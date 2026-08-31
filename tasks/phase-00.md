@@ -1,6 +1,6 @@
 # Phase 0 — tasks
 
-Cập nhật 2026-08-31: scaffold + `BE-P0-001` + `SEC-P0-001` (threat model). Còn PRD, `SEC-P0-003`, audit/backup/`INF-P0-002`.
+Cập nhật 2026-08-31: scaffold + `BE-P0-001` + `SEC-P0-001` + `SEC-P0-003` (PII log checklist). Còn PRD, audit/backup/`INF-P0-002`.
 
 ## PRD / DOC
 
@@ -58,7 +58,7 @@ Cập nhật 2026-08-31: scaffold + `BE-P0-001` + `SEC-P0-001` (threat model). C
 ### BE-P0-003 — Logger JSON + redaction PII
 - Status: done
 - DoD: không log authorization/email/amount
-- Note: Pino redact paths; checklist formal = `SEC-P0-003`
+- Note: Pino redact paths; checklist formal = `SEC-P0-003` (done)
 
 ### BE-P0-004 — Khung audit log (schema, chưa gắn hết event)
 - Status: todo
@@ -116,7 +116,11 @@ Cập nhật 2026-08-31: scaffold + `BE-P0-001` + `SEC-P0-001` (threat model). C
 - Depends: BE-P0-002
 
 ### SEC-P0-003 — Checklist che PII trong log
-- Status: todo
+- Status: done
+- Module: 22
+- Depends: BE-P0-003
+- DoD: checklist field cấm/cho phép; Pino nested paths; test không lộ giá trị thật
+- Note: [pii-log-checklist.md](../docs/architecture/pii-log-checklist.md); `pino-redact.ts`
 
 ## QA
 

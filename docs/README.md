@@ -23,6 +23,7 @@ Mục lục. Nguồn chức năng: kế hoạch 8 phase / 26 module. Roadmap là
 - [Sync](architecture/sync.md)
 - [Security](architecture/security.md)
 - [Threat model](architecture/threat-model.md)
+- [Checklist PII trong log](architecture/pii-log-checklist.md)
 - [Privacy / PDPD](architecture/privacy-compliance.md)
 - [API](architecture/api.md)
 - [Observability](architecture/observability.md)

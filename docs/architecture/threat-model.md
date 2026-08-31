@@ -83,7 +83,7 @@ Chỉ những gì đang chạy.
 | Mailhog `:1025` / `:8025` | Fake SMTP + UI. Không dùng prod. |
 | Web admin `:3001` | Placeholder; fetch health. Chưa auth staff. |
 | Flutter shell | Splash + home. Chưa gọi API. |
-| Logger Pino | Redact `req.headers.authorization`, `req.headers.cookie`, `email`, `amountMinor`, `password`, `token`. Checklist formal: `SEC-P0-003`. |
+| Logger Pino | Redact nested 1–2 cấp (`pino-redact.ts`). Checklist: [pii-log-checklist.md](pii-log-checklist.md) (`SEC-P0-003`). |
 | Git / CI / `.env.example` | Secret không commit ([secrets.md](../infrastructure/secrets.md)). Prod secret manager TBD. |
 | OpenAPI | Public trong repo; Phase 0 chỉ health. |
 | Prisma schema | Bảng User/ví/GD đã migrate local; không có HTTP CRUD. |
@@ -125,7 +125,7 @@ Auth: Bearer (`/api/v1` khi gắn Phase 1). Mobile không nhúng API secret.
 | T-R01 | R | API / admin | Thao tác PII không truy vết | `BE-P0-004` audit schema. Staff tra cứu PII bắt buộc audit ([security.md](security.md)). |
 | T-R02 | R | Export / xóa TK | User phủ nhận yêu cầu xóa / xuất | `BE-P1-010` + audit event khi có `BE-P0-004`. |
 | T-I01 | I | `GET /api/health` | Lộ DB up/down (recon) | Chấp nhận P0 (ops local). Review ẩn chi tiết trước staging công khai. |
-| T-I02 | I | Logger | Email, token, số tiền, số TK trong log | Pino redact paths (`BE-P0-003`). Checklist: `SEC-P0-003`. Không log số dư / email đầy đủ. |
+| T-I02 | I | Logger | Email, token, số tiền, số TK trong log | Pino nested paths (`BE-P0-003`, `pino-redact.ts`). Checklist [pii-log-checklist.md](pii-log-checklist.md) (`SEC-P0-003`). Không nội suy PII vào message. |
 | T-I03 | I | Analytics | PII trong event | Catalog cấm email/số dư/số TK — `MOB-P0-004`. |
 | T-I04 | I | Mobile | Số dư lộ khi app nền / screenshot | `MOB-P1-009`. |
 | T-I05 | I | Export | File xuất chứa PII trên thiết bị mất | `BE-P1-010` + app lock. Privacy: [privacy-compliance.md](privacy-compliance.md). |
@@ -153,12 +153,11 @@ Auth: Bearer (`/api/v1` khi gắn Phase 1). Mobile không nhúng API secret.
 | `security@` TBD | DECISIONS-OPEN #10. |
 | Sync trùng GD | RISKS R2 — `BE-P1-009`. |
 | PDPD / store reject | RISKS R3 — `PRD-P0-002`, export/xóa trước phát hành. |
-| Checklist PII log chưa formal | `SEC-P0-003`. |
 | Audit chưa có schema | `BE-P0-004`. |
 
 ## Cách cập nhật
 
 1. Thêm hàng surface (P0 as-built hoặc P1+ planned).
 2. Thêm hoặc sửa ID STRIDE; gắn mitigation / task.
-3. Nếu control catalog đổi: sửa [security.md](security.md).
+3. Nếu control catalog đổi: sửa [security.md](security.md). Field log mới: [pii-log-checklist.md](pii-log-checklist.md) + `pino-redact.ts`.
 4. PR `SEC-*` / auth / export / xóa TK ghi rõ đã rà threat model ([pr-review.md](../process/pr-review.md)).

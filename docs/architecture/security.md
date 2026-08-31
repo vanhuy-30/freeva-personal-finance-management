@@ -13,7 +13,7 @@ Dữ liệu giao dịch, số dư, PII, session token, (sau này) bank token.
 - Rate limit login/OTP.
 - Session revoke.
 - Helmet, CORS allowlist.
-- Log redaction: email, token, amount, account numbers.
+- Log redaction: email, token, amount, account numbers — checklist [pii-log-checklist.md](pii-log-checklist.md).
 - App lock (PIN/biometrics) — client.
 - Secrets chỉ env / secret manager, không git.
 
