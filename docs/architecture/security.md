@@ -1,6 +1,6 @@
 # Security
 
-Threat model sống — cập nhật mỗi epic lớn.
+Kiểm soát và nguyên tắc. Mô hình đe dọa sống: [threat-model.md](threat-model.md) (STRIDE, bề mặt Phase 0/1). Cập nhật threat model mỗi epic lớn hoặc khi thêm endpoint / client / bên thứ ba — xem [security-review.md](../process/security-review.md).
 
 ## Assets
 
