@@ -2,7 +2,7 @@
 
 | Phase | File | Mức |
 |---|---|---|
-| 0 | [phase-00.md](phase-00.md) | Chi tiết |
+| 0 | [phase-00.md](phase-00.md) | Chi tiết — scaffold done; còn BE/SEC/PRD |
 | 1 | [phase-01.md](phase-01.md) | Chi tiết |
 | 2 | [phase-02.md](phase-02.md) | Epic |
 | 3 | [phase-03.md](phase-03.md) | Epic |

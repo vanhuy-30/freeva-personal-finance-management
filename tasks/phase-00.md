@@ -1,10 +1,13 @@
 # Phase 0 — tasks
 
+Cập nhật 2026-08-31: backlog khớp code trên `main` (`153d3e7`). Scaffold xong; phần còn lại là product/data/security, không phải init repo.
+
 ## PRD / DOC
 
 ### PRD-P0-001 — Persona, thị trường VN, use case ưu tiên
 - Status: todo
 - DoD: personas.md không còn “chỉ stub”; 3 use case ghi chi được viết
+- Note: file hiện là bản đầu + câu hỏi mở
 
 ### PRD-P0-002 — Draft ToS và privacy policy
 - Status: todo
@@ -24,14 +27,17 @@
 ### DS-P0-001 — Design tokens 5 màu brand + semantic + light/dark
 - Status: done
 - DoD: tokens.json + palette.md; Flutter/Next đọc token
+- Note: Next import CSS variables. Flutter dùng `AppColors` (projection, hex không nằm trong widget)
 
 ### INF-P0-001 — Compose Postgres, Redis, Mailhog + Makefile
 - Status: done
 - DoD: `make up` chạy local; README compose
+- Note: host Postgres `:5434` (tránh PG native `:5432`); API local `:4000`
 
 ### INF-P0-002 — CI Flutter analyze + Nest test/build + Next lint/build
-- Status: doing
+- Status: todo
 - DoD: workflow xanh trên `main`
+- Note: [ci.yml](../.github/workflows/ci.yml) đã có; chưa confirm run GitHub (cần `gh auth` hoặc tab Actions)
 
 ### INF-P0-003 — `.env.example` và quy tắc secrets
 - Status: done
@@ -43,14 +49,16 @@
 - Module: nền tảng, 20
 - Depends: —
 - DoD: ADR + ER trong data-model.md reviewed; money = integer minor units; timezone documented
+- Note: data-model.md là logical; Prisma mới có `SchemaMeta`
 
 ### BE-P0-002 — Health API + Prisma migrate local
-- Status: doing
+- Status: done
 - DoD: `GET /api/health` 200 khi compose up; check DB
 
 ### BE-P0-003 — Logger JSON + redaction PII
-- Status: doing
+- Status: done
 - DoD: không log authorization/email/amount
+- Note: Pino redact paths; checklist formal = `SEC-P0-003`
 
 ### BE-P0-004 — Khung audit log (schema, chưa gắn hết event)
 - Status: todo
@@ -60,21 +68,23 @@
 - Status: todo
 - Module: 20
 - DoD: runbook đã chạy thử dump/restore local
+- Note: runbook có; chưa chứng minh restore trên máy này
 
 ## MOB
 
 ### MOB-P0-001 — App shell: DI, logger, l10n vi/en, router
-- Status: doing
+- Status: done
 - DoD: splash + home placeholder; `flutter analyze` sạch
 
 ### MOB-P0-002 — Theme từ design tokens (light/dark)
-- Status: doing
+- Status: done
 - Module: DS
 - DoD: không hex trong widget
 
 ### MOB-P0-003 — Feature flag client stub
-- Status: todo
+- Status: done
 - DoD: interface + local overlay; chưa remote
+- Note: `LocalFeatureFlagService` luôn `false`; chưa gắn UI
 
 ### MOB-P0-004 — Analytics event stub (không PII)
 - Status: todo
@@ -83,7 +93,7 @@
 ## WA
 
 ### WA-P0-001 — Admin placeholder + hiển thị API health
-- Status: doing
+- Status: done
 - Module: 26
 - DoD: trang dùng CSS variables brand
 
@@ -100,7 +110,7 @@
 - Module: 22
 
 ### SEC-P0-002 — Helmet, CORS allowlist, validation pipe
-- Status: doing
+- Status: done
 - Depends: BE-P0-002
 
 ### SEC-P0-003 — Checklist che PII trong log
@@ -109,7 +119,7 @@
 ## QA
 
 ### QA-P0-001 — Money helper + test minor units / cộng trừ
-- Status: doing
+- Status: done
 - DoD: unit test API (và/hoặc Dart) pass
 
 ### QA-P0-002 — Spec bảng test transfer cân bằng (chưa ledger)
