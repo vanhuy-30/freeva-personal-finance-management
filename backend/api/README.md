@@ -11,4 +11,4 @@ pnpm --filter @freeva/api prisma:migrate
 make api
 ```
 
-Money helpers: `src/core/money`. Schema tài chính: `BE-P0-001`.
+Money helpers: `src/core/money`. Schema: ADR 007 / `prisma/schema.prisma`.

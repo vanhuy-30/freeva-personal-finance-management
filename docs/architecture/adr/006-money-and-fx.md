@@ -13,4 +13,4 @@
 
 ## Consequences
 
-Mọi report/test so sánh số nguyên. Helper money có unit test (`QA-P0-*`).
+Mọi report/test so sánh số nguyên. Helper money có unit test (`QA-P0-*`). Cấu trúc bảng: [ADR 007](007-core-data-model.md).

@@ -7,9 +7,209 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Placeholder until BE-P0-001. Never store money as Float/Double.
+// App / sync schema major. Health uses SELECT 1, not this table.
 model SchemaMeta {
   id        Int      @id @default(1)
   version   Int      @default(1)
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt @db.Timestamptz
+}
+
+enum FinancialAccountType {
+  cash
+  bank
+  ewallet
+  credit
+}
+
+enum TransactionType {
+  income
+  expense
+  transfer
+}
+
+enum FxQuoteSource {
+  manual
+  provider
+}
+
+/// ISO 4217 catalog. No seed in BE-P0-001. Never store money as Float/Double.
+model Currency {
+  code        String @id @db.Char(3)
+  minorDigits Int
+  name        String
+
+  users                User[]              @relation("UserDefaultCurrency")
+  financialAccounts    FinancialAccount[]
+  transactions         Transaction[]
+  fxQuotesFrom         FxQuote[]           @relation("FxQuoteFrom")
+  fxQuotesTo           FxQuote[]           @relation("FxQuoteTo")
+}
+
+model User {
+  id                   String   @id @default(uuid()) @db.Uuid
+  email                String   @unique
+  locale               String   @default("vi")
+  timezone             String   @default("Asia/Ho_Chi_Minh")
+  defaultCurrencyCode  String   @db.Char(3)
+  fiscalMonthStartDay  Int      @default(1)
+  version              Int      @default(1)
+  createdAt            DateTime @default(now()) @db.Timestamptz
+  updatedAt            DateTime @updatedAt @db.Timestamptz
+
+  defaultCurrency   Currency           @relation("UserDefaultCurrency", fields: [defaultCurrencyCode], references: [code])
+  financialAccounts FinancialAccount[]
+  categoryGroups    CategoryGroup[]
+  categories        Category[]
+  tags              Tag[]
+  transactions      Transaction[]
+  fxQuotes          FxQuote[]
+}
+
+model FinancialAccount {
+  id                  String                @id @default(uuid()) @db.Uuid
+  userId              String                @db.Uuid
+  clientId            String                @db.Uuid
+  name                String
+  type                FinancialAccountType
+  currencyCode        String                @db.Char(3)
+  initialBalanceMinor BigInt
+  sortOrder           Int                   @default(0)
+  archivedAt          DateTime?             @db.Timestamptz
+  creditLimitMinor    BigInt?
+  statementCloseDay   Int?
+  paymentDueDay       Int?
+  version             Int                   @default(1)
+  createdAt           DateTime              @default(now()) @db.Timestamptz
+  updatedAt           DateTime              @updatedAt @db.Timestamptz
+
+  user         User          @relation(fields: [userId], references: [id])
+  currency     Currency      @relation(fields: [currencyCode], references: [code])
+  transactions Transaction[]
+
+  @@unique([userId, clientId])
+  @@index([userId, archivedAt])
+}
+
+model CategoryGroup {
+  id         String    @id @default(uuid()) @db.Uuid
+  userId     String    @db.Uuid
+  clientId   String    @db.Uuid
+  name       String
+  isSystem   Boolean   @default(false)
+  archivedAt DateTime? @db.Timestamptz
+  version    Int       @default(1)
+  createdAt  DateTime  @default(now()) @db.Timestamptz
+  updatedAt  DateTime  @updatedAt @db.Timestamptz
+
+  user       User       @relation(fields: [userId], references: [id])
+  categories Category[]
+
+  @@unique([userId, clientId])
+  @@index([userId])
+}
+
+model Category {
+  id         String    @id @default(uuid()) @db.Uuid
+  userId     String    @db.Uuid
+  clientId   String    @db.Uuid
+  name       String
+  isSystem   Boolean   @default(false)
+  groupId    String?   @db.Uuid
+  parentId   String?   @db.Uuid
+  colorToken String?
+  iconToken  String?
+  archivedAt DateTime? @db.Timestamptz
+  version    Int       @default(1)
+  createdAt  DateTime  @default(now()) @db.Timestamptz
+  updatedAt  DateTime  @updatedAt @db.Timestamptz
+
+  user         User           @relation(fields: [userId], references: [id])
+  group        CategoryGroup? @relation(fields: [groupId], references: [id])
+  parent       Category?      @relation("CategoryTree", fields: [parentId], references: [id])
+  children     Category[]     @relation("CategoryTree")
+  transactions Transaction[]
+
+  @@unique([userId, clientId])
+  @@index([userId, archivedAt])
+  @@index([parentId])
+}
+
+model Tag {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  clientId  String   @db.Uuid
+  name      String
+  version   Int      @default(1)
+  createdAt DateTime @default(now()) @db.Timestamptz
+  updatedAt DateTime @updatedAt @db.Timestamptz
+
+  user         User             @relation(fields: [userId], references: [id])
+  transactions TransactionTag[]
+
+  @@unique([userId, clientId])
+  @@index([userId])
+}
+
+model Transaction {
+  id              String          @id @default(uuid()) @db.Uuid
+  userId          String          @db.Uuid
+  clientId        String          @db.Uuid
+  type            TransactionType
+  amountMinor     BigInt
+  currencyCode    String          @db.Char(3)
+  occurredOn      DateTime        @db.Date
+  accountId       String          @db.Uuid
+  categoryId      String?         @db.Uuid
+  transferGroupId String?         @db.Uuid
+  fxQuoteId       String?         @db.Uuid
+  notes           String?
+  deletedAt       DateTime?       @db.Timestamptz
+  version         Int             @default(1)
+  createdAt       DateTime        @default(now()) @db.Timestamptz
+  updatedAt       DateTime        @updatedAt @db.Timestamptz
+
+  user     User              @relation(fields: [userId], references: [id])
+  account  FinancialAccount  @relation(fields: [accountId], references: [id])
+  category Category?         @relation(fields: [categoryId], references: [id])
+  currency Currency          @relation(fields: [currencyCode], references: [code])
+  fxQuote  FxQuote?          @relation(fields: [fxQuoteId], references: [id])
+  tags     TransactionTag[]
+
+  @@unique([userId, clientId])
+  @@index([userId, occurredOn])
+  @@index([accountId])
+  @@index([transferGroupId])
+}
+
+model TransactionTag {
+  transactionId String @db.Uuid
+  tagId         String @db.Uuid
+
+  transaction Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  tag         Tag         @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([transactionId, tagId])
+  @@index([tagId])
+}
+
+model FxQuote {
+  id         String        @id @default(uuid()) @db.Uuid
+  userId     String        @db.Uuid
+  clientId   String        @db.Uuid
+  fromCode   String        @db.Char(3)
+  toCode     String        @db.Char(3)
+  rate       Decimal       @db.Decimal(18, 8)
+  quotedAt   DateTime      @db.Timestamptz
+  source     FxQuoteSource
+  version    Int           @default(1)
+  createdAt  DateTime      @default(now()) @db.Timestamptz
+  updatedAt  DateTime      @updatedAt @db.Timestamptz
+
+  user         User          @relation(fields: [userId], references: [id])
+  fromCurrency Currency      @relation("FxQuoteFrom", fields: [fromCode], references: [code])
+  toCurrency   Currency      @relation("FxQuoteTo", fields: [toCode], references: [code])
+  transactions Transaction[]
+
+  @@unique([userId, clientId])
+  @@index([userId, quotedAt])
 }
