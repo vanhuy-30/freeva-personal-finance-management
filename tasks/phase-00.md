@@ -1,6 +1,6 @@
 # Phase 0 — tasks
 
-Cập nhật 2026-08-31: backlog khớp code trên `main` (`153d3e7`). Scaffold xong; phần còn lại là product/data/security, không phải init repo.
+Cập nhật 2026-08-31: scaffold + `BE-P0-001` (ADR 007 / Prisma lõi). Còn product/security/audit/backup/`INF-P0-002`.
 
 ## PRD / DOC
 
@@ -45,11 +45,11 @@ Cập nhật 2026-08-31: backlog khớp code trên `main` (`153d3e7`). Scaffold 
 ## BE
 
 ### BE-P0-001 — Thiết kế mô hình dữ liệu user, ví, GD, category, currency
-- Status: todo
+- Status: done
 - Module: nền tảng, 20
 - Depends: —
 - DoD: ADR + ER trong data-model.md reviewed; money = integer minor units; timezone documented
-- Note: data-model.md là logical; Prisma mới có `SchemaMeta`
+- Note: ADR 007 + ER; Prisma BigInt minor units; chưa CRUD/seed (Phase 1)
 
 ### BE-P0-002 — Health API + Prisma migrate local
 - Status: done

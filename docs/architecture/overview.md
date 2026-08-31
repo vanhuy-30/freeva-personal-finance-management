@@ -13,7 +13,7 @@ apps/web-admin (Next) ──┘
 
 ## Quyết định
 
-Xem ADR: monorepo, Flutter, NestJS, Next admin, Postgres, money/FX.
+Xem ADR: monorepo, Flutter, NestJS, Next admin, Postgres, money/FX, [core data model](adr/007-core-data-model.md).
 
 ## Nguyên tắc
 
