@@ -1,0 +1,7 @@
+---
+description: Flutter Clean Architecture + MVVM rules for apps/mobile
+globs: apps/mobile/**/*.dart
+alwaysApply: false
+---
+
+Feature folders: `lib/features/{name}/{data,domain,presentation}`. Domain has no Flutter imports. Views do not call repositories. ViewModels do not import `dart:ui` or `material.dart`. Use get_it + injectable, dartz Either. No `print()`. No hardcoded strings or colors.

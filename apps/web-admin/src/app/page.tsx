@@ -1,0 +1,75 @@
+export const dynamic = "force-dynamic";
+
+type HealthResponse = {
+  status: string;
+  service: string;
+  timestamp: string;
+  database: string;
+};
+
+async function fetchHealth(): Promise<HealthResponse | null> {
+  const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:4000";
+  try {
+    const response = await fetch(`${base}/api/health`, { cache: "no-store" });
+    if (!response.ok) {
+      return null;
+    }
+    return (await response.json()) as HealthResponse;
+  } catch {
+    return null;
+  }
+}
+
+export default async function Home() {
+  const health = await fetchHealth();
+
+  return (
+    <div className="flex min-h-full flex-1 flex-col">
+      <header
+        className="px-8 py-4 text-white"
+        style={{
+          backgroundImage: "var(--gradient-cta)",
+        }}
+      >
+        <p className="text-sm uppercase tracking-wide opacity-90">Freeva</p>
+        <h1 className="text-2xl font-semibold">Web Admin</h1>
+      </header>
+      <main className="mx-auto w-full max-w-lg flex-1 px-8 py-12">
+        <section
+          className="rounded-2xl border p-6 shadow-sm"
+          style={{
+            background: "var(--color-neutral-surface)",
+            borderColor: "var(--color-brand-muted)",
+          }}
+        >
+          <h2 className="text-lg font-semibold">API health</h2>
+          <p className="mt-1 text-sm" style={{ color: "var(--color-neutral-text-muted)" }}>
+            Phase 0 placeholder — chưa tra cứu user. Chạy <code>make up</code> và{" "}
+            <code>make api</code>.
+          </p>
+          {health ? (
+            <dl className="mt-6 grid grid-cols-2 gap-3 text-sm">
+              <dt>status</dt>
+              <dd className="font-medium">{health.status}</dd>
+              <dt>service</dt>
+              <dd>{health.service}</dd>
+              <dt>database</dt>
+              <dd>{health.database}</dd>
+              <dt>timestamp</dt>
+              <dd className="break-all">{health.timestamp}</dd>
+            </dl>
+          ) : (
+            <p className="mt-6 text-sm" style={{ color: "var(--color-semantic-danger)" }}>
+              Không kết nối được API. Endpoint: /api/health
+            </p>
+          )}
+          <div
+            className="mt-8 h-1.5 w-16 rounded-full"
+            style={{ background: "var(--color-brand-accent)" }}
+            aria-hidden
+          />
+        </section>
+      </main>
+    </div>
+  );
+}

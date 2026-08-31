@@ -1,0 +1,7 @@
+---
+description: NestJS backend conventions
+globs: backend/api/**/*.{ts,prisma}
+alwaysApply: false
+---
+
+Prisma stays in infrastructure. DTOs match OpenAPI. Money is bigint/Decimal, never Float. Redact PII and amounts in logs. New public endpoints ship with OpenAPI in the same PR.

@@ -1,0 +1,7 @@
+---
+description: Money and financial data accuracy
+globs: "{apps/mobile,backend/api,packages}/**/*.{dart,ts}"
+alwaysApply: false
+---
+
+Never use float/double for money. Store integer minor units. Transfers must be two balanced legs. Persist FX rate and timestamp. Do not log balances, account numbers, or full emails.

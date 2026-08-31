@@ -1,0 +1,25 @@
+{
+  "name": "freeva-personal-finance-management",
+  "private": true,
+  "packageManager": "pnpm@10.0.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "bootstrap": "pnpm install",
+    "api": "pnpm --filter @freeva/api start:dev",
+    "api:build": "pnpm --filter @freeva/api build",
+    "admin": "pnpm --filter @freeva/web-admin dev",
+    "admin:build": "pnpm --filter @freeva/web-admin build",
+    "admin:lint": "pnpm --filter @freeva/web-admin lint",
+    "test:money": "pnpm --filter @freeva/api test -- money"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "prisma",
+      "unrs-resolver"
+    ]
+  }
+}

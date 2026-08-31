@@ -1,0 +1,7 @@
+---
+description: Documentation and task ID conventions
+globs: docs/**/*.md
+alwaysApply: false
+---
+
+Keep docs in Vietnamese unless quoting API names. Do not duplicate the full roadmap in README. Link to docs/product and tasks/. Every feature change should mention a task ID `{PREFIX}-P{n}-{nnn}`.

@@ -1,0 +1,7 @@
+---
+description: Brand colors from design tokens only
+globs: "{apps/mobile,apps/web-admin}/**/*.{dart,tsx,css}"
+alwaysApply: false
+---
+
+Do not hardcode hex colors. Use packages/design-tokens (Flutter theme / CSS variables). `#C1C8E4` and `#84CEEB` are not text colors. Primary `#5680E9`, accent `#8860D0`. Financial success/danger are separate semantic tokens, not recolored primary.

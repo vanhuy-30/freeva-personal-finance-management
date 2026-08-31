@@ -1,0 +1,24 @@
+:root {
+  --color-brand-primary: #5680e9;
+  --color-brand-secondary: #5ab9ea;
+  --color-brand-highlight: #84ceeb;
+  --color-brand-muted: #c1c8e4;
+  --color-brand-accent: #8860d0;
+  --color-neutral-text: #1b1f3b;
+  --color-neutral-text-muted: #5c6378;
+  --color-neutral-surface: #ffffff;
+  --color-neutral-canvas: #f4f6fb;
+  --color-neutral-on-primary: #ffffff;
+  --color-semantic-success: #2f9e76;
+  --color-semantic-danger: #d64545;
+  --color-semantic-warning: #d4a017;
+  --gradient-cta: linear-gradient(90deg, #5680e9, #5ab9ea);
+}
+
+[data-theme='dark'] {
+  --color-neutral-text: #f4f6fb;
+  --color-neutral-text-muted: #c1c8e4;
+  --color-neutral-surface: #1b1f33;
+  --color-neutral-canvas: #12141f;
+  --color-neutral-on-primary: #ffffff;
+}

@@ -1,0 +1,61 @@
+openapi: 3.1.0
+info:
+  title: Freeva API
+  version: 0.0.1
+  description: Source of truth for mobile and web admin. Phase 0 exposes health only.
+servers:
+  - url: http://localhost:4000
+    description: local
+paths:
+  /api/health:
+    get:
+      operationId: getHealth
+      tags: [Health]
+      summary: Liveness and database check
+      responses:
+        '200':
+          description: Service is up
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '503':
+          description: Database unreachable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      required: [status, service, timestamp]
+      properties:
+        status:
+          type: string
+          enum: [ok, degraded]
+        service:
+          type: string
+          example: freeva-api
+        timestamp:
+          type: string
+          format: date-time
+        database:
+          type: string
+          enum: [up, down]
+    ErrorEnvelope:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            details:
+              type: array
+              items:
+                type: object

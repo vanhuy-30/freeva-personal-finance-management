@@ -1,0 +1,6 @@
+{
+  "@@locale": "en",
+  "appTitle": "Freeva",
+  "splashTagline": "Personal finance",
+  "homePlaceholder": "Core loop: wallet → transaction → balance. Features land in lib/features."
+}

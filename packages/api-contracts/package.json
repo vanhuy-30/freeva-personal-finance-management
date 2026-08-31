@@ -1,0 +1,7 @@
+{
+  "name": "@freeva/api-contracts",
+  "version": "0.0.1",
+  "private": true,
+  "description": "OpenAPI contracts for Freeva",
+  "files": ["openapi.yaml"]
+}

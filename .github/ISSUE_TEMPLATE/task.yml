@@ -1,0 +1,55 @@
+name: Task
+description: Công việc có prefix bắt buộc
+title: "[PREFIX-P0-000] "
+labels: []
+body:
+  - type: dropdown
+    id: prefix
+    attributes:
+      label: Prefix
+      options:
+        - BE
+        - MOB
+        - WA
+        - INF
+        - DOC
+        - SEC
+        - DS
+        - QA
+        - SHD
+        - PRD
+    validations:
+      required: true
+  - type: dropdown
+    id: phase
+    attributes:
+      label: Phase
+      options:
+        - "0"
+        - "1"
+        - "2"
+        - "3"
+        - "4"
+        - "5"
+        - "6"
+        - "7"
+    validations:
+      required: true
+  - type: input
+    id: task_id
+    attributes:
+      label: Task ID
+      placeholder: BE-P0-001
+    validations:
+      required: true
+  - type: input
+    id: module
+    attributes:
+      label: Module (1–26 hoặc nền tảng)
+      placeholder: "4"
+  - type: textarea
+    id: dod
+    attributes:
+      label: Definition of Done
+    validations:
+      required: true
