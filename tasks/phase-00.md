@@ -1,6 +1,6 @@
 # Phase 0 — tasks
 
-Cập nhật 2026-08-31: scaffold + `BE-P0-001` (ADR 007 / Prisma lõi). Còn product/security/audit/backup/`INF-P0-002`.
+Cập nhật 2026-08-31: scaffold + `BE-P0-001` + `SEC-P0-001` (threat model). Còn PRD, `SEC-P0-003`, audit/backup/`INF-P0-002`.
 
 ## PRD / DOC
 
@@ -106,8 +106,10 @@ Cập nhật 2026-08-31: scaffold + `BE-P0-001` (ADR 007 / Prisma lõi). Còn pr
 ## SEC
 
 ### SEC-P0-001 — Threat model skeleton + surface Phase 0/1
-- Status: todo
+- Status: done
 - Module: 22
+- DoD: STRIDE + trust boundary; surface P0 as-built và P1 planned gắn task; residual trỏ DECISIONS-OPEN / RISKS
+- Note: [docs/architecture/threat-model.md](../docs/architecture/threat-model.md)
 
 ### SEC-P0-002 — Helmet, CORS allowlist, validation pipe
 - Status: done

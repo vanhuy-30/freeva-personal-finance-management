@@ -22,6 +22,7 @@ Mục lục. Nguồn chức năng: kế hoạch 8 phase / 26 module. Roadmap là
 - [Data model](architecture/data-model.md)
 - [Sync](architecture/sync.md)
 - [Security](architecture/security.md)
+- [Threat model](architecture/threat-model.md)
 - [Privacy / PDPD](architecture/privacy-compliance.md)
 - [API](architecture/api.md)
 - [Observability](architecture/observability.md)
