@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
+import { pinoRedactOptions } from './core/logging/pino-redact';
 import { PrismaModule } from './infrastructure/prisma/prisma.module';
 import { HealthModule } from './modules/health/health.module';
 
@@ -13,17 +14,7 @@ import { HealthModule } from './modules/health/health.module';
     LoggerModule.forRoot({
       pinoHttp: {
         level: process.env.LOG_LEVEL ?? 'info',
-        redact: {
-          paths: [
-            'req.headers.authorization',
-            'req.headers.cookie',
-            'email',
-            'amountMinor',
-            'password',
-            'token',
-          ],
-          censor: '[REDACTED]',
-        },
+        redact: pinoRedactOptions,
       },
     }),
     PrismaModule,

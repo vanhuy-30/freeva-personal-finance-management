@@ -2,7 +2,7 @@
 
 | Phase | File | Mức |
 |---|---|---|
-| 0 | [phase-00.md](phase-00.md) | Chi tiết — scaffold + data model + threat model done; còn PRD/`SEC-P0-003`/BE-P0-004–005 |
+| 0 | [phase-00.md](phase-00.md) | Chi tiết — scaffold + data model + threat model + PII log checklist done; còn PRD/BE-P0-004–005 |
 | 1 | [phase-01.md](phase-01.md) | Chi tiết |
 | 2 | [phase-02.md](phase-02.md) | Epic |
 | 3 | [phase-03.md](phase-03.md) | Epic |

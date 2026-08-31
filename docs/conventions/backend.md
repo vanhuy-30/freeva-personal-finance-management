@@ -4,5 +4,5 @@
 - Prisma chỉ ở infrastructure. Repository interface ở application/domain.
 - DTO class-validator khớp OpenAPI.
 - Money: `bigint` Prisma hoặc `Decimal` — không `Float`.
-- Logger: Pino, redact paths email, authorization, amountMinor.
-- Test: money helper + usecase; e2e health.
+- Logger: Pino; paths trong `src/core/logging/pino-redact.ts` — [pii-log-checklist.md](../architecture/pii-log-checklist.md).
+- Test: money helper + pino redact; e2e health.
