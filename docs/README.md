@@ -6,6 +6,7 @@ Mục lục. Nguồn chức năng: kế hoạch 8 phase / 26 module. Roadmap là
 
 - [Vision](product/vision.md)
 - [Personas](product/personas.md)
+- [Use cases ghi chi](product/use-cases.md)
 - [Glossary](product/glossary.md)
 - [Roadmap](product/roadmap.md)
 - [Modules](product/modules.md)

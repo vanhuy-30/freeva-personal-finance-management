@@ -1,13 +1,13 @@
 # Phase 0 — tasks
 
-Cập nhật 2026-08-31: scaffold + `BE-P0-001` + `SEC-P0-001` + `SEC-P0-003` (PII log checklist). Còn PRD, audit/backup/`INF-P0-002`.
+Cập nhật 2026-09-01: scaffold + data model + threat model + PII logs + `PRD-P0-001`. Còn `PRD-P0-002`, audit/backup/`INF-P0-002`.
 
 ## PRD / DOC
 
 ### PRD-P0-001 — Persona, thị trường VN, use case ưu tiên
-- Status: todo
+- Status: done
 - DoD: personas.md không còn “chỉ stub”; 3 use case ghi chi được viết
-- Note: file hiện là bản đầu + câu hỏi mở
+- Note: [personas.md](../docs/product/personas.md) P1 knowledge worker beta 100%; [use-cases.md](../docs/product/use-cases.md) UC-EXP-01/02/03
 
 ### PRD-P0-002 — Draft ToS và privacy policy
 - Status: todo
