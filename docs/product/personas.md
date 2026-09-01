@@ -15,7 +15,7 @@ Chỉ những gì repo đã chốt hoặc giả định vận hành. Không th�
 | Múi giờ | `Asia/Ho_Chi_Minh` |
 | Tìm kiếm | tiếng Việt không dấu (Should Phase 1) |
 | Loại ví | `cash` \| `bank` \| `ewallet` \| `credit` ([data-model](../architecture/data-model.md)) |
-| Pháp lý | tinh thần PDPD — [privacy-compliance](../architecture/privacy-compliance.md); copy ToS/privacy = `PRD-P0-002` |
+| Pháp lý | tinh thần PDPD — [privacy-compliance](../architecture/privacy-compliance.md); ToS/privacy nháp `PRD-P0-002`: [điều khoản](../legal/terms-of-service.md), [bảo mật](../legal/privacy-policy.md) |
 
 **Bộ danh mục mặc định (đề xuất, seed = [BE-P1-006](../../tasks/phase-01.md)):** ăn uống, đi lại, nhà ở, hóa đơn, mua sắm, sức khỏe, giáo dục, giải trí, chi tiêu gia đình (workaround phân loại — xem dưới), khác.
 

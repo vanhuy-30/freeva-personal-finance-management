@@ -152,7 +152,7 @@ Auth: Bearer (`/api/v1` khi gắn Phase 1). Mobile không nhúng API secret.
 | Crash SaaS TBD | DECISIONS-OPEN #9; `INF-P1-001`. |
 | `security@` TBD | DECISIONS-OPEN #10. |
 | Sync trùng GD | RISKS R2 — `BE-P1-009`. |
-| PDPD / store reject | RISKS R3 — `PRD-P0-002`, export/xóa trước phát hành. |
+| PDPD / store reject | RISKS R3 — draft ToS/privacy `PRD-P0-002` ([legal/](../legal/privacy-policy.md)); còn luật sư + export/xóa `BE-P1-010` trước store. |
 | Audit chưa có schema | `BE-P0-004`. |
 
 ## Cách cập nhật

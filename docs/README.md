@@ -16,6 +16,14 @@ Mục lục. Nguồn chức năng: kế hoạch 8 phase / 26 module. Roadmap là
 - [MoSCoW MVP](product/moscow-mvp.md)
 - [Analytics events](product/analytics-events.md)
 
+## Legal (bản nháp)
+
+Copy nội bộ `PRD-P0-002` — chưa có hiệu lực với user; cần luật sư trước store.
+
+- [Điều khoản dịch vụ](legal/terms-of-service.md)
+- [Chính sách bảo mật](legal/privacy-policy.md) (kèm danh sách bên thứ ba dự kiến)
+- Data map PDPD: [privacy-compliance](architecture/privacy-compliance.md)
+
 ## Architecture
 
 - [Overview](architecture/overview.md)

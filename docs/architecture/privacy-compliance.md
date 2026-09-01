@@ -17,6 +17,13 @@ Xem, xuất (JSON/CSV máy đọc), sửa, xóa tài khoản, rút consent.
 
 ## Bên thứ ba (dự kiến)
 
-Hosting, email OTP, crash (TBD), store IAP (Phase 7), bank partner (Phase 6). Danh sách công khai trên privacy policy.
+Danh sách công khai (bản nháp): [privacy-policy.md](../legal/privacy-policy.md) §10. Không nhân bản bảng vendor ở đây.
 
-ToS/Privacy copy: `PRD-P0-*`.
+Local P0: không có bên thứ ba production (compose self-host). Trước MVP: hosting, email OTP, store, crash, analytics — nhà cung cấp/region TBD. Sau MVP không cam kết: push, AI, đối tác ngân hàng (P6, DPA), IAP (P7).
+
+## Copy pháp lý
+
+- [Điều khoản dịch vụ (nháp)](../legal/terms-of-service.md) — `PRD-P0-002`
+- [Chính sách bảo mật (nháp)](../legal/privacy-policy.md) — `PRD-P0-002`
+
+Cần luật sư trước store / in-app. Export và xóa tài khoản: `BE-P1-010`.
