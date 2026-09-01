@@ -7,13 +7,13 @@
 - **Threat model:** `SEC-P0-001` xong ([threat-model.md](../architecture/threat-model.md)).
 - **PII logs:** `SEC-P0-003` xong ([pii-log-checklist.md](../architecture/pii-log-checklist.md)).
 - **Personas / use case ghi chi:** `PRD-P0-001` xong ([personas.md](../product/personas.md), [use-cases.md](../product/use-cases.md)).
+- **ToS / privacy nháp:** `PRD-P0-002` xong ([terms-of-service.md](../legal/terms-of-service.md), [privacy-policy.md](../legal/privacy-policy.md)). Cần luật sư trước store.
 
 ## Còn lại Phase 0 (làm trên branch mới)
 
-1. `PRD-P0-002` — draft ToS/privacy
-2. `BE-P0-004` / `BE-P0-005` — audit schema + thử backup/restore
-3. `MOB-P0-004`, `QA-P0-002`, `WA-P0-002`
-4. `INF-P0-002` — confirm CI GitHub xanh
+1. `BE-P0-004` / `BE-P0-005` — audit schema + thử backup/restore
+2. `MOB-P0-004`, `QA-P0-002`, `WA-P0-002`
+3. `INF-P0-002` — confirm CI GitHub xanh
 
 Chi tiết status từng ID: [tasks/phase-00.md](../../tasks/phase-00.md).
 

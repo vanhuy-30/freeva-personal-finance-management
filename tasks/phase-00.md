@@ -1,6 +1,6 @@
 # Phase 0 — tasks
 
-Cập nhật 2026-09-01: scaffold + data model + threat model + PII logs + `PRD-P0-001`. Còn `PRD-P0-002`, audit/backup/`INF-P0-002`.
+Cập nhật 2026-09-01: scaffold + data model + threat model + PII logs + `PRD-P0-001` + `PRD-P0-002`. Còn audit/backup/`INF-P0-002`.
 
 ## PRD / DOC
 
@@ -10,9 +10,10 @@ Cập nhật 2026-09-01: scaffold + data model + threat model + PII logs + `PRD-
 - Note: [personas.md](../docs/product/personas.md) P1 knowledge worker beta 100%; [use-cases.md](../docs/product/use-cases.md) UC-EXP-01/02/03
 
 ### PRD-P0-002 — Draft ToS và privacy policy
-- Status: todo
+- Status: done
 - Module: 21
 - DoD: bản nháp tiếng Việt; danh sách bên thứ ba dự kiến
+- Note: [terms-of-service.md](../docs/legal/terms-of-service.md), [privacy-policy.md](../docs/legal/privacy-policy.md) (bản nháp, chưa review luật sư); bên thứ ba §10 privacy policy
 
 ### DOC-P0-001 — Docs foundation (vision, modules, ADR, conventions)
 - Status: done
