@@ -1,6 +1,6 @@
 # Phase 0 — tasks
 
-Cập nhật 2026-09-01: scaffold + data model + threat model + PII logs + `PRD-P0-001` + `PRD-P0-002`. Còn audit/backup/`INF-P0-002`.
+Cập nhật 2026-09-16: xác minh `INF-P0-002` done; Phase 0 đạt 19/24 task. Còn audit/backup/analytics/staff lookup/spec transfer.
 
 ## PRD / DOC
 
@@ -36,9 +36,9 @@ Cập nhật 2026-09-01: scaffold + data model + threat model + PII logs + `PRD-
 - Note: host Postgres `:5434` (tránh PG native `:5432`); API local `:4000`
 
 ### INF-P0-002 — CI Flutter analyze + Nest test/build + Next lint/build
-- Status: todo
+- Status: done
 - DoD: workflow xanh trên `main`
-- Note: [ci.yml](../.github/workflows/ci.yml) đã có; chưa confirm run GitHub (cần `gh auth` hoặc tab Actions)
+- Note: xác minh 2026-09-16 qua GitHub API: [CI run 33521325189](https://github.com/vanhuy-30/freeva-personal-finance-management/actions/runs/33521325189) ngày 2026-09-01, push `main`, SHA `e72ac63fa15aa1e885158b4dfd2e369dfac3bdab`; cả `api`, `web-admin`, `mobile` success. Chi tiết kiểm chứng: [ci-cd.md](../docs/infrastructure/ci-cd.md).
 
 ### INF-P0-003 — `.env.example` và quy tắc secrets
 - Status: done
