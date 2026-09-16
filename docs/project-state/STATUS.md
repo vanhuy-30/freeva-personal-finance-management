@@ -1,7 +1,8 @@
 # STATUS
 
 - **Phase hiện tại:** 0 — nền tảng
-- **Cập nhật:** 2026-09-01
+- **Cập nhật:** 2026-09-16
+- **CI:** `INF-P0-002` done; cả ba job xanh trên `main`, [run 33521325189](https://github.com/vanhuy-30/freeva-personal-finance-management/actions/runs/33521325189). Phase 0: 19/24 task done.
 - **Scaffold:** xong trên `main` (`153d3e7`). Health API, admin placeholder, Flutter shell, docs, compose.
 - **Data model:** `BE-P0-001` xong (ADR 007, Prisma lõi). CRUD ví/GD là Phase 1.
 - **Threat model:** `SEC-P0-001` xong ([threat-model.md](../architecture/threat-model.md)).
@@ -13,7 +14,6 @@
 
 1. `BE-P0-004` / `BE-P0-005` — audit schema + thử backup/restore
 2. `MOB-P0-004`, `QA-P0-002`, `WA-P0-002`
-3. `INF-P0-002` — confirm CI GitHub xanh
 
 Chi tiết status từng ID: [tasks/phase-00.md](../../tasks/phase-00.md).
 
