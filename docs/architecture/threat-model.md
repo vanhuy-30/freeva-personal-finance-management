@@ -87,6 +87,7 @@ Chỉ những gì đang chạy.
 | Git / CI / `.env.example` | Secret không commit ([secrets.md](../infrastructure/secrets.md)). Prod secret manager TBD. |
 | OpenAPI | Public trong repo; Phase 0 chỉ health. |
 | Prisma schema | Bảng User/ví/GD đã migrate local; không có HTTP CRUD. |
+| Audit schema | `BE-P0-004`: migration `AuditEvent` đã kiểm chứng PostgreSQL 16; chưa writer/event, chưa chống sửa/xóa. [ADR 008](adr/008-audit-event-schema.md). |
 
 ## Bề mặt Phase 1 (planned)
 
@@ -108,7 +109,7 @@ Chưa implement. Gắn task.
 | Tra cứu tài khoản staff (không dashboard KD) | `WA-P0-002` |
 | Crash monitoring staging | `INF-P1-001` |
 | Security test trước store | `SEC-P1-001` |
-| Audit schema | `BE-P0-004` |
+| Ghi audit thực tế cho tra cứu staff / export / xóa | `WA-P0-002`, `BE-P1-010`; schema nền `BE-P0-004` đã có |
 
 Auth: Bearer (`/api/v1` khi gắn Phase 1). Mobile không nhúng API secret.
 
@@ -122,8 +123,8 @@ Auth: Bearer (`/api/v1` khi gắn Phase 1). Mobile không nhúng API secret.
 | T-T01 | T | CRUD GD P1 | Sửa số tiền / transfer lệch / IDOR `userId` | Isolation theo `userId`. Transfer hai leg cân bằng — `BE-P1-005`, `QA-P0-002`. ValidationPipe đã chặn field lạ P0. |
 | T-T02 | T | Sync P1 | Trùng hoặc ghi đè GD khi offline | `clientId` unique `(userId, clientId)`, `version` — `BE-P1-009`. Rủi ro R2. |
 | T-T03 | T | Compose | Đổi data local nếu port bind máy | Chấp nhận local. Không bind compose ra internet; không trỏ local vào prod DB. |
-| T-R01 | R | API / admin | Thao tác PII không truy vết | `BE-P0-004` audit schema. Staff tra cứu PII bắt buộc audit ([security.md](security.md)). |
-| T-R02 | R | Export / xóa TK | User phủ nhận yêu cầu xóa / xuất | `BE-P1-010` + audit event khi có `BE-P0-004`. |
+| T-R01 | R | API / admin | Thao tác PII không truy vết | `BE-P0-004` đã có schema; chưa writer/event nên rủi ro còn. `WA-P0-002` phải tích hợp audit cho staff tra cứu PII ([security.md](security.md)). |
+| T-R02 | R | Export / xóa TK | User phủ nhận yêu cầu xóa / xuất | `BE-P1-010` phải ghi event trên schema `BE-P0-004`; chưa tích hợp. |
 | T-I01 | I | `GET /api/health` | Lộ DB up/down (recon) | Chấp nhận P0 (ops local). Review ẩn chi tiết trước staging công khai. |
 | T-I02 | I | Logger | Email, token, số tiền, số TK trong log | Pino nested paths (`BE-P0-003`, `pino-redact.ts`). Checklist [pii-log-checklist.md](pii-log-checklist.md) (`SEC-P0-003`). Không nội suy PII vào message. |
 | T-I03 | I | Analytics | PII trong event | Catalog cấm email/số dư/số TK — `MOB-P0-004`. |
@@ -153,7 +154,8 @@ Auth: Bearer (`/api/v1` khi gắn Phase 1). Mobile không nhúng API secret.
 | `security@` TBD | DECISIONS-OPEN #10. |
 | Sync trùng GD | RISKS R2 — `BE-P1-009`. |
 | PDPD / store reject | RISKS R3 — draft ToS/privacy `PRD-P0-002` ([legal/](../legal/privacy-policy.md)); còn luật sư + export/xóa `BE-P1-010` trước store. |
-| Audit chưa có schema | `BE-P0-004`. |
+| Audit chưa có event thực tế / bảo vệ sửa xóa | Schema `BE-P0-004` đã có; writer, quyền đọc/ghi và integrity control cần chốt trước tích hợp `WA-P0-002` / `BE-P1-010`. |
+| UUID audit có thể liên kết người dùng | Không FK/cascade; phải chốt retention và xử lý xóa tài khoản trước tích hợp, xem ADR 008. |
 
 ## Cách cập nhật
 

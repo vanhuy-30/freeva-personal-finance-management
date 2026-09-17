@@ -32,6 +32,37 @@ enum FxQuoteSource {
   provider
 }
 
+enum AuditActorType {
+  user
+  staff
+  system
+}
+
+enum AuditOutcome {
+  success
+  failure
+  denied
+}
+
+/// Internal audit skeleton; no event writer yet. Not tamper-proof.
+/// Actor consistency and code syntax are CHECK constraints in the migration.
+/// IDs deliberately have no FK; retention/deletion policy remains pending.
+model AuditEvent {
+  id         String         @id @default(uuid()) @db.Uuid
+  actorType  AuditActorType
+  actorId    String?        @db.Uuid
+  action     String         @db.VarChar(100)
+  targetType String         @db.VarChar(50)
+  targetId   String?        @db.Uuid
+  outcome    AuditOutcome
+  occurredAt DateTime       @default(now()) @db.Timestamptz
+  createdAt  DateTime       @default(now()) @db.Timestamptz
+
+  @@index([actorType, actorId, occurredAt])
+  @@index([targetType, targetId, occurredAt])
+  @@index([occurredAt])
+}
+
 /// ISO 4217 catalog. No seed in BE-P0-001. Never store money as Float/Double.
 model Currency {
   code        String @id @db.Char(3)

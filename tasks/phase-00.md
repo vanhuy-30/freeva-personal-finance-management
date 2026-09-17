@@ -1,6 +1,6 @@
 # Phase 0 — tasks
 
-Cập nhật 2026-09-16: xác minh `INF-P0-002` done; Phase 0 đạt 19/24 task. Còn audit/backup/analytics/staff lookup/spec transfer.
+Cập nhật 2026-09-17: `BE-P0-004` schema/migration audit done; Phase 0 đạt 20/24 task. Còn backup/analytics/staff lookup/spec transfer.
 
 ## PRD / DOC
 
@@ -62,8 +62,10 @@ Cập nhật 2026-09-16: xác minh `INF-P0-002` done; Phase 0 đạt 19/24 task.
 - Note: Pino redact paths; checklist formal = `SEC-P0-003` (done)
 
 ### BE-P0-004 — Khung audit log (schema, chưa gắn hết event)
-- Status: todo
+- Status: done
 - Module: 22, 26
+- DoD: Prisma AuditEvent + migration CHECK/index; fresh deploy và upgrade có dữ liệu pass trên PostgreSQL 16; ADR/data model/threat model cập nhật.
+- Note: [ADR 008](../docs/architecture/adr/008-audit-event-schema.md), [kiểm chứng SQL](../backend/api/test/README.md). Chỉ schema; chưa writer/event hoặc cơ chế chống sửa/xóa. Retention và xử lý UUID khi xóa tài khoản chưa chốt.
 
 ### BE-P0-005 — Chiến lược backup/restore Postgres
 - Status: todo
