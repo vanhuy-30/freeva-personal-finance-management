@@ -2,7 +2,7 @@
 
 | Phase | File | Mức |
 |---|---|---|
-| 0 | [phase-00.md](phase-00.md) | Chi tiết — 19/24 done, gồm CI đã xác minh; còn `BE-P0-004–005`, `MOB-P0-004`, `WA-P0-002`, `QA-P0-002` |
+| 0 | [phase-00.md](phase-00.md) | Chi tiết — 20/24 done, gồm CI và schema audit; còn `BE-P0-005`, `MOB-P0-004`, `WA-P0-002`, `QA-P0-002` |
 | 1 | [phase-01.md](phase-01.md) | Chi tiết |
 | 2 | [phase-02.md](phase-02.md) | Epic |
 | 3 | [phase-03.md](phase-03.md) | Epic |

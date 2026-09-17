@@ -61,7 +61,7 @@ Phase 0 cần chốt schema lõi (user, ví, giao dịch, danh mục, tiền t�
 
 ### Hoãn Prisma (nêu trên ER logical)
 
-- `AuditEvent` — `BE-P0-004`.
+- `AuditEvent` — hoãn tại thời điểm ADR 007; đã bổ sung bởi `BE-P0-004`, xem [ADR 008](008-audit-event-schema.md).
 - `Session` / `Device` — Phase 1 auth.
 
 ### Catalog

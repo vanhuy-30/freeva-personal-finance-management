@@ -28,7 +28,7 @@ erDiagram
   FxQuote ||--o{ Transaction : rates
 ```
 
-Hoãn Prisma (chỉ logical): **AuditEvent** (`BE-P0-004`); **Session** / **Device** (Phase 1 auth).
+**AuditEvent** đã có Prisma (`BE-P0-004`, ADR [008](adr/008-audit-event-schema.md)); độc lập, không có FK tới actor/target. **Session** / **Device** hoãn tới Phase 1 auth.
 
 ## Quy tắc
 
@@ -136,3 +136,22 @@ Unique `(userId, clientId)`.
 ### SchemaMeta
 
 Giữ từ scaffold: `version` schema ứng dụng / sync major. Health không phụ thuộc bảng này (`SELECT 1`).
+
+### AuditEvent
+
+Schema nội bộ, không thuộc nhóm bảng user-owned/sync ở trên; chưa có writer hoặc event thực tế.
+
+| Cột | Kiểu | Ghi chú |
+|---|---|---|
+| id | UUID PK | Prisma sinh mặc định |
+| actorType | enum | `user`, `staff`, `system` |
+| actorId | UUID? | Bắt buộc user/staff; null với system |
+| action | varchar(100) | Mã ứng dụng, ví dụ `staff.user_lookup` |
+| targetType | varchar(50) | Mã loại, ví dụ `user` |
+| targetId | UUID? | Không FK |
+| outcome | enum | `success`, `failure`, `denied`; không default |
+| occurredAt / createdAt | timestamptz | Thời điểm xảy ra / lưu, mặc định `now()` |
+
+SQL CHECK: actor hợp lệ; action/targetType khớp `^[a-z][a-z0-9._]*$`. Index `(actorType, actorId, occurredAt)`, `(targetType, targetId, occurredAt)`, `(occurredAt)`.
+
+Không metadata hoặc dữ liệu tài chính/PII trực tiếp. UUID vẫn có thể liên kết người dùng. Xóa đối tượng không cascade audit; retention/xóa UUID và quyền audit chưa chốt. Bảng chưa được bảo vệ khỏi sửa/xóa; xem ADR 008.
