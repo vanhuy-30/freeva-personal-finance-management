@@ -2,7 +2,7 @@
 
 | Phase | File | Mức |
 |---|---|---|
-| 0 | [phase-00.md](phase-00.md) | Chi tiết — 21/24 done, gồm CI, schema audit và backup/restore local; còn `MOB-P0-004`, `WA-P0-002`, `QA-P0-002` |
+| 0 | [phase-00.md](phase-00.md) | Chi tiết — 22/24 done, gồm CI, schema audit, backup/restore local và analytics stub; còn `WA-P0-002`, `QA-P0-002` |
 | 1 | [phase-01.md](phase-01.md) | Chi tiết |
 | 2 | [phase-02.md](phase-02.md) | Epic |
 | 3 | [phase-03.md](phase-03.md) | Epic |

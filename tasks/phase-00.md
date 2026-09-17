@@ -1,6 +1,6 @@
 # Phase 0 — tasks
 
-Cập nhật 2026-09-17: `BE-P0-005` backup/restore local done; Phase 0 đạt 21/24 task. Còn analytics/staff lookup/spec transfer.
+Cập nhật 2026-09-17: `MOB-P0-004` analytics stub không PII done; Phase 0 đạt 22/24 task. Còn staff lookup/spec transfer.
 
 ## PRD / DOC
 
@@ -90,8 +90,9 @@ Cập nhật 2026-09-17: `BE-P0-005` backup/restore local done; Phase 0 đạt 2
 - Note: `LocalFeatureFlagService` luôn `false`; chưa gắn UI
 
 ### MOB-P0-004 — Analytics event stub (không PII)
-- Status: todo
+- Status: done
 - DoD: log debug funnel events
+- Note: catalog typed, payload `schema_version: 1`, DI qua `AnalyticsService`; không nhận property tùy ý và chưa gắn vendor/remote SDK
 
 ## WA
 
