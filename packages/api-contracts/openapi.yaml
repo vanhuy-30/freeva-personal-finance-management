@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
   title: Freeva API
-  version: 0.0.1
-  description: Source of truth for mobile and web admin. Phase 0 exposes health only.
+  version: 0.1.0
+  description: Source of truth for mobile and web admin.
 servers:
   - url: http://localhost:4000
     description: local
@@ -25,7 +25,57 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+  /api/admin/user-lookups:
+    post:
+      operationId: lookupUserAccountForStaff
+      tags: [Admin]
+      summary: Look up one user account by exact ID or email
+      description: Staff-only lookup. Every completed lookup attempt is audited before PII is returned.
+      security:
+        - StaffBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StaffUserLookupRequest'
+      responses:
+        '200':
+          description: Minimum account profile for support lookup
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffUserLookupResponse'
+        '400':
+          description: Invalid or ambiguous lookup criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing or invalid staff credential
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: No user matches the exact lookup criterion
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: Staff auth or audit storage is unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
 components:
+  securitySchemes:
+    StaffBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: opaque
   schemas:
     HealthResponse:
       type: object
@@ -43,6 +93,57 @@ components:
         database:
           type: string
           enum: [up, down]
+    StaffUserLookupRequest:
+      oneOf:
+        - type: object
+          additionalProperties: false
+          required: [userId]
+          properties:
+            userId:
+              type: string
+              format: uuid
+        - type: object
+          additionalProperties: false
+          required: [email]
+          properties:
+            email:
+              type: string
+              format: email
+    StaffUserLookupResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - email
+        - locale
+        - timezone
+        - defaultCurrencyCode
+        - fiscalMonthStartDay
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        locale:
+          type: string
+          example: vi
+        timezone:
+          type: string
+          example: Asia/Ho_Chi_Minh
+        defaultCurrencyCode:
+          type: string
+          pattern: '^[A-Z]{3}$'
+          example: VND
+        fiscalMonthStartDay:
+          type: integer
+          minimum: 1
+          maximum: 28
+        createdAt:
+          type: string
+          format: date-time
     ErrorEnvelope:
       type: object
       required: [error]

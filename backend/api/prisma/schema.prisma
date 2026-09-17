@@ -44,7 +44,7 @@ enum AuditOutcome {
   denied
 }
 
-/// Internal audit skeleton; no event writer yet. Not tamper-proof.
+/// Internal audit schema; WA-P0-002 writes staff.user_lookup only. Not tamper-proof.
 /// Actor consistency and code syntax are CHECK constraints in the migration.
 /// IDs deliberately have no FK; retention/deletion policy remains pending.
 model AuditEvent {

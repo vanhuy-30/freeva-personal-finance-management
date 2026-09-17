@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
 import { pinoRedactOptions } from './core/logging/pino-redact';
 import { PrismaModule } from './infrastructure/prisma/prisma.module';
+import { AdminUserLookupModule } from './modules/admin-user-lookup/admin-user-lookup.module';
 import { HealthModule } from './modules/health/health.module';
 
 @Module({
@@ -19,6 +20,7 @@ import { HealthModule } from './modules/health/health.module';
     }),
     PrismaModule,
     HealthModule,
+    AdminUserLookupModule,
   ],
 })
 export class AppModule {}
