@@ -9,3 +9,5 @@ make down
 Credentials khớp `.env.example`: user/password/db `freeva`.
 
 Không dùng compose này cho production.
+
+Backup và diễn tập restore độc lập: [runbook](../runbooks/backup-restore.md) (`BE-P0-005`).

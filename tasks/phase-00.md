@@ -1,6 +1,6 @@
 # Phase 0 — tasks
 
-Cập nhật 2026-09-17: `BE-P0-004` schema/migration audit done; Phase 0 đạt 20/24 task. Còn backup/analytics/staff lookup/spec transfer.
+Cập nhật 2026-09-17: `BE-P0-005` backup/restore local done; Phase 0 đạt 21/24 task. Còn analytics/staff lookup/spec transfer.
 
 ## PRD / DOC
 
@@ -68,10 +68,10 @@ Cập nhật 2026-09-17: `BE-P0-004` schema/migration audit done; Phase 0 đạt
 - Note: [ADR 008](../docs/architecture/adr/008-audit-event-schema.md), [kiểm chứng SQL](../backend/api/test/README.md). Chỉ schema; chưa writer/event hoặc cơ chế chống sửa/xóa. Retention và xử lý UUID khi xóa tài khoản chưa chốt.
 
 ### BE-P0-005 — Chiến lược backup/restore Postgres
-- Status: todo
+- Status: done
 - Module: 20
 - DoD: runbook đã chạy thử dump/restore local
-- Note: runbook có; chưa chứng minh restore trên máy này
+- Note: [runbook](../infra/runbooks/backup-restore.md) và script diễn tập đã pass PostgreSQL 16.14: schema/toàn bộ dữ liệu/migration history khớp, audit constraints pass; container tạm độc lập, không chạm DB development. Production PITR/retention/RPO/RTO chưa chốt.
 
 ## MOB
 
