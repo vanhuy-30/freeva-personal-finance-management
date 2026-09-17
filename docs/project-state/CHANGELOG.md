@@ -4,6 +4,8 @@ Nhật ký repo/process — không phải App Store release notes.
 
 ## 2026-09-17
 
+- `MOB-P0-004`: thêm Flutter `AnalyticsService`/debug implementation qua DI; catalog event typed với payload `schema_version: 1`, chỉ cho phép `transaction_created.type` theo enum và không nhận property tùy ý/PII. Chưa gắn vendor SDK hoặc phát event giả từ UI placeholder. Phase 0 đạt 22/24.
+
 - `BE-P0-005`: sửa runbook restore vào database mới; thêm diễn tập tự dọn container/backup tạm. PostgreSQL 16.14 pass dump/restore, so sánh schema/toàn bộ dữ liệu và migration history, audit constraints và Prisma migration status. Phase 0 đạt 21/24; production backup policy còn mở.
 
 - `BE-P0-004`: thêm schema/migration `AuditEvent`, CHECK actor/mã thao tác và index; ADR 008, data model, threat model. Kiểm chứng fresh deploy, upgrade bảo toàn dữ liệu và SQL regression trên PostgreSQL 16.14. Chưa service ghi event, integration, retention hoặc chống sửa/xóa.
