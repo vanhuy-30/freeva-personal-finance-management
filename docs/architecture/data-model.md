@@ -139,7 +139,7 @@ Giữ từ scaffold: `version` schema ứng dụng / sync major. Health không p
 
 ### AuditEvent
 
-Schema nội bộ, không thuộc nhóm bảng user-owned/sync ở trên; chưa có writer hoặc event thực tế.
+Schema nội bộ, không thuộc nhóm bảng user-owned/sync ở trên. `WA-P0-002` có writer hẹp cho `staff.user_lookup`; các event khác chưa tích hợp.
 
 | Cột | Kiểu | Ghi chú |
 |---|---|---|

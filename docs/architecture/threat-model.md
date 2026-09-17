@@ -44,7 +44,7 @@ flowchart LR
     Mail[Email_SMTP]
   end
   Mobile -->|"TLS_P1_Bearer"| Nest
-  Admin -->|"TLS_staff_role"| Nest
+  Admin -->|"TLS_staff_bearer"| Nest
   Attacker --> Nest
   CI --> Nest
   Nest --> PG
@@ -81,13 +81,14 @@ Chỉ những gì đang chạy.
 | Compose Postgres `:5434` | User/password dev `freeva`/`freeva`. Chỉ local. |
 | Redis `:6379` | Không AUTH trên compose. Chỉ local. |
 | Mailhog `:1025` / `:8025` | Fake SMTP + UI. Không dùng prod. |
-| Web admin `:3001` | Placeholder; fetch health. Chưa auth staff. |
+| Web admin `:3001` | Health + form tra cứu chính xác email/UUID. Credential nhập dạng password cho từng request, không lưu URL/local storage. |
+| `POST /api/admin/user-lookups` | Bearer staff từ env (tối thiểu 32 ký tự), trả hồ sơ tối thiểu, không dữ liệu tài chính. Thiếu/sai config thì fail closed. |
 | Flutter shell | Splash + home. Chưa gọi API. |
 | Logger Pino | Redact nested 1–2 cấp (`pino-redact.ts`). Checklist: [pii-log-checklist.md](pii-log-checklist.md) (`SEC-P0-003`). |
 | Git / CI / `.env.example` | Secret không commit ([secrets.md](../infrastructure/secrets.md)). Prod secret manager TBD. |
 | OpenAPI | Public trong repo; Phase 0 chỉ health. |
 | Prisma schema | Bảng User/ví/GD đã migrate local; không có HTTP CRUD. |
-| Audit schema | `BE-P0-004`: migration `AuditEvent` đã kiểm chứng PostgreSQL 16; chưa writer/event, chưa chống sửa/xóa. [ADR 008](adr/008-audit-event-schema.md). |
+| Audit schema/writer | `BE-P0-004`: schema đã kiểm chứng. `WA-P0-002`: writer hẹp `staff.user_lookup`, fail closed nếu ghi audit lỗi. Chưa writer event khác hoặc chống sửa/xóa. [ADR 008](adr/008-audit-event-schema.md). |
 
 ## Bề mặt Phase 1 (planned)
 
@@ -106,12 +107,11 @@ Chưa implement. Gắn task.
 | Sync queue, idempotency `clientId` | `BE-P1-009`, `MOB-P1-008` |
 | Export JSON + xóa tài khoản | `BE-P1-010` |
 | Ẩn số dư khi nền; cảnh báo thiết bị mới (Should) | `MOB-P1-009` |
-| Tra cứu tài khoản staff (không dashboard KD) | `WA-P0-002` |
 | Crash monitoring staging | `INF-P1-001` |
 | Security test trước store | `SEC-P1-001` |
-| Ghi audit thực tế cho tra cứu staff / export / xóa | `WA-P0-002`, `BE-P1-010`; schema nền `BE-P0-004` đã có |
+| Ghi audit thực tế cho export / xóa | `BE-P1-010`; schema nền `BE-P0-004` đã có, lookup staff đã tích hợp trong `WA-P0-002` |
 
-Auth: Bearer (`/api/v1` khi gắn Phase 1). Mobile không nhúng API secret.
+Auth user: Bearer (`/api/v1` khi gắn Phase 1). Admin P0 dùng opaque Bearer secret ánh xạ một staff UUID; mobile không nhúng API secret.
 
 ## STRIDE
 
@@ -119,11 +119,11 @@ Auth: Bearer (`/api/v1` khi gắn Phase 1). Mobile không nhúng API secret.
 |---|---|---|---|---|
 | T-S01 | S | API P1 | Giả danh user (credential stuffing, session đánh cắp) | Chưa auth P0. P1: hash mật khẩu (Argon2id hoặc bcrypt cost cao), rate limit, session revoke — `BE-P1-001`, `BE-P1-002`. |
 | T-S02 | S | Mobile | Mở app trên máy người khác | `MOB-P1-001` PIN/biometric. P0: chưa lock. |
-| T-S03 | S | Admin | Giả staff | Role `staff` ≠ user; chưa có login staff P0. `WA-P0-002` + auth staff. |
+| T-S03 | S | Admin | Giả staff / đánh cắp shared credential | Role `staff` ≠ user; Bearer token tối thiểu 32 ký tự, timing-safe compare, header redact, actor UUID từ server env. Single-staff credential P0 phải rotate khi nghi lộ và thay bằng identity/session/revoke trước production. |
 | T-T01 | T | CRUD GD P1 | Sửa số tiền / transfer lệch / IDOR `userId` | Isolation theo `userId`. Transfer hai leg cân bằng — `BE-P1-005`, `QA-P0-002`. ValidationPipe đã chặn field lạ P0. |
 | T-T02 | T | Sync P1 | Trùng hoặc ghi đè GD khi offline | `clientId` unique `(userId, clientId)`, `version` — `BE-P1-009`. Rủi ro R2. |
 | T-T03 | T | Compose | Đổi data local nếu port bind máy | Chấp nhận local. Không bind compose ra internet; không trỏ local vào prod DB. |
-| T-R01 | R | API / admin | Thao tác PII không truy vết | `BE-P0-004` đã có schema; chưa writer/event nên rủi ro còn. `WA-P0-002` phải tích hợp audit cho staff tra cứu PII ([security.md](security.md)). |
+| T-R01 | R | API / admin | Thao tác PII không truy vết | Lookup staff ghi `staff.user_lookup` cho success/không tìm thấy và không trả PII nếu audit fail (`WA-P0-002`). Bảng chưa append-only; export/xóa còn `BE-P1-010`. |
 | T-R02 | R | Export / xóa TK | User phủ nhận yêu cầu xóa / xuất | `BE-P1-010` phải ghi event trên schema `BE-P0-004`; chưa tích hợp. |
 | T-I01 | I | `GET /api/health` | Lộ DB up/down (recon) | Chấp nhận P0 (ops local). Review ẩn chi tiết trước staging công khai. |
 | T-I02 | I | Logger | Email, token, số tiền, số TK trong log | Pino nested paths (`BE-P0-003`, `pino-redact.ts`). Checklist [pii-log-checklist.md](pii-log-checklist.md) (`SEC-P0-003`). Không nội suy PII vào message. |
@@ -132,7 +132,7 @@ Auth: Bearer (`/api/v1` khi gắn Phase 1). Mobile không nhúng API secret.
 | T-I05 | I | Export | File xuất chứa PII trên thiết bị mất | `BE-P1-010` + app lock. Privacy: [privacy-compliance.md](privacy-compliance.md). |
 | T-D01 | D | `GET /api/health` | Flood health / mở connection DB | P0: chấp nhận local. P1 staging: rate limit / tách liveness không đụng DB nếu cần. |
 | T-D02 | D | Login P1 | Brute-force / OTP spam | `BE-P1-002` rate limit login/OTP. |
-| T-E01 | E | Admin | Staff thấy dữ liệu user hoặc dashboard KD | Staff ≠ user. `WA-P0-002` least privilege; **không** dashboard kinh doanh P0. |
+| T-E01 | E | Admin | Staff thấy dữ liệu user hoặc dashboard KD | Endpoint staff chỉ exact lookup, response hồ sơ tối thiểu, không số dư/GD/list tổng; **không** dashboard kinh doanh P0. Shared role chưa phân quyền chi tiết. |
 | T-E02 | E | API P1 | User A đọc/ghi resource user B | Mọi query user-owned lọc `userId`. OpenAPI + guard Phase 1. |
 
 ## Ngoài phạm vi P0/P1
@@ -154,7 +154,8 @@ Auth: Bearer (`/api/v1` khi gắn Phase 1). Mobile không nhúng API secret.
 | `security@` TBD | DECISIONS-OPEN #10. |
 | Sync trùng GD | RISKS R2 — `BE-P1-009`. |
 | PDPD / store reject | RISKS R3 — draft ToS/privacy `PRD-P0-002` ([legal/](../legal/privacy-policy.md)); còn luật sư + export/xóa `BE-P1-010` trước store. |
-| Audit chưa có event thực tế / bảo vệ sửa xóa | Schema `BE-P0-004` đã có; writer, quyền đọc/ghi và integrity control cần chốt trước tích hợp `WA-P0-002` / `BE-P1-010`. |
+| Audit chưa bảo vệ sửa/xóa | `staff.user_lookup` đã có writer; bảng vẫn chưa append-only, quyền DB/integrity control và writer export/xóa cần chốt trước `BE-P1-010`. |
+| Credential staff P0 dùng chung cho một actor | Chỉ dùng nội bộ; token dài, secret env, timing-safe compare, rotate khi nghi lộ. Chưa có individual identity/session/revoke/rate limit; phải thay trước production hoặc nhiều staff. |
 | UUID audit có thể liên kết người dùng | Không FK/cascade; phải chốt retention và xử lý xóa tài khoản trước tích hợp, xem ADR 008. |
 
 ## Cách cập nhật

@@ -27,6 +27,7 @@ Không viết `logger.info(\`user ${email}\`)` hay `AppLogger.info('amount $amou
 
 - Flutter: không `print()`. Không nhét email, số dư, số TK vào `AppLogger`.
 - Web admin: không `console.log` payload user / PII.
+- Staff lookup: email ở JSON body (path `req.body.email`, đã redact), không query string; Bearer token ở `req.headers.authorization` (đã redact). UI không log/lưu credential.
 - Analytics: catalog cấm email / số dư / số TK — `MOB-P0-004`.
 
 ## Giới hạn Pino

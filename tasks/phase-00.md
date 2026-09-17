@@ -1,6 +1,6 @@
 # Phase 0 — tasks
 
-Cập nhật 2026-09-17: `MOB-P0-004` analytics stub không PII done; Phase 0 đạt 22/24 task. Còn staff lookup/spec transfer.
+Cập nhật 2026-09-17: `WA-P0-002` staff lookup tối thiểu done; Phase 0 đạt 23/24 task. Còn spec transfer.
 
 ## PRD / DOC
 
@@ -65,7 +65,7 @@ Cập nhật 2026-09-17: `MOB-P0-004` analytics stub không PII done; Phase 0 đ
 - Status: done
 - Module: 22, 26
 - DoD: Prisma AuditEvent + migration CHECK/index; fresh deploy và upgrade có dữ liệu pass trên PostgreSQL 16; ADR/data model/threat model cập nhật.
-- Note: [ADR 008](../docs/architecture/adr/008-audit-event-schema.md), [kiểm chứng SQL](../backend/api/test/README.md). Chỉ schema; chưa writer/event hoặc cơ chế chống sửa/xóa. Retention và xử lý UUID khi xóa tài khoản chưa chốt.
+- Note: [ADR 008](../docs/architecture/adr/008-audit-event-schema.md), [kiểm chứng SQL](../backend/api/test/README.md). Task này chỉ làm schema; writer hẹp `staff.user_lookup` được thêm sau trong `WA-P0-002`. Chưa có cơ chế chống sửa/xóa; retention và xử lý UUID khi xóa tài khoản chưa chốt.
 
 ### BE-P0-005 — Chiến lược backup/restore Postgres
 - Status: done
@@ -102,10 +102,11 @@ Cập nhật 2026-09-17: `MOB-P0-004` analytics stub không PII done; Phase 0 đ
 - DoD: trang dùng CSS variables brand
 
 ### WA-P0-002 — Tra cứu tài khoản staff (phân quyền) — tối thiểu
-- Status: todo
+- Status: done
 - Module: 26
 - Depends: BE auth staff (Phase 1 có thể kéo sớm)
 - DoD: không dashboard kinh doanh
+- Note: opaque Bearer staff từ env; exact lookup email/UUID; response hồ sơ tối thiểu; `staff.user_lookup` audit fail closed. Single-staff credential chỉ là P0 nội bộ, chưa phải auth/session production.
 
 ## SEC
 

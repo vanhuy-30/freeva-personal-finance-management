@@ -3,7 +3,8 @@
 - **Phase hiện tại:** 0 — nền tảng
 - **Cập nhật:** 2026-09-17
 - **CI:** `INF-P0-002` done; cả ba job xanh trên `main`, [run 33521325189](https://github.com/vanhuy-30/freeva-personal-finance-management/actions/runs/33521325189).
-- **Audit schema:** `BE-P0-004` done (ADR 008, migration + SQL regression PostgreSQL 16). Chưa writer/event và bảo vệ sửa/xóa. Phase 0: 22/24 task done.
+- **Audit:** `BE-P0-004` schema done; `WA-P0-002` đã ghi `staff.user_lookup` fail closed. Chưa writer event khác hoặc bảo vệ sửa/xóa. Phase 0: 23/24 task done.
+- **Staff lookup:** `WA-P0-002` done; exact email/UUID, response hồ sơ tối thiểu, opaque Bearer env + actor UUID, không dashboard/dữ liệu tài chính. Auth single-staff P0 phải thay trước production.
 - **Mobile analytics:** `MOB-P0-004` done; catalog typed, debug logger local, `schema_version: 1`, không property tùy ý/PII và chưa có vendor SDK.
 - **Backup/restore:** `BE-P0-005` done; [runbook và bằng chứng local](../../infra/runbooks/backup-restore.md), PostgreSQL 16.14. Production PITR/retention/RPO/RTO chưa triển khai.
 - **Scaffold:** xong trên `main` (`153d3e7`). Health API, admin placeholder, Flutter shell, docs, compose.
@@ -15,7 +16,7 @@
 
 ## Còn lại Phase 0 (làm trên branch mới)
 
-- `QA-P0-002`, `WA-P0-002`
+- `QA-P0-002`
 
 Chi tiết status từng ID: [tasks/phase-00.md](../../tasks/phase-00.md).
 

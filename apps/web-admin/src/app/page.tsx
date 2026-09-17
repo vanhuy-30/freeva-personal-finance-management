@@ -1,3 +1,5 @@
+import { UserLookupForm } from "./user_lookup_form";
+
 export const dynamic = "force-dynamic";
 
 type HealthResponse = {
@@ -34,7 +36,7 @@ export default async function Home() {
         <p className="text-sm uppercase tracking-wide opacity-90">Freeva</p>
         <h1 className="text-2xl font-semibold">Web Admin</h1>
       </header>
-      <main className="mx-auto w-full max-w-lg flex-1 px-8 py-12">
+      <main className="mx-auto grid w-full max-w-5xl flex-1 gap-6 px-8 py-12 lg:grid-cols-2">
         <section
           className="rounded-2xl border p-6 shadow-sm"
           style={{
@@ -44,7 +46,7 @@ export default async function Home() {
         >
           <h2 className="text-lg font-semibold">API health</h2>
           <p className="mt-1 text-sm" style={{ color: "var(--color-neutral-text-muted)" }}>
-            Phase 0 placeholder — chưa tra cứu user. Chạy <code>make up</code> và{" "}
+            Trạng thái dịch vụ nội bộ. Chạy <code>make up</code> và{" "}
             <code>make api</code>.
           </p>
           {health ? (
@@ -69,6 +71,7 @@ export default async function Home() {
             aria-hidden
           />
         </section>
+        <UserLookupForm />
       </main>
     </div>
   );

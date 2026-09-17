@@ -21,10 +21,10 @@ Staff tra cứu PII và các yêu cầu export/xóa tài khoản cần truy vế
 
 ## Consequences và phần hoãn
 
-- Đây chỉ là khung schema: chưa writer, API, event thực tế, phân quyền đọc/ghi hay tích hợp auth/admin/export.
+- Schema ban đầu chỉ là khung. `WA-P0-002` sau đó đã thêm writer hẹp cho `staff.user_lookup`: actor staff từ guard, target user UUID hoặc null khi không tìm thấy, outcome `success`/`failure`; API fail closed nếu không ghi được audit. Chưa có writer chung, API đọc audit hay event export/xóa.
 - Bảng vẫn có thể UPDATE/DELETE bởi role có quyền; chưa có append-only enforcement, chữ ký, hash chain hoặc bảo vệ khỏi DB administrator. Không tuyên bố audit bất biến.
 - Retention, xử lý UUID khi xóa tài khoản và quyền truy cập audit phải chốt trước tích hợp `BE-P1-010` / `WA-P0-002`. Không tự đặt thời hạn lưu giữ hoặc chặn xóa tài khoản bằng FK.
-- Event catalog, cơ chế ghi cùng transaction nghiệp vụ và hành vi khi ghi audit thất bại được chốt ở task tích hợp. Chưa giảm rủi ro thiếu event thực tế chỉ bằng việc có bảng.
+- Event catalog và transaction semantics cho các luồng khác vẫn được chốt ở task tích hợp tương ứng; `staff.user_lookup` là event thực tế duy nhất ở P0.
 - Không thay đổi API public, OpenAPI hoặc bảng tài chính hiện có.
 
 Kiểm chứng: [SQL regression và migration upgrade](../../../backend/api/test/README.md).
