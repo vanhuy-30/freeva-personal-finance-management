@@ -1,6 +1,6 @@
 # Phase 0 — tasks
 
-Cập nhật 2026-09-17: `WA-P0-002` staff lookup tối thiểu done; Phase 0 đạt 23/24 task. Còn spec transfer.
+Cập nhật 2026-09-17: `QA-P0-002` transfer balance spec done; Phase 0 backlog đạt 24/24 task. Phase gate vẫn pending theo `docs/project-state/STATUS.md`.
 
 ## PRD / DOC
 
@@ -134,5 +134,6 @@ Cập nhật 2026-09-17: `WA-P0-002` staff lookup tối thiểu done; Phase 0 đ
 - DoD: unit test API (và/hoặc Dart) pass
 
 ### QA-P0-002 — Spec bảng test transfer cân bằng (chưa ledger)
-- Status: todo
+- Status: done
 - DoD: file ví dụ số trong `docs` hoặc `backend/api/test/fixtures`
+- Note: fixture JSON versioned + Jest contract test; cùng currency và FX exact, chưa chốt rounding/ledger (`BE-P1-005`). Xem [transfer-balance-test-cases.md](../docs/architecture/transfer-balance-test-cases.md).

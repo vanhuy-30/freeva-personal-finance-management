@@ -4,6 +4,8 @@ Nhật ký repo/process — không phải App Store release notes.
 
 ## 2026-09-17
 
+- `QA-P0-002`: thêm fixture JSON versioned và Jest contract test cho transfer hai leg cân bằng, lỗi cấu trúc/dấu/group/type và FX exact; ghi rõ rounding/ledger còn `BE-P1-005`. Phase 0 backlog đạt 24/24; phase gate vẫn pending theo STATUS.
+
 - `WA-P0-002`: thêm `POST /api/admin/user-lookups` và form Next admin; opaque Bearer staff từ env, exact lookup email/UUID, response hồ sơ tối thiểu, không dashboard/dữ liệu tài chính. Ghi `staff.user_lookup` cho success/không tìm thấy và fail closed khi audit lỗi. OpenAPI/threat model/docs cập nhật; single-staff credential chỉ dùng P0 nội bộ. Phase 0 đạt 23/24.
 
 - `MOB-P0-004`: thêm Flutter `AnalyticsService`/debug implementation qua DI; catalog event typed với payload `schema_version: 1`, chỉ cho phép `transaction_created.type` theo enum và không nhận property tùy ý/PII. Chưa gắn vendor SDK hoặc phát event giả từ UI placeholder. Phase 0 đạt 22/24.
