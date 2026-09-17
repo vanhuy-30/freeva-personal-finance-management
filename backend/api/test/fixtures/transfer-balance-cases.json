@@ -1,0 +1,290 @@
+{
+  "schemaVersion": 1,
+  "currencies": {
+    "VND": { "minorDigits": 0 },
+    "USD": { "minorDigits": 2 },
+    "EUR": { "minorDigits": 2 }
+  },
+  "fxQuotes": [
+    {
+      "id": "fx-usd-vnd-25000",
+      "fromCurrency": "USD",
+      "toCurrency": "VND",
+      "rate": "25000",
+      "quotedAt": "2026-09-17T00:00:00.000Z"
+    },
+    {
+      "id": "fx-usd-eur-1",
+      "fromCurrency": "USD",
+      "toCurrency": "EUR",
+      "rate": "1",
+      "quotedAt": "2026-09-17T00:00:00.000Z"
+    }
+  ],
+  "cases": [
+    {
+      "id": "TR-SAME-001",
+      "description": "VND transfer has two opposite legs with equal magnitude",
+      "expected": "accept",
+      "reasonCode": "BALANCED_SAME_CURRENCY",
+      "legs": [
+        {
+          "role": "source",
+          "type": "transfer",
+          "amountMinor": "-150000",
+          "currencyCode": "VND",
+          "transferGroupId": "00000000-0000-4000-8000-000000000101",
+          "fxQuoteId": null
+        },
+        {
+          "role": "destination",
+          "type": "transfer",
+          "amountMinor": "150000",
+          "currencyCode": "VND",
+          "transferGroupId": "00000000-0000-4000-8000-000000000101",
+          "fxQuoteId": null
+        }
+      ]
+    },
+    {
+      "id": "TR-SAME-002",
+      "description": "Same-currency legs do not sum to zero",
+      "expected": "reject",
+      "reasonCode": "UNBALANCED_SAME_CURRENCY",
+      "legs": [
+        {
+          "role": "source",
+          "type": "transfer",
+          "amountMinor": "-150000",
+          "currencyCode": "VND",
+          "transferGroupId": "00000000-0000-4000-8000-000000000102",
+          "fxQuoteId": null
+        },
+        {
+          "role": "destination",
+          "type": "transfer",
+          "amountMinor": "140000",
+          "currencyCode": "VND",
+          "transferGroupId": "00000000-0000-4000-8000-000000000102",
+          "fxQuoteId": null
+        }
+      ]
+    },
+    {
+      "id": "TR-SAME-003",
+      "description": "Leg signs are reversed even though the sum is zero",
+      "expected": "reject",
+      "reasonCode": "INVALID_SIGN_DIRECTION",
+      "legs": [
+        {
+          "role": "source",
+          "type": "transfer",
+          "amountMinor": "150000",
+          "currencyCode": "VND",
+          "transferGroupId": "00000000-0000-4000-8000-000000000103",
+          "fxQuoteId": null
+        },
+        {
+          "role": "destination",
+          "type": "transfer",
+          "amountMinor": "-150000",
+          "currencyCode": "VND",
+          "transferGroupId": "00000000-0000-4000-8000-000000000103",
+          "fxQuoteId": null
+        }
+      ]
+    },
+    {
+      "id": "TR-STRUCT-001",
+      "description": "A transfer group cannot contain only the source leg",
+      "expected": "reject",
+      "reasonCode": "REQUIRES_EXACTLY_TWO_LEGS",
+      "legs": [
+        {
+          "role": "source",
+          "type": "transfer",
+          "amountMinor": "-150000",
+          "currencyCode": "VND",
+          "transferGroupId": "00000000-0000-4000-8000-000000000104",
+          "fxQuoteId": null
+        }
+      ]
+    },
+    {
+      "id": "TR-STRUCT-002",
+      "description": "A transfer group cannot contain three legs even when they sum to zero",
+      "expected": "reject",
+      "reasonCode": "REQUIRES_EXACTLY_TWO_LEGS",
+      "legs": [
+        {
+          "role": "source",
+          "type": "transfer",
+          "amountMinor": "-150000",
+          "currencyCode": "VND",
+          "transferGroupId": "00000000-0000-4000-8000-000000000105",
+          "fxQuoteId": null
+        },
+        {
+          "role": "destination",
+          "type": "transfer",
+          "amountMinor": "100000",
+          "currencyCode": "VND",
+          "transferGroupId": "00000000-0000-4000-8000-000000000105",
+          "fxQuoteId": null
+        },
+        {
+          "role": "destination",
+          "type": "transfer",
+          "amountMinor": "50000",
+          "currencyCode": "VND",
+          "transferGroupId": "00000000-0000-4000-8000-000000000105",
+          "fxQuoteId": null
+        }
+      ]
+    },
+    {
+      "id": "TR-STRUCT-003",
+      "description": "Both legs must share one transfer group",
+      "expected": "reject",
+      "reasonCode": "GROUP_MISMATCH",
+      "legs": [
+        {
+          "role": "source",
+          "type": "transfer",
+          "amountMinor": "-150000",
+          "currencyCode": "VND",
+          "transferGroupId": "00000000-0000-4000-8000-000000000106",
+          "fxQuoteId": null
+        },
+        {
+          "role": "destination",
+          "type": "transfer",
+          "amountMinor": "150000",
+          "currencyCode": "VND",
+          "transferGroupId": "00000000-0000-4000-8000-000000000107",
+          "fxQuoteId": null
+        }
+      ]
+    },
+    {
+      "id": "TR-STRUCT-004",
+      "description": "Both legs must use transaction type transfer",
+      "expected": "reject",
+      "reasonCode": "NON_TRANSFER_LEG",
+      "legs": [
+        {
+          "role": "source",
+          "type": "expense",
+          "amountMinor": "-150000",
+          "currencyCode": "VND",
+          "transferGroupId": "00000000-0000-4000-8000-000000000108",
+          "fxQuoteId": null
+        },
+        {
+          "role": "destination",
+          "type": "transfer",
+          "amountMinor": "150000",
+          "currencyCode": "VND",
+          "transferGroupId": "00000000-0000-4000-8000-000000000108",
+          "fxQuoteId": null
+        }
+      ]
+    },
+    {
+      "id": "TR-FX-001",
+      "description": "USD 10.00 converts exactly to VND 250000 at rate 25000",
+      "expected": "accept",
+      "reasonCode": "BALANCED_EXACT_FX",
+      "legs": [
+        {
+          "role": "source",
+          "type": "transfer",
+          "amountMinor": "-1000",
+          "currencyCode": "USD",
+          "transferGroupId": "00000000-0000-4000-8000-000000000109",
+          "fxQuoteId": "fx-usd-vnd-25000"
+        },
+        {
+          "role": "destination",
+          "type": "transfer",
+          "amountMinor": "250000",
+          "currencyCode": "VND",
+          "transferGroupId": "00000000-0000-4000-8000-000000000109",
+          "fxQuoteId": "fx-usd-vnd-25000"
+        }
+      ]
+    },
+    {
+      "id": "TR-FX-002",
+      "description": "Both cross-currency legs must reference the locked quote",
+      "expected": "reject",
+      "reasonCode": "FX_QUOTE_REQUIRED_ON_BOTH_LEGS",
+      "legs": [
+        {
+          "role": "source",
+          "type": "transfer",
+          "amountMinor": "-1000",
+          "currencyCode": "USD",
+          "transferGroupId": "00000000-0000-4000-8000-000000000110",
+          "fxQuoteId": "fx-usd-vnd-25000"
+        },
+        {
+          "role": "destination",
+          "type": "transfer",
+          "amountMinor": "250000",
+          "currencyCode": "VND",
+          "transferGroupId": "00000000-0000-4000-8000-000000000110",
+          "fxQuoteId": null
+        }
+      ]
+    },
+    {
+      "id": "TR-FX-003",
+      "description": "The quote currency pair must match source and destination",
+      "expected": "reject",
+      "reasonCode": "FX_QUOTE_CURRENCY_MISMATCH",
+      "legs": [
+        {
+          "role": "source",
+          "type": "transfer",
+          "amountMinor": "-1000",
+          "currencyCode": "USD",
+          "transferGroupId": "00000000-0000-4000-8000-000000000111",
+          "fxQuoteId": "fx-usd-eur-1"
+        },
+        {
+          "role": "destination",
+          "type": "transfer",
+          "amountMinor": "250000",
+          "currencyCode": "VND",
+          "transferGroupId": "00000000-0000-4000-8000-000000000111",
+          "fxQuoteId": "fx-usd-eur-1"
+        }
+      ]
+    },
+    {
+      "id": "TR-FX-004",
+      "description": "Destination amount must match an exactly representable FX conversion",
+      "expected": "reject",
+      "reasonCode": "FX_AMOUNT_MISMATCH",
+      "legs": [
+        {
+          "role": "source",
+          "type": "transfer",
+          "amountMinor": "-1000",
+          "currencyCode": "USD",
+          "transferGroupId": "00000000-0000-4000-8000-000000000112",
+          "fxQuoteId": "fx-usd-vnd-25000"
+        },
+        {
+          "role": "destination",
+          "type": "transfer",
+          "amountMinor": "240000",
+          "currencyCode": "VND",
+          "transferGroupId": "00000000-0000-4000-8000-000000000112",
+          "fxQuoteId": "fx-usd-vnd-25000"
+        }
+      ]
+    }
+  ]
+}

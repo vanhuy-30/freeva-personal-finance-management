@@ -29,6 +29,7 @@ Copy nội bộ `PRD-P0-002` — chưa có hiệu lực với user; cần luật
 - [Overview](architecture/overview.md)
 - [ADRs](architecture/adr/)
 - [Data model](architecture/data-model.md)
+- [Transfer balance test cases](architecture/transfer-balance-test-cases.md)
 - [Sync](architecture/sync.md)
 - [Security](architecture/security.md)
 - [Threat model](architecture/threat-model.md)

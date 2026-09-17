@@ -36,7 +36,7 @@ erDiagram
 - **Số dư:** `initialBalanceMinor` ± giao dịch chưa xóa. Không cached balance.
 - **Timezone:** `User.timezone` IANA, mặc định `Asia/Ho_Chi_Minh`. `occurredOn` = calendar date theo TZ user (`date`, không UTC wall-clock).
 - **Kỳ tài chính:** `fiscalMonthStartDay` 1–28.
-- **Transfer:** hai `Transaction` `type=transfer`, cùng `transferGroupId`; cân bằng ở use case Phase 1.
+- **Transfer:** hai `Transaction` `type=transfer`, cùng `transferGroupId`; cân bằng ở use case Phase 1. Acceptance contract: [transfer-balance-test-cases.md](transfer-balance-test-cases.md).
 - **Credit:** chi tăng nợ (số dư derived âm hơn); thanh toán = transfer từ ví khác.
 - **Soft-delete GD:** `deletedAt`. Ví/danh mục: `archivedAt`.
 - **Idempotency / sync:** UUID `id`; unique `(userId, clientId)`; `version` monotonic.

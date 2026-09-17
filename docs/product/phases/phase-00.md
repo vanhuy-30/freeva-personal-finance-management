@@ -12,6 +12,7 @@ Giảm rủi ro kỹ thuật và pháp lý trước nghiệp vụ. Thống nhấ
 - Design system, navigation, analytics, feature flag.
 - Env: local / test / staging / prod + quy trình phát hành.
 - Module 20 (nền), 21, 22, 26 tối thiểu.
+- Bảng chuẩn transfer cân bằng (chưa ledger): [transfer-balance-test-cases.md](../../architecture/transfer-balance-test-cases.md).
 
 ## Chưa làm
 
