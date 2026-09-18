@@ -19,7 +19,7 @@ Xem, xuất (JSON/CSV máy đọc), sửa, xóa tài khoản, rút consent.
 
 Danh sách công khai (bản nháp): [privacy-policy.md](../legal/privacy-policy.md) §10. Không nhân bản bảng vendor ở đây.
 
-Local P0: không có bên thứ ba production (compose self-host). Trước MVP: hosting (region **VN**, vendor TBD), email OTP, store, crash, analytics — nhà cung cấp cụ thể còn mở. Sau MVP không cam kết: push, AI, đối tác ngân hàng (P6, DPA), IAP (P7).
+Local P0: không có bên thứ ba production (compose self-host). Staging: Render + Vercel ([staging.md](../infrastructure/staging.md)) — không user thật. Trước MVP production: hosting region **VN**, vendor TBD tới Store; email OTP, store, crash, analytics — nhà cung cấp cụ thể còn mở. Sau MVP không cam kết: push, AI, đối tác ngân hàng (P6, DPA), IAP (P7).
 
 ## Copy pháp lý
 

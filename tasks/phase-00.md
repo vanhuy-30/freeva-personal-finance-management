@@ -1,6 +1,6 @@
 # Phase 0 — tasks
 
-Cập nhật 2026-09-18: backlog Phase 0 = 24/24 done; brand asset logo/icon chuyển Phase 1 (`MOB-P1-010`, `WA-P1-001`). Phase gate vẫn pending theo `docs/project-state/STATUS.md`.
+Cập nhật 2026-09-18: backlog Phase 0 = 24/25 done (còn `INF-P0-004` staging); brand asset logo/icon ở Phase 1 (`MOB-P1-010`, `WA-P1-001`). Phase gate: staging + crash.
 
 ## PRD / DOC
 
@@ -42,6 +42,13 @@ Cập nhật 2026-09-18: backlog Phase 0 = 24/24 done; brand asset logo/icon chu
 
 ### INF-P0-003 — `.env.example` và quy tắc secrets
 - Status: done
+
+### INF-P0-004 — Staging: Render (API+Postgres) + Vercel (web-admin)
+- Status: todo
+- Module: 26, infra
+- Depends: INF-P0-001, INF-P0-002
+- DoD: xem checklist [staging.md](../docs/infrastructure/staging.md); `GET /api/health` staging 200 + admin Vercel đọc được health; secrets chỉ trên dashboard; URL ghi STATUS
+- Note: Blueprint `render.yaml`, `apps/web-admin/vercel.json`. Staging region Render `singapore` (platform không có VN) — chấp nhận non-prod. Production hoster vẫn TBD tới Store (DECISIONS-OPEN #4/#5). Redis staging chưa cần.
 
 ## BE
 

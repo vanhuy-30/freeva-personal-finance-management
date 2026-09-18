@@ -24,6 +24,6 @@ Môi trường: Node `22.15.0`, pnpm `10.0.0`, Flutter `3.24.1`, Dart `3.5.1`. F
 - Mobile: `flutter pub get`, `dart run build_runner build --delete-conflicting-outputs`, `flutter gen-l10n`, `flutter analyze`, `flutter test` đều pass; 1 widget test, không có diff file generated hoặc lockfile.
 - Admin: `pnpm --filter @freeva/web-admin lint` pass. Build local chưa pass: lần đầu không tải được Geist/Geist Mono từ Google Fonts; chạy lại với quyền mở rộng vẫn bị `Operation not permitted (os error 1)` khi Turbopack bind cổng cho xử lý CSS. Không đổi bundler hoặc bỏ bước build để né giới hạn môi trường. Bằng chứng build pass là job `web-admin` trên GitHub ở run nêu trên.
 
-CD staging/prod chưa có — `INF-P0` còn lại / `INF-P1`.
+CD staging: cấu hình Blueprint/Vercel trong repo (`INF-P0-004`) — [staging.md](staging.md). Auto-deploy từ git trên Render/Vercel; chưa bắt buộc workflow GitHub Actions deploy. Prod CD TBD tới Store.
 
 Release app store: quy trình [../process/release.md](../process/release.md).

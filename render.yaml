@@ -1,0 +1,42 @@
+# Freeva staging — Render Blueprint
+# Docs: docs/infrastructure/staging.md
+#
+# Staging only. Production hoster chốt khi chuẩn bị Store (region VN — DECISIONS-OPEN #5).
+# Render Singapore = gần VN nhất hiện có trên platform; không thay region production VN.
+
+databases:
+  - name: freeva-staging-db
+    plan: free
+    region: singapore
+    databaseName: freeva_staging
+    user: freeva
+
+services:
+  - type: web
+    name: freeva-api-staging
+    runtime: node
+    plan: free
+    region: singapore
+    rootDir: .
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm --filter @freeva/api build
+    startCommand: pnpm --filter @freeva/api prisma:migrate:deploy && pnpm --filter @freeva/api start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NODE_ENV
+        value: staging
+      - key: LOG_LEVEL
+        value: info
+      - key: DATABASE_URL
+        fromDatabase:
+          name: freeva-staging-db
+          property: connectionString
+      # Đặt sau khi có URL Vercel admin (comma-separated nếu nhiều origin).
+      - key: CORS_ORIGINS
+        sync: false
+      # Tạo token ≥32 ký tự trên dashboard; không commit giá trị thật.
+      - key: STAFF_AUTH_TOKEN
+        sync: false
+      - key: STAFF_ACTOR_ID
+        sync: false

@@ -13,6 +13,8 @@ make api
 
 Money helpers: `src/core/money`. Schema: ADR 007 / `prisma/schema.prisma`.
 
+Staging (Render): [docs/infrastructure/staging.md](../../docs/infrastructure/staging.md), Blueprint `render.yaml` ở root. Migrate: `prisma:migrate:deploy`.
+
 ## Staff lookup (Phase 0)
 
 `POST /api/admin/user-lookups` yêu cầu Bearer token tối thiểu 32 ký tự trong `STAFF_AUTH_TOKEN`; actor audit là UUID `STAFF_ACTOR_ID`. Đây là credential staff tối thiểu cho môi trường nội bộ, không phải user auth Phase 1. Không commit giá trị thật.

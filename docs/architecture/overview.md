@@ -24,4 +24,4 @@ Xem ADR: monorepo, Flutter, NestJS, Next admin, Postgres, money/FX, [core data m
 
 ## Môi trường
 
-Local compose → staging (TBD) → production (TBD). Chi tiết: [../infrastructure/environments.md](../infrastructure/environments.md).
+Local compose → staging (Render API + Vercel admin) → production (hoster TBD, region VN). Chi tiết: [../infrastructure/environments.md](../infrastructure/environments.md), [../infrastructure/staging.md](../infrastructure/staging.md).

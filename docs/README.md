@@ -42,7 +42,7 @@ Copy nội bộ `PRD-P0-002` — chưa có hiệu lực với user; cần luật
 
 - [Brand / UI design system](brand/README.md) · [Palette](brand/palette.md)
 - [Conventions](conventions/git.md)
-- [Infrastructure](infrastructure/environments.md)
+- [Environments](infrastructure/environments.md) · [Staging (Render + Vercel)](infrastructure/staging.md)
 - [Process / DoD](process/definition-of-done.md)
 
 ## Project state
