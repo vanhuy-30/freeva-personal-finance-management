@@ -86,9 +86,9 @@ Sao lưu hệ thống có thể giữ bản sao thêm một cửa sổ ngắn sa
 
 ## 6. Chuyển dữ liệu ra nước ngoài
 
-Region lưu trữ production **TBD** (Việt Nam vs Singapore — DECISIONS-OPEN #5).
+Region lưu trữ production primary: **Việt Nam** (chốt DECISIONS-OPEN #5, 2026-09-18). Nhà cung cấp hosting cụ thể vẫn TBD.
 
-Khi chốt hosting ngoài Việt Nam, dữ liệu tài khoản và tài chính có thể được xử lý tại quốc gia đó. Cơ sở chuyển (hợp đồng, bảo đảm thích hợp) do luật sư chốt trước store. Local hiện tại: Postgres/Redis trên máy dev — không phải môi trường user thật.
+Chuyển xử lý ra ngoài Việt Nam (nếu subprocessors như email/crash nằm ngoài VN) cần cơ sở pháp lý do luật sư chốt trước store. Local hiện tại: Postgres/Redis trên máy dev — không phải môi trường user thật.
 
 ## 7. Bảo mật (mức cao)
 
@@ -120,7 +120,7 @@ Không có bên thứ ba **production**. API + Postgres + Redis + Mailhog chạy
 
 | Bên | Mục đích | Dữ liệu | Phase | Trạng thái |
 |---|---|---|---|---|
-| Nhà cung cấp hosting cloud (TBD) | Chạy API, Postgres, Redis | Tài khoản + dữ liệu tài chính + log kỹ thuật | 1 | Dự kiến; region TBD (#5) |
+| Nhà cung cấp hosting cloud (TBD) | Chạy API, Postgres, Redis | Tài khoản + dữ liệu tài chính + log kỹ thuật | 1 | Dự kiến; region **VN** (#5 chốt); vendor chưa chọn |
 | Nhà cung cấp email giao dịch (TBD) | OTP, xác thực email, đặt lại mật khẩu | Địa chỉ email, nội dung mail giao dịch | 1 | Nhà cung cấp chưa chọn; local = Mailhog |
 | Apple App Store / Google Play | Phân phối app; Sign-In (Should) | Tài khoản store; email/tên nếu dùng Sign-In | 1 | Dự kiến khi phát hành store |
 | Crash reporting (Sentry hoặc tương đương) | Stack crash, độ ổn định | Device / phiên bản app; **không** PII tài chính | 1 | Chưa chọn — #9, `INF-P1-001` |

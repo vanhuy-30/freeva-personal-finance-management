@@ -149,7 +149,7 @@ Auth user: Bearer (`/api/v1` khi gắn Phase 1). Admin P0 dùng opaque Bearer se
 |---|---|
 | `GET /api/health` unauth + `database` | Chấp nhận P0. Cắt hoặc tách endpoint trước staging public. |
 | Redis compose không AUTH | Chỉ local. Prod: AUTH + không expose port. |
-| Region dữ liệu TBD | DECISIONS-OPEN #5. |
+| Region dữ liệu chốt VN | DECISIONS-OPEN #5 (2026-09-18). Vendor hosting vẫn TBD. |
 | Crash SaaS TBD | DECISIONS-OPEN #9; `INF-P1-001`. |
 | `security@` TBD | DECISIONS-OPEN #10. |
 | Sync trùng GD | RISKS R2 — `BE-P1-009`. |

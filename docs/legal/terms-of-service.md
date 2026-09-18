@@ -2,7 +2,7 @@
 
 > **Bản nháp nội bộ** — task `PRD-P0-002`. Phiên bản: 2026-09-01.
 >
-> Đây **không** phải tư vấn pháp lý, **không** phải điều khoản có hiệu lực với người dùng cuối. Cần luật sư rà trước khi đưa lên store, website, hoặc màn hình in-app. Pháp nhân, email liên hệ, region dữ liệu chưa chốt — [DECISIONS-OPEN](../project-state/DECISIONS-OPEN.md) (#2, #5, #10).
+> Đây **không** phải tư vấn pháp lý, **không** phải điều khoản có hiệu lực với người dùng cuối. Cần luật sư rà trước khi đưa lên store, website, hoặc màn hình in-app. Pháp nhân và email liên hệ chưa chốt — [DECISIONS-OPEN](../project-state/DECISIONS-OPEN.md) (#2, #10). Region dữ liệu production: **Việt Nam** (#5).
 >
 > Chính sách bảo mật (nháp): [privacy-policy.md](privacy-policy.md). Data map nội bộ: [privacy-compliance.md](../architecture/privacy-compliance.md).
 

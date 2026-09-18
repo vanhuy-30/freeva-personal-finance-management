@@ -4,9 +4,10 @@ Nhật ký repo/process — không phải App Store release notes.
 
 ## 2026-09-18
 
+- DECISIONS-OPEN #5: chốt region dữ liệu production primary **Việt Nam**; cập nhật privacy/ToS nháp, ADR 005, environments, threat model, STATUS.
 - Brand: chốt UI design system board (`docs/brand/ui-design-system.png`); thêm `docs/brand/README.md` (logo, tagline, palette tóm tắt)
 - Brand: thêm asset PNG từ board — `freeva-brand-symbol.png`, `freeva-logo-lockup.png`, `freeva-app-icon.png`; cập nhật `docs/brand/README.md`.
-- Backlog: brand asset → Phase 1 (`MOB-P1-010`, `WA-P1-001`); Phase 0 giữ 24/24 done, gate vẫn staging/crash/region.
+- Backlog: brand asset → Phase 1 (`MOB-P1-010`, `WA-P1-001`); Phase 0 giữ 24/24 done, gate còn staging/crash.
 
 ## 2026-09-17
 

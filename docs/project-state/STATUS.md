@@ -15,6 +15,7 @@
 - **PII logs:** `SEC-P0-003` xong ([pii-log-checklist.md](../architecture/pii-log-checklist.md)).
 - **Personas / use case ghi chi:** `PRD-P0-001` xong ([personas.md](../product/personas.md), [use-cases.md](../product/use-cases.md)).
 - **ToS / privacy nháp:** `PRD-P0-002` xong ([terms-of-service.md](../legal/terms-of-service.md), [privacy-policy.md](../legal/privacy-policy.md)). Cần luật sư trước store.
+- **Region dữ liệu:** chốt **Việt Nam** (DECISIONS-OPEN #5, 2026-09-18). Vendor hosting cụ thể vẫn TBD.
 
 ## Backlog Phase 0
 
@@ -33,12 +34,12 @@ Theo [điều kiện hoàn thành Phase 0](../product/phases/phase-00.md) và [D
 | Backup/restore thử | Done local (`BE-P0-005`); production PITR chưa |
 | Staging cloud | **Chưa** — blocker |
 | Crash monitoring (Sentry TBD) | **Chưa** — blocker; tool còn mở DECISIONS-OPEN #9 |
-| Region dữ liệu (VN vs SG) | **Chưa chốt** — DECISIONS-OPEN #5 |
+| Region dữ liệu | **Chốt VN** — DECISIONS-OPEN #5 (2026-09-18) |
 | Logging JSON + redact | Done (`BE-P0-003` / `SEC-P0-003`) |
 | PDPD / compliance skeleton | Có docs; luật sư trước store (không chặn foundation nếu chấp nhận nháp) |
 | Prototype ghi thu chi với user | Không bắt buộc trong lần foundation này (Phase 1) |
 
-**Cách đóng Phase 0:** (A) dựng staging + chọn crash tooling + chốt/ghi nhận region, hoặc (B) ghi quyết định chấp nhận residual vào DECISIONS-OPEN / STATUS rồi mở Phase 1 chính thức.
+**Cách đóng Phase 0:** (A) dựng staging + chọn crash tooling, hoặc (B) ghi quyết định chấp nhận residual (staging/crash) vào DECISIONS-OPEN / STATUS rồi mở Phase 1 chính thức.
 
 ## Ghi chú
 

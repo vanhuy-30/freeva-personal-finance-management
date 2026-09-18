@@ -7,4 +7,4 @@
 
 PostgreSQL 16 làm source of truth. Redis cho queue/cache/session sau này. Local qua Docker Compose.
 
-Region dữ liệu (VN vs Singapore) còn mở — [DECISIONS-OPEN](../../project-state/DECISIONS-OPEN.md).
+Region dữ liệu production primary: **Việt Nam** — [DECISIONS-OPEN](../../project-state/DECISIONS-OPEN.md) #5 (chốt 2026-09-18). Vendor hosting cụ thể vẫn TBD.
