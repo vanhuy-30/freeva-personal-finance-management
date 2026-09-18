@@ -36,7 +36,7 @@
 
 ## Brand / UI
 
-- Chỉ dùng token trong `packages/design-tokens`. Xem `docs/brand/palette.md`.
+- Chỉ dùng token trong `packages/design-tokens`. Xem `docs/brand/README.md` và `docs/brand/palette.md`.
 - `#C1C8E4` và `#84CEEB` không dùng làm màu chữ.
 - Light là theme mặc định; dark dùng cùng brand hue, surface navy-tím.
 

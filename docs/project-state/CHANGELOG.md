@@ -2,6 +2,12 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-09-18
+
+- Brand: chốt UI design system board (`docs/brand/ui-design-system.png`); thêm `docs/brand/README.md` (logo, tagline, palette tóm tắt)
+- Brand: thêm asset PNG từ board — `freeva-brand-symbol.png`, `freeva-logo-lockup.png`, `freeva-app-icon.png`; cập nhật `docs/brand/README.md`.
+- Backlog: brand asset → Phase 1 (`MOB-P1-010`, `WA-P1-001`); Phase 0 giữ 24/24 done, gate vẫn staging/crash/region.
+
 ## 2026-09-17
 
 - `QA-P0-002`: thêm fixture JSON versioned và Jest contract test cho transfer hai leg cân bằng, lỗi cấu trúc/dấu/group/type và FX exact; ghi rõ rounding/ledger còn `BE-P1-005`. Phase 0 backlog đạt 24/24; phase gate vẫn pending theo STATUS.

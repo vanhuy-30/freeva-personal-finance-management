@@ -1,6 +1,6 @@
 # Phase 0 — tasks
 
-Cập nhật 2026-09-17: `QA-P0-002` transfer balance spec done; Phase 0 backlog đạt 24/24 task. Phase gate vẫn pending theo `docs/project-state/STATUS.md`.
+Cập nhật 2026-09-18: backlog Phase 0 = 24/24 done; brand asset logo/icon chuyển Phase 1 (`MOB-P1-010`, `WA-P1-001`). Phase gate vẫn pending theo `docs/project-state/STATUS.md`.
 
 ## PRD / DOC
 

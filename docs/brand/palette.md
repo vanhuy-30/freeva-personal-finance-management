@@ -1,8 +1,10 @@
 # Palette
 
-Nguồn sự thật: [packages/design-tokens/tokens.json](../../packages/design-tokens/tokens.json). Mood tham chiếu: [reference.png](reference.png) (gradient xanh–tím). Không copy UI Facebook/Timelikes.
+Board UI: [ui-design-system.png](ui-design-system.png) · tổng quan brand: [README.md](README.md).
 
-## Brand (user chốt)
+Nguồn sự thật hex/token: [packages/design-tokens/tokens.json](../../packages/design-tokens/tokens.json). Không hardcode hex trong UI.
+
+## Brand (chốt theo board)
 
 | Token | Hex | Dùng | Không dùng |
 |---|---|---|---|
@@ -10,9 +12,9 @@ Nguồn sự thật: [packages/design-tokens/tokens.json](../../packages/design-
 | `color.brand.secondary` | `#5AB9EA` | Chip, info, icon phụ | Chữ body |
 | `color.brand.highlight` | `#84CEEB` | Gradient end, splash wash | **Chữ** |
 | `color.brand.muted` | `#C1C8E4` | Border, divider, surface tint | **Chữ** |
-| `color.brand.accent` | `#8860D0` | Logo, accent bar | Nền full-bleed chữ nhỏ |
+| `color.brand.accent` | `#8860D0` | Logo, accent bar, app icon gradient | Nền full-bleed chữ nhỏ |
 
-Gradient CTA/splash: `#5680E9` → `#5AB9EA` (tuỳ chỗ thêm `#8860D0`).
+Gradient CTA/splash: `#5680E9` → `#5AB9EA` (tuỳ chỗ thêm `#8860D0`, khớp app icon trên board).
 
 ## Neutral (bắt buộc, ngoài board)
 

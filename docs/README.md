@@ -40,7 +40,7 @@ Copy nội bộ `PRD-P0-002` — chưa có hiệu lực với user; cần luật
 
 ## Brand, convention, infra, process
 
-- [Brand palette](brand/palette.md)
+- [Brand / UI design system](brand/README.md) · [Palette](brand/palette.md)
 - [Conventions](conventions/git.md)
 - [Infrastructure](infrastructure/environments.md)
 - [Process / DoD](process/definition-of-done.md)

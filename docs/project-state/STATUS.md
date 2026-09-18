@@ -1,8 +1,9 @@
 # STATUS
 
-- **Phase hiện tại:** 0 — backlog hoàn tất (24/24), phase gate pending
-- **Cập nhật:** 2026-09-17
+- **Phase hiện tại:** 0 — backlog 24/24 done; phase gate pending
+- **Cập nhật:** 2026-09-18
 - **CI:** `INF-P0-002` done; cả ba job xanh trên `main`, [run 33521325189](https://github.com/vanhuy-30/freeva-personal-finance-management/actions/runs/33521325189).
+- **Brand:** board + PNG trong `docs/brand/`; token/theme P0 done. Gắn logo/icon = Phase 1 (`MOB-P1-010`, `WA-P1-001`).
 - **Transfer QA:** `QA-P0-002` done; fixture JSON versioned + contract test cho cùng currency và FX exact. Ledger/rounding còn `BE-P1-005`.
 - **Audit:** `BE-P0-004` schema done; `WA-P0-002` đã ghi `staff.user_lookup` fail closed. Chưa writer event khác hoặc bảo vệ sửa/xóa.
 - **Staff lookup:** `WA-P0-002` done; exact email/UUID, response hồ sơ tối thiểu, opaque Bearer env + actor UUID, không dashboard/dữ liệu tài chính. Auth single-staff P0 phải thay trước production.
@@ -17,13 +18,27 @@
 
 ## Backlog Phase 0
 
-- 24/24 task done. Chưa chuyển sang Phase 1 cho đến khi phase gate/blocker được xử lý hoặc chấp nhận chính thức.
+- 24/24 task done. Chưa chuyển Phase 1 cho đến khi **phase gate** / blocker được xử lý hoặc chấp nhận chính thức (xem dưới).
 
 Chi tiết status từng ID: [tasks/phase-00.md](../../tasks/phase-00.md).
 
-## Blocker
+## Phase gate / blocker (còn lại để đánh dấu Phase 0 xong)
 
-- Chưa có staging cloud, crash SaaS, region dữ liệu (xem DECISIONS-OPEN).
+Theo [điều kiện hoàn thành Phase 0](../product/phases/phase-00.md) và [DECISIONS-OPEN](DECISIONS-OPEN.md):
+
+| Mục | Trạng thái |
+|---|---|
+| Backlog task P0 | Done (24/24) |
+| Data model + security flow review | Done (ADR 007/008, threat model, PII checklist) |
+| Backup/restore thử | Done local (`BE-P0-005`); production PITR chưa |
+| Staging cloud | **Chưa** — blocker |
+| Crash monitoring (Sentry TBD) | **Chưa** — blocker; tool còn mở DECISIONS-OPEN #9 |
+| Region dữ liệu (VN vs SG) | **Chưa chốt** — DECISIONS-OPEN #5 |
+| Logging JSON + redact | Done (`BE-P0-003` / `SEC-P0-003`) |
+| PDPD / compliance skeleton | Có docs; luật sư trước store (không chặn foundation nếu chấp nhận nháp) |
+| Prototype ghi thu chi với user | Không bắt buộc trong lần foundation này (Phase 1) |
+
+**Cách đóng Phase 0:** (A) dựng staging + chọn crash tooling + chốt/ghi nhận region, hoặc (B) ghi quyết định chấp nhận residual vào DECISIONS-OPEN / STATUS rồi mở Phase 1 chính thức.
 
 ## Ghi chú
 

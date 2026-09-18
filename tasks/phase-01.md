@@ -1,5 +1,21 @@
 # Phase 1 — tasks (MVP)
 
+## Brand / shell
+
+### MOB-P1-010 — Brand asset: app icon + splash/symbol
+- Status: todo
+- Module: DS
+- Depends: `docs/brand/freeva-app-icon.png`, `freeva-brand-symbol.png` (board [ui-design-system.png](../docs/brand/ui-design-system.png))
+- DoD: iOS/Android launcher icon từ `freeva-app-icon.png`; splash (và chỗ brand placeholder) dùng `freeva-brand-symbol.png` đúng tỷ lệ — không icon generic; text/tagline khớp board khi đã có l10n; `flutter analyze` sạch; không hardcode hex
+- Note: `MOB-P0-002` chỉ theme/token; task này gắn logo thật. Adaptive icon Android + AppIcon iOS.
+
+### WA-P1-001 — Brand asset: favicon + logo shell admin
+- Status: todo
+- Module: 26, DS
+- Depends: `docs/brand/freeva-app-icon.png`, `freeva-logo-lockup.png` / `freeva-brand-symbol.png`
+- DoD: favicon (và metadata icon) từ app icon; chrome admin (header/sidebar placeholder) dùng lockup hoặc symbol — không chữ “Freeva” thuần thay logo; vẫn chỉ màu qua CSS variables; không dashboard kinh doanh
+- Note: `WA-P0-001` chỉ CSS variables; task này gắn asset từ board.
+
 ## Auth / profile
 
 ### BE-P1-001 — Đăng ký, login email, verify email, reset password
