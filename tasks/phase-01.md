@@ -3,11 +3,12 @@
 ## Brand / shell
 
 ### MOB-P1-010 — Brand asset: app icon + splash/symbol
-- Status: todo
+- Status: done
 - Module: DS
 - Depends: `docs/brand/freeva-app-icon.png`, `freeva-brand-symbol.png` (board [ui-design-system.png](../docs/brand/ui-design-system.png))
-- DoD: iOS/Android launcher icon từ `freeva-app-icon.png`; splash (và chỗ brand placeholder) dùng `freeva-brand-symbol.png` đúng tỷ lệ — không icon generic; text/tagline khớp board khi đã có l10n; `flutter analyze` sạch; không hardcode hex
+- DoD: iOS/Android launcher icon từ `freeva-app-icon.png`; splash (và chỗ brand placeholder) dùng `freeva-brand-symbol.png` đúng tỷ lệ — không icon generic; text/tagline theo [thiết kế splash đã chốt](../docs/brand/README.md#splash-mobile--mob-p1-010), qua l10n; `flutter analyze` sạch; không hardcode hex
 - Note: `MOB-P0-002` chỉ theme/token; task này gắn logo thật. Adaptive icon Android + AppIcon iOS.
+- Verification: `flutter analyze` sạch; `flutter test` pass; kiểm tra kích thước PNG và iOS không alpha. Hướng dẫn tái sinh và giới hạn kiểm tra native: [mobile README](../apps/mobile/README.md#brand-asset--mob-p1-010).
 
 ### WA-P1-001 — Brand asset: favicon + logo shell admin
 - Status: todo

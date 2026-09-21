@@ -101,10 +101,10 @@ abstract class S {
   /// **'Freeva'**
   String get appTitle;
 
-  /// No description provided for @splashTagline.
+  /// Product-approved splash copy; keep unchanged across locales.
   ///
   /// In en, this message translates to:
-  /// **'Personal finance'**
+  /// **'Your money. Your freedom.'**
   String get splashTagline;
 
   /// No description provided for @homePlaceholder.
@@ -112,6 +112,12 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Core loop: wallet → transaction → balance. Features land in lib/features.'**
   String get homePlaceholder;
+
+  /// Official brand wordmark; keep unchanged across locales.
+  ///
+  /// In en, this message translates to:
+  /// **'FREEVA'**
+  String get brandWordmark;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

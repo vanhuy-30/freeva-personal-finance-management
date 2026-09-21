@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/l10n/generated/app_localizations.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../widgets/splash_background.dart';
+import '../widgets/splash_brand_content.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -11,53 +11,52 @@ class SplashPage extends StatefulWidget {
   State<SplashPage> createState() => _SplashPageState();
 }
 
-class _SplashPageState extends State<SplashPage> {
+class _SplashPageState extends State<SplashPage>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
   @override
   void initState() {
     super.initState();
-    Future<void>.delayed(const Duration(milliseconds: 900), () {
-      if (!mounted) {
-        return;
-      }
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1800),
+      animationBehavior: AnimationBehavior.preserve,
+    )..addStatusListener(_onStatus);
+    _controller.forward();
+  }
+
+  void _onStatus(AnimationStatus status) {
+    if (status == AnimationStatus.completed && mounted) {
       context.go('/home');
-    });
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final S s = S.of(context);
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
     return Scaffold(
-      body: DecoratedBox(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              AppColors.primary,
-              AppColors.secondary,
-              AppColors.accent,
-            ],
-          ),
-        ),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                s.appTitle,
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      color: AppColors.onPrimary,
-                      fontWeight: FontWeight.w600,
-                    ),
+      body: SplashBackground(
+        child: SizedBox.expand(
+          child: SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
+                child: AnimatedBuilder(
+                  animation: _controller,
+                  builder: (context, child) => SplashBrandContent(
+                    progress: _controller.value,
+                    reduceMotion: reduceMotion,
+                  ),
+                ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                s.splashTagline,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: AppColors.onPrimary,
-                    ),
-              ),
-            ],
+            ),
           ),
         ),
       ),

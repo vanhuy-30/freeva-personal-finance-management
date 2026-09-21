@@ -4,6 +4,10 @@ Nhật ký repo/process — không phải App Store release notes.
 
 ## 2026-09-21
 
+- `MOB-P1-010` splash: motion ba nhịp từ PNG gốc trong 1,8 giây, halo nhẹ và thu nhỏ/fade out; copy mới “Your money. Your freedom.”, hỗ trợ giảm chuyển động và chữ lớn.
+
+- `MOB-P1-010`: gắn AppIcon iOS, launcher legacy/adaptive Android từ PNG chính thức; symbol nguyên bản cho splash Flutter/home, wordmark/tagline qua l10n. Thêm script tái sinh asset từ source + token; analyze và widget tests pass. Chưa smoke test launcher trên device/simulator.
+
 - `INF-P0-004`: provision staging live — API Render `https://freeva-api-staging.onrender.com` (health + DB up), admin Vercel `https://freeva-personal-finance-management.vercel.app`; checklist [staging.md](../infrastructure/staging.md) tick; URL ghi STATUS.
 - **Phase 0 closed** (option B): residual crash monitoring chấp nhận — vendor dự kiến Sentry, SDK = `INF-P1-001` (DECISIONS-OPEN #9). Backlog P0 = 25/25; mở Phase 1.
 

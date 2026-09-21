@@ -10,8 +10,11 @@ class SVi extends S {
   String get appTitle => 'Freeva';
 
   @override
-  String get splashTagline => 'Quản lý tài chính cá nhân';
+  String get splashTagline => 'Your money. Your freedom.';
 
   @override
   String get homePlaceholder => 'Vòng lặp cốt lõi: ví → giao dịch → số dư. Feature nghiệp vụ nằm ở lib/features.';
+
+  @override
+  String get brandWordmark => 'FREEVA';
 }

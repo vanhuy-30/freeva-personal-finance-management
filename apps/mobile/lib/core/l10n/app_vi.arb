@@ -1,6 +1,7 @@
 {
   "@@locale": "vi",
   "appTitle": "Freeva",
-  "splashTagline": "Quản lý tài chính cá nhân",
-  "homePlaceholder": "Vòng lặp cốt lõi: ví → giao dịch → số dư. Feature nghiệp vụ nằm ở lib/features."
+  "splashTagline": "Your money. Your freedom.",
+  "homePlaceholder": "Vòng lặp cốt lõi: ví → giao dịch → số dư. Feature nghiệp vụ nằm ở lib/features.",
+  "brandWordmark": "FREEVA"
 }

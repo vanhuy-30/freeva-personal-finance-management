@@ -10,8 +10,11 @@ class SEn extends S {
   String get appTitle => 'Freeva';
 
   @override
-  String get splashTagline => 'Personal finance';
+  String get splashTagline => 'Your money. Your freedom.';
 
   @override
   String get homePlaceholder => 'Core loop: wallet → transaction → balance. Features land in lib/features.';
+
+  @override
+  String get brandWordmark => 'FREEVA';
 }

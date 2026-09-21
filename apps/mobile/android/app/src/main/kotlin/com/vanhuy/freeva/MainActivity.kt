@@ -1,4 +1,4 @@
-package com.freeva.mobile
+package com.vanhuy.freeva
 
 import io.flutter.embedding.android.FlutterActivity
 
