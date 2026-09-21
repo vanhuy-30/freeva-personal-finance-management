@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { UserLookupForm } from "./user_lookup_form";
 
 export const dynamic = "force-dynamic";
@@ -28,13 +29,28 @@ export default async function Home() {
   return (
     <div className="flex min-h-full flex-1 flex-col">
       <header
-        className="px-8 py-4 text-white"
+        className="border-b px-8 py-4"
         style={{
-          backgroundImage: "var(--gradient-cta)",
+          background: "var(--color-neutral-surface)",
+          borderColor: "var(--color-brand-muted)",
         }}
       >
-        <p className="text-sm uppercase tracking-wide opacity-90">Freeva</p>
-        <h1 className="text-2xl font-semibold">Web Admin</h1>
+        <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center gap-x-6 gap-y-2">
+          <Image
+            src="/brand/freeva-logo-lockup.png"
+            alt="Freeva"
+            width={2172}
+            height={724}
+            className="h-12 w-auto"
+            priority
+          />
+          <h1
+            className="text-xl font-semibold sm:border-l sm:pl-6"
+            style={{ borderColor: "var(--color-brand-muted)" }}
+          >
+            Web Admin
+          </h1>
+        </div>
       </header>
       <main className="mx-auto grid w-full max-w-5xl flex-1 gap-6 px-8 py-12 lg:grid-cols-2">
         <section

@@ -11,11 +11,12 @@
 - Verification: `flutter analyze` sạch; `flutter test` pass; kiểm tra kích thước PNG và iOS không alpha. Hướng dẫn tái sinh và giới hạn kiểm tra native: [mobile README](../apps/mobile/README.md#brand-asset--mob-p1-010).
 
 ### WA-P1-001 — Brand asset: favicon + logo shell admin
-- Status: todo
+- Status: done
 - Module: 26, DS
 - Depends: `docs/brand/freeva-app-icon.png`, `freeva-logo-lockup.png` / `freeva-brand-symbol.png`
 - DoD: favicon (và metadata icon) từ app icon; chrome admin (header/sidebar placeholder) dùng lockup hoặc symbol — không chữ “Freeva” thuần thay logo; vẫn chỉ màu qua CSS variables; không dashboard kinh doanh
 - Note: `WA-P0-001` chỉ CSS variables; task này gắn asset từ board.
+- Verification: `pnpm --filter @freeva/web-admin lint`, `pnpm --filter @freeva/web-admin exec tsc --noEmit`, `pnpm --filter @freeva/web-admin exec next build --webpack` pass.
 
 ## Auth / profile
 
