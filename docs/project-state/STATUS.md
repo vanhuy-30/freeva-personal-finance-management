@@ -5,7 +5,7 @@
 - **CI:** `INF-P0-002` done; cả ba job xanh trên `main`, [run 33521325189](https://github.com/vanhuy-30/freeva-personal-finance-management/actions/runs/33521325189).
 - **Staging:** live — API [Render](https://freeva-api-staging.onrender.com) (`GET /api/health` → 200, `database` = up); admin [Vercel](https://freeva-personal-finance-management.vercel.app) đọc health staging. Stack: `render.yaml` + `apps/web-admin/vercel.json`. Prod hoster TBD tới Store (region VN).
 - **Crash monitoring:** residual chấp nhận khi đóng P0 — vendor dự kiến **Sentry**, wiring = `INF-P1-001` (DECISIONS-OPEN #9). Staging dựa health + log platform cho đến khi gắn SDK.
-- **Brand:** board + PNG trong `docs/brand/`; token/theme P0 done. Mobile `MOB-P1-010` done: launcher iOS/Android + symbol splash/home và l10n tagline. Admin `WA-P1-001` còn todo.
+- **Brand:** board + PNG trong `docs/brand/`; token/theme P0 done. Mobile `MOB-P1-010` done: launcher iOS/Android + symbol splash/home và l10n tagline. Admin `WA-P1-001` done: favicon từ app icon và lockup ở header.
 - **Transfer QA:** `QA-P0-002` done; fixture JSON versioned + contract test cho cùng currency và FX exact. Ledger/rounding còn `BE-P1-005`.
 - **Audit:** `BE-P0-004` schema done; `WA-P0-002` đã ghi `staff.user_lookup` fail closed. Chưa writer event khác hoặc bảo vệ sửa/xóa.
 - **Staff lookup:** `WA-P0-002` done; exact email/UUID, response hồ sơ tối thiểu, opaque Bearer env + actor UUID, không dashboard/dữ liệu tài chính. Auth single-staff P0 phải thay trước production.
