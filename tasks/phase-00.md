@@ -1,6 +1,6 @@
 # Phase 0 — tasks
 
-Cập nhật 2026-09-18: backlog Phase 0 = 24/25 done (còn `INF-P0-004` staging); brand asset logo/icon ở Phase 1 (`MOB-P1-010`, `WA-P1-001`). Phase gate: staging + crash.
+Cập nhật 2026-09-21: backlog Phase 0 = **25/25 done**; phase **closed**. Brand asset logo/icon ở Phase 1 (`MOB-P1-010`, `WA-P1-001`). Crash SaaS residual → `INF-P1-001` (DECISIONS-OPEN #9).
 
 ## PRD / DOC
 
@@ -44,11 +44,11 @@ Cập nhật 2026-09-18: backlog Phase 0 = 24/25 done (còn `INF-P0-004` staging
 - Status: done
 
 ### INF-P0-004 — Staging: Render (API+Postgres) + Vercel (web-admin)
-- Status: todo
+- Status: done
 - Module: 26, infra
 - Depends: INF-P0-001, INF-P0-002
 - DoD: xem checklist [staging.md](../docs/infrastructure/staging.md); `GET /api/health` staging 200 + admin Vercel đọc được health; secrets chỉ trên dashboard; URL ghi STATUS
-- Note: Blueprint `render.yaml`, `apps/web-admin/vercel.json`. Staging region Render `singapore` (platform không có VN) — chấp nhận non-prod. Production hoster vẫn TBD tới Store (DECISIONS-OPEN #4/#5). Redis staging chưa cần.
+- Note: Verified 2026-09-21 — API `https://freeva-api-staging.onrender.com` (health + DB up); admin `https://freeva-personal-finance-management.vercel.app`. Blueprint `render.yaml`, `vercel.json`. Region Render `singapore` (non-prod). Redis staging chưa cần. Prod hoster TBD (DECISIONS-OPEN #4/#5).
 
 ## BE
 

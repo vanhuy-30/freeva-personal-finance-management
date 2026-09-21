@@ -1,9 +1,10 @@
 # STATUS
 
-- **Phase hiện tại:** 0 — 24/25 task done; còn `INF-P0-004` staging; phase gate pending
-- **Cập nhật:** 2026-09-18
+- **Phase hiện tại:** 1 — Phase 0 **closed** 2026-09-21
+- **Cập nhật:** 2026-09-21
 - **CI:** `INF-P0-002` done; cả ba job xanh trên `main`, [run 33521325189](https://github.com/vanhuy-30/freeva-personal-finance-management/actions/runs/33521325189).
-- **Staging:** stack chốt Render (API+Postgres) + Vercel (web-admin) — [staging.md](../infrastructure/staging.md), `render.yaml`. Provision live còn `INF-P0-004`. Prod hoster TBD tới Store.
+- **Staging:** live — API [Render](https://freeva-api-staging.onrender.com) (`GET /api/health` → 200, `database` = up); admin [Vercel](https://freeva-personal-finance-management.vercel.app) đọc health staging. Stack: `render.yaml` + `apps/web-admin/vercel.json`. Prod hoster TBD tới Store (region VN).
+- **Crash monitoring:** residual chấp nhận khi đóng P0 — vendor dự kiến **Sentry**, wiring = `INF-P1-001` (DECISIONS-OPEN #9). Staging dựa health + log platform cho đến khi gắn SDK.
 - **Brand:** board + PNG trong `docs/brand/`; token/theme P0 done. Gắn logo/icon = Phase 1 (`MOB-P1-010`, `WA-P1-001`).
 - **Transfer QA:** `QA-P0-002` done; fixture JSON versioned + contract test cho cùng currency và FX exact. Ledger/rounding còn `BE-P1-005`.
 - **Audit:** `BE-P0-004` schema done; `WA-P0-002` đã ghi `staff.user_lookup` fail closed. Chưa writer event khác hoặc bảo vệ sửa/xóa.
@@ -20,28 +21,28 @@
 
 ## Backlog Phase 0
 
-- 24/25 done. Todo: `INF-P0-004` (provision staging theo [staging.md](../infrastructure/staging.md)). Crash tooling vẫn gate (DECISIONS-OPEN #9 / `INF-P1-001`).
+- **25/25 done.** `INF-P0-004` provision live verified 2026-09-21.
 
 Chi tiết status từng ID: [tasks/phase-00.md](../../tasks/phase-00.md).
 
-## Phase gate / blocker (còn lại để đánh dấu Phase 0 xong)
+## Phase 0 gate — đã đóng (2026-09-21)
 
 Theo [điều kiện hoàn thành Phase 0](../product/phases/phase-00.md) và [DECISIONS-OPEN](DECISIONS-OPEN.md):
 
 | Mục | Trạng thái |
 |---|---|
-| Backlog task P0 (trừ staging) | Done |
+| Backlog task P0 | Done (25/25) |
 | Data model + security flow review | Done (ADR 007/008, threat model, PII checklist) |
 | Backup/restore thử | Done local (`BE-P0-005`); production PITR chưa |
-| Staging cloud | Stack **chốt** Render+Vercel; **provision live** = `INF-P0-004` |
-| Crash monitoring (Sentry TBD) | **Chưa** — blocker; tool còn mở DECISIONS-OPEN #9 |
+| Staging cloud | Done — `INF-P0-004`; URL ở mục Staging trên |
+| Crash monitoring | **Residual chấp nhận** — Sentry dự kiến; SDK = `INF-P1-001` |
 | Region dữ liệu | **Chốt VN** — DECISIONS-OPEN #5 (2026-09-18) |
 | Logging JSON + redact | Done (`BE-P0-003` / `SEC-P0-003`) |
 | PDPD / compliance skeleton | Có docs; luật sư trước store (không chặn foundation nếu chấp nhận nháp) |
 | Prototype ghi thu chi với user | Không bắt buộc trong lần foundation này (Phase 1) |
 
-**Cách đóng Phase 0:** (A) xong `INF-P0-004` + chọn/chấp nhận residual crash tooling, hoặc (B) ghi chấp nhận residual rõ ràng rồi mở Phase 1.
+Đóng theo option **B**: `INF-P0-004` xong + residual crash ghi rõ → mở Phase 1.
 
 ## Ghi chú
 
-Nghiệp vụ ví/giao dịch **chưa** làm (Phase 1). Local: API `:4000`, Postgres compose `:5434`, admin `:3001`.
+Nghiệp vụ ví/giao dịch = Phase 1. Local: API `:4000`, Postgres compose `:5434`, admin `:3001`.

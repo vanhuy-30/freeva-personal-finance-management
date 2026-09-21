@@ -105,6 +105,7 @@
 ### INF-P1-001 — Crash monitoring staging
 - Status: todo
 - Module: 26
+- Note: Residual Phase 0 (2026-09-21): vendor dự kiến Sentry (DECISIONS-OPEN #9); chưa SDK. Gắn API ± admin ± mobile trên staging, scrub PII, smoke event — không chặn đóng P0.
 
 ### SEC-P1-001 — Security test cơ bản trước store
 - Status: todo

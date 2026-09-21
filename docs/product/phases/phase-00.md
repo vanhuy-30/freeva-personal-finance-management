@@ -25,4 +25,8 @@ Dashboard admin đầy đủ, báo cáo kinh doanh, CSKH, ngân hàng, AI, đầ
 - Staging, logging, crash, backup/restore đã thử (local compose + runbook là bước đầu).
 - Danh sách tuân thủ thị trường đầu (PDPD) — xem architecture.
 
+## Đóng phase (2026-09-21)
+
+Phase 0 **closed**. Staging live (`INF-P0-004`). Crash SaaS: residual chấp nhận — Sentry dự kiến, wiring `INF-P1-001`. Chi tiết: [STATUS](../../project-state/STATUS.md).
+
 Backlog: [tasks/phase-00.md](../../../tasks/phase-00.md).

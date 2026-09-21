@@ -2,6 +2,11 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-09-21
+
+- `INF-P0-004`: provision staging live — API Render `https://freeva-api-staging.onrender.com` (health + DB up), admin Vercel `https://freeva-personal-finance-management.vercel.app`; checklist [staging.md](../infrastructure/staging.md) tick; URL ghi STATUS.
+- **Phase 0 closed** (option B): residual crash monitoring chấp nhận — vendor dự kiến Sentry, SDK = `INF-P1-001` (DECISIONS-OPEN #9). Backlog P0 = 25/25; mở Phase 1.
+
 ## 2026-09-18
 
 - Staging: chốt stack **Render** (API+Postgres) + **Vercel** (web-admin); thêm `render.yaml`, `apps/web-admin/vercel.json`, [staging.md](../infrastructure/staging.md), task `INF-P0-004`. Production hoster vẫn TBD tới Store (region VN).

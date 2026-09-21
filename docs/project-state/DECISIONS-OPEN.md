@@ -12,5 +12,5 @@
 | 6 | Nguồn FX / giá / bank | FX tay ở MVP; partner Phase 6 | Mở |
 | 7 | Free vs Premium | Core miễn phí; thu phí mở rộng Phase 7 | Đề xuất |
 | 8 | Quy mô đội / QA / budget | Solo/small; process nhẹ | Mở |
-| 9 | Crash tooling | Sentry TBD | Mở |
+| 9 | Crash tooling | Vendor dự kiến **Sentry**; chưa gắn SDK. Residual chấp nhận khi đóng Phase 0 (2026-09-21); wiring staging = `INF-P1-001`. | Residual P0; mở tới P1 |
 | 10 | Security contact | email TBD | Mở |

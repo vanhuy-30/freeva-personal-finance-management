@@ -17,11 +17,18 @@ Redis: chưa runtime-dependent ở P0 — không provision trên staging.
 
 ## Điều kiện hoàn thành (`INF-P0-004`)
 
-- [ ] Blueprint Render tạo được service + DB; `GET /api/health` → 200, `database` = up.
-- [ ] Vercel deploy admin; trang health hiển thị status từ API staging.
-- [ ] `CORS_ORIGINS` = URL Vercel; `NEXT_PUBLIC_API_BASE_URL` = URL Render (HTTPS, không slash cuối).
-- [ ] `STAFF_AUTH_TOKEN` (≥32) + `STAFF_ACTOR_ID` (UUID) chỉ trên Render dashboard — không commit, không `NEXT_PUBLIC_*`.
-- [ ] URL staging ghi vào [STATUS](../project-state/STATUS.md) (có thể redacted path nếu private).
+Verified 2026-09-21 — task **done**.
+
+- [x] Blueprint Render tạo được service + DB; `GET /api/health` → 200, `database` = up.
+- [x] Vercel deploy admin; trang health hiển thị status từ API staging.
+- [x] `CORS_ORIGINS` = URL Vercel; `NEXT_PUBLIC_API_BASE_URL` = URL Render (HTTPS, không slash cuối).
+- [x] `STAFF_AUTH_TOKEN` (≥32) + `STAFF_ACTOR_ID` (UUID) chỉ trên Render dashboard — không commit, không `NEXT_PUBLIC_*`.
+- [x] URL staging ghi vào [STATUS](../project-state/STATUS.md).
+
+| Thành phần | URL staging |
+|---|---|
+| API | https://freeva-api-staging.onrender.com |
+| Web admin | https://freeva-personal-finance-management.vercel.app |
 
 ## Provision Render (API)
 

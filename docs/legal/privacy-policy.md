@@ -123,7 +123,7 @@ Không có bên thứ ba **production**. API + Postgres + Redis + Mailhog chạy
 | Nhà cung cấp hosting cloud (TBD) | Chạy API, Postgres, Redis | Tài khoản + dữ liệu tài chính + log kỹ thuật | 1 | **Production** region **VN** (#5); vendor chốt khi Store. **Staging** hiện: Render (API+DB) + Vercel (admin) — [staging.md](../infrastructure/staging.md) |
 | Nhà cung cấp email giao dịch (TBD) | OTP, xác thực email, đặt lại mật khẩu | Địa chỉ email, nội dung mail giao dịch | 1 | Nhà cung cấp chưa chọn; local = Mailhog |
 | Apple App Store / Google Play | Phân phối app; Sign-In (Should) | Tài khoản store; email/tên nếu dùng Sign-In | 1 | Dự kiến khi phát hành store |
-| Crash reporting (Sentry hoặc tương đương) | Stack crash, độ ổn định | Device / phiên bản app; **không** PII tài chính | 1 | Chưa chọn — #9, `INF-P1-001` |
+| Crash reporting (Sentry hoặc tương đương) | Stack crash, độ ổn định | Device / phiên bản app; **không** PII tài chính | 1 | Sentry dự kiến; chưa SDK — #9, `INF-P1-001` |
 | Analytics (vendor TBD) | Funnel sản phẩm | Event không PII — [analytics-events.md](../product/analytics-events.md) | 1 | Stub `MOB-P0-004`; vendor chưa chọn |
 
 ### Sau MVP — không cam kết

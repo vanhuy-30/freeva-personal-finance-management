@@ -151,7 +151,7 @@ Auth user: Bearer (`/api/v1` khi gắn Phase 1). Admin P0 dùng opaque Bearer se
 | Redis compose không AUTH | Chỉ local. Prod: AUTH + không expose port. |
 | Staging Render/Vercel | Stack chốt; provision `INF-P0-004`. Staging có thể Singapore (Render); prod region VN. |
 | Region dữ liệu chốt VN | DECISIONS-OPEN #5 (2026-09-18). Vendor hosting production vẫn TBD tới Store. |
-| Crash SaaS TBD | DECISIONS-OPEN #9; `INF-P1-001`. |
+| Crash SaaS (Sentry dự kiến; chưa SDK) | Residual P0 chấp nhận 2026-09-21; DECISIONS-OPEN #9; wiring `INF-P1-001`. |
 | `security@` TBD | DECISIONS-OPEN #10. |
 | Sync trùng GD | RISKS R2 — `BE-P1-009`. |
 | PDPD / store reject | RISKS R3 — draft ToS/privacy `PRD-P0-002` ([legal/](../legal/privacy-policy.md)); còn luật sư + export/xóa `BE-P1-010` trước store. |
