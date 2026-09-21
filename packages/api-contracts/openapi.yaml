@@ -9,6 +9,7 @@ servers:
 paths:
   /api/health:
     get:
+      security: []
       operationId: getHealth
       tags: [Health]
       summary: Liveness and database check
@@ -70,12 +71,454 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/auth/register:
+    post:
+      operationId: register
+      tags:
+      - Auth
+      summary: Register email/password; duplicate email returns the same response without
+        changing credentials
+      security: []
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthAccepted'
+        '400':
+          description: Invalid request or invalid/expired/consumed email token. Validation
+            errors never echo submitted values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: 'Rate limit reached: 30 attempts per source IP and operation,
+            5 per normalized email and operation, per 15-minute fixed window. Includes
+            successful attempts.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          headers:
+            Retry-After:
+              description: Seconds until the limiting window expires.
+              schema:
+                type: integer
+                minimum: 1
+        '503':
+          description: Authentication storage temporarily unavailable; fails closed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthCredentialsRequest'
+  /api/v1/auth/login:
+    post:
+      operationId: login
+      tags:
+      - Auth
+      summary: Login with verified email and password
+      security: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthLoginResponse'
+        '400':
+          description: Invalid request or invalid/expired/consumed email token. Validation
+            errors never echo submitted values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing/expired/revoked session, or incorrect credentials/unverified
+            email.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: 'Rate limit reached: 30 attempts per source IP and operation,
+            5 per normalized email and operation, per 15-minute fixed window. Includes
+            successful attempts.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          headers:
+            Retry-After:
+              description: Seconds until the limiting window expires.
+              schema:
+                type: integer
+                minimum: 1
+        '503':
+          description: Authentication storage temporarily unavailable; fails closed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthCredentialsRequest'
+  /api/v1/auth/email-verifications:
+    post:
+      operationId: requestEmailVerification
+      tags:
+      - Auth
+      summary: Request/retry verification email (24-hour single-use token); replaces
+        previous token
+      security: []
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthAccepted'
+        '400':
+          description: Invalid request or invalid/expired/consumed email token. Validation
+            errors never echo submitted values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: 'Rate limit reached: 30 attempts per source IP and operation,
+            5 per normalized email and operation, per 15-minute fixed window. Includes
+            successful attempts.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          headers:
+            Retry-After:
+              description: Seconds until the limiting window expires.
+              schema:
+                type: integer
+                minimum: 1
+        '503':
+          description: Authentication storage temporarily unavailable; fails closed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthEmailRequest'
+  /api/v1/auth/verify-email:
+    post:
+      operationId: verifyEmail
+      tags:
+      - Auth
+      summary: Consume email verification token; does not create a session
+      security: []
+      responses:
+        '204':
+          description: Success
+        '400':
+          description: Invalid request or invalid/expired/consumed email token. Validation
+            errors never echo submitted values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: 'Rate limit reached: 30 attempts per source IP and operation,
+            5 per normalized email and operation, per 15-minute fixed window. Includes
+            successful attempts.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          headers:
+            Retry-After:
+              description: Seconds until the limiting window expires.
+              schema:
+                type: integer
+                minimum: 1
+        '503':
+          description: Authentication storage temporarily unavailable; fails closed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthTokenRequest'
+  /api/v1/auth/password-resets:
+    post:
+      operationId: requestPasswordReset
+      tags:
+      - Auth
+      summary: Request reset email (30-minute single-use token); same response for unknown
+        accounts
+      security: []
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthAccepted'
+        '400':
+          description: Invalid request or invalid/expired/consumed email token. Validation
+            errors never echo submitted values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: 'Rate limit reached: 30 attempts per source IP and operation,
+            5 per normalized email and operation, per 15-minute fixed window. Includes
+            successful attempts.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          headers:
+            Retry-After:
+              description: Seconds until the limiting window expires.
+              schema:
+                type: integer
+                minimum: 1
+        '503':
+          description: Authentication storage temporarily unavailable; fails closed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthEmailRequest'
+  /api/v1/auth/reset-password:
+    post:
+      operationId: resetPassword
+      tags:
+      - Auth
+      summary: Reset password and atomically revoke all sessions and outstanding email
+        tokens; does not verify email or auto-login
+      security: []
+      responses:
+        '204':
+          description: Success
+        '400':
+          description: Invalid request or invalid/expired/consumed email token. Validation
+            errors never echo submitted values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: 'Rate limit reached: 30 attempts per source IP and operation,
+            5 per normalized email and operation, per 15-minute fixed window. Includes
+            successful attempts.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          headers:
+            Retry-After:
+              description: Seconds until the limiting window expires.
+              schema:
+                type: integer
+                minimum: 1
+        '503':
+          description: Authentication storage temporarily unavailable; fails closed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthResetPasswordRequest'
+  /api/v1/auth/logout:
+    post:
+      operationId: logout
+      tags:
+      - Auth
+      summary: Revoke current session
+      security:
+      - UserBearer: []
+      responses:
+        '204':
+          description: Success
+        '400':
+          description: Invalid request or invalid/expired/consumed email token. Validation
+            errors never echo submitted values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing/expired/revoked session, or incorrect credentials/unverified
+            email.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: 'Rate limit reached: 30 attempts per source IP and operation,
+            5 per normalized email and operation, per 15-minute fixed window. Includes
+            successful attempts.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          headers:
+            Retry-After:
+              description: Seconds until the limiting window expires.
+              schema:
+                type: integer
+                minimum: 1
+        '503':
+          description: Authentication storage temporarily unavailable; fails closed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/sessions:
+    get:
+      operationId: listSessions
+      tags:
+      - Auth
+      summary: List own active sessions, newest first
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSessionsResponse'
+        '400':
+          description: Invalid request or invalid/expired/consumed email token. Validation
+            errors never echo submitted values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing/expired/revoked session, or incorrect credentials/unverified
+            email.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: Authentication storage temporarily unavailable; fails closed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    delete:
+      operationId: revokeAllSessions
+      tags:
+      - Auth
+      summary: Revoke all own sessions, including current session
+      security:
+      - UserBearer: []
+      responses:
+        '204':
+          description: Success
+        '400':
+          description: Invalid request or invalid/expired/consumed email token. Validation
+            errors never echo submitted values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing/expired/revoked session, or incorrect credentials/unverified
+            email.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: Authentication storage temporarily unavailable; fails closed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/sessions/{sessionId}:
+    delete:
+      operationId: revokeSession
+      tags:
+      - Auth
+      summary: Revoke own session; idempotent 204 also for missing or foreign session
+        IDs
+      security:
+      - UserBearer: []
+      responses:
+        '204':
+          description: Success
+        '400':
+          description: Invalid request or invalid/expired/consumed email token. Validation
+            errors never echo submitted values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing/expired/revoked session, or incorrect credentials/unverified
+            email.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: Authentication storage temporarily unavailable; fails closed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+      parameters:
+      - in: path
+        name: sessionId
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: UUID v4
 components:
   securitySchemes:
     StaffBearer:
       type: http
       scheme: bearer
       bearerFormat: opaque
+    UserBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: opaque
+      description: 256-bit token returned once on login; absolute 7-day expiry. Server
+        checks session storage on every authenticated request. No refresh token in this
+        phase.
   schemas:
     HealthResponse:
       type: object
@@ -160,3 +603,108 @@ components:
               type: array
               items:
                 type: object
+    AuthEmailRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - email
+      properties:
+        email: &id001
+          type: string
+          format: email
+          maxLength: 254
+          description: Trimmed and lowercased before lookup/storage.
+    AuthCredentialsRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - email
+      - password
+      properties:
+        email: *id001
+        password: &id003
+          type: string
+          minLength: 12
+          maxLength: 128
+          writeOnly: true
+          description: Not trimmed or normalized.
+    AuthTokenRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - token
+      properties:
+        token: &id002
+          type: string
+          pattern: ^[a-f0-9]{64}$
+          writeOnly: true
+    AuthResetPasswordRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - token
+      - password
+      properties:
+        token: *id002
+        password: *id003
+    AuthAccepted:
+      type: object
+      additionalProperties: false
+      required:
+      - message
+      properties:
+        message:
+          type: string
+          const: If the account is eligible, an email will be sent.
+    AuthLoginResponse:
+      type: object
+      additionalProperties: false
+      required:
+      - accessToken
+      - tokenType
+      - expiresAt
+      - sessionId
+      properties:
+        accessToken:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+        tokenType:
+          type: string
+          enum:
+          - Bearer
+        expiresAt:
+          type: string
+          format: date-time
+        sessionId:
+          type: string
+          format: uuid
+    AuthSession:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - createdAt
+      - expiresAt
+      - current
+      properties:
+        id:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+        current:
+          type: boolean
+    AuthSessionsResponse:
+      type: object
+      additionalProperties: false
+      required:
+      - sessions
+      properties:
+        sessions:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuthSession'

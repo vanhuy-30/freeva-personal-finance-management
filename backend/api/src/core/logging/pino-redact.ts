@@ -12,6 +12,8 @@ export const PINO_REDACT_PATHS: string[] = [
   ...nested('password'),
   ...nested('passwordHash'),
   ...nested('token'),
+  ...nested('tokenHash'),
+  ...nested('encryptedToken'),
   ...nested('refreshToken'),
   ...nested('accessToken'),
   ...nested('email'),
