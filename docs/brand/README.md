@@ -51,3 +51,18 @@ Năm màu brand trên board (chi tiết dùng/cấm: [palette.md](palette.md)):
 | `#8860D0` | `color.brand.accent` |
 
 `#84CEEB` và `#C1C8E4` **không** dùng làm màu chữ.
+
+## Splash mobile — MOB-P1-010
+
+Copy splash được chốt riêng: **FREEVA** / *Your money. Your freedom.* (giữ
+nguyên ở vi/en). Tagline trên board và các asset gốc vẫn giữ nguyên.
+Splash Flutter dài 1,8 giây trên gradient brand toàn màn hình: mảnh tím xuất
+hiện trước, mảnh cyan trượt lên nhẹ, mảnh xanh hoàn thiện F; halo nhẹ rồi
+thu nhỏ 4,5% và fade out sang home. Dùng mask theo khoảng trong suốt trên PNG
+gốc, không vẽ lại symbol. Khi bật giảm chuyển động, hiển thị logo/copy tĩnh
+và vẫn chuyển màn sau 1,8 giây.
+
+Tinh chỉnh theo ảnh tham chiếu splash: gradient nhiều lớp sáng ở góc trên phải
+và vùng trung tâm, tím ở góc dưới trái; symbol lớn theo chiều rộng màn hình,
+halo mềm và hai vòng cung mờ. Wordmark navy giãn chữ, tagline đứng màu text
+muted; mọi màu lấy từ token hiện có. Giữ nguyên PNG và motion 1,8 giây.

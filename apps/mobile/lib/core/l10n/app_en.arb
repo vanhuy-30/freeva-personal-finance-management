@@ -1,6 +1,13 @@
 {
   "@@locale": "en",
   "appTitle": "Freeva",
-  "splashTagline": "Personal finance",
-  "homePlaceholder": "Core loop: wallet → transaction → balance. Features land in lib/features."
+  "splashTagline": "Your money. Your freedom.",
+  "homePlaceholder": "Core loop: wallet → transaction → balance. Features land in lib/features.",
+  "brandWordmark": "FREEVA",
+  "@brandWordmark": {
+    "description": "Official brand wordmark; keep unchanged across locales."
+  },
+  "@splashTagline": {
+    "description": "Product-approved splash copy; keep unchanged across locales."
+  }
 }

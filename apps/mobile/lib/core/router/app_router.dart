@@ -14,7 +14,8 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/home',
-      builder: (BuildContext context, GoRouterState state) => const HomePage(),
+      pageBuilder: (BuildContext context, GoRouterState state) =>
+          NoTransitionPage(key: state.pageKey, child: const HomePage()),
     ),
   ],
 );
