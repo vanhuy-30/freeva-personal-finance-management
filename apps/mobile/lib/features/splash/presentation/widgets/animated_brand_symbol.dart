@@ -41,8 +41,9 @@ class AnimatedBrandSymbol extends StatelessWidget {
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      AppColors.onPrimary.withOpacity((.20 + glow * .18)),
-                      AppColors.onPrimary.withOpacity(0),
+                      AppColors.onPrimary
+                          .withAlpha(((.20 + glow * .18) * 255).round()),
+                      AppColors.onPrimary.withAlpha(0),
                     ],
                   ),
                 ),

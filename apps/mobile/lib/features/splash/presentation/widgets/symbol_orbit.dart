@@ -22,9 +22,9 @@ class SymbolOrbit extends CustomPainter {
       ..strokeCap = StrokeCap.round
       ..shader = SweepGradient(
         colors: [
-          AppColors.surface.withOpacity(0),
-          AppColors.surface.withOpacity(opacity * .35),
-          AppColors.surface.withOpacity(0),
+          AppColors.surface.withAlpha(0),
+          AppColors.surface.withAlpha((opacity * .35 * 255).round()),
+          AppColors.surface.withAlpha(0),
         ],
       ).createShader(bounds);
     canvas.save();

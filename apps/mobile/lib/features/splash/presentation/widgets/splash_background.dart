@@ -23,7 +23,7 @@ class SplashBackground extends StatelessWidget {
           gradient: RadialGradient(
             center: Alignment.bottomLeft,
             radius: 1.5,
-            colors: [AppColors.accent, AppColors.accent.withOpacity(0)],
+            colors: [AppColors.accent, AppColors.accent.withAlpha(0)],
           ),
         ),
         child: DecoratedBox(
@@ -31,7 +31,7 @@ class SplashBackground extends StatelessWidget {
             gradient: RadialGradient(
               center: Alignment.topRight,
               radius: 1.65,
-              colors: [AppColors.surface, AppColors.highlight.withOpacity(0)],
+              colors: [AppColors.surface, AppColors.highlight.withAlpha(0)],
             ),
           ),
           child: DecoratedBox(
@@ -40,8 +40,8 @@ class SplashBackground extends StatelessWidget {
                 center: const Alignment(0, -.05),
                 radius: .85,
                 colors: [
-                  AppColors.surface.withOpacity(.85),
-                  AppColors.surface.withOpacity(0),
+                  AppColors.surface.withAlpha((.85 * 255).round()),
+                  AppColors.surface.withAlpha(0),
                 ],
               ),
             ),
