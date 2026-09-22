@@ -77,3 +77,7 @@ Template local: [backend/api/.env.example](../../backend/api/.env.example), [app
 ## CD
 
 Chưa bắt buộc GitHub Actions deploy. Render/Vercel gắn git `main` (hoặc branch `staging`) là đủ Phase 0. CI vẫn là [ci-cd.md](ci-cd.md).
+
+## Phase 1 auth configuration
+
+`BE-P1-001` / `BE-P1-002`: trước deploy đặt `AUTH_SECRET_KEY` (64 hex ngẫu nhiên từ `openssl rand -hex 32`), `SMTP_HOST`, `SMTP_PORT`, `SMTP_FROM`, và cặp `SMTP_USER`/`SMTP_PASSWORD` nếu SMTP yêu cầu. Blueprint khai báo các env, không chứa secret/vendor. SMTP ở staging bắt buộc TLS; migrate trước start như hiện tại. Free instance ngủ làm outbox gửi chậm; job giữ đến expiry và retry khi app chạy. Rate limit lấy socket IP mặc định, có thể gom nhiều user sau proxy; kiểm chứng trusted proxy topology trước thay cấu hình. Xem [ADR 009](../architecture/adr/009-email-auth-sessions.md).

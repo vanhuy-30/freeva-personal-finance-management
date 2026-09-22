@@ -28,7 +28,7 @@ erDiagram
   FxQuote ||--o{ Transaction : rates
 ```
 
-**AuditEvent** đã có Prisma (`BE-P0-004`, ADR [008](adr/008-audit-event-schema.md)); độc lập, không có FK tới actor/target. **Session** / **Device** hoãn tới Phase 1 auth.
+**AuditEvent** đã có Prisma (`BE-P0-004`, ADR [008](adr/008-audit-event-schema.md)); độc lập, không có FK tới actor/target. **AuthSession**, **AuthToken**, **AuthMailJob**, **AuthRateLimit** đã có (`BE-P1-001`, `BE-P1-002`, [ADR 009](adr/009-email-auth-sessions.md)); Device identity chưa triển khai.
 
 ## Quy tắc
 
@@ -54,7 +54,7 @@ Kiểu Prisma. Mọi bảng user-owned (trừ `User`, `Currency`, `SchemaMeta`, 
 | minorDigits | Int | VND = 0 |
 | name | String | |
 
-Catalog trống cho đến Phase 1 (không seed `BE-P0-001`).
+`BE-P1-001` seed VND nếu chưa có để đăng ký user; không thay đổi catalog hiện hữu.
 
 ### User
 
@@ -69,7 +69,7 @@ Catalog trống cho đến Phase 1 (không seed `BE-P0-001`).
 | version | Int | |
 | createdAt / updatedAt | timestamptz | |
 
-Không `passwordHash` — `BE-P1-001`.
+`BE-P1-001`: thêm `passwordHash` nullable (Argon2id) và `emailVerifiedAt` nullable. Email trim/lowercase, CHECK normalization và unique. User legacy không tự cấp credential.
 
 ### FinancialAccount
 
@@ -139,7 +139,7 @@ Giữ từ scaffold: `version` schema ứng dụng / sync major. Health không p
 
 ### AuditEvent
 
-Schema nội bộ, không thuộc nhóm bảng user-owned/sync ở trên. `WA-P0-002` có writer hẹp cho `staff.user_lookup`; các event khác chưa tích hợp.
+Schema nội bộ, không thuộc nhóm bảng user-owned/sync ở trên. `WA-P0-002` có writer hẹp cho `staff.user_lookup`; auth success events đã tích hợp trong `BE-P1-001` / `BE-P1-002` (ADR 009); export/xóa chưa tích hợp.
 
 | Cột | Kiểu | Ghi chú |
 |---|---|---|
@@ -155,3 +155,12 @@ Schema nội bộ, không thuộc nhóm bảng user-owned/sync ở trên. `WA-P0
 SQL CHECK: actor hợp lệ; action/targetType khớp `^[a-z][a-z0-9._]*$`. Index `(actorType, actorId, occurredAt)`, `(targetType, targetId, occurredAt)`, `(occurredAt)`.
 
 Không metadata hoặc dữ liệu tài chính/PII trực tiếp. UUID vẫn có thể liên kết người dùng. Xóa đối tượng không cascade audit; retention/xóa UUID và quyền audit chưa chốt. Bảng chưa được bảo vệ khỏi sửa/xóa; xem ADR 008.
+
+### Auth tables (server-owned, không sync)
+
+- `AuthSession`: UUID, userId FK cascade, tokenHash SHA-256 unique, createdAt, expiresAt; revoke xóa hàng.
+- `AuthToken`: UUID, userId FK cascade, purpose verify_email/reset_password, tokenHash unique, expiresAt; unique `(userId, purpose)`, consume xóa hàng.
+- `AuthMailJob`: UUID, userId FK cascade, purpose, encryptedToken AES-GCM, expiresAt, availableAt; unique `(userId, purpose)`. Durable SMTP retry, xóa sau gửi/expiry.
+- `AuthRateLimit`: HMAC key PK, count, expiresAt; atomic fixed window, không email/IP thô.
+
+Index expiry cho cleanup; sessions index userId/createdAt; mail jobs index availableAt cho claim. Auth tables không có clientId/version vì không thuộc mô hình mobile sync.

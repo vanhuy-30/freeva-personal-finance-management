@@ -9,9 +9,9 @@ Dữ liệu giao dịch, số dư, PII, session token, (sau này) bank token.
 ## Kiểm soát Phase 0/1
 
 - TLS everywhere.
-- Password hashing (Argon2id hoặc bcrypt cost cao) — Phase 1.
-- Rate limit login/OTP.
-- Session revoke.
+- Password hashing Argon2id; verify/reset token single-use; [ADR 009](adr/009-email-auth-sessions.md).
+- Rate limit PostgreSQL theo IP/email, 429 + Retry-After; không trust forwarded IP mặc định.
+- Opaque Bearer session 7 ngày, revoke DB; reset password thu hồi toàn bộ phiên.
 - Helmet, CORS allowlist.
 - Log redaction: email, token, amount, account numbers — checklist [pii-log-checklist.md](pii-log-checklist.md).
 - App lock (PIN/biometrics) — client.

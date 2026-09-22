@@ -21,12 +21,18 @@
 ## Auth / profile
 
 ### BE-P1-001 — Đăng ký, login email, verify email, reset password
-- Status: todo
+- Status: done
 - Module: 1
+- DoD: `/api/v1/auth` register/login/verify/reset; Argon2id; token single-use/expiry; SMTP outbox mã hóa và retry; DTO/OpenAPI/error envelope khớp; audit transaction và log không PII.
+- Verification: API build + 37 unit tests + 12 HTTP/PostgreSQL integration tests pass; fresh/upgrade/collision migration pass; SMTP verify/reset qua Mailhog thật pass; OpenAPI validator pass.
+- Note: [ADR 009](../docs/architecture/adr/009-email-auth-sessions.md). Cần cấu hình AUTH_SECRET_KEY/SMTP và apply migration trước deploy; chưa deploy staging. Existing dependency audit còn cảnh báo, theo threat model / SEC-P1-001.
 
 ### BE-P1-002 — Session, rate limit login, revoke
-- Status: todo
+- Status: done
 - Module: 1, 22
+- DoD: opaque Bearer 7 ngày, list/revoke own sessions/logout/revoke all; PostgreSQL atomic rate limit IP/email + Retry-After; reset thu hồi toàn bộ, guard fail closed.
+- Verification: integration pass ownership/expiry/replay, registration/verify/reset concurrency, shared counters, audit failure rollback; CI có PostgreSQL service và integration job.
+- Note: Không refresh token ở scope này; request đã qua guard có thể hoàn thành khi revoke. Không trust X-Forwarded-For mặc định; deployment sau proxy cần review topology (ADR 009).
 
 ### MOB-P1-001 — Màn auth + PIN/biometric lock
 - Status: todo
