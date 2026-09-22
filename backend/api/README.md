@@ -26,7 +26,7 @@ Thiết kế: [ADR 009](../../docs/architecture/adr/009-email-auth-sessions.md).
 1. Apply migrations (`pnpm --filter @freeva/api prisma:migrate:deploy`). Migration thêm auth tables, chuẩn hóa email và seed VND nếu chưa có; dừng nếu legacy email collision.
 2. Đặt `AUTH_SECRET_KEY` bằng kết quả `openssl rand -hex 32` trong `.env` local hoặc secret manager. Giữ cùng key cho mọi API instance, không commit.
 3. Đặt `SMTP_HOST`, `SMTP_PORT`, `SMTP_FROM`; `SMTP_USER` + `SMTP_PASSWORD` nếu server yêu cầu. Local Compose Mailhog: localhost:1025, UI localhost:8025. Staging/prod bắt buộc TLS, không dùng Mailhog. App fail startup nếu thiếu key/SMTP config.
-4. Register → lấy mã trong email → verify → login. Email được gửi bởi outbox worker mỗi 5 giây; token không xuất hiện trong HTTP response hoặc log. SMTP lỗi sẽ retry mỗi phút tới expiry; đọc cảnh báo chung trong log để theo dõi lỗi gửi.
+4. Register → login ngay; có thể lấy mã trong email để verify sau. Login không tự đánh dấu email đã xác thực. Email được gửi bởi outbox worker mỗi 5 giây; token không xuất hiện trong HTTP response hoặc log. SMTP lỗi sẽ retry mỗi phút tới expiry; đọc cảnh báo chung trong log để theo dõi lỗi gửi.
 5. Login trả opaque Bearer 7 ngày, không refresh. `GET /api/v1/sessions` liệt kê phiên; `DELETE /api/v1/sessions/{sessionId}` thu hồi một phiên, `DELETE /api/v1/sessions` thu hồi tất cả; `POST /api/v1/auth/logout` thu hồi hiện tại. Reset password thu hồi mọi phiên atomically.
 
 Rate limit `/auth/*`: mỗi operation 30/IP + 5/email/15 phút, cả request thành công, HTTP 429 + `Retry-After`. Không trust X-Forwarded-For mặc định. Sau reverse proxy phải kiểm chứng trusted proxy trước khi thay cấu hình, xem ADR 009.

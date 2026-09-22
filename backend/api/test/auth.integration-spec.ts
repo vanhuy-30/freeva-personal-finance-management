@@ -149,9 +149,42 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
     });
     expect(user.passwordHash).toMatch(/^\$argon2id\$/);
     expect(user.defaultCurrencyCode).toBe('VND');
+    const unverifiedLogin = await request('auth/login', {
+      email: user.email,
+      password,
+    });
+    expect(unverifiedLogin.status).toBe(200);
     expect(
-      (await request('auth/login', { email: user.email, password })).status,
+      (
+        await request(
+          'sessions',
+          undefined,
+          unverifiedLogin.body.accessToken,
+          'GET',
+        )
+      ).status,
+    ).toBe(200);
+    expect(
+      (await prisma.user.findUniqueOrThrow({ where: { id: user.id } }))
+        .emailVerifiedAt,
+    ).toBeNull();
+    expect(
+      (
+        await request('auth/login', {
+          email: user.email,
+          password: 'incorrect password',
+        })
+      ).status,
     ).toBe(401);
+    expect(
+      (
+        await request(
+          'auth/logout',
+          undefined,
+          unverifiedLogin.body.accessToken,
+        )
+      ).status,
+    ).toBe(204);
     const token = await emailToken(user.email, 'verify_email');
     expect((await prisma.authToken.findFirstOrThrow()).tokenHash).not.toBe(
       token,
@@ -335,7 +368,11 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
         })
       ).status,
     ).toBe(204);
-    expect((await request('auth/login', { email, password })).status).toBe(401);
+    expect((await request('auth/login', { email, password })).status).toBe(200);
+    expect(
+      (await prisma.user.findUniqueOrThrow({ where: { email } }))
+        .emailVerifiedAt,
+    ).toBeNull();
     await request('auth/email-verifications', { email });
     expect(
       (

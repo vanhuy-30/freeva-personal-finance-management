@@ -11,7 +11,7 @@ Phase 1 cần email/password, verify/reset, logout, quản lý phiên và rate l
 
 - Routes mới ở `/api/v1`; health và staff P0 giữ contract hiện có. Staff credential không dùng được làm user session.
 - Email trim + lowercase, unique trong DB; không sửa password khi đăng ký trùng. Password 12–128 ký tự, không trim; Argon2id (19 MiB, 2 iterations, parallelism 1), salt ngẫu nhiên từng hash. Login kiểm tra dummy hash cho email không tồn tại.
-- User phải verify email trước khi login. Token email ngẫu nhiên 256 bit, lưu SHA-256; verify 24 giờ, reset 30 phút, một lần, tách purpose. Resend thay token cũ. Reset không tự verify email hay auto-login.
+- User được login bằng email/password ngay sau đăng ký, không bắt buộc verify email (quyết định sản phẩm cập nhật 2026-09-22). Login không tự đánh dấu email đã xác thực; trạng thái emailVerifiedAt chỉ thay đổi khi consume verify token. Token email ngẫu nhiên 256 bit, lưu SHA-256; verify 24 giờ, reset 30 phút, một lần, tách purpose. Resend thay token cũ. Reset không tự verify email hay auto-login.
 - Session opaque 256 bit, chỉ lưu SHA-256, hết hạn tuyệt đối sau 7 ngày. Trả token duy nhất lúc login; client lưu secure storage. Không refresh/sliding expiry trong hai task này: hết hạn thì login lại. Guard query DB mỗi request, revoke có hiệu lực ở request tiếp theo; request đã qua guard có thể hoàn thành.
 - List phiên trả UUID/thời điểm/current; không lưu IP, user agent hay device name. DELETE một phiên hoặc toàn bộ chỉ tác động user hiện tại, response 204 idempotent cho ID không tồn tại/không sở hữu. Logout thu hồi phiên hiện tại.
 - Reset đổi hash, xóa mọi phiên/token email/outbox của user trong một transaction. Mutations khóa hàng User trước; login kiểm tra lại hash sau khóa để không tạo phiên từ password đã bị reset.

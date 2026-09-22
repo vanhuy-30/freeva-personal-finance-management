@@ -124,7 +124,7 @@ paths:
       operationId: login
       tags:
       - Auth
-      summary: Login with verified email and password
+      summary: Login with email and password; email verification is optional
       security: []
       responses:
         '200':
@@ -141,8 +141,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
         '401':
-          description: Missing/expired/revoked session, or incorrect credentials/unverified
-            email.
+          description: Missing/expired/revoked session, or incorrect credentials.
           content:
             application/json:
               schema:
@@ -375,8 +374,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
         '401':
-          description: Missing/expired/revoked session, or incorrect credentials/unverified
-            email.
+          description: Missing/expired/revoked session, or incorrect credentials.
           content:
             application/json:
               schema:
@@ -424,8 +422,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
         '401':
-          description: Missing/expired/revoked session, or incorrect credentials/unverified
-            email.
+          description: Missing/expired/revoked session, or incorrect credentials.
           content:
             application/json:
               schema:
@@ -454,8 +451,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
         '401':
-          description: Missing/expired/revoked session, or incorrect credentials/unverified
-            email.
+          description: Missing/expired/revoked session, or incorrect credentials.
           content:
             application/json:
               schema:
@@ -486,8 +482,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
         '401':
-          description: Missing/expired/revoked session, or incorrect credentials/unverified
-            email.
+          description: Missing/expired/revoked session, or incorrect credentials.
           content:
             application/json:
               schema:

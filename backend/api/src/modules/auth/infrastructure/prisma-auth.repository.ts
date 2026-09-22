@@ -103,7 +103,8 @@ export class PrismaAuthRepository implements AuthRepository {
         id: randomUUID(),
         encryptedToken,
         expiresAt: token.expiresAt,
-        availableAt: new Date(),
+        // Immediately eligible, independent of API/database clock skew.
+        availableAt: new Date(0),
       },
     });
   }
@@ -171,7 +172,7 @@ export class PrismaAuthRepository implements AuthRepository {
     return this.prisma.$transaction(async (tx) => {
       await tx.$queryRaw`SELECT "id" FROM "User" WHERE "id" = ${userId}::uuid FOR UPDATE`;
       const user = await tx.user.findUnique({ where: { id: userId } });
-      if (!user?.emailVerifiedAt || user.passwordHash !== passwordHash)
+      if (!user?.passwordHash || user.passwordHash !== passwordHash)
         return null;
       const session = await tx.authSession.create({
         data: { userId, tokenHash, expiresAt },

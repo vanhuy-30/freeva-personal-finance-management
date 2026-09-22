@@ -2,6 +2,10 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-09-22
+
+- `BE-P1-001`: cho phép login khi email chưa xác thực; giữ verify email độc lập và không tự đổi emailVerifiedAt khi login/reset. Cập nhật regression tests, contract và ADR 009.
+
 ## 2026-09-21
 
 - `BE-P1-001`, `BE-P1-002`: auth `/api/v1` email/password (Argon2id), verify/reset single-use, encrypted SMTP outbox/retry; opaque session 7 ngày, list/revoke/logout, rate limit PostgreSQL IP/email. Reset/session mutations khóa User và audit cùng transaction. Migration + OpenAPI + ADR 009/threat model/runbook/CI cập nhật. 37 unit + 12 HTTP/PostgreSQL tests, upgrade/collision regression và SMTP Mailhog smoke pass. Chưa deploy; cần AUTH_SECRET_KEY/SMTP trước rollout. Dependency audit hiện hữu còn 4 high, ghi trong threat model.

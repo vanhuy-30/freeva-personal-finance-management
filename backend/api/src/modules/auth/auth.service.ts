@@ -18,7 +18,7 @@ export const unauthorized = () =>
   new UnauthorizedException({
     error: {
       code: 'INVALID_CREDENTIALS',
-      message: 'Invalid credentials or unverified email',
+      message: 'Invalid credentials',
     },
   });
 
@@ -90,8 +90,7 @@ export class AuthService {
       user?.passwordHash ?? null,
       password,
     );
-    if (!valid || !user?.emailVerifiedAt || !user.passwordHash)
-      throw unauthorized();
+    if (!valid || !user?.passwordHash) throw unauthorized();
     const accessToken = this.crypto.token();
     const session = await this.repository.createSession(
       user.id,

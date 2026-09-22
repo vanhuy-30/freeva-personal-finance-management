@@ -115,7 +115,7 @@ Auth user: Bearer (`/api/v1` khi gắn Phase 1). Admin P0 dùng opaque Bearer se
 
 | ID | Cat | Surface | Threat | Mitigation |
 |---|---|---|---|---|
-| T-S01 | S | API P1 | Giả danh user (credential stuffing, session đánh cắp) | Đã có Argon2id, verified email trước login, DB session 7 ngày, revoke tức thời ở request tiếp theo, reset thu hồi toàn bộ. [ADR 009](adr/009-email-auth-sessions.md). |
+| T-S01 | S | API P1 | Giả danh user (credential stuffing, session đánh cắp) | Đã có Argon2id, email verification độc lập với login, DB session 7 ngày, revoke tức thời ở request tiếp theo, reset thu hồi toàn bộ. [ADR 009](adr/009-email-auth-sessions.md). |
 | T-S02 | S | Mobile | Mở app trên máy người khác | `MOB-P1-001` PIN/biometric. P0: chưa lock. |
 | T-S03 | S | Admin | Giả staff / đánh cắp shared credential | Role `staff` ≠ user; Bearer token tối thiểu 32 ký tự, timing-safe compare, header redact, actor UUID từ server env. Single-staff credential P0 phải rotate khi nghi lộ và thay bằng identity/session/revoke trước production. |
 | T-T01 | T | CRUD GD P1 | Sửa số tiền / transfer lệch / IDOR `userId` | Isolation theo `userId`. Transfer hai leg cân bằng — `BE-P1-005`, `QA-P0-002`. ValidationPipe đã chặn field lạ P0. |
