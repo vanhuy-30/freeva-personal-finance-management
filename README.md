@@ -20,7 +20,7 @@ Vòng lặp giá trị cốt lõi: **đăng ký → tạo ví → ghi giao dịc
 ## Yêu cầu máy local
 
 - Node.js 22+, pnpm
-- Flutter (stable) + Xcode / Android SDK khi chạy mobile
+- FVM + Flutter `3.47.0` + Xcode / Android SDK khi chạy mobile
 - Docker Desktop (Postgres / Redis)
 
 ## Khởi động

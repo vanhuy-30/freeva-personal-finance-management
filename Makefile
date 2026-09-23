@@ -8,7 +8,7 @@ COMPOSE := docker compose -f infra/compose/docker-compose.yml --env-file .env.ex
 bootstrap:
 	pnpm install
 	pnpm --filter @freeva/api exec prisma generate
-	cd apps/mobile && flutter pub get
+	cd apps/mobile && $(FLUTTER) pub get
 
 up:
 	$(COMPOSE) up -d
@@ -27,12 +27,12 @@ mobile:
 
 test:
 	pnpm --filter @freeva/api test
-	@if [ -d apps/mobile ]; then cd apps/mobile && flutter test; fi
+	@if [ -d apps/mobile ]; then cd apps/mobile && $(FLUTTER) test; fi
 
 lint:
 	pnpm --filter @freeva/web-admin lint
 	pnpm --filter @freeva/api build
-	@if [ -d apps/mobile ]; then cd apps/mobile && flutter analyze; fi
+	@if [ -d apps/mobile ]; then cd apps/mobile && $(FLUTTER) analyze; fi
 
 health:
 	curl -sf http://localhost:4000/api/health | python3 -m json.tool

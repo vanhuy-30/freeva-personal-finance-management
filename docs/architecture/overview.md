@@ -1,5 +1,7 @@
 # Architecture overview
 
+Trang tổng hợp để kiểm tra và chỉnh sửa tech stack/architecture hiện tại: [Tech stack & architecture](tech-stack.md).
+
 ```
 apps/mobile (Flutter) ──┐
                         ├── packages/api-contracts (OpenAPI)

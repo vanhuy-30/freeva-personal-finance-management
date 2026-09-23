@@ -1,5 +1,13 @@
 # Phase 1 — tasks (MVP)
 
+## Architecture / tooling
+
+### DOC-P1-001 — Tổng hợp architecture và khóa Flutter toolchain
+- Status: done
+- Module: docs, mobile, CI
+- DoD: có một trang current-state cho tech stack/architecture; Flutter được khóa cùng version ở FVM, pubspec và CI; lệnh Make dùng FVM nhất quán.
+- Verification: Flutter `3.47.0` / Dart `3.13.0`; `flutter analyze` sạch; 38 tests pass; CI YAML hợp lệ.
+
 ## Brand / shell
 
 ### MOB-P1-010 — Brand asset: app icon + splash/symbol

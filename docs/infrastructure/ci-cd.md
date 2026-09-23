@@ -6,7 +6,7 @@ GitHub Actions [ci.yml](../../.github/workflows/ci.yml):
 - `api`: test + build
 - `mobile`: `flutter pub get` + generate DI (`build_runner`) + `flutter gen-l10n` + analyze + test
 
-Workflow chạy trên pull request và push `main`, với ba job độc lập trên `ubuntu-latest`. API/admin dùng Node 22 và pnpm theo `packageManager` ở root, cài bằng `--frozen-lockfile`; mobile dùng Flutter channel `stable`.
+Workflow chạy trên pull request và push `main`, với ba job độc lập trên `ubuntu-latest`. API/admin dùng Node 22 và pnpm theo `packageManager` ở root, cài bằng `--frozen-lockfile`; mobile dùng Flutter `3.47.0`, đồng bộ với `.fvmrc` ở local.
 
 ## Kiểm chứng `INF-P0-002` — 2026-09-16
 
@@ -17,7 +17,7 @@ Workflow chạy trên pull request và push `main`, với ba job độc lập tr
 
 ### Chạy lại local
 
-Môi trường: Node `22.15.0`, pnpm `10.0.0`, Flutter `3.24.1`, Dart `3.5.1`. Flutter local khác cách chọn bản stable ở CI; kết quả local bổ sung cho bằng chứng GitHub phía trên.
+Môi trường tại thời điểm chạy bằng chứng cũ: Node `22.15.0`, pnpm `10.0.0`, Flutter `3.24.1`, Dart `3.5.1`. Project hiện đã nâng và khóa Flutter `3.47.0`; cần một CI run mới để thay thế bằng chứng Flutter cũ phía dưới.
 
 - `pnpm install --frozen-lockfile`: pass.
 - API: `pnpm --filter @freeva/api test` pass 2 suites / 7 tests; `pnpm --filter @freeva/api build` pass (gồm Prisma generate).

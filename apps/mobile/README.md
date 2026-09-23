@@ -2,12 +2,14 @@
 
 ```bash
 cd apps/mobile
-flutter pub get
-dart run build_runner build --delete-conflicting-outputs
+fvm flutter pub get
+fvm dart run build_runner build --delete-conflicting-outputs
 fvm flutter run --dart-define-from-file=config/staging.json
 ```
 
-Hoặc từ repo root: `make mobile` (staging, dùng FVM).
+Repo khóa Flutter `3.47.0` bằng `.fvmrc`. Cài FVM và chạy `fvm install` một lần,
+sau đó dùng các lệnh `fvm flutter` / `fvm dart`. Hoặc từ repo root: `make mobile`
+(staging, dùng FVM).
 
 Cấu trúc: `lib/core` + `lib/features/{name}/{data,domain,presentation}`.
 
@@ -23,9 +25,9 @@ Tái sinh asset trên macOS (Node.js + `sips` có sẵn trong macOS), từ repo 
 ```bash
 node apps/mobile/tool/generate_brand_assets.mjs
 cd apps/mobile
-flutter gen-l10n
-flutter analyze
-flutter test
+fvm flutter gen-l10n
+fvm flutter analyze
+fvm flutter test
 ```
 
 Script đọc PNG gốc và design tokens, xuất đủ kích thước AppIcon iPhone/iPad/store
@@ -55,7 +57,7 @@ không vượt 2 giây. Chi tiết copy/motion: [brand docs](../../docs/brand/RE
 App dùng email auth API thật; cấu hình origin HTTPS khi chạy:
 
 ```bash
-flutter run --dart-define=API_BASE_URL=https://freeva-api-staging.onrender.com
+fvm flutter run --dart-define=API_BASE_URL=https://freeva-api-staging.onrender.com
 ```
 
 Backend đích phải triển khai `BE-P1-001`/`BE-P1-002`, endpoint `POST /api/v1/auth/email-step` của `MOB-P1-001`, và cấu hình SMTP để nhận mã
@@ -68,12 +70,12 @@ Dùng JDK tương thích khi build; không dùng JDK 25 với Gradle này.
 iOS: deployment target 12, CocoaPods cho secure storage/local auth.
 
 ```bash
-flutter gen-l10n
-dart run build_runner build --delete-conflicting-outputs
-flutter analyze
-flutter test
-flutter build apk --debug
-flutter build ios --simulator
+fvm flutter gen-l10n
+fvm dart run build_runner build --delete-conflicting-outputs
+fvm flutter analyze
+fvm flutter test
+fvm flutter build apk --debug
+fvm flutter build ios --simulator
 ```
 
 Smoke test trước store: đăng ký/nhận mail, verify, login trước verify, reset thu hồi
@@ -101,7 +103,7 @@ Từ repo root:
 make mobile                         # staging
 make mobile MOBILE_ENV=dev
 make mobile MOBILE_ENV=prod
-# Không dùng FVM: make mobile FLUTTER=flutter
+# Chỉ dùng SDK hệ thống khi chẩn đoán: make mobile FLUTTER=flutter
 ```
 
 Từ `apps/mobile`:

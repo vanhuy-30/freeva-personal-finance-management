@@ -1,3 +1,6 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -13,7 +16,8 @@ class SEn extends S {
   String get splashTagline => 'Your money. Your freedom.';
 
   @override
-  String get homePlaceholder => 'Core loop: wallet → transaction → balance. Features land in lib/features.';
+  String get homePlaceholder =>
+      'Core loop: wallet → transaction → balance. Features land in lib/features.';
 
   @override
   String get brandWordmark => 'FREEVA';
@@ -49,10 +53,12 @@ class SEn extends S {
   String get authEmailCode => '64-character code from email';
 
   @override
-  String get authSuccess => 'Request processed. If you requested a code, check your email if the account is eligible. After verification or password reset, you can sign in.';
+  String get authSuccess =>
+      'Request processed. If you requested a code, check your email if the account is eligible. After verification or password reset, you can sign in.';
 
   @override
-  String get authInvalidInput => 'Check your email, password, email code, or matching six-digit PINs.';
+  String get authInvalidInput =>
+      'Check your email, password, email code, or matching six-digit PINs.';
 
   @override
   String get authInvalidCredentials => 'Email or password is incorrect.';
@@ -66,19 +72,23 @@ class SEn extends S {
   }
 
   @override
-  String get authNetworkError => 'Unable to connect. Check your connection and retry.';
+  String get authNetworkError =>
+      'Unable to connect. Check your connection and retry.';
 
   @override
   String get authStorageError => 'Secure storage is unavailable. Please retry.';
 
   @override
-  String get authUnavailable => 'Unable to complete. Check service configuration or use your PIN if biometrics are unavailable.';
+  String get authUnavailable =>
+      'Unable to complete. Check service configuration or use your PIN if biometrics are unavailable.';
 
   @override
-  String get authWrongPin => 'Incorrect PIN. After five failed attempts, sign in again.';
+  String get authWrongPin =>
+      'Incorrect PIN. After five failed attempts, sign in again.';
 
   @override
-  String get authExpired => 'Session expired, was revoked, or PIN attempts exceeded. Please sign in again.';
+  String get authExpired =>
+      'Session expired, was revoked, or PIN attempts exceeded. Please sign in again.';
 
   @override
   String get authSetupPin => 'Set up PIN';
@@ -111,7 +121,8 @@ class SEn extends S {
   String get authForgetDevice => 'Forgot PIN / sign in again';
 
   @override
-  String get authForgetHelp => 'Removes credentials on this device. The server session remains until expiry or revocation in session management.';
+  String get authForgetHelp =>
+      'Removes credentials on this device. The server session remains until expiry or revocation in session management.';
 
   @override
   String get authSessions => 'Manage sessions';
@@ -143,7 +154,8 @@ class SEn extends S {
   String get authWelcomeTitle => 'Welcome to Freeva';
 
   @override
-  String get authWelcomeSubtitle => 'Start your journey to a healthier financial future.';
+  String get authWelcomeSubtitle =>
+      'Start your journey to a healthier financial future.';
 
   @override
   String get authEmailPlaceholder => 'Enter your email';
@@ -155,13 +167,15 @@ class SEn extends S {
   String get authWelcomeBack => 'Welcome back';
 
   @override
-  String get authLoginSubtitle => 'Enter your password to pick up where you left off.';
+  String get authLoginSubtitle =>
+      'Enter your password to pick up where you left off.';
 
   @override
   String get authCreateTitle => 'Create your Freeva account';
 
   @override
-  String get authRegisterSubtitle => 'Create a password to start taking care of your finances.';
+  String get authRegisterSubtitle =>
+      'Create a password to start taking care of your finances.';
 
   @override
   String get authCreateAccount => 'Create account';
@@ -170,7 +184,8 @@ class SEn extends S {
   String get authVerifyTitle => 'Check your email';
 
   @override
-  String get authVerifySubtitle => 'Your verification code was sent when you signed up. Enter it below to finish.';
+  String get authVerifySubtitle =>
+      'Your verification code was sent when you signed up. Enter it below to finish.';
 
   @override
   String get authVerifyAndContinue => 'Verify and continue';
@@ -179,7 +194,8 @@ class SEn extends S {
   String get authResendCode => 'No code yet? Send again';
 
   @override
-  String get authCodeResent => 'A new code has been requested. Check your inbox and spam folder.';
+  String get authCodeResent =>
+      'A new code has been requested. Check your inbox and spam folder.';
 
   @override
   String get authVerifiedNotice => 'Email verified. Sign in to continue.';
@@ -197,7 +213,8 @@ class SEn extends S {
   String get authNewPasswordTitle => 'Create a new password';
 
   @override
-  String get authResetSubtitle => 'Check your email for a recovery code, then choose a new password.';
+  String get authResetSubtitle =>
+      'Check your email for a recovery code, then choose a new password.';
 
   @override
   String get authNewPassword => 'New password';
@@ -209,10 +226,12 @@ class SEn extends S {
   String get authSavePassword => 'Save new password';
 
   @override
-  String get authPasswordChanged => 'Password changed. Sign in with your new password.';
+  String get authPasswordChanged =>
+      'Password changed. Sign in with your new password.';
 
   @override
-  String get authPasswordMismatch => 'The passwords don’t match. Please try again.';
+  String get authPasswordMismatch =>
+      'The passwords don’t match. Please try again.';
 
   @override
   String get authInvalidEmail => 'Please enter a valid email address.';
@@ -227,5 +246,6 @@ class SEn extends S {
   String get authBack => 'Go back';
 
   @override
-  String get authSecurityNote => 'Your account is protected by your password and app lock.';
+  String get authSecurityNote =>
+      'Your account is protected by your password and app lock.';
 }

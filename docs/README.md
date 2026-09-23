@@ -26,6 +26,7 @@ Copy nội bộ `PRD-P0-002` — chưa có hiệu lực với user; cần luật
 
 ## Architecture
 
+- [Tech stack & architecture — trang tổng hợp](architecture/tech-stack.md)
 - [Overview](architecture/overview.md)
 - [ADRs](architecture/adr/)
 - [Data model](architecture/data-model.md)
