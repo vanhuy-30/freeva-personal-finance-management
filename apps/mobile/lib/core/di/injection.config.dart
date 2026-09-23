@@ -12,6 +12,7 @@ import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:mobile/core/analytics/analytics_service.dart' as _i1020;
 import 'package:mobile/core/analytics/debug_analytics_service.dart' as _i862;
+import 'package:mobile/core/config/app_config.dart' as _i467;
 import 'package:mobile/core/feature_flags/feature_flag_service.dart' as _i1017;
 import 'package:mobile/core/feature_flags/local_feature_flag_service.dart'
     as _i158;
@@ -36,12 +37,15 @@ extension GetItInjectableX on _i174.GetIt {
       environment,
       environmentFilter,
     );
+    gh.lazySingleton<_i467.AppConfig>(() => _i467.AppConfig());
+    gh.lazySingleton<_i88.AuthApi>(
+        () => _i88.HttpAuthApi(gh<_i467.AppConfig>()));
+    gh.lazySingleton<_i810.AuthVault>(
+        () => _i810.SecureAuthVault(gh<_i467.AppConfig>()));
     gh.lazySingleton<_i810.DeviceBiometrics>(
         () => _i810.LocalDeviceBiometrics());
     gh.lazySingleton<_i1017.FeatureFlagService>(
         () => const _i158.LocalFeatureFlagService());
-    gh.lazySingleton<_i88.AuthApi>(() => _i88.HttpAuthApi());
-    gh.lazySingleton<_i810.AuthVault>(() => _i810.SecureAuthVault());
     gh.lazySingleton<_i766.AppLogger>(() => _i760.AppLoggerImpl());
     gh.lazySingleton<_i1020.AnalyticsService>(
         () => _i862.DebugAnalyticsService(gh<_i766.AppLogger>()));

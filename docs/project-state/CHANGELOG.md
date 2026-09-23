@@ -4,6 +4,8 @@ Nhật ký repo/process — không phải App Store release notes.
 
 ## 2026-09-23
 
+- `MOB-P1-001`: thêm `AppConfig` qua DI, cấu hình mobile dev/staging/prod bằng dart-define JSON, kiểm tra HTTPS origin khi startup, lệnh Make/VS Code và hướng dẫn chạy. Staging có URL Render; dev có HTTPS proxy, CA chỉ tin cậy trong debug/dev, config iOS Simulator/Android Emulator/điện thoại LAN và Mailhog. Session/PIN tách theo env + API origin, phiên legacy cần login lại. Analyze sạch, 38 tests pass; Dart client xác nhận HTTPS/API/database local qua loopback/LAN, TLS từ chối CA/hostname sai; iOS Simulator build + launch dev pass; staging health/database up. Chưa tách native flavors; Android Emulator/thiết bị thật chưa kiểm chứng.
+
 - `MOB-P1-001`: tách `EmailSender`/SMTP adapter khỏi auth outbox, preset Resend qua TLS :2465 cho Render, sender thử `onboarding@resend.dev`, idempotency khi retry, validation config và che lỗi/secret. Đổi vendor SMTP bằng env; thêm CLI kiểm tra kết nối và [runbook](../infrastructure/email.md). Backend build + 67 unit + 13 PostgreSQL integration tests pass; SMTP Mailhog register/verify/login/reset/revoke và connection probe pass. Chưa cấu hình key/deploy hoặc kiểm chứng inbox Resend. Sửa trạng thái task về `doing`, chờ E2E staging và biometric thiết bị thực.
 
 ## 2026-09-22

@@ -1,4 +1,6 @@
 import 'dart:convert';
+import '../../../../core/config/app_config.dart';
+import '../../../../core/network/create_http_client.dart';
 import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';
 import '../domain/auth_repository.dart';
@@ -10,9 +12,8 @@ abstract class AuthApi {
 
 @LazySingleton(as: AuthApi)
 class HttpAuthApi implements AuthApi {
-  HttpAuthApi()
-      : this.withClient(
-            http.Client(), const String.fromEnvironment('API_BASE_URL'));
+  HttpAuthApi(AppConfig config)
+      : this.withClient(createHttpClient(config), config.apiBaseUrl);
   HttpAuthApi.withClient(this._client, this._baseUrl);
   final http.Client _client;
   final String _baseUrl;

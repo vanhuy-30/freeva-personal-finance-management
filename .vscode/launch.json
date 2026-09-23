@@ -1,0 +1,55 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Freeva (dev)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "${workspaceFolder}/apps/mobile",
+      "program": "lib/main.dart",
+      "toolArgs": [
+        "--dart-define-from-file=config/dev.json"
+      ]
+    },
+    {
+      "name": "Freeva (dev-android)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "${workspaceFolder}/apps/mobile",
+      "program": "lib/main.dart",
+      "toolArgs": [
+        "--dart-define-from-file=config/dev-android.json"
+      ]
+    },
+    {
+      "name": "Freeva (dev-device)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "${workspaceFolder}/apps/mobile",
+      "program": "lib/main.dart",
+      "toolArgs": [
+        "--dart-define-from-file=config/dev-device.json"
+      ]
+    },
+    {
+      "name": "Freeva (staging)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "${workspaceFolder}/apps/mobile",
+      "program": "lib/main.dart",
+      "toolArgs": [
+        "--dart-define-from-file=config/staging.json"
+      ]
+    },
+    {
+      "name": "Freeva (prod)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "${workspaceFolder}/apps/mobile",
+      "program": "lib/main.dart",
+      "toolArgs": [
+        "--dart-define-from-file=config/prod.json"
+      ]
+    }
+  ]
+}

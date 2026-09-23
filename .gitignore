@@ -62,3 +62,13 @@ logs/
 # Misc
 tmp/
 .cache/
+
+# Mobile machine-specific public configuration
+apps/mobile/config/dev.json
+apps/mobile/config/prod.json
+!.vscode/launch.json
+
+# Local development CA and private keys
+.local/
+
+apps/mobile/config/dev-*.json
