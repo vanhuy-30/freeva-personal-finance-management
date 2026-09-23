@@ -4,10 +4,10 @@
 cd apps/mobile
 flutter pub get
 dart run build_runner build --delete-conflicting-outputs
-flutter run
+fvm flutter run --dart-define-from-file=config/staging.json
 ```
 
-Hoặc từ repo root: `make mobile`.
+Hoặc từ repo root: `make mobile` (staging, dùng FVM).
 
 Cấu trúc: `lib/core` + `lib/features/{name}/{data,domain,presentation}`.
 
@@ -84,3 +84,77 @@ app switcher không lộ nội dung. Mất mạng khi unlock giữ app khóa.
 Bản iOS `--no-codesign` chỉ dùng kiểm tra compile. Khi chạy để test Keychain,
 cần signing và entitlement Keychain hợp lệ (kể cả simulator). Repo đã cấu hình
 `Runner.entitlements` với access group theo bundle ID cho Debug/Profile/Release.
+
+## Môi trường mobile — MOB-P1-001
+
+`AppConfig` đọc `APP_ENV` (`dev`, `staging`, `prod`) và `API_BASE_URL` tại compile time. App kiểm tra origin HTTPS trước khi dựng UI; thiếu/sai cấu hình dừng startup với lỗi cấu hình không chứa giá trị nhạy cảm. Không đọc `.env` của backend. `APP_ENV` mặc định `dev` để giữ tương thích lệnh `--dart-define=API_BASE_URL=...` cũ.
+
+- Staging: `config/staging.json` đã có URL Render.
+- Dev: copy `config/dev.example.json` thành `config/dev.json`, điền origin HTTPS của backend dev mà thiết bị truy cập và tin cậy certificate.
+- Prod: copy `config/prod.example.json` thành `config/prod.json`, điền origin production khi đã xác định. Không có URL production giả định.
+
+Hai file dev/prod thực tế được gitignore. Chỉ chứa cấu hình public; tuyệt đối không đưa SMTP/API key, database URL hoặc auth secret vào mobile. `APP_ENV` là nhãn môi trường, không tự chọn URL thay cho `API_BASE_URL`.
+
+Từ repo root:
+
+```sh
+make mobile                         # staging
+make mobile MOBILE_ENV=dev
+make mobile MOBILE_ENV=prod
+# Không dùng FVM: make mobile FLUTTER=flutter
+```
+
+Từ `apps/mobile`:
+
+```sh
+fvm flutter run --dart-define-from-file=config/staging.json
+fvm flutter build apk --release --dart-define-from-file=config/prod.json
+fvm flutter build ios --release --dart-define-from-file=config/prod.json
+```
+
+VS Code: chọn `Freeva (dev)`, `Freeva (staging)` hoặc `Freeva (prod)` trong Run and Debug. Tạo file dev/prod trước khi chọn. Khi đổi env cần dừng/chạy lại hoặc build lại; hot reload không đổi compile-time config.
+
+Đây là cấu hình Dart, chưa phải native flavors: các môi trường dùng chung bundle/application ID, nhưng credential/PIN được lưu riêng theo môi trường và API origin; không gửi session của backend cũ sang backend khác. Phiên lưu trước khi thêm phân tách này không tự migrate, cần login lại một lần. Chưa hỗ trợ cài song song dev/staging/prod. Signing release vẫn cần cấu hình riêng trước phát hành.
+
+## Dev local và staging trên thiết bị — MOB-P1-001
+
+Staging dùng `make mobile-staging` (hoặc `make mobile`), không cần backend local. Dev dùng PostgreSQL và Mailhog trên Mac, HTTPS proxy ở port 8443. Không thay secret Resend đã lưu; lệnh `api-dev` override mail sang Mailhog để không gửi thư thật.
+
+Chuẩn bị trên Mac từ repo root (cần Docker, Node, OpenSSL, FVM; backend `.env` có database localhost và `AUTH_SECRET_KEY`):
+
+```sh
+make dev-up
+pnpm --filter @freeva/api prisma:migrate:deploy
+make dev-https-setup
+```
+
+`dev-https-setup` sinh CA/key trong `.local/dev-https` và file cấu hình mobile bị gitignore. Tự lấy IP Wi-Fi `en0`; nếu khác interface, dùng `DEV_LAN_IP=<IPv4 của Mac> make dev-https-setup`. Không chạy migration nếu `.env` đang trỏ DB staging/production.
+
+Mở hai terminal:
+
+```sh
+make api-dev           # API local port 4000, mail gửi vào Mailhog
+make dev-https         # proxy chỉ loopback cho simulator/emulator
+# Hoặc thay dev-https bằng dev-https-lan để dùng điện thoại cùng Wi-Fi
+```
+
+Sau đó chọn thiết bị khi Flutter hỏi:
+
+| Lệnh | Backend | Thiết bị |
+|---|---|---|
+| `make mobile-dev` | `https://localhost:8443` | iOS Simulator |
+| `make mobile-dev-android` | `https://10.0.2.2:8443` | Android Emulator chuẩn |
+| `make mobile-dev-device` | `https://<IP Wi-Fi Mac>:8443` | iPhone/Android thật, cùng Wi-Fi |
+| `make mobile-staging` | HTTPS Render | Mọi thiết bị có Internet |
+
+VS Code có các lựa chọn tương ứng. Điện thoại thật: chạy proxy LAN, cho phép kết nối Node qua firewall macOS và quyền Local Network trên iOS nếu được hỏi; tránh Wi-Fi chặn giao tiếp giữa thiết bị. iPhone thật vẫn cần signing/provisioning thông thường. Khi IP Mac đổi, chạy lại setup, restart proxy và chạy lại app.
+
+`DEV_CA_CERT_BASE64` chỉ chứa **certificate public**, được Dart HTTP client tin cậy riêng trong **debug + APP_ENV=dev**. Certificate chain, expiry và hostname vẫn được kiểm tra; không có `badCertificateCallback`, không cần cài CA vào hệ điều hành. Staging/prod hoặc profile/release có CA dev sẽ bị từ chối. Không copy private key vào mobile hoặc commit `.local`.
+
+Đọc email dev tại `http://localhost:8025`. Kiểm tra HTTPS từ Dart (trong `apps/mobile`):
+
+```sh
+fvm dart run tool/check_dev_connection.dart
+```
+
+CA có hạn 365 ngày, server certificate 90 ngày. Setup tự cấp lại server certificate gần hết hạn; khi CA hết hạn, dừng proxy, xóa `.local/dev-https`, chạy setup lại và rebuild app. `Ctrl+C` dừng API/proxy; `make down` dừng containers, vẫn giữ volume database.

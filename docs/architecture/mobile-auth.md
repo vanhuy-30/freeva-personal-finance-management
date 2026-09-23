@@ -17,7 +17,9 @@ Client Flutter dùng contract `/api/v1` và quyết định email/session ở
 
 ## Lưu trữ và giới hạn
 
-Một record versioned trong Keychain/Android encrypted secure storage chứa token, expiry,
+Mỗi môi trường và API origin có key riêng trong Keychain/Android encrypted secure storage; chuyển backend không tái sử dụng session/PIN của backend khác. Record legacy không tự migrate, cần login lại một lần.
+
+Một record versioned chứa token, expiry,
 session ID, salt/hash PIN, bộ đếm sai và lựa chọn biometric. Không lưu password/PIN thô.
 PBKDF2-HMAC-SHA256, 600.000 vòng, salt ngẫu nhiên 32 byte, output 32 byte; chạy isolate để
 không chặn privacy cover/UI. So sánh hash không dừng sớm theo nội dung.

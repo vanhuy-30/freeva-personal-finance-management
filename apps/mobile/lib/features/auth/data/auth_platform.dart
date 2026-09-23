@@ -1,3 +1,5 @@
+import 'dart:convert';
+import '../../../../core/config/app_config.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
 import 'package:local_auth/local_auth.dart';
@@ -10,12 +12,15 @@ abstract class AuthVault {
 
 @LazySingleton(as: AuthVault)
 class SecureAuthVault implements AuthVault {
+  SecureAuthVault(AppConfig config)
+      : _key = 'freeva.auth.v2.${config.environment.name}.'
+            '${base64Url.encode(utf8.encode(Uri.parse(config.apiBaseUrl).origin))}';
   final _storage = const FlutterSecureStorage(
     aOptions: AndroidOptions(encryptedSharedPreferences: true),
     iOptions:
         IOSOptions(accessibility: KeychainAccessibility.unlocked_this_device),
   );
-  static const _key = 'freeva.auth.v1';
+  final String _key;
   @override
   Future<String?> read() => _storage.read(key: _key);
   @override
