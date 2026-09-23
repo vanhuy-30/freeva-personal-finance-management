@@ -15,8 +15,9 @@ class AuthShell extends StatelessWidget {
     final text = dark ? AppColors.darkText : AppColors.text;
     final border = OutlineInputBorder(
         borderRadius: BorderRadius.circular(18),
-        borderSide:
-            BorderSide(color: AppColors.muted.withOpacity(dark ? 0.35 : 0.55)));
+        borderSide: BorderSide(
+            color: AppColors.muted
+                .withAlpha(((dark ? 0.35 : 0.55) * 255).round())));
     return PopScope(
       canPop: !canGoBack,
       onPopInvokedWithResult: (didPop, _) {
