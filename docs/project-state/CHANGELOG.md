@@ -4,6 +4,10 @@ Nhật ký repo/process — không phải App Store release notes.
 
 ## 2026-09-22
 
+- `MOB-P1-001` UI: email-first theo mẫu, account cũ → password, account mới → đăng ký + mã verify tự gửi; quên password chỉ ở bước login. Thêm contract/API email-step có rate limit/no-store; cập nhật ADR về enumeration. 41 backend unit + 13 integration tests pass.
+
+- `MOB-P1-001`: màn email auth/verify/reset, secure session, PIN 6 số (PBKDF2 + giới hạn sai bền vững), biometric opt-in, lifecycle privacy cover và quản lý phiên. DI abstract, l10n vi/en; 33 unit/widget tests + analyze xanh, build Android debug/iOS simulator pass. Cập nhật Android toolchain cho plugins và CocoaPods. [Thiết kế/giới hạn](../architecture/mobile-auth.md).
+
 - `BE-P1-001`: cho phép login khi email chưa xác thực; giữ verify email độc lập và không tự đổi emailVerifiedAt khi login/reset. Cập nhật regression tests, contract và ADR 009.
 
 ## 2026-09-21

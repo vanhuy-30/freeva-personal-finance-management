@@ -35,8 +35,12 @@
 - Note: Không refresh token ở scope này; request đã qua guard có thể hoàn thành khi revoke. Không trust X-Forwarded-For mặc định; deployment sau proxy cần review topology (ADR 009).
 
 ### MOB-P1-001 — Màn auth + PIN/biometric lock
-- Status: todo
+- Status: done
 - Module: 1, 22
+- Depends: BE-P1-001, BE-P1-002
+- DoD: email login/register/verify/reset; secure opaque session; PIN 6 số + biometric opt-in; lifecycle lock/privacy cover; list/revoke/logout; l10n vi/en; Clean Architecture + MVVM + abstract DI.
+- Verification: Flutter analyze sạch; 33 unit/widget tests pass; Android debug APK (JDK 17), iOS simulator build + cold launch login/Keychain pass.
+- Note: [Thiết kế/cấu hình và residual](../docs/architecture/mobile-auth.md). Unlock cần mạng để kiểm tra revoke. SMTP end-to-end và Face ID/fingerprint/recents thiết bị thực cần smoke trước store.
 
 ### MOB-P1-002 — Hồ sơ: locale, currency, TZ, kỳ tài chính
 - Status: todo

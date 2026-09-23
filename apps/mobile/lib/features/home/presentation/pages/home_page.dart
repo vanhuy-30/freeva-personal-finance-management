@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/widgets/brand_symbol.dart';
+import '../../../auth/presentation/widgets/session_controls.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -11,11 +12,12 @@ class HomePage extends StatelessWidget {
     final S s = S.of(context);
     return Scaffold(
       appBar: AppBar(title: Text(s.appTitle)),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SessionControls(),
             const BrandSymbol(size: 96),
             const SizedBox(height: 16),
             Text(
