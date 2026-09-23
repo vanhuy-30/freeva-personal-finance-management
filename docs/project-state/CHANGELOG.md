@@ -2,6 +2,10 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-09-23
+
+- `MOB-P1-001`: tách `EmailSender`/SMTP adapter khỏi auth outbox, preset Resend qua TLS :2465 cho Render, sender thử `onboarding@resend.dev`, idempotency khi retry, validation config và che lỗi/secret. Đổi vendor SMTP bằng env; thêm CLI kiểm tra kết nối và [runbook](../infrastructure/email.md). Backend build + 67 unit + 13 PostgreSQL integration tests pass; SMTP Mailhog register/verify/login/reset/revoke và connection probe pass. Chưa cấu hình key/deploy hoặc kiểm chứng inbox Resend. Sửa trạng thái task về `doing`, chờ E2E staging và biometric thiết bị thực.
+
 ## 2026-09-22
 
 - `MOB-P1-001` UI: email-first theo mẫu, account cũ → password, account mới → đăng ký + mã verify tự gửi; quên password chỉ ở bước login. Thêm contract/API email-step có rate limit/no-store; cập nhật ADR về enumeration. 41 backend unit + 13 integration tests pass.

@@ -11,7 +11,9 @@ import { AuthCrypto } from '../src/modules/auth/infrastructure/auth-crypto';
 import { AuthMailWorker } from '../src/modules/auth/infrastructure/auth-mail.worker';
 import { PrismaAuthRepository } from '../src/modules/auth/infrastructure/prisma-auth.repository';
 
-const sendMail = jest.fn().mockResolvedValue({});
+const sendMail = jest.fn().mockImplementation(async (message: { to: string }) => ({
+  accepted: [message.to], rejected: [],
+}));
 jest.mock('nodemailer', () => ({
   createTransport: () => ({ sendMail, close: jest.fn() }),
 }));
@@ -63,6 +65,7 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
             () => ({
               AUTH_SECRET_KEY: randomBytes(32).toString('hex'),
               NODE_ENV: 'test',
+              MAIL_PROVIDER: 'smtp',
               SMTP_HOST: 'localhost',
               SMTP_FROM: 'noreply@example.test',
               SMTP_PORT: '1025',

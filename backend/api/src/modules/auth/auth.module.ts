@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { MailModule } from '../mail/mail.module';
 import { AUTH_REPOSITORY } from './domain/auth.repository';
 import { AuthController, SessionsController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -9,6 +10,7 @@ import { PrismaAuthRepository } from './infrastructure/prisma-auth.repository';
 import { AuthMailWorker } from './infrastructure/auth-mail.worker';
 
 @Module({
+  imports: [MailModule],
   controllers: [AuthController, SessionsController],
   providers: [
     AuthService,

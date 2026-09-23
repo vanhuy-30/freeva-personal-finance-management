@@ -5,7 +5,7 @@
 
 ## Context
 
-Phase 1 cần email/password, verify/reset, logout, quản lý phiên và rate limit trên API NestJS. PostgreSQL đã là dependency bắt buộc. Chưa có quyết định JWT/refresh, SMTP vendor hoặc device identity.
+Phase 1 cần email/password, verify/reset, logout, quản lý phiên và rate limit trên API NestJS. PostgreSQL đã là dependency bắt buộc. Tại thời điểm ban đầu chưa chọn JWT/refresh, SMTP vendor hoặc device identity. Cập nhật 2026-09-23: staging chọn Resend qua SMTP.
 
 ## Decision
 
@@ -20,7 +20,7 @@ Phase 1 cần email/password, verify/reset, logout, quản lý phiên và rate l
 - Express không trust proxy mặc định; bỏ qua X-Forwarded-For. Khi đặt sau proxy, các user có thể cùng bucket IP của proxy. Phải cấu hình/kiểm chứng trusted proxy theo topology thực trước khi scale; không bật `trust proxy=true` đại trà.
 - Đăng ký/request verify/reset trả 202 thống nhất dù email không tồn tại/đã tồn tại/không đủ điều kiện. Không trả token qua HTTP. Tạo token và mail job cùng transaction; SMTP lỗi không thay đổi response theo trạng thái account.
 - Outbox lưu token mã hóa AES-256-GCM; key 32 byte `AUTH_SECRET_KEY` từ env, cũng dùng HMAC rate keys. Worker poll 5 giây, batch tối đa 10, claim `SKIP LOCKED` + lease 1 phút, retry đến khi token hết hạn. SMTP timeout, log chỉ mã/message chung, không payload. At-least-once: crash sau SMTP trước delete có thể gửi trùng; token vẫn dùng một lần.
-- SMTP host/from bắt buộc. Ngoài development/test, bắt buộc TLS (STARTTLS hoặc implicit TLS :465). Không tự chọn vendor. Email chứa mã để nhập trong app, không URL chứa token; màn mobile thuộc `MOB-P1-001`.
+- `AuthMailWorker` phụ thuộc port `EmailSender`; `MailModule` cung cấp SMTP adapter. `MAIL_PROVIDER=resend` dùng preset Resend/TLS :2465 và `RESEND_API_KEY`; `smtp` dùng cấu hình generic, đổi vendor SMTP không sửa auth. Sender bắt buộc qua `MAIL_FROM` (fallback `SMTP_FROM`). Ngoài development/test, bắt buộc TLS. Resend retry dùng delivery ID ổn định làm idempotency key, có hiệu lực 24 giờ; generic SMTP vẫn at-least-once. [Runbook](../../infrastructure/email.md). Email chứa mã để nhập trong app, không URL chứa token; màn mobile thuộc `MOB-P1-001`.
 - Audit success registration/verify/login/reset/revoke cùng transaction; chỉ actor/target UUID và action/outcome, không metadata PII. Register chưa chứng minh identity nên actor `system`. Audit hiện chưa append-only (ADR 008). Failed login được throttle, chưa ghi audit từng lần.
 - Pino HTTP serializer chỉ method/path/request ID/remoteAddress; bỏ query/header/body. Redact tokenHash và encryptedToken nếu log có cấu trúc ở chỗ khác. Auth error filter không phản chiếu dữ liệu validation hay exception storage.
 

@@ -10,7 +10,8 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
-    "test:integration": "jest --config jest.integration.config.cjs"
+    "test:integration": "jest --config jest.integration.config.cjs",
+    "mail:verify": "node scripts/verify-mail.cjs"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.6",
