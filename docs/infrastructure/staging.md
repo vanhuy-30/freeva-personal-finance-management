@@ -77,3 +77,9 @@ Template local: [backend/api/.env.example](../../backend/api/.env.example), [app
 ## CD
 
 Chưa bắt buộc GitHub Actions deploy. Render/Vercel gắn git `main` (hoặc branch `staging`) là đủ Phase 0. CI vẫn là [ci-cd.md](ci-cd.md).
+
+## Phase 1 auth configuration
+
+`BE-P1-001` / `BE-P1-002` / `MOB-P1-001`: trước deploy đặt `AUTH_SECRET_KEY` (64 hex, giữ ổn định), `MAIL_PROVIDER=resend`, `MAIL_FROM="Freeva <onboarding@resend.dev>"`, `SMTP_PORT=2465` và secret `RESEND_API_KEY`. Blueprint có preset nhưng service hiện hữu vẫn cần kiểm tra Environment sau sync. Sender mặc định chỉ gửi đến email tài khoản Resend; xem [cấu hình và checklist E2E](email.md).
+
+SMTP staging bắt buộc TLS; migrate trước start. Free instance ngủ làm outbox gửi chậm; job giữ đến expiry và retry khi app chạy. Rate limit lấy socket IP mặc định, có thể gom nhiều user sau proxy; kiểm chứng trusted proxy topology trước thay cấu hình. Xem [ADR 009](../architecture/adr/009-email-auth-sessions.md).

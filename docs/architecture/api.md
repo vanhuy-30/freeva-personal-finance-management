@@ -12,6 +12,6 @@
 
 - Money fields: string integer `amountMinor` + `currency`.
 - Idempotency-Key header cho POST tạo giao dịch.
-- Auth user: Bearer (Phase 1). Admin P0: opaque Bearer credential từ env ánh xạ một `STAFF_ACTOR_ID`; chỉ role staff, không bypass khi thiếu config.
+- Auth user: opaque Bearer 7 ngày (`/api/v1/auth`, `/api/v1/sessions`), xem [ADR 009](adr/009-email-auth-sessions.md). Admin P0: opaque Bearer credential từ env ánh xạ một `STAFF_ACTOR_ID`; chỉ role staff, không bypass khi thiếu config.
 
 Workflow: sửa OpenAPI → PR cùng Nest DTO → client cập nhật.

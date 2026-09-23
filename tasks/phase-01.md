@@ -3,32 +3,44 @@
 ## Brand / shell
 
 ### MOB-P1-010 — Brand asset: app icon + splash/symbol
-- Status: todo
+- Status: done
 - Module: DS
 - Depends: `docs/brand/freeva-app-icon.png`, `freeva-brand-symbol.png` (board [ui-design-system.png](../docs/brand/ui-design-system.png))
-- DoD: iOS/Android launcher icon từ `freeva-app-icon.png`; splash (và chỗ brand placeholder) dùng `freeva-brand-symbol.png` đúng tỷ lệ — không icon generic; text/tagline khớp board khi đã có l10n; `flutter analyze` sạch; không hardcode hex
+- DoD: iOS/Android launcher icon từ `freeva-app-icon.png`; splash (và chỗ brand placeholder) dùng `freeva-brand-symbol.png` đúng tỷ lệ — không icon generic; text/tagline theo [thiết kế splash đã chốt](../docs/brand/README.md#splash-mobile--mob-p1-010), qua l10n; `flutter analyze` sạch; không hardcode hex
 - Note: `MOB-P0-002` chỉ theme/token; task này gắn logo thật. Adaptive icon Android + AppIcon iOS.
+- Verification: `flutter analyze` sạch; `flutter test` pass; kiểm tra kích thước PNG và iOS không alpha. Hướng dẫn tái sinh và giới hạn kiểm tra native: [mobile README](../apps/mobile/README.md#brand-asset--mob-p1-010).
 
 ### WA-P1-001 — Brand asset: favicon + logo shell admin
-- Status: todo
+- Status: done
 - Module: 26, DS
 - Depends: `docs/brand/freeva-app-icon.png`, `freeva-logo-lockup.png` / `freeva-brand-symbol.png`
 - DoD: favicon (và metadata icon) từ app icon; chrome admin (header/sidebar placeholder) dùng lockup hoặc symbol — không chữ “Freeva” thuần thay logo; vẫn chỉ màu qua CSS variables; không dashboard kinh doanh
 - Note: `WA-P0-001` chỉ CSS variables; task này gắn asset từ board.
+- Verification: `pnpm --filter @freeva/web-admin lint`, `pnpm --filter @freeva/web-admin exec tsc --noEmit`, `pnpm --filter @freeva/web-admin exec next build --webpack` pass.
 
 ## Auth / profile
 
 ### BE-P1-001 — Đăng ký, login email, verify email, reset password
-- Status: todo
+- Status: done
 - Module: 1
+- DoD: `/api/v1/auth` register/login/verify/reset; Argon2id; token single-use/expiry; SMTP outbox mã hóa và retry; DTO/OpenAPI/error envelope khớp; audit transaction và log không PII.
+- Verification: API build + 37 unit tests + 12 HTTP/PostgreSQL integration tests pass; fresh/upgrade/collision migration pass; SMTP verify/reset qua Mailhog thật pass; OpenAPI validator pass.
+- Note: [ADR 009](../docs/architecture/adr/009-email-auth-sessions.md). Cần cấu hình AUTH_SECRET_KEY/SMTP và apply migration trước deploy; chưa deploy staging. Existing dependency audit còn cảnh báo, theo threat model / SEC-P1-001.
 
 ### BE-P1-002 — Session, rate limit login, revoke
-- Status: todo
+- Status: done
 - Module: 1, 22
+- DoD: opaque Bearer 7 ngày, list/revoke own sessions/logout/revoke all; PostgreSQL atomic rate limit IP/email + Retry-After; reset thu hồi toàn bộ, guard fail closed.
+- Verification: integration pass ownership/expiry/replay, registration/verify/reset concurrency, shared counters, audit failure rollback; CI có PostgreSQL service và integration job.
+- Note: Không refresh token ở scope này; request đã qua guard có thể hoàn thành khi revoke. Không trust X-Forwarded-For mặc định; deployment sau proxy cần review topology (ADR 009).
 
 ### MOB-P1-001 — Màn auth + PIN/biometric lock
-- Status: todo
+- Status: doing
 - Module: 1, 22
+- Depends: BE-P1-001, BE-P1-002
+- DoD: email login/register/verify/reset; secure opaque session; PIN 6 số + biometric opt-in; lifecycle lock/privacy cover; list/revoke/logout; l10n vi/en; Clean Architecture + MVVM + abstract DI.
+- Verification: Flutter analyze sạch; 33 unit/widget tests pass; Android debug APK (JDK 17), iOS simulator build + cold launch login/Keychain pass.
+- Note: [Thiết kế/cấu hình và residual](../docs/architecture/mobile-auth.md). Unlock cần mạng để kiểm tra revoke. Chưa đóng task: cần E2E Resend trên staging và Face ID/fingerprint/recents thiết bị thực. [Runbook email](../docs/infrastructure/email.md).
 
 ### MOB-P1-002 — Hồ sơ: locale, currency, TZ, kỳ tài chính
 - Status: todo

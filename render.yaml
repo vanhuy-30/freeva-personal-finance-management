@@ -40,3 +40,15 @@ services:
         sync: false
       - key: STAFF_ACTOR_ID
         sync: false
+      # Phase 1 auth: openssl rand -hex 32; independent of staff credential.
+      - key: AUTH_SECRET_KEY
+        sync: false
+      # Resend SMTP: alternate TLS port; Render Free blocks 25/465/587.
+      - key: MAIL_PROVIDER
+        value: resend
+      - key: MAIL_FROM
+        value: "Freeva <onboarding@resend.dev>"
+      - key: SMTP_PORT
+        value: "2465"
+      - key: RESEND_API_KEY
+        sync: false

@@ -2,7 +2,25 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-09-23
+
+- `MOB-P1-001`: tách `EmailSender`/SMTP adapter khỏi auth outbox, preset Resend qua TLS :2465 cho Render, sender thử `onboarding@resend.dev`, idempotency khi retry, validation config và che lỗi/secret. Đổi vendor SMTP bằng env; thêm CLI kiểm tra kết nối và [runbook](../infrastructure/email.md). Backend build + 67 unit + 13 PostgreSQL integration tests pass; SMTP Mailhog register/verify/login/reset/revoke và connection probe pass. Chưa cấu hình key/deploy hoặc kiểm chứng inbox Resend. Sửa trạng thái task về `doing`, chờ E2E staging và biometric thiết bị thực.
+
+## 2026-09-22
+
+- `MOB-P1-001` UI: email-first theo mẫu, account cũ → password, account mới → đăng ký + mã verify tự gửi; quên password chỉ ở bước login. Thêm contract/API email-step có rate limit/no-store; cập nhật ADR về enumeration. 41 backend unit + 13 integration tests pass.
+
+- `MOB-P1-001`: màn email auth/verify/reset, secure session, PIN 6 số (PBKDF2 + giới hạn sai bền vững), biometric opt-in, lifecycle privacy cover và quản lý phiên. DI abstract, l10n vi/en; 33 unit/widget tests + analyze xanh, build Android debug/iOS simulator pass. Cập nhật Android toolchain cho plugins và CocoaPods. [Thiết kế/giới hạn](../architecture/mobile-auth.md).
+
+- `BE-P1-001`: cho phép login khi email chưa xác thực; giữ verify email độc lập và không tự đổi emailVerifiedAt khi login/reset. Cập nhật regression tests, contract và ADR 009.
+
 ## 2026-09-21
+
+- `BE-P1-001`, `BE-P1-002`: auth `/api/v1` email/password (Argon2id), verify/reset single-use, encrypted SMTP outbox/retry; opaque session 7 ngày, list/revoke/logout, rate limit PostgreSQL IP/email. Reset/session mutations khóa User và audit cùng transaction. Migration + OpenAPI + ADR 009/threat model/runbook/CI cập nhật. 37 unit + 12 HTTP/PostgreSQL tests, upgrade/collision regression và SMTP Mailhog smoke pass. Chưa deploy; cần AUTH_SECRET_KEY/SMTP trước rollout. Dependency audit hiện hữu còn 4 high, ghi trong threat model.
+
+- `MOB-P1-010` splash: motion ba nhịp từ PNG gốc trong 1,8 giây, halo nhẹ và thu nhỏ/fade out; copy mới “Your money. Your freedom.”, hỗ trợ giảm chuyển động và chữ lớn.
+
+- `MOB-P1-010`: gắn AppIcon iOS, launcher legacy/adaptive Android từ PNG chính thức; symbol nguyên bản cho splash Flutter/home, wordmark/tagline qua l10n. Thêm script tái sinh asset từ source + token; analyze và widget tests pass. Chưa smoke test launcher trên device/simulator.
 
 - `INF-P0-004`: provision staging live — API Render `https://freeva-api-staging.onrender.com` (health + DB up), admin Vercel `https://freeva-personal-finance-management.vercel.app`; checklist [staging.md](../infrastructure/staging.md) tick; URL ghi STATUS.
 - **Phase 0 closed** (option B): residual crash monitoring chấp nhận — vendor dự kiến Sentry, SDK = `INF-P1-001` (DECISIONS-OPEN #9). Backlog P0 = 25/25; mở Phase 1.

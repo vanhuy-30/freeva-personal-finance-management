@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/auth/presentation/widgets/auth_gate.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/splash/presentation/pages/splash_page.dart';
 
@@ -14,7 +15,9 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/home',
-      builder: (BuildContext context, GoRouterState state) => const HomePage(),
+      pageBuilder: (BuildContext context, GoRouterState state) =>
+          NoTransitionPage(
+              key: state.pageKey, child: const AuthGate(child: HomePage())),
     ),
   ],
 );

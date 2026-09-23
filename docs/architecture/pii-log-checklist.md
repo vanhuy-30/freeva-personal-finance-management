@@ -10,7 +10,7 @@ Pino chỉ che **đúng path** đã liệt kê. Nội suy PII vào chuỗi messa
 |---|---|---|
 | Email | `email` | Redact hết; không mask một phần ở P0 |
 | Mật khẩu | `password`, `passwordHash` | Kể cả Phase 1 auth |
-| Token | `Authorization`, `cookie`, `set-cookie`, `token`, `refreshToken`, `accessToken`, API key | Header HTTP + payload |
+| Token | `Authorization`, `cookie`, `set-cookie`, `token`, `refreshToken`, `accessToken`, `tokenHash`, `encryptedToken`, API key | Header HTTP + payload |
 | Tiền / số dư | `amountMinor`, `initialBalanceMinor`, `creditLimitMinor`, `balanceMinor` | Mọi `*Minor` |
 | Số tài khoản | `accountNumber`, `iban` | Chưa có trên schema P0; path sẵn cho P1+ |
 | Secret env | `DATABASE_URL`, SMTP password, secret manager | Không log env |
@@ -42,3 +42,5 @@ Wildcard một cấp (`*.email`). Path hai cấp (`*.*.email`) cho DTO lồng (`
 4. Reviewer: mục “Log không PII” trên PR template.
 
 Cập nhật file này khi thêm loại dữ liệu nhạy cảm (bank token Phase 6, crash SaaS).
+
+Auth P1: HTTP request serializer chỉ giữ id/method/path/remoteAddress; bỏ query, headers, body. Auth exception filter không log exception Prisma/SMTP hoặc phản chiếu input. Outbox warning chỉ message chung.
