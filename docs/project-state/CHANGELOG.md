@@ -2,7 +2,15 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-09-23
+
+- `MOB-P1-001`: tách `EmailSender`/SMTP adapter khỏi auth outbox, preset Resend qua TLS :2465 cho Render, sender thử `onboarding@resend.dev`, idempotency khi retry, validation config và che lỗi/secret. Đổi vendor SMTP bằng env; thêm CLI kiểm tra kết nối và [runbook](../infrastructure/email.md). Backend build + 67 unit + 13 PostgreSQL integration tests pass; SMTP Mailhog register/verify/login/reset/revoke và connection probe pass. Chưa cấu hình key/deploy hoặc kiểm chứng inbox Resend. Sửa trạng thái task về `doing`, chờ E2E staging và biometric thiết bị thực.
+
 ## 2026-09-22
+
+- `MOB-P1-001` UI: email-first theo mẫu, account cũ → password, account mới → đăng ký + mã verify tự gửi; quên password chỉ ở bước login. Thêm contract/API email-step có rate limit/no-store; cập nhật ADR về enumeration. 41 backend unit + 13 integration tests pass.
+
+- `MOB-P1-001`: màn email auth/verify/reset, secure session, PIN 6 số (PBKDF2 + giới hạn sai bền vững), biometric opt-in, lifecycle privacy cover và quản lý phiên. DI abstract, l10n vi/en; 33 unit/widget tests + analyze xanh, build Android debug/iOS simulator pass. Cập nhật Android toolchain cho plugins và CocoaPods. [Thiết kế/giới hạn](../architecture/mobile-auth.md).
 
 - `BE-P1-001`: cho phép login khi email chưa xác thực; giữ verify email độc lập và không tự đổi emailVerifiedAt khi login/reset. Cập nhật regression tests, contract và ADR 009.
 

@@ -11,7 +11,9 @@ import { AuthCrypto } from '../src/modules/auth/infrastructure/auth-crypto';
 import { AuthMailWorker } from '../src/modules/auth/infrastructure/auth-mail.worker';
 import { PrismaAuthRepository } from '../src/modules/auth/infrastructure/prisma-auth.repository';
 
-const sendMail = jest.fn().mockResolvedValue({});
+const sendMail = jest.fn().mockImplementation(async (message: { to: string }) => ({
+  accepted: [message.to], rejected: [],
+}));
 jest.mock('nodemailer', () => ({
   createTransport: () => ({ sendMail, close: jest.fn() }),
 }));
@@ -35,6 +37,24 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
   let base: string;
   const password = 'correct horse battery staple';
 
+  it('MOB-P1-001 email-step normalizes, limits, and exposes only routing', async () => {
+    const email = 'entry@example.test';
+    const fresh = await request('auth/email-step', { email: ' Entry@Example.test ' });
+    expect(fresh.status).toBe(200);
+    expect(fresh.headers.get('cache-control')).toBe('no-store');
+    expect(fresh.body).toEqual({ nextStep: 'register' });
+    await auth.register(email, password);
+    const existing = await request('auth/email-step', { email });
+    expect(existing.body).toEqual({ nextStep: 'login' });
+    for (let attempt = 0; attempt < 3; attempt++) {
+      expect((await request('auth/email-step', { email })).status).toBe(200);
+    }
+    const limited = await request('auth/email-step', { email });
+    expect(limited.status).toBe(429);
+    expect(Number(limited.headers.get('retry-after'))).toBeGreaterThan(0);
+    expect((await request('auth/email-step', { email: 'invalid' })).status).toBe(400);
+  });
+
   beforeAll(async () => {
     const module = await Test.createTestingModule({
       imports: [
@@ -45,6 +65,7 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
             () => ({
               AUTH_SECRET_KEY: randomBytes(32).toString('hex'),
               NODE_ENV: 'test',
+              MAIL_PROVIDER: 'smtp',
               SMTP_HOST: 'localhost',
               SMTP_FROM: 'noreply@example.test',
               SMTP_PORT: '1025',

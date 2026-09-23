@@ -48,3 +48,39 @@ Splash Flutter dùng một animation controller 1,8 giây, tự dispose khi rờ
 Ba mask giữ nguyên pixel artwork; hỗ trợ giảm chuyển động, SafeArea và cuộn
 khi chữ lớn/màn hình nhỏ. Home không thêm route transition để tổng thời gian
 không vượt 2 giây. Chi tiết copy/motion: [brand docs](../../docs/brand/README.md#splash-mobile--mob-p1-010).
+
+## Auth — MOB-P1-001
+
+Đọc [thiết kế và giới hạn mobile auth](../../docs/architecture/mobile-auth.md).
+App dùng email auth API thật; cấu hình origin HTTPS khi chạy:
+
+```bash
+flutter run --dart-define=API_BASE_URL=https://freeva-api-staging.onrender.com
+```
+
+Backend đích phải triển khai `BE-P1-001`/`BE-P1-002`, endpoint `POST /api/v1/auth/email-step` của `MOB-P1-001`, và cấu hình SMTP để nhận mã
+verify/reset. Không truyền secret qua dart-define; URL là cấu hình public.
+Không có URL mặc định: thiếu/sai cấu hình báo lỗi và không gửi credential.
+Local API cũng cần HTTPS với certificate được thiết bị tin cậy.
+
+Android: SDK compile 35, min 23, NDK 26.3.11579264, AGP 8.6.1/Gradle 8.7 và JDK 17.
+Dùng JDK tương thích khi build; không dùng JDK 25 với Gradle này.
+iOS: deployment target 12, CocoaPods cho secure storage/local auth.
+
+```bash
+flutter gen-l10n
+dart run build_runner build --delete-conflicting-outputs
+flutter analyze
+flutter test
+flutter build apk --debug
+flutter build ios --simulator
+```
+
+Smoke test trước store: đăng ký/nhận mail, verify, login trước verify, reset thu hồi
+phiên, logout; setup PIN/khởi động lại/sai 5 lần; biometric accept/cancel/lockout/
+không enrollment; background trong lúc unlock; Android recents/screenshot và iOS
+app switcher không lộ nội dung. Mất mạng khi unlock giữ app khóa.
+
+Bản iOS `--no-codesign` chỉ dùng kiểm tra compile. Khi chạy để test Keychain,
+cần signing và entitlement Keychain hợp lệ (kể cả simulator). Repo đã cấu hình
+`Runner.entitlements` với access group theo bundle ID cho Debug/Profile/Release.

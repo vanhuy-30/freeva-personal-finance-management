@@ -29,6 +29,13 @@ import {
 export class AuthController {
   constructor(private readonly auth: AuthService) {}
 
+  @Post('email-step')
+  @HttpCode(200)
+  @Header('Cache-Control', 'no-store')
+  emailStep(@Body() body: EmailDto) {
+    return this.auth.emailStep(body.email);
+  }
+
   @Post('register')
   @HttpCode(202)
   register(@Body() body: CredentialsDto) {

@@ -9,5 +9,88 @@
   },
   "@splashTagline": {
     "description": "Product-approved splash copy; keep unchanged across locales."
-  }
+  },
+  "authLogin": "Sign in",
+  "authRegister": "Create account",
+  "authResendVerification": "Send verification code",
+  "authVerifyEmail": "Verify email",
+  "authForgotPassword": "Forgot password",
+  "authResetPassword": "Reset password",
+  "authEmail": "Email",
+  "authPassword": "Password",
+  "authPasswordHelp": "12–128 characters; spaces are preserved.",
+  "authEmailCode": "64-character code from email",
+  "authSuccess": "Request processed. If you requested a code, check your email if the account is eligible. After verification or password reset, you can sign in.",
+  "authInvalidInput": "Check your email, password, email code, or matching six-digit PINs.",
+  "authInvalidCredentials": "Email or password is incorrect.",
+  "authInvalidToken": "Code is invalid, already used, or expired.",
+  "authRateLimited": "Too many requests. Try again in {seconds} seconds.",
+  "authNetworkError": "Unable to connect. Check your connection and retry.",
+  "authStorageError": "Secure storage is unavailable. Please retry.",
+  "authUnavailable": "Unable to complete. Check service configuration or use your PIN if biometrics are unavailable.",
+  "authWrongPin": "Incorrect PIN. After five failed attempts, sign in again.",
+  "authExpired": "Session expired, was revoked, or PIN attempts exceeded. Please sign in again.",
+  "authSetupPin": "Set up PIN",
+  "authLocked": "Freeva is locked",
+  "authPinHelp": "Use a six-digit PIN to unlock this device.",
+  "authPin": "PIN",
+  "authConfirmPin": "Confirm PIN",
+  "authEnableBiometric": "Enable biometric unlock",
+  "authBiometricReason": "Authenticate to unlock Freeva",
+  "authUnlock": "Unlock",
+  "authUseBiometric": "Use biometrics",
+  "authForgetDevice": "Forgot PIN / sign in again",
+  "authForgetHelp": "Removes credentials on this device. The server session remains until expiry or revocation in session management.",
+  "authSessions": "Manage sessions",
+  "authCurrentSession": "Current session",
+  "authOtherSession": "Other session",
+  "authSessionExpiry": "Expires: {date}",
+  "authRevoke": "Revoke session",
+  "authRevokeAll": "Sign out all sessions",
+  "authLockNow": "Lock now",
+  "authLogout": "Sign out",
+  "@authRateLimited": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "@authSessionExpiry": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "authWelcomeTitle": "Welcome to Freeva",
+  "authWelcomeSubtitle": "Start your journey to a healthier financial future.",
+  "authEmailPlaceholder": "Enter your email",
+  "authContinue": "Continue",
+  "authWelcomeBack": "Welcome back",
+  "authLoginSubtitle": "Enter your password to pick up where you left off.",
+  "authCreateTitle": "Create your Freeva account",
+  "authRegisterSubtitle": "Create a password to start taking care of your finances.",
+  "authCreateAccount": "Create account",
+  "authVerifyTitle": "Check your email",
+  "authVerifySubtitle": "Your verification code was sent when you signed up. Enter it below to finish.",
+  "authVerifyAndContinue": "Verify and continue",
+  "authResendCode": "No code yet? Send again",
+  "authCodeResent": "A new code has been requested. Check your inbox and spam folder.",
+  "authVerifiedNotice": "Email verified. Sign in to continue.",
+  "authRecoverTitle": "Forgot your password?",
+  "authRecoverSubtitle": "We’ll send a recovery code to your email.",
+  "authSendResetCode": "Send recovery code",
+  "authNewPasswordTitle": "Create a new password",
+  "authResetSubtitle": "Check your email for a recovery code, then choose a new password.",
+  "authNewPassword": "New password",
+  "authConfirmPassword": "Confirm password",
+  "authSavePassword": "Save new password",
+  "authPasswordChanged": "Password changed. Sign in with your new password.",
+  "authPasswordMismatch": "The passwords don’t match. Please try again.",
+  "authInvalidEmail": "Please enter a valid email address.",
+  "authShowPassword": "Show password",
+  "authHidePassword": "Hide password",
+  "authBack": "Go back",
+  "authSecurityNote": "Your account is protected by your password and app lock."
 }

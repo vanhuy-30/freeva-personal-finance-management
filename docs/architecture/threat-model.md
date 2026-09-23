@@ -166,10 +166,19 @@ Auth user: Bearer (`/api/v1` khi gắn Phase 1). Admin P0 dùng opaque Bearer se
 
 ## Auth Phase 1 — as-built (BE-P1-001, BE-P1-002)
 
-- `/api/v1/auth/*`: register/login, request/consume email verification và password reset, logout. Input JSON, token không nằm trong URL; generic accepted response chống enumeration trực tiếp.
+- `/api/v1/auth/*`: register/login, request/consume email verification và password reset, logout. Input JSON, token không nằm trong URL; register/request email giữ generic accepted response; `email-step` là ngoại lệ cố ý tiết lộ account existence cho UX email-first.
 - `/api/v1/sessions`: Bearer guard, list/revoke own sessions; user ID lấy từ DB session, không nhận qua body. Staff token không được chấp nhận.
 - Password Argon2id, email/session token ngẫu nhiên 256 bit, DB chỉ hash. Email outbox mã hóa AES-GCM bằng env key, SMTP TLS ngoài local/test. Outbox claim có lease, retry hữu hạn theo expiry; không log lỗi chứa recipient/token.
 - Reset/verify/session creation dùng transaction + User row lock. Token purpose/expiry/single-use kiểm tra trong transaction; login recheck hash chống race với reset. Audit lỗi thì rollback mutation.
 - Cleanup xóa dữ liệu auth hết hạn. HTTP serializer bỏ query/body/headers để tránh PII do client gửi sai; redact thêm tokenHash/encryptedToken.
-- Residual: email timing/traffic enumeration, distributed abuse cần edge controls; failed login chưa audit riêng. SMTP at-least-once có thể gửi trùng; free staging ngủ gây chậm. Sau proxy, IP bucket có thể chia sẻ; chưa tự trust forwarded headers. Legacy account không có credential cần quy trình riêng; auth audit chưa append-only. Xem ADR 009 và `SEC-P1-001` trước store.
+- Residual: `email-step` cho phép enumeration account dù có rate limit; email timing/traffic enumeration, distributed abuse cần edge controls; failed login chưa audit riêng. SMTP at-least-once có thể gửi trùng; free staging ngủ gây chậm. Sau proxy, IP bucket có thể chia sẻ; chưa tự trust forwarded headers. Legacy account không có credential cần quy trình riêng; auth audit chưa append-only. Xem ADR 009 và `SEC-P1-001` trước store.
+- Cập nhật `MOB-P1-001` 2026-09-23: Resend là provider email staging qua SMTP TLS. Provider nhận recipient và nội dung token để chuyển thư; không gửi dữ liệu tài chính. Sender `onboarding@resend.dev` chỉ thử với email tài khoản Resend. Cần review retention/region/vendor trước production; test SMTP local chưa chứng minh delivery Resend. [Runbook](../infrastructure/email.md).
 - Dependency audit 2026-09-21: `pnpm audit --prod --audit-level high` báo 4 high ở dependency hiện hữu deepmerge-ts (Prisma tooling) và multer (Nest platform), cộng 2 moderate/1 low. Hai task auth không nâng major Prisma hoặc thay dependency nền; cần xử lý trong security review trước phát hành. Không có advisory cho argon2/nodemailer trong kết quả này.
+
+## Bổ sung mobile auth — MOB-P1-001
+
+Client đã có email auth, secure storage, PIN/biometric và quản lý phiên.
+[Thiết kế mobile auth](mobile-auth.md) ghi rõ lifecycle, KDF, bộ đếm bền vững,
+kiểm tra revoke trước unlock, HTTPS và residual cho thiết bị bị can thiệp.
+Không coi app lock là authorization server. Native enrollment/lockout/recents cần
+smoke test thiết bị trước store; biometric hiện chưa ràng buộc hardware key.

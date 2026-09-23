@@ -71,6 +71,60 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/auth/email-step:
+    post:
+      operationId: emailStep
+      tags:
+      - Auth
+      summary: Choose login or registration for the email-first mobile flow
+      description: Intentionally reveals whether an email is registered. Returns only
+        the next step, including login for legacy accounts without a password.
+        Rate limited per IP/email; no account details and no credential mutation.
+      security: []
+      responses:
+        '200':
+          description: Next step; response must not be cached
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthEmailStepResponse'
+        '400':
+          description: Invalid email or request body. Validation errors never echo submitted values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: 'Rate limit reached: 30 attempts per source IP and operation,
+            5 per normalized email and operation, per 15-minute fixed window. Includes
+            successful attempts.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          headers:
+            Retry-After:
+              description: Seconds until the limiting window expires.
+              schema:
+                type: integer
+                minimum: 1
+        '503':
+          description: Authentication storage temporarily unavailable; fails closed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthEmailRequest'
   /api/v1/auth/register:
     post:
       operationId: register
@@ -609,6 +663,17 @@ components:
           format: email
           maxLength: 254
           description: Trimmed and lowercased before lookup/storage.
+    AuthEmailStepResponse:
+      type: object
+      additionalProperties: false
+      required:
+      - nextStep
+      properties:
+        nextStep:
+          type: string
+          enum:
+          - login
+          - register
     AuthCredentialsRequest:
       type: object
       additionalProperties: false

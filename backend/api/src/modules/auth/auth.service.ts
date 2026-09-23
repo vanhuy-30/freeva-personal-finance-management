@@ -40,6 +40,13 @@ export class AuthService {
     };
   }
 
+  async emailStep(email: string): Promise<{ nextStep: 'login' | 'register' }> {
+    // MOB-P1-001: explicit email-first UX; return no user details or credentials.
+    // Legacy accounts also go to login, never credential replacement via register.
+    const user = await this.repository.findUser(email);
+    return { nextStep: user ? 'login' : 'register' };
+  }
+
   async register(email: string, password: string) {
     const passwordHash = await this.crypto.hashPassword(password);
     await this.repository.register(

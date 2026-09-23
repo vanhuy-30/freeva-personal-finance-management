@@ -5,8 +5,7 @@ import {
   OnModuleDestroy,
   OnApplicationBootstrap,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { createTransport, type Transporter } from 'nodemailer';
+import { EMAIL_SENDER, type EmailSender } from '../../mail/domain/email-sender';
 import {
   AUTH_REPOSITORY,
   type AuthRepository,
@@ -16,47 +15,14 @@ import { AuthCrypto } from './auth-crypto';
 @Injectable()
 export class AuthMailWorker implements OnApplicationBootstrap, OnModuleDestroy {
   private readonly logger = new Logger(AuthMailWorker.name);
-  private readonly transport: Transporter;
-  private readonly from: string;
   private timer?: NodeJS.Timeout;
   private running?: Promise<void>;
 
   constructor(
     @Inject(AUTH_REPOSITORY) private readonly repository: AuthRepository,
     private readonly crypto: AuthCrypto,
-    config: ConfigService,
-  ) {
-    const local = ['development', 'test'].includes(
-      config.get<string>('NODE_ENV') ?? '',
-    );
-    const host = config.get<string>('SMTP_HOST');
-    const from = config.get<string>('SMTP_FROM');
-    if (!host || !from) throw new Error('SMTP_HOST and SMTP_FROM are required');
-    this.from = from;
-    const port = Number(config.get<string>('SMTP_PORT') ?? '587');
-    if (!Number.isInteger(port) || port < 1 || port > 65535)
-      throw new Error('Invalid SMTP_PORT');
-    const user = config.get<string>('SMTP_USER');
-    const pass = config.get<string>('SMTP_PASSWORD');
-    if (Boolean(user) !== Boolean(pass))
-      throw new Error(
-        'SMTP_USER and SMTP_PASSWORD must be configured together',
-      );
-    this.transport = createTransport({
-      host,
-      port,
-      secure: port === 465,
-      requireTLS: !local,
-      auth: user ? { user, pass } : undefined,
-      connectionTimeout: 10_000,
-      greetingTimeout: 10_000,
-      socketTimeout: 15_000,
-      logger: false,
-      debug: false,
-      disableFileAccess: true,
-      disableUrlAccess: true,
-    });
-  }
+    @Inject(EMAIL_SENDER) private readonly sender: EmailSender,
+  ) {}
 
   onApplicationBootstrap(): void {
     this.timer = setInterval(() => {
@@ -68,7 +34,6 @@ export class AuthMailWorker implements OnApplicationBootstrap, OnModuleDestroy {
   async onModuleDestroy(): Promise<void> {
     if (this.timer) clearInterval(this.timer);
     await this.running;
-    this.transport.close();
   }
 
   flush(): Promise<void> {
@@ -88,8 +53,8 @@ export class AuthMailWorker implements OnApplicationBootstrap, OnModuleDestroy {
         try {
           const token = this.crypto.decrypt(job.encryptedToken);
           const verify = job.purpose === 'verify_email';
-          await this.transport.sendMail({
-            from: this.from,
+          await this.sender.send({
+            deliveryId: job.id,
             to: job.email,
             subject: verify
               ? 'Freeva — Xác thực email'

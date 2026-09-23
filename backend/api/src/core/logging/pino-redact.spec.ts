@@ -27,6 +27,11 @@ describe('pino redact (SEC-P0-003)', () => {
     const out = captureLog({
       email: EMAIL,
       password: PASSWORD,
+      RESEND_API_KEY: SECRET,
+      SMTP_PASSWORD: PASSWORD,
+      AUTH_SECRET_KEY: SECRET,
+      pass: PASSWORD,
+      apiKey: SECRET,
       passwordHash: PASSWORD,
       token: SECRET,
       refreshToken: SECRET,
