@@ -4,6 +4,8 @@ Nhật ký repo/process — không phải App Store release notes.
 
 ## 2026-09-23
 
+- `MOB-P1-002`: màn hồ sơ locale/currency/TZ/kỳ tài chính, API và OpenAPI theo session owner, optimistic version chống ghi đè; locale áp dụng sau lưu, bản nháp/lỗi/retry và privacy gate. Unit/widget/HTTP/PostgreSQL tests, analyze và API build pass. Backend cần deploy trước mobile; chưa E2E staging/native. [Thiết kế](../architecture/mobile-profile.md).
+
 - `DOC-P1-001`: thêm trang current-state tập trung cho tech stack/architecture; khóa Flutter `3.47.0` và Dart `3.13.0` qua FVM, pubspec và CI; chuẩn hóa lệnh Make/README. Mobile analyze sạch và 38 tests pass sau migration SDK/l10n.
 
 - `MOB-P1-001`: thêm `AppConfig` qua DI, cấu hình mobile dev/staging/prod bằng dart-define JSON, kiểm tra HTTPS origin khi startup, lệnh Make/VS Code và hướng dẫn chạy. Staging có URL Render; dev có HTTPS proxy, CA chỉ tin cậy trong debug/dev, config iOS Simulator/Android Emulator/điện thoại LAN và Mailhog. Session/PIN tách theo env + API origin, phiên legacy cần login lại. Analyze sạch, 38 tests pass; Dart client xác nhận HTTPS/API/database local qua loopback/LAN, TLS từ chối CA/hostname sai; iOS Simulator build + launch dev pass; staging health/database up. Chưa tách native flavors; Android Emulator/thiết bị thật chưa kiểm chứng.

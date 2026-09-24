@@ -7,6 +7,99 @@ servers:
   - url: http://localhost:4000
     description: local
 paths:
+  /api/v1/profile:
+    get:
+      operationId: getProfile
+      tags: [Profile]
+      security:
+        - UserBearer: []
+      responses:
+        '200':
+          description: Current profile data (Cache-Control no-store)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    put:
+      operationId: updateProfile
+      tags: [Profile]
+      security:
+        - UserBearer: []
+      description: Update own preferences with optimistic version check. Does not convert existing monetary data.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Profile'
+      responses:
+        '200':
+          description: Current profile data (Cache-Control no-store)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '400':
+          description: Invalid preference
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '409':
+          description: Profile changed; reload before saving
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/profile/options:
+    get:
+      operationId: getProfileOptions
+      tags: [Profile]
+      security:
+        - UserBearer: []
+      responses:
+        '200':
+          description: Current profile data (Cache-Control no-store)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileOptions'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
   /api/health:
     get:
       security: []
@@ -569,6 +662,53 @@ components:
         checks session storage on every authenticated request. No refresh token in this
         phase.
   schemas:
+    Profile:
+      type: object
+      additionalProperties: false
+      required: [locale, defaultCurrencyCode, timezone, fiscalMonthStartDay, version]
+      properties:
+        locale:
+          type: string
+          enum: [vi, en]
+        defaultCurrencyCode:
+          type: string
+          pattern: '^[A-Z]{3}$'
+          description: Must exist in the currency catalog.
+        timezone:
+          type: string
+          maxLength: 100
+          description: IANA timezone or UTC; aliases accepted.
+          example: Asia/Ho_Chi_Minh
+        fiscalMonthStartDay:
+          type: integer
+          minimum: 1
+          maximum: 28
+        version:
+          type: integer
+          minimum: 1
+          maximum: 2147483646
+    ProfileOptions:
+      type: object
+      additionalProperties: false
+      required: [currencies, timezones]
+      properties:
+        currencies:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [code, minorDigits]
+            properties:
+              code:
+                type: string
+                pattern: '^[A-Z]{3}$'
+              minorDigits:
+                type: integer
+                minimum: 0
+        timezones:
+          type: array
+          items:
+            type: string
     HealthResponse:
       type: object
       required: [status, service, timestamp]

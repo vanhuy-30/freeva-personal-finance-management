@@ -12,6 +12,7 @@ enum AuthAction {
 }
 
 enum AuthError {
+  conflict,
   invalidInput,
   invalidEmail,
   passwordMismatch,

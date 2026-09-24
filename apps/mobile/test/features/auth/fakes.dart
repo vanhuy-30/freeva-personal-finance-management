@@ -41,12 +41,12 @@ class FakeApi implements AuthApi {
   AuthFailure? failure;
   String nextStep = 'login';
   String? lastPath;
-  Map<String, String>? lastBody;
+  Map<String, dynamic>? lastBody;
   int calls = 0;
   Future<void>? pending;
   @override
   Future<Map<String, dynamic>> request(String method, String path,
-      {Map<String, String>? body, String? token}) async {
+      {Map<String, dynamic>? body, String? token}) async {
     calls++;
     lastPath = path;
     lastBody = body;

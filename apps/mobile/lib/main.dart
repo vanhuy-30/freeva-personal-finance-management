@@ -1,3 +1,5 @@
+import 'features/profile/presentation/viewmodels/profile_view_model.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -19,20 +21,24 @@ class FreevaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      onGenerateTitle: (BuildContext context) => S.of(context).appTitle,
-      theme: AppTheme.light,
-      darkTheme: AppTheme.dark,
-      themeMode: ThemeMode.light,
-      routerConfig: appRouter,
-      locale: const Locale('vi'),
-      supportedLocales: S.supportedLocales,
-      localizationsDelegates: const [
-        S.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
+    final profile = getIt<ProfileViewModel>();
+    return ListenableBuilder(
+      listenable: profile,
+      builder: (context, _) => MaterialApp.router(
+        onGenerateTitle: (BuildContext context) => S.of(context).appTitle,
+        theme: AppTheme.light,
+        darkTheme: AppTheme.dark,
+        themeMode: ThemeMode.light,
+        routerConfig: appRouter,
+        locale: Locale(profile.locale),
+        supportedLocales: S.supportedLocales,
+        localizationsDelegates: const [
+          S.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+      ),
     );
   }
 }

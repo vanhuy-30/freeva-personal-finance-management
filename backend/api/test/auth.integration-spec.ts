@@ -1,3 +1,4 @@
+import { ProfileModule } from '../src/modules/profile/profile.module';
 import { randomBytes } from 'node:crypto';
 import { Test } from '@nestjs/testing';
 import { ConfigModule } from '@nestjs/config';
@@ -74,6 +75,7 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
         }),
         PrismaModule,
         AuthModule,
+        ProfileModule,
       ],
     }).compile();
     app = module.createNestApplication();
@@ -155,6 +157,29 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
     expect(login.status).toBe(200);
     return login.body as { accessToken: string; sessionId: string };
   }
+
+  it('MOB-P1-002 persists own profile, increments version, and rejects concurrent stale writes', async () => {
+    const owner = await verified('profile-owner@example.test');
+    const other = await verified('profile-other@example.test');
+    await prisma.currency.upsert({ where: { code: 'USD' }, update: {},
+      create: { code: 'USD', minorDigits: 2, name: 'US Dollar' } });
+    const current = await request('profile', undefined, owner.accessToken, 'GET');
+    expect(current.status).toBe(200);
+    const changes = { ...current.body, locale: 'en', defaultCurrencyCode: 'USD',
+      timezone: 'America/New_York', fiscalMonthStartDay: 28 };
+    const writes = await Promise.all([
+      request('profile', changes, owner.accessToken, 'PUT'),
+      request('profile', changes, owner.accessToken, 'PUT'),
+    ]);
+    expect(writes.map(r => r.status).sort()).toEqual([200, 409]);
+    expect((await request('profile', undefined, owner.accessToken, 'GET')).body)
+      .toEqual({ ...changes, version: current.body.version + 1 });
+    expect((await request('profile', undefined, other.accessToken, 'GET')).body)
+      .toMatchObject({ locale: 'vi', defaultCurrencyCode: 'VND', fiscalMonthStartDay: 1 });
+    await request('auth/logout', undefined, owner.accessToken);
+    expect((await request('profile', undefined, owner.accessToken, 'GET')).status).toBe(401);
+    expect((await request('profile', { ...changes, version: current.body.version + 1 }, owner.accessToken, 'PUT')).status).toBe(401);
+  });
 
   it('normalizes email, hashes passwords/tokens, verifies once, lists and logs out', async () => {
     expect(

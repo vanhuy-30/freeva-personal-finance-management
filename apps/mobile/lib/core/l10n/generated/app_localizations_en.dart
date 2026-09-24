@@ -248,4 +248,67 @@ class SEn extends S {
   @override
   String get authSecurityNote =>
       'Your account is protected by your password and app lock.';
+
+  @override
+  String get profileTitle => 'Financial profile';
+
+  @override
+  String get profileLanguage => 'Language';
+
+  @override
+  String get profileVietnamese => 'Vietnamese';
+
+  @override
+  String get profileEnglish => 'English';
+
+  @override
+  String get profileCurrency => 'Default currency';
+
+  @override
+  String get profileCurrencyHint =>
+      'Applies to new data by default; existing amounts are not converted.';
+
+  @override
+  String get profileTimezone => 'Time zone';
+
+  @override
+  String get profileFiscalDay => 'Financial month start day';
+
+  @override
+  String get profileFiscalHint =>
+      'Choose a day from 1 to 28 so each financial month starts on the same day.';
+
+  @override
+  String get profileSave => 'Save changes';
+
+  @override
+  String get profileCancel => 'Discard changes';
+
+  @override
+  String get profileSaved => 'Profile saved.';
+
+  @override
+  String get profileLoadError =>
+      'Could not load your profile. Please try again.';
+
+  @override
+  String get profileSaveError =>
+      'Changes could not be saved. Please try again.';
+
+  @override
+  String get profileConflict =>
+      'Your profile changed on another device. Reload before editing.';
+
+  @override
+  String get profileReload => 'Reload';
+
+  @override
+  String get profileInvalid =>
+      'Check the language, currency, time zone and start day (1–28).';
+
+  @override
+  String get profileBack => 'Back to home';
+
+  @override
+  String get profileSearch => 'Search time zones';
 }

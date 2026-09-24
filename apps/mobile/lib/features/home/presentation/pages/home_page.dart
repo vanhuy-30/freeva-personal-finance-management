@@ -1,3 +1,4 @@
+import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
@@ -17,6 +18,12 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            ListTile(
+              leading: const Icon(Icons.person_outline),
+              title: Text(s.profileTitle),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.go('/profile'),
+            ),
             const SessionControls(),
             const BrandSymbol(size: 96),
             const SizedBox(height: 16),
