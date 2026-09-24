@@ -1,3 +1,5 @@
+import { OAuthService } from './oauth.service';
+import { OAuthChallengeDto, OAuthLoginDto } from './dto/oauth.dto';
 import {
   Body,
   Controller,
@@ -27,7 +29,24 @@ import {
 @UseFilters(AuthExceptionFilter)
 @UseGuards(AuthRateLimitGuard)
 export class AuthController {
-  constructor(private readonly auth: AuthService) {}
+  constructor(
+    private readonly auth: AuthService,
+    private readonly oauth: OAuthService,
+  ) {}
+
+  @Post('oauth/challenges')
+  @HttpCode(200)
+  @Header('Cache-Control', 'no-store')
+  oauthChallenge(@Body() body: OAuthChallengeDto) {
+    return this.oauth.challenge(body.provider);
+  }
+
+  @Post('oauth/login')
+  @HttpCode(200)
+  @Header('Cache-Control', 'no-store')
+  oauthLogin(@Body() body: OAuthLoginDto) {
+    return this.oauth.login(body.provider, body.idToken, body.challengeToken);
+  }
 
   @Post('email-step')
   @HttpCode(200)

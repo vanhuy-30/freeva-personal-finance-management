@@ -1,3 +1,4 @@
+import { OAUTH_VERIFIER } from '../src/modules/auth/domain/oauth';
 import { ProfileModule } from '../src/modules/profile/profile.module';
 import { randomBytes } from 'node:crypto';
 import { Test } from '@nestjs/testing';
@@ -12,9 +13,13 @@ import { AuthCrypto } from '../src/modules/auth/infrastructure/auth-crypto';
 import { AuthMailWorker } from '../src/modules/auth/infrastructure/auth-mail.worker';
 import { PrismaAuthRepository } from '../src/modules/auth/infrastructure/prisma-auth.repository';
 
-const sendMail = jest.fn().mockImplementation(async (message: { to: string }) => ({
-  accepted: [message.to], rejected: [],
-}));
+const oauthVerify = jest.fn();
+const sendMail = jest
+  .fn()
+  .mockImplementation(async (message: { to: string }) => ({
+    accepted: [message.to],
+    rejected: [],
+  }));
 jest.mock('nodemailer', () => ({
   createTransport: () => ({ sendMail, close: jest.fn() }),
 }));
@@ -40,7 +45,9 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
 
   it('MOB-P1-001 email-step normalizes, limits, and exposes only routing', async () => {
     const email = 'entry@example.test';
-    const fresh = await request('auth/email-step', { email: ' Entry@Example.test ' });
+    const fresh = await request('auth/email-step', {
+      email: ' Entry@Example.test ',
+    });
     expect(fresh.status).toBe(200);
     expect(fresh.headers.get('cache-control')).toBe('no-store');
     expect(fresh.body).toEqual({ nextStep: 'register' });
@@ -53,7 +60,9 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
     const limited = await request('auth/email-step', { email });
     expect(limited.status).toBe(429);
     expect(Number(limited.headers.get('retry-after'))).toBeGreaterThan(0);
-    expect((await request('auth/email-step', { email: 'invalid' })).status).toBe(400);
+    expect(
+      (await request('auth/email-step', { email: 'invalid' })).status,
+    ).toBe(400);
   });
 
   beforeAll(async () => {
@@ -77,7 +86,10 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
         AuthModule,
         ProfileModule,
       ],
-    }).compile();
+    })
+      .overrideProvider(OAUTH_VERIFIER)
+      .useValue({ assertEnabled: jest.fn(), verify: oauthVerify })
+      .compile();
     app = module.createNestApplication();
     app.setGlobalPrefix('api');
     app.useGlobalPipes(
@@ -102,6 +114,8 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
     await app?.close();
   });
   beforeEach(async () => {
+    oauthVerify.mockReset();
+    await prisma.oAuthChallenge.deleteMany();
     await prisma.auditEvent.deleteMany();
     await prisma.authRateLimit.deleteMany();
     await prisma.authMailJob.deleteMany();
@@ -132,6 +146,161 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
       headers: response.headers,
     };
   }
+  async function oauthChallenge(provider = 'google') {
+    const result = await request('auth/oauth/challenges', { provider });
+    expect(result.status).toBe(200);
+    expect(result.headers.get('cache-control')).toBe('no-store');
+    expect(result.body.nonce).toBe(crypto.digest(result.body.challengeToken));
+    return result.body.challengeToken as string;
+  }
+
+  it.each(['google', 'apple'] as const)(
+    'BE-P1-003 %s creates identity and revocable session, rejects replay',
+    async (provider) => {
+      oauthVerify.mockResolvedValue({
+        provider,
+        subject: 'subject',
+        email: 'oauth@example.test',
+      });
+      const challengeToken = await oauthChallenge(provider);
+      const body = {
+        provider,
+        idToken: 'signed-token-fixture',
+        challengeToken,
+      };
+      const results = await Promise.all([
+        request('auth/oauth/login', body),
+        request('auth/oauth/login', body),
+      ]);
+      expect(results.map((r) => r.status).sort()).toEqual([200, 401]);
+      const login = results.find((r) => r.status === 200)!;
+      expect(login.headers.get('cache-control')).toBe('no-store');
+      expect(await prisma.oAuthIdentity.count()).toBe(1);
+      const user = await prisma.user.findUniqueOrThrow({
+        where: { email: 'oauth@example.test' },
+      });
+      expect(user.passwordHash).toBeNull();
+      expect(user.emailVerifiedAt).not.toBeNull();
+      expect(
+        (await request('sessions', undefined, login.body.accessToken, 'GET'))
+          .status,
+      ).toBe(200);
+      expect(
+        (await request('auth/logout', undefined, login.body.accessToken))
+          .status,
+      ).toBe(204);
+      expect(
+        (await request('sessions', undefined, login.body.accessToken, 'GET'))
+          .status,
+      ).toBe(401);
+      // Returning Apple users may have no email; stable subject remains authoritative.
+      oauthVerify.mockResolvedValue({ provider, subject: 'subject' });
+      expect(
+        (
+          await request('auth/oauth/login', {
+            ...body,
+            challengeToken: await oauthChallenge(provider),
+          })
+        ).status,
+      ).toBe(200);
+      expect(await prisma.user.count()).toBe(1);
+    },
+  );
+
+  it('BE-P1-003 does not merge existing/legacy emails or create unverified identities', async () => {
+    await auth.register('owner@example.test', password);
+    const original = await prisma.user.findUniqueOrThrow({
+      where: { email: 'owner@example.test' },
+    });
+    for (const identity of [
+      { provider: 'google', subject: 'different', email: original.email },
+      { provider: 'apple', subject: 'unverified' },
+    ]) {
+      oauthVerify.mockResolvedValue(identity);
+      expect(
+        (
+          await request('auth/oauth/login', {
+            provider: identity.provider,
+            idToken: 'fixture',
+            challengeToken: await oauthChallenge(identity.provider),
+          })
+        ).status,
+      ).toBe(401);
+    }
+    expect(await prisma.oAuthIdentity.count()).toBe(0);
+    expect(await prisma.authSession.count()).toBe(0);
+    expect(
+      await prisma.user.findUnique({ where: { id: original.id } }),
+    ).toEqual(original);
+  });
+
+  it('BE-P1-003 validates DTO, provider binding and expiry before verifier, rate limits challenge requests', async () => {
+    expect(
+      (await request('auth/oauth/challenges', { provider: 'unknown' })).status,
+    ).toBe(400);
+    expect(
+      (
+        await request('auth/oauth/login', {
+          provider: 'google',
+          idToken: 'private-token',
+          challengeToken: 'bad',
+        })
+      ).status,
+    ).toBe(400);
+    const challengeToken = await oauthChallenge();
+    expect(
+      (
+        await request('auth/oauth/login', {
+          provider: 'apple',
+          idToken: 'fixture',
+          challengeToken,
+        })
+      ).status,
+    ).toBe(401);
+    await prisma.oAuthChallenge.updateMany({
+      data: { expiresAt: new Date(0) },
+    });
+    expect(
+      (
+        await request('auth/oauth/login', {
+          provider: 'google',
+          idToken: 'fixture',
+          challengeToken,
+        })
+      ).status,
+    ).toBe(401);
+    expect(oauthVerify).not.toHaveBeenCalled();
+    for (let i = 0; i < 28; i++) await oauthChallenge();
+    const limited = await request('auth/oauth/challenges', {
+      provider: 'google',
+    });
+    expect(limited.status).toBe(429);
+    expect(Number(limited.headers.get('retry-after'))).toBeGreaterThan(0);
+  });
+
+  it('BE-P1-003 concurrent first logins keep one identity and independent sessions', async () => {
+    oauthVerify.mockResolvedValue({
+      provider: 'google',
+      subject: 'same-subject',
+      email: 'race@example.test',
+    });
+    const challenges = await Promise.all([oauthChallenge(), oauthChallenge()]);
+    const results = await Promise.all(
+      challenges.map((challengeToken) =>
+        request('auth/oauth/login', {
+          provider: 'google',
+          idToken: 'fixture',
+          challengeToken,
+        }),
+      ),
+    );
+    expect(results.map((r) => r.status)).toEqual([200, 200]);
+    expect(await prisma.user.count()).toBe(1);
+    expect(await prisma.oAuthIdentity.count()).toBe(1);
+    expect(await prisma.authSession.count()).toBe(2);
+    expect(await prisma.oAuthChallenge.count()).toBe(0);
+  });
+
   async function emailToken(
     email: string,
     purpose: 'verify_email' | 'reset_password',
@@ -552,6 +721,28 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
     await prisma.$executeRaw`CREATE FUNCTION auth_test_reject_audit() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'Test audit outage'; END $$`;
     await prisma.$executeRaw`CREATE TRIGGER auth_test_audit_failure BEFORE INSERT ON "AuditEvent" FOR EACH ROW EXECUTE FUNCTION auth_test_reject_audit()`;
     try {
+      oauthVerify.mockResolvedValue({
+        provider: 'google',
+        subject: 'rollback',
+        email: 'rollback@example.test',
+      });
+      const challengeToken = await oauthChallenge();
+      expect(
+        (
+          await request('auth/oauth/login', {
+            provider: 'google',
+            idToken: 'fixture',
+            challengeToken,
+          })
+        ).status,
+      ).toBe(503);
+      expect(await prisma.oAuthIdentity.count()).toBe(0);
+      expect(
+        await prisma.user.findUnique({
+          where: { email: 'rollback@example.test' },
+        }),
+      ).toBeNull();
+      expect(await prisma.oAuthChallenge.count()).toBe(1);
       expect(
         (
           await request('auth/reset-password', {

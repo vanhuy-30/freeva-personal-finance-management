@@ -7,6 +7,104 @@ servers:
   - url: http://localhost:4000
     description: local
 paths:
+  /api/v1/auth/oauth/challenges:
+    post:
+      summary: Create a provider-bound OAuth challenge
+      operationId: createOAuthChallenge
+      tags: [Auth]
+      security: []
+      description: Create a single-use 5-minute challenge. Send nonce unchanged to the provider; keep challengeToken locally until exchange.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OAuthChallengeRequest'
+      responses:
+        '200':
+          description: Success (Cache-Control no-store)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAuthChallengeResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Invalid credentials or challenge
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Too many attempts; 30 requests per IP per operation in 15 minutes
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+              description: Seconds until retry
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: Provider disabled or authentication unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/auth/oauth/login:
+    post:
+      summary: Exchange a provider ID token for a Freeva session
+      operationId: loginOAuth
+      tags: [Auth]
+      security: []
+      description: Verify a Google or Apple ID token bound to the server nonce and issue an opaque 7-day session. Identity is provider plus subject. Never auto-link by email; conflicting email or missing verified email for a new identity returns generic 401. Existing identities need no email claim.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OAuthLoginRequest'
+      responses:
+        '200':
+          description: Success (Cache-Control no-store)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthLoginResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Invalid credentials or challenge
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Too many attempts; 30 requests per IP per operation in 15 minutes
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+              description: Seconds until retry
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: Provider disabled or authentication unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
   /api/v1/profile:
     get:
       operationId: getProfile
@@ -662,6 +760,44 @@ components:
         checks session storage on every authenticated request. No refresh token in this
         phase.
   schemas:
+    OAuthChallengeRequest:
+      type: object
+      additionalProperties: false
+      required: [provider]
+      properties:
+        provider:
+          type: string
+          enum: [google, apple]
+    OAuthChallengeResponse:
+      type: object
+      additionalProperties: false
+      required: [challengeToken, nonce, expiresAt]
+      properties:
+        challengeToken:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+        nonce:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+          description: SHA-256 of challengeToken; pass unchanged as the provider nonce. SDKs that hash a raw nonce must receive challengeToken instead.
+        expiresAt:
+          type: string
+          format: date-time
+    OAuthLoginRequest:
+      type: object
+      additionalProperties: false
+      required: [provider, challengeToken, idToken]
+      properties:
+        provider:
+          type: string
+          enum: [google, apple]
+        challengeToken:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+        idToken:
+          type: string
+          minLength: 1
+          maxLength: 16384
     Profile:
       type: object
       additionalProperties: false

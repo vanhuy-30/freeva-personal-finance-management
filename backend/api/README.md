@@ -32,3 +32,11 @@ Thiết kế: [ADR 009](../../docs/architecture/adr/009-email-auth-sessions.md).
 Rate limit `/auth/*`: mỗi operation 30/IP + 5/email/15 phút, cả request thành công, HTTP 429 + `Retry-After`. Không trust X-Forwarded-For mặc định. Sau reverse proxy phải kiểm chứng trusted proxy trước khi thay cấu hình, xem ADR 009.
 
 Tests: `pnpm --filter @freeva/api test`, `pnpm --filter @freeva/api build`; PostgreSQL integration và migration upgrade: [test README](test/README.md#auth--be-p1-001-be-p1-002).
+
+## Google / Apple OAuth — BE-P1-003
+
+Apply migration rồi đặt `GOOGLE_OAUTH_CLIENT_IDS` / `APPLE_OAUTH_CLIENT_IDS` (danh sách client ID phân cách dấu phẩy). Provider để trống bị vô hiệu hóa; email auth vẫn hoạt động. API cần HTTPS outbound đến Google/Apple JWKS cố định. Không cần client secret cho luồng ID token này.
+
+Client gọi `POST /api/v1/auth/oauth/challenges` với provider, truyền `nonce` nhận được vào native provider SDK, sau đó gửi `{provider, challengeToken, idToken}` đến `POST /api/v1/auth/oauth/login`. Nonce trong JWT phải bằng chính xác `nonce` server trả; nếu SDK tự SHA-256 raw nonce thì truyền `challengeToken` cho SDK. Challenge hết hạn sau 5 phút và chỉ dùng một lần. Session trả về dùng list/revoke/logout hiện có.
+
+Không tự liên kết email trùng; user đó tiếp tục dùng phương thức đăng nhập cũ. OAuth-only account chưa có email/password recovery; không gọi register để đặt password. UI mobile, explicit linking/unlinking, provider consent revocation notification và live provider smoke cần công việc tiếp theo. Xem [ADR 010](../../docs/architecture/adr/010-google-apple-oauth.md).
