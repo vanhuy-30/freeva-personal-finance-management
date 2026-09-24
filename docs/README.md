@@ -30,6 +30,7 @@ Copy nội bộ `PRD-P0-002` — chưa có hiệu lực với user; cần luật
 - [Overview](architecture/overview.md)
 - [ADRs](architecture/adr/)
 - [Data model](architecture/data-model.md)
+- [Financial accounts — CRUD ví](architecture/financial-accounts.md)
 - [Transfer balance test cases](architecture/transfer-balance-test-cases.md)
 - [Sync](architecture/sync.md)
 - [Security](architecture/security.md) · [Email auth / sessions (ADR 009)](architecture/adr/009-email-auth-sessions.md) · [Google/Apple OAuth (ADR 010)](architecture/adr/010-google-apple-oauth.md)

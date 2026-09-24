@@ -7,6 +7,198 @@ servers:
   - url: http://localhost:4000
     description: local
 paths:
+  /api/v1/financial-accounts:
+    post:
+      operationId: createFinancialAccount
+      summary: Create a financial account
+      tags:
+      - FinancialAccounts
+      security:
+      - UserBearer: []
+      responses:
+        '201':
+          description: Created
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/FinancialAccountNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FinancialAccount'
+        '200':
+          description: Idempotent replay
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/FinancialAccountNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FinancialAccount'
+        '400':
+          $ref: '#/components/responses/FinancialAccountValidationError'
+        '401':
+          $ref: '#/components/responses/FinancialAccountUnauthorized'
+        '409':
+          $ref: '#/components/responses/FinancialAccountConflict'
+        '503':
+          $ref: '#/components/responses/FinancialAccountUnavailable'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFinancialAccount'
+    get:
+      operationId: listFinancialAccounts
+      summary: List own financial accounts
+      tags:
+      - FinancialAccounts
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Success
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/FinancialAccountNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FinancialAccountPage'
+        '400':
+          $ref: '#/components/responses/FinancialAccountValidationError'
+        '401':
+          $ref: '#/components/responses/FinancialAccountUnauthorized'
+        '503':
+          $ref: '#/components/responses/FinancialAccountUnavailable'
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+          default: 1
+      - name: pageSize
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 50
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - active
+          - archived
+          - all
+          default: active
+      description: Ordered by sortOrder, createdAt, id ascending. Items, balances and
+        total use one database snapshot.
+  /api/v1/financial-accounts/{id}:
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    get:
+      operationId: getFinancialAccount
+      summary: Get own financial account, including archived
+      tags:
+      - FinancialAccounts
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Success
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/FinancialAccountNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FinancialAccount'
+        '400':
+          $ref: '#/components/responses/FinancialAccountValidationError'
+        '401':
+          $ref: '#/components/responses/FinancialAccountUnauthorized'
+        '404':
+          $ref: '#/components/responses/FinancialAccountNotFound'
+        '503':
+          $ref: '#/components/responses/FinancialAccountUnavailable'
+    patch:
+      operationId: updateFinancialAccount
+      summary: Update or restore own financial account
+      tags:
+      - FinancialAccounts
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Updated
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/FinancialAccountNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FinancialAccount'
+        '400':
+          $ref: '#/components/responses/FinancialAccountValidationError'
+        '401':
+          $ref: '#/components/responses/FinancialAccountUnauthorized'
+        '404':
+          $ref: '#/components/responses/FinancialAccountNotFound'
+        '409':
+          $ref: '#/components/responses/FinancialAccountConflict'
+        '503':
+          $ref: '#/components/responses/FinancialAccountUnavailable'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateFinancialAccount'
+    delete:
+      operationId: archiveFinancialAccount
+      summary: Archive own financial account without deleting history
+      tags:
+      - FinancialAccounts
+      security:
+      - UserBearer: []
+      responses:
+        '204':
+          description: Archived
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/FinancialAccountNoStore'
+        '400':
+          $ref: '#/components/responses/FinancialAccountValidationError'
+        '401':
+          $ref: '#/components/responses/FinancialAccountUnauthorized'
+        '404':
+          $ref: '#/components/responses/FinancialAccountNotFound'
+        '409':
+          $ref: '#/components/responses/FinancialAccountConflict'
+        '503':
+          $ref: '#/components/responses/FinancialAccountUnavailable'
+      parameters:
+      - name: version
+        in: query
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483646
+      description: Always archives; never hard-deletes. Increments version, even if
+        already archived. Existing archivedAt is preserved. Stale versions return 409.
   /api/v1/auth/oauth/challenges:
     post:
       summary: Create a provider-bound OAuth challenge
@@ -747,6 +939,59 @@ paths:
           format: uuid
           description: UUID v4
 components:
+  headers:
+    FinancialAccountNoStore:
+      description: Financial responses must not be cached.
+      schema:
+        type: string
+        const: no-store
+  responses:
+    FinancialAccountValidationError:
+      description: VALIDATION_ERROR
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/FinancialAccountNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    FinancialAccountUnauthorized:
+      description: SESSION_INVALID
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/FinancialAccountNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    FinancialAccountConflict:
+      description: 'ACCOUNT_CONFLICT: stale version, duplicate clientId with different
+        fields, or immutable history fields'
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/FinancialAccountNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    FinancialAccountUnavailable:
+      description: ACCOUNTS_UNAVAILABLE or authentication unavailable
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/FinancialAccountNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    FinancialAccountNotFound:
+      description: 'ACCOUNT_NOT_FOUND: missing or owned by another user'
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/FinancialAccountNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
   securitySchemes:
     StaffBearer:
       type: http
@@ -760,6 +1005,248 @@ components:
         checks session storage on every authenticated request. No refresh token in this
         phase.
   schemas:
+    CreateFinancialAccount:
+      type: object
+      additionalProperties: false
+      required:
+      - clientId
+      - name
+      - type
+      - currencyCode
+      - initialBalanceMinor
+      properties:
+        clientId:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Trimmed before validation and storage.
+        type:
+          type: string
+          enum:
+          - cash
+          - bank
+          - ewallet
+          - credit
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}(?![\s\S])
+          description: Existing currency catalog code.
+        initialBalanceMinor:
+          type: string
+          pattern: ^-?[0-9]+(?![\s\S])
+          maxLength: 20
+          description: Integer minor units in signed int64 range (-9223372036854775808..9223372036854775807).
+        sortOrder:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+          default: 0
+        creditLimitMinor:
+          type:
+          - string
+          - 'null'
+          pattern: ^-?[0-9]+(?![\s\S])
+          maxLength: 20
+          description: Nonnegative integer minor units, at most 9223372036854775807. Only
+            for credit accounts.
+        statementCloseDay:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          maximum: 28
+        paymentDueDay:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          maximum: 28
+      description: Card fields must be null or omitted for non-credit accounts. Omitted
+        card fields default to null. clientId is unique per owner; identical normalized
+        retries return the existing account, including archived accounts; differing fields
+        return 409. Retries compare against current stored fields, not a historical creation
+        payload.
+    UpdateFinancialAccount:
+      type: object
+      additionalProperties: false
+      required:
+      - version
+      properties:
+        version:
+          type: integer
+          minimum: 1
+          maximum: 2147483646
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Trimmed before validation and storage.
+        type:
+          type: string
+          enum:
+          - cash
+          - bank
+          - ewallet
+          - credit
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}(?![\s\S])
+          description: Existing currency catalog code.
+        initialBalanceMinor:
+          type: string
+          pattern: ^-?[0-9]+(?![\s\S])
+          maxLength: 20
+          description: Integer minor units in signed int64 range (-9223372036854775808..9223372036854775807).
+        sortOrder:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+        creditLimitMinor:
+          type:
+          - string
+          - 'null'
+          pattern: ^-?[0-9]+(?![\s\S])
+          maxLength: 20
+          description: Nonnegative integer minor units, at most 9223372036854775807. Only
+            for credit accounts.
+        statementCloseDay:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          maximum: 28
+        paymentDueDay:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          maximum: 28
+        archived:
+          type: boolean
+      description: Partial update. Omitted fields are preserved; null is allowed only
+        for card fields. Type and currency cannot change after any transaction, including
+        deleted ones. Initial balance remains editable. Changing away from credit clears
+        card fields; supplying non-null card fields then is invalid. Successful writes
+        increment version, including no-op writes. archived false restores an account.
+    FinancialAccount:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - clientId
+      - name
+      - type
+      - currencyCode
+      - initialBalanceMinor
+      - sortOrder
+      - creditLimitMinor
+      - statementCloseDay
+      - paymentDueDay
+      - balanceMinor
+      - version
+      - archivedAt
+      - createdAt
+      - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        clientId:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Trimmed before validation and storage.
+        type:
+          type: string
+          enum:
+          - cash
+          - bank
+          - ewallet
+          - credit
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}(?![\s\S])
+          description: Existing currency catalog code.
+        initialBalanceMinor:
+          type: string
+          pattern: ^-?[0-9]+(?![\s\S])
+          maxLength: 20
+          description: Integer minor units in signed int64 range (-9223372036854775808..9223372036854775807).
+        sortOrder:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+          default: 0
+        creditLimitMinor:
+          type:
+          - string
+          - 'null'
+          pattern: ^-?[0-9]+(?![\s\S])
+          maxLength: 20
+          description: Nonnegative integer minor units, at most 9223372036854775807. Only
+            for credit accounts.
+        statementCloseDay:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          maximum: 28
+        paymentDueDay:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          maximum: 28
+        balanceMinor:
+          type: string
+          pattern: ^-?[0-9]+(?![\s\S])
+          description: Initial balance plus undeleted signed transactions, from one snapshot;
+            may exceed int64.
+        version:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+        archivedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    FinancialAccountPage:
+      type: object
+      additionalProperties: false
+      required:
+      - items
+      - page
+      - pageSize
+      - total
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/FinancialAccount'
+        page:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+        pageSize:
+          type: integer
+          minimum: 1
+          maximum: 100
+        total:
+          type: integer
+          minimum: 0
     OAuthChallengeRequest:
       type: object
       additionalProperties: false
