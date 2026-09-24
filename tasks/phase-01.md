@@ -59,8 +59,12 @@
 - Note: [Thiết kế và giới hạn](../docs/architecture/mobile-profile.md). Deploy backend trước mobile; chưa smoke native/E2E staging. Không migration mới; catalog mới hiện có VND, không tự thêm tiền tệ hay quy đổi dữ liệu.
 
 ### BE-P1-003 — Google/Apple OAuth (Should)
-- Status: todo
+- Status: done
 - Module: 1
+- Depends: BE-P1-001, BE-P1-002
+- DoD: Google/Apple ID token verification; challenge single-use/provider-bound; identity theo provider+subject, không auto-link email; opaque session/revoke; audit atomic; OpenAPI/DTO, env và log redaction.
+- Verification: API unit và 19 HTTP/PostgreSQL integration tests pass; build/TypeScript/OpenAPI pass; fresh migration và upgrade bảo toàn User/session/financial BigInt pass.
+- Note: [ADR 010](../docs/architecture/adr/010-google-apple-oauth.md). Cần apply migration và cấu hình client ID allowlist trước khi bật provider; chưa mobile SDK/UI, live provider smoke, explicit linking/recovery hay provider revocation notification.
 
 ## Ví / GD / danh mục
 

@@ -89,9 +89,10 @@ model User {
   createdAt           DateTime  @default(now()) @db.Timestamptz
   updatedAt           DateTime  @updatedAt @db.Timestamptz
 
-  authTokens   AuthToken[]
-  sessions     AuthSession[]
-  authMailJobs AuthMailJob[]
+  oauthIdentities OAuthIdentity[]
+  authTokens      AuthToken[]
+  sessions        AuthSession[]
+  authMailJobs    AuthMailJob[]
 
   defaultCurrency   Currency           @relation("UserDefaultCurrency", fields: [defaultCurrencyCode], references: [code])
   financialAccounts FinancialAccount[]
@@ -301,4 +302,29 @@ model AuthMailJob {
 
   @@unique([userId, purpose])
   @@index([availableAt])
+}
+
+// BE-P1-003: stable provider identity; never merge users by email.
+enum OAuthProvider {
+  google
+  apple
+}
+
+model OAuthIdentity {
+  id       String        @id @default(uuid()) @db.Uuid
+  provider OAuthProvider
+  subject  String        @db.VarChar(255)
+  userId   String        @db.Uuid
+  user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, subject])
+  @@unique([userId, provider])
+}
+
+model OAuthChallenge {
+  tokenHash String        @id @db.Char(64)
+  provider  OAuthProvider
+  expiresAt DateTime      @db.Timestamptz
+
+  @@index([expiresAt])
 }

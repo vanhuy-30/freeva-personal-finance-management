@@ -132,3 +132,11 @@ Script tạo account fixture riêng, gửi verify/reset qua SMTP Nodemailer → 
 - SMTP transport thật qua Mailhog: verify/reset/login/revoke pass. Lỗi audit được fault-inject trên DB test để kiểm tra rollback reset/login/revoke.
 - OpenAPI Redocly minimal validation pass (localhost server là cảnh báo cho môi trường local).
 - Dependency audit production còn 4 high, 2 moderate, 1 low ở dependency hiện hữu; xem threat model. Không ghi nhận advisory cho hai dependency auth mới trong lần audit này.
+
+## Google / Apple OAuth — BE-P1-003
+
+Cùng lệnh unit/integration ở trên; không gọi Google/Apple thật. Unit ký JWT RSA thật với JWKS fixture để kiểm tra signature/issuer/audience/azp/iat/exp/nonce và provider outage. HTTP/PostgreSQL test thay verifier bằng fixture identity; kiểm tra challenge expiry/provider binding/replay, email conflict, account mới, Apple không có email ở lần sau, concurrency, audit rollback và session revoke.
+
+Upgrade: tạo database disposable `oauth_upgrade`, baseline gồm bốn migration trước `20260924000000_oauth` (copy schema + migration_lock và các thư mục cũ vào thư mục tạm như ví dụ auth upgrade). Deploy baseline vào DB đó, chạy `oauth-upgrade-fixture.sql` bằng `psql -v ON_ERROR_STOP=1`, deploy toàn bộ migration hiện tại rồi chạy `oauth-upgrade-check.sql`. Fixture so sánh chính xác User/AuthSession/FinancialAccount, gồm số tiền vượt JS safe integer; không dùng database development.
+
+Kết quả 2026-09-24: unit và integration pass, fresh migration/upgrade bảo toàn dữ liệu pass; OpenAPI valid (cảnh báo có sẵn về localhost và profile summary). Chưa smoke với provider console/SDK/tài khoản thật.

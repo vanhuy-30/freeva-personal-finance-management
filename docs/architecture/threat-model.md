@@ -182,3 +182,16 @@ Client đã có email auth, secure storage, PIN/biometric và quản lý phiên.
 kiểm tra revoke trước unlock, HTTPS và residual cho thiết bị bị can thiệp.
 Không coi app lock là authorization server. Native enrollment/lockout/recents cần
 smoke test thiết bị trước store; biometric hiện chưa ràng buộc hardware key.
+
+## BE-P1-003 — Google / Apple ID-token exchange
+
+Bề mặt mới: `POST /api/v1/auth/oauth/challenges`, `POST /api/v1/auth/oauth/login`, outbound JWKS và bảng OAuthIdentity/OAuthChallenge. [ADR 010](adr/010-google-apple-oauth.md).
+
+- Spoofing/token substitution: RS256 + JWKS cố định, issuer/audience/azp/expiry/iat/nonce; provider thiếu config fail closed.
+- Replay/login mix-up: challenge server gắn provider, expiry 5 phút; consume atomically cùng session. Client phải gắn challenge vào đúng attempt, dùng state/PKCE theo provider SDK.
+- Account takeover qua email: không tự link/merge; subject là khóa ổn định, email verified chỉ dùng lúc tạo user mới. Email trùng bị từ chối.
+- DoS/JWKS outage: IP rate limit dùng DB, giới hạn JWT 16 KiB, JWKS timeout/cache/cooldown; 503 khi unavailable. Edge abuse và proxy topology vẫn cần review trước production.
+- Disclosure: không log JWT/challenge/nonce/subject, không lưu provider token/name/avatar; audit chỉ UUID/action. Google/Apple là bên xác thực thứ ba.
+- Residual: chưa live provider smoke, chưa mobile SDK; provider consent revoke không tự thu hồi Freeva session, chưa linking/recovery OAuth-only. Session hết hạn 7 ngày và có API revoke.
+
+Dependency audit 2026-09-24: 4 high, 2 moderate, 1 low ở deepmerge-ts/qs/multer hiện hữu; không advisory JOSE trong kết quả này. Remediation dependency tiếp tục theo SEC-P1-001.

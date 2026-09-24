@@ -32,7 +32,7 @@ Copy nội bộ `PRD-P0-002` — chưa có hiệu lực với user; cần luật
 - [Data model](architecture/data-model.md)
 - [Transfer balance test cases](architecture/transfer-balance-test-cases.md)
 - [Sync](architecture/sync.md)
-- [Security](architecture/security.md) · [Email auth / sessions (ADR 009)](architecture/adr/009-email-auth-sessions.md)
+- [Security](architecture/security.md) · [Email auth / sessions (ADR 009)](architecture/adr/009-email-auth-sessions.md) · [Google/Apple OAuth (ADR 010)](architecture/adr/010-google-apple-oauth.md)
 - [Threat model](architecture/threat-model.md)
 - [Checklist PII trong log](architecture/pii-log-checklist.md)
 - [Privacy / PDPD](architecture/privacy-compliance.md)
