@@ -85,7 +85,7 @@ Kiểu Prisma. Mọi bảng user-owned (trừ `User`, `Currency`, `SchemaMeta`, 
 | statementCloseDay | Int? | 1–28 |
 | paymentDueDay | Int? | 1–28 |
 
-Unique `(userId, clientId)`.
+Unique `(userId, clientId)`. CRUD, số dư derived và quy tắc chỉnh sửa/lưu trữ: [BE-P1-004](financial-accounts.md).
 
 ### CategoryGroup / Category
 

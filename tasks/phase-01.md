@@ -69,8 +69,11 @@
 ## Ví / GD / danh mục
 
 ### BE-P1-004 — CRUD financial accounts + số dư ban đầu
-- Status: todo
+- Status: done
 - Module: 3
+- DoD: CRUD bốn loại ví theo session owner; số dư string/bigint derived; cấu hình thẻ, sortOrder, archive/restore; khóa type/currency sau khi có giao dịch; version và clientId chống ghi đè/trùng; DTO/OpenAPI khớp, log không dữ liệu tài chính.
+- Verification: 117 unit/HTTP tests và 33 HTTP/PostgreSQL integration tests pass; API build, fresh migration vào DB disposable và OpenAPI validation pass. Bao gồm race create/update và đọc số dư cùng snapshot khi commit đồng thời.
+- Note: [Thiết kế API](../docs/architecture/financial-accounts.md), [lệnh test](../backend/api/test/README.md#financial-accounts--be-p1-004). Không thêm migration; chưa deploy staging. UI ví, writer giao dịch và sync thuộc task riêng.
 
 ### MOB-P1-003 — UI ví, sắp xếp, ẩn
 - Status: todo

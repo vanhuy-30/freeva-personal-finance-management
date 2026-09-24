@@ -140,3 +140,31 @@ Cùng lệnh unit/integration ở trên; không gọi Google/Apple thật. Unit 
 Upgrade: tạo database disposable `oauth_upgrade`, baseline gồm bốn migration trước `20260924000000_oauth` (copy schema + migration_lock và các thư mục cũ vào thư mục tạm như ví dụ auth upgrade). Deploy baseline vào DB đó, chạy `oauth-upgrade-fixture.sql` bằng `psql -v ON_ERROR_STOP=1`, deploy toàn bộ migration hiện tại rồi chạy `oauth-upgrade-check.sql`. Fixture so sánh chính xác User/AuthSession/FinancialAccount, gồm số tiền vượt JS safe integer; không dùng database development.
 
 Kết quả 2026-09-24: unit và integration pass, fresh migration/upgrade bảo toàn dữ liệu pass; OpenAPI valid (cảnh báo có sẵn về localhost và profile summary). Chưa smoke với provider console/SDK/tài khoản thật.
+
+## Financial accounts — BE-P1-004
+
+Suite `financial-accounts.integration-spec.ts` chạy cùng `test:integration` và job CI hiện có, dùng guard/session thật, HTTP Nest và PostgreSQL thật. Bắt buộc `AUTH_TEST_DATABASE_URL` trỏ database disposable tên `auth_test`; không dùng database development. Fixture ví/giao dịch được dọn trước khi xóa fixture user.
+
+Ví dụ chạy riêng với container của task (cổng/tên phải còn trống):
+
+```sh
+docker run --detach --rm --name freeva-be-p1-004-test \
+  --publish 127.0.0.1:55439:5432 \
+  --env POSTGRES_USER=auth_test --env POSTGRES_PASSWORD=auth_test_local \
+  --env POSTGRES_DB=auth_test postgres:16-alpine
+docker exec freeva-be-p1-004-test pg_isready -U auth_test
+# Chờ pg_isready báo accepting connections.
+DATABASE_URL=postgresql://auth_test:auth_test_local@127.0.0.1:55439/auth_test \
+  pnpm --filter @freeva/api prisma:migrate:deploy
+pnpm --filter @freeva/api prisma:generate
+pnpm --filter @freeva/api test --runInBand
+AUTH_TEST_DATABASE_URL=postgresql://auth_test:auth_test_local@127.0.0.1:55439/auth_test \
+  pnpm --filter @freeva/api test:integration
+pnpm --filter @freeva/api build
+pnpm --package=@redocly/cli dlx redocly lint packages/api-contracts/openapi.yaml --extends minimal
+docker stop freeva-be-p1-004-test
+```
+
+Coverage: bốn loại ví, bigint signed boundary và vượt JS safe integer, tổng giao dịch vượt int64, thu/chi/transfer/soft-delete, owner/session expiry/revoke, validation/envelope/no-store, POST normalized replay và race, optimistic version race, khóa type/currency theo lịch sử, archive/restore giữ giao dịch, credit fields, pagination/order, log không dữ liệu tài chính. Test snapshot chủ động commit thay đổi ví và giao dịch giữa hai query; kết quả phải hoàn toàn thuộc snapshot cũ, request sau thấy snapshot mới.
+
+Kết quả local 2026-09-24: 14 unit suites / 117 tests và 2 HTTP/PostgreSQL suites / 33 tests pass; API build và OpenAPI validation pass. Bốn warning OpenAPI có sẵn về localhost và profile thiếu summary. Fresh migration vào PostgreSQL 16 disposable pass; task không thêm migration. Chưa deploy staging.

@@ -2,6 +2,10 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-09-24
+
+- `BE-P1-004`: CRUD financial accounts theo Bearer session owner; tiền string/bigint, số dư derived cùng snapshot; cấu hình thẻ, sortOrder, archive/restore; optimistic version và clientId chống trùng. Khóa loại/tiền tệ sau khi có giao dịch, cho đính chính số dư ban đầu. OpenAPI, tài liệu và regression tests cập nhật; 117 unit và 33 PostgreSQL integration tests, build/OpenAPI pass. Không migration mới; chưa deploy staging. [Thiết kế](../architecture/financial-accounts.md).
+
 ## 2026-09-23
 
 - `MOB-P1-002`: màn hồ sơ locale/currency/TZ/kỳ tài chính, API và OpenAPI theo session owner, optimistic version chống ghi đè; locale áp dụng sau lưu, bản nháp/lỗi/retry và privacy gate. Unit/widget/HTTP/PostgreSQL tests, analyze và API build pass. Backend cần deploy trước mobile; chưa E2E staging/native. [Thiết kế](../architecture/mobile-profile.md).

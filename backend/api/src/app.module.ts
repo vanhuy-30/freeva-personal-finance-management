@@ -1,3 +1,4 @@
+import { FinancialAccountModule } from './modules/financial-accounts/financial-account.module';
 import { ProfileModule } from './modules/profile/profile.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { Module } from '@nestjs/common';
@@ -26,6 +27,7 @@ import { HealthModule } from './modules/health/health.module';
     HealthModule,
     AuthModule,
     ProfileModule,
+    FinancialAccountModule,
     AdminUserLookupModule,
   ],
 })

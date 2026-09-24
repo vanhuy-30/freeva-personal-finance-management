@@ -40,3 +40,7 @@ Apply migration rồi đặt `GOOGLE_OAUTH_CLIENT_IDS` / `APPLE_OAUTH_CLIENT_IDS
 Client gọi `POST /api/v1/auth/oauth/challenges` với provider, truyền `nonce` nhận được vào native provider SDK, sau đó gửi `{provider, challengeToken, idToken}` đến `POST /api/v1/auth/oauth/login`. Nonce trong JWT phải bằng chính xác `nonce` server trả; nếu SDK tự SHA-256 raw nonce thì truyền `challengeToken` cho SDK. Challenge hết hạn sau 5 phút và chỉ dùng một lần. Session trả về dùng list/revoke/logout hiện có.
 
 Không tự liên kết email trùng; user đó tiếp tục dùng phương thức đăng nhập cũ. OAuth-only account chưa có email/password recovery; không gọi register để đặt password. UI mobile, explicit linking/unlinking, provider consent revocation notification và live provider smoke cần công việc tiếp theo. Xem [ADR 010](../../docs/architecture/adr/010-google-apple-oauth.md).
+
+## Financial accounts — BE-P1-004
+
+CRUD ví tại `/api/v1/financial-accounts`, dùng Bearer session hiện có; tiền JSON là string integer. Có cấu hình thẻ, sắp xếp, lưu trữ/khôi phục và số dư derived; cập nhật yêu cầu version. Không có migration/env mới. Xem [hành vi API](../../docs/architecture/financial-accounts.md), [OpenAPI](../../packages/api-contracts/openapi.yaml) và [kiểm thử](test/README.md#financial-accounts--be-p1-004).
