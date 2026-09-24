@@ -51,8 +51,12 @@
 - Note: [Thiết kế/cấu hình và residual](../docs/architecture/mobile-auth.md). Unlock cần mạng để kiểm tra revoke. Chưa đóng task: cần E2E Resend trên staging và Face ID/fingerprint/recents thiết bị thực. [Runbook email](../docs/infrastructure/email.md).
 
 ### MOB-P1-002 — Hồ sơ: locale, currency, TZ, kỳ tài chính
-- Status: todo
+- Status: done
 - Module: 2, 24
+- Depends: BE-P1-001, BE-P1-002; auth gate của MOB-P1-001.
+- DoD: màn hồ sơ vi/en; locale toàn app sau lưu; currency từ catalog, IANA TZ, ngày kỳ 1–28; GET/PUT profile theo session owner và OpenAPI; lưu version chống ghi đè; loading/error/retry; không rò dữ liệu khi lock/logout.
+- Verification: Flutter analyze sạch; 50 Flutter tests, 82 API tests, 14 PostgreSQL integration tests và API build pass; gồm persistence/ownership/concurrent 200–409/revoked session.
+- Note: [Thiết kế và giới hạn](../docs/architecture/mobile-profile.md). Deploy backend trước mobile; chưa smoke native/E2E staging. Không migration mới; catalog mới hiện có VND, không tự thêm tiền tệ hay quy đổi dữ liệu.
 
 ### BE-P1-003 — Google/Apple OAuth (Should)
 - Status: todo

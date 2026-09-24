@@ -19,6 +19,7 @@ class AuthMessage extends StatelessWidget {
             null => s.authSuccess,
           }
         : switch (failure.code) {
+            AuthError.conflict => s.profileConflict,
             AuthError.invalidInput => s.authInvalidInput,
             AuthError.invalidEmail => s.authInvalidEmail,
             AuthError.passwordMismatch => s.authPasswordMismatch,

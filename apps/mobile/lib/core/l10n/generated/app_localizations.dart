@@ -534,6 +534,120 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Your account is protected by your password and app lock.'**
   String get authSecurityNote;
+
+  /// No description provided for @profileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Financial profile'**
+  String get profileTitle;
+
+  /// No description provided for @profileLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get profileLanguage;
+
+  /// No description provided for @profileVietnamese.
+  ///
+  /// In en, this message translates to:
+  /// **'Vietnamese'**
+  String get profileVietnamese;
+
+  /// No description provided for @profileEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get profileEnglish;
+
+  /// No description provided for @profileCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Default currency'**
+  String get profileCurrency;
+
+  /// No description provided for @profileCurrencyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Applies to new data by default; existing amounts are not converted.'**
+  String get profileCurrencyHint;
+
+  /// No description provided for @profileTimezone.
+  ///
+  /// In en, this message translates to:
+  /// **'Time zone'**
+  String get profileTimezone;
+
+  /// No description provided for @profileFiscalDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Financial month start day'**
+  String get profileFiscalDay;
+
+  /// No description provided for @profileFiscalHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a day from 1 to 28 so each financial month starts on the same day.'**
+  String get profileFiscalHint;
+
+  /// No description provided for @profileSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save changes'**
+  String get profileSave;
+
+  /// No description provided for @profileCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard changes'**
+  String get profileCancel;
+
+  /// No description provided for @profileSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile saved.'**
+  String get profileSaved;
+
+  /// No description provided for @profileLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load your profile. Please try again.'**
+  String get profileLoadError;
+
+  /// No description provided for @profileSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes could not be saved. Please try again.'**
+  String get profileSaveError;
+
+  /// No description provided for @profileConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'Your profile changed on another device. Reload before editing.'**
+  String get profileConflict;
+
+  /// No description provided for @profileReload.
+  ///
+  /// In en, this message translates to:
+  /// **'Reload'**
+  String get profileReload;
+
+  /// No description provided for @profileInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the language, currency, time zone and start day (1–28).'**
+  String get profileInvalid;
+
+  /// No description provided for @profileBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to home'**
+  String get profileBack;
+
+  /// No description provided for @profileSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search time zones'**
+  String get profileSearch;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

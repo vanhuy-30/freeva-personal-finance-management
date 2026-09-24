@@ -19,12 +19,20 @@ import 'package:mobile/core/feature_flags/local_feature_flag_service.dart'
 import 'package:mobile/core/logging/app_logger.dart' as _i766;
 import 'package:mobile/core/logging/app_logger_impl.dart' as _i760;
 import 'package:mobile/features/auth/data/auth_api.dart' as _i88;
+import 'package:mobile/features/auth/data/auth_data_module.dart' as _i901;
 import 'package:mobile/features/auth/data/auth_platform.dart' as _i810;
 import 'package:mobile/features/auth/data/auth_repository_impl.dart' as _i274;
+import 'package:mobile/features/auth/data/authorized_api.dart' as _i443;
 import 'package:mobile/features/auth/domain/auth_repository.dart' as _i173;
 import 'package:mobile/features/auth/domain/auth_use_cases.dart' as _i253;
 import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dart'
     as _i990;
+import 'package:mobile/features/profile/data/profile_repository_impl.dart'
+    as _i72;
+import 'package:mobile/features/profile/domain/profile_repository.dart' as _i4;
+import 'package:mobile/features/profile/domain/profile_use_cases.dart' as _i281;
+import 'package:mobile/features/profile/presentation/viewmodels/profile_view_model.dart'
+    as _i887;
 
 extension GetItInjectableX on _i174.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -37,6 +45,7 @@ extension GetItInjectableX on _i174.GetIt {
       environment,
       environmentFilter,
     );
+    final authDataModule = _$AuthDataModule();
     gh.lazySingleton<_i467.AppConfig>(() => _i467.AppConfig());
     gh.lazySingleton<_i88.AuthApi>(
         () => _i88.HttpAuthApi(gh<_i467.AppConfig>()));
@@ -54,10 +63,23 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i810.AuthVault>(),
           gh<_i810.DeviceBiometrics>(),
         ));
+    gh.lazySingleton<_i443.AuthorizedApi>(
+        () => authDataModule.authorizedApi(gh<_i173.AuthRepository>()));
+    gh.lazySingleton<_i4.ProfileRepository>(
+        () => _i72.ProfileRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.factory<_i253.AuthUseCases>(
         () => _i253.DefaultAuthUseCases(gh<_i173.AuthRepository>()));
+    gh.factory<_i281.ProfileUseCases>(
+        () => _i281.ProfileUseCases(gh<_i4.ProfileRepository>()));
     gh.lazySingleton<_i990.AuthViewModel>(
         () => _i990.DefaultAuthViewModel(gh<_i253.AuthUseCases>()));
+    gh.lazySingleton<_i887.ProfileViewModel>(
+        () => _i887.DefaultProfileViewModel(
+              gh<_i281.ProfileUseCases>(),
+              gh<_i990.AuthViewModel>(),
+            ));
     return this;
   }
 }
+
+class _$AuthDataModule extends _i901.AuthDataModule {}

@@ -64,6 +64,17 @@ void main() {
     expect(model.failure?.retryAfter, 60);
     expect(model.stage, AuthStage.signedOut);
   });
+  test('profile session expiry wins over an auth request already in flight', () async {
+    final pending = Completer<void>();
+    api.pending = pending.future;
+    final operation = login();
+    model.sessionExpired();
+    pending.complete();
+    await operation;
+    expect(model.stage, AuthStage.signedOut);
+    expect(model.failure?.code, AuthError.expired);
+    expect(model.loading, false);
+  });
   test('revoke current session returns to login', () async {
     await login();
     await model.setupPin('123456', '123456', false, 'unlock');

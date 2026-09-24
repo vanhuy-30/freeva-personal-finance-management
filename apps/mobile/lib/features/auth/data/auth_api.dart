@@ -7,7 +7,7 @@ import '../domain/auth_repository.dart';
 
 abstract class AuthApi {
   Future<Map<String, dynamic>> request(String method, String path,
-      {Map<String, String>? body, String? token});
+      {Map<String, dynamic>? body, String? token});
 }
 
 @LazySingleton(as: AuthApi)
@@ -20,7 +20,7 @@ class HttpAuthApi implements AuthApi {
 
   @override
   Future<Map<String, dynamic>> request(String method, String path,
-      {Map<String, String>? body, String? token}) async {
+      {Map<String, dynamic>? body, String? token}) async {
     final base = Uri.tryParse(_baseUrl);
     if (base == null ||
         base.scheme != 'https' ||
@@ -50,6 +50,7 @@ class HttpAuthApi implements AuthApi {
             401 => token == null ? AuthError.credentials : AuthError.expired,
             429 => AuthError.rateLimited,
             400 => AuthError.invalidToken,
+            409 => AuthError.conflict,
             _ => AuthError.unavailable,
           },
           retryAfter: int.tryParse(response.headers['retry-after'] ?? ''));

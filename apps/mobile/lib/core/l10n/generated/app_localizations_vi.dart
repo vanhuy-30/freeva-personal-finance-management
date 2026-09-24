@@ -253,4 +253,65 @@ class SVi extends S {
   @override
   String get authSecurityNote =>
       'Tài khoản của bạn được bảo vệ bằng mật khẩu và khóa ứng dụng.';
+
+  @override
+  String get profileTitle => 'Hồ sơ tài chính';
+
+  @override
+  String get profileLanguage => 'Ngôn ngữ';
+
+  @override
+  String get profileVietnamese => 'Tiếng Việt';
+
+  @override
+  String get profileEnglish => 'Tiếng Anh';
+
+  @override
+  String get profileCurrency => 'Tiền tệ mặc định';
+
+  @override
+  String get profileCurrencyHint =>
+      'Áp dụng mặc định cho dữ liệu mới; không quy đổi số tiền hiện có.';
+
+  @override
+  String get profileTimezone => 'Múi giờ';
+
+  @override
+  String get profileFiscalDay => 'Ngày bắt đầu tháng tài chính';
+
+  @override
+  String get profileFiscalHint =>
+      'Chọn ngày từ 1 đến 28 để kỳ tài chính luôn bắt đầu đúng ngày mỗi tháng.';
+
+  @override
+  String get profileSave => 'Lưu thay đổi';
+
+  @override
+  String get profileCancel => 'Hủy thay đổi';
+
+  @override
+  String get profileSaved => 'Đã lưu hồ sơ.';
+
+  @override
+  String get profileLoadError => 'Không tải được hồ sơ. Vui lòng thử lại.';
+
+  @override
+  String get profileSaveError => 'Chưa lưu được thay đổi. Vui lòng thử lại.';
+
+  @override
+  String get profileConflict =>
+      'Hồ sơ đã thay đổi trên thiết bị khác. Tải lại trước khi chỉnh sửa.';
+
+  @override
+  String get profileReload => 'Tải lại';
+
+  @override
+  String get profileInvalid =>
+      'Kiểm tra ngôn ngữ, tiền tệ, múi giờ và ngày bắt đầu kỳ (1–28).';
+
+  @override
+  String get profileBack => 'Về trang chủ';
+
+  @override
+  String get profileSearch => 'Tìm múi giờ';
 }
