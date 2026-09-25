@@ -63,7 +63,7 @@ import 'app_localizations_vi.dart';
 /// property.
 abstract class S {
   S(String locale)
-    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -85,16 +85,16 @@ abstract class S {
   /// of delegates is preferred or required.
   static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
       <LocalizationsDelegate<dynamic>>[
-        delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ];
+    delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+  ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
-    Locale('vi'),
+    Locale('vi')
   ];
 
   /// No description provided for @appTitle.
@@ -648,6 +648,174 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Search time zones'**
   String get profileSearch;
+
+  /// No description provided for @walletTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My wallets'**
+  String get walletTitle;
+
+  /// No description provided for @walletAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add wallet'**
+  String get walletAdd;
+
+  /// No description provided for @walletEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit wallet'**
+  String get walletEdit;
+
+  /// No description provided for @walletCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash'**
+  String get walletCash;
+
+  /// No description provided for @walletBank.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank'**
+  String get walletBank;
+
+  /// No description provided for @walletEwallet.
+  ///
+  /// In en, this message translates to:
+  /// **'E-wallet'**
+  String get walletEwallet;
+
+  /// No description provided for @walletCredit.
+  ///
+  /// In en, this message translates to:
+  /// **'Credit card'**
+  String get walletCredit;
+
+  /// No description provided for @walletName.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet name'**
+  String get walletName;
+
+  /// No description provided for @walletType.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet type'**
+  String get walletType;
+
+  /// No description provided for @walletInitialBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Initial balance'**
+  String get walletInitialBalance;
+
+  /// No description provided for @walletCreditLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Credit limit (optional)'**
+  String get walletCreditLimit;
+
+  /// No description provided for @walletCloseDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Statement day (1–28, optional)'**
+  String get walletCloseDay;
+
+  /// No description provided for @walletDueDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment day (1–28, optional)'**
+  String get walletDueDay;
+
+  /// No description provided for @walletMoneyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter amounts in the selected currency without thousands separators. For example: VND 10000; USD 10.50.'**
+  String get walletMoneyHint;
+
+  /// No description provided for @walletEditHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet type and currency cannot change once transactions exist. Edit the initial balance only to correct it.'**
+  String get walletEditHint;
+
+  /// No description provided for @walletShowHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Show hidden wallets'**
+  String get walletShowHidden;
+
+  /// No description provided for @walletHide.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide wallet'**
+  String get walletHide;
+
+  /// No description provided for @walletRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore wallet'**
+  String get walletRestore;
+
+  /// No description provided for @walletHideExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Hiding archives the wallet from the active list. Its balance and history are preserved and it can be restored later.'**
+  String get walletHideExplanation;
+
+  /// No description provided for @walletMoveUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Move up'**
+  String get walletMoveUp;
+
+  /// No description provided for @walletMoveDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Move down'**
+  String get walletMoveDown;
+
+  /// No description provided for @walletEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No wallets yet. Add your first wallet to get started.'**
+  String get walletEmpty;
+
+  /// No description provided for @walletHiddenEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No hidden wallets.'**
+  String get walletHiddenEmpty;
+
+  /// No description provided for @walletBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance: {amount} {currency}'**
+  String walletBalance(String amount, String currency);
+
+  /// No description provided for @walletInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the name, amounts and days (1–28). Type or currency may be locked because transactions exist.'**
+  String get walletInvalid;
+
+  /// No description provided for @walletConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'This wallet changed elsewhere. Return to the list and reload before editing again.'**
+  String get walletConflict;
+
+  /// No description provided for @walletError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load or save wallets. Please try again.'**
+  String get walletError;
+
+  /// No description provided for @walletReloadRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'The operation may have been partially saved. Reload the list to get the latest state.'**
+  String get walletReloadRequired;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {
@@ -676,9 +844,8 @@ S lookupS(Locale locale) {
   }
 
   throw FlutterError(
-    'S.delegate failed to load unsupported locale "$locale". This is likely '
-    'an issue with the localizations generation tool. Please file an issue '
-    'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.',
-  );
+      'S.delegate failed to load unsupported locale "$locale". This is likely '
+      'an issue with the localizations generation tool. Please file an issue '
+      'on GitHub with a reproducible sample app and the gen-l10n configuration '
+      'that was used.');
 }

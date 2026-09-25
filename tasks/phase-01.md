@@ -76,8 +76,12 @@
 - Note: [Thiết kế API](../docs/architecture/financial-accounts.md), [lệnh test](../backend/api/test/README.md#financial-accounts--be-p1-004). Không thêm migration; chưa deploy staging. UI ví, writer giao dịch và sync thuộc task riêng.
 
 ### MOB-P1-003 — UI ví, sắp xếp, ẩn
-- Status: todo
+- Status: done
 - Module: 3
+- Depends: BE-P1-004, MOB-P1-001
+- DoD: danh sách/tạo/sửa bốn loại ví và cấu hình thẻ; số tiền BigInt theo currency catalog; sắp xếp, ẩn/khôi phục qua API với version; l10n vi/en, DI abstract, privacy gate và loại bỏ response cũ sau khóa.
+- Verification: Flutter analyze sạch; toàn bộ 61 Flutter tests pass (11 tests mới), gồm int64/derived balance, phân trang, reorder một phần, retry/clientId, conflict và session lifecycle; editor 320px/text scale 2 không overflow.
+- Note: [Thiết kế và giới hạn](../docs/architecture/mobile-wallets.md). Reorder dùng PATCH tuần tự do API chưa có batch nguyên tử; lỗi yêu cầu tải lại. Chưa native build/E2E staging trong task này.
 
 ### BE-P1-005 — CRUD transactions thu/chi/transfer balanced
 - Status: todo

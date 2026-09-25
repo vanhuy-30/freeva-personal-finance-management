@@ -24,6 +24,12 @@ class HomePage extends StatelessWidget {
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.go('/profile'),
             ),
+            ListTile(
+              leading: const Icon(Icons.account_balance_wallet_outlined),
+              title: Text(s.walletTitle),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.go('/wallets'),
+            ),
             const SessionControls(),
             const BrandSymbol(size: 96),
             const SizedBox(height: 16),

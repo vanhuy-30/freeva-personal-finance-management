@@ -169,3 +169,10 @@ trên toàn app; lỗi giữ bản nháp và cho thử lại. Hồ sơ lưu theo
 
 Backend phải có `/api/v1/profile` và `/api/v1/profile/options` trước khi phát hành.
 Không cần migration mới. Xem [kiến trúc, kiểm chứng và giới hạn](../../docs/architecture/mobile-profile.md).
+
+## Ví — MOB-P1-003
+
+Home → Ví của tôi: tạo/sửa bốn loại ví, số dư ban đầu và cấu hình thẻ, đổi thứ tự
+bằng nút lên/xuống, ẩn và khôi phục. Backend cần BE-P1-004 và profile/options.
+Tiền nhập theo đơn vị chính của tiền tệ, dấu thập phân theo locale; không dùng
+dấu phân cách hàng nghìn. Xem [kiến trúc và giới hạn](../../docs/architecture/mobile-wallets.md).

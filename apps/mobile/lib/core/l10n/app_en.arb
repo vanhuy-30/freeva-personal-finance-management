@@ -111,5 +111,43 @@
   "profileReload": "Reload",
   "profileInvalid": "Check the language, currency, time zone and start day (1–28).",
   "profileBack": "Back to home",
-  "profileSearch": "Search time zones"
+  "profileSearch": "Search time zones",
+  "walletTitle": "My wallets",
+  "walletAdd": "Add wallet",
+  "walletEdit": "Edit wallet",
+  "walletCash": "Cash",
+  "walletBank": "Bank",
+  "walletEwallet": "E-wallet",
+  "walletCredit": "Credit card",
+  "walletName": "Wallet name",
+  "walletType": "Wallet type",
+  "walletInitialBalance": "Initial balance",
+  "walletCreditLimit": "Credit limit (optional)",
+  "walletCloseDay": "Statement day (1–28, optional)",
+  "walletDueDay": "Payment day (1–28, optional)",
+  "walletMoneyHint": "Enter amounts in the selected currency without thousands separators. For example: VND 10000; USD 10.50.",
+  "walletEditHint": "Wallet type and currency cannot change once transactions exist. Edit the initial balance only to correct it.",
+  "walletShowHidden": "Show hidden wallets",
+  "walletHide": "Hide wallet",
+  "walletRestore": "Restore wallet",
+  "walletHideExplanation": "Hiding archives the wallet from the active list. Its balance and history are preserved and it can be restored later.",
+  "walletMoveUp": "Move up",
+  "walletMoveDown": "Move down",
+  "walletEmpty": "No wallets yet. Add your first wallet to get started.",
+  "walletHiddenEmpty": "No hidden wallets.",
+  "walletBalance": "Balance: {amount} {currency}",
+  "walletInvalid": "Check the name, amounts and days (1–28). Type or currency may be locked because transactions exist.",
+  "walletConflict": "This wallet changed elsewhere. Return to the list and reload before editing again.",
+  "walletError": "Could not load or save wallets. Please try again.",
+  "walletReloadRequired": "The operation may have been partially saved. Reload the list to get the latest state.",
+  "@walletBalance": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  }
 }
