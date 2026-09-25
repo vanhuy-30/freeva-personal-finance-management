@@ -2,6 +2,10 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-09-25
+
+- `MOB-P1-003`: UI ví từ Home, danh sách/tạo/sửa bốn loại ví, cấu hình thẻ, sắp xếp lên/xuống và ẩn/khôi phục qua API hiện có. BigInt và formatter vi/en theo minorDigits, abstract DI, version/clientId, chặn mutation sau lỗi reorder một phần, xóa state/bản nháp khi khóa. Analyze và 11 tests mới pass; chưa native build/E2E staging. [Thiết kế](../architecture/mobile-wallets.md).
+
 ## 2026-09-24
 
 - `BE-P1-004`: CRUD financial accounts theo Bearer session owner; tiền string/bigint, số dư derived cùng snapshot; cấu hình thẻ, sortOrder, archive/restore; optimistic version và clientId chống trùng. Khóa loại/tiền tệ sau khi có giao dịch, cho đính chính số dư ban đầu. OpenAPI, tài liệu và regression tests cập nhật; 117 unit và 33 PostgreSQL integration tests, build/OpenAPI pass. Không migration mới; chưa deploy staging. [Thiết kế](../architecture/financial-accounts.md).

@@ -1,3 +1,4 @@
+import '../../features/wallets/presentation/pages/wallet_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 
 import 'package:flutter/material.dart';
@@ -10,6 +11,10 @@ import '../../features/splash/presentation/pages/splash_page.dart';
 final GoRouter appRouter = GoRouter(
   initialLocation: '/splash',
   routes: [
+    GoRoute(
+      path: '/wallets',
+      builder: (context, state) => const AuthGate(child: WalletPage()),
+    ),
     GoRoute(
       path: '/profile',
       builder: (context, state) => const AuthGate(child: ProfilePage()),

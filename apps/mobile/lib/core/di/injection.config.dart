@@ -33,6 +33,12 @@ import 'package:mobile/features/profile/domain/profile_repository.dart' as _i4;
 import 'package:mobile/features/profile/domain/profile_use_cases.dart' as _i281;
 import 'package:mobile/features/profile/presentation/viewmodels/profile_view_model.dart'
     as _i887;
+import 'package:mobile/features/wallets/data/wallet_repository_impl.dart'
+    as _i128;
+import 'package:mobile/features/wallets/domain/wallet_repository.dart' as _i107;
+import 'package:mobile/features/wallets/domain/wallet_use_cases.dart' as _i336;
+import 'package:mobile/features/wallets/presentation/viewmodels/wallet_view_model.dart'
+    as _i251;
 
 extension GetItInjectableX on _i174.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -65,14 +71,22 @@ extension GetItInjectableX on _i174.GetIt {
         ));
     gh.lazySingleton<_i443.AuthorizedApi>(
         () => authDataModule.authorizedApi(gh<_i173.AuthRepository>()));
+    gh.lazySingleton<_i107.WalletRepository>(
+        () => _i128.WalletRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i4.ProfileRepository>(
         () => _i72.ProfileRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.factory<_i253.AuthUseCases>(
         () => _i253.DefaultAuthUseCases(gh<_i173.AuthRepository>()));
+    gh.lazySingleton<_i336.WalletUseCases>(
+        () => _i336.DefaultWalletUseCases(gh<_i107.WalletRepository>()));
     gh.factory<_i281.ProfileUseCases>(
         () => _i281.ProfileUseCases(gh<_i4.ProfileRepository>()));
     gh.lazySingleton<_i990.AuthViewModel>(
         () => _i990.DefaultAuthViewModel(gh<_i253.AuthUseCases>()));
+    gh.lazySingleton<_i251.WalletViewModel>(() => _i251.DefaultWalletViewModel(
+          gh<_i336.WalletUseCases>(),
+          gh<_i990.AuthViewModel>(),
+        ));
     gh.lazySingleton<_i887.ProfileViewModel>(
         () => _i887.DefaultProfileViewModel(
               gh<_i281.ProfileUseCases>(),

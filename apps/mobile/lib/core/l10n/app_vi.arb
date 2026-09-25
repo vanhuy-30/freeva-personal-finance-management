@@ -105,5 +105,43 @@
   "profileReload": "Tải lại",
   "profileInvalid": "Kiểm tra ngôn ngữ, tiền tệ, múi giờ và ngày bắt đầu kỳ (1–28).",
   "profileBack": "Về trang chủ",
-  "profileSearch": "Tìm múi giờ"
+  "profileSearch": "Tìm múi giờ",
+  "walletTitle": "Ví của tôi",
+  "walletAdd": "Thêm ví",
+  "walletEdit": "Sửa ví",
+  "walletCash": "Tiền mặt",
+  "walletBank": "Ngân hàng",
+  "walletEwallet": "Ví điện tử",
+  "walletCredit": "Thẻ tín dụng",
+  "walletName": "Tên ví",
+  "walletType": "Loại ví",
+  "walletInitialBalance": "Số dư ban đầu",
+  "walletCreditLimit": "Hạn mức tín dụng (không bắt buộc)",
+  "walletCloseDay": "Ngày chốt thẻ (1–28, không bắt buộc)",
+  "walletDueDay": "Ngày thanh toán (1–28, không bắt buộc)",
+  "walletMoneyHint": "Nhập số tiền theo đơn vị tiền tệ đã chọn, không dùng dấu phân cách hàng nghìn. Ví dụ: VND 10000; USD 10,50.",
+  "walletEditHint": "Khi ví có giao dịch, không thể đổi loại ví hoặc tiền tệ. Sửa số dư ban đầu chỉ dùng để đính chính.",
+  "walletShowHidden": "Xem ví đã ẩn",
+  "walletHide": "Ẩn ví",
+  "walletRestore": "Khôi phục ví",
+  "walletHideExplanation": "Ẩn ví là lưu trữ ví khỏi danh sách đang dùng. Số dư và lịch sử vẫn được giữ lại; có thể khôi phục sau.",
+  "walletMoveUp": "Di chuyển lên",
+  "walletMoveDown": "Di chuyển xuống",
+  "walletEmpty": "Chưa có ví. Thêm ví đầu tiên để bắt đầu.",
+  "walletHiddenEmpty": "Không có ví đã ẩn.",
+  "walletBalance": "Số dư: {amount} {currency}",
+  "walletInvalid": "Kiểm tra tên, số tiền và ngày 1–28. Loại ví hoặc tiền tệ có thể đã bị khóa do có giao dịch.",
+  "walletConflict": "Ví đã thay đổi ở nơi khác. Quay lại danh sách và tải lại trước khi sửa tiếp.",
+  "walletError": "Không thể tải hoặc lưu ví. Vui lòng thử lại.",
+  "walletReloadRequired": "Thao tác có thể đã được lưu một phần. Tải lại danh sách để lấy trạng thái mới nhất.",
+  "@walletBalance": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  }
 }
