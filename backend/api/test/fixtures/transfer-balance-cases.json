@@ -1,9 +1,15 @@
 {
   "schemaVersion": 1,
   "currencies": {
-    "VND": { "minorDigits": 0 },
-    "USD": { "minorDigits": 2 },
-    "EUR": { "minorDigits": 2 }
+    "VND": {
+      "minorDigits": 0
+    },
+    "USD": {
+      "minorDigits": 2
+    },
+    "EUR": {
+      "minorDigits": 2
+    }
   },
   "fxQuotes": [
     {
@@ -18,6 +24,20 @@
       "fromCurrency": "USD",
       "toCurrency": "EUR",
       "rate": "1",
+      "quotedAt": "2026-09-17T00:00:00.000Z"
+    },
+    {
+      "id": "TR-FX-005-quote",
+      "fromCurrency": "USD",
+      "toCurrency": "VND",
+      "rate": "25000.25",
+      "quotedAt": "2026-09-17T00:00:00.000Z"
+    },
+    {
+      "id": "TR-FX-006-quote",
+      "fromCurrency": "USD",
+      "toCurrency": "VND",
+      "rate": "150",
       "quotedAt": "2026-09-17T00:00:00.000Z"
     }
   ],
@@ -283,6 +303,156 @@
           "currencyCode": "VND",
           "transferGroupId": "00000000-0000-4000-8000-000000000112",
           "fxQuoteId": "fx-usd-vnd-25000"
+        }
+      ]
+    },
+    {
+      "id": "TR-SAME-004",
+      "description": "Reject zero transfer",
+      "expected": "reject",
+      "reasonCode": "INVALID_SIGN_DIRECTION",
+      "legs": [
+        {
+          "role": "source",
+          "type": "transfer",
+          "amountMinor": "0",
+          "currencyCode": "VND",
+          "transferGroupId": "00000000-0000-4000-8000-000000000101",
+          "fxQuoteId": null
+        },
+        {
+          "role": "destination",
+          "type": "transfer",
+          "amountMinor": "0",
+          "currencyCode": "VND",
+          "transferGroupId": "00000000-0000-4000-8000-000000000101",
+          "fxQuoteId": null
+        }
+      ]
+    },
+    {
+      "id": "TR-STRUCT-005",
+      "description": "Reject self-transfer",
+      "expected": "reject",
+      "reasonCode": "SELF_TRANSFER",
+      "legs": [
+        {
+          "role": "source",
+          "type": "transfer",
+          "amountMinor": "-150000",
+          "currencyCode": "VND",
+          "transferGroupId": "00000000-0000-4000-8000-000000000101",
+          "fxQuoteId": null,
+          "accountId": "same-account"
+        },
+        {
+          "role": "destination",
+          "type": "transfer",
+          "amountMinor": "150000",
+          "currencyCode": "VND",
+          "transferGroupId": "00000000-0000-4000-8000-000000000101",
+          "fxQuoteId": null,
+          "accountId": "same-account"
+        }
+      ]
+    },
+    {
+      "id": "TR-STRUCT-006",
+      "description": "Reject different calendar dates",
+      "expected": "reject",
+      "reasonCode": "DATE_MISMATCH",
+      "legs": [
+        {
+          "role": "source",
+          "type": "transfer",
+          "amountMinor": "-150000",
+          "currencyCode": "VND",
+          "transferGroupId": "00000000-0000-4000-8000-000000000101",
+          "fxQuoteId": null,
+          "occurredOn": "2026-09-25"
+        },
+        {
+          "role": "destination",
+          "type": "transfer",
+          "amountMinor": "150000",
+          "currencyCode": "VND",
+          "transferGroupId": "00000000-0000-4000-8000-000000000101",
+          "fxQuoteId": null,
+          "occurredOn": "2026-09-26"
+        }
+      ]
+    },
+    {
+      "id": "TR-STRUCT-007",
+      "description": "Reject partially deleted transfer",
+      "expected": "reject",
+      "reasonCode": "DELETE_STATE_MISMATCH",
+      "legs": [
+        {
+          "role": "source",
+          "type": "transfer",
+          "amountMinor": "-150000",
+          "currencyCode": "VND",
+          "transferGroupId": "00000000-0000-4000-8000-000000000101",
+          "fxQuoteId": null,
+          "deletedAt": null
+        },
+        {
+          "role": "destination",
+          "type": "transfer",
+          "amountMinor": "150000",
+          "currencyCode": "VND",
+          "transferGroupId": "00000000-0000-4000-8000-000000000101",
+          "fxQuoteId": null,
+          "deletedAt": "2026-09-25T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "TR-FX-005",
+      "description": "Exact decimal FX",
+      "expected": "accept",
+      "reasonCode": "BALANCED_EXACT_FX",
+      "legs": [
+        {
+          "role": "source",
+          "type": "transfer",
+          "amountMinor": "-10000",
+          "currencyCode": "USD",
+          "transferGroupId": "00000000-0000-4000-8000-000000000109",
+          "fxQuoteId": "TR-FX-005-quote"
+        },
+        {
+          "role": "destination",
+          "type": "transfer",
+          "amountMinor": "2500025",
+          "currencyCode": "VND",
+          "transferGroupId": "00000000-0000-4000-8000-000000000109",
+          "fxQuoteId": "TR-FX-005-quote"
+        }
+      ]
+    },
+    {
+      "id": "TR-FX-006",
+      "description": "Reject fractional destination minor units",
+      "expected": "reject",
+      "reasonCode": "FX_AMOUNT_MISMATCH",
+      "legs": [
+        {
+          "role": "source",
+          "type": "transfer",
+          "amountMinor": "-1",
+          "currencyCode": "USD",
+          "transferGroupId": "00000000-0000-4000-8000-000000000109",
+          "fxQuoteId": "TR-FX-006-quote"
+        },
+        {
+          "role": "destination",
+          "type": "transfer",
+          "amountMinor": "2",
+          "currencyCode": "VND",
+          "transferGroupId": "00000000-0000-4000-8000-000000000109",
+          "fxQuoteId": "TR-FX-006-quote"
         }
       ]
     }

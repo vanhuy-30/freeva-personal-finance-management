@@ -4,6 +4,8 @@ Nhật ký repo/process — không phải App Store release notes.
 
 ## 2026-09-25
 
+- `BE-P1-005`: CRUD transactions thu/chi/transfer hai leg nguyên tử; BigInt và manual FX exact, quote bất biến; owner/session, Idempotency-Key/clientId, optimistic version, danh mục chi bắt buộc, nhãn/ghi chú, lọc/phân trang và soft-delete/restore cả cặp. Writer phối hợp khóa/update hàng ví để chống race đổi denomination từ snapshot cũ. 145 unit/HTTP + 51 PostgreSQL integration tests, build/OpenAPI pass; không migration mới, chưa deploy staging. [Thiết kế](../architecture/transactions.md).
+
 - `MOB-P1-003`: UI ví từ Home, danh sách/tạo/sửa bốn loại ví, cấu hình thẻ, sắp xếp lên/xuống và ẩn/khôi phục qua API hiện có. BigInt và formatter vi/en theo minorDigits, abstract DI, version/clientId, chặn mutation sau lỗi reorder một phần, xóa state/bản nháp khi khóa. Analyze và 11 tests mới pass; chưa native build/E2E staging. [Thiết kế](../architecture/mobile-wallets.md).
 
 ## 2026-09-24

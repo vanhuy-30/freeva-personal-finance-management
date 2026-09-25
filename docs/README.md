@@ -31,6 +31,7 @@ Copy nội bộ `PRD-P0-002` — chưa có hiệu lực với user; cần luật
 - [ADRs](architecture/adr/)
 - [Data model](architecture/data-model.md)
 - [Financial accounts — CRUD ví](architecture/financial-accounts.md)
+- [Transactions — CRUD thu/chi/transfer](architecture/transactions.md)
 - [Mobile wallets — UI ví, sắp xếp, ẩn](architecture/mobile-wallets.md)
 - [Transfer balance test cases](architecture/transfer-balance-test-cases.md)
 - [Sync](architecture/sync.md)
