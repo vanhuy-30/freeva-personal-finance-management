@@ -168,3 +168,31 @@ docker stop freeva-be-p1-004-test
 Coverage: bốn loại ví, bigint signed boundary và vượt JS safe integer, tổng giao dịch vượt int64, thu/chi/transfer/soft-delete, owner/session expiry/revoke, validation/envelope/no-store, POST normalized replay và race, optimistic version race, khóa type/currency theo lịch sử, archive/restore giữ giao dịch, credit fields, pagination/order, log không dữ liệu tài chính. Test snapshot chủ động commit thay đổi ví và giao dịch giữa hai query; kết quả phải hoàn toàn thuộc snapshot cũ, request sau thấy snapshot mới.
 
 Kết quả local 2026-09-24: 14 unit suites / 117 tests và 2 HTTP/PostgreSQL suites / 33 tests pass; API build và OpenAPI validation pass. Bốn warning OpenAPI có sẵn về localhost và profile thiếu summary. Fresh migration vào PostgreSQL 16 disposable pass; task không thêm migration. Chưa deploy staging.
+
+## Transactions — BE-P1-005
+
+`transactions.integration-spec.ts` chạy trong job `test:integration` hiện có: HTTP Nest, guard/session thật, Prisma/PostgreSQL thật. Bắt buộc `AUTH_TEST_DATABASE_URL` trỏ DB disposable `auth_test`. Test cài trigger gây lỗi có kiểm soát để kiểm tra rollback leg thứ hai khi create/update/delete; dọn trigger bằng finally và chỉ xóa fixture của suite. Không dùng database development.
+
+```sh
+docker run --detach --rm --name freeva-be-p1-005-test \
+  --publish 127.0.0.1:55440:5432 \
+  --env POSTGRES_USER=auth_test --env POSTGRES_PASSWORD=auth_test_local \
+  --env POSTGRES_DB=auth_test postgres:16-alpine
+docker exec freeva-be-p1-005-test pg_isready -U auth_test
+# Chờ accepting connections trước migrate.
+DATABASE_URL=postgresql://auth_test:auth_test_local@127.0.0.1:55440/auth_test \
+  pnpm --filter @freeva/api prisma:migrate:deploy
+pnpm --filter @freeva/api prisma:generate
+pnpm --filter @freeva/api test --runInBand
+AUTH_TEST_DATABASE_URL=postgresql://auth_test:auth_test_local@127.0.0.1:55440/auth_test \
+  pnpm --filter @freeva/api test:integration --runInBand
+pnpm --filter @freeva/api build
+pnpm --package=@redocly/cli dlx redocly lint packages/api-contracts/openapi.yaml --extends minimal
+docker stop freeva-be-p1-005-test
+```
+
+Coverage mới: signed int64/BigInt, ngày lịch/leap day, source/destination signs, zero/self-transfer, FX exact và fractional rejection, quote bất biến, CRUD/khôi phục toàn bộ cặp, số dư derived khi chuyển ví, category bắt buộc cho chi/ownership nhãn, bearer/IDOR, Idempotency-Key/clientId replay/race, stale version kể cả qua leg đối diện, archived wallet, rollback create/update/delete và FX quote, lọc/phân trang, log không PII. Test race chủ động giữ snapshot ví cũ, commit giao dịch đầu tiên rồi thả writer đổi currency: writer phải retry và từ chối đổi denomination.
+
+Fixture [transfer-balance-cases.json](fixtures/transfer-balance-cases.json) được dùng trực tiếp bởi evaluator domain production, không giữ bản kiểm tra cân bằng riêng trong test. Bổ sung zero/self-transfer/ngày/trạng thái xóa/decimal FX/fractional FX.
+
+Kết quả local 2026-09-25: 15 unit/HTTP suites / **145 tests**, 3 HTTP/PostgreSQL suites / **51 tests** pass; API build, fresh migration và OpenAPI validation pass. OpenAPI còn bốn warning có sẵn (localhost và profile thiếu summary). Không thêm migration; chưa deploy staging.

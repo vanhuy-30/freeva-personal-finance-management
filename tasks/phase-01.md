@@ -84,9 +84,12 @@
 - Note: [Thiết kế và giới hạn](../docs/architecture/mobile-wallets.md). Reorder dùng PATCH tuần tự do API chưa có batch nguyên tử; lỗi yêu cầu tải lại. Chưa native build/E2E staging trong task này.
 
 ### BE-P1-005 — CRUD transactions thu/chi/transfer balanced
-- Status: todo
+- Status: done
 - Module: 4
 - Depends: BE-P1-004, QA-P0-001
+- DoD: CRUD thu/chi/transfer nguyên tử, signed bigint, FX manual exact với quote bất biến; soft-delete/restore cả cặp, owner/session, version, Idempotency-Key/clientId; danh mục chi bắt buộc, notes/tags, lọc/phân trang; DTO/OpenAPI/error envelope và log không PII.
+- Verification: 145 unit/HTTP tests và 51 HTTP/PostgreSQL integration tests pass; build, fresh migration vào DB disposable và OpenAPI validation pass. Bao gồm rollback lỗi leg thứ hai khi tạo/sửa/xóa, replay/create/update race và snapshot ví cũ khi ghi giao dịch đầu tiên.
+- Note: [Thiết kế API](../docs/architecture/transactions.md), [lệnh test](../backend/api/test/README.md#transactions--be-p1-005). FX cần rounding bị từ chối; list đếm leg. Không migration mới; chưa deploy staging. UI giao dịch, quản lý danh mục, báo cáo và sync thuộc task riêng.
 
 ### MOB-P1-004 — Ghi giao dịch < số bước tối thiểu
 - Status: todo

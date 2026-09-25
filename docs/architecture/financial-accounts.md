@@ -27,7 +27,7 @@ Tên trim, 1–100 ký tự; `sortOrder` 0–2147483647, mặc định 0. Số t
 - Update/archive/restore khóa hàng theo owner và kiểm tra version trong transaction. Mỗi write thành công tăng version, kể cả no-op; lưu trữ lại giữ nguyên archivedAt. Version đầu vào 1–2147483646; version cuối có thể đạt 2147483647.
 - Retry transaction tối đa 3 lần sau serialization/deadlock; create retry khi đụng unique. Hai request update cùng version chỉ một request thành công, request còn lại nhận conflict.
 - `clientId` UUID bắt buộc, unique theo owner. Retry POST so sánh các trường tạo sau chuẩn hóa với **giá trị hiện tại**: tên đã trim, UUID lowercase, tiền bigint, defaults 0/null. Nếu khớp, trả ví hiện có cùng số dư/version/trạng thái hiện tại; nếu đã sửa khác payload tạo thì trả `409`. Không lưu snapshot payload ban đầu, không tự khôi phục ví khi replay.
-- `BE-P1-005` khi thêm writer giao dịch phải phối hợp khóa ví và kiểm tra owner/currency/trạng thái trong transaction; task này chưa cung cấp API ghi giao dịch.
+- `BE-P1-005` đã thêm [writer giao dịch](transactions.md), khóa ví và kiểm tra owner/currency/trạng thái trong transaction. Writer update updatedAt ví để invalidation snapshot ngăn race đổi type/currency trước lịch sử; không tăng version cấu hình ví.
 
 ## Lỗi và quyền riêng tư
 

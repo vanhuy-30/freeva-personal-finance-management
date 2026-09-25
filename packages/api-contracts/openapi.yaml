@@ -7,6 +7,512 @@ servers:
   - url: http://localhost:4000
     description: local
 paths:
+  /api/v1/transactions:
+    post:
+      operationId: createTransaction
+      summary: Create income, expense, or an atomic balanced transfer
+      tags:
+      - Transactions
+      security:
+      - UserBearer: []
+      responses:
+        '201':
+          description: Created
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionBundle'
+        '200':
+          description: Normalized clientId replay matches current data, including deleted records; no restoration
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionBundle'
+        '400':
+          description: VALIDATION_ERROR
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: SESSION_INVALID or auth error
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: TRANSACTION_NOT_FOUND or ACCOUNT_NOT_FOUND (also for another owner)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '409':
+          description: 'TRANSACTION_CONFLICT: stale version, archived wallet, or conflicting clientId replay'
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: TRANSACTIONS_UNAVAILABLE
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTransaction'
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Must equal the first leg clientId (case-insensitive); retry uses the same key and all leg clientIds.
+    get:
+      operationId: listTransactions
+      summary: List own transaction legs with pagination and filters
+      tags:
+      - Transactions
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Ordered occurredOn descending, createdAt descending, id ascending
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionPage'
+        '400':
+          description: VALIDATION_ERROR
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: SESSION_INVALID or auth error
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: TRANSACTION_NOT_FOUND or ACCOUNT_NOT_FOUND (also for another owner)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '409':
+          description: 'TRANSACTION_CONFLICT: stale version, archived wallet, or conflicting clientId replay'
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: TRANSACTIONS_UNAVAILABLE
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+      parameters:
+      - in: query
+        name: page
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+          default: 1
+      - in: query
+        name: pageSize
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 50
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - active
+          - deleted
+          - all
+          default: active
+      - in: query
+        name: accountId
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: categoryId
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: type
+        schema:
+          type: string
+          enum:
+          - income
+          - expense
+          - transfer
+      - in: query
+        name: from
+        schema:
+          type: string
+          format: date
+          pattern: ^\d{4}-\d{2}-\d{2}$
+      - in: query
+        name: to
+        schema:
+          type: string
+          format: date
+          pattern: ^\d{4}-\d{2}-\d{2}$
+      - in: query
+        name: search
+        schema:
+          type: string
+          maxLength: 200
+          description: Case-insensitive substring of notes.
+  /api/v1/transactions/{id}:
+    parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Either leg ID addresses the entire transfer pair.
+    get:
+      operationId: getTransaction
+      summary: Read one transaction or both transfer legs, including deleted
+      tags:
+      - Transactions
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Success
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionBundle'
+        '400':
+          description: VALIDATION_ERROR
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: SESSION_INVALID or auth error
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: TRANSACTION_NOT_FOUND or ACCOUNT_NOT_FOUND (also for another owner)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '409':
+          description: 'TRANSACTION_CONFLICT: stale version, archived wallet, or conflicting clientId replay'
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: TRANSACTIONS_UNAVAILABLE
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    patch:
+      operationId: updateTransaction
+      summary: Atomically edit, soft-delete, or restore transaction and linked leg
+      tags:
+      - Transactions
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Both leg versions increment together
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionBundle'
+        '400':
+          description: VALIDATION_ERROR
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: SESSION_INVALID or auth error
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: TRANSACTION_NOT_FOUND or ACCOUNT_NOT_FOUND (also for another owner)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '409':
+          description: 'TRANSACTION_CONFLICT: stale version, archived wallet, or conflicting clientId replay'
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: TRANSACTIONS_UNAVAILABLE
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTransaction'
+    delete:
+      operationId: deleteTransaction
+      summary: Soft-delete transaction and linked transfer leg atomically
+      tags:
+      - Transactions
+      security:
+      - UserBearer: []
+      responses:
+        '204':
+          description: Deleted
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+        '400':
+          description: VALIDATION_ERROR
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: SESSION_INVALID or auth error
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: TRANSACTION_NOT_FOUND or ACCOUNT_NOT_FOUND (also for another owner)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '409':
+          description: 'TRANSACTION_CONFLICT: stale version, archived wallet, or conflicting clientId replay'
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: TRANSACTIONS_UNAVAILABLE
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+      parameters:
+      - in: query
+        name: version
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483646
   /api/v1/financial-accounts:
     post:
       operationId: createFinancialAccount
@@ -1005,6 +1511,291 @@ components:
         checks session storage on every authenticated request. No refresh token in this
         phase.
   schemas:
+    TransactionLegInput:
+      type: object
+      additionalProperties: false
+      required:
+      - clientId
+      - accountId
+      - currencyCode
+      - amountMinor
+      properties:
+        clientId:
+          type: string
+          format: uuid
+        accountId:
+          type: string
+          format: uuid
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        amountMinor:
+          type: string
+          maxLength: 20
+          pattern: ^-?[0-9]+$
+          description: Signed int64 integer minor units. Income positive; expense negative; transfer source negative and destination
+            positive. Zero is rejected.
+    ManualTransactionFx:
+      type: object
+      additionalProperties: false
+      required:
+      - rate
+      - quotedAt
+      properties:
+        rate:
+          type: string
+          pattern: ^\d{1,10}(\.\d{1,8})?$
+          description: Positive Decimal(18,8); exact conversion only, fractional destination minor units rejected.
+        quotedAt:
+          type: string
+          format: date-time
+    CreateTransaction:
+      type: object
+      additionalProperties: false
+      required:
+      - type
+      - occurredOn
+      - legs
+      properties:
+        type:
+          type: string
+          enum:
+          - income
+          - expense
+          - transfer
+        occurredOn:
+          type: string
+          format: date
+          pattern: ^\d{4}-\d{2}-\d{2}$
+        legs:
+          type: array
+          minItems: 1
+          maxItems: 2
+          items:
+            $ref: '#/components/schemas/TransactionLegInput'
+          description: One leg for income/expense; exactly two ordered source, destination for transfer. Distinct accounts and
+            clientIds. PATCH replaces both legs and preserves their clientIds/order.
+        categoryId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          description: Required and non-null for expense, optional for income, must be null/omitted for transfer. Active category
+            owned by the session user.
+        notes:
+          type:
+          - string
+          - 'null'
+          maxLength: 2000
+        tagIds:
+          type: array
+          maxItems: 20
+          uniqueItems: true
+          items:
+            type: string
+            format: uuid
+        fx:
+          oneOf:
+          - $ref: '#/components/schemas/ManualTransactionFx'
+          - type: 'null'
+          description: Required for different currencies; forbidden otherwise. Stored immutable with both legs pointing to the
+            same quote.
+    UpdateTransaction:
+      type: object
+      additionalProperties: false
+      required:
+      - version
+      properties:
+        version:
+          type: integer
+          minimum: 1
+          maximum: 2147483646
+        occurredOn:
+          type: string
+          format: date
+          pattern: ^\d{4}-\d{2}-\d{2}$
+        legs:
+          type: array
+          minItems: 1
+          maxItems: 2
+          items:
+            $ref: '#/components/schemas/TransactionLegInput'
+          description: One leg for income/expense; exactly two ordered source, destination for transfer. Distinct accounts and
+            clientIds. PATCH replaces both legs and preserves their clientIds/order.
+        categoryId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          description: Required and non-null for expense, optional for income, must be null/omitted for transfer. Active category
+            owned by the session user.
+        notes:
+          type:
+          - string
+          - 'null'
+          maxLength: 2000
+        tagIds:
+          type: array
+          maxItems: 20
+          uniqueItems: true
+          items:
+            type: string
+            format: uuid
+        fx:
+          oneOf:
+          - $ref: '#/components/schemas/ManualTransactionFx'
+          - type: 'null'
+          description: Required for different currencies; forbidden otherwise. Stored immutable with both legs pointing to the
+            same quote.
+        deleted:
+          type: boolean
+          description: Soft-delete or restore the entire transfer pair. Other omitted fields retain their values; type and clientIds
+            are immutable.
+    TransactionLeg:
+      type: object
+      additionalProperties: false
+      required:
+      - clientId
+      - accountId
+      - currencyCode
+      - amountMinor
+      - id
+      - type
+      - occurredOn
+      - categoryId
+      - notes
+      - tagIds
+      - transferGroupId
+      - fxQuoteId
+      - deletedAt
+      - version
+      - createdAt
+      - updatedAt
+      properties:
+        clientId:
+          type: string
+          format: uuid
+        accountId:
+          type: string
+          format: uuid
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        amountMinor:
+          type: string
+          maxLength: 20
+          pattern: ^-?[0-9]+$
+          description: Signed int64 integer minor units. Income positive; expense negative; transfer source negative and destination
+            positive. Zero is rejected.
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+          - income
+          - expense
+          - transfer
+        occurredOn:
+          type: string
+          format: date
+          pattern: ^\d{4}-\d{2}-\d{2}$
+        categoryId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        notes:
+          type:
+          - string
+          - 'null'
+        tagIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+        transferGroupId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        fxQuoteId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        deletedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        version:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    TransactionBundle:
+      type: object
+      additionalProperties: false
+      required:
+      - legs
+      - fx
+      properties:
+        legs:
+          type: array
+          minItems: 1
+          maxItems: 2
+          items:
+            $ref: '#/components/schemas/TransactionLeg'
+        fx:
+          oneOf:
+          - type: object
+            additionalProperties: false
+            required:
+            - id
+            - fromCode
+            - toCode
+            - rate
+            - quotedAt
+            properties:
+              id:
+                type: string
+                format: uuid
+              fromCode:
+                type: string
+              toCode:
+                type: string
+              rate:
+                type: string
+              quotedAt:
+                type: string
+                format: date-time
+          - type: 'null'
+    TransactionPage:
+      type: object
+      additionalProperties: false
+      required:
+      - items
+      - page
+      - pageSize
+      - total
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransactionLeg'
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        total:
+          type: integer
+          description: Count of legs, including both sides of transfers when both match filters.
     CreateFinancialAccount:
       type: object
       additionalProperties: false

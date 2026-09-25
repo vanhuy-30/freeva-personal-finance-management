@@ -1,3 +1,4 @@
+import { TransactionModule } from './modules/transactions/transaction.module';
 import { FinancialAccountModule } from './modules/financial-accounts/financial-account.module';
 import { ProfileModule } from './modules/profile/profile.module';
 import { AuthModule } from './modules/auth/auth.module';
@@ -28,6 +29,7 @@ import { HealthModule } from './modules/health/health.module';
     AuthModule,
     ProfileModule,
     FinancialAccountModule,
+    TransactionModule,
     AdminUserLookupModule,
   ],
 })
