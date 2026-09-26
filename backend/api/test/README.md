@@ -196,3 +196,67 @@ Coverage mới: signed int64/BigInt, ngày lịch/leap day, source/destination s
 Fixture [transfer-balance-cases.json](fixtures/transfer-balance-cases.json) được dùng trực tiếp bởi evaluator domain production, không giữ bản kiểm tra cân bằng riêng trong test. Bổ sung zero/self-transfer/ngày/trạng thái xóa/decimal FX/fractional FX.
 
 Kết quả local 2026-09-25: 15 unit/HTTP suites / **145 tests**, 3 HTTP/PostgreSQL suites / **51 tests** pass; API build, fresh migration và OpenAPI validation pass. OpenAPI còn bốn warning có sẵn (localhost và profile thiếu summary). Không thêm migration; chưa deploy staging.
+
+## Categories — BE-P1-006
+
+`categories.integration-spec.ts` dùng cùng CI `test:integration`, với auth/session,
+HTTP và PostgreSQL thật. Container riêng, không đọc database development:
+
+```sh
+docker run --detach --rm --name freeva-be-p1-006-test \
+  --publish 127.0.0.1:55441:5432 \
+  --env POSTGRES_USER=auth_test --env POSTGRES_PASSWORD=auth_test_local \
+  --env POSTGRES_DB=auth_test postgres:16-alpine
+docker exec freeva-be-p1-006-test pg_isready -U auth_test
+# Chờ accepting connections.
+DATABASE_URL=postgresql://auth_test:auth_test_local@127.0.0.1:55441/auth_test \
+  pnpm --filter @freeva/api prisma:migrate:deploy
+pnpm --filter @freeva/api prisma:generate
+pnpm --filter @freeva/api test --runInBand
+AUTH_TEST_DATABASE_URL=postgresql://auth_test:auth_test_local@127.0.0.1:55441/auth_test \
+  pnpm --filter @freeva/api test:integration --runInBand
+pnpm --filter @freeva/api build
+pnpm --package=@redocly/cli dlx redocly lint packages/api-contracts/openapi.yaml --extends minimal
+```
+
+Upgrade có dữ liệu, dùng cùng container disposable:
+
+```sh
+category_baseline_dir=$(mktemp -d /tmp/freeva-category-baseline.XXXXXX)
+cp backend/api/prisma/schema.prisma "$category_baseline_dir/schema.prisma"
+mkdir "$category_baseline_dir/migrations"
+cp backend/api/prisma/migrations/migration_lock.toml "$category_baseline_dir/migrations/"
+cp -R backend/api/prisma/migrations/20260826100000_init \
+  backend/api/prisma/migrations/20260831120000_core_data_model \
+  backend/api/prisma/migrations/20260916000000_audit_event \
+  backend/api/prisma/migrations/20260921000000_email_auth_sessions \
+  backend/api/prisma/migrations/20260924000000_oauth "$category_baseline_dir/migrations/"
+docker exec freeva-be-p1-006-test createdb -U auth_test category_upgrade
+DATABASE_URL=postgresql://auth_test:auth_test_local@127.0.0.1:55441/category_upgrade \
+  pnpm --filter @freeva/api exec prisma migrate deploy --schema "$category_baseline_dir/schema.prisma"
+docker exec -i freeva-be-p1-006-test psql -U auth_test -d category_upgrade \
+  -v ON_ERROR_STOP=1 < backend/api/test/categories-upgrade-fixture.sql
+DATABASE_URL=postgresql://auth_test:auth_test_local@127.0.0.1:55441/category_upgrade \
+  pnpm --filter @freeva/api prisma:migrate:deploy
+docker exec -i freeva-be-p1-006-test psql -U auth_test -d category_upgrade \
+  -v ON_ERROR_STOP=1 < backend/api/test/categories-upgrade-check.sql
+# Deploy lại phải báo không có migration pending.
+DATABASE_URL=postgresql://auth_test:auth_test_local@127.0.0.1:55441/category_upgrade \
+  pnpm --filter @freeva/api prisma:migrate:deploy
+docker stop freeva-be-p1-006-test
+```
+
+Fixture so sánh User (trừ cột mới), Category, FinancialAccount và Transaction,
+bao gồm archived/deleted, timestamp và tiền vượt JS safe integer. Không bootstrap
+trong migration. Test integration bootstrap riêng cho user mới/có custom.
+
+Coverage: DTO, design-token catalog, cây sâu/chu trình/owner, archive/restore order,
+bootstrap/replay/version race, pagination, recent dedupe/tie/backdate/limit, chuyển
+active và soft-deleted giữ tiền/nhãn, rollback lỗi sau chuyển và version overflow,
+create/edit/restore song song với archive/delete, cạnh tranh delete và test cố tình
+giữ snapshot cũ để xác nhận retry. Trigger fault được dọn bằng finally.
+
+Kết quả 2026-09-25: **162 unit/HTTP tests**, **66 HTTP/PostgreSQL integration tests**;
+build, OpenAPI validation, fresh migration và upgrade bảo toàn dữ liệu pass.
+OpenAPI còn bốn warning có sẵn (localhost và profile thiếu summary).
+Chưa deploy staging/production.

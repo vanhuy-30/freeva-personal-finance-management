@@ -56,7 +56,7 @@ Tính bằng phân số bigint; **từ chối kết quả có phần lẻ minor 
 - Writer **update updatedAt của các ví liên quan**, không tăng version ví vì không thay field cấu hình. Chỉ khóa hàng không đủ: account writer có snapshot cũ có thể chưa thấy giao dịch mới. Update này buộc writer `BE-P1-004` retry snapshot, rồi khóa đổi type/currency khi đã có lịch sử. Client đọc ví lại sẽ thấy số dư derived mới.
 - Retry tối đa 3 lần sau serialization/deadlock; create retry thêm unique collision. Hai request sửa cùng version chỉ một request thắng, kể cả dùng ID hai leg khác nhau. List/count chạy cùng snapshot; phân trang giữa các request không giữ snapshot dài hạn.
 - Unique `(userId,clientId)` từng leg; Idempotency-Key ánh xạ clientId leg đầu, không lưu key riêng. Replay so sánh payload đã chuẩn hóa với **giá trị hiện tại** toàn bộ giao dịch, không lưu snapshot request gốc: bigint, UUID lowercase, defaults null/[], tags sắp xếp, rate chuẩn hóa và timestamp UTC. Khớp trả `200` với version/trạng thái hiện tại; khác, thiếu một clientId, hoặc đổi partner trả `409`. Replay không tự khôi phục. Sau khi sửa payload, retry POST cũ có thể conflict.
-- Writer categories/tags tương lai cần phối hợp transaction/locking khi archive, chuyển hoặc xóa reference; CRUD categories thuộc `BE-P1-006`.
+- `BE-P1-006`: transaction create/update/delete và category mutations cập nhật User.updatedAt ngay đầu Repeatable Read transaction để tuần tự hóa writer cùng owner và buộc snapshot cũ retry. Không tăng profile version. Xóa category chuyển cả GD soft-delete, tăng version GD; xem [categories](categories.md). Writer tags hoặc writer tài chính mới cần phối hợp cùng protocol.
 
 ## List, lỗi và privacy
 

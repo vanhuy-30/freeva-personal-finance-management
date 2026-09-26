@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../../infrastructure/prisma/prisma.service';
+import { touchFinancialOwner } from '../../../infrastructure/prisma/financial-owner-lock';
 import type { TransactionRepository } from '../domain/transaction.repository';
 import { normalizeRate, TransactionError, validateInput, type TransactionBundle, type TransactionInput, type TransactionLeg, type TransactionPatch, type TransactionQuery } from '../domain/transaction';
 
@@ -87,6 +88,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
   }
   create(userId: string, input: TransactionInput) {
     return this.snapshot(async tx => {
+      await touchFinancialOwner(tx, userId);
       const existing = await tx.transaction.findMany({ where: { userId, clientId: { in: input.legs.map(item => item.clientId) } } });
       if (existing.length) {
         const current = await this.load(tx, userId, existing[0].id);
@@ -122,6 +124,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
   }
   update(userId: string, id: string, patch: TransactionPatch) {
     return this.snapshot(async tx => {
+      await touchFinancialOwner(tx, userId);
       const current = await this.load(tx, userId, id, true);
       const first = current.legs[0];
       if (first.version !== patch.version || first.version >= 2147483647) throw new TransactionError('TRANSACTION_CONFLICT');
