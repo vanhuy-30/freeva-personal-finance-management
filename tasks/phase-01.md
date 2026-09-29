@@ -96,8 +96,12 @@
 - Module: 4
 
 ### BE-P1-006 — Categories mặc định VN + custom + ẩn/xóa chuyển GD
-- Status: todo
+- Status: done
 - Module: 5
+- Depends: BE-P1-005
+- DoD: bootstrap bộ VN một lần, custom/cha-con/màu-icon, ẩn/khôi phục, xóa chuyển cả GD soft-delete nguyên tử; version/replay/owner, recent, OpenAPI và log không PII.
+- Verification: 162 unit/HTTP tests, 66 HTTP/PostgreSQL integration tests; build, OpenAPI, fresh migration và upgrade dữ liệu cũ pass. Có fault rollback và stale-snapshot/concurrent category/transaction writers.
+- Note: [Kiến trúc danh mục](../docs/architecture/categories.md), [test và migration](../backend/api/test/README.md#categories--be-p1-006). Deploy migration trước API; mobile gọi POST defaults trước GET categories. Chưa deploy. UI/nhãn/quản lý nhóm thuộc task riêng.
 
 ### MOB-P1-005 — UI danh mục
 - Status: todo

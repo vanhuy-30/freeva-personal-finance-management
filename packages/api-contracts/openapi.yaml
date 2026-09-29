@@ -7,6 +7,346 @@ servers:
   - url: http://localhost:4000
     description: local
 paths:
+  /api/v1/categories/defaults:
+    post:
+      operationId: initializeDefaultCategories
+      summary: Initialize Vietnamese default categories once
+      tags:
+      - Categories
+      security:
+      - UserBearer: []
+      responses:
+        '204':
+          description: Initialized or already initialized
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+        '400':
+          $ref: '#/components/responses/CategoryValidationError'
+        '401':
+          $ref: '#/components/responses/CategoryUnauthorized'
+        '404':
+          $ref: '#/components/responses/CategoryNotFound'
+        '409':
+          $ref: '#/components/responses/CategoryConflict'
+        '503':
+          $ref: '#/components/responses/CategoryUnavailable'
+      description: Creates 15 editable root categories atomically for the session owner. Concurrent/repeated calls
+        are safe; deleted defaults are never recreated. Call before the first category list. Does not modify custom
+        categories. GET endpoints never initialize data.
+  /api/v1/categories/options:
+    get:
+      operationId: categoryOptions
+      summary: Get supported color token names and semantic icon keys
+      tags:
+      - Categories
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Metadata catalog
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryOptions'
+        '400':
+          $ref: '#/components/responses/CategoryValidationError'
+        '401':
+          $ref: '#/components/responses/CategoryUnauthorized'
+        '404':
+          $ref: '#/components/responses/CategoryNotFound'
+        '409':
+          $ref: '#/components/responses/CategoryConflict'
+        '503':
+          $ref: '#/components/responses/CategoryUnavailable'
+  /api/v1/categories/recent:
+    get:
+      operationId: recentCategories
+      summary: Get up to ten recently used active categories
+      tags:
+      - Categories
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Recent distinct categories
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecentCategories'
+        '400':
+          $ref: '#/components/responses/CategoryValidationError'
+        '401':
+          $ref: '#/components/responses/CategoryUnauthorized'
+        '404':
+          $ref: '#/components/responses/CategoryNotFound'
+        '409':
+          $ref: '#/components/responses/CategoryConflict'
+        '503':
+          $ref: '#/components/responses/CategoryUnavailable'
+      description: Own non-deleted transactions only. Order by maximum transaction createdAt descending, then categoryId
+        ascending; occurredOn and edits do not change recency. Archived categories are excluded.
+  /api/v1/categories:
+    post:
+      operationId: createCategory
+      summary: Create a custom category
+      tags:
+      - Categories
+      security:
+      - UserBearer: []
+      responses:
+        '201':
+          description: Created
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '200':
+          description: Normalized replay matches current data; does not restore archived category
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '400':
+          $ref: '#/components/responses/CategoryValidationError'
+        '401':
+          $ref: '#/components/responses/CategoryUnauthorized'
+        '404':
+          $ref: '#/components/responses/CategoryNotFound'
+        '409':
+          $ref: '#/components/responses/CategoryConflict'
+        '503':
+          $ref: '#/components/responses/CategoryUnavailable'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCategoryRequest'
+      description: clientId is normalized to lowercase. Matching current create fields replays safely; differing fields
+        or replay against a system default returns conflict. Parent must belong to owner and all ancestors must be
+        active. No category type split; used by both income and expense.
+    get:
+      operationId: listCategories
+      summary: List own categories as a flat tree
+      tags:
+      - Categories
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Page ordered by createdAt ascending, then id ascending
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryList'
+        '400':
+          $ref: '#/components/responses/CategoryValidationError'
+        '401':
+          $ref: '#/components/responses/CategoryUnauthorized'
+        '404':
+          $ref: '#/components/responses/CategoryNotFound'
+        '409':
+          $ref: '#/components/responses/CategoryConflict'
+        '503':
+          $ref: '#/components/responses/CategoryUnavailable'
+      parameters:
+      - in: query
+        name: page
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+          default: 1
+      - in: query
+        name: pageSize
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 50
+      - in: query
+        name: status
+        required: false
+        schema:
+          type: string
+          enum:
+          - active
+          - archived
+          - all
+          default: active
+      - in: query
+        name: parentId
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            format: uuid
+          - type: string
+            const: root
+          description: Omit for all levels; root for null parent; UUID for direct children. Foreign/missing parent
+            returns 404.
+  /api/v1/categories/{id}:
+    get:
+      operationId: getCategory
+      summary: Get an own active or archived category
+      tags:
+      - Categories
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Category
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '400':
+          $ref: '#/components/responses/CategoryValidationError'
+        '401':
+          $ref: '#/components/responses/CategoryUnauthorized'
+        '404':
+          $ref: '#/components/responses/CategoryNotFound'
+        '409':
+          $ref: '#/components/responses/CategoryConflict'
+        '503':
+          $ref: '#/components/responses/CategoryUnavailable'
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+    patch:
+      operationId: updateCategory
+      summary: Edit, move, archive or restore a category
+      tags:
+      - Categories
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Updated category
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '400':
+          $ref: '#/components/responses/CategoryValidationError'
+        '401':
+          $ref: '#/components/responses/CategoryUnauthorized'
+        '404':
+          $ref: '#/components/responses/CategoryNotFound'
+        '409':
+          $ref: '#/components/responses/CategoryConflict'
+        '503':
+          $ref: '#/components/responses/CategoryUnavailable'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCategoryRequest'
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      description: Version required. Omitted fields stay unchanged; null clears parent/color/icon. Reject cycles and
+        foreign parents. Archive requires no active direct children. Restoring or moving an active category requires
+        all ancestors active. No cascade. System defaults are editable; clientId/isSystem/groupId are not writable.
+    delete:
+      operationId: deleteCategory
+      summary: Move references then permanently delete a childless category
+      tags:
+      - Categories
+      security:
+      - UserBearer: []
+      responses:
+        '204':
+          description: Deleted atomically
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+        '400':
+          $ref: '#/components/responses/CategoryValidationError'
+        '401':
+          $ref: '#/components/responses/CategoryUnauthorized'
+        '404':
+          $ref: '#/components/responses/CategoryNotFound'
+        '409':
+          $ref: '#/components/responses/CategoryConflict'
+        '503':
+          $ref: '#/components/responses/CategoryUnavailable'
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: version
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483646
+      - in: query
+        name: replacementCategoryId
+        required: false
+        schema:
+          type: string
+          format: uuid
+      description: Reject any children including archived ones. Replacement required if any transaction references
+        this category, including soft-deleted transactions. Target must be a different, active category of the same
+        owner. Move all references and increment each transaction version/updatedAt, preserving money, date, account,
+        tags and deletedAt. Any failure or version overflow rolls back everything. Empty categories may be deleted
+        without replacement. No category restore after deletion.
   /api/v1/transactions:
     post:
       operationId: createTransaction
@@ -1452,6 +1792,61 @@ components:
         type: string
         const: no-store
   responses:
+    CategoryValidationError:
+      description: VALIDATION_ERROR
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    CategoryUnauthorized:
+      description: SESSION_INVALID
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    CategoryNotFound:
+      description: 'CATEGORY_NOT_FOUND: missing or owned by another user'
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    CategoryConflict:
+      description: 'CATEGORY_CONFLICT: stale version, incompatible state or clientId replay'
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    CategoryUnavailable:
+      description: CATEGORIES_UNAVAILABLE or authentication unavailable
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
     FinancialAccountValidationError:
       description: VALIDATION_ERROR
       headers:
@@ -1511,6 +1906,247 @@ components:
         checks session storage on every authenticated request. No refresh token in this
         phase.
   schemas:
+    Category:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - clientId
+      - name
+      - parentId
+      - colorToken
+      - iconToken
+      - groupId
+      - isSystem
+      - archivedAt
+      - version
+      - createdAt
+      - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        clientId:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Trimmed; duplicate names are allowed.
+        parentId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        colorToken:
+          type:
+          - string
+          - 'null'
+          maxLength: 100
+          description: Token name from GET /categories/options, never a hex color.
+        iconToken:
+          type:
+          - string
+          - 'null'
+          enum:
+          - category
+          - food
+          - transport
+          - housing
+          - bills
+          - shopping
+          - health
+          - education
+          - entertainment
+          - family
+          - gifts
+          - travel
+          - salary
+          - bonus
+          - other_income
+          - other_expense
+          - null
+        groupId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        isSystem:
+          type: boolean
+          description: Server-managed origin metadata; defaults remain editable.
+        archivedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        version:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    CreateCategoryRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - clientId
+      - name
+      properties:
+        clientId:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Trimmed; duplicate names are allowed.
+        parentId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        colorToken:
+          type:
+          - string
+          - 'null'
+          maxLength: 100
+          description: Token name from GET /categories/options, never a hex color.
+        iconToken:
+          type:
+          - string
+          - 'null'
+          enum:
+          - category
+          - food
+          - transport
+          - housing
+          - bills
+          - shopping
+          - health
+          - education
+          - entertainment
+          - family
+          - gifts
+          - travel
+          - salary
+          - bonus
+          - other_income
+          - other_expense
+          - null
+    UpdateCategoryRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - version
+      properties:
+        version:
+          type: integer
+          minimum: 1
+          maximum: 2147483646
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Trimmed; duplicate names are allowed.
+        parentId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        colorToken:
+          type:
+          - string
+          - 'null'
+          maxLength: 100
+          description: Token name from GET /categories/options, never a hex color.
+        iconToken:
+          type:
+          - string
+          - 'null'
+          enum:
+          - category
+          - food
+          - transport
+          - housing
+          - bills
+          - shopping
+          - health
+          - education
+          - entertainment
+          - family
+          - gifts
+          - travel
+          - salary
+          - bonus
+          - other_income
+          - other_expense
+          - null
+        archived:
+          type: boolean
+    CategoryList:
+      type: object
+      required:
+      - items
+      - page
+      - pageSize
+      - total
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        total:
+          type: integer
+    RecentCategories:
+      type: object
+      required:
+      - items
+      properties:
+        items:
+          type: array
+          maxItems: 10
+          items:
+            $ref: '#/components/schemas/Category'
+    CategoryOptions:
+      type: object
+      required:
+      - colorTokens
+      - iconTokens
+      properties:
+        colorTokens:
+          type: array
+          items:
+            type: string
+        iconTokens:
+          type: array
+          items:
+            type: string
+            enum:
+            - category
+            - food
+            - transport
+            - housing
+            - bills
+            - shopping
+            - health
+            - education
+            - entertainment
+            - family
+            - gifts
+            - travel
+            - salary
+            - bonus
+            - other_income
+            - other_expense
     TransactionLegInput:
       type: object
       additionalProperties: false

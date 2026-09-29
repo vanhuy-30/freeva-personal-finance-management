@@ -50,4 +50,4 @@ Theo [điều kiện hoàn thành Phase 0](../product/phases/phase-00.md) và [D
 
 ## Ghi chú
 
-CRUD ví và giao dịch đã có; UI giao dịch còn `MOB-P1-004`. Local: API `:4000`, Postgres compose `:5434`, admin `:3001`.
+CRUD ví, giao dịch và danh mục đã có; UI giao dịch còn `MOB-P1-004`. `BE-P1-006` cần deploy migration categories trước API; chưa deploy staging. Local: API `:4000`, Postgres compose `:5434`, admin `:3001`.
