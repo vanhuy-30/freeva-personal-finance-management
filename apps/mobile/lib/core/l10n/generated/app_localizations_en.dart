@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -403,4 +404,113 @@ class SEn extends S {
   @override
   String get walletReloadRequired =>
       'The operation may have been partially saved. Reload the list to get the latest state.';
+
+  @override
+  String get transactionTitle => 'Transactions';
+
+  @override
+  String get transactionRecord => 'Record transaction';
+
+  @override
+  String get transactionExpense => 'Expense';
+
+  @override
+  String get transactionIncome => 'Income';
+
+  @override
+  String get transactionTransfer => 'Transfer';
+
+  @override
+  String get transactionAll => 'All';
+
+  @override
+  String get transactionAmount => 'Amount';
+
+  @override
+  String get transactionWallet => 'Wallet';
+
+  @override
+  String get transactionDestination => 'Destination wallet';
+
+  @override
+  String get transactionCategory => 'Category';
+
+  @override
+  String get transactionAllCategories => 'All categories';
+
+  @override
+  String get transactionDate => 'Date';
+
+  @override
+  String get transactionNotes => 'Note';
+
+  @override
+  String get transactionSave => 'Save';
+
+  @override
+  String get transactionEdit => 'Edit transaction';
+
+  @override
+  String get transactionCopy => 'Copy';
+
+  @override
+  String get transactionDelete => 'Delete';
+
+  @override
+  String get transactionRestore => 'Restore';
+
+  @override
+  String get transactionDeleteTitle => 'Delete transaction?';
+
+  @override
+  String get transactionDeleteBody =>
+      'The transaction is soft-deleted and no longer counts toward the balance.';
+
+  @override
+  String get transactionCancel => 'Cancel';
+
+  @override
+  String get transactionEmpty => 'No transactions yet.';
+
+  @override
+  String get transactionDeletedEmpty => 'No deleted transactions.';
+
+  @override
+  String get transactionNoWallet =>
+      'Add an active wallet before recording a transaction.';
+
+  @override
+  String get transactionCreateWallet => 'Create wallet';
+
+  @override
+  String get transactionShowDeleted => 'Show deleted transactions';
+
+  @override
+  String get transactionSearch => 'Search notes';
+
+  @override
+  String get transactionInvalid =>
+      'Check the amount, wallet, category, date, or exchange rate. Expenses need a category. A cross-currency transfer accepts only an exact rate.';
+
+  @override
+  String get transactionConflict =>
+      'This transaction changed elsewhere. Reload the list before editing again.';
+
+  @override
+  String get transactionError =>
+      'Could not load or save transactions. Please try again.';
+
+  @override
+  String get transactionReloadRequired =>
+      'The data is stale. Reload before recording again.';
+
+  @override
+  String get transactionRate => 'Exchange rate';
+
+  @override
+  String get transactionRateHint =>
+      'Enter a manual rate. The destination amount must match the smallest currency unit exactly.';
+
+  @override
+  String get transactionLoadMore => 'Load more';
 }

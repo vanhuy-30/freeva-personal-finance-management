@@ -7,5 +7,6 @@ abstract class AuthorizedApi {
     String method,
     String path, {
     Map<String, dynamic>? body,
+    Map<String, String>? headers,
   });
 }

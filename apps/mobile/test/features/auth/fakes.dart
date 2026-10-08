@@ -45,8 +45,13 @@ class FakeApi implements AuthApi {
   int calls = 0;
   Future<void>? pending;
   @override
-  Future<Map<String, dynamic>> request(String method, String path,
-      {Map<String, dynamic>? body, String? token}) async {
+  Future<Map<String, dynamic>> request(
+    String method,
+    String path, {
+    Map<String, dynamic>? body,
+    String? token,
+    Map<String, String>? headers,
+  }) async {
     calls++;
     lastPath = path;
     lastBody = body;

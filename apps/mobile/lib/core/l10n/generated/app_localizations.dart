@@ -63,7 +63,7 @@ import 'app_localizations_vi.dart';
 /// property.
 abstract class S {
   S(String locale)
-      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -85,16 +85,16 @@ abstract class S {
   /// of delegates is preferred or required.
   static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
       <LocalizationsDelegate<dynamic>>[
-    delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-  ];
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
-    Locale('vi')
+    Locale('vi'),
   ];
 
   /// No description provided for @appTitle.
@@ -816,6 +816,210 @@ abstract class S {
   /// In en, this message translates to:
   /// **'The operation may have been partially saved. Reload the list to get the latest state.'**
   String get walletReloadRequired;
+
+  /// No description provided for @transactionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Transactions'**
+  String get transactionTitle;
+
+  /// No description provided for @transactionRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Record transaction'**
+  String get transactionRecord;
+
+  /// No description provided for @transactionExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get transactionExpense;
+
+  /// No description provided for @transactionIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get transactionIncome;
+
+  /// No description provided for @transactionTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer'**
+  String get transactionTransfer;
+
+  /// No description provided for @transactionAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get transactionAll;
+
+  /// No description provided for @transactionAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get transactionAmount;
+
+  /// No description provided for @transactionWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet'**
+  String get transactionWallet;
+
+  /// No description provided for @transactionDestination.
+  ///
+  /// In en, this message translates to:
+  /// **'Destination wallet'**
+  String get transactionDestination;
+
+  /// No description provided for @transactionCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get transactionCategory;
+
+  /// No description provided for @transactionAllCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'All categories'**
+  String get transactionAllCategories;
+
+  /// No description provided for @transactionDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get transactionDate;
+
+  /// No description provided for @transactionNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get transactionNotes;
+
+  /// No description provided for @transactionSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get transactionSave;
+
+  /// No description provided for @transactionEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit transaction'**
+  String get transactionEdit;
+
+  /// No description provided for @transactionCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get transactionCopy;
+
+  /// No description provided for @transactionDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get transactionDelete;
+
+  /// No description provided for @transactionRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get transactionRestore;
+
+  /// No description provided for @transactionDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete transaction?'**
+  String get transactionDeleteTitle;
+
+  /// No description provided for @transactionDeleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The transaction is soft-deleted and no longer counts toward the balance.'**
+  String get transactionDeleteBody;
+
+  /// No description provided for @transactionCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get transactionCancel;
+
+  /// No description provided for @transactionEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No transactions yet.'**
+  String get transactionEmpty;
+
+  /// No description provided for @transactionDeletedEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No deleted transactions.'**
+  String get transactionDeletedEmpty;
+
+  /// No description provided for @transactionNoWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an active wallet before recording a transaction.'**
+  String get transactionNoWallet;
+
+  /// No description provided for @transactionCreateWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Create wallet'**
+  String get transactionCreateWallet;
+
+  /// No description provided for @transactionShowDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Show deleted transactions'**
+  String get transactionShowDeleted;
+
+  /// No description provided for @transactionSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search notes'**
+  String get transactionSearch;
+
+  /// No description provided for @transactionInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the amount, wallet, category, date, or exchange rate. Expenses need a category. A cross-currency transfer accepts only an exact rate.'**
+  String get transactionInvalid;
+
+  /// No description provided for @transactionConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'This transaction changed elsewhere. Reload the list before editing again.'**
+  String get transactionConflict;
+
+  /// No description provided for @transactionError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load or save transactions. Please try again.'**
+  String get transactionError;
+
+  /// No description provided for @transactionReloadRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'The data is stale. Reload before recording again.'**
+  String get transactionReloadRequired;
+
+  /// No description provided for @transactionRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Exchange rate'**
+  String get transactionRate;
+
+  /// No description provided for @transactionRateHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a manual rate. The destination amount must match the smallest currency unit exactly.'**
+  String get transactionRateHint;
+
+  /// No description provided for @transactionLoadMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Load more'**
+  String get transactionLoadMore;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {
@@ -844,8 +1048,9 @@ S lookupS(Locale locale) {
   }
 
   throw FlutterError(
-      'S.delegate failed to load unsupported locale "$locale". This is likely '
-      'an issue with the localizations generation tool. Please file an issue '
-      'on GitHub with a reproducible sample app and the gen-l10n configuration '
-      'that was used.');
+    'S.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.',
+  );
 }
