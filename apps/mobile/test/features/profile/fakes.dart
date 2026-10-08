@@ -55,6 +55,7 @@ class Transport implements AuthorizedApi {
     String method,
     String path, {
     Map<String, dynamic>? body,
+    Map<String, String>? headers,
   }) async {
     this.body = body;
     return failure == null ? right(response) : left(failure!);

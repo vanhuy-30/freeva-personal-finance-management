@@ -2,6 +2,7 @@ import 'features/profile/presentation/viewmodels/profile_view_model.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:timezone/data/latest.dart' as tzdata;
 
 import 'core/di/injection.dart';
 import 'core/config/app_config.dart';
@@ -11,6 +12,7 @@ import 'core/theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  tzdata.initializeTimeZones();
   await configureDependencies();
   getIt<AppConfig>().validate();
   runApp(const FreevaApp());

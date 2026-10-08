@@ -1,7 +1,7 @@
 # STATUS
 
-- **Phase hiện tại:** 1 — Phase 0 **closed** 2026-09-21
-- **Cập nhật:** 2026-09-25
+- **Phase hiện tại:** 1 — Phase 0 **closed** 2026-09-21. Phase 1 là sổ cái, chưa phải product v1. Đối chiếu spec: [spec-alignment.md](../product/spec-alignment.md).
+- **Cập nhật:** 2026-10-08
 - **CI:** `INF-P0-002` done; cả ba job xanh trên `main`, [run 33521325189](https://github.com/vanhuy-30/freeva-personal-finance-management/actions/runs/33521325189).
 - **Staging:** live — API [Render](https://freeva-api-staging.onrender.com) (`GET /api/health` → 200, `database` = up); admin [Vercel](https://freeva-personal-finance-management.vercel.app) đọc health staging. Stack: `render.yaml` + `apps/web-admin/vercel.json`. Prod hoster TBD tới Store (region VN).
 - **Crash monitoring:** residual chấp nhận khi đóng P0 — vendor dự kiến **Sentry**, wiring = `INF-P1-001` (DECISIONS-OPEN #9). Staging dựa health + log platform cho đến khi gắn SDK.
@@ -12,6 +12,7 @@
 - **Mobile auth:** `MOB-P1-001` doing: email auth, secure session, PIN/biometric lock, privacy cover và quản lý phiên. Analyze + 33 tests + native builds pass; chờ E2E Resend staging và biometric thiết bị thực để đóng task. [Email runbook](../infrastructure/email.md). [Chi tiết](../architecture/mobile-auth.md).
 - **Mobile profile:** `MOB-P1-002` done: locale/currency/IANA TZ/kỳ 1–28, API theo owner với version chống ghi đè, l10n và privacy gate. Analyze, Flutter tests, API build/tests và PostgreSQL integration pass. Chưa deploy/smoke native. [Chi tiết](../architecture/mobile-profile.md).
 - **Mobile wallets:** `MOB-P1-003` done: danh sách/tạo/sửa bốn loại ví, tiền BigInt, sắp xếp/ẩn/khôi phục, version/clientId và privacy gate. Analyze và 11 tests mới pass; chưa native build/E2E staging. [Chi tiết](../architecture/mobile-wallets.md).
+- **Mobile transactions:** `MOB-P1-004` done: ghi thu/chi/chuyển ít bước, tiền BigInt, FX exact, ngày theo TZ, version/clientId và privacy gate. Analyze và Flutter tests pass; chưa native build/E2E staging. [Chi tiết](../architecture/mobile-transactions.md).
 - **Mobile analytics:** `MOB-P0-004` done; catalog typed, debug logger local, `schema_version: 1`, không property tùy ý/PII và chưa có vendor SDK.
 - **Backup/restore:** `BE-P0-005` done; [runbook và bằng chứng local](../../infra/runbooks/backup-restore.md), PostgreSQL 16.14. Production PITR/retention/RPO/RTO chưa triển khai.
 - **Scaffold:** xong trên `main` (`153d3e7`). Health API, admin placeholder, Flutter shell, docs, compose.
@@ -50,4 +51,4 @@ Theo [điều kiện hoàn thành Phase 0](../product/phases/phase-00.md) và [D
 
 ## Ghi chú
 
-CRUD ví, giao dịch và danh mục đã có; UI giao dịch còn `MOB-P1-004`. `BE-P1-006` cần deploy migration categories trước API; chưa deploy staging. Local: API `:4000`, Postgres compose `:5434`, admin `:3001`.
+CRUD ví, giao dịch và danh mục đã có. UI giao dịch `MOB-P1-004` done trên mobile; quản lý danh mục còn `MOB-P1-005`. `BE-P1-006` cần deploy migration categories trước API; chưa deploy staging. Local: API `:4000`, Postgres compose `:5434`, admin `:3001`.

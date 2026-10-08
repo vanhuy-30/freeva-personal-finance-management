@@ -1,4 +1,6 @@
-# Phase 1 — tasks (MVP)
+# Phase 1 — tasks (sổ cái)
+
+Phase này chưa phải product v1. Gate đầy đủ: [spec-alignment.md](../docs/product/spec-alignment.md).
 
 ## Architecture / tooling
 
@@ -92,8 +94,12 @@
 - Note: [Thiết kế API](../docs/architecture/transactions.md), [lệnh test](../backend/api/test/README.md#transactions--be-p1-005). FX cần rounding bị từ chối; list đếm leg. Không migration mới; chưa deploy staging. UI giao dịch, quản lý danh mục, báo cáo và sync thuộc task riêng.
 
 ### MOB-P1-004 — Ghi giao dịch < số bước tối thiểu
-- Status: todo
+- Status: done
 - Module: 4
+- Depends: BE-P1-005, BE-P1-006, MOB-P1-001, MOB-P1-003
+- DoD: lối tắt home và màn ghi/danh sách thu-chi-chuyển; chi mặc định, ví và danh mục gần nhất, ngày theo TZ hồ sơ; tiền BigInt và FX exact; sửa/sao chép/xóa mềm/khôi phục với version và Idempotency-Key; l10n vi/en, DI abstract, privacy gate. Không quản lý danh mục, nhãn, báo cáo hay hàng đợi offline.
+- Verification: `flutter analyze` sạch; toàn bộ 70 Flutter tests pass (9 tests mới), gồm ngày qua nửa đêm TZ, FX exact/lẻ, idempotency, phân trang, conflict, khóa xóa state và editor 320px text scale 2.
+- Note: [Thiết kế và giới hạn](../docs/architecture/mobile-transactions.md). Chưa native build/E2E staging. Catalog hiện có VND; nhánh FX vẫn có khi hai ví khác tiền tệ.
 
 ### BE-P1-006 — Categories mặc định VN + custom + ẩn/xóa chuyển GD
 - Status: done
@@ -106,49 +112,107 @@
 ### MOB-P1-005 — UI danh mục
 - Status: todo
 - Module: 5
+- Gate: v1
+- Depends: BE-P1-011, MOB-P1-004
+- DoD: tạo, đổi tên, icon/màu bằng token, ẩn, khôi phục, xóa có chuyển giao dịch, cây cha-con. Ghi chi chỉ chọn `expense` hoặc `both`; ghi thu chỉ chọn `income` hoặc `both`. Hiện bộ mặc định sau bootstrap. Loading, empty, error. Không hex, không chuỗi cứng. `flutter analyze` sạch. Chưa quản lý nhãn.
+
+### BE-P1-011 — Kind danh mục và bổ sung bộ mặc định
+- Status: todo
+- Module: 5
+- Gate: v1
+- Depends: BE-P1-006
+- DoD: `kind` = expense, income hoặc both. User đã bootstrap nhận thêm, đúng một lần, các mục spec còn thiếu: Cà phê, Điện nước, Internet, Điện thoại, Subscription, Bảo hiểm, Thuế/phí, Freelance, Kinh doanh, Đầu tư, Hoàn tiền. Điện nước, Internet, Điện thoại là con của Hóa đơn nếu mục đó còn. Không ghi đè tên hoặc mục user đã sửa. Custom cũ mặc định `both`. OpenAPI khớp. Test upgrade tài khoản đã có danh mục. Log không có tên danh mục.
 
 ## Báo cáo / search / settings / help
 
-### BE-P1-007 — Báo cáo thu chi, theo danh mục/ví, net worth hiện tại
+### BE-P1-007 — Báo cáo thu chi, theo danh mục/ví, ròng hiện tại
 - Status: todo
 - Module: 14
+- Gate: v1
+- Depends: BE-P1-004, BE-P1-005
+- DoD: theo kỳ và timezone hồ sơ: tổng thu, tổng chi, tiết kiệm = thu − chi, theo danh mục, theo ví. Tài sản, nợ, ròng hiện tại: số dư âm và thẻ là nợ, không cộng vào tài sản. Phần trăm ròng so với cuối tháng trước tính lại từ ledger và số dư đầu, không dùng bảng snapshot. Transfer không vào thu hoặc chi. Tiền integer, một snapshot đọc. OpenAPI và test bảng số. Chưa so ngân sách, chưa top merchant, chưa lịch sử nhiều kỳ.
 
-### MOB-P1-006 — Màn tổng quan + báo cáo lọc kỳ
+### MOB-P1-006 — Home và báo cáo lọc kỳ
 - Status: todo
 - Module: 14
+- Gate: v1
+- Depends: BE-P1-007, MOB-P1-004
+- DoD: Home có tổng tiền, tài sản, nợ, ròng, phần trăm so với tháng trước, thu/chi/tiết kiệm tháng, 5–10 giao dịch gần nhất. Empty có CTA ghi giao dịch đầu. Tab: Home, Giao dịch, `+`, Thêm. Báo cáo lọc tuần, tháng, khoảng ngày. Loading, empty, error, offline. Số VND dạng `12.500.000đ` từ formatter. `flutter analyze` sạch. Card ngân sách, mục tiêu, insight và tab Insights gắn ở task `Gate: v1` sau.
 
-### BE-P1-008 — Search cơ bản + không dấu (Should)
+### BE-P1-008 — Tìm giao dịch, kể cả không dấu
 - Status: todo
 - Module: 19
+- Gate: v1
+- Depends: BE-P1-005
+- DoD: lọc theo từ khóa ghi chú, danh mục, ví, khoảng tiền, khoảng ngày, loại thu/chi/chuyển. Tiếng Việt không dấu. Phân trang, chỉ owner. OpenAPI và test. Merchant và tag nối trong cùng API khi `BE-P1-012` đã có trường.
 
-### MOB-P1-007 — Settings theme/locale/quyền + onboarding + FAQ + feedback
+### MOB-P1-007 — Onboarding, cài đặt, FAQ, phản hồi
 - Status: todo
 - Module: 24, 25
+- Gate: v1
+- Depends: MOB-P1-002, MOB-P1-003
+- DoD: lần đầu đi locale và tiền tệ (mặc định VND, `Asia/Ho_Chi_Minh`) → ví đầu và số dư → bootstrap danh mục → Home. Bỏ qua được bước sau ví đầu. Settings đổi theme và locale; quyền thông báo chỉ lưu preference. FAQ. Phản hồi không gửi số dư hay số tài khoản. Loading, empty, error. Bước ngân sách và mục tiêu thêm khi module đó xong, không chặn luồng này.
+
+### BE-P1-012 — Merchant và CRUD nhãn (Should)
+- Status: todo
+- Module: 4, 5
+- Gate: should
+- Depends: BE-P1-005
+- DoD: CRUD nhãn theo owner; giao dịch gắn nhiều nhãn bằng API hiện có. `merchant` optional trên thu và chi, cấm trên transfer. Không log merchant. OpenAPI và test owner. Không chặn gate v1.
+
+### MOB-P1-011 — UI merchant và nhãn (Should)
+- Status: todo
+- Module: 4, 5
+- Gate: should
+- Depends: BE-P1-012, MOB-P1-004
+- DoD: tạo nhãn, gắn hoặc gỡ trên giao dịch, nhập merchant ở thu/chi. Bỏ trống vẫn lưu được. L10n vi/en. Không hex.
+
+### QA-P1-001 — Đo ghi chi thường dưới 10 giây (Should)
+- Status: todo
+- Module: 4
+- Gate: should
+- Depends: MOB-P1-004
+- DoD: trên thiết bị thật, chi tiêu với số tiền, ví gần nhất và danh mục gần nhất, từ lúc chạm `+` đến lưu thành công không quá 10 giây. Ghi kết quả vào `docs/architecture/mobile-transactions.md`. Không đạt thì sửa UX trong task này.
 
 ## Sync / privacy / security phát hành
 
-### BE-P1-009 — Sync queue, idempotency, chống trùng đơn giản
+### BE-P1-009 — Hàng đợi sync, idempotency, chống trùng
 - Status: todo
 - Module: 20
-- Depends: BE-P0-001
+- Gate: v1
+- Depends: BE-P1-005
+- DoD: mutation tạo dùng `clientId` UUID, replay không thêm leg. Cùng user, số tiền, ngày và ví trong cửa sổ ngắn thì trả cờ nghi trùng, không tự xóa. Cùng id mà số tiền khác: giữ bản server và trả cờ cần xem lại. Client lệch schema major thì từ chối sync. Test retry không nhân đôi transfer. Không log số tiền.
 
-### MOB-P1-008 — Hàng đợi offline + trạng thái sync
+### MOB-P1-008 — Offline: hàng đợi và trạng thái sync
 - Status: todo
 - Module: 20
+- Gate: should
+- Depends: BE-P1-009, MOB-P1-004
+- DoD: mất mạng vẫn lưu giao dịch local với `clientId`, `syncStatus` pending/synced/failed, thời điểm tạo local, thời điểm server khi ack, `retryCount`. Có mạng thì đẩy và hiện trạng thái. Conflict hiện cho user chọn xem bản server. Sau synced, số dư trên màn hình lấy từ server.
 
-### BE-P1-010 — Export JSON + xóa tài khoản
+### BE-P1-010 — Export CSV/JSON và xóa tài khoản
 - Status: todo
 - Module: 21
+- Gate: v1
+- Depends: BE-P1-005
+- DoD: CSV cột `date,type,amount,category,account,note` và JSON cùng tập giao dịch của owner. `amount` là integer minor units. Xóa tài khoản xóa dữ liệu tài chính và mọi session sau bước xác nhận. Audit không ghi nội dung file. Test không lẫn dữ liệu user khác.
 
-### MOB-P1-009 — Ẩn số dư khi nền; thông báo thiết bị mới (Should)
+### MOB-P1-009 — Che số khi app nền; cảnh báo phiên mới (Should)
 - Status: todo
 - Module: 22
+- Gate: should
+- Depends: MOB-P1-001
+- DoD: số dư và số tiền không còn đọc được ở app switcher. Phiên đăng nhập từ thiết bị mới có cảnh báo in-app, nội dung không kèm số dư. Bật hoặc tắt cảnh báo trong settings. Phần che app nền đã có ở `MOB-P1-001` thì chỉ kiểm chứng lại, không làm màn hình thứ hai.
 
 ### INF-P1-001 — Crash monitoring staging
 - Status: todo
 - Module: 26
-- Note: Residual Phase 0 (2026-09-21): vendor dự kiến Sentry (DECISIONS-OPEN #9); chưa SDK. Gắn API ± admin ± mobile trên staging, scrub PII, smoke event — không chặn đóng P0.
+- Gate: v1
+- DoD: SDK crash (vendor Sentry theo DECISIONS-OPEN #9, trừ khi quyết định đó đổi) trên API, admin và mobile ở staging. Scrub email, số dư, số tài khoản, token. Một event thử không chứa các field đó. Dashboard không public.
 
 ### SEC-P1-001 — Security test cơ bản trước store
 - Status: todo
 - Module: 22
+- Gate: v1
+- Depends: BE-P1-005, BE-P1-010
+- DoD: checklist ghi vào threat model: rate limit auth, không đọc ví hoặc giao dịch của user khác, revoke session có hiệu lực, export và xóa chỉ owner, log không PII, TLS staging. Không kèm hướng dẫn khai thác.

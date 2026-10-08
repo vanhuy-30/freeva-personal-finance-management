@@ -2,6 +2,10 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-10-08
+
+- Đối chiếu spec sản phẩm v0.1: Phase 1 giữ vai trò sổ cái; product v1 thêm ngân sách, mục tiêu và insight cơ bản. Bản spec nằm ở [freeva-product-spec.md](../product/freeva-product-spec.md); quyết định lệch ở [spec-alignment.md](../product/spec-alignment.md). Task còn mở và epic Phase 2–7 có DoD kiểm được.
+
 ## 2026-09-25
 
 - `BE-P1-005`: CRUD transactions thu/chi/transfer hai leg nguyên tử; BigInt và manual FX exact, quote bất biến; owner/session, Idempotency-Key/clientId, optimistic version, danh mục chi bắt buộc, nhãn/ghi chú, lọc/phân trang và soft-delete/restore cả cặp. Writer phối hợp khóa/update hàng ví để chống race đổi denomination từ snapshot cũ. 145 unit/HTTP + 51 PostgreSQL integration tests, build/OpenAPI pass; không migration mới, chưa deploy staging. [Thiết kế](../architecture/transactions.md).

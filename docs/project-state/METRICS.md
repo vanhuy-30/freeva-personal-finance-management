@@ -14,6 +14,6 @@ Onboarding → ví → giao dịch đầu → báo cáo đầu.
 
 ## Product (sau beta)
 
-Retention D7/D30, ngày có ghi chép, tỷ lệ GD phải sửa, opt-in thông báo.
+Giữ tên, chưa đặt mốc số: kích hoạt (ví đầu, giao dịch đầu), giao dịch/user/tháng, D1/D7/D30, tỷ lệ tạo ngân sách, tạo mục tiêu, xem báo cáo. AI khi có: yêu cầu/user, tỷ lệ chấp nhận, tỷ lệ sửa, OCR thành công.
 
 Chuyển phase khi điều kiện hoàn thành ở `docs/product/phases/` đạt, không chỉ “hết ticket”.

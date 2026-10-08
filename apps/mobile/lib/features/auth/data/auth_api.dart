@@ -6,8 +6,13 @@ import 'package:injectable/injectable.dart';
 import '../domain/auth_repository.dart';
 
 abstract class AuthApi {
-  Future<Map<String, dynamic>> request(String method, String path,
-      {Map<String, dynamic>? body, String? token});
+  Future<Map<String, dynamic>> request(
+    String method,
+    String path, {
+    Map<String, dynamic>? body,
+    String? token,
+    Map<String, String>? headers,
+  });
 }
 
 @LazySingleton(as: AuthApi)
@@ -19,8 +24,13 @@ class HttpAuthApi implements AuthApi {
   final String _baseUrl;
 
   @override
-  Future<Map<String, dynamic>> request(String method, String path,
-      {Map<String, dynamic>? body, String? token}) async {
+  Future<Map<String, dynamic>> request(
+    String method,
+    String path, {
+    Map<String, dynamic>? body,
+    String? token,
+    Map<String, String>? headers,
+  }) async {
     final base = Uri.tryParse(_baseUrl);
     if (base == null ||
         base.scheme != 'https' ||
@@ -35,6 +45,7 @@ class HttpAuthApi implements AuthApi {
         ..followRedirects = false
         ..headers['Content-Type'] = 'application/json';
       if (token != null) request.headers['Authorization'] = 'Bearer $token';
+      if (headers != null) request.headers.addAll(headers);
       if (body != null) request.body = jsonEncode(body);
       final response = await _client
           .send(request)
