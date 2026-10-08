@@ -33,6 +33,8 @@ import 'package:mobile/features/categories/domain/category_repository.dart'
     as _i561;
 import 'package:mobile/features/categories/domain/category_use_cases.dart'
     as _i221;
+import 'package:mobile/features/categories/presentation/viewmodels/category_view_model.dart'
+    as _i961;
 import 'package:mobile/features/profile/data/profile_repository_impl.dart'
     as _i72;
 import 'package:mobile/features/profile/domain/profile_repository.dart' as _i4;
@@ -122,6 +124,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i887.ProfileViewModel>(
         () => _i887.DefaultProfileViewModel(
               gh<_i281.ProfileUseCases>(),
+              gh<_i990.AuthViewModel>(),
+            ));
+    gh.lazySingleton<_i961.CategoryViewModel>(
+        () => _i961.DefaultCategoryViewModel(
+              gh<_i221.CategoryUseCases>(),
               gh<_i990.AuthViewModel>(),
             ));
     return this;

@@ -515,4 +515,96 @@ class SVi extends S {
 
   @override
   String get transactionLoadMore => 'Tải thêm';
+
+  @override
+  String get categoryTitle => 'Danh mục';
+
+  @override
+  String get categoryAdd => 'Thêm danh mục';
+
+  @override
+  String get categoryEdit => 'Sửa danh mục';
+
+  @override
+  String get categoryName => 'Tên danh mục';
+
+  @override
+  String get categoryParent => 'Danh mục cha';
+
+  @override
+  String get categoryNoParent => 'Không có danh mục cha';
+
+  @override
+  String get categoryColor => 'Màu';
+
+  @override
+  String get categoryNoColor => 'Không chọn màu';
+
+  @override
+  String get categoryIcon => 'Biểu tượng';
+
+  @override
+  String get categoryNoIcon => 'Không chọn biểu tượng';
+
+  @override
+  String get categorySystem => 'Danh mục mặc định';
+
+  @override
+  String get categoryShowHidden => 'Xem danh mục đã ẩn';
+
+  @override
+  String get categoryHide => 'Ẩn danh mục';
+
+  @override
+  String get categoryRestore => 'Khôi phục danh mục';
+
+  @override
+  String get categoryHideExplanation =>
+      'Ẩn danh mục khỏi danh sách đang dùng. Giao dịch cũ giữ nguyên danh mục; danh mục đã ẩn không dùng để ghi mới.';
+
+  @override
+  String get categoryHideBlocked =>
+      'Hãy ẩn hoặc chuyển các danh mục con đang dùng trước khi ẩn danh mục này.';
+
+  @override
+  String get categoryDelete => 'Xóa danh mục';
+
+  @override
+  String get categoryDeleteTitle => 'Xóa danh mục vĩnh viễn?';
+
+  @override
+  String get categoryDeleteBody =>
+      'Danh mục bị xóa không khôi phục được. Nếu còn giao dịch, kể cả giao dịch đã xóa mềm, hãy chọn danh mục thay thế.';
+
+  @override
+  String get categoryDeleteBlocked =>
+      'Hãy xóa hoặc chuyển mọi danh mục con, kể cả danh mục đã ẩn, trước khi xóa danh mục này.';
+
+  @override
+  String get categoryReplacement => 'Danh mục thay thế';
+
+  @override
+  String get categoryNoReplacement => 'Không chuyển giao dịch';
+
+  @override
+  String get categoryEmpty => 'Chưa có danh mục.';
+
+  @override
+  String get categoryHiddenEmpty => 'Không có danh mục đã ẩn.';
+
+  @override
+  String get categoryInvalid =>
+      'Kiểm tra tên (1–100 ký tự), danh mục cha, màu và biểu tượng. Không chọn chính danh mục này hoặc danh mục con làm cha.';
+
+  @override
+  String get categoryConflict =>
+      'Danh mục đã thay đổi ở nơi khác. Tải lại danh sách trước khi sửa tiếp.';
+
+  @override
+  String get categoryError =>
+      'Không thể tải hoặc lưu danh mục. Vui lòng thử lại.';
+
+  @override
+  String get categoryReloadRequired =>
+      'Dữ liệu đã cũ. Tải lại trước khi sửa tiếp.';
 }

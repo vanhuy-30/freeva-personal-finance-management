@@ -513,4 +513,96 @@ class SEn extends S {
 
   @override
   String get transactionLoadMore => 'Load more';
+
+  @override
+  String get categoryTitle => 'Categories';
+
+  @override
+  String get categoryAdd => 'Add category';
+
+  @override
+  String get categoryEdit => 'Edit category';
+
+  @override
+  String get categoryName => 'Category name';
+
+  @override
+  String get categoryParent => 'Parent category';
+
+  @override
+  String get categoryNoParent => 'No parent';
+
+  @override
+  String get categoryColor => 'Color';
+
+  @override
+  String get categoryNoColor => 'No color';
+
+  @override
+  String get categoryIcon => 'Icon';
+
+  @override
+  String get categoryNoIcon => 'No icon';
+
+  @override
+  String get categorySystem => 'Default category';
+
+  @override
+  String get categoryShowHidden => 'Show hidden categories';
+
+  @override
+  String get categoryHide => 'Hide category';
+
+  @override
+  String get categoryRestore => 'Restore category';
+
+  @override
+  String get categoryHideExplanation =>
+      'Hiding archives the category from the active list. Existing transactions keep it; hidden categories cannot be used for new records.';
+
+  @override
+  String get categoryHideBlocked =>
+      'Hide or move active child categories before hiding this one.';
+
+  @override
+  String get categoryDelete => 'Delete category';
+
+  @override
+  String get categoryDeleteTitle => 'Delete this category permanently?';
+
+  @override
+  String get categoryDeleteBody =>
+      'A deleted category cannot be restored. If any transaction still references it, including a soft-deleted one, choose a replacement.';
+
+  @override
+  String get categoryDeleteBlocked =>
+      'Delete or move every child, including hidden ones, before deleting this category.';
+
+  @override
+  String get categoryReplacement => 'Replacement category';
+
+  @override
+  String get categoryNoReplacement => 'Do not move transactions';
+
+  @override
+  String get categoryEmpty => 'No categories yet.';
+
+  @override
+  String get categoryHiddenEmpty => 'No hidden categories.';
+
+  @override
+  String get categoryInvalid =>
+      'Check the name (1–100 characters), parent, color and icon. A category cannot be its own parent or sit under its child.';
+
+  @override
+  String get categoryConflict =>
+      'This category changed elsewhere. Reload the list before editing again.';
+
+  @override
+  String get categoryError =>
+      'Could not load or save categories. Please try again.';
+
+  @override
+  String get categoryReloadRequired =>
+      'The data is stale. Reload before editing again.';
 }

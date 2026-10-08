@@ -1,3 +1,4 @@
+import '../../features/categories/presentation/pages/category_page.dart';
 import '../../features/transactions/presentation/pages/transaction_page.dart';
 import '../../features/wallets/presentation/pages/wallet_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
@@ -23,6 +24,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/wallets',
       builder: (context, state) => const AuthGate(child: WalletPage()),
+    ),
+    GoRoute(
+      path: '/categories',
+      builder: (context, state) => const AuthGate(child: CategoryPage()),
     ),
     GoRoute(
       path: '/profile',

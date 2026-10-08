@@ -31,6 +31,12 @@ class HomePage extends StatelessWidget {
               onTap: () => context.go('/wallets'),
             ),
             ListTile(
+              leading: const Icon(Icons.category_outlined),
+              title: Text(s.categoryTitle),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.go('/categories'),
+            ),
+            ListTile(
               leading: const Icon(Icons.receipt_long_outlined),
               title: Text(s.transactionTitle),
               trailing: const Icon(Icons.chevron_right),
