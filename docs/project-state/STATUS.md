@@ -1,6 +1,6 @@
 # STATUS
 
-- **Phase hiện tại:** 1 — Phase 0 **closed** 2026-09-21
+- **Phase hiện tại:** 1 — Phase 0 **closed** 2026-09-21. Phase 1 là sổ cái, chưa phải product v1. Đối chiếu spec: [spec-alignment.md](../product/spec-alignment.md).
 - **Cập nhật:** 2026-10-08
 - **CI:** `INF-P0-002` done; cả ba job xanh trên `main`, [run 33521325189](https://github.com/vanhuy-30/freeva-personal-finance-management/actions/runs/33521325189).
 - **Staging:** live — API [Render](https://freeva-api-staging.onrender.com) (`GET /api/health` → 200, `database` = up); admin [Vercel](https://freeva-personal-finance-management.vercel.app) đọc health staging. Stack: `render.yaml` + `apps/web-admin/vercel.json`. Prod hoster TBD tới Store (region VN).

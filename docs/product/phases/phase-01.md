@@ -1,4 +1,6 @@
-# Phase 1 — MVP: Ghi chép tài chính cốt lõi
+# Phase 1 — Ghi chép tài chính cốt lõi
+
+Đây là gate sổ cái, chưa phải product v1. Xem [spec-alignment.md](../spec-alignment.md).
 
 Người dùng bắt đầu trong vài phút, ghi thu chi, thấy bức tranh đáng tin.
 

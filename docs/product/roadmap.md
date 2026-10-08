@@ -1,6 +1,8 @@
 # Roadmap
 
-Thứ tự ưu tiên sản phẩm, không phải cam kết thời gian. Chi tiết: [phases](phases/phase-00.md).
+Thứ tự ưu tiên sản phẩm, không phải cam kết thời gian. Chi tiết: [phases](phases/phase-00.md). Spec: [freeva-product-spec.md](freeva-product-spec.md). Đối chiếu: [spec-alignment.md](spec-alignment.md).
+
+Phase 1 là sổ cái đáng tin, chưa phải product v1. Product v1 còn gồm ngân sách, mục tiêu và insight cơ bản (`Gate: v1` ở Phase 2, 3, 5).
 
 | Phase | Tên | Giá trị chính | Module trọng tâm |
 |---|---|---|---|

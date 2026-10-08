@@ -14,6 +14,8 @@ Mục lục. Nguồn chức năng: kế hoạch 8 phase / 26 module. Roadmap là
 - [Dependencies](product/dependencies.md)
 - [Workstreams](product/workstreams.md)
 - [MoSCoW MVP](product/moscow-mvp.md)
+- [Spec sản phẩm v0.1](product/freeva-product-spec.md)
+- [Đối chiếu spec v0.1](product/spec-alignment.md)
 - [Analytics events](product/analytics-events.md)
 
 ## Legal (bản nháp)
