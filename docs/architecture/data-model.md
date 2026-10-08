@@ -85,7 +85,7 @@ Kiểu Prisma. Mọi bảng user-owned (trừ `User`, `Currency`, `SchemaMeta`, 
 | statementCloseDay | Int? | 1–28 |
 | paymentDueDay | Int? | 1–28 |
 
-Unique `(userId, clientId)`.
+Unique `(userId, clientId)`. CRUD, số dư derived và quy tắc chỉnh sửa/lưu trữ: [BE-P1-004](financial-accounts.md).
 
 ### CategoryGroup / Category
 
@@ -99,7 +99,9 @@ Unique `(userId, clientId)`.
 | colorToken | String? | tên token, không hex |
 | iconToken | String? | |
 
-Xóa danh mục: chuyển GD trước (Phase 1). Unique `(userId, clientId)`.
+Xóa danh mục: chuyển toàn bộ GD (kể cả soft-delete) trước, tăng version GD; chặn khi còn con. Unique `(userId, clientId)`.
+
+`User.categoriesInitializedAt` nullable ghi nhận bootstrap bộ VN một lần. Migration không tạo danh mục; mobile gọi POST defaults trước GET categories. Quy tắc cha/con, archive và khóa writer: [Categories — BE-P1-006](categories.md).
 
 ### Tag
 

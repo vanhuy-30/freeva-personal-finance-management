@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -248,4 +247,160 @@ class SEn extends S {
   @override
   String get authSecurityNote =>
       'Your account is protected by your password and app lock.';
+
+  @override
+  String get profileTitle => 'Financial profile';
+
+  @override
+  String get profileLanguage => 'Language';
+
+  @override
+  String get profileVietnamese => 'Vietnamese';
+
+  @override
+  String get profileEnglish => 'English';
+
+  @override
+  String get profileCurrency => 'Default currency';
+
+  @override
+  String get profileCurrencyHint =>
+      'Applies to new data by default; existing amounts are not converted.';
+
+  @override
+  String get profileTimezone => 'Time zone';
+
+  @override
+  String get profileFiscalDay => 'Financial month start day';
+
+  @override
+  String get profileFiscalHint =>
+      'Choose a day from 1 to 28 so each financial month starts on the same day.';
+
+  @override
+  String get profileSave => 'Save changes';
+
+  @override
+  String get profileCancel => 'Discard changes';
+
+  @override
+  String get profileSaved => 'Profile saved.';
+
+  @override
+  String get profileLoadError =>
+      'Could not load your profile. Please try again.';
+
+  @override
+  String get profileSaveError =>
+      'Changes could not be saved. Please try again.';
+
+  @override
+  String get profileConflict =>
+      'Your profile changed on another device. Reload before editing.';
+
+  @override
+  String get profileReload => 'Reload';
+
+  @override
+  String get profileInvalid =>
+      'Check the language, currency, time zone and start day (1–28).';
+
+  @override
+  String get profileBack => 'Back to home';
+
+  @override
+  String get profileSearch => 'Search time zones';
+
+  @override
+  String get walletTitle => 'My wallets';
+
+  @override
+  String get walletAdd => 'Add wallet';
+
+  @override
+  String get walletEdit => 'Edit wallet';
+
+  @override
+  String get walletCash => 'Cash';
+
+  @override
+  String get walletBank => 'Bank';
+
+  @override
+  String get walletEwallet => 'E-wallet';
+
+  @override
+  String get walletCredit => 'Credit card';
+
+  @override
+  String get walletName => 'Wallet name';
+
+  @override
+  String get walletType => 'Wallet type';
+
+  @override
+  String get walletInitialBalance => 'Initial balance';
+
+  @override
+  String get walletCreditLimit => 'Credit limit (optional)';
+
+  @override
+  String get walletCloseDay => 'Statement day (1–28, optional)';
+
+  @override
+  String get walletDueDay => 'Payment day (1–28, optional)';
+
+  @override
+  String get walletMoneyHint =>
+      'Enter amounts in the selected currency without thousands separators. For example: VND 10000; USD 10.50.';
+
+  @override
+  String get walletEditHint =>
+      'Wallet type and currency cannot change once transactions exist. Edit the initial balance only to correct it.';
+
+  @override
+  String get walletShowHidden => 'Show hidden wallets';
+
+  @override
+  String get walletHide => 'Hide wallet';
+
+  @override
+  String get walletRestore => 'Restore wallet';
+
+  @override
+  String get walletHideExplanation =>
+      'Hiding archives the wallet from the active list. Its balance and history are preserved and it can be restored later.';
+
+  @override
+  String get walletMoveUp => 'Move up';
+
+  @override
+  String get walletMoveDown => 'Move down';
+
+  @override
+  String get walletEmpty =>
+      'No wallets yet. Add your first wallet to get started.';
+
+  @override
+  String get walletHiddenEmpty => 'No hidden wallets.';
+
+  @override
+  String walletBalance(String amount, String currency) {
+    return 'Balance: $amount $currency';
+  }
+
+  @override
+  String get walletInvalid =>
+      'Check the name, amounts and days (1–28). Type or currency may be locked because transactions exist.';
+
+  @override
+  String get walletConflict =>
+      'This wallet changed elsewhere. Return to the list and reload before editing again.';
+
+  @override
+  String get walletError => 'Could not load or save wallets. Please try again.';
+
+  @override
+  String get walletReloadRequired =>
+      'The operation may have been partially saved. Reload the list to get the latest state.';
 }

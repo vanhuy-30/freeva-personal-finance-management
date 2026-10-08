@@ -6,10 +6,11 @@ import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import '../domain/auth_repository.dart';
 import 'auth_api.dart';
+import 'authorized_api.dart';
 import 'auth_platform.dart';
 
 @LazySingleton(as: AuthRepository)
-class AuthRepositoryImpl implements AuthRepository {
+class AuthRepositoryImpl implements AuthRepository, AuthorizedApi {
   AuthRepositoryImpl(this._api, this._vault, this._biometrics);
   final AuthApi _api;
   final AuthVault _vault;
@@ -47,14 +48,23 @@ class AuthRepositoryImpl implements AuthRepository {
     return record['accessToken'] as String;
   }
 
-  Future<Map<String, dynamic>> _authorized(String method, String path) async {
+  Future<Map<String, dynamic>> _authorized(String method, String path,
+      {Map<String, dynamic>? body}) async {
+    final token = await _token();
     try {
-      return await _api.request(method, path, token: await _token());
+      return await _api.request(method, path, token: token, body: body);
     } on AuthFailure catch (failure) {
-      if (failure.code == AuthError.expired) await _clear();
+      if (failure.code == AuthError.expired && _record?['accessToken'] == token) {
+        await _clear();
+      }
       rethrow;
     }
   }
+
+  @override
+  Future<Either<AuthFailure, Map<String, dynamic>>> request(
+          String method, String path, {Map<String, dynamic>? body}) =>
+      _guard(() => _authorized(method, path, body: body));
 
   @override
   Future<Either<AuthFailure, bool>> accountExists(String email) =>

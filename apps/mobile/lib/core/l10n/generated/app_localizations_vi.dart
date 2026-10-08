@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -253,4 +252,157 @@ class SVi extends S {
   @override
   String get authSecurityNote =>
       'Tài khoản của bạn được bảo vệ bằng mật khẩu và khóa ứng dụng.';
+
+  @override
+  String get profileTitle => 'Hồ sơ tài chính';
+
+  @override
+  String get profileLanguage => 'Ngôn ngữ';
+
+  @override
+  String get profileVietnamese => 'Tiếng Việt';
+
+  @override
+  String get profileEnglish => 'Tiếng Anh';
+
+  @override
+  String get profileCurrency => 'Tiền tệ mặc định';
+
+  @override
+  String get profileCurrencyHint =>
+      'Áp dụng mặc định cho dữ liệu mới; không quy đổi số tiền hiện có.';
+
+  @override
+  String get profileTimezone => 'Múi giờ';
+
+  @override
+  String get profileFiscalDay => 'Ngày bắt đầu tháng tài chính';
+
+  @override
+  String get profileFiscalHint =>
+      'Chọn ngày từ 1 đến 28 để kỳ tài chính luôn bắt đầu đúng ngày mỗi tháng.';
+
+  @override
+  String get profileSave => 'Lưu thay đổi';
+
+  @override
+  String get profileCancel => 'Hủy thay đổi';
+
+  @override
+  String get profileSaved => 'Đã lưu hồ sơ.';
+
+  @override
+  String get profileLoadError => 'Không tải được hồ sơ. Vui lòng thử lại.';
+
+  @override
+  String get profileSaveError => 'Chưa lưu được thay đổi. Vui lòng thử lại.';
+
+  @override
+  String get profileConflict =>
+      'Hồ sơ đã thay đổi trên thiết bị khác. Tải lại trước khi chỉnh sửa.';
+
+  @override
+  String get profileReload => 'Tải lại';
+
+  @override
+  String get profileInvalid =>
+      'Kiểm tra ngôn ngữ, tiền tệ, múi giờ và ngày bắt đầu kỳ (1–28).';
+
+  @override
+  String get profileBack => 'Về trang chủ';
+
+  @override
+  String get profileSearch => 'Tìm múi giờ';
+
+  @override
+  String get walletTitle => 'Ví của tôi';
+
+  @override
+  String get walletAdd => 'Thêm ví';
+
+  @override
+  String get walletEdit => 'Sửa ví';
+
+  @override
+  String get walletCash => 'Tiền mặt';
+
+  @override
+  String get walletBank => 'Ngân hàng';
+
+  @override
+  String get walletEwallet => 'Ví điện tử';
+
+  @override
+  String get walletCredit => 'Thẻ tín dụng';
+
+  @override
+  String get walletName => 'Tên ví';
+
+  @override
+  String get walletType => 'Loại ví';
+
+  @override
+  String get walletInitialBalance => 'Số dư ban đầu';
+
+  @override
+  String get walletCreditLimit => 'Hạn mức tín dụng (không bắt buộc)';
+
+  @override
+  String get walletCloseDay => 'Ngày chốt thẻ (1–28, không bắt buộc)';
+
+  @override
+  String get walletDueDay => 'Ngày thanh toán (1–28, không bắt buộc)';
+
+  @override
+  String get walletMoneyHint =>
+      'Nhập số tiền theo đơn vị tiền tệ đã chọn, không dùng dấu phân cách hàng nghìn. Ví dụ: VND 10000; USD 10,50.';
+
+  @override
+  String get walletEditHint =>
+      'Khi ví có giao dịch, không thể đổi loại ví hoặc tiền tệ. Sửa số dư ban đầu chỉ dùng để đính chính.';
+
+  @override
+  String get walletShowHidden => 'Xem ví đã ẩn';
+
+  @override
+  String get walletHide => 'Ẩn ví';
+
+  @override
+  String get walletRestore => 'Khôi phục ví';
+
+  @override
+  String get walletHideExplanation =>
+      'Ẩn ví là lưu trữ ví khỏi danh sách đang dùng. Số dư và lịch sử vẫn được giữ lại; có thể khôi phục sau.';
+
+  @override
+  String get walletMoveUp => 'Di chuyển lên';
+
+  @override
+  String get walletMoveDown => 'Di chuyển xuống';
+
+  @override
+  String get walletEmpty => 'Chưa có ví. Thêm ví đầu tiên để bắt đầu.';
+
+  @override
+  String get walletHiddenEmpty => 'Không có ví đã ẩn.';
+
+  @override
+  String walletBalance(String amount, String currency) {
+    return 'Số dư: $amount $currency';
+  }
+
+  @override
+  String get walletInvalid =>
+      'Kiểm tra tên, số tiền và ngày 1–28. Loại ví hoặc tiền tệ có thể đã bị khóa do có giao dịch.';
+
+  @override
+  String get walletConflict =>
+      'Ví đã thay đổi ở nơi khác. Quay lại danh sách và tải lại trước khi sửa tiếp.';
+
+  @override
+  String get walletError => 'Không thể tải hoặc lưu ví. Vui lòng thử lại.';
+
+  @override
+  String get walletReloadRequired =>
+      'Thao tác có thể đã được lưu một phần. Tải lại danh sách để lấy trạng thái mới nhất.';
 }

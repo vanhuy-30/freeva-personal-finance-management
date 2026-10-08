@@ -114,7 +114,7 @@ Boundary bắt buộc:
 - Base API là `/api`; endpoint versioned dùng `/api/v1` khi cần ổn định/breaking evolution.
 - Error envelope chuẩn: `{ "error": { "code", "message", "details" } }`.
 - Money field public dùng string integer `amountMinor` kèm `currency`.
-- POST tạo giao dịch dùng `Idempotency-Key`.
+- POST tạo giao dịch dùng `Idempotency-Key` UUID trùng `legs[0].clientId`; retry so sánh toàn bộ cặp theo owner/clientId. [Contract và concurrency](transactions.md).
 - Tiền trong database dùng integer minor units; VND có `minorDigits = 0`.
 - Số dư được suy ra từ `initialBalanceMinor` và giao dịch chưa xóa; chưa cache balance.
 - Transfer gồm hai transaction cùng `transferGroupId`; nguồn âm, đích dương.

@@ -7,6 +7,1235 @@ servers:
   - url: http://localhost:4000
     description: local
 paths:
+  /api/v1/categories/defaults:
+    post:
+      operationId: initializeDefaultCategories
+      summary: Initialize Vietnamese default categories once
+      tags:
+      - Categories
+      security:
+      - UserBearer: []
+      responses:
+        '204':
+          description: Initialized or already initialized
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+        '400':
+          $ref: '#/components/responses/CategoryValidationError'
+        '401':
+          $ref: '#/components/responses/CategoryUnauthorized'
+        '404':
+          $ref: '#/components/responses/CategoryNotFound'
+        '409':
+          $ref: '#/components/responses/CategoryConflict'
+        '503':
+          $ref: '#/components/responses/CategoryUnavailable'
+      description: Creates 15 editable root categories atomically for the session owner. Concurrent/repeated calls
+        are safe; deleted defaults are never recreated. Call before the first category list. Does not modify custom
+        categories. GET endpoints never initialize data.
+  /api/v1/categories/options:
+    get:
+      operationId: categoryOptions
+      summary: Get supported color token names and semantic icon keys
+      tags:
+      - Categories
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Metadata catalog
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryOptions'
+        '400':
+          $ref: '#/components/responses/CategoryValidationError'
+        '401':
+          $ref: '#/components/responses/CategoryUnauthorized'
+        '404':
+          $ref: '#/components/responses/CategoryNotFound'
+        '409':
+          $ref: '#/components/responses/CategoryConflict'
+        '503':
+          $ref: '#/components/responses/CategoryUnavailable'
+  /api/v1/categories/recent:
+    get:
+      operationId: recentCategories
+      summary: Get up to ten recently used active categories
+      tags:
+      - Categories
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Recent distinct categories
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecentCategories'
+        '400':
+          $ref: '#/components/responses/CategoryValidationError'
+        '401':
+          $ref: '#/components/responses/CategoryUnauthorized'
+        '404':
+          $ref: '#/components/responses/CategoryNotFound'
+        '409':
+          $ref: '#/components/responses/CategoryConflict'
+        '503':
+          $ref: '#/components/responses/CategoryUnavailable'
+      description: Own non-deleted transactions only. Order by maximum transaction createdAt descending, then categoryId
+        ascending; occurredOn and edits do not change recency. Archived categories are excluded.
+  /api/v1/categories:
+    post:
+      operationId: createCategory
+      summary: Create a custom category
+      tags:
+      - Categories
+      security:
+      - UserBearer: []
+      responses:
+        '201':
+          description: Created
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '200':
+          description: Normalized replay matches current data; does not restore archived category
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '400':
+          $ref: '#/components/responses/CategoryValidationError'
+        '401':
+          $ref: '#/components/responses/CategoryUnauthorized'
+        '404':
+          $ref: '#/components/responses/CategoryNotFound'
+        '409':
+          $ref: '#/components/responses/CategoryConflict'
+        '503':
+          $ref: '#/components/responses/CategoryUnavailable'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCategoryRequest'
+      description: clientId is normalized to lowercase. Matching current create fields replays safely; differing fields
+        or replay against a system default returns conflict. Parent must belong to owner and all ancestors must be
+        active. No category type split; used by both income and expense.
+    get:
+      operationId: listCategories
+      summary: List own categories as a flat tree
+      tags:
+      - Categories
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Page ordered by createdAt ascending, then id ascending
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryList'
+        '400':
+          $ref: '#/components/responses/CategoryValidationError'
+        '401':
+          $ref: '#/components/responses/CategoryUnauthorized'
+        '404':
+          $ref: '#/components/responses/CategoryNotFound'
+        '409':
+          $ref: '#/components/responses/CategoryConflict'
+        '503':
+          $ref: '#/components/responses/CategoryUnavailable'
+      parameters:
+      - in: query
+        name: page
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+          default: 1
+      - in: query
+        name: pageSize
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 50
+      - in: query
+        name: status
+        required: false
+        schema:
+          type: string
+          enum:
+          - active
+          - archived
+          - all
+          default: active
+      - in: query
+        name: parentId
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            format: uuid
+          - type: string
+            const: root
+          description: Omit for all levels; root for null parent; UUID for direct children. Foreign/missing parent
+            returns 404.
+  /api/v1/categories/{id}:
+    get:
+      operationId: getCategory
+      summary: Get an own active or archived category
+      tags:
+      - Categories
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Category
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '400':
+          $ref: '#/components/responses/CategoryValidationError'
+        '401':
+          $ref: '#/components/responses/CategoryUnauthorized'
+        '404':
+          $ref: '#/components/responses/CategoryNotFound'
+        '409':
+          $ref: '#/components/responses/CategoryConflict'
+        '503':
+          $ref: '#/components/responses/CategoryUnavailable'
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+    patch:
+      operationId: updateCategory
+      summary: Edit, move, archive or restore a category
+      tags:
+      - Categories
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Updated category
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '400':
+          $ref: '#/components/responses/CategoryValidationError'
+        '401':
+          $ref: '#/components/responses/CategoryUnauthorized'
+        '404':
+          $ref: '#/components/responses/CategoryNotFound'
+        '409':
+          $ref: '#/components/responses/CategoryConflict'
+        '503':
+          $ref: '#/components/responses/CategoryUnavailable'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCategoryRequest'
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      description: Version required. Omitted fields stay unchanged; null clears parent/color/icon. Reject cycles and
+        foreign parents. Archive requires no active direct children. Restoring or moving an active category requires
+        all ancestors active. No cascade. System defaults are editable; clientId/isSystem/groupId are not writable.
+    delete:
+      operationId: deleteCategory
+      summary: Move references then permanently delete a childless category
+      tags:
+      - Categories
+      security:
+      - UserBearer: []
+      responses:
+        '204':
+          description: Deleted atomically
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+        '400':
+          $ref: '#/components/responses/CategoryValidationError'
+        '401':
+          $ref: '#/components/responses/CategoryUnauthorized'
+        '404':
+          $ref: '#/components/responses/CategoryNotFound'
+        '409':
+          $ref: '#/components/responses/CategoryConflict'
+        '503':
+          $ref: '#/components/responses/CategoryUnavailable'
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: version
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483646
+      - in: query
+        name: replacementCategoryId
+        required: false
+        schema:
+          type: string
+          format: uuid
+      description: Reject any children including archived ones. Replacement required if any transaction references
+        this category, including soft-deleted transactions. Target must be a different, active category of the same
+        owner. Move all references and increment each transaction version/updatedAt, preserving money, date, account,
+        tags and deletedAt. Any failure or version overflow rolls back everything. Empty categories may be deleted
+        without replacement. No category restore after deletion.
+  /api/v1/transactions:
+    post:
+      operationId: createTransaction
+      summary: Create income, expense, or an atomic balanced transfer
+      tags:
+      - Transactions
+      security:
+      - UserBearer: []
+      responses:
+        '201':
+          description: Created
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionBundle'
+        '200':
+          description: Normalized clientId replay matches current data, including deleted records; no restoration
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionBundle'
+        '400':
+          description: VALIDATION_ERROR
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: SESSION_INVALID or auth error
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: TRANSACTION_NOT_FOUND or ACCOUNT_NOT_FOUND (also for another owner)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '409':
+          description: 'TRANSACTION_CONFLICT: stale version, archived wallet, or conflicting clientId replay'
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: TRANSACTIONS_UNAVAILABLE
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTransaction'
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Must equal the first leg clientId (case-insensitive); retry uses the same key and all leg clientIds.
+    get:
+      operationId: listTransactions
+      summary: List own transaction legs with pagination and filters
+      tags:
+      - Transactions
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Ordered occurredOn descending, createdAt descending, id ascending
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionPage'
+        '400':
+          description: VALIDATION_ERROR
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: SESSION_INVALID or auth error
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: TRANSACTION_NOT_FOUND or ACCOUNT_NOT_FOUND (also for another owner)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '409':
+          description: 'TRANSACTION_CONFLICT: stale version, archived wallet, or conflicting clientId replay'
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: TRANSACTIONS_UNAVAILABLE
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+      parameters:
+      - in: query
+        name: page
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+          default: 1
+      - in: query
+        name: pageSize
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 50
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - active
+          - deleted
+          - all
+          default: active
+      - in: query
+        name: accountId
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: categoryId
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: type
+        schema:
+          type: string
+          enum:
+          - income
+          - expense
+          - transfer
+      - in: query
+        name: from
+        schema:
+          type: string
+          format: date
+          pattern: ^\d{4}-\d{2}-\d{2}$
+      - in: query
+        name: to
+        schema:
+          type: string
+          format: date
+          pattern: ^\d{4}-\d{2}-\d{2}$
+      - in: query
+        name: search
+        schema:
+          type: string
+          maxLength: 200
+          description: Case-insensitive substring of notes.
+  /api/v1/transactions/{id}:
+    parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Either leg ID addresses the entire transfer pair.
+    get:
+      operationId: getTransaction
+      summary: Read one transaction or both transfer legs, including deleted
+      tags:
+      - Transactions
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Success
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionBundle'
+        '400':
+          description: VALIDATION_ERROR
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: SESSION_INVALID or auth error
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: TRANSACTION_NOT_FOUND or ACCOUNT_NOT_FOUND (also for another owner)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '409':
+          description: 'TRANSACTION_CONFLICT: stale version, archived wallet, or conflicting clientId replay'
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: TRANSACTIONS_UNAVAILABLE
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    patch:
+      operationId: updateTransaction
+      summary: Atomically edit, soft-delete, or restore transaction and linked leg
+      tags:
+      - Transactions
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Both leg versions increment together
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionBundle'
+        '400':
+          description: VALIDATION_ERROR
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: SESSION_INVALID or auth error
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: TRANSACTION_NOT_FOUND or ACCOUNT_NOT_FOUND (also for another owner)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '409':
+          description: 'TRANSACTION_CONFLICT: stale version, archived wallet, or conflicting clientId replay'
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: TRANSACTIONS_UNAVAILABLE
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTransaction'
+    delete:
+      operationId: deleteTransaction
+      summary: Soft-delete transaction and linked transfer leg atomically
+      tags:
+      - Transactions
+      security:
+      - UserBearer: []
+      responses:
+        '204':
+          description: Deleted
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+        '400':
+          description: VALIDATION_ERROR
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: SESSION_INVALID or auth error
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: TRANSACTION_NOT_FOUND or ACCOUNT_NOT_FOUND (also for another owner)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '409':
+          description: 'TRANSACTION_CONFLICT: stale version, archived wallet, or conflicting clientId replay'
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: TRANSACTIONS_UNAVAILABLE
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+      parameters:
+      - in: query
+        name: version
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483646
+  /api/v1/financial-accounts:
+    post:
+      operationId: createFinancialAccount
+      summary: Create a financial account
+      tags:
+      - FinancialAccounts
+      security:
+      - UserBearer: []
+      responses:
+        '201':
+          description: Created
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/FinancialAccountNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FinancialAccount'
+        '200':
+          description: Idempotent replay
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/FinancialAccountNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FinancialAccount'
+        '400':
+          $ref: '#/components/responses/FinancialAccountValidationError'
+        '401':
+          $ref: '#/components/responses/FinancialAccountUnauthorized'
+        '409':
+          $ref: '#/components/responses/FinancialAccountConflict'
+        '503':
+          $ref: '#/components/responses/FinancialAccountUnavailable'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFinancialAccount'
+    get:
+      operationId: listFinancialAccounts
+      summary: List own financial accounts
+      tags:
+      - FinancialAccounts
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Success
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/FinancialAccountNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FinancialAccountPage'
+        '400':
+          $ref: '#/components/responses/FinancialAccountValidationError'
+        '401':
+          $ref: '#/components/responses/FinancialAccountUnauthorized'
+        '503':
+          $ref: '#/components/responses/FinancialAccountUnavailable'
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+          default: 1
+      - name: pageSize
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 50
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - active
+          - archived
+          - all
+          default: active
+      description: Ordered by sortOrder, createdAt, id ascending. Items, balances and
+        total use one database snapshot.
+  /api/v1/financial-accounts/{id}:
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    get:
+      operationId: getFinancialAccount
+      summary: Get own financial account, including archived
+      tags:
+      - FinancialAccounts
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Success
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/FinancialAccountNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FinancialAccount'
+        '400':
+          $ref: '#/components/responses/FinancialAccountValidationError'
+        '401':
+          $ref: '#/components/responses/FinancialAccountUnauthorized'
+        '404':
+          $ref: '#/components/responses/FinancialAccountNotFound'
+        '503':
+          $ref: '#/components/responses/FinancialAccountUnavailable'
+    patch:
+      operationId: updateFinancialAccount
+      summary: Update or restore own financial account
+      tags:
+      - FinancialAccounts
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Updated
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/FinancialAccountNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FinancialAccount'
+        '400':
+          $ref: '#/components/responses/FinancialAccountValidationError'
+        '401':
+          $ref: '#/components/responses/FinancialAccountUnauthorized'
+        '404':
+          $ref: '#/components/responses/FinancialAccountNotFound'
+        '409':
+          $ref: '#/components/responses/FinancialAccountConflict'
+        '503':
+          $ref: '#/components/responses/FinancialAccountUnavailable'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateFinancialAccount'
+    delete:
+      operationId: archiveFinancialAccount
+      summary: Archive own financial account without deleting history
+      tags:
+      - FinancialAccounts
+      security:
+      - UserBearer: []
+      responses:
+        '204':
+          description: Archived
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/FinancialAccountNoStore'
+        '400':
+          $ref: '#/components/responses/FinancialAccountValidationError'
+        '401':
+          $ref: '#/components/responses/FinancialAccountUnauthorized'
+        '404':
+          $ref: '#/components/responses/FinancialAccountNotFound'
+        '409':
+          $ref: '#/components/responses/FinancialAccountConflict'
+        '503':
+          $ref: '#/components/responses/FinancialAccountUnavailable'
+      parameters:
+      - name: version
+        in: query
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483646
+      description: Always archives; never hard-deletes. Increments version, even if
+        already archived. Existing archivedAt is preserved. Stale versions return 409.
+  /api/v1/auth/oauth/challenges:
+    post:
+      summary: Create a provider-bound OAuth challenge
+      operationId: createOAuthChallenge
+      tags: [Auth]
+      security: []
+      description: Create a single-use 5-minute challenge. Send nonce unchanged to the provider; keep challengeToken locally until exchange.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OAuthChallengeRequest'
+      responses:
+        '200':
+          description: Success (Cache-Control no-store)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAuthChallengeResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Invalid credentials or challenge
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Too many attempts; 30 requests per IP per operation in 15 minutes
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+              description: Seconds until retry
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: Provider disabled or authentication unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/auth/oauth/login:
+    post:
+      summary: Exchange a provider ID token for a Freeva session
+      operationId: loginOAuth
+      tags: [Auth]
+      security: []
+      description: Verify a Google or Apple ID token bound to the server nonce and issue an opaque 7-day session. Identity is provider plus subject. Never auto-link by email; conflicting email or missing verified email for a new identity returns generic 401. Existing identities need no email claim.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OAuthLoginRequest'
+      responses:
+        '200':
+          description: Success (Cache-Control no-store)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthLoginResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Invalid credentials or challenge
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Too many attempts; 30 requests per IP per operation in 15 minutes
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+              description: Seconds until retry
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: Provider disabled or authentication unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/profile:
+    get:
+      operationId: getProfile
+      tags: [Profile]
+      security:
+        - UserBearer: []
+      responses:
+        '200':
+          description: Current profile data (Cache-Control no-store)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    put:
+      operationId: updateProfile
+      tags: [Profile]
+      security:
+        - UserBearer: []
+      description: Update own preferences with optimistic version check. Does not convert existing monetary data.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Profile'
+      responses:
+        '200':
+          description: Current profile data (Cache-Control no-store)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '400':
+          description: Invalid preference
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '409':
+          description: Profile changed; reload before saving
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/profile/options:
+    get:
+      operationId: getProfileOptions
+      tags: [Profile]
+      security:
+        - UserBearer: []
+      responses:
+        '200':
+          description: Current profile data (Cache-Control no-store)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileOptions'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
   /api/health:
     get:
       security: []
@@ -556,6 +1785,114 @@ paths:
           format: uuid
           description: UUID v4
 components:
+  headers:
+    FinancialAccountNoStore:
+      description: Financial responses must not be cached.
+      schema:
+        type: string
+        const: no-store
+  responses:
+    CategoryValidationError:
+      description: VALIDATION_ERROR
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    CategoryUnauthorized:
+      description: SESSION_INVALID
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    CategoryNotFound:
+      description: 'CATEGORY_NOT_FOUND: missing or owned by another user'
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    CategoryConflict:
+      description: 'CATEGORY_CONFLICT: stale version, incompatible state or clientId replay'
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    CategoryUnavailable:
+      description: CATEGORIES_UNAVAILABLE or authentication unavailable
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    FinancialAccountValidationError:
+      description: VALIDATION_ERROR
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/FinancialAccountNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    FinancialAccountUnauthorized:
+      description: SESSION_INVALID
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/FinancialAccountNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    FinancialAccountConflict:
+      description: 'ACCOUNT_CONFLICT: stale version, duplicate clientId with different
+        fields, or immutable history fields'
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/FinancialAccountNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    FinancialAccountUnavailable:
+      description: ACCOUNTS_UNAVAILABLE or authentication unavailable
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/FinancialAccountNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    FinancialAccountNotFound:
+      description: 'ACCOUNT_NOT_FOUND: missing or owned by another user'
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/FinancialAccountNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
   securitySchemes:
     StaffBearer:
       type: http
@@ -569,6 +1906,859 @@ components:
         checks session storage on every authenticated request. No refresh token in this
         phase.
   schemas:
+    Category:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - clientId
+      - name
+      - parentId
+      - colorToken
+      - iconToken
+      - groupId
+      - isSystem
+      - archivedAt
+      - version
+      - createdAt
+      - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        clientId:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Trimmed; duplicate names are allowed.
+        parentId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        colorToken:
+          type:
+          - string
+          - 'null'
+          maxLength: 100
+          description: Token name from GET /categories/options, never a hex color.
+        iconToken:
+          type:
+          - string
+          - 'null'
+          enum:
+          - category
+          - food
+          - transport
+          - housing
+          - bills
+          - shopping
+          - health
+          - education
+          - entertainment
+          - family
+          - gifts
+          - travel
+          - salary
+          - bonus
+          - other_income
+          - other_expense
+          - null
+        groupId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        isSystem:
+          type: boolean
+          description: Server-managed origin metadata; defaults remain editable.
+        archivedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        version:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    CreateCategoryRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - clientId
+      - name
+      properties:
+        clientId:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Trimmed; duplicate names are allowed.
+        parentId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        colorToken:
+          type:
+          - string
+          - 'null'
+          maxLength: 100
+          description: Token name from GET /categories/options, never a hex color.
+        iconToken:
+          type:
+          - string
+          - 'null'
+          enum:
+          - category
+          - food
+          - transport
+          - housing
+          - bills
+          - shopping
+          - health
+          - education
+          - entertainment
+          - family
+          - gifts
+          - travel
+          - salary
+          - bonus
+          - other_income
+          - other_expense
+          - null
+    UpdateCategoryRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - version
+      properties:
+        version:
+          type: integer
+          minimum: 1
+          maximum: 2147483646
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Trimmed; duplicate names are allowed.
+        parentId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        colorToken:
+          type:
+          - string
+          - 'null'
+          maxLength: 100
+          description: Token name from GET /categories/options, never a hex color.
+        iconToken:
+          type:
+          - string
+          - 'null'
+          enum:
+          - category
+          - food
+          - transport
+          - housing
+          - bills
+          - shopping
+          - health
+          - education
+          - entertainment
+          - family
+          - gifts
+          - travel
+          - salary
+          - bonus
+          - other_income
+          - other_expense
+          - null
+        archived:
+          type: boolean
+    CategoryList:
+      type: object
+      required:
+      - items
+      - page
+      - pageSize
+      - total
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        total:
+          type: integer
+    RecentCategories:
+      type: object
+      required:
+      - items
+      properties:
+        items:
+          type: array
+          maxItems: 10
+          items:
+            $ref: '#/components/schemas/Category'
+    CategoryOptions:
+      type: object
+      required:
+      - colorTokens
+      - iconTokens
+      properties:
+        colorTokens:
+          type: array
+          items:
+            type: string
+        iconTokens:
+          type: array
+          items:
+            type: string
+            enum:
+            - category
+            - food
+            - transport
+            - housing
+            - bills
+            - shopping
+            - health
+            - education
+            - entertainment
+            - family
+            - gifts
+            - travel
+            - salary
+            - bonus
+            - other_income
+            - other_expense
+    TransactionLegInput:
+      type: object
+      additionalProperties: false
+      required:
+      - clientId
+      - accountId
+      - currencyCode
+      - amountMinor
+      properties:
+        clientId:
+          type: string
+          format: uuid
+        accountId:
+          type: string
+          format: uuid
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        amountMinor:
+          type: string
+          maxLength: 20
+          pattern: ^-?[0-9]+$
+          description: Signed int64 integer minor units. Income positive; expense negative; transfer source negative and destination
+            positive. Zero is rejected.
+    ManualTransactionFx:
+      type: object
+      additionalProperties: false
+      required:
+      - rate
+      - quotedAt
+      properties:
+        rate:
+          type: string
+          pattern: ^\d{1,10}(\.\d{1,8})?$
+          description: Positive Decimal(18,8); exact conversion only, fractional destination minor units rejected.
+        quotedAt:
+          type: string
+          format: date-time
+    CreateTransaction:
+      type: object
+      additionalProperties: false
+      required:
+      - type
+      - occurredOn
+      - legs
+      properties:
+        type:
+          type: string
+          enum:
+          - income
+          - expense
+          - transfer
+        occurredOn:
+          type: string
+          format: date
+          pattern: ^\d{4}-\d{2}-\d{2}$
+        legs:
+          type: array
+          minItems: 1
+          maxItems: 2
+          items:
+            $ref: '#/components/schemas/TransactionLegInput'
+          description: One leg for income/expense; exactly two ordered source, destination for transfer. Distinct accounts and
+            clientIds. PATCH replaces both legs and preserves their clientIds/order.
+        categoryId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          description: Required and non-null for expense, optional for income, must be null/omitted for transfer. Active category
+            owned by the session user.
+        notes:
+          type:
+          - string
+          - 'null'
+          maxLength: 2000
+        tagIds:
+          type: array
+          maxItems: 20
+          uniqueItems: true
+          items:
+            type: string
+            format: uuid
+        fx:
+          oneOf:
+          - $ref: '#/components/schemas/ManualTransactionFx'
+          - type: 'null'
+          description: Required for different currencies; forbidden otherwise. Stored immutable with both legs pointing to the
+            same quote.
+    UpdateTransaction:
+      type: object
+      additionalProperties: false
+      required:
+      - version
+      properties:
+        version:
+          type: integer
+          minimum: 1
+          maximum: 2147483646
+        occurredOn:
+          type: string
+          format: date
+          pattern: ^\d{4}-\d{2}-\d{2}$
+        legs:
+          type: array
+          minItems: 1
+          maxItems: 2
+          items:
+            $ref: '#/components/schemas/TransactionLegInput'
+          description: One leg for income/expense; exactly two ordered source, destination for transfer. Distinct accounts and
+            clientIds. PATCH replaces both legs and preserves their clientIds/order.
+        categoryId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          description: Required and non-null for expense, optional for income, must be null/omitted for transfer. Active category
+            owned by the session user.
+        notes:
+          type:
+          - string
+          - 'null'
+          maxLength: 2000
+        tagIds:
+          type: array
+          maxItems: 20
+          uniqueItems: true
+          items:
+            type: string
+            format: uuid
+        fx:
+          oneOf:
+          - $ref: '#/components/schemas/ManualTransactionFx'
+          - type: 'null'
+          description: Required for different currencies; forbidden otherwise. Stored immutable with both legs pointing to the
+            same quote.
+        deleted:
+          type: boolean
+          description: Soft-delete or restore the entire transfer pair. Other omitted fields retain their values; type and clientIds
+            are immutable.
+    TransactionLeg:
+      type: object
+      additionalProperties: false
+      required:
+      - clientId
+      - accountId
+      - currencyCode
+      - amountMinor
+      - id
+      - type
+      - occurredOn
+      - categoryId
+      - notes
+      - tagIds
+      - transferGroupId
+      - fxQuoteId
+      - deletedAt
+      - version
+      - createdAt
+      - updatedAt
+      properties:
+        clientId:
+          type: string
+          format: uuid
+        accountId:
+          type: string
+          format: uuid
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        amountMinor:
+          type: string
+          maxLength: 20
+          pattern: ^-?[0-9]+$
+          description: Signed int64 integer minor units. Income positive; expense negative; transfer source negative and destination
+            positive. Zero is rejected.
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+          - income
+          - expense
+          - transfer
+        occurredOn:
+          type: string
+          format: date
+          pattern: ^\d{4}-\d{2}-\d{2}$
+        categoryId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        notes:
+          type:
+          - string
+          - 'null'
+        tagIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+        transferGroupId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        fxQuoteId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        deletedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        version:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    TransactionBundle:
+      type: object
+      additionalProperties: false
+      required:
+      - legs
+      - fx
+      properties:
+        legs:
+          type: array
+          minItems: 1
+          maxItems: 2
+          items:
+            $ref: '#/components/schemas/TransactionLeg'
+        fx:
+          oneOf:
+          - type: object
+            additionalProperties: false
+            required:
+            - id
+            - fromCode
+            - toCode
+            - rate
+            - quotedAt
+            properties:
+              id:
+                type: string
+                format: uuid
+              fromCode:
+                type: string
+              toCode:
+                type: string
+              rate:
+                type: string
+              quotedAt:
+                type: string
+                format: date-time
+          - type: 'null'
+    TransactionPage:
+      type: object
+      additionalProperties: false
+      required:
+      - items
+      - page
+      - pageSize
+      - total
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransactionLeg'
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        total:
+          type: integer
+          description: Count of legs, including both sides of transfers when both match filters.
+    CreateFinancialAccount:
+      type: object
+      additionalProperties: false
+      required:
+      - clientId
+      - name
+      - type
+      - currencyCode
+      - initialBalanceMinor
+      properties:
+        clientId:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Trimmed before validation and storage.
+        type:
+          type: string
+          enum:
+          - cash
+          - bank
+          - ewallet
+          - credit
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}(?![\s\S])
+          description: Existing currency catalog code.
+        initialBalanceMinor:
+          type: string
+          pattern: ^-?[0-9]+(?![\s\S])
+          maxLength: 20
+          description: Integer minor units in signed int64 range (-9223372036854775808..9223372036854775807).
+        sortOrder:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+          default: 0
+        creditLimitMinor:
+          type:
+          - string
+          - 'null'
+          pattern: ^-?[0-9]+(?![\s\S])
+          maxLength: 20
+          description: Nonnegative integer minor units, at most 9223372036854775807. Only
+            for credit accounts.
+        statementCloseDay:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          maximum: 28
+        paymentDueDay:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          maximum: 28
+      description: Card fields must be null or omitted for non-credit accounts. Omitted
+        card fields default to null. clientId is unique per owner; identical normalized
+        retries return the existing account, including archived accounts; differing fields
+        return 409. Retries compare against current stored fields, not a historical creation
+        payload.
+    UpdateFinancialAccount:
+      type: object
+      additionalProperties: false
+      required:
+      - version
+      properties:
+        version:
+          type: integer
+          minimum: 1
+          maximum: 2147483646
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Trimmed before validation and storage.
+        type:
+          type: string
+          enum:
+          - cash
+          - bank
+          - ewallet
+          - credit
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}(?![\s\S])
+          description: Existing currency catalog code.
+        initialBalanceMinor:
+          type: string
+          pattern: ^-?[0-9]+(?![\s\S])
+          maxLength: 20
+          description: Integer minor units in signed int64 range (-9223372036854775808..9223372036854775807).
+        sortOrder:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+        creditLimitMinor:
+          type:
+          - string
+          - 'null'
+          pattern: ^-?[0-9]+(?![\s\S])
+          maxLength: 20
+          description: Nonnegative integer minor units, at most 9223372036854775807. Only
+            for credit accounts.
+        statementCloseDay:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          maximum: 28
+        paymentDueDay:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          maximum: 28
+        archived:
+          type: boolean
+      description: Partial update. Omitted fields are preserved; null is allowed only
+        for card fields. Type and currency cannot change after any transaction, including
+        deleted ones. Initial balance remains editable. Changing away from credit clears
+        card fields; supplying non-null card fields then is invalid. Successful writes
+        increment version, including no-op writes. archived false restores an account.
+    FinancialAccount:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - clientId
+      - name
+      - type
+      - currencyCode
+      - initialBalanceMinor
+      - sortOrder
+      - creditLimitMinor
+      - statementCloseDay
+      - paymentDueDay
+      - balanceMinor
+      - version
+      - archivedAt
+      - createdAt
+      - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        clientId:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Trimmed before validation and storage.
+        type:
+          type: string
+          enum:
+          - cash
+          - bank
+          - ewallet
+          - credit
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}(?![\s\S])
+          description: Existing currency catalog code.
+        initialBalanceMinor:
+          type: string
+          pattern: ^-?[0-9]+(?![\s\S])
+          maxLength: 20
+          description: Integer minor units in signed int64 range (-9223372036854775808..9223372036854775807).
+        sortOrder:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+          default: 0
+        creditLimitMinor:
+          type:
+          - string
+          - 'null'
+          pattern: ^-?[0-9]+(?![\s\S])
+          maxLength: 20
+          description: Nonnegative integer minor units, at most 9223372036854775807. Only
+            for credit accounts.
+        statementCloseDay:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          maximum: 28
+        paymentDueDay:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          maximum: 28
+        balanceMinor:
+          type: string
+          pattern: ^-?[0-9]+(?![\s\S])
+          description: Initial balance plus undeleted signed transactions, from one snapshot;
+            may exceed int64.
+        version:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+        archivedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    FinancialAccountPage:
+      type: object
+      additionalProperties: false
+      required:
+      - items
+      - page
+      - pageSize
+      - total
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/FinancialAccount'
+        page:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+        pageSize:
+          type: integer
+          minimum: 1
+          maximum: 100
+        total:
+          type: integer
+          minimum: 0
+    OAuthChallengeRequest:
+      type: object
+      additionalProperties: false
+      required: [provider]
+      properties:
+        provider:
+          type: string
+          enum: [google, apple]
+    OAuthChallengeResponse:
+      type: object
+      additionalProperties: false
+      required: [challengeToken, nonce, expiresAt]
+      properties:
+        challengeToken:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+        nonce:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+          description: SHA-256 of challengeToken; pass unchanged as the provider nonce. SDKs that hash a raw nonce must receive challengeToken instead.
+        expiresAt:
+          type: string
+          format: date-time
+    OAuthLoginRequest:
+      type: object
+      additionalProperties: false
+      required: [provider, challengeToken, idToken]
+      properties:
+        provider:
+          type: string
+          enum: [google, apple]
+        challengeToken:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+        idToken:
+          type: string
+          minLength: 1
+          maxLength: 16384
+    Profile:
+      type: object
+      additionalProperties: false
+      required: [locale, defaultCurrencyCode, timezone, fiscalMonthStartDay, version]
+      properties:
+        locale:
+          type: string
+          enum: [vi, en]
+        defaultCurrencyCode:
+          type: string
+          pattern: '^[A-Z]{3}$'
+          description: Must exist in the currency catalog.
+        timezone:
+          type: string
+          maxLength: 100
+          description: IANA timezone or UTC; aliases accepted.
+          example: Asia/Ho_Chi_Minh
+        fiscalMonthStartDay:
+          type: integer
+          minimum: 1
+          maximum: 28
+        version:
+          type: integer
+          minimum: 1
+          maximum: 2147483646
+    ProfileOptions:
+      type: object
+      additionalProperties: false
+      required: [currencies, timezones]
+      properties:
+        currencies:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [code, minorDigits]
+            properties:
+              code:
+                type: string
+                pattern: '^[A-Z]{3}$'
+              minorDigits:
+                type: integer
+                minimum: 0
+        timezones:
+          type: array
+          items:
+            type: string
     HealthResponse:
       type: object
       required: [status, service, timestamp]

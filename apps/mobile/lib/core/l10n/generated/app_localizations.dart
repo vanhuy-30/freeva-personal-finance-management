@@ -63,7 +63,7 @@ import 'app_localizations_vi.dart';
 /// property.
 abstract class S {
   S(String locale)
-    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -85,16 +85,16 @@ abstract class S {
   /// of delegates is preferred or required.
   static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
       <LocalizationsDelegate<dynamic>>[
-        delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ];
+    delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+  ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
-    Locale('vi'),
+    Locale('vi')
   ];
 
   /// No description provided for @appTitle.
@@ -534,6 +534,288 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Your account is protected by your password and app lock.'**
   String get authSecurityNote;
+
+  /// No description provided for @profileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Financial profile'**
+  String get profileTitle;
+
+  /// No description provided for @profileLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get profileLanguage;
+
+  /// No description provided for @profileVietnamese.
+  ///
+  /// In en, this message translates to:
+  /// **'Vietnamese'**
+  String get profileVietnamese;
+
+  /// No description provided for @profileEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get profileEnglish;
+
+  /// No description provided for @profileCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Default currency'**
+  String get profileCurrency;
+
+  /// No description provided for @profileCurrencyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Applies to new data by default; existing amounts are not converted.'**
+  String get profileCurrencyHint;
+
+  /// No description provided for @profileTimezone.
+  ///
+  /// In en, this message translates to:
+  /// **'Time zone'**
+  String get profileTimezone;
+
+  /// No description provided for @profileFiscalDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Financial month start day'**
+  String get profileFiscalDay;
+
+  /// No description provided for @profileFiscalHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a day from 1 to 28 so each financial month starts on the same day.'**
+  String get profileFiscalHint;
+
+  /// No description provided for @profileSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save changes'**
+  String get profileSave;
+
+  /// No description provided for @profileCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard changes'**
+  String get profileCancel;
+
+  /// No description provided for @profileSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile saved.'**
+  String get profileSaved;
+
+  /// No description provided for @profileLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load your profile. Please try again.'**
+  String get profileLoadError;
+
+  /// No description provided for @profileSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes could not be saved. Please try again.'**
+  String get profileSaveError;
+
+  /// No description provided for @profileConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'Your profile changed on another device. Reload before editing.'**
+  String get profileConflict;
+
+  /// No description provided for @profileReload.
+  ///
+  /// In en, this message translates to:
+  /// **'Reload'**
+  String get profileReload;
+
+  /// No description provided for @profileInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the language, currency, time zone and start day (1–28).'**
+  String get profileInvalid;
+
+  /// No description provided for @profileBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to home'**
+  String get profileBack;
+
+  /// No description provided for @profileSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search time zones'**
+  String get profileSearch;
+
+  /// No description provided for @walletTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My wallets'**
+  String get walletTitle;
+
+  /// No description provided for @walletAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add wallet'**
+  String get walletAdd;
+
+  /// No description provided for @walletEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit wallet'**
+  String get walletEdit;
+
+  /// No description provided for @walletCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash'**
+  String get walletCash;
+
+  /// No description provided for @walletBank.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank'**
+  String get walletBank;
+
+  /// No description provided for @walletEwallet.
+  ///
+  /// In en, this message translates to:
+  /// **'E-wallet'**
+  String get walletEwallet;
+
+  /// No description provided for @walletCredit.
+  ///
+  /// In en, this message translates to:
+  /// **'Credit card'**
+  String get walletCredit;
+
+  /// No description provided for @walletName.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet name'**
+  String get walletName;
+
+  /// No description provided for @walletType.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet type'**
+  String get walletType;
+
+  /// No description provided for @walletInitialBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Initial balance'**
+  String get walletInitialBalance;
+
+  /// No description provided for @walletCreditLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Credit limit (optional)'**
+  String get walletCreditLimit;
+
+  /// No description provided for @walletCloseDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Statement day (1–28, optional)'**
+  String get walletCloseDay;
+
+  /// No description provided for @walletDueDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment day (1–28, optional)'**
+  String get walletDueDay;
+
+  /// No description provided for @walletMoneyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter amounts in the selected currency without thousands separators. For example: VND 10000; USD 10.50.'**
+  String get walletMoneyHint;
+
+  /// No description provided for @walletEditHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet type and currency cannot change once transactions exist. Edit the initial balance only to correct it.'**
+  String get walletEditHint;
+
+  /// No description provided for @walletShowHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Show hidden wallets'**
+  String get walletShowHidden;
+
+  /// No description provided for @walletHide.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide wallet'**
+  String get walletHide;
+
+  /// No description provided for @walletRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore wallet'**
+  String get walletRestore;
+
+  /// No description provided for @walletHideExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Hiding archives the wallet from the active list. Its balance and history are preserved and it can be restored later.'**
+  String get walletHideExplanation;
+
+  /// No description provided for @walletMoveUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Move up'**
+  String get walletMoveUp;
+
+  /// No description provided for @walletMoveDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Move down'**
+  String get walletMoveDown;
+
+  /// No description provided for @walletEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No wallets yet. Add your first wallet to get started.'**
+  String get walletEmpty;
+
+  /// No description provided for @walletHiddenEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No hidden wallets.'**
+  String get walletHiddenEmpty;
+
+  /// No description provided for @walletBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance: {amount} {currency}'**
+  String walletBalance(String amount, String currency);
+
+  /// No description provided for @walletInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the name, amounts and days (1–28). Type or currency may be locked because transactions exist.'**
+  String get walletInvalid;
+
+  /// No description provided for @walletConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'This wallet changed elsewhere. Return to the list and reload before editing again.'**
+  String get walletConflict;
+
+  /// No description provided for @walletError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load or save wallets. Please try again.'**
+  String get walletError;
+
+  /// No description provided for @walletReloadRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'The operation may have been partially saved. Reload the list to get the latest state.'**
+  String get walletReloadRequired;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {
@@ -562,9 +844,8 @@ S lookupS(Locale locale) {
   }
 
   throw FlutterError(
-    'S.delegate failed to load unsupported locale "$locale". This is likely '
-    'an issue with the localizations generation tool. Please file an issue '
-    'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.',
-  );
+      'S.delegate failed to load unsupported locale "$locale". This is likely '
+      'an issue with the localizations generation tool. Please file an issue '
+      'on GitHub with a reproducible sample app and the gen-l10n configuration '
+      'that was used.');
 }

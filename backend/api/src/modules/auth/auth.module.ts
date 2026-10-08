@@ -1,3 +1,7 @@
+import { OAuthService } from './oauth.service';
+import { OAUTH_REPOSITORY, OAUTH_VERIFIER } from './domain/oauth';
+import { OidcVerifier } from './infrastructure/oidc-verifier';
+import { PrismaOAuthRepository } from './infrastructure/prisma-oauth.repository';
 import { Module } from '@nestjs/common';
 import { MailModule } from '../mail/mail.module';
 import { AUTH_REPOSITORY } from './domain/auth.repository';
@@ -14,6 +18,9 @@ import { AuthMailWorker } from './infrastructure/auth-mail.worker';
   controllers: [AuthController, SessionsController],
   providers: [
     AuthService,
+    OAuthService,
+    { provide: OAUTH_REPOSITORY, useClass: PrismaOAuthRepository },
+    { provide: OAUTH_VERIFIER, useClass: OidcVerifier },
     AuthGuard,
     AuthRateLimitGuard,
     AuthCrypto,

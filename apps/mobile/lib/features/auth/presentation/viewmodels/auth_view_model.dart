@@ -44,6 +44,7 @@ abstract class AuthViewModel extends ChangeNotifier {
   Future<void> logout();
   Future<void> forgetDevice();
   void lock();
+  void sessionExpired();
   void clearMessage();
 }
 
@@ -154,6 +155,11 @@ class DefaultAuthViewModel extends AuthViewModel {
     final epoch = _epoch;
     notifyListeners();
     final result = await operation();
+    if (epoch != _epoch && stage == AuthStage.signedOut) {
+      loading = false;
+      notifyListeners();
+      return;
+    }
     result.fold((error) {
       failure = error;
       if (error.code == AuthError.expired) {
@@ -265,6 +271,17 @@ class DefaultAuthViewModel extends AuthViewModel {
         _resetFlow();
         sessions = [];
       });
+  @override
+  void sessionExpired() {
+    _epoch++;
+    stage = AuthStage.signedOut;
+    sessions = [];
+    _resetFlow();
+    failure = const AuthFailure(AuthError.expired);
+    succeeded = false;
+    notifyListeners();
+  }
+
   @override
   void lock() {
     _epoch++;

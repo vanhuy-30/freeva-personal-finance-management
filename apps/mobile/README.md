@@ -160,3 +160,19 @@ fvm dart run tool/check_dev_connection.dart
 ```
 
 CA có hạn 365 ngày, server certificate 90 ngày. Setup tự cấp lại server certificate gần hết hạn; khi CA hết hạn, dừng proxy, xóa `.local/dev-https`, chạy setup lại và rebuild app. `Ctrl+C` dừng API/proxy; `make down` dừng containers, vẫn giữ volume database.
+
+## Hồ sơ tài chính — MOB-P1-002
+
+Home → Hồ sơ tài chính: ngôn ngữ vi/en, tiền tệ mặc định từ catalog API, múi giờ
+IANA có tìm kiếm và ngày bắt đầu tháng tài chính 1–28. Lưu thành công đổi locale
+trên toàn app; lỗi giữ bản nháp và cho thử lại. Hồ sơ lưu theo tài khoản trên API.
+
+Backend phải có `/api/v1/profile` và `/api/v1/profile/options` trước khi phát hành.
+Không cần migration mới. Xem [kiến trúc, kiểm chứng và giới hạn](../../docs/architecture/mobile-profile.md).
+
+## Ví — MOB-P1-003
+
+Home → Ví của tôi: tạo/sửa bốn loại ví, số dư ban đầu và cấu hình thẻ, đổi thứ tự
+bằng nút lên/xuống, ẩn và khôi phục. Backend cần BE-P1-004 và profile/options.
+Tiền nhập theo đơn vị chính của tiền tệ, dấu thập phân theo locale; không dùng
+dấu phân cách hàng nghìn. Xem [kiến trúc và giới hạn](../../docs/architecture/mobile-wallets.md).

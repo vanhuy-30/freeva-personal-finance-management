@@ -1,3 +1,7 @@
+import { CategoryModule } from './modules/categories/category.module';
+import { TransactionModule } from './modules/transactions/transaction.module';
+import { FinancialAccountModule } from './modules/financial-accounts/financial-account.module';
+import { ProfileModule } from './modules/profile/profile.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
@@ -24,6 +28,10 @@ import { HealthModule } from './modules/health/health.module';
     PrismaModule,
     HealthModule,
     AuthModule,
+    ProfileModule,
+    FinancialAccountModule,
+    TransactionModule,
+    CategoryModule,
     AdminUserLookupModule,
   ],
 })

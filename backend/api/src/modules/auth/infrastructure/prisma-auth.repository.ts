@@ -278,6 +278,7 @@ export class PrismaAuthRepository implements AuthRepository {
   async cleanup(): Promise<void> {
     const expiresAt = { lte: new Date() };
     await this.prisma.$transaction([
+      this.prisma.oAuthChallenge.deleteMany({ where: { expiresAt } }),
       this.prisma.authMailJob.deleteMany({ where: { expiresAt } }),
       this.prisma.authToken.deleteMany({ where: { expiresAt } }),
       this.prisma.authSession.deleteMany({ where: { expiresAt } }),
