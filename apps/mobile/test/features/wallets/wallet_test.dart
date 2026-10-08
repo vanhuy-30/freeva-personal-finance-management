@@ -44,6 +44,7 @@ class WalletTransport implements AuthorizedApi {
     String method,
     String path, {
     Map<String, dynamic>? body,
+    Map<String, String>? headers,
   }) async {
     calls.add((method: method, path: path, body: body));
     if (pending != null) await pending!.future;

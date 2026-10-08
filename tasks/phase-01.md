@@ -92,8 +92,12 @@
 - Note: [Thiết kế API](../docs/architecture/transactions.md), [lệnh test](../backend/api/test/README.md#transactions--be-p1-005). FX cần rounding bị từ chối; list đếm leg. Không migration mới; chưa deploy staging. UI giao dịch, quản lý danh mục, báo cáo và sync thuộc task riêng.
 
 ### MOB-P1-004 — Ghi giao dịch < số bước tối thiểu
-- Status: todo
+- Status: done
 - Module: 4
+- Depends: BE-P1-005, BE-P1-006, MOB-P1-001, MOB-P1-003
+- DoD: lối tắt home và màn ghi/danh sách thu-chi-chuyển; chi mặc định, ví và danh mục gần nhất, ngày theo TZ hồ sơ; tiền BigInt và FX exact; sửa/sao chép/xóa mềm/khôi phục với version và Idempotency-Key; l10n vi/en, DI abstract, privacy gate. Không quản lý danh mục, nhãn, báo cáo hay hàng đợi offline.
+- Verification: `flutter analyze` sạch; toàn bộ 70 Flutter tests pass (9 tests mới), gồm ngày qua nửa đêm TZ, FX exact/lẻ, idempotency, phân trang, conflict, khóa xóa state và editor 320px text scale 2.
+- Note: [Thiết kế và giới hạn](../docs/architecture/mobile-transactions.md). Chưa native build/E2E staging. Catalog hiện có VND; nhánh FX vẫn có khi hai ví khác tiền tệ.
 
 ### BE-P1-006 — Categories mặc định VN + custom + ẩn/xóa chuyển GD
 - Status: done

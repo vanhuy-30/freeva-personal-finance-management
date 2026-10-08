@@ -30,6 +30,20 @@ class HomePage extends StatelessWidget {
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.go('/wallets'),
             ),
+            ListTile(
+              leading: const Icon(Icons.receipt_long_outlined),
+              title: Text(s.transactionTitle),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.go('/transactions'),
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: FilledButton.icon(
+                onPressed: () => context.go('/transactions?record=1'),
+                icon: const Icon(Icons.add),
+                label: Text(s.transactionRecord),
+              ),
+            ),
             const SessionControls(),
             const BrandSymbol(size: 96),
             const SizedBox(height: 16),

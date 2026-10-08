@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -405,4 +406,113 @@ class SVi extends S {
   @override
   String get walletReloadRequired =>
       'Thao tác có thể đã được lưu một phần. Tải lại danh sách để lấy trạng thái mới nhất.';
+
+  @override
+  String get transactionTitle => 'Giao dịch';
+
+  @override
+  String get transactionRecord => 'Ghi giao dịch';
+
+  @override
+  String get transactionExpense => 'Chi';
+
+  @override
+  String get transactionIncome => 'Thu';
+
+  @override
+  String get transactionTransfer => 'Chuyển';
+
+  @override
+  String get transactionAll => 'Tất cả';
+
+  @override
+  String get transactionAmount => 'Số tiền';
+
+  @override
+  String get transactionWallet => 'Ví';
+
+  @override
+  String get transactionDestination => 'Ví đích';
+
+  @override
+  String get transactionCategory => 'Danh mục';
+
+  @override
+  String get transactionAllCategories => 'Tất cả danh mục';
+
+  @override
+  String get transactionDate => 'Ngày';
+
+  @override
+  String get transactionNotes => 'Ghi chú';
+
+  @override
+  String get transactionSave => 'Lưu';
+
+  @override
+  String get transactionEdit => 'Sửa giao dịch';
+
+  @override
+  String get transactionCopy => 'Sao chép';
+
+  @override
+  String get transactionDelete => 'Xóa';
+
+  @override
+  String get transactionRestore => 'Khôi phục';
+
+  @override
+  String get transactionDeleteTitle => 'Xóa giao dịch?';
+
+  @override
+  String get transactionDeleteBody =>
+      'Giao dịch được xóa mềm và không còn tính vào số dư.';
+
+  @override
+  String get transactionCancel => 'Hủy';
+
+  @override
+  String get transactionEmpty => 'Chưa có giao dịch.';
+
+  @override
+  String get transactionDeletedEmpty => 'Không có giao dịch đã xóa.';
+
+  @override
+  String get transactionNoWallet =>
+      'Cần ít nhất một ví đang dùng trước khi ghi giao dịch.';
+
+  @override
+  String get transactionCreateWallet => 'Tạo ví';
+
+  @override
+  String get transactionShowDeleted => 'Xem giao dịch đã xóa';
+
+  @override
+  String get transactionSearch => 'Tìm trong ghi chú';
+
+  @override
+  String get transactionInvalid =>
+      'Kiểm tra số tiền, ví, danh mục, ngày hoặc tỷ giá. Chi cần danh mục. Chuyển khoản khác tiền tệ chỉ nhận tỷ giá đúng đơn vị.';
+
+  @override
+  String get transactionConflict =>
+      'Giao dịch đã thay đổi ở nơi khác. Tải lại danh sách trước khi sửa tiếp.';
+
+  @override
+  String get transactionError =>
+      'Không thể tải hoặc lưu giao dịch. Vui lòng thử lại.';
+
+  @override
+  String get transactionReloadRequired =>
+      'Dữ liệu đã cũ. Tải lại trước khi ghi tiếp.';
+
+  @override
+  String get transactionRate => 'Tỷ giá';
+
+  @override
+  String get transactionRateHint =>
+      'Nhập tỷ giá thủ công. Số tiền đích phải khớp đúng đơn vị nhỏ nhất, không làm tròn.';
+
+  @override
+  String get transactionLoadMore => 'Tải thêm';
 }

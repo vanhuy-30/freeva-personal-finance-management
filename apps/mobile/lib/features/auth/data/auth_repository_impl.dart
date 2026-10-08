@@ -48,11 +48,21 @@ class AuthRepositoryImpl implements AuthRepository, AuthorizedApi {
     return record['accessToken'] as String;
   }
 
-  Future<Map<String, dynamic>> _authorized(String method, String path,
-      {Map<String, dynamic>? body}) async {
+  Future<Map<String, dynamic>> _authorized(
+    String method,
+    String path, {
+    Map<String, dynamic>? body,
+    Map<String, String>? headers,
+  }) async {
     final token = await _token();
     try {
-      return await _api.request(method, path, token: token, body: body);
+      return await _api.request(
+        method,
+        path,
+        token: token,
+        body: body,
+        headers: headers,
+      );
     } on AuthFailure catch (failure) {
       if (failure.code == AuthError.expired && _record?['accessToken'] == token) {
         await _clear();
@@ -63,8 +73,13 @@ class AuthRepositoryImpl implements AuthRepository, AuthorizedApi {
 
   @override
   Future<Either<AuthFailure, Map<String, dynamic>>> request(
-          String method, String path, {Map<String, dynamic>? body}) =>
-      _guard(() => _authorized(method, path, body: body));
+    String method,
+    String path, {
+    Map<String, dynamic>? body,
+    Map<String, String>? headers,
+  }) => _guard(
+    () => _authorized(method, path, body: body, headers: headers),
+  );
 
   @override
   Future<Either<AuthFailure, bool>> accountExists(String email) =>

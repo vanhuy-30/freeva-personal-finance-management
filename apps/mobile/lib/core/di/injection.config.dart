@@ -27,12 +27,26 @@ import 'package:mobile/features/auth/domain/auth_repository.dart' as _i173;
 import 'package:mobile/features/auth/domain/auth_use_cases.dart' as _i253;
 import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dart'
     as _i990;
+import 'package:mobile/features/categories/data/category_repository_impl.dart'
+    as _i613;
+import 'package:mobile/features/categories/domain/category_repository.dart'
+    as _i561;
+import 'package:mobile/features/categories/domain/category_use_cases.dart'
+    as _i221;
 import 'package:mobile/features/profile/data/profile_repository_impl.dart'
     as _i72;
 import 'package:mobile/features/profile/domain/profile_repository.dart' as _i4;
 import 'package:mobile/features/profile/domain/profile_use_cases.dart' as _i281;
 import 'package:mobile/features/profile/presentation/viewmodels/profile_view_model.dart'
     as _i887;
+import 'package:mobile/features/transactions/data/transaction_repository_impl.dart'
+    as _i1020;
+import 'package:mobile/features/transactions/domain/transaction_repository.dart'
+    as _i931;
+import 'package:mobile/features/transactions/domain/transaction_use_cases.dart'
+    as _i292;
+import 'package:mobile/features/transactions/presentation/viewmodels/transaction_view_model.dart'
+    as _i332;
 import 'package:mobile/features/wallets/data/wallet_repository_impl.dart'
     as _i128;
 import 'package:mobile/features/wallets/domain/wallet_repository.dart' as _i107;
@@ -71,12 +85,20 @@ extension GetItInjectableX on _i174.GetIt {
         ));
     gh.lazySingleton<_i443.AuthorizedApi>(
         () => authDataModule.authorizedApi(gh<_i173.AuthRepository>()));
+    gh.lazySingleton<_i561.CategoryRepository>(
+        () => _i613.CategoryRepositoryImpl(gh<_i443.AuthorizedApi>()));
+    gh.lazySingleton<_i931.TransactionRepository>(
+        () => _i1020.TransactionRepositoryImpl(gh<_i443.AuthorizedApi>()));
+    gh.lazySingleton<_i292.TransactionUseCases>(() =>
+        _i292.DefaultTransactionUseCases(gh<_i931.TransactionRepository>()));
     gh.lazySingleton<_i107.WalletRepository>(
         () => _i128.WalletRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i4.ProfileRepository>(
         () => _i72.ProfileRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.factory<_i253.AuthUseCases>(
         () => _i253.DefaultAuthUseCases(gh<_i173.AuthRepository>()));
+    gh.lazySingleton<_i221.CategoryUseCases>(
+        () => _i221.DefaultCategoryUseCases(gh<_i561.CategoryRepository>()));
     gh.lazySingleton<_i336.WalletUseCases>(
         () => _i336.DefaultWalletUseCases(gh<_i107.WalletRepository>()));
     gh.factory<_i281.ProfileUseCases>(
@@ -87,6 +109,16 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i336.WalletUseCases>(),
           gh<_i990.AuthViewModel>(),
         ));
+    gh.lazySingleton<_i332.TransactionViewModel>(
+        () => _i332.DefaultTransactionViewModel(
+              gh<_i292.TransactionUseCases>(),
+              gh<_i221.CategoryUseCases>(),
+              gh<_i336.WalletUseCases>(),
+              gh<_i251.WalletViewModel>(),
+              gh<_i281.ProfileUseCases>(),
+              gh<_i990.AuthViewModel>(),
+              gh<_i1020.AnalyticsService>(),
+            ));
     gh.lazySingleton<_i887.ProfileViewModel>(
         () => _i887.DefaultProfileViewModel(
               gh<_i281.ProfileUseCases>(),
