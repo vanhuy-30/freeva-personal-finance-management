@@ -2,6 +2,10 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-10-08
+
+- `MOB-P1-005`: UI danh mục từ Home, cây cha-con, tạo/sửa custom, màu và icon theo catalog, ẩn/khôi phục và xóa vĩnh viễn kèm danh mục thay thế. Abstract DI, version/clientId, chặn ghi sau conflict, xóa state khi khóa. Analyze sạch và 80 Flutter tests pass (10 tests mới); chưa native build/E2E staging. [Thiết kế](../architecture/mobile-categories.md).
+
 ## 2026-09-25
 
 - `BE-P1-005`: CRUD transactions thu/chi/transfer hai leg nguyên tử; BigInt và manual FX exact, quote bất biến; owner/session, Idempotency-Key/clientId, optimistic version, danh mục chi bắt buộc, nhãn/ghi chú, lọc/phân trang và soft-delete/restore cả cặp. Writer phối hợp khóa/update hàng ví để chống race đổi denomination từ snapshot cũ. 145 unit/HTTP + 51 PostgreSQL integration tests, build/OpenAPI pass; không migration mới, chưa deploy staging. [Thiết kế](../architecture/transactions.md).

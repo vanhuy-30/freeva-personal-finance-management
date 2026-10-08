@@ -108,8 +108,12 @@
 - Note: [Kiến trúc danh mục](../docs/architecture/categories.md), [test và migration](../backend/api/test/README.md#categories--be-p1-006). Deploy migration trước API; mobile gọi POST defaults trước GET categories. Chưa deploy. UI/nhãn/quản lý nhóm thuộc task riêng.
 
 ### MOB-P1-005 — UI danh mục
-- Status: todo
+- Status: done
 - Module: 5
+- Depends: BE-P1-006, MOB-P1-001, MOB-P1-004
+- DoD: màn danh sách/tạo/sửa cây danh mục từ Home; màu và icon theo catalog; ẩn/khôi phục; xóa vĩnh viễn kèm danh mục thay thế; version/clientId; l10n vi/en, DI abstract, privacy gate. Không nhãn, nhóm, báo cáo hay hàng đợi offline.
+- Verification: `flutter analyze` sạch; toàn bộ 80 Flutter tests pass (10 tests mới), gồm phân trang, chu trình cha, idempotency, 409, khóa xóa state và editor 320px text scale 2.
+- Note: [Thiết kế và giới hạn](../docs/architecture/mobile-categories.md). Không đổi API. Chưa native build/E2E staging.
 
 ## Báo cáo / search / settings / help
 

@@ -1020,6 +1020,174 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Load more'**
   String get transactionLoadMore;
+
+  /// No description provided for @categoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get categoryTitle;
+
+  /// No description provided for @categoryAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add category'**
+  String get categoryAdd;
+
+  /// No description provided for @categoryEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit category'**
+  String get categoryEdit;
+
+  /// No description provided for @categoryName.
+  ///
+  /// In en, this message translates to:
+  /// **'Category name'**
+  String get categoryName;
+
+  /// No description provided for @categoryParent.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent category'**
+  String get categoryParent;
+
+  /// No description provided for @categoryNoParent.
+  ///
+  /// In en, this message translates to:
+  /// **'No parent'**
+  String get categoryNoParent;
+
+  /// No description provided for @categoryColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Color'**
+  String get categoryColor;
+
+  /// No description provided for @categoryNoColor.
+  ///
+  /// In en, this message translates to:
+  /// **'No color'**
+  String get categoryNoColor;
+
+  /// No description provided for @categoryIcon.
+  ///
+  /// In en, this message translates to:
+  /// **'Icon'**
+  String get categoryIcon;
+
+  /// No description provided for @categoryNoIcon.
+  ///
+  /// In en, this message translates to:
+  /// **'No icon'**
+  String get categoryNoIcon;
+
+  /// No description provided for @categorySystem.
+  ///
+  /// In en, this message translates to:
+  /// **'Default category'**
+  String get categorySystem;
+
+  /// No description provided for @categoryShowHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Show hidden categories'**
+  String get categoryShowHidden;
+
+  /// No description provided for @categoryHide.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide category'**
+  String get categoryHide;
+
+  /// No description provided for @categoryRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore category'**
+  String get categoryRestore;
+
+  /// No description provided for @categoryHideExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Hiding archives the category from the active list. Existing transactions keep it; hidden categories cannot be used for new records.'**
+  String get categoryHideExplanation;
+
+  /// No description provided for @categoryHideBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide or move active child categories before hiding this one.'**
+  String get categoryHideBlocked;
+
+  /// No description provided for @categoryDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete category'**
+  String get categoryDelete;
+
+  /// No description provided for @categoryDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this category permanently?'**
+  String get categoryDeleteTitle;
+
+  /// No description provided for @categoryDeleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A deleted category cannot be restored. If any transaction still references it, including a soft-deleted one, choose a replacement.'**
+  String get categoryDeleteBody;
+
+  /// No description provided for @categoryDeleteBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete or move every child, including hidden ones, before deleting this category.'**
+  String get categoryDeleteBlocked;
+
+  /// No description provided for @categoryReplacement.
+  ///
+  /// In en, this message translates to:
+  /// **'Replacement category'**
+  String get categoryReplacement;
+
+  /// No description provided for @categoryNoReplacement.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not move transactions'**
+  String get categoryNoReplacement;
+
+  /// No description provided for @categoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No categories yet.'**
+  String get categoryEmpty;
+
+  /// No description provided for @categoryHiddenEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No hidden categories.'**
+  String get categoryHiddenEmpty;
+
+  /// No description provided for @categoryInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the name (1–100 characters), parent, color and icon. A category cannot be its own parent or sit under its child.'**
+  String get categoryInvalid;
+
+  /// No description provided for @categoryConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'This category changed elsewhere. Reload the list before editing again.'**
+  String get categoryConflict;
+
+  /// No description provided for @categoryError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load or save categories. Please try again.'**
+  String get categoryError;
+
+  /// No description provided for @categoryReloadRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'The data is stale. Reload before editing again.'**
+  String get categoryReloadRequired;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {
