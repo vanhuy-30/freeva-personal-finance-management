@@ -12,6 +12,10 @@ abstract class AuthUseCases {
   Future<Either<AuthFailure, Unit>> unlockPin(String pin);
   Future<Either<AuthFailure, Unit>> unlockBiometric(String reason);
   Future<Either<AuthFailure, bool>> biometricAvailable();
+  Future<Either<AuthFailure, bool>> biometricHardware();
+  Future<Either<AuthFailure, bool>> biometricEnabled();
+  Future<Either<AuthFailure, Unit>> setBiometricEnabled(
+      bool enabled, String reason);
   Future<Either<AuthFailure, List<AuthSession>>> sessions();
   Future<Either<AuthFailure, Unit>> revoke(String? id);
   Future<Either<AuthFailure, Unit>> logout();
@@ -80,6 +84,16 @@ class DefaultAuthUseCases implements AuthUseCases {
   @override
   Future<Either<AuthFailure, bool>> biometricAvailable() =>
       _repository.biometricAvailable();
+  @override
+  Future<Either<AuthFailure, bool>> biometricHardware() =>
+      _repository.biometricHardware();
+  @override
+  Future<Either<AuthFailure, bool>> biometricEnabled() =>
+      _repository.biometricEnabled();
+  @override
+  Future<Either<AuthFailure, Unit>> setBiometricEnabled(
+          bool enabled, String reason) =>
+      _repository.setBiometricEnabled(enabled, reason);
   @override
   Future<Either<AuthFailure, List<AuthSession>>> sessions() =>
       _repository.sessions();

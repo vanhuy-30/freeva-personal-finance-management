@@ -4,6 +4,8 @@ Nhật ký repo/process — không phải App Store release notes.
 
 ## 2026-10-09
 
+- `MOB-P1-007`: cài đặt theme trên thiết bị, lối sang hồ sơ cho ngôn ngữ/tiền tệ/múi giờ, bật/tắt sinh trắc, onboarding một lần với `onboarding_started`/`onboarding_completed`, FAQ, phản hồi chỉ sao chép cục bộ, phiên bản và bản nháp ToS/privacy. Không đổi API và không gửi nội dung phản hồi. Analyze sạch và 108 Flutter tests pass (14 tests mới); chưa native build/E2E staging. [Thiết kế](../architecture/mobile-settings.md).
+
 - `MOB-P1-006`: tổng quan trên Home và màn báo cáo lọc tuần, tháng, khoảng ngày. Tài sản/nợ/ròng hiện tại và thu/chi/dòng tiền theo từng loại tiền; danh mục lá giữ tên cha, thu chưa phân loại có nhãn. Không cộng khác loại tiền, không đổi API. `report_viewed` một lần mỗi lượt mở báo cáo. Analyze sạch và 94 Flutter tests pass (14 tests mới); chưa native build/E2E staging. [Thiết kế](../architecture/mobile-reports.md).
 
 ## 2026-10-08

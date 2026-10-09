@@ -1,4 +1,6 @@
 import 'features/profile/presentation/viewmodels/profile_view_model.dart';
+import 'features/settings/presentation/theme_mode.dart';
+import 'features/settings/presentation/viewmodels/settings_view_model.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -15,6 +17,8 @@ Future<void> main() async {
   tzdata.initializeTimeZones();
   await configureDependencies();
   getIt<AppConfig>().validate();
+  await getIt<SettingsViewModel>().load();
+  createAppRouter();
   runApp(const FreevaApp());
 }
 
@@ -24,13 +28,14 @@ class FreevaApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final profile = getIt<ProfileViewModel>();
+    final settings = getIt<SettingsViewModel>();
     return ListenableBuilder(
-      listenable: profile,
+      listenable: Listenable.merge([profile, settings]),
       builder: (context, _) => MaterialApp.router(
         onGenerateTitle: (BuildContext context) => S.of(context).appTitle,
         theme: AppTheme.light,
         darkTheme: AppTheme.dark,
-        themeMode: ThemeMode.light,
+        themeMode: themeModeFor(settings.theme),
         routerConfig: appRouter,
         locale: Locale(profile.locale),
         supportedLocales: S.supportedLocales,

@@ -684,4 +684,192 @@ class SEn extends S {
   String reportAmount(String label, String amount, String currency) {
     return '$label: $amount $currency';
   }
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get settingsBack => 'Back';
+
+  @override
+  String get settingsAppearance => 'Appearance';
+
+  @override
+  String get settingsThemeLight => 'Light';
+
+  @override
+  String get settingsThemeDark => 'Dark';
+
+  @override
+  String get settingsThemeSystem => 'System';
+
+  @override
+  String get settingsProfile => 'Language, currency, and time zone';
+
+  @override
+  String get settingsPermissions => 'System access';
+
+  @override
+  String get settingsBiometric => 'Biometric unlock';
+
+  @override
+  String get settingsBiometricReason =>
+      'Authenticate to change biometric unlock';
+
+  @override
+  String get settingsBiometricOn => 'On';
+
+  @override
+  String get settingsBiometricOff => 'Off';
+
+  @override
+  String get settingsBiometricUnavailable =>
+      'This device has no biometrics available.';
+
+  @override
+  String get settingsBiometricPin =>
+      'Set up a PIN on the lock screen before enabling biometrics.';
+
+  @override
+  String get settingsBiometricFailed =>
+      'Biometrics were not confirmed. The setting was not changed.';
+
+  @override
+  String get settingsHelp => 'Help';
+
+  @override
+  String get settingsFaq => 'FAQ';
+
+  @override
+  String get settingsFeedback => 'Send feedback';
+
+  @override
+  String get settingsTerms => 'Terms of service (draft)';
+
+  @override
+  String get settingsPrivacy => 'Privacy policy (draft)';
+
+  @override
+  String settingsVersion(String version) {
+    return 'Version $version';
+  }
+
+  @override
+  String get settingsStorageError =>
+      'Settings could not be saved on this device. Please try again.';
+
+  @override
+  String get onboardingSkip => 'Skip';
+
+  @override
+  String get onboardingNext => 'Next';
+
+  @override
+  String get onboardingBack => 'Back';
+
+  @override
+  String get onboardingFinish => 'Done';
+
+  @override
+  String get onboardingWelcomeTitle => 'Welcome to Freeva';
+
+  @override
+  String get onboardingWelcomeBody =>
+      'A short introduction so you can record money without extra help.';
+
+  @override
+  String get onboardingWalletTitle => 'Create a wallet';
+
+  @override
+  String get onboardingWalletBody =>
+      'Add a cash, bank, e-wallet, or credit wallet. Each amount stays in its own currency.';
+
+  @override
+  String get onboardingTransactionTitle => 'Record the first transaction';
+
+  @override
+  String get onboardingTransactionBody =>
+      'From Home, record income, an expense, or a transfer between two wallets.';
+
+  @override
+  String get faqTitle => 'FAQ';
+
+  @override
+  String get faqWalletQ => 'How do I add a wallet?';
+
+  @override
+  String get faqWalletA =>
+      'Open Wallets from Home, then create a cash, bank, e-wallet, or credit wallet.';
+
+  @override
+  String get faqTransactionQ => 'How do I record a transaction?';
+
+  @override
+  String get faqTransactionA =>
+      'Open Transactions or use Record transaction on Home. Choose income, an expense, or a transfer with two balanced sides.';
+
+  @override
+  String get faqProfileQ => 'How do I change language, currency, or time zone?';
+
+  @override
+  String get faqProfileA =>
+      'Open Settings, then Language, currency, and time zone. The language changes after the profile is saved.';
+
+  @override
+  String get faqLockQ => 'How do I lock the app?';
+
+  @override
+  String get faqLockA =>
+      'Freeva locks when you leave the app. Unlock with your six-digit PIN. You can turn on biometrics in Settings after a PIN exists.';
+
+  @override
+  String get faqThemeQ => 'How do I switch light and dark mode?';
+
+  @override
+  String get faqThemeA =>
+      'Open Settings and choose Light, Dark, or System. Light is the default and stays on this device.';
+
+  @override
+  String get feedbackTitle => 'Feedback';
+
+  @override
+  String get feedbackIdea => 'Idea';
+
+  @override
+  String get feedbackProblem => 'Problem';
+
+  @override
+  String get feedbackMessage => 'Message';
+
+  @override
+  String get feedbackCopy => 'Copy feedback';
+
+  @override
+  String get feedbackCopied =>
+      'Copied. A contact address is not configured yet, so Freeva does not send this message.';
+
+  @override
+  String get feedbackInvalid => 'Enter a message of up to 2000 characters.';
+
+  @override
+  String get feedbackHelp =>
+      'Freeva copies the message on this device. It is not uploaded and is not written to logs.';
+
+  @override
+  String get legalDraft =>
+      'Draft for PRD-P0-002. This is not legal advice and is not in effect. The operating entity and contact channel are not decided yet.';
+
+  @override
+  String get tosTitle => 'Terms of service';
+
+  @override
+  String get tosBody =>
+      'Freeva lets you record wallets and transactions you enter. You keep your financial data. The service operator is not decided yet. Account export and deletion are separate release work. This summary does not replace a lawyer-reviewed agreement.';
+
+  @override
+  String get privacyTitle => 'Privacy policy';
+
+  @override
+  String get privacyBody =>
+      'The account stores email, language, time zone, default currency, and the financial month start day. Amounts you enter are not written to logs. Feedback you compose stays on this device until a contact channel exists. Analytics events do not include email, balances, or account numbers. This summary does not replace a lawyer-reviewed policy.';
 }

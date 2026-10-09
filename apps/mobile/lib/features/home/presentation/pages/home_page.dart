@@ -50,6 +50,12 @@ class HomePage extends StatelessWidget {
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.go('/reports'),
             ),
+            ListTile(
+              leading: const Icon(Icons.settings_outlined),
+              title: Text(s.settingsTitle),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.go('/settings'),
+            ),
             Align(
               alignment: Alignment.centerLeft,
               child: FilledButton.icon(

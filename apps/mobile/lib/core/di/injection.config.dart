@@ -49,6 +49,15 @@ import 'package:mobile/features/reports/presentation/viewmodels/overview_view_mo
     as _i43;
 import 'package:mobile/features/reports/presentation/viewmodels/report_view_model.dart'
     as _i1044;
+import 'package:mobile/features/settings/data/preference_vault.dart' as _i1060;
+import 'package:mobile/features/settings/data/settings_repository_impl.dart'
+    as _i1018;
+import 'package:mobile/features/settings/domain/settings_repository.dart'
+    as _i1056;
+import 'package:mobile/features/settings/domain/settings_use_cases.dart'
+    as _i519;
+import 'package:mobile/features/settings/presentation/viewmodels/settings_view_model.dart'
+    as _i421;
 import 'package:mobile/features/transactions/data/transaction_repository_impl.dart'
     as _i1020;
 import 'package:mobile/features/transactions/domain/transaction_repository.dart'
@@ -79,6 +88,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i467.AppConfig>(() => _i467.AppConfig());
     gh.lazySingleton<_i88.AuthApi>(
         () => _i88.HttpAuthApi(gh<_i467.AppConfig>()));
+    gh.lazySingleton<_i1060.PreferenceVault>(
+        () => _i1060.SecurePreferenceVault());
     gh.lazySingleton<_i810.AuthVault>(
         () => _i810.SecureAuthVault(gh<_i467.AppConfig>()));
     gh.lazySingleton<_i810.DeviceBiometrics>(
@@ -86,6 +97,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i1017.FeatureFlagService>(
         () => const _i158.LocalFeatureFlagService());
     gh.lazySingleton<_i766.AppLogger>(() => _i760.AppLoggerImpl());
+    gh.lazySingleton<_i1056.SettingsRepository>(
+        () => _i1018.SettingsRepositoryImpl(gh<_i1060.PreferenceVault>()));
     gh.lazySingleton<_i1020.AnalyticsService>(
         () => _i862.DebugAnalyticsService(gh<_i766.AppLogger>()));
     gh.lazySingleton<_i173.AuthRepository>(() => _i274.AuthRepositoryImpl(
@@ -95,6 +108,8 @@ extension GetItInjectableX on _i174.GetIt {
         ));
     gh.lazySingleton<_i443.AuthorizedApi>(
         () => authDataModule.authorizedApi(gh<_i173.AuthRepository>()));
+    gh.lazySingleton<_i519.SettingsUseCases>(
+        () => _i519.DefaultSettingsUseCases(gh<_i1056.SettingsRepository>()));
     gh.lazySingleton<_i561.CategoryRepository>(
         () => _i613.CategoryRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i931.TransactionRepository>(
@@ -111,6 +126,12 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i253.DefaultAuthUseCases(gh<_i173.AuthRepository>()));
     gh.lazySingleton<_i221.CategoryUseCases>(
         () => _i221.DefaultCategoryUseCases(gh<_i561.CategoryRepository>()));
+    gh.lazySingleton<_i421.SettingsViewModel>(
+        () => _i421.DefaultSettingsViewModel(
+              gh<_i519.SettingsUseCases>(),
+              gh<_i253.AuthUseCases>(),
+              gh<_i1020.AnalyticsService>(),
+            ));
     gh.lazySingleton<_i336.WalletUseCases>(
         () => _i336.DefaultWalletUseCases(gh<_i107.WalletRepository>()));
     gh.factory<_i281.ProfileUseCases>(
