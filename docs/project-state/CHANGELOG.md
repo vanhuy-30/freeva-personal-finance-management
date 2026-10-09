@@ -4,6 +4,8 @@ Nhật ký repo/process — không phải App Store release notes.
 
 ## 2026-10-09
 
+- `BE-P1-009`: `POST /api/v1/sync` áp tuần tự create/update/delete giao dịch. Replay theo `clientId` không tạo thêm dòng; conflict giữ bản server và chỉ bật `review` khi số tiền khác. Gợi ý trùng trong 10 phút không chặn tạo. `schemaVersion` phải khớp `SchemaMeta`. CRUD giao dịch hiện có không đổi. 19 unit suites / 179 tests và 6 HTTP/PostgreSQL suites / 75 tests, build/OpenAPI pass. Một migration seed `SchemaMeta`; chưa deploy staging. [Thiết kế](../architecture/sync.md).
+
 - `MOB-P1-007`: cài đặt theme trên thiết bị, lối sang hồ sơ cho ngôn ngữ/tiền tệ/múi giờ, bật/tắt sinh trắc, onboarding một lần với `onboarding_started`/`onboarding_completed`, FAQ, phản hồi chỉ sao chép cục bộ, phiên bản và bản nháp ToS/privacy. Không đổi API và không gửi nội dung phản hồi. Analyze sạch và 108 Flutter tests pass (14 tests mới); chưa native build/E2E staging. [Thiết kế](../architecture/mobile-settings.md).
 
 - `MOB-P1-006`: tổng quan trên Home và màn báo cáo lọc tuần, tháng, khoảng ngày. Tài sản/nợ/ròng hiện tại và thu/chi/dòng tiền theo từng loại tiền; danh mục lá giữ tên cha, thu chưa phân loại có nhãn. Không cộng khác loại tiền, không đổi API. `report_viewed` một lần mỗi lượt mở báo cáo. Analyze sạch và 94 Flutter tests pass (14 tests mới); chưa native build/E2E staging. [Thiết kế](../architecture/mobile-reports.md).

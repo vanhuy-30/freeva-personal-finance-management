@@ -64,4 +64,4 @@ Page mặc định 1, pageSize 50, tối đa 100. `status=active` mặc định,
 
 `400 VALIDATION_ERROR`, `401` theo auth service, `404 TRANSACTION_NOT_FOUND`/`ACCOUNT_NOT_FOUND` cho cả ID không tồn tại và khác owner, `409 TRANSACTION_CONFLICT`, `503 TRANSACTIONS_UNAVAILABLE`. Lỗi không phản chiếu input hoặc exception Prisma. HTTP logger không ghi body/query/header, ghi chú, số tiền hoặc bearer token.
 
-Chưa triển khai sync queue, báo cáo, đối soát, receipt hoặc batch edit. Không deploy staging trong task này. Lệnh kiểm tra và coverage: [test README](../../backend/api/test/README.md#transactions--be-p1-005).
+Sync queue giao dịch: [sync.md](sync.md) (`BE-P1-009`). Chưa triển khai đối soát, receipt hoặc batch edit. Không deploy staging trong task này. Lệnh kiểm tra và coverage: [test README](../../backend/api/test/README.md#transactions--be-p1-005).

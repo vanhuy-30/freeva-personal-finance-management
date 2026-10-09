@@ -312,3 +312,29 @@ docker stop freeva-be-p1-008-test
 Coverage: fold `cà phê`/`CA PHE`/`Đ`, tên danh mục lá kể cả đã ẩn, tên ví kể cả đã lưu trữ, nhãn, cha không kéo con, `150.000` và `12.50`/`1.50` theo minor digits, `%` literal, AND `from`/`to`/`accountId`, `status` xóa, owner khác, log không PII. `search=private` cũ vẫn đúng.
 
 Kết quả local 2026-10-09: **18 unit suites / 175 tests** (4 tests search mới), **5 HTTP/PostgreSQL suites / 71 tests** (1 test search mới); API build và OpenAPI validation pass, không warning. Không thêm migration; chưa deploy staging.
+
+## Sync queue — BE-P1-009
+
+`sync.integration-spec.ts` chạy trong job `test:integration`: HTTP Nest, guard/session thật, Prisma/PostgreSQL thật. Bắt buộc `AUTH_TEST_DATABASE_URL` trỏ DB disposable `auth_test`. Không dùng database development. Migration chỉ chèn `SchemaMeta` id=1 version=1 nếu chưa có.
+
+```sh
+docker run --detach --rm --name freeva-be-p1-009-test \
+  --publish 127.0.0.1:55444:5432 \
+  --env POSTGRES_USER=auth_test --env POSTGRES_PASSWORD=auth_test_local \
+  --env POSTGRES_DB=auth_test postgres:16-alpine
+docker exec freeva-be-p1-009-test pg_isready -U auth_test
+# Chờ accepting connections trước migrate.
+DATABASE_URL=postgresql://auth_test:auth_test_local@127.0.0.1:55444/auth_test \
+  pnpm --filter @freeva/api prisma:migrate:deploy
+pnpm --filter @freeva/api test --runInBand
+AUTH_TEST_DATABASE_URL=postgresql://auth_test:auth_test_local@127.0.0.1:55444/auth_test \
+  pnpm --filter @freeva/api test:integration --runInBand
+pnpm --filter @freeva/api build
+pnpm --package=@redocly/cli dlx redocly lint packages/api-contracts/openapi.yaml --extends minimal
+docker stop freeva-be-p1-009-test
+```
+
+Coverage: replay một dòng, conflict không đổi số tiền, operation sau vẫn applied, gợi ý trùng trong 10 phút, không gợi ý user khác hoặc bản cũ hơn, version cũ không ghi đè, `review` chỉ khi amount khác, 401/400/409/503, log không chứa số tiền hay ghi chú.
+
+Kết quả local 2026-10-09: **19 unit suites / 179 tests** (4 tests sync mới), **6 HTTP/PostgreSQL suites / 75 tests** (4 tests sync mới); API build và OpenAPI validation pass. Một migration seed `SchemaMeta`; chưa deploy staging.
+

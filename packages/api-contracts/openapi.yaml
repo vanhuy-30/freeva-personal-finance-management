@@ -859,6 +859,82 @@ paths:
           type: integer
           minimum: 1
           maximum: 2147483646
+  /api/v1/sync:
+    post:
+      operationId: syncTransactions
+      summary: Apply a transaction mutation queue
+      description: Bearer session owner. schemaVersion must equal SchemaMeta.version. Each operation commits on its own. Create idempotency is legs[0].clientId; there is no Idempotency-Key header. A matching replay is replayed. A conflicting clientId or stale version is conflict and does not overwrite. review is true only when a requested amount differs from the stored amount. A newly created transaction may include up to five duplicate hints for another active transaction with the same owner, account, amountMinor and occurredOn created within the previous 10 minutes. Hints do not drop the create. Per-item failures stay in the 200 body. Later operations still run after conflict or rejection. An unexpected failure rejects that item and omits the rest.
+      tags:
+      - Sync
+      security:
+      - UserBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SyncRequest'
+      responses:
+        '200':
+          description: Queue accepted. Individual operations may be applied, replayed, conflict or rejected.
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncResponse'
+        '400':
+          description: VALIDATION_ERROR before any write
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: SESSION_INVALID or auth error
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '409':
+          description: SYNC_SCHEMA_MISMATCH before any write
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: SYNC_UNAVAILABLE when SchemaMeta is missing or sync storage fails
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
   /api/v1/reports/cashflow:
     get:
       operationId: reportCashflow
@@ -2537,6 +2613,170 @@ components:
                 type: string
                 format: date-time
           - type: 'null'
+    SyncRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - schemaVersion
+      - operations
+      properties:
+        schemaVersion:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+          description: Must equal the server schema major in SchemaMeta.
+        operations:
+          type: array
+          minItems: 1
+          maxItems: 50
+          items:
+            $ref: '#/components/schemas/SyncOperation'
+    SyncOperation:
+      oneOf:
+      - $ref: '#/components/schemas/SyncCreateOperation'
+      - $ref: '#/components/schemas/SyncUpdateOperation'
+      - $ref: '#/components/schemas/SyncDeleteOperation'
+      discriminator:
+        propertyName: action
+        mapping:
+          create: '#/components/schemas/SyncCreateOperation'
+          update: '#/components/schemas/SyncUpdateOperation'
+          delete: '#/components/schemas/SyncDeleteOperation'
+    SyncCreateOperation:
+      type: object
+      additionalProperties: false
+      required:
+      - opId
+      - action
+      - body
+      properties:
+        opId:
+          type: string
+          format: uuid
+        action:
+          type: string
+          const: create
+        body:
+          $ref: '#/components/schemas/CreateTransaction'
+    SyncUpdateOperation:
+      type: object
+      additionalProperties: false
+      required:
+      - opId
+      - action
+      - id
+      - body
+      properties:
+        opId:
+          type: string
+          format: uuid
+        action:
+          type: string
+          const: update
+        id:
+          type: string
+          format: uuid
+        body:
+          $ref: '#/components/schemas/UpdateTransaction'
+    SyncDeleteOperation:
+      type: object
+      additionalProperties: false
+      required:
+      - opId
+      - action
+      - id
+      - version
+      properties:
+        opId:
+          type: string
+          format: uuid
+        action:
+          type: string
+          const: delete
+        id:
+          type: string
+          format: uuid
+        version:
+          type: integer
+          minimum: 1
+          maximum: 2147483646
+    SyncResponse:
+      type: object
+      additionalProperties: false
+      required:
+      - schemaVersion
+      - results
+      properties:
+        schemaVersion:
+          type: integer
+          minimum: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SyncResult'
+    SyncResult:
+      type: object
+      additionalProperties: false
+      required:
+      - opId
+      - status
+      - review
+      - transaction
+      - error
+      - duplicates
+      properties:
+        opId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+          - applied
+          - replayed
+          - conflict
+          - rejected
+        review:
+          type: boolean
+          description: True only when the operation conflicts and a requested amountMinor differs from the stored amount.
+        transaction:
+          oneOf:
+          - $ref: '#/components/schemas/TransactionBundle'
+          - type: 'null'
+        error:
+          oneOf:
+          - type: object
+            additionalProperties: false
+            required:
+            - code
+            - message
+            - details
+            properties:
+              code:
+                type: string
+              message:
+                type: string
+              details:
+                type: array
+                maxItems: 0
+                items:
+                  type: object
+          - type: 'null'
+        duplicates:
+          type: array
+          maxItems: 5
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - id
+            - clientId
+            properties:
+              id:
+                type: string
+                format: uuid
+              clientId:
+                type: string
+                format: uuid
     TransactionPage:
       type: object
       additionalProperties: false

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { TRANSACTION_REPOSITORY, type TransactionRepository } from './domain/transaction.repository';
+import { TRANSACTION_REPOSITORY, type RecentMatchQuery, type TransactionRepository } from './domain/transaction.repository';
 import { calendarDate, minor, normalizeRate, TransactionError, type TransactionBundle, type TransactionLeg, type TransactionPatch } from './domain/transaction';
 import type { CreateTransactionDto, ManualFxDto, TransactionLegDto, TransactionQueryDto, UpdateTransactionDto } from './transaction.dto';
 const legs = (input: TransactionLegDto[]) => input.map(leg => ({ ...leg, amountMinor: minor(leg.amountMinor) }));
@@ -21,6 +21,11 @@ export class TransactionService {
     return { transaction: response(result.transaction), created: result.created };
   }
   async find(userId: string, id: string) { return response(await this.repository.find(userId, id)); }
+  async findByClientId(userId: string, clientId: string) {
+    const bundle = await this.repository.findByClientId(userId, clientId);
+    return bundle ? response(bundle) : null;
+  }
+  recentMatches(userId: string, query: RecentMatchQuery) { return this.repository.findRecentMatches(userId, query); }
   async list(userId: string, query: TransactionQueryDto) {
     if (query.from) calendarDate(query.from);
     if (query.to) calendarDate(query.to);

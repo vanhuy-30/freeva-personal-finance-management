@@ -1,3 +1,4 @@
+import { SyncModule } from './modules/sync/sync.module';
 import { ReportModule } from './modules/reports/report.module';
 import { CategoryModule } from './modules/categories/category.module';
 import { TransactionModule } from './modules/transactions/transaction.module';
@@ -32,6 +33,7 @@ import { HealthModule } from './modules/health/health.module';
     ProfileModule,
     FinancialAccountModule,
     TransactionModule,
+    SyncModule,
     CategoryModule,
     ReportModule,
     AdminUserLookupModule,
