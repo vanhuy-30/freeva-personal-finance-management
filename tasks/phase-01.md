@@ -142,8 +142,12 @@
 - Note: [Thiết kế API](../docs/architecture/search.md), [lệnh test](../backend/api/test/README.md#search--be-p1-008). Không CRUD nhãn và không UI. Chưa deploy staging.
 
 ### MOB-P1-007 — Settings theme/locale/quyền + onboarding + FAQ + feedback
-- Status: todo
+- Status: done
 - Module: 24, 25
+- Depends: MOB-P1-001, MOB-P1-002
+- DoD: Cài đặt từ Home: theme sáng/tối/hệ thống lưu trên thiết bị; dòng dẫn hồ sơ cho locale/tiền tệ/múi giờ; bật/tắt sinh trắc trên PIN hiện có. Onboarding một lần khi đã mở khóa, FAQ tĩnh, phản hồi chỉ sao chép cục bộ, phiên bản và bản nháp ToS/privacy. l10n vi/en, DI abstract, privacy gate. Không API, không quyền thông báo, không gửi nội dung phản hồi.
+- Verification: `flutter analyze` sạch; toàn bộ 108 Flutter tests pass (14 tests mới), gồm theme sau khi tải, onboarding một lần với hai event, phản hồi rỗng/không vào log, sinh trắc thất bại không đổi cờ, và layout 320px text scale 2.
+- Note: [Thiết kế và giới hạn](../docs/architecture/mobile-settings.md). Không đổi API. Chưa native build/E2E staging. Địa chỉ nhận phản hồi còn TBD (DECISIONS-OPEN #10).
 
 ## Sync / privacy / security phát hành
 

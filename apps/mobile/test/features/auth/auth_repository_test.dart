@@ -133,6 +133,31 @@ void main() {
     await repository.submit(AuthAction.resetPassword, {});
     expect(vault.value, isNull);
   });
+  test('enabling biometrics keeps the flag unchanged when confirmation fails',
+      () async {
+    await setup();
+    biometrics.accepted = false;
+    expect((await repository.setBiometricEnabled(true, 'unlock')).isLeft(),
+        true);
+    expect(jsonDecode(vault.value!)['biometrics'], false);
+    expect(biometrics.calls, 1);
+    biometrics.accepted = true;
+    expect((await repository.setBiometricEnabled(true, 'unlock')).isRight(),
+        true);
+    final calls = biometrics.calls;
+    expect((await repository.setBiometricEnabled(false, 'unlock')).isRight(),
+        true);
+    expect(biometrics.calls, calls);
+    expect(jsonDecode(vault.value!)['biometrics'], false);
+  });
+  test('biometrics cannot be enabled before a PIN exists', () async {
+    await login();
+    expect(
+        (await repository.setBiometricEnabled(true, 'unlock'))
+            .fold((f) => f.code, (_) => null),
+        AuthError.invalidInput);
+    expect(biometrics.calls, 0);
+  });
   test('expired stored session requires login', () async {
     await setup();
     final record = jsonDecode(vault.value!) as Map<String, dynamic>;

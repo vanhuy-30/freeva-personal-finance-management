@@ -686,4 +686,190 @@ class SVi extends S {
   String reportAmount(String label, String amount, String currency) {
     return '$label: $amount $currency';
   }
+
+  @override
+  String get settingsTitle => 'Cài đặt';
+
+  @override
+  String get settingsBack => 'Quay lại';
+
+  @override
+  String get settingsAppearance => 'Giao diện';
+
+  @override
+  String get settingsThemeLight => 'Sáng';
+
+  @override
+  String get settingsThemeDark => 'Tối';
+
+  @override
+  String get settingsThemeSystem => 'Theo hệ thống';
+
+  @override
+  String get settingsProfile => 'Ngôn ngữ, tiền tệ và múi giờ';
+
+  @override
+  String get settingsPermissions => 'Quyền hệ thống';
+
+  @override
+  String get settingsBiometric => 'Mở khóa bằng sinh trắc';
+
+  @override
+  String get settingsBiometricReason => 'Xác thực để đổi mở khóa sinh trắc';
+
+  @override
+  String get settingsBiometricOn => 'Đang bật';
+
+  @override
+  String get settingsBiometricOff => 'Đang tắt';
+
+  @override
+  String get settingsBiometricUnavailable => 'Thiết bị này không có sinh trắc.';
+
+  @override
+  String get settingsBiometricPin =>
+      'Hãy tạo PIN ở màn khóa trước khi bật sinh trắc.';
+
+  @override
+  String get settingsBiometricFailed =>
+      'Chưa xác nhận sinh trắc. Cài đặt không đổi.';
+
+  @override
+  String get settingsHelp => 'Trợ giúp';
+
+  @override
+  String get settingsFaq => 'Câu hỏi thường gặp';
+
+  @override
+  String get settingsFeedback => 'Gửi phản hồi';
+
+  @override
+  String get settingsTerms => 'Điều khoản dịch vụ (nháp)';
+
+  @override
+  String get settingsPrivacy => 'Chính sách bảo mật (nháp)';
+
+  @override
+  String settingsVersion(String version) {
+    return 'Phiên bản $version';
+  }
+
+  @override
+  String get settingsStorageError =>
+      'Chưa lưu được cài đặt trên thiết bị này. Vui lòng thử lại.';
+
+  @override
+  String get onboardingSkip => 'Bỏ qua';
+
+  @override
+  String get onboardingNext => 'Tiếp';
+
+  @override
+  String get onboardingBack => 'Quay lại';
+
+  @override
+  String get onboardingFinish => 'Xong';
+
+  @override
+  String get onboardingWelcomeTitle => 'Chào mừng đến Freeva';
+
+  @override
+  String get onboardingWelcomeBody =>
+      'Vài bước ngắn để bạn tự ghi chép tiền mà không cần hỗ trợ thêm.';
+
+  @override
+  String get onboardingWalletTitle => 'Tạo một ví';
+
+  @override
+  String get onboardingWalletBody =>
+      'Thêm ví tiền mặt, ngân hàng, ví điện tử hoặc thẻ. Mỗi số tiền giữ nguyên loại tiền của ví.';
+
+  @override
+  String get onboardingTransactionTitle => 'Ghi giao dịch đầu tiên';
+
+  @override
+  String get onboardingTransactionBody =>
+      'Từ trang chủ, ghi thu, chi, hoặc chuyển khoản giữa hai ví.';
+
+  @override
+  String get faqTitle => 'Câu hỏi thường gặp';
+
+  @override
+  String get faqWalletQ => 'Làm sao để thêm ví?';
+
+  @override
+  String get faqWalletA =>
+      'Mở Ví từ trang chủ, rồi tạo ví tiền mặt, ngân hàng, ví điện tử hoặc thẻ.';
+
+  @override
+  String get faqTransactionQ => 'Làm sao để ghi giao dịch?';
+
+  @override
+  String get faqTransactionA =>
+      'Mở Giao dịch hoặc chọn Ghi giao dịch ở trang chủ. Chọn thu, chi, hoặc chuyển khoản cân bằng hai vế.';
+
+  @override
+  String get faqProfileQ => 'Làm sao để đổi ngôn ngữ, tiền tệ hoặc múi giờ?';
+
+  @override
+  String get faqProfileA =>
+      'Mở Cài đặt, rồi Ngôn ngữ, tiền tệ và múi giờ. Ngôn ngữ đổi sau khi hồ sơ được lưu.';
+
+  @override
+  String get faqLockQ => 'Ứng dụng khóa như thế nào?';
+
+  @override
+  String get faqLockA =>
+      'Freeva khóa khi bạn rời ứng dụng. Mở khóa bằng PIN sáu số. Có thể bật sinh trắc trong Cài đặt sau khi đã có PIN.';
+
+  @override
+  String get faqThemeQ => 'Làm sao để đổi sáng và tối?';
+
+  @override
+  String get faqThemeA =>
+      'Mở Cài đặt và chọn Sáng, Tối hoặc Theo hệ thống. Sáng là mặc định và được giữ trên thiết bị này.';
+
+  @override
+  String get feedbackTitle => 'Phản hồi';
+
+  @override
+  String get feedbackIdea => 'Góp ý';
+
+  @override
+  String get feedbackProblem => 'Lỗi';
+
+  @override
+  String get feedbackMessage => 'Nội dung';
+
+  @override
+  String get feedbackCopy => 'Sao chép phản hồi';
+
+  @override
+  String get feedbackCopied =>
+      'Đã sao chép. Chưa có địa chỉ liên hệ, nên Freeva không gửi nội dung này.';
+
+  @override
+  String get feedbackInvalid => 'Hãy nhập nội dung, tối đa 2000 ký tự.';
+
+  @override
+  String get feedbackHelp =>
+      'Freeva sao chép nội dung trên thiết bị này. Nội dung không được tải lên và không được ghi vào log.';
+
+  @override
+  String get legalDraft =>
+      'Bản nháp cho PRD-P0-002. Đây không phải tư vấn pháp lý và chưa có hiệu lực. Pháp nhân vận hành và kênh liên hệ chưa được chốt.';
+
+  @override
+  String get tosTitle => 'Điều khoản dịch vụ';
+
+  @override
+  String get tosBody =>
+      'Freeva để bạn ghi ví và giao dịch do bạn nhập. Bạn giữ dữ liệu tài chính của mình. Đơn vị vận hành chưa được chốt. Xuất và xóa tài khoản là việc phát hành riêng. Bản tóm tắt này không thay điều khoản đã được luật sư rà.';
+
+  @override
+  String get privacyTitle => 'Chính sách bảo mật';
+
+  @override
+  String get privacyBody =>
+      'Tài khoản lưu email, ngôn ngữ, múi giờ, tiền tệ mặc định và ngày bắt đầu tháng tài chính. Số tiền bạn nhập không được ghi vào log. Phản hồi bạn soạn ở lại trên thiết bị cho đến khi có kênh liên hệ. Sự kiện phân tích không gồm email, số dư hoặc số tài khoản. Bản tóm tắt này không thay chính sách đã được luật sư rà.';
 }

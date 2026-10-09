@@ -50,6 +50,10 @@ abstract class AuthRepository {
   Future<Either<AuthFailure, Unit>> unlockPin(String pin);
   Future<Either<AuthFailure, Unit>> unlockBiometric(String reason);
   Future<Either<AuthFailure, bool>> biometricAvailable();
+  Future<Either<AuthFailure, bool>> biometricHardware();
+  Future<Either<AuthFailure, bool>> biometricEnabled();
+  Future<Either<AuthFailure, Unit>> setBiometricEnabled(
+      bool enabled, String reason);
   Future<Either<AuthFailure, List<AuthSession>>> sessions();
   Future<Either<AuthFailure, Unit>> revoke(String? id);
   Future<Either<AuthFailure, Unit>> logout();

@@ -203,6 +203,28 @@ class AuthRepositoryImpl implements AuthRepository, AuthorizedApi {
       await _biometrics.available() &&
       (_record?['pinHash'] == null || _record?['biometrics'] == true));
   @override
+  Future<Either<AuthFailure, bool>> biometricHardware() =>
+      _guard(_biometrics.available);
+  @override
+  Future<Either<AuthFailure, bool>> biometricEnabled() =>
+      _guard(() async => _record?['biometrics'] == true);
+  @override
+  Future<Either<AuthFailure, Unit>> setBiometricEnabled(
+          bool enabled, String reason) =>
+      _guard(() async {
+        await _token();
+        if (_record!['pinHash'] == null) {
+          throw const AuthFailure(AuthError.invalidInput);
+        }
+        if (enabled &&
+            (!await _biometrics.available() ||
+                !await _biometrics.authenticate(reason))) {
+          throw const AuthFailure(AuthError.unavailable);
+        }
+        await _save({..._record!, 'biometrics': enabled});
+        return unit;
+      });
+  @override
   Future<Either<AuthFailure, List<AuthSession>>> sessions() => _guard(() async {
         final response = await _authorized('GET', 'sessions');
         return (response['sessions'] as List)

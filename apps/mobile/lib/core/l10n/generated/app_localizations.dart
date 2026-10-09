@@ -1338,6 +1338,342 @@ abstract class S {
   /// In en, this message translates to:
   /// **'{label}: {amount} {currency}'**
   String reportAmount(String label, String amount, String currency);
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// No description provided for @settingsBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get settingsBack;
+
+  /// No description provided for @settingsAppearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get settingsAppearance;
+
+  /// No description provided for @settingsThemeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get settingsThemeLight;
+
+  /// No description provided for @settingsThemeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get settingsThemeDark;
+
+  /// No description provided for @settingsThemeSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get settingsThemeSystem;
+
+  /// No description provided for @settingsProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Language, currency, and time zone'**
+  String get settingsProfile;
+
+  /// No description provided for @settingsPermissions.
+  ///
+  /// In en, this message translates to:
+  /// **'System access'**
+  String get settingsPermissions;
+
+  /// No description provided for @settingsBiometric.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric unlock'**
+  String get settingsBiometric;
+
+  /// No description provided for @settingsBiometricReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Authenticate to change biometric unlock'**
+  String get settingsBiometricReason;
+
+  /// No description provided for @settingsBiometricOn.
+  ///
+  /// In en, this message translates to:
+  /// **'On'**
+  String get settingsBiometricOn;
+
+  /// No description provided for @settingsBiometricOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get settingsBiometricOff;
+
+  /// No description provided for @settingsBiometricUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This device has no biometrics available.'**
+  String get settingsBiometricUnavailable;
+
+  /// No description provided for @settingsBiometricPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up a PIN on the lock screen before enabling biometrics.'**
+  String get settingsBiometricPin;
+
+  /// No description provided for @settingsBiometricFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometrics were not confirmed. The setting was not changed.'**
+  String get settingsBiometricFailed;
+
+  /// No description provided for @settingsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Help'**
+  String get settingsHelp;
+
+  /// No description provided for @settingsFaq.
+  ///
+  /// In en, this message translates to:
+  /// **'FAQ'**
+  String get settingsFaq;
+
+  /// No description provided for @settingsFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Send feedback'**
+  String get settingsFeedback;
+
+  /// No description provided for @settingsTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of service (draft)'**
+  String get settingsTerms;
+
+  /// No description provided for @settingsPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy policy (draft)'**
+  String get settingsPrivacy;
+
+  /// No description provided for @settingsVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version {version}'**
+  String settingsVersion(String version);
+
+  /// No description provided for @settingsStorageError.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings could not be saved on this device. Please try again.'**
+  String get settingsStorageError;
+
+  /// No description provided for @onboardingSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get onboardingSkip;
+
+  /// No description provided for @onboardingNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get onboardingNext;
+
+  /// No description provided for @onboardingBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get onboardingBack;
+
+  /// No description provided for @onboardingFinish.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get onboardingFinish;
+
+  /// No description provided for @onboardingWelcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Freeva'**
+  String get onboardingWelcomeTitle;
+
+  /// No description provided for @onboardingWelcomeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A short introduction so you can record money without extra help.'**
+  String get onboardingWelcomeBody;
+
+  /// No description provided for @onboardingWalletTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a wallet'**
+  String get onboardingWalletTitle;
+
+  /// No description provided for @onboardingWalletBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a cash, bank, e-wallet, or credit wallet. Each amount stays in its own currency.'**
+  String get onboardingWalletBody;
+
+  /// No description provided for @onboardingTransactionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Record the first transaction'**
+  String get onboardingTransactionTitle;
+
+  /// No description provided for @onboardingTransactionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'From Home, record income, an expense, or a transfer between two wallets.'**
+  String get onboardingTransactionBody;
+
+  /// No description provided for @faqTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'FAQ'**
+  String get faqTitle;
+
+  /// No description provided for @faqWalletQ.
+  ///
+  /// In en, this message translates to:
+  /// **'How do I add a wallet?'**
+  String get faqWalletQ;
+
+  /// No description provided for @faqWalletA.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Wallets from Home, then create a cash, bank, e-wallet, or credit wallet.'**
+  String get faqWalletA;
+
+  /// No description provided for @faqTransactionQ.
+  ///
+  /// In en, this message translates to:
+  /// **'How do I record a transaction?'**
+  String get faqTransactionQ;
+
+  /// No description provided for @faqTransactionA.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Transactions or use Record transaction on Home. Choose income, an expense, or a transfer with two balanced sides.'**
+  String get faqTransactionA;
+
+  /// No description provided for @faqProfileQ.
+  ///
+  /// In en, this message translates to:
+  /// **'How do I change language, currency, or time zone?'**
+  String get faqProfileQ;
+
+  /// No description provided for @faqProfileA.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings, then Language, currency, and time zone. The language changes after the profile is saved.'**
+  String get faqProfileA;
+
+  /// No description provided for @faqLockQ.
+  ///
+  /// In en, this message translates to:
+  /// **'How do I lock the app?'**
+  String get faqLockQ;
+
+  /// No description provided for @faqLockA.
+  ///
+  /// In en, this message translates to:
+  /// **'Freeva locks when you leave the app. Unlock with your six-digit PIN. You can turn on biometrics in Settings after a PIN exists.'**
+  String get faqLockA;
+
+  /// No description provided for @faqThemeQ.
+  ///
+  /// In en, this message translates to:
+  /// **'How do I switch light and dark mode?'**
+  String get faqThemeQ;
+
+  /// No description provided for @faqThemeA.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings and choose Light, Dark, or System. Light is the default and stays on this device.'**
+  String get faqThemeA;
+
+  /// No description provided for @feedbackTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback'**
+  String get feedbackTitle;
+
+  /// No description provided for @feedbackIdea.
+  ///
+  /// In en, this message translates to:
+  /// **'Idea'**
+  String get feedbackIdea;
+
+  /// No description provided for @feedbackProblem.
+  ///
+  /// In en, this message translates to:
+  /// **'Problem'**
+  String get feedbackProblem;
+
+  /// No description provided for @feedbackMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get feedbackMessage;
+
+  /// No description provided for @feedbackCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy feedback'**
+  String get feedbackCopy;
+
+  /// No description provided for @feedbackCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied. A contact address is not configured yet, so Freeva does not send this message.'**
+  String get feedbackCopied;
+
+  /// No description provided for @feedbackInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a message of up to 2000 characters.'**
+  String get feedbackInvalid;
+
+  /// No description provided for @feedbackHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Freeva copies the message on this device. It is not uploaded and is not written to logs.'**
+  String get feedbackHelp;
+
+  /// No description provided for @legalDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft for PRD-P0-002. This is not legal advice and is not in effect. The operating entity and contact channel are not decided yet.'**
+  String get legalDraft;
+
+  /// No description provided for @tosTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of service'**
+  String get tosTitle;
+
+  /// No description provided for @tosBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Freeva lets you record wallets and transactions you enter. You keep your financial data. The service operator is not decided yet. Account export and deletion are separate release work. This summary does not replace a lawyer-reviewed agreement.'**
+  String get tosBody;
+
+  /// No description provided for @privacyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy policy'**
+  String get privacyTitle;
+
+  /// No description provided for @privacyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The account stores email, language, time zone, default currency, and the financial month start day. Amounts you enter are not written to logs. Feedback you compose stays on this device until a contact channel exists. Analytics events do not include email, balances, or account numbers. This summary does not replace a lawyer-reviewed policy.'**
+  String get privacyBody;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {
