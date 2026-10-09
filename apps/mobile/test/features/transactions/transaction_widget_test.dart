@@ -10,6 +10,8 @@ import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dar
 import 'package:mobile/features/categories/data/category_repository_impl.dart';
 import 'package:mobile/features/categories/domain/category_use_cases.dart';
 import 'package:mobile/features/profile/domain/profile_use_cases.dart';
+import 'package:mobile/features/sync/domain/sync_use_cases.dart';
+import 'package:mobile/features/sync/presentation/viewmodels/sync_view_model.dart';
 import 'package:mobile/features/transactions/data/transaction_repository_impl.dart';
 import 'package:mobile/features/transactions/domain/transaction_use_cases.dart';
 import 'package:mobile/features/transactions/presentation/viewmodels/transaction_view_model.dart';
@@ -32,6 +34,7 @@ void main() {
   late DefaultAuthViewModel auth;
   late DefaultWalletViewModel wallets;
   late DefaultTransactionViewModel model;
+  late DefaultSyncViewModel sync;
 
   setUp(() async {
     await getIt.reset();
@@ -47,6 +50,12 @@ void main() {
     getIt.registerSingleton<AuthViewModel>(auth);
     final walletCases = DefaultWalletUseCases(WalletRepositoryImpl(api));
     wallets = DefaultWalletViewModel(walletCases, auth);
+    final analytics = RecordingAnalytics();
+    sync = DefaultSyncViewModel(
+      DefaultSyncUseCases(MemorySyncRepository()),
+      auth,
+      analytics,
+    );
     model = DefaultTransactionViewModel(
       DefaultTransactionUseCases(TransactionRepositoryImpl(api)),
       DefaultCategoryUseCases(CategoryRepositoryImpl(api)),
@@ -54,13 +63,15 @@ void main() {
       wallets,
       ProfileUseCases(MemoryProfiles()),
       auth,
-      RecordingAnalytics(),
+      analytics,
+      sync,
     );
     await model.load();
   });
 
   tearDown(() async {
     model.dispose();
+    sync.dispose();
     wallets.dispose();
     auth.dispose();
     await getIt.reset();

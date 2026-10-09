@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/core/analytics/analytics_event.dart';
 import 'package:mobile/core/analytics/analytics_service.dart';
@@ -13,6 +14,10 @@ import 'package:mobile/features/profile/domain/profile_use_cases.dart';
 import 'package:mobile/features/transactions/data/transaction_repository_impl.dart';
 import 'package:mobile/features/transactions/domain/transaction.dart';
 import 'package:mobile/features/transactions/domain/transaction_use_cases.dart';
+import 'package:mobile/features/sync/domain/sync_repository.dart';
+import 'package:mobile/features/sync/domain/sync_item.dart';
+import 'package:mobile/features/sync/domain/sync_use_cases.dart';
+import 'package:mobile/features/sync/presentation/viewmodels/sync_view_model.dart';
 import 'package:mobile/features/transactions/presentation/viewmodels/transaction_view_model.dart';
 import 'package:mobile/features/wallets/data/wallet_repository_impl.dart';
 import 'package:mobile/features/wallets/domain/wallet_use_cases.dart';
@@ -29,6 +34,21 @@ class RecordingAnalytics implements AnalyticsService {
   void track(AnalyticsEvent event) => events.add(event.toPayload());
 }
 
+class MemorySyncRepository implements SyncRepository {
+  List<SyncQueueItem> items = const [];
+
+  @override
+  Future<List<SyncQueueItem>> read() async => items;
+
+  @override
+  Future<void> write(List<SyncQueueItem> value) async => items = value;
+
+  @override
+  Future<Either<AuthFailure, List<SyncItemResult>>> submit(
+    List<SyncQueueItem> batch,
+  ) async => right(const []);
+}
+
 void main() {
   setUpAll(tzdata.initializeTimeZones);
 
@@ -36,6 +56,7 @@ void main() {
   late DefaultAuthViewModel auth;
   late DefaultWalletViewModel wallets;
   late DefaultTransactionViewModel model;
+  late DefaultSyncViewModel sync;
   late RecordingAnalytics analytics;
 
   setUp(() async {
@@ -51,6 +72,11 @@ void main() {
           ..ready = true;
     final walletCases = DefaultWalletUseCases(WalletRepositoryImpl(api));
     wallets = DefaultWalletViewModel(walletCases, auth);
+    sync = DefaultSyncViewModel(
+      DefaultSyncUseCases(MemorySyncRepository()),
+      auth,
+      analytics,
+    );
     model = DefaultTransactionViewModel(
       DefaultTransactionUseCases(TransactionRepositoryImpl(api)),
       DefaultCategoryUseCases(CategoryRepositoryImpl(api)),
@@ -59,12 +85,14 @@ void main() {
       ProfileUseCases(MemoryProfiles()),
       auth,
       analytics,
+      sync,
     );
     await model.load();
   });
 
   tearDown(() {
     model.dispose();
+    sync.dispose();
     wallets.dispose();
     auth.dispose();
   });
@@ -84,8 +112,11 @@ void main() {
   test('create sends a negative amount and stable idempotency key', () async {
     final draft = _draft(model.newClientId());
     api.failWrite = 1;
-    expect(await model.save(draft), isFalse);
     expect(await model.save(draft), isTrue);
+    expect(sync.items, hasLength(1));
+    expect(sync.items.single.legs.single.amountMinor, '-150000');
+    expect(await model.save(draft), isTrue);
+    expect(sync.items, isEmpty);
     final posts = api.calls.where(
       (call) => call.method == 'POST' && call.path == 'transactions',
     );

@@ -160,8 +160,12 @@
 - Note: [Thiết kế](../docs/architecture/sync.md). Không pull cursor, không CRDT, không hàng đợi mobile (`MOB-P1-008`). Chưa deploy staging.
 
 ### MOB-P1-008 — Hàng đợi offline + trạng thái sync
-- Status: todo
+- Status: done
 - Module: 20
+- Depends: MOB-P1-004, BE-P1-009
+- DoD: Mất mạng khi tạo/sửa/xóa/khôi phục giao dịch thì vào hàng đợi cục bộ và gửi lại bằng `POST /api/v1/sync`. Gộp mutation trước khi gửi, giữ `clientId`, conflict không ghi đè. Banner trạng thái trên Home và danh sách giao dịch. Đăng xuất xóa hàng đợi; khóa PIN không xóa. Không sync ví/danh mục, không đổi API, không log số tiền hay ghi chú.
+- Verification: `flutter analyze` sạch; toàn bộ 117 Flutter tests pass (9 tests mới), gồm gộp hàng đợi, `applied`/`replayed`/`conflict`/`rejected`, batch 50, đăng xuất xóa queue, và banner vi/en.
+- Note: [Thiết kế](../docs/architecture/mobile-sync.md). Không pull cursor, không CRDT, không đối soát. Chưa native build/E2E staging.
 
 ### BE-P1-010 — Export JSON + xóa tài khoản
 - Status: todo

@@ -26,4 +26,4 @@ Chỉ khi create `applied`. Giao dịch active khác `clientId`, cùng owner, c�
 
 ## Ngoài phạm vi
 
-Hàng đợi offline trên mobile là `MOB-P1-008`. Không sync ví/danh mục trong batch này, không last-write-wins, không đối soát.
+Hàng đợi offline trên mobile là [MOB-P1-008](mobile-sync.md). Không sync ví/danh mục trong batch này, không last-write-wins, không đối soát.
