@@ -1,3 +1,4 @@
+import { ReportModule } from './modules/reports/report.module';
 import { CategoryModule } from './modules/categories/category.module';
 import { TransactionModule } from './modules/transactions/transaction.module';
 import { FinancialAccountModule } from './modules/financial-accounts/financial-account.module';
@@ -32,6 +33,7 @@ import { HealthModule } from './modules/health/health.module';
     FinancialAccountModule,
     TransactionModule,
     CategoryModule,
+    ReportModule,
     AdminUserLookupModule,
   ],
 })

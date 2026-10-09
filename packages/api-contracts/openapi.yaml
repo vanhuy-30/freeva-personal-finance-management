@@ -853,6 +853,90 @@ paths:
           type: integer
           minimum: 1
           maximum: 2147483646
+  /api/v1/reports/cashflow:
+    get:
+      operationId: reportCashflow
+      summary: Report income, expense, and net cashflow for a period
+      tags:
+      - Reports
+      security:
+      - UserBearer: []
+      parameters:
+      - name: period
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - week
+          - month
+          - range
+      - name: on
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
+        description: Anchor calendar date for week or month. Defaults to today in the user timezone. Forbidden for range.
+      - name: from
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
+        description: Inclusive range start. Required with to for period=range. Forbidden for week and month.
+      - name: to
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
+        description: Inclusive range end. At most 3660 days after from.
+      responses:
+        '200':
+          description: Period totals by currency, leaf category, and account
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/ReportNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CashflowReport'
+        '400':
+          $ref: '#/components/responses/ReportValidationError'
+        '401':
+          $ref: '#/components/responses/ReportUnauthorized'
+        '503':
+          $ref: '#/components/responses/ReportUnavailable'
+      description: Read-only. Week is Monday through Sunday. Month follows fiscalMonthStartDay in the user timezone. Amounts stay in each account currency; transfers are excluded from income, expense, and net. No FX conversion.
+  /api/v1/reports/net-worth:
+    get:
+      operationId: reportNetWorth
+      summary: Report current assets, liabilities, and net worth
+      tags:
+      - Reports
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Current signed totals per currency
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/ReportNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NetWorthReport'
+        '400':
+          $ref: '#/components/responses/ReportValidationError'
+        '401':
+          $ref: '#/components/responses/ReportUnauthorized'
+        '503':
+          $ref: '#/components/responses/ReportUnavailable'
+      description: Read-only current snapshot. Includes archived accounts. Assets are cash, bank, and ewallet balances; liabilities are credit balances. No period filter and no FX conversion.
   /api/v1/financial-accounts:
     post:
       operationId: createFinancialAccount
@@ -1786,6 +1870,11 @@ paths:
           description: UUID v4
 components:
   headers:
+    ReportNoStore:
+      description: Report responses must not be cached.
+      schema:
+        type: string
+        const: no-store
     FinancialAccountNoStore:
       description: Financial responses must not be cached.
       schema:
@@ -1880,6 +1969,33 @@ components:
       headers:
         Cache-Control:
           $ref: '#/components/headers/FinancialAccountNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    ReportValidationError:
+      description: VALIDATION_ERROR
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/ReportNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    ReportUnauthorized:
+      description: Authentication rejected by the auth service
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/ReportNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    ReportUnavailable:
+      description: REPORTS_UNAVAILABLE or authentication unavailable
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/ReportNoStore'
       content:
         application/json:
           schema:
@@ -2958,3 +3074,162 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AuthSession'
+    ReportMoney:
+      type: string
+      pattern: ^-?[0-9]+$
+      description: Signed integer minor units as a decimal string. May exceed int64. Never a JSON number.
+    CashflowReport:
+      type: object
+      additionalProperties: false
+      required:
+      - period
+      - totals
+      - byCategory
+      - byAccount
+      properties:
+        period:
+          $ref: '#/components/schemas/CashflowPeriod'
+        totals:
+          type: array
+          items:
+            $ref: '#/components/schemas/CashflowTotal'
+        byCategory:
+          type: array
+          items:
+            $ref: '#/components/schemas/CashflowCategoryTotal'
+        byAccount:
+          type: array
+          items:
+            $ref: '#/components/schemas/CashflowAccountTotal'
+    CashflowPeriod:
+      type: object
+      additionalProperties: false
+      required:
+      - kind
+      - from
+      - to
+      - timezone
+      - fiscalMonthStartDay
+      properties:
+        kind:
+          type: string
+          enum:
+          - week
+          - month
+          - range
+        from:
+          type: string
+          format: date
+        to:
+          type: string
+          format: date
+        timezone:
+          type: string
+        fiscalMonthStartDay:
+          type: integer
+          minimum: 1
+          maximum: 28
+    CashflowTotal:
+      type: object
+      additionalProperties: false
+      required:
+      - currency
+      - incomeMinor
+      - expenseMinor
+      - netMinor
+      properties:
+        currency:
+          type: string
+          pattern: ^[A-Z]{3}$
+        incomeMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        expenseMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        netMinor:
+          $ref: '#/components/schemas/ReportMoney'
+          description: incomeMinor + expenseMinor. Transfers are excluded.
+    CashflowCategoryTotal:
+      type: object
+      additionalProperties: false
+      required:
+      - categoryId
+      - parentId
+      - currency
+      - incomeMinor
+      - expenseMinor
+      properties:
+        categoryId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          description: Leaf category on the transaction. Null is uncategorized income.
+        parentId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        currency:
+          type: string
+          pattern: ^[A-Z]{3}$
+        incomeMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        expenseMinor:
+          $ref: '#/components/schemas/ReportMoney'
+    CashflowAccountTotal:
+      type: object
+      additionalProperties: false
+      required:
+      - accountId
+      - currency
+      - incomeMinor
+      - expenseMinor
+      - transferMinor
+      - netMinor
+      properties:
+        accountId:
+          type: string
+          format: uuid
+        currency:
+          type: string
+          pattern: ^[A-Z]{3}$
+        incomeMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        expenseMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        transferMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        netMinor:
+          $ref: '#/components/schemas/ReportMoney'
+          description: incomeMinor + expenseMinor + transferMinor for this account.
+    NetWorthReport:
+      type: object
+      additionalProperties: false
+      required:
+      - items
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/NetWorthTotal'
+    NetWorthTotal:
+      type: object
+      additionalProperties: false
+      required:
+      - currency
+      - assetsMinor
+      - liabilitiesMinor
+      - netWorthMinor
+      properties:
+        currency:
+          type: string
+          pattern: ^[A-Z]{3}$
+        assetsMinor:
+          $ref: '#/components/schemas/ReportMoney'
+          description: Signed sum of cash, bank, and ewallet balances. Negative means overdraft.
+        liabilitiesMinor:
+          $ref: '#/components/schemas/ReportMoney'
+          description: Signed sum of credit balances. Negative means debt.
+        netWorthMinor:
+          $ref: '#/components/schemas/ReportMoney'
+          description: assetsMinor + liabilitiesMinor.

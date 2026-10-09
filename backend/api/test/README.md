@@ -260,3 +260,29 @@ Kết quả 2026-09-25: **162 unit/HTTP tests**, **66 HTTP/PostgreSQL integratio
 build, OpenAPI validation, fresh migration và upgrade bảo toàn dữ liệu pass.
 OpenAPI còn bốn warning có sẵn (localhost và profile thiếu summary).
 Chưa deploy staging/production.
+
+## Reports — BE-P1-007
+
+`reports.integration-spec.ts` chạy trong job `test:integration` hiện có: HTTP Nest, guard/session thật, Prisma/PostgreSQL thật. Bắt buộc `AUTH_TEST_DATABASE_URL` trỏ DB disposable `auth_test`. Không dùng database development. Task không thêm migration.
+
+```sh
+docker run --detach --rm --name freeva-be-p1-007-test \
+  --publish 127.0.0.1:55442:5432 \
+  --env POSTGRES_USER=auth_test --env POSTGRES_PASSWORD=auth_test_local \
+  --env POSTGRES_DB=auth_test postgres:16-alpine
+docker exec freeva-be-p1-007-test pg_isready -U auth_test
+# Chờ accepting connections trước migrate.
+DATABASE_URL=postgresql://auth_test:auth_test_local@127.0.0.1:55442/auth_test \
+  pnpm --filter @freeva/api prisma:migrate:deploy
+pnpm --filter @freeva/api prisma:generate
+pnpm --filter @freeva/api test --runInBand
+AUTH_TEST_DATABASE_URL=postgresql://auth_test:auth_test_local@127.0.0.1:55442/auth_test \
+  pnpm --filter @freeva/api test:integration --runInBand
+pnpm --filter @freeva/api build
+pnpm --package=@redocly/cli dlx redocly lint packages/api-contracts/openapi.yaml --extends minimal
+docker stop freeva-be-p1-007-test
+```
+
+Coverage: biên tuần/tháng tài chính/năm nhuận/TZ, khoảng 3660 ngày, dấu thu chi, transfer loại khỏi dòng tiền nhưng vào ví, danh mục lá không gộp cha, ví active rỗng và ví archived, credit/thấu chi, bigint vượt int64, soft-delete, owner, FX transfer, log không PII.
+
+Kết quả local 2026-10-09: **17 unit suites / 171 tests** (9 tests báo cáo mới), **5 HTTP/PostgreSQL suites / 70 tests** (4 tests báo cáo mới); API build và OpenAPI validation pass. OpenAPI còn bốn warning có sẵn (localhost và profile thiếu summary). Không thêm migration; chưa deploy staging.

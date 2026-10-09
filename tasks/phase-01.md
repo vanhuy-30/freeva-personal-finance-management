@@ -118,8 +118,12 @@
 ## Báo cáo / search / settings / help
 
 ### BE-P1-007 — Báo cáo thu chi, theo danh mục/ví, net worth hiện tại
-- Status: todo
+- Status: done
 - Module: 14
+- Depends: BE-P1-004, BE-P1-005
+- DoD: GET cashflow và net-worth chỉ đọc, owner/session, no-store; tuần Thứ Hai–Chủ nhật, tháng theo fiscalMonthStartDay, khoảng inclusive tối đa 3660 ngày; thu/chi/dòng tiền theo từng currency, danh mục lá và ví; transfer không vào thu/chi; net worth hiện tại gồm ví lưu trữ; không quy đổi FX, không migration; OpenAPI và log không PII.
+- Verification: 171 unit tests (9 mới) và 70 HTTP/PostgreSQL integration tests (4 mới) pass; build và OpenAPI validation pass. Không migration mới.
+- Note: [Thiết kế API](../docs/architecture/reports.md), [lệnh test](../backend/api/test/README.md#reports--be-p1-007). Không cộng khác loại tiền. Chưa deploy staging. UI báo cáo thuộc MOB-P1-006.
 
 ### MOB-P1-006 — Màn tổng quan + báo cáo lọc kỳ
 - Status: todo
