@@ -11,7 +11,7 @@ Pino chỉ che **đúng path** đã liệt kê. Nội suy PII vào chuỗi messa
 | Email | `email` | Redact hết; không mask một phần ở P0 |
 | Mật khẩu | `password`, `passwordHash` | Kể cả Phase 1 auth |
 | Token | `Authorization`, `cookie`, `set-cookie`, `token`, `refreshToken`, `accessToken`, `tokenHash`, `encryptedToken`, API key | Header HTTP + payload |
-| Tiền / số dư | `amountMinor`, `initialBalanceMinor`, `creditLimitMinor`, `balanceMinor` | Mọi `*Minor` |
+| Tiền / số dư | `amountMinor`, `balanceMinor`, `incomeMinor`, `expenseMinor`, `netMinor`, `transferMinor`, `assetsMinor`, `liabilitiesMinor`, `netWorthMinor` | Mọi `*Minor` |
 | Số tài khoản | `accountNumber`, `iban` | Chưa có trên schema P0; path sẵn cho P1+ |
 | Secret env | `DATABASE_URL`, SMTP password, secret manager | Không log env |
 

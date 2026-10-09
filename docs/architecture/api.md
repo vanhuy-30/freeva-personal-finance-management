@@ -10,7 +10,7 @@
 { "error": { "code": "VALIDATION_ERROR", "message": "…", "details": [] } }
 ```
 
-- Money fields: string integer `amountMinor` + `currency`.
+- Money fields: string integer `amountMinor` + `currency`. Báo cáo dùng cùng dạng string cho `*Minor`, có thể vượt int64, không quy đổi FX: [reports.md](reports.md) (`BE-P1-007`).
 - `Idempotency-Key` UUID bắt buộc cho POST tạo giao dịch, trùng `legs[0].clientId`; unique owner/clientId cho mỗi leg. [CRUD transactions](transactions.md).
 - Auth user: opaque Bearer 7 ngày (`/api/v1/auth`, `/api/v1/sessions`), xem [ADR 009](adr/009-email-auth-sessions.md). Admin P0: opaque Bearer credential từ env ánh xạ một `STAFF_ACTOR_ID`; chỉ role staff, không bypass khi thiếu config.
 
