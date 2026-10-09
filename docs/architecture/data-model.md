@@ -137,7 +137,7 @@ Unique `(userId, clientId)`.
 
 ### SchemaMeta
 
-Giữ từ scaffold: `version` schema ứng dụng / sync major. Health không phụ thuộc bảng này (`SELECT 1`).
+Giữ từ scaffold: `version` schema ứng dụng / sync major. `BE-P1-009` chèn hàng `id = 1`, `version = 1` nếu chưa có; `POST /api/v1/sync` từ chối khi major lệch hoặc thiếu hàng này. Health không phụ thuộc bảng này (`SELECT 1`).
 
 ### AuditEvent
 

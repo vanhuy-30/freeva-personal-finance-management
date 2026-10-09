@@ -152,9 +152,12 @@
 ## Sync / privacy / security phát hành
 
 ### BE-P1-009 — Sync queue, idempotency, chống trùng đơn giản
-- Status: todo
+- Status: done
 - Module: 20
 - Depends: BE-P0-001
+- DoD: `POST /api/v1/sync` áp create/update/delete giao dịch theo thứ tự; idempotent theo `clientId`; conflict không ghi đè; `review` khi amount khác; gợi ý trùng trong 10 phút nhưng vẫn tạo. `schemaVersion` khớp `SchemaMeta`. CRUD giao dịch hiện có không đổi. OpenAPI cập nhật; log không chứa số tiền hay ghi chú.
+- Verification: 19 unit suites / 179 tests (4 mới) và 6 HTTP/PostgreSQL suites / 75 tests (4 mới) pass; build và OpenAPI validation pass. Một migration chỉ seed `SchemaMeta`.
+- Note: [Thiết kế](../docs/architecture/sync.md). Không pull cursor, không CRDT, không hàng đợi mobile (`MOB-P1-008`). Chưa deploy staging.
 
 ### MOB-P1-008 — Hàng đợi offline + trạng thái sync
 - Status: todo

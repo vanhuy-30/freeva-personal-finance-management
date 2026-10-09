@@ -120,7 +120,7 @@ Boundary bắt buộc:
 - Transfer gồm hai transaction cùng `transferGroupId`; nguồn âm, đích dương.
 - FX phải lưu rate và thời điểm để báo cáo có thể tái tạo.
 - Record do user sở hữu dùng UUID, `clientId`, version tăng đơn điệu và timestamps.
-- Offline MVP hiện định hướng mutation queue + exponential retry, không dùng CRDT; conflict giao dịch cần server resolution và review khi amount khác.
+- Offline MVP: `POST /api/v1/sync` hàng đợi giao dịch, retry theo `clientId`, optimistic version, không CRDT. Conflict không ghi đè; `review` khi amount khác. [Sync](sync.md).
 
 Chi tiết model/invariant: [Data model](data-model.md), [Money & FX ADR](adr/006-money-and-fx.md), [Sync](sync.md).
 
@@ -138,7 +138,7 @@ Chi tiết model/invariant: [Data model](data-model.md), [Money & FX ADR](adr/00
 | Chủ đề | Hiện trạng | Điều kiện chốt |
 |---|---|---|
 | Production hosting | Vendor chưa chọn; region Việt Nam đã chốt | Trước khi chuẩn bị phát hành Store. |
-| Offline conflict | Queue + retry, không CRDT là phương án hiện tại | Chốt cùng thiết kế/implementation sync Phase 1. |
+| Offline conflict | `POST /api/v1/sync` cho giao dịch: optimistic version, không ghi đè, không CRDT | Chốt `BE-P1-009` 2026-10-09 |
 | Redis responsibility | Dự kiến queue/cache/session | Mỗi use case phải có owner, TTL/durability và failure policy trước khi dùng. |
 | FX/bank/market provider | FX nhập tay ở MVP; external partner để sau | Khi vào scope tích hợp Phase 6. |
 | Crash monitoring | Dự kiến Sentry, chưa tích hợp | `INF-P1-001`. |

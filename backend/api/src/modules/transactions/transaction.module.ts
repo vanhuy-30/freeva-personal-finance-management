@@ -9,5 +9,6 @@ import { TransactionService } from './transaction.service';
   imports: [AuthModule],
   controllers: [TransactionController],
   providers: [TransactionService, { provide: TRANSACTION_REPOSITORY, useClass: PrismaTransactionRepository }],
+  exports: [TransactionService],
 })
 export class TransactionModule {}

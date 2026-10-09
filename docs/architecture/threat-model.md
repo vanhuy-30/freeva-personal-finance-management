@@ -102,7 +102,7 @@ Các hàng dưới còn planned; auth/session đã triển khai được ghi ri�
 | CRUD GD thu/chi/transfer cân bằng | `BE-P1-005`, `MOB-P1-004`, `QA-P0-002` |
 | Danh mục | `BE-P1-006`, `MOB-P1-005` |
 | Báo cáo / search | `BE-P1-007`, `BE-P1-008` |
-| Sync queue, idempotency `clientId` | `BE-P1-009`, `MOB-P1-008` |
+| Sync queue, idempotency `clientId` | `BE-P1-009` đã có `POST /api/v1/sync`; hàng đợi mobile còn `MOB-P1-008` |
 | Export JSON + xóa tài khoản | `BE-P1-010` |
 | Ẩn số dư khi nền; cảnh báo thiết bị mới (Should) | `MOB-P1-009` |
 | Crash monitoring staging | `INF-P1-001` |
@@ -119,7 +119,7 @@ Auth user: Bearer (`/api/v1` khi gắn Phase 1). Admin P0 dùng opaque Bearer se
 | T-S02 | S | Mobile | Mở app trên máy người khác | `MOB-P1-001` PIN/biometric. P0: chưa lock. |
 | T-S03 | S | Admin | Giả staff / đánh cắp shared credential | Role `staff` ≠ user; Bearer token tối thiểu 32 ký tự, timing-safe compare, header redact, actor UUID từ server env. Single-staff credential P0 phải rotate khi nghi lộ và thay bằng identity/session/revoke trước production. |
 | T-T01 | T | CRUD GD P1 | Sửa số tiền / transfer lệch / IDOR `userId` | Isolation theo `userId`. Transfer hai leg cân bằng — `BE-P1-005`, `QA-P0-002`. ValidationPipe đã chặn field lạ P0. |
-| T-T02 | T | Sync P1 | Trùng hoặc ghi đè GD khi offline | `clientId` unique `(userId, clientId)`, `version` — `BE-P1-009`. Rủi ro R2. |
+| T-T02 | T | Sync P1 | Trùng hoặc ghi đè GD khi offline | `POST /api/v1/sync`: unique `(userId, clientId)`, conflict version không ghi đè, `review` khi amount khác, gợi ý trùng 10 phút. Hàng đợi mobile còn `MOB-P1-008`. [sync.md](sync.md). |
 | T-T03 | T | Compose | Đổi data local nếu port bind máy | Chấp nhận local. Không bind compose ra internet; không trỏ local vào prod DB. |
 | T-R01 | R | API / admin | Thao tác PII không truy vết | Auth success register/verify/login/reset/revoke ghi audit trong cùng transaction. Lookup staff ghi `staff.user_lookup` cho success/không tìm thấy và không trả PII nếu audit fail (`WA-P0-002`). Bảng chưa append-only; export/xóa còn `BE-P1-010`. |
 | T-R02 | R | Export / xóa TK | User phủ nhận yêu cầu xóa / xuất | `BE-P1-010` phải ghi event trên schema `BE-P0-004`; chưa tích hợp. |
@@ -151,7 +151,7 @@ Auth user: Bearer (`/api/v1` khi gắn Phase 1). Admin P0 dùng opaque Bearer se
 | Region dữ liệu chốt VN | DECISIONS-OPEN #5 (2026-09-18). Vendor hosting production vẫn TBD tới Store. |
 | Crash SaaS (Sentry dự kiến; chưa SDK) | Residual P0 chấp nhận 2026-09-21; DECISIONS-OPEN #9; wiring `INF-P1-001`. |
 | `security@` TBD | DECISIONS-OPEN #10. |
-| Sync trùng GD | RISKS R2 — `BE-P1-009`. |
+| Sync trùng GD | Server queue `BE-P1-009` đã có. Hàng đợi offline mobile còn `MOB-P1-008`. RISKS R2. |
 | PDPD / store reject | RISKS R3 — draft ToS/privacy `PRD-P0-002` ([legal/](../legal/privacy-policy.md)); còn luật sư + export/xóa `BE-P1-010` trước store. |
 | Audit chưa bảo vệ sửa/xóa | `staff.user_lookup` đã có writer; bảng vẫn chưa append-only, quyền DB/integrity control và writer export/xóa cần chốt trước `BE-P1-010`. |
 | Credential staff P0 dùng chung cho một actor | Chỉ dùng nội bộ; token dài, secret env, timing-safe compare, rotate khi nghi lộ. Chưa có individual identity/session/revoke/rate limit; phải thay trước production hoặc nhiều staff. |

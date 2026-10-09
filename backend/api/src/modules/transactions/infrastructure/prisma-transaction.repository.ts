@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../../infrastructure/prisma/prisma.service';
 import { touchFinancialOwner } from '../../../infrastructure/prisma/financial-owner-lock';
-import type { TransactionRepository } from '../domain/transaction.repository';
+import type { RecentMatchQuery, TransactionRepository } from '../domain/transaction.repository';
 import { normalizeRate, TransactionError, validateInput, type TransactionBundle, type TransactionInput, type TransactionLeg, type TransactionPatch, type TransactionQuery } from '../domain/transaction';
 import { VIETNAMESE_FOLD_FROM, VIETNAMESE_FOLD_TO, parseTransactionSearch, type AmountSearch, type ParsedTransactionSearch } from '../domain/search';
 
@@ -110,6 +110,28 @@ export class PrismaTransactionRepository implements TransactionRepository {
     }, true);
   }
   find(userId: string, id: string) { return this.snapshot(tx => this.load(tx, userId, id)); }
+  findByClientId(userId: string, clientId: string) {
+    return this.snapshot(async tx => {
+      const row = await tx.transaction.findFirst({ where: { userId, clientId } });
+      return row ? this.load(tx, userId, row.id) : null;
+    });
+  }
+  findRecentMatches(userId: string, query: RecentMatchQuery) {
+    return this.snapshot(async tx => {
+      if (!query.legs.length) return [];
+      return tx.transaction.findMany({
+        where: {
+          userId, deletedAt: null, occurredOn: query.occurredOn,
+          createdAt: { gte: query.createdAfter, lte: query.createdBefore },
+          clientId: { notIn: query.excludeClientIds },
+          OR: query.legs.map(leg => ({ accountId: leg.accountId, amountMinor: leg.amountMinor })),
+        },
+        select: { id: true, clientId: true, accountId: true, amountMinor: true, occurredOn: true, createdAt: true, deletedAt: true },
+        orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
+        take: 50,
+      });
+    });
+  }
   list(userId: string, query: TransactionQuery) {
     return this.snapshot(async tx => {
       const search = parseTransactionSearch(query.search);

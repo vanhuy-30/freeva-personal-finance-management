@@ -21,6 +21,7 @@
 - **Scaffold:** xong trên `main` (`153d3e7`). Health API, admin placeholder, Flutter shell, docs, compose.
 - **Financial accounts:** `BE-P1-004` done: CRUD bốn loại ví, số dư derived bigint, credit config, sắp xếp/lưu trữ/khôi phục, owner/version/clientId; 117 unit và 33 PostgreSQL integration tests, build/OpenAPI pass. Không migration mới; chưa deploy staging. [Thiết kế](../architecture/financial-accounts.md).
 - **Transactions:** `BE-P1-005` done: CRUD thu/chi/transfer nguyên tử, FX exact/quote bất biến, soft-delete/restore cả cặp, owner/version/Idempotency-Key/clientId, category/tags/filter. 145 unit/HTTP + 51 PostgreSQL tests, build/OpenAPI pass; không migration, chưa deploy staging. [Thiết kế](../architecture/transactions.md).
+- **Sync queue:** `BE-P1-009` done: `POST /api/v1/sync` áp hàng đợi giao dịch, idempotent theo `clientId`, conflict không ghi đè, gợi ý trùng 10 phút. 19 unit suites / 179 tests và 6 PostgreSQL suites / 75 tests, build/OpenAPI pass. Một migration seed `SchemaMeta`. Chưa deploy staging. [Thiết kế](../architecture/sync.md).
 - **Data model:** `BE-P0-001` xong (ADR 007, Prisma lõi). CRUD ví đã có ở `BE-P1-004`; CRUD giao dịch đã có ở `BE-P1-005`.
 - **Threat model:** `SEC-P0-001` xong ([threat-model.md](../architecture/threat-model.md)).
 - **PII logs:** `SEC-P0-003` xong ([pii-log-checklist.md](../architecture/pii-log-checklist.md)).
