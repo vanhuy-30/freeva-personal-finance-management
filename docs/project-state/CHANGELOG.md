@@ -2,6 +2,10 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-10-09
+
+- `MOB-P1-006`: tổng quan trên Home và màn báo cáo lọc tuần, tháng, khoảng ngày. Tài sản/nợ/ròng hiện tại và thu/chi/dòng tiền theo từng loại tiền; danh mục lá giữ tên cha, thu chưa phân loại có nhãn. Không cộng khác loại tiền, không đổi API. `report_viewed` một lần mỗi lượt mở báo cáo. Analyze sạch và 94 Flutter tests pass (14 tests mới); chưa native build/E2E staging. [Thiết kế](../architecture/mobile-reports.md).
+
 ## 2026-10-08
 
 - `MOB-P1-005`: UI danh mục từ Home, cây cha-con, tạo/sửa custom, màu và icon theo catalog, ẩn/khôi phục và xóa vĩnh viễn kèm danh mục thay thế. Abstract DI, version/clientId, chặn ghi sau conflict, xóa state khi khóa. Analyze sạch và 80 Flutter tests pass (10 tests mới); chưa native build/E2E staging. [Thiết kế](../architecture/mobile-categories.md).

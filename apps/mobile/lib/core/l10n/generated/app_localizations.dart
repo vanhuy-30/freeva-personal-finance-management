@@ -109,12 +109,6 @@ abstract class S {
   /// **'Your money. Your freedom.'**
   String get splashTagline;
 
-  /// No description provided for @homePlaceholder.
-  ///
-  /// In en, this message translates to:
-  /// **'Core loop: wallet → transaction → balance. Features land in lib/features.'**
-  String get homePlaceholder;
-
   /// Official brand wordmark; keep unchanged across locales.
   ///
   /// In en, this message translates to:
@@ -1188,6 +1182,162 @@ abstract class S {
   /// In en, this message translates to:
   /// **'The data is stale. Reload before editing again.'**
   String get categoryReloadRequired;
+
+  /// No description provided for @reportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports'**
+  String get reportTitle;
+
+  /// No description provided for @reportOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get reportOverview;
+
+  /// No description provided for @reportThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get reportThisMonth;
+
+  /// No description provided for @reportNetWorth.
+  ///
+  /// In en, this message translates to:
+  /// **'Net worth'**
+  String get reportNetWorth;
+
+  /// No description provided for @reportAssets.
+  ///
+  /// In en, this message translates to:
+  /// **'Assets'**
+  String get reportAssets;
+
+  /// No description provided for @reportLiabilities.
+  ///
+  /// In en, this message translates to:
+  /// **'Liabilities'**
+  String get reportLiabilities;
+
+  /// No description provided for @reportIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get reportIncome;
+
+  /// No description provided for @reportExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get reportExpense;
+
+  /// No description provided for @reportNet.
+  ///
+  /// In en, this message translates to:
+  /// **'Cashflow'**
+  String get reportNet;
+
+  /// No description provided for @reportTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer'**
+  String get reportTransfer;
+
+  /// No description provided for @reportWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Week'**
+  String get reportWeek;
+
+  /// No description provided for @reportMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get reportMonth;
+
+  /// No description provided for @reportRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Date range'**
+  String get reportRange;
+
+  /// No description provided for @reportPrevious.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous period'**
+  String get reportPrevious;
+
+  /// No description provided for @reportNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next period'**
+  String get reportNext;
+
+  /// No description provided for @reportFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get reportFrom;
+
+  /// No description provided for @reportTo.
+  ///
+  /// In en, this message translates to:
+  /// **'To'**
+  String get reportTo;
+
+  /// No description provided for @reportApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Show this range'**
+  String get reportApply;
+
+  /// No description provided for @reportByCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'By category'**
+  String get reportByCategory;
+
+  /// No description provided for @reportByAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'By wallet'**
+  String get reportByAccount;
+
+  /// No description provided for @reportUncategorized.
+  ///
+  /// In en, this message translates to:
+  /// **'Uncategorized'**
+  String get reportUncategorized;
+
+  /// No description provided for @reportEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to show for this period.'**
+  String get reportEmpty;
+
+  /// No description provided for @reportError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load the report. Please try again.'**
+  String get reportError;
+
+  /// No description provided for @reportInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'That date range is invalid. The start must be on or before the end, and the dates can be at most 3660 days apart.'**
+  String get reportInvalid;
+
+  /// No description provided for @reportPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'{from} – {to}'**
+  String reportPeriod(String from, String to);
+
+  /// No description provided for @reportAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'{label}: {amount} {currency}'**
+  String reportAmount(String label, String amount, String currency);
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

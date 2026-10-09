@@ -16,10 +16,6 @@ class SEn extends S {
   String get splashTagline => 'Your money. Your freedom.';
 
   @override
-  String get homePlaceholder =>
-      'Core loop: wallet → transaction → balance. Features land in lib/features.';
-
-  @override
   String get brandWordmark => 'FREEVA';
 
   @override
@@ -605,4 +601,87 @@ class SEn extends S {
   @override
   String get categoryReloadRequired =>
       'The data is stale. Reload before editing again.';
+
+  @override
+  String get reportTitle => 'Reports';
+
+  @override
+  String get reportOverview => 'Overview';
+
+  @override
+  String get reportThisMonth => 'This month';
+
+  @override
+  String get reportNetWorth => 'Net worth';
+
+  @override
+  String get reportAssets => 'Assets';
+
+  @override
+  String get reportLiabilities => 'Liabilities';
+
+  @override
+  String get reportIncome => 'Income';
+
+  @override
+  String get reportExpense => 'Expense';
+
+  @override
+  String get reportNet => 'Cashflow';
+
+  @override
+  String get reportTransfer => 'Transfer';
+
+  @override
+  String get reportWeek => 'Week';
+
+  @override
+  String get reportMonth => 'Month';
+
+  @override
+  String get reportRange => 'Date range';
+
+  @override
+  String get reportPrevious => 'Previous period';
+
+  @override
+  String get reportNext => 'Next period';
+
+  @override
+  String get reportFrom => 'From';
+
+  @override
+  String get reportTo => 'To';
+
+  @override
+  String get reportApply => 'Show this range';
+
+  @override
+  String get reportByCategory => 'By category';
+
+  @override
+  String get reportByAccount => 'By wallet';
+
+  @override
+  String get reportUncategorized => 'Uncategorized';
+
+  @override
+  String get reportEmpty => 'Nothing to show for this period.';
+
+  @override
+  String get reportError => 'Could not load the report. Please try again.';
+
+  @override
+  String get reportInvalid =>
+      'That date range is invalid. The start must be on or before the end, and the dates can be at most 3660 days apart.';
+
+  @override
+  String reportPeriod(String from, String to) {
+    return '$from – $to';
+  }
+
+  @override
+  String reportAmount(String label, String amount, String currency) {
+    return '$label: $amount $currency';
+  }
 }

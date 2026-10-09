@@ -16,10 +16,6 @@ class SVi extends S {
   String get splashTagline => 'Your money. Your freedom.';
 
   @override
-  String get homePlaceholder =>
-      'Vòng lặp cốt lõi: ví → giao dịch → số dư. Feature nghiệp vụ nằm ở lib/features.';
-
-  @override
   String get brandWordmark => 'FREEVA';
 
   @override
@@ -607,4 +603,87 @@ class SVi extends S {
   @override
   String get categoryReloadRequired =>
       'Dữ liệu đã cũ. Tải lại trước khi sửa tiếp.';
+
+  @override
+  String get reportTitle => 'Báo cáo';
+
+  @override
+  String get reportOverview => 'Tổng quan';
+
+  @override
+  String get reportThisMonth => 'Tháng này';
+
+  @override
+  String get reportNetWorth => 'Tài sản ròng';
+
+  @override
+  String get reportAssets => 'Tài sản';
+
+  @override
+  String get reportLiabilities => 'Nợ';
+
+  @override
+  String get reportIncome => 'Thu';
+
+  @override
+  String get reportExpense => 'Chi';
+
+  @override
+  String get reportNet => 'Dòng tiền';
+
+  @override
+  String get reportTransfer => 'Chuyển khoản';
+
+  @override
+  String get reportWeek => 'Tuần';
+
+  @override
+  String get reportMonth => 'Tháng';
+
+  @override
+  String get reportRange => 'Khoảng ngày';
+
+  @override
+  String get reportPrevious => 'Kỳ trước';
+
+  @override
+  String get reportNext => 'Kỳ sau';
+
+  @override
+  String get reportFrom => 'Từ ngày';
+
+  @override
+  String get reportTo => 'Đến ngày';
+
+  @override
+  String get reportApply => 'Xem khoảng này';
+
+  @override
+  String get reportByCategory => 'Theo danh mục';
+
+  @override
+  String get reportByAccount => 'Theo ví';
+
+  @override
+  String get reportUncategorized => 'Chưa phân loại';
+
+  @override
+  String get reportEmpty => 'Chưa có số liệu trong kỳ này.';
+
+  @override
+  String get reportError => 'Không thể tải báo cáo. Vui lòng thử lại.';
+
+  @override
+  String get reportInvalid =>
+      'Khoảng ngày không hợp lệ. Ngày bắt đầu phải trước hoặc bằng ngày kết thúc và không quá 3660 ngày.';
+
+  @override
+  String reportPeriod(String from, String to) {
+    return '$from – $to';
+  }
+
+  @override
+  String reportAmount(String label, String amount, String currency) {
+    return '$label: $amount $currency';
+  }
 }

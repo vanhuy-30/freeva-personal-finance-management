@@ -2,7 +2,7 @@
 
 Module 14, bản đọc hiện tại. Contract: [OpenAPI](../../packages/api-contracts/openapi.yaml). Không migration. Domain và repository interface không phụ thuộc Prisma; adapter infrastructure là nơi truy cập DB.
 
-Ngoài phạm vi: so sánh kỳ, ngân sách, chi lớn, tài sản ròng theo thời gian, CSV, search (`BE-P1-008`) và UI (`MOB-P1-006`).
+Ngoài phạm vi: so sánh kỳ, ngân sách, chi lớn, tài sản ròng theo thời gian, CSV và search (`BE-P1-008`). UI nằm ở [mobile-reports.md](mobile-reports.md) (`MOB-P1-006`).
 
 ## API
 
