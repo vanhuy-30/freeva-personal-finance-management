@@ -1,7 +1,7 @@
 # STATUS
 
 - **Phase hiện tại:** 1 — Phase 0 **closed** 2026-09-21
-- **Cập nhật:** 2026-10-08
+- **Cập nhật:** 2026-10-09
 - **CI:** `INF-P0-002` done; cả ba job xanh trên `main`, [run 33521325189](https://github.com/vanhuy-30/freeva-personal-finance-management/actions/runs/33521325189).
 - **Staging:** live — API [Render](https://freeva-api-staging.onrender.com) (`GET /api/health` → 200, `database` = up); admin [Vercel](https://freeva-personal-finance-management.vercel.app) đọc health staging. Stack: `render.yaml` + `apps/web-admin/vercel.json`. Prod hoster TBD tới Store (region VN).
 - **Crash monitoring:** residual chấp nhận khi đóng P0 — vendor dự kiến **Sentry**, wiring = `INF-P1-001` (DECISIONS-OPEN #9). Staging dựa health + log platform cho đến khi gắn SDK.
@@ -14,6 +14,7 @@
 - **Mobile wallets:** `MOB-P1-003` done: danh sách/tạo/sửa bốn loại ví, tiền BigInt, sắp xếp/ẩn/khôi phục, version/clientId và privacy gate. Analyze và 11 tests mới pass; chưa native build/E2E staging. [Chi tiết](../architecture/mobile-wallets.md).
 - **Mobile transactions:** `MOB-P1-004` done: ghi thu/chi/chuyển ít bước, tiền BigInt, FX exact, ngày theo TZ, version/clientId và privacy gate. Analyze và Flutter tests pass; chưa native build/E2E staging. [Chi tiết](../architecture/mobile-transactions.md).
 - **Mobile categories:** `MOB-P1-005` done: danh sách cây, tạo/sửa custom, màu/icon catalog, ẩn/khôi phục và xóa kèm chuyển giao dịch. Analyze và 10 tests mới pass; chưa native build/E2E staging. [Chi tiết](../architecture/mobile-categories.md).
+- **Mobile reports:** `MOB-P1-006` done: tổng quan tài sản/nợ/ròng và thu chi tháng này, báo cáo lọc tuần/tháng/khoảng, mỗi loại tiền một khối. Analyze và 14 tests mới pass; chưa native build/E2E staging. [Chi tiết](../architecture/mobile-reports.md).
 - **Mobile analytics:** `MOB-P0-004` done; catalog typed, debug logger local, `schema_version: 1`, không property tùy ý/PII và chưa có vendor SDK.
 - **Backup/restore:** `BE-P0-005` done; [runbook và bằng chứng local](../../infra/runbooks/backup-restore.md), PostgreSQL 16.14. Production PITR/retention/RPO/RTO chưa triển khai.
 - **Scaffold:** xong trên `main` (`153d3e7`). Health API, admin placeholder, Flutter shell, docs, compose.

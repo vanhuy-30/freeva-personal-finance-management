@@ -35,6 +35,7 @@ Copy nội bộ `PRD-P0-002` — chưa có hiệu lực với user; cần luật
 - [Categories — bộ VN, cây và chuyển giao dịch](architecture/categories.md)
 - [Mobile wallets — UI ví, sắp xếp, ẩn](architecture/mobile-wallets.md)
 - [Mobile categories — UI danh mục](architecture/mobile-categories.md)
+- [Mobile reports — tổng quan và lọc kỳ](architecture/mobile-reports.md)
 - [Transfer balance test cases](architecture/transfer-balance-test-cases.md)
 - [Sync](architecture/sync.md)
 - [Security](architecture/security.md) · [Email auth / sessions (ADR 009)](architecture/adr/009-email-auth-sessions.md) · [Google/Apple OAuth (ADR 010)](architecture/adr/010-google-apple-oauth.md)

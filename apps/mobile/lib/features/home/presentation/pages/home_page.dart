@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/widgets/brand_symbol.dart';
 import '../../../auth/presentation/widgets/session_controls.dart';
+import '../../../reports/presentation/widgets/overview_section.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -18,6 +19,7 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const OverviewSection(),
             ListTile(
               leading: const Icon(Icons.person_outline),
               title: Text(s.profileTitle),
@@ -42,6 +44,12 @@ class HomePage extends StatelessWidget {
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.go('/transactions'),
             ),
+            ListTile(
+              leading: const Icon(Icons.pie_chart_outline),
+              title: Text(s.reportTitle),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.go('/reports'),
+            ),
             Align(
               alignment: Alignment.centerLeft,
               child: FilledButton.icon(
@@ -52,11 +60,6 @@ class HomePage extends StatelessWidget {
             ),
             const SessionControls(),
             const BrandSymbol(size: 96),
-            const SizedBox(height: 16),
-            Text(
-              s.homePlaceholder,
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
           ],
         ),
       ),

@@ -2,7 +2,6 @@
   "@@locale": "en",
   "appTitle": "Freeva",
   "splashTagline": "Your money. Your freedom.",
-  "homePlaceholder": "Core loop: wallet → transaction → balance. Features land in lib/features.",
   "brandWordmark": "FREEVA",
   "@brandWordmark": {
     "description": "Official brand wordmark; keep unchanged across locales."
@@ -202,6 +201,55 @@
   "categoryConflict": "This category changed elsewhere. Reload the list before editing again.",
   "categoryError": "Could not load or save categories. Please try again.",
   "categoryReloadRequired": "The data is stale. Reload before editing again.",
+  "reportTitle": "Reports",
+  "reportOverview": "Overview",
+  "reportThisMonth": "This month",
+  "reportNetWorth": "Net worth",
+  "reportAssets": "Assets",
+  "reportLiabilities": "Liabilities",
+  "reportIncome": "Income",
+  "reportExpense": "Expense",
+  "reportNet": "Cashflow",
+  "reportTransfer": "Transfer",
+  "reportWeek": "Week",
+  "reportMonth": "Month",
+  "reportRange": "Date range",
+  "reportPrevious": "Previous period",
+  "reportNext": "Next period",
+  "reportFrom": "From",
+  "reportTo": "To",
+  "reportApply": "Show this range",
+  "reportByCategory": "By category",
+  "reportByAccount": "By wallet",
+  "reportUncategorized": "Uncategorized",
+  "reportEmpty": "Nothing to show for this period.",
+  "reportError": "Could not load the report. Please try again.",
+  "reportInvalid": "That date range is invalid. The start must be on or before the end, and the dates can be at most 3660 days apart.",
+  "reportPeriod": "{from} – {to}",
+  "reportAmount": "{label}: {amount} {currency}",
+  "@reportPeriod": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "@reportAmount": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
   "@walletBalance": {
     "placeholders": {
       "amount": {

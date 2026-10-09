@@ -126,8 +126,12 @@
 - Note: [Thiết kế API](../docs/architecture/reports.md), [lệnh test](../backend/api/test/README.md#reports--be-p1-007). Không cộng khác loại tiền. Chưa deploy staging. UI báo cáo thuộc MOB-P1-006.
 
 ### MOB-P1-006 — Màn tổng quan + báo cáo lọc kỳ
-- Status: todo
+- Status: done
 - Module: 14
+- Depends: BE-P1-007, MOB-P1-001, MOB-P1-004, MOB-P1-005
+- DoD: Home hiện tài sản, nợ, ròng và thu/chi/dòng tiền của tháng hiện tại, mỗi loại tiền một khối; `/reports` lọc tuần, tháng và khoảng inclusive tối đa 3660 ngày. Tuần/tháng bước theo mốc server. Danh mục lá không gộp cha; thu chưa phân loại có nhãn; tên ví gồm ví đã lưu trữ. Không cộng khác loại tiền, không đổi API, không log số tiền. `report_viewed` một lần mỗi lượt mở màn báo cáo. 401 và khóa xóa state.
+- Verification: `flutter analyze` sạch; toàn bộ 94 Flutter tests pass (14 tests mới), gồm khoảng 3660 ngày, bigint vượt int64, bước kỳ, epoch/401, `report_viewed` một lần, hai currency tách riêng, nhãn chưa phân loại và layout 320px text scale 2.
+- Note: [Thiết kế và giới hạn](../docs/architecture/mobile-reports.md). Không đổi API. Chưa native build/E2E staging.
 
 ### BE-P1-008 — Search cơ bản + không dấu (Should)
 - Status: todo
