@@ -134,8 +134,12 @@
 - Note: [Thiết kế và giới hạn](../docs/architecture/mobile-reports.md). Không đổi API. Chưa native build/E2E staging.
 
 ### BE-P1-008 — Search cơ bản + không dấu (Should)
-- Status: todo
+- Status: done
 - Module: 19
+- Depends: BE-P1-005
+- DoD: `GET /api/v1/transactions?search` khớp ghi chú, tên danh mục gắn leg, tên ví, tên nhãn hoặc `abs(amountMinor)`; không phân biệt hoa thường và dấu tiếng Việt; `from`/`to` cùng lọc cũ vẫn AND; owner/session, no-store; không migration, không endpoint mới; OpenAPI và log không PII.
+- Verification: 18 unit suites / 175 tests (4 mới) và 5 HTTP/PostgreSQL suites / 71 tests (1 mới) pass; build và OpenAPI validation pass. Không migration mới.
+- Note: [Thiết kế API](../docs/architecture/search.md), [lệnh test](../backend/api/test/README.md#search--be-p1-008). Không CRUD nhãn và không UI. Chưa deploy staging.
 
 ### MOB-P1-007 — Settings theme/locale/quyền + onboarding + FAQ + feedback
 - Status: todo
