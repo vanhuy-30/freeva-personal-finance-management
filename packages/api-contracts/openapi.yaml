@@ -4,8 +4,8 @@ info:
   version: 0.1.0
   description: Source of truth for mobile and web admin.
 servers:
-  - url: http://localhost:4000
-    description: local
+  - url: /
+    description: Origin of the deployed API. Paths already start with /api.
 paths:
   /api/v1/categories/defaults:
     post:
@@ -593,7 +593,13 @@ paths:
         schema:
           type: string
           maxLength: 200
-          description: Case-insensitive substring of notes.
+          description: >
+            Substring of notes, the leg category name, the account name, or any tag name.
+            Matching ignores case and Vietnamese diacritics. A numeric query also matches
+            abs(amountMinor): grouped thousands (150.000) as exact minor units, or one
+            decimal separator whose fraction is not 3 digits (12.50) scaled by the leg
+            currency minor digits with no rounding. Combined with from/to and the other
+            filters. Blank text does not filter.
   /api/v1/transactions/{id}:
     parameters:
     - in: path
@@ -1230,6 +1236,7 @@ paths:
   /api/v1/profile:
     get:
       operationId: getProfile
+      summary: Read own locale, currency, timezone, and fiscal month start
       tags: [Profile]
       security:
         - UserBearer: []
@@ -1254,6 +1261,7 @@ paths:
                 $ref: '#/components/schemas/ErrorEnvelope'
     put:
       operationId: updateProfile
+      summary: Update own preferences with an optimistic version check
       tags: [Profile]
       security:
         - UserBearer: []
@@ -1298,6 +1306,7 @@ paths:
   /api/v1/profile/options:
     get:
       operationId: getProfileOptions
+      summary: List currency catalog and supported timezones
       tags: [Profile]
       security:
         - UserBearer: []

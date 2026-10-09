@@ -286,3 +286,29 @@ docker stop freeva-be-p1-007-test
 Coverage: biên tuần/tháng tài chính/năm nhuận/TZ, khoảng 3660 ngày, dấu thu chi, transfer loại khỏi dòng tiền nhưng vào ví, danh mục lá không gộp cha, ví active rỗng và ví archived, credit/thấu chi, bigint vượt int64, soft-delete, owner, FX transfer, log không PII.
 
 Kết quả local 2026-10-09: **17 unit suites / 171 tests** (9 tests báo cáo mới), **5 HTTP/PostgreSQL suites / 70 tests** (4 tests báo cáo mới); API build và OpenAPI validation pass. OpenAPI còn bốn warning có sẵn (localhost và profile thiếu summary). Không thêm migration; chưa deploy staging.
+
+## Search — BE-P1-008
+
+Case mới nằm trong `transactions.integration-spec.ts`, cùng job `test:integration`. Bắt buộc `AUTH_TEST_DATABASE_URL` trỏ DB disposable `auth_test`. Không dùng database development. Task không thêm migration.
+
+```sh
+docker run --detach --rm --name freeva-be-p1-008-test \
+  --publish 127.0.0.1:55443:5432 \
+  --env POSTGRES_USER=auth_test --env POSTGRES_PASSWORD=auth_test_local \
+  --env POSTGRES_DB=auth_test postgres:16-alpine
+docker exec freeva-be-p1-008-test pg_isready -U auth_test
+# Chờ accepting connections trước migrate.
+DATABASE_URL=postgresql://auth_test:auth_test_local@127.0.0.1:55443/auth_test \
+  pnpm --filter @freeva/api prisma:migrate:deploy
+pnpm --filter @freeva/api prisma:generate
+pnpm --filter @freeva/api test --runInBand
+AUTH_TEST_DATABASE_URL=postgresql://auth_test:auth_test_local@127.0.0.1:55443/auth_test \
+  pnpm --filter @freeva/api test:integration --runInBand
+pnpm --filter @freeva/api build
+pnpm --package=@redocly/cli dlx redocly lint packages/api-contracts/openapi.yaml --extends minimal
+docker stop freeva-be-p1-008-test
+```
+
+Coverage: fold `cà phê`/`CA PHE`/`Đ`, tên danh mục lá kể cả đã ẩn, tên ví kể cả đã lưu trữ, nhãn, cha không kéo con, `150.000` và `12.50`/`1.50` theo minor digits, `%` literal, AND `from`/`to`/`accountId`, `status` xóa, owner khác, log không PII. `search=private` cũ vẫn đúng.
+
+Kết quả local 2026-10-09: **18 unit suites / 175 tests** (4 tests search mới), **5 HTTP/PostgreSQL suites / 71 tests** (1 test search mới); API build và OpenAPI validation pass, không warning. Không thêm migration; chưa deploy staging.
