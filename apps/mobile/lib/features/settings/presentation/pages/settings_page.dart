@@ -8,6 +8,7 @@ import '../viewmodels/settings_view_model.dart';
 import '../widgets/settings_appearance.dart';
 import '../widgets/settings_biometric.dart';
 import '../widgets/settings_help_section.dart';
+import '../widgets/settings_privacy.dart';
 import '../widgets/settings_profile_link.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -40,6 +41,7 @@ class SettingsPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       SettingsAppearance(model: model),
+                      SettingsPrivacy(model: model),
                       SettingsProfileLink(locale: profile.locale),
                       SettingsBiometric(model: model),
                       const SettingsHelpSection(),

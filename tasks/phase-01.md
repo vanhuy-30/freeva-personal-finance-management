@@ -176,8 +176,12 @@
 - Note: [Thiết kế](../docs/architecture/account-privacy.md). Không cửa sổ 30 ngày trên ứng dụng. Chưa deploy staging.
 
 ### MOB-P1-009 — Ẩn số dư khi nền; thông báo thiết bị mới (Should)
-- Status: todo
+- Status: done
 - Module: 22
+- Depends: MOB-P1-001, MOB-P1-007
+- DoD: Giữ màn che khi app vào nền, `FLAG_SECURE` Android và cover iOS. Nút mắt và công tắc Cài đặt che số đang đọc trên Home, ví, giao dịch và báo cáo; ô đang gõ vẫn hiện số. Sau khi mở khóa, so phiên với danh sách id đã thấy trên máy: lần đầu chỉ ghi nhớ, phiên khác chưa thấy thì banner và thông báo cục bộ một lần. Xin quyền thông báo đúng lúc cảnh báo đầu; từ chối thì banner vẫn hiện và không hỏi lại. Đăng xuất xóa danh sách đã thấy; khóa PIN không xóa. Không email, số dư, tên thiết bị, token hay id phiên. Không đổi API.
+- Verification: `flutter analyze` sạch; toàn bộ 130 Flutter tests pass (13 tests mới), gồm preference cũ, che số đọc, seed/phiên lạ/phiên hiện tại, lỗi mạng, đăng xuất và nội dung thông báo.
+- Note: [Thiết kế](../docs/architecture/mobile-privacy.md). Không báo khi app đang đóng. Không FCM/APNs. Chưa native build/E2E staging.
 
 ### INF-P1-001 — Crash monitoring staging
 - Status: todo

@@ -17,6 +17,11 @@ import 'package:mobile/features/transactions/domain/transaction_use_cases.dart';
 import 'package:mobile/features/transactions/presentation/viewmodels/transaction_view_model.dart';
 import 'package:mobile/features/transactions/presentation/widgets/transaction_editor.dart';
 import 'package:mobile/features/transactions/presentation/widgets/transaction_form.dart';
+import 'package:mobile/features/transactions/presentation/widgets/transaction_list.dart';
+import 'package:mobile/features/settings/data/settings_repository_impl.dart';
+import 'package:mobile/features/settings/domain/settings_use_cases.dart';
+import 'package:mobile/features/settings/presentation/viewmodels/settings_view_model.dart';
+import 'package:mobile/core/money/money_text.dart';
 import 'package:mobile/features/wallets/data/wallet_repository_impl.dart';
 import 'package:mobile/features/wallets/domain/wallet_use_cases.dart';
 import 'package:mobile/features/wallets/presentation/viewmodels/wallet_view_model.dart';
@@ -24,6 +29,7 @@ import 'package:timezone/data/latest.dart' as tzdata;
 
 import '../auth/fakes.dart';
 import '../profile/fakes.dart';
+import '../settings/fakes.dart' show MemoryPreferences;
 import 'transaction_fakes.dart';
 import 'transaction_view_model_test.dart';
 
@@ -129,5 +135,31 @@ void main() {
     expect(find.byType(TransactionEditor), findsNothing);
     expect(model.wallets, isEmpty);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('hidden balances mask the list but not the amount being typed', (
+    tester,
+  ) async {
+    final settings = DefaultSettingsViewModel(
+      DefaultSettingsUseCases(SettingsRepositoryImpl(MemoryPreferences())),
+      DefaultAuthUseCases(
+        AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+      ),
+      RecordingAnalytics(),
+    );
+    await settings.load();
+    await settings.setBalancesHidden(true);
+    getIt.registerSingleton<SettingsViewModel>(settings);
+    addTearDown(settings.dispose);
+    await tester.pumpWidget(app(TransactionList(model: model, onOpen: (_) {})));
+    expect(find.textContaining('••••'), findsOneWidget);
+    expect(
+      find.textContaining(formatMoneyText(BigInt.from(-1000), 0, 'vi')),
+      findsNothing,
+    );
+    await tester.pumpWidget(app(TransactionForm(model: model)));
+    await tester.enterText(find.byType(TextField).first, '25000');
+    expect(find.text('25000'), findsOneWidget);
+    expect(find.textContaining('••••'), findsNothing);
   });
 }

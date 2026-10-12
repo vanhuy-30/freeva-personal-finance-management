@@ -919,4 +919,40 @@ class SEn extends S {
   @override
   String get privacyBody =>
       'The account stores email, language, time zone, default currency, and the financial month start day. Amounts you enter are not written to logs. Feedback you compose stays on this device until a contact channel exists. Analytics events do not include email, balances, or account numbers. This summary does not replace a lawyer-reviewed policy.';
+
+  @override
+  String get balanceHiddenMask => '••••';
+
+  @override
+  String get balanceHide => 'Hide amounts';
+
+  @override
+  String get balanceShow => 'Show amounts';
+
+  @override
+  String get settingsPrivacyControls => 'Privacy';
+
+  @override
+  String get settingsHideBalances => 'Hide balances';
+
+  @override
+  String get settingsHideBalancesHelp =>
+      'Masks amounts shown on this device. Fields you are editing still show what you type.';
+
+  @override
+  String get settingsSessionAlerts => 'New sign-in alerts';
+
+  @override
+  String get settingsSessionAlertsHelp =>
+      'Warns on this device when another session appears. The alert does not include an email, balance, or device name.';
+
+  @override
+  String get sessionAlertTitle => 'New sign-in';
+
+  @override
+  String get sessionAlertBody =>
+      'Another session signed in. Open Freeva to review it and revoke it if it was not you.';
+
+  @override
+  String get sessionAlertReview => 'Review sessions';
 }

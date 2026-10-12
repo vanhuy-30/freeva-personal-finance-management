@@ -110,4 +110,17 @@ void main() {
     expect(model.biometricEnabled, isFalse);
     expect(biometrics.calls, calls);
   });
+
+  test('hiding balances keeps the previous flag when storage fails', () async {
+    await model.load();
+    expect(model.balancesHidden, isFalse);
+    expect(model.sessionAlertsEnabled, isTrue);
+    await model.setBalancesHidden(true);
+    expect(model.balancesHidden, isTrue);
+    preferences.fail = true;
+    await model.setSessionAlertsEnabled(false);
+    expect(model.sessionAlertsEnabled, isTrue);
+    expect(model.balancesHidden, isTrue);
+    expect(model.failure?.code, SettingsError.storage);
+  });
 }

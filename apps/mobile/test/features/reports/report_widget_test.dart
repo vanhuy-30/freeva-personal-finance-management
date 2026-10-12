@@ -18,10 +18,14 @@ import 'package:mobile/features/reports/presentation/pages/report_page.dart';
 import 'package:mobile/features/reports/presentation/viewmodels/overview_view_model.dart';
 import 'package:mobile/features/reports/presentation/viewmodels/report_view_model.dart';
 import 'package:mobile/features/reports/presentation/widgets/overview_section.dart';
+import 'package:mobile/features/settings/data/settings_repository_impl.dart';
+import 'package:mobile/features/settings/domain/settings_use_cases.dart';
+import 'package:mobile/features/settings/presentation/viewmodels/settings_view_model.dart';
 import 'package:mobile/features/wallets/data/wallet_repository_impl.dart';
 import 'package:mobile/features/wallets/domain/wallet_repository.dart';
 
 import '../auth/fakes.dart';
+import '../settings/fakes.dart' show MemoryPreferences;
 import '../transactions/transaction_view_model_test.dart'
     show RecordingAnalytics;
 
@@ -106,6 +110,45 @@ void main() {
     );
     expect(find.textContaining('1502000'), findsNothing);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('hidden balances mask overview and report figures', (
+    tester,
+  ) async {
+    final settings = DefaultSettingsViewModel(
+      DefaultSettingsUseCases(SettingsRepositoryImpl(MemoryPreferences())),
+      DefaultAuthUseCases(
+        AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+      ),
+      RecordingAnalytics(),
+    );
+    await settings.load();
+    await settings.setBalancesHidden(true);
+    getIt.registerSingleton<SettingsViewModel>(settings);
+    addTearDown(settings.dispose);
+    await tester.pumpWidget(
+      app(const SingleChildScrollView(child: OverviewSection())),
+    );
+    await tester.pumpAndSettle();
+    expect(find.textContaining('••••'), findsWidgets);
+    expect(
+      find.textContaining(formatMoneyText(BigInt.from(1500000), 0, 'vi')),
+      findsNothing,
+    );
+    await tester.tap(find.byTooltip('Hiện số tiền'));
+    await tester.pumpAndSettle();
+    expect(
+      find.textContaining(formatMoneyText(BigInt.from(1500000), 0, 'vi')),
+      findsWidgets,
+    );
+    await settings.setBalancesHidden(true);
+    await tester.pumpWidget(app(const ReportPage()));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('••••'), findsWidgets);
+    expect(
+      find.textContaining(formatMoneyText(BigInt.from(1000000), 0, 'vi')),
+      findsNothing,
+    );
   });
 
   testWidgets('report page fits a narrow large-text screen', (tester) async {

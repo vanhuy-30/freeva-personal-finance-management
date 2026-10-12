@@ -1,5 +1,7 @@
 import 'package:dartz/dartz.dart';
 
+import 'session_notice.dart';
+
 enum AuthStage { signedOut, setupPin, locked, unlocked }
 
 enum AuthAction {
@@ -8,7 +10,7 @@ enum AuthAction {
   requestVerification,
   verifyEmail,
   requestReset,
-  resetPassword
+  resetPassword,
 }
 
 enum AuthError {
@@ -23,7 +25,7 @@ enum AuthError {
   storage,
   unavailable,
   wrongPin,
-  expired
+  expired,
 }
 
 class AuthFailure {
@@ -44,17 +46,25 @@ abstract class AuthRepository {
   Future<Either<AuthFailure, AuthStage>> restore();
   Future<Either<AuthFailure, bool>> accountExists(String email);
   Future<Either<AuthFailure, Unit>> submit(
-      AuthAction action, Map<String, String> fields);
+    AuthAction action,
+    Map<String, String> fields,
+  );
   Future<Either<AuthFailure, Unit>> setupPin(
-      String pin, bool biometrics, String reason);
+    String pin,
+    bool biometrics,
+    String reason,
+  );
   Future<Either<AuthFailure, Unit>> unlockPin(String pin);
   Future<Either<AuthFailure, Unit>> unlockBiometric(String reason);
   Future<Either<AuthFailure, bool>> biometricAvailable();
   Future<Either<AuthFailure, bool>> biometricHardware();
   Future<Either<AuthFailure, bool>> biometricEnabled();
   Future<Either<AuthFailure, Unit>> setBiometricEnabled(
-      bool enabled, String reason);
+    bool enabled,
+    String reason,
+  );
   Future<Either<AuthFailure, List<AuthSession>>> sessions();
+  Future<Either<AuthFailure, SessionNoticeDecision>> observeSessions();
   Future<Either<AuthFailure, Unit>> revoke(String? id);
   Future<Either<AuthFailure, Unit>> logout();
   Future<Either<AuthFailure, Unit>> forgetDevice();

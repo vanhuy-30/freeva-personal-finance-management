@@ -1752,6 +1752,72 @@ abstract class S {
   /// In en, this message translates to:
   /// **'The account stores email, language, time zone, default currency, and the financial month start day. Amounts you enter are not written to logs. Feedback you compose stays on this device until a contact channel exists. Analytics events do not include email, balances, or account numbers. This summary does not replace a lawyer-reviewed policy.'**
   String get privacyBody;
+
+  /// No description provided for @balanceHiddenMask.
+  ///
+  /// In en, this message translates to:
+  /// **'••••'**
+  String get balanceHiddenMask;
+
+  /// No description provided for @balanceHide.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide amounts'**
+  String get balanceHide;
+
+  /// No description provided for @balanceShow.
+  ///
+  /// In en, this message translates to:
+  /// **'Show amounts'**
+  String get balanceShow;
+
+  /// No description provided for @settingsPrivacyControls.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy'**
+  String get settingsPrivacyControls;
+
+  /// No description provided for @settingsHideBalances.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide balances'**
+  String get settingsHideBalances;
+
+  /// No description provided for @settingsHideBalancesHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Masks amounts shown on this device. Fields you are editing still show what you type.'**
+  String get settingsHideBalancesHelp;
+
+  /// No description provided for @settingsSessionAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'New sign-in alerts'**
+  String get settingsSessionAlerts;
+
+  /// No description provided for @settingsSessionAlertsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Warns on this device when another session appears. The alert does not include an email, balance, or device name.'**
+  String get settingsSessionAlertsHelp;
+
+  /// No description provided for @sessionAlertTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New sign-in'**
+  String get sessionAlertTitle;
+
+  /// No description provided for @sessionAlertBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Another session signed in. Open Freeva to review it and revoke it if it was not you.'**
+  String get sessionAlertBody;
+
+  /// No description provided for @sessionAlertReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review sessions'**
+  String get sessionAlertReview;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {
