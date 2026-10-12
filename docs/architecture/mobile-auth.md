@@ -46,7 +46,7 @@ fallback passcode hệ điều hành; hủy/lỗi/không hỗ trợ vẫn có PI
 Khóa này bảo vệ UI trên thiết bị bình thường, không phải bảo đảm chống thiết bị root/jailbreak,
 runtime instrumentation hoặc rollback secure storage bởi kẻ có quyền hệ điều hành.
 `local_auth` xác nhận biometric của thiết bị, không ràng buộc token bằng hardware key và
-không phát hiện riêng việc thay đổi tập biometric enrollment. Review trước store thuộc `SEC-P1-001`.
+không phát hiện riêng việc thay đổi tập biometric enrollment. `SEC-P1-001` ghi residual này trong [security-test-phase1.md](security-test-phase1.md); không gắn token vào hardware key.
 
 ## Cấu hình và kiểm chứng
 
