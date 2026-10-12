@@ -1953,6 +1953,86 @@ paths:
           type: string
           format: uuid
           description: UUID v4
+  /api/v1/account/export:
+    get:
+      operationId: exportAccount
+      tags: [Account]
+      summary: Export the signed-in user's data as JSON
+      description: Bearer session only. Includes owned profile, wallets, categories, tags, FX quotes and transactions, including soft-deleted transactions. Omits password hashes, sessions, tokens and OAuth subjects. Writes audit user.data_export in the same transaction and returns nothing if that write fails. Requires SchemaMeta. Cache-Control no-store. Does not log the body, email, notes or amounts.
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Account snapshot (Cache-Control no-store)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountExport'
+        '401':
+          description: Missing, expired or revoked session
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: Storage unavailable, audit write failed, or SchemaMeta is missing
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/account:
+    delete:
+      operationId: deleteAccount
+      tags: [Account]
+      summary: Permanently delete the signed-in account
+      description: Bearer session only. Deletes owned financial data and the user row in one transaction, then cascades auth sessions, tokens, mail jobs and OAuth identities. Writes audit user.account_delete before the user row is removed. Audit rows are kept. Does not require SchemaMeta and does not apply a grace period. Cache-Control no-store. Does not log email, notes or amounts.
+      security:
+      - UserBearer: []
+      responses:
+        '204':
+          description: Account deleted (Cache-Control no-store)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+        '401':
+          description: Missing, expired or revoked session
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: Storage unavailable or audit write failed; the account is left unchanged
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
 components:
   headers:
     ReportNoStore:
@@ -3482,3 +3562,288 @@ components:
         netWorthMinor:
           $ref: '#/components/schemas/ReportMoney'
           description: assetsMinor + liabilitiesMinor.
+    AccountExport:
+      type: object
+      additionalProperties: false
+      required:
+      - schemaVersion
+      - exportedAt
+      - userId
+      - profile
+      - oauthProviders
+      - financialAccounts
+      - categoryGroups
+      - categories
+      - tags
+      - fxQuotes
+      - transactions
+      properties:
+        schemaVersion:
+          type: integer
+          minimum: 1
+          description: SchemaMeta.version at export time.
+        exportedAt:
+          type: string
+          format: date-time
+        userId:
+          type: string
+          format: uuid
+        profile:
+          $ref: '#/components/schemas/AccountExportProfile'
+        oauthProviders:
+          type: array
+          items:
+            type: string
+            enum: [google, apple]
+          description: Linked providers only. Subjects are omitted.
+        financialAccounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountExportFinancialAccount'
+        categoryGroups:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountExportCategoryGroup'
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountExportCategory'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountExportTag'
+        fxQuotes:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountExportFxQuote'
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountExportTransaction'
+    AccountExportProfile:
+      type: object
+      additionalProperties: false
+      required: [email, locale, timezone, defaultCurrencyCode, fiscalMonthStartDay, emailVerifiedAt, categoriesInitializedAt, createdAt, updatedAt]
+      properties:
+        email:
+          type: string
+          format: email
+        locale:
+          type: string
+        timezone:
+          type: string
+        defaultCurrencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        fiscalMonthStartDay:
+          type: integer
+          minimum: 1
+          maximum: 28
+        emailVerifiedAt:
+          type: [string, 'null']
+          format: date-time
+        categoriesInitializedAt:
+          type: [string, 'null']
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    AccountExportFinancialAccount:
+      type: object
+      additionalProperties: false
+      required: [id, clientId, name, type, currencyCode, initialBalanceMinor, sortOrder, archivedAt, creditLimitMinor, statementCloseDay, paymentDueDay, version, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        clientId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        type:
+          type: string
+          enum: [cash, bank, ewallet, credit]
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        initialBalanceMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        sortOrder:
+          type: integer
+        archivedAt:
+          type: [string, 'null']
+          format: date-time
+        creditLimitMinor:
+          oneOf:
+          - $ref: '#/components/schemas/ReportMoney'
+          - type: 'null'
+        statementCloseDay:
+          type: [integer, 'null']
+          minimum: 1
+          maximum: 28
+        paymentDueDay:
+          type: [integer, 'null']
+          minimum: 1
+          maximum: 28
+        version:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    AccountExportCategoryGroup:
+      type: object
+      additionalProperties: false
+      required: [id, clientId, name, isSystem, archivedAt, version, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        clientId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        isSystem:
+          type: boolean
+        archivedAt:
+          type: [string, 'null']
+          format: date-time
+        version:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    AccountExportCategory:
+      allOf:
+      - $ref: '#/components/schemas/AccountExportCategoryGroup'
+      - type: object
+        additionalProperties: false
+        required: [groupId, parentId, colorToken, iconToken]
+        properties:
+          groupId:
+            type: [string, 'null']
+            format: uuid
+          parentId:
+            type: [string, 'null']
+            format: uuid
+          colorToken:
+            type: [string, 'null']
+          iconToken:
+            type: [string, 'null']
+    AccountExportTag:
+      type: object
+      additionalProperties: false
+      required: [id, clientId, name, version, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        clientId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        version:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    AccountExportFxQuote:
+      type: object
+      additionalProperties: false
+      required: [id, clientId, fromCode, toCode, rate, quotedAt, source, version, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        clientId:
+          type: string
+          format: uuid
+        fromCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        toCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        rate:
+          type: string
+          description: Decimal FX rate with 8 fractional digits. Not money.
+        quotedAt:
+          type: string
+          format: date-time
+        source:
+          type: string
+          enum: [manual, provider]
+        version:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    AccountExportTransaction:
+      type: object
+      additionalProperties: false
+      required: [id, clientId, type, amountMinor, currencyCode, occurredOn, accountId, categoryId, transferGroupId, fxQuoteId, notes, deletedAt, tagIds, version, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        clientId:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [income, expense, transfer]
+        amountMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        occurredOn:
+          type: string
+          format: date
+        accountId:
+          type: string
+          format: uuid
+        categoryId:
+          type: [string, 'null']
+          format: uuid
+        transferGroupId:
+          type: [string, 'null']
+          format: uuid
+        fxQuoteId:
+          type: [string, 'null']
+          format: uuid
+        notes:
+          type: [string, 'null']
+        deletedAt:
+          type: [string, 'null']
+          format: date-time
+        tagIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+        version:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time

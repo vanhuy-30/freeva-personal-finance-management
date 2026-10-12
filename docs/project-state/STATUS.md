@@ -1,13 +1,13 @@
 # STATUS
 
 - **Phase hiện tại:** 1 — Phase 0 **closed** 2026-09-21
-- **Cập nhật:** 2026-10-09
+- **Cập nhật:** 2026-10-12
 - **CI:** `INF-P0-002` done; cả ba job xanh trên `main`, [run 33521325189](https://github.com/vanhuy-30/freeva-personal-finance-management/actions/runs/33521325189).
 - **Staging:** live — API [Render](https://freeva-api-staging.onrender.com) (`GET /api/health` → 200, `database` = up); admin [Vercel](https://freeva-personal-finance-management.vercel.app) đọc health staging. Stack: `render.yaml` + `apps/web-admin/vercel.json`. Prod hoster TBD tới Store (region VN).
 - **Crash monitoring:** residual chấp nhận khi đóng P0 — vendor dự kiến **Sentry**, wiring = `INF-P1-001` (DECISIONS-OPEN #9). Staging dựa health + log platform cho đến khi gắn SDK.
 - **Brand:** board + PNG trong `docs/brand/`; token/theme P0 done. Mobile `MOB-P1-010` done: launcher iOS/Android + symbol splash/home và l10n tagline. Admin `WA-P1-001` done: favicon từ app icon và lockup ở header.
 - **Transfer QA:** `QA-P0-002` done; fixture JSON versioned + contract test cho cùng currency và FX exact. `BE-P1-005` dùng evaluator production và thêm fixture; chỉ nhận FX exact, không làm tròn ngầm.
-- **Audit:** `BE-P0-004` schema done; `WA-P0-002` đã ghi `staff.user_lookup` fail closed. Chưa writer event khác hoặc bảo vệ sửa/xóa.
+- **Audit:** `BE-P0-004` schema done; `WA-P0-002` ghi `staff.user_lookup`; `BE-P1-010` ghi `user.data_export` và `user.account_delete` fail closed. Bảng chưa append-only.
 - **Staff lookup:** `WA-P0-002` done; exact email/UUID, response hồ sơ tối thiểu, opaque Bearer env + actor UUID, không dashboard/dữ liệu tài chính. Auth single-staff P0 phải thay trước production.
 - **Mobile auth:** `MOB-P1-001` doing: email auth, secure session, PIN/biometric lock, privacy cover và quản lý phiên. Analyze + 33 tests + native builds pass; chờ E2E Resend staging và biometric thiết bị thực để đóng task. [Email runbook](../infrastructure/email.md). [Chi tiết](../architecture/mobile-auth.md).
 - **Mobile profile:** `MOB-P1-002` done: locale/currency/IANA TZ/kỳ 1–28, API theo owner với version chống ghi đè, l10n và privacy gate. Analyze, Flutter tests, API build/tests và PostgreSQL integration pass. Chưa deploy/smoke native. [Chi tiết](../architecture/mobile-profile.md).
@@ -23,6 +23,7 @@
 - **Financial accounts:** `BE-P1-004` done: CRUD bốn loại ví, số dư derived bigint, credit config, sắp xếp/lưu trữ/khôi phục, owner/version/clientId; 117 unit và 33 PostgreSQL integration tests, build/OpenAPI pass. Không migration mới; chưa deploy staging. [Thiết kế](../architecture/financial-accounts.md).
 - **Transactions:** `BE-P1-005` done: CRUD thu/chi/transfer nguyên tử, FX exact/quote bất biến, soft-delete/restore cả cặp, owner/version/Idempotency-Key/clientId, category/tags/filter. 145 unit/HTTP + 51 PostgreSQL tests, build/OpenAPI pass; không migration, chưa deploy staging. [Thiết kế](../architecture/transactions.md).
 - **Sync queue:** `BE-P1-009` done: `POST /api/v1/sync` áp hàng đợi giao dịch, idempotent theo `clientId`, conflict không ghi đè, gợi ý trùng 10 phút. 19 unit suites / 179 tests và 6 PostgreSQL suites / 75 tests, build/OpenAPI pass. Một migration seed `SchemaMeta`. Chưa deploy staging. [Thiết kế](../architecture/sync.md).
+- **Export / xóa tài khoản:** `BE-P1-010` done: `GET /api/v1/account/export` và `DELETE /api/v1/account`, audit fail closed, UUID audit được giữ. 20 unit suites / 185 tests và 7 PostgreSQL suites / 79 tests, build/OpenAPI pass. Không migration. Chưa deploy staging. [Thiết kế](../architecture/account-privacy.md).
 - **Data model:** `BE-P0-001` xong (ADR 007, Prisma lõi). CRUD ví đã có ở `BE-P1-004`; CRUD giao dịch đã có ở `BE-P1-005`.
 - **Threat model:** `SEC-P0-001` xong ([threat-model.md](../architecture/threat-model.md)).
 - **PII logs:** `SEC-P0-003` xong ([pii-log-checklist.md](../architecture/pii-log-checklist.md)).

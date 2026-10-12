@@ -168,8 +168,12 @@
 - Note: [Thiết kế](../docs/architecture/mobile-sync.md). Không pull cursor, không CRDT, không đối soát. Chưa native build/E2E staging.
 
 ### BE-P1-010 — Export JSON + xóa tài khoản
-- Status: todo
+- Status: done
 - Module: 21
+- Depends: BE-P0-004, BE-P1-001
+- DoD: `GET /api/v1/account/export` trả snapshot JSON của owner, gồm giao dịch đã xóa, tiền dạng string; `DELETE /api/v1/account` xóa ngay user và dữ liệu tài chính. Audit `user.data_export` / `user.account_delete` cùng transaction, fail closed, UUID còn sau khi user biến mất. Session Bearer, no-store, không log email/ghi chú/số tiền. Không CSV, không UI, không migration.
+- Verification: 20 unit suites / 185 tests (6 mới) và 7 HTTP/PostgreSQL suites / 79 tests (4 mới) pass; build và OpenAPI validation pass. Không migration mới.
+- Note: [Thiết kế](../docs/architecture/account-privacy.md). Không cửa sổ 30 ngày trên ứng dụng. Chưa deploy staging.
 
 ### MOB-P1-009 — Ẩn số dư khi nền; thông báo thiết bị mới (Should)
 - Status: todo

@@ -26,4 +26,4 @@ Local P0: không có bên thứ ba production (compose self-host). Staging: Rend
 - [Điều khoản dịch vụ (nháp)](../legal/terms-of-service.md) — `PRD-P0-002`
 - [Chính sách bảo mật (nháp)](../legal/privacy-policy.md) — `PRD-P0-002`
 
-Cần luật sư trước store / in-app. Export và xóa tài khoản: `BE-P1-010`.
+Cần luật sư trước store / in-app. API xuất JSON và xóa tài khoản ngay: `BE-P1-010` ([account-privacy.md](account-privacy.md)). Mốc “+ 30 ngày” trong bảng trên vẫn là đề xuất, không phải thời hạn ứng dụng đang áp dụng.

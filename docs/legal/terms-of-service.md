@@ -85,11 +85,11 @@ Trong phạm vi pháp luật cho phép, trách nhiệm của chúng tôi giới 
 
 ## 10. Chấm dứt và xóa tài khoản
 
-Bạn có thể ngừng dùng dịch vụ bất kỳ lúc nào. Quyền xóa tài khoản và xuất dữ liệu sẽ có **trước phát hành** store (`BE-P1-010`) — chưa ship ở Phase 0.
+Bạn có thể ngừng dùng dịch vụ bất kỳ lúc nào. API xóa tài khoản (`DELETE /api/v1/account`) và xuất JSON (`GET /api/v1/account/export`) đã có (`BE-P1-010`). Nút trong app và CSV chưa có. Bản nháp này chưa được luật sư review.
 
 Chúng tôi có thể tạm khóa hoặc chấm dứt tài khoản nếu vi phạm Điều khoản, theo yêu cầu pháp luật, hoặc khi ngừng vận hành dịch vụ (sẽ thông báo qua email đã đăng ký khi có quy trình đó).
 
-Sau khi xóa, dữ liệu tài khoản/tài chính được xử lý theo retention trong [privacy-compliance.md](../architecture/privacy-compliance.md) (đề xuất: xóa TK + 30 ngày đối với dữ liệu tài khoản).
+Sau khi xóa qua API, dữ liệu tài khoản và tài chính bị xóa ngay. Mốc “+ 30 ngày” trong [privacy-compliance.md](../architecture/privacy-compliance.md) vẫn là đề xuất chưa chốt luật sư. Bản sao backup theo runbook `BE-P0-005`.
 
 ## 11. Thay đổi điều khoản
 

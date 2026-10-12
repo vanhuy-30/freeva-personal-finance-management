@@ -2,6 +2,10 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-10-12
+
+- `BE-P1-010`: `GET /api/v1/account/export` trả snapshot JSON của owner; `DELETE /api/v1/account` xóa ngay user và dữ liệu tài chính. Audit `user.data_export` / `user.account_delete` cùng transaction, fail closed, UUID còn sau khi user biến mất. Không CSV, không UI, không cửa sổ 30 ngày trên ứng dụng. 20 unit suites / 185 tests và 7 HTTP/PostgreSQL suites / 79 tests, build/OpenAPI pass. Không migration; chưa deploy staging. [Thiết kế](../architecture/account-privacy.md).
+
 ## 2026-10-09
 
 - `MOB-P1-008`: hàng đợi mutation giao dịch khi mất mạng, lưu trong secure storage, gửi lại bằng `POST /api/v1/sync`. Gộp sửa/xóa trước khi gửi, conflict không ghi đè, `review` khi số tiền khác. Không sync ví/danh mục và không cộng số dư từ bản chờ. Analyze sạch và 117 Flutter tests pass (9 tests mới); chưa native build/E2E staging. [Thiết kế](../architecture/mobile-sync.md).

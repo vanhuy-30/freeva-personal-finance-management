@@ -44,9 +44,9 @@ enum AuditOutcome {
   denied
 }
 
-/// Internal audit schema; WA-P0-002 writes staff.user_lookup only. Not tamper-proof.
-/// Actor consistency and code syntax are CHECK constraints in the migration.
-/// IDs deliberately have no FK; retention/deletion policy remains pending.
+/// Internal audit schema. Writers include staff.user_lookup, auth success, user.data_export and user.account_delete.
+/// Not tamper-proof. Actor consistency and code syntax are CHECK constraints in the migration.
+/// IDs deliberately have no FK. Account deletion keeps these rows.
 model AuditEvent {
   id         String         @id @default(uuid()) @db.Uuid
   actorType  AuditActorType

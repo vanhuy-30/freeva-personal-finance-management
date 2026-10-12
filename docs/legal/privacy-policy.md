@@ -64,8 +64,8 @@ Consent tùy chọn (sau này): thông báo, AI, kết nối ngân hàng. Có th
 Theo tinh thần PDPD, bạn có quyền (khi đã có tài khoản và quy trình Phase 1):
 
 - **Xem** và **sửa** hồ sơ / dữ liệu ghi chép trong app.
-- **Xuất** dữ liệu dạng máy đọc (JSON/CSV) — sẽ có trước phát hành (`BE-P1-010`). Chưa ship ở Phase 0.
-- **Xóa tài khoản** — cùng `BE-P1-010`; paywall không được chặn quyền này.
+- **Xuất** dữ liệu JSON tại `GET /api/v1/account/export` (`BE-P1-010`). CSV chưa có. Chưa có nút trong app.
+- **Xóa tài khoản** tại `DELETE /api/v1/account` — xóa ngay hàng tài khoản và dữ liệu tài chính; paywall không được chặn quyền này. UI app chưa có.
 - **Rút consent** đối với xử lý không bắt buộc (thông báo, analytics mở rộng, AI, bank connect).
 - Khiếu nại với cơ quan có thẩm quyền theo pháp luật Việt Nam.
 
@@ -82,7 +82,7 @@ Cách gửi yêu cầu: kênh TBD cho đến khi có email hỗ trợ. Staff adm
 | Thiết bị / IP login | 90 ngày log |
 | Hỗ trợ (ticket) | 12 tháng |
 
-Sao lưu hệ thống có thể giữ bản sao thêm một cửa sổ ngắn sau xóa, rồi hết hạn theo runbook backup (`BE-P0-005`).
+API `BE-P1-010` xóa ngay dữ liệu tài khoản và tài chính. Mốc “+ 30 ngày” vẫn là đề xuất chưa chốt luật sư. Sao lưu hệ thống có thể giữ bản sao thêm một cửa sổ ngắn sau xóa, rồi hết hạn theo runbook backup (`BE-P0-005`). Audit giữ UUID của yêu cầu xuất/xóa, không kèm email hay số tiền.
 
 ## 6. Chuyển dữ liệu ra nước ngoài
 

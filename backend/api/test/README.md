@@ -338,3 +338,27 @@ Coverage: replay một dòng, conflict không đổi số tiền, operation sau 
 
 Kết quả local 2026-10-09: **19 unit suites / 179 tests** (4 tests sync mới), **6 HTTP/PostgreSQL suites / 75 tests** (4 tests sync mới); API build và OpenAPI validation pass. Một migration seed `SchemaMeta`; chưa deploy staging.
 
+## Export và xóa tài khoản — BE-P1-010
+
+`account.integration-spec.ts` chạy trong job `test:integration`: HTTP Nest, guard/session thật, Prisma/PostgreSQL thật. Bắt buộc `AUTH_TEST_DATABASE_URL` trỏ DB disposable `auth_test`. Không dùng database development. Không migration mới.
+
+```sh
+docker run --detach --rm --name freeva-be-p1-010-test \
+  --publish 127.0.0.1:55445:5432 \
+  --env POSTGRES_USER=auth_test --env POSTGRES_PASSWORD=auth_test_local \
+  --env POSTGRES_DB=auth_test postgres:16-alpine
+docker exec freeva-be-p1-010-test pg_isready -U auth_test
+DATABASE_URL=postgresql://auth_test:auth_test_local@127.0.0.1:55445/auth_test \
+  pnpm --filter @freeva/api prisma:migrate:deploy
+pnpm --filter @freeva/api test --runInBand
+AUTH_TEST_DATABASE_URL=postgresql://auth_test:auth_test_local@127.0.0.1:55445/auth_test \
+  pnpm --filter @freeva/api test:integration --runInBand
+pnpm --filter @freeva/api build
+pnpm --package=@redocly/cli dlx redocly lint packages/api-contracts/openapi.yaml --extends minimal
+docker stop freeva-be-p1-010-test
+```
+
+Coverage: snapshot chỉ của owner, tiền string, giao dịch đã xóa, không password/subject, log không email/ghi chú/số tiền, xóa user và cascade auth, user khác còn, audit UUID còn, export 503 khi thiếu `SchemaMeta` nhưng xóa vẫn chạy, 401 khi không session.
+
+Kết quả local 2026-10-12: **20 unit suites / 185 tests** (6 tests account mới), **7 HTTP/PostgreSQL suites / 79 tests** (4 tests account mới); API build và OpenAPI validation pass. Không migration; chưa deploy staging.
+
