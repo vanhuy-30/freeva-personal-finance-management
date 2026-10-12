@@ -65,6 +65,8 @@ Staff token cho form lookup: nhập tay trên UI khi gọi API; không nhúng v�
 | `STAFF_AUTH_TOKEN` / `STAFF_ACTOR_ID` | Render | Secrets |
 | `NODE_ENV` | Render | `staging` |
 | `NEXT_PUBLIC_API_BASE_URL` | Vercel | Public URL API |
+| `SENTRY_DSN` | Render và Vercel (server) | `INF-P1-001`. Không commit. Trống = không gửi crash |
+| `NEXT_PUBLIC_SENTRY_DSN` | Vercel | Chỉ crash trình duyệt admin. Write key, vẫn không commit |
 
 Template local: [backend/api/.env.example](../../backend/api/.env.example), [apps/web-admin/.env.example](../../apps/web-admin/.env.example).
 
@@ -83,3 +85,24 @@ Chưa bắt buộc GitHub Actions deploy. Render/Vercel gắn git `main` (hoặc
 `BE-P1-001` / `BE-P1-002` / `MOB-P1-001`: trước deploy đặt `AUTH_SECRET_KEY` (64 hex, giữ ổn định), `MAIL_PROVIDER=resend`, `MAIL_FROM="Freeva <onboarding@resend.dev>"`, `SMTP_PORT=2465` và secret `RESEND_API_KEY`. Blueprint có preset nhưng service hiện hữu vẫn cần kiểm tra Environment sau sync. Sender mặc định chỉ gửi đến email tài khoản Resend; xem [cấu hình và checklist E2E](email.md).
 
 SMTP staging bắt buộc TLS; migrate trước start. Free instance ngủ làm outbox gửi chậm; job giữ đến expiry và retry khi app chạy. Rate limit lấy socket IP mặc định, có thể gom nhiều user sau proxy; kiểm chứng trusted proxy topology trước thay cấu hình. Xem [ADR 009](../architecture/adr/009-email-auth-sessions.md).
+
+## Crash monitoring (`INF-P1-001`)
+
+Sentry tắt khi thiếu DSN. Đặt `SENTRY_DSN` trên Render và trên Vercel (biến server, không `NEXT_PUBLIC_`) sau khi tạo project staging. Crash trình duyệt admin cần thêm `NEXT_PUBLIC_SENTRY_DSN`. Mobile không ghi DSN vào `config/staging.json`; truyền `--dart-define=SENTRY_DSN=...` lúc build.
+
+Smoke chỉ chạy khi cố ý. Không có DSN thì lệnh in `sentry smoke skipped` và thoát 0.
+
+```sh
+SENTRY_DSN='<dsn>' SENTRY_SMOKE=1 pnpm --filter @freeva/api sentry:smoke
+SENTRY_DSN='<dsn>' SENTRY_SMOKE=1 pnpm --filter @freeva/web-admin sentry:smoke
+```
+
+Mobile, từ `apps/mobile`, một lần khởi động rồi bỏ cờ:
+
+```sh
+fvm flutter run --dart-define-from-file=config/staging.json \
+  --dart-define=SENTRY_DSN='<dsn>' \
+  --dart-define=SENTRY_SMOKE=true
+```
+
+Event cố định là `freeva.sentry.smoke`, không kèm user hay request. Không upload source map. Chi tiết: [ADR 011](../architecture/adr/011-sentry-crash-monitoring.md).

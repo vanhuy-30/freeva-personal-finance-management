@@ -95,7 +95,9 @@ cần signing và entitlement Keychain hợp lệ (kể cả simulator). Repo đ
 - Dev: copy `config/dev.example.json` thành `config/dev.json`, điền origin HTTPS của backend dev mà thiết bị truy cập và tin cậy certificate.
 - Prod: copy `config/prod.example.json` thành `config/prod.json`, điền origin production khi đã xác định. Không có URL production giả định.
 
-Hai file dev/prod thực tế được gitignore. Chỉ chứa cấu hình public; tuyệt đối không đưa SMTP/API key, database URL hoặc auth secret vào mobile. `APP_ENV` là nhãn môi trường, không tự chọn URL thay cho `API_BASE_URL`.
+Hai file dev/prod thực tế được gitignore. Chỉ chứa cấu hình public; tuyệt đối không đưa SMTP/API key, database URL, auth secret hoặc Sentry DSN vào file config đã commit. `APP_ENV` là nhãn môi trường, không tự chọn URL thay cho `API_BASE_URL`.
+
+Crash staging (`INF-P1-001`) đọc `SENTRY_DSN` qua `--dart-define`. Không ghi DSN vào `config/staging.json`. Thiếu DSN thì app chạy như cũ và không gửi event. Smoke một lần: thêm `--dart-define=SENTRY_SMOKE=true`, rồi bỏ cờ. Xem [staging.md](../../docs/infrastructure/staging.md).
 
 Từ repo root:
 

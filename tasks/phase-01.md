@@ -184,9 +184,11 @@
 - Note: [Thiết kế](../docs/architecture/mobile-privacy.md). Không báo khi app đang đóng. Không FCM/APNs. Chưa native build/E2E staging.
 
 ### INF-P1-001 — Crash monitoring staging
-- Status: todo
+- Status: done
 - Module: 26
-- Note: Residual Phase 0 (2026-09-21): vendor dự kiến Sentry (DECISIONS-OPEN #9); chưa SDK. Gắn API ± admin ± mobile trên staging, scrub PII, smoke event — không chặn đóng P0.
+- DoD: Sentry trên API, web admin và mobile staging. SDK tắt khi không có DSN. Scrub PII trước khi gửi; API không gửi HTTP status dưới 500. Không endpoint public, không tracing, không upload source map, không commit DSN. Script smoke chỉ gửi khi có DSN và `SENTRY_SMOKE`.
+- Verification: 22 unit suites / 192 tests (7 mới) và API build pass. Admin `tsc --noEmit`, lint và 2 node tests pass. `flutter analyze` sạch; toàn bộ 133 Flutter tests pass (3 tests mới). Lệnh smoke không có DSN in `sentry smoke skipped`. Event live trên dashboard Sentry chờ DSN vận hành.
+- Note: [ADR 011](../docs/architecture/adr/011-sentry-crash-monitoring.md). [Staging](../docs/infrastructure/staging.md). Residual Phase 0 đóng bằng SDK này; DSN dashboard vẫn do người vận hành đặt.
 
 ### SEC-P1-001 — Security test cơ bản trước store
 - Status: todo

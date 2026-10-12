@@ -4,7 +4,7 @@
 - **Cập nhật:** 2026-10-12
 - **CI:** `INF-P0-002` done; cả ba job xanh trên `main`, [run 33521325189](https://github.com/vanhuy-30/freeva-personal-finance-management/actions/runs/33521325189).
 - **Staging:** live — API [Render](https://freeva-api-staging.onrender.com) (`GET /api/health` → 200, `database` = up); admin [Vercel](https://freeva-personal-finance-management.vercel.app) đọc health staging. Stack: `render.yaml` + `apps/web-admin/vercel.json`. Prod hoster TBD tới Store (region VN).
-- **Crash monitoring:** residual chấp nhận khi đóng P0 — vendor dự kiến **Sentry**, wiring = `INF-P1-001` (DECISIONS-OPEN #9). Staging dựa health + log platform cho đến khi gắn SDK.
+- **Crash monitoring:** `INF-P1-001` done — Sentry trên API, admin và mobile; tắt khi không có DSN; scrub PII. Event live chờ DSN trên dashboard (DECISIONS-OPEN #9, [ADR 011](../architecture/adr/011-sentry-crash-monitoring.md)).
 - **Brand:** board + PNG trong `docs/brand/`; token/theme P0 done. Mobile `MOB-P1-010` done: launcher iOS/Android + symbol splash/home và l10n tagline. Admin `WA-P1-001` done: favicon từ app icon và lockup ở header.
 - **Transfer QA:** `QA-P0-002` done; fixture JSON versioned + contract test cho cùng currency và FX exact. `BE-P1-005` dùng evaluator production và thêm fixture; chỉ nhận FX exact, không làm tròn ngầm.
 - **Audit:** `BE-P0-004` schema done; `WA-P0-002` ghi `staff.user_lookup`; `BE-P1-010` ghi `user.data_export` và `user.account_delete` fail closed. Bảng chưa append-only.
@@ -48,7 +48,7 @@ Theo [điều kiện hoàn thành Phase 0](../product/phases/phase-00.md) và [D
 | Data model + security flow review | Done (ADR 007/008, threat model, PII checklist) |
 | Backup/restore thử | Done local (`BE-P0-005`); production PITR chưa |
 | Staging cloud | Done — `INF-P0-004`; URL ở mục Staging trên |
-| Crash monitoring | **Residual chấp nhận** — Sentry dự kiến; SDK = `INF-P1-001` |
+| Crash monitoring | SDK staging done (`INF-P1-001`); event live chờ DSN |
 | Region dữ liệu | **Chốt VN** — DECISIONS-OPEN #5 (2026-09-18) |
 | Logging JSON + redact | Done (`BE-P0-003` / `SEC-P0-003`) |
 | PDPD / compliance skeleton | Có docs; luật sư trước store (không chặn foundation nếu chấp nhận nháp) |
