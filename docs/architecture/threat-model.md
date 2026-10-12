@@ -23,7 +23,7 @@ Cập nhật khi thêm bề mặt (endpoint, client, bên thứ ba) hoặc trư�
 | Developer local | Máy dev, credential compose. |
 | CI | GitHub Actions; đọc repo, secret CI khi có. |
 
-Ngoài P0/P1: bank partner (Phase 6), crash SaaS (`INF-P1-001` / DECISIONS-OPEN #9).
+Ngoài P0/P1: bank partner (Phase 6). Crash staging: Sentry `INF-P1-001`.
 
 ## Trust boundaries
 
@@ -149,7 +149,7 @@ Auth user: Bearer (`/api/v1` khi gắn Phase 1). Admin P0 dùng opaque Bearer se
 | Redis compose không AUTH | Chỉ local. Prod: AUTH + không expose port. |
 | Staging Render/Vercel | Stack chốt; provision `INF-P0-004`. Staging có thể Singapore (Render); prod region VN. |
 | Region dữ liệu chốt VN | DECISIONS-OPEN #5 (2026-09-18). Vendor hosting production vẫn TBD tới Store. |
-| Crash SaaS (Sentry dự kiến; chưa SDK) | Residual P0 chấp nhận 2026-09-21; DECISIONS-OPEN #9; wiring `INF-P1-001`. |
+| Crash SaaS (Sentry staging) | SDK `INF-P1-001` / ADR 011. Tắt khi không có DSN. Event live chờ DSN dashboard. |
 | `security@` TBD | DECISIONS-OPEN #10. |
 | Sync trùng GD | Server queue `BE-P1-009` và hàng đợi offline mobile `MOB-P1-008`. RISKS R2. |
 | PDPD / store reject | RISKS R3 — API export/xóa `BE-P1-010` đã có; UI app và review luật sư vẫn còn trước store. Draft ToS/privacy `PRD-P0-002`. |

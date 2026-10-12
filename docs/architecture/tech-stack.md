@@ -2,7 +2,7 @@
 
 > Trang kiểm tra nhanh và chỉnh sửa tập trung cho tech stack và kiến trúc hiện tại của Freeva.
 >
-> **Trạng thái:** current state · **Cập nhật:** 2026-09-23
+> **Trạng thái:** current state · **Cập nhật:** 2026-10-12
 
 Khi thay đổi công nghệ hoặc boundary kiến trúc, cập nhật trang này trong cùng PR. Nếu thay đổi là quyết định khó đảo ngược hoặc ảnh hưởng nhiều phần, tạo/cập nhật ADR tương ứng rồi liên kết lại từ đây. Version dependency chính xác vẫn lấy từ `package.json`, `pubspec.yaml` và lockfile.
 
@@ -44,7 +44,7 @@ Design tokens ─────────────> Mobile + Web Admin
 | Design system | JSON design tokens | Adopted | Nguồn màu brand/semantic dùng chung cho mobile và admin. |
 | Cache/queue/session | Redis | Planned | Có trong local compose; chỉ đưa vào luồng nghiệp vụ khi use case tương ứng được triển khai. |
 | Email local | Mailhog | Adopted for local | Không phải dịch vụ production. |
-| Crash monitoring | Sentry | Proposed | Vendor dự kiến; chưa gắn SDK, theo `INF-P1-001`. |
+| Crash monitoring | Sentry | Adopted (staging) | SDK `INF-P1-001`. Tắt khi không có DSN. [ADR 011](adr/011-sentry-crash-monitoring.md). |
 | Analytics | Typed internal catalog | Adopted foundation | Hiện dùng debug logger local; chưa chọn vendor SDK. |
 
 ## Kiến trúc theo phần
@@ -141,7 +141,7 @@ Chi tiết model/invariant: [Data model](data-model.md), [Money & FX ADR](adr/00
 | Offline conflict | `POST /api/v1/sync` cho giao dịch: optimistic version, không ghi đè, không CRDT | Chốt `BE-P1-009` 2026-10-09 |
 | Redis responsibility | Dự kiến queue/cache/session | Mỗi use case phải có owner, TTL/durability và failure policy trước khi dùng. |
 | FX/bank/market provider | FX nhập tay ở MVP; external partner để sau | Khi vào scope tích hợp Phase 6. |
-| Crash monitoring | Dự kiến Sentry, chưa tích hợp | `INF-P1-001`. |
+| Crash monitoring | Sentry staging; DSN do người vận hành đặt, không commit | `INF-P1-001`, [ADR 011](adr/011-sentry-crash-monitoring.md) |
 | Analytics vendor | Chưa chọn | Khi cần gửi production telemetry; phải qua privacy review. |
 | Multi-staff identity | P0 mới có single staff credential | Bắt buộc trước production admin. |
 | Production backup/PITR | Chưa triển khai đầy đủ | Chốt RPO/RTO, retention và restore drill trước production. |
@@ -169,3 +169,5 @@ Danh sách quyết định vận hành mới nhất được theo dõi tại [DE
 - [007 — Core data model](adr/007-core-data-model.md)
 - [008 — Audit event schema](adr/008-audit-event-schema.md)
 - [009 — Email auth and sessions](adr/009-email-auth-sessions.md)
+- [010 — Google and Apple OAuth](adr/010-google-apple-oauth.md)
+- [011 — Sentry crash monitoring](adr/011-sentry-crash-monitoring.md)

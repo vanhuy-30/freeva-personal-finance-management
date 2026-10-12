@@ -41,6 +41,10 @@ Wildcard một cấp (`*.email`). Path hai cấp (`*.*.email`) cho DTO lồng (`
 3. Không nội suy PII vào message.
 4. Reviewer: mục “Log không PII” trên PR template.
 
-Cập nhật file này khi thêm loại dữ liệu nhạy cảm (bank token Phase 6, crash SaaS).
+Cập nhật file này khi thêm loại dữ liệu nhạy cảm (bank token Phase 6).
+
+## Crash SaaS (`INF-P1-001`)
+
+Sentry nhận stack và phiên bản app, không nhận user, body, header, cookie, query hay biến local. Field cấm trong bảng trên bị thay bằng `[REDACTED]` trước khi gửi, kể cả chuỗi email, `Bearer` và URL DSN. API bỏ HTTP status dưới 500. Không log DSN. Thiếu DSN thì không gửi.
 
 Auth P1: HTTP request serializer chỉ giữ id/method/path/remoteAddress; bỏ query, headers, body. Auth exception filter không log exception Prisma/SMTP hoặc phản chiếu input. Outbox warning chỉ message chung.

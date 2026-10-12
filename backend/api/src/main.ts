@@ -1,8 +1,11 @@
-import { NestFactory } from '@nestjs/core';
+import './instrument';
+
 import { ValidationPipe } from '@nestjs/common';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import helmet from 'helmet';
 import { Logger } from 'nestjs-pino';
 import { AppModule } from './app.module';
+import { SentryExceptionFilter } from './core/sentry/sentry-exception.filter';
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
@@ -16,6 +19,8 @@ async function bootstrap(): Promise<void> {
       transform: true,
     }),
   );
+  const { httpAdapter } = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new SentryExceptionFilter(httpAdapter));
 
   const origins = (process.env.CORS_ORIGINS ?? 'http://localhost:3001')
     .split(',')

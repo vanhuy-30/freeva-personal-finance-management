@@ -10,11 +10,11 @@
 
 - Health: `GET /api/health` trên Render; admin Vercel đọc status.
 - Log API: Pino JSON + redact (platform Render logs).
-- Crash SaaS: residual tới `INF-P1-001` (Sentry dự kiến — DECISIONS-OPEN #9).
+- Crash: Sentry trên API, web admin và mobile khi có DSN (`INF-P1-001`, [ADR 011](adr/011-sentry-crash-monitoring.md)). Không có DSN thì SDK không gửi. Không tracing.
 
 ## Trước phát hành MVP
 
-- Crash: Sentry (`INF-P1-001`) trên API ± admin ± mobile staging.
+- Crash staging đã gắn SDK. Event live trên dashboard cần DSN do người vận hành đặt — [staging.md](../infrastructure/staging.md).
 - Tracing request id.
 - Uptime staging.
 - Alert lỗi 5xx / sync fail rate.

@@ -12,5 +12,5 @@
 | 6 | Nguồn FX / giá / bank | FX tay ở MVP; partner Phase 6 | Mở |
 | 7 | Free vs Premium | Core miễn phí; thu phí mở rộng Phase 7 | Đề xuất |
 | 8 | Quy mô đội / QA / budget | Solo/small; process nhẹ | Mở |
-| 9 | Crash tooling | Vendor dự kiến **Sentry**; chưa gắn SDK. Residual chấp nhận khi đóng Phase 0 (2026-09-21); wiring staging = `INF-P1-001`. | Residual P0; mở tới P1 |
+| 9 | Crash tooling | **Sentry** cho staging (`INF-P1-001`, ADR 011). SDK tắt khi không có DSN. DSN đặt trên Render/Vercel và `--dart-define` mobile; không commit. Event live chờ project Sentry. | Chốt vendor staging 2026-10-12; DSN vận hành còn mở |
 | 10 | Security contact | email TBD | Mở |

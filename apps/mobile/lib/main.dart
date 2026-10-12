@@ -12,9 +12,14 @@ import 'core/di/injection.dart';
 import 'core/config/app_config.dart';
 import 'core/l10n/generated/app_localizations.dart';
 import 'core/router/app_router.dart';
+import 'core/sentry/sentry_bootstrap.dart';
 import 'core/theme/app_theme.dart';
 
 Future<void> main() async {
+  await runFreeva(_boot);
+}
+
+Future<void> _boot() async {
   WidgetsFlutterBinding.ensureInitialized();
   tzdata.initializeTimeZones();
   await configureDependencies();

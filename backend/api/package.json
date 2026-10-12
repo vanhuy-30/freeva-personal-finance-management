@@ -11,7 +11,8 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
     "test:integration": "jest --config jest.integration.config.cjs",
-    "mail:verify": "node scripts/verify-mail.cjs"
+    "mail:verify": "node scripts/verify-mail.cjs",
+    "sentry:smoke": "node scripts/sentry-smoke.cjs"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.6",
@@ -19,6 +20,7 @@
     "@nestjs/core": "^11.1.6",
     "@nestjs/platform-express": "^11.1.6",
     "@prisma/client": "^6.14.0",
+    "@sentry/nestjs": "^11.6.0",
     "argon2": "^0.45.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
