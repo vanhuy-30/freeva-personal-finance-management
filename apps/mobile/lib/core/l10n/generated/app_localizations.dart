@@ -1015,6 +1015,84 @@ abstract class S {
   /// **'Load more'**
   String get transactionLoadMore;
 
+  /// No description provided for @syncPending.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} changes waiting to sync'**
+  String syncPending(int count);
+
+  /// No description provided for @syncNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync'**
+  String get syncNow;
+
+  /// No description provided for @syncing.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing'**
+  String get syncing;
+
+  /// No description provided for @syncConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'Not overwritten. Reload to see the copy on the server.'**
+  String get syncConflict;
+
+  /// No description provided for @syncReview.
+  ///
+  /// In en, this message translates to:
+  /// **'The amount differs from the saved copy. Not overwritten.'**
+  String get syncReview;
+
+  /// No description provided for @syncFailedItem.
+  ///
+  /// In en, this message translates to:
+  /// **'This change could not be synced.'**
+  String get syncFailedItem;
+
+  /// No description provided for @syncDiscard.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get syncDiscard;
+
+  /// No description provided for @syncSchema.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync is paused because the app and server schemas differ.'**
+  String get syncSchema;
+
+  /// No description provided for @syncDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'A similar transaction may already exist. This one was still kept.'**
+  String get syncDuplicate;
+
+  /// No description provided for @syncDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get syncDelete;
+
+  /// No description provided for @syncRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get syncRestore;
+
+  /// No description provided for @syncChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get syncChange;
+
+  /// No description provided for @syncItem.
+  ///
+  /// In en, this message translates to:
+  /// **'{action} · {date}'**
+  String syncItem(String action, String date);
+
   /// No description provided for @categoryTitle.
   ///
   /// In en, this message translates to:

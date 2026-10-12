@@ -511,6 +511,53 @@ class SEn extends S {
   String get transactionLoadMore => 'Load more';
 
   @override
+  String syncPending(int count) {
+    return '$count changes waiting to sync';
+  }
+
+  @override
+  String get syncNow => 'Sync';
+
+  @override
+  String get syncing => 'Syncing';
+
+  @override
+  String get syncConflict =>
+      'Not overwritten. Reload to see the copy on the server.';
+
+  @override
+  String get syncReview =>
+      'The amount differs from the saved copy. Not overwritten.';
+
+  @override
+  String get syncFailedItem => 'This change could not be synced.';
+
+  @override
+  String get syncDiscard => 'Discard';
+
+  @override
+  String get syncSchema =>
+      'Sync is paused because the app and server schemas differ.';
+
+  @override
+  String get syncDuplicate =>
+      'A similar transaction may already exist. This one was still kept.';
+
+  @override
+  String get syncDelete => 'Delete';
+
+  @override
+  String get syncRestore => 'Restore';
+
+  @override
+  String get syncChange => 'Change';
+
+  @override
+  String syncItem(String action, String date) {
+    return '$action · $date';
+  }
+
+  @override
   String get categoryTitle => 'Categories';
 
   @override

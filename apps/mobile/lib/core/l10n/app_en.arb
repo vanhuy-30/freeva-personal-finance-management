@@ -173,6 +173,36 @@
   "transactionRate": "Exchange rate",
   "transactionRateHint": "Enter a manual rate. The destination amount must match the smallest currency unit exactly.",
   "transactionLoadMore": "Load more",
+  "syncPending": "{count} changes waiting to sync",
+  "@syncPending": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "syncNow": "Sync",
+  "syncing": "Syncing",
+  "syncConflict": "Not overwritten. Reload to see the copy on the server.",
+  "syncReview": "The amount differs from the saved copy. Not overwritten.",
+  "syncFailedItem": "This change could not be synced.",
+  "syncDiscard": "Discard",
+  "syncSchema": "Sync is paused because the app and server schemas differ.",
+  "syncDuplicate": "A similar transaction may already exist. This one was still kept.",
+  "syncDelete": "Delete",
+  "syncRestore": "Restore",
+  "syncChange": "Change",
+  "syncItem": "{action} · {date}",
+  "@syncItem": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "categoryTitle": "Categories",
   "categoryAdd": "Add category",
   "categoryEdit": "Edit category",

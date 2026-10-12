@@ -513,6 +513,51 @@ class SVi extends S {
   String get transactionLoadMore => 'Tải thêm';
 
   @override
+  String syncPending(int count) {
+    return '$count thay đổi chờ đồng bộ';
+  }
+
+  @override
+  String get syncNow => 'Đồng bộ';
+
+  @override
+  String get syncing => 'Đang đồng bộ';
+
+  @override
+  String get syncConflict => 'Không ghi đè. Tải lại để xem bản trên máy chủ.';
+
+  @override
+  String get syncReview => 'Số tiền khác bản đã lưu. Không ghi đè.';
+
+  @override
+  String get syncFailedItem => 'Không đồng bộ được thay đổi này.';
+
+  @override
+  String get syncDiscard => 'Bỏ';
+
+  @override
+  String get syncSchema =>
+      'Tạm dừng đồng bộ vì schema ứng dụng và máy chủ khác nhau.';
+
+  @override
+  String get syncDuplicate =>
+      'Có thể đã có giao dịch tương tự. Bản này vẫn được giữ.';
+
+  @override
+  String get syncDelete => 'Xóa';
+
+  @override
+  String get syncRestore => 'Khôi phục';
+
+  @override
+  String get syncChange => 'Thay đổi';
+
+  @override
+  String syncItem(String action, String date) {
+    return '$action · $date';
+  }
+
+  @override
   String get categoryTitle => 'Danh mục';
 
   @override

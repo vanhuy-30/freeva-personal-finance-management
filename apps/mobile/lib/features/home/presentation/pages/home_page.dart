@@ -5,6 +5,7 @@ import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/widgets/brand_symbol.dart';
 import '../../../auth/presentation/widgets/session_controls.dart';
 import '../../../reports/presentation/widgets/overview_section.dart';
+import '../../../sync/presentation/widgets/sync_status_banner.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -20,6 +21,7 @@ class HomePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const OverviewSection(),
+            const SyncStatusBanner(),
             ListTile(
               leading: const Icon(Icons.person_outline),
               title: Text(s.profileTitle),
