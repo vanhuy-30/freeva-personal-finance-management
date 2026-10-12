@@ -106,7 +106,7 @@ Các hàng dưới còn planned; auth/session đã triển khai được ghi ri�
 | Export JSON + xóa tài khoản | `BE-P1-010` `GET /api/v1/account/export`, `DELETE /api/v1/account` |
 | Ẩn số dư khi nền; cảnh báo thiết bị mới (Should) | `MOB-P1-009` |
 | Crash monitoring staging | `INF-P1-001` |
-| Security test trước store | `SEC-P1-001` |
+| Security test trước store | `SEC-P1-001` đã rà 2026-10-12 — [security-test-phase1.md](security-test-phase1.md) |
 | Ghi audit thực tế cho export / xóa | `BE-P1-010` ghi `user.data_export` và `user.account_delete` fail closed; schema nền `BE-P0-004`; lookup staff `WA-P0-002` |
 
 Auth user: Bearer (`/api/v1` khi gắn Phase 1). Admin P0 dùng opaque Bearer secret ánh xạ một staff UUID; mobile không nhúng API secret.
@@ -171,9 +171,9 @@ Auth user: Bearer (`/api/v1` khi gắn Phase 1). Admin P0 dùng opaque Bearer se
 - Password Argon2id, email/session token ngẫu nhiên 256 bit, DB chỉ hash. Email outbox mã hóa AES-GCM bằng env key, SMTP TLS ngoài local/test. Outbox claim có lease, retry hữu hạn theo expiry; không log lỗi chứa recipient/token.
 - Reset/verify/session creation dùng transaction + User row lock. Token purpose/expiry/single-use kiểm tra trong transaction; login recheck hash chống race với reset. Audit lỗi thì rollback mutation.
 - Cleanup xóa dữ liệu auth hết hạn. HTTP serializer bỏ query/body/headers để tránh PII do client gửi sai; redact thêm tokenHash/encryptedToken.
-- Residual: `email-step` cho phép enumeration account dù có rate limit; email timing/traffic enumeration, distributed abuse cần edge controls; failed login chưa audit riêng. SMTP at-least-once có thể gửi trùng; free staging ngủ gây chậm. Sau proxy, IP bucket có thể chia sẻ; chưa tự trust forwarded headers. Legacy account không có credential cần quy trình riêng; auth audit chưa append-only. Xem ADR 009 và `SEC-P1-001` trước store.
+- Residual: `email-step` cho phép enumeration account dù có rate limit; email timing/traffic enumeration, distributed abuse cần edge controls; failed login chưa audit riêng. SMTP at-least-once có thể gửi trùng; free staging ngủ gây chậm. Sau proxy, IP bucket có thể chia sẻ; chưa tự trust forwarded headers. Legacy account không có credential cần quy trình riêng; auth audit chưa append-only. Review `SEC-P1-001` ghi các mục này còn lại trong [security-test-phase1.md](security-test-phase1.md).
 - Cập nhật `MOB-P1-001` 2026-09-23: Resend là provider email staging qua SMTP TLS. Provider nhận recipient và nội dung token để chuyển thư; không gửi dữ liệu tài chính. Sender `onboarding@resend.dev` chỉ thử với email tài khoản Resend. Cần review retention/region/vendor trước production; test SMTP local chưa chứng minh delivery Resend. [Runbook](../infrastructure/email.md).
-- Dependency audit 2026-09-21: `pnpm audit --prod --audit-level high` báo 4 high ở dependency hiện hữu deepmerge-ts (Prisma tooling) và multer (Nest platform), cộng 2 moderate/1 low. Hai task auth không nâng major Prisma hoặc thay dependency nền; cần xử lý trong security review trước phát hành. Không có advisory cho argon2/nodemailer trong kết quả này.
+- Dependency audit 2026-09-21: `pnpm audit --prod --audit-level high` báo 4 high ở dependency hiện hữu deepmerge-ts (Prisma tooling) và multer (Nest platform), cộng 2 moderate/1 low. Hai task auth không nâng major Prisma hoặc thay dependency nền. Kết quả và phần đã vá: `SEC-P1-001`. Không có advisory cho argon2/nodemailer trong kết quả này.
 
 ## Bổ sung mobile auth — MOB-P1-001
 
@@ -194,7 +194,7 @@ Bề mặt mới: `POST /api/v1/auth/oauth/challenges`, `POST /api/v1/auth/oauth
 - Disclosure: không log JWT/challenge/nonce/subject, không lưu provider token/name/avatar; audit chỉ UUID/action. Google/Apple là bên xác thực thứ ba.
 - Residual: chưa live provider smoke, chưa mobile SDK; provider consent revoke không tự thu hồi Freeva session, chưa linking/recovery OAuth-only. Session hết hạn 7 ngày và có API revoke.
 
-Dependency audit 2026-09-24: 4 high, 2 moderate, 1 low ở deepmerge-ts/qs/multer hiện hữu; không advisory JOSE trong kết quả này. Remediation dependency tiếp tục theo SEC-P1-001.
+Dependency audit 2026-09-24 được `SEC-P1-001` rà lại ngày 2026-10-12. Không advisory JOSE. Chi tiết vá và residual: [security-test-phase1.md](security-test-phase1.md).
 
 ## BE-P1-010 — Export JSON và xóa tài khoản
 
@@ -204,3 +204,11 @@ Bề mặt: `GET /api/v1/account/export`, `DELETE /api/v1/account`. [Thiết k�
 - Export: snapshot của đúng owner, `no-store`, không log email/ghi chú/số tiền. Audit `user.data_export` cùng transaction; lỗi audit không trả dữ liệu.
 - Xóa: xóa dữ liệu sở hữu rồi user trong một transaction; cascade session/token/mail/OAuth. Audit `user.account_delete` trước khi xóa hàng user; lỗi audit thì rollback. UUID audit được giữ. Không grace period trên ứng dụng.
 - Residual: file JSON trên thiết bị vẫn phụ thuộc app lock; bảng audit chưa append-only; CSV và UI mobile chưa có; bản nháp retention 30 ngày chưa chốt luật sư.
+
+## SEC-P1-001 — Security test trước store
+
+Review 2026-10-12: [security-test-phase1.md](security-test-phase1.md). Helmet, CORS allowlist và ValidationPipe đi qua `configureHttp`. Payload auth không hợp lệ vẫn bị rate limit theo IP. Bearer user và staff token không đổi vai.
+
+`pnpm audit --prod` sau vá còn 1 high: `deepmerge-ts@7.1.5` trong `@prisma/config`. Bản vá là major 8; không nâng Prisma. Flutter outdated không có advisory; không nâng major mobile.
+
+Residual giữ nguyên: enumeration `email-step`, edge/WAF, biometric không gắn hardware key, smoke thiết bị thật, audit chưa append-only, cert pinning, luật sư trước store.

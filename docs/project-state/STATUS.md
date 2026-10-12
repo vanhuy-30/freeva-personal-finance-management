@@ -26,7 +26,7 @@
 - **Sync queue:** `BE-P1-009` done: `POST /api/v1/sync` áp hàng đợi giao dịch, idempotent theo `clientId`, conflict không ghi đè, gợi ý trùng 10 phút. 19 unit suites / 179 tests và 6 PostgreSQL suites / 75 tests, build/OpenAPI pass. Một migration seed `SchemaMeta`. Chưa deploy staging. [Thiết kế](../architecture/sync.md).
 - **Export / xóa tài khoản:** `BE-P1-010` done: `GET /api/v1/account/export` và `DELETE /api/v1/account`, audit fail closed, UUID audit được giữ. 20 unit suites / 185 tests và 7 PostgreSQL suites / 79 tests, build/OpenAPI pass. Không migration. Chưa deploy staging. [Thiết kế](../architecture/account-privacy.md).
 - **Data model:** `BE-P0-001` xong (ADR 007, Prisma lõi). CRUD ví đã có ở `BE-P1-004`; CRUD giao dịch đã có ở `BE-P1-005`.
-- **Threat model:** `SEC-P0-001` xong ([threat-model.md](../architecture/threat-model.md)).
+- **Threat model:** `SEC-P0-001` xong ([threat-model.md](../architecture/threat-model.md)). `SEC-P1-001` xong: checklist trước store, Helmet/CORS được test, audit dependency còn 1 high `deepmerge-ts` trong Prisma ([security-test-phase1.md](../architecture/security-test-phase1.md)).
 - **PII logs:** `SEC-P0-003` xong ([pii-log-checklist.md](../architecture/pii-log-checklist.md)).
 - **Personas / use case ghi chi:** `PRD-P0-001` xong ([personas.md](../product/personas.md), [use-cases.md](../product/use-cases.md)).
 - **ToS / privacy nháp:** `PRD-P0-002` xong ([terms-of-service.md](../legal/terms-of-service.md), [privacy-policy.md](../legal/privacy-policy.md)). Cần luật sư trước store.

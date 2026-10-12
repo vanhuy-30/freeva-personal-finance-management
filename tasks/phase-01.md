@@ -33,7 +33,7 @@
 - Module: 1
 - DoD: `/api/v1/auth` register/login/verify/reset; Argon2id; token single-use/expiry; SMTP outbox mã hóa và retry; DTO/OpenAPI/error envelope khớp; audit transaction và log không PII.
 - Verification: API build + 37 unit tests + 12 HTTP/PostgreSQL integration tests pass; fresh/upgrade/collision migration pass; SMTP verify/reset qua Mailhog thật pass; OpenAPI validator pass.
-- Note: [ADR 009](../docs/architecture/adr/009-email-auth-sessions.md). Cần cấu hình AUTH_SECRET_KEY/SMTP và apply migration trước deploy; chưa deploy staging. Existing dependency audit còn cảnh báo, theo threat model / SEC-P1-001.
+- Note: [ADR 009](../docs/architecture/adr/009-email-auth-sessions.md). Cần cấu hình AUTH_SECRET_KEY/SMTP và apply migration trước deploy; chưa deploy staging. Dependency còn high `deepmerge-ts` trong Prisma; xem `SEC-P1-001`.
 
 ### BE-P1-002 — Session, rate limit login, revoke
 - Status: done
@@ -191,5 +191,8 @@
 - Note: [ADR 011](../docs/architecture/adr/011-sentry-crash-monitoring.md). [Staging](../docs/infrastructure/staging.md). Residual Phase 0 đóng bằng SDK này; DSN dashboard vẫn do người vận hành đặt.
 
 ### SEC-P1-001 — Security test cơ bản trước store
-- Status: todo
+- Status: done
 - Module: 22
+- DoD: Checklist authn/z, secrets, log PII, export/xóa và rate limit có bằng chứng test hoặc residual có chủ đích. Helmet, CORS allowlist và ValidationPipe dùng chung với runtime và có test. Payload auth không hợp lệ vẫn bị giới hạn theo IP, không lưu email thô. Audit dependency được ghi; chỉ vá trong cùng major. Không payload exploit, không cert pinning, không gắn biometric vào hardware key.
+- Verification: 22 unit suites / 192 tests và 8 HTTP/PostgreSQL suites / 82 tests (3 mới) pass; API build pass. Admin lint và build pass sau Next `16.3.8`. `pnpm audit --prod` còn 1 high `deepmerge-ts`. Không migration mới.
+- Note: [security-test-phase1.md](../docs/architecture/security-test-phase1.md). Residual: enumeration `email-step`, edge/WAF, biometric/smoke thiết bị, audit chưa append-only, luật sư, `deepmerge-ts` 7 trong Prisma.
