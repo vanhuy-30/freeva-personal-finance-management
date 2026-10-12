@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../settings/presentation/widgets/masked_amount.dart';
 import '../../../wallets/domain/wallet.dart';
 import 'report_money.dart';
 
@@ -37,8 +38,9 @@ class ReportAmountText extends StatelessWidget {
       ReportTone.expense => AppColors.danger,
       null => null,
     };
-    return Text(
-      s.reportAmount(label, amount ?? '', currency),
+    return MaskedAmount(
+      shown: s.reportAmount(label, amount ?? '', currency),
+      hidden: s.reportAmount(label, s.balanceHiddenMask, currency),
       style: TextStyle(color: color),
     );
   }

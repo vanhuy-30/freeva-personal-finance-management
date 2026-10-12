@@ -4,6 +4,7 @@ import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../domain/report.dart';
 import '../viewmodels/overview_view_model.dart';
+import 'overview_balance_toggle.dart';
 import 'overview_card.dart';
 import 'report_labels.dart';
 
@@ -34,7 +35,17 @@ class _OverviewSectionState extends State<OverviewSection> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(s.reportOverview, style: Theme.of(context).textTheme.titleLarge),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  s.reportOverview,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ),
+              const OverviewBalanceToggle(),
+            ],
+          ),
           if (model.busy) const LinearProgressIndicator(),
           if (model.failure != null)
             Text(

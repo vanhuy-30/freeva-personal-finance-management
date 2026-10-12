@@ -299,5 +299,16 @@
   "tosTitle": "Điều khoản dịch vụ",
   "tosBody": "Freeva để bạn ghi ví và giao dịch do bạn nhập. Bạn giữ dữ liệu tài chính của mình. Đơn vị vận hành chưa được chốt. Xuất và xóa tài khoản là việc phát hành riêng. Bản tóm tắt này không thay điều khoản đã được luật sư rà.",
   "privacyTitle": "Chính sách bảo mật",
-  "privacyBody": "Tài khoản lưu email, ngôn ngữ, múi giờ, tiền tệ mặc định và ngày bắt đầu tháng tài chính. Số tiền bạn nhập không được ghi vào log. Phản hồi bạn soạn ở lại trên thiết bị cho đến khi có kênh liên hệ. Sự kiện phân tích không gồm email, số dư hoặc số tài khoản. Bản tóm tắt này không thay chính sách đã được luật sư rà."
+  "privacyBody": "Tài khoản lưu email, ngôn ngữ, múi giờ, tiền tệ mặc định và ngày bắt đầu tháng tài chính. Số tiền bạn nhập không được ghi vào log. Phản hồi bạn soạn ở lại trên thiết bị cho đến khi có kênh liên hệ. Sự kiện phân tích không gồm email, số dư hoặc số tài khoản. Bản tóm tắt này không thay chính sách đã được luật sư rà.",
+  "balanceHiddenMask": "••••",
+  "balanceHide": "Ẩn số tiền",
+  "balanceShow": "Hiện số tiền",
+  "settingsPrivacyControls": "Quyền riêng tư",
+  "settingsHideBalances": "Ẩn số dư",
+  "settingsHideBalancesHelp": "Che số tiền đang hiển thị trên máy này. Ô đang nhập vẫn hiện số bạn gõ.",
+  "settingsSessionAlerts": "Cảnh báo phiên mới",
+  "settingsSessionAlertsHelp": "Báo trên máy này khi có phiên đăng nhập khác. Không gồm email, số dư hay tên thiết bị.",
+  "sessionAlertTitle": "Phiên đăng nhập mới",
+  "sessionAlertBody": "Có phiên đăng nhập khác. Mở Freeva để xem và thu hồi nếu không phải bạn.",
+  "sessionAlertReview": "Xem các phiên"
 }

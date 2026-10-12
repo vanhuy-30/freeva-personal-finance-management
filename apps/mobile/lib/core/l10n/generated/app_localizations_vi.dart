@@ -917,4 +917,40 @@ class SVi extends S {
   @override
   String get privacyBody =>
       'Tài khoản lưu email, ngôn ngữ, múi giờ, tiền tệ mặc định và ngày bắt đầu tháng tài chính. Số tiền bạn nhập không được ghi vào log. Phản hồi bạn soạn ở lại trên thiết bị cho đến khi có kênh liên hệ. Sự kiện phân tích không gồm email, số dư hoặc số tài khoản. Bản tóm tắt này không thay chính sách đã được luật sư rà.';
+
+  @override
+  String get balanceHiddenMask => '••••';
+
+  @override
+  String get balanceHide => 'Ẩn số tiền';
+
+  @override
+  String get balanceShow => 'Hiện số tiền';
+
+  @override
+  String get settingsPrivacyControls => 'Quyền riêng tư';
+
+  @override
+  String get settingsHideBalances => 'Ẩn số dư';
+
+  @override
+  String get settingsHideBalancesHelp =>
+      'Che số tiền đang hiển thị trên máy này. Ô đang nhập vẫn hiện số bạn gõ.';
+
+  @override
+  String get settingsSessionAlerts => 'Cảnh báo phiên mới';
+
+  @override
+  String get settingsSessionAlertsHelp =>
+      'Báo trên máy này khi có phiên đăng nhập khác. Không gồm email, số dư hay tên thiết bị.';
+
+  @override
+  String get sessionAlertTitle => 'Phiên đăng nhập mới';
+
+  @override
+  String get sessionAlertBody =>
+      'Có phiên đăng nhập khác. Mở Freeva để xem và thu hồi nếu không phải bạn.';
+
+  @override
+  String get sessionAlertReview => 'Xem các phiên';
 }

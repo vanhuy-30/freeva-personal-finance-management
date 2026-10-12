@@ -17,6 +17,7 @@
 - **Mobile reports:** `MOB-P1-006` done: tổng quan tài sản/nợ/ròng và thu chi tháng này, báo cáo lọc tuần/tháng/khoảng, mỗi loại tiền một khối. Analyze và 14 tests mới pass; chưa native build/E2E staging. [Chi tiết](../architecture/mobile-reports.md).
 - **Mobile settings:** `MOB-P1-007` done: theme sáng/tối/hệ thống trên thiết bị, lối sang hồ sơ, cờ sinh trắc, onboarding một lần, FAQ, phản hồi chỉ sao chép, phiên bản và bản nháp ToS/privacy. Analyze và 14 tests mới pass (108 tổng); chưa native build/E2E staging. [Chi tiết](../architecture/mobile-settings.md).
 - **Mobile sync:** `MOB-P1-008` done: hàng đợi mutation giao dịch khi mất mạng, gửi lại bằng `POST /api/v1/sync`, conflict không ghi đè. Analyze và 9 tests mới pass (117 tổng); chưa native build/E2E staging. [Chi tiết](../architecture/mobile-sync.md).
+- **Mobile privacy:** `MOB-P1-009` done: nút mắt che số đang đọc, cảnh báo phiên đăng nhập mới bằng banner và thông báo cục bộ. Analyze và 13 tests mới pass (130 tổng); chưa native build/E2E staging. [Chi tiết](../architecture/mobile-privacy.md).
 - **Mobile analytics:** `MOB-P0-004` done; catalog typed, debug logger local, `schema_version: 1`, không property tùy ý/PII và chưa có vendor SDK.
 - **Backup/restore:** `BE-P0-005` done; [runbook và bằng chứng local](../../infra/runbooks/backup-restore.md), PostgreSQL 16.14. Production PITR/retention/RPO/RTO chưa triển khai.
 - **Scaffold:** xong trên `main` (`153d3e7`). Health API, admin placeholder, Flutter shell, docs, compose.

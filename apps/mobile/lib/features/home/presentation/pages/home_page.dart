@@ -3,12 +3,20 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/widgets/brand_symbol.dart';
+import '../../../auth/presentation/widgets/session_alert_banner.dart';
 import '../../../auth/presentation/widgets/session_controls.dart';
 import '../../../reports/presentation/widgets/overview_section.dart';
 import '../../../sync/presentation/widgets/sync_status_banner.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final GlobalKey _sessions = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +74,8 @@ class HomePage extends StatelessWidget {
                 label: Text(s.transactionRecord),
               ),
             ),
-            const SessionControls(),
+            SessionAlertBanner(scrollTarget: _sessions),
+            SessionControls(key: _sessions),
             const BrandSymbol(size: 96),
           ],
         ),

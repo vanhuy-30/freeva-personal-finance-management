@@ -23,8 +23,14 @@ import 'package:mobile/features/auth/data/auth_data_module.dart' as _i901;
 import 'package:mobile/features/auth/data/auth_platform.dart' as _i810;
 import 'package:mobile/features/auth/data/auth_repository_impl.dart' as _i274;
 import 'package:mobile/features/auth/data/authorized_api.dart' as _i443;
+import 'package:mobile/features/auth/data/local_session_alert_notifier.dart'
+    as _i165;
 import 'package:mobile/features/auth/domain/auth_repository.dart' as _i173;
 import 'package:mobile/features/auth/domain/auth_use_cases.dart' as _i253;
+import 'package:mobile/features/auth/domain/session_alert_notifier.dart'
+    as _i54;
+import 'package:mobile/features/auth/presentation/auth_presentation_module.dart'
+    as _i282;
 import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dart'
     as _i990;
 import 'package:mobile/features/categories/data/category_repository_impl.dart'
@@ -91,6 +97,7 @@ extension GetItInjectableX on _i174.GetIt {
       environmentFilter,
     );
     final authDataModule = _$AuthDataModule();
+    final authPresentationModule = _$AuthPresentationModule();
     gh.lazySingleton<_i467.AppConfig>(() => _i467.AppConfig());
     gh.lazySingleton<_i88.AuthApi>(
         () => _i88.HttpAuthApi(gh<_i467.AppConfig>()));
@@ -99,6 +106,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i938.SyncQueueVault>(() => _i938.SecureSyncQueueVault());
     gh.lazySingleton<_i810.AuthVault>(
         () => _i810.SecureAuthVault(gh<_i467.AppConfig>()));
+    gh.lazySingleton<_i54.SessionAlertNotifier>(
+        () => _i165.LocalSessionAlertNotifier());
     gh.lazySingleton<_i810.DeviceBiometrics>(
         () => _i810.LocalDeviceBiometrics());
     gh.lazySingleton<_i1017.FeatureFlagService>(
@@ -151,7 +160,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i281.ProfileUseCases>(
         () => _i281.ProfileUseCases(gh<_i4.ProfileRepository>()));
     gh.lazySingleton<_i990.AuthViewModel>(
-        () => _i990.DefaultAuthViewModel(gh<_i253.AuthUseCases>()));
+        () => authPresentationModule.authViewModel(
+              gh<_i253.AuthUseCases>(),
+              gh<_i519.SettingsUseCases>(),
+              gh<_i54.SessionAlertNotifier>(),
+              gh<_i1020.AnalyticsService>(),
+            ));
     gh.lazySingleton<_i146.ReportUseCases>(() => _i146.DefaultReportUseCases(
           gh<_i61.ReportRepository>(),
           gh<_i107.WalletRepository>(),
@@ -203,3 +217,5 @@ extension GetItInjectableX on _i174.GetIt {
 }
 
 class _$AuthDataModule extends _i901.AuthDataModule {}
+
+class _$AuthPresentationModule extends _i282.AuthPresentationModule {}

@@ -4,6 +4,8 @@ Nhật ký repo/process — không phải App Store release notes.
 
 ## 2026-10-12
 
+- `MOB-P1-009`: giữ màn che khi app vào nền; nút mắt và công tắc Cài đặt che số đang đọc, ô đang gõ vẫn hiện. Sau mở khóa, phiên khác chưa từng thấy thì banner và thông báo cục bộ một lần. Xin quyền đúng lúc cảnh báo đầu. Đăng xuất xóa danh sách phiên đã thấy; khóa PIN không xóa. Không đổi API, không gọi là thiết bị mới. Analyze sạch và 130 Flutter tests pass (13 tests mới); chưa native build/E2E staging. [Thiết kế](../architecture/mobile-privacy.md).
+
 - `BE-P1-010`: `GET /api/v1/account/export` trả snapshot JSON của owner; `DELETE /api/v1/account` xóa ngay user và dữ liệu tài chính. Audit `user.data_export` / `user.account_delete` cùng transaction, fail closed, UUID còn sau khi user biến mất. Không CSV, không UI, không cửa sổ 30 ngày trên ứng dụng. 20 unit suites / 185 tests và 7 HTTP/PostgreSQL suites / 79 tests, build/OpenAPI pass. Không migration; chưa deploy staging. [Thiết kế](../architecture/account-privacy.md).
 
 ## 2026-10-09

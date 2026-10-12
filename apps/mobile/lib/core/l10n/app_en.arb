@@ -352,5 +352,16 @@
   "tosTitle": "Terms of service",
   "tosBody": "Freeva lets you record wallets and transactions you enter. You keep your financial data. The service operator is not decided yet. Account export and deletion are separate release work. This summary does not replace a lawyer-reviewed agreement.",
   "privacyTitle": "Privacy policy",
-  "privacyBody": "The account stores email, language, time zone, default currency, and the financial month start day. Amounts you enter are not written to logs. Feedback you compose stays on this device until a contact channel exists. Analytics events do not include email, balances, or account numbers. This summary does not replace a lawyer-reviewed policy."
+  "privacyBody": "The account stores email, language, time zone, default currency, and the financial month start day. Amounts you enter are not written to logs. Feedback you compose stays on this device until a contact channel exists. Analytics events do not include email, balances, or account numbers. This summary does not replace a lawyer-reviewed policy.",
+  "balanceHiddenMask": "••••",
+  "balanceHide": "Hide amounts",
+  "balanceShow": "Show amounts",
+  "settingsPrivacyControls": "Privacy",
+  "settingsHideBalances": "Hide balances",
+  "settingsHideBalancesHelp": "Masks amounts shown on this device. Fields you are editing still show what you type.",
+  "settingsSessionAlerts": "New sign-in alerts",
+  "settingsSessionAlertsHelp": "Warns on this device when another session appears. The alert does not include an email, balance, or device name.",
+  "sessionAlertTitle": "New sign-in",
+  "sessionAlertBody": "Another session signed in. Open Freeva to review it and revoke it if it was not you.",
+  "sessionAlertReview": "Review sessions"
 }

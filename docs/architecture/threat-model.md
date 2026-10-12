@@ -126,7 +126,7 @@ Auth user: Bearer (`/api/v1` khi gắn Phase 1). Admin P0 dùng opaque Bearer se
 | T-I01 | I | `GET /api/health` | Lộ DB up/down (recon) | Chấp nhận P0 (ops local). Review ẩn chi tiết trước staging công khai. |
 | T-I02 | I | Logger | Email, token, số tiền, số TK trong log | Pino nested paths (`BE-P0-003`, `pino-redact.ts`). Checklist [pii-log-checklist.md](pii-log-checklist.md) (`SEC-P0-003`). Không nội suy PII vào message. |
 | T-I03 | I | Analytics | PII trong event | Catalog cấm email/số dư/số TK — `MOB-P0-004`. |
-| T-I04 | I | Mobile | Số dư lộ khi app nền / screenshot | `MOB-P1-009`. |
+| T-I04 | I | Mobile | Số dư lộ khi app nền / screenshot | `MOB-P1-009`: cover/khóa khi nền và `FLAG_SECURE` Android giữ nguyên; nút mắt che số đang đọc. iOS vẫn không chặn screenshot lúc app đang mở nếu số đang hiện. |
 | T-I05 | I | Export | File xuất chứa PII trên thiết bị mất | API trả JSON chỉ cho session của owner và `no-store` (`BE-P1-010`). File nằm trên thiết bị vẫn phụ thuộc app lock. Privacy: [privacy-compliance.md](privacy-compliance.md). |
 | T-D01 | D | `GET /api/health` | Flood health / mở connection DB | P0: chấp nhận local. P1 staging: rate limit / tách liveness không đụng DB nếu cần. |
 | T-D02 | D | Login P1 | Brute-force / OTP spam | Đã có atomic PostgreSQL rate limit 30/IP + 5/email/operation/15 phút, trước hash/validation; Retry-After, storage lỗi fail closed. |

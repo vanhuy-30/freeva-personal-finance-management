@@ -19,6 +19,29 @@ void main() {
       decodePreferences(encodePreferences(saved)).onboardingCompleted,
       isTrue,
     );
+    const hidden = AppPreferences(
+      balancesHidden: true,
+      sessionAlertsEnabled: false,
+      notificationPrompted: true,
+      notificationsOptInTracked: true,
+    );
+    final restored = decodePreferences(encodePreferences(hidden));
+    expect(restored.balancesHidden, isTrue);
+    expect(restored.sessionAlertsEnabled, isFalse);
+    expect(restored.notificationPrompted, isTrue);
+    expect(restored.notificationsOptInTracked, isTrue);
+    final legacy = decodePreferences(
+      '{"theme":"dark","onboardingCompleted":false}',
+    );
+    expect(legacy.theme, AppThemePreference.dark);
+    expect(legacy.balancesHidden, isFalse);
+    expect(legacy.sessionAlertsEnabled, isTrue);
+    expect(
+      () => decodePreferences(
+        '{"theme":"light","onboardingCompleted":true,"balancesHidden":"yes"}',
+      ),
+      throwsFormatException,
+    );
     expect(() => decodePreferences('{"theme":"neon"}'), throwsFormatException);
     expect(
       () => decodePreferences(

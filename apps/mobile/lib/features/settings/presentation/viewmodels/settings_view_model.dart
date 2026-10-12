@@ -11,6 +11,8 @@ import '../../domain/settings_use_cases.dart';
 abstract class SettingsViewModel extends ChangeNotifier {
   AppThemePreference get theme;
   bool get onboardingCompleted;
+  bool get balancesHidden;
+  bool get sessionAlertsEnabled;
   bool get loading;
   SettingsFailure? get failure;
   bool get biometricHardware;
@@ -19,6 +21,8 @@ abstract class SettingsViewModel extends ChangeNotifier {
   AuthFailure? get biometricFailure;
   Future<void> load();
   Future<void> setTheme(AppThemePreference value);
+  Future<void> setBalancesHidden(bool value);
+  Future<void> setSessionAlertsEnabled(bool value);
   void beginOnboarding();
   Future<bool> completeOnboarding();
   String? prepareFeedback(FeedbackKind kind, String message);
@@ -41,6 +45,10 @@ class DefaultSettingsViewModel extends SettingsViewModel {
   AppThemePreference get theme => _preferences.theme;
   @override
   bool get onboardingCompleted => _preferences.onboardingCompleted;
+  @override
+  bool get balancesHidden => _preferences.balancesHidden;
+  @override
+  bool get sessionAlertsEnabled => _preferences.sessionAlertsEnabled;
   @override
   bool loading = false;
   @override
@@ -70,7 +78,23 @@ class DefaultSettingsViewModel extends SettingsViewModel {
   @override
   Future<void> setTheme(AppThemePreference value) async {
     if (theme == value) return;
-    final result = await _cases.save(_preferences.copyWith(theme: value));
+    await _save(_preferences.copyWith(theme: value));
+  }
+
+  @override
+  Future<void> setBalancesHidden(bool value) async {
+    if (balancesHidden == value) return;
+    await _save(_preferences.copyWith(balancesHidden: value));
+  }
+
+  @override
+  Future<void> setSessionAlertsEnabled(bool value) async {
+    if (sessionAlertsEnabled == value) return;
+    await _save(_preferences.copyWith(sessionAlertsEnabled: value));
+  }
+
+  Future<void> _save(AppPreferences next) async {
+    final result = await _cases.save(next);
     result.fold((error) => failure = error, (saved) {
       _preferences = saved;
       failure = null;
