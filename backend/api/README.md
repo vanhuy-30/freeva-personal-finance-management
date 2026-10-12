@@ -44,3 +44,7 @@ Không tự liên kết email trùng; user đó tiếp tục dùng phương th�
 ## Financial accounts — BE-P1-004
 
 CRUD ví tại `/api/v1/financial-accounts`, dùng Bearer session hiện có; tiền JSON là string integer. Có cấu hình thẻ, sắp xếp, lưu trữ/khôi phục và số dư derived; cập nhật yêu cầu version. Không có migration/env mới. Xem [hành vi API](../../docs/architecture/financial-accounts.md), [OpenAPI](../../packages/api-contracts/openapi.yaml) và [kiểm thử](test/README.md#financial-accounts--be-p1-004).
+
+## Export và xóa tài khoản — BE-P1-010
+
+`GET /api/v1/account/export` trả snapshot JSON của owner. `DELETE /api/v1/account` xóa ngay user và dữ liệu tài chính; audit giữ UUID. Không migration/env mới. Xem [hành vi](../../docs/architecture/account-privacy.md) và [kiểm thử](test/README.md#export-và-xóa-tài-khoản--be-p1-010).

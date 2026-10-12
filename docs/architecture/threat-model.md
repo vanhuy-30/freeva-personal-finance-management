@@ -103,11 +103,11 @@ Các hàng dưới còn planned; auth/session đã triển khai được ghi ri�
 | Danh mục | `BE-P1-006`, `MOB-P1-005` |
 | Báo cáo / search | `BE-P1-007`, `BE-P1-008` |
 | Sync queue, idempotency `clientId` | `BE-P1-009` `POST /api/v1/sync`; hàng đợi mobile `MOB-P1-008` |
-| Export JSON + xóa tài khoản | `BE-P1-010` |
+| Export JSON + xóa tài khoản | `BE-P1-010` `GET /api/v1/account/export`, `DELETE /api/v1/account` |
 | Ẩn số dư khi nền; cảnh báo thiết bị mới (Should) | `MOB-P1-009` |
 | Crash monitoring staging | `INF-P1-001` |
 | Security test trước store | `SEC-P1-001` |
-| Ghi audit thực tế cho export / xóa | `BE-P1-010`; schema nền `BE-P0-004` đã có, lookup staff đã tích hợp trong `WA-P0-002` |
+| Ghi audit thực tế cho export / xóa | `BE-P1-010` ghi `user.data_export` và `user.account_delete` fail closed; schema nền `BE-P0-004`; lookup staff `WA-P0-002` |
 
 Auth user: Bearer (`/api/v1` khi gắn Phase 1). Admin P0 dùng opaque Bearer secret ánh xạ một staff UUID; mobile không nhúng API secret.
 
@@ -121,13 +121,13 @@ Auth user: Bearer (`/api/v1` khi gắn Phase 1). Admin P0 dùng opaque Bearer se
 | T-T01 | T | CRUD GD P1 | Sửa số tiền / transfer lệch / IDOR `userId` | Isolation theo `userId`. Transfer hai leg cân bằng — `BE-P1-005`, `QA-P0-002`. ValidationPipe đã chặn field lạ P0. |
 | T-T02 | T | Sync P1 | Trùng hoặc ghi đè GD khi offline | `POST /api/v1/sync`: unique `(userId, clientId)`, conflict version không ghi đè, `review` khi amount khác, gợi ý trùng 10 phút. Hàng đợi mobile `MOB-P1-008` gộp mutation và retry theo `clientId`. [sync.md](sync.md), [mobile-sync.md](mobile-sync.md). |
 | T-T03 | T | Compose | Đổi data local nếu port bind máy | Chấp nhận local. Không bind compose ra internet; không trỏ local vào prod DB. |
-| T-R01 | R | API / admin | Thao tác PII không truy vết | Auth success register/verify/login/reset/revoke ghi audit trong cùng transaction. Lookup staff ghi `staff.user_lookup` cho success/không tìm thấy và không trả PII nếu audit fail (`WA-P0-002`). Bảng chưa append-only; export/xóa còn `BE-P1-010`. |
-| T-R02 | R | Export / xóa TK | User phủ nhận yêu cầu xóa / xuất | `BE-P1-010` phải ghi event trên schema `BE-P0-004`; chưa tích hợp. |
+| T-R01 | R | API / admin | Thao tác PII không truy vết | Auth success register/verify/login/reset/revoke ghi audit trong cùng transaction. Lookup staff ghi `staff.user_lookup` cho success/không tìm thấy và không trả PII nếu audit fail (`WA-P0-002`). Export và xóa tài khoản ghi `user.data_export` / `user.account_delete` trong cùng transaction, fail closed (`BE-P1-010`). Bảng chưa append-only. |
+| T-R02 | R | Export / xóa TK | User phủ nhận yêu cầu xóa / xuất | `BE-P1-010` ghi success trên schema `BE-P0-004` trước khi trả snapshot hoặc xóa hàng user. UUID audit còn sau khi user biến mất. |
 | T-I01 | I | `GET /api/health` | Lộ DB up/down (recon) | Chấp nhận P0 (ops local). Review ẩn chi tiết trước staging công khai. |
 | T-I02 | I | Logger | Email, token, số tiền, số TK trong log | Pino nested paths (`BE-P0-003`, `pino-redact.ts`). Checklist [pii-log-checklist.md](pii-log-checklist.md) (`SEC-P0-003`). Không nội suy PII vào message. |
 | T-I03 | I | Analytics | PII trong event | Catalog cấm email/số dư/số TK — `MOB-P0-004`. |
 | T-I04 | I | Mobile | Số dư lộ khi app nền / screenshot | `MOB-P1-009`. |
-| T-I05 | I | Export | File xuất chứa PII trên thiết bị mất | `BE-P1-010` + app lock. Privacy: [privacy-compliance.md](privacy-compliance.md). |
+| T-I05 | I | Export | File xuất chứa PII trên thiết bị mất | API trả JSON chỉ cho session của owner và `no-store` (`BE-P1-010`). File nằm trên thiết bị vẫn phụ thuộc app lock. Privacy: [privacy-compliance.md](privacy-compliance.md). |
 | T-D01 | D | `GET /api/health` | Flood health / mở connection DB | P0: chấp nhận local. P1 staging: rate limit / tách liveness không đụng DB nếu cần. |
 | T-D02 | D | Login P1 | Brute-force / OTP spam | Đã có atomic PostgreSQL rate limit 30/IP + 5/email/operation/15 phút, trước hash/validation; Retry-After, storage lỗi fail closed. |
 | T-E01 | E | Admin | Staff thấy dữ liệu user hoặc dashboard KD | Endpoint staff chỉ exact lookup, response hồ sơ tối thiểu, không số dư/GD/list tổng; **không** dashboard kinh doanh P0. Shared role chưa phân quyền chi tiết. |
@@ -152,10 +152,10 @@ Auth user: Bearer (`/api/v1` khi gắn Phase 1). Admin P0 dùng opaque Bearer se
 | Crash SaaS (Sentry dự kiến; chưa SDK) | Residual P0 chấp nhận 2026-09-21; DECISIONS-OPEN #9; wiring `INF-P1-001`. |
 | `security@` TBD | DECISIONS-OPEN #10. |
 | Sync trùng GD | Server queue `BE-P1-009` và hàng đợi offline mobile `MOB-P1-008`. RISKS R2. |
-| PDPD / store reject | RISKS R3 — draft ToS/privacy `PRD-P0-002` ([legal/](../legal/privacy-policy.md)); còn luật sư + export/xóa `BE-P1-010` trước store. |
-| Audit chưa bảo vệ sửa/xóa | `staff.user_lookup` đã có writer; bảng vẫn chưa append-only, quyền DB/integrity control và writer export/xóa cần chốt trước `BE-P1-010`. |
+| PDPD / store reject | RISKS R3 — API export/xóa `BE-P1-010` đã có; UI app và review luật sư vẫn còn trước store. Draft ToS/privacy `PRD-P0-002`. |
+| Audit chưa bảo vệ sửa/xóa | Writer `staff.user_lookup`, auth success, `user.data_export` và `user.account_delete` đã có. Bảng vẫn chưa append-only; quyền DB/integrity control chưa có. |
 | Credential staff P0 dùng chung cho một actor | Chỉ dùng nội bộ; token dài, secret env, timing-safe compare, rotate khi nghi lộ. Chưa có individual identity/session/revoke/rate limit; phải thay trước production hoặc nhiều staff. |
-| UUID audit có thể liên kết người dùng | Không FK/cascade; phải chốt retention và xử lý xóa tài khoản trước tích hợp, xem ADR 008. |
+| UUID audit có thể liên kết người dùng | Không FK/cascade. `BE-P1-010` giữ UUID sau khi xóa tài khoản để không phủ nhận yêu cầu; không thêm job retention. Xem ADR 008. |
 
 ## Cách cập nhật
 
@@ -195,3 +195,12 @@ Bề mặt mới: `POST /api/v1/auth/oauth/challenges`, `POST /api/v1/auth/oauth
 - Residual: chưa live provider smoke, chưa mobile SDK; provider consent revoke không tự thu hồi Freeva session, chưa linking/recovery OAuth-only. Session hết hạn 7 ngày và có API revoke.
 
 Dependency audit 2026-09-24: 4 high, 2 moderate, 1 low ở deepmerge-ts/qs/multer hiện hữu; không advisory JOSE trong kết quả này. Remediation dependency tiếp tục theo SEC-P1-001.
+
+## BE-P1-010 — Export JSON và xóa tài khoản
+
+Bề mặt: `GET /api/v1/account/export`, `DELETE /api/v1/account`. [Thiết kế](account-privacy.md). Đã rà T-R01, T-R02, T-I05.
+
+- Authorization: Bearer session, owner từ session, không body `userId`. Không đòi mật khẩu vì OAuth có thể không có hash.
+- Export: snapshot của đúng owner, `no-store`, không log email/ghi chú/số tiền. Audit `user.data_export` cùng transaction; lỗi audit không trả dữ liệu.
+- Xóa: xóa dữ liệu sở hữu rồi user trong một transaction; cascade session/token/mail/OAuth. Audit `user.account_delete` trước khi xóa hàng user; lỗi audit thì rollback. UUID audit được giữ. Không grace period trên ứng dụng.
+- Residual: file JSON trên thiết bị vẫn phụ thuộc app lock; bảng audit chưa append-only; CSV và UI mobile chưa có; bản nháp retention 30 ngày chưa chốt luật sư.
