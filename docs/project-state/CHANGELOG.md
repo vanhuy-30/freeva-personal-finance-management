@@ -2,6 +2,10 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-10-19
+
+- `MOB-P1-001`: đóng task. Face ID, vân tay và màn hình recents đã test pass trên thiết bị thực. E2E gửi email Resend trên staging hoãn có chủ đích đến khi setup Resend; chưa kiểm chứng delivery/inbox. [Runbook](../infrastructure/email.md).
+
 ## 2026-10-12
 
 - `INF-P1-001`: gắn Sentry cho crash staging trên API, web admin và mobile. SDK tắt khi không có DSN; scrub PII trước khi gửi; không endpoint public và không tracing. 22 unit suites / 192 tests và API build pass; admin tsc, lint và 2 node tests pass; Flutter analyze sạch và 133 tests pass (3 mới). Event trên dashboard chờ DSN vận hành. [ADR 011](../architecture/adr/011-sentry-crash-monitoring.md).
