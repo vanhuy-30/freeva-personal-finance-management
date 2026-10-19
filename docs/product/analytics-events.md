@@ -8,10 +8,10 @@ Catalog sẽ mở rộng khi có SDK. Không gửi PII (email, số dư, số TK
 |---|---|
 | `onboarding_started` | Mở bước đầu |
 | `onboarding_completed` | Xong onboarding |
-| `auth_signed_up` | Đăng ký thành công |
+| `auth_signed_up` | Đăng ký thành công. Tên spec: `sign_up`. |
 | `auth_signed_in` | Đăng nhập |
-| `wallet_created` | Tạo ví đầu / tiếp |
-| `transaction_created` | Ghi GD (type: income/expense/transfer) |
+| `wallet_created` | Tạo ví đầu / tiếp. Tên spec: `account_created`. |
+| `transaction_created` | Ghi GD (type: income/expense/transfer). Spec còn `transaction_updated`. |
 | `report_viewed` | Mở báo cáo đầu / lần sau |
 
 ## Chất lượng / trust

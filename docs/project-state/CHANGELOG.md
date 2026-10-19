@@ -26,6 +26,8 @@ Nhật ký repo/process — không phải App Store release notes.
 
 ## 2026-10-08
 
+- Đối chiếu spec sản phẩm v0.1: Phase 1 giữ vai trò sổ cái; product v1 thêm ngân sách, mục tiêu và insight cơ bản. Bản spec nằm ở [freeva-product-spec.md](../product/freeva-product-spec.md); quyết định lệch ở [spec-alignment.md](../product/spec-alignment.md). Task còn mở và epic Phase 2–7 có DoD kiểm được.
+
 - `MOB-P1-005`: UI danh mục từ Home, cây cha-con, tạo/sửa custom, màu và icon theo catalog, ẩn/khôi phục và xóa vĩnh viễn kèm danh mục thay thế. Abstract DI, version/clientId, chặn ghi sau conflict, xóa state khi khóa. Analyze sạch và 80 Flutter tests pass (10 tests mới); chưa native build/E2E staging. [Thiết kế](../architecture/mobile-categories.md).
 
 ## 2026-09-25

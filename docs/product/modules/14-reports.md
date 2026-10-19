@@ -5,4 +5,4 @@
 
 MVP: thu/chi/dòng tiền, theo danh mục và ví, lọc tuần/tháng/khoảng, tài sản / nợ / ròng hiện tại.
 
-Sau: so sánh kỳ, vs ngân sách, chi lớn, tài sản ròng theo thời gian, CSV (Excel/PDF Could).
+Sau: so sánh kỳ, vs ngân sách, chi lớn, tài sản ròng theo thời gian. Xuất CSV/JSON giao dịch thuộc `BE-P1-010`. Excel/PDF là Could.

@@ -9,7 +9,7 @@ Freeva giúp người Việt **biết mình đang có bao nhiêu tiền** và d�
 3. Ghi giao dịch (thu, chi, chuyển khoản)
 4. Xem số dư và báo cáo cơ bản
 
-Mọi phase sau (ngân sách, mục tiêu, tài sản, AI, ngân hàng, gia đình, Premium) chỉ mở khi vòng lặp này **đáng tin cậy**.
+Mọi phase sau chỉ mở khi vòng lặp này **đáng tin cậy**. Product v1 theo spec còn thêm ngân sách, mục tiêu và insight cơ bản; xem [spec-alignment.md](spec-alignment.md).
 
 ## Nguyên tắc sản phẩm
 

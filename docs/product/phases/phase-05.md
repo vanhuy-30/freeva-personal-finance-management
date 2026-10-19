@@ -9,4 +9,6 @@ Module 13 (file/OCR), 18; mở rộng 5, 6, 14.
 - AI không đổi dữ liệu tài chính khi chưa confirm.
 - Feedback, tắt AI, xóa dữ liệu liên quan.
 
+`Gate: v1` chỉ gồm gợi ý danh mục, insight cơ bản, cờ server và consent. OCR, chat, forecast, what-if và import sao kê là sau v1.
+
 Epic: [tasks/phase-05.md](../../../tasks/phase-05.md).
