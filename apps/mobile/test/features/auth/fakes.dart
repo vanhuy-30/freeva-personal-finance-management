@@ -4,6 +4,7 @@ import 'package:mobile/features/auth/domain/auth_repository.dart';
 
 class MemoryVault implements AuthVault {
   String? value;
+  String? seen;
   bool fail = false;
   @override
   Future<String?> read() async {
@@ -21,6 +22,24 @@ class MemoryVault implements AuthVault {
   Future<void> clear() async {
     if (fail) throw StateError('storage');
     value = null;
+  }
+
+  @override
+  Future<String?> readSeenSessions() async {
+    if (fail) throw StateError('storage');
+    return seen;
+  }
+
+  @override
+  Future<void> writeSeenSessions(String value) async {
+    if (fail) throw StateError('storage');
+    seen = value;
+  }
+
+  @override
+  Future<void> clearSeenSessions() async {
+    if (fail) throw StateError('storage');
+    seen = null;
   }
 }
 
@@ -40,6 +59,7 @@ class FakeBiometrics implements DeviceBiometrics {
 class FakeApi implements AuthApi {
   AuthFailure? failure;
   String nextStep = 'login';
+  List<Map<String, dynamic>>? sessionItems;
   String? lastPath;
   Map<String, dynamic>? lastBody;
   int calls = 0;
@@ -71,15 +91,18 @@ class FakeApi implements AuthApi {
     }
     if (path == 'sessions' && method == 'GET') {
       return {
-        'sessions': [
-          {
-            'id': 'current',
-            'createdAt': DateTime.now().toIso8601String(),
-            'expiresAt':
-                DateTime.now().add(const Duration(days: 7)).toIso8601String(),
-            'current': true
-          },
-        ]
+        'sessions':
+            sessionItems ??
+            [
+              {
+                'id': 'current',
+                'createdAt': DateTime.now().toIso8601String(),
+                'expiresAt': DateTime.now()
+                    .add(const Duration(days: 7))
+                    .toIso8601String(),
+                'current': true,
+              },
+            ],
       };
     }
     return {};

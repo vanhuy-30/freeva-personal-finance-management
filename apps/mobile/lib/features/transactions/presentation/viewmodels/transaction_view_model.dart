@@ -15,9 +15,12 @@ import '../../../profile/domain/profile_use_cases.dart';
 import '../../../wallets/domain/wallet.dart';
 import '../../../wallets/domain/wallet_use_cases.dart';
 import '../../../wallets/presentation/viewmodels/wallet_view_model.dart';
+import '../../../sync/domain/sync_item.dart';
+import '../../../sync/presentation/viewmodels/sync_view_model.dart';
 import '../../domain/transaction.dart';
 import '../../domain/transaction_rules.dart';
 import '../../domain/transaction_use_cases.dart';
+import '../transaction_sync.dart';
 
 abstract class TransactionViewModel extends ChangeNotifier {
   List<TransactionBundle> get rows;
@@ -57,9 +60,12 @@ class DefaultTransactionViewModel extends TransactionViewModel {
     this._profile,
     this._auth,
     this._analytics,
+    this._sync,
   ) {
     _stage = _auth.stage;
+    _seenApplied = _sync.appliedEpoch;
     _auth.addListener(_authChanged);
+    _sync.addListener(_syncChanged);
     if (_stage == AuthStage.unlocked) Future.microtask(load);
   }
 
@@ -70,7 +76,10 @@ class DefaultTransactionViewModel extends TransactionViewModel {
   final ProfileUseCases _profile;
   final AuthViewModel _auth;
   final AnalyticsService _analytics;
+  final SyncViewModel _sync;
   late AuthStage _stage;
+  late int _seenApplied;
+  bool _pendingSyncReload = false;
   int _epoch = 0;
   int _page = 1;
   int _total = 0;
@@ -111,6 +120,20 @@ class DefaultTransactionViewModel extends TransactionViewModel {
     _reset();
     notifyListeners();
     if (_stage == AuthStage.unlocked) load();
+  }
+
+  void _syncChanged() {
+    if (_sync.appliedEpoch == _seenApplied) return;
+    _pendingSyncReload = true;
+    _drainSyncReload();
+  }
+
+  void _drainSyncReload() {
+    if (!_pendingSyncReload || busy || _stage != AuthStage.unlocked) return;
+    _pendingSyncReload = false;
+    _seenApplied = _sync.appliedEpoch;
+    _walletScreen.load();
+    load();
   }
 
   void _reset() {
@@ -310,9 +333,15 @@ class DefaultTransactionViewModel extends TransactionViewModel {
   Future<bool> _afterWrite(
     int epoch,
     Either<AuthFailure, Object> result,
-    void Function() track,
-  ) async {
+    void Function() track, {
+    String? clientId,
+    String? serverId,
+  }) async {
     if (epoch != _epoch) return false;
+    if (result.isRight()) {
+      await _sync.acknowledge(clientId: clientId, serverId: serverId);
+      if (epoch != _epoch) return false;
+    }
     result.fold(_fail, (_) => track());
     needsReload = failure?.code == AuthError.conflict;
     if (result.isRight()) {
@@ -322,8 +351,42 @@ class DefaultTransactionViewModel extends TransactionViewModel {
     }
     if (epoch != _epoch) return false;
     busy = false;
+    _drainSyncReload();
     notifyListeners();
     return result.isRight();
+  }
+
+  bool _offline(Either<AuthFailure, Object> result) =>
+      result.fold((error) => error.code == AuthError.network, (_) => false);
+
+  Future<bool> _queue(
+    int epoch,
+    Future<void> Function() enqueue,
+    void Function() track,
+  ) async {
+    await enqueue();
+    if (epoch != _epoch) return false;
+    track();
+    busy = false;
+    _drainSyncReload();
+    notifyListeners();
+    return true;
+  }
+
+  void _trackSave(TransactionDraft draft, TransactionBundle? existing) {
+    if (existing == null) {
+      if (_tracked.add(draft.clientIds.first)) {
+        _analytics.track(
+          AnalyticsEvent.transactionCreated(switch (draft.type) {
+            TransactionType.income => TransactionAnalyticsType.income,
+            TransactionType.expense => TransactionAnalyticsType.expense,
+            TransactionType.transfer => TransactionAnalyticsType.transfer,
+          }),
+        );
+      }
+    } else {
+      _analytics.track(AnalyticsEvent.transactionEdited);
+    }
   }
 
   @override
@@ -343,21 +406,38 @@ class DefaultTransactionViewModel extends TransactionViewModel {
       categories,
       existing: existing,
     );
-    return _afterWrite(epoch, result, () {
-      if (existing == null) {
-        if (_tracked.add(draft.clientIds.first)) {
-          _analytics.track(
-            AnalyticsEvent.transactionCreated(switch (draft.type) {
-              TransactionType.income => TransactionAnalyticsType.income,
-              TransactionType.expense => TransactionAnalyticsType.expense,
-              TransactionType.transfer => TransactionAnalyticsType.transfer,
-            }),
-          );
-        }
-      } else {
-        _analytics.track(AnalyticsEvent.transactionEdited);
-      }
-    });
+    if (epoch != _epoch) return false;
+    if (_offline(result)) {
+      final prepared = prepareTransaction(
+        draft,
+        wallets,
+        currencies,
+        categories,
+        existing: existing,
+      );
+      return prepared.fold(
+        (_) async {
+          _fail(const AuthFailure(AuthError.network));
+          busy = false;
+          notifyListeners();
+          return false;
+        },
+        (command) => _queue(
+          epoch,
+          () => _sync.enqueue(
+            mutationFromCommand(command, serverId: existing?.id),
+          ),
+          () => _trackSave(draft, existing),
+        ),
+      );
+    }
+    return _afterWrite(
+      epoch,
+      result,
+      () => _trackSave(draft, existing),
+      clientId: draft.clientIds.first,
+      serverId: existing?.id,
+    );
   }
 
   @override
@@ -368,9 +448,21 @@ class DefaultTransactionViewModel extends TransactionViewModel {
     failure = null;
     notifyListeners();
     final result = await _cases.remove(bundle);
-    return _afterWrite(epoch, result, () {
-      _analytics.track(AnalyticsEvent.transactionDeleted);
-    });
+    if (epoch != _epoch) return false;
+    if (_offline(result)) {
+      return _queue(
+        epoch,
+        () => _sync.enqueue(mutationFromBundle(bundle, SyncAction.delete)),
+        () => _analytics.track(AnalyticsEvent.transactionDeleted),
+      );
+    }
+    return _afterWrite(
+      epoch,
+      result,
+      () => _analytics.track(AnalyticsEvent.transactionDeleted),
+      clientId: bundle.legs.first.clientId,
+      serverId: bundle.id,
+    );
   }
 
   @override
@@ -381,13 +473,28 @@ class DefaultTransactionViewModel extends TransactionViewModel {
     failure = null;
     notifyListeners();
     final result = await _cases.restore(bundle, wallets);
-    return _afterWrite(epoch, result, () {});
+    if (epoch != _epoch) return false;
+    if (_offline(result)) {
+      return _queue(
+        epoch,
+        () => _sync.enqueue(mutationFromBundle(bundle, SyncAction.restore)),
+        () {},
+      );
+    }
+    return _afterWrite(
+      epoch,
+      result,
+      () {},
+      clientId: bundle.legs.first.clientId,
+      serverId: bundle.id,
+    );
   }
 
   @override
   void dispose() {
     _epoch++;
     _auth.removeListener(_authChanged);
+    _sync.removeListener(_syncChanged);
     super.dispose();
   }
 }

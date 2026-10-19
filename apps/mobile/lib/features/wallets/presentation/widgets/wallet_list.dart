@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
+import '../../../settings/presentation/widgets/masked_amount.dart';
 import '../viewmodels/wallet_view_model.dart';
 import 'wallet_editor.dart';
 import 'wallet_money.dart';
@@ -40,8 +41,8 @@ class WalletList extends StatelessWidget {
                 ),
                 Text(walletTypeLabel(s, w.draft.type)),
                 if (currency != null)
-                  Text(
-                    s.walletBalance(
+                  MaskedAmount(
+                    shown: s.walletBalance(
                       walletMoney(
                         w.balance,
                         currency,
@@ -49,6 +50,7 @@ class WalletList extends StatelessWidget {
                       ),
                       currency.code,
                     ),
+                    hidden: s.walletBalance(s.balanceHiddenMask, currency.code),
                   ),
                 Wrap(
                   children: [

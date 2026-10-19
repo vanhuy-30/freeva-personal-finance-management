@@ -137,11 +137,11 @@ Unique `(userId, clientId)`.
 
 ### SchemaMeta
 
-Giữ từ scaffold: `version` schema ứng dụng / sync major. Health không phụ thuộc bảng này (`SELECT 1`).
+Giữ từ scaffold: `version` schema ứng dụng / sync major. `BE-P1-009` chèn hàng `id = 1`, `version = 1` nếu chưa có; `POST /api/v1/sync` từ chối khi major lệch hoặc thiếu hàng này. Health không phụ thuộc bảng này (`SELECT 1`).
 
 ### AuditEvent
 
-Schema nội bộ, không thuộc nhóm bảng user-owned/sync ở trên. `WA-P0-002` có writer hẹp cho `staff.user_lookup`; auth success events đã tích hợp trong `BE-P1-001` / `BE-P1-002` (ADR 009); export/xóa chưa tích hợp.
+Schema nội bộ, không thuộc nhóm bảng user-owned/sync ở trên. `WA-P0-002` có writer hẹp cho `staff.user_lookup`; auth success events đã tích hợp trong `BE-P1-001` / `BE-P1-002` (ADR 009). `BE-P1-010` ghi `user.data_export` và `user.account_delete` trong cùng transaction với thao tác; hàng audit không bị xóa theo user.
 
 | Cột | Kiểu | Ghi chú |
 |---|---|---|
@@ -156,7 +156,7 @@ Schema nội bộ, không thuộc nhóm bảng user-owned/sync ở trên. `WA-P0
 
 SQL CHECK: actor hợp lệ; action/targetType khớp `^[a-z][a-z0-9._]*$`. Index `(actorType, actorId, occurredAt)`, `(targetType, targetId, occurredAt)`, `(occurredAt)`.
 
-Không metadata hoặc dữ liệu tài chính/PII trực tiếp. UUID vẫn có thể liên kết người dùng. Xóa đối tượng không cascade audit; retention/xóa UUID và quyền audit chưa chốt. Bảng chưa được bảo vệ khỏi sửa/xóa; xem ADR 008.
+Không metadata hoặc dữ liệu tài chính/PII trực tiếp. UUID vẫn có thể liên kết người dùng. Xóa tài khoản (`BE-P1-010`) không cascade audit và không xóa UUID; không có job retention mới. Bảng chưa được bảo vệ khỏi sửa/xóa; xem ADR 008.
 
 ### Auth tables (server-owned, không sync)
 

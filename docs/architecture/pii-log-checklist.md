@@ -11,7 +11,7 @@ Pino chỉ che **đúng path** đã liệt kê. Nội suy PII vào chuỗi messa
 | Email | `email` | Redact hết; không mask một phần ở P0 |
 | Mật khẩu | `password`, `passwordHash` | Kể cả Phase 1 auth |
 | Token | `Authorization`, `cookie`, `set-cookie`, `token`, `refreshToken`, `accessToken`, `tokenHash`, `encryptedToken`, API key | Header HTTP + payload |
-| Tiền / số dư | `amountMinor`, `initialBalanceMinor`, `creditLimitMinor`, `balanceMinor` | Mọi `*Minor` |
+| Tiền / số dư | `amountMinor`, `balanceMinor`, `incomeMinor`, `expenseMinor`, `netMinor`, `transferMinor`, `assetsMinor`, `liabilitiesMinor`, `netWorthMinor` | Mọi `*Minor` |
 | Số tài khoản | `accountNumber`, `iban` | Chưa có trên schema P0; path sẵn cho P1+ |
 | Secret env | `DATABASE_URL`, SMTP password, secret manager | Không log env |
 
@@ -41,6 +41,10 @@ Wildcard một cấp (`*.email`). Path hai cấp (`*.*.email`) cho DTO lồng (`
 3. Không nội suy PII vào message.
 4. Reviewer: mục “Log không PII” trên PR template.
 
-Cập nhật file này khi thêm loại dữ liệu nhạy cảm (bank token Phase 6, crash SaaS).
+Cập nhật file này khi thêm loại dữ liệu nhạy cảm (bank token Phase 6).
+
+## Crash SaaS (`INF-P1-001`)
+
+Sentry nhận stack và phiên bản app, không nhận user, body, header, cookie, query hay biến local. Field cấm trong bảng trên bị thay bằng `[REDACTED]` trước khi gửi, kể cả chuỗi email, `Bearer` và URL DSN. API bỏ HTTP status dưới 500. Không log DSN. Thiếu DSN thì không gửi.
 
 Auth P1: HTTP request serializer chỉ giữ id/method/path/remoteAddress; bỏ query, headers, body. Auth exception filter không log exception Prisma/SMTP hoặc phản chiếu input. Outbox warning chỉ message chung.

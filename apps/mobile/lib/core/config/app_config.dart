@@ -5,26 +5,32 @@ enum AppEnvironment { dev, staging, prod }
 @lazySingleton
 class AppConfig {
   AppConfig()
-      : this.fromValues(
-          environment:
-              const String.fromEnvironment('APP_ENV', defaultValue: 'dev'),
-          apiBaseUrl: const String.fromEnvironment('API_BASE_URL'),
-          devCaCertificate: const String.fromEnvironment('DEV_CA_CERT_BASE64'),
-        );
+    : this.fromValues(
+        environment: const String.fromEnvironment(
+          'APP_ENV',
+          defaultValue: 'dev',
+        ),
+        apiBaseUrl: const String.fromEnvironment('API_BASE_URL'),
+        devCaCertificate: const String.fromEnvironment('DEV_CA_CERT_BASE64'),
+        sentryDsn: const String.fromEnvironment('SENTRY_DSN'),
+      );
 
-  AppConfig.fromValues(
-      {required String environment,
-      required this.apiBaseUrl,
-      this.devCaCertificate = ''})
-      : environment = AppEnvironment.values.firstWhere(
-          (value) => value.name == environment,
-          orElse: () =>
-              throw StateError('APP_ENV must be dev, staging or prod'),
-        );
+  AppConfig.fromValues({
+    required String environment,
+    required this.apiBaseUrl,
+    this.devCaCertificate = '',
+    this.sentryDsn = '',
+  }) : environment = AppEnvironment.values.firstWhere(
+         (value) => value.name == environment,
+         orElse: () => throw StateError('APP_ENV must be dev, staging or prod'),
+       );
 
   final AppEnvironment environment;
   final String apiBaseUrl;
   final String devCaCertificate;
+  final String sentryDsn;
+
+  bool get sentryEnabled => sentryDsn.isNotEmpty;
 
   bool get allowsDevelopmentCertificates =>
       environment == AppEnvironment.dev &&
@@ -43,8 +49,10 @@ class AppConfig {
         uri.hasQuery ||
         uri.hasFragment ||
         (uri.path.isNotEmpty && uri.path != '/')) {
-      throw StateError('API_BASE_URL must be an HTTPS origin. '
-          'Run with --dart-define-from-file=config/<environment>.json');
+      throw StateError(
+        'API_BASE_URL must be an HTTPS origin. '
+        'Run with --dart-define-from-file=config/<environment>.json',
+      );
     }
   }
 }

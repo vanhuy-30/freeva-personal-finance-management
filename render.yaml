@@ -52,3 +52,6 @@ services:
         value: "2465"
       - key: RESEND_API_KEY
         sync: false
+      # INF-P1-001: DSN write key của project Sentry staging. Không commit giá trị thật.
+      - key: SENTRY_DSN
+        sync: false

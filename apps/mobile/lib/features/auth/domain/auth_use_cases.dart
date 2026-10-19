@@ -1,18 +1,33 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+
 import 'auth_repository.dart';
+import 'session_notice.dart';
 
 abstract class AuthUseCases {
   Future<Either<AuthFailure, AuthStage>> restore();
   Future<Either<AuthFailure, bool>> accountExists(String email);
   Future<Either<AuthFailure, Unit>> submit(
-      AuthAction action, Map<String, String> fields);
+    AuthAction action,
+    Map<String, String> fields,
+  );
   Future<Either<AuthFailure, Unit>> setupPin(
-      String pin, String confirmation, bool biometrics, String reason);
+    String pin,
+    String confirmation,
+    bool biometrics,
+    String reason,
+  );
   Future<Either<AuthFailure, Unit>> unlockPin(String pin);
   Future<Either<AuthFailure, Unit>> unlockBiometric(String reason);
   Future<Either<AuthFailure, bool>> biometricAvailable();
+  Future<Either<AuthFailure, bool>> biometricHardware();
+  Future<Either<AuthFailure, bool>> biometricEnabled();
+  Future<Either<AuthFailure, Unit>> setBiometricEnabled(
+    bool enabled,
+    String reason,
+  );
   Future<Either<AuthFailure, List<AuthSession>>> sessions();
+  Future<Either<AuthFailure, SessionNoticeDecision>> observeSessions();
   Future<Either<AuthFailure, Unit>> revoke(String? id);
   Future<Either<AuthFailure, Unit>> logout();
   Future<Either<AuthFailure, Unit>> forgetDevice();
@@ -37,7 +52,9 @@ class DefaultAuthUseCases implements AuthUseCases {
   Future<Either<AuthFailure, AuthStage>> restore() => _repository.restore();
   @override
   Future<Either<AuthFailure, Unit>> submit(
-      AuthAction action, Map<String, String> fields) {
+    AuthAction action,
+    Map<String, String> fields,
+  ) {
     final requiredFields = switch (action) {
       AuthAction.login || AuthAction.register => {'email', 'password'},
       AuthAction.requestVerification || AuthAction.requestReset => {'email'},
@@ -58,13 +75,19 @@ class DefaultAuthUseCases implements AuthUseCases {
         (token != null && !RegExp(r'^[a-f0-9]{64}$').hasMatch(token))) {
       return Future.value(left(const AuthFailure(AuthError.invalidInput)));
     }
-    return _repository
-        .submit(action, {...fields, if (email != null) 'email': email});
+    return _repository.submit(action, {
+      ...fields,
+      if (email != null) 'email': email,
+    });
   }
 
   @override
   Future<Either<AuthFailure, Unit>> setupPin(
-      String pin, String confirmation, bool biometrics, String reason) {
+    String pin,
+    String confirmation,
+    bool biometrics,
+    String reason,
+  ) {
     if (!RegExp(r'^\d{6}$').hasMatch(pin) || pin != confirmation) {
       return Future.value(left(const AuthFailure(AuthError.invalidInput)));
     }
@@ -81,8 +104,22 @@ class DefaultAuthUseCases implements AuthUseCases {
   Future<Either<AuthFailure, bool>> biometricAvailable() =>
       _repository.biometricAvailable();
   @override
+  Future<Either<AuthFailure, bool>> biometricHardware() =>
+      _repository.biometricHardware();
+  @override
+  Future<Either<AuthFailure, bool>> biometricEnabled() =>
+      _repository.biometricEnabled();
+  @override
+  Future<Either<AuthFailure, Unit>> setBiometricEnabled(
+    bool enabled,
+    String reason,
+  ) => _repository.setBiometricEnabled(enabled, reason);
+  @override
   Future<Either<AuthFailure, List<AuthSession>>> sessions() =>
       _repository.sessions();
+  @override
+  Future<Either<AuthFailure, SessionNoticeDecision>> observeSessions() =>
+      _repository.observeSessions();
   @override
   Future<Either<AuthFailure, Unit>> revoke(String? id) =>
       _repository.revoke(id);

@@ -24,6 +24,8 @@ dependencies:
   local_auth: ^2.3.0
   cryptography: ^2.7.0
   timezone: ^0.10.1
+  flutter_local_notifications: ^20.1.0
+  sentry_flutter: ^8.14.2
 
 dev_dependencies:
   flutter_test:

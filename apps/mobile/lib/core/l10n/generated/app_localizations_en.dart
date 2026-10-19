@@ -16,10 +16,6 @@ class SEn extends S {
   String get splashTagline => 'Your money. Your freedom.';
 
   @override
-  String get homePlaceholder =>
-      'Core loop: wallet → transaction → balance. Features land in lib/features.';
-
-  @override
   String get brandWordmark => 'FREEVA';
 
   @override
@@ -513,4 +509,450 @@ class SEn extends S {
 
   @override
   String get transactionLoadMore => 'Load more';
+
+  @override
+  String syncPending(int count) {
+    return '$count changes waiting to sync';
+  }
+
+  @override
+  String get syncNow => 'Sync';
+
+  @override
+  String get syncing => 'Syncing';
+
+  @override
+  String get syncConflict =>
+      'Not overwritten. Reload to see the copy on the server.';
+
+  @override
+  String get syncReview =>
+      'The amount differs from the saved copy. Not overwritten.';
+
+  @override
+  String get syncFailedItem => 'This change could not be synced.';
+
+  @override
+  String get syncDiscard => 'Discard';
+
+  @override
+  String get syncSchema =>
+      'Sync is paused because the app and server schemas differ.';
+
+  @override
+  String get syncDuplicate =>
+      'A similar transaction may already exist. This one was still kept.';
+
+  @override
+  String get syncDelete => 'Delete';
+
+  @override
+  String get syncRestore => 'Restore';
+
+  @override
+  String get syncChange => 'Change';
+
+  @override
+  String syncItem(String action, String date) {
+    return '$action · $date';
+  }
+
+  @override
+  String get categoryTitle => 'Categories';
+
+  @override
+  String get categoryAdd => 'Add category';
+
+  @override
+  String get categoryEdit => 'Edit category';
+
+  @override
+  String get categoryName => 'Category name';
+
+  @override
+  String get categoryParent => 'Parent category';
+
+  @override
+  String get categoryNoParent => 'No parent';
+
+  @override
+  String get categoryColor => 'Color';
+
+  @override
+  String get categoryNoColor => 'No color';
+
+  @override
+  String get categoryIcon => 'Icon';
+
+  @override
+  String get categoryNoIcon => 'No icon';
+
+  @override
+  String get categorySystem => 'Default category';
+
+  @override
+  String get categoryShowHidden => 'Show hidden categories';
+
+  @override
+  String get categoryHide => 'Hide category';
+
+  @override
+  String get categoryRestore => 'Restore category';
+
+  @override
+  String get categoryHideExplanation =>
+      'Hiding archives the category from the active list. Existing transactions keep it; hidden categories cannot be used for new records.';
+
+  @override
+  String get categoryHideBlocked =>
+      'Hide or move active child categories before hiding this one.';
+
+  @override
+  String get categoryDelete => 'Delete category';
+
+  @override
+  String get categoryDeleteTitle => 'Delete this category permanently?';
+
+  @override
+  String get categoryDeleteBody =>
+      'A deleted category cannot be restored. If any transaction still references it, including a soft-deleted one, choose a replacement.';
+
+  @override
+  String get categoryDeleteBlocked =>
+      'Delete or move every child, including hidden ones, before deleting this category.';
+
+  @override
+  String get categoryReplacement => 'Replacement category';
+
+  @override
+  String get categoryNoReplacement => 'Do not move transactions';
+
+  @override
+  String get categoryEmpty => 'No categories yet.';
+
+  @override
+  String get categoryHiddenEmpty => 'No hidden categories.';
+
+  @override
+  String get categoryInvalid =>
+      'Check the name (1–100 characters), parent, color and icon. A category cannot be its own parent or sit under its child.';
+
+  @override
+  String get categoryConflict =>
+      'This category changed elsewhere. Reload the list before editing again.';
+
+  @override
+  String get categoryError =>
+      'Could not load or save categories. Please try again.';
+
+  @override
+  String get categoryReloadRequired =>
+      'The data is stale. Reload before editing again.';
+
+  @override
+  String get reportTitle => 'Reports';
+
+  @override
+  String get reportOverview => 'Overview';
+
+  @override
+  String get reportThisMonth => 'This month';
+
+  @override
+  String get reportNetWorth => 'Net worth';
+
+  @override
+  String get reportAssets => 'Assets';
+
+  @override
+  String get reportLiabilities => 'Liabilities';
+
+  @override
+  String get reportIncome => 'Income';
+
+  @override
+  String get reportExpense => 'Expense';
+
+  @override
+  String get reportNet => 'Cashflow';
+
+  @override
+  String get reportTransfer => 'Transfer';
+
+  @override
+  String get reportWeek => 'Week';
+
+  @override
+  String get reportMonth => 'Month';
+
+  @override
+  String get reportRange => 'Date range';
+
+  @override
+  String get reportPrevious => 'Previous period';
+
+  @override
+  String get reportNext => 'Next period';
+
+  @override
+  String get reportFrom => 'From';
+
+  @override
+  String get reportTo => 'To';
+
+  @override
+  String get reportApply => 'Show this range';
+
+  @override
+  String get reportByCategory => 'By category';
+
+  @override
+  String get reportByAccount => 'By wallet';
+
+  @override
+  String get reportUncategorized => 'Uncategorized';
+
+  @override
+  String get reportEmpty => 'Nothing to show for this period.';
+
+  @override
+  String get reportError => 'Could not load the report. Please try again.';
+
+  @override
+  String get reportInvalid =>
+      'That date range is invalid. The start must be on or before the end, and the dates can be at most 3660 days apart.';
+
+  @override
+  String reportPeriod(String from, String to) {
+    return '$from – $to';
+  }
+
+  @override
+  String reportAmount(String label, String amount, String currency) {
+    return '$label: $amount $currency';
+  }
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get settingsBack => 'Back';
+
+  @override
+  String get settingsAppearance => 'Appearance';
+
+  @override
+  String get settingsThemeLight => 'Light';
+
+  @override
+  String get settingsThemeDark => 'Dark';
+
+  @override
+  String get settingsThemeSystem => 'System';
+
+  @override
+  String get settingsProfile => 'Language, currency, and time zone';
+
+  @override
+  String get settingsPermissions => 'System access';
+
+  @override
+  String get settingsBiometric => 'Biometric unlock';
+
+  @override
+  String get settingsBiometricReason =>
+      'Authenticate to change biometric unlock';
+
+  @override
+  String get settingsBiometricOn => 'On';
+
+  @override
+  String get settingsBiometricOff => 'Off';
+
+  @override
+  String get settingsBiometricUnavailable =>
+      'This device has no biometrics available.';
+
+  @override
+  String get settingsBiometricPin =>
+      'Set up a PIN on the lock screen before enabling biometrics.';
+
+  @override
+  String get settingsBiometricFailed =>
+      'Biometrics were not confirmed. The setting was not changed.';
+
+  @override
+  String get settingsHelp => 'Help';
+
+  @override
+  String get settingsFaq => 'FAQ';
+
+  @override
+  String get settingsFeedback => 'Send feedback';
+
+  @override
+  String get settingsTerms => 'Terms of service (draft)';
+
+  @override
+  String get settingsPrivacy => 'Privacy policy (draft)';
+
+  @override
+  String settingsVersion(String version) {
+    return 'Version $version';
+  }
+
+  @override
+  String get settingsStorageError =>
+      'Settings could not be saved on this device. Please try again.';
+
+  @override
+  String get onboardingSkip => 'Skip';
+
+  @override
+  String get onboardingNext => 'Next';
+
+  @override
+  String get onboardingBack => 'Back';
+
+  @override
+  String get onboardingFinish => 'Done';
+
+  @override
+  String get onboardingWelcomeTitle => 'Welcome to Freeva';
+
+  @override
+  String get onboardingWelcomeBody =>
+      'A short introduction so you can record money without extra help.';
+
+  @override
+  String get onboardingWalletTitle => 'Create a wallet';
+
+  @override
+  String get onboardingWalletBody =>
+      'Add a cash, bank, e-wallet, or credit wallet. Each amount stays in its own currency.';
+
+  @override
+  String get onboardingTransactionTitle => 'Record the first transaction';
+
+  @override
+  String get onboardingTransactionBody =>
+      'From Home, record income, an expense, or a transfer between two wallets.';
+
+  @override
+  String get faqTitle => 'FAQ';
+
+  @override
+  String get faqWalletQ => 'How do I add a wallet?';
+
+  @override
+  String get faqWalletA =>
+      'Open Wallets from Home, then create a cash, bank, e-wallet, or credit wallet.';
+
+  @override
+  String get faqTransactionQ => 'How do I record a transaction?';
+
+  @override
+  String get faqTransactionA =>
+      'Open Transactions or use Record transaction on Home. Choose income, an expense, or a transfer with two balanced sides.';
+
+  @override
+  String get faqProfileQ => 'How do I change language, currency, or time zone?';
+
+  @override
+  String get faqProfileA =>
+      'Open Settings, then Language, currency, and time zone. The language changes after the profile is saved.';
+
+  @override
+  String get faqLockQ => 'How do I lock the app?';
+
+  @override
+  String get faqLockA =>
+      'Freeva locks when you leave the app. Unlock with your six-digit PIN. You can turn on biometrics in Settings after a PIN exists.';
+
+  @override
+  String get faqThemeQ => 'How do I switch light and dark mode?';
+
+  @override
+  String get faqThemeA =>
+      'Open Settings and choose Light, Dark, or System. Light is the default and stays on this device.';
+
+  @override
+  String get feedbackTitle => 'Feedback';
+
+  @override
+  String get feedbackIdea => 'Idea';
+
+  @override
+  String get feedbackProblem => 'Problem';
+
+  @override
+  String get feedbackMessage => 'Message';
+
+  @override
+  String get feedbackCopy => 'Copy feedback';
+
+  @override
+  String get feedbackCopied =>
+      'Copied. A contact address is not configured yet, so Freeva does not send this message.';
+
+  @override
+  String get feedbackInvalid => 'Enter a message of up to 2000 characters.';
+
+  @override
+  String get feedbackHelp =>
+      'Freeva copies the message on this device. It is not uploaded and is not written to logs.';
+
+  @override
+  String get legalDraft =>
+      'Draft for PRD-P0-002. This is not legal advice and is not in effect. The operating entity and contact channel are not decided yet.';
+
+  @override
+  String get tosTitle => 'Terms of service';
+
+  @override
+  String get tosBody =>
+      'Freeva lets you record wallets and transactions you enter. You keep your financial data. The service operator is not decided yet. Account export and deletion are separate release work. This summary does not replace a lawyer-reviewed agreement.';
+
+  @override
+  String get privacyTitle => 'Privacy policy';
+
+  @override
+  String get privacyBody =>
+      'The account stores email, language, time zone, default currency, and the financial month start day. Amounts you enter are not written to logs. Feedback you compose stays on this device until a contact channel exists. Analytics events do not include email, balances, or account numbers. This summary does not replace a lawyer-reviewed policy.';
+
+  @override
+  String get balanceHiddenMask => '••••';
+
+  @override
+  String get balanceHide => 'Hide amounts';
+
+  @override
+  String get balanceShow => 'Show amounts';
+
+  @override
+  String get settingsPrivacyControls => 'Privacy';
+
+  @override
+  String get settingsHideBalances => 'Hide balances';
+
+  @override
+  String get settingsHideBalancesHelp =>
+      'Masks amounts shown on this device. Fields you are editing still show what you type.';
+
+  @override
+  String get settingsSessionAlerts => 'New sign-in alerts';
+
+  @override
+  String get settingsSessionAlertsHelp =>
+      'Warns on this device when another session appears. The alert does not include an email, balance, or device name.';
+
+  @override
+  String get sessionAlertTitle => 'New sign-in';
+
+  @override
+  String get sessionAlertBody =>
+      'Another session signed in. Open Freeva to review it and revoke it if it was not you.';
+
+  @override
+  String get sessionAlertReview => 'Review sessions';
 }

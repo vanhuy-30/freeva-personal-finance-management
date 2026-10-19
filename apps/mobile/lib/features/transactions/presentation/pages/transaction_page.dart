@@ -5,6 +5,7 @@ import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../domain/transaction.dart';
 import '../viewmodels/transaction_view_model.dart';
+import '../../../sync/presentation/widgets/sync_status_banner.dart';
 import '../widgets/transaction_editor.dart';
 import '../widgets/transaction_labels.dart';
 import '../widgets/transaction_list.dart';
@@ -81,6 +82,10 @@ class _TransactionPageState extends State<TransactionPage> {
           child: Column(
             children: [
               if (model.busy) const LinearProgressIndicator(),
+              const Padding(
+                padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+                child: SyncStatusBanner(),
+              ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                 child: Column(

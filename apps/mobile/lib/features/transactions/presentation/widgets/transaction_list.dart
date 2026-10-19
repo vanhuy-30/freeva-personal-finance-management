@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/money/money_text.dart';
+import '../../../settings/presentation/widgets/masked_amount.dart';
 import '../../../categories/domain/finance_category.dart';
 import '../../../wallets/domain/wallet.dart';
 import '../../domain/transaction.dart';
@@ -47,7 +48,10 @@ class TransactionList extends StatelessWidget {
           subtitle: Text(
             '${_date(source.occurredOn, locale)} · ${_wallet(model.wallets, source.accountId)}',
           ),
-          trailing: Text('$amount ${source.currencyCode}'),
+          trailing: MaskedAmount(
+            shown: '$amount ${source.currencyCode}',
+            hidden: '${s.balanceHiddenMask} ${source.currencyCode}',
+          ),
           onTap: () => onOpen(row),
         );
       },

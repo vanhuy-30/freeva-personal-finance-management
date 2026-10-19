@@ -16,10 +16,6 @@ class SVi extends S {
   String get splashTagline => 'Your money. Your freedom.';
 
   @override
-  String get homePlaceholder =>
-      'Vòng lặp cốt lõi: ví → giao dịch → số dư. Feature nghiệp vụ nằm ở lib/features.';
-
-  @override
   String get brandWordmark => 'FREEVA';
 
   @override
@@ -515,4 +511,446 @@ class SVi extends S {
 
   @override
   String get transactionLoadMore => 'Tải thêm';
+
+  @override
+  String syncPending(int count) {
+    return '$count thay đổi chờ đồng bộ';
+  }
+
+  @override
+  String get syncNow => 'Đồng bộ';
+
+  @override
+  String get syncing => 'Đang đồng bộ';
+
+  @override
+  String get syncConflict => 'Không ghi đè. Tải lại để xem bản trên máy chủ.';
+
+  @override
+  String get syncReview => 'Số tiền khác bản đã lưu. Không ghi đè.';
+
+  @override
+  String get syncFailedItem => 'Không đồng bộ được thay đổi này.';
+
+  @override
+  String get syncDiscard => 'Bỏ';
+
+  @override
+  String get syncSchema =>
+      'Tạm dừng đồng bộ vì schema ứng dụng và máy chủ khác nhau.';
+
+  @override
+  String get syncDuplicate =>
+      'Có thể đã có giao dịch tương tự. Bản này vẫn được giữ.';
+
+  @override
+  String get syncDelete => 'Xóa';
+
+  @override
+  String get syncRestore => 'Khôi phục';
+
+  @override
+  String get syncChange => 'Thay đổi';
+
+  @override
+  String syncItem(String action, String date) {
+    return '$action · $date';
+  }
+
+  @override
+  String get categoryTitle => 'Danh mục';
+
+  @override
+  String get categoryAdd => 'Thêm danh mục';
+
+  @override
+  String get categoryEdit => 'Sửa danh mục';
+
+  @override
+  String get categoryName => 'Tên danh mục';
+
+  @override
+  String get categoryParent => 'Danh mục cha';
+
+  @override
+  String get categoryNoParent => 'Không có danh mục cha';
+
+  @override
+  String get categoryColor => 'Màu';
+
+  @override
+  String get categoryNoColor => 'Không chọn màu';
+
+  @override
+  String get categoryIcon => 'Biểu tượng';
+
+  @override
+  String get categoryNoIcon => 'Không chọn biểu tượng';
+
+  @override
+  String get categorySystem => 'Danh mục mặc định';
+
+  @override
+  String get categoryShowHidden => 'Xem danh mục đã ẩn';
+
+  @override
+  String get categoryHide => 'Ẩn danh mục';
+
+  @override
+  String get categoryRestore => 'Khôi phục danh mục';
+
+  @override
+  String get categoryHideExplanation =>
+      'Ẩn danh mục khỏi danh sách đang dùng. Giao dịch cũ giữ nguyên danh mục; danh mục đã ẩn không dùng để ghi mới.';
+
+  @override
+  String get categoryHideBlocked =>
+      'Hãy ẩn hoặc chuyển các danh mục con đang dùng trước khi ẩn danh mục này.';
+
+  @override
+  String get categoryDelete => 'Xóa danh mục';
+
+  @override
+  String get categoryDeleteTitle => 'Xóa danh mục vĩnh viễn?';
+
+  @override
+  String get categoryDeleteBody =>
+      'Danh mục bị xóa không khôi phục được. Nếu còn giao dịch, kể cả giao dịch đã xóa mềm, hãy chọn danh mục thay thế.';
+
+  @override
+  String get categoryDeleteBlocked =>
+      'Hãy xóa hoặc chuyển mọi danh mục con, kể cả danh mục đã ẩn, trước khi xóa danh mục này.';
+
+  @override
+  String get categoryReplacement => 'Danh mục thay thế';
+
+  @override
+  String get categoryNoReplacement => 'Không chuyển giao dịch';
+
+  @override
+  String get categoryEmpty => 'Chưa có danh mục.';
+
+  @override
+  String get categoryHiddenEmpty => 'Không có danh mục đã ẩn.';
+
+  @override
+  String get categoryInvalid =>
+      'Kiểm tra tên (1–100 ký tự), danh mục cha, màu và biểu tượng. Không chọn chính danh mục này hoặc danh mục con làm cha.';
+
+  @override
+  String get categoryConflict =>
+      'Danh mục đã thay đổi ở nơi khác. Tải lại danh sách trước khi sửa tiếp.';
+
+  @override
+  String get categoryError =>
+      'Không thể tải hoặc lưu danh mục. Vui lòng thử lại.';
+
+  @override
+  String get categoryReloadRequired =>
+      'Dữ liệu đã cũ. Tải lại trước khi sửa tiếp.';
+
+  @override
+  String get reportTitle => 'Báo cáo';
+
+  @override
+  String get reportOverview => 'Tổng quan';
+
+  @override
+  String get reportThisMonth => 'Tháng này';
+
+  @override
+  String get reportNetWorth => 'Tài sản ròng';
+
+  @override
+  String get reportAssets => 'Tài sản';
+
+  @override
+  String get reportLiabilities => 'Nợ';
+
+  @override
+  String get reportIncome => 'Thu';
+
+  @override
+  String get reportExpense => 'Chi';
+
+  @override
+  String get reportNet => 'Dòng tiền';
+
+  @override
+  String get reportTransfer => 'Chuyển khoản';
+
+  @override
+  String get reportWeek => 'Tuần';
+
+  @override
+  String get reportMonth => 'Tháng';
+
+  @override
+  String get reportRange => 'Khoảng ngày';
+
+  @override
+  String get reportPrevious => 'Kỳ trước';
+
+  @override
+  String get reportNext => 'Kỳ sau';
+
+  @override
+  String get reportFrom => 'Từ ngày';
+
+  @override
+  String get reportTo => 'Đến ngày';
+
+  @override
+  String get reportApply => 'Xem khoảng này';
+
+  @override
+  String get reportByCategory => 'Theo danh mục';
+
+  @override
+  String get reportByAccount => 'Theo ví';
+
+  @override
+  String get reportUncategorized => 'Chưa phân loại';
+
+  @override
+  String get reportEmpty => 'Chưa có số liệu trong kỳ này.';
+
+  @override
+  String get reportError => 'Không thể tải báo cáo. Vui lòng thử lại.';
+
+  @override
+  String get reportInvalid =>
+      'Khoảng ngày không hợp lệ. Ngày bắt đầu phải trước hoặc bằng ngày kết thúc và không quá 3660 ngày.';
+
+  @override
+  String reportPeriod(String from, String to) {
+    return '$from – $to';
+  }
+
+  @override
+  String reportAmount(String label, String amount, String currency) {
+    return '$label: $amount $currency';
+  }
+
+  @override
+  String get settingsTitle => 'Cài đặt';
+
+  @override
+  String get settingsBack => 'Quay lại';
+
+  @override
+  String get settingsAppearance => 'Giao diện';
+
+  @override
+  String get settingsThemeLight => 'Sáng';
+
+  @override
+  String get settingsThemeDark => 'Tối';
+
+  @override
+  String get settingsThemeSystem => 'Theo hệ thống';
+
+  @override
+  String get settingsProfile => 'Ngôn ngữ, tiền tệ và múi giờ';
+
+  @override
+  String get settingsPermissions => 'Quyền hệ thống';
+
+  @override
+  String get settingsBiometric => 'Mở khóa bằng sinh trắc';
+
+  @override
+  String get settingsBiometricReason => 'Xác thực để đổi mở khóa sinh trắc';
+
+  @override
+  String get settingsBiometricOn => 'Đang bật';
+
+  @override
+  String get settingsBiometricOff => 'Đang tắt';
+
+  @override
+  String get settingsBiometricUnavailable => 'Thiết bị này không có sinh trắc.';
+
+  @override
+  String get settingsBiometricPin =>
+      'Hãy tạo PIN ở màn khóa trước khi bật sinh trắc.';
+
+  @override
+  String get settingsBiometricFailed =>
+      'Chưa xác nhận sinh trắc. Cài đặt không đổi.';
+
+  @override
+  String get settingsHelp => 'Trợ giúp';
+
+  @override
+  String get settingsFaq => 'Câu hỏi thường gặp';
+
+  @override
+  String get settingsFeedback => 'Gửi phản hồi';
+
+  @override
+  String get settingsTerms => 'Điều khoản dịch vụ (nháp)';
+
+  @override
+  String get settingsPrivacy => 'Chính sách bảo mật (nháp)';
+
+  @override
+  String settingsVersion(String version) {
+    return 'Phiên bản $version';
+  }
+
+  @override
+  String get settingsStorageError =>
+      'Chưa lưu được cài đặt trên thiết bị này. Vui lòng thử lại.';
+
+  @override
+  String get onboardingSkip => 'Bỏ qua';
+
+  @override
+  String get onboardingNext => 'Tiếp';
+
+  @override
+  String get onboardingBack => 'Quay lại';
+
+  @override
+  String get onboardingFinish => 'Xong';
+
+  @override
+  String get onboardingWelcomeTitle => 'Chào mừng đến Freeva';
+
+  @override
+  String get onboardingWelcomeBody =>
+      'Vài bước ngắn để bạn tự ghi chép tiền mà không cần hỗ trợ thêm.';
+
+  @override
+  String get onboardingWalletTitle => 'Tạo một ví';
+
+  @override
+  String get onboardingWalletBody =>
+      'Thêm ví tiền mặt, ngân hàng, ví điện tử hoặc thẻ. Mỗi số tiền giữ nguyên loại tiền của ví.';
+
+  @override
+  String get onboardingTransactionTitle => 'Ghi giao dịch đầu tiên';
+
+  @override
+  String get onboardingTransactionBody =>
+      'Từ trang chủ, ghi thu, chi, hoặc chuyển khoản giữa hai ví.';
+
+  @override
+  String get faqTitle => 'Câu hỏi thường gặp';
+
+  @override
+  String get faqWalletQ => 'Làm sao để thêm ví?';
+
+  @override
+  String get faqWalletA =>
+      'Mở Ví từ trang chủ, rồi tạo ví tiền mặt, ngân hàng, ví điện tử hoặc thẻ.';
+
+  @override
+  String get faqTransactionQ => 'Làm sao để ghi giao dịch?';
+
+  @override
+  String get faqTransactionA =>
+      'Mở Giao dịch hoặc chọn Ghi giao dịch ở trang chủ. Chọn thu, chi, hoặc chuyển khoản cân bằng hai vế.';
+
+  @override
+  String get faqProfileQ => 'Làm sao để đổi ngôn ngữ, tiền tệ hoặc múi giờ?';
+
+  @override
+  String get faqProfileA =>
+      'Mở Cài đặt, rồi Ngôn ngữ, tiền tệ và múi giờ. Ngôn ngữ đổi sau khi hồ sơ được lưu.';
+
+  @override
+  String get faqLockQ => 'Ứng dụng khóa như thế nào?';
+
+  @override
+  String get faqLockA =>
+      'Freeva khóa khi bạn rời ứng dụng. Mở khóa bằng PIN sáu số. Có thể bật sinh trắc trong Cài đặt sau khi đã có PIN.';
+
+  @override
+  String get faqThemeQ => 'Làm sao để đổi sáng và tối?';
+
+  @override
+  String get faqThemeA =>
+      'Mở Cài đặt và chọn Sáng, Tối hoặc Theo hệ thống. Sáng là mặc định và được giữ trên thiết bị này.';
+
+  @override
+  String get feedbackTitle => 'Phản hồi';
+
+  @override
+  String get feedbackIdea => 'Góp ý';
+
+  @override
+  String get feedbackProblem => 'Lỗi';
+
+  @override
+  String get feedbackMessage => 'Nội dung';
+
+  @override
+  String get feedbackCopy => 'Sao chép phản hồi';
+
+  @override
+  String get feedbackCopied =>
+      'Đã sao chép. Chưa có địa chỉ liên hệ, nên Freeva không gửi nội dung này.';
+
+  @override
+  String get feedbackInvalid => 'Hãy nhập nội dung, tối đa 2000 ký tự.';
+
+  @override
+  String get feedbackHelp =>
+      'Freeva sao chép nội dung trên thiết bị này. Nội dung không được tải lên và không được ghi vào log.';
+
+  @override
+  String get legalDraft =>
+      'Bản nháp cho PRD-P0-002. Đây không phải tư vấn pháp lý và chưa có hiệu lực. Pháp nhân vận hành và kênh liên hệ chưa được chốt.';
+
+  @override
+  String get tosTitle => 'Điều khoản dịch vụ';
+
+  @override
+  String get tosBody =>
+      'Freeva để bạn ghi ví và giao dịch do bạn nhập. Bạn giữ dữ liệu tài chính của mình. Đơn vị vận hành chưa được chốt. Xuất và xóa tài khoản là việc phát hành riêng. Bản tóm tắt này không thay điều khoản đã được luật sư rà.';
+
+  @override
+  String get privacyTitle => 'Chính sách bảo mật';
+
+  @override
+  String get privacyBody =>
+      'Tài khoản lưu email, ngôn ngữ, múi giờ, tiền tệ mặc định và ngày bắt đầu tháng tài chính. Số tiền bạn nhập không được ghi vào log. Phản hồi bạn soạn ở lại trên thiết bị cho đến khi có kênh liên hệ. Sự kiện phân tích không gồm email, số dư hoặc số tài khoản. Bản tóm tắt này không thay chính sách đã được luật sư rà.';
+
+  @override
+  String get balanceHiddenMask => '••••';
+
+  @override
+  String get balanceHide => 'Ẩn số tiền';
+
+  @override
+  String get balanceShow => 'Hiện số tiền';
+
+  @override
+  String get settingsPrivacyControls => 'Quyền riêng tư';
+
+  @override
+  String get settingsHideBalances => 'Ẩn số dư';
+
+  @override
+  String get settingsHideBalancesHelp =>
+      'Che số tiền đang hiển thị trên máy này. Ô đang nhập vẫn hiện số bạn gõ.';
+
+  @override
+  String get settingsSessionAlerts => 'Cảnh báo phiên mới';
+
+  @override
+  String get settingsSessionAlertsHelp =>
+      'Báo trên máy này khi có phiên đăng nhập khác. Không gồm email, số dư hay tên thiết bị.';
+
+  @override
+  String get sessionAlertTitle => 'Phiên đăng nhập mới';
+
+  @override
+  String get sessionAlertBody =>
+      'Có phiên đăng nhập khác. Mở Freeva để xem và thu hồi nếu không phải bạn.';
+
+  @override
+  String get sessionAlertReview => 'Xem các phiên';
 }

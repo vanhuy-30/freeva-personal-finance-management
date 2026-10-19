@@ -2,9 +2,33 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-10-19
+
+- `MOB-P1-001`: đóng task. Face ID, vân tay và màn hình recents đã test pass trên thiết bị thực. E2E gửi email Resend trên staging hoãn có chủ đích đến khi setup Resend; chưa kiểm chứng delivery/inbox. [Runbook](../infrastructure/email.md).
+
+## 2026-10-12
+
+- `INF-P1-001`: gắn Sentry cho crash staging trên API, web admin và mobile. SDK tắt khi không có DSN; scrub PII trước khi gửi; không endpoint public và không tracing. 22 unit suites / 192 tests và API build pass; admin tsc, lint và 2 node tests pass; Flutter analyze sạch và 133 tests pass (3 mới). Event trên dashboard chờ DSN vận hành. [ADR 011](../architecture/adr/011-sentry-crash-monitoring.md).
+
+- `MOB-P1-009`: giữ màn che khi app vào nền; nút mắt và công tắc Cài đặt che số đang đọc, ô đang gõ vẫn hiện. Sau mở khóa, phiên khác chưa từng thấy thì banner và thông báo cục bộ một lần. Xin quyền đúng lúc cảnh báo đầu. Đăng xuất xóa danh sách phiên đã thấy; khóa PIN không xóa. Không đổi API, không gọi là thiết bị mới. Analyze sạch và 130 Flutter tests pass (13 tests mới); chưa native build/E2E staging. [Thiết kế](../architecture/mobile-privacy.md).
+
+- `BE-P1-010`: `GET /api/v1/account/export` trả snapshot JSON của owner; `DELETE /api/v1/account` xóa ngay user và dữ liệu tài chính. Audit `user.data_export` / `user.account_delete` cùng transaction, fail closed, UUID còn sau khi user biến mất. Không CSV, không UI, không cửa sổ 30 ngày trên ứng dụng. 20 unit suites / 185 tests và 7 HTTP/PostgreSQL suites / 79 tests, build/OpenAPI pass. Không migration; chưa deploy staging. [Thiết kế](../architecture/account-privacy.md).
+
+## 2026-10-09
+
+- `MOB-P1-008`: hàng đợi mutation giao dịch khi mất mạng, lưu trong secure storage, gửi lại bằng `POST /api/v1/sync`. Gộp sửa/xóa trước khi gửi, conflict không ghi đè, `review` khi số tiền khác. Không sync ví/danh mục và không cộng số dư từ bản chờ. Analyze sạch và 117 Flutter tests pass (9 tests mới); chưa native build/E2E staging. [Thiết kế](../architecture/mobile-sync.md).
+
+- `BE-P1-009`: `POST /api/v1/sync` áp tuần tự create/update/delete giao dịch. Replay theo `clientId` không tạo thêm dòng; conflict giữ bản server và chỉ bật `review` khi số tiền khác. Gợi ý trùng trong 10 phút không chặn tạo. `schemaVersion` phải khớp `SchemaMeta`. CRUD giao dịch hiện có không đổi. 19 unit suites / 179 tests và 6 HTTP/PostgreSQL suites / 75 tests, build/OpenAPI pass. Một migration seed `SchemaMeta`; chưa deploy staging. [Thiết kế](../architecture/sync.md).
+
+- `MOB-P1-007`: cài đặt theme trên thiết bị, lối sang hồ sơ cho ngôn ngữ/tiền tệ/múi giờ, bật/tắt sinh trắc, onboarding một lần với `onboarding_started`/`onboarding_completed`, FAQ, phản hồi chỉ sao chép cục bộ, phiên bản và bản nháp ToS/privacy. Không đổi API và không gửi nội dung phản hồi. Analyze sạch và 108 Flutter tests pass (14 tests mới); chưa native build/E2E staging. [Thiết kế](../architecture/mobile-settings.md).
+
+- `MOB-P1-006`: tổng quan trên Home và màn báo cáo lọc tuần, tháng, khoảng ngày. Tài sản/nợ/ròng hiện tại và thu/chi/dòng tiền theo từng loại tiền; danh mục lá giữ tên cha, thu chưa phân loại có nhãn. Không cộng khác loại tiền, không đổi API. `report_viewed` một lần mỗi lượt mở báo cáo. Analyze sạch và 94 Flutter tests pass (14 tests mới); chưa native build/E2E staging. [Thiết kế](../architecture/mobile-reports.md).
+
 ## 2026-10-08
 
 - Đối chiếu spec sản phẩm v0.1: Phase 1 giữ vai trò sổ cái; product v1 thêm ngân sách, mục tiêu và insight cơ bản. Bản spec nằm ở [freeva-product-spec.md](../product/freeva-product-spec.md); quyết định lệch ở [spec-alignment.md](../product/spec-alignment.md). Task còn mở và epic Phase 2–7 có DoD kiểm được.
+
+- `MOB-P1-005`: UI danh mục từ Home, cây cha-con, tạo/sửa custom, màu và icon theo catalog, ẩn/khôi phục và xóa vĩnh viễn kèm danh mục thay thế. Abstract DI, version/clientId, chặn ghi sau conflict, xóa state khi khóa. Analyze sạch và 80 Flutter tests pass (10 tests mới); chưa native build/E2E staging. [Thiết kế](../architecture/mobile-categories.md).
 
 ## 2026-09-25
 

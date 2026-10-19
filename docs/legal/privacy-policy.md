@@ -64,8 +64,8 @@ Consent tùy chọn (sau này): thông báo, AI, kết nối ngân hàng. Có th
 Theo tinh thần PDPD, bạn có quyền (khi đã có tài khoản và quy trình Phase 1):
 
 - **Xem** và **sửa** hồ sơ / dữ liệu ghi chép trong app.
-- **Xuất** dữ liệu dạng máy đọc (JSON/CSV) — sẽ có trước phát hành (`BE-P1-010`). Chưa ship ở Phase 0.
-- **Xóa tài khoản** — cùng `BE-P1-010`; paywall không được chặn quyền này.
+- **Xuất** dữ liệu JSON tại `GET /api/v1/account/export` (`BE-P1-010`). CSV chưa có. Chưa có nút trong app.
+- **Xóa tài khoản** tại `DELETE /api/v1/account` — xóa ngay hàng tài khoản và dữ liệu tài chính; paywall không được chặn quyền này. UI app chưa có.
 - **Rút consent** đối với xử lý không bắt buộc (thông báo, analytics mở rộng, AI, bank connect).
 - Khiếu nại với cơ quan có thẩm quyền theo pháp luật Việt Nam.
 
@@ -82,7 +82,7 @@ Cách gửi yêu cầu: kênh TBD cho đến khi có email hỗ trợ. Staff adm
 | Thiết bị / IP login | 90 ngày log |
 | Hỗ trợ (ticket) | 12 tháng |
 
-Sao lưu hệ thống có thể giữ bản sao thêm một cửa sổ ngắn sau xóa, rồi hết hạn theo runbook backup (`BE-P0-005`).
+API `BE-P1-010` xóa ngay dữ liệu tài khoản và tài chính. Mốc “+ 30 ngày” vẫn là đề xuất chưa chốt luật sư. Sao lưu hệ thống có thể giữ bản sao thêm một cửa sổ ngắn sau xóa, rồi hết hạn theo runbook backup (`BE-P0-005`). Audit giữ UUID của yêu cầu xuất/xóa, không kèm email hay số tiền.
 
 ## 6. Chuyển dữ liệu ra nước ngoài
 
@@ -123,7 +123,7 @@ Không có bên thứ ba **production**. API + Postgres + Redis + Mailhog chạy
 | Nhà cung cấp hosting cloud (TBD) | Chạy API, Postgres, Redis | Tài khoản + dữ liệu tài chính + log kỹ thuật | 1 | **Production** region **VN** (#5); vendor chốt khi Store. **Staging** hiện: Render (API+DB) + Vercel (admin) — [staging.md](../infrastructure/staging.md) |
 | Nhà cung cấp email giao dịch (TBD) | OTP, xác thực email, đặt lại mật khẩu | Địa chỉ email, nội dung mail giao dịch | 1 | Nhà cung cấp chưa chọn; local = Mailhog |
 | Apple App Store / Google Play | Phân phối app; Sign-In (Should) | Tài khoản store; email/tên nếu dùng Sign-In | 1 | Dự kiến khi phát hành store |
-| Crash reporting (Sentry hoặc tương đương) | Stack crash, độ ổn định | Device / phiên bản app; **không** PII tài chính | 1 | Sentry dự kiến; chưa SDK — #9, `INF-P1-001` |
+| Crash reporting (Sentry) | Stack crash, độ ổn định | Device / phiên bản app; **không** PII tài chính | 1 | SDK staging `INF-P1-001`; event live chờ DSN, không commit |
 | Analytics (vendor TBD) | Funnel sản phẩm | Event không PII — [analytics-events.md](../product/analytics-events.md) | 1 | Stub `MOB-P0-004`; vendor chưa chọn |
 
 ### Sau MVP — không cam kết

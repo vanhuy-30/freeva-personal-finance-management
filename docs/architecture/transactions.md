@@ -60,8 +60,8 @@ Tính bằng phân số bigint; **từ chối kết quả có phần lẻ minor 
 
 ## List, lỗi và privacy
 
-Page mặc định 1, pageSize 50, tối đa 100. `status=active` mặc định, hoặc `deleted`/`all`. Lọc `accountId`, `categoryId`, `type`, `from`/`to` inclusive; `search` tìm notes không phân biệt hoa thường, tối đa 200 ký tự. Sort occurredOn giảm, createdAt giảm, id tăng. `total` đếm leg, không đếm transfer group; báo cáo thu/chi phải lọc type, không tính transfer là thu/chi.
+Page mặc định 1, pageSize 50, tối đa 100. `status=active` mặc định, hoặc `deleted`/`all`. Lọc `accountId`, `categoryId`, `type`, `from`/`to` inclusive; `search` tối đa 200 ký tự theo [search.md](search.md). Sort occurredOn giảm, createdAt giảm, id tăng. `total` đếm leg, không đếm transfer group; báo cáo thu/chi phải lọc type, không tính transfer là thu/chi.
 
 `400 VALIDATION_ERROR`, `401` theo auth service, `404 TRANSACTION_NOT_FOUND`/`ACCOUNT_NOT_FOUND` cho cả ID không tồn tại và khác owner, `409 TRANSACTION_CONFLICT`, `503 TRANSACTIONS_UNAVAILABLE`. Lỗi không phản chiếu input hoặc exception Prisma. HTTP logger không ghi body/query/header, ghi chú, số tiền hoặc bearer token.
 
-Chưa triển khai sync queue, báo cáo, đối soát, receipt hoặc batch edit. Không deploy staging trong task này. Lệnh kiểm tra và coverage: [test README](../../backend/api/test/README.md#transactions--be-p1-005).
+Sync queue giao dịch: [sync.md](sync.md) (`BE-P1-009`). Chưa triển khai đối soát, receipt hoặc batch edit. Không deploy staging trong task này. Lệnh kiểm tra và coverage: [test README](../../backend/api/test/README.md#transactions--be-p1-005).

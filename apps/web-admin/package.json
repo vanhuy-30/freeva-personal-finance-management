@@ -6,11 +6,14 @@
     "dev": "next dev -p 3001",
     "build": "next build",
     "start": "next start -p 3001",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "node --experimental-strip-types --test src/sentry/scrub.test.ts",
+    "sentry:smoke": "node scripts/sentry-smoke.mjs"
   },
   "dependencies": {
     "@freeva/design-tokens": "workspace:*",
-    "next": "16.3.3",
+    "@sentry/nextjs": "^11.6.0",
+    "next": "16.3.8",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
@@ -20,7 +23,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.3.3",
+    "eslint-config-next": "16.3.8",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

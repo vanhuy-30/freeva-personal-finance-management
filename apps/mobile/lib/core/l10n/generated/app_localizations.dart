@@ -109,12 +109,6 @@ abstract class S {
   /// **'Your money. Your freedom.'**
   String get splashTagline;
 
-  /// No description provided for @homePlaceholder.
-  ///
-  /// In en, this message translates to:
-  /// **'Core loop: wallet → transaction → balance. Features land in lib/features.'**
-  String get homePlaceholder;
-
   /// Official brand wordmark; keep unchanged across locales.
   ///
   /// In en, this message translates to:
@@ -1020,6 +1014,810 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Load more'**
   String get transactionLoadMore;
+
+  /// No description provided for @syncPending.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} changes waiting to sync'**
+  String syncPending(int count);
+
+  /// No description provided for @syncNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync'**
+  String get syncNow;
+
+  /// No description provided for @syncing.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing'**
+  String get syncing;
+
+  /// No description provided for @syncConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'Not overwritten. Reload to see the copy on the server.'**
+  String get syncConflict;
+
+  /// No description provided for @syncReview.
+  ///
+  /// In en, this message translates to:
+  /// **'The amount differs from the saved copy. Not overwritten.'**
+  String get syncReview;
+
+  /// No description provided for @syncFailedItem.
+  ///
+  /// In en, this message translates to:
+  /// **'This change could not be synced.'**
+  String get syncFailedItem;
+
+  /// No description provided for @syncDiscard.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get syncDiscard;
+
+  /// No description provided for @syncSchema.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync is paused because the app and server schemas differ.'**
+  String get syncSchema;
+
+  /// No description provided for @syncDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'A similar transaction may already exist. This one was still kept.'**
+  String get syncDuplicate;
+
+  /// No description provided for @syncDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get syncDelete;
+
+  /// No description provided for @syncRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get syncRestore;
+
+  /// No description provided for @syncChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get syncChange;
+
+  /// No description provided for @syncItem.
+  ///
+  /// In en, this message translates to:
+  /// **'{action} · {date}'**
+  String syncItem(String action, String date);
+
+  /// No description provided for @categoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get categoryTitle;
+
+  /// No description provided for @categoryAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add category'**
+  String get categoryAdd;
+
+  /// No description provided for @categoryEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit category'**
+  String get categoryEdit;
+
+  /// No description provided for @categoryName.
+  ///
+  /// In en, this message translates to:
+  /// **'Category name'**
+  String get categoryName;
+
+  /// No description provided for @categoryParent.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent category'**
+  String get categoryParent;
+
+  /// No description provided for @categoryNoParent.
+  ///
+  /// In en, this message translates to:
+  /// **'No parent'**
+  String get categoryNoParent;
+
+  /// No description provided for @categoryColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Color'**
+  String get categoryColor;
+
+  /// No description provided for @categoryNoColor.
+  ///
+  /// In en, this message translates to:
+  /// **'No color'**
+  String get categoryNoColor;
+
+  /// No description provided for @categoryIcon.
+  ///
+  /// In en, this message translates to:
+  /// **'Icon'**
+  String get categoryIcon;
+
+  /// No description provided for @categoryNoIcon.
+  ///
+  /// In en, this message translates to:
+  /// **'No icon'**
+  String get categoryNoIcon;
+
+  /// No description provided for @categorySystem.
+  ///
+  /// In en, this message translates to:
+  /// **'Default category'**
+  String get categorySystem;
+
+  /// No description provided for @categoryShowHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Show hidden categories'**
+  String get categoryShowHidden;
+
+  /// No description provided for @categoryHide.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide category'**
+  String get categoryHide;
+
+  /// No description provided for @categoryRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore category'**
+  String get categoryRestore;
+
+  /// No description provided for @categoryHideExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Hiding archives the category from the active list. Existing transactions keep it; hidden categories cannot be used for new records.'**
+  String get categoryHideExplanation;
+
+  /// No description provided for @categoryHideBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide or move active child categories before hiding this one.'**
+  String get categoryHideBlocked;
+
+  /// No description provided for @categoryDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete category'**
+  String get categoryDelete;
+
+  /// No description provided for @categoryDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this category permanently?'**
+  String get categoryDeleteTitle;
+
+  /// No description provided for @categoryDeleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A deleted category cannot be restored. If any transaction still references it, including a soft-deleted one, choose a replacement.'**
+  String get categoryDeleteBody;
+
+  /// No description provided for @categoryDeleteBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete or move every child, including hidden ones, before deleting this category.'**
+  String get categoryDeleteBlocked;
+
+  /// No description provided for @categoryReplacement.
+  ///
+  /// In en, this message translates to:
+  /// **'Replacement category'**
+  String get categoryReplacement;
+
+  /// No description provided for @categoryNoReplacement.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not move transactions'**
+  String get categoryNoReplacement;
+
+  /// No description provided for @categoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No categories yet.'**
+  String get categoryEmpty;
+
+  /// No description provided for @categoryHiddenEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No hidden categories.'**
+  String get categoryHiddenEmpty;
+
+  /// No description provided for @categoryInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the name (1–100 characters), parent, color and icon. A category cannot be its own parent or sit under its child.'**
+  String get categoryInvalid;
+
+  /// No description provided for @categoryConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'This category changed elsewhere. Reload the list before editing again.'**
+  String get categoryConflict;
+
+  /// No description provided for @categoryError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load or save categories. Please try again.'**
+  String get categoryError;
+
+  /// No description provided for @categoryReloadRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'The data is stale. Reload before editing again.'**
+  String get categoryReloadRequired;
+
+  /// No description provided for @reportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports'**
+  String get reportTitle;
+
+  /// No description provided for @reportOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get reportOverview;
+
+  /// No description provided for @reportThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get reportThisMonth;
+
+  /// No description provided for @reportNetWorth.
+  ///
+  /// In en, this message translates to:
+  /// **'Net worth'**
+  String get reportNetWorth;
+
+  /// No description provided for @reportAssets.
+  ///
+  /// In en, this message translates to:
+  /// **'Assets'**
+  String get reportAssets;
+
+  /// No description provided for @reportLiabilities.
+  ///
+  /// In en, this message translates to:
+  /// **'Liabilities'**
+  String get reportLiabilities;
+
+  /// No description provided for @reportIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get reportIncome;
+
+  /// No description provided for @reportExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get reportExpense;
+
+  /// No description provided for @reportNet.
+  ///
+  /// In en, this message translates to:
+  /// **'Cashflow'**
+  String get reportNet;
+
+  /// No description provided for @reportTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer'**
+  String get reportTransfer;
+
+  /// No description provided for @reportWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Week'**
+  String get reportWeek;
+
+  /// No description provided for @reportMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get reportMonth;
+
+  /// No description provided for @reportRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Date range'**
+  String get reportRange;
+
+  /// No description provided for @reportPrevious.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous period'**
+  String get reportPrevious;
+
+  /// No description provided for @reportNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next period'**
+  String get reportNext;
+
+  /// No description provided for @reportFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get reportFrom;
+
+  /// No description provided for @reportTo.
+  ///
+  /// In en, this message translates to:
+  /// **'To'**
+  String get reportTo;
+
+  /// No description provided for @reportApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Show this range'**
+  String get reportApply;
+
+  /// No description provided for @reportByCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'By category'**
+  String get reportByCategory;
+
+  /// No description provided for @reportByAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'By wallet'**
+  String get reportByAccount;
+
+  /// No description provided for @reportUncategorized.
+  ///
+  /// In en, this message translates to:
+  /// **'Uncategorized'**
+  String get reportUncategorized;
+
+  /// No description provided for @reportEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to show for this period.'**
+  String get reportEmpty;
+
+  /// No description provided for @reportError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load the report. Please try again.'**
+  String get reportError;
+
+  /// No description provided for @reportInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'That date range is invalid. The start must be on or before the end, and the dates can be at most 3660 days apart.'**
+  String get reportInvalid;
+
+  /// No description provided for @reportPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'{from} – {to}'**
+  String reportPeriod(String from, String to);
+
+  /// No description provided for @reportAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'{label}: {amount} {currency}'**
+  String reportAmount(String label, String amount, String currency);
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// No description provided for @settingsBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get settingsBack;
+
+  /// No description provided for @settingsAppearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get settingsAppearance;
+
+  /// No description provided for @settingsThemeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get settingsThemeLight;
+
+  /// No description provided for @settingsThemeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get settingsThemeDark;
+
+  /// No description provided for @settingsThemeSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get settingsThemeSystem;
+
+  /// No description provided for @settingsProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Language, currency, and time zone'**
+  String get settingsProfile;
+
+  /// No description provided for @settingsPermissions.
+  ///
+  /// In en, this message translates to:
+  /// **'System access'**
+  String get settingsPermissions;
+
+  /// No description provided for @settingsBiometric.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric unlock'**
+  String get settingsBiometric;
+
+  /// No description provided for @settingsBiometricReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Authenticate to change biometric unlock'**
+  String get settingsBiometricReason;
+
+  /// No description provided for @settingsBiometricOn.
+  ///
+  /// In en, this message translates to:
+  /// **'On'**
+  String get settingsBiometricOn;
+
+  /// No description provided for @settingsBiometricOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get settingsBiometricOff;
+
+  /// No description provided for @settingsBiometricUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This device has no biometrics available.'**
+  String get settingsBiometricUnavailable;
+
+  /// No description provided for @settingsBiometricPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up a PIN on the lock screen before enabling biometrics.'**
+  String get settingsBiometricPin;
+
+  /// No description provided for @settingsBiometricFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometrics were not confirmed. The setting was not changed.'**
+  String get settingsBiometricFailed;
+
+  /// No description provided for @settingsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Help'**
+  String get settingsHelp;
+
+  /// No description provided for @settingsFaq.
+  ///
+  /// In en, this message translates to:
+  /// **'FAQ'**
+  String get settingsFaq;
+
+  /// No description provided for @settingsFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Send feedback'**
+  String get settingsFeedback;
+
+  /// No description provided for @settingsTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of service (draft)'**
+  String get settingsTerms;
+
+  /// No description provided for @settingsPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy policy (draft)'**
+  String get settingsPrivacy;
+
+  /// No description provided for @settingsVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version {version}'**
+  String settingsVersion(String version);
+
+  /// No description provided for @settingsStorageError.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings could not be saved on this device. Please try again.'**
+  String get settingsStorageError;
+
+  /// No description provided for @onboardingSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get onboardingSkip;
+
+  /// No description provided for @onboardingNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get onboardingNext;
+
+  /// No description provided for @onboardingBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get onboardingBack;
+
+  /// No description provided for @onboardingFinish.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get onboardingFinish;
+
+  /// No description provided for @onboardingWelcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Freeva'**
+  String get onboardingWelcomeTitle;
+
+  /// No description provided for @onboardingWelcomeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A short introduction so you can record money without extra help.'**
+  String get onboardingWelcomeBody;
+
+  /// No description provided for @onboardingWalletTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a wallet'**
+  String get onboardingWalletTitle;
+
+  /// No description provided for @onboardingWalletBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a cash, bank, e-wallet, or credit wallet. Each amount stays in its own currency.'**
+  String get onboardingWalletBody;
+
+  /// No description provided for @onboardingTransactionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Record the first transaction'**
+  String get onboardingTransactionTitle;
+
+  /// No description provided for @onboardingTransactionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'From Home, record income, an expense, or a transfer between two wallets.'**
+  String get onboardingTransactionBody;
+
+  /// No description provided for @faqTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'FAQ'**
+  String get faqTitle;
+
+  /// No description provided for @faqWalletQ.
+  ///
+  /// In en, this message translates to:
+  /// **'How do I add a wallet?'**
+  String get faqWalletQ;
+
+  /// No description provided for @faqWalletA.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Wallets from Home, then create a cash, bank, e-wallet, or credit wallet.'**
+  String get faqWalletA;
+
+  /// No description provided for @faqTransactionQ.
+  ///
+  /// In en, this message translates to:
+  /// **'How do I record a transaction?'**
+  String get faqTransactionQ;
+
+  /// No description provided for @faqTransactionA.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Transactions or use Record transaction on Home. Choose income, an expense, or a transfer with two balanced sides.'**
+  String get faqTransactionA;
+
+  /// No description provided for @faqProfileQ.
+  ///
+  /// In en, this message translates to:
+  /// **'How do I change language, currency, or time zone?'**
+  String get faqProfileQ;
+
+  /// No description provided for @faqProfileA.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings, then Language, currency, and time zone. The language changes after the profile is saved.'**
+  String get faqProfileA;
+
+  /// No description provided for @faqLockQ.
+  ///
+  /// In en, this message translates to:
+  /// **'How do I lock the app?'**
+  String get faqLockQ;
+
+  /// No description provided for @faqLockA.
+  ///
+  /// In en, this message translates to:
+  /// **'Freeva locks when you leave the app. Unlock with your six-digit PIN. You can turn on biometrics in Settings after a PIN exists.'**
+  String get faqLockA;
+
+  /// No description provided for @faqThemeQ.
+  ///
+  /// In en, this message translates to:
+  /// **'How do I switch light and dark mode?'**
+  String get faqThemeQ;
+
+  /// No description provided for @faqThemeA.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings and choose Light, Dark, or System. Light is the default and stays on this device.'**
+  String get faqThemeA;
+
+  /// No description provided for @feedbackTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback'**
+  String get feedbackTitle;
+
+  /// No description provided for @feedbackIdea.
+  ///
+  /// In en, this message translates to:
+  /// **'Idea'**
+  String get feedbackIdea;
+
+  /// No description provided for @feedbackProblem.
+  ///
+  /// In en, this message translates to:
+  /// **'Problem'**
+  String get feedbackProblem;
+
+  /// No description provided for @feedbackMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get feedbackMessage;
+
+  /// No description provided for @feedbackCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy feedback'**
+  String get feedbackCopy;
+
+  /// No description provided for @feedbackCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied. A contact address is not configured yet, so Freeva does not send this message.'**
+  String get feedbackCopied;
+
+  /// No description provided for @feedbackInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a message of up to 2000 characters.'**
+  String get feedbackInvalid;
+
+  /// No description provided for @feedbackHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Freeva copies the message on this device. It is not uploaded and is not written to logs.'**
+  String get feedbackHelp;
+
+  /// No description provided for @legalDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft for PRD-P0-002. This is not legal advice and is not in effect. The operating entity and contact channel are not decided yet.'**
+  String get legalDraft;
+
+  /// No description provided for @tosTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of service'**
+  String get tosTitle;
+
+  /// No description provided for @tosBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Freeva lets you record wallets and transactions you enter. You keep your financial data. The service operator is not decided yet. Account export and deletion are separate release work. This summary does not replace a lawyer-reviewed agreement.'**
+  String get tosBody;
+
+  /// No description provided for @privacyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy policy'**
+  String get privacyTitle;
+
+  /// No description provided for @privacyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The account stores email, language, time zone, default currency, and the financial month start day. Amounts you enter are not written to logs. Feedback you compose stays on this device until a contact channel exists. Analytics events do not include email, balances, or account numbers. This summary does not replace a lawyer-reviewed policy.'**
+  String get privacyBody;
+
+  /// No description provided for @balanceHiddenMask.
+  ///
+  /// In en, this message translates to:
+  /// **'••••'**
+  String get balanceHiddenMask;
+
+  /// No description provided for @balanceHide.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide amounts'**
+  String get balanceHide;
+
+  /// No description provided for @balanceShow.
+  ///
+  /// In en, this message translates to:
+  /// **'Show amounts'**
+  String get balanceShow;
+
+  /// No description provided for @settingsPrivacyControls.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy'**
+  String get settingsPrivacyControls;
+
+  /// No description provided for @settingsHideBalances.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide balances'**
+  String get settingsHideBalances;
+
+  /// No description provided for @settingsHideBalancesHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Masks amounts shown on this device. Fields you are editing still show what you type.'**
+  String get settingsHideBalancesHelp;
+
+  /// No description provided for @settingsSessionAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'New sign-in alerts'**
+  String get settingsSessionAlerts;
+
+  /// No description provided for @settingsSessionAlertsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Warns on this device when another session appears. The alert does not include an email, balance, or device name.'**
+  String get settingsSessionAlertsHelp;
+
+  /// No description provided for @sessionAlertTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New sign-in'**
+  String get sessionAlertTitle;
+
+  /// No description provided for @sessionAlertBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Another session signed in. Open Freeva to review it and revoke it if it was not you.'**
+  String get sessionAlertBody;
+
+  /// No description provided for @sessionAlertReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review sessions'**
+  String get sessionAlertReview;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

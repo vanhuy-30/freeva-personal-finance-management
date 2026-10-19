@@ -20,6 +20,15 @@
       "@prisma/engines",
       "prisma",
       "unrs-resolver"
-    ]
+    ],
+    "overrides": {
+      "multer": "2.4.0",
+      "proxy-addr": "2.0.8",
+      "qs": "6.16.0",
+      "brace-expansion@^5": "5.0.12",
+      "fast-uri@^3": "3.1.8",
+      "sharp@0.35.4": "0.35.5",
+      "source-map-js@1.2.1": "1.2.2"
+    }
   }
 }

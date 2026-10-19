@@ -44,6 +44,13 @@ describe('pino redact (SEC-P0-003)', () => {
       initialBalanceMinor: AMOUNT,
       creditLimitMinor: AMOUNT,
       balanceMinor: AMOUNT,
+      incomeMinor: AMOUNT,
+      expenseMinor: AMOUNT,
+      netMinor: AMOUNT,
+      transferMinor: AMOUNT,
+      assetsMinor: AMOUNT,
+      liabilitiesMinor: AMOUNT,
+      netWorthMinor: AMOUNT,
       accountNumber: ACCOUNT,
       iban: IBAN,
       userId: '11111111-1111-1111-1111-111111111111',
@@ -69,6 +76,15 @@ describe('pino redact (SEC-P0-003)', () => {
         creditLimitMinor: AMOUNT,
         balanceMinor: AMOUNT,
         iban: IBAN,
+      },
+      report: {
+        incomeMinor: AMOUNT,
+        expenseMinor: AMOUNT,
+        netMinor: AMOUNT,
+        transferMinor: AMOUNT,
+        assetsMinor: AMOUNT,
+        liabilitiesMinor: AMOUNT,
+        netWorthMinor: AMOUNT,
       },
     });
 
@@ -98,6 +114,7 @@ describe('pino redact (SEC-P0-003)', () => {
       },
       wrapper: {
         transaction: { amountMinor: AMOUNT },
+        report: { netWorthMinor: AMOUNT, incomeMinor: AMOUNT },
       },
     });
 

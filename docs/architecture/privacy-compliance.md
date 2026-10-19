@@ -19,11 +19,11 @@ Xem, xuất (JSON/CSV máy đọc), sửa, xóa tài khoản, rút consent.
 
 Danh sách công khai (bản nháp): [privacy-policy.md](../legal/privacy-policy.md) §10. Không nhân bản bảng vendor ở đây.
 
-Local P0: không có bên thứ ba production (compose self-host). Staging: Render + Vercel ([staging.md](../infrastructure/staging.md)) — không user thật. Trước MVP production: hosting region **VN**, vendor TBD tới Store; email OTP, store, crash, analytics — nhà cung cấp cụ thể còn mở. Sau MVP không cam kết: push, AI, đối tác ngân hàng (P6, DPA), IAP (P7).
+Local P0: không có bên thứ ba production (compose self-host). Staging: Render + Vercel ([staging.md](../infrastructure/staging.md)) — không user thật. Crash staging dùng Sentry (`INF-P1-001`): tắt khi không có DSN, không gửi PII tài chính. Trước MVP production: hosting region **VN**, vendor TBD tới Store; email OTP, store, analytics — nhà cung cấp cụ thể còn mở. Sau MVP không cam kết: push, AI, đối tác ngân hàng (P6, DPA), IAP (P7).
 
 ## Copy pháp lý
 
 - [Điều khoản dịch vụ (nháp)](../legal/terms-of-service.md) — `PRD-P0-002`
 - [Chính sách bảo mật (nháp)](../legal/privacy-policy.md) — `PRD-P0-002`
 
-Cần luật sư trước store / in-app. Export và xóa tài khoản: `BE-P1-010`.
+Cần luật sư trước store / in-app. API xuất JSON và xóa tài khoản ngay: `BE-P1-010` ([account-privacy.md](account-privacy.md)). Mốc “+ 30 ngày” trong bảng trên vẫn là đề xuất, không phải thời hạn ứng dụng đang áp dụng.

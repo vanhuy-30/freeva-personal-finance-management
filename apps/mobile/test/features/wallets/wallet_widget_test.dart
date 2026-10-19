@@ -13,8 +13,12 @@ import 'package:mobile/features/wallets/domain/wallet_use_cases.dart';
 import 'package:mobile/features/wallets/presentation/viewmodels/wallet_view_model.dart';
 import 'package:mobile/features/wallets/presentation/widgets/wallet_editor_form.dart';
 import 'package:mobile/features/wallets/presentation/widgets/wallet_list.dart';
+import 'package:mobile/features/settings/data/settings_repository_impl.dart';
+import 'package:mobile/features/settings/domain/settings_use_cases.dart';
+import 'package:mobile/features/settings/presentation/viewmodels/settings_view_model.dart';
 
 import '../auth/fakes.dart';
+import '../settings/fakes.dart';
 import 'wallet_test.dart' show WalletTransport;
 
 void main() {
@@ -106,6 +110,46 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('b'), findsOneWidget);
     expect(find.text('Restore wallet'), findsOneWidget);
+  });
+  testWidgets('hidden balances mask the list and leave the editor visible', (
+    tester,
+  ) async {
+    final settings = DefaultSettingsViewModel(
+      DefaultSettingsUseCases(SettingsRepositoryImpl(MemoryPreferences())),
+      DefaultAuthUseCases(
+        AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+      ),
+      RecordingAnalytics(),
+    );
+    await settings.load();
+    await settings.setBalancesHidden(true);
+    getIt.registerSingleton<SettingsViewModel>(settings);
+    addTearDown(settings.dispose);
+    await tester.pumpWidget(
+      app(
+        ListenableBuilder(
+          listenable: model,
+          builder: (_, _) => WalletList(model: model, archived: false),
+        ),
+      ),
+    );
+    expect(find.text('Số dư: •••• VND'), findsNWidgets(3));
+    expect(find.textContaining('18.446.744.073.709.551.614'), findsNothing);
+    await tester.pumpWidget(
+      app(WalletEditorForm(model: model, wallet: model.wallets.first)),
+    );
+    await tester.pump();
+    final fields = tester.widgetList<TextField>(find.byType(TextField));
+    expect(
+      fields.any((field) => (field.controller?.text ?? '').contains('•')),
+      isFalse,
+    );
+    expect(
+      fields.any(
+        (field) => RegExp(r'\d').hasMatch(field.controller?.text ?? ''),
+      ),
+      isTrue,
+    );
   });
   testWidgets(
     'editor retains invalid draft and supports small screen with large text',

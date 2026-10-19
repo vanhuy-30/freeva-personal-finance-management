@@ -35,7 +35,7 @@ Phase này chưa phải product v1. Gate đầy đủ: [spec-alignment.md](../do
 - Module: 1
 - DoD: `/api/v1/auth` register/login/verify/reset; Argon2id; token single-use/expiry; SMTP outbox mã hóa và retry; DTO/OpenAPI/error envelope khớp; audit transaction và log không PII.
 - Verification: API build + 37 unit tests + 12 HTTP/PostgreSQL integration tests pass; fresh/upgrade/collision migration pass; SMTP verify/reset qua Mailhog thật pass; OpenAPI validator pass.
-- Note: [ADR 009](../docs/architecture/adr/009-email-auth-sessions.md). Cần cấu hình AUTH_SECRET_KEY/SMTP và apply migration trước deploy; chưa deploy staging. Existing dependency audit còn cảnh báo, theo threat model / SEC-P1-001.
+- Note: [ADR 009](../docs/architecture/adr/009-email-auth-sessions.md). Cần cấu hình AUTH_SECRET_KEY/SMTP và apply migration trước deploy; chưa deploy staging. Dependency còn high `deepmerge-ts` trong Prisma; xem `SEC-P1-001`.
 
 ### BE-P1-002 — Session, rate limit login, revoke
 - Status: done
@@ -45,12 +45,12 @@ Phase này chưa phải product v1. Gate đầy đủ: [spec-alignment.md](../do
 - Note: Không refresh token ở scope này; request đã qua guard có thể hoàn thành khi revoke. Không trust X-Forwarded-For mặc định; deployment sau proxy cần review topology (ADR 009).
 
 ### MOB-P1-001 — Màn auth + PIN/biometric lock
-- Status: doing
+- Status: done
 - Module: 1, 22
 - Depends: BE-P1-001, BE-P1-002
 - DoD: email login/register/verify/reset; secure opaque session; PIN 6 số + biometric opt-in; lifecycle lock/privacy cover; list/revoke/logout; l10n vi/en; Clean Architecture + MVVM + abstract DI.
 - Verification: Flutter analyze sạch; 33 unit/widget tests pass; Android debug APK (JDK 17), iOS simulator build + cold launch login/Keychain pass.
-- Note: [Thiết kế/cấu hình và residual](../docs/architecture/mobile-auth.md). Unlock cần mạng để kiểm tra revoke. Chưa đóng task: cần E2E Resend trên staging và Face ID/fingerprint/recents thiết bị thực. [Runbook email](../docs/infrastructure/email.md).
+- Note: [Thiết kế/cấu hình và residual](../docs/architecture/mobile-auth.md). Unlock cần mạng để kiểm tra revoke. Đóng task 2026-10-19: Face ID/fingerprint/recents đã test pass trên thiết bị thực. Residual có chủ đích: E2E Resend trên staging hoãn đến khi setup Resend, chưa kiểm chứng delivery/inbox. [Runbook email](../docs/infrastructure/email.md).
 
 ### MOB-P1-002 — Hồ sơ: locale, currency, TZ, kỳ tài chính
 - Status: done
@@ -110,11 +110,51 @@ Phase này chưa phải product v1. Gate đầy đủ: [spec-alignment.md](../do
 - Note: [Kiến trúc danh mục](../docs/architecture/categories.md), [test và migration](../backend/api/test/README.md#categories--be-p1-006). Deploy migration trước API; mobile gọi POST defaults trước GET categories. Chưa deploy. UI/nhãn/quản lý nhóm thuộc task riêng.
 
 ### MOB-P1-005 — UI danh mục
-- Status: todo
+- Status: done
 - Module: 5
 - Gate: v1
-- Depends: BE-P1-011, MOB-P1-004
-- DoD: tạo, đổi tên, icon/màu bằng token, ẩn, khôi phục, xóa có chuyển giao dịch, cây cha-con. Ghi chi chỉ chọn `expense` hoặc `both`; ghi thu chỉ chọn `income` hoặc `both`. Hiện bộ mặc định sau bootstrap. Loading, empty, error. Không hex, không chuỗi cứng. `flutter analyze` sạch. Chưa quản lý nhãn.
+- Depends: BE-P1-006, MOB-P1-001, MOB-P1-004
+- DoD: màn danh sách/tạo/sửa cây danh mục từ Home; màu và icon theo catalog; ẩn/khôi phục; xóa vĩnh viễn kèm danh mục thay thế; version/clientId; l10n vi/en, DI abstract, privacy gate. Không nhãn, nhóm, báo cáo hay hàng đợi offline.
+- Verification: `flutter analyze` sạch; toàn bộ 80 Flutter tests pass (10 tests mới), gồm phân trang, chu trình cha, idempotency, 409, khóa xóa state và editor 320px text scale 2.
+- Note: [Thiết kế và giới hạn](../docs/architecture/mobile-categories.md). Không đổi API. Chưa native build/E2E staging.
+
+## Báo cáo / search / settings / help
+
+### BE-P1-007 — Báo cáo thu chi, theo danh mục/ví, net worth hiện tại
+- Status: done
+- Module: 14
+- Gate: v1
+- Depends: BE-P1-004, BE-P1-005
+- DoD: GET cashflow và net-worth chỉ đọc, owner/session, no-store; tuần Thứ Hai–Chủ nhật, tháng theo fiscalMonthStartDay, khoảng inclusive tối đa 3660 ngày; thu/chi/dòng tiền theo từng currency, danh mục lá và ví; transfer không vào thu/chi; net worth hiện tại gồm ví lưu trữ; không quy đổi FX, không migration; OpenAPI và log không PII.
+- Verification: 171 unit tests (9 mới) và 70 HTTP/PostgreSQL integration tests (4 mới) pass; build và OpenAPI validation pass. Không migration mới.
+- Note: [Thiết kế API](../docs/architecture/reports.md), [lệnh test](../backend/api/test/README.md#reports--be-p1-007). Không cộng khác loại tiền. Chưa deploy staging. UI báo cáo thuộc MOB-P1-006.
+
+### MOB-P1-006 — Màn tổng quan + báo cáo lọc kỳ
+- Status: done
+- Module: 14
+- Gate: v1
+- Depends: BE-P1-007, MOB-P1-001, MOB-P1-004, MOB-P1-005
+- DoD: Home hiện tài sản, nợ, ròng và thu/chi/dòng tiền của tháng hiện tại, mỗi loại tiền một khối; `/reports` lọc tuần, tháng và khoảng inclusive tối đa 3660 ngày. Tuần/tháng bước theo mốc server. Danh mục lá không gộp cha; thu chưa phân loại có nhãn; tên ví gồm ví đã lưu trữ. Không cộng khác loại tiền, không đổi API, không log số tiền. `report_viewed` một lần mỗi lượt mở màn báo cáo. 401 và khóa xóa state.
+- Verification: `flutter analyze` sạch; toàn bộ 94 Flutter tests pass (14 tests mới), gồm khoảng 3660 ngày, bigint vượt int64, bước kỳ, epoch/401, `report_viewed` một lần, hai currency tách riêng, nhãn chưa phân loại và layout 320px text scale 2.
+- Note: [Thiết kế và giới hạn](../docs/architecture/mobile-reports.md). Không đổi API. Chưa native build/E2E staging.
+
+### BE-P1-008 — Search cơ bản + không dấu (Should)
+- Status: done
+- Module: 19
+- Gate: v1
+- Depends: BE-P1-005
+- DoD: `GET /api/v1/transactions?search` khớp ghi chú, tên danh mục gắn leg, tên ví, tên nhãn hoặc `abs(amountMinor)`; không phân biệt hoa thường và dấu tiếng Việt; `from`/`to` cùng lọc cũ vẫn AND; owner/session, no-store; không migration, không endpoint mới; OpenAPI và log không PII.
+- Verification: 18 unit suites / 175 tests (4 mới) và 5 HTTP/PostgreSQL suites / 71 tests (1 mới) pass; build và OpenAPI validation pass. Không migration mới.
+- Note: [Thiết kế API](../docs/architecture/search.md), [lệnh test](../backend/api/test/README.md#search--be-p1-008). Không CRUD nhãn và không UI. Chưa deploy staging.
+
+### MOB-P1-007 — Settings theme/locale/quyền + onboarding + FAQ + feedback
+- Status: done
+- Module: 24, 25
+- Gate: v1
+- Depends: MOB-P1-001, MOB-P1-002
+- DoD: Cài đặt từ Home: theme sáng/tối/hệ thống lưu trên thiết bị; dòng dẫn hồ sơ cho locale/tiền tệ/múi giờ; bật/tắt sinh trắc trên PIN hiện có. Onboarding một lần khi đã mở khóa, FAQ tĩnh, phản hồi chỉ sao chép cục bộ, phiên bản và bản nháp ToS/privacy. l10n vi/en, DI abstract, privacy gate. Không API, không quyền thông báo, không gửi nội dung phản hồi.
+- Verification: `flutter analyze` sạch; toàn bộ 108 Flutter tests pass (14 tests mới), gồm theme sau khi tải, onboarding một lần với hai event, phản hồi rỗng/không vào log, sinh trắc thất bại không đổi cờ, và layout 320px text scale 2.
+- Note: [Thiết kế và giới hạn](../docs/architecture/mobile-settings.md). Không đổi API. Chưa native build/E2E staging. Địa chỉ nhận phản hồi còn TBD (DECISIONS-OPEN #10).
 
 ### BE-P1-011 — Kind danh mục và bổ sung bộ mặc định
 - Status: todo
@@ -124,34 +164,6 @@ Phase này chưa phải product v1. Gate đầy đủ: [spec-alignment.md](../do
 - DoD: `kind` = expense, income hoặc both. User đã bootstrap nhận thêm, đúng một lần, các mục spec còn thiếu: Cà phê, Điện nước, Internet, Điện thoại, Subscription, Bảo hiểm, Thuế/phí, Freelance, Kinh doanh, Đầu tư, Hoàn tiền. Điện nước, Internet, Điện thoại là con của Hóa đơn nếu mục đó còn. Không ghi đè tên hoặc mục user đã sửa. Custom cũ mặc định `both`. OpenAPI khớp. Test upgrade tài khoản đã có danh mục. Log không có tên danh mục.
 
 ## Báo cáo / search / settings / help
-
-### BE-P1-007 — Báo cáo thu chi, theo danh mục/ví, ròng hiện tại
-- Status: todo
-- Module: 14
-- Gate: v1
-- Depends: BE-P1-004, BE-P1-005
-- DoD: theo kỳ và timezone hồ sơ: tổng thu, tổng chi, tiết kiệm = thu − chi, theo danh mục, theo ví. Tài sản, nợ, ròng hiện tại: số dư âm và thẻ là nợ, không cộng vào tài sản. Phần trăm ròng so với cuối tháng trước tính lại từ ledger và số dư đầu, không dùng bảng snapshot. Transfer không vào thu hoặc chi. Tiền integer, một snapshot đọc. OpenAPI và test bảng số. Chưa so ngân sách, chưa top merchant, chưa lịch sử nhiều kỳ.
-
-### MOB-P1-006 — Home và báo cáo lọc kỳ
-- Status: todo
-- Module: 14
-- Gate: v1
-- Depends: BE-P1-007, MOB-P1-004
-- DoD: Home có tổng tiền, tài sản, nợ, ròng, phần trăm so với tháng trước, thu/chi/tiết kiệm tháng, 5–10 giao dịch gần nhất. Empty có CTA ghi giao dịch đầu. Tab: Home, Giao dịch, `+`, Thêm. Báo cáo lọc tuần, tháng, khoảng ngày. Loading, empty, error, offline. Số VND dạng `12.500.000đ` từ formatter. `flutter analyze` sạch. Card ngân sách, mục tiêu, insight và tab Insights gắn ở task `Gate: v1` sau.
-
-### BE-P1-008 — Tìm giao dịch, kể cả không dấu
-- Status: todo
-- Module: 19
-- Gate: v1
-- Depends: BE-P1-005
-- DoD: lọc theo từ khóa ghi chú, danh mục, ví, khoảng tiền, khoảng ngày, loại thu/chi/chuyển. Tiếng Việt không dấu. Phân trang, chỉ owner. OpenAPI và test. Merchant và tag nối trong cùng API khi `BE-P1-012` đã có trường.
-
-### MOB-P1-007 — Onboarding, cài đặt, FAQ, phản hồi
-- Status: todo
-- Module: 24, 25
-- Gate: v1
-- Depends: MOB-P1-002, MOB-P1-003
-- DoD: lần đầu đi locale và tiền tệ (mặc định VND, `Asia/Ho_Chi_Minh`) → ví đầu và số dư → bootstrap danh mục → Home. Bỏ qua được bước sau ví đầu. Settings đổi theme và locale; quyền thông báo chỉ lưu preference. FAQ. Phản hồi không gửi số dư hay số tài khoản. Loading, empty, error. Bước ngân sách và mục tiêu thêm khi module đó xong, không chặn luồng này.
 
 ### BE-P1-012 — Merchant và CRUD nhãn (Should)
 - Status: todo
@@ -176,43 +188,56 @@ Phase này chưa phải product v1. Gate đầy đủ: [spec-alignment.md](../do
 
 ## Sync / privacy / security phát hành
 
-### BE-P1-009 — Hàng đợi sync, idempotency, chống trùng
-- Status: todo
+## Sync / privacy / security phát hành
+
+### BE-P1-009 — Sync queue, idempotency, chống trùng đơn giản
+- Status: done
 - Module: 20
 - Gate: v1
-- Depends: BE-P1-005
-- DoD: mutation tạo dùng `clientId` UUID, replay không thêm leg. Cùng user, số tiền, ngày và ví trong cửa sổ ngắn thì trả cờ nghi trùng, không tự xóa. Cùng id mà số tiền khác: giữ bản server và trả cờ cần xem lại. Client lệch schema major thì từ chối sync. Test retry không nhân đôi transfer. Không log số tiền.
+- Depends: BE-P0-001
+- DoD: `POST /api/v1/sync` áp create/update/delete giao dịch theo thứ tự; idempotent theo `clientId`; conflict không ghi đè; `review` khi amount khác; gợi ý trùng trong 10 phút nhưng vẫn tạo. `schemaVersion` khớp `SchemaMeta`. CRUD giao dịch hiện có không đổi. OpenAPI cập nhật; log không chứa số tiền hay ghi chú.
+- Verification: 19 unit suites / 179 tests (4 mới) và 6 HTTP/PostgreSQL suites / 75 tests (4 mới) pass; build và OpenAPI validation pass. Một migration chỉ seed `SchemaMeta`.
+- Note: [Thiết kế](../docs/architecture/sync.md). Không pull cursor, không CRDT, không hàng đợi mobile (`MOB-P1-008`). Chưa deploy staging.
 
-### MOB-P1-008 — Offline: hàng đợi và trạng thái sync
-- Status: todo
+### MOB-P1-008 — Hàng đợi offline + trạng thái sync
+- Status: done
 - Module: 20
 - Gate: should
-- Depends: BE-P1-009, MOB-P1-004
-- DoD: mất mạng vẫn lưu giao dịch local với `clientId`, `syncStatus` pending/synced/failed, thời điểm tạo local, thời điểm server khi ack, `retryCount`. Có mạng thì đẩy và hiện trạng thái. Conflict hiện cho user chọn xem bản server. Sau synced, số dư trên màn hình lấy từ server.
+- Depends: MOB-P1-004, BE-P1-009
+- DoD: Mất mạng khi tạo/sửa/xóa/khôi phục giao dịch thì vào hàng đợi cục bộ và gửi lại bằng `POST /api/v1/sync`. Gộp mutation trước khi gửi, giữ `clientId`, conflict không ghi đè. Banner trạng thái trên Home và danh sách giao dịch. Đăng xuất xóa hàng đợi; khóa PIN không xóa. Không sync ví/danh mục, không đổi API, không log số tiền hay ghi chú.
+- Verification: `flutter analyze` sạch; toàn bộ 117 Flutter tests pass (9 tests mới), gồm gộp hàng đợi, `applied`/`replayed`/`conflict`/`rejected`, batch 50, đăng xuất xóa queue, và banner vi/en.
+- Note: [Thiết kế](../docs/architecture/mobile-sync.md). Không pull cursor, không CRDT, không đối soát. Chưa native build/E2E staging.
 
-### BE-P1-010 — Export CSV/JSON và xóa tài khoản
-- Status: todo
+### BE-P1-010 — Export JSON + xóa tài khoản
+- Status: done
 - Module: 21
 - Gate: v1
-- Depends: BE-P1-005
-- DoD: CSV cột `date,type,amount,category,account,note` và JSON cùng tập giao dịch của owner. `amount` là integer minor units. Xóa tài khoản xóa dữ liệu tài chính và mọi session sau bước xác nhận. Audit không ghi nội dung file. Test không lẫn dữ liệu user khác.
+- Depends: BE-P0-004, BE-P1-001
+- DoD: `GET /api/v1/account/export` trả snapshot JSON của owner, gồm giao dịch đã xóa, tiền dạng string; `DELETE /api/v1/account` xóa ngay user và dữ liệu tài chính. Audit `user.data_export` / `user.account_delete` cùng transaction, fail closed, UUID còn sau khi user biến mất. Session Bearer, no-store, không log email/ghi chú/số tiền. Không CSV, không UI, không migration.
+- Verification: 20 unit suites / 185 tests (6 mới) và 7 HTTP/PostgreSQL suites / 79 tests (4 mới) pass; build và OpenAPI validation pass. Không migration mới.
+- Note: [Thiết kế](../docs/architecture/account-privacy.md). Không cửa sổ 30 ngày trên ứng dụng. Chưa deploy staging.
 
-### MOB-P1-009 — Che số khi app nền; cảnh báo phiên mới (Should)
-- Status: todo
+### MOB-P1-009 — Ẩn số dư khi nền; thông báo thiết bị mới (Should)
+- Status: done
 - Module: 22
 - Gate: should
-- Depends: MOB-P1-001
-- DoD: số dư và số tiền không còn đọc được ở app switcher. Phiên đăng nhập từ thiết bị mới có cảnh báo in-app, nội dung không kèm số dư. Bật hoặc tắt cảnh báo trong settings. Phần che app nền đã có ở `MOB-P1-001` thì chỉ kiểm chứng lại, không làm màn hình thứ hai.
+- Depends: MOB-P1-001, MOB-P1-007
+- DoD: Giữ màn che khi app vào nền, `FLAG_SECURE` Android và cover iOS. Nút mắt và công tắc Cài đặt che số đang đọc trên Home, ví, giao dịch và báo cáo; ô đang gõ vẫn hiện số. Sau khi mở khóa, so phiên với danh sách id đã thấy trên máy: lần đầu chỉ ghi nhớ, phiên khác chưa thấy thì banner và thông báo cục bộ một lần. Xin quyền thông báo đúng lúc cảnh báo đầu; từ chối thì banner vẫn hiện và không hỏi lại. Đăng xuất xóa danh sách đã thấy; khóa PIN không xóa. Không email, số dư, tên thiết bị, token hay id phiên. Không đổi API.
+- Verification: `flutter analyze` sạch; toàn bộ 130 Flutter tests pass (13 tests mới), gồm preference cũ, che số đọc, seed/phiên lạ/phiên hiện tại, lỗi mạng, đăng xuất và nội dung thông báo.
+- Note: [Thiết kế](../docs/architecture/mobile-privacy.md). Không báo khi app đang đóng. Không FCM/APNs. Chưa native build/E2E staging.
 
 ### INF-P1-001 — Crash monitoring staging
-- Status: todo
+- Status: done
 - Module: 26
 - Gate: v1
-- DoD: SDK crash (vendor Sentry theo DECISIONS-OPEN #9, trừ khi quyết định đó đổi) trên API, admin và mobile ở staging. Scrub email, số dư, số tài khoản, token. Một event thử không chứa các field đó. Dashboard không public.
+- DoD: Sentry trên API, web admin và mobile staging. SDK tắt khi không có DSN. Scrub PII trước khi gửi; API không gửi HTTP status dưới 500. Không endpoint public, không tracing, không upload source map, không commit DSN. Script smoke chỉ gửi khi có DSN và `SENTRY_SMOKE`.
+- Verification: 22 unit suites / 192 tests (7 mới) và API build pass. Admin `tsc --noEmit`, lint và 2 node tests pass. `flutter analyze` sạch; toàn bộ 133 Flutter tests pass (3 tests mới). Lệnh smoke không có DSN in `sentry smoke skipped`. Event live trên dashboard Sentry chờ DSN vận hành.
+- Note: [ADR 011](../docs/architecture/adr/011-sentry-crash-monitoring.md). [Staging](../docs/infrastructure/staging.md). Residual Phase 0 đóng bằng SDK này; DSN dashboard vẫn do người vận hành đặt.
 
 ### SEC-P1-001 — Security test cơ bản trước store
-- Status: todo
+- Status: done
 - Module: 22
 - Gate: v1
-- Depends: BE-P1-005, BE-P1-010
-- DoD: checklist ghi vào threat model: rate limit auth, không đọc ví hoặc giao dịch của user khác, revoke session có hiệu lực, export và xóa chỉ owner, log không PII, TLS staging. Không kèm hướng dẫn khai thác.
+- DoD: Checklist authn/z, secrets, log PII, export/xóa và rate limit có bằng chứng test hoặc residual có chủ đích. Helmet, CORS allowlist và ValidationPipe dùng chung với runtime và có test. Payload auth không hợp lệ vẫn bị giới hạn theo IP, không lưu email thô. Audit dependency được ghi; chỉ vá trong cùng major. Không payload exploit, không cert pinning, không gắn biometric vào hardware key.
+- Verification: 22 unit suites / 192 tests và 8 HTTP/PostgreSQL suites / 82 tests (3 mới) pass; API build pass. Admin lint và build pass sau Next `16.3.8`. `pnpm audit --prod` còn 1 high `deepmerge-ts`. Không migration mới.
+- Note: [security-test-phase1.md](../docs/architecture/security-test-phase1.md). Residual: enumeration `email-step`, edge/WAF, biometric/smoke thiết bị, audit chưa append-only, luật sư, `deepmerge-ts` 7 trong Prisma.
