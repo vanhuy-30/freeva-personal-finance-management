@@ -443,6 +443,24 @@ class SVi extends S {
   String get transactionNotes => 'Ghi chú';
 
   @override
+  String get transactionMerchant => 'Người nhận / cửa hàng';
+
+  @override
+  String get transactionTags => 'Nhãn';
+
+  @override
+  String get transactionTagCreate => 'Tạo nhãn';
+
+  @override
+  String get transactionTagCreateTitle => 'Tạo nhãn mới';
+
+  @override
+  String get transactionTagName => 'Tên nhãn';
+
+  @override
+  String get transactionTagLimit => 'Tối đa 20 nhãn trên một giao dịch.';
+
+  @override
   String get transactionSave => 'Lưu';
 
   @override

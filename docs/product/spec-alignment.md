@@ -35,7 +35,7 @@ Giữ nguyên số phase và ID đã có. Không dồn ngân sách, mục tiêu,
 | Spec | Hiện trạng | Task |
 |---|---|---|
 | §10 danh mục thu/chi tách và thiếu Cà phê, điện nước, internet, điện thoại, subscription, bảo hiểm, thuế, freelance, kinh doanh, đầu tư, hoàn tiền | API có `kind` và bộ đủ tên; app vẫn một cây, chưa lọc theo `kind` | UI lọc `kind` khi cần; `MOB-P1-005` đã có cây |
-| §8 merchant; §30 tag | API CRUD nhãn và `merchant` trên thu/chi đã có (`BE-P1-012`); UI còn mở | `MOB-P1-011` |
+| §8 merchant; §30 tag | API và UI merchant/nhãn trên thu/chi đã có (`BE-P1-012`, `MOB-P1-011`) | Đóng; search merchant/tag còn `BE-P1-008` |
 | §6 Home: tài sản, nợ, ròng, dòng tiền, giao dịch gần | `MOB-P1-006` chưa có DoD | `BE-P1-007`, `MOB-P1-006` |
 | §6.3–6.6 ngân sách, mục tiêu, insight trên Home | Chưa có task gắn vào Home | `MOB-P2-E02`, `MOB-P3-E01`, `MOB-P5-E04` |
 | §9 ghi chi thường dưới 10 giây | `MOB-P1-004` xong về số bước, chưa đo thời gian | `QA-P1-001` |
@@ -57,7 +57,7 @@ Giữ nguyên số phase và ID đã có. Không dồn ngân sách, mục tiêu,
 Đủ khi các task sau đạt DoD của chính task đó:
 
 1. Phase 1 `Gate: v1` trong backlog đã đóng (gồm `BE-P1-011`).
-2. Should, không chặn v1 nếu thiếu: `BE-P1-012`, `MOB-P1-011`, `QA-P1-001`.
+2. Should, không chặn v1 nếu thiếu: `QA-P1-001` (`BE-P1-012` / `MOB-P1-011` đã đóng).
 3. `Gate: v1` ở phase sau: `BE-P2-E02` / `MOB-P2-E02`, `BE-P3-E01` / `MOB-P3-E01`, `BE-P5-E03` / `MOB-P5-E03`, `BE-P5-E04` / `MOB-P5-E04`, `PRD-P5-E01`.
 
 Hành trình chấp nhận: đăng ký → ví và số dư → danh mục → ghi thu/chi/chuyển → Home đúng số → ngân sách → mục tiêu → báo cáo → một insight có số lấy từ báo cáo, user xác nhận trước mọi ghi đè.

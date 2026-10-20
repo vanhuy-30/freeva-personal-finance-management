@@ -57,6 +57,23 @@ class ScriptedApi implements AuthorizedApi {
         'total': 1,
       });
     }
+    if (method == 'GET' && path.startsWith('tags?')) {
+      return right({
+        'items': [_tag('work', 'Work')],
+        'page': 1,
+        'pageSize': 100,
+        'total': 1,
+      });
+    }
+    if (method == 'POST' && path == 'tags') {
+      return right(
+        _tag(
+          'tag-${body!['clientId']}',
+          body['name'] as String,
+          clientId: body['clientId'] as String,
+        ),
+      );
+    }
     if (method == 'GET' && path.startsWith('transactions?')) {
       final page = int.parse(
         Uri.parse('http://local/$path').queryParameters['page']!,
@@ -106,6 +123,15 @@ Map<String, dynamic> _category(String id, String name) => {
   'parentId': null,
 };
 
+Map<String, dynamic> _tag(String id, String name, {String? clientId}) => {
+  'id': id,
+  'clientId': clientId ?? 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+  'name': name,
+  'version': 1,
+  'createdAt': '2026-01-01T00:00:00.000Z',
+  'updatedAt': '2026-01-01T00:00:00.000Z',
+};
+
 Map<String, dynamic> _leg(String id, {required String accountId}) => {
   'id': id,
   'clientId': '11111111-1111-4111-8111-111111111111',
@@ -116,6 +142,7 @@ Map<String, dynamic> _leg(String id, {required String accountId}) => {
   'occurredOn': '2026-01-02',
   'categoryId': 'food',
   'notes': null,
+  'merchant': null,
   'tagIds': <String>[],
   'transferGroupId': null,
   'fxQuoteId': null,
@@ -137,6 +164,8 @@ Map<String, dynamic> _bundle(Map<String, dynamic> body) {
           'occurredOn': body['occurredOn'],
           'categoryId': body['categoryId'],
           'notes': body['notes'],
+          'merchant': body['merchant'],
+          'tagIds': body['tagIds'] ?? <String>[],
           'transferGroupId': legs.length == 2 ? 'group-1' : null,
           'deletedAt': null,
           'version': (body['version'] as int? ?? 0) + 1,

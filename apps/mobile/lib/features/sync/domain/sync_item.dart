@@ -31,6 +31,8 @@ class SyncMutation {
     this.occurredOn,
     this.categoryId,
     this.notes,
+    this.merchant,
+    this.tagIds = const [],
     this.legs = const [],
     this.rate,
     this.quotedAt,
@@ -44,6 +46,8 @@ class SyncMutation {
   final String? occurredOn;
   final String? categoryId;
   final String? notes;
+  final String? merchant;
+  final List<String> tagIds;
   final List<SyncLeg> legs;
   final String? rate;
   final String? quotedAt;
@@ -64,6 +68,8 @@ class SyncQueueItem {
     this.occurredOn,
     this.categoryId,
     this.notes,
+    this.merchant,
+    this.tagIds = const [],
     this.legs = const [],
     this.rate,
     this.quotedAt,
@@ -78,6 +84,8 @@ class SyncQueueItem {
   final String? occurredOn;
   final String? categoryId;
   final String? notes;
+  final String? merchant;
+  final List<String> tagIds;
   final List<SyncLeg> legs;
   final String? rate;
   final String? quotedAt;
@@ -99,6 +107,8 @@ class SyncQueueItem {
     Object? occurredOn = _keep,
     Object? categoryId = _keep,
     Object? notes = _keep,
+    Object? merchant = _keep,
+    List<String>? tagIds,
     List<SyncLeg>? legs,
     Object? rate = _keep,
     Object? quotedAt = _keep,
@@ -118,6 +128,8 @@ class SyncQueueItem {
       occurredOn: occurredOn == _keep ? this.occurredOn : occurredOn as String?,
       categoryId: categoryId == _keep ? this.categoryId : categoryId as String?,
       notes: notes == _keep ? this.notes : notes as String?,
+      merchant: merchant == _keep ? this.merchant : merchant as String?,
+      tagIds: tagIds ?? this.tagIds,
       legs: legs ?? this.legs,
       rate: rate == _keep ? this.rate : rate as String?,
       quotedAt: quotedAt == _keep ? this.quotedAt : quotedAt as String?,

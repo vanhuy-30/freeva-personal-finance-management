@@ -889,6 +889,42 @@ abstract class S {
   /// **'Note'**
   String get transactionNotes;
 
+  /// No description provided for @transactionMerchant.
+  ///
+  /// In en, this message translates to:
+  /// **'Payee / merchant'**
+  String get transactionMerchant;
+
+  /// No description provided for @transactionTags.
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get transactionTags;
+
+  /// No description provided for @transactionTagCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create tag'**
+  String get transactionTagCreate;
+
+  /// No description provided for @transactionTagCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a new tag'**
+  String get transactionTagCreateTitle;
+
+  /// No description provided for @transactionTagName.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag name'**
+  String get transactionTagName;
+
+  /// No description provided for @transactionTagLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'At most 20 tags on one transaction.'**
+  String get transactionTagLimit;
+
   /// No description provided for @transactionSave.
   ///
   /// In en, this message translates to:

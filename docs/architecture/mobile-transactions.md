@@ -3,7 +3,8 @@
 Home có lối tắt **Ghi giao dịch** và mục danh sách (`/transactions`, qua AuthGate).
 Dùng contract hiện có của [BE-P1-005](transactions.md) và đọc danh mục của
 [BE-P1-006](categories.md). Không đổi API hoặc migration. Quản lý danh mục là
-`MOB-P1-005`. Báo cáo, tìm không dấu, nhãn và hàng đợi offline nằm ngoài task.
+`MOB-P1-005`. Báo cáo, tìm không dấu và hàng đợi offline nằm ngoài task.
+Nhãn/merchant thuộc [MOB-P1-011](mobile-tags.md).
 
 ## Hành vi
 
@@ -19,7 +20,7 @@ Dùng contract hiện có của [BE-P1-005](transactions.md) và đọc danh m�
 - User nhập số dương. Domain lưu chi âm, thu dương. Chuyển cùng tiền tệ thì
   đích bằng `|nguồn|`. Khác tiền tệ bắt buộc rate chuỗi và `quotedAt`; đích chỉ
   được nhận khi phép đổi ra đúng minor unit, không `double` và không làm tròn.
-- Ghi chú optional, tối đa 2000 ký tự. Không gửi nhãn.
+- Ghi chú optional, tối đa 2000 ký tự. Merchant và nhãn: [MOB-P1-011](mobile-tags.md).
 - Sửa giữ `version` và `clientId`. Sao chép là POST với `clientId` mới. Xóa mềm
   cả cặp. Khôi phục gửi `deleted: false` và chỉ khi ví còn active.
 - Danh sách lọc loại, ghi chú và đang dùng/đã xóa; tải thêm theo trang 50 leg.
