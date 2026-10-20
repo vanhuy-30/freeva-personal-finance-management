@@ -1,4 +1,4 @@
-# Categories — BE-P1-006
+# Categories — BE-P1-006 / BE-P1-011
 
 Module 5, contract public trong [OpenAPI](../../packages/api-contracts/openapi.yaml).
 Danh mục dùng chung cho thu/chi, transfer không có danh mục. Domain và repository
@@ -11,7 +11,7 @@ Tất cả `/api/v1/categories` yêu cầu session user, giới hạn owner và 
 
 | Method / path | Hành vi |
 |---|---|
-| `POST /defaults` | 204; tạo bộ VN một lần, lặp/concurrent an toàn |
+| `POST /defaults` | 204; tạo hoặc bổ sung bộ VN một lần, lặp/concurrent an toàn |
 | `GET /options` | `colorTokens`, `iconTokens` cho metadata |
 | `GET /` | `{items,page,pageSize,total}`, danh sách phẳng có parentId |
 | `GET /recent` | `{items}`; tối đa 10 danh mục active dùng gần đây |
@@ -22,15 +22,27 @@ Tất cả `/api/v1/categories` yêu cầu session user, giới hạn owner và 
 
 Mobile gọi **POST defaults → GET categories** trước lần dùng danh mục đầu tiên.
 GET không khởi tạo dữ liệu. Migration `20260925000000_categories_init` thêm nullable
-`User.categoriesInitializedAt`; tài khoản cũ giữ nguyên dữ liệu và chưa có marker.
-Bootstrap bổ sung 15 danh mục gốc, không sửa custom; marker và danh mục commit
-cùng transaction. Gọi lại sau khi sửa/ẩn/xóa mặc định không tái tạo hoặc ghi đè.
-Profile version không tăng khi bootstrap hoặc khi khóa writer tài chính.
+`User.categoriesInitializedAt`. Migration `20261020000000_category_kind` thêm
+`Category.kind` (default `both`) và `User.categoriesSupplementedAt`. Tài khoản cũ
+giữ dữ liệu; migration không tạo danh mục.
 
-Bộ VN: Ăn uống, Đi lại, Nhà ở, Hóa đơn, Mua sắm, Sức khỏe, Giáo dục, Giải trí,
-Gia đình, Quà tặng, Du lịch, Lương, Thưởng, Thu nhập khác, Chi khác. Tên là dữ
-liệu tiếng Việt, không tự dịch khi đổi locale. `isSystem` chỉ ghi nhận nguồn;
-người dùng vẫn sửa/ẩn/xóa được. Mặc định có icon ngữ nghĩa, colorToken null.
+`POST /defaults`:
+
+- Chưa `categoriesInitializedAt`: tạo 26 mục hệ thống (15 gốc cũ + 11 mục spec),
+  gắn `kind`, đặt cả hai marker trong cùng transaction.
+- Đã khởi tạo nhưng chưa `categoriesSupplementedAt`: gán `kind` chỉ cho mục hệ
+  thống còn nguyên seed; thêm tên còn thiếu đúng một lần; đặt marker. Không ghi đè
+  tên đã sửa, không nhân đôi tên đã có (kể cả custom).
+- Đã bổ sung: no-op. Gọi lại sau khi sửa/ẩn/xóa mặc định không tái tạo.
+
+`kind` ∈ `expense` | `income` | `both`. Client không gửi `kind`. Custom mới mặc
+định `both`. Phase 1 không từ chối giao dịch theo `kind`. Điện nước, Internet,
+Điện thoại là con của Hóa đơn nếu mục đó còn active; nếu không thì là gốc.
+
+Bộ VN gồm thêm: Cà phê, Điện nước, Internet, Điện thoại, Subscription, Bảo hiểm,
+Thuế/phí, Freelance, Kinh doanh, Đầu tư, Hoàn tiền. Tên là dữ liệu tiếng Việt (trừ
+Subscription), không tự dịch khi đổi locale. `isSystem` chỉ ghi nhận nguồn; người
+dùng vẫn sửa/ẩn/xóa được. Mặc định có icon ngữ nghĩa, colorToken null.
 
 ## Metadata, cây và danh sách
 

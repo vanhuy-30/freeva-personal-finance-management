@@ -100,18 +100,72 @@ describe('BE-P1-006 HTTP + PostgreSQL', () => {
     expect((await request()).body.total).toBe(0);
     expect((await prisma.user.findUniqueOrThrow({ where: { id: owner } })).categoriesInitializedAt).toBeNull();
     const custom = await category();
+    expect(custom.kind).toBe('both');
     const responses = await Promise.all([request('POST', '/categories/defaults'), request('POST', '/categories/defaults')]);
     expect(responses.map(r => r.status)).toEqual([204, 204]);
-    const list = (await request()).body;
-    expect(list.total).toBe(16); expect(list.items.filter((c: { isSystem: boolean }) => c.isSystem)).toHaveLength(15);
-    expect(JSON.stringify(list)).not.toContain(owner);
-    const defaults = list.items.filter((c: { id: string }) => c.id !== custom.id);
-    expect((await request('DELETE', `/categories/${defaults[0].id}?version=1`)).status).toBe(204);
-    expect((await request('PATCH', `/categories/${defaults[1].id}`, { version: 1, name: 'Renamed' })).status).toBe(200);
+    const all = (await request('GET', '/categories?pageSize=100')).body;
+    expect(all.total).toBe(27); expect(all.items.filter((c: { isSystem: boolean }) => c.isSystem)).toHaveLength(26);
+    expect(JSON.stringify(all)).not.toContain(owner);
+    const bills = all.items.find((c: { name: string }) => c.name === 'Hóa đơn');
+    const utilities = all.items.filter((c: { name: string }) => ['Điện nước', 'Internet', 'Điện thoại'].includes(c.name));
+    expect(utilities).toHaveLength(3);
+    expect(utilities.every((c: { parentId: string }) => c.parentId === bills.id)).toBe(true);
+    expect(all.items.find((c: { name: string }) => c.name === 'Lương').kind).toBe('income');
+    expect(all.items.find((c: { name: string }) => c.name === 'Quà tặng').kind).toBe('both');
+    const ownerRow = await prisma.user.findUniqueOrThrow({ where: { id: owner } });
+    expect(ownerRow.categoriesInitializedAt).not.toBeNull();
+    expect(ownerRow.categoriesSupplementedAt).not.toBeNull();
+    const food = all.items.find((c: { name: string }) => c.name === 'Ăn uống');
+    const travel = all.items.find((c: { name: string }) => c.name === 'Du lịch');
+    expect((await request('DELETE', `/categories/${food.id}?version=1`)).status).toBe(204);
+    expect((await request('PATCH', `/categories/${travel.id}`, { version: 1, name: 'Renamed' })).status).toBe(200);
     expect((await request('POST', '/categories/defaults')).status).toBe(204);
-    expect((await request()).body.total).toBe(15);
-    expect((await request('GET', `/categories/${defaults[1].id}`)).body.name).toBe('Renamed');
+    expect((await request('GET', '/categories?pageSize=100')).body.total).toBe(26);
+    expect((await request('GET', `/categories/${travel.id}`)).body.name).toBe('Renamed');
     expect((await prisma.user.findUniqueOrThrow({ where: { id: owner } })).version).toBe(1);
+  });
+  it('supplements an already-bootstrapped account once without overwriting edits or duplicates', async () => {
+    const legacy = [
+      ['Ăn uống', 'food'], ['Đi lại', 'transport'], ['Nhà ở', 'housing'], ['Hóa đơn', 'bills'],
+      ['Mua sắm', 'shopping'], ['Sức khỏe', 'health'], ['Giáo dục', 'education'], ['Giải trí', 'entertainment'],
+      ['Gia đình', 'family'], ['Quà tặng', 'gifts'], ['Du lịch', 'travel'], ['Lương', 'salary'],
+      ['Thưởng', 'bonus'], ['Thu nhập khác', 'other_income'], ['Chi khác', 'other_expense'],
+    ] as const;
+    for (const [name, iconToken] of legacy) {
+      await prisma.category.create({ data: { userId: owner, clientId: randomUUID(), name, iconToken, isSystem: true } });
+    }
+    await prisma.user.update({ where: { id: owner }, data: { categoriesInitializedAt: new Date() } });
+    await category('Cà phê');
+    expect((await request('PATCH', `/categories/${(await prisma.category.findFirstOrThrow({ where: { userId: owner, name: 'Ăn uống' } })).id}`,
+      { version: 1, name: 'Ăn ngoài' })).status).toBe(200);
+    expect((await request('POST', '/categories/defaults')).status).toBe(204);
+    const first = (await request('GET', '/categories?pageSize=100')).body;
+    expect(first.total).toBe(26);
+    expect(first.items.filter((c: { name: string }) => c.name === 'Cà phê')).toHaveLength(1);
+    expect(first.items.find((c: { name: string }) => c.name === 'Ăn ngoài').kind).toBe('both');
+    expect(first.items.find((c: { name: string }) => c.name === 'Lương').kind).toBe('income');
+    const bills = first.items.find((c: { name: string }) => c.name === 'Hóa đơn');
+    expect(first.items.find((c: { name: string }) => c.name === 'Internet').parentId).toBe(bills.id);
+    expect((await prisma.user.findUniqueOrThrow({ where: { id: owner } })).categoriesSupplementedAt).not.toBeNull();
+    expect((await request('POST', '/categories/defaults')).status).toBe(204);
+    expect((await request('GET', '/categories?pageSize=100')).body.total).toBe(26);
+    expect(logs).not.toContain('Cà phê'); expect(logs).not.toContain('Ăn ngoài');
+  });
+  it('places utility defaults at root when Hóa đơn is missing before supplement', async () => {
+    for (const [name, iconToken] of [
+      ['Ăn uống', 'food'], ['Đi lại', 'transport'], ['Nhà ở', 'housing'], ['Mua sắm', 'shopping'],
+      ['Sức khỏe', 'health'], ['Giáo dục', 'education'], ['Giải trí', 'entertainment'], ['Gia đình', 'family'],
+      ['Quà tặng', 'gifts'], ['Du lịch', 'travel'], ['Lương', 'salary'], ['Thưởng', 'bonus'],
+      ['Thu nhập khác', 'other_income'], ['Chi khác', 'other_expense'],
+    ] as const) {
+      await prisma.category.create({ data: { userId: owner, clientId: randomUUID(), name, iconToken, isSystem: true } });
+    }
+    await prisma.user.update({ where: { id: owner }, data: { categoriesInitializedAt: new Date() } });
+    expect((await request('POST', '/categories/defaults')).status).toBe(204);
+    const all = (await request('GET', '/categories?pageSize=100')).body;
+    for (const name of ['Điện nước', 'Internet', 'Điện thoại']) {
+      expect(all.items.find((c: { name: string }) => c.name === name).parentId).toBeNull();
+    }
   });
   it('enforces session, ownership, safe errors and no-store on every route', async () => {
     const c = await category();

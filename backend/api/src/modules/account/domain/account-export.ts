@@ -10,6 +10,7 @@ export interface AccountExport {
     fiscalMonthStartDay: number;
     emailVerifiedAt: string | null;
     categoriesInitializedAt: string | null;
+    categoriesSupplementedAt: string | null;
     createdAt: string;
     updatedAt: string;
   };
@@ -53,6 +54,7 @@ export interface AccountExportGroup extends Omit<SyncRow, 'createdAt' | 'updated
 }
 
 export interface AccountExportCategory extends AccountExportGroup {
+  kind: 'expense' | 'income' | 'both';
   groupId: string | null;
   parentId: string | null;
   colorToken: string | null;
@@ -103,6 +105,7 @@ export interface ExportSource {
     fiscalMonthStartDay: number;
     emailVerifiedAt: Date | null;
     categoriesInitializedAt: Date | null;
+    categoriesSupplementedAt: Date | null;
     createdAt: Date;
     updatedAt: Date;
   };
@@ -161,6 +164,7 @@ export function toAccountExport(source: ExportSource): AccountExport {
       fiscalMonthStartDay: user.fiscalMonthStartDay,
       emailVerifiedAt: user.emailVerifiedAt ? iso(user.emailVerifiedAt) : null,
       categoriesInitializedAt: user.categoriesInitializedAt ? iso(user.categoriesInitializedAt) : null,
+      categoriesSupplementedAt: user.categoriesSupplementedAt ? iso(user.categoriesSupplementedAt) : null,
       ...stamps(user),
     },
     oauthProviders: [...source.oauthProviders].sort(),
@@ -176,7 +180,7 @@ export function toAccountExport(source: ExportSource): AccountExport {
       archivedAt: row.archivedAt ? iso(row.archivedAt) : null, version: row.version, ...stamps(row),
     })),
     categories: source.categories.map(row => ({
-      id: row.id, clientId: row.clientId, name: row.name, isSystem: row.isSystem,
+      id: row.id, clientId: row.clientId, name: row.name, isSystem: row.isSystem, kind: row.kind,
       groupId: row.groupId, parentId: row.parentId, colorToken: row.colorToken, iconToken: row.iconToken,
       archivedAt: row.archivedAt ? iso(row.archivedAt) : null, version: row.version, ...stamps(row),
     })),

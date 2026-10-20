@@ -4,10 +4,15 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../../infrastructure/prisma/prisma.service';
 import { touchFinancialOwner } from '../../../infrastructure/prisma/financial-owner-lock';
 import type { CategoryRepository } from '../domain/category.repository';
-import { assertParent, assertVersion, CategoryError, DEFAULT_CATEGORIES, type Category, type CategoryInput, type CategoryPatch, type CategoryQuery } from '../domain/category';
+import {
+  assertParent, assertVersion, CategoryError, DEFAULT_CATEGORIES, supplementPlan,
+  type Category, type CategoryInput, type CategoryPatch, type CategoryQuery, type SupplementRow,
+} from '../domain/category';
 // Explicit public projection: never return userId or internal account data.
-const select = { id: true, clientId: true, name: true, parentId: true, groupId: true, colorToken: true, iconToken: true,
+const select = { id: true, clientId: true, name: true, kind: true, parentId: true, groupId: true, colorToken: true, iconToken: true,
   isSystem: true, archivedAt: true, version: true, createdAt: true, updatedAt: true } satisfies Prisma.CategorySelect;
+const supplementSelect = { id: true, name: true, kind: true, iconToken: true, colorToken: true, parentId: true,
+  isSystem: true, archivedAt: true, version: true } satisfies Prisma.CategorySelect;
 @Injectable()
 export class PrismaCategoryRepository implements CategoryRepository {
   constructor(private readonly prisma: PrismaService) {}
@@ -30,12 +35,62 @@ export class PrismaCategoryRepository implements CategoryRepository {
     if (!row) throw new CategoryError('CATEGORY_NOT_FOUND');
     return row;
   }
+  private async seedDefaults(tx: Prisma.TransactionClient, userId: string) {
+    const byName = new Map<string, string>();
+    const roots = DEFAULT_CATEGORIES.filter(seed => !seed.parentName);
+    const children = DEFAULT_CATEGORIES.filter(seed => seed.parentName);
+    for (const seed of roots) {
+      const row = await tx.category.create({
+        data: {
+          userId, clientId: randomUUID(), name: seed.name, kind: seed.kind, iconToken: seed.iconToken, isSystem: true,
+        },
+        select: { id: true, name: true },
+      });
+      byName.set(row.name, row.id);
+    }
+    for (const seed of children) {
+      const parentId = seed.parentName ? byName.get(seed.parentName) ?? null : null;
+      await tx.category.create({
+        data: {
+          userId, clientId: randomUUID(), name: seed.name, kind: seed.kind, iconToken: seed.iconToken,
+          parentId, isSystem: true,
+        },
+      });
+    }
+  }
+  private async applySupplement(tx: Prisma.TransactionClient, userId: string, rows: SupplementRow[]) {
+    const plan = supplementPlan(rows);
+    for (const update of plan.kindUpdates) {
+      await tx.category.update({ where: { id: update.id }, data: { kind: update.kind } });
+    }
+    for (const create of plan.creates) {
+      await tx.category.create({
+        data: {
+          userId, clientId: randomUUID(), name: create.name, kind: create.kind,
+          iconToken: create.iconToken, parentId: create.parentId, isSystem: true,
+        },
+      });
+    }
+  }
   initialize(userId: string) {
     return this.write(userId, async tx => {
-      const owner = await tx.user.findUniqueOrThrow({ where: { id: userId }, select: { categoriesInitializedAt: true } });
-      if (owner.categoriesInitializedAt) return;
-      await tx.category.createMany({ data: DEFAULT_CATEGORIES.map(([name, iconToken]) => ({ userId, clientId: randomUUID(), name, iconToken, isSystem: true })) });
-      await tx.user.update({ where: { id: userId }, data: { categoriesInitializedAt: new Date() } });
+      const owner = await tx.user.findUniqueOrThrow({
+        where: { id: userId },
+        select: { categoriesInitializedAt: true, categoriesSupplementedAt: true },
+      });
+      const now = new Date();
+      if (!owner.categoriesInitializedAt) {
+        await this.seedDefaults(tx, userId);
+        await tx.user.update({
+          where: { id: userId },
+          data: { categoriesInitializedAt: now, categoriesSupplementedAt: now },
+        });
+        return;
+      }
+      if (owner.categoriesSupplementedAt) return;
+      const rows = await tx.category.findMany({ where: { userId }, select: supplementSelect });
+      await this.applySupplement(tx, userId, rows);
+      await tx.user.update({ where: { id: userId }, data: { categoriesSupplementedAt: now } });
     });
   }
   create(userId: string, input: CategoryInput) {

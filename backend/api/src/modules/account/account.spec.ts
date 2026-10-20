@@ -14,7 +14,7 @@ function source(): ExportSource {
     exportedAt: at,
     user: {
       id, email: 'owner@example.test', locale: 'vi', timezone: 'Asia/Ho_Chi_Minh', defaultCurrencyCode: 'VND',
-      fiscalMonthStartDay: 1, emailVerifiedAt: at, categoriesInitializedAt: null, createdAt: at, updatedAt: at,
+      fiscalMonthStartDay: 1, emailVerifiedAt: at, categoriesInitializedAt: null, categoriesSupplementedAt: null, createdAt: at, updatedAt: at,
     },
     oauthProviders: ['apple', 'google'],
     financialAccounts: [{
@@ -94,7 +94,7 @@ describe('BE-P1-010 account repository audit', () => {
       user: {
         findUnique: jest.fn().mockResolvedValue({
           id, email: 'owner@example.test', locale: 'vi', timezone: 'Asia/Ho_Chi_Minh', defaultCurrencyCode: 'VND',
-          fiscalMonthStartDay: 1, emailVerifiedAt: null, categoriesInitializedAt: null, createdAt: at, updatedAt: at,
+          fiscalMonthStartDay: 1, emailVerifiedAt: null, categoriesInitializedAt: null, categoriesSupplementedAt: null, createdAt: at, updatedAt: at,
           oauthIdentities: [{ provider: 'google' }],
         }),
         delete: jest.fn(),
