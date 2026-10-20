@@ -70,6 +70,8 @@ void main() {
       api.sent?['operations'][0]['body']['legs'][0]['amountMinor'],
       '-150000',
     );
+    expect(api.sent?['operations'][0]['body']['merchant'], isNull);
+    expect(api.sent?['operations'][0]['body']['tagIds'], isEmpty);
     expect(logger.messages, isEmpty);
 
     vault.value = 'secret-note 150000';
@@ -77,6 +79,46 @@ void main() {
     expect(logger.messages.single, 'sync queue unreadable null');
     expect(logger.messages.single.contains('secret-note'), isFalse);
     expect(logger.messages.single.contains('150000'), isFalse);
+  });
+
+  test('legacy queue without merchant or tagIds still loads', () async {
+    final vault = _Vault();
+    final repository = SyncRepositoryImpl(_Api(), vault, _Logger());
+    vault.value = jsonEncode({
+      'items': [
+        {
+          'opId': '11111111-1111-4111-8111-111111111111',
+          'clientId': '22222222-2222-4222-8222-222222222222',
+          'serverId': null,
+          'action': 'create',
+          'type': 'expense',
+          'occurredOn': '2026-01-15',
+          'categoryId': 'food',
+          'notes': 'secret-note',
+          'legs': [
+            {
+              'clientId': '22222222-2222-4222-8222-222222222222',
+              'accountId': 'card',
+              'currencyCode': 'VND',
+              'amountMinor': '-150000',
+            },
+          ],
+          'rate': null,
+          'quotedAt': null,
+          'version': null,
+          'createdAt': '2026-01-15T00:00:00.000Z',
+          'serverUpdatedAt': null,
+          'retryCount': 0,
+          'status': 'pending',
+          'review': false,
+        },
+      ],
+    });
+    final items = await repository.read();
+    expect(items, hasLength(1));
+    expect(items.single.merchant, isNull);
+    expect(items.single.tagIds, isEmpty);
+    expect(items.single.notes, 'secret-note');
   });
 }
 

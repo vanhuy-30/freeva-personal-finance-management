@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 import '../../../core/time/calendar_date.dart';
 import '../../auth/domain/auth_repository.dart';
 import '../../categories/domain/finance_category.dart';
+import '../../tags/domain/tag.dart';
 import '../../wallets/domain/wallet.dart';
 import 'transaction.dart';
 import 'transaction_money.dart';
@@ -37,7 +38,8 @@ Either<AuthFailure, TransactionCommand> prepareTransaction(
   TransactionDraft draft,
   List<Wallet> wallets,
   List<WalletCurrency> currencies,
-  List<FinanceCategory> categories, {
+  List<FinanceCategory> categories,
+  List<Tag> tags, {
   TransactionBundle? existing,
 }) {
   if (!isCalendarDate(draft.occurredOn) || draft.magnitude <= BigInt.zero) {
@@ -46,6 +48,15 @@ Either<AuthFailure, TransactionCommand> prepareTransaction(
   final notes = draft.notes?.trim();
   final storedNotes = notes == null || notes.isEmpty ? null : notes;
   if (storedNotes != null && storedNotes.length > 2000) {
+    return left(const AuthFailure(AuthError.invalidInput));
+  }
+  final merchantResult = _merchant(draft);
+  if (merchantResult.isLeft()) {
+    return left(const AuthFailure(AuthError.invalidInput));
+  }
+  final storedMerchant = merchantResult.getOrElse(() => null);
+  final tagIds = _tagIds(draft.tagIds, tags);
+  if (tagIds == null) {
     return left(const AuthFailure(AuthError.invalidInput));
   }
   if (existing != null) {
@@ -96,6 +107,8 @@ Either<AuthFailure, TransactionCommand> prepareTransaction(
         occurredOn: draft.occurredOn,
         categoryId: draft.categoryId,
         notes: storedNotes,
+        merchant: storedMerchant,
+        tagIds: tagIds,
         version: existing?.version,
         legs: [
           TransactionLegCommand(
@@ -152,6 +165,8 @@ Either<AuthFailure, TransactionCommand> prepareTransaction(
       occurredOn: draft.occurredOn,
       categoryId: null,
       notes: storedNotes,
+      merchant: null,
+      tagIds: tagIds,
       rate: rate,
       quotedAt: quotedAt,
       version: existing?.version,
@@ -171,6 +186,34 @@ Either<AuthFailure, TransactionCommand> prepareTransaction(
       ],
     ),
   );
+}
+
+Either<AuthFailure, String?> _merchant(TransactionDraft draft) {
+  if (draft.type == TransactionType.transfer) {
+    final raw = draft.merchant?.trim();
+    if (raw != null && raw.isNotEmpty) {
+      return left(const AuthFailure(AuthError.invalidInput));
+    }
+    return right(null);
+  }
+  final trimmed = draft.merchant?.trim();
+  if (trimmed == null || trimmed.isEmpty) return right(null);
+  if (trimmed.length > 200) {
+    return left(const AuthFailure(AuthError.invalidInput));
+  }
+  return right(trimmed);
+}
+
+List<String>? _tagIds(List<String> raw, List<Tag> tags) {
+  final unique = <String>[];
+  final seen = <String>{};
+  final known = tags.map((tag) => tag.id).toSet();
+  for (final id in raw) {
+    if (!known.contains(id) || !seen.add(id)) return null;
+    unique.add(id);
+  }
+  if (unique.length > 20) return null;
+  return List.unmodifiable(unique);
 }
 
 Wallet? _activeWallet(List<Wallet> wallets, String? id) {

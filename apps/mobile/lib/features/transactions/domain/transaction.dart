@@ -11,6 +11,8 @@ class TxLeg {
     required this.occurredOn,
     required this.categoryId,
     required this.notes,
+    required this.merchant,
+    required this.tagIds,
     required this.transferGroupId,
     required this.deletedAt,
     required this.version,
@@ -25,6 +27,8 @@ class TxLeg {
   final String occurredOn;
   final String? categoryId;
   final String? notes;
+  final String? merchant;
+  final List<String> tagIds;
   final String? transferGroupId;
   final DateTime? deletedAt;
   final int version;
@@ -48,6 +52,8 @@ class TransactionBundle {
   String get occurredOn => legs.first.occurredOn;
   String? get categoryId => legs.first.categoryId;
   String? get notes => legs.first.notes;
+  String? get merchant => legs.first.merchant;
+  List<String> get tagIds => legs.first.tagIds;
 }
 
 class TransactionDraft {
@@ -60,6 +66,8 @@ class TransactionDraft {
     this.counterAccountId,
     this.categoryId,
     this.notes,
+    this.merchant,
+    this.tagIds = const [],
     this.rate,
     this.quotedAt,
   });
@@ -71,6 +79,8 @@ class TransactionDraft {
   final List<String> clientIds;
   final String? categoryId;
   final String? notes;
+  final String? merchant;
+  final List<String> tagIds;
   final String? rate;
   final String? quotedAt;
 }
@@ -81,6 +91,8 @@ class TransactionCommand {
     required this.occurredOn,
     required this.categoryId,
     required this.notes,
+    required this.merchant,
+    required this.tagIds,
     required this.legs,
     this.rate,
     this.quotedAt,
@@ -90,6 +102,8 @@ class TransactionCommand {
   final String occurredOn;
   final String? categoryId;
   final String? notes;
+  final String? merchant;
+  final List<String> tagIds;
   final List<TransactionLegCommand> legs;
   final String? rate;
   final String? quotedAt;

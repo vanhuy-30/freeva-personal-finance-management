@@ -70,6 +70,9 @@ import 'package:mobile/features/sync/domain/sync_repository.dart' as _i882;
 import 'package:mobile/features/sync/domain/sync_use_cases.dart' as _i665;
 import 'package:mobile/features/sync/presentation/viewmodels/sync_view_model.dart'
     as _i488;
+import 'package:mobile/features/tags/data/tag_repository_impl.dart' as _i729;
+import 'package:mobile/features/tags/domain/tag_repository.dart' as _i57;
+import 'package:mobile/features/tags/domain/tag_use_cases.dart' as _i112;
 import 'package:mobile/features/transactions/data/transaction_repository_impl.dart'
     as _i1020;
 import 'package:mobile/features/transactions/domain/transaction_repository.dart'
@@ -143,22 +146,22 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i72.ProfileRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i61.ReportRepository>(
         () => _i931.ReportRepositoryImpl(gh<_i443.AuthorizedApi>()));
+    gh.lazySingleton<_i57.TagRepository>(
+        () => _i729.TagRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.factory<_i253.AuthUseCases>(
         () => _i253.DefaultAuthUseCases(gh<_i173.AuthRepository>()));
     gh.lazySingleton<_i665.SyncUseCases>(
         () => _i665.DefaultSyncUseCases(gh<_i882.SyncRepository>()));
     gh.lazySingleton<_i221.CategoryUseCases>(
         () => _i221.DefaultCategoryUseCases(gh<_i561.CategoryRepository>()));
+    gh.lazySingleton<_i112.TagUseCases>(
+        () => _i112.DefaultTagUseCases(gh<_i57.TagRepository>()));
     gh.lazySingleton<_i421.SettingsViewModel>(
         () => _i421.DefaultSettingsViewModel(
               gh<_i519.SettingsUseCases>(),
               gh<_i253.AuthUseCases>(),
               gh<_i1020.AnalyticsService>(),
             ));
-    gh.lazySingleton<_i336.WalletUseCases>(
-        () => _i336.DefaultWalletUseCases(gh<_i107.WalletRepository>()));
-    gh.factory<_i281.ProfileUseCases>(
-        () => _i281.ProfileUseCases(gh<_i4.ProfileRepository>()));
     gh.lazySingleton<_i990.AuthViewModel>(
         () => authPresentationModule.authViewModel(
               gh<_i253.AuthUseCases>(),
@@ -166,6 +169,20 @@ extension GetItInjectableX on _i174.GetIt {
               gh<_i54.SessionAlertNotifier>(),
               gh<_i1020.AnalyticsService>(),
             ));
+    gh.lazySingleton<_i488.SyncViewModel>(() => _i488.DefaultSyncViewModel(
+          gh<_i665.SyncUseCases>(),
+          gh<_i990.AuthViewModel>(),
+          gh<_i1020.AnalyticsService>(),
+        ));
+    gh.lazySingleton<_i961.CategoryViewModel>(
+        () => _i961.DefaultCategoryViewModel(
+              gh<_i221.CategoryUseCases>(),
+              gh<_i990.AuthViewModel>(),
+            ));
+    gh.lazySingleton<_i336.WalletUseCases>(
+        () => _i336.DefaultWalletUseCases(gh<_i107.WalletRepository>()));
+    gh.factory<_i281.ProfileUseCases>(
+        () => _i281.ProfileUseCases(gh<_i4.ProfileRepository>()));
     gh.lazySingleton<_i146.ReportUseCases>(() => _i146.DefaultReportUseCases(
           gh<_i61.ReportRepository>(),
           gh<_i107.WalletRepository>(),
@@ -180,15 +197,17 @@ extension GetItInjectableX on _i174.GetIt {
               gh<_i281.ProfileUseCases>(),
               gh<_i990.AuthViewModel>(),
             ));
-    gh.lazySingleton<_i488.SyncViewModel>(() => _i488.DefaultSyncViewModel(
-          gh<_i665.SyncUseCases>(),
-          gh<_i990.AuthViewModel>(),
-          gh<_i1020.AnalyticsService>(),
-        ));
-    gh.lazySingleton<_i961.CategoryViewModel>(
-        () => _i961.DefaultCategoryViewModel(
+    gh.lazySingleton<_i332.TransactionViewModel>(
+        () => _i332.DefaultTransactionViewModel(
+              gh<_i292.TransactionUseCases>(),
               gh<_i221.CategoryUseCases>(),
+              gh<_i112.TagUseCases>(),
+              gh<_i336.WalletUseCases>(),
+              gh<_i251.WalletViewModel>(),
+              gh<_i281.ProfileUseCases>(),
               gh<_i990.AuthViewModel>(),
+              gh<_i1020.AnalyticsService>(),
+              gh<_i488.SyncViewModel>(),
             ));
     gh.lazySingleton<_i43.OverviewViewModel>(
         () => _i43.DefaultOverviewViewModel(
@@ -200,17 +219,6 @@ extension GetItInjectableX on _i174.GetIt {
               gh<_i146.ReportUseCases>(),
               gh<_i990.AuthViewModel>(),
               gh<_i1020.AnalyticsService>(),
-            ));
-    gh.lazySingleton<_i332.TransactionViewModel>(
-        () => _i332.DefaultTransactionViewModel(
-              gh<_i292.TransactionUseCases>(),
-              gh<_i221.CategoryUseCases>(),
-              gh<_i336.WalletUseCases>(),
-              gh<_i251.WalletViewModel>(),
-              gh<_i281.ProfileUseCases>(),
-              gh<_i990.AuthViewModel>(),
-              gh<_i1020.AnalyticsService>(),
-              gh<_i488.SyncViewModel>(),
             ));
     return this;
   }

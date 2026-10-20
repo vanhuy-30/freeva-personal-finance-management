@@ -12,6 +12,8 @@ import 'package:mobile/features/categories/domain/category_use_cases.dart';
 import 'package:mobile/features/profile/domain/profile_use_cases.dart';
 import 'package:mobile/features/sync/domain/sync_use_cases.dart';
 import 'package:mobile/features/sync/presentation/viewmodels/sync_view_model.dart';
+import 'package:mobile/features/tags/data/tag_repository_impl.dart';
+import 'package:mobile/features/tags/domain/tag_use_cases.dart';
 import 'package:mobile/features/transactions/data/transaction_repository_impl.dart';
 import 'package:mobile/features/transactions/domain/transaction_use_cases.dart';
 import 'package:mobile/features/transactions/presentation/viewmodels/transaction_view_model.dart';
@@ -65,6 +67,7 @@ void main() {
     model = DefaultTransactionViewModel(
       DefaultTransactionUseCases(TransactionRepositoryImpl(api)),
       DefaultCategoryUseCases(CategoryRepositoryImpl(api)),
+      DefaultTagUseCases(TagRepositoryImpl(api)),
       walletCases,
       wallets,
       ProfileUseCases(MemoryProfiles()),
@@ -135,6 +138,29 @@ void main() {
     expect(find.byType(TransactionEditor), findsNothing);
     expect(model.wallets, isEmpty);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('blank merchant and a new tag still save', (tester) async {
+    await tester.pumpWidget(app(TransactionForm(model: model)));
+    await tester.enterText(find.byType(TextField).first, '25000');
+    await tester.ensureVisible(find.widgetWithText(FilterChip, 'Work'));
+    await tester.tap(find.widgetWithText(FilterChip, 'Work'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.widgetWithText(ActionChip, 'Tạo nhãn'));
+    await tester.tap(find.widgetWithText(ActionChip, 'Tạo nhãn'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField).last, 'Family');
+    await tester.tap(find.widgetWithText(FilledButton, 'Tạo nhãn'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.widgetWithText(FilledButton, 'Lưu'));
+    await tester.tap(find.widgetWithText(FilledButton, 'Lưu'));
+    await tester.pumpAndSettle();
+    final post = api.calls.lastWhere(
+      (call) => call.method == 'POST' && call.path == 'transactions',
+    );
+    expect(post.body!['merchant'], isNull);
+    expect(post.body!['tagIds'], hasLength(2));
+    expect(post.body!['tagIds'], contains('work'));
   });
 
   testWidgets('hidden balances mask the list but not the amount being typed', (

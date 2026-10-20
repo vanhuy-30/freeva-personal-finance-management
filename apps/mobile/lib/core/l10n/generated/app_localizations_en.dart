@@ -441,6 +441,24 @@ class SEn extends S {
   String get transactionNotes => 'Note';
 
   @override
+  String get transactionMerchant => 'Payee / merchant';
+
+  @override
+  String get transactionTags => 'Tags';
+
+  @override
+  String get transactionTagCreate => 'Create tag';
+
+  @override
+  String get transactionTagCreateTitle => 'Create a new tag';
+
+  @override
+  String get transactionTagName => 'Tag name';
+
+  @override
+  String get transactionTagLimit => 'At most 20 tags on one transaction.';
+
+  @override
   String get transactionSave => 'Save';
 
   @override

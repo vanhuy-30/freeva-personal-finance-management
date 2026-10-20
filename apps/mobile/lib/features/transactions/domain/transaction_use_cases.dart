@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../auth/domain/auth_repository.dart';
 import '../../categories/domain/finance_category.dart';
+import '../../tags/domain/tag.dart';
 import '../../wallets/domain/wallet.dart';
 import 'transaction.dart';
 import 'transaction_repository.dart';
@@ -15,7 +16,8 @@ abstract class TransactionUseCases {
     TransactionDraft draft,
     List<Wallet> wallets,
     List<WalletCurrency> currencies,
-    List<FinanceCategory> categories, {
+    List<FinanceCategory> categories,
+    List<Tag> tags, {
     TransactionBundle? existing,
   });
   Future<Either<AuthFailure, Unit>> remove(TransactionBundle bundle);
@@ -57,7 +59,8 @@ class DefaultTransactionUseCases implements TransactionUseCases {
     TransactionDraft draft,
     List<Wallet> wallets,
     List<WalletCurrency> currencies,
-    List<FinanceCategory> categories, {
+    List<FinanceCategory> categories,
+    List<Tag> tags, {
     TransactionBundle? existing,
   }) {
     final command = prepareTransaction(
@@ -65,6 +68,7 @@ class DefaultTransactionUseCases implements TransactionUseCases {
       wallets,
       currencies,
       categories,
+      tags,
       existing: existing,
     );
     return command.fold(

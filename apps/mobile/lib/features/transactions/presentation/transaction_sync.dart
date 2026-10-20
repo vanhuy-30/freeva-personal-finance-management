@@ -14,6 +14,8 @@ SyncMutation mutationFromCommand(
     occurredOn: command.occurredOn,
     categoryId: command.categoryId,
     notes: command.notes,
+    merchant: command.merchant,
+    tagIds: command.tagIds,
     rate: command.rate,
     quotedAt: command.quotedAt,
     legs: [

@@ -177,11 +177,13 @@ Phase này chưa phải product v1. Gate đầy đủ: [spec-alignment.md](../do
 - Note: [Thiết kế](../docs/architecture/tags.md). Deploy migration trước API. UI `MOB-P1-011`. Chưa deploy staging.
 
 ### MOB-P1-011 — UI merchant và nhãn (Should)
-- Status: todo
+- Status: done
 - Module: 4, 5
 - Gate: should
 - Depends: BE-P1-012, MOB-P1-004
 - DoD: tạo nhãn, gắn hoặc gỡ trên giao dịch, nhập merchant ở thu/chi. Bỏ trống vẫn lưu được. L10n vi/en. Không hex.
+- Verification: `flutter analyze` sạch; toàn bộ 137 Flutter tests pass (gồm merchant trống → null, transfer không merchant, giới hạn 20 nhãn, body HTTP/sync có merchant/tagIds, hàng đợi cũ thiếu key, widget lưu khi bỏ trống và gắn nhãn vừa tạo).
+- Note: [Thiết kế](../docs/architecture/mobile-tags.md). Không màn quản lý nhãn riêng, không đổi API. Chưa native build/E2E staging.
 
 ### QA-P1-001 — Đo ghi chi thường dưới 10 giây (Should)
 - Status: todo

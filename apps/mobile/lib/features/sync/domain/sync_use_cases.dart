@@ -159,6 +159,8 @@ class DefaultSyncUseCases implements SyncUseCases {
       occurredOn: mutation.occurredOn,
       categoryId: mutation.categoryId,
       notes: mutation.notes,
+      merchant: mutation.merchant,
+      tagIds: mutation.tagIds,
       legs: mutation.legs,
       rate: mutation.rate,
       quotedAt: mutation.quotedAt,

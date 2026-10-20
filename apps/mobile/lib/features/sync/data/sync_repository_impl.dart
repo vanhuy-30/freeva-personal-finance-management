@@ -109,6 +109,8 @@ class SyncRepositoryImpl implements SyncRepository {
     'occurredOn': item.occurredOn,
     'categoryId': item.categoryId,
     'notes': item.notes,
+    'merchant': item.merchant,
+    'tagIds': item.tagIds,
     'legs': [
       for (final leg in item.legs)
         {
@@ -133,6 +135,8 @@ Map<String, dynamic> _json(SyncQueueItem item) => {
   'occurredOn': item.occurredOn,
   'categoryId': item.categoryId,
   'notes': item.notes,
+  'merchant': item.merchant,
+  'tagIds': item.tagIds,
   'legs': [
     for (final leg in item.legs)
       {
@@ -154,6 +158,7 @@ Map<String, dynamic> _json(SyncQueueItem item) => {
 
 SyncQueueItem _item(Map<String, dynamic> json) {
   final legs = json['legs'];
+  final tagIds = json['tagIds'];
   return SyncQueueItem(
     opId: json['opId'] as String,
     clientId: json['clientId'] as String,
@@ -165,6 +170,10 @@ SyncQueueItem _item(Map<String, dynamic> json) {
     occurredOn: json['occurredOn'] as String?,
     categoryId: json['categoryId'] as String?,
     notes: json['notes'] as String?,
+    merchant: json['merchant'] as String?,
+    tagIds: tagIds is List
+        ? List.unmodifiable(tagIds.cast<String>())
+        : const [],
     legs: legs is List
         ? [
             for (final leg in legs.cast<Map<String, dynamic>>())

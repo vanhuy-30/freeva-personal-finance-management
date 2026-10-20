@@ -8,6 +8,7 @@ import '../viewmodels/transaction_view_model.dart';
 import 'transaction_editor.dart';
 import 'transaction_fields.dart';
 import 'transaction_labels.dart';
+import 'transaction_tags_section.dart';
 
 class TransactionForm extends StatefulWidget {
   const TransactionForm({
@@ -26,9 +27,11 @@ class TransactionForm extends StatefulWidget {
 class _TransactionFormState extends State<TransactionForm> {
   final amount = TextEditingController();
   final notes = TextEditingController();
+  final merchant = TextEditingController();
   final rate = TextEditingController();
   late TransactionType type;
   late List<String> clientIds;
+  late List<String> tagIds;
   String? accountId;
   String? counterAccountId;
   String? categoryId;
@@ -58,6 +61,8 @@ class _TransactionFormState extends State<TransactionForm> {
             : null);
     occurredOn = existing?.occurredOn ?? widget.model.today() ?? '';
     notes.text = existing?.notes ?? '';
+    merchant.text = existing?.merchant ?? '';
+    tagIds = List.of(existing?.tagIds ?? const []);
     quotedAt = existing?.fx?.quotedAt;
     rate.text = existing?.fx?.rate ?? '';
     rateSeed = rate.text;
@@ -80,6 +85,7 @@ class _TransactionFormState extends State<TransactionForm> {
   void dispose() {
     amount.dispose();
     notes.dispose();
+    merchant.dispose();
     rate.dispose();
     super.dispose();
   }
@@ -130,6 +136,8 @@ class _TransactionFormState extends State<TransactionForm> {
       clientIds: clientIds,
       categoryId: type == TransactionType.transfer ? null : categoryId,
       notes: notes.text,
+      merchant: type == TransactionType.transfer ? null : merchant.text,
+      tagIds: tagIds,
       rate: cross ? rate.text : null,
       quotedAt: cross ? quotedAt : null,
     );
@@ -209,6 +217,17 @@ class _TransactionFormState extends State<TransactionForm> {
           onCounter: (value) => setState(() => counterAccountId = value),
           onCategory: (value) => setState(() => categoryId = value),
           onDate: _pickDate,
+        ),
+        const SizedBox(height: 8),
+        TransactionTagsSection(
+          type: type,
+          readOnly: readOnly,
+          merchant: merchant,
+          selectedTagIds: tagIds,
+          tags: model.tags,
+          model: model,
+          onMerchantChanged: () => setState(() {}),
+          onTagIdsChanged: (value) => setState(() => tagIds = value),
         ),
         if (invalid && failure != null)
           Text(
