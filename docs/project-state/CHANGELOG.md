@@ -2,6 +2,10 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-10-20
+
+- `BE-P1-012`: CRUD `/api/v1/tags` theo owner (replay `clientId`, xóa gỡ link và tăng version giao dịch); `merchant` optional trên thu/chi, cấm trên transfer; export/sync kế thừa DTO; redact `merchant` trong log. 23 unit suites / 209 tests và 9 HTTP/PostgreSQL suites / 87 tests, build/OpenAPI pass. Migration additive `20261020120000_transaction_merchant`; chưa deploy staging. [Thiết kế](../architecture/tags.md).
+
 ## 2026-10-19
 
 - `MOB-P1-001`: đóng task. Face ID, vân tay và màn hình recents đã test pass trên thiết bị thực. E2E gửi email Resend trên staging hoãn có chủ đích đến khi setup Resend; chưa kiểm chứng delivery/inbox. [Runbook](../infrastructure/email.md).

@@ -31,7 +31,7 @@ function source(): ExportSource {
     }],
     transactions: [{
       id, clientId, type: 'expense', amountMinor: -150000n, currencyCode: 'VND', occurredOn: day,
-      accountId: id, categoryId: null, transferGroupId: null, fxQuoteId: null, notes: 'cafe',
+      accountId: id, categoryId: null, transferGroupId: null, fxQuoteId: null, notes: 'cafe', merchant: 'WinMart',
       deletedAt: at, tagIds: [clientId, id], version: 2, createdAt: at, updatedAt: at,
     }],
   };
@@ -47,7 +47,10 @@ describe('BE-P1-010 account export mapping', () => {
       profile: { email: 'owner@example.test', emailVerifiedAt: at.toISOString(), categoriesInitializedAt: null },
       financialAccounts: [{ initialBalanceMinor: '9007199254740993', creditLimitMinor: null }],
       fxQuotes: [{ rate: '25000.00000000' }],
-      transactions: [{ amountMinor: '-150000', occurredOn: '2026-10-12', deletedAt: at.toISOString(), tagIds: [clientId, id].sort() }],
+      transactions: [{
+        amountMinor: '-150000', occurredOn: '2026-10-12', deletedAt: at.toISOString(), merchant: 'WinMart',
+        tagIds: [clientId, id].sort(),
+      }],
     });
     expect(JSON.stringify(snapshot)).not.toContain('passwordHash');
     expect(snapshot.transactions[0].tagIds).toEqual([id, clientId].sort());

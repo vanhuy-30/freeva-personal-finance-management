@@ -168,11 +168,13 @@ Phase này chưa phải product v1. Gate đầy đủ: [spec-alignment.md](../do
 ## Báo cáo / search / settings / help
 
 ### BE-P1-012 — Merchant và CRUD nhãn (Should)
-- Status: todo
+- Status: done
 - Module: 4, 5
 - Gate: should
 - Depends: BE-P1-005
 - DoD: CRUD nhãn theo owner; giao dịch gắn nhiều nhãn bằng API hiện có. `merchant` optional trên thu và chi, cấm trên transfer. Không log merchant. OpenAPI và test owner. Không chặn gate v1.
+- Verification: 23 unit suites / 209 tests và 9 HTTP/PostgreSQL suites / 87 tests pass (gồm tags mới và merchant trên transactions); build và OpenAPI validation pass. Migration additive `20261020120000_transaction_merchant`.
+- Note: [Thiết kế](../docs/architecture/tags.md). Deploy migration trước API. UI `MOB-P1-011`. Chưa deploy staging.
 
 ### MOB-P1-011 — UI merchant và nhãn (Should)
 - Status: todo

@@ -8,6 +8,7 @@ const PASSWORD = 'hunter2-secret';
 const AMOUNT = 150000;
 const ACCOUNT = '123456789012';
 const IBAN = 'VN12FREE0000000001';
+const MERCHANT = 'WinMart-Secret-Shop';
 
 function captureLog(payload: object): string {
   const chunks: Buffer[] = [];
@@ -53,6 +54,7 @@ describe('pino redact (SEC-P0-003)', () => {
       netWorthMinor: AMOUNT,
       accountNumber: ACCOUNT,
       iban: IBAN,
+      merchant: MERCHANT,
       userId: '11111111-1111-1111-1111-111111111111',
     });
 
@@ -64,12 +66,13 @@ describe('pino redact (SEC-P0-003)', () => {
     expect(out).not.toContain(String(AMOUNT));
     expect(out).not.toContain(ACCOUNT);
     expect(out).not.toContain(IBAN);
+    expect(out).not.toContain(MERCHANT);
   });
 
   it('redacts one-level nested fields', () => {
     const out = captureLog({
       user: { email: EMAIL, password: PASSWORD },
-      transaction: { amountMinor: AMOUNT, accountNumber: ACCOUNT },
+      transaction: { amountMinor: AMOUNT, accountNumber: ACCOUNT, merchant: MERCHANT },
       session: { token: SECRET, refreshToken: SECRET, accessToken: SECRET },
       account: {
         initialBalanceMinor: AMOUNT,
@@ -95,6 +98,7 @@ describe('pino redact (SEC-P0-003)', () => {
     expect(out).not.toContain(String(AMOUNT));
     expect(out).not.toContain(ACCOUNT);
     expect(out).not.toContain(IBAN);
+    expect(out).not.toContain(MERCHANT);
   });
 
   it('redacts two-level nested fields and HTTP headers', () => {

@@ -39,6 +39,7 @@ export const PINO_REDACT_PATHS: string[] = [
   ...nested('netWorthMinor'),
   ...nested('accountNumber'),
   ...nested('iban'),
+  ...nested('merchant'),
 ];
 
 export const pinoRedactOptions = {

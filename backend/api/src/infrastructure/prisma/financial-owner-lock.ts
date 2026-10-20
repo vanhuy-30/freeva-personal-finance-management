@@ -1,6 +1,6 @@
 import type { Prisma } from '@prisma/client';
 /**
- * First write in category/transaction mutations. Under Repeatable Read a writer
+ * First write in category/tag/transaction mutations. Under Repeatable Read a writer
  * waiting on this row must retry with a fresh snapshot after a concurrent write.
  * SELECT FOR UPDATE alone would not invalidate an older snapshot. Profile
  * version is deliberately unchanged: no profile preference was modified.

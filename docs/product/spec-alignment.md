@@ -35,7 +35,7 @@ Giữ nguyên số phase và ID đã có. Không dồn ngân sách, mục tiêu,
 | Spec | Hiện trạng | Task |
 |---|---|---|
 | §10 danh mục thu/chi tách và thiếu Cà phê, điện nước, internet, điện thoại, subscription, bảo hiểm, thuế, freelance, kinh doanh, đầu tư, hoàn tiền | API có `kind` và bộ đủ tên; app vẫn một cây, chưa lọc theo `kind` | UI lọc `kind` khi cần; `MOB-P1-005` đã có cây |
-| §8 merchant; §30 tag | Giao dịch nhận `tagIds` nhưng không có API tạo tag; không có merchant | `BE-P1-012`, `MOB-P1-011` |
+| §8 merchant; §30 tag | API CRUD nhãn và `merchant` trên thu/chi đã có (`BE-P1-012`); UI còn mở | `MOB-P1-011` |
 | §6 Home: tài sản, nợ, ròng, dòng tiền, giao dịch gần | `MOB-P1-006` chưa có DoD | `BE-P1-007`, `MOB-P1-006` |
 | §6.3–6.6 ngân sách, mục tiêu, insight trên Home | Chưa có task gắn vào Home | `MOB-P2-E02`, `MOB-P3-E01`, `MOB-P5-E04` |
 | §9 ghi chi thường dưới 10 giây | `MOB-P1-004` xong về số bước, chưa đo thời gian | `QA-P1-001` |

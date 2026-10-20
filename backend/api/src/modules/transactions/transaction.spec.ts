@@ -4,7 +4,7 @@ import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { calendarDate, convertedMinor, minor, normalizeRate, validateInput, type TransactionInput } from './domain/transaction';
 import { CreateTransactionDto, UpdateTransactionDto } from './transaction.dto';
-const input = (): TransactionInput => ({ type: 'transfer', occurredOn: calendarDate('2026-09-25'), categoryId: null, notes: null, tagIds: [], fx: null,
+const input = (): TransactionInput => ({ type: 'transfer', occurredOn: calendarDate('2026-09-25'), categoryId: null, notes: null, merchant: null, tagIds: [], fx: null,
   legs: [{ clientId: randomUUID(), accountId: randomUUID(), currencyCode: 'VND', amountMinor: -9007199254740993n },
     { clientId: randomUUID(), accountId: randomUUID(), currencyCode: 'VND', amountMinor: 9007199254740993n }] });
 describe('BE-P1-005 transaction money and DTO rules', () => {
@@ -30,12 +30,17 @@ describe('BE-P1-005 transaction money and DTO rules', () => {
       (x: TransactionInput) => { x.legs.reverse(); },
       (x: TransactionInput) => { x.legs.pop(); },
       (x: TransactionInput) => { x.categoryId = randomUUID(); },
+      (x: TransactionInput) => { x.merchant = 'Shop'; },
       (x: TransactionInput) => { x.legs[1].amountMinor -= 1n; },
     ]) { const value = input(); change(value); expect(() => validateInput(value, { VND: 0 })).toThrow('VALIDATION_ERROR'); }
   });
-  it('validates income and expense signs', () => {
+  it('validates income and expense signs and optional merchant', () => {
     for (const type of ['income', 'expense'] as const) {
       const value = input(); value.type = type; value.categoryId = type === 'expense' ? randomUUID() : null; value.legs = [value.legs[type === 'income' ? 1 : 0]];
+      expect(() => validateInput(value, { VND: 0 })).not.toThrow();
+      value.merchant = 'WinMart';
+      expect(() => validateInput(value, { VND: 0 })).not.toThrow();
+      value.merchant = null;
       expect(() => validateInput(value, { VND: 0 })).not.toThrow();
       value.legs[0].amountMinor *= -1n;
       expect(() => validateInput(value, { VND: 0 })).toThrow('VALIDATION_ERROR');
@@ -47,6 +52,8 @@ describe('BE-P1-005 transaction money and DTO rules', () => {
     for (const patch of [{ version: null }, { version: 1, legs: null }, { version: 1, deleted: null }, { version: 1, type: 'income' }, { version: 1, fx: [] }, { version: 1, tagIds: null }, { version: 1, fx: { rate: '1', quotedAt: '2026-09-25' } }]) {
       expect((await validate(plainToInstance(UpdateTransactionDto, patch), { whitelist: true, forbidNonWhitelisted: true })).length).toBeGreaterThan(0);
     }
-    expect(await validate(plainToInstance(UpdateTransactionDto, { version: 1, notes: null, categoryId: null, fx: null, tagIds: [] }))).toHaveLength(0);
+    expect(await validate(plainToInstance(UpdateTransactionDto, { version: 1, notes: null, merchant: null, categoryId: null, fx: null, tagIds: [] }))).toHaveLength(0);
+    expect((await validate(plainToInstance(CreateTransactionDto, { ...valid, merchant: '' }))).length).toBeGreaterThan(0);
+    expect((await validate(plainToInstance(CreateTransactionDto, { ...valid, merchant: 'x'.repeat(201) }))).length).toBeGreaterThan(0);
   });
 });
