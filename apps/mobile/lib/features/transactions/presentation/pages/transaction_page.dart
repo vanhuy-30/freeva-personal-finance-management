@@ -31,7 +31,7 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   void _maybeRecord() {
-    if (!widget.record || prompted || model.busy) return;
+    if (!widget.record || prompted || !model.composerReady) return;
     if (model.preferredAccountId() == null) return;
     prompted = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -66,7 +66,7 @@ class _TransactionPageState extends State<TransactionPage> {
     builder: (context, _) {
       final s = S.of(context);
       final noWallet =
-          !model.busy &&
+          model.composerReady &&
           model.failure == null &&
           model.wallets.every((wallet) => wallet.archived);
       return Scaffold(
@@ -160,7 +160,7 @@ class _TransactionPageState extends State<TransactionPage> {
                           ),
                           FilledButton.icon(
                             onPressed:
-                                model.busy ||
+                                !model.composerReady ||
                                     model.needsReload ||
                                     model.preferredAccountId() == null
                                 ? null

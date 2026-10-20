@@ -33,6 +33,8 @@ abstract class TransactionViewModel extends ChangeNotifier {
   List<Tag> get tags;
   String? get timeZone;
   bool get busy;
+  bool get composerReady;
+  bool get canWrite;
   bool get hasMore;
   bool get needsReload;
   bool get deleted;
@@ -106,8 +108,10 @@ class DefaultTransactionViewModel extends TransactionViewModel {
   List<Tag> tags = const [];
   @override
   String? timeZone;
+  bool _loading = false;
+  bool _writing = false;
   @override
-  bool busy = false;
+  bool composerReady = false;
   @override
   bool needsReload = false;
   @override
@@ -120,6 +124,14 @@ class DefaultTransactionViewModel extends TransactionViewModel {
   List<TransactionBundle> get rows => _group(_legs);
   @override
   bool get hasMore => _legs.length < _total;
+  @override
+  bool get busy => _loading || _writing;
+  @override
+  bool get canWrite =>
+      composerReady &&
+      !_writing &&
+      !needsReload &&
+      _stage == AuthStage.unlocked;
 
   void _authChanged() {
     if (_stage == _auth.stage) return;
@@ -156,7 +168,9 @@ class DefaultTransactionViewModel extends TransactionViewModel {
     _page = 1;
     _total = 0;
     failure = null;
-    busy = false;
+    _loading = false;
+    _writing = false;
+    composerReady = false;
     needsReload = false;
     _tracked.clear();
   }
@@ -165,8 +179,6 @@ class DefaultTransactionViewModel extends TransactionViewModel {
     failure = error;
     if (error.code == AuthError.expired) _auth.sessionExpired();
   }
-
-  bool get _canWrite => !busy && !needsReload && _stage == AuthStage.unlocked;
 
   @override
   String newClientId() {
@@ -193,7 +205,14 @@ class DefaultTransactionViewModel extends TransactionViewModel {
   String? preferredCategoryId() => defaultCategoryId(recentCategories);
 
   Future<bool> _references(int epoch) async {
-    final profile = await _profile.load();
+    final profileFuture = _profile.load();
+    final walletsFuture = _wallets.load();
+    final currenciesFuture = _wallets.currencies();
+    final categoriesFuture = _categoriesUseCases.load();
+    final profile = await profileFuture;
+    final walletResult = await walletsFuture;
+    final currencyResult = await currenciesFuture;
+    final categoryResult = await categoriesFuture;
     if (epoch != _epoch) return false;
     final profileError = profile.fold<AuthFailure?>(
       (error) {
@@ -206,8 +225,6 @@ class DefaultTransactionViewModel extends TransactionViewModel {
       },
     );
     if (profileError != null) return false;
-    final walletResult = await _wallets.load();
-    if (epoch != _epoch) return false;
     if (walletResult.fold<bool>(
       (error) {
         _fail(error);
@@ -220,8 +237,6 @@ class DefaultTransactionViewModel extends TransactionViewModel {
     )) {
       return false;
     }
-    final currencyResult = await _wallets.currencies();
-    if (epoch != _epoch) return false;
     if (currencyResult.fold<bool>(
       (error) {
         _fail(error);
@@ -234,8 +249,6 @@ class DefaultTransactionViewModel extends TransactionViewModel {
     )) {
       return false;
     }
-    final categoryResult = await _categoriesUseCases.load();
-    if (epoch != _epoch) return false;
     if (categoryResult.fold<bool>(
       (error) {
         _fail(error);
@@ -249,18 +262,15 @@ class DefaultTransactionViewModel extends TransactionViewModel {
     )) {
       return false;
     }
+    return true;
+  }
+
+  Future<void> _loadTags(int epoch) async {
     final tagResult = await _tagsUseCases.list();
-    if (epoch != _epoch) return false;
-    return tagResult.fold(
-      (error) {
-        _fail(error);
-        return false;
-      },
-      (value) {
-        tags = value;
-        return true;
-      },
-    );
+    if (epoch != _epoch) return;
+    tagResult.fold(_fail, (value) {
+      tags = value;
+    });
   }
 
   Future<void> _pageAt(int epoch, {required bool replace}) async {
@@ -287,51 +297,63 @@ class DefaultTransactionViewModel extends TransactionViewModel {
 
   @override
   Future<void> load() async {
-    if (busy || _stage != AuthStage.unlocked) return;
+    if (_loading || _writing || _stage != AuthStage.unlocked) return;
     final epoch = ++_epoch;
-    busy = true;
+    _loading = true;
     failure = null;
     notifyListeners();
-    final ready = await _references(epoch);
+    final refsFuture = _references(epoch);
+    final pageFuture = _pageAt(epoch, replace: true);
+    final tagsFuture = _loadTags(epoch);
+    final ready = await refsFuture;
     if (epoch != _epoch) return;
-    if (ready) await _pageAt(epoch, replace: true);
+    if (ready) {
+      composerReady = true;
+      _loading = false;
+      notifyListeners();
+      await Future.wait([pageFuture, tagsFuture]);
+      if (epoch != _epoch) return;
+      notifyListeners();
+      return;
+    }
+    await Future.wait([pageFuture, tagsFuture]);
     if (epoch != _epoch) return;
-    busy = false;
+    _loading = false;
     notifyListeners();
   }
 
   @override
   Future<void> loadMore() async {
-    if (!_canWrite || !hasMore) return;
+    if (!canWrite || !hasMore || _loading) return;
     final epoch = ++_epoch;
-    busy = true;
+    _loading = true;
     failure = null;
     _page += 1;
     notifyListeners();
     await _pageAt(epoch, replace: false);
     if (epoch != _epoch) return;
     if (failure != null) _page -= 1;
-    busy = false;
+    _loading = false;
     notifyListeners();
   }
 
   @override
   Future<void> showDeleted(bool value) async {
-    if (busy) return;
+    if (_loading || _writing) return;
     deleted = value;
     await load();
   }
 
   @override
   Future<void> filterType(TransactionType? type) async {
-    if (busy) return;
+    if (_loading || _writing) return;
     typeFilter = type;
     await load();
   }
 
   @override
   Future<void> search(String text) async {
-    if (busy) return;
+    if (_loading || _writing) return;
     final trimmed = text.trim();
     _search = trimmed.isEmpty ? null : trimmed;
     await load();
@@ -339,16 +361,16 @@ class DefaultTransactionViewModel extends TransactionViewModel {
 
   @override
   Future<TransactionBundle?> open(String id) async {
-    if (busy || _stage != AuthStage.unlocked) return null;
+    if (_writing || _stage != AuthStage.unlocked) return null;
     final epoch = ++_epoch;
-    busy = true;
+    _writing = true;
     failure = null;
     notifyListeners();
     final result = await _cases.read(id);
     if (epoch != _epoch) return null;
     TransactionBundle? bundle;
     result.fold(_fail, (value) => bundle = value);
-    busy = false;
+    _writing = false;
     notifyListeners();
     return bundle;
   }
@@ -373,7 +395,7 @@ class DefaultTransactionViewModel extends TransactionViewModel {
       await _pageAt(epoch, replace: true);
     }
     if (epoch != _epoch) return false;
-    busy = false;
+    _writing = false;
     _drainSyncReload();
     notifyListeners();
     return result.isRight();
@@ -390,7 +412,7 @@ class DefaultTransactionViewModel extends TransactionViewModel {
     await enqueue();
     if (epoch != _epoch) return false;
     track();
-    busy = false;
+    _writing = false;
     _drainSyncReload();
     notifyListeners();
     return true;
@@ -414,7 +436,7 @@ class DefaultTransactionViewModel extends TransactionViewModel {
 
   @override
   Future<Tag?> createTag(String name, {required String clientId}) async {
-    if (!_canWrite) return null;
+    if (!canWrite) return null;
     final epoch = _epoch;
     final result = await _tagsUseCases.create(clientId: clientId, name: name);
     if (epoch != _epoch) return null;
@@ -438,9 +460,9 @@ class DefaultTransactionViewModel extends TransactionViewModel {
     TransactionDraft draft, {
     TransactionBundle? existing,
   }) async {
-    if (!_canWrite) return false;
+    if (!canWrite) return false;
     final epoch = ++_epoch;
-    busy = true;
+    _writing = true;
     failure = null;
     notifyListeners();
     final result = await _cases.save(
@@ -464,7 +486,7 @@ class DefaultTransactionViewModel extends TransactionViewModel {
       return prepared.fold(
         (_) async {
           _fail(const AuthFailure(AuthError.network));
-          busy = false;
+          _writing = false;
           notifyListeners();
           return false;
         },
@@ -488,9 +510,9 @@ class DefaultTransactionViewModel extends TransactionViewModel {
 
   @override
   Future<bool> remove(TransactionBundle bundle) async {
-    if (!_canWrite || bundle.deleted) return false;
+    if (!canWrite || bundle.deleted) return false;
     final epoch = ++_epoch;
-    busy = true;
+    _writing = true;
     failure = null;
     notifyListeners();
     final result = await _cases.remove(bundle);
@@ -513,9 +535,9 @@ class DefaultTransactionViewModel extends TransactionViewModel {
 
   @override
   Future<bool> restore(TransactionBundle bundle) async {
-    if (!_canWrite) return false;
+    if (!canWrite) return false;
     final epoch = ++_epoch;
-    busy = true;
+    _writing = true;
     failure = null;
     notifyListeners();
     final result = await _cases.restore(bundle, wallets);

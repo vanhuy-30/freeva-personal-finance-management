@@ -106,13 +106,38 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
     await tester.pumpWidget(app(TransactionForm(model: model), scale: 2));
     await tester.enterText(find.byType(TextField).first, '1e3');
-    await tester.ensureVisible(find.widgetWithText(FilledButton, 'Lưu'));
     await tester.tap(find.widgetWithText(FilledButton, 'Lưu'));
     await tester.pumpAndSettle();
     expect(api.writes, 0);
     expect(find.text('1e3'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets(
+    'new expense focuses amount, prefers recent defaults, and pins save',
+    (tester) async {
+      await tester.pumpWidget(app(TransactionForm(model: model)));
+      await tester.pumpAndSettle();
+      final amountField = tester.widget<TextField>(find.byType(TextField).first);
+      expect(amountField.autofocus, isTrue);
+      expect(model.preferredAccountId(), 'card');
+      expect(model.preferredCategoryId(), 'food');
+      expect(find.text('Ăn uống'), findsWidgets);
+      final scroll = find.byType(SingleChildScrollView);
+      expect(
+        find.descendant(
+          of: scroll,
+          matching: find.widgetWithText(FilledButton, 'Lưu'),
+        ),
+        findsNothing,
+      );
+      expect(find.widgetWithText(FilledButton, 'Lưu'), findsOneWidget);
+      await tester.enterText(find.byType(TextField).first, '25000');
+      await tester.tap(find.widgetWithText(FilledButton, 'Lưu'));
+      await tester.pumpAndSettle();
+      expect(api.writes, 1);
+    },
+  );
 
   testWidgets('locking closes the editor and drops the draft', (tester) async {
     await tester.pumpWidget(

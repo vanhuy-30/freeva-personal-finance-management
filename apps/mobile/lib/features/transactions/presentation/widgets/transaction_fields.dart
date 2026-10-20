@@ -30,12 +30,14 @@ class TransactionFields extends StatelessWidget {
     required this.onCounter,
     required this.onCategory,
     required this.onDate,
+    this.autofocusAmount = false,
     super.key,
   });
 
   final TransactionType type;
   final bool lockedType;
   final bool readOnly;
+  final bool autofocusAmount;
   final String? accountId;
   final String? counterAccountId;
   final String? categoryId;
@@ -91,6 +93,7 @@ class TransactionFields extends StatelessWidget {
         TextField(
           controller: amount,
           readOnly: readOnly,
+          autofocus: autofocusAmount,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           decoration: InputDecoration(
             labelText: s.transactionAmount,

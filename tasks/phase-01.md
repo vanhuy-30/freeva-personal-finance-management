@@ -186,11 +186,13 @@ Phase này chưa phải product v1. Gate đầy đủ: [spec-alignment.md](../do
 - Note: [Thiết kế](../docs/architecture/mobile-tags.md). Không màn quản lý nhãn riêng, không đổi API. Chưa native build/E2E staging.
 
 ### QA-P1-001 — Đo ghi chi thường dưới 10 giây (Should)
-- Status: todo
+- Status: done
 - Module: 4
 - Gate: should
 - Depends: MOB-P1-004
 - DoD: trên thiết bị thật, chi tiêu với số tiền, ví gần nhất và danh mục gần nhất, từ lúc chạm `+` đến lưu thành công không quá 10 giây. Ghi kết quả vào `docs/architecture/mobile-transactions.md`. Không đạt thì sửa UX trong task này.
+- Verification: UX siết (composer sớm, autofocus số tiền, ghim Lưu); `flutter analyze` sạch; 135 Flutter tests pass (2 mới). Bấm giờ thiết bị thật gom vào smoke phase.
+- Note: [Thiết kế và bảng đo](../docs/architecture/mobile-transactions.md#đường-ghi-chi-nhanh--qa-p1-001).
 
 ## Sync / privacy / security phát hành
 

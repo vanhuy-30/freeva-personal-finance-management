@@ -1,7 +1,7 @@
 # STATUS
 
 - **Phase hiện tại:** 1 — Phase 0 **closed** 2026-09-21. Phase 1 là sổ cái, chưa phải product v1. Đối chiếu spec: [spec-alignment.md](../product/spec-alignment.md).
-- **Cập nhật:** 2026-10-19
+- **Cập nhật:** 2026-10-20
 - **CI:** `INF-P0-002` done; cả ba job xanh trên `main`, [run 33521325189](https://github.com/vanhuy-30/freeva-personal-finance-management/actions/runs/33521325189).
 - **Staging:** live — API [Render](https://freeva-api-staging.onrender.com) (`GET /api/health` → 200, `database` = up); admin [Vercel](https://freeva-personal-finance-management.vercel.app) đọc health staging. Stack: `render.yaml` + `apps/web-admin/vercel.json`. Prod hoster TBD tới Store (region VN).
 - **Crash monitoring:** `INF-P1-001` done — Sentry trên API, admin và mobile; tắt khi không có DSN; scrub PII. Event live chờ DSN trên dashboard (DECISIONS-OPEN #9, [ADR 011](../architecture/adr/011-sentry-crash-monitoring.md)).
@@ -12,7 +12,7 @@
 - **Mobile auth:** `MOB-P1-001` done (2026-10-19): email auth, secure session, PIN/biometric lock, privacy cover và quản lý phiên. Analyze + 33 tests + native builds pass; Face ID/fingerprint/recents pass trên thiết bị thực. Residual: E2E Resend staging hoãn đến khi setup Resend. [Email runbook](../infrastructure/email.md). [Chi tiết](../architecture/mobile-auth.md).
 - **Mobile profile:** `MOB-P1-002` done: locale/currency/IANA TZ/kỳ 1–28, API theo owner với version chống ghi đè, l10n và privacy gate. Analyze, Flutter tests, API build/tests và PostgreSQL integration pass. Chưa deploy/smoke native. [Chi tiết](../architecture/mobile-profile.md).
 - **Mobile wallets:** `MOB-P1-003` done: danh sách/tạo/sửa bốn loại ví, tiền BigInt, sắp xếp/ẩn/khôi phục, version/clientId và privacy gate. Analyze và 11 tests mới pass; chưa native build/E2E staging. [Chi tiết](../architecture/mobile-wallets.md).
-- **Mobile transactions:** `MOB-P1-004` done: ghi thu/chi/chuyển ít bước, tiền BigInt, FX exact, ngày theo TZ, version/clientId và privacy gate. Analyze và Flutter tests pass; chưa native build/E2E staging. [Chi tiết](../architecture/mobile-transactions.md).
+- **Mobile transactions:** `MOB-P1-004` done: ghi thu/chi/chuyển ít bước, tiền BigInt, FX exact, ngày theo TZ, version/clientId và privacy gate. `QA-P1-001` done: composer sớm, autofocus số tiền, ghim Lưu; analyze và 135 tests pass; bấm giờ thiết bị thật gom smoke phase. [Chi tiết](../architecture/mobile-transactions.md).
 - **Mobile categories:** `MOB-P1-005` done: danh sách cây, tạo/sửa custom, màu/icon catalog, ẩn/khôi phục và xóa kèm chuyển giao dịch. Analyze và 10 tests mới pass; chưa native build/E2E staging. [Chi tiết](../architecture/mobile-categories.md).
 - **Mobile reports:** `MOB-P1-006` done: tổng quan tài sản/nợ/ròng và thu chi tháng này, báo cáo lọc tuần/tháng/khoảng, mỗi loại tiền một khối. Analyze và 14 tests mới pass; chưa native build/E2E staging. [Chi tiết](../architecture/mobile-reports.md).
 - **Mobile settings:** `MOB-P1-007` done: theme sáng/tối/hệ thống trên thiết bị, lối sang hồ sơ, cờ sinh trắc, onboarding một lần, FAQ, phản hồi chỉ sao chép, phiên bản và bản nháp ToS/privacy. Analyze và 14 tests mới pass (108 tổng); chưa native build/E2E staging. [Chi tiết](../architecture/mobile-settings.md).
