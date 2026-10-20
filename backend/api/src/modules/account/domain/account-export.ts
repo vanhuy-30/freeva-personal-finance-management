@@ -87,6 +87,7 @@ export interface AccountExportTransaction extends Omit<SyncRow, 'createdAt' | 'u
   transferGroupId: string | null;
   fxQuoteId: string | null;
   notes: string | null;
+  merchant: string | null;
   deletedAt: string | null;
   tagIds: string[];
   createdAt: string;
@@ -193,8 +194,8 @@ export function toAccountExport(source: ExportSource): AccountExport {
       id: row.id, clientId: row.clientId, type: row.type, amountMinor: row.amountMinor.toString(),
       currencyCode: code(row.currencyCode), occurredOn: day(row.occurredOn), accountId: row.accountId,
       categoryId: row.categoryId, transferGroupId: row.transferGroupId, fxQuoteId: row.fxQuoteId,
-      notes: row.notes, deletedAt: row.deletedAt ? iso(row.deletedAt) : null, tagIds: [...row.tagIds].sort(),
-      version: row.version, ...stamps(row),
+      notes: row.notes, merchant: row.merchant, deletedAt: row.deletedAt ? iso(row.deletedAt) : null,
+      tagIds: [...row.tagIds].sort(), version: row.version, ...stamps(row),
     })),
   };
 }

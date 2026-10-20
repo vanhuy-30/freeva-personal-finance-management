@@ -17,6 +17,7 @@ export interface TransactionInput {
   legs: LegInput[];
   categoryId: string | null;
   notes: string | null;
+  merchant: string | null;
   tagIds: string[];
   fx: ManualFx | null;
 }
@@ -27,6 +28,7 @@ export interface TransactionLeg extends LegInput {
   occurredOn: Date;
   categoryId: string | null;
   notes: string | null;
+  merchant: string | null;
   tagIds: string[];
   transferGroupId: string | null;
   fxQuoteId: string | null;
@@ -59,11 +61,12 @@ export function validateInput(input: TransactionInput, digits: Record<string, nu
   for (const leg of legs) minor(leg.amountMinor.toString());
   const [source, destination] = legs;
   if (type === 'expense' && input.categoryId === null) throw new TransactionError('VALIDATION_ERROR');
+  if (input.merchant !== null && (input.merchant.length < 1 || input.merchant.length > 200)) throw new TransactionError('VALIDATION_ERROR');
   if (type !== 'transfer') {
     if (fx || (type === 'income' ? source.amountMinor <= 0n : source.amountMinor >= 0n)) throw new TransactionError('VALIDATION_ERROR');
     return;
   }
-  if (input.categoryId !== null || source.amountMinor >= 0n || destination.amountMinor <= 0n) throw new TransactionError('VALIDATION_ERROR');
+  if (input.categoryId !== null || input.merchant !== null || source.amountMinor >= 0n || destination.amountMinor <= 0n) throw new TransactionError('VALIDATION_ERROR');
   if (source.currencyCode === destination.currencyCode && fx) throw new TransactionError('VALIDATION_ERROR');
   const result = evaluateTransfer({ legs: legs.map((item, index) => ({ role: index === 0 ? 'source' : 'destination', type, amountMinor: item.amountMinor.toString(),
       accountId: item.accountId, occurredOn: input.occurredOn.toISOString(), currencyCode: item.currencyCode, transferGroupId: 'request', fxQuoteId: fx ? 'quote' : null })) }, {

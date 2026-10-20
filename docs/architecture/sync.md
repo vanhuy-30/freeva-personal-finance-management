@@ -16,7 +16,7 @@ Batch hợp lệ trả `200`. Tối đa 50 operation, `opId` UUID duy nhất tro
 | `update` | `UpdateTransaction` kèm `id` | `applied` |
 | `delete` | `id` + `version` | `applied`, `transaction` null |
 
-Create không dùng header `Idempotency-Key`. Khóa vẫn là `legs[0].clientId`, so sánh giống POST giao dịch.
+Create không dùng header `Idempotency-Key`. Khóa vẫn là `legs[0].clientId`, so sánh giống POST giao dịch. `merchant` đi theo body create/update giống CRUD giao dịch (`BE-P1-012`); không đổi protocol sync.
 
 `TRANSACTION_CONFLICT` thành `conflict` và không ghi đè. Kèm bundle server nếu đọc được. `review` chỉ `true` khi amount yêu cầu khác amount đang lưu, so bằng bigint. Version cũ nhưng cùng số tiền: `review` false. `VALIDATION_ERROR`, not found và account not found thành `rejected` với `details` rỗng.
 

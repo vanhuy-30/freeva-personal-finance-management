@@ -347,6 +347,222 @@ paths:
         owner. Move all references and increment each transaction version/updatedAt, preserving money, date, account,
         tags and deletedAt. Any failure or version overflow rolls back everything. Empty categories may be deleted
         without replacement. No category restore after deletion.
+  /api/v1/tags:
+    post:
+      operationId: createTag
+      summary: Create a tag owned by the session user
+      tags:
+      - Tags
+      security:
+      - UserBearer: []
+      responses:
+        '201':
+          description: Created
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+        '200':
+          description: Normalized clientId replay matches current name
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+        '400':
+          $ref: '#/components/responses/TagValidationError'
+        '401':
+          $ref: '#/components/responses/TagUnauthorized'
+        '404':
+          $ref: '#/components/responses/TagNotFound'
+        '409':
+          $ref: '#/components/responses/TagConflict'
+        '503':
+          $ref: '#/components/responses/TagUnavailable'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTagRequest'
+      description: clientId is normalized to lowercase. Matching current name replays safely; a different name for the
+        same clientId returns conflict. Duplicate names are allowed. Attach tags to transactions via existing tagIds.
+    get:
+      operationId: listTags
+      summary: List own tags
+      tags:
+      - Tags
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Page ordered by createdAt ascending, then id ascending
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagList'
+        '400':
+          $ref: '#/components/responses/TagValidationError'
+        '401':
+          $ref: '#/components/responses/TagUnauthorized'
+        '404':
+          $ref: '#/components/responses/TagNotFound'
+        '409':
+          $ref: '#/components/responses/TagConflict'
+        '503':
+          $ref: '#/components/responses/TagUnavailable'
+      parameters:
+      - in: query
+        name: page
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+          default: 1
+      - in: query
+        name: pageSize
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 50
+  /api/v1/tags/{id}:
+    get:
+      operationId: getTag
+      summary: Get an own tag
+      tags:
+      - Tags
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Tag
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+        '400':
+          $ref: '#/components/responses/TagValidationError'
+        '401':
+          $ref: '#/components/responses/TagUnauthorized'
+        '404':
+          $ref: '#/components/responses/TagNotFound'
+        '409':
+          $ref: '#/components/responses/TagConflict'
+        '503':
+          $ref: '#/components/responses/TagUnavailable'
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+    patch:
+      operationId: updateTag
+      summary: Rename an own tag
+      tags:
+      - Tags
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Updated
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+        '400':
+          $ref: '#/components/responses/TagValidationError'
+        '401':
+          $ref: '#/components/responses/TagUnauthorized'
+        '404':
+          $ref: '#/components/responses/TagNotFound'
+        '409':
+          $ref: '#/components/responses/TagConflict'
+        '503':
+          $ref: '#/components/responses/TagUnavailable'
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTagRequest'
+    delete:
+      operationId: deleteTag
+      summary: Detach from transactions then permanently delete a tag
+      tags:
+      - Tags
+      security:
+      - UserBearer: []
+      responses:
+        '204':
+          description: Deleted atomically
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+        '400':
+          $ref: '#/components/responses/TagValidationError'
+        '401':
+          $ref: '#/components/responses/TagUnauthorized'
+        '404':
+          $ref: '#/components/responses/TagNotFound'
+        '409':
+          $ref: '#/components/responses/TagConflict'
+        '503':
+          $ref: '#/components/responses/TagUnavailable'
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: version
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483646
+      description: Removes TransactionTag links for the owner, increments version/updatedAt on every linked
+        transaction including soft-deleted ones, then deletes the tag. Version overflow on a linked transaction
+        rolls back. Missing or foreign id returns 404.
   /api/v1/transactions:
     post:
       operationId: createTransaction
@@ -2101,6 +2317,61 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorEnvelope'
+    TagValidationError:
+      description: VALIDATION_ERROR
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    TagUnauthorized:
+      description: SESSION_INVALID
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    TagNotFound:
+      description: 'TAG_NOT_FOUND: missing or owned by another user'
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    TagConflict:
+      description: 'TAG_CONFLICT: stale version, clientId replay mismatch, or linked transaction version overflow'
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    TagUnavailable:
+      description: TAGS_UNAVAILABLE or authentication unavailable
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
     FinancialAccountValidationError:
       description: VALIDATION_ERROR
       headers:
@@ -2433,6 +2704,86 @@ components:
             - bonus
             - other_income
             - other_expense
+    Tag:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - clientId
+      - name
+      - version
+      - createdAt
+      - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        clientId:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Trimmed; duplicate names are allowed.
+        version:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    CreateTagRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - clientId
+      - name
+      properties:
+        clientId:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Trimmed; duplicate names are allowed.
+    UpdateTagRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - version
+      properties:
+        version:
+          type: integer
+          minimum: 1
+          maximum: 2147483646
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Trimmed; duplicate names are allowed.
+    TagList:
+      type: object
+      required:
+      - items
+      - page
+      - pageSize
+      - total
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        total:
+          type: integer
     TransactionLegInput:
       type: object
       additionalProperties: false
@@ -2509,6 +2860,14 @@ components:
           - string
           - 'null'
           maxLength: 2000
+        merchant:
+          type:
+          - string
+          - 'null'
+          minLength: 1
+          maxLength: 200
+          description: Optional for income and expense after trim. Forbidden on transfer (must be null or omitted). Empty
+            string after trim is rejected.
         tagIds:
           type: array
           maxItems: 20
@@ -2556,6 +2915,14 @@ components:
           - string
           - 'null'
           maxLength: 2000
+        merchant:
+          type:
+          - string
+          - 'null'
+          minLength: 1
+          maxLength: 200
+          description: Optional for income and expense after trim. Forbidden on transfer (must be null or omitted). Empty
+            string after trim is rejected. Omitted keeps the current value; null clears it.
         tagIds:
           type: array
           maxItems: 20
@@ -2586,6 +2953,7 @@ components:
       - occurredOn
       - categoryId
       - notes
+      - merchant
       - tagIds
       - transferGroupId
       - fxQuoteId
@@ -2631,6 +2999,12 @@ components:
           type:
           - string
           - 'null'
+        merchant:
+          type:
+          - string
+          - 'null'
+          maxLength: 200
+          description: Always present. Null for transfer and when unset on income/expense.
         tagIds:
           type: array
           items:
@@ -3809,7 +4183,7 @@ components:
     AccountExportTransaction:
       type: object
       additionalProperties: false
-      required: [id, clientId, type, amountMinor, currencyCode, occurredOn, accountId, categoryId, transferGroupId, fxQuoteId, notes, deletedAt, tagIds, version, createdAt, updatedAt]
+      required: [id, clientId, type, amountMinor, currencyCode, occurredOn, accountId, categoryId, transferGroupId, fxQuoteId, notes, merchant, deletedAt, tagIds, version, createdAt, updatedAt]
       properties:
         id:
           type: string
@@ -3841,6 +4215,8 @@ components:
           type: [string, 'null']
           format: uuid
         notes:
+          type: [string, 'null']
+        merchant:
           type: [string, 'null']
         deletedAt:
           type: [string, 'null']
