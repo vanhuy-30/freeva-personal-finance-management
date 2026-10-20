@@ -157,11 +157,13 @@ Phase này chưa phải product v1. Gate đầy đủ: [spec-alignment.md](../do
 - Note: [Thiết kế và giới hạn](../docs/architecture/mobile-settings.md). Không đổi API. Chưa native build/E2E staging. Địa chỉ nhận phản hồi còn TBD (DECISIONS-OPEN #10).
 
 ### BE-P1-011 — Kind danh mục và bổ sung bộ mặc định
-- Status: todo
+- Status: done
 - Module: 5
 - Gate: v1
 - Depends: BE-P1-006
 - DoD: `kind` = expense, income hoặc both. User đã bootstrap nhận thêm, đúng một lần, các mục spec còn thiếu: Cà phê, Điện nước, Internet, Điện thoại, Subscription, Bảo hiểm, Thuế/phí, Freelance, Kinh doanh, Đầu tư, Hoàn tiền. Điện nước, Internet, Điện thoại là con của Hóa đơn nếu mục đó còn. Không ghi đè tên hoặc mục user đã sửa. Custom cũ mặc định `both`. OpenAPI khớp. Test upgrade tài khoản đã có danh mục. Log không có tên danh mục.
+- Verification: unit categories/account pass (gồm `supplementPlan`); HTTP/PostgreSQL categories + account pass (bootstrap 26, supplement một lần, không đè tên, không nhân đôi custom, Hóa đơn mất → tiện ích gốc); upgrade SQL bảo toàn legacy với `kind=both`; build và OpenAPI lint pass. Migration additive `20261020000000_category_kind`.
+- Note: [Kiến trúc](../docs/architecture/categories.md). Deploy migration trước API. Không enforce `kind` khi ghi giao dịch. Chưa deploy staging.
 
 ## Báo cáo / search / settings / help
 

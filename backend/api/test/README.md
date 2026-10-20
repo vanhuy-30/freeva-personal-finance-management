@@ -197,10 +197,11 @@ Fixture [transfer-balance-cases.json](fixtures/transfer-balance-cases.json) đư
 
 Kết quả local 2026-09-25: 15 unit/HTTP suites / **145 tests**, 3 HTTP/PostgreSQL suites / **51 tests** pass; API build, fresh migration và OpenAPI validation pass. OpenAPI còn bốn warning có sẵn (localhost và profile thiếu summary). Không thêm migration; chưa deploy staging.
 
-## Categories — BE-P1-006
+## Categories — BE-P1-006 / BE-P1-011
 
 `categories.integration-spec.ts` dùng cùng CI `test:integration`, với auth/session,
-HTTP và PostgreSQL thật. Container riêng, không đọc database development:
+HTTP và PostgreSQL thật. Container riêng, không đọc database development.
+BE-P1-011 thêm `kind`, bộ 26 mục, và bổ sung một lần qua `categoriesSupplementedAt`:
 
 ```sh
 docker run --detach --rm --name freeva-be-p1-006-test \
@@ -246,20 +247,19 @@ DATABASE_URL=postgresql://auth_test:auth_test_local@127.0.0.1:55441/category_upg
 docker stop freeva-be-p1-006-test
 ```
 
-Fixture so sánh User (trừ cột mới), Category, FinancialAccount và Transaction,
+Fixture so sánh User (trừ `categoriesInitializedAt` và `categoriesSupplementedAt`),
+Category (trừ `kind`, assert `kind = both`), FinancialAccount và Transaction,
 bao gồm archived/deleted, timestamp và tiền vượt JS safe integer. Không bootstrap
-trong migration. Test integration bootstrap riêng cho user mới/có custom.
+trong migration. Test integration: bootstrap 26 mục, supplement tài khoản đã có
+15 mục, không đè tên đã sửa, không nhân đôi `Cà phê` custom, Hóa đơn mất thì tiện
+ích là gốc.
 
-Coverage: DTO, design-token catalog, cây sâu/chu trình/owner, archive/restore order,
-bootstrap/replay/version race, pagination, recent dedupe/tie/backdate/limit, chuyển
-active và soft-deleted giữ tiền/nhãn, rollback lỗi sau chuyển và version overflow,
-create/edit/restore song song với archive/delete, cạnh tranh delete và test cố tình
-giữ snapshot cũ để xác nhận retry. Trigger fault được dọn bằng finally.
+Coverage: DTO (từ chối `kind`), `supplementPlan`, design-token catalog, cây,
+bootstrap/replay, pagination, recent, chuyển giao dịch, race writers.
 
-Kết quả 2026-09-25: **162 unit/HTTP tests**, **66 HTTP/PostgreSQL integration tests**;
-build, OpenAPI validation, fresh migration và upgrade bảo toàn dữ liệu pass.
-OpenAPI còn bốn warning có sẵn (localhost và profile thiếu summary).
-Chưa deploy staging/production.
+Kết quả 2026-10-20 (BE-P1-011): **22 unit suites / 198 tests**; categories +
+account HTTP/PostgreSQL integration pass; build, OpenAPI validation, fresh
+migration và upgrade bảo toàn dữ liệu pass. Chưa deploy staging/production.
 
 ## Reports — BE-P1-007
 

@@ -2194,6 +2194,7 @@ components:
       - id
       - clientId
       - name
+      - kind
       - parentId
       - colorToken
       - iconToken
@@ -2215,6 +2216,10 @@ components:
           minLength: 1
           maxLength: 100
           description: Trimmed; duplicate names are allowed.
+        kind:
+          type: string
+          enum: [expense, income, both]
+          description: Server-managed; custom defaults to both. Not enforced on transaction write in Phase 1.
         parentId:
           type:
           - string
@@ -3623,7 +3628,7 @@ components:
     AccountExportProfile:
       type: object
       additionalProperties: false
-      required: [email, locale, timezone, defaultCurrencyCode, fiscalMonthStartDay, emailVerifiedAt, categoriesInitializedAt, createdAt, updatedAt]
+      required: [email, locale, timezone, defaultCurrencyCode, fiscalMonthStartDay, emailVerifiedAt, categoriesInitializedAt, categoriesSupplementedAt, createdAt, updatedAt]
       properties:
         email:
           type: string
@@ -3643,6 +3648,9 @@ components:
           type: [string, 'null']
           format: date-time
         categoriesInitializedAt:
+          type: [string, 'null']
+          format: date-time
+        categoriesSupplementedAt:
           type: [string, 'null']
           format: date-time
         createdAt:
@@ -3728,8 +3736,11 @@ components:
       - $ref: '#/components/schemas/AccountExportCategoryGroup'
       - type: object
         additionalProperties: false
-        required: [groupId, parentId, colorToken, iconToken]
+        required: [kind, groupId, parentId, colorToken, iconToken]
         properties:
+          kind:
+            type: string
+            enum: [expense, income, both]
           groupId:
             type: [string, 'null']
             format: uuid

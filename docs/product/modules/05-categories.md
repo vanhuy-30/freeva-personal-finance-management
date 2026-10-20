@@ -5,4 +5,6 @@
 
 Bộ mặc định người Việt. Danh mục tùy chỉnh, con, màu, icon. Ẩn; khi xóa phải chuyển giao dịch. Nhãn (Should, `BE-P1-012`). Danh mục dùng gần đây.
 
-Seed hiện có 15 mục dùng chung thu/chi. `BE-P1-011` bổ sung mục spec còn thiếu và `kind` expense/income/both, không ghi đè tên user đã sửa.
+API (`BE-P1-011`) có `kind` expense/income/both và bộ mặc định đủ tên spec; bổ sung
+một lần cho tài khoản đã bootstrap, không ghi đè tên đã sửa. App vẫn một cây dùng
+chung; lọc theo `kind` thuộc UI sau.
