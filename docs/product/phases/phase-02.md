@@ -2,6 +2,8 @@
 
 Module 6, 7, 8, 15, 17; mở rộng 14, 19.
 
+Phase 1 (sổ cái) **closed** 2026-10-21 — phase này đang mở. [STATUS](../../project-state/STATUS.md).
+
 ## Điều kiện hoàn thành
 
 - Nhìn đã chi / còn lại theo ngân sách.

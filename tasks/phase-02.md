@@ -1,6 +1,6 @@
 # Phase 2 — epic
 
-Điều kiện hoàn thành: [phase-02.md](../docs/product/phases/phase-02.md). Chưa băm ticket triển khai trước khi Phase 1 đạt gate sổ cái. `Gate: v1` vẫn là điều kiện product v1.
+Điều kiện hoàn thành: [phase-02.md](../docs/product/phases/phase-02.md). Phase 1 gate sổ cái **closed** 2026-10-21 — được băm ticket triển khai khi làm epic. `Gate: v1` vẫn là điều kiện product v1.
 
 ### BE-P2-E01 / MOB-P2-E01 — Giao dịch định kỳ (module 6)
 - Status: todo

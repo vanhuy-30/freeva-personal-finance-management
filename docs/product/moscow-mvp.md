@@ -1,8 +1,8 @@
 # MoSCoW — bản phát hành đầu
 
-Phase 1 trong repo là sổ cái. Product v1 rộng hơn: mục Must bên dưới cộng ngân sách, mục tiêu và insight cơ bản. Bảng lệch: [spec-alignment.md](spec-alignment.md).
+Phase 1 (sổ cái) **closed** 2026-10-21. Product v1 rộng hơn: mục Must bên dưới cộng ngân sách, mục tiêu và insight cơ bản. Bảng lệch: [spec-alignment.md](spec-alignment.md).
 
-## Must (Phase 1)
+## Must (Phase 1 — đã đạt)
 
 - Đăng ký/đăng nhập/reset mật khẩu và khóa app.
 - Hồ sơ, tiền tệ, múi giờ, kỳ tài chính.

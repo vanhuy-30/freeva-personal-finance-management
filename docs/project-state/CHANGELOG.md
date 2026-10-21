@@ -2,6 +2,10 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-10-21
+
+- **Phase 1 closed** (option B): backlog 28/28 done; điều kiện sổ cái đạt trên `main`; residual deploy staging, E2E native/Resend, DSN Sentry và nút OAuth mobile ghi rõ. Mở Phase 2 (ngân sách / định kỳ / …). Biên bản: [STATUS](STATUS.md), [phase-01](../product/phases/phase-01.md).
+
 ## 2026-10-20
 
 - `BE-P1-012`: CRUD `/api/v1/tags` theo owner (replay `clientId`, xóa gỡ link và tăng version giao dịch); `merchant` optional trên thu/chi, cấm trên transfer; export/sync kế thừa DTO; redact `merchant` trong log. 23 unit suites / 209 tests và 9 HTTP/PostgreSQL suites / 87 tests, build/OpenAPI pass. Migration additive `20261020120000_transaction_merchant`; chưa deploy staging. [Thiết kế](../architecture/tags.md).

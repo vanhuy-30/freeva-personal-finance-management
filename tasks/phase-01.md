@@ -1,6 +1,6 @@
 # Phase 1 — tasks (sổ cái)
 
-Phase này chưa phải product v1. Gate đầy đủ: [spec-alignment.md](../docs/product/spec-alignment.md).
+**Closed** 2026-10-21 — 28/28 done. Gate sổ cái; chưa phải product v1. Residual và biên bản: [STATUS](../docs/project-state/STATUS.md). Gate product v1: [spec-alignment.md](../docs/product/spec-alignment.md).
 
 ## Architecture / tooling
 
