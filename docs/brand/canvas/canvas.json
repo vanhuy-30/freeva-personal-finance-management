@@ -375,9 +375,16 @@
     "WCredit.dc.html": { "x": 1380, "y": 8696, "w": 390, "h": 844, "page": "p", "title": "D · 4. Chi tiết thẻ tín dụng", "is_interactive": true },
     "WAdd.dc.html": { "x": 1840, "y": 8696, "w": 390, "h": 844, "page": "p", "title": "D · 5. Thêm ví", "is_interactive": true },
     "WAddCredit.dc.html": { "x": 2300, "y": 8696, "w": 390, "h": 844, "page": "p", "title": "D · 6. Thêm thẻ tín dụng", "is_interactive": true },
-    "WDaySheet.dc.html": { "x": 2760, "y": 8696, "w": 390, "h": 844, "page": "p", "title": "D · 7. Chọn ngày (sheet)", "is_interactive": true },
+    "WDaySheet.dc.html": { "x": 2760, "y": 8696, "w": 390, "h": 844, "page": "p", "title": "D · 7. Chọn ngày (popup)", "is_interactive": true },
     "WEdit.dc.html": { "x": 3220, "y": 8696, "w": 390, "h": 844, "page": "p", "title": "D · 8. Sửa ví đã có giao dịch", "is_interactive": true },
-    "WHidden.dc.html": { "x": 3680, "y": 8696, "w": 390, "h": 844, "page": "p", "title": "D · 9. Ví đã ẩn", "is_interactive": true }
+    "WHidden.dc.html": { "x": 3680, "y": 8696, "w": 390, "h": 844, "page": "p", "title": "D · 9. Ví đã ẩn", "is_interactive": true },
+    "CatList.dc.html": { "x": 0, "y": 9940, "w": 390, "h": 844, "page": "p", "title": "E · 1. Danh mục", "is_interactive": true },
+    "CatAdd.dc.html": { "x": 460, "y": 9940, "w": 390, "h": 844, "page": "p", "title": "E · 2. Thêm danh mục", "is_interactive": true },
+    "CatParent.dc.html": { "x": 920, "y": 9940, "w": 390, "h": 844, "page": "p", "title": "E · 3. Thuộc danh mục chính (sheet)", "is_interactive": true },
+    "CatIcons.dc.html": { "x": 1380, "y": 9940, "w": 390, "h": 844, "page": "p", "title": "E · 4. Biểu tượng (sheet)", "is_interactive": true },
+    "CatEdit.dc.html": { "x": 1840, "y": 9940, "w": 390, "h": 844, "page": "p", "title": "E · 5. Sửa danh mục", "is_interactive": true },
+    "CatDelete.dc.html": { "x": 2300, "y": 9940, "w": 390, "h": 844, "page": "p", "title": "E · 6. Xoá (popup)", "is_interactive": true },
+    "CatHidden.dc.html": { "x": 2760, "y": 9940, "w": 390, "h": 844, "page": "p", "title": "E · 7. Danh mục đã ẩn", "is_interactive": true }
   },
   "order": [
     "Principles.dc.html",
@@ -445,6 +452,13 @@
     "WDaySheet.dc.html",
     "WEdit.dc.html",
     "WHidden.dc.html",
+    "CatList.dc.html",
+    "CatAdd.dc.html",
+    "CatParent.dc.html",
+    "CatIcons.dc.html",
+    "CatEdit.dc.html",
+    "CatDelete.dc.html",
+    "CatHidden.dc.html",
     "IA.dc.html",
     "Access.dc.html",
     "Motion.dc.html",
@@ -537,6 +551,14 @@
       "text": "D · Ví",
       "kind": "title1",
       "maxW": 4070,
+      "page": "p"
+    },
+    "te": {
+      "x": 0,
+      "y": 9660,
+      "text": "E · Danh mục",
+      "kind": "title1",
+      "maxW": 3150,
       "page": "p"
     },
     "tg": {

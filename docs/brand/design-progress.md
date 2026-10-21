@@ -16,14 +16,13 @@
 | **B** Tổng quan | **Chốt** 2026-10-21 | [patterns/B-overview.md](patterns/B-overview.md) |
 | **C** Giao dịch | **Chốt** 2026-10-21 | [patterns/C-transactions.md](patterns/C-transactions.md) |
 | **D** Ví | **Chốt** 2026-10-21 | [patterns/D-wallets.md](patterns/D-wallets.md) |
-| **E Danh mục** | **Tiếp theo** | — |
-| F Báo cáo | Chưa | — |
+| **E** Danh mục | **Chốt** 2026-10-21 | [patterns/E-categories.md](patterns/E-categories.md) |
+| **F Báo cáo** | **Tiếp theo** | — |
 | G Cá nhân và cài đặt | Có màn mẫu Cá nhân | — |
 | H Đồng bộ | Chưa | — |
 
 ## Màn cần thiết kế cho các nhóm còn lại (theo code Phase 1)
 
-- **E Danh mục:** danh sách cha/con, hệ thống vs tự tạo, thêm/sửa (tên, cha, màu token, icon token), ẩn/khôi phục, xoá phải chọn danh mục thay thế.
 - **F Báo cáo:** kỳ tuần/tháng/khoảng tuỳ chọn, trước/sau, tổng thu chi, theo danh mục, theo ví.
 - **G Cá nhân:** hồ sơ (ngôn ngữ, tiền tệ, múi giờ, ngày bắt đầu kỳ), cài đặt (giao diện, ẩn số dư, sinh trắc, cảnh báo phiên, quyền riêng tư), phiên đăng nhập (thu hồi một/tất cả), FAQ, góp ý (lỗi/ý tưởng), pháp lý.
 - **H Đồng bộ:** hàng chờ, lỗi, xung đột, trùng lặp; giữ / bỏ / khôi phục từng mục.
@@ -46,6 +45,8 @@
 - **Bottom nav chỉ ở màn gốc của tab**; vào màn tiếp theo thì ẩn.
 - **Chọn ngày trong tháng dùng popup**, không dùng sheet. Thẻ chọn trong form: icon và chữ một dòng.
 - **Chữ gợi ý ngắn, rõ, không khô** (ví dụ "Nhập số gần đúng, có thể sửa lại sau.").
+- **Trạng thái phải nhìn ra được** (ví dụ mở/thu danh mục con có nút riêng). Không gắn nhãn mà người dùng phải đoán nghĩa ("Của bạn").
+- **Bảng chọn màu:** nhiều lựa chọn nhưng không na ná nhau; kiểm bằng ΔE2000.
 - **Không bỏ phần UI đã duyệt chỉ vì tính năng chưa có code** (ví dụ chuông thông báo ở Tổng quan).
 - **Ẩn số dư chỉ ẩn số dư**, không ẩn thu/chi hay số tiền giao dịch.
 - **Màu giữ như spec.** Đã thử ba mức tăng màu (icon danh mục hai tông → nền nhuộm xanh → khối màu đậm đầu màn); product owner chọn giữ nguyên. Không đề xuất lại nếu chưa được hỏi.
