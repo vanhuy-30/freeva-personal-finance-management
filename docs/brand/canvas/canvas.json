@@ -360,7 +360,15 @@
     "TxMore.dc.html": { "x": 920, "y": 5992, "w": 390, "h": 844, "page": "p", "title": "C2 · 3. Ghi chú, cửa hàng, nhãn", "is_interactive": true },
     "TxTags.dc.html": { "x": 1380, "y": 5992, "w": 390, "h": 844, "page": "p", "title": "C2 · 4. Nhãn (sheet)", "is_interactive": true },
     "TxTransfer.dc.html": { "x": 1840, "y": 5992, "w": 390, "h": 844, "page": "p", "title": "C2 · 5. Chuyển ví khác tiền tệ", "is_interactive": true },
-    "TxSaved.dc.html": { "x": 2300, "y": 5992, "w": 390, "h": 844, "page": "p", "title": "C2 · 6. Đã lưu + Hoàn tác", "is_interactive": true }
+    "TxSaved.dc.html": { "x": 2300, "y": 5992, "w": 390, "h": 844, "page": "p", "title": "C2 · 6. Đã lưu + Hoàn tác", "is_interactive": true },
+    "BHome.dc.html": { "x": 0, "y": 7256, "w": 390, "h": 1040, "page": "p", "title": "B · 1. Tổng quan", "is_interactive": true },
+    "BHidden.dc.html": { "x": 460, "y": 7256, "w": 390, "h": 844, "page": "p", "title": "B · 2. Ẩn số dư", "is_interactive": true },
+    "BMulti.dc.html": { "x": 920, "y": 7256, "w": 390, "h": 844, "page": "p", "title": "B · 3. Nhiều tiền tệ", "is_interactive": true },
+    "BDebt.dc.html": { "x": 1380, "y": 7256, "w": 390, "h": 844, "page": "p", "title": "B · 4. Mục tiêu quản lý nợ", "is_interactive": true },
+    "BNewMonth.dc.html": { "x": 1840, "y": 7256, "w": 390, "h": 844, "page": "p", "title": "B · 5. Đầu tháng", "is_interactive": true },
+    "BLoading.dc.html": { "x": 2300, "y": 7256, "w": 390, "h": 844, "page": "p", "title": "B · 6. Đang tải", "is_interactive": true },
+    "BOffline.dc.html": { "x": 2760, "y": 7256, "w": 390, "h": 844, "page": "p", "title": "B · 7. Ngoại tuyến", "is_interactive": true },
+    "BError.dc.html": { "x": 3220, "y": 7256, "w": 390, "h": 844, "page": "p", "title": "B · 8. Lỗi tải", "is_interactive": true }
   },
   "order": [
     "Principles.dc.html",
@@ -411,6 +419,14 @@
     "TxTags.dc.html",
     "TxTransfer.dc.html",
     "TxSaved.dc.html",
+    "BHome.dc.html",
+    "BHidden.dc.html",
+    "BMulti.dc.html",
+    "BDebt.dc.html",
+    "BNewMonth.dc.html",
+    "BLoading.dc.html",
+    "BOffline.dc.html",
+    "BError.dc.html",
     "IA.dc.html",
     "Access.dc.html",
     "Motion.dc.html",
@@ -487,6 +503,14 @@
       "text": "C2 · Ghi chi, chuyển ví",
       "kind": "title1",
       "maxW": 3150,
+      "page": "p"
+    },
+    "tb": {
+      "x": 0,
+      "y": 6976,
+      "text": "B · Tổng quan: các trạng thái",
+      "kind": "title1",
+      "maxW": 3610,
       "page": "p"
     },
     "tg": {

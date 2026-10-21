@@ -13,7 +13,7 @@
 |---|---|---|
 | Foundations, tokens, components, states, guidelines | Chốt | [design-system.md](design-system.md) |
 | **A** Onboarding + tài khoản | **Chốt** 2026-10-21 | [patterns/A-onboarding-auth.md](patterns/A-onboarding-auth.md) |
-| B Tổng quan | Có màn mẫu (V3), chưa thiết kế đủ trạng thái | — |
+| **B** Tổng quan | **Chốt** 2026-10-21 | [patterns/B-overview.md](patterns/B-overview.md) |
 | **C** Giao dịch | **Chốt** 2026-10-21 | [patterns/C-transactions.md](patterns/C-transactions.md) |
 | **D Ví** | **Tiếp theo** | — |
 | E Danh mục | Chưa | — |
@@ -44,6 +44,8 @@
 - **Mỗi màn không giống Tổng quan:** dùng đúng loại màn trong spec (danh sách, nhập liệu, chi tiết, cài đặt).
 - Ưa: nền sáng, thẻ trắng bo lớn, bottom nav viên thuốc trắng có nút + ở giữa, thẻ số dư lớp màu mờ (chỉ một chỗ), minh hoạ nét vẽ tay, thẻ chọn nền xanh nhạt có dấu tích.
 - Không ưa: rập khuôn, nhiều gradient, nhiều chữ giải thích, thiếu điểm nhấn.
+- **Không bỏ phần UI đã duyệt chỉ vì tính năng chưa có code** (ví dụ chuông thông báo ở Tổng quan).
+- **Ẩn số dư chỉ ẩn số dư**, không ẩn thu/chi hay số tiền giao dịch.
 - **Màu giữ như spec.** Đã thử ba mức tăng màu (icon danh mục hai tông → nền nhuộm xanh → khối màu đậm đầu màn); product owner chọn giữ nguyên. Không đề xuất lại nếu chưa được hỏi.
 - Product owner gửi ảnh tham chiếu thường xuyên: lưu vào `references/` kèm một dòng mô tả trong `references/README.md`.
 

@@ -163,7 +163,7 @@ Mọi component tương tác có: **default · pressed · focused · disabled ·
 
 | Pattern | Quy tắc chính |
 |---|---|
-| Data display | Một con số lớn mở màn; một thẻ có lớp màu; số rút gọn chỉ ở chip và biểu đồ; bật ẩn số dư thì mọi số tiền trên màn đều ẩn. |
+| Data display | Một con số lớn mở màn; một thẻ có lớp màu; số rút gọn chỉ ở chip và biểu đồ; bật ẩn số dư thì chỉ ẩn số dư (tổng và từng ví), thu/chi và giao dịch vẫn hiện. Chi tiết: [patterns/B-overview.md](patterns/B-overview.md). |
 | Search & filter | Chip lọc luôn hiện; ô tìm mở từ kính lúp; tìm tiếng Việt không dấu, cập nhật sau 300 ms; tổng thu/chi theo bộ lọc; không kết quả có nút "Xoá bộ lọc". Chi tiết: [patterns/C-transactions.md](patterns/C-transactions.md). |
 | Form | Số tiền focus sẵn; mặc định ví gần nhất, hôm nay, danh mục hay dùng; trường phụ gấp lại; lưu xong đóng màn + toast Hoàn tác. |
 | Settings | Thẻ hồ sơ, email che một phần; nhóm Quản lý · Ứng dụng · Hỗ trợ; bật/tắt có hiệu lực ngay; hành động nguy hiểm ở cuối và luôn hỏi lại. |

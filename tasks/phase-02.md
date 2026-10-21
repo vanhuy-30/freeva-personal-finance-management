@@ -21,7 +21,7 @@
 - Module: —
 - Gate: post-v1
 - Depends: DS-P2-002
-- DoD: theo thứ tự Tổng quan → Ghi giao dịch → Danh sách giao dịch → Ví → Báo cáo → Cá nhân/Cài đặt/Giới thiệu/Đăng nhập/Khoá. Chỉ đổi View và widget, không đổi ViewModel/use case. Mỗi màn một PR. Không còn hex rời hay `Icons.*` trong `lib/features`. Đo lại ghi chi < 10 giây (QA-P1-001). Chạy được ở màn 320 pt và cỡ chữ 1.3×.
+- DoD: Tổng quan theo [B-overview.md](../docs/brand/patterns/B-overview.md) (đủ 8 trạng thái; ẩn số dư chỉ ẩn số dư). Theo thứ tự Tổng quan → Ghi giao dịch → Danh sách giao dịch → Ví → Báo cáo → Cá nhân/Cài đặt/Giới thiệu/Đăng nhập/Khoá. Chỉ đổi View và widget, không đổi ViewModel/use case. Mỗi màn một PR. Không còn hex rời hay `Icons.*` trong `lib/features`. Đo lại ghi chi < 10 giây (QA-P1-001). Chạy được ở màn 320 pt và cỡ chữ 1.3×.
 
 ### DS-P2-004 — Onboarding và tài khoản theo thiết kế nhóm A
 - Status: todo
