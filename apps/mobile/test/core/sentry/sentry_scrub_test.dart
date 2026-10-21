@@ -10,7 +10,7 @@ void main() {
 
   test('scrubs PII from a Sentry event and drops the user', () {
     final event = SentryEvent(
-      message: const SentryMessage('failed for $email Bearer $secret'),
+      message: SentryMessage('failed for $email Bearer $secret'),
       user: SentryUser(email: email, ipAddress: '203.0.113.5'),
       request: SentryRequest(
         method: 'POST',
@@ -19,7 +19,7 @@ void main() {
         headers: const {'authorization': 'Bearer $secret'},
       ),
       contexts: Contexts()
-        ..['finance'] = const {
+        ..['finance'] = {
           'email': email,
           'amountMinor': amount,
           'userId': '11111111-1111-4111-8111-111111111111',
@@ -29,7 +29,7 @@ void main() {
           type: 'http',
           category: 'http',
           message: email,
-          data: const {
+          data: {
             'method': 'GET',
             'url': 'https://api.example.com/health?email=$email',
             'status_code': 500,
@@ -37,7 +37,7 @@ void main() {
           },
         ),
       ],
-      exceptions: const [
+      exceptions: [
         SentryException(
           type: 'StateError',
           value: 'smtp failed for $email',
@@ -82,7 +82,7 @@ void main() {
     expect(
       scrubSentryEvent(
         SentryEvent(
-          message: const SentryMessage('missing'),
+          message: SentryMessage('missing'),
           contexts: Contexts(response: SentryResponse(statusCode: 404)),
         ),
         Hint(),
