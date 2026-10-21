@@ -1,9 +1,10 @@
-# UI giao dịch — MOB-P1-004
+# UI giao dịch — MOB-P1-004 / QA-P1-001
 
 Home có lối tắt **Ghi giao dịch** và mục danh sách (`/transactions`, qua AuthGate).
 Dùng contract hiện có của [BE-P1-005](transactions.md) và đọc danh mục của
 [BE-P1-006](categories.md). Không đổi API hoặc migration. Quản lý danh mục là
-`MOB-P1-005`. Báo cáo, tìm không dấu, nhãn và hàng đợi offline nằm ngoài task.
+`MOB-P1-005`. Báo cáo, tìm không dấu và hàng đợi offline nằm ngoài task.
+Nhãn/merchant thuộc [MOB-P1-011](mobile-tags.md).
 
 ## Hành vi
 
@@ -19,12 +20,37 @@ Dùng contract hiện có của [BE-P1-005](transactions.md) và đọc danh m�
 - User nhập số dương. Domain lưu chi âm, thu dương. Chuyển cùng tiền tệ thì
   đích bằng `|nguồn|`. Khác tiền tệ bắt buộc rate chuỗi và `quotedAt`; đích chỉ
   được nhận khi phép đổi ra đúng minor unit, không `double` và không làm tròn.
-- Ghi chú optional, tối đa 2000 ký tự. Không gửi nhãn.
+- Ghi chú optional, tối đa 2000 ký tự. Merchant và nhãn: [MOB-P1-011](mobile-tags.md).
 - Sửa giữ `version` và `clientId`. Sao chép là POST với `clientId` mới. Xóa mềm
   cả cặp. Khôi phục gửi `deleted: false` và chỉ khi ví còn active.
 - Danh sách lọc loại, ghi chú và đang dùng/đã xóa; tải thêm theo trang 50 leg.
   Transfer trên cùng trang được gom một dòng.
 - Trước lần đọc danh mục, client gọi `POST /categories/defaults`.
+
+## Đường ghi chi nhanh — QA-P1-001
+
+Mục tiêu spec §9: từ lúc chạm **Ghi giao dịch** (Home → `/transactions?record=1`)
+đến lưu chi thành công với số tiền, ví gần nhất và danh mục gần nhất, dưới 10 giây
+trên thiết bị thật.
+
+UX siết cho đường đó:
+
+- `composerReady` bật sau khi hồ sơ, ví, tiền tệ và danh mục sẵn sàng; trang danh
+  sách tải tiếp và không chặn `canWrite`. Hồ sơ / ví / tiền tệ / danh mục chạy
+  song song với request trang đầu.
+- Form mới autofocus ô số tiền. Sửa giao dịch không autofocus.
+- Nút Lưu (và Xóa / Khôi phục / Sao chép khi sửa) nằm thanh dưới, ngoài vùng
+  cuộn, vẫn bấm được khi bàn phím mở.
+- Form đồng bộ lại ví và danh mục gần nhất khi danh sách về, nếu user chưa đổi.
+
+### Đo thời gian
+
+| Ngày | Thiết bị | Bước | Thời gian | Kết quả |
+|---|---|---|---|---|
+| 2026-10-20 | Gom vào smoke thiết bị thật toàn phase | Chạm Ghi giao dịch → gõ số tiền → Lưu → form đóng | — | Task đóng sau UX + test tự động; ghi số giây khi smoke phase. |
+
+Kiểm chứng tự động (2026-10-20): `fvm flutter analyze` sạch; 135 Flutter tests pass
+(2 tests mới cho composer sớm và form ghim Lưu / autofocus). Task `done`.
 
 ## Layer, tiền và quyền riêng tư
 
@@ -66,4 +92,5 @@ fvm flutter analyze
 fvm flutter test
 ```
 
-Kết quả: analyzer sạch, toàn bộ 70 Flutter tests pass (9 tests mới).
+Kết quả MOB-P1-004: analyzer sạch, 70 Flutter tests pass (9 tests mới).
+Cập nhật QA-P1-001: analyzer sạch, 135 Flutter tests pass (2 tests mới).

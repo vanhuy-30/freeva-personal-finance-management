@@ -1,6 +1,6 @@
 # Phase 1 — tasks (sổ cái)
 
-Phase này chưa phải product v1. Gate đầy đủ: [spec-alignment.md](../docs/product/spec-alignment.md).
+**Closed** 2026-10-21 — 28/28 done. Gate sổ cái; chưa phải product v1. Residual và biên bản: [STATUS](../docs/project-state/STATUS.md). Gate product v1: [spec-alignment.md](../docs/product/spec-alignment.md).
 
 ## Architecture / tooling
 
@@ -157,34 +157,42 @@ Phase này chưa phải product v1. Gate đầy đủ: [spec-alignment.md](../do
 - Note: [Thiết kế và giới hạn](../docs/architecture/mobile-settings.md). Không đổi API. Chưa native build/E2E staging. Địa chỉ nhận phản hồi còn TBD (DECISIONS-OPEN #10).
 
 ### BE-P1-011 — Kind danh mục và bổ sung bộ mặc định
-- Status: todo
+- Status: done
 - Module: 5
 - Gate: v1
 - Depends: BE-P1-006
 - DoD: `kind` = expense, income hoặc both. User đã bootstrap nhận thêm, đúng một lần, các mục spec còn thiếu: Cà phê, Điện nước, Internet, Điện thoại, Subscription, Bảo hiểm, Thuế/phí, Freelance, Kinh doanh, Đầu tư, Hoàn tiền. Điện nước, Internet, Điện thoại là con của Hóa đơn nếu mục đó còn. Không ghi đè tên hoặc mục user đã sửa. Custom cũ mặc định `both`. OpenAPI khớp. Test upgrade tài khoản đã có danh mục. Log không có tên danh mục.
+- Verification: unit categories/account pass (gồm `supplementPlan`); HTTP/PostgreSQL categories + account pass (bootstrap 26, supplement một lần, không đè tên, không nhân đôi custom, Hóa đơn mất → tiện ích gốc); upgrade SQL bảo toàn legacy với `kind=both`; build và OpenAPI lint pass. Migration additive `20261020000000_category_kind`.
+- Note: [Kiến trúc](../docs/architecture/categories.md). Deploy migration trước API. Không enforce `kind` khi ghi giao dịch. Chưa deploy staging.
 
 ## Báo cáo / search / settings / help
 
 ### BE-P1-012 — Merchant và CRUD nhãn (Should)
-- Status: todo
+- Status: done
 - Module: 4, 5
 - Gate: should
 - Depends: BE-P1-005
 - DoD: CRUD nhãn theo owner; giao dịch gắn nhiều nhãn bằng API hiện có. `merchant` optional trên thu và chi, cấm trên transfer. Không log merchant. OpenAPI và test owner. Không chặn gate v1.
+- Verification: 23 unit suites / 209 tests và 9 HTTP/PostgreSQL suites / 87 tests pass (gồm tags mới và merchant trên transactions); build và OpenAPI validation pass. Migration additive `20261020120000_transaction_merchant`.
+- Note: [Thiết kế](../docs/architecture/tags.md). Deploy migration trước API. UI `MOB-P1-011`. Chưa deploy staging.
 
 ### MOB-P1-011 — UI merchant và nhãn (Should)
-- Status: todo
+- Status: done
 - Module: 4, 5
 - Gate: should
 - Depends: BE-P1-012, MOB-P1-004
 - DoD: tạo nhãn, gắn hoặc gỡ trên giao dịch, nhập merchant ở thu/chi. Bỏ trống vẫn lưu được. L10n vi/en. Không hex.
+- Verification: `flutter analyze` sạch; toàn bộ 137 Flutter tests pass (gồm merchant trống → null, transfer không merchant, giới hạn 20 nhãn, body HTTP/sync có merchant/tagIds, hàng đợi cũ thiếu key, widget lưu khi bỏ trống và gắn nhãn vừa tạo).
+- Note: [Thiết kế](../docs/architecture/mobile-tags.md). Không màn quản lý nhãn riêng, không đổi API. Chưa native build/E2E staging.
 
 ### QA-P1-001 — Đo ghi chi thường dưới 10 giây (Should)
-- Status: todo
+- Status: done
 - Module: 4
 - Gate: should
 - Depends: MOB-P1-004
 - DoD: trên thiết bị thật, chi tiêu với số tiền, ví gần nhất và danh mục gần nhất, từ lúc chạm `+` đến lưu thành công không quá 10 giây. Ghi kết quả vào `docs/architecture/mobile-transactions.md`. Không đạt thì sửa UX trong task này.
+- Verification: UX siết (composer sớm, autofocus số tiền, ghim Lưu); `flutter analyze` sạch; 135 Flutter tests pass (2 mới). Bấm giờ thiết bị thật gom vào smoke phase.
+- Note: [Thiết kế và bảng đo](../docs/architecture/mobile-transactions.md#đường-ghi-chi-nhanh--qa-p1-001).
 
 ## Sync / privacy / security phát hành
 

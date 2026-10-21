@@ -16,4 +16,8 @@ Người dùng bắt đầu trong vài phút, ghi thu chi, thấy bức tranh đ
 - Báo cáo khớp nguồn.
 - Export, xóa TK, reset password, thu hồi phiên hoạt động.
 
+## Đóng phase (2026-10-21)
+
+Phase 1 **closed** (gate sổ cái). Backlog 28/28 done, gồm `Gate: v1` và Should (merchant/nhãn, offline queue, OAuth backend, …). Residual vận hành (deploy staging, E2E native/Resend, DSN Sentry, nút OAuth mobile) chấp nhận — không chặn mở Phase 2. Chưa phải product v1. Chi tiết: [STATUS](../../project-state/STATUS.md).
+
 Backlog: [tasks/phase-01.md](../../../tasks/phase-01.md).

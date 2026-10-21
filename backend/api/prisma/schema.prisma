@@ -27,6 +27,12 @@ enum TransactionType {
   transfer
 }
 
+enum CategoryKind {
+  expense
+  income
+  both
+}
+
 enum FxQuoteSource {
   manual
   provider
@@ -89,6 +95,7 @@ model User {
   createdAt           DateTime  @default(now()) @db.Timestamptz
   updatedAt           DateTime  @updatedAt @db.Timestamptz
   categoriesInitializedAt DateTime? @db.Timestamptz
+  categoriesSupplementedAt DateTime? @db.Timestamptz
 
   oauthIdentities OAuthIdentity[]
   authTokens      AuthToken[]
@@ -148,19 +155,20 @@ model CategoryGroup {
 }
 
 model Category {
-  id         String    @id @default(uuid()) @db.Uuid
-  userId     String    @db.Uuid
-  clientId   String    @db.Uuid
+  id         String       @id @default(uuid()) @db.Uuid
+  userId     String       @db.Uuid
+  clientId   String       @db.Uuid
   name       String
-  isSystem   Boolean   @default(false)
-  groupId    String?   @db.Uuid
-  parentId   String?   @db.Uuid
+  kind       CategoryKind @default(both)
+  isSystem   Boolean      @default(false)
+  groupId    String?      @db.Uuid
+  parentId   String?      @db.Uuid
   colorToken String?
   iconToken  String?
-  archivedAt DateTime? @db.Timestamptz
-  version    Int       @default(1)
-  createdAt  DateTime  @default(now()) @db.Timestamptz
-  updatedAt  DateTime  @updatedAt @db.Timestamptz
+  archivedAt DateTime?    @db.Timestamptz
+  version    Int          @default(1)
+  createdAt  DateTime     @default(now()) @db.Timestamptz
+  updatedAt  DateTime     @updatedAt @db.Timestamptz
 
   user         User           @relation(fields: [userId], references: [id])
   group        CategoryGroup? @relation(fields: [groupId], references: [id])
@@ -202,6 +210,7 @@ model Transaction {
   transferGroupId String?         @db.Uuid
   fxQuoteId       String?         @db.Uuid
   notes           String?
+  merchant        String?
   deletedAt       DateTime?       @db.Timestamptz
   version         Int             @default(1)
   createdAt       DateTime        @default(now()) @db.Timestamptz

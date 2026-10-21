@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/core/time/calendar_date.dart';
 import 'package:mobile/features/categories/domain/finance_category.dart';
+import 'package:mobile/features/tags/domain/tag.dart';
 import 'package:mobile/features/transactions/domain/transaction.dart';
 import 'package:mobile/features/transactions/domain/transaction_money.dart';
 import 'package:mobile/features/transactions/domain/transaction_rules.dart';
@@ -50,6 +51,14 @@ void main() {
     final categories = [
       const FinanceCategory(id: 'food', name: 'Ăn uống', parentId: null),
     ];
+    final tags = [
+      const Tag(
+        id: 'work',
+        clientId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+        name: 'Work',
+        version: 1,
+      ),
+    ];
     final result = prepareTransaction(
       TransactionDraft(
         type: TransactionType.expense,
@@ -59,6 +68,8 @@ void main() {
         clientIds: const ['11111111-1111-4111-8111-111111111111'],
         categoryId: 'food',
         notes: '  lunch  ',
+        merchant: '  WinMart  ',
+        tagIds: const ['work'],
       ),
       [
         _wallet('cash', order: 0),
@@ -66,11 +77,14 @@ void main() {
       ],
       const [WalletCurrency('VND', 0)],
       categories,
+      tags,
     );
     final command = result.getOrElse(() => throw StateError('invalid'));
     expect(command.legs.single.amountMinor, BigInt.from(-150000));
     expect(command.legs.single.currencyCode, 'VND');
     expect(command.notes, 'lunch');
+    expect(command.merchant, 'WinMart');
+    expect(command.tagIds, ['work']);
     expect(
       defaultAccountId(
         wallets: [
@@ -84,6 +98,60 @@ void main() {
     expect(defaultCategoryId(categories), 'food');
   });
 
+  test('blank merchant becomes null and transfer forbids merchant', () {
+    final blank = prepareTransaction(
+      TransactionDraft(
+        type: TransactionType.expense,
+        occurredOn: '2026-01-15',
+        accountId: 'cash',
+        magnitude: BigInt.from(1000),
+        clientIds: const ['11111111-1111-4111-8111-111111111111'],
+        categoryId: 'food',
+        merchant: '   ',
+      ),
+      [_wallet('cash')],
+      const [WalletCurrency('VND', 0)],
+      const [FinanceCategory(id: 'food', name: 'Ăn uống', parentId: null)],
+      const [],
+    ).getOrElse(() => throw StateError('invalid'));
+    expect(blank.merchant, isNull);
+    expect(blank.tagIds, isEmpty);
+
+    final transfer = prepareTransaction(
+      _transfer(magnitude: BigInt.from(1000), merchant: 'Shop'),
+      [_wallet('a'), _wallet('b')],
+      const [WalletCurrency('VND', 0)],
+      const [],
+      const [],
+    );
+    expect(transfer.isLeft(), isTrue);
+
+    final tooMany = prepareTransaction(
+      TransactionDraft(
+        type: TransactionType.expense,
+        occurredOn: '2026-01-15',
+        accountId: 'cash',
+        magnitude: BigInt.from(1000),
+        clientIds: const ['11111111-1111-4111-8111-111111111111'],
+        categoryId: 'food',
+        tagIds: List.generate(21, (i) => 't$i'),
+      ),
+      [_wallet('cash')],
+      const [WalletCurrency('VND', 0)],
+      const [FinanceCategory(id: 'food', name: 'Ăn uống', parentId: null)],
+      [
+        for (var i = 0; i < 21; i++)
+          Tag(
+            id: 't$i',
+            clientId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+            name: 'T$i',
+            version: 1,
+          ),
+      ],
+    );
+    expect(tooMany.isLeft(), isTrue);
+  });
+
   test(
     'same-currency transfer balances and cross-currency rate is normalized',
     () {
@@ -92,12 +160,14 @@ void main() {
         [_wallet('a'), _wallet('b')],
         const [WalletCurrency('VND', 0)],
         const [],
+        const [],
       ).getOrElse(() => throw StateError('invalid'));
       expect(same.legs.map((leg) => leg.amountMinor), [
         BigInt.from(-150000),
         BigInt.from(150000),
       ]);
       expect(same.categoryId, isNull);
+      expect(same.merchant, isNull);
       expect(same.rate, isNull);
 
       final fx = prepareTransaction(
@@ -109,6 +179,7 @@ void main() {
         ),
         [_wallet('usd', currency: 'USD'), _wallet('vnd', currency: 'VND')],
         const [WalletCurrency('USD', 2), WalletCurrency('VND', 0)],
+        const [],
         const [],
       ).getOrElse(() => throw StateError('invalid'));
       expect(fx.legs[1].amountMinor, BigInt.from(250000));
@@ -123,6 +194,7 @@ void main() {
         ),
         [_wallet('usd', currency: 'USD'), _wallet('vnd', currency: 'VND')],
         const [WalletCurrency('USD', 2), WalletCurrency('VND', 0)],
+        const [],
         const [],
       );
       expect(fraction.isLeft(), isTrue);
@@ -160,6 +232,8 @@ TxLeg _leg(String accountId) => TxLeg(
   occurredOn: '2026-01-02',
   categoryId: 'food',
   notes: null,
+  merchant: null,
+  tagIds: const [],
   transferGroupId: null,
   deletedAt: null,
   version: 1,
@@ -171,6 +245,7 @@ TransactionDraft _transfer({
   String counter = 'b',
   String? rate,
   String? quotedAt,
+  String? merchant,
 }) => TransactionDraft(
   type: TransactionType.transfer,
   occurredOn: '2026-01-15',
@@ -181,6 +256,7 @@ TransactionDraft _transfer({
     '11111111-1111-4111-8111-111111111111',
     '22222222-2222-4222-8222-222222222222',
   ],
+  merchant: merchant,
   rate: rate,
   quotedAt: quotedAt,
 );

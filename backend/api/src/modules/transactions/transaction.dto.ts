@@ -1,9 +1,10 @@
 import { Transform, Type } from 'class-transformer';
-import { ArrayMaxSize, ArrayMinSize, ArrayUnique, IsArray, IsBoolean, IsISO8601, IsIn, IsInt, IsObject, IsString, IsUUID, Matches, Max, MaxLength, Min, ValidateIf, ValidateNested } from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, ArrayUnique, IsArray, IsBoolean, IsISO8601, IsIn, IsInt, IsObject, IsString, IsUUID, Length, Matches, Max, MaxLength, Min, ValidateIf, ValidateNested } from 'class-validator';
 import { TRANSACTION_TYPES, type TransactionType } from './domain/transaction';
 const optional = (_: unknown, value: unknown) => value !== undefined;
 const nullable = (_: unknown, value: unknown) => value !== undefined && value !== null;
 const uuid = ({ value }: { value: unknown }) => typeof value === 'string' ? value.toLowerCase() : value;
+const trim = ({ value }: { value: unknown }) => typeof value === 'string' ? value.trim() : value;
 export class TransactionLegDto {
   @Transform(uuid) @IsUUID() clientId!: string;
   @Transform(uuid) @IsUUID() accountId!: string;
@@ -20,6 +21,7 @@ export class CreateTransactionDto {
   @IsArray() @ArrayMinSize(1) @ArrayMaxSize(2) @ValidateNested({ each: true }) @Type(() => TransactionLegDto) legs!: TransactionLegDto[];
   @ValidateIf(nullable) @Transform(uuid) @IsUUID() categoryId?: string | null;
   @ValidateIf(nullable) @IsString() @MaxLength(2000) notes?: string | null;
+  @ValidateIf(nullable) @Transform(trim) @IsString() @Length(1, 200) merchant?: string | null;
   @ValidateIf(optional) @IsArray() @ArrayMaxSize(20) @ArrayUnique() @IsUUID('all', { each: true }) tagIds?: string[];
   @ValidateIf(nullable) @IsObject() @ValidateNested() @Type(() => ManualFxDto) fx?: ManualFxDto | null;
 }
@@ -29,6 +31,7 @@ export class UpdateTransactionDto {
   @ValidateIf(optional) @IsArray() @ArrayMinSize(1) @ArrayMaxSize(2) @ValidateNested({ each: true }) @Type(() => TransactionLegDto) legs?: TransactionLegDto[];
   @ValidateIf(nullable) @Transform(uuid) @IsUUID() categoryId?: string | null;
   @ValidateIf(nullable) @IsString() @MaxLength(2000) notes?: string | null;
+  @ValidateIf(nullable) @Transform(trim) @IsString() @Length(1, 200) merchant?: string | null;
   @ValidateIf(optional) @IsArray() @ArrayMaxSize(20) @ArrayUnique() @IsUUID('all', { each: true }) tagIds?: string[];
   @ValidateIf(nullable) @IsObject() @ValidateNested() @Type(() => ManualFxDto) fx?: ManualFxDto | null;
   @ValidateIf(optional) @IsBoolean() deleted?: boolean;

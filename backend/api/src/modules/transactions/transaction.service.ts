@@ -17,7 +17,8 @@ export class TransactionService {
   constructor(@Inject(TRANSACTION_REPOSITORY) private readonly repository: TransactionRepository) {}
   async create(userId: string, dto: CreateTransactionDto) {
     const result = await this.repository.create(userId, { type: dto.type, occurredOn: calendarDate(dto.occurredOn), legs: legs(dto.legs),
-      categoryId: dto.categoryId ?? null, notes: dto.notes ?? null, tagIds: tags(dto.tagIds ?? []), fx: fx(dto.fx ?? null) });
+      categoryId: dto.categoryId ?? null, notes: dto.notes ?? null, merchant: dto.merchant ?? null,
+      tagIds: tags(dto.tagIds ?? []), fx: fx(dto.fx ?? null) });
     return { transaction: response(result.transaction), created: result.created };
   }
   async find(userId: string, id: string) { return response(await this.repository.find(userId, id)); }
@@ -38,6 +39,7 @@ export class TransactionService {
     const patch: TransactionPatch = { version: dto.version };
     if (rest.categoryId !== undefined) patch.categoryId = rest.categoryId;
     if (rest.notes !== undefined) patch.notes = rest.notes;
+    if (rest.merchant !== undefined) patch.merchant = rest.merchant;
     if (rest.deleted !== undefined) patch.deleted = rest.deleted;
     if (occurredOn !== undefined) patch.occurredOn = calendarDate(occurredOn);
     if (inputLegs !== undefined) patch.legs = legs(inputLegs);

@@ -5,6 +5,7 @@ import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/money/money_text.dart';
 import '../../../settings/presentation/widgets/masked_amount.dart';
 import '../../../categories/domain/finance_category.dart';
+import '../../../tags/domain/tag.dart';
 import '../../../wallets/domain/wallet.dart';
 import '../../domain/transaction.dart';
 import '../viewmodels/transaction_view_model.dart';
@@ -46,7 +47,12 @@ class TransactionList extends StatelessWidget {
         return ListTile(
           title: Text(_label(s, model.categories, row)),
           subtitle: Text(
-            '${_date(source.occurredOn, locale)} · ${_wallet(model.wallets, source.accountId)}',
+            _subtitle(
+              date: _date(source.occurredOn, locale),
+              wallet: _wallet(model.wallets, source.accountId),
+              merchant: source.merchant,
+              tags: _tagNames(model.tags, source.tagIds),
+            ),
           ),
           trailing: MaskedAmount(
             shown: '$amount ${source.currencyCode}',
@@ -57,6 +63,27 @@ class TransactionList extends StatelessWidget {
       },
     );
   }
+}
+
+String _subtitle({
+  required String date,
+  required String wallet,
+  required String? merchant,
+  required List<String> tags,
+}) {
+  final parts = <String>[date, wallet];
+  final trimmed = merchant?.trim();
+  if (trimmed != null && trimmed.isNotEmpty) parts.add(trimmed);
+  if (tags.isNotEmpty) parts.add(tags.join(', '));
+  return parts.join(' · ');
+}
+
+List<String> _tagNames(List<Tag> tags, List<String> ids) {
+  final byId = {for (final tag in tags) tag.id: tag.name};
+  return [
+    for (final id in ids)
+      if (byId.containsKey(id)) byId[id]!,
+  ];
 }
 
 int _digits(TransactionViewModel model, String code) {

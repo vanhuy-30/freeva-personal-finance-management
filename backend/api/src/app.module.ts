@@ -2,6 +2,7 @@ import { AccountModule } from './modules/account/account.module';
 import { SyncModule } from './modules/sync/sync.module';
 import { ReportModule } from './modules/reports/report.module';
 import { CategoryModule } from './modules/categories/category.module';
+import { TagModule } from './modules/tags/tag.module';
 import { TransactionModule } from './modules/transactions/transaction.module';
 import { FinancialAccountModule } from './modules/financial-accounts/financial-account.module';
 import { ProfileModule } from './modules/profile/profile.module';
@@ -37,6 +38,7 @@ import { HealthModule } from './modules/health/health.module';
     SyncModule,
     AccountModule,
     CategoryModule,
+    TagModule,
     ReportModule,
     AdminUserLookupModule,
   ],

@@ -13,6 +13,7 @@ Pino chỉ che **đúng path** đã liệt kê. Nội suy PII vào chuỗi messa
 | Token | `Authorization`, `cookie`, `set-cookie`, `token`, `refreshToken`, `accessToken`, `tokenHash`, `encryptedToken`, API key | Header HTTP + payload |
 | Tiền / số dư | `amountMinor`, `balanceMinor`, `incomeMinor`, `expenseMinor`, `netMinor`, `transferMinor`, `assetsMinor`, `liabilitiesMinor`, `netWorthMinor` | Mọi `*Minor` |
 | Số tài khoản | `accountNumber`, `iban` | Chưa có trên schema P0; path sẵn cho P1+ |
+| Merchant | `merchant` | `BE-P1-012`; không log tên cửa hàng |
 | Secret env | `DATABASE_URL`, SMTP password, secret manager | Không log env |
 
 ## Cho phép

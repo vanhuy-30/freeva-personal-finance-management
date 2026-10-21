@@ -105,7 +105,7 @@ Xóa danh mục: chuyển toàn bộ GD (kể cả soft-delete) trước, tăng 
 
 ### Tag
 
-`name` theo user. Unique `(userId, clientId)`. Gắn GD qua `TransactionTag` `(transactionId, tagId)`.
+`name` theo user. Unique `(userId, clientId)`. Gắn GD qua `TransactionTag` `(transactionId, tagId)`. CRUD API: [tags.md](tags.md) (`BE-P1-012`).
 
 ### Transaction
 
@@ -120,6 +120,7 @@ Xóa danh mục: chuyển toàn bộ GD (kể cả soft-delete) trước, tăng 
 | transferGroupId | UUID? | hai leg cùng giá trị |
 | fxQuoteId | FK? | transfer khác currency |
 | notes | String? | |
+| merchant | String? | thu/chi optional; transfer luôn null (`BE-P1-012`) |
 | deletedAt | timestamptz? | |
 
 Index `(userId, occurredOn)`, `(transferGroupId)`. Unique `(userId, clientId)`.

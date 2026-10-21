@@ -175,6 +175,7 @@ describe('BE-P1-005 HTTP + PostgreSQL', () => {
       { legs: [{ ...data.legs[0], amountMinor: '-9223372036854775809' }, data.legs[1]] },
       { legs: [{ ...data.legs[0], amountMinor: '-1\n' }, data.legs[1]] }, { legs: [{ ...data.legs[0], transferGroupId: randomUUID() }, data.legs[1]] },
       { fx: { rate: '1', quotedAt: '2026-09-25T00:00:00Z' } }, { fx: [] }, { tagIds: null }, { notes: 'x'.repeat(2001) },
+      { merchant: 'Shop' }, { merchant: '' }, { merchant: 'x'.repeat(201) },
     ]) expect((await request('POST', '', { ...data, ...extra })).status).toBe(400);
     expect(await prisma.transaction.count({ where: { userId: owner } })).toBe(0);
     const created = await create(data); const id = created.legs[0].id;
@@ -196,17 +197,19 @@ describe('BE-P1-005 HTTP + PostgreSQL', () => {
     }
     expect(await balance(data.legs[1].accountId)).toBe('260000');
   });
-  it('checks category and tag ownership, nullable patch, and transfer category restriction', async () => {
+  it('checks category and tag ownership, nullable patch, merchant, and transfer category restriction', async () => {
     const category = await prisma.category.create({ data: { userId: owner, clientId: randomUUID(), name: 'Food' } });
     const tag = await prisma.tag.create({ data: { userId: owner, clientId: randomUUID(), name: 'Personal' } });
     const foreign = await prisma.tag.create({ data: { userId: other, clientId: randomUUID(), name: 'Foreign' } });
-    const data = await input('income'); const created = await create({ ...data, categoryId: category.id, tagIds: [tag.id] });
-    expect(created.legs[0]).toMatchObject({ categoryId: category.id, tagIds: [tag.id] });
+    const data = await input('income');
+    const created = await create({ ...data, categoryId: category.id, tagIds: [tag.id], merchant: '  WinMart  ' });
+    expect(created.legs[0]).toMatchObject({ categoryId: category.id, tagIds: [tag.id], merchant: 'WinMart' });
     expect((await request('PATCH', `/${created.legs[0].id}`, { version: 1, tagIds: [foreign.id] })).status).toBe(400);
-    const changed = await request('PATCH', `/${created.legs[0].id}`, { version: 1, categoryId: null, tagIds: [], notes: null });
-    expect(changed.body.legs[0]).toMatchObject({ categoryId: null, tagIds: [], notes: null });
+    const changed = await request('PATCH', `/${created.legs[0].id}`, { version: 1, categoryId: null, tagIds: [], notes: null, merchant: null });
+    expect(changed.body.legs[0]).toMatchObject({ categoryId: null, tagIds: [], notes: null, merchant: null });
     expect((await request('POST', '', { ...await input(), categoryId: category.id })).status).toBe(400);
     expect((await request('POST', '', { ...await input('income'), categoryId: randomUUID() })).status).toBe(400);
+    expect((await request('POST', '', { ...await input(), merchant: 'Shop' })).status).toBe(400);
   });
   it('allows only one winner for concurrent updates through opposite transfer legs', async () => {
     const data = await input(); const created = await create(data);

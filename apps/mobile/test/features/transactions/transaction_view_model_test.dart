@@ -11,6 +11,8 @@ import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dar
 import 'package:mobile/features/categories/data/category_repository_impl.dart';
 import 'package:mobile/features/categories/domain/category_use_cases.dart';
 import 'package:mobile/features/profile/domain/profile_use_cases.dart';
+import 'package:mobile/features/tags/data/tag_repository_impl.dart';
+import 'package:mobile/features/tags/domain/tag_use_cases.dart';
 import 'package:mobile/features/transactions/data/transaction_repository_impl.dart';
 import 'package:mobile/features/transactions/domain/transaction.dart';
 import 'package:mobile/features/transactions/domain/transaction_use_cases.dart';
@@ -80,6 +82,7 @@ void main() {
     model = DefaultTransactionViewModel(
       DefaultTransactionUseCases(TransactionRepositoryImpl(api)),
       DefaultCategoryUseCases(CategoryRepositoryImpl(api)),
+      DefaultTagUseCases(TagRepositoryImpl(api)),
       walletCases,
       wallets,
       ProfileUseCases(MemoryProfiles()),
@@ -125,11 +128,38 @@ void main() {
       expect(call.headers?['Idempotency-Key'], draft.clientIds.single);
       expect(call.body!['legs'][0]['amountMinor'], '-150000');
       expect(call.body!['type'], 'expense');
+      expect(call.body!['merchant'], isNull);
+      expect(call.body!['tagIds'], isEmpty);
     }
     expect(analytics.events.single['event'], 'transaction_created');
     expect(analytics.events.single['type'], 'expense');
     expect(analytics.events.single.containsKey('amountMinor'), isFalse);
     expect(api.calls.any((call) => call.path == 'categories/defaults'), isTrue);
+    expect(model.tags.single.name, 'Work');
+  });
+
+  test('create attaches merchant and a newly created tag', () async {
+    final tag = await model.createTag(
+      'Family',
+      clientId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+    );
+    expect(tag?.name, 'Family');
+    final draft = TransactionDraft(
+      type: TransactionType.expense,
+      occurredOn: '2026-01-15',
+      accountId: 'card',
+      magnitude: BigInt.from(150000),
+      clientIds: [model.newClientId()],
+      categoryId: 'food',
+      merchant: 'WinMart',
+      tagIds: [tag!.id, 'work'],
+    );
+    expect(await model.save(draft), isTrue);
+    final post = api.calls.lastWhere(
+      (call) => call.method == 'POST' && call.path == 'transactions',
+    );
+    expect(post.body!['merchant'], 'WinMart');
+    expect(post.body!['tagIds'], [tag.id, 'work']);
   });
 
   test(
@@ -155,6 +185,47 @@ void main() {
       expect(analytics.events, hasLength(0));
     },
   );
+
+  test('composer is ready before the list finishes and save still works', () async {
+    model.dispose();
+    sync.dispose();
+    wallets.dispose();
+    api = ScriptedApi()..listPending = Completer<void>();
+    final walletCases = DefaultWalletUseCases(WalletRepositoryImpl(api));
+    wallets = DefaultWalletViewModel(walletCases, auth);
+    sync = DefaultSyncViewModel(
+      DefaultSyncUseCases(MemorySyncRepository()),
+      auth,
+      analytics,
+    );
+    model = DefaultTransactionViewModel(
+      DefaultTransactionUseCases(TransactionRepositoryImpl(api)),
+      DefaultCategoryUseCases(CategoryRepositoryImpl(api)),
+      DefaultTagUseCases(TagRepositoryImpl(api)),
+      walletCases,
+      wallets,
+      ProfileUseCases(MemoryProfiles()),
+      auth,
+      analytics,
+      sync,
+    );
+    final loading = model.load();
+    await Future<void>.delayed(Duration.zero);
+    for (var i = 0; i < 20 && !model.composerReady; i++) {
+      await Future<void>.delayed(Duration.zero);
+    }
+    expect(model.composerReady, isTrue);
+    expect(model.canWrite, isTrue);
+    expect(model.preferredCategoryId(), 'food');
+    expect(model.preferredAccountId(), 'cash');
+    expect(model.rows, isEmpty);
+    final saving = model.save(_draft(model.newClientId()));
+    api.listPending!.complete();
+    expect(await saving, isTrue);
+    await loading;
+    expect(model.preferredAccountId(), 'card');
+    expect(analytics.events.single['event'], 'transaction_created');
+  });
 }
 
 TransactionDraft _draft(String clientId) => TransactionDraft(

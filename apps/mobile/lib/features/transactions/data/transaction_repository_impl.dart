@@ -21,6 +21,10 @@ class TransactionRepositoryImpl implements TransactionRepository {
     occurredOn: json['occurredOn'] as String,
     categoryId: json['categoryId'] as String?,
     notes: json['notes'] as String?,
+    merchant: json['merchant'] as String?,
+    tagIds: List.unmodifiable(
+      (json['tagIds'] as List? ?? const []).cast<String>(),
+    ),
     transferGroupId: json['transferGroupId'] as String?,
     deletedAt: json['deletedAt'] == null
         ? null
@@ -58,6 +62,8 @@ class TransactionRepositoryImpl implements TransactionRepository {
     'occurredOn': command.occurredOn,
     'categoryId': command.categoryId,
     'notes': command.notes,
+    'merchant': command.merchant,
+    'tagIds': command.tagIds,
     'legs': [
       for (final leg in command.legs)
         {
