@@ -20,6 +20,7 @@ class ScriptedApi implements AuthorizedApi {
   bool conflict = false;
   bool paginate = false;
   Completer<void>? pending;
+  Completer<void>? listPending;
 
   @override
   Future<Either<AuthFailure, Map<String, dynamic>>> request(
@@ -75,6 +76,7 @@ class ScriptedApi implements AuthorizedApi {
       );
     }
     if (method == 'GET' && path.startsWith('transactions?')) {
+      if (listPending != null) await listPending!.future;
       final page = int.parse(
         Uri.parse('http://local/$path').queryParameters['page']!,
       );

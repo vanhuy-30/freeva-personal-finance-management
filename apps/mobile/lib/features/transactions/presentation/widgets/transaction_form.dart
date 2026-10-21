@@ -40,6 +40,16 @@ class _TransactionFormState extends State<TransactionForm> {
   String rateSeed = '';
   bool invalid = false;
   bool ready = false;
+  bool accountTouched = false;
+  bool categoryTouched = false;
+
+  bool get _isNew => widget.existing == null || widget.copy;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.model.addListener(_syncDefaults);
+  }
 
   @override
   void didChangeDependencies() {
@@ -81,8 +91,29 @@ class _TransactionFormState extends State<TransactionForm> {
     }
   }
 
+  void _syncDefaults() {
+    if (!_isNew || !mounted) return;
+    var changed = false;
+    if (!accountTouched) {
+      final preferred = widget.model.preferredAccountId();
+      if (preferred != null && preferred != accountId) {
+        accountId = preferred;
+        changed = true;
+      }
+    }
+    if (!categoryTouched && type == TransactionType.expense) {
+      final preferred = widget.model.preferredCategoryId();
+      if (preferred != null && preferred != categoryId) {
+        categoryId = preferred;
+        changed = true;
+      }
+    }
+    if (changed) setState(() {});
+  }
+
   @override
   void dispose() {
+    widget.model.removeListener(_syncDefaults);
     amount.dispose();
     notes.dispose();
     merchant.dispose();
@@ -175,99 +206,132 @@ class _TransactionFormState extends State<TransactionForm> {
     setState(() => occurredOn = '$year-$month-$day');
   }
 
+  Widget _actions(S s, TransactionViewModel model, bool readOnly) {
+    return SafeArea(
+      minimum: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+      child: Wrap(
+        spacing: 12,
+        children: [
+          if (!readOnly)
+            FilledButton(
+              onPressed: model.canWrite ? _save : null,
+              child: Text(s.transactionSave),
+            ),
+          if (widget.existing != null && !widget.copy && !readOnly)
+            OutlinedButton(
+              onPressed: model.canWrite ? _delete : null,
+              child: Text(s.transactionDelete),
+            ),
+          if (readOnly)
+            FilledButton(
+              onPressed: model.canWrite ? _restore : null,
+              child: Text(s.transactionRestore),
+            ),
+          if (widget.existing != null && !widget.copy)
+            TextButton(
+              onPressed: model.busy ? null : _copy,
+              child: Text(s.transactionCopy),
+            ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
     final model = widget.model;
     final readOnly = widget.existing?.deleted == true && !widget.copy;
-    final failure = model.failure;
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-        TransactionFields(
-          type: type,
-          lockedType: widget.existing != null && !widget.copy,
-          readOnly: readOnly,
-          accountId: accountId,
-          counterAccountId: counterAccountId,
-          categoryId: categoryId,
-          occurredOn: occurredOn,
-          amount: amount,
-          notes: notes,
-          rate: rate,
-          wallets: model.wallets,
-          currencies: model.currencies,
-          categories: model.categories,
-          recent: model.recentCategories,
-          onType: (value) => setState(() {
-            type = value;
-            if (value == TransactionType.transfer && clientIds.length == 1) {
-              clientIds = [...clientIds, model.newClientId()];
-            }
-            if (value != TransactionType.transfer) {
-              clientIds = [clientIds.first];
-            }
-            if (value == TransactionType.expense && categoryId == null) {
-              categoryId = model.preferredCategoryId();
-            }
-          }),
-          onAccount: (value) => setState(() => accountId = value),
-          onCounter: (value) => setState(() => counterAccountId = value),
-          onCategory: (value) => setState(() => categoryId = value),
-          onDate: _pickDate,
-        ),
-        const SizedBox(height: 8),
-        TransactionTagsSection(
-          type: type,
-          readOnly: readOnly,
-          merchant: merchant,
-          selectedTagIds: tagIds,
-          tags: model.tags,
-          model: model,
-          onMerchantChanged: () => setState(() {}),
-          onTagIdsChanged: (value) => setState(() => tagIds = value),
-        ),
-        if (invalid && failure != null)
-          Text(
-            transactionError(s, failure),
-            style: TextStyle(color: Theme.of(context).colorScheme.error),
-          )
-        else if (invalid)
-          Text(
-            s.transactionInvalid,
-            style: TextStyle(color: Theme.of(context).colorScheme.error),
-          ),
-        if (model.needsReload) Text(s.transactionReloadRequired),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 12,
+    return ListenableBuilder(
+      listenable: model,
+      builder: (context, _) {
+        final failure = model.failure;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (!readOnly)
-              FilledButton(
-                onPressed: model.busy || model.needsReload ? null : _save,
-                child: Text(s.transactionSave),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    TransactionFields(
+                      type: type,
+                      lockedType: widget.existing != null && !widget.copy,
+                      readOnly: readOnly,
+                      autofocusAmount: _isNew && !readOnly,
+                      accountId: accountId,
+                      counterAccountId: counterAccountId,
+                      categoryId: categoryId,
+                      occurredOn: occurredOn,
+                      amount: amount,
+                      notes: notes,
+                      rate: rate,
+                      wallets: model.wallets,
+                      currencies: model.currencies,
+                      categories: model.categories,
+                      recent: model.recentCategories,
+                      onType: (value) => setState(() {
+                        type = value;
+                        if (value == TransactionType.transfer &&
+                            clientIds.length == 1) {
+                          clientIds = [...clientIds, model.newClientId()];
+                        }
+                        if (value != TransactionType.transfer) {
+                          clientIds = [clientIds.first];
+                        }
+                        if (value == TransactionType.expense &&
+                            categoryId == null) {
+                          categoryId = model.preferredCategoryId();
+                        }
+                      }),
+                      onAccount: (value) => setState(() {
+                        accountTouched = true;
+                        accountId = value;
+                      }),
+                      onCounter: (value) =>
+                          setState(() => counterAccountId = value),
+                      onCategory: (value) => setState(() {
+                        categoryTouched = true;
+                        categoryId = value;
+                      }),
+                      onDate: _pickDate,
+                    ),
+                    const SizedBox(height: 8),
+                    TransactionTagsSection(
+                      type: type,
+                      readOnly: readOnly,
+                      merchant: merchant,
+                      selectedTagIds: tagIds,
+                      tags: model.tags,
+                      model: model,
+                      onMerchantChanged: () => setState(() {}),
+                      onTagIdsChanged: (value) => setState(() => tagIds = value),
+                    ),
+                    if (invalid && failure != null)
+                      Text(
+                        transactionError(s, failure),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                      )
+                    else if (invalid)
+                      Text(
+                        s.transactionInvalid,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                      ),
+                    if (model.needsReload) Text(s.transactionReloadRequired),
+                  ],
+                ),
               ),
-            if (widget.existing != null && !widget.copy && !readOnly)
-              OutlinedButton(
-                onPressed: model.busy ? null : _delete,
-                child: Text(s.transactionDelete),
-              ),
-            if (readOnly)
-              FilledButton(
-                onPressed: model.busy || model.needsReload ? null : _restore,
-                child: Text(s.transactionRestore),
-              ),
-            if (widget.existing != null && !widget.copy)
-              TextButton(
-                onPressed: model.busy ? null : _copy,
-                child: Text(s.transactionCopy),
-              ),
+            ),
+            const Divider(height: 1),
+            _actions(s, model, readOnly),
           ],
-        ),
-      ],
-      ),
+        );
+      },
     );
   }
 
@@ -318,4 +382,3 @@ class _TransactionFormState extends State<TransactionForm> {
     );
   }
 }
-
