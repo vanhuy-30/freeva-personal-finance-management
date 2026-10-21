@@ -18,6 +18,6 @@ tham khảo phong cách; không sao chép bố cục hay thương hiệu của s
 | `11-fitness-onboarding.webp` | Mỗi màn một câu hỏi, lựa chọn rõ trạng thái chọn, màn xin quyền có "Không phải bây giờ" |
 | `12-credit-registration.webp` | Màn giới thiệu một thông điệp lớn, đăng nhập có nút mạng xã hội |
 | `13-illustrated-intro.png` | Minh hoạ đặt trong vòng tròn nền nhạt, chấm tiến độ, nút tối |
+| `17-green-login.png` | Đăng nhập một màn: ô nhập viên thuốc có icon, "Quên mật khẩu?" ở giữa, nút mạng xã hội không viền |
 
 Ghét: thiết kế rập khuôn, máy móc, nhiều chữ giải thích, không có điểm nhấn.
-| `17-green-login.png` | Đăng nhập một màn: ô nhập viên thuốc có icon, "Quên mật khẩu?" ở giữa, nút mạng xã hội không viền |
