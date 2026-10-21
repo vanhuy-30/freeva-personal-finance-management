@@ -4,4 +4,4 @@ globs: "{apps/mobile,apps/web-admin}/**/*.{dart,tsx,css}"
 alwaysApply: false
 ---
 
-Do not hardcode hex colors. Use packages/design-tokens (Flutter theme / CSS variables). `#C1C8E4` and `#84CEEB` are not text colors. Primary `#5680E9`, accent `#8860D0`. Financial success/danger are separate semantic tokens, not recolored primary.
+Do not hardcode hex colors. Use packages/design-tokens (Flutter theme / CSS variables); spec in docs/brand/design-system.md. `#C1C8E4` and `#84CEEB` are not text colors. Text and filled buttons use the 600–700 steps (action `#3F67D1`), not brand 500 (fails AA). Expenses are ink with a minus sign, never red; red is for errors only. Financial success/danger are separate semantic tokens, not recolored primary. Icons: lucide_icons_flutter only.

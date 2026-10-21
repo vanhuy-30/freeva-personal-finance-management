@@ -4,6 +4,10 @@
   "private": true,
   "description": "Brand and semantic tokens for Freeva mobile and web admin",
   "main": "tokens.json",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "check": "node scripts/check.mjs && node scripts/build.mjs --check"
+  },
   "exports": {
     ".": "./tokens.json",
     "./tokens.json": "./tokens.json",

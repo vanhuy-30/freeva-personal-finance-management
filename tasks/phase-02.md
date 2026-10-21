@@ -2,6 +2,27 @@
 
 Điều kiện hoàn thành: [phase-02.md](../docs/product/phases/phase-02.md). Phase 1 gate sổ cái **closed** 2026-10-21 — được băm ticket triển khai khi làm epic. `Gate: v1` vẫn là điều kiện product v1.
 
+### DS-P2-001 — Design system v2: spec và token
+- Status: done
+- Module: —
+- Gate: post-v1
+- Depends: DS-P0-001
+- DoD: [design-system.md](../docs/brand/design-system.md) chốt nguyên tắc, foundations, components, trạng thái, patterns, guidelines. `tokens.json` có ba tầng primitive → semantic (light/dark) → component cùng typography, space, radius, size, elevation, motion. Key `color.*` giữ nguyên ([ADR 012](../docs/architecture/adr/012-design-tokens-v2.md)). `tokens.css` sinh bằng script; `pnpm check` trong `packages/design-tokens` xanh (tương phản AA cả hai mode).
+
+### DS-P2-002 — Flutter theme và component nền
+- Status: todo
+- Module: —
+- Gate: post-v1
+- Depends: DS-P2-001
+- DoD: sinh Dart từ `tokens.json` (không chép tay hex). `AppTheme` light/dark dùng semantic token và `ThemeExtension`. Inter đóng gói trong app. Thêm `lucide_icons_flutter` 4.0.1 và thay các `Icons.*`. Component trong `lib/core/widgets/`: nút, trường nhập, bàn phím số tiền, chip, segmented, bottom nav, thanh trên, sheet, thẻ, dòng giao dịch, toast, banner, hộp thoại, trạng thái trống có animation tự vẽ, skeleton. Đủ 6 trạng thái. Trang gallery chỉ ở debug và golden test light/dark.
+
+### DS-P2-003 — Refactor màn hình Phase 1 theo design system
+- Status: todo
+- Module: —
+- Gate: post-v1
+- Depends: DS-P2-002
+- DoD: theo thứ tự Tổng quan → Ghi giao dịch → Danh sách giao dịch → Ví → Báo cáo → Cá nhân/Cài đặt/Giới thiệu/Đăng nhập/Khoá. Chỉ đổi View và widget, không đổi ViewModel/use case. Mỗi màn một PR. Không còn hex rời hay `Icons.*` trong `lib/features`. Đo lại ghi chi < 10 giây (QA-P1-001). Chạy được ở màn 320 pt và cỡ chữ 1.3×.
+
 ### BE-P2-E01 / MOB-P2-E01 — Giao dịch định kỳ (module 6)
 - Status: todo
 - Module: 6
