@@ -389,7 +389,17 @@
     "RepWallets.dc.html": { "x": 460, "y": 11184, "w": 390, "h": 844, "page": "p", "title": "F · 2. Theo ví", "is_interactive": true },
     "RepCategory.dc.html": { "x": 920, "y": 11184, "w": 390, "h": 844, "page": "p", "title": "F · 3. Một danh mục trong kỳ", "is_interactive": true },
     "RepRange.dc.html": { "x": 1380, "y": 11184, "w": 390, "h": 844, "page": "p", "title": "F · 4. Khoảng tuỳ chọn (popup)", "is_interactive": true },
-    "RepEmpty.dc.html": { "x": 1840, "y": 11184, "w": 390, "h": 844, "page": "p", "title": "F · 5. Kỳ chưa có số liệu", "is_interactive": true }
+    "RepEmpty.dc.html": { "x": 1840, "y": 11184, "w": 390, "h": 844, "page": "p", "title": "F · 5. Kỳ chưa có số liệu", "is_interactive": true },
+    "MeHome.dc.html": { "x": 0, "y": 13084, "w": 390, "h": 1260, "page": "p", "title": "G · 1. Cá nhân", "is_interactive": true },
+    "MeProfile.dc.html": { "x": 460, "y": 13084, "w": 390, "h": 1300, "page": "p", "title": "G · 2. Hồ sơ", "is_interactive": true },
+    "MeTheme.dc.html": { "x": 920, "y": 13084, "w": 390, "h": 844, "page": "p", "title": "G · 3. Giao diện (sheet)", "is_interactive": true },
+    "MeSecurity.dc.html": { "x": 1380, "y": 13084, "w": 390, "h": 844, "page": "p", "title": "G · 4. Bảo mật", "is_interactive": true },
+    "MeSessions.dc.html": { "x": 1840, "y": 13084, "w": 390, "h": 844, "page": "p", "title": "G · 5. Phiên đăng nhập", "is_interactive": true },
+    "MeLogout.dc.html": { "x": 2300, "y": 13084, "w": 390, "h": 844, "page": "p", "title": "G · 6. Đăng xuất (popup)", "is_interactive": true },
+    "MeTags.dc.html": { "x": 2760, "y": 13084, "w": 390, "h": 844, "page": "p", "title": "G · 7. Nhãn", "is_interactive": true },
+    "MeFeedback.dc.html": { "x": 3220, "y": 13084, "w": 390, "h": 844, "page": "p", "title": "G · 8. Góp ý", "is_interactive": true },
+    "MeFeedbackSent.dc.html": { "x": 3680, "y": 13084, "w": 390, "h": 844, "page": "p", "title": "G · 9. Đã gửi góp ý", "is_interactive": true },
+    "MeFaq.dc.html": { "x": 4140, "y": 13084, "w": 390, "h": 844, "page": "p", "title": "G · 10. Câu hỏi thường gặp", "is_interactive": true }
   },
   "order": [
     "Principles.dc.html",
@@ -469,6 +479,16 @@
     "RepCategory.dc.html",
     "RepRange.dc.html",
     "RepEmpty.dc.html",
+    "MeHome.dc.html",
+    "MeProfile.dc.html",
+    "MeTheme.dc.html",
+    "MeSecurity.dc.html",
+    "MeSessions.dc.html",
+    "MeLogout.dc.html",
+    "MeTags.dc.html",
+    "MeFeedback.dc.html",
+    "MeFeedbackSent.dc.html",
+    "MeFaq.dc.html",
     "IA.dc.html",
     "Access.dc.html",
     "Motion.dc.html",
@@ -577,6 +597,14 @@
       "text": "F · Báo cáo",
       "kind": "title1",
       "maxW": 2230,
+      "page": "p"
+    },
+    "tgme": {
+      "x": 0,
+      "y": 12804,
+      "text": "G · Cá nhân và cài đặt",
+      "kind": "title1",
+      "maxW": 4530,
       "page": "p"
     },
     "tg": {

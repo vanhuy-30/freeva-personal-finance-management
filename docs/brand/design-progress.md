@@ -18,12 +18,11 @@
 | **D** Ví | **Chốt** 2026-10-21 | [patterns/D-wallets.md](patterns/D-wallets.md) |
 | **E** Danh mục | **Chốt** 2026-10-21 | [patterns/E-categories.md](patterns/E-categories.md) |
 | **F** Báo cáo | **Chốt** 2026-10-21 | [patterns/F-reports.md](patterns/F-reports.md) |
-| **G Cá nhân và cài đặt** | **Tiếp theo** (có màn mẫu Cá nhân) | — |
-| H Đồng bộ | Chưa | — |
+| **G** Cá nhân và cài đặt | **Chốt** 2026-10-21 | [patterns/G-profile-settings.md](patterns/G-profile-settings.md) |
+| **H Đồng bộ** | **Tiếp theo** | — |
 
 ## Màn cần thiết kế cho các nhóm còn lại (theo code Phase 1)
 
-- **G Cá nhân:** hồ sơ (ngôn ngữ, tiền tệ, múi giờ, ngày bắt đầu kỳ), cài đặt (giao diện, ẩn số dư, sinh trắc, cảnh báo phiên, quyền riêng tư), phiên đăng nhập (thu hồi một/tất cả), FAQ, góp ý (lỗi/ý tưởng), pháp lý.
 - **H Đồng bộ:** hàng chờ, lỗi, xung đột, trùng lặp; giữ / bỏ / khôi phục từng mục.
 
 ## Cách làm đã thống nhất với product owner
@@ -47,6 +46,8 @@
 - **Trạng thái phải nhìn ra được** (ví dụ mở/thu danh mục con có nút riêng). Không gắn nhãn mà người dùng phải đoán nghĩa ("Của bạn").
 - **Bảng chọn màu:** nhiều lựa chọn nhưng không na ná nhau; kiểm bằng ΔE2000.
 - **Báo cáo phải đủ ý người dùng cần** (trung bình/ngày, ngân sách, xu hướng) dù API chưa có; vẽ ra và ghi phụ thuộc.
+- **Hồ sơ chỉ là thông tin về bạn**; tuỳ chọn của app nằm ở Cá nhân → Ứng dụng. Thiếu API thì vẽ và ghi phụ thuộc.
+- **Luồng phụ (góp ý…) không được sơ sài:** có loại, chủ đề, đính kèm, màn cảm ơn.
 - **Không bỏ phần UI đã duyệt chỉ vì tính năng chưa có code** (ví dụ chuông thông báo ở Tổng quan).
 - **Ẩn số dư chỉ ẩn số dư**, không ẩn thu/chi hay số tiền giao dịch.
 - **Màu giữ như spec.** Đã thử ba mức tăng màu (icon danh mục hai tông → nền nhuộm xanh → khối màu đậm đầu màn); product owner chọn giữ nguyên. Không đề xuất lại nếu chưa được hỏi.

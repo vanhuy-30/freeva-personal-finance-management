@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Hồ sơ</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a,button,input{font-family:inherit}
+.ib{width:44px;height:44px;border-radius:999px;border:1px solid #EEF0F6;background:#FFFFFF;color:#22283A;display:flex;align-items:center;justify-content:center;box-sizing:border-box;text-decoration:none}
+.fld{border-radius:16px;border:1px solid #E4E7F0;background:#FFFFFF;padding:8px 14px 8px 10px;display:flex;align-items:center;gap:10px;box-sizing:border-box;min-height:60px;color:#22283A;text-decoration:none}
+.fi{width:32px;height:32px;border-radius:10px;background:#F4F6FB;color:#3D4460;display:flex;align-items:center;justify-content:center;flex:0 0 32px}
+.fl{font-size:12px;color:#5C6378}
+.fv{font-size:16px;color:#22283A}
+.lb{font-size:12px;letter-spacing:1.4px;font-weight:600;color:#5C6378;padding-left:4px}
+.ch{height:36px;padding:0 14px;border-radius:999px;border:1px solid #E4E7F0;background:#FFFFFF;color:#22283A;font-size:13px;font-weight:500;white-space:nowrap}
+.ch.on{border:1.5px solid #22283A;font-weight:600}
+.grp{background:#FFFFFF;border-radius:20px;overflow:hidden;box-shadow:0 1px 2px rgba(34,40,58,.04),0 8px 24px rgba(34,40,58,.05)}
+.row{display:flex;align-items:center;gap:12px;min-height:56px;padding:6px 16px;box-sizing:border-box;font-size:15px;color:#22283A;text-decoration:none}
+.row+.row{border-top:1px solid #EEF0F5}
+.ri{width:32px;height:32px;border-radius:10px;background:#F4F6FB;display:flex;align-items:center;justify-content:center;flex:0 0 32px}
+.tx{display:flex;flex-direction:column;flex:1 1 0;min-width:0;gap:2px}
+.sub{font-size:12px;color:#5C6378;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.act{font-size:14px;font-weight:600;color:#3F67D1;white-space:nowrap}
+.gc{height:40px;padding:0 12px 0 6px;border-radius:999px;background:#EEF2FD;border:1.5px solid #3F67D1;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:#22283A;white-space:nowrap}
+.gi{width:28px;height:28px;border-radius:999px;background:#FFFFFF;color:#3F67D1;display:flex;align-items:center;justify-content:center}
+</style>
+</helmet>
+<div style="width: 390px; height: 1300px; box-sizing: border-box; position: relative; overflow: hidden; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; padding: 56px 20px 28px 20px; gap: 14px">
+
+  <div style="display: flex; align-items: center; justify-content: space-between">
+    <a href="MeHome.dc.html" class="ib" aria-label="Quay lại"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <h1 style="margin: 0; font-size: 17px; line-height: 24px; font-weight: 600">Hồ sơ</h1>
+    <span style="width: 44px"></span>
+  </div>
+
+  <div style="align-self: center; padding: 6px 0 8px 0; position: relative">
+    <span aria-hidden="true" style="width: 84px; height: 84px; border-radius: 999px; background: #E6EBFB; color: #3F67D1; display: flex; align-items: center; justify-content: center; font-size: 30px; font-weight: 600">M</span>
+    <button aria-label="Đổi ảnh đại diện" style="position: absolute; right: -4px; bottom: 6px; width: 34px; height: 34px; border-radius: 999px; border: 3px solid #FCFDFF; background: #22283A; color: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"></path><circle cx="12" cy="13" r="3"></circle></svg></button>
+  </div>
+
+  <span class="lb">VỀ BẠN</span>
+  <div class="fld" style="border: 1.5px solid #3F67D1; box-shadow: 0 0 0 4px rgba(86,128,233,.18)"><span class="fi"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg></span><span style="display: flex; flex-direction: column; flex-grow: 1; gap: 2px"><label for="pn" class="fl">Tên hiển thị</label><input id="pn" type="text" value="Minh" maxlength="50" style="border: none; outline: none; background: transparent; font-size: 16px; color: #22283A; padding: 0"></span></div>
+
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <span class="fl" style="padding-left: 4px">Thu nhập chính</span>
+    <div role="radiogroup" aria-label="Thu nhập chính" style="display: flex; flex-wrap: wrap; gap: 8px">
+      <button class="ch on" role="radio" aria-checked="true">Lương cố định</button>
+      <button class="ch" role="radio" aria-checked="false">Làm tự do</button>
+      <button class="ch" role="radio" aria-checked="false">Kinh doanh</button>
+      <button class="ch" role="radio" aria-checked="false">Khác</button>
+    </div>
+  </div>
+
+  <a href="#" class="fld"><span class="fi"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="13" rx="3"></rect><circle cx="12" cy="12.5" r="2.5"></circle></svg></span><span style="display: flex; flex-direction: column; flex-grow: 1; gap: 2px"><span class="fl">Thường nhận lương ngày</span><span class="fv">Ngày 5</span></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5C6378" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></a>
+
+  <span class="lb" style="margin-top: 6px">MỤC TIÊU</span>
+  <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+    <span class="gc"><span class="gi"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8 0 3 2 4.5V20h4v-2h3v2h4v-4c1-.5 1.7-1 2-2h2v-4h-2c0-1-.5-1.5-1-2V5z"></path></svg></span>Tiết kiệm nhiều hơn</span>
+    <span class="gc"><span class="gi"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0 0 4h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a2 2 0 0 1-2-2V5"></path></svg></span>Chi đúng ngân sách</span>
+    <a href="ObGoals.dc.html" style="height: 40px; padding: 0 10px; display: flex; align-items: center; color: #3F67D1; font-size: 14px; font-weight: 600; text-decoration: none">Đổi</a>
+  </div>
+
+  <a href="#" class="fld"><span class="fi"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12A9 9 0 1 1 12 3v9z"></path><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"></path></svg></span><span style="display: flex; flex-direction: column; flex-grow: 1; gap: 2px"><span class="fl">Xem lại chi tiêu</span><span class="fv">Mỗi tuần, tối Chủ nhật</span></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5C6378" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></a>
+
+  <span class="lb" style="margin-top: 6px">TÀI KHOẢN</span>
+  <div class="grp">
+    <a href="#" class="row"><span class="ri"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"></rect><path d="M3.5 7l8.5 6 8.5-6"></path></svg></span><span class="tx"><span>Email</span><span class="sub">m•••@gmail.com · đã xác nhận</span></span><span class="act">Đổi</span></a>
+    <a href="#" class="row"><span class="ri"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg></span><span class="tx"><span>Mật khẩu</span><span class="sub">Đổi lần cuối 02/10</span></span><span class="act">Đổi</span></a>
+    <a href="#" class="row"><span class="ri"><svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true"><path fill="#4285F4" d="M45.1 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h11.8c-.5 2.8-2.1 5.1-4.4 6.7v5.6h7.1c4.2-3.8 6.6-9.5 6.6-16.3z"></path><path fill="#34A853" d="M24 46c5.9 0 10.9-2 14.5-5.3l-7.1-5.6c-2 1.3-4.5 2.1-7.4 2.1-5.7 0-10.5-3.8-12.2-9H4.5v5.7C8.1 41.1 15.5 46 24 46z"></path><path fill="#FBBC05" d="M11.8 28.2c-.4-1.3-.7-2.7-.7-4.2s.3-2.9.7-4.2v-5.7H4.5C3 17.1 2 20.4 2 24s1 6.9 2.5 9.9l7.3-5.7z"></path><path fill="#EA4335" d="M24 10.8c3.2 0 6.1 1.1 8.4 3.3l6.3-6.3C34.9 4.2 29.9 2 24 2 15.5 2 8.1 6.9 4.5 14.1l7.3 5.7c1.7-5.2 6.5-9 12.2-9z"></path></svg></span><span class="tx"><span>Google</span><span class="sub">Chưa liên kết</span></span><span class="act">Liên kết</span></a>
+    <a href="#" class="row"><span class="ri"><svg width="15" height="17" viewBox="0 0 17 20" aria-hidden="true"><path fill="#22283A" d="M14.1 10.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9C3.6 4.8 2 5.8 1.1 7.4c-1.9 3.2-.5 8 1.3 10.6.9 1.3 1.9 2.7 3.3 2.6 1.3-.1 1.8-.9 3.4-.9s2 .9 3.4.8c1.4 0 2.3-1.3 3.2-2.6 1-1.5 1.4-2.9 1.4-3 0 0-2.9-1.1-3-4.3zM11.5 3c.7-.9 1.2-2 1.1-3.2-1 0-2.3.7-3 1.6-.7.8-1.2 2-1.1 3.1 1.1.1 2.3-.6 3-1.5z"></path></svg></span><span class="tx"><span>Apple</span><span class="sub">Chưa liên kết</span></span><span class="act">Liên kết</span></a>
+  </div>
+
+  <a href="#" style="align-self: center; height: 44px; padding: 0 16px; display: flex; align-items: center; gap: 8px; color: #B83434; font-size: 15px; font-weight: 600; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"></path></svg>Xoá tài khoản</a>
+
+  <a href="MeHome.dc.html" style="margin-top: auto; height: 56px; border-radius: 999px; background: #3F67D1; color: #FFFFFF; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center; text-decoration: none">Lưu thay đổi</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1300}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
