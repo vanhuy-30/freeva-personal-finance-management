@@ -177,7 +177,8 @@ Mọi component tương tác có: **default · pressed · focused · disabled ·
 - 4 tab: **Tổng quan · Giao dịch · Báo cáo · Cá nhân**, nút + ở giữa mở Ghi chi/Thu/Chuyển.
 - Lần đầu: Splash → Welcome → Mục tiêu → Thói quen → Ngân sách → Tạo tài khoản → Thiết lập tài chính → Trang chính.
   Lần sau: Splash → Mở khoá (nếu đã bật) → Trang chính.
-- **Push** khi đi sâu vào nội dung (giữ bottom nav ở cấp 1–2). **Modal** khi tạo/sửa dữ
+- **Bottom nav chỉ hiện ở màn gốc của 4 tab.** Vào bất kỳ màn tiếp theo nào (push, chi tiết, modal) thì ẩn.
+- **Push** khi đi sâu vào nội dung. **Modal** khi tạo/sửa dữ
   liệu (ẩn bottom nav). **Sheet** khi chọn nhanh hoặc xem nhanh.
 - Tối đa ba cấp. Nhấn lại tab đang chọn: cuộn lên đầu, lần hai về gốc của tab.
 

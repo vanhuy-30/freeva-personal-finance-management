@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Chọn ngày đến hạn</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"cv11" 1}
+a,button{font-family:inherit}
+.d{height:40px;border:none;border-radius:999px;background:transparent;color:#22283A;font-size:15px;font-weight:500;display:flex;align-items:center;justify-content:center;position:relative;padding:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif">
+
+  <div aria-hidden="true" style="padding: 56px 20px 0 20px; display: flex; flex-direction: column; gap: 16px">
+    <span style="align-self: center; font-size: 17px; font-weight: 600; padding: 10px 0">Thêm ví</span>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px"><span style="height: 72px; border-radius: 20px; background: #FFFFFF"></span><span style="height: 72px; border-radius: 20px; background: #FFFFFF"></span><span style="height: 72px; border-radius: 20px; background: #FFFFFF"></span><span style="height: 72px; border-radius: 20px; background: #EEF2FD"></span></div>
+    <span style="height: 60px; border-radius: 16px; background: #FFFFFF"></span>
+    <span style="height: 60px; border-radius: 16px; background: #FFFFFF"></span>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px"><span style="height: 60px; border-radius: 16px; background: #FFFFFF"></span><span style="height: 60px; border-radius: 16px; background: #FFFFFF"></span></div>
+  </div>
+  <a href="WAddCredit.dc.html" aria-label="Đóng" style="position: absolute; inset: 0; background: rgba(34,40,58,.45)"></a>
+
+  <div role="dialog" aria-modal="true" aria-label="Chọn ngày đến hạn" style="position: absolute; left: 20px; right: 20px; top: 50%; transform: translateY(-50%); background: #FFFFFF; border-radius: 28px; padding: 22px 18px 18px 18px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 24px 48px rgba(34,40,58,.22)">
+    <div style="display: flex; align-items: center; gap: 12px; padding: 0 2px">
+      <span style="width: 40px; height: 40px; border-radius: 12px; background: #FBF4E0; color: #7A5A00; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4M12 13v3l2 1"></path></svg></span>
+      <span style="display: flex; flex-direction: column"><h2 style="margin: 0; font-size: 17px; line-height: 24px; font-weight: 600">Đến hạn ngày nào?</h2><span style="font-size: 13px; color: #5C6378">Hằng tháng</span></span>
+    </div>
+
+    <div class="num" role="radiogroup" aria-label="Ngày trong tháng" style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px">
+      <button class="d">1</button><button class="d">2</button><button class="d">3</button><button class="d">4</button><button class="d">5</button><button class="d">6</button><button class="d">7</button>
+      <button class="d">8</button><button class="d">9</button><button class="d">10</button><button class="d">11</button><button class="d">12</button><button class="d">13</button><button class="d">14</button>
+      <button class="d">15</button><button class="d">16</button><button class="d">17</button><button class="d">18</button><button class="d">19</button><button class="d" aria-label="20, ngày chốt" style="color: #5C6378">20<span style="position: absolute; bottom: 3px; width: 4px; height: 4px; border-radius: 999px; background: #9AA1B8"></span></button><button class="d">21</button>
+      <button class="d">22</button><button class="d">23</button><button class="d">24</button><button class="d" role="radio" aria-checked="true" style="background: #3F67D1; color: #FFFFFF; font-weight: 600">25</button><button class="d">26</button><button class="d">27</button><button class="d">28</button>
+    </div>
+    <span style="font-size: 12px; color: #5C6378; display: flex; align-items: center; gap: 6px; padding: 0 2px"><span style="width: 6px; height: 6px; border-radius: 999px; background: #9AA1B8"></span>Ngày chốt</span>
+
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+      <a href="WAddCredit.dc.html" style="height: 48px; border-radius: 999px; border: 1px solid #E4E7F0; color: #22283A; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; text-decoration: none">Huỷ</a>
+      <a href="WAddCredit.dc.html" style="height: 48px; border-radius: 999px; background: #3F67D1; color: #FFFFFF; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; text-decoration: none">Chọn ngày 25</a>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

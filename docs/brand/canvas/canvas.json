@@ -368,7 +368,16 @@
     "BNewMonth.dc.html": { "x": 1840, "y": 7256, "w": 390, "h": 844, "page": "p", "title": "B · 5. Đầu tháng", "is_interactive": true },
     "BLoading.dc.html": { "x": 2300, "y": 7256, "w": 390, "h": 844, "page": "p", "title": "B · 6. Đang tải", "is_interactive": true },
     "BOffline.dc.html": { "x": 2760, "y": 7256, "w": 390, "h": 844, "page": "p", "title": "B · 7. Ngoại tuyến", "is_interactive": true },
-    "BError.dc.html": { "x": 3220, "y": 7256, "w": 390, "h": 844, "page": "p", "title": "B · 8. Lỗi tải", "is_interactive": true }
+    "BError.dc.html": { "x": 3220, "y": 7256, "w": 390, "h": 844, "page": "p", "title": "B · 8. Lỗi tải", "is_interactive": true },
+    "WList.dc.html": { "x": 0, "y": 8696, "w": 390, "h": 844, "page": "p", "title": "D · 1. Ví của tôi", "is_interactive": true },
+    "WSort.dc.html": { "x": 460, "y": 8696, "w": 390, "h": 844, "page": "p", "title": "D · 2. Sắp xếp ví", "is_interactive": true },
+    "WDetail.dc.html": { "x": 920, "y": 8696, "w": 390, "h": 844, "page": "p", "title": "D · 3. Chi tiết ví", "is_interactive": true },
+    "WCredit.dc.html": { "x": 1380, "y": 8696, "w": 390, "h": 844, "page": "p", "title": "D · 4. Chi tiết thẻ tín dụng", "is_interactive": true },
+    "WAdd.dc.html": { "x": 1840, "y": 8696, "w": 390, "h": 844, "page": "p", "title": "D · 5. Thêm ví", "is_interactive": true },
+    "WAddCredit.dc.html": { "x": 2300, "y": 8696, "w": 390, "h": 844, "page": "p", "title": "D · 6. Thêm thẻ tín dụng", "is_interactive": true },
+    "WDaySheet.dc.html": { "x": 2760, "y": 8696, "w": 390, "h": 844, "page": "p", "title": "D · 7. Chọn ngày (sheet)", "is_interactive": true },
+    "WEdit.dc.html": { "x": 3220, "y": 8696, "w": 390, "h": 844, "page": "p", "title": "D · 8. Sửa ví đã có giao dịch", "is_interactive": true },
+    "WHidden.dc.html": { "x": 3680, "y": 8696, "w": 390, "h": 844, "page": "p", "title": "D · 9. Ví đã ẩn", "is_interactive": true }
   },
   "order": [
     "Principles.dc.html",
@@ -427,6 +436,15 @@
     "BLoading.dc.html",
     "BOffline.dc.html",
     "BError.dc.html",
+    "WList.dc.html",
+    "WSort.dc.html",
+    "WDetail.dc.html",
+    "WCredit.dc.html",
+    "WAdd.dc.html",
+    "WAddCredit.dc.html",
+    "WDaySheet.dc.html",
+    "WEdit.dc.html",
+    "WHidden.dc.html",
     "IA.dc.html",
     "Access.dc.html",
     "Motion.dc.html",
@@ -511,6 +529,14 @@
       "text": "B · Tổng quan: các trạng thái",
       "kind": "title1",
       "maxW": 3610,
+      "page": "p"
+    },
+    "td": {
+      "x": 0,
+      "y": 8416,
+      "text": "D · Ví",
+      "kind": "title1",
+      "maxW": 4070,
       "page": "p"
     },
     "tg": {

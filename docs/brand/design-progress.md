@@ -15,15 +15,14 @@
 | **A** Onboarding + tài khoản | **Chốt** 2026-10-21 | [patterns/A-onboarding-auth.md](patterns/A-onboarding-auth.md) |
 | **B** Tổng quan | **Chốt** 2026-10-21 | [patterns/B-overview.md](patterns/B-overview.md) |
 | **C** Giao dịch | **Chốt** 2026-10-21 | [patterns/C-transactions.md](patterns/C-transactions.md) |
-| **D Ví** | **Tiếp theo** | — |
-| E Danh mục | Chưa | — |
+| **D** Ví | **Chốt** 2026-10-21 | [patterns/D-wallets.md](patterns/D-wallets.md) |
+| **E Danh mục** | **Tiếp theo** | — |
 | F Báo cáo | Chưa | — |
 | G Cá nhân và cài đặt | Có màn mẫu Cá nhân | — |
 | H Đồng bộ | Chưa | — |
 
 ## Màn cần thiết kế cho các nhóm còn lại (theo code Phase 1)
 
-- **D Ví:** danh sách (sắp xếp lên/xuống), ví đã ẩn, thêm/sửa ví (4 loại; tiền tệ khoá khi đã có giao dịch; thẻ tín dụng: hạn mức, ngày chốt, ngày đến hạn 1–28).
 - **E Danh mục:** danh sách cha/con, hệ thống vs tự tạo, thêm/sửa (tên, cha, màu token, icon token), ẩn/khôi phục, xoá phải chọn danh mục thay thế.
 - **F Báo cáo:** kỳ tuần/tháng/khoảng tuỳ chọn, trước/sau, tổng thu chi, theo danh mục, theo ví.
 - **G Cá nhân:** hồ sơ (ngôn ngữ, tiền tệ, múi giờ, ngày bắt đầu kỳ), cài đặt (giao diện, ẩn số dư, sinh trắc, cảnh báo phiên, quyền riêng tư), phiên đăng nhập (thu hồi một/tất cả), FAQ, góp ý (lỗi/ý tưởng), pháp lý.
@@ -44,6 +43,9 @@
 - **Mỗi màn không giống Tổng quan:** dùng đúng loại màn trong spec (danh sách, nhập liệu, chi tiết, cài đặt).
 - Ưa: nền sáng, thẻ trắng bo lớn, bottom nav viên thuốc trắng có nút + ở giữa, thẻ số dư lớp màu mờ (chỉ một chỗ), minh hoạ nét vẽ tay, thẻ chọn nền xanh nhạt có dấu tích.
 - Không ưa: rập khuôn, nhiều gradient, nhiều chữ giải thích, thiếu điểm nhấn.
+- **Bottom nav chỉ ở màn gốc của tab**; vào màn tiếp theo thì ẩn.
+- **Chọn ngày trong tháng dùng popup**, không dùng sheet. Thẻ chọn trong form: icon và chữ một dòng.
+- **Chữ gợi ý ngắn, rõ, không khô** (ví dụ "Nhập số gần đúng, có thể sửa lại sau.").
 - **Không bỏ phần UI đã duyệt chỉ vì tính năng chưa có code** (ví dụ chuông thông báo ở Tổng quan).
 - **Ẩn số dư chỉ ẩn số dư**, không ẩn thu/chi hay số tiền giao dịch.
 - **Màu giữ như spec.** Đã thử ba mức tăng màu (icon danh mục hai tông → nền nhuộm xanh → khối màu đậm đầu màn); product owner chọn giữ nguyên. Không đề xuất lại nếu chưa được hỏi.
