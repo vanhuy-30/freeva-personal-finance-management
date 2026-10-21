@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Ghi chi · chi tiết</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"cv11" 1}
+a,button,input,textarea{font-family:inherit}
+.seg{height:36px;padding:0 16px;border:none;border-radius:999px;background:transparent;color:#5C6378;font-size:14px;font-weight:500;display:flex;align-items:center;text-decoration:none}
+.row{display:flex;align-items:center;gap:12px;height:52px;text-decoration:none;color:#22283A}
+.row+.row{border-top:1px solid #EEF0F5}
+.rk{width:84px;flex:0 0 84px;font-size:14px;color:#5C6378}
+.rv{flex-grow:1;font-size:15px;font-weight:500;text-align:right}
+.fld{border-radius:16px;border:1px solid #E4E7F0;background:#FFFFFF;padding:8px 14px;display:flex;flex-direction:column;gap:2px;box-sizing:border-box}
+.fld label{font-size:12px;color:#5C6378}
+.fld input,.fld textarea{border:none;outline:none;background:transparent;font-size:16px;color:#22283A;padding:0;resize:none}
+.tag{height:36px;padding:0 6px 0 12px;border-radius:999px;border:none;background:#F4F0FB;color:#7048B8;font-size:14px;font-weight:500;display:flex;align-items:center;gap:2px}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; padding: 56px 20px 28px 20px; gap: 16px">
+
+  <div style="display: flex; align-items: center; justify-content: space-between">
+    <a href="TxExpense.dc.html" aria-label="Đóng" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #EEF0F6; background: #FFFFFF; color: #22283A; display: flex; align-items: center; justify-content: center; box-sizing: border-box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a>
+    <div role="tablist" aria-label="Loại giao dịch" style="display: flex; background: #EAEDF4; border-radius: 999px; padding: 4px">
+      <span role="tab" aria-selected="true" class="seg" style="background: #22283A; color: #FFFFFF; font-weight: 600">Chi</span>
+      <span role="tab" aria-selected="false" class="seg">Thu</span>
+      <a href="TxTransfer.dc.html" role="tab" aria-selected="false" class="seg">Chuyển</a>
+    </div>
+    <span style="width: 44px"></span>
+  </div>
+
+  <a href="TxExpense.dc.html" class="num" aria-label="Sửa số tiền, 65.000 đồng" style="align-self: center; padding: 8px 0; color: #22283A; text-decoration: none; font-size: 40px; line-height: 44px; font-weight: 600; letter-spacing: -1.2px">65.000 <span style="font-size: 20px; font-weight: 500; color: #5C6378">₫</span></a>
+
+  <div style="background: #FFFFFF; border-radius: 20px; padding: 0 16px; box-shadow: 0 1px 2px rgba(34,40,58,.04), 0 8px 24px rgba(34,40,58,.05)">
+    <a href="TxCategory.dc.html" class="row"><span class="rk">Danh mục</span><span class="rv">Ăn uống</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C6378" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></a>
+    <a href="#" class="row"><span class="rk">Ví</span><span class="rv">Tiền mặt</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C6378" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></a>
+    <a href="#" class="row num"><span class="rk">Thời gian</span><span class="rv">Hôm nay, 12:40</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C6378" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></a>
+  </div>
+
+  <div class="fld"><label for="mc">Cửa hàng</label><input id="mc" type="text" value="Phở Thìn"></div>
+  <div class="fld" style="border: 1.5px solid #3F67D1; box-shadow: 0 0 0 4px rgba(86,128,233,.18)"><label for="mn">Ghi chú</label><textarea id="mn" rows="2">Ăn với team sau buổi họp</textarea></div>
+
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <span style="font-size: 13px; font-weight: 600; color: #5C6378; padding-left: 4px">Nhãn</span>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px">
+      <span class="tag">Ăn trưa<button aria-label="Bỏ nhãn Ăn trưa" style="width: 28px; height: 28px; border: none; background: transparent; color: #7048B8; display: flex; align-items: center; justify-content: center; padding: 0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"></path></svg></button></span>
+      <span class="tag">Công ty<button aria-label="Bỏ nhãn Công ty" style="width: 28px; height: 28px; border: none; background: transparent; color: #7048B8; display: flex; align-items: center; justify-content: center; padding: 0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"></path></svg></button></span>
+      <a href="TxTags.dc.html" style="height: 36px; padding: 0 12px; border-radius: 999px; border: 1px dashed #C9CEDD; color: #3D4460; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 4px; text-decoration: none; box-sizing: border-box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Thêm nhãn</a>
+    </div>
+  </div>
+
+  <a href="TxSaved.dc.html" style="margin-top: auto; height: 56px; border-radius: 999px; background: #3F67D1; color: #FFFFFF; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center; text-decoration: none">Lưu khoản chi</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

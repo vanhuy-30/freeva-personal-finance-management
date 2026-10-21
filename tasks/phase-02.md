@@ -30,6 +30,13 @@
 - Depends: DS-P2-002
 - DoD: luồng và màn theo [A-onboarding-auth.md](../docs/brand/patterns/A-onboarding-auth.md): Welcome → Mục tiêu (tối đa 2) → Thói quen → Ngân sách (ẩn hoặc lưu tạm nếu chưa có `BE-P2-E02`) → Tạo tài khoản → Thiết lập tài chính (không bắt buộc) → Trang chính có checklist. Đăng nhập email + mật khẩu một màn. PIN không chặn đường vào app. Deep link xác nhận email / đặt lại mật khẩu và Google/Apple mobile tách task BE/MOB riêng khi làm.
 
+### DS-P2-005 — Giao dịch theo thiết kế nhóm C
+- Status: todo
+- Module: 4, 5
+- Gate: post-v1
+- Depends: DS-P2-002
+- DoD: màn và luồng theo [C-transactions.md](../docs/brand/patterns/C-transactions.md): danh sách có chip lọc và tổng theo bộ lọc, tìm không dấu, sheet bộ lọc, trạng thái không kết quả, sheet chi tiết (sửa, sao chép, xoá có Hoàn tác), mục Đã xoá, ghi chi/thu với sheet danh mục và sheet nhãn, chuyển ví khác tiền tệ có tỷ giá + thời điểm. Lọc nhiều ví/danh mục, lọc nhãn, tìm theo cửa hàng và tổng theo bộ lọc tách task BE/MOB riêng khi làm.
+
 ### BE-P2-E01 / MOB-P2-E01 — Giao dịch định kỳ (module 6)
 - Status: todo
 - Module: 6

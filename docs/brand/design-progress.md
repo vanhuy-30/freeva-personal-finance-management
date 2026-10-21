@@ -14,8 +14,8 @@
 | Foundations, tokens, components, states, guidelines | Chốt | [design-system.md](design-system.md) |
 | **A** Onboarding + tài khoản | **Chốt** 2026-10-21 | [patterns/A-onboarding-auth.md](patterns/A-onboarding-auth.md) |
 | B Tổng quan | Có màn mẫu (V3), chưa thiết kế đủ trạng thái | — |
-| **C Giao dịch** | **Tiếp theo** | — |
-| D Ví | Chưa | — |
+| **C** Giao dịch | **Chốt** 2026-10-21 | [patterns/C-transactions.md](patterns/C-transactions.md) |
+| **D Ví** | **Tiếp theo** | — |
 | E Danh mục | Chưa | — |
 | F Báo cáo | Chưa | — |
 | G Cá nhân và cài đặt | Có màn mẫu Cá nhân | — |
@@ -23,7 +23,6 @@
 
 ## Màn cần thiết kế cho các nhóm còn lại (theo code Phase 1)
 
-- **C Giao dịch:** danh sách (đã có mẫu), tìm/lọc, chi tiết giao dịch (sheet: sửa, sao chép, xoá), ghi chi/thu (đã có mẫu Ghi chi), chuyển ví (khác tiền tệ thì nhập tỷ giá), chọn danh mục (sheet), nhãn + tạo nhãn (tối đa 20), ghi chú / cửa hàng, mục Đã xoá + khôi phục.
 - **D Ví:** danh sách (sắp xếp lên/xuống), ví đã ẩn, thêm/sửa ví (4 loại; tiền tệ khoá khi đã có giao dịch; thẻ tín dụng: hạn mức, ngày chốt, ngày đến hạn 1–28).
 - **E Danh mục:** danh sách cha/con, hệ thống vs tự tạo, thêm/sửa (tên, cha, màu token, icon token), ẩn/khôi phục, xoá phải chọn danh mục thay thế.
 - **F Báo cáo:** kỳ tuần/tháng/khoảng tuỳ chọn, trước/sau, tổng thu chi, theo danh mục, theo ví.
@@ -45,6 +44,7 @@
 - **Mỗi màn không giống Tổng quan:** dùng đúng loại màn trong spec (danh sách, nhập liệu, chi tiết, cài đặt).
 - Ưa: nền sáng, thẻ trắng bo lớn, bottom nav viên thuốc trắng có nút + ở giữa, thẻ số dư lớp màu mờ (chỉ một chỗ), minh hoạ nét vẽ tay, thẻ chọn nền xanh nhạt có dấu tích.
 - Không ưa: rập khuôn, nhiều gradient, nhiều chữ giải thích, thiếu điểm nhấn.
+- **Màu giữ như spec.** Đã thử ba mức tăng màu (icon danh mục hai tông → nền nhuộm xanh → khối màu đậm đầu màn); product owner chọn giữ nguyên. Không đề xuất lại nếu chưa được hỏi.
 - Product owner gửi ảnh tham chiếu thường xuyên: lưu vào `references/` kèm một dòng mô tả trong `references/README.md`.
 
 ## Ghi chú kỹ thuật cho người sửa canvas

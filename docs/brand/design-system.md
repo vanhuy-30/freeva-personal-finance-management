@@ -164,7 +164,7 @@ Mọi component tương tác có: **default · pressed · focused · disabled ·
 | Pattern | Quy tắc chính |
 |---|---|
 | Data display | Một con số lớn mở màn; một thẻ có lớp màu; số rút gọn chỉ ở chip và biểu đồ; bật ẩn số dư thì mọi số tiền trên màn đều ẩn. |
-| Search & filter | Chip lọc luôn hiện; ô tìm mở từ kính lúp; tìm tiếng Việt không dấu, cập nhật sau 300 ms; tổng thu/chi theo bộ lọc; không kết quả có nút "Xoá bộ lọc". |
+| Search & filter | Chip lọc luôn hiện; ô tìm mở từ kính lúp; tìm tiếng Việt không dấu, cập nhật sau 300 ms; tổng thu/chi theo bộ lọc; không kết quả có nút "Xoá bộ lọc". Chi tiết: [patterns/C-transactions.md](patterns/C-transactions.md). |
 | Form | Số tiền focus sẵn; mặc định ví gần nhất, hôm nay, danh mục hay dùng; trường phụ gấp lại; lưu xong đóng màn + toast Hoàn tác. |
 | Settings | Thẻ hồ sơ, email che một phần; nhóm Quản lý · Ứng dụng · Hỗ trợ; bật/tắt có hiệu lực ngay; hành động nguy hiểm ở cuối và luôn hỏi lại. |
 | Authentication | Email + mật khẩu trên một màn, kèm Google/Apple. Mở khoá: sinh trắc học trước, PIN 6 số dự phòng; chưa mở khoá thì không hiện số tiền nào, kể cả ở màn chuyển app; sai 5 lần thì đăng nhập lại. Chi tiết: [patterns/A-onboarding-auth.md](patterns/A-onboarding-auth.md). |
