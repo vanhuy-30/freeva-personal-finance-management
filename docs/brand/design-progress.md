@@ -1,0 +1,54 @@
+# Tiến độ thiết kế UI v2 — bàn giao giữa các phiên
+
+Đọc file này trước khi tiếp tục thiết kế. Cập nhật mỗi khi chốt một nhóm.
+
+- Spec: [design-system.md](design-system.md) · token: [`packages/design-tokens`](../../packages/design-tokens/)
+- Canvas (riêng tư, của product owner): <https://claude.ai/artifact/SmyaVvz57doJiAM6Kn678T>
+- Bản sao nguồn canvas trong repo: [canvas/](canvas/) (`canvas.json` + mỗi artboard một `.dc.html`). Nếu canvas và repo lệch nhau: tài liệu và token trong repo thắng.
+- Nhánh: `feat/DS-P2-001-design-system-v2`
+
+## Trạng thái
+
+| Phần | Trạng thái | Tài liệu |
+|---|---|---|
+| Foundations, tokens, components, states, guidelines | Chốt | [design-system.md](design-system.md) |
+| **A** Onboarding + tài khoản | **Chốt** 2026-10-21 | [patterns/A-onboarding-auth.md](patterns/A-onboarding-auth.md) |
+| B Tổng quan | Có màn mẫu (V3), chưa thiết kế đủ trạng thái | — |
+| **C Giao dịch** | **Tiếp theo** | — |
+| D Ví | Chưa | — |
+| E Danh mục | Chưa | — |
+| F Báo cáo | Chưa | — |
+| G Cá nhân và cài đặt | Có màn mẫu Cá nhân | — |
+| H Đồng bộ | Chưa | — |
+
+## Màn cần thiết kế cho các nhóm còn lại (theo code Phase 1)
+
+- **C Giao dịch:** danh sách (đã có mẫu), tìm/lọc, chi tiết giao dịch (sheet: sửa, sao chép, xoá), ghi chi/thu (đã có mẫu Ghi chi), chuyển ví (khác tiền tệ thì nhập tỷ giá), chọn danh mục (sheet), nhãn + tạo nhãn (tối đa 20), ghi chú / cửa hàng, mục Đã xoá + khôi phục.
+- **D Ví:** danh sách (sắp xếp lên/xuống), ví đã ẩn, thêm/sửa ví (4 loại; tiền tệ khoá khi đã có giao dịch; thẻ tín dụng: hạn mức, ngày chốt, ngày đến hạn 1–28).
+- **E Danh mục:** danh sách cha/con, hệ thống vs tự tạo, thêm/sửa (tên, cha, màu token, icon token), ẩn/khôi phục, xoá phải chọn danh mục thay thế.
+- **F Báo cáo:** kỳ tuần/tháng/khoảng tuỳ chọn, trước/sau, tổng thu chi, theo danh mục, theo ví.
+- **G Cá nhân:** hồ sơ (ngôn ngữ, tiền tệ, múi giờ, ngày bắt đầu kỳ), cài đặt (giao diện, ẩn số dư, sinh trắc, cảnh báo phiên, quyền riêng tư), phiên đăng nhập (thu hồi một/tất cả), FAQ, góp ý (lỗi/ý tưởng), pháp lý.
+- **H Đồng bộ:** hàng chờ, lỗi, xung đột, trùng lặp; giữ / bỏ / khôi phục từng mục.
+
+## Cách làm đã thống nhất với product owner
+
+1. Mỗi nhóm một (hoặc hai) hàng artboard 390×844 trên trang **05 · Patterns** của canvas, nối link để bấm Play đi được hết luồng.
+2. Làm xong một nhóm thì dừng cho product owner duyệt; chốt xong mới ghi vào `docs/brand/patterns/{nhóm}.md`, cập nhật file này và bản sao `canvas/`, rồi commit.
+3. Chưa viết code Flutter cho tới khi product owner yêu cầu (`DS-P2-002`, `DS-P2-003`, `DS-P2-004`).
+
+## Phản hồi đã nhận (áp cho mọi nhóm)
+
+- **Chữ ngắn, cô đọng.** Tiêu đề ngắn, tối đa một dòng phụ. Giọng ấm nhưng không màu mè.
+- **Không đưa chi tiết kỹ thuật lên UI** (độ dài mã, điều kiện hệ thống, nhãn bước kỹ thuật).
+- **Không lạm dụng logo**; logo chỉ ở splash và app icon.
+- **Không bắt người dùng nhập tiền sớm.** Hỏi điều dễ trước, việc tốn công sau và cho bỏ qua.
+- **Mỗi màn không giống Tổng quan:** dùng đúng loại màn trong spec (danh sách, nhập liệu, chi tiết, cài đặt).
+- Ưa: nền sáng, thẻ trắng bo lớn, bottom nav viên thuốc trắng có nút + ở giữa, thẻ số dư lớp màu mờ (chỉ một chỗ), minh hoạ nét vẽ tay, thẻ chọn nền xanh nhạt có dấu tích.
+- Không ưa: rập khuôn, nhiều gradient, nhiều chữ giải thích, thiếu điểm nhấn.
+- Product owner gửi ảnh tham chiếu thường xuyên: lưu vào `references/` kèm một dòng mô tả trong `references/README.md`.
+
+## Ghi chú kỹ thuật cho người sửa canvas
+
+- Canvas là Artifact loại Design: file `project/canvas.json` (index, `pages`, `boards`, `order`, `notes`) và `project/*.dc.html`. Ảnh logo đã tải lên dạng asset `/_blob/…` (xem `canvas/Logo.dc.html`).
+- Trang canvas: `f` Foundations · `t` Tokens · `c` Components · `s` States · `p` Patterns · `g` Guidelines.
+- Màu trong artboard là hex theo token v2 (ink `#22283A`, canvas `#FCFDFF`, action `#3F67D1`, wash ở `.wash`).

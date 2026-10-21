@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Freeva · Component states</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"cv11" 1}
+button{font-family:inherit}
+.g{display:grid;grid-template-columns:132px repeat(6, minmax(0, 1fr));gap:10px;align-items:center}
+.ch{font-size:12px;font-weight:600;color:#5C6378;letter-spacing:.4px}
+.rh{font-size:13px;font-weight:600}
+.cell{height:76px;border-radius:16px;background:#F4F6FB;display:flex;align-items:center;justify-content:center;padding:0 10px;box-sizing:border-box}
+.na{font-size:11px;color:#9AA1B8}
+.pb{height:44px;width:100%;border-radius:999px;font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px;box-sizing:border-box}
+.ring{box-shadow:0 0 0 4px rgba(86,128,233,.28)}
+.fld{width:100%;height:48px;border-radius:14px;background:#FFFFFF;border:1px solid #E4E7F0;padding:6px 12px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:1px}
+.fl{font-size:10px;color:#5C6378;font-weight:500}
+.fv{font-size:13px;color:#22283A}
+.chip{height:36px;padding:0 14px;border-radius:999px;border:1px solid #E4E7F0;background:#FFFFFF;color:#22283A;font-size:13px;font-weight:500;display:flex;align-items:center}
+.row{width:100%;height:52px;border-radius:14px;background:#FFFFFF;display:flex;align-items:center;gap:8px;padding:0 10px;box-sizing:border-box}
+.ri{width:30px;height:30px;border-radius:999px;background:#F4F6FB;flex:0 0 30px}
+.ib{width:44px;height:44px;border-radius:999px;border:1px solid #EEF0F6;background:#FFFFFF;color:#22283A;display:flex;align-items:center;justify-content:center;box-sizing:border-box}
+.rule{display:flex;flex-direction:column;gap:4px}
+.rt{font-size:13px;font-weight:600}
+.rd{font-size:12px;line-height:17px;color:#5C6378}
+</style>
+</helmet>
+<div style="width: 1280px; height: 1000px; box-sizing: border-box; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; padding: 56px 64px; display: flex; flex-direction: column; gap: 28px">
+
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <span style="font-size: 12px; letter-spacing: 2px; font-weight: 600; color: #5C6378">COMPONENT STATES</span>
+    <h1 style="margin: 0; font-size: 40px; line-height: 44px; font-weight: 600; letter-spacing: -1px">Sáu trạng thái, cùng một quy tắc</h1>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 10px">
+    <div class="g"><span></span><span class="ch">DEFAULT</span><span class="ch">PRESSED</span><span class="ch">FOCUSED</span><span class="ch">DISABLED</span><span class="ch">LOADING</span><span class="ch">ERROR</span></div>
+
+    <div class="g"><span class="rh">Nút primary</span>
+      <div class="cell"><span class="pb" style="background: #3F67D1; color: #FFFFFF">Lưu</span></div>
+      <div class="cell"><span class="pb" style="background: #3352AA; color: #FFFFFF; transform: scale(.97)">Lưu</span></div>
+      <div class="cell"><span class="pb ring" style="background: #3F67D1; color: #FFFFFF">Lưu</span></div>
+      <div class="cell"><span class="pb" style="background: #E4E7F0; color: #6B7288">Lưu</span></div>
+      <div class="cell"><span class="pb" style="background: #3F67D1; color: #FFFFFF"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9" opacity=".95"></path></svg>Đang lưu</span></div>
+      <div class="cell"><span class="na">— lỗi hiện ở toast</span></div>
+    </div>
+
+    <div class="g"><span class="rh">Nút secondary</span>
+      <div class="cell"><span class="pb" style="background: #FFFFFF; border: 1px solid #E4E7F0; color: #22283A">Huỷ</span></div>
+      <div class="cell"><span class="pb" style="background: #EEF0F5; border: 1px solid #E4E7F0; color: #22283A; transform: scale(.97)">Huỷ</span></div>
+      <div class="cell"><span class="pb ring" style="background: #FFFFFF; border: 1.5px solid #3F67D1; color: #22283A">Huỷ</span></div>
+      <div class="cell"><span class="pb" style="background: #FFFFFF; border: 1px solid #EEF0F5; color: #9AA1B8">Huỷ</span></div>
+      <div class="cell"><span class="pb" style="background: #FFFFFF; border: 1px solid #E4E7F0; color: #22283A"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9"></path></svg>Đang tải</span></div>
+      <div class="cell"><span class="na">—</span></div>
+    </div>
+
+    <div class="g"><span class="rh">Trường nhập</span>
+      <div class="cell"><span class="fld"><span class="fl">Tên ví</span><span class="fv" style="color: #6B7288">Ví dụ: Vietcombank</span></span></div>
+      <div class="cell"><span class="na">—</span></div>
+      <div class="cell"><span class="fld ring" style="border: 1.5px solid #3F67D1"><span class="fl" style="color: #3F67D1">Tên ví</span><span class="fv">Vietcom|</span></span></div>
+      <div class="cell"><span class="fld" style="background: #F4F6FB; border-color: #EEF0F5"><span class="fl">Tiền tệ</span><span class="fv" style="color: #6B7288">VND</span></span></div>
+      <div class="cell"><span class="fld" style="flex-direction: row; align-items: center; justify-content: space-between"><span style="display: flex; flex-direction: column"><span class="fl">Tên ví</span><span class="fv">Vietcombank</span></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C6378" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9"></path></svg></span></div>
+      <div class="cell" style="flex-direction: column; gap: 4px; align-items: stretch"><span class="fld" style="border: 1.5px solid #B83434; height: 44px"><span class="fl" style="color: #B83434">Tên ví</span><span class="fv">&nbsp;</span></span><span style="font-size: 10px; color: #B83434">Nhập tên ví</span></div>
+    </div>
+
+    <div class="g"><span class="rh">Chip</span>
+      <div class="cell"><span class="chip">Đi lại</span></div>
+      <div class="cell"><span class="chip" style="background: #EEF0F5; transform: scale(.97)">Đi lại</span></div>
+      <div class="cell"><span class="chip ring" style="border: 1.5px solid #3F67D1">Đi lại</span></div>
+      <div class="cell"><span class="chip" style="color: #9AA1B8; border-color: #EEF0F5">Đi lại</span></div>
+      <div class="cell"><span class="na">—</span></div>
+      <div class="cell"><span class="na">—</span></div>
+    </div>
+
+    <div class="g"><span class="rh">Dòng giao dịch</span>
+      <div class="cell"><span class="row"><span class="ri"></span><span style="flex-grow: 1; font-size: 13px; font-weight: 500">Grab</span><span class="num" style="font-size: 13px; font-weight: 600">−48.000</span></span></div>
+      <div class="cell"><span class="row" style="background: #EEF0F5"><span class="ri" style="background: #E4E7F0"></span><span style="flex-grow: 1; font-size: 13px; font-weight: 500">Grab</span><span class="num" style="font-size: 13px; font-weight: 600">−48.000</span></span></div>
+      <div class="cell"><span class="row" style="box-shadow: inset 0 0 0 2px #5680E9"><span class="ri"></span><span style="flex-grow: 1; font-size: 13px; font-weight: 500">Grab</span><span class="num" style="font-size: 13px; font-weight: 600">−48.000</span></span></div>
+      <div class="cell"><span class="row" style="opacity: .5"><span class="ri"></span><span style="flex-grow: 1; font-size: 13px; font-weight: 500">Grab</span><span class="num" style="font-size: 13px; font-weight: 600">−48.000</span></span></div>
+      <div class="cell"><span class="row"><span class="ri" style="background: #E9ECF4"></span><span style="flex-grow: 1; display: flex; flex-direction: column; gap: 5px"><span style="width: 70%; height: 9px; border-radius: 5px; background: #E9ECF4"></span><span style="width: 45%; height: 8px; border-radius: 5px; background: #E9ECF4"></span></span></span></div>
+      <div class="cell"><span class="row"><span class="ri"></span><span style="flex-grow: 1; display: flex; flex-direction: column"><span style="font-size: 13px; font-weight: 500">Grab</span><span style="font-size: 10px; color: #B83434; display: flex; align-items: center; gap: 3px"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5M12 16h.01"></path></svg>Chưa đồng bộ</span></span><span class="num" style="font-size: 13px; font-weight: 600">−48.000</span></span></div>
+    </div>
+
+    <div class="g"><span class="rh">Nút icon</span>
+      <div class="cell"><span class="ib"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg></span></div>
+      <div class="cell"><span class="ib" style="background: #EEF0F5; transform: scale(.94)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg></span></div>
+      <div class="cell"><span class="ib ring" style="border: 1.5px solid #3F67D1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg></span></div>
+      <div class="cell"><span class="ib" style="color: #C9CEDD"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg></span></div>
+      <div class="cell"><span class="ib"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9"></path></svg></span></div>
+      <div class="cell"><span class="na">—</span></div>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px; padding-top: 16px; border-top: 1px solid #E4E7F0">
+    <div class="rule"><span class="rt">Default</span><span class="rd">Theo token component.</span></div>
+    <div class="rule"><span class="rt">Pressed</span><span class="rd">Tối một bậc hoặc nền subtle, thu 0.97, 100 ms. Rung nhẹ cho nút + và phím số.</span></div>
+    <div class="rule"><span class="rt">Focused</span><span class="rd">Viền 1.5 primary + vòng 4 px. Cho bàn phím ngoài và Switch Access.</span></div>
+    <div class="rule"><span class="rt">Disabled</span><span class="rd">Đổi sang token disabled, không chỉ giảm opacity của nút chính. Nói lý do gần đó.</span></div>
+    <div class="rule"><span class="rt">Loading</span><span class="rd">Giữ nguyên kích thước, chặn chạm lặp. Danh sách dùng skeleton.</span></div>
+    <div class="rule"><span class="rt">Error</span><span class="rd">Viền lỗi + chữ hướng dẫn + icon. Không báo lỗi chỉ bằng màu.</span></div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1000}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

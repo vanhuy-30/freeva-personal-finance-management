@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Màn mẫu · Mở khoá</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button{font-family:inherit}
+.key{height:64px;border:none;border-radius:999px;background:transparent;color:#22283A;font-size:28px;font-weight:500;display:flex;align-items:center;justify-content:center}
+.d{width:14px;height:14px;border-radius:999px;box-sizing:border-box}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; padding: 96px 32px 40px 32px">
+
+  <span style="width: 72px; height: 72px; border-radius: 999px; background: #E6EBFB; color: #3F67D1; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 600">M</span>
+  <span style="margin-top: 20px; font-size: 24px; line-height: 30px; font-weight: 600; letter-spacing: -0.4px">Chào Minh</span>
+  <span style="margin-top: 6px; font-size: 14px; color: #5C6378">Nhập mã PIN</span>
+
+  <div aria-label="Đã nhập 2 trên 6 số" role="img" style="display: flex; gap: 14px; margin-top: 36px">
+    <span class="d" style="background: #22283A"></span>
+    <span class="d" style="background: #22283A"></span>
+    <span class="d" style="border: 1.5px solid #C9CEDD"></span>
+    <span class="d" style="border: 1.5px solid #C9CEDD"></span>
+    <span class="d" style="border: 1.5px solid #C9CEDD"></span>
+    <span class="d" style="border: 1.5px solid #C9CEDD"></span>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(3, 76px); column-gap: 28px; row-gap: 10px; margin-top: auto">
+    <button class="key">1</button><button class="key">2</button><button class="key">3</button>
+    <button class="key">4</button><button class="key">5</button><button class="key">6</button>
+    <button class="key">7</button><button class="key">8</button><button class="key">9</button>
+    <button class="key" aria-label="Mở bằng Face ID" style="color: #3F67D1"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M9 9v1M15 9v1M12 9v4h-1M9.5 15.5a3.5 3.5 0 0 0 5 0"></path></svg></button>
+    <button class="key">0</button>
+    <button class="key" aria-label="Xoá"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 5H9l-6 7 6 7h12a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1z"></path><path d="M17 9l-5 6M12 9l5 6"></path></svg></button>
+  </div>
+
+  <a href="#" style="margin-top: 24px; font-size: 14px; font-weight: 600; color: #3F67D1; text-decoration: none; padding: 12px">Quên mã PIN?</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

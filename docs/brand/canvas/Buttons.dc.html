@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Freeva · Buttons</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button{font-family:inherit}
+.h{font-size:15px;font-weight:600}
+.cap{font-size:12px;line-height:17px;color:#5C6378}
+.panel{background:#F4F6FB;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:14px}
+.b{height:52px;border-radius:999px;font-size:16px;font-weight:600;padding:0 24px;display:flex;align-items:center;justify-content:center;gap:8px}
+.lbl{display:grid;grid-template-columns:96px 1fr;gap:12px;align-items:center}
+</style>
+</helmet>
+<div style="width: 1280px; height: 680px; box-sizing: border-box; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; padding: 56px 64px; display: flex; flex-direction: column; gap: 28px">
+
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <span style="font-size: 12px; letter-spacing: 2px; font-weight: 600; color: #5C6378">COMPONENTS — BUTTONS</span>
+    <h1 style="margin: 0; font-size: 40px; line-height: 44px; font-weight: 600; letter-spacing: -1px">Một nút chính trên mỗi màn</h1>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 20px; flex-grow: 1">
+    <div class="panel">
+      <span class="h">Thứ bậc</span>
+      <div class="lbl"><span class="cap">Primary</span><button class="b" style="border: none; background: #3F67D1; color: #FFFFFF">Lưu khoản chi</button></div>
+      <div class="lbl"><span class="cap">Ink</span><button class="b" style="border: none; background: #22283A; color: #FFFFFF">Tiếp tục</button></div>
+      <div class="lbl"><span class="cap">Secondary</span><button class="b" style="border: 1px solid #E4E7F0; background: #FFFFFF; color: #22283A">Huỷ</button></div>
+      <div class="lbl"><span class="cap">Destructive</span><button class="b" style="border: none; background: #B83434; color: #FFFFFF">Xoá giao dịch</button></div>
+      <div class="lbl"><span class="cap">Text</span><a href="#" style="font-size: 15px; font-weight: 600; color: #3F67D1; text-decoration: none; padding: 12px 0">Xem tất cả</a></div>
+      <span class="cap">Primary: hành động hoàn tất (lưu, xác nhận). Ink: bước tiếp theo trong luồng nhiều bước. Không đặt hai nút primary cạnh nhau.</span>
+    </div>
+
+    <div class="panel">
+      <span class="h">Kích thước</span>
+      <button class="b" style="height: 56px; border: none; background: #3F67D1; color: #FFFFFF">L · 56 · cuối form</button>
+      <button class="b" style="border: none; background: #3F67D1; color: #FFFFFF">M · 52 · mặc định</button>
+      <div style="display: flex; gap: 8px; align-items: center">
+        <button class="b" style="height: 44px; font-size: 14px; padding: 0 18px; border: none; background: #3F67D1; color: #FFFFFF">S · 44</button>
+        <button class="b" style="height: 40px; font-size: 14px; padding: 0 16px; border: none; background: #22283A; color: #FFFFFF"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>XS · 40</button>
+      </div>
+      <span class="cap">Nút L/M rộng hết cột trong form và sheet. S/XS dùng trong thẻ, trạng thái trống, toast. Icon 16–20 đặt trước chữ.</span>
+      <span class="h" style="margin-top: 6px">Cặp nút</span>
+      <div style="display: flex; gap: 8px">
+        <button class="b" style="flex: 1 1 0; height: 48px; border: 1px solid #E4E7F0; background: #FFFFFF; color: #22283A; font-size: 15px">Huỷ</button>
+        <button class="b" style="flex: 1 1 0; height: 48px; border: none; background: #3F67D1; color: #FFFFFF; font-size: 15px">Xác nhận</button>
+      </div>
+      <span class="cap">Nút chính bên phải. Hộp thoại xoá: nút phải là destructive.</span>
+    </div>
+
+    <div class="panel">
+      <span class="h">Nút icon</span>
+      <div style="display: flex; gap: 14px; align-items: center">
+        <button aria-label="Tìm kiếm" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #EEF0F6; background: #FFFFFF; color: #22283A; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg></button>
+        <span class="cap">Thanh trên · 44, viền e0</span>
+      </div>
+      <div style="display: flex; gap: 14px; align-items: center">
+        <span style="padding: 8px; border-radius: 16px; background: #ECEFFA"><button aria-label="Ẩn số dư" style="width: 36px; height: 36px; border-radius: 999px; border: none; background: rgba(255,255,255,.75); color: #22283A; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg></button></span>
+        <span class="cap">Trên thẻ · 36, nền trắng 75% (vùng chạm vẫn 44)</span>
+      </div>
+      <div style="display: flex; gap: 14px; align-items: center">
+        <button aria-label="Ghi giao dịch" style="width: 52px; height: 52px; border-radius: 999px; border: none; background: #3F67D1; color: #FFFFFF; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 16px rgba(63,103,209,.35)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+        <span class="cap">Nút + · 52, chỉ nằm giữa bottom nav, luôn mở Ghi chi</span>
+      </div>
+      <span class="cap" style="margin-top: 4px">Mọi nút icon cần nhãn cho trình đọc màn hình (Semantics label).</span>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":680}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

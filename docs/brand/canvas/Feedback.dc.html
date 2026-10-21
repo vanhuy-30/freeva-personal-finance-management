@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Freeva · Feedback</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"cv11" 1}
+button{font-family:inherit}
+.h{font-size:15px;font-weight:600}
+.cap{font-size:12px;line-height:17px;color:#5C6378}
+.panel{background:#F4F6FB;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:14px}
+.card{background:#FFFFFF;border-radius:20px;box-shadow:0 1px 2px rgba(34,40,58,.04),0 8px 24px rgba(34,40,58,.05)}
+.dlg{background:#FFFFFF;border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:14px;box-shadow:0 1px 2px rgba(34,40,58,.05),0 12px 32px rgba(34,40,58,.12)}
+.b2{flex:1 1 0;height:48px;border-radius:999px;font-size:15px;font-weight:600}
+.sk{background:#E9ECF4;border-radius:8px}
+</style>
+</helmet>
+<div style="width: 1280px; height: 900px; box-sizing: border-box; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; padding: 56px 64px; display: flex; flex-direction: column; gap: 28px">
+
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <span style="font-size: 12px; letter-spacing: 2px; font-weight: 600; color: #5C6378">COMPONENTS — FEEDBACK</span>
+    <h1 style="margin: 0; font-size: 40px; line-height: 44px; font-weight: 600; letter-spacing: -1px">Báo đúng lúc, không làm phiền</h1>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; flex-grow: 1">
+    <div class="panel">
+      <span class="h">Toast</span>
+      <div style="background: #22283A; color: #FFFFFF; border-radius: 999px; height: 52px; padding: 0 8px 0 18px; display: flex; align-items: center; gap: 10px; box-shadow: 0 12px 28px rgba(34,40,58,.25)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7FD8B4" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg>
+        <span class="num" style="flex-grow: 1; font-size: 14px; font-weight: 500">Đã lưu khoản chi 65.000 ₫</span>
+        <button style="height: 36px; padding: 0 14px; border-radius: 999px; border: none; background: rgba(255,255,255,.12); color: #FFFFFF; font-size: 13px; font-weight: 600">Hoàn tác</button>
+      </div>
+      <div style="background: #22283A; color: #FFFFFF; border-radius: 999px; height: 52px; padding: 0 18px; display: flex; align-items: center; gap: 10px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F29B9B" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5M12 16h.01"></path></svg>
+        <span style="flex-grow: 1; font-size: 14px; font-weight: 500">Chưa lưu được. Đã giữ bản nháp.</span>
+      </div>
+      <span class="cap">Nổi trên bottom nav, tự ẩn sau 4 giây (có hành động: 6 giây). Một toast mỗi lúc.</span>
+      <span class="h" style="margin-top: 4px">Banner</span>
+      <div style="background: #EDF7FD; border-radius: 16px; padding: 12px 14px; display: flex; align-items: center; gap: 10px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F6187" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"></path></svg>
+        <span style="flex-grow: 1; font-size: 13px; color: #1F6187; font-weight: 500">Đang đồng bộ 3 giao dịch…</span>
+      </div>
+      <div style="background: #FBF4E0; border-radius: 16px; padding: 12px 14px; display: flex; align-items: center; gap: 10px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7A5A00" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l10 18H2z"></path><path d="M12 10v4M12 17.5h.01"></path></svg>
+        <span style="flex-grow: 1; font-size: 13px; color: #7A5A00; font-weight: 500">Có đăng nhập mới trên thiết bị khác</span>
+        <a href="#" style="font-size: 13px; font-weight: 600; color: #7A5A00">Xem</a>
+      </div>
+      <span class="cap">Banner nằm trong luồng nội dung, không che. Tối đa một banner mỗi màn. Chấm thông báo: 8 px accent, viền trắng 2.</span>
+    </div>
+
+    <div class="panel">
+      <span class="h">Hộp thoại xác nhận</span>
+      <div class="dlg">
+        <div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 17px; font-weight: 600">Xoá giao dịch này?</span><span class="num" style="font-size: 14px; line-height: 20px; color: #5C6378">Số dư ví Tiền mặt sẽ được cộng lại 65.000 ₫. Có thể khôi phục trong mục Đã xoá.</span></div>
+        <div style="display: flex; gap: 8px"><button class="b2" style="border: 1px solid #E4E7F0; background: #FFFFFF; color: #22283A">Huỷ</button><button class="b2" style="border: none; background: #B83434; color: #FFFFFF">Xoá</button></div>
+      </div>
+      <div class="dlg">
+        <div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 17px; font-weight: 600">Bỏ khoản chi đang nhập?</span><span style="font-size: 14px; line-height: 20px; color: #5C6378">Số tiền và ghi chú sẽ không được lưu.</span></div>
+        <div style="display: flex; gap: 8px"><button class="b2" style="border: 1px solid #E4E7F0; background: #FFFFFF; color: #22283A">Tiếp tục nhập</button><button class="b2" style="border: none; background: #22283A; color: #FFFFFF">Bỏ</button></div>
+      </div>
+      <span class="cap">Chỉ dùng cho việc không hoàn tác được hoặc làm mất dữ liệu. Tiêu đề là câu hỏi, nội dung nói hậu quả bằng con số cụ thể. Nút nói rõ hành động, không dùng "OK".</span>
+    </div>
+
+    <div class="panel">
+      <span class="h">Trống · đang tải · lỗi</span>
+      <div class="card" style="padding: 24px 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center">
+        <div style="position: relative; width: 64px; height: 64px">
+          <span style="position: absolute; inset: 0; border-radius: 22px; background: #EEF2FD"></span>
+          <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" style="position: absolute; inset: 0"><path d="M18 30 C18 23 24 20 46 18 C44 25 38 28 26 29 C22 29 19 30 18 33 Z" fill="#5680E9"></path><path d="M20 39 C20 35 25 33 40 32 C38 38 33 40 25 41 C22 41 21 42 20 44 Z" fill="#84CEEB"></path><path d="M21 48 C22 45 25 44 30 44 C29 49 26 52 22 52 Z" fill="#8860D0"></path></svg>
+        </div>
+        <span style="font-size: 17px; font-weight: 600">Chưa có giao dịch</span>
+        <span style="font-size: 13px; line-height: 19px; color: #5C6378">Ghi khoản chi đầu tiên chỉ mất vài giây.</span>
+        <button style="height: 44px; padding: 0 20px; border-radius: 999px; border: none; background: #3F67D1; color: #FFFFFF; font-size: 14px; font-weight: 600">Ghi khoản chi</button>
+      </div>
+      <div class="card" style="padding: 8px 16px" aria-label="Đang tải">
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px 0"><span class="sk" style="width: 40px; height: 40px; border-radius: 999px"></span><div style="flex-grow: 1; display: flex; flex-direction: column; gap: 6px"><span class="sk" style="width: 60%; height: 12px"></span><span class="sk" style="width: 40%; height: 10px"></span></div><span class="sk" style="width: 64px; height: 12px"></span></div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px 0"><span class="sk" style="width: 40px; height: 40px; border-radius: 999px"></span><div style="flex-grow: 1; display: flex; flex-direction: column; gap: 6px"><span class="sk" style="width: 50%; height: 12px"></span><span class="sk" style="width: 35%; height: 10px"></span></div><span class="sk" style="width: 56px; height: 12px"></span></div>
+      </div>
+      <div class="card" style="padding: 14px 16px; display: flex; align-items: center; gap: 12px">
+        <span style="width: 40px; height: 40px; border-radius: 12px; background: #FBECEC; color: #B83434; display: flex; align-items: center; justify-content: center; flex: 0 0 40px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8.5a15 15 0 0 1 20 0M5 12a10 10 0 0 1 14 0M8.5 15.5a5 5 0 0 1 7 0M12 19h.01M3 3l18 18"></path></svg></span>
+        <div style="display: flex; flex-direction: column; flex-grow: 1"><span style="font-size: 14px; font-weight: 600">Không tải được ví</span><span style="font-size: 12px; color: #5C6378">Kiểm tra kết nối rồi thử lại</span></div>
+        <button style="height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid #E4E7F0; background: #FFFFFF; color: #22283A; font-size: 13px; font-weight: 600">Thử lại</button>
+      </div>
+      <span class="cap">Trống: animation tự vẽ bằng Flutter (không Lottie) — ba nét F trôi lệch nhịp, chu kỳ 3 s; hình trên là khung tĩnh. Giảm chuyển động thì đứng yên. Skeleton đúng hình nội dung. Lỗi luôn có lối ra.</span>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":900}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

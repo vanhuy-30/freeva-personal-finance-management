@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Thiết lập tài chính</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"cv11" 1}
+a,button{font-family:inherit}
+.row{height:72px;border-radius:20px;background:#FFFFFF;display:flex;align-items:center;gap:14px;padding:0 12px 0 16px;box-shadow:0 1px 2px rgba(34,40,58,.04),0 8px 24px rgba(34,40,58,.05)}
+.ic{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex:0 0 42px}
+.add{margin-left:auto;height:38px;padding:0 14px;border-radius:999px;border:1px solid #E4E7F0;background:#FFFFFF;color:#22283A;font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; padding: 56px 20px 40px 20px">
+
+  <div style="display: flex; justify-content: flex-end; height: 44px; align-items: center">
+    <a href="ObHome.dc.html" style="font-size: 15px; font-weight: 600; color: #5C6378; text-decoration: none; padding: 12px 4px">Bỏ qua</a>
+  </div>
+
+  <h1 style="margin: 20px 0 0 0; font-size: 28px; line-height: 34px; font-weight: 600; letter-spacing: -0.6px">Tiền của bạn ở đâu?</h1>
+  <p style="margin: 8px 0 0 0; font-size: 15px; line-height: 22px; color: #5C6378">Thêm ví và số dư. Ước chừng là đủ.</p>
+
+  <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 24px">
+    <div class="row"><span class="ic" style="background: #EDF7FD; color: #2A7FAE"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="13" rx="3"></rect><circle cx="12" cy="12.5" r="2.5"></circle></svg></span><span style="font-size: 16px; font-weight: 600">Tiền mặt</span><span class="num" style="margin-left: auto; font-size: 17px; font-weight: 600; padding-right: 6px">850.000 <span style="font-size: 12px; color: #5C6378; font-weight: 500">₫</span></span></div>
+    <div class="row"><span class="ic" style="background: #EEF2FD; color: #3F67D1"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10h18M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 21h18M12 3l9 5H3z"></path></svg></span><span style="font-size: 16px; font-weight: 600">Ngân hàng</span><button class="add"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Thêm</button></div>
+    <div class="row"><span class="ic" style="background: #F4F0FB; color: #7048B8"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="3"></rect><path d="M11 18h2"></path></svg></span><span style="font-size: 16px; font-weight: 600">Ví điện tử</span><button class="add"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Thêm</button></div>
+    <div class="row"><span class="ic" style="background: #F4F6FB; color: #22283A"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="3"></rect><path d="M2.5 10h19M6 15h4"></path></svg></span><span style="font-size: 16px; font-weight: 600">Thẻ tín dụng</span><button class="add"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Thêm</button></div>
+  </div>
+
+  <a href="ObHome.dc.html" style="margin-top: auto; height: 56px; border-radius: 999px; background: #3F67D1; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; text-decoration: none">Xong</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

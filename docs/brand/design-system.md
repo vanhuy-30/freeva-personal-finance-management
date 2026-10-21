@@ -98,6 +98,12 @@ Inter 400/500/600, đóng gói trong app cho cả iOS và Android.
 - Trạng thái trống: **animation tự vẽ bằng Flutter** (`AnimationController` + `CustomPainter`)
   từ ba nét chữ F, trôi lệch nhịp, chu kỳ 3 s. Không Lottie, không ảnh stock hay 3D.
   Màu lấy từ token. Bật giảm chuyển động thì hiện khung tĩnh.
+- **Minh hoạ nét vẽ tay** (onboarding, xác nhận, màn trống lớn): nét ink 2.4 đầu tròn, mảng tô
+  đặc ink rất ít, đúng một mảng màu brand nhạt (`blue.100`), chấm/vòng nhỏ dưới đất làm bóng.
+  Vẽ bằng SVG (Flutter: `flutter_svg` hoặc `CustomPainter`). Tham chiếu `references/13`, `17`.
+  Mẫu đầu tiên: "tự do tài chính" ở A1.5.
+- **Logo chỉ xuất hiện ở splash và app icon**, không đặt trong màn hình chức năng. Avatar dùng
+  chữ cái đầu tên.
 
 ## 3. Design tokens
 
@@ -134,7 +140,7 @@ Sinh Dart cho Flutter thuộc `DS-P2-002`.
 | Nhóm | Thành phần |
 |---|---|
 | Buttons | Primary (`action.primary`), Ink (bước tiếp theo), Secondary (viền), Destructive, Text. Cỡ L 56 · M 52 · S 44 · XS 40. Nút icon 44 / 36 trên thẻ. Nút + 52 chỉ ở giữa bottom nav. Một nút primary mỗi màn. |
-| Inputs & selection | Trường nhập nhãn trong ô; focus, lỗi, khoá. Ô chọn mở sheet. Ô tìm kiếm. Nhập số tiền bằng bàn phím riêng có phím `000`. Segmented (2–4 lựa chọn), chip chọn (viền ink), chip lọc (nền ink), công tắc, radio, checkbox. |
+| Inputs & selection | Trường nhập nhãn trong ô; focus, lỗi, khoá. **Ô nhập viên thuốc có icon** chỉ cho màn tài khoản. Ô chọn mở sheet. Ô tìm kiếm. Nhập số tiền bằng bàn phím riêng có phím `000`. Segmented (2–4 lựa chọn), chip chọn (viền ink), chip lọc (nền ink), **thẻ chọn** (nền `tint.blue`, viền primary, dấu tích), công tắc, radio, checkbox. Nút đăng nhập Google (nền nhạt) / Apple (ink). |
 | Navigation | Bottom nav 4 tab + nút +, chỉ icon, mục đang chọn là vòng ink. Thanh trên: tiêu đề lớn · màn đẩy vào · modal. Segmented trong trang. Bottom sheet. |
 | Cards & data | Thẻ số dư (wash, duy nhất), thẻ ví, menu nhanh, ô chỉ số, thanh tiến độ (hạn mức thẻ), thanh phân bổ, biểu đồ cột theo kỳ. |
 | Lists | Dòng giao dịch (icon 40 · tên + danh mục · ví · số tiền có dấu, không ₫), nhóm theo ngày kèm tổng ròng, vuốt để sửa/xoá, danh sách cài đặt. |
@@ -161,14 +167,16 @@ Mọi component tương tác có: **default · pressed · focused · disabled ·
 | Search & filter | Chip lọc luôn hiện; ô tìm mở từ kính lúp; tìm tiếng Việt không dấu, cập nhật sau 300 ms; tổng thu/chi theo bộ lọc; không kết quả có nút "Xoá bộ lọc". |
 | Form | Số tiền focus sẵn; mặc định ví gần nhất, hôm nay, danh mục hay dùng; trường phụ gấp lại; lưu xong đóng màn + toast Hoàn tác. |
 | Settings | Thẻ hồ sơ, email che một phần; nhóm Quản lý · Ứng dụng · Hỗ trợ; bật/tắt có hiệu lực ngay; hành động nguy hiểm ở cuối và luôn hỏi lại. |
-| Authentication | Sinh trắc học trước, PIN 6 số dự phòng; chưa mở khoá thì không hiện số tiền nào, kể cả ở màn chuyển app; sai 5 lần thì đăng nhập lại. |
+| Authentication | Email + mật khẩu trên một màn, kèm Google/Apple. Mở khoá: sinh trắc học trước, PIN 6 số dự phòng; chưa mở khoá thì không hiện số tiền nào, kể cả ở màn chuyển app; sai 5 lần thì đăng nhập lại. Chi tiết: [patterns/A-onboarding-auth.md](patterns/A-onboarding-auth.md). |
+| Onboarding | Hỏi trước, tạo tài khoản sau, tiền cuối cùng và không bắt buộc. Mỗi màn một câu hỏi, chữ ngắn, "Để sau" luôn có. Câu trả lời phải dùng để cá nhân hoá. |
 
 ## 7. Guidelines
 
 ### Điều hướng và IA
 
 - 4 tab: **Tổng quan · Giao dịch · Báo cáo · Cá nhân**, nút + ở giữa mở Ghi chi/Thu/Chuyển.
-- Trước khi vào app: Splash 1,8 s → Giới thiệu (lần đầu) → Đăng nhập → Mở khoá.
+- Lần đầu: Splash → Welcome → Mục tiêu → Thói quen → Ngân sách → Tạo tài khoản → Thiết lập tài chính → Trang chính.
+  Lần sau: Splash → Mở khoá (nếu đã bật) → Trang chính.
 - **Push** khi đi sâu vào nội dung (giữ bottom nav ở cấp 1–2). **Modal** khi tạo/sửa dữ
   liệu (ẩn bottom nav). **Sheet** khi chọn nhanh hoặc xem nhanh.
 - Tối đa ba cấp. Nhấn lại tab đang chọn: cuộn lên đầu, lần hai về gốc của tab.

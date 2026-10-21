@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Freeva · Navigation và IA</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.col{display:flex;flex-direction:column;gap:8px}
+.tab{height:48px;border-radius:999px;background:#22283A;color:#FFFFFF;font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px}
+.n{background:#FFFFFF;border:1px solid #E4E7F0;border-radius:14px;padding:9px 12px;font-size:13px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.n.l2{margin-left:14px}
+.n.l3{margin-left:28px}
+.tg{font-size:10px;font-weight:600;border-radius:999px;padding:2px 7px;white-space:nowrap}
+.push{background:#F4F6FB;color:#3D4460}
+.modal{background:#EEF2FD;color:#3352AA}
+.sheet{background:#F4F0FB;color:#5B3A96}
+.cap{font-size:12px;line-height:17px;color:#5C6378}
+</style>
+</helmet>
+<div style="width: 1280px; height: 820px; box-sizing: border-box; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; padding: 56px 64px; display: flex; flex-direction: column; gap: 24px">
+
+  <div style="display: flex; justify-content: space-between; align-items: flex-end">
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <span style="font-size: 12px; letter-spacing: 2px; font-weight: 600; color: #5C6378">GUIDELINES — NAVIGATION &amp; INFORMATION ARCHITECTURE</span>
+      <h1 style="margin: 0; font-size: 40px; line-height: 44px; font-weight: 600; letter-spacing: -1px">Bốn tab, một nút ghi, tối đa ba cấp</h1>
+    </div>
+    <div style="display: flex; gap: 8px; align-items: center">
+      <span class="tg push" style="font-size: 12px; padding: 4px 10px">Push · quay lại</span>
+      <span class="tg modal" style="font-size: 12px; padding: 4px 10px">Modal · đóng</span>
+      <span class="tg sheet" style="font-size: 12px; padding: 4px 10px">Sheet · kéo xuống</span>
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 10px; align-items: center; background: #F4F6FB; border-radius: 18px; padding: 10px 14px; font-size: 13px; color: #3D4460">
+    <span style="font-weight: 600; color: #22283A">Trước khi vào app</span>
+    <span>Splash 1,8 s</span><span style="color: #9AA1B8">→</span><span>Giới thiệu (lần đầu)</span><span style="color: #9AA1B8">→</span><span>Đăng nhập</span><span style="color: #9AA1B8">→</span><span>Mở khoá (Face ID / PIN)</span><span style="color: #9AA1B8">→</span><span style="font-weight: 600; color: #22283A">Tổng quan</span>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; flex-grow: 1">
+    <div class="col">
+      <div class="tab">Tổng quan</div>
+      <div class="n">Thẻ số dư <span class="tg push">Chi tiết ví</span></div>
+      <div class="n">Menu nhanh</div>
+      <div class="n l2">Ghi thu · Chuyển ví <span class="tg modal">modal</span></div>
+      <div class="n l2">Ví · Danh mục <span class="tg push">push</span></div>
+      <div class="n">Chi tháng này <span class="tg push">Báo cáo</span></div>
+      <div class="n">Gần đây</div>
+      <div class="n l2">Chi tiết giao dịch <span class="tg sheet">sheet</span></div>
+    </div>
+    <div class="col">
+      <div class="tab">Giao dịch</div>
+      <div class="n">Danh sách theo ngày</div>
+      <div class="n">Tìm · lọc</div>
+      <div class="n l2">Chi tiết giao dịch <span class="tg sheet">sheet</span></div>
+      <div class="n l3">Sửa <span class="tg modal">modal</span></div>
+      <div class="n l3">Xoá <span class="tg modal">hộp thoại</span></div>
+      <div class="n">Đã xoá <span class="tg push">push</span></div>
+    </div>
+    <div class="col">
+      <div class="tab" style="background: #3F67D1">+ Ghi giao dịch</div>
+      <div class="n">Chi · Thu · Chuyển <span class="tg modal">modal</span></div>
+      <div class="n l2">Chọn danh mục <span class="tg sheet">sheet</span></div>
+      <div class="n l2">Chọn ví <span class="tg sheet">sheet</span></div>
+      <div class="n l2">Chọn ngày <span class="tg sheet">sheet</span></div>
+      <span class="cap" style="padding: 4px">Mở từ mọi tab. Đóng xong quay về đúng tab đang đứng.</span>
+    </div>
+    <div class="col">
+      <div class="tab">Báo cáo</div>
+      <div class="n">Tuần · Tháng · Năm</div>
+      <div class="n">Theo danh mục</div>
+      <div class="n l2">Giao dịch đã lọc <span class="tg push">push</span></div>
+      <div class="n">Theo ví</div>
+    </div>
+    <div class="col">
+      <div class="tab">Cá nhân</div>
+      <div class="n">Hồ sơ <span class="tg push">push</span></div>
+      <div class="n">Ví của tôi <span class="tg push">push</span></div>
+      <div class="n l2">Chi tiết ví <span class="tg push">push</span></div>
+      <div class="n l3">Thêm · sửa ví <span class="tg modal">modal</span></div>
+      <div class="n">Danh mục · Nhãn <span class="tg push">push</span></div>
+      <div class="n">Cài đặt bảo mật <span class="tg push">push</span></div>
+      <div class="n">FAQ · Góp ý · Pháp lý <span class="tg push">push</span></div>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; padding-top: 14px; border-top: 1px solid #E4E7F0">
+    <span class="cap"><span style="color: #22283A; font-weight: 600">Push</span> khi đi sâu vào nội dung; giữ bottom nav ở cấp 1–2.</span>
+    <span class="cap"><span style="color: #22283A; font-weight: 600">Modal</span> khi tạo hoặc sửa dữ liệu; ẩn bottom nav.</span>
+    <span class="cap"><span style="color: #22283A; font-weight: 600">Sheet</span> khi chọn nhanh hoặc xem nhanh mà không rời ngữ cảnh.</span>
+    <span class="cap"><span style="color: #22283A; font-weight: 600">Nhấn lại tab</span> đang chọn: cuộn lên đầu, lần hai về gốc của tab.</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":820}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
