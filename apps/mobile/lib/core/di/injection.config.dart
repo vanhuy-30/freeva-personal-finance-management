@@ -102,8 +102,6 @@ extension GetItInjectableX on _i174.GetIt {
     final authDataModule = _$AuthDataModule();
     final authPresentationModule = _$AuthPresentationModule();
     gh.lazySingleton<_i467.AppConfig>(() => _i467.AppConfig());
-    gh.lazySingleton<_i88.AuthApi>(
-        () => _i88.HttpAuthApi(gh<_i467.AppConfig>()));
     gh.lazySingleton<_i1060.PreferenceVault>(
         () => _i1060.SecurePreferenceVault());
     gh.lazySingleton<_i938.SyncQueueVault>(() => _i938.SecureSyncQueueVault());
@@ -116,6 +114,10 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i1017.FeatureFlagService>(
         () => const _i158.LocalFeatureFlagService());
     gh.lazySingleton<_i766.AppLogger>(() => _i760.AppLoggerImpl());
+    gh.lazySingleton<_i88.AuthApi>(() => _i88.HttpAuthApi(
+          gh<_i467.AppConfig>(),
+          gh<_i766.AppLogger>(),
+        ));
     gh.lazySingleton<_i1056.SettingsRepository>(
         () => _i1018.SettingsRepositoryImpl(gh<_i1060.PreferenceVault>()));
     gh.lazySingleton<_i1020.AnalyticsService>(

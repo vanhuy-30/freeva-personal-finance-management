@@ -20,7 +20,7 @@ dependencies:
   intl: any
   dartz: ^0.10.1
   http: ^1.2.2
-  flutter_secure_storage: ^9.2.4
+  flutter_secure_storage: ^11.2.0
   local_auth: ^2.3.0
   cryptography: ^2.7.0
   timezone: ^0.10.1

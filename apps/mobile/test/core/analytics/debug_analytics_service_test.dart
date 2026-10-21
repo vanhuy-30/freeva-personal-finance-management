@@ -110,4 +110,10 @@ class _RecordingLogger implements AppLogger {
 
   @override
   void info(String message) {}
+
+  @override
+  void op(String message) {}
+
+  @override
+  void http(String message) {}
 }

@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import '../../../../core/config/app_config.dart';
+import '../../../../core/storage/secure_storage_factory.dart';
 
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
 import 'package:local_auth/local_auth.dart';
 
@@ -25,12 +25,7 @@ class SecureAuthVault implements AuthVault {
       '$prefix.${config.environment.name}.'
       '${base64Url.encode(utf8.encode(Uri.parse(config.apiBaseUrl).origin))}';
 
-  final _storage = const FlutterSecureStorage(
-    aOptions: AndroidOptions(encryptedSharedPreferences: true),
-    iOptions: IOSOptions(
-      accessibility: KeychainAccessibility.unlocked_this_device,
-    ),
-  );
+  final _storage = createFreevaSecureStorage();
   final String _key;
   final String _seenKey;
   @override

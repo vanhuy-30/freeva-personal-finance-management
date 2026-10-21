@@ -39,4 +39,10 @@ class RecordingLogger implements AppLogger {
   @override
   void error(String message, [Object? error, StackTrace? stackTrace]) =>
       messages.add(message);
+
+  @override
+  void op(String message) => messages.add(message);
+
+  @override
+  void http(String message) => messages.add(message);
 }

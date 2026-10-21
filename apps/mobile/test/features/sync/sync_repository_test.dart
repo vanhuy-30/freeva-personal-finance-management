@@ -148,6 +148,12 @@ class _Logger implements AppLogger {
   void error(String message, [Object? error, StackTrace? stackTrace]) {
     messages.add('$message $error');
   }
+
+  @override
+  void op(String message) => messages.add(message);
+
+  @override
+  void http(String message) => messages.add(message);
 }
 
 class _Api implements AuthorizedApi {

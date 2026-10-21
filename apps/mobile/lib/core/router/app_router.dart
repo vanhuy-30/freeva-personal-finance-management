@@ -18,6 +18,8 @@ import '../../features/splash/presentation/pages/splash_page.dart';
 import '../../features/transactions/presentation/pages/transaction_page.dart';
 import '../../features/wallets/presentation/pages/wallet_page.dart';
 import '../di/injection.dart';
+import '../logging/app_logger.dart';
+import '../logging/logging_navigator_observer.dart';
 import 'settings_redirect.dart';
 
 GoRouter? _appRouter;
@@ -36,7 +38,12 @@ GoRouter createAppRouter() {
   final auth = getIt<AuthViewModel>();
   final settings = getIt<SettingsViewModel>();
   _refresh = RouterRefresh([auth, settings]);
-  _appRouter = _createAppRouter(auth, settings, _refresh!);
+  _appRouter = _createAppRouter(
+    auth,
+    settings,
+    _refresh!,
+    getIt<AppLogger>(),
+  );
   return _appRouter!;
 }
 
@@ -81,15 +88,23 @@ GoRouter _createAppRouter(
   AuthViewModel auth,
   SettingsViewModel settings,
   Listenable refresh,
+  AppLogger logger,
 ) {
   return GoRouter(
     initialLocation: '/splash',
     refreshListenable: refresh,
-    redirect: (context, state) => settingsRedirect(
-      stage: auth.stage,
-      onboardingCompleted: settings.onboardingCompleted,
-      path: state.uri.path,
-    ),
+    observers: [LoggingNavigatorObserver(logger)],
+    redirect: (context, state) {
+      final next = settingsRedirect(
+        stage: auth.stage,
+        onboardingCompleted: settings.onboardingCompleted,
+        path: state.uri.path,
+      );
+      if (next != null) {
+        logger.op('nav redirect ${state.uri.path} → $next');
+      }
+      return next;
+    },
     routes: [
       GoRoute(
         path: '/transactions',
