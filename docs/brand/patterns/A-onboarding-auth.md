@@ -3,7 +3,7 @@
 Trạng thái: **chốt thiết kế 2026-10-21**, chưa code. Task: `DS-P2-004`.
 Canvas: trang **05 · Patterns**, hai hàng A1 và A2
 (<https://claude.ai/artifact/SmyaVvz57doJiAM6Kn678T>, riêng tư). Spec chung:
-[design-system.md](../design-system.md). Ảnh tham chiếu: `references/09`–`17`.
+[design-system.md](../design-system.md). Ảnh tham chiếu: `references/09`–`13`, `17`.
 
 ## Nguyên tắc riêng cho nhóm này
 

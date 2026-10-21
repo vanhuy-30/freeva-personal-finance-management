@@ -20,3 +20,4 @@ tham khảo phong cách; không sao chép bố cục hay thương hiệu của s
 | `13-illustrated-intro.png` | Minh hoạ đặt trong vòng tròn nền nhạt, chấm tiến độ, nút tối |
 
 Ghét: thiết kế rập khuôn, máy móc, nhiều chữ giải thích, không có điểm nhấn.
+| `17-green-login.png` | Đăng nhập một màn: ô nhập viên thuốc có icon, "Quên mật khẩu?" ở giữa, nút mạng xã hội không viền |
