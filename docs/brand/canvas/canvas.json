@@ -384,7 +384,12 @@
     "CatIcons.dc.html": { "x": 1380, "y": 9940, "w": 390, "h": 844, "page": "p", "title": "E · 4. Biểu tượng (sheet)", "is_interactive": true },
     "CatEdit.dc.html": { "x": 1840, "y": 9940, "w": 390, "h": 844, "page": "p", "title": "E · 5. Sửa danh mục", "is_interactive": true },
     "CatDelete.dc.html": { "x": 2300, "y": 9940, "w": 390, "h": 844, "page": "p", "title": "E · 6. Xoá (popup)", "is_interactive": true },
-    "CatHidden.dc.html": { "x": 2760, "y": 9940, "w": 390, "h": 844, "page": "p", "title": "E · 7. Danh mục đã ẩn", "is_interactive": true }
+    "CatHidden.dc.html": { "x": 2760, "y": 9940, "w": 390, "h": 844, "page": "p", "title": "E · 7. Danh mục đã ẩn", "is_interactive": true },
+    "RepMonth.dc.html": { "x": 0, "y": 11184, "w": 390, "h": 1500, "page": "p", "title": "F · 1. Báo cáo tháng", "is_interactive": true },
+    "RepWallets.dc.html": { "x": 460, "y": 11184, "w": 390, "h": 844, "page": "p", "title": "F · 2. Theo ví", "is_interactive": true },
+    "RepCategory.dc.html": { "x": 920, "y": 11184, "w": 390, "h": 844, "page": "p", "title": "F · 3. Một danh mục trong kỳ", "is_interactive": true },
+    "RepRange.dc.html": { "x": 1380, "y": 11184, "w": 390, "h": 844, "page": "p", "title": "F · 4. Khoảng tuỳ chọn (popup)", "is_interactive": true },
+    "RepEmpty.dc.html": { "x": 1840, "y": 11184, "w": 390, "h": 844, "page": "p", "title": "F · 5. Kỳ chưa có số liệu", "is_interactive": true }
   },
   "order": [
     "Principles.dc.html",
@@ -459,6 +464,11 @@
     "CatEdit.dc.html",
     "CatDelete.dc.html",
     "CatHidden.dc.html",
+    "RepMonth.dc.html",
+    "RepWallets.dc.html",
+    "RepCategory.dc.html",
+    "RepRange.dc.html",
+    "RepEmpty.dc.html",
     "IA.dc.html",
     "Access.dc.html",
     "Motion.dc.html",
@@ -559,6 +569,14 @@
       "text": "E · Danh mục",
       "kind": "title1",
       "maxW": 3150,
+      "page": "p"
+    },
+    "tf2": {
+      "x": 0,
+      "y": 10904,
+      "text": "F · Báo cáo",
+      "kind": "title1",
+      "maxW": 2230,
       "page": "p"
     },
     "tg": {
