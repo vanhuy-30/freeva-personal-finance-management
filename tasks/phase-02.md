@@ -31,7 +31,7 @@
 - DoD: luồng và màn theo [A-onboarding-auth.md](../docs/brand/patterns/A-onboarding-auth.md): Welcome → Mục tiêu (tối đa 2) → Thói quen → Ngân sách (ẩn hoặc lưu tạm nếu chưa có `BE-P2-E02`) → Tạo tài khoản → Thiết lập tài chính (không bắt buộc) → Trang chính có checklist. Đăng nhập email + mật khẩu một màn. PIN không chặn đường vào app. Deep link xác nhận email / đặt lại mật khẩu và Google/Apple mobile tách task BE/MOB riêng khi làm.
 
 ### DS-P2-005 — Giao dịch theo thiết kế nhóm C
-- Status: doing
+- Status: done
 - Module: 4, 5
 - Gate: post-v1
 - Depends: DS-P2-002

@@ -79,6 +79,13 @@ abstract class TransactionViewModel extends ChangeNotifier {
 
   /// Undo of [remove]: reads the deleted copy and restores it.
   Future<bool> undoRemove(TransactionBundle bundle);
+
+  /// Last transaction saved online (null when queued offline). The list
+  /// marks its row briefly and "Hoàn tác" deletes it again.
+  TransactionBundle? get lastSaved;
+
+  /// When [lastSaved] was stored; rows are marked only shortly after.
+  DateTime? get lastSavedAt;
   Future<TransactionBundle?> open(String id);
   Future<Tag?> createTag(String name, {required String clientId});
   Future<bool> save(TransactionDraft draft, {TransactionBundle? existing});
@@ -156,6 +163,10 @@ class DefaultTransactionViewModel extends TransactionViewModel {
   int fiscalDay = 1;
   @override
   String profileCurrency = 'VND';
+  @override
+  TransactionBundle? lastSaved;
+  @override
+  DateTime? lastSavedAt;
   @override
   AuthFailure? failure;
   @override
@@ -558,6 +569,8 @@ class DefaultTransactionViewModel extends TransactionViewModel {
       existing: existing,
     );
     if (epoch != _epoch) return false;
+    lastSaved = result.fold((_) => null, (bundle) => bundle);
+    lastSavedAt = lastSaved == null ? null : DateTime.now();
     if (_offline(result)) {
       final prepared = prepareTransaction(
         draft,

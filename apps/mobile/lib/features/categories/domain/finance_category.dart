@@ -1,3 +1,13 @@
+/// Which transactions a category fits. Older servers omit it (both).
+enum CategoryKind {
+  expense,
+  income,
+  both;
+
+  bool fits(bool income) =>
+      this == both || (income ? this == CategoryKind.income : this == expense);
+}
+
 class FinanceCategory {
   const FinanceCategory({
     required this.id,
@@ -10,6 +20,7 @@ class FinanceCategory {
     this.archived = false,
     this.version = 1,
     this.createdAt,
+    this.kind = CategoryKind.both,
   });
   final String id;
   final String name;
@@ -21,6 +32,7 @@ class FinanceCategory {
   final bool archived;
   final int version;
   final DateTime? createdAt;
+  final CategoryKind kind;
 }
 
 class CategoryDraft {

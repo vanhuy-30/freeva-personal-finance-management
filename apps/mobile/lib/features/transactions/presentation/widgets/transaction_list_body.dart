@@ -29,6 +29,15 @@ class TransactionListBody extends StatelessWidget {
           .firstOrNull ??
       0;
 
+  String? _recentlySaved() {
+    final at = model.lastSavedAt;
+    if (at == null ||
+        DateTime.now().difference(at) > const Duration(seconds: 5)) {
+      return null;
+    }
+    return model.lastSaved?.id;
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
@@ -75,6 +84,7 @@ class TransactionListBody extends StatelessWidget {
         mainCurrency: model.profileCurrency,
         today: model.today() ?? '',
         onOpen: (row) => openTransactionDetail(context, model, row),
+        highlightId: _recentlySaved(),
       );
     }
     return NotificationListener<ScrollNotification>(

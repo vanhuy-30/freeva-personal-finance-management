@@ -24,6 +24,9 @@ class CategoryRepositoryImpl implements CategoryRepository {
     createdAt: json['createdAt'] == null
         ? null
         : DateTime.parse(json['createdAt'] as String),
+    kind:
+        CategoryKind.values.where((k) => k.name == json['kind']).firstOrNull ??
+        CategoryKind.both,
   );
 
   Future<Either<AuthFailure, T>> _request<T>(
