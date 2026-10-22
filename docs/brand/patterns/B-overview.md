@@ -1,6 +1,6 @@
 # Nhóm B — Tổng quan
 
-Trạng thái: **chốt thiết kế 2026-10-21**, chưa code. Task: `DS-P2-003` (màn Tổng quan).
+Trạng thái: **chốt thiết kế 2026-10-21**, **đã code 2026-10-22** (`lib/features/home/`). Task: `DS-P2-003` (màn Tổng quan).
 Canvas: trang **05 · Patterns**, hàng B
 (<https://claude.ai/artifact/SmyaVvz57doJiAM6Kn678T>, riêng tư). Spec chung:
 [design-system.md](../design-system.md). Màn lần đầu (checklist "Bắt đầu nào") ở
@@ -41,6 +41,18 @@ Canvas: trang **05 · Patterns**, hàng B
 - **Banner ngoại tuyến:** nền `status.infoBg`, chữ `status.info`, icon mây gạch chéo, hai dòng.
 - **Thẻ lỗi khối:** icon trong ô `status.dangerBg`, tiêu đề `titleL`, một dòng trấn an, nút secondary "Thử lại".
 - **Skeleton trên wash:** khối trắng 72% thay cho `bg.skeleton` để giữ lớp màu.
+
+## Trạng thái code
+
+| Việc | Đã làm / còn chờ |
+|---|---|
+| Ẩn số dư chỉ ẩn số dư | Đã làm. Danh sách giao dịch và báo cáo không che số nữa. |
+| Tên trong lời chào | Đã có `User.displayName` (API + mobile đọc). Chưa có tên thì "Chào bạn". Màn sửa tên: nhóm G. |
+| Tổng số dư và "· N ví" | API net-worth bỏ ví đã ẩn; "N ví" đếm ví đang dùng theo tiền tệ. |
+| Khối thẻ tín dụng | Hiện khi có ví thẻ tín dụng, dưới khối Chi. Khi nhóm A lưu mục tiêu "Quản lý khoản nợ" thì đưa lên trên. |
+| Ngoại tuyến | Số liệu chỉ giữ trong bộ nhớ (không ghi số dư xuống máy), xoá khi khoá/đăng xuất. Mở app khi mất mạng thì ra thẻ lỗi (màn 8). |
+| Chuông thông báo | Mở màn trống `/notifications` tới khi có `BE-P2-E05`. |
+| Nút tìm, chạm dòng giao dịch | Tạm mở tab Giao dịch / màn sửa giao dịch hiện có; màn tìm và sheet chi tiết thuộc nhóm C. |
 
 ## Phụ thuộc khi làm code
 

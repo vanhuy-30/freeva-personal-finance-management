@@ -942,10 +942,10 @@ class SEn extends S {
   String get balanceHiddenMask => '••••';
 
   @override
-  String get balanceHide => 'Hide amounts';
+  String get balanceHide => 'Hide balances';
 
   @override
-  String get balanceShow => 'Show amounts';
+  String get balanceShow => 'Show balances';
 
   @override
   String get settingsPrivacyControls => 'Privacy';
@@ -1015,4 +1015,156 @@ class SEn extends S {
 
   @override
   String get passwordHide => 'Hide password';
+
+  @override
+  String get homeDatePattern => 'EEEE, MMM d';
+
+  @override
+  String get homeMonthPattern => 'MMMM';
+
+  @override
+  String homeGreeting(String name) {
+    return 'Hi $name';
+  }
+
+  @override
+  String get homeGreetingAnon => 'Hi there';
+
+  @override
+  String get homeSearch => 'Search transactions';
+
+  @override
+  String get homeNotifications => 'Notifications';
+
+  @override
+  String homeTotalBalance(int count) {
+    return 'Total balance · $count wallets';
+  }
+
+  @override
+  String homeTotalBalanceIn(int count, String currency) {
+    return 'Total balance · $count $currency wallets';
+  }
+
+  @override
+  String homeOtherCurrency(String amount, String currency, int count) {
+    return '$amount $currency · $count wallets';
+  }
+
+  @override
+  String homeIncomeMonth(String month) {
+    return 'Income in $month';
+  }
+
+  @override
+  String homeExpenseMonth(String month) {
+    return 'Spent in $month';
+  }
+
+  @override
+  String get homeQuickIncome => 'Add income';
+
+  @override
+  String get homeQuickTransfer => 'Move money';
+
+  @override
+  String get homeQuickWallets => 'My wallets';
+
+  @override
+  String get homeQuickCategories => 'Categories';
+
+  @override
+  String get homeSpendOther => 'Other';
+
+  @override
+  String get homeSpendEmpty => 'No spending yet.';
+
+  @override
+  String get homeSpendRecord => 'Add expense';
+
+  @override
+  String homeOtherCurrencySpend(String currency, String amount) {
+    return '$currency wallets: $amount $currency spent this month';
+  }
+
+  @override
+  String homeReviewMonth(String month) {
+    return 'Look back at $month';
+  }
+
+  @override
+  String homeReviewLine(String expense, String income) {
+    return 'Spent $expense · Earned $income';
+  }
+
+  @override
+  String get homeCreditTitle => 'Credit cards';
+
+  @override
+  String homeCreditDue(String date) {
+    return 'Due $date';
+  }
+
+  @override
+  String homeCreditUsed(String used, String limit) {
+    return 'Used $used of $limit';
+  }
+
+  @override
+  String homeCreditUsedNoLimit(String used) {
+    return 'Used $used';
+  }
+
+  @override
+  String get homeRecent => 'Recent';
+
+  @override
+  String get homeSeeTransactions => 'See transactions';
+
+  @override
+  String get homeRecentEmpty => 'Your transactions will show here';
+
+  @override
+  String get homePendingSync => 'Waiting to sync';
+
+  @override
+  String homeOfflineTitle(String time) {
+    return 'Offline · Figures from $time';
+  }
+
+  @override
+  String get homeOfflineBody => 'You can still add expenses.';
+
+  @override
+  String get homeErrorTitle => 'Couldn\'t load your balance';
+
+  @override
+  String get homeErrorBody => 'Your data is safe.';
+
+  @override
+  String homeSpokenExpense(String amount, String currency) {
+    return 'minus $amount $currency';
+  }
+
+  @override
+  String homeSpokenIncome(String amount, String currency) {
+    return 'plus $amount $currency';
+  }
+
+  @override
+  String homeSpokenRow(String amount, String title, String detail) {
+    return '$amount, $title, $detail';
+  }
+
+  @override
+  String get homeUncategorized => 'Uncategorized';
+
+  @override
+  String get notificationsEmpty => 'No notifications yet';
+
+  @override
+  String get notificationsEmptyBody => 'Reminders and alerts will show here.';
+
+  @override
+  String get homeSpokenVnd => 'dong';
 }

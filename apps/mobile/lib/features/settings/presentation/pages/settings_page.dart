@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
+import '../../../auth/presentation/widgets/session_alert_banner.dart';
+import '../../../auth/presentation/widgets/session_controls.dart';
 import '../../../profile/presentation/viewmodels/profile_view_model.dart';
 import '../viewmodels/settings_view_model.dart';
 import '../widgets/settings_appearance.dart';
@@ -12,6 +14,9 @@ import '../widgets/settings_profile_link.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
+
+  // Sessions live here until the Security screen of group G.
+  static final _sessions = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +45,8 @@ class SettingsPage extends StatelessWidget {
                       SettingsProfileLink(locale: profile.locale),
                       SettingsBiometric(model: model),
                       const SettingsHelpSection(),
+                      SessionAlertBanner(scrollTarget: _sessions),
+                      SessionControls(key: _sessions),
                     ],
                   ),
                 ),

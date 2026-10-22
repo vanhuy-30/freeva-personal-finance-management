@@ -38,7 +38,7 @@ Mỗi lần đọc chạy trong một transaction Repeatable Read: hồ sơ (tim
 
 `byAccount` gồm mọi ví đang hoạt động, cộng ví đã lưu trữ nếu có giao dịch trong kỳ. Mỗi ví có `incomeMinor`, `expenseMinor`, `transferMinor` và `netMinor` bằng tổng ba số. Transfer làm đổi số dư ví nhưng không phải thu hay chi. Không cộng `byAccount` vào `totals`.
 
-**Net worth hiện tại, mỗi currency có ít nhất một ví, kể cả ví đã lưu trữ:**
+**Net worth hiện tại, mỗi currency có ít nhất một ví đang dùng. Ví đã ẩn (lưu trữ) không tính** (`DS-P2-003`, khớp "Tổng số dư · N ví" ở Tổng quan và Ví):
 
 - Số dư ví = `initialBalanceMinor` + tổng giao dịch chưa xóa, gồm transfer
 - `assetsMinor` = tổng số dư `cash`, `bank`, `ewallet`. Âm là thấu chi, vẫn ở tài sản

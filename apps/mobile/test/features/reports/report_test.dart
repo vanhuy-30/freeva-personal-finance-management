@@ -71,28 +71,6 @@ void main() {
     expect(reports.cashflowCalls, 0);
   });
 
-  test(
-    'overview asks for the current month and keeps currencies apart',
-    () async {
-      final reports = _Reports()
-        ..cashflowReport = _flow()
-        ..worth = _worth();
-      final wallets = _Wallets()
-        ..codes = const [WalletCurrency('VND', 0), WalletCurrency('USD', 2)];
-      final cases = DefaultReportUseCases(reports, wallets, _Categories());
-      final result = await cases.loadOverview();
-      final snapshot = result.getOrElse(() => throw StateError('overview'));
-      expect(reports.queries.single.kind, ReportPeriodKind.month);
-      expect(reports.queries.single.on, isNull);
-      expect(snapshot.netWorth.items.map((row) => row.currency), [
-        'VND',
-        'USD',
-      ]);
-      expect(snapshot.netWorth.items.first.assetsMinor, BigInt.from(1500000));
-      expect(snapshot.netWorth.items.last.assetsMinor, BigInt.from(2000));
-    },
-  );
-
   test('names leaves without rolling them into the parent', () async {
     final reports = _Reports()..cashflowReport = _flow();
     final wallets = _Wallets()
@@ -227,23 +205,6 @@ CashflowReport _flow() => CashflowReport(
       expenseMinor: BigInt.from(-25),
       transferMinor: BigInt.from(100),
       netMinor: BigInt.from(1125),
-    ),
-  ],
-);
-
-NetWorthReport _worth() => NetWorthReport(
-  items: [
-    NetWorthTotal(
-      currency: 'VND',
-      assetsMinor: BigInt.from(1500000),
-      liabilitiesMinor: BigInt.zero,
-      netWorthMinor: BigInt.from(1500000),
-    ),
-    NetWorthTotal(
-      currency: 'USD',
-      assetsMinor: BigInt.from(2000),
-      liabilitiesMinor: BigInt.from(-500),
-      netWorthMinor: BigInt.from(1500),
     ),
   ],
 );

@@ -28,7 +28,7 @@ Thứ tự đã chốt: nền tảng → B → C → D → E → F → G → A �
 | Nhóm | Trạng thái | Ghi chú |
 |---|---|---|
 | Nền tảng (`DS-P2-002`) | Xong | Token → Dart, theme, Inter, Lucide, component trong `lib/core/widgets/`, khung 4 tab + nút +, gallery `/debug/gallery`, golden light/dark |
-| B Tổng quan | Chưa | |
+| B Tổng quan | Xong | 8 trạng thái, `User.displayName`, net-worth bỏ ví đã ẩn, ẩn số dư chỉ ẩn số dư |
 | C Giao dịch | Chưa | |
 | D Ví | Chưa | |
 | E Danh mục | Chưa | |

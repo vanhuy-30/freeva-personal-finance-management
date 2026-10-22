@@ -107,7 +107,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
     final search = query.search;
     final params = <String, String>{
       'page': '${query.page}',
-      'pageSize': '50',
+      'pageSize': '${query.pageSize}',
       'status': query.deleted ? 'deleted' : 'active',
       if (query.type != null) 'type': query.type!.name,
       if (search != null) 'search': search,

@@ -188,7 +188,7 @@ void main() {
     expect(post.body!['tagIds'], contains('work'));
   });
 
-  testWidgets('hidden balances mask the list but not the amount being typed', (
+  testWidgets('hiding balances keeps transaction amounts visible', (
     tester,
   ) async {
     final settings = DefaultSettingsViewModel(
@@ -203,10 +203,10 @@ void main() {
     getIt.registerSingleton<SettingsViewModel>(settings);
     addTearDown(settings.dispose);
     await tester.pumpWidget(app(TransactionList(model: model, onOpen: (_) {})));
-    expect(find.textContaining('••••'), findsOneWidget);
+    expect(find.textContaining('••••'), findsNothing);
     expect(
       find.textContaining(formatMoneyText(BigInt.from(-1000), 0, 'vi')),
-      findsNothing,
+      findsOneWidget,
     );
     await tester.pumpWidget(app(TransactionForm(model: model)));
     await tester.enterText(find.byType(TextField).first, '25000');

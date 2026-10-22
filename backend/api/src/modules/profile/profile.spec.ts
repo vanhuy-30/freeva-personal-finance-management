@@ -2,19 +2,21 @@ import { Test } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { AuthService } from '../auth/auth.service';
-import { PROFILE_REPOSITORY, type Profile } from './domain/profile.repository';
+import { PROFILE_REPOSITORY, type Profile, type ProfileUpdate } from './domain/profile.repository';
 import { ProfileController } from './profile.controller';
 import { ProfileService } from './profile.service';
-const initial: Profile = { locale: 'vi', defaultCurrencyCode: 'VND', timezone: 'Asia/Ho_Chi_Minh', fiscalMonthStartDay: 1, version: 1 };
+const initial: Profile = { displayName: null, locale: 'vi', defaultCurrencyCode: 'VND', timezone: 'Asia/Ho_Chi_Minh', fiscalMonthStartDay: 1, version: 1 };
 describe('MOB-P1-002 profile HTTP contract', () => {
   let app: INestApplication; let base: string;
   const profiles = new Map<string, Profile>();
   const repo = {
     find: jest.fn(async (id: string) => profiles.get(id) ?? null),
     currencies: async () => [{ code: 'VND', minorDigits: 0 }, { code: 'USD', minorDigits: 2 }],
-    update: jest.fn(async (id: string, profile: Profile) => {
+    update: jest.fn(async (id: string, profile: ProfileUpdate) => {
       if (profiles.get(id)?.version !== profile.version) return null;
-      const saved = { ...profile, version: profile.version + 1 }; profiles.set(id, saved); return saved;
+      const stored = profiles.get(id)!;
+      const saved = { ...stored, ...profile, displayName: profile.displayName === undefined ? stored.displayName : profile.displayName, version: profile.version + 1 };
+      profiles.set(id, saved); return saved;
     }),
   };
   beforeAll(async () => {
@@ -54,6 +56,14 @@ describe('MOB-P1-002 profile HTTP contract', () => {
       expect(result.status).toBe(400); expect(result.body.error.code).toBe('VALIDATION_ERROR');
       expect(repo.update).not.toHaveBeenCalled();
       expect(JSON.stringify(result.body)).not.toContain('sensitive@example.test');
+  });
+  it('keeps displayName when omitted, trims it, and clears it when blank', async () => {
+    const { displayName: _omit, ...rest } = initial;
+    expect((await request('PUT', { ...rest, displayName: '  Minh  ' })).body.displayName).toBe('Minh');
+    expect((await request('PUT', { ...rest, version: 2 })).body.displayName).toBe('Minh');
+    expect((await request('PUT', { ...rest, version: 3, displayName: '   ' })).body.displayName).toBeNull();
+    const long = await request('PUT', { ...rest, version: 4, displayName: 'x'.repeat(61) });
+    expect(long.status).toBe(400);
   });
   it('supplies currency catalog and IANA timezones', async () => {
     const result = await request('GET', undefined, 'a'.repeat(64), 'profile/options');

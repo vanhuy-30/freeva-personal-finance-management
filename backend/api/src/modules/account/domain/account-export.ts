@@ -4,6 +4,7 @@ export interface AccountExport {
   userId: string;
   profile: {
     email: string;
+    displayName: string | null;
     locale: string;
     timezone: string;
     defaultCurrencyCode: string;
@@ -100,6 +101,7 @@ export interface ExportSource {
   user: {
     id: string;
     email: string;
+    displayName: string | null;
     locale: string;
     timezone: string;
     defaultCurrencyCode: string;
@@ -159,6 +161,7 @@ export function toAccountExport(source: ExportSource): AccountExport {
     userId: user.id,
     profile: {
       email: user.email,
+      displayName: user.displayName,
       locale: user.locale,
       timezone: user.timezone,
       defaultCurrencyCode: code(user.defaultCurrencyCode),

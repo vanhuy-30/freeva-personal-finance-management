@@ -5,9 +5,13 @@ import '../../../../core/l10n/generated/app_localizations.dart';
 import '../viewmodels/auth_view_model.dart';
 
 class SessionAlertBanner extends StatefulWidget {
-  const SessionAlertBanner({required this.scrollTarget, super.key});
+  const SessionAlertBanner({this.scrollTarget, this.onReview, super.key});
 
-  final GlobalKey scrollTarget;
+  /// Session list to scroll to on the same screen.
+  final GlobalKey? scrollTarget;
+
+  /// Or a navigation to where the session list lives.
+  final VoidCallback? onReview;
 
   @override
   State<SessionAlertBanner> createState() => _SessionAlertBannerState();
@@ -55,7 +59,8 @@ class _SessionAlertBannerState extends State<SessionAlertBanner> {
                   child: TextButton(
                     onPressed: () async {
                       await _auth.openSessionAlert();
-                      final target = widget.scrollTarget.currentContext;
+                      widget.onReview?.call();
+                      final target = widget.scrollTarget?.currentContext;
                       if (target != null && target.mounted) {
                         await Scrollable.ensureVisible(target);
                       }

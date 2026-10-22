@@ -212,8 +212,8 @@ describe('BE-P1-007 HTTP + PostgreSQL', () => {
     await transaction({ accountId: stored.id, currencyCode: 'USD', type: 'income', amountMinor: 20n, occurredOn: '2020-01-04' });
     const report = await request('/net-worth');
     expect(report.status).toBe(200);
+    // Hidden (archived) wallets stay out of the total; USD has no active wallet.
     expect(report.body).toEqual({ items: [
-      { currency: 'USD', assetsMinor: '100', liabilitiesMinor: '0', netWorthMinor: '100' },
       { currency: 'VND', assetsMinor: (huge - 150n - 20n).toString(), liabilitiesMinor: '-700', netWorthMinor: (huge - 150n - 20n - 700n).toString() },
     ] });
     expect(JSON.stringify(report.body)).not.toContain(foreign.id);

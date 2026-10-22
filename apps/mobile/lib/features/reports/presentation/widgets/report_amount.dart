@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/theme_context.dart';
-import '../../../settings/presentation/widgets/masked_amount.dart';
 import '../../../wallets/domain/wallet.dart';
 import 'report_money.dart';
 
@@ -38,9 +37,9 @@ class ReportAmountText extends StatelessWidget {
       ReportTone.expense => context.colors.moneyExpense,
       null => null,
     };
-    return MaskedAmount(
-      shown: s.reportAmount(label, amount ?? '', currency),
-      hidden: s.reportAmount(label, s.balanceHiddenMask, currency),
+    // Reports are income/expense, not balances: never masked.
+    return Text(
+      s.reportAmount(label, amount ?? '', currency),
       style: TextStyle(color: color),
     );
   }

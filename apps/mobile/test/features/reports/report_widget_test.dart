@@ -15,9 +15,7 @@ import 'package:mobile/features/categories/data/category_repository_impl.dart';
 import 'package:mobile/features/reports/data/report_repository_impl.dart';
 import 'package:mobile/features/reports/domain/report_use_cases.dart';
 import 'package:mobile/features/reports/presentation/pages/report_page.dart';
-import 'package:mobile/features/reports/presentation/viewmodels/overview_view_model.dart';
 import 'package:mobile/features/reports/presentation/viewmodels/report_view_model.dart';
-import 'package:mobile/features/reports/presentation/widgets/overview_section.dart';
 import 'package:mobile/features/settings/data/settings_repository_impl.dart';
 import 'package:mobile/features/settings/domain/settings_use_cases.dart';
 import 'package:mobile/features/settings/presentation/viewmodels/settings_view_model.dart';
@@ -33,7 +31,6 @@ void main() {
   late ReportTransport api;
   late DefaultAuthViewModel auth;
   late DefaultReportViewModel reports;
-  late DefaultOverviewViewModel overview;
 
   setUp(() async {
     await getIt.reset();
@@ -53,9 +50,7 @@ void main() {
       CategoryRepositoryImpl(api),
     );
     reports = DefaultReportViewModel(cases, auth, RecordingAnalytics());
-    overview = DefaultOverviewViewModel(cases, auth);
     getIt.registerSingleton<ReportViewModel>(reports);
-    getIt.registerSingleton<OverviewViewModel>(overview);
     getIt.registerSingleton<AuthViewModel>(auth);
     getIt.registerSingleton<WalletRepository>(wallets);
     getIt.registerSingleton<AnalyticsService>(RecordingAnalytics());
@@ -63,7 +58,6 @@ void main() {
 
   tearDown(() async {
     reports.dispose();
-    overview.dispose();
     auth.dispose();
     await getIt.reset();
   });
@@ -95,24 +89,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('overview shows each currency on its own card', (tester) async {
-    await tester.pumpWidget(app(const SingleChildScrollView(child: OverviewSection())));
-    await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('overview-VND')), findsOneWidget);
-    expect(find.byKey(const ValueKey('overview-USD')), findsOneWidget);
-    expect(
-      find.textContaining(formatMoneyText(BigInt.from(1500000), 0, 'vi')),
-      findsWidgets,
-    );
-    expect(
-      find.textContaining(formatMoneyText(BigInt.from(2000), 2, 'vi')),
-      findsWidgets,
-    );
-    expect(find.textContaining('1502000'), findsNothing);
-    expect(tester.takeException(), isNull);
-  });
-
-  testWidgets('hidden balances mask overview and report figures', (
+  testWidgets('hiding balances keeps report income and expense visible', (
     tester,
   ) async {
     final settings = DefaultSettingsViewModel(
@@ -126,28 +103,12 @@ void main() {
     await settings.setBalancesHidden(true);
     getIt.registerSingleton<SettingsViewModel>(settings);
     addTearDown(settings.dispose);
-    await tester.pumpWidget(
-      app(const SingleChildScrollView(child: OverviewSection())),
-    );
-    await tester.pumpAndSettle();
-    expect(find.textContaining('••••'), findsWidgets);
-    expect(
-      find.textContaining(formatMoneyText(BigInt.from(1500000), 0, 'vi')),
-      findsNothing,
-    );
-    await tester.tap(find.byTooltip('Hiện số tiền'));
-    await tester.pumpAndSettle();
-    expect(
-      find.textContaining(formatMoneyText(BigInt.from(1500000), 0, 'vi')),
-      findsWidgets,
-    );
-    await settings.setBalancesHidden(true);
     await tester.pumpWidget(app(const ReportPage()));
     await tester.pumpAndSettle();
-    expect(find.textContaining('••••'), findsWidgets);
+    expect(find.textContaining('••••'), findsNothing);
     expect(
       find.textContaining(formatMoneyText(BigInt.from(1000000), 0, 'vi')),
-      findsNothing,
+      findsWidgets,
     );
   });
 

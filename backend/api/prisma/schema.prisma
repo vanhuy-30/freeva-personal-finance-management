@@ -85,6 +85,7 @@ model Currency {
 model User {
   id                  String    @id @default(uuid()) @db.Uuid
   email               String    @unique
+  displayName         String?   @db.VarChar(60)
   passwordHash        String?
   emailVerifiedAt     DateTime? @db.Timestamptz
   locale              String    @default("vi")

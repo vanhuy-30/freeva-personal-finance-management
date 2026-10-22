@@ -87,7 +87,7 @@ class SettingsRow extends StatelessWidget {
                     ),
                   ),
                 ),
-              ?trailing,
+              if (trailing != null) trailing!,
               if (chevron && trailing == null && !destructive)
                 Icon(
                   LucideIcons.chevronRight,

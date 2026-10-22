@@ -41,6 +41,9 @@ import 'package:mobile/features/categories/domain/category_use_cases.dart'
     as _i221;
 import 'package:mobile/features/categories/presentation/viewmodels/category_view_model.dart'
     as _i961;
+import 'package:mobile/features/home/domain/overview_use_cases.dart' as _i970;
+import 'package:mobile/features/home/presentation/viewmodels/home_view_model.dart'
+    as _i722;
 import 'package:mobile/features/profile/data/profile_repository_impl.dart'
     as _i72;
 import 'package:mobile/features/profile/domain/profile_repository.dart' as _i4;
@@ -51,8 +54,6 @@ import 'package:mobile/features/reports/data/report_repository_impl.dart'
     as _i931;
 import 'package:mobile/features/reports/domain/report_repository.dart' as _i61;
 import 'package:mobile/features/reports/domain/report_use_cases.dart' as _i146;
-import 'package:mobile/features/reports/presentation/viewmodels/overview_view_model.dart'
-    as _i43;
 import 'package:mobile/features/reports/presentation/viewmodels/report_view_model.dart'
     as _i1044;
 import 'package:mobile/features/settings/data/preference_vault.dart' as _i1060;
@@ -171,6 +172,13 @@ extension GetItInjectableX on _i174.GetIt {
               gh<_i54.SessionAlertNotifier>(),
               gh<_i1020.AnalyticsService>(),
             ));
+    gh.lazySingleton<_i970.OverviewUseCases>(
+        () => _i970.DefaultOverviewUseCases(
+              gh<_i61.ReportRepository>(),
+              gh<_i107.WalletRepository>(),
+              gh<_i931.TransactionRepository>(),
+              gh<_i561.CategoryRepository>(),
+            ));
     gh.lazySingleton<_i488.SyncViewModel>(() => _i488.DefaultSyncViewModel(
           gh<_i665.SyncUseCases>(),
           gh<_i990.AuthViewModel>(),
@@ -211,17 +219,19 @@ extension GetItInjectableX on _i174.GetIt {
               gh<_i1020.AnalyticsService>(),
               gh<_i488.SyncViewModel>(),
             ));
-    gh.lazySingleton<_i43.OverviewViewModel>(
-        () => _i43.DefaultOverviewViewModel(
-              gh<_i146.ReportUseCases>(),
-              gh<_i990.AuthViewModel>(),
-            ));
     gh.lazySingleton<_i1044.ReportViewModel>(
         () => _i1044.DefaultReportViewModel(
               gh<_i146.ReportUseCases>(),
               gh<_i990.AuthViewModel>(),
               gh<_i1020.AnalyticsService>(),
             ));
+    gh.lazySingleton<_i722.HomeViewModel>(() => _i722.DefaultHomeViewModel(
+          gh<_i970.OverviewUseCases>(),
+          gh<_i990.AuthViewModel>(),
+          gh<_i887.ProfileViewModel>(),
+          gh<_i421.SettingsViewModel>(),
+          gh<_i488.SyncViewModel>(),
+        ));
     return this;
   }
 }

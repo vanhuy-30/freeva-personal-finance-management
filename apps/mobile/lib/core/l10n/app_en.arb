@@ -360,8 +360,8 @@
   "privacyTitle": "Privacy policy",
   "privacyBody": "The account stores email, language, time zone, default currency, and the financial month start day. Amounts you enter are not written to logs. Feedback you compose stays on this device until a contact channel exists. Analytics events do not include email, balances, or account numbers. This summary does not replace a lawyer-reviewed policy.",
   "balanceHiddenMask": "••••",
-  "balanceHide": "Hide amounts",
-  "balanceShow": "Show amounts",
+  "balanceHide": "Hide balances",
+  "balanceShow": "Show balances",
   "settingsPrivacyControls": "Privacy",
   "settingsHideBalances": "Hide balances",
   "settingsHideBalancesHelp": "Masks amounts shown on this device. Fields you are editing still show what you type.",
@@ -383,5 +383,187 @@
   "keypadDelete": "Delete",
   "commonLoading": "Loading",
   "passwordShow": "Show password",
-  "passwordHide": "Hide password"
+  "passwordHide": "Hide password",
+  "homeDatePattern": "EEEE, MMM d",
+  "homeMonthPattern": "MMMM",
+  "homeGreeting": "Hi {name}",
+  "@homeGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "homeGreetingAnon": "Hi there",
+  "homeSearch": "Search transactions",
+  "homeNotifications": "Notifications",
+  "homeTotalBalance": "Total balance · {count} wallets",
+  "@homeTotalBalance": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeTotalBalanceIn": "Total balance · {count} {currency} wallets",
+  "@homeTotalBalanceIn": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "homeOtherCurrency": "{amount} {currency} · {count} wallets",
+  "@homeOtherCurrency": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeIncomeMonth": "Income in {month}",
+  "@homeIncomeMonth": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "homeExpenseMonth": "Spent in {month}",
+  "@homeExpenseMonth": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "homeQuickIncome": "Add income",
+  "homeQuickTransfer": "Move money",
+  "homeQuickWallets": "My wallets",
+  "homeQuickCategories": "Categories",
+  "homeSpendOther": "Other",
+  "homeSpendEmpty": "No spending yet.",
+  "homeSpendRecord": "Add expense",
+  "homeOtherCurrencySpend": "{currency} wallets: {amount} {currency} spent this month",
+  "@homeOtherCurrencySpend": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "homeReviewMonth": "Look back at {month}",
+  "@homeReviewMonth": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "homeReviewLine": "Spent {expense} · Earned {income}",
+  "@homeReviewLine": {
+    "placeholders": {
+      "expense": {
+        "type": "String"
+      },
+      "income": {
+        "type": "String"
+      }
+    }
+  },
+  "homeCreditTitle": "Credit cards",
+  "homeCreditDue": "Due {date}",
+  "@homeCreditDue": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeCreditUsed": "Used {used} of {limit}",
+  "@homeCreditUsed": {
+    "placeholders": {
+      "used": {
+        "type": "String"
+      },
+      "limit": {
+        "type": "String"
+      }
+    }
+  },
+  "homeCreditUsedNoLimit": "Used {used}",
+  "@homeCreditUsedNoLimit": {
+    "placeholders": {
+      "used": {
+        "type": "String"
+      }
+    }
+  },
+  "homeRecent": "Recent",
+  "homeSeeTransactions": "See transactions",
+  "homeRecentEmpty": "Your transactions will show here",
+  "homePendingSync": "Waiting to sync",
+  "homeOfflineTitle": "Offline · Figures from {time}",
+  "@homeOfflineTitle": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "homeOfflineBody": "You can still add expenses.",
+  "homeErrorTitle": "Couldn't load your balance",
+  "homeErrorBody": "Your data is safe.",
+  "homeSpokenExpense": "minus {amount} {currency}",
+  "@homeSpokenExpense": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "homeSpokenIncome": "plus {amount} {currency}",
+  "@homeSpokenIncome": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "homeSpokenRow": "{amount}, {title}, {detail}",
+  "@homeSpokenRow": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "title": {
+        "type": "String"
+      },
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "homeUncategorized": "Uncategorized",
+  "notificationsEmpty": "No notifications yet",
+  "notificationsEmptyBody": "Reminders and alerts will show here.",
+  "homeSpokenVnd": "dong"
 }

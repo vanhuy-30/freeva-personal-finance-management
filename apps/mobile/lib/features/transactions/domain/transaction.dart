@@ -129,8 +129,10 @@ class TransactionQuery {
     this.deleted = false,
     this.type,
     this.search,
+    this.pageSize = 50,
   });
   final int page;
+  final int pageSize;
   final bool deleted;
   final TransactionType? type;
   final String? search;
@@ -145,4 +147,26 @@ class TransactionListPage {
   final List<TxLeg> legs;
   final int page;
   final int total;
+}
+
+/// Pairs the two legs of a transfer into one bundle, keeping list order.
+List<TransactionBundle> groupTransactionLegs(List<TxLeg> legs) {
+  final grouped = <String, List<TxLeg>>{};
+  final order = <String>[];
+  for (final leg in legs) {
+    final key = leg.transferGroupId ?? leg.id;
+    if (!grouped.containsKey(key)) order.add(key);
+    grouped.putIfAbsent(key, () => []).add(leg);
+  }
+  return [
+    for (final key in order)
+      TransactionBundle(
+        legs: List.unmodifiable(
+          [...grouped[key]!]..sort((a, b) {
+            final amount = a.amountMinor.compareTo(b.amountMinor);
+            return amount != 0 ? amount : a.id.compareTo(b.id);
+          }),
+        ),
+      ),
+  ];
 }

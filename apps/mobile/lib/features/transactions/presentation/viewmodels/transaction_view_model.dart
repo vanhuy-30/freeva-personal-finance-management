@@ -121,7 +121,7 @@ class DefaultTransactionViewModel extends TransactionViewModel {
   @override
   AuthFailure? failure;
   @override
-  List<TransactionBundle> get rows => _group(_legs);
+  List<TransactionBundle> get rows => groupTransactionLegs(_legs);
   @override
   bool get hasMore => _legs.length < _total;
   @override
@@ -565,25 +565,4 @@ class DefaultTransactionViewModel extends TransactionViewModel {
     _sync.removeListener(_syncChanged);
     super.dispose();
   }
-}
-
-List<TransactionBundle> _group(List<TxLeg> legs) {
-  final grouped = <String, List<TxLeg>>{};
-  final order = <String>[];
-  for (final leg in legs) {
-    final key = leg.transferGroupId ?? leg.id;
-    if (!grouped.containsKey(key)) order.add(key);
-    grouped.putIfAbsent(key, () => []).add(leg);
-  }
-  return [
-    for (final key in order)
-      TransactionBundle(
-        legs: List.unmodifiable(
-          [...grouped[key]!]..sort((a, b) {
-            final amount = a.amountMinor.compareTo(b.amountMinor);
-            return amount != 0 ? amount : a.id.compareTo(b.id);
-          }),
-        ),
-      ),
-  ];
 }

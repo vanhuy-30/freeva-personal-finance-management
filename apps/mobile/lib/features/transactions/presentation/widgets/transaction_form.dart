@@ -15,11 +15,15 @@ class TransactionForm extends StatefulWidget {
     required this.model,
     this.existing,
     this.copy = false,
+    this.initialType,
     super.key,
   });
   final TransactionViewModel model;
   final TransactionBundle? existing;
   final bool copy;
+
+  /// Type preselected for a new transaction (quick actions on Overview).
+  final TransactionType? initialType;
   @override
   State<TransactionForm> createState() => _TransactionFormState();
 }
@@ -58,7 +62,7 @@ class _TransactionFormState extends State<TransactionForm> {
     ready = true;
     final existing = widget.existing;
     final copy = widget.copy;
-    type = existing?.type ?? TransactionType.expense;
+    type = existing?.type ?? widget.initialType ?? TransactionType.expense;
     accountId =
         existing?.legs.first.accountId ?? widget.model.preferredAccountId();
     counterAccountId = existing != null && existing.legs.length > 1

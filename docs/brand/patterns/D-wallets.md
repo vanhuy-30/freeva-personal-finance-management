@@ -40,7 +40,7 @@ Canvas: trang **05 · Patterns**, hàng D
 
 | Việc | Ghi chú |
 |---|---|
-| Tổng số dư và ví đã ẩn | API tổng tài sản hiện cộng cả ví đã ẩn, còn "· 4 ví" chỉ đếm ví đang dùng. Cần thống nhất: bỏ ví đã ẩn khỏi tổng (đổi API) hoặc đếm cả. |
+| Tổng số dư và ví đã ẩn | Đã chốt ở `DS-P2-003`: API net-worth bỏ ví đã ẩn khỏi tổng, khớp "· 4 ví". |
 | Ví có giao dịch hay chưa | Cần cờ từ API để khoá loại/tiền tệ trước khi người dùng sửa, thay vì báo lỗi lúc lưu. |
 | Kéo để sắp xếp | Mobile hiện chỉ có lên/xuống từng bước; kéo cần cập nhật nhiều `sortOrder` một lần. |
 | Ngày đến hạn kế tiếp, "còn N ngày" | Tính từ `dueDay` và múi giờ hồ sơ. |
