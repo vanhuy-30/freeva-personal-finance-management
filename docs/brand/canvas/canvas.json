@@ -400,7 +400,15 @@
     "MeFeedback.dc.html": { "x": 3220, "y": 13084, "w": 390, "h": 844, "page": "p", "title": "G · 8. Góp ý", "is_interactive": true },
     "MeFeedbackSent.dc.html": { "x": 3680, "y": 13084, "w": 390, "h": 844, "page": "p", "title": "G · 9. Đã gửi góp ý", "is_interactive": true },
     "MeFaq.dc.html": { "x": 4140, "y": 13084, "w": 390, "h": 844, "page": "p", "title": "G · 10. Câu hỏi thường gặp", "is_interactive": true },
-    "MeNotify.dc.html": { "x": 4600, "y": 13084, "w": 390, "h": 844, "page": "p", "title": "G · 11. Thông báo", "is_interactive": true }
+    "MeNotify.dc.html": { "x": 4600, "y": 13084, "w": 390, "h": 844, "page": "p", "title": "G · 11. Thông báo", "is_interactive": true },
+    "SyncBanner.dc.html": { "x": 0, "y": 14964, "w": 390, "h": 844, "page": "p", "title": "H · 1. Báo trên danh sách", "is_interactive": true },
+    "SyncCenter.dc.html": { "x": 460, "y": 14964, "w": 390, "h": 844, "page": "p", "title": "H · 2. Đồng bộ", "is_interactive": true },
+    "SyncRunning.dc.html": { "x": 920, "y": 14964, "w": 390, "h": 844, "page": "p", "title": "H · 3. Đang gửi", "is_interactive": true },
+    "SyncDone.dc.html": { "x": 1380, "y": 14964, "w": 390, "h": 844, "page": "p", "title": "H · 4. Đã đồng bộ hết", "is_interactive": true },
+    "SyncConflict.dc.html": { "x": 1840, "y": 14964, "w": 390, "h": 844, "page": "p", "title": "H · 5. Xung đột · chọn bản giữ lại", "is_interactive": true },
+    "SyncDuplicate.dc.html": { "x": 2300, "y": 14964, "w": 390, "h": 844, "page": "p", "title": "H · 6. Có thể trùng (sheet)", "is_interactive": true },
+    "SyncDiscard.dc.html": { "x": 2760, "y": 14964, "w": 390, "h": 844, "page": "p", "title": "H · 7. Bỏ thay đổi (popup)", "is_interactive": true },
+    "SyncUpdate.dc.html": { "x": 3220, "y": 14964, "w": 390, "h": 844, "page": "p", "title": "H · 8. Cần cập nhật app", "is_interactive": true }
   },
   "order": [
     "Principles.dc.html",
@@ -491,6 +499,14 @@
     "MeFeedbackSent.dc.html",
     "MeFaq.dc.html",
     "MeNotify.dc.html",
+    "SyncBanner.dc.html",
+    "SyncCenter.dc.html",
+    "SyncRunning.dc.html",
+    "SyncDone.dc.html",
+    "SyncConflict.dc.html",
+    "SyncDuplicate.dc.html",
+    "SyncDiscard.dc.html",
+    "SyncUpdate.dc.html",
     "IA.dc.html",
     "Access.dc.html",
     "Motion.dc.html",
@@ -607,6 +623,14 @@
       "text": "G · Cá nhân và cài đặt",
       "kind": "title1",
       "maxW": 4990,
+      "page": "p"
+    },
+    "th": {
+      "x": 0,
+      "y": 14684,
+      "text": "H · Đồng bộ",
+      "kind": "title1",
+      "maxW": 3610,
       "page": "p"
     },
     "tg": {

@@ -8,7 +8,7 @@ Board brand gốc (logo, 5 màu): [ui-design-system.png](ui-design-system.png).
 |---|---|
 | [design-system.md](design-system.md) | **Design system v2** (DS-P2-001): nguyên tắc, foundations, token, components, trạng thái, patterns, guidelines. UI mới bám theo tài liệu này. |
 | [design-progress.md](design-progress.md) | **Tiến độ thiết kế từng nhóm màn và cách làm tiếp** — đọc trước khi thiết kế tiếp |
-| [patterns/](patterns/) | Thiết kế đã chốt theo nhóm màn (A: onboarding + tài khoản · B: tổng quan · C: giao dịch · D: ví · E: danh mục · F: báo cáo · G: cá nhân và cài đặt) |
+| [patterns/](patterns/) | Thiết kế đã chốt theo nhóm màn (A: onboarding + tài khoản · B: tổng quan · C: giao dịch · D: ví · E: danh mục · F: báo cáo · G: cá nhân và cài đặt · H: đồng bộ) |
 | [canvas/](canvas/) | Bản sao nguồn canvas (`.dc.html`) |
 | [palette.md](palette.md) | Bảng màu, thang sắc độ, token semantic light/dark |
 | [`packages/design-tokens`](../../packages/design-tokens/) | Nguồn hex và mọi token; `tokens.css` sinh từ `tokens.json` |

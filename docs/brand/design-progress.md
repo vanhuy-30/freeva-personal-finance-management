@@ -19,11 +19,13 @@
 | **E** Danh mục | **Chốt** 2026-10-21 | [patterns/E-categories.md](patterns/E-categories.md) |
 | **F** Báo cáo | **Chốt** 2026-10-21 | [patterns/F-reports.md](patterns/F-reports.md) |
 | **G** Cá nhân và cài đặt | **Chốt** 2026-10-21 | [patterns/G-profile-settings.md](patterns/G-profile-settings.md) |
-| **H Đồng bộ** | **Tiếp theo** | — |
+| **H** Đồng bộ | **Chốt** 2026-10-22 | [patterns/H-sync.md](patterns/H-sync.md) |
 
-## Màn cần thiết kế cho các nhóm còn lại (theo code Phase 1)
+## Việc thiết kế còn lại
 
-- **H Đồng bộ:** hàng chờ, lỗi, xung đột, trùng lặp; giữ / bỏ / khôi phục từng mục.
+Tám nhóm A–H đã chốt. Còn:
+
+- **Popup xoá tài khoản** (nhóm G): chờ quyết định sản phẩm về thời gian chờ huỷ.
 
 ## Cách làm đã thống nhất với product owner
 
@@ -50,6 +52,7 @@
 - **Luồng phụ (góp ý…) không được sơ sài:** có loại, chủ đề, đính kèm, màn cảm ơn.
 - **Không bỏ phần UI đã duyệt chỉ vì tính năng chưa có code** (ví dụ chuông thông báo ở Tổng quan).
 - **Ẩn số dư chỉ ẩn số dư**, không ẩn thu/chi hay số tiền giao dịch.
+- **Đồng bộ chạy ngầm, không làm mất dữ liệu:** chỉ hiện khi có việc cần người dùng; luôn nói rõ thay đổi vẫn nằm trên máy.
 - **Màu giữ như spec.** Đã thử ba mức tăng màu (icon danh mục hai tông → nền nhuộm xanh → khối màu đậm đầu màn); product owner chọn giữ nguyên. Không đề xuất lại nếu chưa được hỏi.
 - Product owner gửi ảnh tham chiếu thường xuyên: lưu vào `references/` kèm một dòng mô tả trong `references/README.md`.
 

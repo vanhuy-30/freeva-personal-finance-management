@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Có thể bị trùng</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"cv11" 1}
+a,button{font-family:inherit}
+.r{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:#FFFFFF;border:1px solid #E4E7F0}
+.ti{width:40px;height:40px;border-radius:999px;background:#F4F6FB;display:flex;align-items:center;justify-content:center;color:#22283A;flex:0 0 40px}
+.tn{display:flex;flex-direction:column;flex:1 1 0;gap:2px;min-width:0}
+.lb{font-size:11px;font-weight:600;letter-spacing:1px;color:#5C6378}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif">
+
+  <div aria-hidden="true" style="padding: 56px 20px 0 20px; display: flex; flex-direction: column; gap: 16px">
+    <span style="font-size: 28px; line-height: 34px; font-weight: 600; letter-spacing: -0.6px">Giao dịch</span>
+    <span style="height: 36px; width: 70%; border-radius: 999px; background: #EAEDF4"></span>
+    <span style="height: 220px; border-radius: 20px; background: #FFFFFF"></span>
+  </div>
+  <a href="TxList.dc.html" aria-label="Đóng" style="position: absolute; inset: 0; background: rgba(34,40,58,.45)"></a>
+
+  <div role="dialog" aria-label="Có thể bị trùng" style="position: absolute; left: 0; right: 0; bottom: 0; background: #FCFDFF; border-radius: 28px 28px 0 0; padding: 10px 20px 28px 20px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 -12px 32px rgba(34,40,58,.12)">
+    <span style="align-self: center; width: 36px; height: 4px; border-radius: 999px; background: #C9CEDD"></span>
+    <div style="display: flex; flex-direction: column; gap: 4px">
+      <h2 style="margin: 0; font-size: 17px; line-height: 24px; font-weight: 600">Có thể bạn đã ghi rồi</h2>
+      <span style="font-size: 14px; color: #5C6378">Hai khoản này giống nhau.</span>
+    </div>
+
+    <div class="num" style="display: flex; flex-direction: column; gap: 8px">
+      <span class="lb">VỪA GHI</span>
+      <div class="r" style="border: 1.5px solid #3F67D1; background: #EEF2FD"><span class="ti" style="background: #FFFFFF"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 3v8a3 3 0 0 0 3 3v7M7 3v6M10 3v8a3 3 0 0 1-3 3M17 21V3c-2 1-3 4-3 8h3"></path></svg></span><span class="tn"><span style="font-size: 15px; font-weight: 500">Phở Thìn</span><span style="font-size: 12px; color: #5C6378">Ăn uống · Tiền mặt · hôm nay 12:42</span></span><span style="font-size: 15px; font-weight: 600">−65.000</span></div>
+      <span class="lb" style="margin-top: 4px">ĐÃ CÓ</span>
+      <div class="r"><span class="ti"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 3v8a3 3 0 0 0 3 3v7M7 3v6M10 3v8a3 3 0 0 1-3 3M17 21V3c-2 1-3 4-3 8h3"></path></svg></span><span class="tn"><span style="font-size: 15px; font-weight: 500">Phở Thìn</span><span style="font-size: 12px; color: #5C6378">Ăn uống · Tiền mặt · hôm nay 12:40</span></span><span style="font-size: 15px; font-weight: 600">−65.000</span></div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 4px">
+      <a href="TxList.dc.html" style="height: 52px; border-radius: 999px; border: 1px solid #E4E7F0; background: #FFFFFF; color: #22283A; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; text-decoration: none">Giữ cả hai</a>
+      <a href="TxDeleted.dc.html" style="height: 52px; border-radius: 999px; background: #22283A; color: #FFFFFF; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; text-decoration: none">Xoá bản vừa ghi</a>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
