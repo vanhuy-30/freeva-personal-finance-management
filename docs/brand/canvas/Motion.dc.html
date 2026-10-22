@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Freeva · Motion</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:12px}
+.tok{background:#F4F6FB;border-radius:18px;padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+.r{display:grid;grid-template-columns:200px 1fr 110px;gap:16px;align-items:center;padding:9px 0;border-bottom:1px solid #EEF0F5;font-size:13px}
+.track{height:10px;border-radius:999px;background:#EEF0F5;position:relative}
+.fill{position:absolute;left:0;top:0;bottom:0;border-radius:999px}
+.d{font-size:12px;color:#5C6378;line-height:17px}
+</style>
+</helmet>
+<div style="width: 1280px; height: 640px; box-sizing: border-box; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; padding: 56px 64px; display: flex; flex-direction: column; gap: 24px">
+
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <span style="font-size: 12px; letter-spacing: 2px; font-weight: 600; color: #5C6378">GUIDELINES — MOTION &amp; INTERACTION</span>
+    <h1 style="margin: 0; font-size: 40px; line-height: 44px; font-weight: 600; letter-spacing: -1px">Nhanh, có hướng, không trình diễn</h1>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 300px 1fr; gap: 48px; flex-grow: 1">
+    <div style="display: flex; flex-direction: column; gap: 10px">
+      <div class="tok"><span class="mono" style="color: #22283A">motion.fast · 150 ms</span><span class="d">Nhấn, đổi trạng thái, đổi tab</span></div>
+      <div class="tok"><span class="mono" style="color: #22283A">motion.base · 250 ms</span><span class="d">Sheet, modal, chuyển màn</span></div>
+      <div class="tok"><span class="mono" style="color: #22283A">motion.slow · 400 ms</span><span class="d">Số dư đếm lên lần đầu mở app</span></div>
+      <div class="tok"><span class="mono" style="color: #22283A">ease.standard</span><span class="d">cubic-bezier(0.2, 0, 0, 1) — vào nhanh, dừng mềm</span></div>
+      <div class="tok" style="background: #22283A; color: #FFFFFF"><span style="font-size: 13px; font-weight: 600">Giảm chuyển động</span><span style="font-size: 12px; line-height: 17px; color: #C9CEDD">Bỏ trượt, thu phóng, đếm số. Chỉ còn mờ dần 150 ms. Splash hiện tĩnh.</span></div>
+    </div>
+
+    <div style="display: flex; flex-direction: column">
+      <div class="r" style="font-size: 12px; font-weight: 600; color: #5C6378; border-bottom-color: #E4E7F0"><span>Tương tác</span><span>Thời lượng (0–600 ms)</span><span>Kiểu</span></div>
+      <div class="r"><span style="font-weight: 500">Nhấn nút, chip, dòng</span><div class="track"><span class="fill" style="width: 17%; background: #5680E9"></span></div><span class="d">thu 0.97 + nền</span></div>
+      <div class="r"><span style="font-weight: 500">Nút + mở Ghi chi</span><div class="track"><span class="fill" style="width: 42%; background: #5680E9"></span></div><span class="d">trượt lên</span></div>
+      <div class="r"><span style="font-weight: 500">Bottom sheet</span><div class="track"><span class="fill" style="width: 42%; background: #5680E9"></span></div><span class="d">trượt lên + nền mờ</span></div>
+      <div class="r"><span style="font-weight: 500">Lưu thành công</span><div class="track"><span class="fill" style="width: 42%; background: #23795A"></span></div><span class="d">đóng + toast</span></div>
+      <div class="r"><span style="font-weight: 500">Đổi tab</span><div class="track"><span class="fill" style="width: 25%; background: #5680E9"></span></div><span class="d">mờ chéo</span></div>
+      <div class="r"><span style="font-weight: 500">Số dư đếm lên</span><div class="track"><span class="fill" style="width: 67%; background: #8860D0"></span></div><span class="d">một lần / phiên</span></div>
+      <div class="r"><span style="font-weight: 500">Skeleton</span><div class="track"><span class="fill" style="width: 100%; background: #C1C8E4"></span></div><span class="d">nhấp nháy 1,2 s</span></div>
+      <div class="r" style="border-bottom: none"><span style="font-weight: 500">PIN sai</span><div class="track"><span class="fill" style="width: 50%; background: #B83434"></span></div><span class="d">lắc ngang + rung</span></div>
+      <span class="d" style="margin-top: 10px">Chuyển động luôn chỉ ra nguồn gốc: sheet trồi từ đáy, chi tiết trượt từ phải, toast hiện trên nút +. Không có hiệu ứng trang trí lặp vô hạn ngoài skeleton.</span>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":640}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

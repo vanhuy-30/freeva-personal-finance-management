@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Freeva · Design tokens</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.h{font-size:15px;font-weight:600}
+.cap{font-size:12px;line-height:17px;color:#5C6378}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:12px}
+.tr{display:grid;grid-template-columns:minmax(0,1fr) 20px 58px;column-gap:10px;row-gap:1px;align-items:center;padding:6px 0;border-bottom:1px solid #EEF0F5;font-size:12px}
+.tr .cap{grid-column:1/-1;font-size:11px;line-height:15px}
+.sw{width:20px;height:20px;border-radius:6px;border:1px solid rgba(34,40,58,.12)}
+.tier{background:#FFFFFF;border-radius:18px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;box-shadow:0 1px 2px rgba(34,40,58,.04),0 8px 24px rgba(34,40,58,.05)}
+.kv{display:grid;grid-template-columns:150px 1fr;gap:8px;padding:5px 0;border-bottom:1px solid #EEF0F5;font-size:12px}
+</style>
+</helmet>
+<div style="width: 1280px; height: 1100px; box-sizing: border-box; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; padding: 56px 64px; display: flex; flex-direction: column; gap: 28px">
+
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <span style="font-size: 12px; letter-spacing: 2px; font-weight: 600; color: #5C6378">DESIGN TOKENS</span>
+    <h1 style="margin: 0; font-size: 40px; line-height: 44px; font-weight: 600; letter-spacing: -1px">Một nguồn, ba tầng</h1>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1.25fr; gap: 48px; flex-grow: 1">
+    <div style="display: flex; flex-direction: column; gap: 22px">
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <span class="h">Ba tầng token</span>
+        <div style="display: flex; flex-direction: column; gap: 8px; background: #F4F6FB; border-radius: 22px; padding: 14px">
+          <div class="tier"><span style="font-size: 11px; letter-spacing: 1.4px; font-weight: 600; color: #5C6378">1 · PRIMITIVE — giá trị thô</span><span class="mono">blue.600 = #3F67D1</span><span class="cap">Thang màu, cỡ, khoảng cách. Không dùng trực tiếp trong UI.</span></div>
+          <div style="align-self: center; color: #9AA1B8"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"></path></svg></div>
+          <div class="tier"><span style="font-size: 11px; letter-spacing: 1.4px; font-weight: 600; color: #5C6378">2 · SEMANTIC — vai trò</span><span class="mono">color.action.primary → blue.600</span><span class="cap">Đặt tên theo ý nghĩa. Dark mode chỉ đổi tầng này.</span></div>
+          <div style="align-self: center; color: #9AA1B8"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"></path></svg></div>
+          <div class="tier"><span style="font-size: 11px; letter-spacing: 1.4px; font-weight: 600; color: #5C6378">3 · COMPONENT — nơi dùng</span><span class="mono">button.primary.bg → color.action.primary</span><span class="cap">Widget chỉ đọc tầng này hoặc tầng semantic.</span></div>
+        </div>
+        <span class="cap">Cách đặt tên: <span class="mono" style="color: #22283A">{nhóm}.{vai trò}.{biến thể}.{trạng thái}</span> — ví dụ <span class="mono" style="color: #22283A">color.action.primary.pressed</span>.</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <span class="h">Kích thước, hình khối, chuyển động</span>
+        <div class="kv"><span class="mono">space.1 … space.12</span><span class="cap">4 · 8 · 12 · 16 · 20 · 24 · 32 · 48</span></div>
+        <div class="kv"><span class="mono">radius.sm / md / lg</span><span class="cap">12 · 16 · 20</span></div>
+        <div class="kv"><span class="mono">radius.xl / sheet / full</span><span class="cap">24 · 28 · 999</span></div>
+        <div class="kv"><span class="mono">elevation.0 / 1 / 2</span><span class="cap">viền · thẻ · nổi</span></div>
+        <div class="kv"><span class="mono">type.money.display …</span><span class="cap">10 kiểu chữ ở board Typography</span></div>
+        <div class="kv"><span class="mono">motion.fast / base</span><span class="cap">150 ms · 250 ms · ease-out</span></div>
+        <div class="kv" style="border-bottom: none"><span class="mono">size.touch / button / row</span><span class="cap">44 · 52 · 56</span></div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px; background: #22283A; color: #FFFFFF; border-radius: 20px; padding: 16px 18px">
+        <span style="font-size: 14px; font-weight: 600">Quản lý thay đổi</span>
+        <span style="font-size: 12px; line-height: 18px; color: #C9CEDD">Nguồn duy nhất: <span class="mono" style="color: #FFFFFF">packages/design-tokens/tokens.json</span> → sinh Dart (Flutter) và CSS (web-admin). Đổi token qua PR có task <span class="mono" style="color: #FFFFFF">DS-…</span>, kèm kiểm tra tương phản. Không hex rời trong widget.</span>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <span class="h">Semantic color tokens · light</span>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 28px">
+        <div style="display: flex; flex-direction: column">
+          <div class="tr"><span class="mono">bg.canvas</span><span class="sw" style="background: #FCFDFF"></span><span class="mono">FCFDFF</span><span class="cap">nền màn</span></div>
+          <div class="tr"><span class="mono">bg.surface</span><span class="sw" style="background: #FFFFFF"></span><span class="mono">FFFFFF</span><span class="cap">thẻ, sheet</span></div>
+          <div class="tr"><span class="mono">bg.subtle</span><span class="sw" style="background: #F4F6FB"></span><span class="mono">F4F6FB</span><span class="cap">ô icon, nhóm</span></div>
+          <div class="tr"><span class="mono">bg.wash</span><span class="sw" style="background: #ECEFFA"></span><span class="mono">ECEFFA</span><span class="cap">thẻ số dư</span></div>
+          <div class="tr"><span class="mono">border.default</span><span class="sw" style="background: #E4E7F0"></span><span class="mono">E4E7F0</span><span class="cap">input, chip</span></div>
+          <div class="tr"><span class="mono">border.divider</span><span class="sw" style="background: #EEF0F5"></span><span class="mono">EEF0F5</span><span class="cap">giữa dòng</span></div>
+          <div class="tr"><span class="mono">border.selected</span><span class="sw" style="background: #22283A"></span><span class="mono">22283A</span><span class="cap">chip chọn</span></div>
+          <div class="tr"><span class="mono">text.primary</span><span class="sw" style="background: #22283A"></span><span class="mono">22283A</span><span class="cap">chữ chính</span></div>
+          <div class="tr"><span class="mono">text.secondary</span><span class="sw" style="background: #5C6378"></span><span class="mono">5C6378</span><span class="cap">chữ phụ</span></div>
+          <div class="tr"><span class="mono">text.onWash</span><span class="sw" style="background: #3D4460"></span><span class="mono">3D4460</span><span class="cap">chữ trên wash</span></div>
+          <div class="tr"><span class="mono">text.onAction</span><span class="sw" style="background: #FFFFFF"></span><span class="mono">FFFFFF</span><span class="cap">chữ trên nút</span></div>
+          <div class="tr"><span class="mono">action.primary</span><span class="sw" style="background: #3F67D1"></span><span class="mono">3F67D1</span><span class="cap">nút chính, link</span></div>
+          <div class="tr"><span class="mono">action.primary.pressed</span><span class="sw" style="background: #3352AA"></span><span class="mono">3352AA</span><span class="cap">khi nhấn</span></div>
+        </div>
+        <div style="display: flex; flex-direction: column">
+          <div class="tr"><span class="mono">action.ink</span><span class="sw" style="background: #22283A"></span><span class="mono">22283A</span><span class="cap">nav, chip lọc</span></div>
+          <div class="tr"><span class="mono">focus.ring</span><span class="sw" style="background: #5680E9"></span><span class="mono">5680E9</span><span class="cap">vòng 18%</span></div>
+          <div class="tr"><span class="mono">money.income</span><span class="sw" style="background: #23795A"></span><span class="mono">23795A</span><span class="cap">số thu</span></div>
+          <div class="tr"><span class="mono">money.expense</span><span class="sw" style="background: #22283A"></span><span class="mono">22283A</span><span class="cap">số chi</span></div>
+          <div class="tr"><span class="mono">money.transfer</span><span class="sw" style="background: #5C6378"></span><span class="mono">5C6378</span><span class="cap">chuyển ví</span></div>
+          <div class="tr"><span class="mono">status.danger</span><span class="sw" style="background: #B83434"></span><span class="mono">B83434</span><span class="cap">nền FBECEC</span></div>
+          <div class="tr"><span class="mono">status.warning</span><span class="sw" style="background: #7A5A00"></span><span class="mono">7A5A00</span><span class="cap">nền FBF4E0</span></div>
+          <div class="tr"><span class="mono">status.info</span><span class="sw" style="background: #1F6187"></span><span class="mono">1F6187</span><span class="cap">nền EDF7FD</span></div>
+          <div class="tr"><span class="mono">status.success</span><span class="sw" style="background: #23795A"></span><span class="mono">23795A</span><span class="cap">nền E9F5F0</span></div>
+          <div class="tr"><span class="mono">data.1</span><span class="sw" style="background: #5680E9"></span><span class="mono">5680E9</span><span class="cap">chuỗi chính</span></div>
+          <div class="tr"><span class="mono">data.2</span><span class="sw" style="background: #8860D0"></span><span class="mono">8860D0</span><span class="cap">chuỗi 2</span></div>
+          <div class="tr"><span class="mono">data.3</span><span class="sw" style="background: #5AB9EA"></span><span class="mono">5AB9EA</span><span class="cap">chuỗi 3</span></div>
+          <div class="tr"><span class="mono">data.4</span><span class="sw" style="background: #C1C8E4"></span><span class="mono">C1C8E4</span><span class="cap">"Khác"</span></div>
+        </div>
+      </div>
+
+      <span class="h" style="margin-top: 18px">Component tokens · ví dụ</span>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 28px">
+        <div style="display: flex; flex-direction: column">
+          <div class="kv"><span class="mono">button.primary.bg</span><span class="mono" style="color: #5C6378">action.primary</span></div>
+          <div class="kv"><span class="mono">button.height</span><span class="mono" style="color: #5C6378">size.button (52)</span></div>
+          <div class="kv"><span class="mono">input.border.focus</span><span class="mono" style="color: #5C6378">action.primary</span></div>
+          <div class="kv"><span class="mono">chip.selected.border</span><span class="mono" style="color: #5C6378">border.selected</span></div>
+        </div>
+        <div style="display: flex; flex-direction: column">
+          <div class="kv"><span class="mono">nav.bg</span><span class="mono" style="color: #5C6378">bg.surface + elevation.2</span></div>
+          <div class="kv"><span class="mono">nav.item.active.bg</span><span class="mono" style="color: #5C6378">action.ink</span></div>
+          <div class="kv"><span class="mono">card.radius</span><span class="mono" style="color: #5C6378">radius.xl (24)</span></div>
+          <div class="kv"><span class="mono">balanceCard.bg</span><span class="mono" style="color: #5C6378">bg.wash + wash recipe</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1100}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

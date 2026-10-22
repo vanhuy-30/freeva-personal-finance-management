@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Danh mục</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"cv11" 1}
+a,button{font-family:inherit}
+.ib{width:44px;height:44px;border-radius:999px;border:1px solid #EEF0F6;background:#FFFFFF;color:#22283A;display:flex;align-items:center;justify-content:center;box-sizing:border-box;text-decoration:none}
+.seg{flex:1 1 0;height:36px;border:none;border-radius:999px;background:transparent;color:#5C6378;font-size:14px;font-weight:500;display:flex;align-items:center;justify-content:center}
+.card{background:#FFFFFF;border-radius:20px;padding:4px 12px 4px 16px;box-shadow:0 1px 2px rgba(34,40,58,.04),0 8px 24px rgba(34,40,58,.05)}
+.p{display:flex;align-items:center;gap:12px;min-height:60px}
+.pl{display:flex;align-items:center;gap:12px;flex-grow:1;min-height:60px;text-decoration:none;color:#22283A}
+.pn{display:flex;flex-direction:column;gap:2px}
+.t1{font-size:15px;font-weight:500}
+.t2{font-size:12px;color:#5C6378}
+.c{display:flex;align-items:center;gap:12px;min-height:44px;padding-left:52px;text-decoration:none;color:#22283A;font-size:14px}
+.sep{border-top:1px solid #EEF0F5}
+.ci{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:0 0 40px}
+.dot{width:8px;height:8px;border-radius:999px;flex:0 0 8px}
+.tg{width:36px;height:36px;flex:0 0 36px;border-radius:999px;border:none;background:#F4F6FB;color:#3D4460;display:flex;align-items:center;justify-content:center;padding:0}
+.tg.on{background:#EEF2FD;color:#3F67D1}
+.go{width:36px;flex:0 0 36px;display:flex;justify-content:center}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; padding: 56px 20px 0 20px; gap: 16px">
+
+  <div style="display: flex; align-items: center; justify-content: space-between">
+    <a href="SettingsScreen.dc.html" class="ib" aria-label="Quay lại"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <h1 style="margin: 0; font-size: 17px; line-height: 24px; font-weight: 600">Danh mục</h1>
+    <a href="CatAdd.dc.html" class="ib" aria-label="Thêm danh mục"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></a>
+  </div>
+
+  <div role="tablist" aria-label="Loại danh mục" style="display: flex; background: #EAEDF4; border-radius: 999px; padding: 4px">
+    <button role="tab" aria-selected="true" class="seg" style="background: #FFFFFF; color: #22283A; font-weight: 600; box-shadow: 0 1px 3px rgba(34,40,58,.12)">Chi</button>
+    <button role="tab" aria-selected="false" class="seg">Thu</button>
+  </div>
+
+  <div class="card">
+    <div class="p">
+      <a href="CatEdit.dc.html" class="pl"><span class="ci" style="background: #EEF2FD; color: #3F67D1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 3v8a3 3 0 0 0 3 3v7M7 3v6M10 3v8a3 3 0 0 1-3 3M17 21V3c-2 1-3 4-3 8h3"></path></svg></span><span class="pn"><span class="t1">Ăn uống</span><span class="t2">2 danh mục con</span></span></a>
+      <button class="{{ anClass }}" aria-expanded="{{ anOpen }}" aria-label="Ăn uống: mở hoặc thu danh mục con" onClick="{{ toggleAn }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{ anRotate }}"><path d="M6 9l6 6 6-6"></path></svg></button>
+    </div>
+    <sc-if value="{{ anOpen }}" hint-placeholder-val="{{ true }}">
+      <a href="CatEdit.dc.html" class="c"><span class="dot" style="background: #8860D0"></span>Ăn vặt</a>
+      <a href="CatEdit.dc.html" class="c"><span class="dot" style="background: #2F9E76"></span>Đi chợ</a>
+    </sc-if>
+
+    <div class="p sep">
+      <a href="CatEdit.dc.html" class="pl"><span class="ci" style="background: #FBF4E0; color: #7A5A00"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"></path></svg></span><span class="pn"><span class="t1">Hóa đơn</span><span class="t2">3 danh mục con</span></span></a>
+      <button class="{{ hdClass }}" aria-expanded="{{ hdOpen }}" aria-label="Hóa đơn: mở hoặc thu danh mục con" onClick="{{ toggleHd }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{ hdRotate }}"><path d="M6 9l6 6 6-6"></path></svg></button>
+    </div>
+    <sc-if value="{{ hdOpen }}" hint-placeholder-val="{{ false }}">
+      <a href="CatEdit.dc.html" class="c"><span class="dot" style="background: #D4A017"></span>Điện nước</a>
+      <a href="CatEdit.dc.html" class="c"><span class="dot" style="background: #D4A017"></span>Internet</a>
+      <a href="CatEdit.dc.html" class="c"><span class="dot" style="background: #D4A017"></span>Điện thoại</a>
+    </sc-if>
+
+    <div class="p sep">
+      <a href="CatEdit.dc.html" class="pl"><span class="ci" style="background: #EDF7FD; color: #2A7FAE"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 17h14M6 17l1.5-6h9L18 17M8 11l1.5-4h5L16 11"></path><circle cx="8" cy="17.5" r="1.5"></circle><circle cx="16" cy="17.5" r="1.5"></circle></svg></span><span class="t1">Đi lại</span></a>
+      <span class="go"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9AA1B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></span>
+    </div>
+
+    <div class="p sep">
+      <a href="CatEdit.dc.html" class="pl"><span class="ci" style="background: #F4F0FB; color: #7048B8"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"></path></svg></span><span class="t1">Nhà ở</span></a>
+      <span class="go"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9AA1B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></span>
+    </div>
+
+    <div class="p sep">
+      <a href="CatEdit.dc.html" class="pl"><span class="ci" style="background: #E9F5F0; color: #23795A"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l1 14H5zM9 7a3 3 0 0 1 6 0"></path></svg></span><span class="t1">Mua sắm</span></a>
+      <span class="go"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9AA1B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></span>
+    </div>
+
+    <div class="p sep">
+      <a href="CatEdit.dc.html" class="pl"><span class="ci" style="background: #F4F6FB; color: #3D4460"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 12 5a5.5 5.5 0 0 0-10 3.5c0 2.3 1.5 4 3 5.5l7 7z"></path></svg></span><span class="t1">Sức khỏe</span></a>
+      <span class="go"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9AA1B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></span>
+    </div>
+  </div>
+
+  <a href="CatHidden.dc.html" style="display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 4px; color: #3D4460; text-decoration: none; font-size: 15px; font-weight: 500"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"></path></svg><span style="flex-grow: 1">Danh mục đã ẩn</span><span class="num" style="font-size: 13px; color: #5C6378">2</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C6378" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { an: true, hd: false };
+  }
+  renderVals() {
+    const an = this.state.an;
+    const hd = this.state.hd;
+    return {
+      anOpen: an,
+      hdOpen: hd,
+      anClass: an ? 'tg on' : 'tg',
+      hdClass: hd ? 'tg on' : 'tg',
+      anRotate: an ? 'transform: rotate(180deg)' : '',
+      hdRotate: hd ? 'transform: rotate(180deg)' : '',
+      toggleAn: () => this.setState({ an: !this.state.an }),
+      toggleHd: () => this.setState({ hd: !this.state.hd })
+    };
+  }
+}
+</script>
+</body>
+</html>

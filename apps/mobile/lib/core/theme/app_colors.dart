@@ -10,10 +10,10 @@ abstract final class AppColors {
   static const Color muted = Color(0xFFC1C8E4);
   static const Color accent = Color(0xFF8860D0);
 
-  static const Color text = Color(0xFF1B1F3B);
+  static const Color text = Color(0xFF22283A);
   static const Color textMuted = Color(0xFF5C6378);
   static const Color surface = Color(0xFFFFFFFF);
-  static const Color canvas = Color(0xFFF4F6FB);
+  static const Color canvas = Color(0xFFFCFDFF);
   static const Color onPrimary = Color(0xFFFFFFFF);
 
   static const Color success = Color(0xFF2F9E76);
@@ -21,7 +21,7 @@ abstract final class AppColors {
   static const Color warning = Color(0xFFD4A017);
 
   static const Color darkText = Color(0xFFF4F6FB);
-  static const Color darkTextMuted = Color(0xFFC1C8E4);
+  static const Color darkTextMuted = Color(0xFFA9B0C7);
   static const Color darkSurface = Color(0xFF1B1F33);
   static const Color darkCanvas = Color(0xFF12141F);
 }

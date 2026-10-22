@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Đồng bộ</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"cv11" 1}
+a,button{font-family:inherit}
+.ib{width:44px;height:44px;border-radius:999px;border:1px solid #EEF0F6;background:#FFFFFF;color:#22283A;display:flex;align-items:center;justify-content:center;box-sizing:border-box;text-decoration:none}
+.gh{font-size:12px;letter-spacing:1.4px;font-weight:600;color:#5C6378;padding:0 4px}
+.card{background:#FFFFFF;border-radius:20px;padding:0 16px;box-shadow:0 1px 2px rgba(34,40,58,.04),0 8px 24px rgba(34,40,58,.05)}
+.it{display:flex;align-items:center;gap:12px;padding:12px 0}
+.it+.it{border-top:1px solid #EEF0F5}
+.ti{width:40px;height:40px;border-radius:999px;background:#F4F6FB;display:flex;align-items:center;justify-content:center;color:#22283A;flex:0 0 40px}
+.tn{display:flex;flex-direction:column;flex:1 1 0;min-width:0;gap:2px}
+.t1{font-size:15px;font-weight:500;display:flex;justify-content:space-between;gap:8px}
+.t2{font-size:12px;color:#5C6378;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tag{height:20px;padding:0 7px;border-radius:999px;font-size:11px;font-weight:600;display:inline-flex;align-items:center;margin-right:4px}
+.b{height:32px;padding:0 12px;border-radius:999px;font-size:13px;font-weight:600;white-space:nowrap;display:flex;align-items:center;text-decoration:none;box-sizing:border-box}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; padding: 56px 20px 28px 20px; gap: 16px">
+
+  <div style="display: flex; align-items: center; justify-content: space-between">
+    <a href="SyncBanner.dc.html" class="ib" aria-label="Quay lại"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <h1 style="margin: 0; font-size: 17px; line-height: 24px; font-weight: 600">Đồng bộ</h1>
+    <span style="width: 44px"></span>
+  </div>
+
+  <div style="background: #FFFFFF; border-radius: 24px; padding: 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 1px 2px rgba(34,40,58,.04), 0 8px 24px rgba(34,40,58,.05)">
+    <span style="width: 44px; height: 44px; border-radius: 14px; background: #EDF7FD; color: #1F6187; display: flex; align-items: center; justify-content: center; flex: 0 0 44px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 2l20 20M5.8 8.2A6 6 0 0 0 6.5 20H17M21.5 17a4.5 4.5 0 0 0-3.5-7.4 6 6 0 0 0-8.3-4.8"></path></svg></span>
+    <span class="num" style="display: flex; flex-direction: column; flex: 1 1 0; gap: 2px"><span style="font-size: 15px; font-weight: 600">Chưa có mạng</span><span style="font-size: 13px; color: #5C6378">Lần cuối 09:30 hôm nay</span></span>
+    <a href="SyncRunning.dc.html" class="b" style="height: 40px; background: #3F67D1; color: #FFFFFF">Thử lại</a>
+  </div>
+
+  <span class="gh">CẦN BẠN XEM · 2</span>
+  <div class="card num" style="margin-top: -8px">
+    <div class="it"><span class="ti"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 3v8a3 3 0 0 0 3 3v7M7 3v6M10 3v8a3 3 0 0 1-3 3M17 21V3c-2 1-3 4-3 8h3"></path></svg></span><span class="tn"><span class="t1"><span>Phở Thìn</span><span style="font-weight: 600">−65.000</span></span><span class="t2"><span class="tag" style="background: #EEF2FD; color: #3352AA">Sửa</span>Đã đổi trên máy khác</span></span><a href="SyncConflict.dc.html" class="b" style="background: #22283A; color: #FFFFFF">Xem</a></div>
+    <div class="it"><span class="ti"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 17h14M6 17l1.5-6h9L18 17M8 11l1.5-4h5L16 11"></path><circle cx="8" cy="17.5" r="1.5"></circle><circle cx="16" cy="17.5" r="1.5"></circle></svg></span><span class="tn"><span class="t1"><span>Taxi</span><span style="font-weight: 600">−120.000</span></span><span class="t2"><span class="tag" style="background: #E9F5F0; color: #23795A">Thêm</span>Danh mục đã bị ẩn</span></span><a href="TxMore.dc.html" class="b" style="border: 1px solid #E4E7F0; color: #22283A">Sửa</a></div>
+  </div>
+
+  <span class="gh">ĐANG CHỜ GỬI · 3</span>
+  <div class="card num" style="margin-top: -8px">
+    <div class="it"><span class="ti"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 8h1a4 4 0 0 1 0 8h-1M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4zM6 2v3M10 2v3M14 2v3"></path></svg></span><span class="tn"><span class="t1"><span>Highlands</span><span style="font-weight: 600">−55.000</span></span><span class="t2"><span class="tag" style="background: #E9F5F0; color: #23795A">Thêm</span>09:12</span></span><a href="SyncDiscard.dc.html" class="b" aria-label="Bỏ thay đổi Highlands" style="padding: 0 8px; color: #5C6378"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a></div>
+    <div class="it"><span class="ti"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 17h14M6 17l1.5-6h9L18 17M8 11l1.5-4h5L16 11"></path><circle cx="8" cy="17.5" r="1.5"></circle><circle cx="16" cy="17.5" r="1.5"></circle></svg></span><span class="tn"><span class="t1"><span>Grab</span><span style="font-weight: 600">−48.000</span></span><span class="t2"><span class="tag" style="background: #EEF2FD; color: #3352AA">Sửa</span>09:30</span></span><a href="SyncDiscard.dc.html" class="b" aria-label="Bỏ thay đổi Grab" style="padding: 0 8px; color: #5C6378"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a></div>
+    <div class="it"><span class="ti"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 8h1a4 4 0 0 1 0 8h-1M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4zM6 2v3M10 2v3M14 2v3"></path></svg></span><span class="tn"><span class="t1"><span style="text-decoration: line-through; color: #5C6378">Cà phê</span><span style="font-weight: 600; color: #5C6378">−39.000</span></span><span class="t2"><span class="tag" style="background: #F4F6FB; color: #3D4460">Xoá</span>08:50</span></span><a href="SyncDiscard.dc.html" class="b" aria-label="Bỏ thay đổi Cà phê" style="padding: 0 8px; color: #5C6378"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a></div>
+  </div>
+  <span style="font-size: 13px; color: #5C6378; padding: 0 4px">Dữ liệu vẫn nằm trên máy này cho tới khi gửi xong.</span>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

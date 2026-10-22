@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Freeva · Content và UX writing</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"cv11" 1}
+.h{font-size:17px;font-weight:600}
+.panel{background:#F4F6FB;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:12px}
+.v{background:#FFFFFF;border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:3px}
+.vt{font-size:14px;font-weight:600}
+.vd{font-size:12px;line-height:17px;color:#5C6378}
+.dd{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.do,.dont{border-radius:14px;padding:10px 12px;font-size:12px;line-height:17px}
+.do{background:#E9F5F0;color:#1B5E46}
+.dont{background:#FBECEC;color:#8E2A2A}
+.lab{font-size:10px;font-weight:700;letter-spacing:1px;display:block;margin-bottom:3px}
+.gr{display:grid;grid-template-columns:120px 1fr;gap:10px;padding:7px 0;border-bottom:1px solid #E4E7F0;font-size:12px;line-height:17px}
+</style>
+</helmet>
+<div style="width: 1280px; height: 820px; box-sizing: border-box; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; padding: 56px 64px; display: flex; flex-direction: column; gap: 28px">
+
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <span style="font-size: 12px; letter-spacing: 2px; font-weight: 600; color: #5C6378">GUIDELINES — CONTENT &amp; UX WRITING</span>
+    <h1 style="margin: 0; font-size: 40px; line-height: 44px; font-weight: 600; letter-spacing: -1px">Nói ngắn, nói thật, không phán xét</h1>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1.15fr 1fr; gap: 20px; flex-grow: 1">
+    <div class="panel">
+      <span class="h">Giọng văn</span>
+      <div class="v"><span class="vt">Rõ ràng</span><span class="vd">Một ý một câu. Động từ trước: "Ghi khoản chi", không "Thực hiện ghi nhận".</span></div>
+      <div class="v"><span class="vt">Thân thiện, không suồng sã</span><span class="vd">Gọi bằng tên hoặc "bạn". Không emoji, không dấu chấm than liên tiếp.</span></div>
+      <div class="v"><span class="vt">Không phán xét tiền</span><span class="vd">Nêu số liệu, không đánh giá: "Chi tháng này cao hơn tháng 9 12%", không "Bạn tiêu quá tay".</span></div>
+      <div class="v"><span class="vt">Ít chữ giải thích</span><span class="vd">Nếu cần một đoạn văn để hiểu màn hình, sửa thiết kế trước.</span></div>
+    </div>
+
+    <div class="panel">
+      <span class="h">Nên / không nên</span>
+      <div class="dd">
+        <div class="do"><span class="lab">NÊN</span>Lưu khoản chi</div>
+        <div class="dont"><span class="lab">KHÔNG</span>OK · Xác nhận · Submit</div>
+      </div>
+      <div class="dd">
+        <div class="do"><span class="lab">NÊN</span>Chưa lưu được. Đã giữ bản nháp — thử lại khi có mạng.</div>
+        <div class="dont"><span class="lab">KHÔNG</span>Lỗi 500. Đã xảy ra lỗi không xác định.</div>
+      </div>
+      <div class="dd">
+        <div class="do"><span class="lab">NÊN</span>Xoá giao dịch này? Số dư ví Tiền mặt sẽ được cộng lại 65.000 ₫.</div>
+        <div class="dont"><span class="lab">KHÔNG</span>Bạn có chắc chắn muốn xoá không?</div>
+      </div>
+      <div class="dd">
+        <div class="do"><span class="lab">NÊN</span>Chưa có giao dịch. Ghi khoản chi đầu tiên chỉ mất vài giây.</div>
+        <div class="dont"><span class="lab">KHÔNG</span>Không có dữ liệu.</div>
+      </div>
+      <span class="vd">Công thức lỗi: <span style="color: #22283A; font-weight: 600">chuyện gì xảy ra + dữ liệu có an toàn không + làm gì tiếp</span>. Không đổ lỗi cho người dùng.</span>
+    </div>
+
+    <div class="panel">
+      <span class="h">Định dạng và thuật ngữ</span>
+      <div style="display: flex; flex-direction: column">
+        <div class="gr num"><span style="font-weight: 600">Tiền</span><span style="color: #3D4460">18.500.000 ₫ · rút gọn 18,5tr / 850k</span></div>
+        <div class="gr"><span style="font-weight: 600">Ngày</span><span style="color: #3D4460">Hôm nay · Hôm qua · Thứ Hai, 20/10 · 20/10/2025 (khác năm)</span></div>
+        <div class="gr num"><span style="font-weight: 600">Giờ</span><span style="color: #3D4460">07:42 (24 giờ)</span></div>
+        <div class="gr num"><span style="font-weight: 600">Phần trăm</span><span style="color: #3D4460">12% · −6% so với T9</span></div>
+        <div class="gr"><span style="font-weight: 600">Ví</span><span style="color: #3D4460">Không dùng "tài khoản" cho nơi giữ tiền</span></div>
+        <div class="gr"><span style="font-weight: 600">Ghi chi / Ghi thu</span><span style="color: #3D4460">Hành động. "Khoản chi" là bản ghi</span></div>
+        <div class="gr"><span style="font-weight: 600">Chuyển ví</span><span style="color: #3D4460">Giữa hai ví của chính mình; không phải "chuyển khoản"</span></div>
+        <div class="gr" style="border-bottom: none"><span style="font-weight: 600">Danh mục · Nhãn</span><span style="color: #3D4460">Danh mục: một, bắt buộc. Nhãn: nhiều, tuỳ chọn</span></div>
+      </div>
+      <span class="vd">Mọi chuỗi qua l10n (vi mặc định, en thứ hai). Viết tiếng Việt trước, dịch sau.</span>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":820}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Freeva · Accessibility, adaptive, platform</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"cv11" 1}
+.h{font-size:17px;font-weight:600}
+.panel{background:#F4F6FB;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:12px}
+.it{display:flex;flex-direction:column;gap:3px;padding:10px 0;border-bottom:1px solid #E4E7F0}
+.it:last-child{border-bottom:none}
+.t{font-size:13px;font-weight:600}
+.d{font-size:12px;line-height:18px;color:#5C6378}
+.cr{display:grid;grid-template-columns:1fr 52px 40px;gap:8px;align-items:center;font-size:12px;padding:5px 0}
+.pass{font-size:10px;font-weight:600;color:#23795A;background:#E9F5F0;border-radius:999px;padding:2px 6px;text-align:center}
+.fail{font-size:10px;font-weight:600;color:#B83434;background:#FBECEC;border-radius:999px;padding:2px 6px;text-align:center}
+.pr{display:grid;grid-template-columns:110px 1fr 1fr;gap:10px;padding:8px 0;border-bottom:1px solid #E4E7F0;font-size:12px;line-height:17px}
+</style>
+</helmet>
+<div style="width: 1280px; height: 860px; box-sizing: border-box; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; padding: 56px 64px; display: flex; flex-direction: column; gap: 28px">
+
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <span style="font-size: 12px; letter-spacing: 2px; font-weight: 600; color: #5C6378">GUIDELINES — ACCESSIBILITY · ADAPTIVE · PLATFORM</span>
+    <h1 style="margin: 0; font-size: 40px; line-height: 44px; font-weight: 600; letter-spacing: -1px">Ai cũng đọc được số tiền của mình</h1>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr 1.25fr; gap: 20px; flex-grow: 1">
+    <div class="panel">
+      <span class="h">Accessibility</span>
+      <div style="background: #FFFFFF; border-radius: 16px; padding: 8px 12px">
+        <div class="cr num"><span>Ink trên canvas</span><span>14.7:1</span><span class="pass">AA</span></div>
+        <div class="cr num"><span>Text muted trên trắng</span><span>6.0:1</span><span class="pass">AA</span></div>
+        <div class="cr num"><span>Trắng trên action 3F67D1</span><span>5.2:1</span><span class="pass">AA</span></div>
+        <div class="cr num"><span>Trắng trên primary 5680E9</span><span>3.7:1</span><span class="fail">chỉ chữ lớn</span></div>
+        <div class="cr num"><span>Thu 23795A trên trắng</span><span>5.2:1</span><span class="pass">AA</span></div>
+      </div>
+      <div class="it"><span class="t">Đọc số tiền</span><span class="d">Nhãn đọc màn hình viết đầy đủ: "trừ 65 nghìn đồng, Phở Thìn, ăn uống, hôm nay". Số đang ẩn đọc là "số dư đã ẩn".</span></div>
+      <div class="it"><span class="t">Không chỉ dựa vào màu</span><span class="d">Thu/chi có dấu + / −; lỗi có icon và chữ; biểu đồ có chú thích.</span></div>
+      <div class="it"><span class="t">Chạm và nhãn</span><span class="d">Vùng chạm ≥ 44. Mọi nút icon có nhãn. Thứ tự đọc theo thứ tự hiển thị.</span></div>
+    </div>
+
+    <div class="panel">
+      <span class="h">Responsive &amp; adaptive</span>
+      <div class="it"><span class="t">320 pt</span><span class="d">Lề 16. Số dư 32. Menu nhanh còn 4 ô nhưng nhãn xuống 2 dòng. Chip cuộn ngang.</span></div>
+      <div class="it"><span class="t">390 pt · chuẩn</span><span class="d">Thiết kế gốc của mọi màn mẫu.</span></div>
+      <div class="it"><span class="t">≥ 430 pt và tablet</span><span class="d">Nội dung giới hạn rộng 480, căn giữa. Không giãn thẻ ra hết màn.</span></div>
+      <div class="it"><span class="t">Cỡ chữ hệ thống</span><span class="d">Hỗ trợ tới 1.3×. Dòng giao dịch cho phép 2 dòng tên; số tiền không bao giờ bị cắt.</span></div>
+      <div class="it"><span class="t">Bàn phím và hướng</span><span class="d">Chỉ dọc. Nút lưu nổi trên bàn phím hệ thống. Giảm chuyển động: thay trượt bằng mờ dần.</span></div>
+    </div>
+
+    <div class="panel">
+      <span class="h">iOS và Android</span>
+      <span class="d">Một giao diện cho cả hai; chỉ khác ở hành vi hệ thống.</span>
+      <div style="display: flex; flex-direction: column">
+        <div class="pr" style="font-weight: 600; color: #5C6378"><span></span><span>iOS</span><span>Android</span></div>
+        <div class="pr"><span class="t">Quay lại</span><span class="d">Vuốt từ mép trái</span><span class="d">Nút / cử chỉ back hệ thống; đóng sheet trước</span></div>
+        <div class="pr"><span class="t">Sinh trắc</span><span class="d">"Face ID" / "Touch ID"</span><span class="d">"Vân tay" / "Khuôn mặt" theo máy</span></div>
+        <div class="pr"><span class="t">Phản hồi chạm</span><span class="d">Haptic nhẹ cho + và phím số</span><span class="d">Rung ngắn; không dùng hiệu ứng ripple</span></div>
+        <div class="pr"><span class="t">Thanh trạng thái</span><span class="d">Chữ tối trên canvas</span><span class="d">Edge-to-edge, thanh điều hướng trong suốt</span></div>
+        <div class="pr"><span class="t">Chọn ngày, giờ</span><span class="d" style="grid-column: span 2">Dùng sheet riêng của Freeva trên cả hai, không dùng picker hệ thống.</span></div>
+        <div class="pr" style="border-bottom: none"><span class="t">Font</span><span class="d" style="grid-column: span 2">Inter đóng gói trong app; không dùng SF Pro hay Roboto để giữ giống nhau.</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":860}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

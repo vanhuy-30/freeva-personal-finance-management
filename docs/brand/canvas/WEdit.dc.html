@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Sửa ví</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"cv11" 1}
+a,button,input{font-family:inherit}
+.fld{border-radius:16px;border:1px solid #E4E7F0;background:#FFFFFF;padding:8px 14px;display:flex;flex-direction:column;gap:2px;box-sizing:border-box;min-height:60px;justify-content:center}
+.fld label,.fl{font-size:12px;color:#5C6378}
+.fld input{border:none;outline:none;background:transparent;font-size:16px;color:#22283A;padding:0}
+.lk{border-radius:16px;background:#F4F6FB;padding:8px 14px;display:flex;align-items:center;gap:10px;min-height:60px;box-sizing:border-box}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; padding: 56px 20px 28px 20px; gap: 16px">
+
+  <div style="display: flex; align-items: center; justify-content: space-between">
+    <a href="WDetail.dc.html" aria-label="Đóng" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #EEF0F6; background: #FFFFFF; color: #22283A; display: flex; align-items: center; justify-content: center; box-sizing: border-box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a>
+    <h1 style="margin: 0; font-size: 17px; line-height: 24px; font-weight: 600">Sửa ví</h1>
+    <span style="width: 44px"></span>
+  </div>
+
+  <div class="fld"><label for="en">Tên ví</label><input id="en" type="text" value="Vietcombank" maxlength="100"></div>
+
+  <div class="lk" aria-disabled="true" aria-label="Ngân hàng, VND, đã khoá vì ví có giao dịch"><span style="display: flex; flex-direction: column; flex-grow: 1; gap: 2px"><span class="fl">Loại ví · Tiền tệ</span><span style="font-size: 16px; color: #3D4460">Ngân hàng · VND</span></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C6378" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg></div>
+
+  <div class="fld"><label for="eb">Số dư ban đầu</label><span class="num" style="display: flex; align-items: baseline; gap: 4px"><input id="eb" type="text" inputmode="numeric" value="40.000.000" style="width: 100%"><span style="font-size: 14px; color: #5C6378">₫</span></span></div>
+
+  <a href="WList.dc.html" style="margin-top: 8px; align-self: center; height: 44px; padding: 0 16px; display: flex; align-items: center; gap: 8px; color: #3D4460; font-size: 15px; font-weight: 500; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"></path></svg>Ẩn ví</a>
+
+  <a href="WDetail.dc.html" style="margin-top: auto; height: 56px; border-radius: 999px; background: #3F67D1; color: #FFFFFF; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center; text-decoration: none">Lưu thay đổi</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Sắp xếp ví</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a,button{font-family:inherit}
+.row{display:flex;align-items:center;gap:12px;height:64px;padding:0 8px 0 12px;background:#FFFFFF;border-radius:16px;box-shadow:0 1px 2px rgba(34,40,58,.04),0 6px 18px rgba(34,40,58,.05)}
+.grip{color:#9AA1B8;display:flex}
+.wi{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:0 0 40px}
+.t1{font-size:15px;font-weight:500;flex-grow:1}
+.mv{width:40px;height:40px;border-radius:999px;border:none;background:transparent;color:#3D4460;display:flex;align-items:center;justify-content:center}
+.mv[disabled]{color:#C9CEDD}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; padding: 56px 20px 0 20px; gap: 16px">
+
+  <div style="display: flex; align-items: center; justify-content: space-between">
+    <span style="width: 44px"></span>
+    <h1 style="margin: 0; font-size: 17px; line-height: 24px; font-weight: 600">Sắp xếp ví</h1>
+    <a href="WList.dc.html" style="height: 44px; display: flex; align-items: center; color: #3F67D1; font-size: 15px; font-weight: 600; text-decoration: none">Xong</a>
+  </div>
+  <span style="font-size: 14px; color: #5C6378; padding: 0 4px">Giữ và kéo, hoặc dùng mũi tên.</span>
+
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <div class="row"><span class="grip"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.5"></circle><circle cx="15" cy="6" r="1.5"></circle><circle cx="9" cy="12" r="1.5"></circle><circle cx="15" cy="12" r="1.5"></circle><circle cx="9" cy="18" r="1.5"></circle><circle cx="15" cy="18" r="1.5"></circle></svg></span><span class="wi" style="background: #EEF2FD; color: #3F67D1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-6 9 6M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 21h18"></path></svg></span><span class="t1">Vietcombank</span><button class="mv" disabled aria-label="Đưa Vietcombank lên"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 15l-6-6-6 6"></path></svg></button><button class="mv" aria-label="Đưa Vietcombank xuống"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></button></div>
+
+    <div class="row" style="transform: translateX(6px) rotate(-1deg); border: 1.5px solid #3F67D1; box-shadow: 0 16px 32px rgba(34,40,58,.16)"><span class="grip" style="color: #3F67D1"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.5"></circle><circle cx="15" cy="6" r="1.5"></circle><circle cx="9" cy="12" r="1.5"></circle><circle cx="15" cy="12" r="1.5"></circle><circle cx="9" cy="18" r="1.5"></circle><circle cx="15" cy="18" r="1.5"></circle></svg></span><span class="wi" style="background: #F4F0FB; color: #7048B8"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="3"></rect><path d="M11 18h2"></path></svg></span><span class="t1">MoMo</span><button class="mv" aria-label="Đưa MoMo lên"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 15l-6-6-6 6"></path></svg></button><button class="mv" aria-label="Đưa MoMo xuống"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></button></div>
+
+    <div style="height: 64px; border-radius: 16px; border: 1.5px dashed #BCCDF7; background: #EEF2FD" aria-hidden="true"></div>
+
+    <div class="row"><span class="grip"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.5"></circle><circle cx="15" cy="6" r="1.5"></circle><circle cx="9" cy="12" r="1.5"></circle><circle cx="15" cy="12" r="1.5"></circle><circle cx="9" cy="18" r="1.5"></circle><circle cx="15" cy="18" r="1.5"></circle></svg></span><span class="wi" style="background: #EDF7FD; color: #2A7FAE"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="13" rx="3"></rect><circle cx="12" cy="12.5" r="2.5"></circle></svg></span><span class="t1">Tiền mặt</span><button class="mv" aria-label="Đưa Tiền mặt lên"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 15l-6-6-6 6"></path></svg></button><button class="mv" aria-label="Đưa Tiền mặt xuống"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></button></div>
+
+    <div class="row"><span class="grip"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.5"></circle><circle cx="15" cy="6" r="1.5"></circle><circle cx="9" cy="12" r="1.5"></circle><circle cx="15" cy="12" r="1.5"></circle><circle cx="9" cy="18" r="1.5"></circle><circle cx="15" cy="18" r="1.5"></circle></svg></span><span class="wi" style="background: #F4F6FB; color: #22283A"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="3"></rect><path d="M2.5 10h19M6 15h4"></path></svg></span><span class="t1">Thẻ chính</span><button class="mv" aria-label="Đưa Thẻ chính lên"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 15l-6-6-6 6"></path></svg></button><button class="mv" disabled aria-label="Đưa Thẻ chính xuống"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></button></div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Freeva · Dark mode</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"cv11" 1}
+button{font-family:inherit}
+.dwash{background:radial-gradient(120% 90% at 100% 0%, rgba(132,206,235,.20) 0%, rgba(132,206,235,0) 55%), radial-gradient(90% 80% at 0% 100%, rgba(136,96,208,.28) 0%, rgba(136,96,208,0) 60%), #232842}
+.tr{display:grid;grid-template-columns:150px 1fr 1fr;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid #EEF0F5;font-size:13px}
+.sw{display:flex;align-items:center;gap:8px}
+.dot{width:22px;height:22px;border-radius:7px;border:1px solid rgba(34,40,58,.12)}
+</style>
+</helmet>
+<div style="width: 1280px; height: 760px; box-sizing: border-box; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; padding: 56px 64px; display: flex; flex-direction: column; gap: 28px">
+
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <span style="font-size: 12px; letter-spacing: 2px; font-weight: 600; color: #5C6378">DESIGN TOKENS — SEMANTIC · DARK MODE</span>
+    <h1 style="margin: 0; font-size: 40px; line-height: 44px; font-weight: 600; letter-spacing: -1px">Cùng sắc brand, nền navy tím</h1>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1.3fr 1fr; gap: 48px; flex-grow: 1">
+    <div style="display: flex; flex-direction: column">
+      <div class="tr" style="font-size: 12px; font-weight: 600; color: #5C6378; border-bottom-color: #E4E7F0"><span>Token</span><span>Light</span><span>Dark</span></div>
+      <div class="tr"><span style="font-weight: 600">canvas</span><span class="sw"><span class="dot" style="background: #FCFDFF"></span>FCFDFF</span><span class="sw"><span class="dot" style="background: #12141F"></span>12141F</span></div>
+      <div class="tr"><span style="font-weight: 600">surface</span><span class="sw"><span class="dot" style="background: #FFFFFF"></span>FFFFFF</span><span class="sw"><span class="dot" style="background: #1B1F33"></span>1B1F33</span></div>
+      <div class="tr"><span style="font-weight: 600">surface.subtle</span><span class="sw"><span class="dot" style="background: #F4F6FB"></span>F4F6FB</span><span class="sw"><span class="dot" style="background: #232842"></span>232842</span></div>
+      <div class="tr"><span style="font-weight: 600">divider</span><span class="sw"><span class="dot" style="background: #EEF0F5"></span>EEF0F5</span><span class="sw"><span class="dot" style="background: #2C3252"></span>2C3252</span></div>
+      <div class="tr"><span style="font-weight: 600">text</span><span class="sw"><span class="dot" style="background: #22283A"></span>22283A</span><span class="sw"><span class="dot" style="background: #F4F6FB"></span>F4F6FB</span></div>
+      <div class="tr"><span style="font-weight: 600">text.muted</span><span class="sw"><span class="dot" style="background: #5C6378"></span>5C6378</span><span class="sw"><span class="dot" style="background: #A9B0C7"></span>A9B0C7</span></div>
+      <div class="tr"><span style="font-weight: 600">action (nút, link)</span><span class="sw"><span class="dot" style="background: #3F67D1"></span>3F67D1</span><span class="sw"><span class="dot" style="background: #99B2F2"></span>99B2F2 chữ</span></div>
+      <div class="tr"><span style="font-weight: 600">income.text</span><span class="sw"><span class="dot" style="background: #23795A"></span>23795A</span><span class="sw"><span class="dot" style="background: #7FD8B4"></span>7FD8B4</span></div>
+      <div class="tr"><span style="font-weight: 600">danger.text</span><span class="sw"><span class="dot" style="background: #B83434"></span>B83434</span><span class="sw"><span class="dot" style="background: #F29B9B"></span>F29B9B</span></div>
+      <div class="tr" style="border-bottom: none"><span style="font-weight: 600">nav.active</span><span class="sw"><span class="dot" style="background: #22283A"></span>ink</span><span class="sw"><span class="dot" style="background: #F4F6FB"></span>đảo: nền sáng, icon ink</span></div>
+      <span style="font-size: 12px; line-height: 17px; color: #5C6378; margin-top: 12px">Dark là chế độ phụ: cùng component, chỉ đổi token. Nền nút chính giữ 3F67D1. Bóng đổ thay bằng viền divider; lớp màu mờ giảm highlight còn 20%.</span>
+    </div>
+
+    <div style="background: #12141F; border-radius: 32px; padding: 24px 20px; display: flex; flex-direction: column; gap: 14px; color: #F4F6FB; position: relative; overflow: hidden">
+      <div class="dwash" style="border-radius: 24px; padding: 18px; display: flex; flex-direction: column; gap: 12px">
+        <span style="font-size: 13px; color: #C9CEDD">Tổng số dư · 4 ví</span>
+        <div class="num" style="display: flex; align-items: baseline; gap: 6px; margin-top: -6px"><span style="font-size: 34px; line-height: 40px; font-weight: 600; letter-spacing: -1px">48.250.000</span><span style="font-size: 18px; color: #A9B0C7">₫</span></div>
+        <div class="num" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+          <div style="background: rgba(255,255,255,.06); border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; color: #A9B0C7">Thu</span><span style="font-size: 15px; font-weight: 600; color: #7FD8B4">+18.500.000</span></div>
+          <div style="background: rgba(255,255,255,.06); border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; color: #A9B0C7">Chi</span><span style="font-size: 15px; font-weight: 600">−9.320.000</span></div>
+        </div>
+      </div>
+      <div style="background: #1B1F33; border: 1px solid #2C3252; border-radius: 20px; padding: 4px 16px">
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0">
+          <div style="width: 40px; height: 40px; border-radius: 999px; background: #232842; display: flex; align-items: center; justify-content: center; color: #F4F6FB"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 3v8a3 3 0 0 0 3 3v7M7 3v6M10 3v8a3 3 0 0 1-3 3M17 21V3c-2 1-3 4-3 8h3"></path></svg></div>
+          <div style="display: flex; flex-direction: column; flex-grow: 1"><span style="font-size: 15px; font-weight: 500">Phở Thìn</span><span style="font-size: 12px; color: #A9B0C7">Ăn uống · Tiền mặt</span></div>
+          <span class="num" style="font-size: 15px; font-weight: 600">−65.000</span>
+        </div>
+      </div>
+      <nav aria-label="Điều hướng chính (dark)" style="margin-top: auto; height: 60px; border-radius: 999px; background: #232842; border: 1px solid #2C3252; display: flex; align-items: center; justify-content: space-between; padding: 0 6px">
+        <a href="#" aria-label="Tổng quan" aria-current="page" style="width: 46px; height: 46px; border-radius: 999px; background: #F4F6FB; color: #22283A; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"></path></svg></a>
+        <a href="#" aria-label="Giao dịch" style="width: 46px; height: 46px; color: #A9B0C7; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h13M7 12h13M7 20h13M3 4h.01M3 12h.01M3 20h.01"></path></svg></a>
+        <a href="#" aria-label="Ghi giao dịch" style="width: 50px; height: 50px; border-radius: 999px; background: #3F67D1; color: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></a>
+        <a href="#" aria-label="Báo cáo" style="width: 46px; height: 46px; color: #A9B0C7; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12A9 9 0 1 1 12 3v9z"></path><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"></path></svg></a>
+        <a href="#" aria-label="Cá nhân" style="width: 46px; height: 46px; color: #A9B0C7; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg></a>
+      </nav>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":760}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

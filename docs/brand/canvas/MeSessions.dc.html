@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Phiên đăng nhập</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"cv11" 1}
+a,button{font-family:inherit}
+.ib{width:44px;height:44px;border-radius:999px;border:1px solid #EEF0F6;background:#FFFFFF;color:#22283A;display:flex;align-items:center;justify-content:center;box-sizing:border-box;text-decoration:none}
+.s{display:flex;align-items:center;gap:12px;padding:14px 0}
+.s+.s{border-top:1px solid #EEF0F5}
+.si{width:40px;height:40px;border-radius:12px;background:#F4F6FB;color:#3D4460;display:flex;align-items:center;justify-content:center;flex:0 0 40px}
+.rv{height:36px;padding:0 14px;border-radius:999px;border:1px solid #F29B9B;background:#FFFFFF;color:#B83434;font-size:13px;font-weight:600;white-space:nowrap;flex:0 0 auto}
+.st{display:flex;flex-direction:column;flex:1 1 0;min-width:0;gap:2px}
+.sub{font-size:12px;color:#5C6378;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; padding: 56px 20px 28px 20px; gap: 16px">
+
+  <div style="display: flex; align-items: center; justify-content: space-between">
+    <a href="MeSecurity.dc.html" class="ib" aria-label="Quay lại"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <h1 style="margin: 0; font-size: 17px; line-height: 24px; font-weight: 600">Phiên đăng nhập</h1>
+    <span style="width: 44px"></span>
+  </div>
+
+  <span style="font-size: 14px; color: #5C6378; padding: 0 4px">Không nhận ra phiên nào thì thu hồi ngay.</span>
+
+  <div class="num" style="background: #FFFFFF; border-radius: 20px; padding: 0 16px; box-shadow: 0 1px 2px rgba(34,40,58,.04), 0 8px 24px rgba(34,40,58,.05)">
+    <div class="s"><span class="si" style="background: #E9F5F0; color: #23795A"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="3"></rect><path d="M11 18h2"></path></svg></span><span class="st"><span style="font-size: 15px; font-weight: 600">Máy này</span><span class="sub">Từ 02/10 · hết hạn 01/11</span></span><span style="height: 24px; padding: 0 10px; border-radius: 999px; background: #E9F5F0; color: #23795A; font-size: 12px; font-weight: 600; display: flex; align-items: center; white-space: nowrap; flex: 0 0 auto">Đang dùng</span></div>
+    <div class="s"><span class="si"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="3"></rect><path d="M11 18h2"></path></svg></span><span class="st"><span style="font-size: 15px; font-weight: 500">Phiên khác</span><span class="sub">Từ 18/10 · hết hạn 17/11</span></span><button class="rv" aria-label="Thu hồi phiên đăng nhập ngày 18/10">Thu hồi</button></div>
+  </div>
+
+  <a href="MeHome.dc.html" style="margin-top: auto; height: 56px; border-radius: 999px; border: 1px solid #F29B9B; background: #FFFFFF; color: #B83434; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center; text-decoration: none">Đăng xuất mọi máy khác</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
