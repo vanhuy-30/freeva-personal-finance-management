@@ -3,8 +3,7 @@
 Task `DS-P2-001`. Áp cho `apps/mobile`; `apps/web-admin` chỉ dùng chung token màu.
 Nguồn token: [`packages/design-tokens/tokens.json`](../../packages/design-tokens/tokens.json).
 Canvas thiết kế (riêng tư, cần được chia sẻ mới mở được):
-<https://claude.ai/artifact/SmyaVvz57doJiAM6Kn678T>. Ảnh tham chiếu:
-[references/](references/).
+<https://claude.ai/artifact/SmyaVvz57doJiAM6Kn678T>.
 
 Khi tài liệu này và canvas lệch nhau, **token trong repo thắng**, rồi tới tài liệu
 này, cuối cùng là canvas.
@@ -100,7 +99,7 @@ Inter 400/500/600, đóng gói trong app cho cả iOS và Android.
   Màu lấy từ token. Bật giảm chuyển động thì hiện khung tĩnh.
 - **Minh hoạ nét vẽ tay** (onboarding, xác nhận, màn trống lớn): nét ink 2.4 đầu tròn, mảng tô
   đặc ink rất ít, đúng một mảng màu brand nhạt (`blue.100`), chấm/vòng nhỏ dưới đất làm bóng.
-  Vẽ bằng SVG (Flutter: `flutter_svg` hoặc `CustomPainter`). Tham chiếu `references/13`, `17`.
+  Vẽ bằng SVG (Flutter: `flutter_svg` hoặc `CustomPainter`).
   Mẫu đầu tiên: "tự do tài chính" ở A1.5.
 - **Logo chỉ xuất hiện ở splash và app icon**, không đặt trong màn hình chức năng. Avatar dùng
   chữ cái đầu tên.
@@ -141,7 +140,7 @@ Sinh Dart cho Flutter thuộc `DS-P2-002`.
 |---|---|
 | Buttons | Primary (`action.primary`), Ink (bước tiếp theo), Secondary (viền), Destructive, Text. Cỡ L 56 · M 52 · S 44 · XS 40. Nút icon 44 / 36 trên thẻ. Nút + 56 chỉ ở giữa bottom nav. Một nút primary mỗi màn. |
 | Inputs & selection | Trường nhập nhãn trong ô; focus, lỗi, khoá. **Ô nhập viên thuốc có icon** chỉ cho màn tài khoản. Ô chọn mở sheet. Ô tìm kiếm. Nhập số tiền bằng bàn phím riêng có phím `000`. Segmented (2–4 lựa chọn), chip chọn (viền ink), chip lọc (nền ink), **thẻ chọn** (nền `tint.blue`, viền primary, dấu tích), công tắc, radio, checkbox. Nút đăng nhập Google (nền nhạt) / Apple (ink). |
-| Navigation | Bottom nav 4 tab + nút +, chỉ icon, mục đang chọn là vòng ink. Nút + nổi nửa trên thanh (lệch lên 26), thanh có khe cắt rộng hơn nút 6 mỗi bên, mép khe cong lõm (Flutter: vẽ bằng `CustomPainter`, không giả bằng viền màu nền). Tham chiếu `references/18`. Thanh trên: tiêu đề lớn · màn đẩy vào · modal. Segmented trong trang. Bottom sheet. |
+| Navigation | Bottom nav 4 tab + nút +, chỉ icon, mục đang chọn là vòng ink. Nút + nổi nửa trên thanh (lệch lên 26), thanh có khe cắt rộng hơn nút 6 mỗi bên, mép khe cong lõm (Flutter: vẽ bằng `CustomPainter`, không giả bằng viền màu nền). Thanh trên: tiêu đề lớn · màn đẩy vào · modal. Segmented trong trang. Bottom sheet. |
 | Cards & data | Thẻ số dư (wash, duy nhất), thẻ ví, menu nhanh, ô chỉ số, thanh tiến độ (hạn mức thẻ), thanh phân bổ, biểu đồ cột theo kỳ. |
 | Lists | Dòng giao dịch (icon 40 · tên + danh mục · ví · số tiền có dấu, không ₫), nhóm theo ngày kèm tổng ròng, vuốt để sửa/xoá, danh sách cài đặt. |
 | Feedback | Toast ink (4 s, 6 s nếu có Hoàn tác), banner trong luồng nội dung, hộp thoại xác nhận, trạng thái trống, skeleton, lỗi có nút thử lại. |

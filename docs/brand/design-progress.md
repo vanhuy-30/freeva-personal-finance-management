@@ -54,7 +54,7 @@ Tám nhóm A–H đã chốt. Còn:
 - **Ẩn số dư chỉ ẩn số dư**, không ẩn thu/chi hay số tiền giao dịch.
 - **Đồng bộ chạy ngầm, không làm mất dữ liệu:** chỉ hiện khi có việc cần người dùng; luôn nói rõ thay đổi vẫn nằm trên máy.
 - **Màu giữ như spec.** Đã thử ba mức tăng màu (icon danh mục hai tông → nền nhuộm xanh → khối màu đậm đầu màn); product owner chọn giữ nguyên. Không đề xuất lại nếu chưa được hỏi.
-- Product owner gửi ảnh tham chiếu thường xuyên: lưu vào `references/` kèm một dòng mô tả trong `references/README.md`.
+- Product owner gửi ảnh tham chiếu thường xuyên: chỉ dùng để thiết kế, **không lưu vào repo**. Điều rút ra từ ảnh thì ghi thành chữ vào spec hoặc file pattern.
 
 ## Ghi chú kỹ thuật cho người sửa canvas
 

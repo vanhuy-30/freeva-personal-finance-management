@@ -12,7 +12,6 @@ Board brand gốc (logo, 5 màu): [ui-design-system.png](ui-design-system.png).
 | [canvas/](canvas/) | Bản sao nguồn canvas (`.dc.html`) |
 | [palette.md](palette.md) | Bảng màu, thang sắc độ, token semantic light/dark |
 | [`packages/design-tokens`](../../packages/design-tokens/) | Nguồn hex và mọi token; `tokens.css` sinh từ `tokens.json` |
-| [references/](references/) | Ảnh tham chiếu phong cách dùng khi dựng v2 |
 | [Canvas thiết kế](https://claude.ai/artifact/SmyaVvz57doJiAM6Kn678T) | Board trực quan (riêng tư, cần được chia sẻ) |
 
 Không copy UI Facebook/Timelikes. UI sản phẩm chỉ dùng token brand/semantic — không hardcode hex trong widget/component.
