@@ -31,7 +31,7 @@
 - DoD: luồng và màn theo [A-onboarding-auth.md](../docs/brand/patterns/A-onboarding-auth.md): Welcome → Mục tiêu (tối đa 2) → Thói quen → Ngân sách (ẩn hoặc lưu tạm nếu chưa có `BE-P2-E02`) → Tạo tài khoản → Thiết lập tài chính (không bắt buộc) → Trang chính có checklist. Đăng nhập email + mật khẩu một màn. PIN không chặn đường vào app. Deep link xác nhận email / đặt lại mật khẩu và Google/Apple mobile tách task BE/MOB riêng khi làm.
 
 ### DS-P2-005 — Giao dịch theo thiết kế nhóm C
-- Status: todo
+- Status: doing
 - Module: 4, 5
 - Gate: post-v1
 - Depends: DS-P2-002
@@ -92,3 +92,10 @@
 - Gate: post-v1
 - Depends: BE-P1-007
 - DoD: một bản cho tháng đã chọn: thu, chi, tiết kiệm, savings rate, top 3 danh mục. Mọi số lấy từ báo cáo, không tính lại ở client. Phần lời AI gắn ở `BE-P5-E04`; bản không AI vẫn đủ số.
+
+### BE-P2-E09 / MOB-P2-E09 — Giờ giao dịch
+- Status: todo
+- Module: 4
+- Gate: post-v1
+- Depends: DS-P2-005
+- DoD: giao dịch lưu thêm giờ (tuỳ chọn) trong múi giờ hồ sơ; `occurredOn` vẫn là ngày lịch cho báo cáo. API, OpenAPI, sync và form ghi/sửa (ô Thời gian có giờ như thiết kế C2.3, chi tiết "Hôm nay, 12:40"). Tách ra từ nhóm C theo quyết định 2026-10-22.

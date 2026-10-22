@@ -18,8 +18,10 @@ import '../../features/settings/presentation/pages/onboarding_page.dart';
 import '../../features/settings/presentation/pages/settings_page.dart';
 import '../../features/settings/presentation/viewmodels/settings_view_model.dart';
 import '../../features/splash/presentation/pages/splash_page.dart';
+import '../../features/transactions/presentation/pages/deleted_transactions_page.dart';
 import '../../features/transactions/presentation/pages/record_transaction_page.dart';
 import '../../features/transactions/presentation/pages/transaction_page.dart';
+import '../../features/transactions/presentation/pages/transaction_search_page.dart';
 import '../../features/wallets/presentation/pages/wallet_page.dart';
 import '../di/injection.dart';
 import '../logging/app_logger.dart';
@@ -164,6 +166,16 @@ GoRouter _createAppRouter(
             ),
           ),
         ),
+      ),
+      GoRoute(
+        path: '/transactions/search',
+        builder: (context, state) =>
+            const AuthGate(child: TransactionSearchPage()),
+      ),
+      GoRoute(
+        path: '/transactions/deleted',
+        builder: (context, state) =>
+            const AuthGate(child: DeletedTransactionsPage()),
       ),
       GoRoute(
         path: '/notifications',

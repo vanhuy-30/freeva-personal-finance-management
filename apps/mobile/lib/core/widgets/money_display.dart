@@ -21,6 +21,7 @@ class MoneyDisplay extends StatelessWidget {
     this.style = FreevaTypography.moneyDisplay,
     this.showCurrency = true,
     this.hidden = false,
+    this.muted = false,
     this.semanticsLabel,
     super.key,
   });
@@ -34,6 +35,9 @@ class MoneyDisplay extends StatelessWidget {
   /// Lists drop the ₫ mark; headline amounts keep it.
   final bool showCurrency;
   final bool hidden;
+
+  /// Keeps the sign but uses the muted colour (deleted transactions).
+  final bool muted;
   final String? semanticsLabel;
 
   static String symbolFor(String currency) =>
@@ -49,12 +53,14 @@ class MoneyDisplay extends StatelessWidget {
       MoneyTone.income => '+',
       _ => minor.isNegative ? '−' : '',
     };
-    final color = switch (tone) {
-      MoneyTone.income => c.moneyIncome,
-      MoneyTone.transfer => c.moneyTransfer,
-      MoneyTone.expense => c.moneyExpense,
-      MoneyTone.plain => style.color ?? c.textPrimary,
-    };
+    final color = muted
+        ? c.moneyTransfer
+        : switch (tone) {
+            MoneyTone.income => c.moneyIncome,
+            MoneyTone.transfer => c.moneyTransfer,
+            MoneyTone.expense => c.moneyExpense,
+            MoneyTone.plain => style.color ?? c.textPrimary,
+          };
     final text = hidden ? '••••••' : '$sign$number';
     // Half size on display amounts; same size on small ones.
     final fontSize = style.fontSize ?? 15;

@@ -40,6 +40,12 @@ class FakeSyncViewModel extends ChangeNotifier implements SyncViewModel {
   List<SyncQueueItem> items = const [];
   @override
   int appliedEpoch = 0;
+  @override
+  bool syncing = false;
+  @override
+  bool schemaMismatch = false;
+  @override
+  bool duplicateHint = false;
 
   void applied() {
     appliedEpoch++;

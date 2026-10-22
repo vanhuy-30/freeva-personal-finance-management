@@ -2178,6 +2178,336 @@ abstract class S {
   /// In en, this message translates to:
   /// **'dong'**
   String get homeSpokenVnd;
+
+  /// No description provided for @txSearchAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get txSearchAction;
+
+  /// No description provided for @txFilterAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get txFilterAction;
+
+  /// No description provided for @txFilterActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters on'**
+  String get txFilterActive;
+
+  /// No description provided for @txPeriodThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'This week'**
+  String get txPeriodThisWeek;
+
+  /// No description provided for @txPeriodThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get txPeriodThisMonth;
+
+  /// No description provided for @txPeriodLastMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Last month'**
+  String get txPeriodLastMonth;
+
+  /// No description provided for @txPeriodCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get txPeriodCustom;
+
+  /// No description provided for @txPeriodAllTime.
+  ///
+  /// In en, this message translates to:
+  /// **'All time'**
+  String get txPeriodAllTime;
+
+  /// No description provided for @txMonthChip.
+  ///
+  /// In en, this message translates to:
+  /// **'{month}'**
+  String txMonthChip(String month);
+
+  /// No description provided for @txRangeChip.
+  ///
+  /// In en, this message translates to:
+  /// **'{from} – {to}'**
+  String txRangeChip(String from, String to);
+
+  /// No description provided for @txToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get txToday;
+
+  /// No description provided for @txDayHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'{day} · {date}'**
+  String txDayHeader(String day, String date);
+
+  /// No description provided for @txChipRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {label}'**
+  String txChipRemove(String label);
+
+  /// No description provided for @txFilterReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get txFilterReset;
+
+  /// No description provided for @txFilterPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get txFilterPeriod;
+
+  /// No description provided for @txFilterWallets.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallets'**
+  String get txFilterWallets;
+
+  /// No description provided for @txFilterCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get txFilterCategories;
+
+  /// No description provided for @txFilterTags.
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get txFilterTags;
+
+  /// No description provided for @txFilterAny.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get txFilterAny;
+
+  /// No description provided for @txFilterDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted'**
+  String get txFilterDeleted;
+
+  /// No description provided for @txFilterApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Show {count} transactions'**
+  String txFilterApply(int count);
+
+  /// No description provided for @txFilterApplyUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Show transactions'**
+  String get txFilterApplyUnknown;
+
+  /// No description provided for @txFilterDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get txFilterDone;
+
+  /// No description provided for @txNoResultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching transactions'**
+  String get txNoResultTitle;
+
+  /// No description provided for @txNoResultBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Try removing a filter.'**
+  String get txNoResultBody;
+
+  /// No description provided for @txNoResultClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear filters'**
+  String get txNoResultClear;
+
+  /// No description provided for @txEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No transactions yet'**
+  String get txEmptyTitle;
+
+  /// No description provided for @txEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your first expense takes seconds.'**
+  String get txEmptyBody;
+
+  /// No description provided for @txEmptyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Add expense'**
+  String get txEmptyAction;
+
+  /// No description provided for @txSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search transactions'**
+  String get txSearchHint;
+
+  /// No description provided for @txSearchCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get txSearchCancel;
+
+  /// No description provided for @txSearchClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear text'**
+  String get txSearchClear;
+
+  /// No description provided for @txSearchResults.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} results'**
+  String txSearchResults(int count);
+
+  /// No description provided for @txSearchPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by store, note or amount.'**
+  String get txSearchPrompt;
+
+  /// No description provided for @txDetailCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get txDetailCategory;
+
+  /// No description provided for @txDetailWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet'**
+  String get txDetailWallet;
+
+  /// No description provided for @txDetailDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get txDetailDate;
+
+  /// No description provided for @txDetailTags.
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get txDetailTags;
+
+  /// No description provided for @txDetailNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get txDetailNotes;
+
+  /// No description provided for @txDetailFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get txDetailFrom;
+
+  /// No description provided for @txDetailTo.
+  ///
+  /// In en, this message translates to:
+  /// **'To'**
+  String get txDetailTo;
+
+  /// No description provided for @txDetailDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete transaction'**
+  String get txDetailDelete;
+
+  /// No description provided for @txDetailCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Duplicate'**
+  String get txDetailCopy;
+
+  /// No description provided for @txDetailEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get txDetailEdit;
+
+  /// No description provided for @txKindExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'expense'**
+  String get txKindExpense;
+
+  /// No description provided for @txKindIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'income'**
+  String get txKindIncome;
+
+  /// No description provided for @txKindTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'transfer'**
+  String get txKindTransfer;
+
+  /// No description provided for @txDeletedToast.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted {kind}'**
+  String txDeletedToast(String kind);
+
+  /// No description provided for @txRestoredToast.
+  ///
+  /// In en, this message translates to:
+  /// **'Restored'**
+  String get txRestoredToast;
+
+  /// No description provided for @txTrashTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted'**
+  String get txTrashTitle;
+
+  /// No description provided for @txTrashBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore to bring it back to your list.'**
+  String get txTrashBody;
+
+  /// No description provided for @txTrashRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get txTrashRestore;
+
+  /// No description provided for @txTrashEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing deleted'**
+  String get txTrashEmpty;
+
+  /// No description provided for @txLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load transactions'**
+  String get txLoadFailed;
+
+  /// No description provided for @txTransferTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer'**
+  String get txTransferTitle;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

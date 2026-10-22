@@ -40,7 +40,14 @@ export interface TransactionLeg extends LegInput {
 export interface TransactionBundle { legs: TransactionLeg[]; fx: (ManualFx & { id: string; fromCode: string; toCode: string }) | null }
 export interface TransactionQuery {
   page: number; pageSize: number; status: 'active' | 'deleted' | 'all';
-  accountId?: string; categoryId?: string; type?: TransactionType; from?: string; to?: string; search?: string;
+  /** Any of these (OR within one filter, AND across filters). */
+  accountIds?: string[]; categoryIds?: string[]; tagIds?: string[];
+  type?: TransactionType; from?: string; to?: string; search?: string;
+}
+/** Totals over the whole filtered result, not just the page. Transfers are counted once and excluded from income/expense. */
+export interface TransactionSummary {
+  count: number;
+  totals: { currency: string; incomeMinor: bigint; expenseMinor: bigint }[];
 }
 export function minor(value: string): bigint {
   if (!/^-?[0-9]+(?![\s\S])/.test(value) || value.length > 20) throw new TransactionError('VALIDATION_ERROR');

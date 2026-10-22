@@ -22,6 +22,7 @@ class TagChip extends StatelessWidget {
       child: Text(
         label,
         maxLines: 1,
+        overflow: TextOverflow.ellipsis,
         style: FreevaTypography.overline.copyWith(
           letterSpacing: 0,
           color: c.tintVioletFg,

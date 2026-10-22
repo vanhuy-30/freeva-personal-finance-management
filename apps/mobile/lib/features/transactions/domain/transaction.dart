@@ -130,12 +130,66 @@ class TransactionQuery {
     this.type,
     this.search,
     this.pageSize = 50,
+    this.from,
+    this.to,
+    this.accountIds = const [],
+    this.categoryIds = const [],
+    this.tagIds = const [],
   });
   final int page;
   final int pageSize;
   final bool deleted;
   final TransactionType? type;
   final String? search;
+
+  /// Inclusive calendar dates `yyyy-MM-dd`.
+  final String? from;
+  final String? to;
+
+  /// Match any of the listed wallets / categories / tags.
+  final List<String> accountIds;
+  final List<String> categoryIds;
+  final List<String> tagIds;
+
+  TransactionQuery copyWith({
+    int? page,
+    int? pageSize,
+    bool? deleted,
+    String? search,
+  }) => TransactionQuery(
+    page: page ?? this.page,
+    pageSize: pageSize ?? this.pageSize,
+    deleted: deleted ?? this.deleted,
+    type: type,
+    search: search ?? this.search,
+    from: from,
+    to: to,
+    accountIds: accountIds,
+    categoryIds: categoryIds,
+    tagIds: tagIds,
+  );
+}
+
+class TransactionTotal {
+  const TransactionTotal({
+    required this.currency,
+    required this.income,
+    required this.expense,
+  });
+  final String currency;
+  final BigInt income;
+
+  /// Signed: negative or zero.
+  final BigInt expense;
+}
+
+/// Totals over the whole filtered result. A transfer counts once and is not
+/// income or expense.
+class TransactionSummary {
+  const TransactionSummary({required this.count, required this.totals});
+  static const empty = TransactionSummary(count: 0, totals: []);
+  final int count;
+  final List<TransactionTotal> totals;
 }
 
 class TransactionListPage {
@@ -143,10 +197,12 @@ class TransactionListPage {
     required this.legs,
     required this.page,
     required this.total,
+    this.summary = TransactionSummary.empty,
   });
   final List<TxLeg> legs;
   final int page;
   final int total;
+  final TransactionSummary summary;
 }
 
 /// Pairs the two legs of a transfer into one bundle, keeping list order.

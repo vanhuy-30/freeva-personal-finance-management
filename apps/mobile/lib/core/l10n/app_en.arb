@@ -565,5 +565,115 @@
   "homeUncategorized": "Uncategorized",
   "notificationsEmpty": "No notifications yet",
   "notificationsEmptyBody": "Reminders and alerts will show here.",
-  "homeSpokenVnd": "dong"
+  "homeSpokenVnd": "dong",
+  "txSearchAction": "Search",
+  "txFilterAction": "Filters",
+  "txFilterActive": "Filters on",
+  "txPeriodThisWeek": "This week",
+  "txPeriodThisMonth": "This month",
+  "txPeriodLastMonth": "Last month",
+  "txPeriodCustom": "Custom",
+  "txPeriodAllTime": "All time",
+  "txMonthChip": "{month}",
+  "@txMonthChip": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "txRangeChip": "{from} – {to}",
+  "@txRangeChip": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "txToday": "Today",
+  "txDayHeader": "{day} · {date}",
+  "@txDayHeader": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "txChipRemove": "Remove {label}",
+  "@txChipRemove": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "txFilterReset": "Reset",
+  "txFilterPeriod": "Time",
+  "txFilterWallets": "Wallets",
+  "txFilterCategories": "Categories",
+  "txFilterTags": "Tags",
+  "txFilterAny": "All",
+  "txFilterDeleted": "Deleted",
+  "txFilterApply": "Show {count} transactions",
+  "@txFilterApply": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "txFilterApplyUnknown": "Show transactions",
+  "txFilterDone": "Done",
+  "txNoResultTitle": "No matching transactions",
+  "txNoResultBody": "Try removing a filter.",
+  "txNoResultClear": "Clear filters",
+  "txEmptyTitle": "No transactions yet",
+  "txEmptyBody": "Your first expense takes seconds.",
+  "txEmptyAction": "Add expense",
+  "txSearchHint": "Search transactions",
+  "txSearchCancel": "Cancel",
+  "txSearchClear": "Clear text",
+  "txSearchResults": "{count} results",
+  "@txSearchResults": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "txSearchPrompt": "Search by store, note or amount.",
+  "txDetailCategory": "Category",
+  "txDetailWallet": "Wallet",
+  "txDetailDate": "Date",
+  "txDetailTags": "Tags",
+  "txDetailNotes": "Note",
+  "txDetailFrom": "From",
+  "txDetailTo": "To",
+  "txDetailDelete": "Delete transaction",
+  "txDetailCopy": "Duplicate",
+  "txDetailEdit": "Edit",
+  "txKindExpense": "expense",
+  "txKindIncome": "income",
+  "txKindTransfer": "transfer",
+  "txDeletedToast": "Deleted {kind}",
+  "@txDeletedToast": {
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "txRestoredToast": "Restored",
+  "txTrashTitle": "Deleted",
+  "txTrashBody": "Restore to bring it back to your list.",
+  "txTrashRestore": "Restore",
+  "txTrashEmpty": "Nothing deleted",
+  "txLoadFailed": "Couldn't load transactions",
+  "txTransferTitle": "Transfer"
 }

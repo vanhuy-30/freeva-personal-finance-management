@@ -1,4 +1,4 @@
-import type { TransactionBundle, TransactionInput, TransactionLeg, TransactionPatch, TransactionQuery } from './transaction';
+import type { TransactionBundle, TransactionInput, TransactionLeg, TransactionPatch, TransactionQuery, TransactionSummary } from './transaction';
 export const TRANSACTION_REPOSITORY = Symbol('TRANSACTION_REPOSITORY');
 export interface RecentMatchQuery {
   occurredOn: Date;
@@ -21,6 +21,6 @@ export interface TransactionRepository {
   find(userId: string, id: string): Promise<TransactionBundle>;
   findByClientId(userId: string, clientId: string): Promise<TransactionBundle | null>;
   findRecentMatches(userId: string, query: RecentMatchQuery): Promise<RecentMatch[]>;
-  list(userId: string, query: TransactionQuery): Promise<{ items: TransactionLeg[]; total: number }>;
+  list(userId: string, query: TransactionQuery): Promise<{ items: TransactionLeg[]; total: number; summary: TransactionSummary }>;
   update(userId: string, id: string, patch: TransactionPatch): Promise<TransactionBundle>;
 }

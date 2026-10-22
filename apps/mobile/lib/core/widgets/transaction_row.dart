@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../theme/theme_context.dart';
 import '../theme/tokens.g.dart';
 import 'money_display.dart';
-import 'tag_chip.dart';
+import 'transaction_row_text.dart';
 
 /// Transaction row: 40 round icon · title + "category · wallet" · signed
 /// amount without ₫. Up to two tag chips replace the second line's tail.
@@ -17,6 +17,8 @@ class TransactionRow extends StatelessWidget {
     this.tone = MoneyTone.expense,
     this.tags = const [],
     this.onTap,
+    this.highlight,
+    this.trailing,
     super.key,
   });
 
@@ -32,6 +34,12 @@ class TransactionRow extends StatelessWidget {
   final MoneyTone tone;
   final List<String> tags;
   final VoidCallback? onTap;
+
+  /// Search text to mark in the title and second line.
+  final String? highlight;
+
+  /// Extra action after the amount (restore button on the deleted list).
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -72,36 +80,11 @@ class TransactionRow extends StatelessWidget {
                     ),
                     const SizedBox(width: FreevaSpace.s3),
                     Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            title,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: FreevaTypography.body.copyWith(
-                              fontWeight: FontWeight.w500,
-                              color: c.textPrimary,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Row(
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  subtitle,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: FreevaTypography.label.copyWith(
-                                    fontWeight: FontWeight.w400,
-                                    color: c.textSecondary,
-                                  ),
-                                ),
-                              ),
-                              for (final tag in tags.take(2)) TagChip(tag),
-                            ],
-                          ),
-                        ],
+                      child: TransactionRowText(
+                        title: title,
+                        subtitle: subtitle,
+                        tags: tags,
+                        highlight: highlight,
                       ),
                     ),
                     const SizedBox(width: FreevaSpace.s3),
@@ -114,6 +97,10 @@ class TransactionRow extends StatelessWidget {
                         child: amount,
                       ),
                     ),
+                    if (trailing != null) ...[
+                      const SizedBox(width: FreevaSpace.s3),
+                      trailing!,
+                    ],
                   ],
                 );
               },

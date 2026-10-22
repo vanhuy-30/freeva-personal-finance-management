@@ -31,8 +31,15 @@ export class TransactionService {
     if (query.from) calendarDate(query.from);
     if (query.to) calendarDate(query.to);
     if (query.from && query.to && query.from > query.to) throw new TransactionError('VALIDATION_ERROR');
-    const result = await this.repository.list(userId, query);
-    return { items: result.items.map(legResponse), total: result.total, page: query.page, pageSize: query.pageSize };
+    const { accountId, categoryId, tagId, ...rest } = query;
+    const result = await this.repository.list(userId, { ...rest, accountIds: accountId, categoryIds: categoryId, tagIds: tagId });
+    return {
+      items: result.items.map(legResponse), total: result.total, page: query.page, pageSize: query.pageSize,
+      summary: {
+        count: result.summary.count,
+        totals: result.summary.totals.map(row => ({ currency: row.currency, incomeMinor: row.incomeMinor.toString(), expenseMinor: row.expenseMinor.toString() })),
+      },
+    };
   }
   async update(userId: string, id: string, dto: UpdateTransactionDto) {
     const { occurredOn, legs: inputLegs, fx: inputFx, tagIds, ...rest } = dto;

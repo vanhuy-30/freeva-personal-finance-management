@@ -1165,4 +1165,183 @@ class SVi extends S {
 
   @override
   String get homeSpokenVnd => 'đồng';
+
+  @override
+  String get txSearchAction => 'Tìm kiếm';
+
+  @override
+  String get txFilterAction => 'Bộ lọc';
+
+  @override
+  String get txFilterActive => 'Bộ lọc đang bật';
+
+  @override
+  String get txPeriodThisWeek => 'Tuần này';
+
+  @override
+  String get txPeriodThisMonth => 'Tháng này';
+
+  @override
+  String get txPeriodLastMonth => 'Tháng trước';
+
+  @override
+  String get txPeriodCustom => 'Tuỳ chọn';
+
+  @override
+  String get txPeriodAllTime => 'Mọi lúc';
+
+  @override
+  String txMonthChip(String month) {
+    return 'Tháng $month';
+  }
+
+  @override
+  String txRangeChip(String from, String to) {
+    return '$from – $to';
+  }
+
+  @override
+  String get txToday => 'Hôm nay';
+
+  @override
+  String txDayHeader(String day, String date) {
+    return '$day · $date';
+  }
+
+  @override
+  String txChipRemove(String label) {
+    return 'Bỏ $label';
+  }
+
+  @override
+  String get txFilterReset => 'Đặt lại';
+
+  @override
+  String get txFilterPeriod => 'Thời gian';
+
+  @override
+  String get txFilterWallets => 'Ví';
+
+  @override
+  String get txFilterCategories => 'Danh mục';
+
+  @override
+  String get txFilterTags => 'Nhãn';
+
+  @override
+  String get txFilterAny => 'Tất cả';
+
+  @override
+  String get txFilterDeleted => 'Đã xoá';
+
+  @override
+  String txFilterApply(int count) {
+    return 'Xem $count giao dịch';
+  }
+
+  @override
+  String get txFilterApplyUnknown => 'Xem giao dịch';
+
+  @override
+  String get txFilterDone => 'Xong';
+
+  @override
+  String get txNoResultTitle => 'Không có giao dịch phù hợp';
+
+  @override
+  String get txNoResultBody => 'Thử bỏ bớt bộ lọc.';
+
+  @override
+  String get txNoResultClear => 'Xoá bộ lọc';
+
+  @override
+  String get txEmptyTitle => 'Chưa có giao dịch';
+
+  @override
+  String get txEmptyBody => 'Ghi khoản chi đầu tiên chỉ mất vài giây.';
+
+  @override
+  String get txEmptyAction => 'Ghi khoản chi';
+
+  @override
+  String get txSearchHint => 'Tìm giao dịch';
+
+  @override
+  String get txSearchCancel => 'Huỷ';
+
+  @override
+  String get txSearchClear => 'Xoá chữ';
+
+  @override
+  String txSearchResults(int count) {
+    return '$count kết quả';
+  }
+
+  @override
+  String get txSearchPrompt => 'Tìm theo cửa hàng, ghi chú hoặc số tiền.';
+
+  @override
+  String get txDetailCategory => 'Danh mục';
+
+  @override
+  String get txDetailWallet => 'Ví';
+
+  @override
+  String get txDetailDate => 'Thời gian';
+
+  @override
+  String get txDetailTags => 'Nhãn';
+
+  @override
+  String get txDetailNotes => 'Ghi chú';
+
+  @override
+  String get txDetailFrom => 'Từ';
+
+  @override
+  String get txDetailTo => 'Đến';
+
+  @override
+  String get txDetailDelete => 'Xoá giao dịch';
+
+  @override
+  String get txDetailCopy => 'Sao chép';
+
+  @override
+  String get txDetailEdit => 'Sửa';
+
+  @override
+  String get txKindExpense => 'khoản chi';
+
+  @override
+  String get txKindIncome => 'khoản thu';
+
+  @override
+  String get txKindTransfer => 'chuyển ví';
+
+  @override
+  String txDeletedToast(String kind) {
+    return 'Đã xoá $kind';
+  }
+
+  @override
+  String get txRestoredToast => 'Đã khôi phục';
+
+  @override
+  String get txTrashTitle => 'Đã xoá';
+
+  @override
+  String get txTrashBody => 'Khôi phục để đưa giao dịch về danh sách.';
+
+  @override
+  String get txTrashRestore => 'Khôi phục';
+
+  @override
+  String get txTrashEmpty => 'Không có giao dịch đã xoá';
+
+  @override
+  String get txLoadFailed => 'Chưa tải được giao dịch';
+
+  @override
+  String get txTransferTitle => 'Chuyển ví';
 }

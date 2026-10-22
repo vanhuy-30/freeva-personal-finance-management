@@ -60,7 +60,7 @@ Tính bằng phân số bigint; **từ chối kết quả có phần lẻ minor 
 
 ## List, lỗi và privacy
 
-Page mặc định 1, pageSize 50, tối đa 100. `status=active` mặc định, hoặc `deleted`/`all`. Lọc `accountId`, `categoryId`, `type`, `from`/`to` inclusive; `search` tối đa 200 ký tự theo [search.md](search.md). Sort occurredOn giảm, createdAt giảm, id tăng. `total` đếm leg, không đếm transfer group; báo cáo thu/chi phải lọc type, không tính transfer là thu/chi.
+Page mặc định 1, pageSize 50, tối đa 100. `status=active` mặc định, hoặc `deleted`/`all`. Lọc `accountId` (≤ 20), `categoryId` (≤ 50), `tagId` (≤ 20) — mỗi tham số lặp lại được, khớp bất kỳ giá trị nào; `type`, `from`/`to` inclusive; `search` tối đa 200 ký tự theo [search.md](search.md), khớp cả `merchant` (`DS-P2-005`). `summary` tính trên toàn bộ kết quả lọc: `count` đếm giao dịch (chuyển ví = 1) và `totals` thu/chi theo tiền tệ, không tính chuyển ví. Sort occurredOn giảm, createdAt giảm, id tăng. `total` đếm leg, không đếm transfer group; báo cáo thu/chi phải lọc type, không tính transfer là thu/chi.
 
 `400 VALIDATION_ERROR`, `401` theo auth service, `404 TRANSACTION_NOT_FOUND`/`ACCOUNT_NOT_FOUND` cho cả ID không tồn tại và khác owner, `409 TRANSACTION_CONFLICT`, `503 TRANSACTIONS_UNAVAILABLE`. Lỗi không phản chiếu input hoặc exception Prisma. HTTP logger không ghi body/query/header, ghi chú, merchant, số tiền hoặc bearer token.
 
