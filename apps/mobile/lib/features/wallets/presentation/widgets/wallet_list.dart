@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../settings/presentation/widgets/masked_amount.dart';
@@ -103,14 +104,14 @@ class WalletList extends StatelessWidget {
                     if (!archived) ...[
                       IconButton(
                         tooltip: s.walletMoveUp,
-                        icon: const Icon(Icons.arrow_upward),
+                        icon: const Icon(LucideIcons.arrowUp),
                         onPressed: enabled && index > 0
                             ? () => model.move(w, -1)
                             : null,
                       ),
                       IconButton(
                         tooltip: s.walletMoveDown,
-                        icon: const Icon(Icons.arrow_downward),
+                        icon: const Icon(LucideIcons.arrowDown),
                         onPressed: enabled && index < items.length - 1
                             ? () => model.move(w, 1)
                             : null,

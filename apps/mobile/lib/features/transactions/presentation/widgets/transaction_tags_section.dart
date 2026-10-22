@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../tags/domain/tag.dart';
@@ -66,7 +67,7 @@ class TransactionTagsSection extends StatelessWidget {
               ),
             if (!readOnly)
               ActionChip(
-                avatar: Icon(Icons.add, color: scheme.primary),
+                avatar: Icon(LucideIcons.plus, color: scheme.primary),
                 label: Text(s.transactionTagCreate),
                 onPressed: () => _create(context),
               ),

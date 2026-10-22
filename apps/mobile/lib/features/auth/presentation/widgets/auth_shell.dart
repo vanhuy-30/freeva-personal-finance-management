@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/theme_context.dart';
 
 class AuthShell extends StatelessWidget {
   const AuthShell(
@@ -11,13 +11,11 @@ class AuthShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final dark = theme.brightness == Brightness.dark;
-    final text = dark ? AppColors.darkText : AppColors.text;
+    final colors = context.colors;
+    final text = colors.textPrimary;
     final border = OutlineInputBorder(
         borderRadius: BorderRadius.circular(18),
-        borderSide: BorderSide(
-            color: AppColors.muted
-                .withAlpha(((dark ? 0.35 : 0.55) * 255).round())));
+        borderSide: BorderSide(color: colors.borderDefault));
     return PopScope(
       canPop: !canGoBack,
       onPopInvokedWithResult: (didPop, _) {
@@ -38,8 +36,7 @@ class AuthShell extends StatelessWidget {
               focusedBorder: border.copyWith(
                   borderSide:
                       BorderSide(color: theme.colorScheme.primary, width: 1.5)),
-              hintStyle: TextStyle(
-                  color: dark ? AppColors.darkText : AppColors.textMuted),
+              hintStyle: TextStyle(color: colors.textSecondary),
               helperMaxLines: 3,
               errorMaxLines: 3,
             ),

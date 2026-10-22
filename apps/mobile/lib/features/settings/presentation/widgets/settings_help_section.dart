@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
@@ -16,31 +17,31 @@ class SettingsHelpSection extends StatelessWidget {
         Text(s.settingsHelp, style: Theme.of(context).textTheme.titleMedium),
         ListTile(
           contentPadding: EdgeInsets.zero,
-          leading: const Icon(Icons.quiz_outlined),
+          leading: const Icon(LucideIcons.circleQuestionMark),
           title: Text(s.settingsFaq),
-          trailing: const Icon(Icons.chevron_right),
-          onTap: () => context.go('/help/faq'),
+          trailing: const Icon(LucideIcons.chevronRight),
+          onTap: () => context.push('/help/faq'),
         ),
         ListTile(
           contentPadding: EdgeInsets.zero,
-          leading: const Icon(Icons.feedback_outlined),
+          leading: const Icon(LucideIcons.messageSquare),
           title: Text(s.settingsFeedback),
-          trailing: const Icon(Icons.chevron_right),
-          onTap: () => context.go('/help/feedback'),
+          trailing: const Icon(LucideIcons.chevronRight),
+          onTap: () => context.push('/help/feedback'),
         ),
         ListTile(
           contentPadding: EdgeInsets.zero,
-          leading: const Icon(Icons.gavel_outlined),
+          leading: const Icon(LucideIcons.scale),
           title: Text(s.settingsTerms),
-          trailing: const Icon(Icons.chevron_right),
-          onTap: () => context.go('/help/legal?doc=terms'),
+          trailing: const Icon(LucideIcons.chevronRight),
+          onTap: () => context.push('/help/legal?doc=terms'),
         ),
         ListTile(
           contentPadding: EdgeInsets.zero,
-          leading: const Icon(Icons.privacy_tip_outlined),
+          leading: const Icon(LucideIcons.shieldCheck),
           title: Text(s.settingsPrivacy),
-          trailing: const Icon(Icons.chevron_right),
-          onTap: () => context.go('/help/legal?doc=privacy'),
+          trailing: const Icon(LucideIcons.chevronRight),
+          onTap: () => context.push('/help/legal?doc=privacy'),
         ),
         ListTile(
           contentPadding: EdgeInsets.zero,

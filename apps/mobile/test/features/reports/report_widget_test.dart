@@ -96,7 +96,7 @@ void main() {
   });
 
   testWidgets('overview shows each currency on its own card', (tester) async {
-    await tester.pumpWidget(app(const OverviewSection()));
+    await tester.pumpWidget(app(const SingleChildScrollView(child: OverviewSection())));
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('overview-VND')), findsOneWidget);
     expect(find.byKey(const ValueKey('overview-USD')), findsOneWidget);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
@@ -20,9 +21,7 @@ class OverviewBalanceToggle extends StatelessWidget {
         tooltip: settings.balancesHidden ? s.balanceShow : s.balanceHide,
         onPressed: () => settings.setBalancesHidden(!settings.balancesHidden),
         icon: Icon(
-          settings.balancesHidden
-              ? Icons.visibility_off_outlined
-              : Icons.visibility_outlined,
+          settings.balancesHidden ? LucideIcons.eyeOff : LucideIcons.eye,
         ),
       ),
     );

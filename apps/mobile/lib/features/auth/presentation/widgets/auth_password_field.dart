@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 
 class AuthPasswordField extends StatefulWidget {
@@ -37,8 +38,8 @@ class _AuthPasswordFieldState extends State<AuthPasswordField> {
                     : S.of(context).authHidePassword,
                 icon: Icon(
                     _obscured
-                        ? Icons.visibility_outlined
-                        : Icons.visibility_off_outlined,
+                        ? LucideIcons.eye
+                        : LucideIcons.eyeOff,
                     size: 20))),
         obscureText: _obscured,
         autocorrect: false,

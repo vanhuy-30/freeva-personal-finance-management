@@ -369,5 +369,19 @@
   "settingsSessionAlertsHelp": "Warns on this device when another session appears. The alert does not include an email, balance, or device name.",
   "sessionAlertTitle": "New sign-in",
   "sessionAlertBody": "Another session signed in. Open Freeva to review it and revoke it if it was not you.",
-  "sessionAlertReview": "Review sessions"
+  "sessionAlertReview": "Review sessions",
+  "navOverview": "Overview",
+  "navTransactions": "Transactions",
+  "navReports": "Reports",
+  "navMe": "Me",
+  "navRecord": "Record transaction",
+  "commonUndo": "Undo",
+  "commonRetry": "Try again",
+  "commonClose": "Close",
+  "commonCancel": "Cancel",
+  "balanceHiddenSemantics": "balance hidden",
+  "keypadDelete": "Delete",
+  "commonLoading": "Loading",
+  "passwordShow": "Show password",
+  "passwordHide": "Hide password"
 }

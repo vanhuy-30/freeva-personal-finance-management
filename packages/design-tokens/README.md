@@ -9,6 +9,7 @@ Docs: [design-system.md](../../docs/brand/design-system.md), [palette.md](../../
 | `tokens.json` | Nguồn. Tầng `primitive` → `semantic` (light/dark) → `component`, cùng `typography`, `space`, `radius`, `size`, `layout`, `border`, `elevation`, `motion`. |
 | `tokens.css` | **Sinh ra**, không sửa tay. Biến legacy `--color-brand-*`, `--color-neutral-*` và biến semantic `--color-bg-*`, `--color-text-*`… Dark ở `[data-theme='dark']`. |
 | `scripts/build.mjs` | Sinh `tokens.css`. |
+| `scripts/build-dart.mjs` | Sinh `apps/mobile/lib/core/theme/tokens.g.dart` (`FreevaColors` light/dark, scale, typography, `categoryPalette`). |
 | `scripts/check.mjs` | Kiểm tra tham chiếu, tương phản AA và cấm highlight/muted làm chữ. |
 
 ```bash

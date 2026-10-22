@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../../core/router/nav_back.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../viewmodels/profile_view_model.dart';
@@ -21,10 +22,10 @@ class ProfilePage extends StatelessWidget {
             title: Text(s.profileTitle),
             leading: IconButton(
               tooltip: s.profileBack,
-              icon: const Icon(Icons.arrow_back),
+              icon: const Icon(LucideIcons.arrowLeft),
               onPressed: () {
                 model.cancel();
-                context.go('/home');
+                context.popOrGo('/me');
               },
             ),
           ),

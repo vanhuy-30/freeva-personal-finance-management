@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../widgets/pin_fields.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../domain/auth_repository.dart';
@@ -39,7 +40,7 @@ class _LockPageState extends State<LockPage> {
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              const Icon(Icons.lock_outline, size: 56),
+                              const Icon(LucideIcons.lock, size: 56),
                               Text(s.authPinHelp),
                               PinFields(
                                   pin: _pin,

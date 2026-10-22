@@ -21,6 +21,22 @@
 | **G** Cá nhân và cài đặt | **Chốt** 2026-10-21 | [patterns/G-profile-settings.md](patterns/G-profile-settings.md) |
 | **H** Đồng bộ | **Chốt** 2026-10-22 | [patterns/H-sync.md](patterns/H-sync.md) |
 
+## Tiến độ code (Flutter)
+
+Thứ tự đã chốt: nền tảng → B → C → D → E → F → G → A → H. Mỗi nhóm một nhánh + một PR vào `develop`; API nhỏ mà màn cần làm luôn trong PR đó, module lớn (ngân sách, thông báo, chế độ khách, deep link email) để trạng thái trống/ẩn.
+
+| Nhóm | Trạng thái | Ghi chú |
+|---|---|---|
+| Nền tảng (`DS-P2-002`) | Xong | Token → Dart, theme, Inter, Lucide, component trong `lib/core/widgets/`, khung 4 tab + nút +, gallery `/debug/gallery`, golden light/dark |
+| B Tổng quan | Chưa | |
+| C Giao dịch | Chưa | |
+| D Ví | Chưa | |
+| E Danh mục | Chưa | |
+| F Báo cáo | Chưa | |
+| G Cá nhân/Cài đặt | Chưa | |
+| A Onboarding/tài khoản | Chưa | |
+| H Đồng bộ | Chưa | |
+
 ## Việc thiết kế còn lại
 
 Tám nhóm A–H đã chốt. Còn:

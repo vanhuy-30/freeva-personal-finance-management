@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/di/injection.dart';
@@ -40,13 +41,13 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   void _openNew() {
-    Navigator.of(context).push(
+    Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute<void>(builder: (_) => TransactionEditor(model: model)),
     );
   }
 
   void _open(TransactionBundle row) {
-    Navigator.of(context).push(
+    Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute<void>(
         builder: (_) => TransactionEditor(model: model, transactionId: row.id),
       ),
@@ -72,11 +73,7 @@ class _TransactionPageState extends State<TransactionPage> {
       return Scaffold(
         appBar: AppBar(
           title: Text(s.transactionTitle),
-          leading: IconButton(
-            tooltip: s.profileBack,
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => context.go('/home'),
-          ),
+          automaticallyImplyLeading: false,
         ),
         body: SafeArea(
           child: Column(
@@ -104,7 +101,7 @@ class _TransactionPageState extends State<TransactionPage> {
                     if (noWallet) ...[
                       Text(s.transactionNoWallet),
                       FilledButton(
-                        onPressed: () => context.go('/wallets'),
+                        onPressed: () => context.push('/wallets'),
                         child: Text(s.transactionCreateWallet),
                       ),
                     ],
@@ -165,7 +162,7 @@ class _TransactionPageState extends State<TransactionPage> {
                                     model.preferredAccountId() == null
                                 ? null
                                 : _openNew,
-                            icon: const Icon(Icons.add),
+                            icon: const Icon(LucideIcons.plus),
                             label: Text(s.transactionRecord),
                           ),
                         ],

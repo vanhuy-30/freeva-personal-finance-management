@@ -1854,6 +1854,90 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Review sessions'**
   String get sessionAlertReview;
+
+  /// No description provided for @navOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get navOverview;
+
+  /// No description provided for @navTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'Transactions'**
+  String get navTransactions;
+
+  /// No description provided for @navReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports'**
+  String get navReports;
+
+  /// No description provided for @navMe.
+  ///
+  /// In en, this message translates to:
+  /// **'Me'**
+  String get navMe;
+
+  /// No description provided for @navRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Record transaction'**
+  String get navRecord;
+
+  /// No description provided for @commonUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get commonUndo;
+
+  /// No description provided for @commonRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get commonRetry;
+
+  /// No description provided for @commonClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get commonClose;
+
+  /// No description provided for @commonCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get commonCancel;
+
+  /// No description provided for @balanceHiddenSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'balance hidden'**
+  String get balanceHiddenSemantics;
+
+  /// No description provided for @keypadDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get keypadDelete;
+
+  /// No description provided for @commonLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading'**
+  String get commonLoading;
+
+  /// No description provided for @passwordShow.
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get passwordShow;
+
+  /// No description provided for @passwordHide.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get passwordHide;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

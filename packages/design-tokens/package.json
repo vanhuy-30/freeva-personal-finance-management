@@ -5,8 +5,8 @@
   "description": "Brand and semantic tokens for Freeva mobile and web admin",
   "main": "tokens.json",
   "scripts": {
-    "build": "node scripts/build.mjs",
-    "check": "node scripts/check.mjs && node scripts/build.mjs --check"
+    "build": "node scripts/build.mjs && node scripts/build-dart.mjs",
+    "check": "node scripts/check.mjs && node scripts/build.mjs --check && node scripts/build-dart.mjs --check"
   },
   "exports": {
     ".": "./tokens.json",

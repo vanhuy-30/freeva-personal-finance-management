@@ -15,6 +15,7 @@ import 'core/logging/app_logger.dart';
 import 'core/router/app_router.dart';
 import 'core/sentry/sentry_bootstrap.dart';
 import 'core/theme/app_theme.dart';
+import 'core/theme/tokens.g.dart';
 
 Future<void> main() async {
   await runFreeva(_boot);
@@ -51,6 +52,10 @@ class FreevaApp extends StatelessWidget {
           darkTheme: AppTheme.dark,
           themeMode: themeModeFor(settings.theme),
           routerConfig: appRouter,
+          builder: (context, child) => MediaQuery.withClampedTextScaling(
+            maxScaleFactor: FreevaTypography.maxTextScale,
+            child: child!,
+          ),
           locale: Locale(profile.locale),
           supportedLocales: S.supportedLocales,
           localizationsDelegates: const [

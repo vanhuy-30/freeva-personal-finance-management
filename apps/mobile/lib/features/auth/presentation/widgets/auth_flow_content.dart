@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../viewmodels/auth_view_model.dart';
 import 'auth_fields.dart';
@@ -63,7 +64,7 @@ class AuthFlowContent extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(Icons.lock_outline_rounded,
+            Icon(LucideIcons.lock,
                 size: 16, color: Theme.of(context).colorScheme.primary),
             const SizedBox(width: 8),
             Flexible(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 
@@ -39,7 +40,9 @@ class _ProfileSelectState extends State<ProfileSelect> {
             contentPadding: EdgeInsets.zero,
             title: Text(widget.label),
             subtitle: Text(widget.choices[widget.value] ?? widget.value),
-            trailing: Icon(expanded ? Icons.expand_less : Icons.expand_more),
+            trailing: Icon(
+              expanded ? LucideIcons.chevronUp : LucideIcons.chevronDown,
+            ),
             enabled: widget.enabled,
             onTap: () => setState(() {
               expanded = !expanded;
@@ -66,7 +69,7 @@ class _ProfileSelectState extends State<ProfileSelect> {
                       title: Text(entry.value),
                       selected: entry.key == widget.value,
                       trailing: entry.key == widget.value
-                          ? const Icon(Icons.check)
+                          ? const Icon(LucideIcons.check)
                           : null,
                       onTap: () {
                         widget.onChanged(entry.key);

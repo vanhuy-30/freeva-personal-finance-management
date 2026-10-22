@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/theme_context.dart';
 import '../../../../core/widgets/brand_symbol.dart';
 import '../viewmodels/auth_view_model.dart';
 
@@ -42,13 +43,11 @@ class AuthHeader extends StatelessWidget {
       Text(subtitle,
           style: theme.textTheme.bodyLarge?.copyWith(
               height: 1.6,
-              color: theme.brightness == Brightness.dark
-                  ? AppColors.darkText
-                  : AppColors.textMuted)),
+              color: context.colors.textSecondary)),
       if (step != AuthStep.email) ...[
         const SizedBox(height: 16),
         Row(children: [
-          Icon(Icons.alternate_email_rounded,
+          Icon(LucideIcons.atSign,
               size: 18, color: theme.colorScheme.primary),
           const SizedBox(width: 8),
           Expanded(

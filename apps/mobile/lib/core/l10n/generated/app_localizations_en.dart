@@ -973,4 +973,46 @@ class SEn extends S {
 
   @override
   String get sessionAlertReview => 'Review sessions';
+
+  @override
+  String get navOverview => 'Overview';
+
+  @override
+  String get navTransactions => 'Transactions';
+
+  @override
+  String get navReports => 'Reports';
+
+  @override
+  String get navMe => 'Me';
+
+  @override
+  String get navRecord => 'Record transaction';
+
+  @override
+  String get commonUndo => 'Undo';
+
+  @override
+  String get commonRetry => 'Try again';
+
+  @override
+  String get commonClose => 'Close';
+
+  @override
+  String get commonCancel => 'Cancel';
+
+  @override
+  String get balanceHiddenSemantics => 'balance hidden';
+
+  @override
+  String get keypadDelete => 'Delete';
+
+  @override
+  String get commonLoading => 'Loading';
+
+  @override
+  String get passwordShow => 'Show password';
+
+  @override
+  String get passwordHide => 'Hide password';
 }

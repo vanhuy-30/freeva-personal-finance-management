@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
@@ -29,7 +30,7 @@ class SessionControls extends StatelessWidget {
                             .format(session.expiresAt.toLocal()))),
                     trailing: IconButton(
                         tooltip: s.authRevoke,
-                        icon: const Icon(Icons.logout),
+                        icon: const Icon(LucideIcons.logOut),
                         onPressed:
                             model.loading ? null : () => model.revoke(session)),
                   )),
