@@ -19,7 +19,11 @@ abstract class SettingsViewModel extends ChangeNotifier {
   bool get biometricEnabled;
   bool get biometricBusy;
   AuthFailure? get biometricFailure;
+
+  /// Email this device signed in with (shown masked); null when unknown.
+  String? get email;
   Future<void> load();
+  Future<void> refreshAccount();
   Future<void> setTheme(AppThemePreference value);
   Future<void> setBalancesHidden(bool value);
   Future<void> setSessionAlertsEnabled(bool value);
@@ -61,6 +65,8 @@ class DefaultSettingsViewModel extends SettingsViewModel {
   bool biometricBusy = false;
   @override
   AuthFailure? biometricFailure;
+  @override
+  String? email;
 
   @override
   Future<void> load() async {
@@ -147,6 +153,13 @@ class DefaultSettingsViewModel extends SettingsViewModel {
         return text;
       },
     );
+  }
+
+  @override
+  Future<void> refreshAccount() async {
+    final result = await _auth.accountEmail();
+    email = result.getOrElse(() => null);
+    notifyListeners();
   }
 
   @override

@@ -3815,6 +3815,492 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Couldn\'t load transactions'**
   String get reportLargestError;
+
+  /// No description provided for @meTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get meTitle;
+
+  /// No description provided for @meGroupFinance.
+  ///
+  /// In en, this message translates to:
+  /// **'Money setup'**
+  String get meGroupFinance;
+
+  /// No description provided for @meGroupApp.
+  ///
+  /// In en, this message translates to:
+  /// **'App'**
+  String get meGroupApp;
+
+  /// No description provided for @meGroupHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Help'**
+  String get meGroupHelp;
+
+  /// No description provided for @meWallets.
+  ///
+  /// In en, this message translates to:
+  /// **'My wallets'**
+  String get meWallets;
+
+  /// No description provided for @meCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get meCategories;
+
+  /// No description provided for @meTags.
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get meTags;
+
+  /// No description provided for @meCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Default currency'**
+  String get meCurrency;
+
+  /// No description provided for @meBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly budget'**
+  String get meBudget;
+
+  /// No description provided for @meFiscal.
+  ///
+  /// In en, this message translates to:
+  /// **'Month starts on'**
+  String get meFiscal;
+
+  /// No description provided for @meFiscalDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Day {day}'**
+  String meFiscalDay(int day);
+
+  /// No description provided for @meGoals.
+  ///
+  /// In en, this message translates to:
+  /// **'Goals'**
+  String get meGoals;
+
+  /// No description provided for @meTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get meTheme;
+
+  /// No description provided for @meThemeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get meThemeLight;
+
+  /// No description provided for @meThemeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get meThemeDark;
+
+  /// No description provided for @meThemeSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'Match device'**
+  String get meThemeSystem;
+
+  /// No description provided for @meLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get meLanguage;
+
+  /// No description provided for @meTimezone.
+  ///
+  /// In en, this message translates to:
+  /// **'Time zone'**
+  String get meTimezone;
+
+  /// No description provided for @meNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get meNotifications;
+
+  /// No description provided for @meHideBalances.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide balances'**
+  String get meHideBalances;
+
+  /// No description provided for @meSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get meSecurity;
+
+  /// No description provided for @meSecurityValueBiometric.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN · biometrics'**
+  String get meSecurityValueBiometric;
+
+  /// No description provided for @meSecurityValuePin.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN'**
+  String get meSecurityValuePin;
+
+  /// No description provided for @meFaq.
+  ///
+  /// In en, this message translates to:
+  /// **'FAQ'**
+  String get meFaq;
+
+  /// No description provided for @meFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Send feedback'**
+  String get meFeedback;
+
+  /// No description provided for @meTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of service'**
+  String get meTerms;
+
+  /// No description provided for @mePrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy policy'**
+  String get mePrivacy;
+
+  /// No description provided for @meSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get meSoon;
+
+  /// No description provided for @meLogout.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out'**
+  String get meLogout;
+
+  /// No description provided for @meLogoutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out of this device?'**
+  String get meLogoutTitle;
+
+  /// No description provided for @meLogoutBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data stays in your account.'**
+  String get meLogoutBody;
+
+  /// No description provided for @meProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get meProfileTitle;
+
+  /// No description provided for @meProfileName.
+  ///
+  /// In en, this message translates to:
+  /// **'Display name'**
+  String get meProfileName;
+
+  /// No description provided for @meProfileEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get meProfileEmail;
+
+  /// No description provided for @meChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get meChange;
+
+  /// No description provided for @meSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save changes'**
+  String get meSave;
+
+  /// No description provided for @meSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get meSaved;
+
+  /// No description provided for @meSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save. Try again.'**
+  String get meSaveError;
+
+  /// No description provided for @meConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'This changed on another device. Reload and try again.'**
+  String get meConflict;
+
+  /// No description provided for @meAvatarSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile picture, initial {letter}'**
+  String meAvatarSemantics(String letter);
+
+  /// No description provided for @meSecUnlock.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock'**
+  String get meSecUnlock;
+
+  /// No description provided for @meSecPin.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN lock'**
+  String get meSecPin;
+
+  /// No description provided for @meSecPinSub.
+  ///
+  /// In en, this message translates to:
+  /// **'When you reopen Freeva'**
+  String get meSecPinSub;
+
+  /// No description provided for @meSecBiometric.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock with biometrics'**
+  String get meSecBiometric;
+
+  /// No description provided for @meSecChangePin.
+  ///
+  /// In en, this message translates to:
+  /// **'Change PIN'**
+  String get meSecChangePin;
+
+  /// No description provided for @meSecLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign-in'**
+  String get meSecLogin;
+
+  /// No description provided for @meSecSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Signed-in devices'**
+  String get meSecSessions;
+
+  /// No description provided for @meSecChangePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change password'**
+  String get meSecChangePassword;
+
+  /// No description provided for @meSessionsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t recognise one? Revoke it now.'**
+  String get meSessionsHint;
+
+  /// No description provided for @meSessionThis.
+  ///
+  /// In en, this message translates to:
+  /// **'This device'**
+  String get meSessionThis;
+
+  /// No description provided for @meSessionOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Another device'**
+  String get meSessionOther;
+
+  /// No description provided for @meSessionInUse.
+  ///
+  /// In en, this message translates to:
+  /// **'In use'**
+  String get meSessionInUse;
+
+  /// No description provided for @meSessionDates.
+  ///
+  /// In en, this message translates to:
+  /// **'From {from} · expires {to}'**
+  String meSessionDates(String from, String to);
+
+  /// No description provided for @meRevoke.
+  ///
+  /// In en, this message translates to:
+  /// **'Revoke'**
+  String get meRevoke;
+
+  /// No description provided for @meRevokeSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Revoke the session from {date}'**
+  String meRevokeSemantics(String date);
+
+  /// No description provided for @meRevokeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Revoke this session?'**
+  String get meRevokeTitle;
+
+  /// No description provided for @meRevokeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'That device will be signed out.'**
+  String get meRevokeBody;
+
+  /// No description provided for @meRevokeOthers.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out all other devices'**
+  String get meRevokeOthers;
+
+  /// No description provided for @meRevokeOthersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out all other devices?'**
+  String get meRevokeOthersTitle;
+
+  /// No description provided for @meRevokeOthersBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This device stays signed in.'**
+  String get meRevokeOthersBody;
+
+  /// No description provided for @meChangePinTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Change PIN'**
+  String get meChangePinTitle;
+
+  /// No description provided for @mePinCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'Current PIN'**
+  String get mePinCurrent;
+
+  /// No description provided for @mePinNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New PIN'**
+  String get mePinNew;
+
+  /// No description provided for @mePinRepeat.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat new PIN'**
+  String get mePinRepeat;
+
+  /// No description provided for @mePinWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong PIN. After 5 misses you sign in again.'**
+  String get mePinWrong;
+
+  /// No description provided for @mePinMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'The new PINs don\'t match.'**
+  String get mePinMismatch;
+
+  /// No description provided for @mePinSame.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a different PIN.'**
+  String get mePinSame;
+
+  /// No description provided for @mePinInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'A PIN is 6 digits.'**
+  String get mePinInvalid;
+
+  /// No description provided for @mePinChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN changed'**
+  String get mePinChanged;
+
+  /// No description provided for @meChangePasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Change password'**
+  String get meChangePasswordTitle;
+
+  /// No description provided for @mePasswordCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'Current password'**
+  String get mePasswordCurrent;
+
+  /// No description provided for @mePasswordNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get mePasswordNew;
+
+  /// No description provided for @mePasswordRepeat.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat new password'**
+  String get mePasswordRepeat;
+
+  /// No description provided for @mePasswordHint.
+  ///
+  /// In en, this message translates to:
+  /// **'At least 12 characters, with letters and digits.'**
+  String get mePasswordHint;
+
+  /// No description provided for @mePasswordWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'That isn\'t your current password.'**
+  String get mePasswordWrong;
+
+  /// No description provided for @mePasswordWeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Use at least 12 characters with letters and digits, different from the old one.'**
+  String get mePasswordWeak;
+
+  /// No description provided for @mePasswordMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'The new passwords don\'t match.'**
+  String get mePasswordMismatch;
+
+  /// No description provided for @mePasswordChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Password changed. Other devices were signed out.'**
+  String get mePasswordChanged;
+
+  /// No description provided for @meBusyRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again in {minutes} min.'**
+  String meBusyRetry(int minutes);
+
+  /// No description provided for @meNetworkError.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t reach Freeva. Check your connection.'**
+  String get meNetworkError;
+
+  /// No description provided for @meSecAlways.
+  ///
+  /// In en, this message translates to:
+  /// **'Always on'**
+  String get meSecAlways;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

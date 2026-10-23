@@ -1317,5 +1317,124 @@
       }
     }
   },
-  "reportLargestError": "Couldn't load transactions"
+  "reportLargestError": "Couldn't load transactions",
+  "meTitle": "You",
+  "meGroupFinance": "Money setup",
+  "meGroupApp": "App",
+  "meGroupHelp": "Help",
+  "meWallets": "My wallets",
+  "meCategories": "Categories",
+  "meTags": "Tags",
+  "meCurrency": "Default currency",
+  "meBudget": "Monthly budget",
+  "meFiscal": "Month starts on",
+  "meFiscalDay": "Day {day}",
+  "@meFiscalDay": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "meGoals": "Goals",
+  "meTheme": "Appearance",
+  "meThemeLight": "Light",
+  "meThemeDark": "Dark",
+  "meThemeSystem": "Match device",
+  "meLanguage": "Language",
+  "meTimezone": "Time zone",
+  "meNotifications": "Notifications",
+  "meHideBalances": "Hide balances",
+  "meSecurity": "Security",
+  "meSecurityValueBiometric": "PIN · biometrics",
+  "meSecurityValuePin": "PIN",
+  "meFaq": "FAQ",
+  "meFeedback": "Send feedback",
+  "meTerms": "Terms of service",
+  "mePrivacy": "Privacy policy",
+  "meSoon": "Coming soon",
+  "meLogout": "Log out",
+  "meLogoutTitle": "Log out of this device?",
+  "meLogoutBody": "Your data stays in your account.",
+  "meProfileTitle": "Profile",
+  "meProfileName": "Display name",
+  "meProfileEmail": "Email",
+  "meChange": "Change",
+  "meSave": "Save changes",
+  "meSaved": "Saved",
+  "meSaveError": "Couldn't save. Try again.",
+  "meConflict": "This changed on another device. Reload and try again.",
+  "meAvatarSemantics": "Profile picture, initial {letter}",
+  "@meAvatarSemantics": {
+    "placeholders": {
+      "letter": {
+        "type": "String"
+      }
+    }
+  },
+  "meSecUnlock": "Unlock",
+  "meSecPin": "PIN lock",
+  "meSecPinSub": "When you reopen Freeva",
+  "meSecBiometric": "Unlock with biometrics",
+  "meSecChangePin": "Change PIN",
+  "meSecLogin": "Sign-in",
+  "meSecSessions": "Signed-in devices",
+  "meSecChangePassword": "Change password",
+  "meSessionsHint": "Don't recognise one? Revoke it now.",
+  "meSessionThis": "This device",
+  "meSessionOther": "Another device",
+  "meSessionInUse": "In use",
+  "meSessionDates": "From {from} · expires {to}",
+  "@meSessionDates": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "meRevoke": "Revoke",
+  "meRevokeSemantics": "Revoke the session from {date}",
+  "@meRevokeSemantics": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "meRevokeTitle": "Revoke this session?",
+  "meRevokeBody": "That device will be signed out.",
+  "meRevokeOthers": "Sign out all other devices",
+  "meRevokeOthersTitle": "Sign out all other devices?",
+  "meRevokeOthersBody": "This device stays signed in.",
+  "meChangePinTitle": "Change PIN",
+  "mePinCurrent": "Current PIN",
+  "mePinNew": "New PIN",
+  "mePinRepeat": "Repeat new PIN",
+  "mePinWrong": "Wrong PIN. After 5 misses you sign in again.",
+  "mePinMismatch": "The new PINs don't match.",
+  "mePinSame": "Pick a different PIN.",
+  "mePinInvalid": "A PIN is 6 digits.",
+  "mePinChanged": "PIN changed",
+  "meChangePasswordTitle": "Change password",
+  "mePasswordCurrent": "Current password",
+  "mePasswordNew": "New password",
+  "mePasswordRepeat": "Repeat new password",
+  "mePasswordHint": "At least 12 characters, with letters and digits.",
+  "mePasswordWrong": "That isn't your current password.",
+  "mePasswordWeak": "Use at least 12 characters with letters and digits, different from the old one.",
+  "mePasswordMismatch": "The new passwords don't match.",
+  "mePasswordChanged": "Password changed. Other devices were signed out.",
+  "meBusyRetry": "Try again in {minutes} min.",
+  "@meBusyRetry": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "meNetworkError": "Can't reach Freeva. Check your connection.",
+  "meSecAlways": "Always on"
 }

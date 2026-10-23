@@ -16,6 +16,8 @@ class SettingsRow extends StatelessWidget {
     this.chevron = true,
     this.destructive = false,
     this.trailing,
+    this.subtitle,
+    this.accent = false,
     super.key,
   });
 
@@ -24,6 +26,8 @@ class SettingsRow extends StatelessWidget {
     required this.title,
     required bool on,
     required ValueChanged<bool> onChanged,
+    this.subtitle,
+    this.accent = false,
     super.key,
   }) : value = null,
        chevron = false,
@@ -38,6 +42,12 @@ class SettingsRow extends StatelessWidget {
   final bool chevron;
   final bool destructive;
   final Widget? trailing;
+
+  /// One short line under the title.
+  final String? subtitle;
+
+  /// Coloured icon tile (money setup) instead of the grey one (app settings).
+  final bool accent;
 
   @override
   Widget build(BuildContext context) {
@@ -60,30 +70,57 @@ class SettingsRow extends StatelessWidget {
                 width: FreevaSize.iconTile,
                 height: FreevaSize.iconTile,
                 decoration: BoxDecoration(
-                  color: destructive ? c.statusDangerBg : c.bgSubtle,
+                  color: destructive
+                      ? c.statusDangerBg
+                      : accent
+                      ? c.tintBlue
+                      : c.bgSubtle,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(icon, size: 18, color: fg),
+                child: Icon(
+                  icon,
+                  size: 18,
+                  color: accent && !destructive ? c.tintBlueFg : fg,
+                ),
               ),
               const SizedBox(width: FreevaSpace.s3),
               Expanded(
-                child: Text(
-                  title,
-                  style: FreevaTypography.body.copyWith(
-                    color: fg,
-                    fontWeight: destructive ? FontWeight.w500 : null,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: FreevaTypography.body.copyWith(
+                        color: fg,
+                        fontWeight: destructive ? FontWeight.w500 : null,
+                      ),
+                    ),
+                    if (subtitle != null)
+                      Text(
+                        subtitle!,
+                        style: FreevaTypography.label.copyWith(
+                          fontWeight: FontWeight.w400,
+                          color: c.textSecondary,
+                        ),
+                      ),
+                  ],
                 ),
               ),
               if (value != null)
-                Padding(
-                  padding: const EdgeInsets.only(left: FreevaSpace.s2),
-                  child: Text(
-                    value!,
-                    maxLines: 1,
-                    style: FreevaTypography.body.copyWith(
-                      fontSize: 14,
-                      color: c.textSecondary,
+                // Wraps (never cut) when text is large and the title is long.
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.sizeOf(context).width * .45,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: FreevaSpace.s2),
+                    child: Text(
+                      value!,
+                      textAlign: TextAlign.end,
+                      style: FreevaTypography.body.copyWith(
+                        fontSize: 14,
+                        color: c.textSecondary,
+                      ),
                     ),
                   ),
                 ),

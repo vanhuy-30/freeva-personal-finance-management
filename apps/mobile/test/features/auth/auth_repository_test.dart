@@ -299,4 +299,130 @@ void main() {
     );
     expect(vault.seen, '["current"]');
   });
+
+  group('DS-P2-003 account security', () {
+    test('keeps the sign-in email on the device and hands it back', () async {
+      await setup();
+      expect(
+        (await repository.accountEmail()).getOrElse(() => null),
+        'user@example.com',
+      );
+    });
+
+    test(
+      'changing the PIN needs the old one and then unlocks only with the new',
+      () async {
+        await setup();
+        expect((await repository.changePin('000000', '654321')).isLeft(), true);
+        expect((await repository.changePin('123456', '12ab56')).isLeft(), true);
+        expect(
+          (await repository.changePin('123456', '654321')).isRight(),
+          true,
+        );
+        expect(vault.value, isNot(contains('654321')));
+        final restarted = AuthRepositoryImpl(api, vault, biometrics);
+        await restarted.restore();
+        expect((await restarted.unlockPin('123456')).isLeft(), true);
+        expect((await restarted.unlockPin('654321')).isRight(), true);
+      },
+    );
+
+    test('a wrong old PIN counts as an unlock attempt and the fifth clears the device', () async {
+      await setup();
+      Object? last;
+      for (var i = 0; i < 5; i++) {
+        last = (await repository.changePin(
+          '000000',
+          '654321',
+        )).fold((e) => e.code, (_) => null);
+      }
+      expect(last, AuthError.expired);
+      expect(vault.value, isNull);
+    });
+
+    test(
+      'change password posts both passwords and leaves this session alone',
+      () async {
+        await setup();
+        final done = await repository.changePassword(
+          'old password 12345',
+          'new password 12345',
+        );
+        expect(done.isRight(), true);
+        expect(api.lastPath, 'auth/change-password');
+        expect(api.lastBody, {
+          'currentPassword': 'old password 12345',
+          'newPassword': 'new password 12345',
+        });
+        expect(vault.value, isNotNull);
+      },
+    );
+
+    test('revokeOthers ends every session but the current one', () async {
+      await setup();
+      final now = DateTime.now().toIso8601String();
+      final later = DateTime.now()
+          .add(const Duration(days: 5))
+          .toIso8601String();
+      api.sessionItems = [
+        {
+          'id': 'current',
+          'createdAt': now,
+          'expiresAt': later,
+          'current': true,
+        },
+        {
+          'id': 'other-1',
+          'createdAt': now,
+          'expiresAt': later,
+          'current': false,
+        },
+        {
+          'id': 'other-2',
+          'createdAt': now,
+          'expiresAt': later,
+          'current': false,
+        },
+      ];
+      expect((await repository.revokeOthers()).isRight(), true);
+      expect(api.lastPath, 'sessions/other-2');
+      expect(vault.value, isNotNull);
+    });
+
+    test('use cases check the rules before asking the server', () async {
+      final cases = DefaultAuthUseCases(repository);
+      Future<AuthError?> pin(String a, String b, String c) async =>
+          (await cases.changePin(a, b, c)).fold((e) => e.code, (_) => null);
+      expect(await pin('123456', '654321', '654322'), AuthError.passwordMismatch);
+      expect(await pin('123456', '123456', '123456'), AuthError.invalidInput);
+      expect(await pin('12345', '654321', '654321'), AuthError.invalidInput);
+      Future<AuthError?> password(String a, String b, String c) async =>
+          (await cases.changePassword(
+            a,
+            b,
+            c,
+          )).fold((e) => e.code, (_) => null);
+      expect(
+        await password('old', 'new password 12345', 'other password 12345'),
+        AuthError.passwordMismatch,
+      );
+      expect(
+        await password('old', 'no digits in this one', 'no digits in this one'),
+        AuthError.invalidInput,
+      );
+      expect(
+        await password(
+          'same password 12345',
+          'same password 12345',
+          'same password 12345',
+        ),
+        AuthError.invalidInput,
+      );
+      expect(
+        await password('', 'new password 12345', 'new password 12345'),
+        AuthError.invalidInput,
+      );
+      expect(api.calls, 0);
+    });
+  });
 }
