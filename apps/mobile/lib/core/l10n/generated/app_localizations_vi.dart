@@ -598,12 +598,6 @@ class SVi extends S {
   String get reportNext => 'Kỳ sau';
 
   @override
-  String get reportFrom => 'Từ ngày';
-
-  @override
-  String get reportTo => 'Đến ngày';
-
-  @override
   String get reportApply => 'Xem khoảng này';
 
   @override
@@ -2043,4 +2037,71 @@ class SVi extends S {
   String reportMonthShort(String month) {
     return 'T$month';
   }
+
+  @override
+  String get reportRangeTitle => 'Chọn khoảng ngày';
+
+  @override
+  String get reportQuick7 => '7 ngày qua';
+
+  @override
+  String get reportQuick30 => '30 ngày qua';
+
+  @override
+  String get reportQuickQuarter => 'Quý này';
+
+  @override
+  String get reportWeekdays => 'T2,T3,T4,T5,T6,T7,CN';
+
+  @override
+  String get reportRangePickStart => 'Chọn ngày đầu';
+
+  @override
+  String get reportRangePickEnd => 'Chọn ngày cuối';
+
+  @override
+  String reportDayFrom(String date) {
+    return 'Từ $date';
+  }
+
+  @override
+  String reportDayTo(String date) {
+    return 'Đến $date';
+  }
+
+  @override
+  String reportDayToday(String date) {
+    return 'Hôm nay, $date';
+  }
+
+  @override
+  String reportShareExpense(String percent) {
+    return '$percent% tổng chi';
+  }
+
+  @override
+  String reportShareIncome(String percent) {
+    return '$percent% tổng thu';
+  }
+
+  @override
+  String reportShareCount(String share, int count) {
+    return '$share · $count giao dịch';
+  }
+
+  @override
+  String reportBarGeneral(String name) {
+    return '$name (chung)';
+  }
+
+  @override
+  String get reportLargest => 'Giao dịch lớn nhất';
+
+  @override
+  String reportSeeAll(int count) {
+    return 'Xem cả $count';
+  }
+
+  @override
+  String get reportLargestError => 'Không tải được giao dịch';
 }

@@ -45,6 +45,8 @@ export interface TransactionQuery {
   /** Any of these (OR within one filter, AND across filters). */
   accountIds?: string[]; categoryIds?: string[]; tagIds?: string[];
   type?: TransactionType; from?: string; to?: string; search?: string;
+  /** ISO 4217 code of the transaction (leg) currency. */
+  currency?: string;
 }
 /**
  * Totals over the whole filtered result, not just the page. Transfers are counted once and excluded from income/expense;

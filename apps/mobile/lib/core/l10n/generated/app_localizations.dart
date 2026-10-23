@@ -1189,18 +1189,6 @@ abstract class S {
   /// **'Next period'**
   String get reportNext;
 
-  /// No description provided for @reportFrom.
-  ///
-  /// In en, this message translates to:
-  /// **'From'**
-  String get reportFrom;
-
-  /// No description provided for @reportTo.
-  ///
-  /// In en, this message translates to:
-  /// **'To'**
-  String get reportTo;
-
   /// No description provided for @reportApply.
   ///
   /// In en, this message translates to:
@@ -3725,6 +3713,108 @@ abstract class S {
   /// In en, this message translates to:
   /// **'M{month}'**
   String reportMonthShort(String month);
+
+  /// No description provided for @reportRangeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a date range'**
+  String get reportRangeTitle;
+
+  /// No description provided for @reportQuick7.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 7 days'**
+  String get reportQuick7;
+
+  /// No description provided for @reportQuick30.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 30 days'**
+  String get reportQuick30;
+
+  /// No description provided for @reportQuickQuarter.
+  ///
+  /// In en, this message translates to:
+  /// **'This quarter'**
+  String get reportQuickQuarter;
+
+  /// No description provided for @reportWeekdays.
+  ///
+  /// In en, this message translates to:
+  /// **'Mon,Tue,Wed,Thu,Fri,Sat,Sun'**
+  String get reportWeekdays;
+
+  /// No description provided for @reportRangePickStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick the first day'**
+  String get reportRangePickStart;
+
+  /// No description provided for @reportRangePickEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'Now pick the last day'**
+  String get reportRangePickEnd;
+
+  /// No description provided for @reportDayFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From {date}'**
+  String reportDayFrom(String date);
+
+  /// No description provided for @reportDayTo.
+  ///
+  /// In en, this message translates to:
+  /// **'To {date}'**
+  String reportDayTo(String date);
+
+  /// No description provided for @reportDayToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today, {date}'**
+  String reportDayToday(String date);
+
+  /// No description provided for @reportShareExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% of spending'**
+  String reportShareExpense(String percent);
+
+  /// No description provided for @reportShareIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% of income'**
+  String reportShareIncome(String percent);
+
+  /// No description provided for @reportShareCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{share} · {count} transactions'**
+  String reportShareCount(String share, int count);
+
+  /// No description provided for @reportBarGeneral.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} (general)'**
+  String reportBarGeneral(String name);
+
+  /// No description provided for @reportLargest.
+  ///
+  /// In en, this message translates to:
+  /// **'Largest transactions'**
+  String get reportLargest;
+
+  /// No description provided for @reportSeeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See all {count}'**
+  String reportSeeAll(int count);
+
+  /// No description provided for @reportLargestError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load transactions'**
+  String get reportLargestError;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

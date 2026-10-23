@@ -123,6 +123,9 @@ class TransactionLegCommand {
   final BigInt amountMinor;
 }
 
+/// `date` is newest first; `amountDesc` the largest amount first, ignoring sign.
+enum TransactionSort { date, amountDesc }
+
 class TransactionQuery {
   const TransactionQuery({
     this.page = 1,
@@ -135,6 +138,7 @@ class TransactionQuery {
     this.accountIds = const [],
     this.categoryIds = const [],
     this.tagIds = const [],
+    this.sort = TransactionSort.date,
   });
   final int page;
   final int pageSize;
@@ -150,6 +154,7 @@ class TransactionQuery {
   final List<String> accountIds;
   final List<String> categoryIds;
   final List<String> tagIds;
+  final TransactionSort sort;
 
   TransactionQuery copyWith({
     int? page,
@@ -167,6 +172,7 @@ class TransactionQuery {
     accountIds: accountIds,
     categoryIds: categoryIds,
     tagIds: tagIds,
+    sort: sort,
   );
 }
 

@@ -219,8 +219,6 @@
   "reportRange": "Custom",
   "reportPrevious": "Previous period",
   "reportNext": "Next period",
-  "reportFrom": "From",
-  "reportTo": "To",
   "reportApply": "Show this range",
   "reportError": "Could not load the report. Please try again.",
   "reportInvalid": "That date range isn't valid.",
@@ -1243,5 +1241,81 @@
         "type": "String"
       }
     }
-  }
+  },
+  "reportRangeTitle": "Choose a date range",
+  "reportQuick7": "Last 7 days",
+  "reportQuick30": "Last 30 days",
+  "reportQuickQuarter": "This quarter",
+  "reportWeekdays": "Mon,Tue,Wed,Thu,Fri,Sat,Sun",
+  "reportRangePickStart": "Pick the first day",
+  "reportRangePickEnd": "Now pick the last day",
+  "reportDayFrom": "From {date}",
+  "@reportDayFrom": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "reportDayTo": "To {date}",
+  "@reportDayTo": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "reportDayToday": "Today, {date}",
+  "@reportDayToday": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "reportShareExpense": "{percent}% of spending",
+  "@reportShareExpense": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "reportShareIncome": "{percent}% of income",
+  "@reportShareIncome": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "reportShareCount": "{share} · {count} transactions",
+  "@reportShareCount": {
+    "placeholders": {
+      "share": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reportBarGeneral": "{name} (general)",
+  "@reportBarGeneral": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "reportLargest": "Largest transactions",
+  "reportSeeAll": "See all {count}",
+  "@reportSeeAll": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reportLargestError": "Couldn't load transactions"
 }

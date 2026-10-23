@@ -211,6 +211,7 @@ function listFilters(userId: string, query: TransactionQuery, search: ParsedTran
     )`);
   }
   if (query.type) parts.push(Prisma.sql`t.type::text = ${query.type}`);
+  if (query.currency) parts.push(Prisma.sql`t."currencyCode" = ${query.currency}`);
   if (query.from) parts.push(Prisma.sql`t."occurredOn" >= ${query.from}::date`);
   if (query.to) parts.push(Prisma.sql`t."occurredOn" <= ${query.to}::date`);
   if (search) parts.push(searchMatch(search));

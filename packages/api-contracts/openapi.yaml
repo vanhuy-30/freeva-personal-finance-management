@@ -818,6 +818,13 @@ paths:
           - all
           default: active
       - in: query
+        name: currency
+        required: false
+        description: ISO 4217 code of the transaction currency.
+        schema:
+          type: string
+          pattern: ^[A-Z]{3}$
+      - in: query
         name: sort
         required: false
         description: date is newest first (default). amountDesc is the largest amount first, ignoring sign.
