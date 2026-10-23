@@ -526,6 +526,47 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
     ).toBe(401);
   });
 
+  it('DS-P2-003 changes the password while signed in, keeps this session and ends the others', async () => {
+    const email = 'owner@example.test';
+    const first = await verified();
+    const second = (await request('auth/login', { email, password }))
+      .body as { accessToken: string };
+    const next = 'another secure password 9';
+    const change = (current: string, fresh: string, bearer = first.accessToken) =>
+      request(
+        'auth/change-password',
+        { currentPassword: current, newPassword: fresh },
+        bearer,
+      );
+    expect((await change('wrong password entirely 1', next)).status).toBe(403);
+    expect((await change(password, 'no digits in this one')).status).toBe(400);
+    expect((await change(password, password)).status).toBe(400);
+    expect(
+      (await request('auth/change-password', { currentPassword: password, newPassword: next })).status,
+    ).toBe(401);
+    expect((await change(password, next)).status).toBe(204);
+    expect(
+      (await request('sessions', undefined, first.accessToken, 'GET')).status,
+    ).toBe(200);
+    expect(
+      (await request('sessions', undefined, second.accessToken, 'GET')).status,
+    ).toBe(401);
+    expect((await request('auth/login', { email, password })).status).toBe(401);
+    expect(
+      (await request('auth/login', { email, password: next })).status,
+    ).toBe(200);
+    expect(
+      await prisma.auditEvent.count({
+        where: { action: 'auth.change_password', outcome: 'success' },
+      }),
+    ).toBe(1);
+    const tries = [];
+    for (let i = 0; i < 6; i++) {
+      tries.push((await change('wrong password entirely 1', password)).status);
+    }
+    expect(tries).toContain(429);
+  });
+
   it('atomically consumes reset once, changes password, revokes sessions and invalidates other tokens', async () => {
     const login = await verified();
     await request('auth/password-resets', { email: 'owner@example.test' });

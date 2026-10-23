@@ -19,6 +19,7 @@ import { AuthGuard, type AuthRequest } from './auth.guard';
 import { AuthRateLimitGuard } from './auth-rate-limit.guard';
 import { AuthExceptionFilter } from './auth-exception.filter';
 import {
+  ChangePasswordDto,
   CredentialsDto,
   NewCredentialsDto,
   EmailDto,
@@ -91,6 +92,21 @@ export class AuthController {
   @HttpCode(204)
   resetPassword(@Body() body: ResetPasswordDto) {
     return this.auth.consume(body.token, 'reset_password', body.password);
+  }
+
+  @Post('change-password')
+  @HttpCode(204)
+  @UseGuards(AuthGuard)
+  changePassword(
+    @Req() request: AuthRequest,
+    @Body() body: ChangePasswordDto,
+  ) {
+    return this.auth.changePassword(
+      request.session.userId,
+      request.session.id,
+      body.currentPassword,
+      body.newPassword,
+    );
   }
 
   @Post('logout')

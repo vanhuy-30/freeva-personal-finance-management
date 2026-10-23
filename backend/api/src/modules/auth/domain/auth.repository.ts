@@ -48,6 +48,18 @@ export interface AuthRepository {
   ): Promise<Session | null>;
   findSession(tokenHash: string): Promise<Session | null>;
   listSessions(userId: string): Promise<Session[]>;
+  findUserById(userId: string): Promise<AuthUser | null>;
+  /**
+   * Swaps the hash only while it still equals [currentHash], ends every other
+   * session and unused email tokens, and records the change. False when the
+   * password changed in the meantime.
+   */
+  changePassword(
+    userId: string,
+    currentHash: string,
+    newHash: string,
+    keepSessionId: string,
+  ): Promise<boolean>;
   revoke(userId: string, sessionId?: string): Promise<void>;
   takeRateLimit(
     key: string,
