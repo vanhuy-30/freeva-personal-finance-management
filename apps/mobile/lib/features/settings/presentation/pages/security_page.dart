@@ -55,7 +55,12 @@ class _SecurityPageState extends State<SecurityPage> {
           onLeading: () => context.popOrGo('/me'),
         ),
         body: ListView(
-          padding: EdgeInsets.fromLTRB(margin, FreevaSpace.s2, margin, FreevaSpace.s8),
+          padding: EdgeInsets.fromLTRB(
+            margin,
+            FreevaSpace.s2,
+            margin,
+            FreevaSpace.s8,
+          ),
           children: [
             SettingsGroup(
               title: s.meSecUnlock,
@@ -96,7 +101,9 @@ class _SecurityPageState extends State<SecurityPage> {
                 SettingsRow(
                   icon: LucideIcons.smartphone,
                   title: s.meSecSessions,
-                  value: auth.sessions.isEmpty ? null : '${auth.sessions.length}',
+                  value: auth.sessions.isEmpty
+                      ? null
+                      : '${auth.sessions.length}',
                   onTap: () => context.push('/me/sessions'),
                 ),
                 SettingsRow(

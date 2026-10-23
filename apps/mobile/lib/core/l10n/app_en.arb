@@ -264,7 +264,6 @@
   "settingsBiometricFailed": "Biometrics were not confirmed. The setting was not changed.",
   "settingsHelp": "Help",
   "settingsFaq": "FAQ",
-  "settingsFeedback": "Send feedback",
   "settingsTerms": "Terms of service (draft)",
   "settingsPrivacy": "Privacy policy (draft)",
   "settingsVersion": "Version {version}",
@@ -297,14 +296,6 @@
   "faqLockA": "Freeva locks when you leave the app. Unlock with your six-digit PIN. You can turn on biometrics in Settings after a PIN exists.",
   "faqThemeQ": "How do I switch light and dark mode?",
   "faqThemeA": "Open Settings and choose Light, Dark, or System. Light is the default and stays on this device.",
-  "feedbackTitle": "Feedback",
-  "feedbackIdea": "Idea",
-  "feedbackProblem": "Problem",
-  "feedbackMessage": "Message",
-  "feedbackCopy": "Copy feedback",
-  "feedbackCopied": "Copied. A contact address is not configured yet, so Freeva does not send this message.",
-  "feedbackInvalid": "Enter a message of up to 2000 characters.",
-  "feedbackHelp": "Freeva copies the message on this device. It is not uploaded and is not written to logs.",
   "legalDraft": "Draft for PRD-P0-002. This is not legal advice and is not in effect. The operating entity and contact channel are not decided yet.",
   "tosTitle": "Terms of service",
   "tosBody": "Freeva lets you record wallets and transactions you enter. You keep your financial data. The service operator is not decided yet. Account export and deletion are separate release work. This summary does not replace a lawyer-reviewed agreement.",
@@ -1436,5 +1427,89 @@
     }
   },
   "meNetworkError": "Can't reach Freeva. Check your connection.",
-  "meSecAlways": "Always on"
+  "meSecAlways": "Always on",
+  "tagsSearch": "Search tags",
+  "tagsAdd": "Create tag",
+  "tagsName": "Tag name",
+  "tagsRenameTitle": "Rename tag",
+  "tagsRename": "Rename",
+  "tagsDelete": "Delete",
+  "tagsDeleteTitle": "Delete “{name}”?",
+  "@tagsDeleteTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "tagsDeleteBody": "Transactions stay; only this tag comes off.",
+  "tagsEmptyTitle": "No tags yet",
+  "tagsEmptyBody": "Tag transactions to group them your way.",
+  "tagsNoMatch": "No tag matches",
+  "tagsLoadError": "Couldn't load tags",
+  "tagsRowSemantics": "{name}, {count} transactions",
+  "@tagsRowSemantics": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tagsMore": "Actions for {name}",
+  "@tagsMore": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "fbHeading": "What would you like to tell Freeva?",
+  "fbKindBug": "Bug",
+  "fbKindIdea": "Idea",
+  "fbKindPraise": "Praise",
+  "fbAbout": "Which part?",
+  "fbTopicRecord": "Recording",
+  "fbTopicReports": "Reports",
+  "fbTopicWallets": "Wallets",
+  "fbTopicCategories": "Categories",
+  "fbTopicAppearance": "Appearance",
+  "fbTopicOther": "Other",
+  "fbLabelBug": "What went wrong?",
+  "fbLabelIdea": "Your idea",
+  "fbLabelPraise": "What do you like?",
+  "fbCount": "{count}/2000",
+  "@fbCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "fbReply": "Reply to me by email",
+  "fbSend": "Send feedback",
+  "fbSending": "Sending…",
+  "fbThanks": "Thank you!",
+  "fbThanksReply": "Freeva will read it and reply by email.",
+  "fbThanksNoReply": "Freeva will read every message.",
+  "fbDone": "Done",
+  "fbError": "Couldn't send. Try again.",
+  "faqSearch": "Search questions",
+  "faqNoMatch": "No question matches",
+  "faqMissing": "Not finding your answer?",
+  "faqSend": "Send feedback to Freeva",
+  "notifyReminders": "Reminders",
+  "notifyAlerts": "Alerts",
+  "notifyRecord": "Record reminder",
+  "notifyRecordSub": "Every day",
+  "notifyDigest": "Spending summary",
+  "notifyDigestSub": "Every week or month",
+  "notifyBudget": "Budget running out",
+  "notifyBudgetSub": "At 80% and 100% used",
+  "notifyCard": "Credit card due",
+  "notifyCardSub": "3 days before",
+  "notifySession": "New device signed in",
+  "notifySessionSub": "So you can check it"
 }

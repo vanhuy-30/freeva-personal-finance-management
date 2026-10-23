@@ -15,11 +15,13 @@ import '../../features/reports/presentation/pages/report_category_page.dart';
 import '../../features/reports/presentation/pages/report_page.dart';
 import '../../features/settings/domain/app_preferences.dart';
 import '../../features/settings/presentation/pages/faq_page.dart';
-import '../../features/settings/presentation/pages/feedback_page.dart';
+import '../../features/feedback/presentation/pages/feedback_page.dart';
 import '../../features/settings/presentation/pages/legal_page.dart';
 import '../../features/settings/presentation/pages/onboarding_page.dart';
 import '../../features/settings/presentation/pages/change_password_page.dart';
+import '../../features/tags/presentation/pages/tag_page.dart';
 import '../../features/settings/presentation/pages/change_pin_page.dart';
+import '../../features/settings/presentation/pages/notification_settings_page.dart';
 import '../../features/settings/presentation/pages/security_page.dart';
 import '../../features/settings/presentation/pages/sessions_page.dart';
 import '../../features/settings/presentation/pages/settings_page.dart';
@@ -252,6 +254,15 @@ GoRouter _createAppRouter(
                 const AuthGate(child: ChangePasswordPage()),
           ),
         ],
+      ),
+      GoRoute(
+        path: '/me/notifications',
+        builder: (context, state) =>
+            const AuthGate(child: NotificationSettingsPage()),
+      ),
+      GoRoute(
+        path: '/me/tags',
+        builder: (context, state) => const AuthGate(child: TagPage()),
       ),
       GoRoute(
         path: '/me/sessions',

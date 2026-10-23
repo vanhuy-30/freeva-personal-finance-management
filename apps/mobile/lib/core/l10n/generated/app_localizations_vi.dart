@@ -670,9 +670,6 @@ class SVi extends S {
   String get settingsFaq => 'Câu hỏi thường gặp';
 
   @override
-  String get settingsFeedback => 'Gửi phản hồi';
-
-  @override
   String get settingsTerms => 'Điều khoản dịch vụ (nháp)';
 
   @override
@@ -757,32 +754,6 @@ class SVi extends S {
   @override
   String get faqThemeA =>
       'Mở Cài đặt và chọn Sáng, Tối hoặc Theo hệ thống. Sáng là mặc định và được giữ trên thiết bị này.';
-
-  @override
-  String get feedbackTitle => 'Phản hồi';
-
-  @override
-  String get feedbackIdea => 'Góp ý';
-
-  @override
-  String get feedbackProblem => 'Lỗi';
-
-  @override
-  String get feedbackMessage => 'Nội dung';
-
-  @override
-  String get feedbackCopy => 'Sao chép phản hồi';
-
-  @override
-  String get feedbackCopied =>
-      'Đã sao chép. Chưa có địa chỉ liên hệ, nên Freeva không gửi nội dung này.';
-
-  @override
-  String get feedbackInvalid => 'Hãy nhập nội dung, tối đa 2000 ký tự.';
-
-  @override
-  String get feedbackHelp =>
-      'Freeva sao chép nội dung trên thiết bị này. Nội dung không được tải lên và không được ghi vào log.';
 
   @override
   String get legalDraft =>
@@ -2360,4 +2331,171 @@ class SVi extends S {
 
   @override
   String get meSecAlways => 'Luôn bật';
+
+  @override
+  String get tagsSearch => 'Tìm nhãn';
+
+  @override
+  String get tagsAdd => 'Tạo nhãn';
+
+  @override
+  String get tagsName => 'Tên nhãn';
+
+  @override
+  String get tagsRenameTitle => 'Đổi tên nhãn';
+
+  @override
+  String get tagsRename => 'Đổi tên';
+
+  @override
+  String get tagsDelete => 'Xoá';
+
+  @override
+  String tagsDeleteTitle(String name) {
+    return 'Xoá nhãn “$name”?';
+  }
+
+  @override
+  String get tagsDeleteBody => 'Giao dịch vẫn còn, chỉ gỡ nhãn này.';
+
+  @override
+  String get tagsEmptyTitle => 'Chưa có nhãn nào';
+
+  @override
+  String get tagsEmptyBody => 'Gắn nhãn để gom giao dịch theo cách của bạn.';
+
+  @override
+  String get tagsNoMatch => 'Không có nhãn khớp';
+
+  @override
+  String get tagsLoadError => 'Không tải được nhãn';
+
+  @override
+  String tagsRowSemantics(String name, int count) {
+    return '$name, $count giao dịch';
+  }
+
+  @override
+  String tagsMore(String name) {
+    return 'Tác vụ cho $name';
+  }
+
+  @override
+  String get fbHeading => 'Bạn muốn nói gì với Freeva?';
+
+  @override
+  String get fbKindBug => 'Lỗi';
+
+  @override
+  String get fbKindIdea => 'Ý tưởng';
+
+  @override
+  String get fbKindPraise => 'Lời khen';
+
+  @override
+  String get fbAbout => 'Về phần nào?';
+
+  @override
+  String get fbTopicRecord => 'Ghi chi';
+
+  @override
+  String get fbTopicReports => 'Báo cáo';
+
+  @override
+  String get fbTopicWallets => 'Ví';
+
+  @override
+  String get fbTopicCategories => 'Danh mục';
+
+  @override
+  String get fbTopicAppearance => 'Giao diện';
+
+  @override
+  String get fbTopicOther => 'Khác';
+
+  @override
+  String get fbLabelBug => 'Bạn gặp lỗi gì?';
+
+  @override
+  String get fbLabelIdea => 'Ý tưởng của bạn';
+
+  @override
+  String get fbLabelPraise => 'Bạn thích điều gì?';
+
+  @override
+  String fbCount(int count) {
+    return '$count/2000';
+  }
+
+  @override
+  String get fbReply => 'Trả lời tôi qua email';
+
+  @override
+  String get fbSend => 'Gửi góp ý';
+
+  @override
+  String get fbSending => 'Đang gửi…';
+
+  @override
+  String get fbThanks => 'Cảm ơn bạn!';
+
+  @override
+  String get fbThanksReply => 'Freeva sẽ đọc và trả lời qua email.';
+
+  @override
+  String get fbThanksNoReply => 'Freeva sẽ đọc từng góp ý.';
+
+  @override
+  String get fbDone => 'Xong';
+
+  @override
+  String get fbError => 'Chưa gửi được. Thử lại nhé.';
+
+  @override
+  String get faqSearch => 'Tìm câu hỏi';
+
+  @override
+  String get faqNoMatch => 'Không có câu hỏi khớp';
+
+  @override
+  String get faqMissing => 'Chưa thấy câu trả lời?';
+
+  @override
+  String get faqSend => 'Gửi góp ý cho Freeva';
+
+  @override
+  String get notifyReminders => 'Nhắc nhở';
+
+  @override
+  String get notifyAlerts => 'Cảnh báo';
+
+  @override
+  String get notifyRecord => 'Nhắc ghi chi';
+
+  @override
+  String get notifyRecordSub => 'Mỗi ngày';
+
+  @override
+  String get notifyDigest => 'Tổng kết chi tiêu';
+
+  @override
+  String get notifyDigestSub => 'Mỗi tuần hoặc mỗi tháng';
+
+  @override
+  String get notifyBudget => 'Ngân sách sắp hết';
+
+  @override
+  String get notifyBudgetSub => 'Khi dùng 80% và 100%';
+
+  @override
+  String get notifyCard => 'Thẻ tín dụng đến hạn';
+
+  @override
+  String get notifyCardSub => 'Trước 3 ngày';
+
+  @override
+  String get notifySession => 'Máy mới đăng nhập';
+
+  @override
+  String get notifySessionSub => 'Báo để bạn kiểm tra';
 }

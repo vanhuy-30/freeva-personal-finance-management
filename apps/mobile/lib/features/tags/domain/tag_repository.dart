@@ -9,4 +9,6 @@ abstract class TagRepository {
     required String clientId,
     required String name,
   });
+  Future<Either<AuthFailure, Tag>> rename(Tag tag, String name);
+  Future<Either<AuthFailure, Unit>> delete(Tag tag);
 }

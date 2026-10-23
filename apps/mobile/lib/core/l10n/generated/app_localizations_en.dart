@@ -674,9 +674,6 @@ class SEn extends S {
   String get settingsFaq => 'FAQ';
 
   @override
-  String get settingsFeedback => 'Send feedback';
-
-  @override
   String get settingsTerms => 'Terms of service (draft)';
 
   @override
@@ -761,32 +758,6 @@ class SEn extends S {
   @override
   String get faqThemeA =>
       'Open Settings and choose Light, Dark, or System. Light is the default and stays on this device.';
-
-  @override
-  String get feedbackTitle => 'Feedback';
-
-  @override
-  String get feedbackIdea => 'Idea';
-
-  @override
-  String get feedbackProblem => 'Problem';
-
-  @override
-  String get feedbackMessage => 'Message';
-
-  @override
-  String get feedbackCopy => 'Copy feedback';
-
-  @override
-  String get feedbackCopied =>
-      'Copied. A contact address is not configured yet, so Freeva does not send this message.';
-
-  @override
-  String get feedbackInvalid => 'Enter a message of up to 2000 characters.';
-
-  @override
-  String get feedbackHelp =>
-      'Freeva copies the message on this device. It is not uploaded and is not written to logs.';
 
   @override
   String get legalDraft =>
@@ -2397,4 +2368,171 @@ class SEn extends S {
 
   @override
   String get meSecAlways => 'Always on';
+
+  @override
+  String get tagsSearch => 'Search tags';
+
+  @override
+  String get tagsAdd => 'Create tag';
+
+  @override
+  String get tagsName => 'Tag name';
+
+  @override
+  String get tagsRenameTitle => 'Rename tag';
+
+  @override
+  String get tagsRename => 'Rename';
+
+  @override
+  String get tagsDelete => 'Delete';
+
+  @override
+  String tagsDeleteTitle(String name) {
+    return 'Delete “$name”?';
+  }
+
+  @override
+  String get tagsDeleteBody => 'Transactions stay; only this tag comes off.';
+
+  @override
+  String get tagsEmptyTitle => 'No tags yet';
+
+  @override
+  String get tagsEmptyBody => 'Tag transactions to group them your way.';
+
+  @override
+  String get tagsNoMatch => 'No tag matches';
+
+  @override
+  String get tagsLoadError => 'Couldn\'t load tags';
+
+  @override
+  String tagsRowSemantics(String name, int count) {
+    return '$name, $count transactions';
+  }
+
+  @override
+  String tagsMore(String name) {
+    return 'Actions for $name';
+  }
+
+  @override
+  String get fbHeading => 'What would you like to tell Freeva?';
+
+  @override
+  String get fbKindBug => 'Bug';
+
+  @override
+  String get fbKindIdea => 'Idea';
+
+  @override
+  String get fbKindPraise => 'Praise';
+
+  @override
+  String get fbAbout => 'Which part?';
+
+  @override
+  String get fbTopicRecord => 'Recording';
+
+  @override
+  String get fbTopicReports => 'Reports';
+
+  @override
+  String get fbTopicWallets => 'Wallets';
+
+  @override
+  String get fbTopicCategories => 'Categories';
+
+  @override
+  String get fbTopicAppearance => 'Appearance';
+
+  @override
+  String get fbTopicOther => 'Other';
+
+  @override
+  String get fbLabelBug => 'What went wrong?';
+
+  @override
+  String get fbLabelIdea => 'Your idea';
+
+  @override
+  String get fbLabelPraise => 'What do you like?';
+
+  @override
+  String fbCount(int count) {
+    return '$count/2000';
+  }
+
+  @override
+  String get fbReply => 'Reply to me by email';
+
+  @override
+  String get fbSend => 'Send feedback';
+
+  @override
+  String get fbSending => 'Sending…';
+
+  @override
+  String get fbThanks => 'Thank you!';
+
+  @override
+  String get fbThanksReply => 'Freeva will read it and reply by email.';
+
+  @override
+  String get fbThanksNoReply => 'Freeva will read every message.';
+
+  @override
+  String get fbDone => 'Done';
+
+  @override
+  String get fbError => 'Couldn\'t send. Try again.';
+
+  @override
+  String get faqSearch => 'Search questions';
+
+  @override
+  String get faqNoMatch => 'No question matches';
+
+  @override
+  String get faqMissing => 'Not finding your answer?';
+
+  @override
+  String get faqSend => 'Send feedback to Freeva';
+
+  @override
+  String get notifyReminders => 'Reminders';
+
+  @override
+  String get notifyAlerts => 'Alerts';
+
+  @override
+  String get notifyRecord => 'Record reminder';
+
+  @override
+  String get notifyRecordSub => 'Every day';
+
+  @override
+  String get notifyDigest => 'Spending summary';
+
+  @override
+  String get notifyDigestSub => 'Every week or month';
+
+  @override
+  String get notifyBudget => 'Budget running out';
+
+  @override
+  String get notifyBudgetSub => 'At 80% and 100% used';
+
+  @override
+  String get notifyCard => 'Credit card due';
+
+  @override
+  String get notifyCardSub => '3 days before';
+
+  @override
+  String get notifySession => 'New device signed in';
+
+  @override
+  String get notifySessionSub => 'So you can check it';
 }

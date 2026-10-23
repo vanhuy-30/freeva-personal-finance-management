@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/core/analytics/analytics_event.dart';
-import 'package:mobile/core/analytics/debug_analytics_service.dart';
 import 'package:mobile/features/auth/data/auth_repository_impl.dart';
 import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/auth/domain/auth_use_cases.dart';
@@ -20,7 +19,6 @@ void main() {
   late MemoryVault vault;
   late FakeBiometrics biometrics;
   late RecordingAnalytics analytics;
-  late RecordingLogger logger;
   late AuthRepositoryImpl auth;
   late DefaultSettingsViewModel model;
 
@@ -29,7 +27,6 @@ void main() {
     vault = MemoryVault();
     biometrics = FakeBiometrics();
     analytics = RecordingAnalytics();
-    logger = RecordingLogger();
     auth = AuthRepositoryImpl(FakeApi(), vault, biometrics);
     model = DefaultSettingsViewModel(
       DefaultSettingsUseCases(SettingsRepositoryImpl(preferences)),
@@ -79,18 +76,6 @@ void main() {
       expect(model.theme, AppThemePreference.light);
     },
   );
-
-  test('feedback body is not written to analytics or the logger', () async {
-    const secret = 'secret-feedback-body';
-    final service = DebugAnalyticsService(logger);
-    final text = model.prepareFeedback(FeedbackKind.problem, '  $secret  ');
-    expect(text, contains(secret));
-    expect(model.prepareFeedback(FeedbackKind.idea, '   '), isNull);
-    service.track(AnalyticsEvent.onboardingStarted);
-    expect(logger.messages.single.contains(secret), isFalse);
-    expect(analytics.events, isEmpty);
-    expect(text!.contains('@'), isFalse);
-  });
 
   test('a failed biometric confirmation does not flip the flag', () async {
     await unlockWithPin();
