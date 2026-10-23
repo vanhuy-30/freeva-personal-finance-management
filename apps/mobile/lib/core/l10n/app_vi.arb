@@ -507,5 +507,18 @@
   "dayClear": "Để trống",
   "dayCloseMark": "Ngày chốt",
   "dayDueMark": "Ngày đến hạn",
-  "dayMarkedSemantics": "{day}, {mark}"
+  "dayMarkedSemantics": "{day}, {mark}",
+  "categoryTabExpense": "Chi",
+  "categoryTabIncome": "Thu",
+  "categoryTabs": "Loại danh mục",
+  "categoryChildCount": "{count} danh mục con",
+  "categoryToggleSemantics": "{name}: mở hoặc thu danh mục con",
+  "categoryHiddenTitle": "Danh mục đã ẩn",
+  "categoryHiddenHint": "Giao dịch cũ vẫn giữ danh mục này.",
+  "categoryRestoreShort": "Khôi phục",
+  "categoryRestoreNamed": "Khôi phục {name}",
+  "categoryRestored": "Đã khôi phục {name}",
+  "categoryEmptyTitle": "Chưa có danh mục",
+  "categoryEmptyBody": "Thêm một danh mục để bắt đầu.",
+  "categoryLoadError": "Chưa tải được danh mục"
 }

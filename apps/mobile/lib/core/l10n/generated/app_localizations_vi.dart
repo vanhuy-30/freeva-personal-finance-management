@@ -1667,4 +1667,51 @@ class SVi extends S {
   String dayMarkedSemantics(int day, String mark) {
     return '$day, $mark';
   }
+
+  @override
+  String get categoryTabExpense => 'Chi';
+
+  @override
+  String get categoryTabIncome => 'Thu';
+
+  @override
+  String get categoryTabs => 'Loại danh mục';
+
+  @override
+  String categoryChildCount(int count) {
+    return '$count danh mục con';
+  }
+
+  @override
+  String categoryToggleSemantics(String name) {
+    return '$name: mở hoặc thu danh mục con';
+  }
+
+  @override
+  String get categoryHiddenTitle => 'Danh mục đã ẩn';
+
+  @override
+  String get categoryHiddenHint => 'Giao dịch cũ vẫn giữ danh mục này.';
+
+  @override
+  String get categoryRestoreShort => 'Khôi phục';
+
+  @override
+  String categoryRestoreNamed(String name) {
+    return 'Khôi phục $name';
+  }
+
+  @override
+  String categoryRestored(String name) {
+    return 'Đã khôi phục $name';
+  }
+
+  @override
+  String get categoryEmptyTitle => 'Chưa có danh mục';
+
+  @override
+  String get categoryEmptyBody => 'Thêm một danh mục để bắt đầu.';
+
+  @override
+  String get categoryLoadError => 'Chưa tải được danh mục';
 }

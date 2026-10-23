@@ -12,13 +12,24 @@ import 'package:mobile/features/categories/domain/category_use_cases.dart';
 import 'package:mobile/features/categories/presentation/viewmodels/category_view_model.dart';
 import 'package:mobile/features/categories/presentation/widgets/category_editor.dart';
 import 'package:mobile/features/categories/presentation/widgets/category_editor_form.dart';
-import 'package:mobile/features/categories/presentation/widgets/category_list.dart';
+import 'package:mobile/features/categories/domain/category_expansion_repository.dart';
+import 'package:mobile/features/categories/presentation/pages/category_page.dart';
+import 'package:mobile/features/categories/presentation/pages/hidden_categories_page.dart';
 
 import '../auth/fakes.dart';
-import 'category_test.dart' show CategoryTransport;
+import 'category_test.dart' show CategoryTransport, categoryJson;
+
+class _Expansion implements CategoryExpansionRepository {
+  Set<String> stored = {};
+  @override
+  Future<Set<String>> read() async => stored;
+  @override
+  Future<void> write(Set<String> ids) async => stored = ids;
+}
 
 void main() {
   late CategoryTransport api;
+  late _Expansion expansion;
   late DefaultAuthViewModel auth;
   late DefaultCategoryViewModel model;
   setUp(() async {
@@ -33,10 +44,13 @@ void main() {
           ..stage = AuthStage.unlocked
           ..ready = true;
     getIt.registerSingleton<AuthViewModel>(auth);
+    expansion = _Expansion();
     model = DefaultCategoryViewModel(
       DefaultCategoryUseCases(CategoryRepositoryImpl(api)),
       auth,
+      expansion,
     );
+    getIt.registerSingleton<CategoryViewModel>(model);
     await model.load();
   });
   tearDown(() async {
@@ -57,49 +71,60 @@ void main() {
         ),
       );
 
-  testWidgets('tree indents children and hidden filter omits active rows', (
+  testWidgets('list starts collapsed; the round button opens and is kept', (
     tester,
   ) async {
-    await tester.pumpWidget(
-      app(
-        ListenableBuilder(
-          listenable: model,
-          builder: (_, _) => CategoryList(model: model, archived: false),
-        ),
-      ),
+    await tester.pumpWidget(app(const CategoryPage()));
+    await tester.pump();
+    expect(find.text('Ăn uống'), findsOneWidget);
+    expect(find.text('1 danh mục con'), findsOneWidget);
+    expect(find.text('Cà phê'), findsNothing);
+    expect(find.text('Quà'), findsNothing);
+    await tester.tap(
+      find.bySemanticsLabel('Ăn uống: mở hoặc thu danh mục con'),
     );
-    final food = tester.widget<Card>(find.byKey(const ValueKey('food')));
-    final coffee = tester.widget<Card>(find.byKey(const ValueKey('coffee')));
-    expect(
-      (coffee.margin! as EdgeInsets).left,
-      greaterThan((food.margin! as EdgeInsets).left),
-    );
-    expect(find.text('Danh mục mặc định'), findsOneWidget);
-    await tester.tap(find.text('Ẩn danh mục').first);
-    await tester.pumpAndSettle();
-    expect(find.textContaining('danh mục con'), findsOneWidget);
-    expect(api.writes, 0);
-    await tester.pumpWidget(
-      app(CategoryList(model: model, archived: true), locale: 'en'),
-    );
-    await tester.pumpAndSettle();
-    expect(find.text('Quà'), findsOneWidget);
-    expect(find.text('Restore category'), findsOneWidget);
+    await tester.pump();
+    expect(find.text('Cà phê'), findsOneWidget);
+    expect(expansion.stored, {'food'});
+    expect(find.bySemanticsLabel('Danh mục đã ẩn, 1'), findsOneWidget);
+  });
+
+  testWidgets('Chi and Thu tabs follow kind; both shows in each', (
+    tester,
+  ) async {
+    api.rows[0]['kind'] = 'expense';
+    api.rows.add(categoryJson('salary', name: 'Lương')..['kind'] = 'income');
+    api.rows.add(categoryJson('gifts', name: 'Quà tặng')..['kind'] = 'both');
+    await model.load();
+    await tester.pumpWidget(app(const CategoryPage()));
+    await tester.pump();
+    expect(find.text('Lương'), findsNothing);
+    expect(find.text('Quà tặng'), findsOneWidget);
+    await tester.tap(find.text('Thu'));
+    await tester.pump();
+    expect(find.text('Lương'), findsOneWidget);
+    expect(find.text('Quà tặng'), findsOneWidget);
     expect(find.text('Ăn uống'), findsNothing);
+  });
+
+  testWidgets('hidden page restores a main category with a toast', (
+    tester,
+  ) async {
+    await tester.pumpWidget(app(const HiddenCategoriesPage()));
+    expect(find.text('Giao dịch cũ vẫn giữ danh mục này.'), findsOneWidget);
+    await tester.tap(find.bySemanticsLabel('Khôi phục Quà'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(model.categories.firstWhere((c) => c.id == 'gift').archived, false);
+    expect(find.text('Đã khôi phục Quà'), findsOneWidget);
   });
 
   testWidgets('locking closes the editor and discards the draft', (
     tester,
   ) async {
-    await tester.pumpWidget(
-      app(
-        ListenableBuilder(
-          listenable: model,
-          builder: (_, _) => CategoryList(model: model, archived: false),
-        ),
-      ),
-    );
-    await tester.tap(find.text('Sửa danh mục').first);
+    await tester.pumpWidget(app(const CategoryPage()));
+    await tester.pump();
+    await tester.tap(find.text('Ăn uống'));
     await tester.pumpAndSettle();
     expect(find.byType(CategoryEditorForm), findsOneWidget);
     await tester.enterText(find.byType(TextField).first, 'Private draft');

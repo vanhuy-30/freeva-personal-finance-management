@@ -7,9 +7,15 @@ import 'category_fields.dart';
 import 'category_labels.dart';
 
 class CategoryEditorForm extends StatefulWidget {
-  const CategoryEditorForm({required this.model, this.category, super.key});
+  const CategoryEditorForm({
+    required this.model,
+    this.category,
+    this.kind = CategoryKind.both,
+    super.key,
+  });
   final CategoryViewModel model;
   final FinanceCategory? category;
+  final CategoryKind kind;
   @override
   State<CategoryEditorForm> createState() => _CategoryEditorFormState();
 }
@@ -39,6 +45,7 @@ class _CategoryEditorFormState extends State<CategoryEditorForm> {
         parentId: parentId,
         colorToken: colorToken,
         iconToken: iconToken,
+        kind: widget.category?.kind ?? widget.kind,
       ),
       clientId,
       category: widget.category,

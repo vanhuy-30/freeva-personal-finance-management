@@ -1,7 +1,31 @@
 export class CategoryError extends Error {
   constructor(readonly code: 'VALIDATION_ERROR' | 'CATEGORY_NOT_FOUND' | 'CATEGORY_CONFLICT') { super(code); }
 }
-export const CATEGORY_ICONS = ['category', 'food', 'transport', 'housing', 'bills', 'shopping', 'health', 'education', 'entertainment', 'family', 'gifts', 'travel', 'salary', 'bonus', 'other_income', 'other_expense'] as const;
+/**
+ * The 36 icons offered by the picker (DS-P2-003, group E), in picker order and four groups. Older tokens keep their
+ * meaning: `entertainment` is "phim", `bills` is "thuế/phí", `other_income` is "tiết kiệm", `other_expense` is "khác".
+ */
+export const CATEGORY_PICKER_ICONS = [
+  'food', 'coffee', 'groceries', 'shopping', 'clothes', 'gifts',
+  'transport', 'bus', 'fuel', 'travel', 'housing', 'repair', 'electricity', 'water', 'internet', 'phone',
+  'health', 'medicine', 'sports', 'family', 'pets', 'beauty', 'education', 'books', 'music', 'entertainment', 'games',
+  'salary', 'bonus', 'investment', 'work', 'other_income', 'bills', 'insurance', 'subscription', 'other_expense',
+] as const;
+/** Every accepted icon: the picker set plus `category`, kept for rows saved before DS-P2-003. */
+export const CATEGORY_ICONS = ['category', ...CATEGORY_PICKER_ICONS] as const;
+/**
+ * Colour grid order (after "no colour", which is null): 20 legacy `color.*` keys. Writes may only pick these; a row
+ * that already holds another catalog key keeps it until changed.
+ */
+export const CATEGORY_PALETTE = [
+  'color.brand.primary', 'color.category.blueDeep', 'color.brand.secondary', 'color.category.oceanDeep',
+  'color.brand.accent', 'color.category.violetDeep',
+  'color.semantic.success', 'color.semantic.warning', 'color.category.blueLight', 'color.brand.highlight',
+  'color.category.violetLight', 'color.category.greenLight', 'color.category.yellowLight',
+  'color.category.pink', 'color.category.orange', 'color.category.brown', 'color.category.lime',
+  'color.category.olive', 'color.category.plum', 'color.category.gray',
+] as const;
+export const CATEGORY_KINDS = ['expense', 'income', 'both'] as const;
 export type CategoryKind = 'expense' | 'income' | 'both';
 export type CategoryIcon = (typeof CATEGORY_ICONS)[number];
 export interface DefaultCategorySeed {
@@ -31,29 +55,47 @@ export const LEGACY_DEFAULT_CATEGORIES: readonly DefaultCategorySeed[] = [
 ];
 /** Spec names missing from the original 15; added once via supplement or fresh bootstrap. */
 export const SUPPLEMENT_CATEGORIES: readonly DefaultCategorySeed[] = [
-  { name: 'Cà phê', iconToken: 'food', kind: 'expense', parentName: null },
-  { name: 'Điện nước', iconToken: 'bills', kind: 'expense', parentName: 'Hóa đơn' },
-  { name: 'Internet', iconToken: 'bills', kind: 'expense', parentName: 'Hóa đơn' },
-  { name: 'Điện thoại', iconToken: 'bills', kind: 'expense', parentName: 'Hóa đơn' },
-  { name: 'Subscription', iconToken: 'category', kind: 'expense', parentName: null },
-  { name: 'Bảo hiểm', iconToken: 'health', kind: 'expense', parentName: null },
-  { name: 'Thuế/phí', iconToken: 'category', kind: 'expense', parentName: null },
-  { name: 'Freelance', iconToken: 'other_income', kind: 'income', parentName: null },
-  { name: 'Kinh doanh', iconToken: 'other_income', kind: 'income', parentName: null },
-  { name: 'Đầu tư', iconToken: 'other_income', kind: 'income', parentName: null },
+  { name: 'Cà phê', iconToken: 'coffee', kind: 'expense', parentName: null },
+  { name: 'Điện nước', iconToken: 'electricity', kind: 'expense', parentName: 'Hóa đơn' },
+  { name: 'Internet', iconToken: 'internet', kind: 'expense', parentName: 'Hóa đơn' },
+  { name: 'Điện thoại', iconToken: 'phone', kind: 'expense', parentName: 'Hóa đơn' },
+  { name: 'Subscription', iconToken: 'subscription', kind: 'expense', parentName: null },
+  { name: 'Bảo hiểm', iconToken: 'insurance', kind: 'expense', parentName: null },
+  { name: 'Thuế/phí', iconToken: 'bills', kind: 'expense', parentName: null },
+  { name: 'Freelance', iconToken: 'work', kind: 'income', parentName: null },
+  { name: 'Kinh doanh', iconToken: 'work', kind: 'income', parentName: null },
+  { name: 'Đầu tư', iconToken: 'investment', kind: 'income', parentName: null },
   { name: 'Hoàn tiền', iconToken: 'other_income', kind: 'income', parentName: null },
 ];
 export const DEFAULT_CATEGORIES: readonly DefaultCategorySeed[] = [...LEGACY_DEFAULT_CATEGORIES, ...SUPPLEMENT_CATEGORIES];
+/** Icons the supplement defaults had before DS-P2-003 (all generic). */
+const PREVIOUS_SUPPLEMENT_ICONS: Readonly<Record<string, CategoryIcon>> = {
+  'Cà phê': 'food', 'Điện nước': 'bills', Internet: 'bills', 'Điện thoại': 'bills', Subscription: 'category',
+  'Bảo hiểm': 'health', 'Thuế/phí': 'category', Freelance: 'other_income', 'Kinh doanh': 'other_income',
+  'Đầu tư': 'other_income',
+};
+/**
+ * One-shot icon refresh: system defaults that still have their old name and old generic icon get the specific icon.
+ * Anything the user renamed or re-iconed is left alone.
+ */
+export function iconRefreshPlan(rows: Pick<SupplementRow, 'id' | 'name' | 'iconToken' | 'isSystem'>[]): Array<{ id: string; iconToken: CategoryIcon }> {
+  return rows.flatMap(row => {
+    const previous = PREVIOUS_SUPPLEMENT_ICONS[row.name];
+    const seed = SUPPLEMENT_CATEGORIES.find(item => item.name === row.name);
+    return row.isSystem && previous && seed && row.iconToken === previous ? [{ id: row.id, iconToken: seed.iconToken }] : [];
+  });
+}
 export interface CategoryInput {
   clientId: string;
   name: string;
   parentId: string | null;
   colorToken: string | null;
   iconToken: string | null;
+  /** Ignored for a subcategory, which takes its parent's kind. */
+  kind: CategoryKind;
 }
 export interface Category extends CategoryInput {
   id: string;
-  kind: CategoryKind;
   groupId: string | null;
   isSystem: boolean;
   archivedAt: Date | null;
@@ -133,6 +175,22 @@ export function supplementPlan(rows: SupplementRow[]): SupplementPlan {
 }
 export function assertVersion(actual: number, expected: number) {
   if (actual !== expected || actual >= 2147483647) throw new CategoryError('CATEGORY_CONFLICT');
+}
+/**
+ * Two levels only (DS-P2-003): a new parent must be a root of the owner, and a category that has
+ * children cannot become a child. Rows nested deeper before this rule stay readable and editable in place.
+ */
+export function assertTwoLevels(id: string | undefined, parentId: string | null, tree: Pick<Category, 'id' | 'parentId'>[]) {
+  if (!parentId) return;
+  const parent = tree.find(item => item.id === parentId);
+  if (!parent) throw new CategoryError('CATEGORY_NOT_FOUND');
+  if (parentId === id || parent.parentId !== null) throw new CategoryError('VALIDATION_ERROR');
+  if (id && tree.some(item => item.parentId === id)) throw new CategoryError('CATEGORY_CONFLICT');
+}
+/** A write may pick a palette colour or none; any other catalog key only when it is the row's current value. */
+export function assertPaletteColor(color: string | null | undefined, current?: string | null) {
+  if (color == null || color === current) return;
+  if (!(CATEGORY_PALETTE as readonly string[]).includes(color)) throw new CategoryError('VALIDATION_ERROR');
 }
 /** All ancestors must exist in the owner's tree; tolerate arbitrary valid depth. */
 export function assertParent(id: string | undefined, parentId: string | null, tree: Pick<Category, 'id' | 'parentId' | 'archivedAt'>[], active: boolean) {

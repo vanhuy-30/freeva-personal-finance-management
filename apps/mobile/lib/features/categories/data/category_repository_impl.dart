@@ -147,6 +147,7 @@ class CategoryRepositoryImpl implements CategoryRepository {
         if (draft.parentId != null) 'parentId': draft.parentId,
         if (draft.colorToken != null) 'colorToken': draft.colorToken,
         if (draft.iconToken != null) 'iconToken': draft.iconToken,
+        'kind': draft.kind.name,
       };
     }
     return {

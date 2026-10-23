@@ -943,5 +943,46 @@
         "type": "String"
       }
     }
-  }
+  },
+  "categoryTabExpense": "Expense",
+  "categoryTabIncome": "Income",
+  "categoryTabs": "Category type",
+  "categoryChildCount": "{count, plural, =1{1 subcategory} other{{count} subcategories}}",
+  "@categoryChildCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "categoryToggleSemantics": "{name}: show or hide subcategories",
+  "@categoryToggleSemantics": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "categoryHiddenTitle": "Hidden categories",
+  "categoryHiddenHint": "Past transactions keep these categories.",
+  "categoryRestoreShort": "Restore",
+  "categoryRestoreNamed": "Restore {name}",
+  "@categoryRestoreNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "categoryRestored": "{name} is back",
+  "@categoryRestored": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "categoryEmptyTitle": "No categories yet",
+  "categoryEmptyBody": "Add one to get started.",
+  "categoryLoadError": "Couldn't load categories"
 }

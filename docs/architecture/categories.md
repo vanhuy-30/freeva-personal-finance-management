@@ -35,8 +35,9 @@ giữ dữ liệu; migration không tạo danh mục.
   tên đã sửa, không nhân đôi tên đã có (kể cả custom).
 - Đã bổ sung: no-op. Gọi lại sau khi sửa/ẩn/xóa mặc định không tái tạo.
 
-`kind` ∈ `expense` | `income` | `both`. Client không gửi `kind`. Custom mới mặc
-định `both`. Phase 1 không từ chối giao dịch theo `kind`. Điện nước, Internet,
+`kind` ∈ `expense` | `income` | `both`. Từ `DS-P2-003` POST nhận `kind` (tab Chi /
+Thu đang mở, mặc định `both`); danh mục con luôn lấy `kind` của cha, và lấy `kind`
+của cha mới khi chuyển cha. PATCH không đổi `kind`. Phase 1 không từ chối giao dịch theo `kind`. Điện nước, Internet,
 Điện thoại là con của Hóa đơn nếu mục đó còn active; nếu không thì là gốc.
 
 Bộ VN gồm thêm: Cà phê, Điện nước, Internet, Điện thoại, Subscription, Bảo hiểm,
@@ -44,13 +45,25 @@ Thuế/phí, Freelance, Kinh doanh, Đầu tư, Hoàn tiền. Tên là dữ li�
 Subscription), không tự dịch khi đổi locale. `isSystem` chỉ ghi nhận nguồn; người
 dùng vẫn sửa/ẩn/xóa được. Mặc định có icon ngữ nghĩa, colorToken null.
 
+Icon riêng (`DS-P2-003`): bộ bổ sung tạo mới dùng icon cụ thể (Cà phê `coffee`,
+Internet `internet`…). Migration `20261023000000_category_icon_refresh` thêm
+`User.categoryIconsRefreshedAt`; lần `POST /defaults` kế tiếp đổi icon một lần cho
+mục hệ thống còn đúng tên và icon chung cũ (tăng version), mục người dùng đã đổi
+tên/icon giữ nguyên.
+
 ## Metadata, cây và danh sách
 
 Tên trim dài 1–100 ký tự, cho phép trùng. Parent cùng owner, không tự tham chiếu
-hoặc chu trình; không áp giới hạn độ sâu. Client không sửa clientId/isSystem/
+hoặc chu trình. **Hai cấp** (`DS-P2-003`): khi tạo hoặc đổi cha, cha phải là danh
+mục gốc (`400`), và danh mục đang có con không được nhận cha (`409`). Dữ liệu lồng
+sâu hơn từ trước vẫn đọc và sửa tại chỗ được. Client không sửa clientId/isSystem/
 groupId; quản lý nhóm và nhãn nằm ngoài task này.
 
 `colorToken` là tên token trong `packages/design-tokens/tokens.json`, không hex.
+`/options` trả **bảng 20 màu** theo thứ tự lưới (`CATEGORY_PALETTE`, gồm 14 key
+`color.category.*` mới, không có đỏ lỗi) và **36 icon** theo 4 nhóm
+(`CATEGORY_PICKER_ICONS`). Ghi mới chỉ nhận màu trong bảng; key catalog khác chỉ
+được giữ nguyên trên dòng đang có. Mọi icon cũ vẫn hợp lệ.
 Catalog được sinh bởi `node backend/api/scripts/generate-category-tokens.cjs`;
 unit test kiểm tra catalog khớp source of truth. Đây là metadata cho icon/badge,
 không phải quyền dùng mọi token làm màu chữ; UI vẫn tuân thủ brand contrast.

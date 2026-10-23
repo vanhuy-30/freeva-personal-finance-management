@@ -41,11 +41,15 @@ class CategoryDraft {
     this.parentId,
     this.colorToken,
     this.iconToken,
+    this.kind = CategoryKind.both,
   });
   final String name;
   final String? parentId;
   final String? colorToken;
   final String? iconToken;
+
+  /// Tab it is created on; the server gives a subcategory its parent's kind.
+  final CategoryKind kind;
 }
 
 class CategoryOptions {

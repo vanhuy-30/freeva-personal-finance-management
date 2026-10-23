@@ -1683,4 +1683,57 @@ class SEn extends S {
   String dayMarkedSemantics(int day, String mark) {
     return '$day, $mark';
   }
+
+  @override
+  String get categoryTabExpense => 'Expense';
+
+  @override
+  String get categoryTabIncome => 'Income';
+
+  @override
+  String get categoryTabs => 'Category type';
+
+  @override
+  String categoryChildCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count subcategories',
+      one: '1 subcategory',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String categoryToggleSemantics(String name) {
+    return '$name: show or hide subcategories';
+  }
+
+  @override
+  String get categoryHiddenTitle => 'Hidden categories';
+
+  @override
+  String get categoryHiddenHint => 'Past transactions keep these categories.';
+
+  @override
+  String get categoryRestoreShort => 'Restore';
+
+  @override
+  String categoryRestoreNamed(String name) {
+    return 'Restore $name';
+  }
+
+  @override
+  String categoryRestored(String name) {
+    return '$name is back';
+  }
+
+  @override
+  String get categoryEmptyTitle => 'No categories yet';
+
+  @override
+  String get categoryEmptyBody => 'Add one to get started.';
+
+  @override
+  String get categoryLoadError => 'Couldn\'t load categories';
 }

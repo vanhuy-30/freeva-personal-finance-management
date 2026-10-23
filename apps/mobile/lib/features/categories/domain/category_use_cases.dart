@@ -57,7 +57,9 @@ class DefaultCategoryUseCases implements CategoryUseCases {
     if (name.isEmpty ||
         name.length > 100 ||
         categoryParentInvalid(draft.parentId, category?.id, categories) ||
-        !_token(draft.colorToken, options.colorTokens) ||
+        // An older colour outside the palette may stay as it is.
+        (draft.colorToken != category?.colorToken &&
+            !_token(draft.colorToken, options.colorTokens)) ||
         !_token(draft.iconToken, options.iconTokens)) {
       return Future.value(left(const AuthFailure(AuthError.invalidInput)));
     }

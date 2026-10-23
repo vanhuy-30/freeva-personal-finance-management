@@ -7,9 +7,17 @@ import '../viewmodels/category_view_model.dart';
 import 'category_editor_form.dart';
 
 class CategoryEditor extends StatefulWidget {
-  const CategoryEditor({required this.model, this.category, super.key});
+  const CategoryEditor({
+    required this.model,
+    this.category,
+    this.kind = CategoryKind.both,
+    super.key,
+  });
   final CategoryViewModel model;
   final FinanceCategory? category;
+
+  /// Tab a new category is added from.
+  final CategoryKind kind;
   @override
   State<CategoryEditor> createState() => _CategoryEditorState();
 }
@@ -47,7 +55,11 @@ class _CategoryEditorState extends State<CategoryEditor> {
               : S.of(context).categoryEdit,
         ),
       ),
-      body: CategoryEditorForm(model: widget.model, category: widget.category),
+      body: CategoryEditorForm(
+        model: widget.model,
+        category: widget.category,
+        kind: widget.kind,
+      ),
     ),
   );
 }

@@ -3060,6 +3060,84 @@ abstract class S {
   /// In en, this message translates to:
   /// **'{day}, {mark}'**
   String dayMarkedSemantics(int day, String mark);
+
+  /// No description provided for @categoryTabExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get categoryTabExpense;
+
+  /// No description provided for @categoryTabIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get categoryTabIncome;
+
+  /// No description provided for @categoryTabs.
+  ///
+  /// In en, this message translates to:
+  /// **'Category type'**
+  String get categoryTabs;
+
+  /// No description provided for @categoryChildCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 subcategory} other{{count} subcategories}}'**
+  String categoryChildCount(int count);
+
+  /// No description provided for @categoryToggleSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}: show or hide subcategories'**
+  String categoryToggleSemantics(String name);
+
+  /// No description provided for @categoryHiddenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden categories'**
+  String get categoryHiddenTitle;
+
+  /// No description provided for @categoryHiddenHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Past transactions keep these categories.'**
+  String get categoryHiddenHint;
+
+  /// No description provided for @categoryRestoreShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get categoryRestoreShort;
+
+  /// No description provided for @categoryRestoreNamed.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore {name}'**
+  String categoryRestoreNamed(String name);
+
+  /// No description provided for @categoryRestored.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is back'**
+  String categoryRestored(String name);
+
+  /// No description provided for @categoryEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No categories yet'**
+  String get categoryEmptyTitle;
+
+  /// No description provided for @categoryEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add one to get started.'**
+  String get categoryEmptyBody;
+
+  /// No description provided for @categoryLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load categories'**
+  String get categoryLoadError;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

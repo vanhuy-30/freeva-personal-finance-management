@@ -59,10 +59,11 @@ Màu chỉ dùng cho chấm, nền ô icon (bậc nhạt) và biểu tượng; k
 
 | Việc | Ghi chú |
 |---|---|
-| 13 màu mới | Thêm key vào nhánh `color.*` (chỉ thêm, không đổi key cũ), sinh lại `category-tokens.generated.ts`; kiểm tra màu chữ không dùng các key này. |
-| 20 biểu tượng mới | Mở rộng `CATEGORY_ICONS` ở backend và OpenAPI; mobile map token → icon Lucide. |
-| Tab Chi · Thu | Server đã có `kind` (expense/income/both); API mobile chưa trả và chưa cho chọn. "both" hiện ở cả hai tab. |
-| Hai cấp | Code cho phép lồng sâu; cần chặn chọn danh mục con làm "Thuộc". |
+| Màu mới | Xong (E1): 14 key `color.category.*` (6 màu còn lại đã có trong `color.brand` / `color.semantic`), bảng 20 màu theo thứ tự lưới ở `/options`. |
+| Biểu tượng mới | Xong (E1): 21 token mới + 15 token cũ = 36 icon picker; token cũ mang nghĩa mới: `entertainment` = phim, `bills` = thuế/phí, `other_income` = tiết kiệm, `other_expense` = khác. "Đi lại" đổi từ xe buýt sang ô tô. |
+| Tab Chi · Thu | Xong (E1): danh mục mới lấy tab đang mở, con lấy theo cha; "both" hiện ở cả hai tab (chốt 2026-10-23). |
+| Màu danh mục ngoài màn Danh mục | Chốt 2026-10-23: chỉ dùng ở các màn nhóm E; dòng giao dịch, sheet chọn, Tổng quan giữ ô icon trung tính như thiết kế B/C. |
+| Hai cấp | Xong (E1): backend chặn khi tạo/đổi cha; dữ liệu cũ lồng sâu hiện dưới danh mục chính trên cùng. |
 | Chặn ẩn/xoá | Danh mục chính còn danh mục con đang dùng: nút Ẩn/Xoá mờ, dòng "Còn N danh mục con". |
 | Số giao dịch khi xoá | Cần API trả số giao dịch (kể cả đã xoá mềm) để hiện "12 giao dịch sẽ chuyển sang". |
 | Copy l10n | Thay chuỗi `category*` dài (`categoryHideExplanation`, `categoryDeleteBody`, `categoryInvalid`…) bằng chữ ngắn ở trên. |
