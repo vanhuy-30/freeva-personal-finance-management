@@ -1,7 +1,7 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
 import {
   PROFILE_REPOSITORY,
-  type Profile,
+  type ProfileUpdate,
   type ProfileRepository,
 } from './domain/profile.repository';
 
@@ -40,7 +40,7 @@ export class ProfileService {
     };
   }
 
-  async update(userId: string, profile: Profile) {
+  async update(userId: string, profile: ProfileUpdate) {
     // Reject offsets and unknown zones; accept IANA aliases used by existing users.
     if (!/^(UTC|[A-Za-z_]+(?:\/[A-Za-z0-9_+\-]+)+)$/.test(profile.timezone)) {
       throw error(400, 'VALIDATION_ERROR');

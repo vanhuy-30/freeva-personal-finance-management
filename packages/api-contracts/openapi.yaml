@@ -1220,7 +1220,7 @@ paths:
       - UserBearer: []
       responses:
         '200':
-          description: Current signed totals per currency
+          description: Current signed totals per currency. Hidden (archived) wallets are excluded; a currency appears only if it has an active wallet.
           headers:
             Cache-Control:
               $ref: '#/components/headers/ReportNoStore'
@@ -3541,6 +3541,10 @@ components:
       additionalProperties: false
       required: [locale, defaultCurrencyCode, timezone, fiscalMonthStartDay, version]
       properties:
+        displayName:
+          type: [string, 'null']
+          maxLength: 60
+          description: Optional name for greetings. Always returned (null when unset). On PUT, omit to keep the stored name; blank or null clears it. Never logged.
         locale:
           type: string
           enum: [vi, en]
@@ -4002,11 +4006,14 @@ components:
     AccountExportProfile:
       type: object
       additionalProperties: false
-      required: [email, locale, timezone, defaultCurrencyCode, fiscalMonthStartDay, emailVerifiedAt, categoriesInitializedAt, categoriesSupplementedAt, createdAt, updatedAt]
+      required: [email, displayName, locale, timezone, defaultCurrencyCode, fiscalMonthStartDay, emailVerifiedAt, categoriesInitializedAt, categoriesSupplementedAt, createdAt, updatedAt]
       properties:
         email:
           type: string
           format: email
+        displayName:
+          type: [string, 'null']
+          maxLength: 60
         locale:
           type: string
         timezone:

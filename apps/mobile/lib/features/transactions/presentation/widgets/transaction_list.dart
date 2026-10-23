@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/money/money_text.dart';
-import '../../../settings/presentation/widgets/masked_amount.dart';
 import '../../../categories/domain/finance_category.dart';
 import '../../../tags/domain/tag.dart';
 import '../../../wallets/domain/wallet.dart';
@@ -54,10 +53,8 @@ class TransactionList extends StatelessWidget {
               tags: _tagNames(model.tags, source.tagIds),
             ),
           ),
-          trailing: MaskedAmount(
-            shown: '$amount ${source.currencyCode}',
-            hidden: '${s.balanceHiddenMask} ${source.currencyCode}',
-          ),
+          // Transaction amounts stay visible when balances are hidden.
+          trailing: Text('$amount ${source.currencyCode}'),
           onTap: () => onOpen(row),
         );
       },

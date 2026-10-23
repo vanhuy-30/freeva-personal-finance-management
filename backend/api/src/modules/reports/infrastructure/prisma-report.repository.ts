@@ -96,7 +96,7 @@ export class PrismaReportRepository implements ReportRepository {
         SELECT "accountId", SUM("amountMinor") AS total FROM "Transaction"
         WHERE "userId" = ${userId}::uuid AND "deletedAt" IS NULL GROUP BY "accountId"
       ) mv ON mv."accountId" = a.id
-      WHERE a."userId" = ${userId}::uuid
+      WHERE a."userId" = ${userId}::uuid AND a."archivedAt" IS NULL
       GROUP BY a."currencyCode", CASE WHEN a.type::text = 'credit' THEN 'liability' ELSE 'asset' END
     `);
     return rows.map(row => {

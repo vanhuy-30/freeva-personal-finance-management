@@ -56,14 +56,20 @@ class MoneyDisplay extends StatelessWidget {
       MoneyTone.plain => style.color ?? c.textPrimary,
     };
     final text = hidden ? '••••••' : '$sign$number';
-    final symbolSize = (style.fontSize ?? 15) / 2;
-    final mark = showCurrency && symbolSize >= 9;
-    final maxScale = identical(style, FreevaTypography.moneyDisplay)
+    // Half size on display amounts; same size on small ones.
+    final fontSize = style.fontSize ?? 15;
+    final symbolSize = fontSize >= 24 ? fontSize / 2 : fontSize;
+    final mark = showCurrency;
+    final display =
+        identical(style, FreevaTypography.moneyDisplay) ||
+        identical(style, FreevaTypography.moneyDisplayCompact);
+    final maxScale = display
         ? FreevaTypography.moneyDisplayMaxScale
         : FreevaTypography.maxTextScale;
     return MediaQuery.withClampedTextScaling(
       maxScaleFactor: maxScale,
       child: Semantics(
+        container: true,
         label: hidden
             ? S.of(context).balanceHiddenSemantics
             : semanticsLabel ?? '$sign$number ${symbolFor(currency)}',
@@ -76,7 +82,7 @@ class MoneyDisplay extends StatelessWidget {
                 TextSpan(
                   text: ' ${symbolFor(currency)}',
                   style: style.copyWith(
-                    fontSize: symbolSize < 12 ? 12 : symbolSize,
+                    fontSize: symbolSize,
                     fontWeight: FontWeight.w500,
                     letterSpacing: 0,
                     color: c.textSecondary,

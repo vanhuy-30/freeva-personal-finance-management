@@ -1,0 +1,150 @@
+import 'package:flutter/foundation.dart';
+import 'package:injectable/injectable.dart';
+
+import '../../../auth/domain/auth_repository.dart';
+import '../../../auth/presentation/viewmodels/auth_view_model.dart';
+import '../../../profile/presentation/viewmodels/profile_view_model.dart';
+import '../../../settings/presentation/viewmodels/settings_view_model.dart';
+import '../../../sync/domain/sync_item.dart';
+import '../../../sync/presentation/viewmodels/sync_view_model.dart';
+import '../../domain/overview.dart';
+import '../../domain/overview_use_cases.dart';
+
+enum HomeStatus {
+  /// First load, nothing to show yet: skeletons.
+  loading,
+
+  /// Fresh data.
+  ready,
+
+  /// Reload failed but earlier data is kept: shown with "Số liệu lúc …".
+  offline,
+
+  /// Nothing loaded and the load failed: error card with "Thử lại".
+  error,
+}
+
+abstract class HomeViewModel extends ChangeNotifier {
+  HomeStatus get status;
+  OverviewData? get data;
+  String? get displayName;
+  String get currency;
+  bool get balancesHidden;
+
+  /// Today, for the greeting date.
+  DateTime get today;
+
+  /// Transactions recorded on this device that are still waiting to sync.
+  List<SyncQueueItem> get pending;
+  Future<void> load();
+  Future<void> toggleBalances();
+}
+
+@LazySingleton(as: HomeViewModel)
+class DefaultHomeViewModel extends HomeViewModel {
+  DefaultHomeViewModel(
+    this._cases,
+    this._auth,
+    this._profile,
+    this._settings,
+    this._sync, {
+    @ignoreParam DateTime Function()? clock,
+  }) : _clock = clock ?? DateTime.now {
+    _stage = _auth.stage;
+    _seenApplied = _sync.appliedEpoch;
+    _auth.addListener(_authChanged);
+    _profile.addListener(notifyListeners);
+    _settings.addListener(notifyListeners);
+    _sync.addListener(_syncChanged);
+  }
+
+  final OverviewUseCases _cases;
+  final AuthViewModel _auth;
+  final ProfileViewModel _profile;
+  final SettingsViewModel _settings;
+  final SyncViewModel _sync;
+  final DateTime Function() _clock;
+  late AuthStage _stage;
+  late int _seenApplied;
+  int _epoch = 0;
+  bool _busy = false;
+
+  @override
+  HomeStatus status = HomeStatus.loading;
+  @override
+  OverviewData? data;
+
+  @override
+  String? get displayName => _profile.saved?.displayName;
+  @override
+  String get currency => _profile.saved?.currency ?? 'VND';
+  @override
+  bool get balancesHidden => _settings.balancesHidden;
+  @override
+  DateTime get today => _clock();
+  @override
+  List<SyncQueueItem> get pending => [
+    for (final item in _sync.items)
+      if (item.action == SyncAction.create) item,
+  ];
+
+  void _authChanged() {
+    if (_stage == _auth.stage) return;
+    _stage = _auth.stage;
+    // Balances never outlive the unlocked session (memory only).
+    _epoch++;
+    data = null;
+    status = HomeStatus.loading;
+    _busy = false;
+    notifyListeners();
+    if (_stage == AuthStage.unlocked) load();
+  }
+
+  void _syncChanged() {
+    if (_sync.appliedEpoch != _seenApplied) {
+      _seenApplied = _sync.appliedEpoch;
+      load();
+    } else {
+      notifyListeners();
+    }
+  }
+
+  @override
+  Future<void> load() async {
+    if (_busy || _stage != AuthStage.unlocked) return;
+    final epoch = ++_epoch;
+    _busy = true;
+    if (data == null) {
+      status = HomeStatus.loading;
+      notifyListeners();
+    }
+    final result = await _cases.load(_clock());
+    if (epoch != _epoch) return;
+    _busy = false;
+    result.fold(
+      (failure) {
+        if (failure.code == AuthError.expired) _auth.sessionExpired();
+        status = data == null ? HomeStatus.error : HomeStatus.offline;
+      },
+      (value) {
+        data = value;
+        status = HomeStatus.ready;
+      },
+    );
+    notifyListeners();
+  }
+
+  @override
+  Future<void> toggleBalances() =>
+      _settings.setBalancesHidden(!_settings.balancesHidden);
+
+  @override
+  void dispose() {
+    _epoch++;
+    _auth.removeListener(_authChanged);
+    _profile.removeListener(notifyListeners);
+    _settings.removeListener(notifyListeners);
+    _sync.removeListener(_syncChanged);
+    super.dispose();
+  }
+}

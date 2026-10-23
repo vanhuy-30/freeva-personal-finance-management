@@ -12,12 +12,14 @@ class TransactionEditor extends StatefulWidget {
     this.transactionId,
     this.initial,
     this.copy = false,
+    this.initialType,
     super.key,
   });
   final TransactionViewModel model;
   final String? transactionId;
   final TransactionBundle? initial;
   final bool copy;
+  final TransactionType? initialType;
   @override
   State<TransactionEditor> createState() => _TransactionEditorState();
 }
@@ -97,6 +99,7 @@ class _TransactionEditorState extends State<TransactionEditor> {
                 model: widget.model,
                 existing: bundle,
                 copy: widget.copy,
+                initialType: widget.initialType,
               ),
       ),
     );

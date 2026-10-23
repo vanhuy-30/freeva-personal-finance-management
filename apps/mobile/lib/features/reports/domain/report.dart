@@ -156,18 +156,6 @@ class NetWorthReport {
   final List<NetWorthTotal> items;
 }
 
-class OverviewSnapshot {
-  const OverviewSnapshot({
-    required this.netWorth,
-    required this.month,
-    required this.currencies,
-  });
-
-  final NetWorthReport netWorth;
-  final CashflowReport month;
-  final List<WalletCurrency> currencies;
-}
-
 class NamedCashflow {
   const NamedCashflow({required this.report, required this.currencies});
 

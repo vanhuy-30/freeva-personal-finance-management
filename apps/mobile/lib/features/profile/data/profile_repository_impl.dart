@@ -17,6 +17,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
       timezone: json['timezone'] as String,
       fiscalDay: json['fiscalMonthStartDay'] as int,
       version: json['version'] as int,
+      displayName: _name(json['displayName']),
     );
     if (!['vi', 'en'].contains(value.locale) ||
         !RegExp(r'^[A-Z]{3}$').hasMatch(value.currency) ||
@@ -73,4 +74,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
       'version': profile.version,
     },
   );
+}
+
+String? _name(Object? value) {
+  final name = value is String ? value.trim() : '';
+  return name.isEmpty ? null : name;
 }

@@ -1798,13 +1798,13 @@ abstract class S {
   /// No description provided for @balanceHide.
   ///
   /// In en, this message translates to:
-  /// **'Hide amounts'**
+  /// **'Hide balances'**
   String get balanceHide;
 
   /// No description provided for @balanceShow.
   ///
   /// In en, this message translates to:
-  /// **'Show amounts'**
+  /// **'Show balances'**
   String get balanceShow;
 
   /// No description provided for @settingsPrivacyControls.
@@ -1938,6 +1938,246 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Hide password'**
   String get passwordHide;
+
+  /// No description provided for @homeDatePattern.
+  ///
+  /// In en, this message translates to:
+  /// **'EEEE, MMM d'**
+  String get homeDatePattern;
+
+  /// No description provided for @homeMonthPattern.
+  ///
+  /// In en, this message translates to:
+  /// **'MMMM'**
+  String get homeMonthPattern;
+
+  /// No description provided for @homeGreeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Hi {name}'**
+  String homeGreeting(String name);
+
+  /// No description provided for @homeGreetingAnon.
+  ///
+  /// In en, this message translates to:
+  /// **'Hi there'**
+  String get homeGreetingAnon;
+
+  /// No description provided for @homeSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search transactions'**
+  String get homeSearch;
+
+  /// No description provided for @homeNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get homeNotifications;
+
+  /// No description provided for @homeTotalBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Total balance · {count} wallets'**
+  String homeTotalBalance(int count);
+
+  /// No description provided for @homeTotalBalanceIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Total balance · {count} {currency} wallets'**
+  String homeTotalBalanceIn(int count, String currency);
+
+  /// No description provided for @homeOtherCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} {currency} · {count} wallets'**
+  String homeOtherCurrency(String amount, String currency, int count);
+
+  /// No description provided for @homeIncomeMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Income in {month}'**
+  String homeIncomeMonth(String month);
+
+  /// No description provided for @homeExpenseMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent in {month}'**
+  String homeExpenseMonth(String month);
+
+  /// No description provided for @homeQuickIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Add income'**
+  String get homeQuickIncome;
+
+  /// No description provided for @homeQuickTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Move money'**
+  String get homeQuickTransfer;
+
+  /// No description provided for @homeQuickWallets.
+  ///
+  /// In en, this message translates to:
+  /// **'My wallets'**
+  String get homeQuickWallets;
+
+  /// No description provided for @homeQuickCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get homeQuickCategories;
+
+  /// No description provided for @homeSpendOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get homeSpendOther;
+
+  /// No description provided for @homeSpendEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No spending yet.'**
+  String get homeSpendEmpty;
+
+  /// No description provided for @homeSpendRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Add expense'**
+  String get homeSpendRecord;
+
+  /// No description provided for @homeOtherCurrencySpend.
+  ///
+  /// In en, this message translates to:
+  /// **'{currency} wallets: {amount} {currency} spent this month'**
+  String homeOtherCurrencySpend(String currency, String amount);
+
+  /// No description provided for @homeReviewMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Look back at {month}'**
+  String homeReviewMonth(String month);
+
+  /// No description provided for @homeReviewLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent {expense} · Earned {income}'**
+  String homeReviewLine(String expense, String income);
+
+  /// No description provided for @homeCreditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Credit cards'**
+  String get homeCreditTitle;
+
+  /// No description provided for @homeCreditDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Due {date}'**
+  String homeCreditDue(String date);
+
+  /// No description provided for @homeCreditUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Used {used} of {limit}'**
+  String homeCreditUsed(String used, String limit);
+
+  /// No description provided for @homeCreditUsedNoLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Used {used}'**
+  String homeCreditUsedNoLimit(String used);
+
+  /// No description provided for @homeRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent'**
+  String get homeRecent;
+
+  /// No description provided for @homeSeeTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'See transactions'**
+  String get homeSeeTransactions;
+
+  /// No description provided for @homeRecentEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Your transactions will show here'**
+  String get homeRecentEmpty;
+
+  /// No description provided for @homePendingSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting to sync'**
+  String get homePendingSync;
+
+  /// No description provided for @homeOfflineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline · Figures from {time}'**
+  String homeOfflineTitle(String time);
+
+  /// No description provided for @homeOfflineBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You can still add expenses.'**
+  String get homeOfflineBody;
+
+  /// No description provided for @homeErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your balance'**
+  String get homeErrorTitle;
+
+  /// No description provided for @homeErrorBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data is safe.'**
+  String get homeErrorBody;
+
+  /// No description provided for @homeSpokenExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'minus {amount} {currency}'**
+  String homeSpokenExpense(String amount, String currency);
+
+  /// No description provided for @homeSpokenIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'plus {amount} {currency}'**
+  String homeSpokenIncome(String amount, String currency);
+
+  /// No description provided for @homeSpokenRow.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount}, {title}, {detail}'**
+  String homeSpokenRow(String amount, String title, String detail);
+
+  /// No description provided for @homeUncategorized.
+  ///
+  /// In en, this message translates to:
+  /// **'Uncategorized'**
+  String get homeUncategorized;
+
+  /// No description provided for @notificationsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications yet'**
+  String get notificationsEmpty;
+
+  /// No description provided for @notificationsEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders and alerts will show here.'**
+  String get notificationsEmptyBody;
+
+  /// No description provided for @homeSpokenVnd.
+  ///
+  /// In en, this message translates to:
+  /// **'dong'**
+  String get homeSpokenVnd;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

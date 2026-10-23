@@ -5,23 +5,6 @@ import '../../categories/domain/finance_category.dart';
 import '../../wallets/domain/wallet.dart';
 import 'report.dart';
 
-Either<AuthFailure, OverviewSnapshot> overviewSnapshot(
-  NetWorthReport netWorth,
-  CashflowReport month,
-  List<WalletCurrency> currencies,
-) {
-  final codes = [
-    ...netWorth.items.map((row) => row.currency),
-    ...month.totals.map((row) => row.currency),
-  ];
-  if (codes.any((code) => !_known(code, currencies))) {
-    return left(const AuthFailure(AuthError.unavailable));
-  }
-  return right(
-    OverviewSnapshot(netWorth: netWorth, month: month, currencies: currencies),
-  );
-}
-
 Either<AuthFailure, NamedCashflow> nameCashflow(
   CashflowReport report,
   List<Wallet> wallets,

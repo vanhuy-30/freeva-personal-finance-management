@@ -19,6 +19,7 @@ IconData categoryIcon(String? token) => switch (token) {
   'bonus' => LucideIcons.gift,
   'other_income' => LucideIcons.piggyBank,
   'other_expense' => LucideIcons.shapes,
+  'transfer' => LucideIcons.arrowLeftRight,
   _ => LucideIcons.shapes,
 };
 

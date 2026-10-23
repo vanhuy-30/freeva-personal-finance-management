@@ -19,6 +19,10 @@ Từ home chọn **Hồ sơ tài chính**. Hồ sơ thuộc tài khoản đang �
 
 ## Contract và quyền riêng tư
 
+**`displayName` (`DS-P2-003`):** tên tuỳ chọn (≤ 60 ký tự) chỉ dùng cho lời chào ở
+Tổng quan. GET luôn trả (null khi chưa đặt); PUT bỏ trường này thì giữ nguyên, chuỗi
+trống hoặc null thì xoá. App hiện chỉ đọc; màn sửa tên thuộc nhóm G. Không ghi log.
+
 `GET /api/v1/profile`, `PUT /api/v1/profile`, `GET /api/v1/profile/options`
 đều dùng `UserBearer`/`AuthGuard`, lấy user ID từ session, `Cache-Control: no-store`.
 PUT nhận đủ bốn trường và `version`; DTO từ chối field lạ, sai kiểu và giá trị

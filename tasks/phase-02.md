@@ -17,7 +17,7 @@
 - DoD: sinh Dart từ `tokens.json` (không chép tay hex). `AppTheme` light/dark dùng semantic token và `ThemeExtension`. Inter đóng gói trong app. Thêm `lucide_icons_flutter` 4.0.1 và thay các `Icons.*`. Component trong `lib/core/widgets/`: nút, trường nhập, bàn phím số tiền, chip, segmented, bottom nav, thanh trên, sheet, thẻ, dòng giao dịch, toast, banner, hộp thoại, trạng thái trống có animation tự vẽ, skeleton. Đủ 6 trạng thái. Trang gallery chỉ ở debug và golden test light/dark.
 
 ### DS-P2-003 — Refactor màn hình Phase 1 theo design system
-- Status: todo
+- Status: doing
 - Module: —
 - Gate: post-v1
 - Depends: DS-P2-002

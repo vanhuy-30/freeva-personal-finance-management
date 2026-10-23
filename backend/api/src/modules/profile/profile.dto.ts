@@ -1,8 +1,16 @@
+import { Transform } from 'class-transformer';
 import {
-  IsIn, IsInt, IsString, Matches, Max, MaxLength, Min,
+  IsIn, IsInt, IsOptional, IsString, Matches, Max, MaxLength, Min,
 } from 'class-validator';
 
 export class UpdateProfileDto {
+  /** Omitted keeps the stored name; blank clears it. */
+  @IsOptional()
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() || null : value))
+  @IsString()
+  @MaxLength(60)
+  displayName?: string | null;
+
   @IsIn(['vi', 'en'])
   locale!: string;
 

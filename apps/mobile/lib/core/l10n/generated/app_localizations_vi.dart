@@ -940,10 +940,10 @@ class SVi extends S {
   String get balanceHiddenMask => '••••';
 
   @override
-  String get balanceHide => 'Ẩn số tiền';
+  String get balanceHide => 'Ẩn số dư';
 
   @override
-  String get balanceShow => 'Hiện số tiền';
+  String get balanceShow => 'Hiện số dư';
 
   @override
   String get settingsPrivacyControls => 'Quyền riêng tư';
@@ -1013,4 +1013,156 @@ class SVi extends S {
 
   @override
   String get passwordHide => 'Ẩn mật khẩu';
+
+  @override
+  String get homeDatePattern => 'EEEE, dd/MM';
+
+  @override
+  String get homeMonthPattern => 'M';
+
+  @override
+  String homeGreeting(String name) {
+    return 'Chào $name';
+  }
+
+  @override
+  String get homeGreetingAnon => 'Chào bạn';
+
+  @override
+  String get homeSearch => 'Tìm giao dịch';
+
+  @override
+  String get homeNotifications => 'Thông báo';
+
+  @override
+  String homeTotalBalance(int count) {
+    return 'Tổng số dư · $count ví';
+  }
+
+  @override
+  String homeTotalBalanceIn(int count, String currency) {
+    return 'Tổng số dư · $count ví $currency';
+  }
+
+  @override
+  String homeOtherCurrency(String amount, String currency, int count) {
+    return '$amount $currency · $count ví';
+  }
+
+  @override
+  String homeIncomeMonth(String month) {
+    return 'Thu tháng $month';
+  }
+
+  @override
+  String homeExpenseMonth(String month) {
+    return 'Chi tháng $month';
+  }
+
+  @override
+  String get homeQuickIncome => 'Ghi thu';
+
+  @override
+  String get homeQuickTransfer => 'Chuyển ví';
+
+  @override
+  String get homeQuickWallets => 'Ví của tôi';
+
+  @override
+  String get homeQuickCategories => 'Danh mục';
+
+  @override
+  String get homeSpendOther => 'Khác';
+
+  @override
+  String get homeSpendEmpty => 'Chưa có khoản chi nào.';
+
+  @override
+  String get homeSpendRecord => 'Ghi chi';
+
+  @override
+  String homeOtherCurrencySpend(String currency, String amount) {
+    return 'Ví $currency: chi $amount $currency tháng này';
+  }
+
+  @override
+  String homeReviewMonth(String month) {
+    return 'Xem lại tháng $month';
+  }
+
+  @override
+  String homeReviewLine(String expense, String income) {
+    return 'Chi $expense · Thu $income';
+  }
+
+  @override
+  String get homeCreditTitle => 'Thẻ tín dụng';
+
+  @override
+  String homeCreditDue(String date) {
+    return 'Đến hạn $date';
+  }
+
+  @override
+  String homeCreditUsed(String used, String limit) {
+    return 'Đã dùng $used / Hạn mức $limit';
+  }
+
+  @override
+  String homeCreditUsedNoLimit(String used) {
+    return 'Đã dùng $used';
+  }
+
+  @override
+  String get homeRecent => 'Gần đây';
+
+  @override
+  String get homeSeeTransactions => 'Xem giao dịch';
+
+  @override
+  String get homeRecentEmpty => 'Giao dịch sẽ hiện ở đây';
+
+  @override
+  String get homePendingSync => 'Chờ đồng bộ';
+
+  @override
+  String homeOfflineTitle(String time) {
+    return 'Đang ngoại tuyến · Số liệu lúc $time';
+  }
+
+  @override
+  String get homeOfflineBody => 'Vẫn ghi chi được.';
+
+  @override
+  String get homeErrorTitle => 'Chưa tải được số dư';
+
+  @override
+  String get homeErrorBody => 'Dữ liệu của bạn vẫn an toàn.';
+
+  @override
+  String homeSpokenExpense(String amount, String currency) {
+    return 'trừ $amount $currency';
+  }
+
+  @override
+  String homeSpokenIncome(String amount, String currency) {
+    return 'cộng $amount $currency';
+  }
+
+  @override
+  String homeSpokenRow(String amount, String title, String detail) {
+    return '$amount, $title, $detail';
+  }
+
+  @override
+  String get homeUncategorized => 'Chưa phân loại';
+
+  @override
+  String get notificationsEmpty => 'Chưa có thông báo';
+
+  @override
+  String get notificationsEmptyBody => 'Nhắc việc và cảnh báo sẽ hiện ở đây.';
+
+  @override
+  String get homeSpokenVnd => 'đồng';
 }

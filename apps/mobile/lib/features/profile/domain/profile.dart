@@ -5,7 +5,11 @@ class Profile {
     required this.timezone,
     required this.fiscalDay,
     required this.version,
+    this.displayName,
   });
+
+  /// Greeting name; null until the user sets one (edited in group G).
+  final String? displayName;
   final String locale;
   final String currency;
   final String timezone;
@@ -22,6 +26,7 @@ class Profile {
     timezone: timezone ?? this.timezone,
     fiscalDay: fiscalDay ?? this.fiscalDay,
     version: version,
+    displayName: displayName,
   );
   bool samePreferences(Profile other) =>
       locale == other.locale &&

@@ -1,14 +1,22 @@
-import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
-import '../../../../core/widgets/brand_symbol.dart';
+import '../../../../core/theme/theme_context.dart';
+import '../../../../core/theme/tokens.g.dart';
+import '../../../../core/widgets/freeva_banner.dart';
 import '../../../auth/presentation/widgets/session_alert_banner.dart';
-import '../../../auth/presentation/widgets/session_controls.dart';
-import '../../../reports/presentation/widgets/overview_section.dart';
-import '../../../sync/presentation/widgets/sync_status_banner.dart';
+import '../viewmodels/home_view_model.dart';
+import '../widgets/balance_section.dart';
+import '../widgets/overview_blocks.dart';
+import '../widgets/overview_header.dart';
+import '../widgets/overview_states.dart';
+import '../widgets/quick_actions.dart';
 
+/// Tổng quan. Partial failures never block the greeting, quick actions or +.
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -17,70 +25,87 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final GlobalKey _sessions = GlobalKey();
+  late final HomeViewModel model = getIt<HomeViewModel>();
+  GoRouter? _router;
+  String? _lastPath;
 
   @override
-  Widget build(BuildContext context) {
-    final S s = S.of(context);
-    return Scaffold(
-      appBar: AppBar(title: Text(s.appTitle)),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const OverviewSection(),
-            const SyncStatusBanner(),
-            ListTile(
-              leading: const Icon(LucideIcons.user),
-              title: Text(s.profileTitle),
-              trailing: const Icon(LucideIcons.chevronRight),
-              onTap: () => context.push('/profile'),
-            ),
-            ListTile(
-              leading: const Icon(LucideIcons.wallet),
-              title: Text(s.walletTitle),
-              trailing: const Icon(LucideIcons.chevronRight),
-              onTap: () => context.push('/wallets'),
-            ),
-            ListTile(
-              leading: const Icon(LucideIcons.shapes),
-              title: Text(s.categoryTitle),
-              trailing: const Icon(LucideIcons.chevronRight),
-              onTap: () => context.push('/categories'),
-            ),
-            ListTile(
-              leading: const Icon(LucideIcons.receipt),
-              title: Text(s.transactionTitle),
-              trailing: const Icon(LucideIcons.chevronRight),
-              onTap: () => context.go('/transactions'),
-            ),
-            ListTile(
-              leading: const Icon(LucideIcons.chartPie),
-              title: Text(s.reportTitle),
-              trailing: const Icon(LucideIcons.chevronRight),
-              onTap: () => context.go('/reports'),
-            ),
-            ListTile(
-              leading: const Icon(LucideIcons.settings),
-              title: Text(s.settingsTitle),
-              trailing: const Icon(LucideIcons.chevronRight),
-              onTap: () => context.go('/me'),
-            ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: FilledButton.icon(
-                onPressed: () => context.push('/record'),
-                icon: const Icon(LucideIcons.plus),
-                label: Text(s.transactionRecord),
-              ),
-            ),
-            SessionAlertBanner(scrollTarget: _sessions),
-            SessionControls(key: _sessions),
-            const BrandSymbol(size: 96),
-          ],
-        ),
-      ),
-    );
+  void initState() {
+    super.initState();
+    if (model.data == null) Future.microtask(model.load);
   }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final router = GoRouter.maybeOf(context);
+    if (router == _router) return;
+    _router?.routerDelegate.removeListener(_routeChanged);
+    _router = router?..routerDelegate.addListener(_routeChanged);
+  }
+
+  /// Coming back to Overview (after recording, editing a wallet…) refreshes.
+  void _routeChanged() {
+    final path = _router?.routerDelegate.currentConfiguration.uri.path;
+    if (path == '/home' && _lastPath != null && _lastPath != '/home') {
+      model.load();
+    }
+    _lastPath = path;
+  }
+
+  @override
+  void dispose() {
+    _router?.routerDelegate.removeListener(_routeChanged);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => ListenableBuilder(
+    listenable: model,
+    builder: (context, _) {
+      final s = S.of(context);
+      final data = model.data;
+      final margin = context.screenMargin;
+      const gap = SizedBox(height: 22);
+      return Scaffold(
+        body: SafeArea(
+          bottom: false,
+          child: RefreshIndicator(
+            onRefresh: model.load,
+            child: ListView(
+              padding: EdgeInsets.fromLTRB(
+                margin,
+                FreevaSpace.s4,
+                margin,
+                FreevaLayout.navReserve,
+              ),
+              children: [
+                OverviewHeader(name: model.displayName, today: model.today),
+                gap,
+                SessionAlertBanner(onReview: () => context.go('/me')),
+                if (model.status == HomeStatus.offline && data != null) ...[
+                  FreevaBanner(
+                    icon: LucideIcons.cloudOff,
+                    message: s.homeOfflineTitle(
+                      DateFormat.Hm().format(data.loadedAt),
+                    ),
+                    detail: s.homeOfflineBody,
+                  ),
+                  const SizedBox(height: FreevaSpace.s3),
+                ],
+                BalanceSection(model: model),
+                gap,
+                const QuickActions(),
+                gap,
+                if (data != null)
+                  OverviewBlocks(model: model, data: data)
+                else if (model.status == HomeStatus.loading)
+                  const BlocksSkeleton(),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
 }

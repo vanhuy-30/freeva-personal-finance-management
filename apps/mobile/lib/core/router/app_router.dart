@@ -6,6 +6,8 @@ import '../../features/auth/presentation/viewmodels/auth_view_model.dart';
 import '../../features/auth/presentation/widgets/auth_gate.dart';
 import '../../features/categories/presentation/pages/category_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
+import '../../features/home/presentation/pages/notifications_page.dart';
+import '../../features/transactions/domain/transaction.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/reports/presentation/pages/report_page.dart';
 import '../../features/settings/domain/app_preferences.dart';
@@ -154,8 +156,18 @@ GoRouter _createAppRouter(
         pageBuilder: (context, state) => MaterialPage(
           key: state.pageKey,
           fullscreenDialog: true,
-          child: const AuthGate(child: RecordTransactionPage()),
+          child: AuthGate(
+            child: RecordTransactionPage(
+              type: TransactionType.values
+                  .where((t) => t.name == state.uri.queryParameters['type'])
+                  .firstOrNull,
+            ),
+          ),
         ),
+      ),
+      GoRoute(
+        path: '/notifications',
+        builder: (context, state) => const AuthGate(child: NotificationsPage()),
       ),
       GoRoute(
         path: '/wallets',

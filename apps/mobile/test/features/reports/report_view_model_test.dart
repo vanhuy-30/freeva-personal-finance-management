@@ -130,10 +130,6 @@ class _Cases implements ReportUseCases {
     if (error != null) return left(error);
     return right(report);
   }
-
-  @override
-  Future<Either<AuthFailure, OverviewSnapshot>> loadOverview() =>
-      throw UnimplementedError();
 }
 
 class _Analytics implements AnalyticsService {
