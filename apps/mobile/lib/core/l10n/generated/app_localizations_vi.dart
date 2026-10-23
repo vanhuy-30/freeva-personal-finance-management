@@ -368,51 +368,6 @@ class SVi extends S {
   String get transactionLoadMore => 'Tải thêm';
 
   @override
-  String syncPending(int count) {
-    return '$count thay đổi chờ đồng bộ';
-  }
-
-  @override
-  String get syncNow => 'Đồng bộ';
-
-  @override
-  String get syncing => 'Đang đồng bộ';
-
-  @override
-  String get syncConflict => 'Không ghi đè. Tải lại để xem bản trên máy chủ.';
-
-  @override
-  String get syncReview => 'Số tiền khác bản đã lưu. Không ghi đè.';
-
-  @override
-  String get syncFailedItem => 'Không đồng bộ được thay đổi này.';
-
-  @override
-  String get syncDiscard => 'Bỏ';
-
-  @override
-  String get syncSchema =>
-      'Tạm dừng đồng bộ vì schema ứng dụng và máy chủ khác nhau.';
-
-  @override
-  String get syncDuplicate =>
-      'Có thể đã có giao dịch tương tự. Bản này vẫn được giữ.';
-
-  @override
-  String get syncDelete => 'Xóa';
-
-  @override
-  String get syncRestore => 'Khôi phục';
-
-  @override
-  String get syncChange => 'Thay đổi';
-
-  @override
-  String syncItem(String action, String date) {
-    return '$action · $date';
-  }
-
-  @override
   String get categoryTitle => 'Danh mục';
 
   @override
@@ -2680,4 +2635,159 @@ class SVi extends S {
   String authLockGreeting(String name) {
     return 'Chào $name';
   }
+
+  @override
+  String get syncTitle => 'Đồng bộ';
+
+  @override
+  String syncBannerBoth(int attention, int waiting) {
+    return '$attention thay đổi cần bạn xem · $waiting thay đổi khác đang chờ gửi';
+  }
+
+  @override
+  String syncBannerAttention(int count) {
+    return '$count thay đổi cần bạn xem';
+  }
+
+  @override
+  String syncBannerWaiting(int count) {
+    return '$count thay đổi đang chờ gửi';
+  }
+
+  @override
+  String get syncBannerDuplicate => 'Có thể bạn đã ghi một khoản rồi';
+
+  @override
+  String get syncOffline => 'Chưa có mạng';
+
+  @override
+  String get syncUnavailable => 'Chưa gửi được';
+
+  @override
+  String get syncUnavailableSub => 'Thử lại sau';
+
+  @override
+  String get syncWaitingCard => 'Có thay đổi chờ gửi';
+
+  @override
+  String syncLastTime(String when) {
+    return 'Lần cuối $when';
+  }
+
+  @override
+  String get syncLastNever => 'Chưa đồng bộ lần nào';
+
+  @override
+  String syncToday(String time) {
+    return 'hôm nay $time';
+  }
+
+  @override
+  String syncOnDay(String date, String time) {
+    return '$date $time';
+  }
+
+  @override
+  String get syncRetry => 'Thử lại';
+
+  @override
+  String syncSending(int count) {
+    return 'Đang gửi $count thay đổi';
+  }
+
+  @override
+  String get syncSendingSub => 'Có thể dùng app như bình thường';
+
+  @override
+  String get syncAllDone => 'Đã đồng bộ hết';
+
+  @override
+  String syncSectionAttention(int count) {
+    return 'CẦN BẠN XEM · $count';
+  }
+
+  @override
+  String syncSectionWaiting(int count) {
+    return 'ĐANG CHỜ GỬI · $count';
+  }
+
+  @override
+  String syncSectionHolding(int count) {
+    return 'ĐANG GIỮ TRÊN MÁY · $count';
+  }
+
+  @override
+  String get syncActionAdd => 'Thêm';
+
+  @override
+  String get syncActionEdit => 'Sửa';
+
+  @override
+  String get syncActionDelete => 'Xoá';
+
+  @override
+  String get syncActionRestore => 'Khôi phục';
+
+  @override
+  String syncItemLine(String action, String detail) {
+    return '$action · $detail';
+  }
+
+  @override
+  String get syncReasonChanged => 'Đã đổi trên máy khác';
+
+  @override
+  String get syncReasonWallet => 'Ví đã bị xoá';
+
+  @override
+  String get syncReasonMissing => 'Giao dịch đã bị xoá ở máy khác';
+
+  @override
+  String get syncReasonInvalid => 'Dữ liệu không còn hợp lệ';
+
+  @override
+  String get syncReasonOther => 'Chưa gửi được · Thử lại sau';
+
+  @override
+  String get syncFooter => 'Dữ liệu vẫn nằm trên máy này cho tới khi gửi xong.';
+
+  @override
+  String get syncUpdateTitle => 'Cần cập nhật Freeva';
+
+  @override
+  String get syncUpdateBody => 'Để tiếp tục đồng bộ. Thay đổi vẫn được giữ.';
+
+  @override
+  String get syncDuplicateNote =>
+      'Có thể bạn đã ghi một khoản giống thế. Cả hai đều được giữ.';
+
+  @override
+  String get syncDiscardTitle => 'Bỏ thay đổi này?';
+
+  @override
+  String syncDiscardMessage(String name, String amount) {
+    return 'Khoản $name $amount sẽ không được lưu.';
+  }
+
+  @override
+  String syncDiscardMessageShort(String name) {
+    return 'Khoản $name sẽ không được lưu.';
+  }
+
+  @override
+  String get syncDiscardKeep => 'Giữ lại';
+
+  @override
+  String get syncDiscardConfirm => 'Bỏ';
+
+  @override
+  String syncDiscardSemantics(String name) {
+    return 'Bỏ thay đổi $name';
+  }
+
+  @override
+  String get syncChipReview => 'Cần xem lại';
+
+  @override
+  String get syncChipWaiting => 'Chờ đồng bộ';
 }

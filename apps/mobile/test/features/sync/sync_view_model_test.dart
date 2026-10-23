@@ -124,6 +124,41 @@ void main() {
     },
   );
 
+  test(
+    'tracks how the last attempt went and when the server last answered',
+    () async {
+      final repository = _Repository([_item('one')]);
+      final model = _model(repository, auth, analytics);
+      repository.failure = const AuthFailure(AuthError.network);
+      await model.flush();
+      expect(model.link, SyncLink.offline);
+      expect(model.lastSyncedAt, isNull);
+      repository.failure = const AuthFailure(AuthError.unavailable);
+      await model.flush();
+      expect(model.link, SyncLink.unavailable);
+      repository.failure = null;
+      await model.flush();
+      expect(model.link, SyncLink.ok);
+      expect(model.lastSyncedAt, isNotNull);
+      expect(repository.stamp, model.lastSyncedAt);
+      await model.clear();
+      expect(model.lastSyncedAt, isNull);
+    },
+  );
+
+  test('retry sends a failed change again and leaves the others', () async {
+    final failed = _item(
+      'one',
+    ).copyWith(status: SyncItemStatus.failed, reason: SyncReason.unavailable);
+    final repository = _Repository([failed, _item('two')]);
+    final model = _model(repository, auth, analytics);
+    await model.flush();
+    expect(model.items.map((i) => i.opId), ['one']);
+    await model.retry('one');
+    expect(model.items, isEmpty);
+    expect(repository.batches.last.single.opId, 'one');
+  });
+
   test('sign-out clears the queue and lock keeps it', () async {
     final repository = _Repository(const []);
     repository.results = const [];
@@ -180,6 +215,17 @@ class _Repository implements SyncRepository {
 
   @override
   Future<void> write(List<SyncQueueItem> value) async => items = value;
+
+  DateTime? stamp;
+  @override
+  Future<DateTime?> lastSyncedAt() async => stamp;
+  @override
+  Future<void> markSynced(DateTime at) async => stamp = at;
+  @override
+  Future<void> clear() async {
+    items = const [];
+    stamp = null;
+  }
 
   @override
   Future<Either<AuthFailure, List<SyncItemResult>>> submit(

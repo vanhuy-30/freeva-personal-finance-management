@@ -81,6 +81,42 @@ void main() {
     expect(logger.messages.single.contains('150000'), isFalse);
   });
 
+  test(
+    'keeps why a change is held and when the server last answered',
+    () async {
+      final vault = _Vault();
+      final repository = SyncRepositoryImpl(_Api(), vault, _Logger());
+      final item = SyncQueueItem(
+        opId: '11111111-1111-4111-8111-111111111111',
+        clientId: '22222222-2222-4222-8222-222222222222',
+        action: SyncAction.update,
+        createdAt: DateTime.utc(2026, 1, 15),
+        retryCount: 0,
+        status: SyncItemStatus.failed,
+        review: false,
+        reason: SyncReason.walletMissing,
+      );
+      expect(await repository.lastSyncedAt(), isNull);
+      await repository.write([item]);
+      await repository.markSynced(DateTime.utc(2026, 10, 22, 9, 30));
+      expect((await repository.read()).single.reason, SyncReason.walletMissing);
+      expect(
+        await repository.lastSyncedAt(),
+        DateTime.utc(2026, 10, 22, 9, 30),
+      );
+      // An empty queue still remembers the time; sign-out forgets both.
+      await repository.write(const []);
+      expect(await repository.read(), isEmpty);
+      expect(
+        await repository.lastSyncedAt(),
+        DateTime.utc(2026, 10, 22, 9, 30),
+      );
+      await repository.clear();
+      expect(vault.value, isNull);
+      expect(await repository.lastSyncedAt(), isNull);
+    },
+  );
+
   test('legacy queue without merchant or tagIds still loads', () async {
     final vault = _Vault();
     final repository = SyncRepositoryImpl(_Api(), vault, _Logger());

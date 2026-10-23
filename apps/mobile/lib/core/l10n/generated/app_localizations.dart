@@ -769,84 +769,6 @@ abstract class S {
   /// **'Load more'**
   String get transactionLoadMore;
 
-  /// No description provided for @syncPending.
-  ///
-  /// In en, this message translates to:
-  /// **'{count} changes waiting to sync'**
-  String syncPending(int count);
-
-  /// No description provided for @syncNow.
-  ///
-  /// In en, this message translates to:
-  /// **'Sync'**
-  String get syncNow;
-
-  /// No description provided for @syncing.
-  ///
-  /// In en, this message translates to:
-  /// **'Syncing'**
-  String get syncing;
-
-  /// No description provided for @syncConflict.
-  ///
-  /// In en, this message translates to:
-  /// **'Not overwritten. Reload to see the copy on the server.'**
-  String get syncConflict;
-
-  /// No description provided for @syncReview.
-  ///
-  /// In en, this message translates to:
-  /// **'The amount differs from the saved copy. Not overwritten.'**
-  String get syncReview;
-
-  /// No description provided for @syncFailedItem.
-  ///
-  /// In en, this message translates to:
-  /// **'This change could not be synced.'**
-  String get syncFailedItem;
-
-  /// No description provided for @syncDiscard.
-  ///
-  /// In en, this message translates to:
-  /// **'Discard'**
-  String get syncDiscard;
-
-  /// No description provided for @syncSchema.
-  ///
-  /// In en, this message translates to:
-  /// **'Sync is paused because the app and server schemas differ.'**
-  String get syncSchema;
-
-  /// No description provided for @syncDuplicate.
-  ///
-  /// In en, this message translates to:
-  /// **'A similar transaction may already exist. This one was still kept.'**
-  String get syncDuplicate;
-
-  /// No description provided for @syncDelete.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete'**
-  String get syncDelete;
-
-  /// No description provided for @syncRestore.
-  ///
-  /// In en, this message translates to:
-  /// **'Restore'**
-  String get syncRestore;
-
-  /// No description provided for @syncChange.
-  ///
-  /// In en, this message translates to:
-  /// **'Change'**
-  String get syncChange;
-
-  /// No description provided for @syncItem.
-  ///
-  /// In en, this message translates to:
-  /// **'{action} · {date}'**
-  String syncItem(String action, String date);
-
   /// No description provided for @categoryTitle.
   ///
   /// In en, this message translates to:
@@ -4931,6 +4853,258 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Hi {name}'**
   String authLockGreeting(String name);
+
+  /// No description provided for @syncTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync'**
+  String get syncTitle;
+
+  /// No description provided for @syncBannerBoth.
+  ///
+  /// In en, this message translates to:
+  /// **'{attention} changes need you · {waiting} more waiting to send'**
+  String syncBannerBoth(int attention, int waiting);
+
+  /// No description provided for @syncBannerAttention.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} changes need you'**
+  String syncBannerAttention(int count);
+
+  /// No description provided for @syncBannerWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} changes waiting to send'**
+  String syncBannerWaiting(int count);
+
+  /// No description provided for @syncBannerDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'You may have recorded one twice'**
+  String get syncBannerDuplicate;
+
+  /// No description provided for @syncOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'No connection'**
+  String get syncOffline;
+
+  /// No description provided for @syncUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t send yet'**
+  String get syncUnavailable;
+
+  /// No description provided for @syncUnavailableSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again later'**
+  String get syncUnavailableSub;
+
+  /// No description provided for @syncWaitingCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes are waiting to send'**
+  String get syncWaitingCard;
+
+  /// No description provided for @syncLastTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Last {when}'**
+  String syncLastTime(String when);
+
+  /// No description provided for @syncLastNever.
+  ///
+  /// In en, this message translates to:
+  /// **'Not synced yet'**
+  String get syncLastNever;
+
+  /// No description provided for @syncToday.
+  ///
+  /// In en, this message translates to:
+  /// **'today {time}'**
+  String syncToday(String time);
+
+  /// No description provided for @syncOnDay.
+  ///
+  /// In en, this message translates to:
+  /// **'{date} {time}'**
+  String syncOnDay(String date, String time);
+
+  /// No description provided for @syncRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get syncRetry;
+
+  /// No description provided for @syncSending.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending {count} changes'**
+  String syncSending(int count);
+
+  /// No description provided for @syncSendingSub.
+  ///
+  /// In en, this message translates to:
+  /// **'You can keep using the app'**
+  String get syncSendingSub;
+
+  /// No description provided for @syncAllDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything is synced'**
+  String get syncAllDone;
+
+  /// No description provided for @syncSectionAttention.
+  ///
+  /// In en, this message translates to:
+  /// **'NEEDS YOU · {count}'**
+  String syncSectionAttention(int count);
+
+  /// No description provided for @syncSectionWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'WAITING TO SEND · {count}'**
+  String syncSectionWaiting(int count);
+
+  /// No description provided for @syncSectionHolding.
+  ///
+  /// In en, this message translates to:
+  /// **'KEPT ON THIS DEVICE · {count}'**
+  String syncSectionHolding(int count);
+
+  /// No description provided for @syncActionAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get syncActionAdd;
+
+  /// No description provided for @syncActionEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get syncActionEdit;
+
+  /// No description provided for @syncActionDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get syncActionDelete;
+
+  /// No description provided for @syncActionRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get syncActionRestore;
+
+  /// No description provided for @syncItemLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{action} · {detail}'**
+  String syncItemLine(String action, String detail);
+
+  /// No description provided for @syncReasonChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Changed on another device'**
+  String get syncReasonChanged;
+
+  /// No description provided for @syncReasonWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'The wallet was removed'**
+  String get syncReasonWallet;
+
+  /// No description provided for @syncReasonMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'The transaction was removed elsewhere'**
+  String get syncReasonMissing;
+
+  /// No description provided for @syncReasonInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'The details are no longer valid'**
+  String get syncReasonInvalid;
+
+  /// No description provided for @syncReasonOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t send · Try again later'**
+  String get syncReasonOther;
+
+  /// No description provided for @syncFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data stays on this device until it is sent.'**
+  String get syncFooter;
+
+  /// No description provided for @syncUpdateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Freeva needs an update'**
+  String get syncUpdateTitle;
+
+  /// No description provided for @syncUpdateBody.
+  ///
+  /// In en, this message translates to:
+  /// **'To keep syncing. Your changes are kept.'**
+  String get syncUpdateBody;
+
+  /// No description provided for @syncDuplicateNote.
+  ///
+  /// In en, this message translates to:
+  /// **'You may have recorded a similar one. Both are kept.'**
+  String get syncDuplicateNote;
+
+  /// No description provided for @syncDiscardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard this change?'**
+  String get syncDiscardTitle;
+
+  /// No description provided for @syncDiscardMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} {amount} won’t be saved.'**
+  String syncDiscardMessage(String name, String amount);
+
+  /// No description provided for @syncDiscardMessageShort.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} won’t be saved.'**
+  String syncDiscardMessageShort(String name);
+
+  /// No description provided for @syncDiscardKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it'**
+  String get syncDiscardKeep;
+
+  /// No description provided for @syncDiscardConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get syncDiscardConfirm;
+
+  /// No description provided for @syncDiscardSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard change {name}'**
+  String syncDiscardSemantics(String name);
+
+  /// No description provided for @syncChipReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs a look'**
+  String get syncChipReview;
+
+  /// No description provided for @syncChipWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting to sync'**
+  String get syncChipWaiting;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

@@ -83,11 +83,18 @@ List<SyncQueueItem> applySyncResults(
           item.copyWith(
             status: SyncItemStatus.conflict,
             review: result.review,
+            reason: SyncReason.changedElsewhere,
             serverUpdatedAt: result.serverUpdatedAt ?? item.serverUpdatedAt,
           ),
         );
       case 'rejected':
-        next.add(item.copyWith(status: SyncItemStatus.failed, review: false));
+        next.add(
+          item.copyWith(
+            status: SyncItemStatus.failed,
+            review: false,
+            reason: reasonForCode(result.errorCode),
+          ),
+        );
       default:
         next.add(item);
     }
@@ -115,11 +122,38 @@ List<SyncQueueItem> markSyncFailed(
   return [
     for (final item in items)
       if (opIds.contains(item.opId))
-        item.copyWith(status: SyncItemStatus.failed, review: false)
+        item.copyWith(
+          status: SyncItemStatus.failed,
+          review: false,
+          reason: SyncReason.unavailable,
+        )
       else
         item,
   ];
 }
+
+/// Puts a failed change back in line to be sent again.
+List<SyncQueueItem> retrySyncItem(List<SyncQueueItem> items, String opId) {
+  return [
+    for (final item in items)
+      if (item.opId == opId && item.status == SyncItemStatus.failed)
+        item.copyWith(
+          status: SyncItemStatus.pending,
+          review: false,
+          reason: null,
+        )
+      else
+        item,
+  ];
+}
+
+/// One short reason for a rejected change, from the server's item code.
+SyncReason reasonForCode(String? code) => switch (code) {
+  'ACCOUNT_NOT_FOUND' => SyncReason.walletMissing,
+  'TRANSACTION_NOT_FOUND' => SyncReason.transactionMissing,
+  'VALIDATION_ERROR' => SyncReason.invalid,
+  _ => SyncReason.unavailable,
+};
 
 List<SyncQueueItem> pendingSyncBatch(List<SyncQueueItem> items) {
   final pending = items.where((item) => item.status == SyncItemStatus.pending);

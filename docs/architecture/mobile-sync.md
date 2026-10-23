@@ -17,7 +17,7 @@ Home và danh sách giao dịch hiện trạng thái sync. Có mạng vẫn gọ
 
 Payload tiền là chuỗi integer. Vault `FlutterSecureStorage`, key `freeva.sync.queue.v1`, tách khỏi preference và vault phiên. Log lỗi đọc hàng đợi không kèm nội dung. Analytics `transaction_created`, `transaction_edited`, `transaction_deleted` một lần lúc user ghi; `sync_failed` không property khi flush lỗi mạng hoặc mục `rejected`.
 
-Banner trên Home và màn giao dịch: số mục chờ, loại và ngày, nút Đồng bộ, conflict/failed có thể bỏ. Chuỗi vi/en. Màu lấy từ theme.
+Giao diện (`DS-P2-003`, nhóm H): dải trên danh sách Giao dịch mở màn Đồng bộ (`/sync`); dòng giao dịch có chip "Cần xem lại" hoặc icon đồng hồ; mục hàng đợi giữ `reason` (đổi ở máy khác, ví/giao dịch không còn, dữ liệu không hợp lệ, chưa gửi được) dịch từ mã lỗi theo mục của `/sync`; giờ gửi thành công gần nhất lưu cùng hàng đợi (`lastSyncedAt`, xoá khi đăng xuất). "Thử lại" chỉ cho mục lỗi không do dữ liệu; mọi mục bỏ được sau khi xác nhận. Chuỗi vi/en. Màu lấy từ theme.
 
 ## Giới hạn
 

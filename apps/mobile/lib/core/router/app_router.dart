@@ -14,6 +14,7 @@ import '../../features/reports/domain/category_detail.dart';
 import '../../features/reports/presentation/pages/report_category_page.dart';
 import '../../features/reports/presentation/pages/report_page.dart';
 import '../../features/settings/domain/app_preferences.dart';
+import '../../features/sync/presentation/pages/sync_page.dart';
 import '../../features/settings/presentation/pages/faq_page.dart';
 import '../../features/feedback/presentation/pages/feedback_page.dart';
 import '../../features/settings/presentation/pages/legal_page.dart';
@@ -181,6 +182,10 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
         path: '/transactions/deleted',
         builder: (context, state) =>
             const AuthGate(child: DeletedTransactionsPage()),
+      ),
+      GoRoute(
+        path: '/sync',
+        builder: (context, state) => const AuthGate(child: SyncPage()),
       ),
       GoRoute(
         path: '/notifications',

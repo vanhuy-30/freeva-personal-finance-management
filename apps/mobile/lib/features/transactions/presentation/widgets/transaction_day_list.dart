@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_card.dart';
+import '../../../sync/presentation/widgets/sync_mark_chip.dart';
 import '../../domain/transaction.dart';
 import 'transaction_day_header.dart';
 import 'transaction_list_row.dart';
@@ -21,6 +22,7 @@ class TransactionDayList extends StatelessWidget {
     required this.onOpen,
     this.highlight,
     this.trailingFor,
+    this.markFor,
     this.muted = false,
     this.highlightId,
     super.key,
@@ -36,6 +38,9 @@ class TransactionDayList extends StatelessWidget {
   final ValueChanged<TransactionBundle> onOpen;
   final String? highlight;
   final Widget Function(TransactionBundle)? trailingFor;
+
+  /// Queued change of a row, shown as a chip or clock.
+  final SyncMark? Function(TransactionBundle)? markFor;
 
   /// Deleted list: amounts muted.
   final bool muted;
@@ -91,5 +96,6 @@ class TransactionDayList extends StatelessWidget {
     muted: muted,
     onTap: () => onOpen(row),
     trailing: trailingFor?.call(row),
+    mark: markFor?.call(row),
   );
 }

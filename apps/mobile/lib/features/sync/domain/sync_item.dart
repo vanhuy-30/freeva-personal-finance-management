@@ -7,6 +7,24 @@ enum SyncAction { create, update, delete, restore }
 
 enum SyncItemStatus { pending, conflict, failed }
 
+/// Why a change is waiting for the person (shown as one short line).
+enum SyncReason {
+  /// Someone changed it on another device first.
+  changedElsewhere,
+
+  /// The wallet it uses no longer exists.
+  walletMissing,
+
+  /// The transaction it edits is gone.
+  transactionMissing,
+
+  /// The server refused the data as it is.
+  invalid,
+
+  /// Not sent yet for another reason; trying again later may work.
+  unavailable,
+}
+
 class SyncLeg {
   const SyncLeg({
     required this.clientId,
@@ -74,6 +92,7 @@ class SyncQueueItem {
     this.rate,
     this.quotedAt,
     this.serverUpdatedAt,
+    this.reason,
   });
 
   final String opId;
@@ -95,6 +114,9 @@ class SyncQueueItem {
   final int retryCount;
   final SyncItemStatus status;
   final bool review;
+
+  /// Set once the item needs attention; null while it is just waiting.
+  final SyncReason? reason;
 
   static const Object _keep = Object();
 
@@ -118,6 +140,7 @@ class SyncQueueItem {
     int? retryCount,
     SyncItemStatus? status,
     bool? review,
+    Object? reason = _keep,
   }) {
     return SyncQueueItem(
       opId: opId ?? this.opId,
@@ -141,6 +164,7 @@ class SyncQueueItem {
       retryCount: retryCount ?? this.retryCount,
       status: status ?? this.status,
       review: review ?? this.review,
+      reason: reason == _keep ? this.reason : reason as SyncReason?,
     );
   }
 }
@@ -152,6 +176,7 @@ class SyncItemResult {
     required this.review,
     required this.duplicateHint,
     this.serverUpdatedAt,
+    this.errorCode,
   });
 
   final String opId;
@@ -159,4 +184,7 @@ class SyncItemResult {
   final bool review;
   final bool duplicateHint;
   final DateTime? serverUpdatedAt;
+
+  /// Server code for a conflict or rejection (e.g. `ACCOUNT_NOT_FOUND`).
+  final String? errorCode;
 }
