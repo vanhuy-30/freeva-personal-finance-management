@@ -45,6 +45,7 @@ export class TransactionQueryDto {
   @Type(() => Number) @IsInt() @Min(1) @Max(2147483647) page = 1;
   @Type(() => Number) @IsInt() @Min(1) @Max(100) pageSize = 50;
   @IsIn(['active', 'deleted', 'all']) status: 'active' | 'deleted' | 'all' = 'active';
+  @IsIn(['date', 'amountDesc']) sort: 'date' | 'amountDesc' = 'date';
   @ValidateIf(optional) @Transform(many) @IsArray() @ArrayMaxSize(20) @ArrayUnique() @IsUUID('all', { each: true }) accountId?: string[];
   @ValidateIf(optional) @Transform(many) @IsArray() @ArrayMaxSize(50) @ArrayUnique() @IsUUID('all', { each: true }) categoryId?: string[];
   @ValidateIf(optional) @Transform(many) @IsArray() @ArrayMaxSize(20) @ArrayUnique() @IsUUID('all', { each: true }) tagId?: string[];

@@ -40,6 +40,8 @@ export interface TransactionLeg extends LegInput {
 export interface TransactionBundle { legs: TransactionLeg[]; fx: (ManualFx & { id: string; fromCode: string; toCode: string }) | null }
 export interface TransactionQuery {
   page: number; pageSize: number; status: 'active' | 'deleted' | 'all';
+  /** `date` is newest first; `amountDesc` is the largest amount first, ignoring sign ("Giao dịch lớn nhất"). */
+  sort?: 'date' | 'amountDesc';
   /** Any of these (OR within one filter, AND across filters). */
   accountIds?: string[]; categoryIds?: string[]; tagIds?: string[];
   type?: TransactionType; from?: string; to?: string; search?: string;

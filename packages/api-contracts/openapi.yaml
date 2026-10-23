@@ -818,6 +818,16 @@ paths:
           - all
           default: active
       - in: query
+        name: sort
+        required: false
+        description: date is newest first (default). amountDesc is the largest amount first, ignoring sign.
+        schema:
+          type: string
+          enum:
+          - date
+          - amountDesc
+          default: date
+      - in: query
         name: accountId
         style: form
         explode: true
