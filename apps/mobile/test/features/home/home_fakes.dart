@@ -64,6 +64,7 @@ class StubHomeViewModel extends HomeViewModel {
     this.displayName = 'Minh',
     this.balancesHidden = false,
     this.pending = const [],
+    this.hasPin = true,
   });
 
   @override
@@ -76,6 +77,8 @@ class StubHomeViewModel extends HomeViewModel {
   String currency = 'VND';
   @override
   bool balancesHidden;
+  @override
+  bool hasPin;
   @override
   List<SyncQueueItem> pending;
   @override

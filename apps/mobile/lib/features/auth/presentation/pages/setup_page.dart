@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../onboarding/presentation/viewmodels/onboarding_view_model.dart';
+import '../../../onboarding/presentation/viewmodels/setup_wallets_view_model.dart';
+import '../../../onboarding/presentation/widgets/setup_wallets_step.dart';
+import '../../../wallets/domain/wallet_use_cases.dart';
 import '../../../onboarding/presentation/widgets/budget_step.dart';
 import '../../../onboarding/presentation/widgets/goals_step.dart';
 import '../../../onboarding/presentation/widgets/habits_step.dart';
@@ -14,10 +17,10 @@ import '../viewmodels/auth_view_model.dart';
 import '../widgets/pin_setup_flow.dart';
 import '../widgets/verify_email_step.dart';
 
-enum SetupStep { verify, goals, habits, budget, pin }
+enum SetupStep { verify, goals, habits, budget, wallets, pin }
 
-/// First run after sign-up: confirm email, three questions, then an optional
-/// PIN. Every step can be skipped or left; [AuthViewModel.finishSetup] opens
+/// First run after sign-up: confirm email, three questions, where the money
+/// is (wallets), then an optional PIN. Every step can be skipped or left; [AuthViewModel.finishSetup] opens
 /// the app. Quitting midway lands in the app on the next launch.
 class SetupPage extends StatefulWidget {
   const SetupPage({required this.model, super.key});
@@ -33,6 +36,9 @@ class _SetupPageState extends State<SetupPage> {
     getIt<ProfileUseCases>(),
     getIt<SettingsUseCases>(),
   );
+  late final SetupWalletsViewModel _wallets = SetupWalletsViewModel(
+    getIt<WalletUseCases>(),
+  );
   var _step = SetupStep.verify;
 
   @override
@@ -44,12 +50,14 @@ class _SetupPageState extends State<SetupPage> {
   @override
   void dispose() {
     _answers.dispose();
+    _wallets.dispose();
     super.dispose();
   }
 
   void _go(SetupStep step) => setState(() => _step = step);
 
-  /// Questions are over (answered or skipped): record it and go to the PIN.
+  /// Questions and wallets are over (answered or skipped): record it and go
+  /// to the PIN.
   void _toPin() {
     unawaited(getIt<SettingsViewModel>().completeOnboarding());
     _go(SetupStep.pin);
@@ -84,15 +92,16 @@ class _SetupPageState extends State<SetupPage> {
         model: _answers,
         onNext: () {
           unawaited(_answers.saveBudgetDraft());
-          _toPin();
+          _go(SetupStep.wallets);
         },
-        onSkip: _toPin,
+        onSkip: () => _go(SetupStep.wallets),
         onBack: () => _go(SetupStep.habits),
       ),
+      SetupStep.wallets => SetupWalletsStep(model: _wallets, onDone: _toPin),
       SetupStep.pin => PinSetupFlow(
         model: model,
         onSkip: model.finishSetup,
-        onBack: () => _go(SetupStep.budget),
+        onBack: () => _go(SetupStep.wallets),
       ),
     };
   }

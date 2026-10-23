@@ -48,8 +48,7 @@ class OnboardingFrame extends StatelessWidget {
               maxWidth: FreevaLayout.maxContentWidth,
             ),
             child: CustomScrollView(
-              keyboardDismissBehavior:
-                  ScrollViewKeyboardDismissBehavior.onDrag,
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               slivers: [
                 SliverFillRemaining(
                   hasScrollBody: false,

@@ -9,6 +9,7 @@ import '../../../../core/widgets/pin_pad.dart';
 import '../viewmodels/auth_view_model.dart';
 import '../../domain/auth_repository.dart';
 import '../widgets/auth_message.dart';
+import '../../../settings/presentation/widgets/avatar_letter.dart';
 
 /// Daily unlock: the PIN keypad, with Face ID / fingerprint in the corner when
 /// it is on, and "Quên mã PIN?" to sign in again.
@@ -76,24 +77,29 @@ class _LockPageState extends State<LockPage> {
                     child: Column(
                       children: [
                         const SizedBox(height: FreevaSpace.s8),
-                        Container(
-                          width: 72,
-                          height: 72,
-                          decoration: BoxDecoration(
-                            color: c.tintBlue,
-                            shape: BoxShape.circle,
+                        if (model.name != null)
+                          AvatarLetter(name: model.name, email: null, size: 72)
+                        else
+                          Container(
+                            width: 72,
+                            height: 72,
+                            decoration: BoxDecoration(
+                              color: c.tintBlue,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              LucideIcons.lock,
+                              size: 28,
+                              color: c.tintBlueFg,
+                            ),
                           ),
-                          child: Icon(
-                            LucideIcons.lock,
-                            size: 28,
-                            color: c.tintBlueFg,
-                          ),
-                        ),
                         const SizedBox(height: FreevaSpace.s5),
                         Semantics(
                           header: true,
                           child: Text(
-                            s.authLockWelcome,
+                            model.name == null
+                                ? s.authLockWelcome
+                                : s.authLockGreeting(model.name!),
                             textAlign: TextAlign.center,
                             style: FreevaTypography.titleXl.copyWith(
                               fontSize: 24,

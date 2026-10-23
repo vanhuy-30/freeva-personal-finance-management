@@ -137,18 +137,17 @@ void main() {
         await tester.tap(done);
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull, reason: '$locale goals');
-        // Goals → habits → budget → PIN, each left with its skip button.
-        for (final step in ['habits', 'budget', 'pin']) {
-          final skip = find.text(
-            step == 'pin'
-                ? (locale == 'vi' ? 'Thiết lập sau' : 'Set up later')
-                : (locale == 'vi' ? 'Để sau' : 'Later'),
-          );
+        // Goals → habits → budget → wallets → PIN, each left with its skip.
+        final skips = locale == 'vi'
+            ? ['Để sau', 'Để sau', 'Thiết lập sau', 'Bỏ qua']
+            : ['Later', 'Later', 'Set up later', 'Skip'];
+        for (final (i, label) in skips.indexed) {
+          final skip = find.text(label);
           await tester.ensureVisible(skip);
           await tester.pumpAndSettle();
-          await tester.tap(skip, warnIfMissed: false);
+          await tester.tap(skip);
           await tester.pumpAndSettle();
-          expect(tester.takeException(), isNull, reason: '$locale $step');
+          expect(tester.takeException(), isNull, reason: '$locale step $i');
         }
       }
     },

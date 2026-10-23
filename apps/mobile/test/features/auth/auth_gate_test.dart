@@ -72,41 +72,45 @@ void main() {
       }
     },
   );
-  testWidgets('first-run setup: email, three questions, PIN, then the app', (
-    tester,
-  ) async {
-    tester.view.physicalSize = const Size(390, 1200);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
-    model.stage = AuthStage.setup;
-    await tester.pumpWidget(app());
-    expect(find.text('Xác nhận email'), findsOneWidget);
-    expect(find.text('protected content'), findsNothing);
-    await tester.tap(find.text('Xong'));
-    await tester.pumpAndSettle();
-    expect(find.text('Bạn muốn cải thiện điều gì?'), findsOneWidget);
-    expect(find.text('1/3'), findsOneWidget);
-    await tester.tap(find.text('Để sau'));
-    await tester.pumpAndSettle();
-    expect(find.text('Bạn đang quản lý tiền thế nào?'), findsOneWidget);
-    await tester.tap(find.byTooltip('Quay lại'));
-    await tester.pumpAndSettle();
-    expect(find.text('Bạn muốn cải thiện điều gì?'), findsOneWidget);
-    await tester.tap(find.text('Để sau'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Để sau'));
-    await tester.pumpAndSettle();
-    expect(find.text('Mỗi tháng bạn định chi bao nhiêu?'), findsOneWidget);
-    await tester.tap(find.text('Thiết lập sau'));
-    await tester.pumpAndSettle();
-    expect(find.text('Đặt mã PIN'), findsOneWidget);
-    await tester.tap(find.text('Để sau'));
-    await tester.pumpAndSettle();
-    expect(model.stage, AuthStage.unlocked);
-    expect(find.text('protected content'), findsOneWidget);
-    expect(deps.settings.onboardingCompleted, isTrue);
-  });
+  testWidgets(
+    'first-run setup: email, three questions, wallets, PIN, then the app',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 1200);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      model.stage = AuthStage.setup;
+      await tester.pumpWidget(app());
+      expect(find.text('Xác nhận email'), findsOneWidget);
+      expect(find.text('protected content'), findsNothing);
+      await tester.tap(find.text('Xong'));
+      await tester.pumpAndSettle();
+      expect(find.text('Bạn muốn cải thiện điều gì?'), findsOneWidget);
+      expect(find.text('1/3'), findsOneWidget);
+      await tester.tap(find.text('Để sau'));
+      await tester.pumpAndSettle();
+      expect(find.text('Bạn đang quản lý tiền thế nào?'), findsOneWidget);
+      await tester.tap(find.byTooltip('Quay lại'));
+      await tester.pumpAndSettle();
+      expect(find.text('Bạn muốn cải thiện điều gì?'), findsOneWidget);
+      await tester.tap(find.text('Để sau'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Để sau'));
+      await tester.pumpAndSettle();
+      expect(find.text('Mỗi tháng bạn định chi bao nhiêu?'), findsOneWidget);
+      await tester.tap(find.text('Thiết lập sau'));
+      await tester.pumpAndSettle();
+      expect(find.text('Tiền của bạn ở đâu?'), findsOneWidget);
+      await tester.tap(find.text('Bỏ qua'));
+      await tester.pumpAndSettle();
+      expect(find.text('Đặt mã PIN'), findsOneWidget);
+      await tester.tap(find.text('Để sau'));
+      await tester.pumpAndSettle();
+      expect(model.stage, AuthStage.unlocked);
+      expect(find.text('protected content'), findsOneWidget);
+      expect(deps.settings.onboardingCompleted, isTrue);
+    },
+  );
   testWidgets('without a PIN, backgrounding never locks the app', (
     tester,
   ) async {

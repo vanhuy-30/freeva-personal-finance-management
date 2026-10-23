@@ -149,4 +149,21 @@ void main() {
       expect(second.step, AuthStep.login);
     },
   );
+
+  test(
+    'the name for the lock screen survives a restart and a sign-out clears it',
+    () async {
+      await model.login('a@example.com', password);
+      await model.rememberName(' Minh ');
+      expect(model.name, 'Minh');
+      final restarted = DefaultAuthViewModel(
+        DefaultAuthUseCases(AuthRepositoryImpl(api, vault, FakeBiometrics())),
+      );
+      addTearDown(restarted.dispose);
+      await restarted.initialize();
+      expect(restarted.name, 'Minh');
+      await restarted.logout();
+      expect(restarted.name, isNull);
+    },
+  );
 }

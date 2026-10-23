@@ -31,6 +31,9 @@ abstract class HomeViewModel extends ChangeNotifier {
   String get currency;
   bool get balancesHidden;
 
+  /// Whether this device has a PIN (the checklist asks for one if not).
+  bool get hasPin;
+
   /// Today, for the greeting date.
   DateTime get today;
 
@@ -80,6 +83,8 @@ class DefaultHomeViewModel extends HomeViewModel {
   String get currency => _profile.saved?.currency ?? 'VND';
   @override
   bool get balancesHidden => _settings.balancesHidden;
+  @override
+  bool get hasPin => _auth.hasPin;
   @override
   DateTime get today => _clock();
   @override

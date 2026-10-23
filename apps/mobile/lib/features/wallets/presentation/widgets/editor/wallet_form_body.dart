@@ -25,6 +25,7 @@ class WalletFormBody extends StatelessWidget {
     required this.amount,
     required this.limit,
     this.onHide,
+    this.showTypes = true,
     super.key,
   });
 
@@ -36,6 +37,10 @@ class WalletFormBody extends StatelessWidget {
   /// "Ẩn ví" under the fields; only when editing.
   final VoidCallback? onHide;
 
+  /// False when the type is already fixed by where the form was opened
+  /// (first-run setup).
+  final bool showTypes;
+
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
@@ -46,7 +51,7 @@ class WalletFormBody extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (!form.locked) ...[
+        if (!form.locked && showTypes) ...[
           Padding(
             padding: const EdgeInsets.only(left: 4, bottom: 10),
             child: Text(
