@@ -39,6 +39,7 @@ class CategoryBars extends StatelessWidget {
                     : Border(top: BorderSide(color: c.borderDivider)),
               ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Row(
                     children: [
@@ -64,7 +65,9 @@ class CategoryBars extends StatelessWidget {
                   FreevaProgressBar(
                     value: detail.total == BigInt.zero
                         ? 0
-                        : (bar.minor * BigInt.from(1000) ~/ detail.total) / 1000,
+                        : (bar.minor * BigInt.from(1000) ~/ detail.total)
+                                  .toInt() /
+                              1000,
                     semanticsLabel: bar.name,
                   ),
                 ],

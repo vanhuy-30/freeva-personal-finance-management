@@ -13,6 +13,7 @@ import 'package:mobile/features/auth/domain/auth_use_cases.dart';
 import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dart';
 import 'package:mobile/features/categories/data/category_repository_impl.dart';
 import 'package:mobile/features/reports/data/report_repository_impl.dart';
+import 'package:mobile/features/reports/domain/report.dart';
 import 'package:mobile/features/reports/domain/report_use_cases.dart';
 import 'package:mobile/features/reports/presentation/pages/report_page.dart';
 import 'package:mobile/features/reports/presentation/viewmodels/report_view_model.dart';
@@ -159,6 +160,29 @@ void main() {
     expect(
       api.paths.where((p) => p.startsWith('reports/cashflow')).last,
       contains('on=2026-09-30'),
+    );
+  });
+
+  testWidgets('Tuỳ chọn opens the calendar and loads the picked range', (
+    tester,
+  ) async {
+    tall(tester);
+    await tester.pumpWidget(app(const ReportPage()));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Tuỳ chọn'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Huỷ'));
+    await tester.pumpAndSettle();
+    expect(reports.kind, ReportPeriodKind.month);
+    await tester.tap(find.text('Tuỳ chọn'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('7 ngày qua'));
+    await tester.pump();
+    await tester.tap(find.text('Xem khoảng này'));
+    await tester.pumpAndSettle();
+    expect(
+      api.paths,
+      contains('reports/cashflow?period=range&from=2026-10-17&to=2026-10-23'),
     );
   });
 

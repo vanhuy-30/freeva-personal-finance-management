@@ -50,6 +50,7 @@ class CategoryReportViewModel extends ChangeNotifier {
         from: period.from,
         to: period.to,
         categoryIds: ids,
+        currency: args.currency,
         sort: TransactionSort.amountDesc,
       ),
     );

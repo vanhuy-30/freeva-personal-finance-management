@@ -71,6 +71,7 @@ class _RangeDialogState extends State<_RangeDialog> {
       ),
       child: Semantics(
         scopesRoute: true,
+        explicitChildNodes: true,
         namesRoute: true,
         label: s.reportRangeTitle,
         child: SingleChildScrollView(
@@ -142,34 +143,59 @@ class _RangeDialogState extends State<_RangeDialog> {
                 ),
               ),
               const SizedBox(height: FreevaSpace.s3),
-              Row(
-                children: [
-                  Expanded(
-                    child: FreevaButton(
-                      label: s.commonCancel,
-                      variant: FreevaButtonVariant.secondary,
-                      size: FreevaButtonSize.s,
-                      expand: true,
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ),
-                  const SizedBox(width: FreevaSpace.s2),
-                  Expanded(
-                    child: FreevaButton(
-                      label: s.reportApply,
-                      size: FreevaButtonSize.s,
-                      expand: true,
-                      onPressed: selection.complete
-                          ? () => Navigator.of(context).pop(selection)
-                          : null,
-                    ),
-                  ),
-                ],
+              _Actions(
+                onCancel: () => Navigator.of(context).pop(),
+                onApply: selection.complete
+                    ? () => Navigator.of(context).pop(selection)
+                    : null,
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Huỷ · Xem khoảng này side by side; one above the other at large text so
+/// neither label is cut.
+class _Actions extends StatelessWidget {
+  const _Actions({required this.onCancel, required this.onApply});
+
+  final VoidCallback onCancel;
+  final VoidCallback? onApply;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    final cancel = FreevaButton(
+      label: s.commonCancel,
+      variant: FreevaButtonVariant.secondary,
+      size: FreevaButtonSize.s,
+      expand: true,
+      onPressed: onCancel,
+    );
+    final apply = FreevaButton(
+      label: s.reportApply,
+      size: FreevaButtonSize.s,
+      expand: true,
+      onPressed: onApply,
+    );
+    if (MediaQuery.textScalerOf(context).scale(1) > 1.15) {
+      return Column(
+        children: [
+          apply,
+          const SizedBox(height: FreevaSpace.s2),
+          cancel,
+        ],
+      );
+    }
+    return Row(
+      children: [
+        Expanded(child: cancel),
+        const SizedBox(width: FreevaSpace.s2),
+        Expanded(child: apply),
+      ],
     );
   }
 }

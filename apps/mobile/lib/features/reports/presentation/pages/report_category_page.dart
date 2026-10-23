@@ -15,7 +15,6 @@ import '../../../transactions/domain/transaction_repository.dart';
 import '../../../transactions/presentation/viewmodels/transaction_view_model.dart';
 import '../../../transactions/presentation/widgets/transaction_detail_sheet.dart';
 import '../../domain/category_detail.dart';
-import '../../domain/report_breakdown.dart';
 import '../viewmodels/category_report_view_model.dart';
 import '../widgets/category_bars.dart';
 import '../widgets/category_header.dart';
@@ -87,7 +86,12 @@ class _ReportCategoryPageState extends State<ReportCategoryPage> {
             onLeading: () => context.popOrGo('/reports'),
           ),
           body: ListView(
-            padding: EdgeInsets.fromLTRB(margin, FreevaSpace.s2, margin, FreevaSpace.s8),
+            padding: EdgeInsets.fromLTRB(
+              margin,
+              FreevaSpace.s2,
+              margin,
+              FreevaSpace.s8,
+            ),
             children: [
               CategoryHeader(
                 args: args,

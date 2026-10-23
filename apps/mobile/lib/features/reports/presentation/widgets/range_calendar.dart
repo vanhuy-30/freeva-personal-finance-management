@@ -121,7 +121,9 @@ class _Day extends StatelessWidget {
                 : inside
                 ? c.tintBlue
                 : null,
-            borderRadius: end ? BorderRadius.circular(FreevaRadius.full) : null,
+            borderRadius: end || (isToday && !inside)
+                ? BorderRadius.circular(FreevaRadius.full)
+                : null,
             border: isToday && !end
                 ? Border.all(color: c.textPrimary, width: 1.2)
                 : null,

@@ -112,6 +112,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
       ('status', query.deleted ? 'deleted' : 'active'),
       if (query.sort != TransactionSort.date) ('sort', query.sort.name),
       if (query.type != null) ('type', query.type!.name),
+      if (query.currency != null) ('currency', query.currency!),
       if (search != null) ('search', search),
       if (query.from != null) ('from', query.from!),
       if (query.to != null) ('to', query.to!),

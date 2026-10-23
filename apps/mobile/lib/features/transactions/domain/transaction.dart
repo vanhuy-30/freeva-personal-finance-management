@@ -139,6 +139,7 @@ class TransactionQuery {
     this.categoryIds = const [],
     this.tagIds = const [],
     this.sort = TransactionSort.date,
+    this.currency,
   });
   final int page;
   final int pageSize;
@@ -155,6 +156,9 @@ class TransactionQuery {
   final List<String> categoryIds;
   final List<String> tagIds;
   final TransactionSort sort;
+
+  /// ISO code of the transaction currency.
+  final String? currency;
 
   TransactionQuery copyWith({
     int? page,
@@ -173,6 +177,7 @@ class TransactionQuery {
     categoryIds: categoryIds,
     tagIds: tagIds,
     sort: sort,
+    currency: currency,
   );
 }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/theme_context.dart';
@@ -60,12 +61,14 @@ class BreakdownRows extends StatelessWidget {
     required this.slices,
     required this.currency,
     required this.digits,
+    required this.onOpen,
     super.key,
   });
 
   final List<BreakdownSlice> slices;
   final String currency;
   final int digits;
+  final ValueChanged<BreakdownSlice> onOpen;
 
   @override
   Widget build(BuildContext context) {
@@ -74,32 +77,47 @@ class BreakdownRows extends StatelessWidget {
     return Column(
       children: [
         for (var i = 0; i < slices.length; i++)
-          Container(
-            constraints: const BoxConstraints(minHeight: 44),
-            decoration: BoxDecoration(
-              border: i == 0
-                  ? null
-                  : Border(top: BorderSide(color: c.borderDivider)),
-            ),
-            child: Row(
-              children: [
-                Dot(sliceColor(context, i, slices[i])),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    sliceName(s, slices[i], withCount: true),
-                    style: FreevaTypography.body.copyWith(color: c.textPrimary),
-                  ),
+          Semantics(
+            button: true,
+            container: true,
+            child: InkWell(
+              onTap: () => onOpen(slices[i]),
+              child: Container(
+                constraints: const BoxConstraints(minHeight: 44),
+                decoration: BoxDecoration(
+                  border: i == 0
+                      ? null
+                      : Border(top: BorderSide(color: c.borderDivider)),
                 ),
-                const SizedBox(width: 8),
-                MoneyDisplay(
-                  minor: slices[i].minor,
-                  currency: currency,
-                  minorDigits: digits,
-                  showCurrency: false,
-                  style: FreevaTypography.titleM,
+                child: Row(
+                  children: [
+                    Dot(sliceColor(context, i, slices[i])),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        sliceName(s, slices[i], withCount: true),
+                        style: FreevaTypography.body.copyWith(
+                          color: c.textPrimary,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    MoneyDisplay(
+                      minor: slices[i].minor,
+                      currency: currency,
+                      minorDigits: digits,
+                      showCurrency: false,
+                      style: FreevaTypography.titleM,
+                    ),
+                    const SizedBox(width: 6),
+                    Icon(
+                      LucideIcons.chevronRight,
+                      size: 14,
+                      color: c.textSecondary,
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
       ],
