@@ -157,7 +157,7 @@
   "transactionTagCreate": "Create tag",
   "transactionTagCreateTitle": "Create a new tag",
   "transactionTagName": "Tag name",
-  "transactionTagLimit": "At most 20 tags on one transaction.",
+  "transactionTagLimit": "Up to 20 tags",
   "transactionSave": "Save",
   "transactionEdit": "Edit transaction",
   "transactionCopy": "Copy",
@@ -675,5 +675,91 @@
   "txTrashRestore": "Restore",
   "txTrashEmpty": "Nothing deleted",
   "txLoadFailed": "Couldn't load transactions",
-  "txTransferTitle": "Transfer"
+  "txTransferTitle": "Transfer",
+  "txAmountLabel": "Amount",
+  "txTransferAmountLabel": "Amount to move",
+  "txDateLabel": "Date",
+  "txMoreButton": "Note, store, tags",
+  "txSaveExpense": "Save expense",
+  "txSaveIncome": "Save income",
+  "txSaveTransfer": "Save transfer",
+  "txSaveChanges": "Save changes",
+  "txEditTitle": "Edit {kind}",
+  "@txEditTitle": {
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "txMerchantLabel": "Store",
+  "txMerchantHint": "e.g. Corner Café",
+  "txNotesHint": "Add a note",
+  "txAddTag": "Add tag",
+  "txPickCategory": "Choose a category",
+  "txFindCategory": "Find a category",
+  "txFrequent": "Frequent",
+  "txFindOrCreateTag": "Find or create a tag",
+  "txCreateTag": "Create tag “{name}”",
+  "@txCreateTag": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "txSelected": "Selected",
+  "txSwap": "Swap direction",
+  "txPickWallet": "Choose a wallet",
+  "txWalletSubExpense": "The expense comes out of this wallet",
+  "txWalletSubIncome": "The income goes into this wallet",
+  "txRateLabel": "Rate at {time}",
+  "@txRateLabel": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "txRateEmpty": "Enter a rate",
+  "txRateValue": "1 {from} = {rate} {to}",
+  "@txRateValue": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "rate": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "txReceived": "Received",
+  "txRateTitle": "Exchange rate",
+  "txDateTitle": "Choose a date",
+  "txYesterday": "Yesterday",
+  "txSavedToast": "Saved {kind}",
+  "@txSavedToast": {
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "txDiscardTitle": "Discard this {kind}?",
+  "@txDiscardTitle": {
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "txDiscardBody": "The amount and note won't be saved.",
+  "txKeepEditing": "Keep editing",
+  "txDiscard": "Discard",
+  "txAmountMissing": "Enter an amount first.",
+  "txPickDestination": "Choose the wallet that receives it.",
+  "txRateInvalid": "This rate doesn't work for this amount."
 }

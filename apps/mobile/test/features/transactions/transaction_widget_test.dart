@@ -18,7 +18,7 @@ import 'package:mobile/features/transactions/data/transaction_repository_impl.da
 import 'package:mobile/features/transactions/domain/transaction_use_cases.dart';
 import 'package:mobile/features/transactions/presentation/viewmodels/transaction_view_model.dart';
 import 'package:mobile/features/transactions/presentation/widgets/transaction_editor.dart';
-import 'package:mobile/features/transactions/presentation/widgets/transaction_form.dart';
+import 'package:mobile/features/transactions/presentation/widgets/composer/transaction_composer_screen.dart';
 import 'package:mobile/features/transactions/presentation/widgets/transaction_list_body.dart';
 import 'package:mobile/features/settings/data/settings_repository_impl.dart';
 import 'package:mobile/features/settings/domain/settings_use_cases.dart';
@@ -97,47 +97,59 @@ void main() {
     ),
   );
 
-  testWidgets('editor keeps an invalid draft on a narrow large-text screen', (
+  // Saving shows a 6 s toast; settle the frames without waiting it out.
+  Future<void> settle(WidgetTester tester) async {
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+  }
+
+  Widget editor() => app(TransactionComposerScreen(model: model));
+
+  Future<void> keys(WidgetTester tester, List<String> labels) async {
+    for (final label in labels) {
+      await tester.tap(find.bySemanticsLabel(label).last);
+    }
+    await tester.pump();
+  }
+
+  testWidgets('zero amount blocks saving on a narrow large-text screen', (
     tester,
   ) async {
-    tester.view.physicalSize = const Size(320, 640);
+    tester.view.physicalSize = const Size(320, 700);
     tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
-    await tester.pumpWidget(app(TransactionForm(model: model), scale: 2));
-    await tester.enterText(find.byType(TextField).first, '1e3');
-    await tester.tap(find.widgetWithText(FilledButton, 'Lưu'));
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      app(TransactionComposerScreen(model: model), scale: 1.3),
+    );
     await tester.pumpAndSettle();
+    await tester.tap(find.text('Lưu khoản chi'));
+    await settle(tester);
     expect(api.writes, 0);
-    expect(find.text('1e3'), findsOneWidget);
+    expect(find.text('Nhập số tiền trước khi lưu.'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
   testWidgets(
-    'new expense focuses amount, prefers recent defaults, and pins save',
+    'new expense: recent defaults, keypad amount, saved in five taps',
     (tester) async {
-      await tester.pumpWidget(app(TransactionForm(model: model)));
+      await tester.pumpWidget(editor());
       await tester.pumpAndSettle();
-      final amountField = tester.widget<TextField>(
-        find.byType(TextField).first,
-      );
-      expect(amountField.autofocus, isTrue);
       expect(model.preferredAccountId(), 'card');
-      expect(model.preferredCategoryId(), 'food');
       expect(find.text('Ăn uống'), findsWidgets);
-      final scroll = find.byType(SingleChildScrollView);
-      expect(
-        find.descendant(
-          of: scroll,
-          matching: find.widgetWithText(FilledButton, 'Lưu'),
-        ),
-        findsNothing,
-      );
-      expect(find.widgetWithText(FilledButton, 'Lưu'), findsOneWidget);
-      await tester.enterText(find.byType(TextField).first, '25000');
-      await tester.tap(find.widgetWithText(FilledButton, 'Lưu'));
-      await tester.pumpAndSettle();
+      expect(find.text('card'), findsOneWidget);
+      // 4 key taps + save: well under the 10 s target (QA-P1-001).
+      await keys(tester, ['2', '5', '000']);
+      expect(find.text('25.000'), findsOneWidget);
+      await tester.tap(find.text('Lưu khoản chi'));
+      await settle(tester);
       expect(api.writes, 1);
+      final post = api.calls.lastWhere(
+        (call) => call.method == 'POST' && call.path == 'transactions',
+      );
+      final legs = (post.body!['legs'] as List).cast<Map<String, dynamic>>();
+      expect(legs.single['amountMinor'], '-25000');
+      expect(post.body!['categoryId'], 'food');
     },
   );
 
@@ -158,36 +170,76 @@ void main() {
     );
     await tester.tap(find.text('Ghi'));
     await tester.pumpAndSettle();
-    await tester.enterText(find.byType(TextField).first, '25000');
+    await keys(tester, ['2', '5']);
     auth.lock();
     await tester.pumpAndSettle();
-    expect(find.text('25000'), findsNothing);
+    expect(find.text('25'), findsNothing);
     expect(find.byType(TransactionEditor), findsNothing);
     expect(model.wallets, isEmpty);
     expect(tester.takeException(), isNull);
   });
 
   testWidgets('blank merchant and a new tag still save', (tester) async {
-    await tester.pumpWidget(app(TransactionForm(model: model)));
-    await tester.enterText(find.byType(TextField).first, '25000');
-    await tester.ensureVisible(find.widgetWithText(FilterChip, 'Work'));
-    await tester.tap(find.widgetWithText(FilterChip, 'Work'));
+    await tester.pumpWidget(editor());
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.widgetWithText(ActionChip, 'Tạo nhãn'));
-    await tester.tap(find.widgetWithText(ActionChip, 'Tạo nhãn'));
+    await keys(tester, ['2', '5', '000']);
+    await tester.ensureVisible(find.text('Ghi chú, cửa hàng, nhãn'));
     await tester.pumpAndSettle();
+    await tester.tap(find.text('Ghi chú, cửa hàng, nhãn'));
+    await tester.pumpAndSettle();
+    expect(find.text('Cửa hàng'), findsOneWidget);
+    await tester.ensureVisible(find.text('Thêm nhãn'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Thêm nhãn'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Work'));
     await tester.enterText(find.byType(TextField).last, 'Family');
-    await tester.tap(find.widgetWithText(FilledButton, 'Tạo nhãn'));
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.widgetWithText(FilledButton, 'Lưu'));
-    await tester.tap(find.widgetWithText(FilledButton, 'Lưu'));
+    await tester.tap(find.text('Tạo nhãn “Family”'));
     await tester.pumpAndSettle();
+    await tester.tap(find.text('Xong'));
+    await tester.pumpAndSettle();
+    expect(find.text('Family'), findsOneWidget);
+    await tester.tap(find.text('Lưu khoản chi'));
+    await settle(tester);
     final post = api.calls.lastWhere(
       (call) => call.method == 'POST' && call.path == 'transactions',
     );
     expect(post.body!['merchant'], isNull);
     expect(post.body!['tagIds'], hasLength(2));
     expect(post.body!['tagIds'], contains('work'));
+  });
+
+  testWidgets('transfer posts two balanced legs', (tester) async {
+    await tester.pumpWidget(editor());
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Chuyển'));
+    await tester.pumpAndSettle();
+    await keys(tester, ['5', '000']);
+    await tester.tap(find.bySemanticsLabel(RegExp('^Đến')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('cash').last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Lưu chuyển ví'));
+    await settle(tester);
+    final post = api.calls.lastWhere(
+      (call) => call.method == 'POST' && call.path == 'transactions',
+    );
+    final legs = (post.body!['legs'] as List).cast<Map<String, dynamic>>();
+    expect(legs.map((l) => l['amountMinor']), ['-5000', '5000']);
+    expect(post.body!['fx'], isNull);
+  });
+
+  testWidgets('closing a dirty form asks first', (tester) async {
+    await tester.pumpWidget(editor());
+    await tester.pumpAndSettle();
+    await keys(tester, ['9']);
+    await tester.tap(find.byTooltip('Đóng'));
+    await tester.pumpAndSettle();
+    expect(find.text('Bỏ khoản chi đang nhập?'), findsOneWidget);
+    await tester.tap(find.text('Tiếp tục nhập'));
+    await tester.pumpAndSettle();
+    expect(find.text('9'), findsWidgets);
   });
 
   testWidgets('hiding balances keeps transaction amounts visible', (
@@ -214,9 +266,9 @@ void main() {
       ),
       findsWidgets,
     );
-    await tester.pumpWidget(app(TransactionForm(model: model)));
-    await tester.enterText(find.byType(TextField).first, '25000');
-    expect(find.text('25000'), findsOneWidget);
-    expect(find.textContaining('••••'), findsNothing);
+    await tester.pumpWidget(editor());
+    await tester.pumpAndSettle();
+    await keys(tester, ['2', '5', '000']);
+    expect(find.text('25.000'), findsOneWidget);
   });
 }

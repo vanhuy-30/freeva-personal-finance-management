@@ -4,7 +4,9 @@ import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../auth/presentation/widgets/auth_gate.dart';
 import '../../domain/transaction.dart';
 import '../viewmodels/transaction_view_model.dart';
-import 'transaction_form.dart';
+import '../../../../core/widgets/error_retry.dart';
+import '../../../../core/widgets/freeva_top_bar.dart';
+import 'composer/transaction_composer_screen.dart';
 
 class TransactionEditor extends StatefulWidget {
   const TransactionEditor({
@@ -68,40 +70,29 @@ class _TransactionEditorState extends State<TransactionEditor> {
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
-    final editing = bundle != null && !widget.copy;
     return AuthGate(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            widget.copy
-                ? s.transactionCopy
-                : editing
-                ? s.transactionEdit
-                : s.transactionRecord,
-          ),
-        ),
-        body: loading
-            ? const Center(child: CircularProgressIndicator())
-            : failed
-            ? Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(s.transactionError),
-                    OutlinedButton(
-                      onPressed: _load,
-                      child: Text(s.profileReload),
-                    ),
-                  ],
-                ),
-              )
-            : TransactionForm(
-                model: widget.model,
-                existing: bundle,
-                copy: widget.copy,
-                initialType: widget.initialType,
+      child: loading || failed
+          ? Scaffold(
+              appBar: FreevaTopBar(
+                title: s.transactionEdit,
+                kind: FreevaTopBarKind.modal,
               ),
-      ),
+              body: Center(
+                child: loading
+                    ? const CircularProgressIndicator()
+                    : ErrorRetry(
+                        title: s.transactionError,
+                        message: s.homeErrorBody,
+                        onRetry: _load,
+                      ),
+              ),
+            )
+          : TransactionComposerScreen(
+              model: widget.model,
+              existing: bundle,
+              copy: widget.copy,
+              initialType: widget.initialType,
+            ),
     );
   }
 }

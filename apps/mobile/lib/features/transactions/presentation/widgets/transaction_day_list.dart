@@ -6,6 +6,7 @@ import '../../../../core/widgets/freeva_card.dart';
 import '../../domain/transaction.dart';
 import 'transaction_day_header.dart';
 import 'transaction_list_row.dart';
+import 'saved_row_flash.dart';
 import 'transaction_naming.dart';
 
 /// Transactions grouped by day: a header with the day's net (transfers
@@ -21,6 +22,7 @@ class TransactionDayList extends StatelessWidget {
     this.highlight,
     this.trailingFor,
     this.muted = false,
+    this.highlightId,
     super.key,
   });
 
@@ -37,6 +39,9 @@ class TransactionDayList extends StatelessWidget {
 
   /// Deleted list: amounts muted.
   final bool muted;
+
+  /// Row to mark as just saved.
+  final String? highlightId;
 
   @override
   Widget build(BuildContext context) {
@@ -63,16 +68,10 @@ class TransactionDayList extends StatelessWidget {
               children: [
                 for (final (i, row) in items.indexed) ...[
                   if (i > 0) Divider(height: 1, color: c.listDivider),
-                  TransactionListRow(
-                    row: row,
-                    label: naming.label(row),
-                    digits: digitsOf(row.legs.first.currencyCode),
-                    showCurrency: row.legs.first.currencyCode != mainCurrency,
-                    highlight: highlight,
-                    muted: muted,
-                    onTap: () => onOpen(row),
-                    trailing: trailingFor?.call(row),
-                  ),
+                  if (row.id == highlightId)
+                    SavedRowFlash(key: ValueKey(row.id), child: _row(row))
+                  else
+                    _row(row),
                 ],
               ],
             ),
@@ -82,4 +81,15 @@ class TransactionDayList extends StatelessWidget {
       ],
     );
   }
+
+  Widget _row(TransactionBundle row) => TransactionListRow(
+    row: row,
+    label: naming.label(row),
+    digits: digitsOf(row.legs.first.currencyCode),
+    showCurrency: row.legs.first.currencyCode != mainCurrency,
+    highlight: highlight,
+    muted: muted,
+    onTap: () => onOpen(row),
+    trailing: trailingFor?.call(row),
+  );
 }

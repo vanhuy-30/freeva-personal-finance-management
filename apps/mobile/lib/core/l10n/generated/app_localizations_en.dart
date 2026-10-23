@@ -456,7 +456,7 @@ class SEn extends S {
   String get transactionTagName => 'Tag name';
 
   @override
-  String get transactionTagLimit => 'At most 20 tags on one transaction.';
+  String get transactionTagLimit => 'Up to 20 tags';
 
   @override
   String get transactionSave => 'Save';
@@ -1346,4 +1346,130 @@ class SEn extends S {
 
   @override
   String get txTransferTitle => 'Transfer';
+
+  @override
+  String get txAmountLabel => 'Amount';
+
+  @override
+  String get txTransferAmountLabel => 'Amount to move';
+
+  @override
+  String get txDateLabel => 'Date';
+
+  @override
+  String get txMoreButton => 'Note, store, tags';
+
+  @override
+  String get txSaveExpense => 'Save expense';
+
+  @override
+  String get txSaveIncome => 'Save income';
+
+  @override
+  String get txSaveTransfer => 'Save transfer';
+
+  @override
+  String get txSaveChanges => 'Save changes';
+
+  @override
+  String txEditTitle(String kind) {
+    return 'Edit $kind';
+  }
+
+  @override
+  String get txMerchantLabel => 'Store';
+
+  @override
+  String get txMerchantHint => 'e.g. Corner Café';
+
+  @override
+  String get txNotesHint => 'Add a note';
+
+  @override
+  String get txAddTag => 'Add tag';
+
+  @override
+  String get txPickCategory => 'Choose a category';
+
+  @override
+  String get txFindCategory => 'Find a category';
+
+  @override
+  String get txFrequent => 'Frequent';
+
+  @override
+  String get txFindOrCreateTag => 'Find or create a tag';
+
+  @override
+  String txCreateTag(String name) {
+    return 'Create tag “$name”';
+  }
+
+  @override
+  String get txSelected => 'Selected';
+
+  @override
+  String get txSwap => 'Swap direction';
+
+  @override
+  String get txPickWallet => 'Choose a wallet';
+
+  @override
+  String get txWalletSubExpense => 'The expense comes out of this wallet';
+
+  @override
+  String get txWalletSubIncome => 'The income goes into this wallet';
+
+  @override
+  String txRateLabel(String time) {
+    return 'Rate at $time';
+  }
+
+  @override
+  String get txRateEmpty => 'Enter a rate';
+
+  @override
+  String txRateValue(String from, String rate, String to) {
+    return '1 $from = $rate $to';
+  }
+
+  @override
+  String get txReceived => 'Received';
+
+  @override
+  String get txRateTitle => 'Exchange rate';
+
+  @override
+  String get txDateTitle => 'Choose a date';
+
+  @override
+  String get txYesterday => 'Yesterday';
+
+  @override
+  String txSavedToast(String kind) {
+    return 'Saved $kind';
+  }
+
+  @override
+  String txDiscardTitle(String kind) {
+    return 'Discard this $kind?';
+  }
+
+  @override
+  String get txDiscardBody => 'The amount and note won\'t be saved.';
+
+  @override
+  String get txKeepEditing => 'Keep editing';
+
+  @override
+  String get txDiscard => 'Discard';
+
+  @override
+  String get txAmountMissing => 'Enter an amount first.';
+
+  @override
+  String get txPickDestination => 'Choose the wallet that receives it.';
+
+  @override
+  String get txRateInvalid => 'This rate doesn\'t work for this amount.';
 }

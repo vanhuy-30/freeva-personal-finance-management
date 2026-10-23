@@ -176,7 +176,7 @@ class StubTransactionViewModel extends ChangeNotifier
   @override
   List<FinanceCategory> categories = stubCategories;
   @override
-  List<FinanceCategory> recentCategories = const [];
+  List<FinanceCategory> recentCategories = stubCategories;
   @override
   List<Tag> tags = [
     const Tag(id: 'work', clientId: 'c', name: 'Đi làm', version: 1),
@@ -201,6 +201,24 @@ class StubTransactionViewModel extends ChangeNotifier
   String? today() => '2026-10-21';
   @override
   String? get timeZone => 'Asia/Ho_Chi_Minh';
+
+  @override
+  TransactionBundle? lastSaved;
+  @override
+  DateTime? lastSavedAt;
+  @override
+  String? preferredAccountId() => wallets.first.id;
+  @override
+  String? preferredCategoryId() => categories.first.id;
+  int _ids = 0;
+  @override
+  String newClientId() => 'client-${_ids++}';
+  final saved = <TransactionDraft>[];
+  @override
+  Future<bool> save(TransactionDraft draft, {TransactionBundle? existing}) async {
+    saved.add(draft);
+    return true;
+  }
 
   final applied = <TransactionFilter>[];
   final removed = <TransactionBundle>[];

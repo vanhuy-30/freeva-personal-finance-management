@@ -922,7 +922,7 @@ abstract class S {
   /// No description provided for @transactionTagLimit.
   ///
   /// In en, this message translates to:
-  /// **'At most 20 tags on one transaction.'**
+  /// **'Up to 20 tags'**
   String get transactionTagLimit;
 
   /// No description provided for @transactionSave.
@@ -2508,6 +2508,234 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Transfer'**
   String get txTransferTitle;
+
+  /// No description provided for @txAmountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get txAmountLabel;
+
+  /// No description provided for @txTransferAmountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount to move'**
+  String get txTransferAmountLabel;
+
+  /// No description provided for @txDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get txDateLabel;
+
+  /// No description provided for @txMoreButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Note, store, tags'**
+  String get txMoreButton;
+
+  /// No description provided for @txSaveExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Save expense'**
+  String get txSaveExpense;
+
+  /// No description provided for @txSaveIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Save income'**
+  String get txSaveIncome;
+
+  /// No description provided for @txSaveTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Save transfer'**
+  String get txSaveTransfer;
+
+  /// No description provided for @txSaveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save changes'**
+  String get txSaveChanges;
+
+  /// No description provided for @txEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit {kind}'**
+  String txEditTitle(String kind);
+
+  /// No description provided for @txMerchantLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Store'**
+  String get txMerchantLabel;
+
+  /// No description provided for @txMerchantHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Corner Café'**
+  String get txMerchantHint;
+
+  /// No description provided for @txNotesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a note'**
+  String get txNotesHint;
+
+  /// No description provided for @txAddTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Add tag'**
+  String get txAddTag;
+
+  /// No description provided for @txPickCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a category'**
+  String get txPickCategory;
+
+  /// No description provided for @txFindCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Find a category'**
+  String get txFindCategory;
+
+  /// No description provided for @txFrequent.
+  ///
+  /// In en, this message translates to:
+  /// **'Frequent'**
+  String get txFrequent;
+
+  /// No description provided for @txFindOrCreateTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Find or create a tag'**
+  String get txFindOrCreateTag;
+
+  /// No description provided for @txCreateTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Create tag “{name}”'**
+  String txCreateTag(String name);
+
+  /// No description provided for @txSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected'**
+  String get txSelected;
+
+  /// No description provided for @txSwap.
+  ///
+  /// In en, this message translates to:
+  /// **'Swap direction'**
+  String get txSwap;
+
+  /// No description provided for @txPickWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a wallet'**
+  String get txPickWallet;
+
+  /// No description provided for @txWalletSubExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'The expense comes out of this wallet'**
+  String get txWalletSubExpense;
+
+  /// No description provided for @txWalletSubIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'The income goes into this wallet'**
+  String get txWalletSubIncome;
+
+  /// No description provided for @txRateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate at {time}'**
+  String txRateLabel(String time);
+
+  /// No description provided for @txRateEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a rate'**
+  String get txRateEmpty;
+
+  /// No description provided for @txRateValue.
+  ///
+  /// In en, this message translates to:
+  /// **'1 {from} = {rate} {to}'**
+  String txRateValue(String from, String rate, String to);
+
+  /// No description provided for @txReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Received'**
+  String get txReceived;
+
+  /// No description provided for @txRateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Exchange rate'**
+  String get txRateTitle;
+
+  /// No description provided for @txDateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a date'**
+  String get txDateTitle;
+
+  /// No description provided for @txYesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get txYesterday;
+
+  /// No description provided for @txSavedToast.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved {kind}'**
+  String txSavedToast(String kind);
+
+  /// No description provided for @txDiscardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard this {kind}?'**
+  String txDiscardTitle(String kind);
+
+  /// No description provided for @txDiscardBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The amount and note won\'t be saved.'**
+  String get txDiscardBody;
+
+  /// No description provided for @txKeepEditing.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep editing'**
+  String get txKeepEditing;
+
+  /// No description provided for @txDiscard.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get txDiscard;
+
+  /// No description provided for @txAmountMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter an amount first.'**
+  String get txAmountMissing;
+
+  /// No description provided for @txPickDestination.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the wallet that receives it.'**
+  String get txPickDestination;
+
+  /// No description provided for @txRateInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'This rate doesn\'t work for this amount.'**
+  String get txRateInvalid;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

@@ -458,7 +458,7 @@ class SVi extends S {
   String get transactionTagName => 'Tên nhãn';
 
   @override
-  String get transactionTagLimit => 'Tối đa 20 nhãn trên một giao dịch.';
+  String get transactionTagLimit => 'Tối đa 20 nhãn';
 
   @override
   String get transactionSave => 'Lưu';
@@ -1344,4 +1344,130 @@ class SVi extends S {
 
   @override
   String get txTransferTitle => 'Chuyển ví';
+
+  @override
+  String get txAmountLabel => 'Số tiền';
+
+  @override
+  String get txTransferAmountLabel => 'Số tiền chuyển';
+
+  @override
+  String get txDateLabel => 'Ngày';
+
+  @override
+  String get txMoreButton => 'Ghi chú, cửa hàng, nhãn';
+
+  @override
+  String get txSaveExpense => 'Lưu khoản chi';
+
+  @override
+  String get txSaveIncome => 'Lưu khoản thu';
+
+  @override
+  String get txSaveTransfer => 'Lưu chuyển ví';
+
+  @override
+  String get txSaveChanges => 'Lưu thay đổi';
+
+  @override
+  String txEditTitle(String kind) {
+    return 'Sửa $kind';
+  }
+
+  @override
+  String get txMerchantLabel => 'Cửa hàng';
+
+  @override
+  String get txMerchantHint => 'Ví dụ: Phở Thìn';
+
+  @override
+  String get txNotesHint => 'Thêm ghi chú';
+
+  @override
+  String get txAddTag => 'Thêm nhãn';
+
+  @override
+  String get txPickCategory => 'Chọn danh mục';
+
+  @override
+  String get txFindCategory => 'Tìm danh mục';
+
+  @override
+  String get txFrequent => 'Hay dùng';
+
+  @override
+  String get txFindOrCreateTag => 'Tìm hoặc tạo nhãn';
+
+  @override
+  String txCreateTag(String name) {
+    return 'Tạo nhãn “$name”';
+  }
+
+  @override
+  String get txSelected => 'Đã chọn';
+
+  @override
+  String get txSwap => 'Đổi chiều chuyển';
+
+  @override
+  String get txPickWallet => 'Chọn ví';
+
+  @override
+  String get txWalletSubExpense => 'Khoản chi sẽ trừ vào ví này';
+
+  @override
+  String get txWalletSubIncome => 'Khoản thu sẽ cộng vào ví này';
+
+  @override
+  String txRateLabel(String time) {
+    return 'Tỷ giá lúc $time';
+  }
+
+  @override
+  String get txRateEmpty => 'Nhập tỷ giá';
+
+  @override
+  String txRateValue(String from, String rate, String to) {
+    return '1 $from = $rate $to';
+  }
+
+  @override
+  String get txReceived => 'Nhận được';
+
+  @override
+  String get txRateTitle => 'Tỷ giá';
+
+  @override
+  String get txDateTitle => 'Chọn ngày';
+
+  @override
+  String get txYesterday => 'Hôm qua';
+
+  @override
+  String txSavedToast(String kind) {
+    return 'Đã lưu $kind';
+  }
+
+  @override
+  String txDiscardTitle(String kind) {
+    return 'Bỏ $kind đang nhập?';
+  }
+
+  @override
+  String get txDiscardBody => 'Số tiền và ghi chú sẽ không được lưu.';
+
+  @override
+  String get txKeepEditing => 'Tiếp tục nhập';
+
+  @override
+  String get txDiscard => 'Bỏ';
+
+  @override
+  String get txAmountMissing => 'Nhập số tiền trước khi lưu.';
+
+  @override
+  String get txPickDestination => 'Chọn ví nhận tiền.';
+
+  @override
+  String get txRateInvalid => 'Tỷ giá chưa hợp lệ với số tiền này.';
 }

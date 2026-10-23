@@ -13,8 +13,13 @@ class AmountKeypad extends StatelessWidget {
   const AmountKeypad({
     required this.onDigits,
     required this.onDelete,
+    this.filled = true,
     super.key,
   });
+
+  /// White keys (component sheet) or flat keys on the page background
+  /// (record screen).
+  final bool filled;
 
   /// Receives "0"–"9" or "000".
   final ValueChanged<String> onDigits;
@@ -39,18 +44,26 @@ class AmountKeypad extends StatelessWidget {
         for (final key in _keys)
           key.isEmpty
               ? _Key(
+                  filled: filled,
                   label: S.of(context).keypadDelete,
                   icon: LucideIcons.delete,
                   onTap: onDelete,
                 )
-              : _Key(label: key, onTap: () => onDigits(key)),
+              : _Key(label: key, filled: filled, onTap: () => onDigits(key)),
       ],
     );
   }
 }
 
 class _Key extends StatelessWidget {
-  const _Key({required this.label, required this.onTap, this.icon});
+  const _Key({
+    required this.label,
+    required this.onTap,
+    this.icon,
+    this.filled = true,
+  });
+
+  final bool filled;
 
   final String label;
   final IconData? icon;
@@ -65,7 +78,7 @@ class _Key extends StatelessWidget {
         label: label,
         excludeSemantics: true,
         child: Material(
-          color: c.bgSurface,
+          color: filled ? c.bgSurface : Colors.transparent,
           borderRadius: BorderRadius.circular(FreevaRadius.md),
           child: InkWell(
             borderRadius: BorderRadius.circular(FreevaRadius.md),
