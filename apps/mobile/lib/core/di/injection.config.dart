@@ -224,6 +224,7 @@ extension GetItInjectableX on _i174.GetIt {
               gh<_i146.ReportUseCases>(),
               gh<_i990.AuthViewModel>(),
               gh<_i1020.AnalyticsService>(),
+              gh<_i887.ProfileViewModel>(),
             ));
     gh.lazySingleton<_i722.HomeViewModel>(() => _i722.DefaultHomeViewModel(
           gh<_i970.OverviewUseCases>(),

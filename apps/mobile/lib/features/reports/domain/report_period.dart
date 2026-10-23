@@ -3,6 +3,9 @@ import 'report.dart';
 
 const maxReportRangeDays = 3660;
 
+/// `YYYY-MM-DD` of the device calendar date, never shifted through UTC.
+String calendarDate(DateTime date) => _format(date);
+
 bool isCalendarDate(String value) => _utc(value) != null;
 
 /// Calendar-day distance from [from] to [to]. Negative when [from] is later.
@@ -40,7 +43,7 @@ AuthFailure? invalidPeriod(ReportPeriodQuery query) {
   return null;
 }
 
-/// Steps a week or month by the inclusive bounds the server already resolved.
+/// Steps a week, month or year by the inclusive bounds the server already resolved.
 /// Month length follows the user's fiscal start, so the client only moves the
 /// anchor to the day before [ReportPeriod.from] or the day after [ReportPeriod.to].
 ReportPeriodQuery? adjacentPeriod(ReportPeriod period, int direction) {
@@ -49,9 +52,32 @@ ReportPeriodQuery? adjacentPeriod(ReportPeriod period, int direction) {
   final anchor = direction < 0 ? period.from : period.to;
   final on = shiftCalendarDate(anchor, direction);
   if (on == null) return null;
-  return period.kind == ReportPeriodKind.week
-      ? ReportPeriodQuery.week(on: on)
-      : ReportPeriodQuery.month(on: on);
+  return switch (period.kind) {
+    ReportPeriodKind.week => ReportPeriodQuery.week(on: on),
+    ReportPeriodKind.month => ReportPeriodQuery.month(on: on),
+    _ => ReportPeriodQuery.year(on: on),
+  };
+}
+
+/// The period right before [period], for "so với kỳ trước". A range moves back
+/// by its own length. Null when that would leave the supported dates.
+ReportPeriodQuery? previousPeriod(ReportPeriod period) {
+  if (period.kind != ReportPeriodKind.range) {
+    return adjacentPeriod(period, -1);
+  }
+  final length = daysApart(period.from, period.to);
+  if (length == null) return null;
+  final to = shiftCalendarDate(period.from, -1);
+  final from = to == null ? null : shiftCalendarDate(to, -length);
+  if (from == null || to == null) return null;
+  return ReportPeriodQuery.range(from, to);
+}
+
+/// Today (device calendar date) falls inside, or before the end of, [period].
+/// The "next" button is locked there, since later periods hold nothing.
+bool reachesToday(ReportPeriod period, String today) {
+  final apart = daysApart(today, period.to);
+  return apart != null && apart >= 0;
 }
 
 DateTime? _utc(String value) {

@@ -17,6 +17,7 @@ class FreevaSegmented<T> extends StatelessWidget {
     required this.selected,
     required this.onChanged,
     this.expand = false,
+    this.compact = false,
     super.key,
   }) : assert(segments.length >= 2 && segments.length <= 4);
 
@@ -26,6 +27,10 @@ class FreevaSegmented<T> extends StatelessWidget {
 
   /// Fill the row with equal segments (report period) instead of hugging.
   final bool expand;
+
+  /// Card-level variant (trend range, Chi · Thu · Ví): 30 high, 12 pt text,
+  /// on the subtle track.
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -43,11 +48,11 @@ class FreevaSegmented<T> extends StatelessWidget {
             duration: FreevaMotion.fast,
             curve: FreevaMotion.standard,
             // Grows instead of clipping when large text needs two lines.
-            constraints: const BoxConstraints(minHeight: 36),
+            constraints: BoxConstraints(minHeight: compact ? 30 : 36),
             alignment: Alignment.center,
             padding: EdgeInsets.symmetric(
-              horizontal: expand ? 10 : 18,
-              vertical: 6,
+              horizontal: compact ? 10 : (expand ? 6 : 18),
+              vertical: compact ? 4 : 6,
             ),
             decoration: ShapeDecoration(
               shape: const StadiumBorder(),
@@ -58,7 +63,7 @@ class FreevaSegmented<T> extends StatelessWidget {
               maxLines: 2,
               textAlign: TextAlign.center,
               style: FreevaTypography.body.copyWith(
-                fontSize: 14,
+                fontSize: compact ? 12 : 14,
                 fontWeight: on ? FontWeight.w600 : FontWeight.w500,
                 color: on ? c.segmentedSelectedFg : c.textSecondary,
               ),
@@ -70,10 +75,10 @@ class FreevaSegmented<T> extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.all(FreevaSpace.s1),
+      padding: EdgeInsets.all(compact ? 3 : FreevaSpace.s1),
       decoration: ShapeDecoration(
         shape: const StadiumBorder(),
-        color: c.segmentedTrack,
+        color: compact ? c.bgSubtle : c.segmentedTrack,
       ),
       child: Row(
         mainAxisSize: expand ? MainAxisSize.max : MainAxisSize.min,

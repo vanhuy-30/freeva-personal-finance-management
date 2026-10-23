@@ -155,7 +155,7 @@ describe('BE-P1-007 HTTP + PostgreSQL', () => {
     const categories = report.body?.byCategory as { categoryId: string | null; parentId: string | null; expenseMinor: string }[];
     expect(categories).toEqual(expect.arrayContaining([
       expect.objectContaining({ categoryId: null, parentId: null, currency: 'VND', incomeMinor: '1000', expenseMinor: '0' }),
-      expect.objectContaining({ categoryId: child.id, parentId: parent.id, currency: 'VND', incomeMinor: '0', expenseMinor: '-405' }),
+      expect.objectContaining({ categoryId: child.id, parentId: parent.id, currency: 'VND', incomeMinor: '0', expenseMinor: '-405', transactionCount: 2 }),
       expect.objectContaining({ categoryId: null, parentId: null, currency: 'USD', incomeMinor: '2500', expenseMinor: '0' }),
     ]));
     expect(categories.find(row => row.categoryId === parent.id)).toBeUndefined();
@@ -188,7 +188,10 @@ describe('BE-P1-007 HTTP + PostgreSQL', () => {
       '/cashflow?period=range&from=2026-10-02&to=2026-10-01',
       '/cashflow?period=week&from=2026-10-05&to=2026-10-11',
       '/cashflow?period=range&on=2026-10-08&from=2026-10-01&to=2026-10-02',
-      '/cashflow?period=year',
+      '/cashflow?period=decade',
+      '/cashflow?period=year&from=2026-01-01',
+      '/trend?period=range',
+      '/trend?period=week&from=2026-10-01',
       '/cashflow?period=month&userId=x',
       '/net-worth?period=month',
     ]) {
@@ -221,6 +224,31 @@ describe('BE-P1-007 HTTP + PostgreSQL', () => {
       { currency: 'VND', assetsMinor: '999999', liabilitiesMinor: '0', netWorthMinor: '999999' },
     ] });
     for (const secret of [token, walletName, 'Private report note', huge.toString(), '999999']) expect(logs).not.toContain(secret);
+  });
+
+  it('reports a calendar year and a six-month fiscal trend in one call', async () => {
+    await prisma.user.update({ where: { id: owner }, data: { fiscalMonthStartDay: 15 } });
+    const cash = await account('cash', 'VND', 0n);
+    await transaction({ accountId: cash.id, currencyCode: 'VND', type: 'expense', amountMinor: -300n, occurredOn: '2026-10-14' });
+    await transaction({ accountId: cash.id, currencyCode: 'VND', type: 'expense', amountMinor: -200n, occurredOn: '2026-09-15' });
+    await transaction({ accountId: cash.id, currencyCode: 'VND', type: 'income', amountMinor: 900n, occurredOn: '2026-09-16' });
+    await transaction({ accountId: cash.id, currencyCode: 'VND', type: 'expense', amountMinor: -100n, occurredOn: '2025-03-01' });
+    await transaction({ accountId: cash.id, currencyCode: 'VND', type: 'expense', amountMinor: -999n, occurredOn: '2026-10-01', deleted: true });
+    await transaction({ accountId: cash.id, currencyCode: 'VND', type: 'transfer', amountMinor: -50n, occurredOn: '2026-10-01', transferGroupId: randomUUID() });
+    const year = await request('/cashflow?period=year&on=2026-06-01');
+    expect(year.body).toMatchObject({ period: { kind: 'year', from: '2026-01-01', to: '2026-12-31' }, totals: [{ currency: 'VND', incomeMinor: '900', expenseMinor: '-500' }] });
+    const months = await request('/trend?period=month&on=2026-10-08');
+    expect(months.status).toBe(200);
+    const buckets = months.body?.buckets as { from: string; to: string; totals: unknown[] }[];
+    expect(buckets).toHaveLength(6);
+    expect(buckets[5]).toEqual({ from: '2026-09-15', to: '2026-10-14', totals: [{ currency: 'VND', incomeMinor: '900', expenseMinor: '-500' }] });
+    expect(buckets[4].totals).toEqual([]);
+    const years = await request('/trend?period=year&on=2026-10-08');
+    expect((years.body?.buckets as { from: string }[]).map(bucket => bucket.from)).toEqual(['2025-01-01', '2026-01-01']);
+    expect((await request('/trend?period=week')).status).toBe(200);
+    expect((await request('/trend?period=week', otherToken)).body).toMatchObject({ kind: 'week' });
+    expect(JSON.stringify((await request('/trend?period=week', otherToken)).body)).not.toContain('900');
+    expect((await request('/trend?period=week', '')).status).toBe(401);
   });
 
   it('uses the profile timezone when the anchor is omitted', async () => {

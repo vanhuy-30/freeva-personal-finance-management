@@ -32,7 +32,7 @@ Thứ tự đã chốt: nền tảng → B → C → D → E → F → G → A �
 | C Giao dịch | Xong | API lọc nhiều ví/danh mục/nhãn, tìm cửa hàng, `summary`; giờ giao dịch tách `BE-P2-E09` |
 | D Ví | Xong | D1: danh sách, sắp xếp (`PUT /financial-accounts/order`), chi tiết ví (Vào/Ra tính cả chuyển ví qua `summary.transferIn/OutMinor`), chi tiết thẻ, ví đã ẩn. D2: thêm/sửa ví và thẻ, popup ngày, cờ `hasTransactions` khoá loại/tiền tệ, ẩn có Hoàn tác |
 | E Danh mục | Xong | E1: danh sách Chi · Thu, mở/thu nhớ trên máy, danh mục đã ẩn; API bảng 20 màu, 36 icon, `kind` khi tạo, hai cấp, đổi icon mặc định một lần. E2: thêm/sửa, sheet Thuộc/Biểu tượng, ẩn có Hoàn tác, popup xoá + `GET /categories/{id}/usage` |
-| F Báo cáo | Chưa | |
+| F Báo cáo | F1 xong, F2 chưa | F1: kỳ Tuần/Tháng/Năm/Tuỳ chọn (khoảng ngày vẫn chọn bằng hai ô ngày), thẻ tổng (so kỳ trước, trung bình/ngày, còn lại), xu hướng 8 tuần/6 tháng/các năm (`GET /reports/trend`), phân tích Chi · Thu · Ví, trạng thái trống; dòng "Đặt ngân sách tháng" bấm ra toast "Sắp có" (chờ `BE-P2-E02`). API: kỳ `year`, `transactionCount` theo danh mục. F2: chi tiết danh mục, giao dịch lớn nhất, popup lịch |
 | G Cá nhân/Cài đặt | Chưa | |
 | A Onboarding/tài khoản | Chưa | |
 | H Đồng bộ | Chưa | |

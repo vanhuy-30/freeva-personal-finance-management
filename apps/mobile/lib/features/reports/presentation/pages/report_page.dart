@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
+import '../../../../core/widgets/freeva_top_bar.dart';
 import '../../domain/report.dart';
 import '../viewmodels/report_view_model.dart';
 import '../widgets/report_body.dart';
 
+/// Báo cáo, a tab root (bottom nav stays).
 class ReportPage extends StatefulWidget {
   const ReportPage({super.key});
 
@@ -27,22 +29,12 @@ class _ReportPageState extends State<ReportPage> {
   @override
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: model,
-    builder: (context, _) {
-      final s = S.of(context);
-      return Scaffold(
-        appBar: AppBar(
-          title: Text(s.reportTitle),
-          automaticallyImplyLeading: false,
-        ),
-        body: SafeArea(
-          child: Column(
-            children: [
-              if (model.busy) const LinearProgressIndicator(),
-              Expanded(child: ReportBody(model: model)),
-            ],
-          ),
-        ),
-      );
-    },
+    builder: (context, _) => Scaffold(
+      appBar: FreevaTopBar(
+        title: S.of(context).reportTitle,
+        kind: FreevaTopBarKind.largeTitle,
+      ),
+      body: ReportBody(model: model),
+    ),
   );
 }

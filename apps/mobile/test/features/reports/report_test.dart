@@ -260,6 +260,12 @@ class _Reports implements ReportRepository {
   }
 
   @override
+  Future<Either<AuthFailure, TrendReport>> trend(
+    ReportPeriodKind kind, {
+    String? on,
+  }) async => left(const AuthFailure(AuthError.unavailable));
+
+  @override
   Future<Either<AuthFailure, NetWorthReport>> netWorth() async => right(worth!);
 }
 

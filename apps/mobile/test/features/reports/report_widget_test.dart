@@ -23,6 +23,7 @@ import 'package:mobile/features/wallets/data/wallet_repository_impl.dart';
 import 'package:mobile/features/wallets/domain/wallet_repository.dart';
 
 import '../auth/fakes.dart';
+import '../home/home_fakes.dart' show FakeProfileViewModel;
 import '../settings/fakes.dart' show MemoryPreferences;
 import '../transactions/transaction_view_model_test.dart'
     show RecordingAnalytics;
@@ -49,7 +50,13 @@ void main() {
       wallets,
       CategoryRepositoryImpl(api),
     );
-    reports = DefaultReportViewModel(cases, auth, RecordingAnalytics());
+    reports = DefaultReportViewModel(
+      cases,
+      auth,
+      RecordingAnalytics(),
+      FakeProfileViewModel(),
+      clock: () => DateTime(2026, 10, 23),
+    );
     getIt.registerSingleton<ReportViewModel>(reports);
     getIt.registerSingleton<AuthViewModel>(auth);
     getIt.registerSingleton<WalletRepository>(wallets);
@@ -62,6 +69,13 @@ void main() {
     await getIt.reset();
   });
 
+  void tall(WidgetTester tester) {
+    tester.view.physicalSize = const Size(400, 2400);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+  }
+
   Widget app(Widget child, {double scale = 1}) => MaterialApp(
     theme: AppTheme.light,
     locale: const Locale('vi'),
@@ -73,25 +87,85 @@ void main() {
     ),
   );
 
-  testWidgets('keeps currencies separate and labels uncategorized income', (
+  testWidgets('shows one currency at a time and rolls children into parents', (
     tester,
   ) async {
+    tall(tester);
     await tester.pumpWidget(app(const ReportPage()));
     await tester.pumpAndSettle();
-    expect(find.text('Chưa phân loại'), findsOneWidget);
+    expect(find.text('Tháng 10, 2026'), findsOneWidget);
+    expect(find.text('01/10 – 31/10'), findsOneWidget);
     expect(find.text('Ăn uống'), findsWidgets);
-    expect(find.text('Cà phê'), findsNWidgets(2));
-    final vnd = formatMoneyText(BigInt.from(1000000), 0, 'vi');
-    final usd = formatMoneyText(BigInt.from(1050), 2, 'vi');
-    expect(find.textContaining(vnd), findsWidgets);
-    expect(find.textContaining(usd), findsWidgets);
+    expect(find.text('Cà phê'), findsNothing);
+    expect(find.textContaining('1.000.000'), findsWidgets);
+    expect(find.textContaining('1.050'), findsNothing);
+    await tester.tap(find.text('USD'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('10,50'), findsWidgets);
+    expect(find.textContaining('1.000.000'), findsNothing);
     expect(find.textContaining('1001050'), findsNothing);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('income tab lists uncategorized income under Khác', (
+    tester,
+  ) async {
+    tall(tester);
+    await tester.pumpWidget(app(const ReportPage()));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Thu').last);
+    await tester.pumpAndSettle();
+    expect(find.text('Khác · 1 danh mục'), findsOneWidget);
+    expect(find.text('100%'), findsOneWidget);
+  });
+
+  testWidgets('wallet tab shows what moved through each wallet', (
+    tester,
+  ) async {
+    tall(tester);
+    await tester.pumpWidget(app(const ReportPage()));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Ví'));
+    await tester.pumpAndSettle();
+    expect(find.text('Tiền mặt'), findsOneWidget);
+    expect(find.text('Vào\u00A0+1.000.000 · Ra\u00A0−250.000'), findsOneWidget);
+    expect(find.text('Ngoại tệ'), findsNothing);
+  });
+
+  testWidgets('trend card and budget stand-in appear on a month', (
+    tester,
+  ) async {
+    tall(tester);
+    await tester.pumpWidget(app(const ReportPage()));
+    await tester.pumpAndSettle();
+    expect(find.text('Xu hướng chi'), findsOneWidget);
+    expect(find.text('Trung bình 2 tháng: 175.000'), findsOneWidget);
+    expect(find.text('T10'), findsOneWidget);
+    await tester.tap(find.text('Đặt ngân sách tháng'));
+    await tester.pump();
+    expect(find.text('Ngân sách sắp có'), findsOneWidget);
+  });
+
+  testWidgets('next is disabled on the current month; previous steps back', (
+    tester,
+  ) async {
+    tall(tester);
+    await tester.pumpWidget(app(const ReportPage()));
+    await tester.pumpAndSettle();
+    final next = find.bySemanticsLabel('Kỳ sau');
+    expect(tester.getSemantics(next).flagsCollection.isEnabled.name, 'isFalse');
+    await tester.tap(find.byTooltip('Kỳ trước'));
+    await tester.pumpAndSettle();
+    expect(
+      api.paths.where((p) => p.startsWith('reports/cashflow')).last,
+      contains('on=2026-09-30'),
+    );
   });
 
   testWidgets('hiding balances keeps report income and expense visible', (
     tester,
   ) async {
+    tall(tester);
     final settings = DefaultSettingsViewModel(
       DefaultSettingsUseCases(SettingsRepositoryImpl(MemoryPreferences())),
       DefaultAuthUseCases(
@@ -117,10 +191,15 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
-    await tester.pumpWidget(app(const ReportPage(), scale: 2));
-    await tester.pumpAndSettle();
-    expect(find.text('Báo cáo'), findsOneWidget);
-    expect(tester.takeException(), isNull);
+    for (final scale in [1.3, 2.0]) {
+      await tester.pumpWidget(app(const ReportPage(), scale: scale));
+      await tester.pumpAndSettle();
+      expect(find.text('Báo cáo'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await tester.drag(find.byType(ListView), const Offset(0, -800));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+    }
   });
 }
 
@@ -153,6 +232,7 @@ class ReportTransport implements AuthorizedApi {
         ],
       });
     }
+    if (path.startsWith('reports/trend')) return right(_trend);
     if (path.startsWith('reports/cashflow')) return right(_cashflow);
     if (path.startsWith('financial-accounts')) {
       return right({
@@ -250,6 +330,7 @@ final Map<String, dynamic> _cashflow = {
       'currency': 'VND',
       'incomeMinor': '1000000',
       'expenseMinor': '0',
+      'transactionCount': 1,
     },
     {
       'categoryId': 'coffee',
@@ -257,6 +338,7 @@ final Map<String, dynamic> _cashflow = {
       'currency': 'VND',
       'incomeMinor': '0',
       'expenseMinor': '-250000',
+      'transactionCount': 4,
     },
     {
       'categoryId': 'coffee',
@@ -264,6 +346,7 @@ final Map<String, dynamic> _cashflow = {
       'currency': 'USD',
       'incomeMinor': '1050',
       'expenseMinor': '-25',
+      'transactionCount': 2,
     },
   ],
   'byAccount': [
@@ -282,6 +365,30 @@ final Map<String, dynamic> _cashflow = {
       'expenseMinor': '-25',
       'transferMinor': '100',
       'netMinor': '1125',
+    },
+  ],
+};
+
+final Map<String, dynamic> _trend = {
+  'kind': 'month',
+  'buckets': [
+    {
+      'from': '2026-09-01',
+      'to': '2026-09-30',
+      'totals': [
+        {'currency': 'VND', 'incomeMinor': '0', 'expenseMinor': '-100000'},
+      ],
+    },
+    {
+      'from': '2026-10-01',
+      'to': '2026-10-31',
+      'totals': [
+        {
+          'currency': 'VND',
+          'incomeMinor': '1000000',
+          'expenseMinor': '-250000',
+        },
+      ],
     },
   ],
 };
