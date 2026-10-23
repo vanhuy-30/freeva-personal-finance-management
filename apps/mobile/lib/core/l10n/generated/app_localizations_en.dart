@@ -585,19 +585,13 @@ class SEn extends S {
   String get reportExpense => 'Expense';
 
   @override
-  String get reportNet => 'Cashflow';
-
-  @override
-  String get reportTransfer => 'Transfer';
-
-  @override
   String get reportWeek => 'Week';
 
   @override
   String get reportMonth => 'Month';
 
   @override
-  String get reportRange => 'Date range';
+  String get reportRange => 'Custom';
 
   @override
   String get reportPrevious => 'Previous period';
@@ -615,23 +609,10 @@ class SEn extends S {
   String get reportApply => 'Show this range';
 
   @override
-  String get reportByCategory => 'By category';
-
-  @override
-  String get reportByAccount => 'By wallet';
-
-  @override
-  String get reportUncategorized => 'Uncategorized';
-
-  @override
-  String get reportEmpty => 'Nothing to show for this period.';
-
-  @override
   String get reportError => 'Could not load the report. Please try again.';
 
   @override
-  String get reportInvalid =>
-      'That date range is invalid. The start must be on or before the end, and the dates can be at most 3660 days apart.';
+  String get reportInvalid => 'That date range isn\'t valid.';
 
   @override
   String reportPeriod(String from, String to) {
@@ -1950,4 +1931,152 @@ class SEn extends S {
 
   @override
   String get categoryMoveTo => 'Move transactions to';
+
+  @override
+  String get reportYear => 'Year';
+
+  @override
+  String reportYearTitle(String year) {
+    return 'Year $year';
+  }
+
+  @override
+  String get reportMonthTitlePattern => 'MMMM, yyyy';
+
+  @override
+  String get reportShortDatePattern => 'MM/dd';
+
+  @override
+  String reportRangeDays(int count) {
+    return '$count days';
+  }
+
+  @override
+  String get reportAverageDay => 'Average spend/day';
+
+  @override
+  String get reportRemaining => 'Left';
+
+  @override
+  String reportVsMonth(String month) {
+    return 'vs M$month';
+  }
+
+  @override
+  String get reportVsWeek => 'vs last week';
+
+  @override
+  String reportVsYear(String year) {
+    return 'vs $year';
+  }
+
+  @override
+  String get reportVsPeriod => 'vs previous period';
+
+  @override
+  String reportChange(String percent, String versus) {
+    return '$percent% $versus';
+  }
+
+  @override
+  String get reportBudgetSet => 'Set a monthly budget';
+
+  @override
+  String get reportBudgetSoon => 'Budgets are coming soon';
+
+  @override
+  String get reportTrendTitle => 'Spending trend';
+
+  @override
+  String reportTrendAverageWeeks(int count) {
+    return 'Average of $count weeks';
+  }
+
+  @override
+  String reportTrendAverageMonths(int count) {
+    return 'Average of $count months';
+  }
+
+  @override
+  String reportTrendAverageYears(int count) {
+    return 'Average of $count years';
+  }
+
+  @override
+  String get reportViewExpense => 'Spent';
+
+  @override
+  String get reportViewIncome => 'Income';
+
+  @override
+  String get reportViewWallet => 'Wallets';
+
+  @override
+  String get reportOther => 'Other';
+
+  @override
+  String reportOtherCount(int count) {
+    return 'Other · $count categories';
+  }
+
+  @override
+  String reportFlowIn(String amount) {
+    return 'In +$amount';
+  }
+
+  @override
+  String reportFlowOut(String amount) {
+    return 'Out −$amount';
+  }
+
+  @override
+  String reportFlowTransfer(String amount) {
+    return 'Transfers $amount';
+  }
+
+  @override
+  String reportEmptyTitle(String period) {
+    return 'No data for $period';
+  }
+
+  @override
+  String get reportEmptyHint => 'Record a transaction to see your numbers.';
+
+  @override
+  String get reportBackWeek => 'Back to this week';
+
+  @override
+  String get reportBackMonth => 'Back to this month';
+
+  @override
+  String get reportBackYear => 'Back to this year';
+
+  @override
+  String get reportUnitThousand => 'k';
+
+  @override
+  String get reportUnitMillion => 'M';
+
+  @override
+  String get reportUnitBillion => 'B';
+
+  @override
+  String reportDonutSemantics(
+    String label,
+    String amount,
+    String currency,
+    String items,
+  ) {
+    return '$label $amount $currency: $items';
+  }
+
+  @override
+  String reportTrendSemantics(int count, String items) {
+    return 'Spending, last $count: $items';
+  }
+
+  @override
+  String reportMonthShort(String month) {
+    return 'M$month';
+  }
 }

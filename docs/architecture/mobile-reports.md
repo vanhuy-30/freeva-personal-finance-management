@@ -21,9 +21,22 @@ Use case tổng quan chỉ ghép net worth, cashflow tháng và catalog tiền t
 
 Đổi auth stage bỏ response cũ. Không cache báo cáo và không log số tiền, tên ví hay tên danh mục.
 
+## Màn Báo cáo theo thiết kế nhóm F (DS-P2-003, F1)
+
+Thiết kế: [F-reports.md](../brand/patterns/F-reports.md). Backend: `period=year` và `GET /reports/trend` ([reports.md](reports.md)).
+
+- **Kỳ:** Tuần · Tháng · Năm · Tuỳ chọn. Nút trước/sau gửi `on` theo mốc server đã trả; nút sau khoá khi kỳ đang xem chứa hôm nay (ngày của thiết bị). Khoảng tuỳ chọn tạm dùng hai ô chọn ngày; popup lịch ở F2.
+- **Thẻ tổng:** Thu, Chi, Chi trung bình/ngày (chia số ngày đã qua của kỳ đang chạy, hoặc cả kỳ), Còn lại = thu − chi. "So với kỳ trước" gọi thêm cashflow kỳ liền trước (khoảng tuỳ chọn lùi đúng số ngày của nó); làm tròn % nửa ra xa 0, màu xám, không hiện khi kỳ trước chưa có chi.
+- **Xu hướng:** một lần gọi `/reports/trend`, tách riêng với tổng: lỗi chỉ ẩn khối này. Công tắc Tuần/Tháng/Năm của khối chỉ tải lại xu hướng. Kỳ đang xem tô `data.1`; nhãn giá trị rút gọn (`9,32tr`) bớt khi chữ lớn, nhãn trợ năng đọc đủ số.
+- **Phân tích:** Chi · Thu gộp danh mục con về cha, ba nhóm đầu rồi "Khác" (tổng % luôn 100). Ví: Vào/Ra/Chuyển ví và số ròng mỗi ví, sắp theo |ròng|, chạm mở chi tiết ví.
+- **Nhiều loại tiền:** mỗi lần một loại (chip khi có hơn một), mặc định tiền hồ sơ; không cộng chéo.
+- **Ngân sách:** chưa có module, thay bằng dòng "Đặt ngân sách tháng" (chỉ ở kỳ Tháng) bấm ra toast "Ngân sách sắp có".
+- **Trống:** kỳ không có số liệu → minh hoạ + "Về tháng này/tuần này/năm nay" (kỳ hiện tại thì chỉ lời nhắc).
+- Chữ lớn / 320 pt: tổng xếp một cột, biểu đồ tròn đặt chú thích bên dưới, công tắc xu hướng xuống dòng riêng.
+
 ## Giới hạn
 
-Không so sánh kỳ, ngân sách, chi lớn, tài sản ròng theo thời gian, CSV, search hay quy đổi FX. Không hàng đợi offline. Chưa native build hoặc E2E staging. API báo cáo cần có trước khi smoke trên server thật.
+Chưa có ngân sách, chi lớn (F2), tài sản ròng theo thời gian, CSV, search hay quy đổi FX. Không hàng đợi offline. Chưa native build hoặc E2E staging. API báo cáo cần có trước khi smoke trên server thật.
 
 ## Kiểm chứng
 

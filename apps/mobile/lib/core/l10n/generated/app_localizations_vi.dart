@@ -583,19 +583,13 @@ class SVi extends S {
   String get reportExpense => 'Chi';
 
   @override
-  String get reportNet => 'Dòng tiền';
-
-  @override
-  String get reportTransfer => 'Chuyển khoản';
-
-  @override
   String get reportWeek => 'Tuần';
 
   @override
   String get reportMonth => 'Tháng';
 
   @override
-  String get reportRange => 'Khoảng ngày';
+  String get reportRange => 'Tuỳ chọn';
 
   @override
   String get reportPrevious => 'Kỳ trước';
@@ -613,23 +607,10 @@ class SVi extends S {
   String get reportApply => 'Xem khoảng này';
 
   @override
-  String get reportByCategory => 'Theo danh mục';
-
-  @override
-  String get reportByAccount => 'Theo ví';
-
-  @override
-  String get reportUncategorized => 'Chưa phân loại';
-
-  @override
-  String get reportEmpty => 'Chưa có số liệu trong kỳ này.';
-
-  @override
   String get reportError => 'Không thể tải báo cáo. Vui lòng thử lại.';
 
   @override
-  String get reportInvalid =>
-      'Khoảng ngày không hợp lệ. Ngày bắt đầu phải trước hoặc bằng ngày kết thúc và không quá 3660 ngày.';
+  String get reportInvalid => 'Khoảng ngày chưa hợp lệ.';
 
   @override
   String reportPeriod(String from, String to) {
@@ -1914,4 +1895,152 @@ class SVi extends S {
 
   @override
   String get categoryMoveTo => 'Chuyển giao dịch sang';
+
+  @override
+  String get reportYear => 'Năm';
+
+  @override
+  String reportYearTitle(String year) {
+    return 'Năm $year';
+  }
+
+  @override
+  String get reportMonthTitlePattern => '\'Tháng\' M, yyyy';
+
+  @override
+  String get reportShortDatePattern => 'dd/MM';
+
+  @override
+  String reportRangeDays(int count) {
+    return '$count ngày';
+  }
+
+  @override
+  String get reportAverageDay => 'Chi trung bình/ngày';
+
+  @override
+  String get reportRemaining => 'Còn lại';
+
+  @override
+  String reportVsMonth(String month) {
+    return 'so với T$month';
+  }
+
+  @override
+  String get reportVsWeek => 'so với tuần trước';
+
+  @override
+  String reportVsYear(String year) {
+    return 'so với $year';
+  }
+
+  @override
+  String get reportVsPeriod => 'so với kỳ trước';
+
+  @override
+  String reportChange(String percent, String versus) {
+    return '$percent% $versus';
+  }
+
+  @override
+  String get reportBudgetSet => 'Đặt ngân sách tháng';
+
+  @override
+  String get reportBudgetSoon => 'Ngân sách sắp có';
+
+  @override
+  String get reportTrendTitle => 'Xu hướng chi';
+
+  @override
+  String reportTrendAverageWeeks(int count) {
+    return 'Trung bình $count tuần';
+  }
+
+  @override
+  String reportTrendAverageMonths(int count) {
+    return 'Trung bình $count tháng';
+  }
+
+  @override
+  String reportTrendAverageYears(int count) {
+    return 'Trung bình $count năm';
+  }
+
+  @override
+  String get reportViewExpense => 'Chi';
+
+  @override
+  String get reportViewIncome => 'Thu';
+
+  @override
+  String get reportViewWallet => 'Ví';
+
+  @override
+  String get reportOther => 'Khác';
+
+  @override
+  String reportOtherCount(int count) {
+    return 'Khác · $count danh mục';
+  }
+
+  @override
+  String reportFlowIn(String amount) {
+    return 'Vào +$amount';
+  }
+
+  @override
+  String reportFlowOut(String amount) {
+    return 'Ra −$amount';
+  }
+
+  @override
+  String reportFlowTransfer(String amount) {
+    return 'Chuyển ví $amount';
+  }
+
+  @override
+  String reportEmptyTitle(String period) {
+    return 'Chưa có số liệu $period';
+  }
+
+  @override
+  String get reportEmptyHint => 'Ghi giao dịch để thấy số liệu.';
+
+  @override
+  String get reportBackWeek => 'Về tuần này';
+
+  @override
+  String get reportBackMonth => 'Về tháng này';
+
+  @override
+  String get reportBackYear => 'Về năm nay';
+
+  @override
+  String get reportUnitThousand => 'k';
+
+  @override
+  String get reportUnitMillion => 'tr';
+
+  @override
+  String get reportUnitBillion => 'tỷ';
+
+  @override
+  String reportDonutSemantics(
+    String label,
+    String amount,
+    String currency,
+    String items,
+  ) {
+    return '$label $amount $currency: $items';
+  }
+
+  @override
+  String reportTrendSemantics(int count, String items) {
+    return 'Chi $count kỳ gần nhất: $items';
+  }
+
+  @override
+  String reportMonthShort(String month) {
+    return 'T$month';
+  }
 }

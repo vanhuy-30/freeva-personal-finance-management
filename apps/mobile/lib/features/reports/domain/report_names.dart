@@ -21,7 +21,7 @@ Either<AuthFailure, NamedCashflow> nameCashflow(
   }
   final accounts = {
     for (final wallet in wallets)
-      if (wallet.draft.name.trim().isNotEmpty) wallet.id: wallet.draft.name,
+      if (wallet.draft.name.trim().isNotEmpty) wallet.id: wallet,
   };
   final byId = {for (final category in categories) category.id: category};
   final namedCategories = <CashflowCategoryRow>[];
@@ -45,9 +45,9 @@ Either<AuthFailure, NamedCashflow> nameCashflow(
   }
   final namedAccounts = <CashflowAccountRow>[];
   for (final row in report.byAccount) {
-    final name = accounts[row.accountId];
-    if (name == null) return left(const AuthFailure(AuthError.unavailable));
-    namedAccounts.add(row.withName(name));
+    final wallet = accounts[row.accountId];
+    if (wallet == null) return left(const AuthFailure(AuthError.unavailable));
+    namedAccounts.add(row.withName(wallet.draft.name, wallet.draft.type));
   }
   return right(
     NamedCashflow(

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../domain/report_period.dart';
 import '../viewmodels/report_view_model.dart';
-import 'report_money.dart';
 
 class ReportRangeFields extends StatelessWidget {
   const ReportRangeFields({required this.model, super.key});

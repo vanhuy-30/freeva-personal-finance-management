@@ -1159,18 +1159,6 @@ abstract class S {
   /// **'Expense'**
   String get reportExpense;
 
-  /// No description provided for @reportNet.
-  ///
-  /// In en, this message translates to:
-  /// **'Cashflow'**
-  String get reportNet;
-
-  /// No description provided for @reportTransfer.
-  ///
-  /// In en, this message translates to:
-  /// **'Transfer'**
-  String get reportTransfer;
-
   /// No description provided for @reportWeek.
   ///
   /// In en, this message translates to:
@@ -1186,7 +1174,7 @@ abstract class S {
   /// No description provided for @reportRange.
   ///
   /// In en, this message translates to:
-  /// **'Date range'**
+  /// **'Custom'**
   String get reportRange;
 
   /// No description provided for @reportPrevious.
@@ -1219,30 +1207,6 @@ abstract class S {
   /// **'Show this range'**
   String get reportApply;
 
-  /// No description provided for @reportByCategory.
-  ///
-  /// In en, this message translates to:
-  /// **'By category'**
-  String get reportByCategory;
-
-  /// No description provided for @reportByAccount.
-  ///
-  /// In en, this message translates to:
-  /// **'By wallet'**
-  String get reportByAccount;
-
-  /// No description provided for @reportUncategorized.
-  ///
-  /// In en, this message translates to:
-  /// **'Uncategorized'**
-  String get reportUncategorized;
-
-  /// No description provided for @reportEmpty.
-  ///
-  /// In en, this message translates to:
-  /// **'Nothing to show for this period.'**
-  String get reportEmpty;
-
   /// No description provided for @reportError.
   ///
   /// In en, this message translates to:
@@ -1252,7 +1216,7 @@ abstract class S {
   /// No description provided for @reportInvalid.
   ///
   /// In en, this message translates to:
-  /// **'That date range is invalid. The start must be on or before the end, and the dates can be at most 3660 days apart.'**
+  /// **'That date range isn\'t valid.'**
   String get reportInvalid;
 
   /// No description provided for @reportPeriod.
@@ -3534,6 +3498,233 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Move transactions to'**
   String get categoryMoveTo;
+
+  /// No description provided for @reportYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Year'**
+  String get reportYear;
+
+  /// No description provided for @reportYearTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Year {year}'**
+  String reportYearTitle(String year);
+
+  /// No description provided for @reportMonthTitlePattern.
+  ///
+  /// In en, this message translates to:
+  /// **'MMMM, yyyy'**
+  String get reportMonthTitlePattern;
+
+  /// No description provided for @reportShortDatePattern.
+  ///
+  /// In en, this message translates to:
+  /// **'MM/dd'**
+  String get reportShortDatePattern;
+
+  /// No description provided for @reportRangeDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} days'**
+  String reportRangeDays(int count);
+
+  /// No description provided for @reportAverageDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Average spend/day'**
+  String get reportAverageDay;
+
+  /// No description provided for @reportRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Left'**
+  String get reportRemaining;
+
+  /// No description provided for @reportVsMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'vs M{month}'**
+  String reportVsMonth(String month);
+
+  /// No description provided for @reportVsWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'vs last week'**
+  String get reportVsWeek;
+
+  /// No description provided for @reportVsYear.
+  ///
+  /// In en, this message translates to:
+  /// **'vs {year}'**
+  String reportVsYear(String year);
+
+  /// No description provided for @reportVsPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'vs previous period'**
+  String get reportVsPeriod;
+
+  /// No description provided for @reportChange.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% {versus}'**
+  String reportChange(String percent, String versus);
+
+  /// No description provided for @reportBudgetSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a monthly budget'**
+  String get reportBudgetSet;
+
+  /// No description provided for @reportBudgetSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Budgets are coming soon'**
+  String get reportBudgetSoon;
+
+  /// No description provided for @reportTrendTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending trend'**
+  String get reportTrendTitle;
+
+  /// No description provided for @reportTrendAverageWeeks.
+  ///
+  /// In en, this message translates to:
+  /// **'Average of {count} weeks'**
+  String reportTrendAverageWeeks(int count);
+
+  /// No description provided for @reportTrendAverageMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'Average of {count} months'**
+  String reportTrendAverageMonths(int count);
+
+  /// No description provided for @reportTrendAverageYears.
+  ///
+  /// In en, this message translates to:
+  /// **'Average of {count} years'**
+  String reportTrendAverageYears(int count);
+
+  /// No description provided for @reportViewExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent'**
+  String get reportViewExpense;
+
+  /// No description provided for @reportViewIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get reportViewIncome;
+
+  /// No description provided for @reportViewWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallets'**
+  String get reportViewWallet;
+
+  /// No description provided for @reportOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get reportOther;
+
+  /// No description provided for @reportOtherCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Other · {count} categories'**
+  String reportOtherCount(int count);
+
+  /// No description provided for @reportFlowIn.
+  ///
+  /// In en, this message translates to:
+  /// **'In +{amount}'**
+  String reportFlowIn(String amount);
+
+  /// No description provided for @reportFlowOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Out −{amount}'**
+  String reportFlowOut(String amount);
+
+  /// No description provided for @reportFlowTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfers {amount}'**
+  String reportFlowTransfer(String amount);
+
+  /// No description provided for @reportEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No data for {period}'**
+  String reportEmptyTitle(String period);
+
+  /// No description provided for @reportEmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Record a transaction to see your numbers.'**
+  String get reportEmptyHint;
+
+  /// No description provided for @reportBackWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to this week'**
+  String get reportBackWeek;
+
+  /// No description provided for @reportBackMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to this month'**
+  String get reportBackMonth;
+
+  /// No description provided for @reportBackYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to this year'**
+  String get reportBackYear;
+
+  /// No description provided for @reportUnitThousand.
+  ///
+  /// In en, this message translates to:
+  /// **'k'**
+  String get reportUnitThousand;
+
+  /// No description provided for @reportUnitMillion.
+  ///
+  /// In en, this message translates to:
+  /// **'M'**
+  String get reportUnitMillion;
+
+  /// No description provided for @reportUnitBillion.
+  ///
+  /// In en, this message translates to:
+  /// **'B'**
+  String get reportUnitBillion;
+
+  /// No description provided for @reportDonutSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'{label} {amount} {currency}: {items}'**
+  String reportDonutSemantics(
+    String label,
+    String amount,
+    String currency,
+    String items,
+  );
+
+  /// No description provided for @reportTrendSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending, last {count}: {items}'**
+  String reportTrendSemantics(int count, String items);
+
+  /// No description provided for @reportMonthShort.
+  ///
+  /// In en, this message translates to:
+  /// **'M{month}'**
+  String reportMonthShort(String month);
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

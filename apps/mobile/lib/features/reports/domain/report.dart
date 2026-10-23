@@ -1,6 +1,6 @@
 import '../../wallets/domain/wallet.dart';
 
-enum ReportPeriodKind { week, month, range }
+enum ReportPeriodKind { week, month, year, range }
 
 class ReportPeriodQuery {
   const ReportPeriodQuery.week({this.on})
@@ -9,6 +9,10 @@ class ReportPeriodQuery {
       to = null;
   const ReportPeriodQuery.month({this.on})
     : kind = ReportPeriodKind.month,
+      from = null,
+      to = null;
+  const ReportPeriodQuery.year({this.on})
+    : kind = ReportPeriodKind.year,
       from = null,
       to = null;
   const ReportPeriodQuery.range(this.from, this.to)
@@ -58,6 +62,7 @@ class CashflowCategoryRow {
     required this.currency,
     required this.incomeMinor,
     required this.expenseMinor,
+    this.transactionCount = 0,
     this.name,
     this.parentName,
   });
@@ -67,6 +72,9 @@ class CashflowCategoryRow {
   final String currency;
   final BigInt incomeMinor;
   final BigInt expenseMinor;
+
+  /// Income and expense transactions behind this row.
+  final int transactionCount;
   final String? name;
   final String? parentName;
 
@@ -77,6 +85,7 @@ class CashflowCategoryRow {
         currency: currency,
         incomeMinor: incomeMinor,
         expenseMinor: expenseMinor,
+        transactionCount: transactionCount,
         name: name,
         parentName: parentName,
       );
@@ -91,6 +100,7 @@ class CashflowAccountRow {
     required this.transferMinor,
     required this.netMinor,
     this.name,
+    this.type,
   });
 
   final String accountId;
@@ -100,16 +110,19 @@ class CashflowAccountRow {
   final BigInt transferMinor;
   final BigInt netMinor;
   final String? name;
+  final WalletType? type;
 
-  CashflowAccountRow withName(String name) => CashflowAccountRow(
-    accountId: accountId,
-    currency: currency,
-    incomeMinor: incomeMinor,
-    expenseMinor: expenseMinor,
-    transferMinor: transferMinor,
-    netMinor: netMinor,
-    name: name,
-  );
+  CashflowAccountRow withName(String name, WalletType type) =>
+      CashflowAccountRow(
+        accountId: accountId,
+        currency: currency,
+        incomeMinor: incomeMinor,
+        expenseMinor: expenseMinor,
+        transferMinor: transferMinor,
+        netMinor: netMinor,
+        name: name,
+        type: type,
+      );
 }
 
 class CashflowReport {
@@ -161,4 +174,52 @@ class NamedCashflow {
 
   final CashflowReport report;
   final List<WalletCurrency> currencies;
+
+  int digitsOf(String currency) =>
+      currencies
+          .where((item) => item.code == currency)
+          .map((item) => item.minorDigits)
+          .firstOrNull ??
+      0;
+}
+
+class TrendTotal {
+  const TrendTotal({
+    required this.currency,
+    required this.incomeMinor,
+    required this.expenseMinor,
+  });
+
+  final String currency;
+  final BigInt incomeMinor;
+  final BigInt expenseMinor;
+}
+
+/// One bar of the trend chart: an inclusive period and its totals per currency.
+class TrendBucket {
+  const TrendBucket({
+    required this.from,
+    required this.to,
+    required this.totals,
+  });
+
+  final String from;
+  final String to;
+  final List<TrendTotal> totals;
+
+  /// Expense magnitude in [currency]; zero when the bucket has none.
+  BigInt expenseOf(String currency) =>
+      totals
+          .where((total) => total.currency == currency)
+          .map((total) => total.expenseMinor.abs())
+          .firstOrNull ??
+      BigInt.zero;
+}
+
+/// Oldest-first buckets; the last one is the period being viewed.
+class TrendReport {
+  const TrendReport({required this.kind, required this.buckets});
+
+  final ReportPeriodKind kind;
+  final List<TrendBucket> buckets;
 }

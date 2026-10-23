@@ -214,22 +214,16 @@
   "reportLiabilities": "Liabilities",
   "reportIncome": "Income",
   "reportExpense": "Expense",
-  "reportNet": "Cashflow",
-  "reportTransfer": "Transfer",
   "reportWeek": "Week",
   "reportMonth": "Month",
-  "reportRange": "Date range",
+  "reportRange": "Custom",
   "reportPrevious": "Previous period",
   "reportNext": "Next period",
   "reportFrom": "From",
   "reportTo": "To",
   "reportApply": "Show this range",
-  "reportByCategory": "By category",
-  "reportByAccount": "By wallet",
-  "reportUncategorized": "Uncategorized",
-  "reportEmpty": "Nothing to show for this period.",
   "reportError": "Could not load the report. Please try again.",
-  "reportInvalid": "That date range is invalid. The start must be on or before the end, and the dates can be at most 3660 days apart.",
+  "reportInvalid": "That date range isn't valid.",
   "reportPeriod": "{from} – {to}",
   "reportAmount": "{label}: {amount} {currency}",
   "@reportPeriod": {
@@ -1085,5 +1079,169 @@
       }
     }
   },
-  "categoryMoveTo": "Move transactions to"
+  "categoryMoveTo": "Move transactions to",
+  "reportYear": "Year",
+  "reportYearTitle": "Year {year}",
+  "@reportYearTitle": {
+    "placeholders": {
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "reportMonthTitlePattern": "MMMM, yyyy",
+  "reportShortDatePattern": "MM/dd",
+  "reportRangeDays": "{count} days",
+  "@reportRangeDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reportAverageDay": "Average spend/day",
+  "reportRemaining": "Left",
+  "reportVsMonth": "vs M{month}",
+  "@reportVsMonth": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "reportVsWeek": "vs last week",
+  "reportVsYear": "vs {year}",
+  "@reportVsYear": {
+    "placeholders": {
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "reportVsPeriod": "vs previous period",
+  "reportChange": "{percent}% {versus}",
+  "@reportChange": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      },
+      "versus": {
+        "type": "String"
+      }
+    }
+  },
+  "reportBudgetSet": "Set a monthly budget",
+  "reportBudgetSoon": "Budgets are coming soon",
+  "reportTrendTitle": "Spending trend",
+  "reportTrendAverageWeeks": "Average of {count} weeks",
+  "@reportTrendAverageWeeks": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reportTrendAverageMonths": "Average of {count} months",
+  "@reportTrendAverageMonths": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reportTrendAverageYears": "Average of {count} years",
+  "@reportTrendAverageYears": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reportViewExpense": "Spent",
+  "reportViewIncome": "Income",
+  "reportViewWallet": "Wallets",
+  "reportOther": "Other",
+  "reportOtherCount": "Other · {count} categories",
+  "@reportOtherCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reportFlowIn": "In +{amount}",
+  "@reportFlowIn": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "reportFlowOut": "Out −{amount}",
+  "@reportFlowOut": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "reportFlowTransfer": "Transfers {amount}",
+  "@reportFlowTransfer": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "reportEmptyTitle": "No data for {period}",
+  "@reportEmptyTitle": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "reportEmptyHint": "Record a transaction to see your numbers.",
+  "reportBackWeek": "Back to this week",
+  "reportBackMonth": "Back to this month",
+  "reportBackYear": "Back to this year",
+  "reportUnitThousand": "k",
+  "reportUnitMillion": "M",
+  "reportUnitBillion": "B",
+  "reportDonutSemantics": "{label} {amount} {currency}: {items}",
+  "@reportDonutSemantics": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      },
+      "items": {
+        "type": "String"
+      }
+    }
+  },
+  "reportTrendSemantics": "Spending, last {count}: {items}",
+  "@reportTrendSemantics": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "items": {
+        "type": "String"
+      }
+    }
+  },
+  "reportMonthShort": "M{month}",
+  "@reportMonthShort": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -14,6 +14,7 @@ import 'package:mobile/features/reports/presentation/viewmodels/report_view_mode
 import 'package:mobile/features/wallets/domain/wallet.dart';
 
 import '../auth/fakes.dart';
+import '../home/home_fakes.dart' show FakeProfileViewModel;
 
 void main() {
   late _Cases cases;
@@ -32,7 +33,13 @@ void main() {
           )
           ..stage = AuthStage.unlocked
           ..ready = true;
-    model = DefaultReportViewModel(cases, auth, analytics);
+    model = DefaultReportViewModel(
+      cases,
+      auth,
+      analytics,
+      FakeProfileViewModel(),
+      clock: () => DateTime(2026, 10, 23),
+    );
   });
 
   tearDown(() {
@@ -79,6 +86,91 @@ void main() {
     expect(analytics.events, isEmpty);
   });
 
+  test('loads the previous period and trend after the totals', () async {
+    model.beginVisit();
+    await model.load(const ReportPeriodQuery.week());
+    expect(cases.previous.single.from, '2026-10-05');
+    expect(cases.trends.single, (ReportPeriodKind.month, '2026-10-11'));
+    expect(model.previous, isNotNull);
+    expect(model.trend, isNotNull);
+    expect(model.summary?.expenseChange, 0);
+  });
+
+  test('a failing trend hides only the trend', () async {
+    cases.trendFailure = const AuthFailure(AuthError.network);
+    model.beginVisit();
+    await model.load(const ReportPeriodQuery.week());
+    expect(model.data, isNotNull);
+    expect(model.failure, isNull);
+    expect(model.trend, isNull);
+    expect(model.trendFailed, isTrue);
+  });
+
+  test('next is locked on the period that holds today', () async {
+    model.beginVisit();
+    await model.load(const ReportPeriodQuery.week());
+    expect(model.atCurrent, isFalse);
+    expect(model.canStepNext, isTrue);
+    cases.report = _named(from: '2026-10-19', to: '2026-10-25');
+    await model.load(const ReportPeriodQuery.week());
+    expect(model.atCurrent, isTrue);
+    expect(model.canStepNext, isFalse);
+    expect(model.canStep, isTrue);
+    final before = cases.queries.length;
+    await model.step(1);
+    expect(cases.queries, hasLength(before));
+  });
+
+  test('changing the trend range reloads only the trend', () async {
+    model.beginVisit();
+    await model.load(const ReportPeriodQuery.week());
+    final loads = cases.queries.length;
+    await model.selectTrend(ReportPeriodKind.year);
+    expect(model.trendKind, ReportPeriodKind.year);
+    expect(cases.trends.last, (ReportPeriodKind.year, '2026-10-11'));
+    expect(cases.queries, hasLength(loads));
+  });
+
+  test('keeps a chosen currency only while it has data', () async {
+    cases.report = NamedCashflow(
+      currencies: const [WalletCurrency('VND', 0), WalletCurrency('USD', 2)],
+      report: CashflowReport(
+        period: _named().report.period,
+        totals: [
+          CashflowTotal(
+            currency: 'USD',
+            incomeMinor: BigInt.one,
+            expenseMinor: BigInt.zero,
+            netMinor: BigInt.one,
+          ),
+          ..._named().report.totals,
+        ],
+        byCategory: const [],
+        byAccount: const [],
+      ),
+    );
+    model.beginVisit();
+    await model.load(const ReportPeriodQuery.week());
+    expect(model.currencies, ['USD', 'VND']);
+    expect(model.currency, 'VND');
+    model.selectCurrency('USD');
+    expect(model.currency, 'USD');
+    cases.report = _named();
+    await model.load(const ReportPeriodQuery.week());
+    expect(model.currency, 'VND');
+  });
+
+  test('retry after a failure asks for the same period again', () async {
+    cases.failure = const AuthFailure(AuthError.network);
+    model.beginVisit();
+    await model.load(const ReportPeriodQuery.year());
+    expect(model.data, isNull);
+    cases.failure = null;
+    await model.reload();
+    expect(cases.queries.last.kind, ReportPeriodKind.year);
+    expect(model.data, isNotNull);
+  });
+
   test('an expired session signs the user out', () async {
     cases.failure = const AuthFailure(AuthError.expired);
     model.beginVisit();
@@ -117,7 +209,10 @@ class _Cases implements ReportUseCases {
   final queries = <ReportPeriodQuery>[];
   NamedCashflow report = _named();
   AuthFailure? failure;
+  AuthFailure? trendFailure;
   Completer<void>? gate;
+  final trends = <(ReportPeriodKind, String?)>[];
+  final previous = <ReportPeriod>[];
 
   @override
   Future<Either<AuthFailure, NamedCashflow>> loadCashflow(
@@ -129,6 +224,25 @@ class _Cases implements ReportUseCases {
     final error = failure;
     if (error != null) return left(error);
     return right(report);
+  }
+
+  @override
+  Future<Either<AuthFailure, CashflowReport>> loadPrevious(
+    ReportPeriod period,
+  ) async {
+    previous.add(period);
+    return right(report.report);
+  }
+
+  @override
+  Future<Either<AuthFailure, TrendReport>> loadTrend(
+    ReportPeriodKind kind, {
+    String? on,
+  }) async {
+    trends.add((kind, on));
+    final error = trendFailure;
+    if (error != null) return left(error);
+    return right(TrendReport(kind: kind, buckets: const []));
   }
 }
 
