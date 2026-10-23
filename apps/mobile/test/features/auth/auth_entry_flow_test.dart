@@ -46,8 +46,8 @@ void main() {
     api.nextStep = 'register';
     await model.continueEmail('new@example.com');
     await model.submitStep(
-        password: 'correct horse battery',
-        confirmation: 'correct horse battery');
+        password: 'correct horse battery 7',
+        confirmation: 'correct horse battery 7');
     expect(api.lastPath, 'auth/register');
     expect(model.step, AuthStep.verification);
     // Registration sends the first challenge; mobile does not issue a second one.
@@ -58,6 +58,14 @@ void main() {
     expect(api.lastPath, 'auth/verify-email');
     expect(model.step, AuthStep.password);
     expect(model.notice, AuthNotice.verified);
+  });
+  test('a new password without a digit sends no request', () async {
+    api.nextStep = 'register';
+    await model.continueEmail('new@example.com');
+    await model.submitStep(
+        password: 'correct horse battery', confirmation: 'correct horse battery');
+    expect(api.calls, 1);
+    expect(model.step, AuthStep.register);
   });
   test('mismatched confirmation sends no registration request', () async {
     api.nextStep = 'register';
@@ -78,12 +86,12 @@ void main() {
     expect(model.step, AuthStep.resetPassword);
     await model.submitStep(
         token: 'a' * 64,
-        password: 'new password long enough',
-        confirmation: 'new password long enough');
+        password: 'new password long enough 2',
+        confirmation: 'new password long enough 2');
     expect(api.lastPath, 'auth/reset-password');
     expect(model.step, AuthStep.password);
     expect(model.notice, AuthNotice.passwordChanged);
-    await model.submitStep(password: 'new password long enough');
+    await model.submitStep(password: 'new password long enough 2');
     expect(model.stage, AuthStage.setupPin);
   });
 }

@@ -41,7 +41,7 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
   let auth: AuthService;
   let worker: AuthMailWorker;
   let base: string;
-  const password = 'correct horse battery staple';
+  const password = 'correct horse battery staple 7';
 
   it('MOB-P1-001 email-step normalizes, limits, and exposes only routing', async () => {
     const email = 'entry@example.test';
@@ -449,7 +449,7 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
       (
         await request('auth/register', {
           ...body,
-          password: 'different password value',
+          password: 'different password value 2',
         })
       ).body,
     ).toEqual(first.body);
@@ -531,7 +531,7 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
     await request('auth/password-resets', { email: 'owner@example.test' });
     const token = await emailToken('owner@example.test', 'reset_password');
     expect((await request('auth/verify-email', { token })).status).toBe(400);
-    const newPassword = 'brand new secure password';
+    const newPassword = 'brand new secure password 5';
     const responses = await Promise.all(
       [1, 2].map(() =>
         request('auth/reset-password', { token, password: newPassword }),
@@ -747,7 +747,7 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
         (
           await request('auth/reset-password', {
             token,
-            password: 'changed test password',
+            password: 'changed test password 9',
           })
         ).status,
       ).toBe(503);
@@ -774,7 +774,7 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
       (
         await request('auth/reset-password', {
           token,
-          password: 'changed test password',
+          password: 'changed test password 9',
         })
       ).status,
     ).toBe(204);
@@ -821,6 +821,21 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
         })
       ).status,
     ).toBe(400);
+    // DS-P2-004: a new password needs a letter and a digit; symbols optional.
+    for (const weak of ['no digits in this one', '1234567890123']) {
+      expect(
+        (await request('auth/register', { email: 'valid@example.test', password: weak }))
+          .status,
+      ).toBe(400);
+    }
+    expect(
+      (
+        await request('auth/register', {
+          email: 'rule@example.test',
+          password: 'mật khẩu có số 7',
+        })
+      ).status,
+    ).toBe(202);
     expect(
       (await request('sessions', undefined, undefined, 'GET')).status,
     ).toBe(401);

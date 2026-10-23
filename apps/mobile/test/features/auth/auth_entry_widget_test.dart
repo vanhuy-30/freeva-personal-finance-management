@@ -63,9 +63,9 @@ void main() {
     expect(find.byType(TextField), findsNWidgets(2));
     expect(find.text('Quên mật khẩu'), findsNothing);
     await tester.enterText(
-        find.byType(TextField).at(0), 'correct horse battery');
+        find.byType(TextField).at(0), 'correct horse battery 7');
     await tester.enterText(
-        find.byType(TextField).at(1), 'correct horse battery');
+        find.byType(TextField).at(1), 'correct horse battery 7');
     await tester.ensureVisible(find.text('Tạo tài khoản'));
     await tester.tap(find.text('Tạo tài khoản'));
     await tester.pumpAndSettle();

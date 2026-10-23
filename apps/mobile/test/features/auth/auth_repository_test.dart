@@ -135,11 +135,36 @@ void main() {
         })).isLeft(),
         true,
       );
+      // DS-P2-004: new passwords need a letter and a digit.
+      for (final weak in ['no digits in this one', '1234567890123']) {
+        expect(
+          (await useCases.submit(AuthAction.register, {
+            'email': 'lan@example.com',
+            'password': weak,
+          })).isLeft(),
+          true,
+        );
+      }
+      final before = api.calls;
+      expect(
+        (await useCases.submit(AuthAction.register, {
+          'email': 'lan@example.com',
+          'password': 'mật khẩu có số 7',
+        })).isRight(),
+        true,
+      );
+      expect(api.calls, before + 1);
+      await useCases.submit(AuthAction.login, {
+        'email': 'lan@example.com',
+        'password': 'no digits in this one',
+      });
+      expect(api.calls, before + 2);
       expect(
         (await useCases.setupPin('123456', '654321', false, 'unlock')).isLeft(),
         true,
       );
-      expect(api.calls, calls);
+      // Only the two valid submissions above reached the API.
+      expect(api.calls, calls + 2);
     },
   );
   test('reset and revoke current/all clear local credentials', () async {

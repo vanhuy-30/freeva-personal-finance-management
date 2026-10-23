@@ -68,10 +68,15 @@ class DefaultAuthUseCases implements AuthUseCases {
     final email = fields['email']?.trim().toLowerCase();
     final password = fields['password'];
     final token = fields['token'];
+    // A new password needs a letter and a digit (any script); login keeps
+    // the length rule only, so older passwords still work.
+    final newPassword =
+        action == AuthAction.register || action == AuthAction.resetPassword;
     if ((email != null &&
             (email.length > 254 ||
                 !RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$').hasMatch(email))) ||
         (password != null && (password.length < 12 || password.length > 128)) ||
+        (newPassword && password != null && !hasLetterAndDigit(password)) ||
         (token != null && !RegExp(r'^[a-f0-9]{64}$').hasMatch(token))) {
       return Future.value(left(const AuthFailure(AuthError.invalidInput)));
     }
@@ -129,3 +134,8 @@ class DefaultAuthUseCases implements AuthUseCases {
   Future<Either<AuthFailure, Unit>> forgetDevice() =>
       _repository.forgetDevice();
 }
+
+/// At least one letter and one digit, in any script (Vietnamese included).
+bool hasLetterAndDigit(String password) =>
+    RegExp(r'\p{L}', unicode: true).hasMatch(password) &&
+    RegExp(r'\p{Nd}', unicode: true).hasMatch(password);

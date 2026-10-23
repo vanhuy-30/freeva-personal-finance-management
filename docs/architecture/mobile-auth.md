@@ -10,7 +10,7 @@ Client Flutter dùng contract `/api/v1` và quyết định email/session ở
 - “Quên mật khẩu” chỉ xuất hiện tại màn nhập password → gửi mã → nhập mã + password mới → quay lại login. Không có nút reset/verify độc lập ở màn đầu.
 - Login → thiết lập PIN 6 chữ số và xác nhận → home.
 - UI giữ logo/tokens Freeva, nền surface, input/CTA bo góc, back navigation, password visibility, loading/error, l10n vi/en. Google/Apple chưa hiện vì OAuth chưa triển khai; không đưa legal draft nội bộ thành điều khoản in-app.
-- Mã email là 64 ký tự hex từ mail của backend; không dùng deep link chứa token. Password 12–128 ký tự, không trim. Email trim/lowercase.
+- Mã email là 64 ký tự hex từ mail của backend; không dùng deep link chứa token. Password 12–128 ký tự, không trim; đăng ký và đặt lại cần thêm ít nhất một chữ và một số (`hasLetterAndDigit`, `DS-P2-004`), đăng nhập chỉ kiểm tra độ dài. Email trim/lowercase.
 - Login nhận opaque Bearer, hạn tuyệt đối và session ID. Khởi động lại luôn khóa; nếu dừng app giữa bước login và tạo PIN thì yêu cầu login lại.
 - Home có list phiên, thu hồi một phiên/mọi phiên, logout và khóa ngay. Logout online phải thành công mới xóa local; lỗi mạng cho phép thử lại. `401` của request có Bearer xóa credential và yêu cầu login.
 - Quên PIN xóa credential **trên thiết bị**, không giả định đã revoke server. UI nói rõ phiên server còn đến hạn hoặc được thu hồi sau khi login lại.
