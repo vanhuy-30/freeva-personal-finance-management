@@ -18,6 +18,10 @@ import '../../features/settings/presentation/pages/faq_page.dart';
 import '../../features/settings/presentation/pages/feedback_page.dart';
 import '../../features/settings/presentation/pages/legal_page.dart';
 import '../../features/settings/presentation/pages/onboarding_page.dart';
+import '../../features/settings/presentation/pages/change_password_page.dart';
+import '../../features/settings/presentation/pages/change_pin_page.dart';
+import '../../features/settings/presentation/pages/security_page.dart';
+import '../../features/settings/presentation/pages/sessions_page.dart';
 import '../../features/settings/presentation/pages/settings_page.dart';
 import '../../features/settings/presentation/viewmodels/settings_view_model.dart';
 import '../../features/splash/presentation/pages/splash_page.dart';
@@ -233,6 +237,25 @@ GoRouter _createAppRouter(
       GoRoute(
         path: '/profile',
         builder: (context, state) => const AuthGate(child: ProfilePage()),
+      ),
+      GoRoute(
+        path: '/me/security',
+        builder: (context, state) => const AuthGate(child: SecurityPage()),
+        routes: [
+          GoRoute(
+            path: 'pin',
+            builder: (context, state) => const AuthGate(child: ChangePinPage()),
+          ),
+          GoRoute(
+            path: 'password',
+            builder: (context, state) =>
+                const AuthGate(child: ChangePasswordPage()),
+          ),
+        ],
+      ),
+      GoRoute(
+        path: '/me/sessions',
+        builder: (context, state) => const AuthGate(child: SessionsPage()),
       ),
       GoRoute(
         path: '/onboarding',

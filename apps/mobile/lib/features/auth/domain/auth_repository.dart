@@ -55,10 +55,23 @@ abstract class AuthRepository {
     String reason,
   );
   Future<Either<AuthFailure, Unit>> unlockPin(String pin);
+
+  /// Checks [oldPin] (counted like an unlock attempt) and stores [newPin].
+  Future<Either<AuthFailure, Unit>> changePin(String oldPin, String newPin);
+
+  /// Signed-in password change. A wrong current password is
+  /// [AuthError.credentials]; the other sessions end on the server.
+  Future<Either<AuthFailure, Unit>> changePassword(String current, String next);
+
+  /// Ends every session except this one.
+  Future<Either<AuthFailure, Unit>> revokeOthers();
   Future<Either<AuthFailure, Unit>> unlockBiometric(String reason);
   Future<Either<AuthFailure, bool>> biometricAvailable();
   Future<Either<AuthFailure, bool>> biometricHardware();
   Future<Either<AuthFailure, bool>> biometricEnabled();
+
+  /// Email this device signed in with; null for sessions saved before it was kept.
+  Future<Either<AuthFailure, String?>> accountEmail();
   Future<Either<AuthFailure, Unit>> setBiometricEnabled(
     bool enabled,
     String reason,

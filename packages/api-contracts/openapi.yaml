@@ -2196,6 +2196,45 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/AuthResetPasswordRequest'
+  /api/v1/auth/change-password:
+    post:
+      operationId: changePassword
+      summary: Change the password while signed in
+      tags:
+      - Auth
+      security:
+      - UserBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+              - currentPassword
+              - newPassword
+              properties:
+                currentPassword:
+                  type: string
+                  minLength: 1
+                  maxLength: 128
+                newPassword:
+                  type: string
+                  minLength: 12
+                  maxLength: 128
+                  description: At least one letter and one digit (DS-P2-004). Must differ from the current password.
+      responses:
+        '204':
+          description: Changed. This session stays signed in; every other session and unused email token ends.
+        '400':
+          description: New password rejected
+        '401':
+          description: Session missing or expired
+        '403':
+          description: Current password is wrong (code INVALID_CREDENTIALS)
+        '429':
+          description: Too many attempts
   /api/v1/auth/logout:
     post:
       operationId: logout

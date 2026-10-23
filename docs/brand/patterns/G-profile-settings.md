@@ -1,6 +1,6 @@
 # Nhóm G — Cá nhân và cài đặt
 
-Trạng thái: **chốt thiết kế 2026-10-21**, chưa code. Task: `DS-P2-003` (màn Cá nhân/Cài đặt/Giới thiệu/Đăng nhập/Khoá).
+Trạng thái: **chốt thiết kế 2026-10-21**; bỏ dòng Định dạng ngày (2026-10-23). Task: `DS-P2-003` (màn Cá nhân/Cài đặt/Giới thiệu/Đăng nhập/Khoá).
 Canvas: trang **05 · Patterns**, hàng G
 (<https://claude.ai/artifact/SmyaVvz57doJiAM6Kn678T>, riêng tư). Spec chung:
 [design-system.md](../design-system.md).
@@ -18,7 +18,7 @@ Canvas: trang **05 · Patterns**, hàng G
 
 | # | Màn | Nội dung | Ghi chú |
 |---|---|---|---|
-| 1 | Cá nhân | "Cá nhân". Thẻ hồ sơ (avatar chữ cái, tên, email che). **Thiết lập tài chính:** Ví của tôi · Danh mục · Nhãn · Tiền tệ mặc định · Ngân sách tháng · Tháng tính từ · Mục tiêu (mở A1.2). **Ứng dụng:** Giao diện · Ngôn ngữ · Định dạng ngày · Múi giờ · Thông báo · Ẩn số dư (công tắc) · Bảo mật. **Hỗ trợ:** Câu hỏi thường gặp · Góp ý · Điều khoản và quyền riêng tư. "Đăng xuất" (đỏ), "Phiên bản 0.0.1" | Giá trị hiện tại ở bên phải mỗi dòng; icon màu cho Thiết lập tài chính, xám cho Ứng dụng |
+| 1 | Cá nhân | "Cá nhân". Thẻ hồ sơ (avatar chữ cái, tên, email che). **Thiết lập tài chính:** Ví của tôi · Danh mục · Nhãn · Tiền tệ mặc định · Ngân sách tháng · Tháng tính từ · Mục tiêu (mở A1.2). **Ứng dụng:** Giao diện · Ngôn ngữ · Múi giờ · Thông báo · Ẩn số dư (công tắc) · Bảo mật. **Hỗ trợ:** Câu hỏi thường gặp · Góp ý · Điều khoản và quyền riêng tư. "Đăng xuất" (đỏ), "Phiên bản 0.0.1" | Giá trị hiện tại ở bên phải mỗi dòng; icon màu cho Thiết lập tài chính, xám cho Ứng dụng |
 | 2 | Hồ sơ | Avatar 96 + nút máy ảnh. Tên hiển thị. Email (đã xác nhận) · "Đổi". "Xoá tài khoản" (đỏ). "Lưu thay đổi" | |
 | 3 | Giao diện (sheet) | 3 thẻ chọn có ảnh thu nhỏ: Sáng · Tối · Theo máy | Đổi ngay khi chọn |
 | 4 | Bảo mật | **Mở khoá:** Khoá bằng mã PIN, Mở bằng Face ID (công tắc), Đổi mã PIN. **Đăng nhập:** Phiên đăng nhập (số), Đổi mật khẩu | Face ID khoá khi chưa có PIN, kèm lý do ngắn |
@@ -40,7 +40,7 @@ Canvas: trang **05 · Patterns**, hàng G
 | Ngân sách tháng | Thiết lập tài chính | Khối ngân sách ([F-reports.md](F-reports.md)), cảnh báo |
 | Mục tiêu (tối đa 2) | Thiết lập tài chính | Thứ tự khối trên Tổng quan ([B-overview.md](B-overview.md)) |
 | Tiền tệ mặc định, Tháng tính từ | Thiết lập tài chính | Ví mới; kỳ tháng của báo cáo |
-| Định dạng ngày, Múi giờ, Ngôn ngữ | Ứng dụng | Hiển thị ngày giờ, chữ |
+| Múi giờ, Ngôn ngữ | Ứng dụng | Hiển thị ngày giờ, chữ |
 
 ## Thành phần mới (bổ sung vào design system)
 
@@ -58,7 +58,6 @@ Canvas: trang **05 · Patterns**, hàng G
 |---|---|
 | Hồ sơ | Thêm tên hiển thị, ảnh đại diện (lưu trữ ảnh) vào profile API; mục tiêu lưu từ onboarding. |
 | Ngân sách tháng | `BE-P2-E02`. |
-| Định dạng ngày | Preference mới (thiết bị hoặc hồ sơ). |
 | Thông báo | Thông báo đẩy `BE-P2-E05`; lưu lựa chọn từng loại, giờ nhắc, nhịp tổng kết, ngưỡng ngân sách. |
 | Đổi email | API đổi email có xác nhận lại qua thư. |
 | Đổi mật khẩu khi đang đăng nhập | API mới (Phase 1 chỉ có đặt lại qua email). |

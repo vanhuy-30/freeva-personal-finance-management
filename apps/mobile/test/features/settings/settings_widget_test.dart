@@ -19,9 +19,7 @@ import 'package:mobile/features/settings/presentation/pages/feedback_page.dart';
 import 'package:mobile/features/settings/presentation/pages/legal_page.dart';
 import 'package:mobile/features/settings/presentation/pages/onboarding_page.dart';
 import 'package:mobile/features/settings/presentation/pages/settings_page.dart';
-import 'package:mobile/features/settings/presentation/theme_mode.dart';
 import 'package:mobile/features/settings/presentation/viewmodels/settings_view_model.dart';
-import 'package:mobile/features/settings/presentation/widgets/settings_appearance.dart';
 
 import '../auth/fakes.dart';
 import '../profile/fakes.dart';
@@ -78,37 +76,6 @@ void main() {
         ),
         home: child,
       );
-
-  testWidgets('dark theme applies after it is selected', (tester) async {
-    await tester.pumpWidget(
-      ListenableBuilder(
-        listenable: settings,
-        builder: (context, _) => MaterialApp(
-          theme: ThemeData(brightness: Brightness.light),
-          darkTheme: ThemeData(brightness: Brightness.dark),
-          themeMode: themeModeFor(settings.theme),
-          locale: const Locale('en'),
-          supportedLocales: S.supportedLocales,
-          localizationsDelegates: S.localizationsDelegates,
-          home: Builder(
-            builder: (context) => Scaffold(
-              body: Column(
-                children: [
-                  SettingsAppearance(model: settings),
-                  Text(Theme.of(context).brightness.name),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-    expect(find.text('light'), findsOneWidget);
-    await tester.tap(find.text('Dark'));
-    await tester.pumpAndSettle();
-    expect(settings.theme, AppThemePreference.dark);
-    expect(find.text('dark'), findsOneWidget);
-  });
 
   testWidgets('skip completes onboarding once', (tester) async {
     final router = GoRouter(

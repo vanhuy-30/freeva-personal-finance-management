@@ -67,6 +67,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
     'profile',
     _profile,
     body: {
+      'displayName': profile.displayName,
       'locale': profile.locale,
       'defaultCurrencyCode': profile.currency,
       'timezone': profile.timezone,

@@ -2104,4 +2104,260 @@ class SVi extends S {
 
   @override
   String get reportLargestError => 'Không tải được giao dịch';
+
+  @override
+  String get meTitle => 'Cá nhân';
+
+  @override
+  String get meGroupFinance => 'Thiết lập tài chính';
+
+  @override
+  String get meGroupApp => 'Ứng dụng';
+
+  @override
+  String get meGroupHelp => 'Hỗ trợ';
+
+  @override
+  String get meWallets => 'Ví của tôi';
+
+  @override
+  String get meCategories => 'Danh mục';
+
+  @override
+  String get meTags => 'Nhãn';
+
+  @override
+  String get meCurrency => 'Tiền tệ mặc định';
+
+  @override
+  String get meBudget => 'Ngân sách tháng';
+
+  @override
+  String get meFiscal => 'Tháng tính từ';
+
+  @override
+  String meFiscalDay(int day) {
+    return 'Ngày $day';
+  }
+
+  @override
+  String get meGoals => 'Mục tiêu';
+
+  @override
+  String get meTheme => 'Giao diện';
+
+  @override
+  String get meThemeLight => 'Sáng';
+
+  @override
+  String get meThemeDark => 'Tối';
+
+  @override
+  String get meThemeSystem => 'Theo máy';
+
+  @override
+  String get meLanguage => 'Ngôn ngữ';
+
+  @override
+  String get meTimezone => 'Múi giờ';
+
+  @override
+  String get meNotifications => 'Thông báo';
+
+  @override
+  String get meHideBalances => 'Ẩn số dư';
+
+  @override
+  String get meSecurity => 'Bảo mật';
+
+  @override
+  String get meSecurityValueBiometric => 'PIN · Sinh trắc';
+
+  @override
+  String get meSecurityValuePin => 'PIN';
+
+  @override
+  String get meFaq => 'Câu hỏi thường gặp';
+
+  @override
+  String get meFeedback => 'Góp ý';
+
+  @override
+  String get meTerms => 'Điều khoản dịch vụ';
+
+  @override
+  String get mePrivacy => 'Chính sách bảo mật';
+
+  @override
+  String get meSoon => 'Sắp có';
+
+  @override
+  String get meLogout => 'Đăng xuất';
+
+  @override
+  String get meLogoutTitle => 'Đăng xuất khỏi máy này?';
+
+  @override
+  String get meLogoutBody => 'Dữ liệu vẫn nằm trong tài khoản của bạn.';
+
+  @override
+  String get meProfileTitle => 'Hồ sơ';
+
+  @override
+  String get meProfileName => 'Tên hiển thị';
+
+  @override
+  String get meProfileEmail => 'Email';
+
+  @override
+  String get meChange => 'Đổi';
+
+  @override
+  String get meSave => 'Lưu thay đổi';
+
+  @override
+  String get meSaved => 'Đã lưu';
+
+  @override
+  String get meSaveError => 'Chưa lưu được. Thử lại nhé.';
+
+  @override
+  String get meConflict =>
+      'Đã thay đổi trên máy khác. Tải lại rồi thử lại nhé.';
+
+  @override
+  String meAvatarSemantics(String letter) {
+    return 'Ảnh đại diện, chữ $letter';
+  }
+
+  @override
+  String get meSecUnlock => 'Mở khoá';
+
+  @override
+  String get meSecPin => 'Khoá bằng mã PIN';
+
+  @override
+  String get meSecPinSub => 'Khi mở lại Freeva';
+
+  @override
+  String get meSecBiometric => 'Mở bằng sinh trắc';
+
+  @override
+  String get meSecChangePin => 'Đổi mã PIN';
+
+  @override
+  String get meSecLogin => 'Đăng nhập';
+
+  @override
+  String get meSecSessions => 'Phiên đăng nhập';
+
+  @override
+  String get meSecChangePassword => 'Đổi mật khẩu';
+
+  @override
+  String get meSessionsHint => 'Không nhận ra phiên nào thì thu hồi ngay.';
+
+  @override
+  String get meSessionThis => 'Máy này';
+
+  @override
+  String get meSessionOther => 'Phiên khác';
+
+  @override
+  String get meSessionInUse => 'Đang dùng';
+
+  @override
+  String meSessionDates(String from, String to) {
+    return 'Từ $from · hết hạn $to';
+  }
+
+  @override
+  String get meRevoke => 'Thu hồi';
+
+  @override
+  String meRevokeSemantics(String date) {
+    return 'Thu hồi phiên đăng nhập ngày $date';
+  }
+
+  @override
+  String get meRevokeTitle => 'Thu hồi phiên này?';
+
+  @override
+  String get meRevokeBody => 'Máy đó sẽ bị đăng xuất.';
+
+  @override
+  String get meRevokeOthers => 'Đăng xuất mọi máy khác';
+
+  @override
+  String get meRevokeOthersTitle => 'Đăng xuất mọi máy khác?';
+
+  @override
+  String get meRevokeOthersBody => 'Máy này vẫn đăng nhập.';
+
+  @override
+  String get meChangePinTitle => 'Đổi mã PIN';
+
+  @override
+  String get mePinCurrent => 'Mã PIN hiện tại';
+
+  @override
+  String get mePinNew => 'Mã PIN mới';
+
+  @override
+  String get mePinRepeat => 'Nhập lại mã PIN mới';
+
+  @override
+  String get mePinWrong =>
+      'Mã PIN chưa đúng. Sai 5 lần thì phải đăng nhập lại.';
+
+  @override
+  String get mePinMismatch => 'Hai mã PIN mới chưa khớp.';
+
+  @override
+  String get mePinSame => 'Chọn mã PIN khác mã cũ nhé.';
+
+  @override
+  String get mePinInvalid => 'Mã PIN gồm 6 chữ số.';
+
+  @override
+  String get mePinChanged => 'Đã đổi mã PIN';
+
+  @override
+  String get meChangePasswordTitle => 'Đổi mật khẩu';
+
+  @override
+  String get mePasswordCurrent => 'Mật khẩu hiện tại';
+
+  @override
+  String get mePasswordNew => 'Mật khẩu mới';
+
+  @override
+  String get mePasswordRepeat => 'Nhập lại mật khẩu mới';
+
+  @override
+  String get mePasswordHint => 'Từ 12 ký tự, có cả chữ và số.';
+
+  @override
+  String get mePasswordWrong => 'Mật khẩu hiện tại chưa đúng.';
+
+  @override
+  String get mePasswordWeak =>
+      'Dùng từ 12 ký tự, có cả chữ và số, khác mật khẩu cũ.';
+
+  @override
+  String get mePasswordMismatch => 'Hai mật khẩu mới chưa khớp.';
+
+  @override
+  String get mePasswordChanged => 'Đã đổi mật khẩu. Các máy khác đã đăng xuất.';
+
+  @override
+  String meBusyRetry(int minutes) {
+    return 'Thử lại sau $minutes phút nhé.';
+  }
+
+  @override
+  String get meNetworkError => 'Chưa kết nối được. Kiểm tra mạng nhé.';
+
+  @override
+  String get meSecAlways => 'Luôn bật';
 }

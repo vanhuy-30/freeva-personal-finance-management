@@ -73,6 +73,8 @@ class HttpAuthApi implements AuthApi {
       throw AuthFailure(
         switch (response.statusCode) {
           401 => token == null ? AuthError.credentials : AuthError.expired,
+          // Signed in but refused: the current password was wrong.
+          403 when token != null => AuthError.credentials,
           429 => AuthError.rateLimited,
           400 => AuthError.invalidToken,
           409 => AuthError.conflict,

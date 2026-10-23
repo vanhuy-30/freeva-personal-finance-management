@@ -41,6 +41,7 @@ class MemoryProfiles implements ProfileRepository {
       timezone: profile.timezone,
       fiscalDay: profile.fiscalDay,
       version: profile.version + 1,
+      displayName: profile.displayName,
     );
     return right(value);
   }

@@ -51,3 +51,17 @@ export class ResetPasswordDto extends TokenDto {
   @Matches(LETTER_AND_DIGIT)
   password!: string;
 }
+
+/** Signed-in password change: the current password proves it is the owner. */
+export class ChangePasswordDto {
+  @IsString()
+  @MinLength(1)
+  @MaxLength(128)
+  currentPassword!: string;
+
+  @IsString()
+  @MinLength(12)
+  @MaxLength(128)
+  @Matches(LETTER_AND_DIGIT)
+  newPassword!: string;
+}

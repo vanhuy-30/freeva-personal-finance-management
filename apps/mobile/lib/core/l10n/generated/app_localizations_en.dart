@@ -2140,4 +2140,261 @@ class SEn extends S {
 
   @override
   String get reportLargestError => 'Couldn\'t load transactions';
+
+  @override
+  String get meTitle => 'You';
+
+  @override
+  String get meGroupFinance => 'Money setup';
+
+  @override
+  String get meGroupApp => 'App';
+
+  @override
+  String get meGroupHelp => 'Help';
+
+  @override
+  String get meWallets => 'My wallets';
+
+  @override
+  String get meCategories => 'Categories';
+
+  @override
+  String get meTags => 'Tags';
+
+  @override
+  String get meCurrency => 'Default currency';
+
+  @override
+  String get meBudget => 'Monthly budget';
+
+  @override
+  String get meFiscal => 'Month starts on';
+
+  @override
+  String meFiscalDay(int day) {
+    return 'Day $day';
+  }
+
+  @override
+  String get meGoals => 'Goals';
+
+  @override
+  String get meTheme => 'Appearance';
+
+  @override
+  String get meThemeLight => 'Light';
+
+  @override
+  String get meThemeDark => 'Dark';
+
+  @override
+  String get meThemeSystem => 'Match device';
+
+  @override
+  String get meLanguage => 'Language';
+
+  @override
+  String get meTimezone => 'Time zone';
+
+  @override
+  String get meNotifications => 'Notifications';
+
+  @override
+  String get meHideBalances => 'Hide balances';
+
+  @override
+  String get meSecurity => 'Security';
+
+  @override
+  String get meSecurityValueBiometric => 'PIN · biometrics';
+
+  @override
+  String get meSecurityValuePin => 'PIN';
+
+  @override
+  String get meFaq => 'FAQ';
+
+  @override
+  String get meFeedback => 'Send feedback';
+
+  @override
+  String get meTerms => 'Terms of service';
+
+  @override
+  String get mePrivacy => 'Privacy policy';
+
+  @override
+  String get meSoon => 'Coming soon';
+
+  @override
+  String get meLogout => 'Log out';
+
+  @override
+  String get meLogoutTitle => 'Log out of this device?';
+
+  @override
+  String get meLogoutBody => 'Your data stays in your account.';
+
+  @override
+  String get meProfileTitle => 'Profile';
+
+  @override
+  String get meProfileName => 'Display name';
+
+  @override
+  String get meProfileEmail => 'Email';
+
+  @override
+  String get meChange => 'Change';
+
+  @override
+  String get meSave => 'Save changes';
+
+  @override
+  String get meSaved => 'Saved';
+
+  @override
+  String get meSaveError => 'Couldn\'t save. Try again.';
+
+  @override
+  String get meConflict =>
+      'This changed on another device. Reload and try again.';
+
+  @override
+  String meAvatarSemantics(String letter) {
+    return 'Profile picture, initial $letter';
+  }
+
+  @override
+  String get meSecUnlock => 'Unlock';
+
+  @override
+  String get meSecPin => 'PIN lock';
+
+  @override
+  String get meSecPinSub => 'When you reopen Freeva';
+
+  @override
+  String get meSecBiometric => 'Unlock with biometrics';
+
+  @override
+  String get meSecChangePin => 'Change PIN';
+
+  @override
+  String get meSecLogin => 'Sign-in';
+
+  @override
+  String get meSecSessions => 'Signed-in devices';
+
+  @override
+  String get meSecChangePassword => 'Change password';
+
+  @override
+  String get meSessionsHint => 'Don\'t recognise one? Revoke it now.';
+
+  @override
+  String get meSessionThis => 'This device';
+
+  @override
+  String get meSessionOther => 'Another device';
+
+  @override
+  String get meSessionInUse => 'In use';
+
+  @override
+  String meSessionDates(String from, String to) {
+    return 'From $from · expires $to';
+  }
+
+  @override
+  String get meRevoke => 'Revoke';
+
+  @override
+  String meRevokeSemantics(String date) {
+    return 'Revoke the session from $date';
+  }
+
+  @override
+  String get meRevokeTitle => 'Revoke this session?';
+
+  @override
+  String get meRevokeBody => 'That device will be signed out.';
+
+  @override
+  String get meRevokeOthers => 'Sign out all other devices';
+
+  @override
+  String get meRevokeOthersTitle => 'Sign out all other devices?';
+
+  @override
+  String get meRevokeOthersBody => 'This device stays signed in.';
+
+  @override
+  String get meChangePinTitle => 'Change PIN';
+
+  @override
+  String get mePinCurrent => 'Current PIN';
+
+  @override
+  String get mePinNew => 'New PIN';
+
+  @override
+  String get mePinRepeat => 'Repeat new PIN';
+
+  @override
+  String get mePinWrong => 'Wrong PIN. After 5 misses you sign in again.';
+
+  @override
+  String get mePinMismatch => 'The new PINs don\'t match.';
+
+  @override
+  String get mePinSame => 'Pick a different PIN.';
+
+  @override
+  String get mePinInvalid => 'A PIN is 6 digits.';
+
+  @override
+  String get mePinChanged => 'PIN changed';
+
+  @override
+  String get meChangePasswordTitle => 'Change password';
+
+  @override
+  String get mePasswordCurrent => 'Current password';
+
+  @override
+  String get mePasswordNew => 'New password';
+
+  @override
+  String get mePasswordRepeat => 'Repeat new password';
+
+  @override
+  String get mePasswordHint =>
+      'At least 12 characters, with letters and digits.';
+
+  @override
+  String get mePasswordWrong => 'That isn\'t your current password.';
+
+  @override
+  String get mePasswordWeak =>
+      'Use at least 12 characters with letters and digits, different from the old one.';
+
+  @override
+  String get mePasswordMismatch => 'The new passwords don\'t match.';
+
+  @override
+  String get mePasswordChanged =>
+      'Password changed. Other devices were signed out.';
+
+  @override
+  String meBusyRetry(int minutes) {
+    return 'Try again in $minutes min.';
+  }
+
+  @override
+  String get meNetworkError => 'Can\'t reach Freeva. Check your connection.';
+
+  @override
+  String get meSecAlways => 'Always on';
 }

@@ -33,3 +33,13 @@ fvm flutter test
 ```
 
 Kết quả: analyzer sạch, toàn bộ 108 Flutter tests pass (14 tests mới).
+
+## DS-P2-003 nhóm G (G1)
+
+Thiết kế: [G-profile-settings.md](../brand/patterns/G-profile-settings.md).
+
+- **Cá nhân** (`/me`, tab gốc): thẻ hồ sơ (avatar chữ cái, tên, email che; email lấy từ két máy, API hồ sơ không trả email), nhóm Thiết lập tài chính / Ứng dụng / Hỗ trợ. Tiền tệ, Tháng tính từ, Ngôn ngữ, Múi giờ mở sheet chọn rồi `PUT /profile` ngay, lỗi thì trả giá trị cũ và báo. Ẩn số dư là công tắc. Ngân sách, Mục tiêu, Thông báo, Nhãn: toast "Sắp có". Đăng xuất hỏi lại.
+- **Hồ sơ** (`/profile`): tên hiển thị (gửi trong `PUT /profile`, để trống là xoá); email có "Đổi" nhưng chưa làm (cần xác nhận qua thư).
+- **Bảo mật** (`/me/security`): PIN luôn bật; sinh trắc là công tắc; **Đổi mã PIN** nhập PIN cũ (tính như một lần mở khoá, sai 5 lần thì xoá máy), PIN mới, nhập lại; **Đổi mật khẩu** gọi `POST /auth/change-password` (403 là sai mật khẩu hiện tại; máy này giữ phiên, máy khác bị đăng xuất).
+- **Phiên đăng nhập** (`/me/sessions`): Máy này + chip, phiên khác + Thu hồi (hỏi lại), "Đăng xuất mọi máy khác" (thu hồi từng phiên khác, không đụng phiên hiện tại).
+- Chưa có avatar ảnh, xoá tài khoản, đổi email.

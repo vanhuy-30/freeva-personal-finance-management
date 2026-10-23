@@ -132,7 +132,13 @@ class AuthRepositoryImpl implements AuthRepository, AuthorizedApi {
         throw const AuthFailure(AuthError.unavailable);
       }
       DateTime.parse(result['expiresAt'] as String);
-      await _save({...result, 'attempts': 0, 'biometrics': false});
+      await _save({
+        ...result,
+        'attempts': 0,
+        'biometrics': false,
+        // Shown (masked) on Cá nhân; the profile API never returns it.
+        'email': fields['email'],
+      });
     }
     if (action == AuthAction.resetPassword) await _clear();
     return unit;
@@ -169,8 +175,15 @@ class AuthRepositoryImpl implements AuthRepository, AuthorizedApi {
   @override
   Future<Either<AuthFailure, Unit>> unlockPin(String pin) => _guard(() async {
     await _token();
+    await _checkPin(pin);
+    await _authorized('GET', 'sessions');
+    return unit;
+  });
+
+  /// Counts the attempt before the slow hash, so killing the app cannot reset
+  /// it; the fifth miss signs the device out.
+  Future<void> _checkPin(String pin) async {
     final attempts = (_record!['attempts'] as int) + 1;
-    // Persist before expensive verification: process termination cannot reset attempts.
     await _save({..._record!, 'attempts': attempts});
     if (attempts > 5) {
       await _clear();
@@ -190,9 +203,53 @@ class AuthRepositoryImpl implements AuthRepository, AuthorizedApi {
       throw const AuthFailure(AuthError.wrongPin);
     }
     await _save({..._record!, 'attempts': 0});
-    await _authorized('GET', 'sessions');
+  }
+
+  @override
+  Future<Either<AuthFailure, Unit>> changePin(
+    String oldPin,
+    String newPin,
+  ) => _guard(() async {
+    await _token();
+    if (!RegExp(r'^\d{6}$').hasMatch(newPin) || _record!['pinHash'] == null) {
+      throw const AuthFailure(AuthError.invalidInput);
+    }
+    await _checkPin(oldPin);
+    final random = Random.secure();
+    final salt = base64Encode(List.generate(32, (_) => random.nextInt(256)));
+    await _save({
+      ..._record!,
+      'salt': salt,
+      'pinHash': await _hash(newPin, salt),
+    });
     return unit;
   });
+
+  @override
+  Future<Either<AuthFailure, Unit>> changePassword(
+    String current,
+    String next,
+  ) => _guard(() async {
+    await _authorized(
+      'POST',
+      'auth/change-password',
+      body: {'currentPassword': current, 'newPassword': next},
+    );
+    return unit;
+  });
+
+  @override
+  Future<Either<AuthFailure, Unit>> revokeOthers() => _guard(() async {
+    for (final session in await _loadSessions()) {
+      if (session.current) continue;
+      await _authorized(
+        'DELETE',
+        'sessions/${Uri.encodeComponent(session.id)}',
+      );
+    }
+    return unit;
+  });
+
   @override
   Future<Either<AuthFailure, Unit>> unlockBiometric(String reason) =>
       _guard(() async {
@@ -215,6 +272,10 @@ class AuthRepositoryImpl implements AuthRepository, AuthorizedApi {
   @override
   Future<Either<AuthFailure, bool>> biometricHardware() =>
       _guard(_biometrics.available);
+  @override
+  Future<Either<AuthFailure, String?>> accountEmail() =>
+      _guard(() async => _record?['email'] as String?);
+
   @override
   Future<Either<AuthFailure, bool>> biometricEnabled() =>
       _guard(() async => _record?['biometrics'] == true);

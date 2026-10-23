@@ -59,6 +59,51 @@ export class PrismaAuthRepository implements AuthRepository {
     });
   }
 
+  findUserById(userId: string) {
+    return this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        passwordHash: true,
+        emailVerifiedAt: true,
+      },
+    });
+  }
+
+  async changePassword(
+    userId: string,
+    currentHash: string,
+    newHash: string,
+    keepSessionId: string,
+  ): Promise<boolean> {
+    return this.prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT "id" FROM "User" WHERE "id" = ${userId}::uuid FOR UPDATE`;
+      const user = await tx.user.findUnique({ where: { id: userId } });
+      if (!user || user.passwordHash !== currentHash) return false;
+      await tx.user.update({
+        where: { id: userId },
+        data: { passwordHash: newHash },
+      });
+      await tx.authSession.deleteMany({
+        where: { userId, id: { not: keepSessionId } },
+      });
+      await tx.authToken.deleteMany({ where: { userId } });
+      await tx.authMailJob.deleteMany({ where: { userId } });
+      await tx.auditEvent.create({
+        data: {
+          actorType: 'user',
+          actorId: userId,
+          action: 'auth.change_password',
+          targetType: 'user',
+          targetId: userId,
+          outcome: 'success',
+        },
+      });
+      return true;
+    });
+  }
+
   async issueChallenge(
     email: string,
     purpose: TokenPurpose,

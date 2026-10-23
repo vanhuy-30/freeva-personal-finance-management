@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
-import { CredentialsDto, NewCredentialsDto, ResetPasswordDto } from './auth.dto';
+import { ChangePasswordDto, CredentialsDto, NewCredentialsDto, ResetPasswordDto } from './auth.dto';
 
 const email = 'lan@example.test';
 const token = 'a'.repeat(64);
@@ -17,5 +17,10 @@ describe('DS-P2-004 password rule', () => {
   });
   it('login keeps accepting older passwords without a digit', async () => {
     expect(await validate(plainToInstance(CredentialsDto, { email, password: 'no digits in this one' }))).toHaveLength(0);
+  });
+  it('change-password asks for the old password and applies the new rule', async () => {
+    expect(await validate(plainToInstance(ChangePasswordDto, { currentPassword: 'old', newPassword: 'maytrangngay7' }))).toHaveLength(0);
+    expect((await validate(plainToInstance(ChangePasswordDto, { currentPassword: '', newPassword: 'maytrangngay7' }))).length).toBeGreaterThan(0);
+    expect((await validate(plainToInstance(ChangePasswordDto, { currentPassword: 'old', newPassword: 'no digits in this one' }))).length).toBeGreaterThan(0);
   });
 });

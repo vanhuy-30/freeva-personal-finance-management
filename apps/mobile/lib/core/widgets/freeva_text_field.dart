@@ -23,6 +23,7 @@ class FreevaTextField extends StatefulWidget {
     this.tabular = false,
     this.maxLines = 1,
     this.suffix,
+    this.obscureText = false,
     super.key,
   });
 
@@ -41,6 +42,9 @@ class FreevaTextField extends StatefulWidget {
 
   /// Short unit after the value, such as "₫".
   final String? suffix;
+
+  /// Passwords and PINs: dots instead of characters, no suggestions.
+  final bool obscureText;
 
   @override
   State<FreevaTextField> createState() => _FreevaTextFieldState();
@@ -131,7 +135,10 @@ class _FreevaTextFieldState extends State<FreevaTextField> {
                       textInputAction: widget.textInputAction,
                       onChanged: widget.onChanged,
                       onSubmitted: widget.onSubmitted,
-                      maxLines: widget.maxLines,
+                      maxLines: widget.obscureText ? 1 : widget.maxLines,
+                      obscureText: widget.obscureText,
+                      enableSuggestions: !widget.obscureText,
+                      autocorrect: !widget.obscureText,
                       style: valueStyle,
                       // The box above draws border and fill; the theme's
                       // outlined input style must not apply here.

@@ -62,27 +62,33 @@ void main() {
       );
     },
   );
-  test('reads displayName and never sends it on save', () async {
-    final api = Transport();
-    final repo = ProfileRepositoryImpl(api);
-    api.response = {
-      'displayName': '  Minh ',
-      'locale': 'vi',
-      'defaultCurrencyCode': 'VND',
-      'timezone': 'UTC',
-      'fiscalMonthStartDay': 1,
-      'version': 1,
-    };
-    final loaded = (await repo.load()).getOrElse(() => throw StateError('x'));
-    expect(loaded.displayName, 'Minh');
-    await repo.save(loaded);
-    expect(api.body!.containsKey('displayName'), isFalse);
-    api.response['displayName'] = null;
-    expect(
-      (await repo.load()).getOrElse(() => throw StateError('x')).displayName,
-      isNull,
-    );
-  });
+  test(
+    'reads displayName and sends it back on save (null clears it)',
+    () async {
+      final api = Transport();
+      final repo = ProfileRepositoryImpl(api);
+      api.response = {
+        'displayName': '  Minh ',
+        'locale': 'vi',
+        'defaultCurrencyCode': 'VND',
+        'timezone': 'UTC',
+        'fiscalMonthStartDay': 1,
+        'version': 1,
+      };
+      final loaded = (await repo.load()).getOrElse(() => throw StateError('x'));
+      expect(loaded.displayName, 'Minh');
+      await repo.save(loaded);
+      expect(api.body!['displayName'], 'Minh');
+      await repo.save(loaded.copyWith(displayName: null));
+      expect(api.body!.containsKey('displayName'), isTrue);
+      expect(api.body!['displayName'], isNull);
+      api.response['displayName'] = null;
+      expect(
+        (await repo.load()).getOrElse(() => throw StateError('x')).displayName,
+        isNull,
+      );
+    },
+  );
   group('view model', () {
     late MemoryProfiles repo;
     late DefaultAuthViewModel auth;
