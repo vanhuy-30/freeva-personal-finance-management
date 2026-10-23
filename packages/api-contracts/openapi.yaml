@@ -390,6 +390,63 @@ paths:
         owner. Move all references and increment each transaction version/updatedAt, preserving money, date, account,
         tags and deletedAt. Any failure or version overflow rolls back everything. Empty categories may be deleted
         without replacement. No category restore after deletion.
+  /api/v1/feedback:
+    post:
+      operationId: sendFeedback
+      summary: Send feedback from the app
+      tags:
+      - Feedback
+      security:
+      - UserBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+              - kind
+              - topic
+              - message
+              - allowReply
+              - appVersion
+              properties:
+                kind:
+                  type: string
+                  enum:
+                  - bug
+                  - idea
+                  - praise
+                topic:
+                  type: string
+                  enum:
+                  - record
+                  - reports
+                  - wallets
+                  - categories
+                  - appearance
+                  - other
+                message:
+                  type: string
+                  minLength: 1
+                  maxLength: 2000
+                allowReply:
+                  type: boolean
+                  description: The user agreed to be answered by email.
+                appVersion:
+                  type: string
+                  pattern: ^[0-9A-Za-z.+_-]{1,30}$
+      responses:
+        '204':
+          description: Stored
+        '400':
+          description: Invalid body
+        '401':
+          description: Session missing or expired
+        '429':
+          description: Five messages an hour per user; Retry-After is 3600
+      description: Text only, owned by the user and deleted with the account. Never logged.
   /api/v1/tags:
     post:
       operationId: createTag
@@ -3047,6 +3104,10 @@ components:
         updatedAt:
           type: string
           format: date-time
+        transactionCount:
+          type: integer
+          minimum: 0
+          description: Not-deleted transactions with this tag. Only on GET /tags list items.
     CreateTagRequest:
       type: object
       additionalProperties: false
