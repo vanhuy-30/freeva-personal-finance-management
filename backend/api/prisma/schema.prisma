@@ -88,6 +88,8 @@ model User {
   displayName         String?   @db.VarChar(60)
   passwordHash        String?
   emailVerifiedAt     DateTime? @db.Timestamptz
+  termsAcceptedAt     DateTime? @db.Timestamptz
+  termsVersion        String?   @db.VarChar(20)
   locale              String    @default("vi")
   timezone            String    @default("Asia/Ho_Chi_Minh")
   defaultCurrencyCode String    @db.Char(3)

@@ -6,6 +6,7 @@ import type {
   AuthRepository,
   EmailChallenge,
   MailJob,
+  TermsConsent,
   TokenPurpose,
 } from '../domain/auth.repository';
 
@@ -17,11 +18,18 @@ export class PrismaAuthRepository implements AuthRepository {
     email: string,
     passwordHash: string,
     challenge: EmailChallenge,
+    terms: TermsConsent,
   ): Promise<void> {
     try {
       await this.prisma.$transaction(async (tx) => {
         const user = await tx.user.create({
-          data: { email, passwordHash, defaultCurrencyCode: 'VND' },
+          data: {
+            email,
+            passwordHash,
+            defaultCurrencyCode: 'VND',
+            termsAcceptedAt: terms.acceptedAt,
+            termsVersion: terms.version,
+          },
         });
         await this.saveChallenge(tx, user.id, 'verify_email', challenge);
         await tx.auditEvent.create({

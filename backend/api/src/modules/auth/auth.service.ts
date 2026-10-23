@@ -13,6 +13,9 @@ import {
 } from './domain/auth.repository';
 import { AuthCrypto } from './infrastructure/auth-crypto';
 
+/** Version of the Terms and Privacy policy people agree to at sign-up. */
+export const TERMS_VERSION = '2026-10';
+
 export const accepted = {
   message: 'If the account is eligible, an email will be sent.',
 };
@@ -55,6 +58,7 @@ export class AuthService {
       email,
       passwordHash,
       this.challenge('verify_email'),
+      { acceptedAt: new Date(), version: TERMS_VERSION },
     );
     return accepted;
   }

@@ -16,6 +16,11 @@ export interface Session {
   createdAt: Date;
   expiresAt: Date;
 }
+/** When the person agreed, and to which version of the Terms and Privacy policy. */
+export interface TermsConsent {
+  acceptedAt: Date;
+  version: string;
+}
 export interface MailJob {
   id: string;
   email: string;
@@ -28,6 +33,7 @@ export interface AuthRepository {
     email: string,
     passwordHash: string,
     challenge: EmailChallenge,
+    terms: TermsConsent,
   ): Promise<void>;
   findUser(email: string): Promise<AuthUser | null>;
   issueChallenge(
