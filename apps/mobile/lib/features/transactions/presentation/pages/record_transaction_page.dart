@@ -12,10 +12,19 @@ import '../widgets/transaction_editor.dart';
 /// Target of the + button: opens the transaction editor as a modal, without
 /// the transaction list underneath.
 class RecordTransactionPage extends StatefulWidget {
-  const RecordTransactionPage({this.type, super.key});
+  const RecordTransactionPage({
+    this.type,
+    this.fromAccountId,
+    this.toAccountId,
+    super.key,
+  });
 
   /// Preselected type from `/record?type=income|transfer`.
   final TransactionType? type;
+
+  /// Preselected wallets from `/record?from=<id>&to=<id>`.
+  final String? fromAccountId;
+  final String? toAccountId;
 
   @override
   State<RecordTransactionPage> createState() => _RecordTransactionPageState();
@@ -36,7 +45,12 @@ class _RecordTransactionPageState extends State<RecordTransactionPage> {
     builder: (context, _) {
       final s = S.of(context);
       if (model.composerReady && model.preferredAccountId() != null) {
-        return TransactionEditor(model: model, initialType: widget.type);
+        return TransactionEditor(
+          model: model,
+          initialType: widget.type,
+          fromAccountId: widget.fromAccountId,
+          toAccountId: widget.toAccountId,
+        );
       }
       final waiting = !model.composerReady && model.failure == null;
       return Scaffold(

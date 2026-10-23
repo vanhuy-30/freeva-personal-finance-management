@@ -337,21 +337,28 @@ describe('BE-P1-005 HTTP + PostgreSQL', () => {
     const list = async (query: string) => {
       const res = await request('GET', `?${query}`);
       expect(res.status).toBe(200);
-      return res.body as { total: number; items: { id: string }[]; summary: { count: number; totals: { currency: string; incomeMinor: string; expenseMinor: string }[] } };
+      return res.body as { total: number; items: { id: string }[]; summary: { count: number; totals: { currency: string; incomeMinor: string; expenseMinor: string; transferInMinor: string; transferOutMinor: string }[] } };
     };
     const all = await list('');
     expect(all.total).toBe(7);
     expect(all.summary.count).toBe(6);
     expect(all.summary.totals).toEqual([
-      { currency: 'USD', incomeMinor: '1250', expenseMinor: '0' },
-      { currency: 'VND', incomeMinor: '18500000', expenseMinor: '-114000' },
+      { currency: 'USD', incomeMinor: '1250', expenseMinor: '0', transferInMinor: '0', transferOutMinor: '0' },
+      { currency: 'VND', incomeMinor: '18500000', expenseMinor: '-114000', transferInMinor: '500000', transferOutMinor: '-500000' },
     ]);
     const paged = await list('pageSize=1');
     expect(paged.items).toHaveLength(1);
     expect(paged.summary.count).toBe(6);
     const wallets = await list(`accountId=${cash.id}&accountId=${bank.id}&type=expense`);
     expect(new Set(wallets.items.map(item => item.id))).toEqual(new Set([pho.legs[0].id, grab.legs[0].id]));
-    expect(wallets.summary.totals).toEqual([{ currency: 'VND', incomeMinor: '0', expenseMinor: '-113000' }]);
+    expect(wallets.summary.totals).toEqual([{ currency: 'VND', incomeMinor: '0', expenseMinor: '-113000', transferInMinor: '0', transferOutMinor: '0' }]);
+    // One wallet: its transfer legs show as money in and out, apart from income/expense.
+    expect((await list(`accountId=${bank.id}`)).summary.totals).toEqual([
+      { currency: 'VND', incomeMinor: '18500000', expenseMinor: '-48000', transferInMinor: '0', transferOutMinor: '-500000' },
+    ]);
+    expect((await list(`accountId=${cash.id}&type=transfer`)).summary.totals).toEqual([
+      { currency: 'VND', incomeMinor: '0', expenseMinor: '0', transferInMinor: '500000', transferOutMinor: '0' },
+    ]);
     expect((await list(`categoryId=${food.id}&categoryId=${bus.id}`)).summary.count).toBe(3);
     expect((await list(`tagId=${trip.id}`)).items.map(item => item.id)).toEqual([grab.legs[0].id]);
     expect((await list(`tagId=${trip.id}&tagId=${work.id}`)).summary.count).toBe(2);

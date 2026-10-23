@@ -42,8 +42,10 @@ Canvas: trang **05 · Patterns**, hàng D
 |---|---|
 | Tổng số dư và ví đã ẩn | Đã chốt ở `DS-P2-003`: API net-worth bỏ ví đã ẩn khỏi tổng, khớp "· 4 ví". |
 | Ví có giao dịch hay chưa | Cần cờ từ API để khoá loại/tiền tệ trước khi người dùng sửa, thay vì báo lỗi lúc lưu. |
-| Kéo để sắp xếp | Mobile hiện chỉ có lên/xuống từng bước; kéo cần cập nhật nhiều `sortOrder` một lần. |
-| Ngày đến hạn kế tiếp, "còn N ngày" | Tính từ `dueDay` và múi giờ hồ sơ. |
+| Kéo để sắp xếp | Xong (D1): `PUT /financial-accounts/order` lưu cả thứ tự một lần. Kéo dùng `ReorderableListView`: chỗ thả là khoảng trống, chưa có ô viền đứt `tint.blue`. |
+| Ngày đến hạn kế tiếp, "còn N ngày" | Tính từ `dueDay` theo ngày trên máy, cùng cách khối thẻ ở Tổng quan (chưa theo múi giờ hồ sơ). |
+| Vào / Ra tháng | Chốt 2026-10-23: tính cả chuyển ví vào/ra. `summary` thêm `transferInMinor` / `transferOutMinor`. |
+| Dòng chuyển ví trong chi tiết ví | API lọc theo ví chỉ trả leg của ví đó, nên dòng chưa ghi "Sang MoMo"; tiêu đề là ghi chú hoặc "Chuyển ví". |
 | Trả thẻ | Là Chuyển ví với ví đích là thẻ; hai leg cân bằng như mọi chuyển ví. |
 | Toast Hoàn tác khi ẩn | Hoàn tác = khôi phục ngay. |
 | Copy l10n | Thay các chuỗi `wallet*` dài hiện có (`walletMoneyHint`, `walletEditHint`, `walletHideExplanation`…) bằng chữ ngắn ở trên. |

@@ -12,6 +12,7 @@ Tất cả endpoint `/api/v1/financial-accounts` yêu cầu Bearer session ngư�
 | `GET /` | `{items,page,pageSize,total}`; mặc định page 1 / pageSize 50, tối đa 100; `status=active` mặc định, hoặc `archived`, `all` |
 | `GET /{id}` | Chi tiết và số dư, kể cả ví đã lưu trữ |
 | `PATCH /{id}` | Sửa từng trường, bắt buộc version hiện tại; `archived: false` khôi phục, `true` lưu trữ |
+| `PUT /order` | `{items:[{id,version}]}` liệt kê **mọi** ví đang dùng đúng một lần theo thứ tự mới; trả `{items}` theo thứ tự mới (`DS-P2-003`) |
 | `DELETE /{id}?version=…` | Lưu trữ, trả `204`; không hard-delete hoặc thay đổi giao dịch |
 
 List sắp xếp `sortOrder`, `createdAt`, `id` tăng dần. Timestamp ISO 8601; tiền là string integer. Currency lấy từ catalog hiện có (`GET /api/v1/profile/options`), không tự thêm mã tiền tệ từ request.
@@ -27,6 +28,7 @@ Tên trim, 1–100 ký tự; `sortOrder` 0–2147483647, mặc định 0. Số t
 - Update/archive/restore khóa hàng theo owner và kiểm tra version trong transaction. Mỗi write thành công tăng version, kể cả no-op; lưu trữ lại giữ nguyên archivedAt. Version đầu vào 1–2147483646; version cuối có thể đạt 2147483647.
 - Retry transaction tối đa 3 lần sau serialization/deadlock; create retry khi đụng unique. Hai request update cùng version chỉ một request thành công, request còn lại nhận conflict.
 - `clientId` UUID bắt buộc, unique theo owner. Retry POST so sánh các trường tạo sau chuẩn hóa với **giá trị hiện tại**: tên đã trim, UUID lowercase, tiền bigint, defaults 0/null. Nếu khớp, trả ví hiện có cùng số dư/version/trạng thái hiện tại; nếu đã sửa khác payload tạo thì trả `409`. Không lưu snapshot payload ban đầu, không tự khôi phục ví khi replay.
+- `PUT /order` khóa mọi ví đang dùng của owner theo `id` rồi gán `sortOrder` = vị trí trong một transaction; chỉ ví đổi vị trí mới tăng version. Thiếu/thừa ví, ví đã lưu trữ hoặc của người khác, version cũ → `409` để client tải lại; id trùng → `400`. Không ghi một phần.
 - `BE-P1-005` đã thêm [writer giao dịch](transactions.md), khóa ví và kiểm tra owner/currency/trạng thái trong transaction. Writer update updatedAt ví để invalidation snapshot ngăn race đổi type/currency trước lịch sử; không tăng version cấu hình ví.
 
 ## Lỗi và quyền riêng tư

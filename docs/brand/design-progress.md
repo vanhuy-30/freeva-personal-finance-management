@@ -30,7 +30,7 @@ Thứ tự đã chốt: nền tảng → B → C → D → E → F → G → A �
 | Nền tảng (`DS-P2-002`) | Xong | Token → Dart, theme, Inter, Lucide, component trong `lib/core/widgets/`, khung 4 tab + nút +, gallery `/debug/gallery`, golden light/dark |
 | B Tổng quan | Xong | 8 trạng thái, `User.displayName`, net-worth bỏ ví đã ẩn, ẩn số dư chỉ ẩn số dư |
 | C Giao dịch | Xong | API lọc nhiều ví/danh mục/nhãn, tìm cửa hàng, `summary`; giờ giao dịch tách `BE-P2-E09` |
-| D Ví | Chưa | |
+| D Ví | D1 xong, D2 chưa | D1: danh sách, sắp xếp (`PUT /financial-accounts/order`), chi tiết ví (Vào/Ra tính cả chuyển ví qua `summary.transferIn/OutMinor`), chi tiết thẻ, ví đã ẩn. D2: thêm/sửa ví, popup ngày, cờ `hasTransactions` |
 | E Danh mục | Chưa | |
 | F Báo cáo | Chưa | |
 | G Cá nhân/Cài đặt | Chưa | |

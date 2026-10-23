@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { FINANCIAL_ACCOUNT_REPOSITORY, type FinancialAccountRepository } from './domain/financial-account.repository';
 import { minor, validateCredit, type AccountPatch, type FinancialAccount } from './domain/financial-account';
-import type { AccountQueryDto, CreateAccountDto, UpdateAccountDto } from './financial-account.dto';
+import type { AccountQueryDto, CreateAccountDto, ReorderAccountsDto, UpdateAccountDto } from './financial-account.dto';
 
 function response(account: FinancialAccount) {
   return {
@@ -40,6 +40,10 @@ export class FinancialAccountService {
     if (initialBalanceMinor !== undefined) patch.initialBalanceMinor = minor(initialBalanceMinor);
     if (creditLimitMinor !== undefined) patch.creditLimitMinor = creditLimitMinor === null ? null : minor(creditLimitMinor);
     return response(await this.repository.update(userId, id, patch));
+  }
+  async reorder(userId: string, dto: ReorderAccountsDto) {
+    const items = await this.repository.reorder(userId, dto.items.map(item => ({ id: item.id.toLowerCase(), version: item.version })));
+    return { items: items.map(response) };
   }
   async archive(userId: string, id: string, version: number): Promise<void> {
     await this.repository.update(userId, id, { version, archived: true });

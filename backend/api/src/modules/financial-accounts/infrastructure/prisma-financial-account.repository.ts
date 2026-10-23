@@ -3,8 +3,8 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../../infrastructure/prisma/prisma.service';
 import type { FinancialAccountRepository } from '../domain/financial-account.repository';
 import {
-  AccountError, sameCreate, updatedFields,
-  type AccountPatch, type AccountQuery, type CreateAccount, type FinancialAccount,
+  AccountError, reorderedPositions, sameCreate, updatedFields,
+  type AccountOrderItem, type AccountPatch, type AccountQuery, type CreateAccount, type FinancialAccount,
 } from '../domain/financial-account';
 
 const select = {
@@ -109,6 +109,25 @@ export class PrismaFinancialAccountRepository implements FinancialAccountReposit
         }, select,
       });
       return (await this.balances(tx, userId, [saved]))[0];
+    });
+  }
+
+  reorder(userId: string, items: AccountOrderItem[]) {
+    return this.snapshot(async tx => {
+      // Lock every active account in a fixed order so concurrent reorders and edits serialize without deadlock.
+      await tx.$queryRaw`
+        SELECT id FROM "FinancialAccount" WHERE "userId" = ${userId}::uuid AND "archivedAt" IS NULL ORDER BY id FOR UPDATE
+      `;
+      const active = await tx.financialAccount.findMany({ where: { userId, archivedAt: null }, select });
+      for (const change of reorderedPositions(active, items)) {
+        await tx.financialAccount.update({
+          where: { id: change.id, userId }, data: { sortOrder: change.sortOrder, version: { increment: 1 } },
+        });
+      }
+      const rows = await tx.financialAccount.findMany({
+        where: { userId, archivedAt: null }, select, orderBy: [{ sortOrder: 'asc' }, { createdAt: 'asc' }, { id: 'asc' }],
+      });
+      return this.balances(tx, userId, rows);
     });
   }
 }

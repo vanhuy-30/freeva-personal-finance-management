@@ -2,8 +2,8 @@ import 'reflect-metadata';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { randomUUID } from 'node:crypto';
-import { minor, sameCreate, updatedFields, validateCredit, type FinancialAccount } from './domain/financial-account';
-import { CreateAccountDto, UpdateAccountDto } from './financial-account.dto';
+import { minor, reorderedPositions, sameCreate, updatedFields, validateCredit, type FinancialAccount } from './domain/financial-account';
+import { CreateAccountDto, ReorderAccountsDto, UpdateAccountDto } from './financial-account.dto';
 
 const current: FinancialAccount = {
   id: randomUUID(), clientId: randomUUID(), name: 'Ví', type: 'cash', currencyCode: 'VND',
@@ -49,5 +49,23 @@ describe('BE-P1-004 account rules', () => {
     }
     expect(await validate(plainToInstance(UpdateAccountDto, { version: 1, creditLimitMinor: null, statementCloseDay: null }))).toHaveLength(0);
     expect((await validate(plainToInstance(UpdateAccountDto, { version: 1, userId: randomUUID() }), { whitelist: true, forbidNonWhitelisted: true })).length).toBeGreaterThan(0);
+  });
+  it('reorders only moved accounts and rejects stale or partial lists', () => {
+    const [a, b, c] = ['a', 'b', 'c'].map((id, sortOrder) => ({ id, version: 3, sortOrder }));
+    expect(reorderedPositions([a, b, c], [{ id: 'a', version: 3 }, { id: 'c', version: 3 }, { id: 'b', version: 3 }]))
+      .toEqual([{ id: 'c', sortOrder: 1 }, { id: 'b', sortOrder: 2 }]);
+    expect(reorderedPositions([a, b], [{ id: 'a', version: 3 }, { id: 'b', version: 3 }])).toEqual([]);
+    expect(() => reorderedPositions([a, b], [{ id: 'a', version: 3 }, { id: 'a', version: 3 }])).toThrow('VALIDATION_ERROR');
+    expect(() => reorderedPositions([a, b, c], [{ id: 'b', version: 3 }, { id: 'a', version: 3 }])).toThrow('ACCOUNT_CONFLICT');
+    expect(() => reorderedPositions([a, b], [{ id: 'b', version: 2 }, { id: 'a', version: 3 }])).toThrow('ACCOUNT_CONFLICT');
+    expect(() => reorderedPositions([a, b], [{ id: 'b', version: 3 }, { id: 'x', version: 3 }])).toThrow('ACCOUNT_CONFLICT');
+    expect(() => reorderedPositions([{ ...a, version: 2147483647 }, b], [{ id: 'b', version: 3 }, { id: 'a', version: 2147483647 }]))
+      .toThrow('ACCOUNT_CONFLICT');
+  });
+  it('validates the reorder body', async () => {
+    expect(await validate(plainToInstance(ReorderAccountsDto, { items: [{ id: randomUUID(), version: 1 }] }))).toHaveLength(0);
+    for (const items of [[], [{ id: 'x', version: 1 }], [{ id: randomUUID(), version: 0 }], 'a']) {
+      expect((await validate(plainToInstance(ReorderAccountsDto, { items }))).length).toBeGreaterThan(0);
+    }
   });
 });

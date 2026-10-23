@@ -359,34 +359,10 @@ class SVi extends S {
       'Khi ví có giao dịch, không thể đổi loại ví hoặc tiền tệ. Sửa số dư ban đầu chỉ dùng để đính chính.';
 
   @override
-  String get walletShowHidden => 'Xem ví đã ẩn';
-
-  @override
   String get walletHide => 'Ẩn ví';
 
   @override
-  String get walletRestore => 'Khôi phục ví';
-
-  @override
-  String get walletHideExplanation =>
-      'Ẩn ví là lưu trữ ví khỏi danh sách đang dùng. Số dư và lịch sử vẫn được giữ lại; có thể khôi phục sau.';
-
-  @override
-  String get walletMoveUp => 'Di chuyển lên';
-
-  @override
-  String get walletMoveDown => 'Di chuyển xuống';
-
-  @override
-  String get walletEmpty => 'Chưa có ví. Thêm ví đầu tiên để bắt đầu.';
-
-  @override
   String get walletHiddenEmpty => 'Không có ví đã ẩn.';
-
-  @override
-  String walletBalance(String amount, String currency) {
-    return 'Số dư: $amount $currency';
-  }
 
   @override
   String get walletInvalid =>
@@ -1470,4 +1446,148 @@ class SVi extends S {
 
   @override
   String get txRateInvalid => 'Tỷ giá chưa hợp lệ với số tiền này.';
+
+  @override
+  String walletTotal(int count) {
+    return 'Tổng số dư · $count ví';
+  }
+
+  @override
+  String walletOtherTotal(String amount, int count) {
+    return '$amount · $count ví';
+  }
+
+  @override
+  String get walletSort => 'Sắp xếp';
+
+  @override
+  String get walletSortTitle => 'Sắp xếp ví';
+
+  @override
+  String get walletSortHint => 'Giữ và kéo, hoặc dùng mũi tên.';
+
+  @override
+  String get walletSortDone => 'Xong';
+
+  @override
+  String walletMoveUpNamed(String name) {
+    return 'Đưa $name lên';
+  }
+
+  @override
+  String walletMoveDownNamed(String name) {
+    return 'Đưa $name xuống';
+  }
+
+  @override
+  String get walletSortFailed => 'Chưa lưu được thứ tự. Thử lại nhé.';
+
+  @override
+  String get walletHiddenTitle => 'Ví đã ẩn';
+
+  @override
+  String get walletHiddenHint =>
+      'Lịch sử vẫn giữ, khôi phục lúc nào cũng được.';
+
+  @override
+  String get walletRestoreShort => 'Khôi phục';
+
+  @override
+  String walletRestored(String name) {
+    return 'Đã khôi phục $name';
+  }
+
+  @override
+  String walletRestoreNamed(String name) {
+    return 'Khôi phục $name';
+  }
+
+  @override
+  String walletDueOn(String date) {
+    return 'đến hạn $date';
+  }
+
+  @override
+  String walletTypeCurrency(String type, String currency) {
+    return '$type · $currency';
+  }
+
+  @override
+  String walletMonthIn(String month) {
+    return 'Vào tháng $month';
+  }
+
+  @override
+  String walletMonthOut(String month) {
+    return 'Ra tháng $month';
+  }
+
+  @override
+  String get walletRecordFrom => 'Ghi từ ví này';
+
+  @override
+  String get walletTransfer => 'Chuyển ví';
+
+  @override
+  String get walletEditCard => 'Sửa thẻ';
+
+  @override
+  String get walletNoTransactions => 'Chưa có giao dịch';
+
+  @override
+  String get walletNoTransactionsBody => 'Ghi khoản đầu tiên từ ví này.';
+
+  @override
+  String get creditNoTransactionsBody => 'Ghi khoản đầu tiên từ thẻ này.';
+
+  @override
+  String get walletNotFound => 'Không tìm thấy ví này';
+
+  @override
+  String get walletEmptyTitle => 'Chưa có ví';
+
+  @override
+  String get walletEmptyBody => 'Thêm ví đầu tiên để bắt đầu ghi.';
+
+  @override
+  String get creditDebtLabel => 'Dư nợ · Thẻ tín dụng';
+
+  @override
+  String get creditAvailableLabel => 'Còn dùng được';
+
+  @override
+  String creditLimit(String amount) {
+    return 'Hạn mức $amount';
+  }
+
+  @override
+  String get creditDueTitle => 'Đến hạn thanh toán';
+
+  @override
+  String creditDaysLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'còn $count ngày',
+      zero: 'hôm nay',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get creditCloseTitle => 'Ngày chốt sao kê';
+
+  @override
+  String creditCloseValue(int day) {
+    return 'Ngày $day hằng tháng';
+  }
+
+  @override
+  String get creditNotSet => 'Chưa đặt';
+
+  @override
+  String get creditRecordFrom => 'Ghi từ thẻ này';
+
+  @override
+  String get creditPay => 'Trả thẻ';
 }

@@ -16,4 +16,7 @@ abstract class WalletRepository {
     bool? archived,
     int? sortOrder,
   });
+
+  /// Saves the order of all [active] wallets at once; returns them reordered.
+  Future<Either<AuthFailure, List<Wallet>>> reorder(List<Wallet> active);
 }

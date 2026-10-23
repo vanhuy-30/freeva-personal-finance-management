@@ -274,6 +274,26 @@ describe('BE-P1-004 HTTP + PostgreSQL', () => {
     expect((await request()).body.items[0].id).toBe(first.id);
   });
 
+  it('reorders all active accounts at once and rejects stale lists', async () => {
+    const [first, second, third] = [await create(), await create(), await create()];
+    const hidden = await create();
+    expect((await request('PATCH', `/${hidden.id}`, { version: 1, archived: true })).status).toBe(200);
+    const order = [third, first, second].map(account => ({ id: account.id, version: account.version }));
+    const moved = await request('PUT', '/order', { items: order });
+    expect(moved.status).toBe(200);
+    expect(moved.body.items.map((item: { id: string; sortOrder: number }) => [item.id, item.sortOrder]))
+      .toEqual([[third.id, 0], [first.id, 1], [second.id, 2]]);
+    // All start at sortOrder 0; only accounts whose position changed get a new version.
+    expect(moved.body.items.map((item: { version: number }) => item.version)).toEqual([1, 2, 2]);
+    expect((await request()).body.items.map((item: { id: string }) => item.id)).toEqual([third.id, first.id, second.id]);
+    expect((await request('PUT', '/order', { items: order })).status).toBe(409);
+    expect((await request('PUT', '/order', { items: moved.body.items.slice(0, 2).map((item: { id: string; version: number }) => ({ id: item.id, version: item.version })) })).status).toBe(409);
+    expect((await request('PUT', '/order', { items: [{ id: hidden.id, version: 2 }] })).status).toBe(409);
+    expect((await request('PUT', '/order', { items: [{ id: third.id, version: 2 }, { id: third.id, version: 2 }] })).status).toBe(400);
+    expect((await request('PUT', '/order', { items: moved.body.items.map((item: { id: string; version: number }) => ({ id: item.id, version: item.version })) }, otherToken)).status).toBe(409);
+    expect((await request('PUT', '/order', { items: order }, '')).status).toBe(401);
+  });
+
   it('keeps financial data out of HTTP logs and sanitizes infrastructure failures', async () => {
     const account = await create({ name: 'secret-wallet-name', initialBalanceMinor: '87654321987654321' });
     await request('GET', `/${account.id}`);

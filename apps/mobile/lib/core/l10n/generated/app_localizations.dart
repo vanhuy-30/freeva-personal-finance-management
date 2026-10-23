@@ -733,59 +733,17 @@ abstract class S {
   /// **'Wallet type and currency cannot change once transactions exist. Edit the initial balance only to correct it.'**
   String get walletEditHint;
 
-  /// No description provided for @walletShowHidden.
-  ///
-  /// In en, this message translates to:
-  /// **'Show hidden wallets'**
-  String get walletShowHidden;
-
   /// No description provided for @walletHide.
   ///
   /// In en, this message translates to:
   /// **'Hide wallet'**
   String get walletHide;
 
-  /// No description provided for @walletRestore.
-  ///
-  /// In en, this message translates to:
-  /// **'Restore wallet'**
-  String get walletRestore;
-
-  /// No description provided for @walletHideExplanation.
-  ///
-  /// In en, this message translates to:
-  /// **'Hiding archives the wallet from the active list. Its balance and history are preserved and it can be restored later.'**
-  String get walletHideExplanation;
-
-  /// No description provided for @walletMoveUp.
-  ///
-  /// In en, this message translates to:
-  /// **'Move up'**
-  String get walletMoveUp;
-
-  /// No description provided for @walletMoveDown.
-  ///
-  /// In en, this message translates to:
-  /// **'Move down'**
-  String get walletMoveDown;
-
-  /// No description provided for @walletEmpty.
-  ///
-  /// In en, this message translates to:
-  /// **'No wallets yet. Add your first wallet to get started.'**
-  String get walletEmpty;
-
   /// No description provided for @walletHiddenEmpty.
   ///
   /// In en, this message translates to:
   /// **'No hidden wallets.'**
   String get walletHiddenEmpty;
-
-  /// No description provided for @walletBalance.
-  ///
-  /// In en, this message translates to:
-  /// **'Balance: {amount} {currency}'**
-  String walletBalance(String amount, String currency);
 
   /// No description provided for @walletInvalid.
   ///
@@ -2736,6 +2694,228 @@ abstract class S {
   /// In en, this message translates to:
   /// **'This rate doesn\'t work for this amount.'**
   String get txRateInvalid;
+
+  /// No description provided for @walletTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total balance · {count, plural, =1{1 wallet} other{{count} wallets}}'**
+  String walletTotal(int count);
+
+  /// No description provided for @walletOtherTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} · {count, plural, =1{1 wallet} other{{count} wallets}}'**
+  String walletOtherTotal(String amount, int count);
+
+  /// No description provided for @walletSort.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort'**
+  String get walletSort;
+
+  /// No description provided for @walletSortTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrange wallets'**
+  String get walletSortTitle;
+
+  /// No description provided for @walletSortHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold and drag, or use the arrows.'**
+  String get walletSortHint;
+
+  /// No description provided for @walletSortDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get walletSortDone;
+
+  /// No description provided for @walletMoveUpNamed.
+  ///
+  /// In en, this message translates to:
+  /// **'Move {name} up'**
+  String walletMoveUpNamed(String name);
+
+  /// No description provided for @walletMoveDownNamed.
+  ///
+  /// In en, this message translates to:
+  /// **'Move {name} down'**
+  String walletMoveDownNamed(String name);
+
+  /// No description provided for @walletSortFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save the order. Try again.'**
+  String get walletSortFailed;
+
+  /// No description provided for @walletHiddenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden wallets'**
+  String get walletHiddenTitle;
+
+  /// No description provided for @walletHiddenHint.
+  ///
+  /// In en, this message translates to:
+  /// **'History stays. Restore any time.'**
+  String get walletHiddenHint;
+
+  /// No description provided for @walletRestoreShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get walletRestoreShort;
+
+  /// No description provided for @walletRestored.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is back'**
+  String walletRestored(String name);
+
+  /// No description provided for @walletRestoreNamed.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore {name}'**
+  String walletRestoreNamed(String name);
+
+  /// No description provided for @walletDueOn.
+  ///
+  /// In en, this message translates to:
+  /// **'due {date}'**
+  String walletDueOn(String date);
+
+  /// No description provided for @walletTypeCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'{type} · {currency}'**
+  String walletTypeCurrency(String type, String currency);
+
+  /// No description provided for @walletMonthIn.
+  ///
+  /// In en, this message translates to:
+  /// **'In, month {month}'**
+  String walletMonthIn(String month);
+
+  /// No description provided for @walletMonthOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Out, month {month}'**
+  String walletMonthOut(String month);
+
+  /// No description provided for @walletRecordFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Record from here'**
+  String get walletRecordFrom;
+
+  /// No description provided for @walletTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer'**
+  String get walletTransfer;
+
+  /// No description provided for @walletEditCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit card'**
+  String get walletEditCard;
+
+  /// No description provided for @walletNoTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'No transactions yet'**
+  String get walletNoTransactions;
+
+  /// No description provided for @walletNoTransactionsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Record the first one from this wallet.'**
+  String get walletNoTransactionsBody;
+
+  /// No description provided for @creditNoTransactionsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Record the first one from this card.'**
+  String get creditNoTransactionsBody;
+
+  /// No description provided for @walletNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'This wallet isn\'t here'**
+  String get walletNotFound;
+
+  /// No description provided for @walletEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No wallets yet'**
+  String get walletEmptyTitle;
+
+  /// No description provided for @walletEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your first wallet to start.'**
+  String get walletEmptyBody;
+
+  /// No description provided for @creditDebtLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance owed · Credit card'**
+  String get creditDebtLabel;
+
+  /// No description provided for @creditAvailableLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get creditAvailableLabel;
+
+  /// No description provided for @creditLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Limit {amount}'**
+  String creditLimit(String amount);
+
+  /// No description provided for @creditDueTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment due'**
+  String get creditDueTitle;
+
+  /// No description provided for @creditDaysLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{today} =1{1 day left} other{{count} days left}}'**
+  String creditDaysLeft(int count);
+
+  /// No description provided for @creditCloseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Statement closes'**
+  String get creditCloseTitle;
+
+  /// No description provided for @creditCloseValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Day {day} each month'**
+  String creditCloseValue(int day);
+
+  /// No description provided for @creditNotSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get creditNotSet;
+
+  /// No description provided for @creditRecordFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Record from card'**
+  String get creditRecordFrom;
+
+  /// No description provided for @creditPay.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay card'**
+  String get creditPay;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

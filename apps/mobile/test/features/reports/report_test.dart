@@ -287,6 +287,10 @@ class _Wallets implements WalletRepository {
     bool? archived,
     int? sortOrder,
   }) => throw UnimplementedError();
+
+  @override
+  Future<Either<AuthFailure, List<Wallet>>> reorder(List<Wallet> active) =>
+      throw UnimplementedError();
 }
 
 class _Categories implements CategoryRepository {

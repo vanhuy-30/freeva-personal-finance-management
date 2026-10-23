@@ -5,6 +5,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../auth/domain/auth_repository.dart';
 import '../../../auth/presentation/viewmodels/auth_view_model.dart';
+import '../../../profile/presentation/viewmodels/profile_view_model.dart';
 import '../../domain/wallet.dart';
 import '../../domain/wallet_use_cases.dart';
 
@@ -14,21 +15,51 @@ abstract class WalletViewModel extends ChangeNotifier {
   bool get busy;
   bool get needsReload;
   AuthFailure? get failure;
+
+  /// Profile currency: the "Tổng số dư" headline.
+  String get mainCurrency;
+
+  /// Local date for "còn N ngày" (same clock as Overview).
+  DateTime get today;
+  List<Wallet> get active => [
+    for (final w in wallets)
+      if (!w.archived) w,
+  ];
+  List<Wallet> get hidden => [
+    for (final w in wallets)
+      if (w.archived) w,
+  ];
+  Wallet? byId(String id) => wallets.where((w) => w.id == id).firstOrNull;
+  WalletCurrency? currencyOf(Wallet wallet) =>
+      currencies.where((c) => c.code == wallet.draft.currency).firstOrNull;
   String newClientId();
   Future<void> load();
   Future<bool> save(WalletDraft draft, String clientId, {Wallet? wallet});
-  Future<void> archive(Wallet wallet);
-  Future<void> move(Wallet wallet, int offset);
+
+  /// Hides an active wallet or restores a hidden one. Undo calls it again
+  /// with the returned copy.
+  Future<bool> archive(Wallet wallet);
+
+  /// Saves [ordered] (every active wallet) as the new order in one request.
+  Future<bool> reorder(List<Wallet> ordered);
 }
 
 @LazySingleton(as: WalletViewModel)
 class DefaultWalletViewModel extends WalletViewModel {
-  DefaultWalletViewModel(this._cases, this._auth) {
+  DefaultWalletViewModel(
+    this._cases,
+    this._auth, [
+    this._profile,
+    @ignoreParam DateTime Function()? clock,
+  ]) : _clock = clock ?? DateTime.now {
     _stage = _auth.stage;
     _auth.addListener(_authChanged);
+    _profile?.addListener(notifyListeners);
   }
   final WalletUseCases _cases;
   final AuthViewModel _auth;
+  final ProfileViewModel? _profile;
+  final DateTime Function() _clock;
   late AuthStage _stage;
   int _epoch = 0;
   @override
@@ -41,6 +72,10 @@ class DefaultWalletViewModel extends WalletViewModel {
   bool needsReload = false;
   @override
   AuthFailure? failure;
+  @override
+  String get mainCurrency => _profile?.saved?.currency ?? 'VND';
+  @override
+  DateTime get today => _clock();
   void _authChanged() {
     if (_stage == _auth.stage) return;
     _stage = _auth.stage;
@@ -138,63 +173,53 @@ class DefaultWalletViewModel extends WalletViewModel {
   }
 
   @override
-  Future<void> archive(Wallet wallet) async {
-    if (!_canWrite) return;
+  Future<bool> archive(Wallet wallet) async {
+    if (!_canWrite) return false;
     final epoch = ++_epoch;
     busy = true;
     failure = null;
     notifyListeners();
     final result = await _cases.update(wallet, archived: !wallet.archived);
-    if (epoch != _epoch) return;
+    if (epoch != _epoch) return false;
     result.fold((e) {
       needsReload = true;
       _fail(e);
     }, _replace);
-    if (epoch != _epoch) return;
+    if (epoch != _epoch) return false;
     busy = false;
     notifyListeners();
+    return result.isRight();
   }
 
   @override
-  Future<void> move(Wallet wallet, int offset) async {
-    if (!_canWrite || wallet.archived) return;
-    final ordered = wallets.where((w) => !w.archived).toList();
-    final index = ordered.indexWhere((w) => w.id == wallet.id);
-    final target = index + offset;
-    if (index < 0 || target < 0 || target >= ordered.length) return;
-    ordered.insert(target, ordered.removeAt(index));
+  Future<bool> reorder(List<Wallet> ordered) async {
+    if (!_canWrite) return false;
+    if (listEquals(
+      [for (final w in active) w.id],
+      [for (final w in ordered) w.id],
+    )) {
+      return true;
+    }
     final epoch = ++_epoch;
     busy = true;
     failure = null;
     notifyListeners();
-    // API has no atomic reorder. Preserve each returned version; stop on any
-    // failure and require a reload before another mutation.
-    for (var i = 0; i < ordered.length; i++) {
-      if (ordered[i].sortOrder == i) continue;
-      final result = await _cases.update(ordered[i], sortOrder: i);
-      if (epoch != _epoch) return;
-      result.fold((e) {
-        needsReload = true;
-        _fail(e);
-      }, _replace);
-      if (epoch != _epoch) return;
-      if (result.isLeft()) break;
-    }
-    if (failure == null) {
-      final byId = {for (final w in wallets) w.id: w};
-      wallets = List.unmodifiable([
-        ...ordered.map((w) => byId[w.id]!),
-        ...wallets.where((w) => w.archived),
-      ]);
-    }
+    final result = await _cases.reorder(ordered);
+    if (epoch != _epoch) return false;
+    result.fold((e) {
+      needsReload = e.code == AuthError.conflict;
+      _fail(e);
+    }, (saved) => wallets = List.unmodifiable([...saved, ...hidden]));
     busy = false;
     notifyListeners();
+    return result.isRight();
   }
 
   @override
   void dispose() {
     _epoch++;
     _auth.removeListener(_authChanged);
+    _profile?.removeListener(notifyListeners);
     super.dispose();
   }
 }

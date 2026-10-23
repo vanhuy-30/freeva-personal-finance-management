@@ -3,6 +3,14 @@
 Home → **Ví của tôi** (`/wallets`, qua AuthGate). Dùng contract hiện có của
 [BE-P1-004](financial-accounts.md); không đổi API hoặc migration.
 
+> **UI v2 (`DS-P2-003`, nhóm D):** màn và luồng theo
+> [D-wallets.md](../brand/patterns/D-wallets.md). D1 đã thay danh sách,
+> sắp xếp, chi tiết ví, chi tiết thẻ và ví đã ẩn (`/wallets`, `/wallets/sort`,
+> `/wallets/hidden`, `/wallets/:id`); thêm/sửa ví vẫn là form cũ tới D2. Sắp xếp
+> nay lưu một lần qua `PUT /financial-accounts/order` (mục "Sắp xếp" dưới đây
+> mô tả cách cũ). Vào/Ra tháng của ví lấy `summary` lọc một ví, tính cả chuyển
+> ví. "Ghi từ ví này" / "Chuyển ví" / "Trả thẻ" mở `/record?from=…&to=…`.
+
 ## Hành vi
 
 - Danh sách ví đang dùng và bộ lọc ví đã ẩn; tên, loại, số dư và mã tiền tệ.

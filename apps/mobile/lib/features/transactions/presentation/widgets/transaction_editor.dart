@@ -15,6 +15,8 @@ class TransactionEditor extends StatefulWidget {
     this.initial,
     this.copy = false,
     this.initialType,
+    this.fromAccountId,
+    this.toAccountId,
     super.key,
   });
   final TransactionViewModel model;
@@ -22,6 +24,8 @@ class TransactionEditor extends StatefulWidget {
   final TransactionBundle? initial;
   final bool copy;
   final TransactionType? initialType;
+  final String? fromAccountId;
+  final String? toAccountId;
   @override
   State<TransactionEditor> createState() => _TransactionEditorState();
 }
@@ -92,6 +96,8 @@ class _TransactionEditorState extends State<TransactionEditor> {
               existing: bundle,
               copy: widget.copy,
               initialType: widget.initialType,
+              fromAccountId: widget.fromAccountId,
+              toAccountId: widget.toAccountId,
             ),
     );
   }

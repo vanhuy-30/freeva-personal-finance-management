@@ -117,4 +117,19 @@ class WalletRepositoryImpl implements WalletRepository {
       if (sortOrder != null) 'sortOrder': sortOrder,
     },
   );
+
+  @override
+  Future<Either<AuthFailure, List<Wallet>>> reorder(List<Wallet> active) =>
+      _request(
+        'PUT',
+        'financial-accounts/order',
+        (j) => List<Wallet>.unmodifiable(
+          (j['items'] as List).map((i) => _parse(i as Map<String, dynamic>)),
+        ),
+        body: {
+          'items': [
+            for (final w in active) {'id': w.id, 'version': w.version},
+          ],
+        },
+      );
 }

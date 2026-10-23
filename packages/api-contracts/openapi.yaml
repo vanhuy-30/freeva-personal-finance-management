@@ -1354,6 +1354,49 @@ paths:
           default: active
       description: Ordered by sortOrder, createdAt, id ascending. Items, balances and
         total use one database snapshot.
+  /api/v1/financial-accounts/order:
+    put:
+      operationId: reorderFinancialAccounts
+      summary: Set the order of all active financial accounts at once
+      tags:
+      - FinancialAccounts
+      security:
+      - UserBearer: []
+      description: Lists every active account exactly once, in the new order, with its current version. Each
+        account's sortOrder becomes its position; only accounts whose sortOrder changes get a new version. All
+        or nothing in one database transaction. A missing, extra, archived, foreign or stale entry returns 409
+        so the client reloads.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReorderFinancialAccounts'
+      responses:
+        '200':
+          description: Active accounts in the new order
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/FinancialAccountNoStore'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FinancialAccount'
+        '400':
+          $ref: '#/components/responses/FinancialAccountValidationError'
+        '401':
+          $ref: '#/components/responses/FinancialAccountUnauthorized'
+        '409':
+          $ref: '#/components/responses/FinancialAccountConflict'
+        '503':
+          $ref: '#/components/responses/FinancialAccountUnavailable'
   /api/v1/financial-accounts/{id}:
     parameters:
     - name: id
@@ -3296,11 +3339,11 @@ components:
           description: Transactions matching the filters; a transfer counts once.
         totals:
           type: array
-          description: Per currency, sorted by code; currencies with no income or expense are omitted. Transfers are excluded. No FX conversion.
+          description: Per currency, sorted by code; currencies with all four sums zero are omitted. Transfers are excluded from income and expense and summed apart per matching leg. No FX conversion.
           items:
             type: object
             additionalProperties: false
-            required: [currency, incomeMinor, expenseMinor]
+            required: [currency, incomeMinor, expenseMinor, transferInMinor, transferOutMinor]
             properties:
               currency:
                 type: string
@@ -3312,6 +3355,14 @@ components:
                 type: string
                 pattern: ^-?[0-9]+$
                 description: Signed (negative or zero).
+              transferInMinor:
+                type: string
+                pattern: ^-?[0-9]+$
+                description: Sum of matching transfer legs that add money (positive or zero). With one `accountId`, the money moved into that wallet.
+              transferOutMinor:
+                type: string
+                pattern: ^-?[0-9]+$
+                description: Sum of matching transfer legs that take money (negative or zero). With one `accountId`, the money moved out of that wallet.
     CreateFinancialAccount:
       type: object
       additionalProperties: false
@@ -3530,6 +3581,28 @@ components:
         updatedAt:
           type: string
           format: date-time
+    ReorderFinancialAccounts:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          minItems: 1
+          maxItems: 500
+          description: Unique account ids.
+          items:
+            type: object
+            additionalProperties: false
+            required: [id, version]
+            properties:
+              id:
+                type: string
+                format: uuid
+              version:
+                type: integer
+                minimum: 1
+                maximum: 2147483646
     FinancialAccountPage:
       type: object
       additionalProperties: false

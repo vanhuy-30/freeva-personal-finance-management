@@ -69,6 +69,25 @@ class WalletTransport implements AuthorizedApi {
     writes++;
     if (writes == failWrite) return left(const AuthFailure(AuthError.network));
     if (method == 'POST') return right({...row('new'), ...body!});
+    if (method == 'PUT' && path == 'financial-accounts/order') {
+      final items = (body!['items'] as List).cast<Map<String, dynamic>>();
+      final byId = {for (final r in rows) r['id']: r};
+      if (items.any((i) => byId[i['id']]?['version'] != i['version'])) {
+        return left(const AuthFailure(AuthError.conflict));
+      }
+      for (final (index, item) in items.indexed) {
+        final r = byId[item['id']]!;
+        if (r['sortOrder'] == index) continue;
+        r['sortOrder'] = index;
+        r['version'] = (r['version'] as int) + 1;
+      }
+      return right({
+        'items': [
+          for (final item in items)
+            Map<String, dynamic>.from(byId[item['id']]!),
+        ],
+      });
+    }
     final r = rows.firstWhere((r) => path.endsWith('/${r['id']}'));
     if (r['version'] != body!['version']) {
       return left(const AuthFailure(AuthError.conflict));
@@ -210,39 +229,52 @@ void main() {
       model.dispose();
       auth.dispose();
     });
+    test('reorder saves the whole order in one request; archive/restore use latest versions', () async {
+      final w = model.wallets;
+      expect(await model.reorder([w[0], w[2], w[1]]), isTrue);
+      expect(model.wallets.map((w) => w.id), ['a', 'c', 'b']);
+      expect(api.rows.map((r) => r['sortOrder']), [0, 2, 1]);
+      expect(api.writes, 1);
+      expect(api.calls.last.body, {
+        'items': [
+          {'id': 'a', 'version': 1},
+          {'id': 'c', 'version': 1},
+          {'id': 'b', 'version': 1},
+        ],
+      });
+      expect(await model.reorder(model.active), isTrue);
+      expect(api.writes, 1);
+      await model.archive(model.wallets[1]);
+      final hidden = model.wallets.firstWhere((w) => w.id == 'c');
+      expect(hidden.archived, true);
+      await model.archive(hidden);
+      expect(model.wallets.firstWhere((w) => w.id == 'c').archived, false);
+      expect(model.failure, isNull);
+    });
     test(
-      'reorder handles equal sortOrder and archive/restore use latest versions',
+      'stale reorder needs a reload; a network failure keeps the old order',
       () async {
-        await model.move(model.wallets[2], -1);
-        expect(model.wallets.map((w) => w.id), ['a', 'c', 'b']);
-        expect(api.rows.map((r) => r['sortOrder']), [0, 2, 1]);
-        await model.archive(model.wallets[1]);
-        final hidden = model.wallets.firstWhere((w) => w.id == 'c');
-        expect(hidden.archived, true);
-        await model.archive(hidden);
-        expect(model.wallets.firstWhere((w) => w.id == 'c').archived, false);
-        expect(model.failure, isNull);
-      },
-    );
-    test(
-      'partial reorder blocks writes until server state is reloaded',
-      () async {
-        api.failWrite = 2;
-        await model.move(model.wallets[2], -1);
+        final w = model.wallets;
+        api.failWrite = 1;
+        expect(await model.reorder([w[2], w[0], w[1]]), isFalse);
+        expect(model.needsReload, false);
+        expect(model.wallets.map((w) => w.id), ['a', 'b', 'c']);
+        api.rows[0]['version'] = 5;
+        expect(await model.reorder([w[2], w[0], w[1]]), isFalse);
         expect(model.needsReload, true);
-        expect(api.writes, 2);
         await model.archive(model.wallets.first);
         expect(api.writes, 2);
         await model.load();
         expect(model.needsReload, false);
-        expect(model.wallets.firstWhere((w) => w.id == 'c').version, 2);
+        expect(model.wallets.first.version, 5);
       },
     );
     test(
       'lock clears financial data and discards late response; reorder stops',
       () async {
         api.pending = Completer<void>();
-        final work = model.move(model.wallets[2], -1);
+        final w = model.wallets;
+        final work = model.reorder([w[0], w[2], w[1]]);
         auth.lock();
         expect(model.wallets, isEmpty);
         expect(model.currencies, isEmpty);
