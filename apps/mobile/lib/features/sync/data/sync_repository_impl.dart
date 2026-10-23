@@ -19,15 +19,24 @@ class SyncRepositoryImpl implements SyncRepository {
   final SyncQueueVault _vault;
   final AppLogger _logger;
 
-  @override
-  Future<List<SyncQueueItem>> read() async {
+  Future<Map<String, dynamic>?> _readMap() async {
     final raw = await _vault.read();
-    if (raw == null || raw.isEmpty) return const [];
+    if (raw == null || raw.isEmpty) return null;
     try {
       final decoded = jsonDecode(raw);
-      if (decoded is! Map<String, dynamic>) return const [];
-      final items = decoded['items'];
-      if (items is! List) return const [];
+      return decoded is Map<String, dynamic> ? decoded : null;
+    } catch (_) {
+      _logger.error('sync queue unreadable');
+      return null;
+    }
+  }
+
+  @override
+  Future<List<SyncQueueItem>> read() async {
+    final map = await _readMap();
+    final items = map?['items'];
+    if (items is! List) return const [];
+    try {
       return [for (final item in items) _item(item as Map<String, dynamic>)];
     } catch (_) {
       _logger.error('sync queue unreadable');
@@ -36,17 +45,33 @@ class SyncRepositoryImpl implements SyncRepository {
   }
 
   @override
-  Future<void> write(List<SyncQueueItem> items) async {
-    if (items.isEmpty) {
+  Future<DateTime?> lastSyncedAt() async {
+    final stamp = (await _readMap())?['lastSyncedAt'];
+    return stamp is String ? DateTime.tryParse(stamp)?.toUtc() : null;
+  }
+
+  Future<void> _store(List<SyncQueueItem> items, DateTime? stamp) async {
+    if (items.isEmpty && stamp == null) {
       await _vault.delete();
       return;
     }
     await _vault.write(
       jsonEncode({
         'items': [for (final item in items) _json(item)],
+        if (stamp != null) 'lastSyncedAt': stamp.toUtc().toIso8601String(),
       }),
     );
   }
+
+  @override
+  Future<void> write(List<SyncQueueItem> items) async =>
+      _store(items, await lastSyncedAt());
+
+  @override
+  Future<void> markSynced(DateTime at) async => _store(await read(), at);
+
+  @override
+  Future<void> clear() => _vault.delete();
 
   @override
   Future<Either<AuthFailure, List<SyncItemResult>>> submit(
@@ -154,6 +179,7 @@ Map<String, dynamic> _json(SyncQueueItem item) => {
   'retryCount': item.retryCount,
   'status': item.status.name,
   'review': item.review,
+  'reason': item.reason?.name,
 };
 
 SyncQueueItem _item(Map<String, dynamic> json) {
@@ -195,6 +221,9 @@ SyncQueueItem _item(Map<String, dynamic> json) {
     retryCount: json['retryCount'] as int? ?? 0,
     status: SyncItemStatus.values.byName(json['status'] as String),
     review: json['review'] == true,
+    reason: json['reason'] == null
+        ? null
+        : SyncReason.values.byName(json['reason'] as String),
   );
 }
 
@@ -209,11 +238,13 @@ SyncItemResult _result(Map<String, dynamic> json) {
     }
   }
   final duplicates = json['duplicates'];
+  final error = json['error'];
   return SyncItemResult(
     opId: json['opId'] as String,
     status: json['status'] as String,
     review: json['review'] == true,
     duplicateHint: duplicates is List && duplicates.isNotEmpty,
     serverUpdatedAt: updated,
+    errorCode: error is Map<String, dynamic> ? error['code'] as String? : null,
   );
 }

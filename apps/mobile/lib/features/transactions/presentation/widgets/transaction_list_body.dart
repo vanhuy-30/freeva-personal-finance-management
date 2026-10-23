@@ -8,6 +8,8 @@ import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/error_retry.dart';
 import '../../../../core/widgets/freeva_card.dart';
 import '../../../../core/widgets/skeleton.dart';
+import '../../../sync/presentation/widgets/sync_mark_chip.dart';
+import '../../domain/transaction.dart';
 import '../viewmodels/transaction_view_model.dart';
 import 'transaction_day_list.dart';
 import 'transaction_detail_sheet.dart';
@@ -18,9 +20,12 @@ import 'transaction_summary_line.dart';
 /// Scrolling part of the list: totals line, day groups, paging, and the
 /// loading / error / empty / no-result states.
 class TransactionListBody extends StatelessWidget {
-  const TransactionListBody({required this.model, super.key});
+  const TransactionListBody({required this.model, this.markFor, super.key});
 
   final TransactionViewModel model;
+
+  /// Queued change per row (chip / clock); none when null.
+  final SyncMark? Function(TransactionBundle)? markFor;
 
   int _digits(String code) =>
       model.currencies
@@ -85,6 +90,7 @@ class TransactionListBody extends StatelessWidget {
         today: model.today() ?? '',
         onOpen: (row) => openTransactionDetail(context, model, row),
         highlightId: _recentlySaved(),
+        markFor: markFor,
       );
     }
     return NotificationListener<ScrollNotification>(

@@ -5,6 +5,8 @@ import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_top_bar.dart';
+import '../../../sync/presentation/viewmodels/sync_view_model.dart';
+import '../../../sync/presentation/widgets/sync_marks.dart';
 import '../../../sync/presentation/widgets/sync_status_banner.dart';
 import '../../domain/transaction_filter.dart';
 import '../viewmodels/transaction_view_model.dart';
@@ -27,6 +29,7 @@ class TransactionPage extends StatefulWidget {
 
 class _TransactionPageState extends State<TransactionPage> {
   late final TransactionViewModel model = getIt<TransactionViewModel>();
+  late final SyncViewModel sync = getIt<SyncViewModel>();
   bool prompted = false;
 
   @override
@@ -109,7 +112,15 @@ class _TransactionPageState extends State<TransactionPage> {
               padding: EdgeInsets.symmetric(horizontal: margin),
               child: const SyncStatusBanner(),
             ),
-            Expanded(child: TransactionListBody(model: model)),
+            Expanded(
+              child: ListenableBuilder(
+                listenable: sync,
+                builder: (context, _) => TransactionListBody(
+                  model: model,
+                  markFor: (row) => syncMarkFor(sync.items, row),
+                ),
+              ),
+            ),
           ],
         ),
       );

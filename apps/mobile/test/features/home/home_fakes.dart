@@ -39,6 +39,20 @@ class FakeSyncViewModel extends ChangeNotifier implements SyncViewModel {
   @override
   List<SyncQueueItem> items = const [];
   @override
+  List<SyncQueueItem> get attention => [
+    for (final i in items)
+      if (i.status != SyncItemStatus.pending) i,
+  ];
+  @override
+  List<SyncQueueItem> get waiting => [
+    for (final i in items)
+      if (i.status == SyncItemStatus.pending) i,
+  ];
+  @override
+  SyncLink link = SyncLink.ok;
+  @override
+  DateTime? lastSyncedAt;
+  @override
   int appliedEpoch = 0;
   @override
   bool syncing = false;

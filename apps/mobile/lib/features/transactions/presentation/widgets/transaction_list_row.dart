@@ -5,6 +5,7 @@ import '../../../../core/money/money_text.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/money_display.dart';
 import '../../../../core/widgets/transaction_row.dart';
+import '../../../sync/presentation/widgets/sync_mark_chip.dart';
 import '../../domain/transaction.dart';
 import 'transaction_naming.dart';
 
@@ -19,6 +20,7 @@ class TransactionListRow extends StatelessWidget {
     this.highlight,
     this.muted = false,
     this.trailing,
+    this.mark,
     super.key,
   });
 
@@ -32,6 +34,9 @@ class TransactionListRow extends StatelessWidget {
   final String? highlight;
   final bool muted;
   final Widget? trailing;
+
+  /// Queued change on this row: the chip is also read to screen readers.
+  final SyncMark? mark;
 
   @override
   Widget build(BuildContext context) {
@@ -52,9 +57,12 @@ class TransactionListRow extends StatelessWidget {
       tone: muted ? MoneyTone.plain : label.tone,
       tags: label.tags,
       highlight: highlight,
-      trailing: trailing,
+      trailing: mark == null ? trailing : SyncMarkChip(mark: mark!),
       onTap: onTap,
-      semanticsLabel: s.homeSpokenRow(signed, label.title, label.detail),
+      semanticsLabel: [
+        s.homeSpokenRow(signed, label.title, label.detail),
+        if (mark != null) SyncMarkChip.label(s, mark!),
+      ].join(', '),
       amount: MoneyDisplay(
         minor: label.minor,
         currency: label.currency,

@@ -1,6 +1,6 @@
 # Nhóm H — Đồng bộ
 
-Trạng thái: **chốt thiết kế 2026-10-22**, chưa code. Task: `DS-P2-003`.
+Trạng thái: **chốt thiết kế 2026-10-22**, code H1 xong 2026-10-23 (banner, chip, màn Đồng bộ, popup bỏ); H2 (màn 5 chọn bản, màn 6 sheet trùng) chưa. Khác thiết kế ở H1: không có tiến độ "2/3" từng mục (một lô gửi một lần gọi, hiện "Đang gửi n thay đổi" + thanh chạy); chưa có nút "Cập nhật" (chờ lên store) và nút "Sửa" (cần form giao dịch nhận dữ liệu từ hàng đợi); lỗi do dữ liệu chỉ có "Bỏ"; lý do "Danh mục đã bị ẩn" thành "Dữ liệu không còn hợp lệ" vì server chỉ trả `VALIDATION_ERROR`. Task: `DS-P2-003`.
 Canvas: trang **05 · Patterns**, hàng H
 (<https://claude.ai/artifact/SmyaVvz57doJiAM6Kn678T>, riêng tư). Spec chung:
 [design-system.md](../design-system.md). Hành vi đồng bộ:
@@ -63,9 +63,9 @@ Canvas: trang **05 · Patterns**, hàng H
 | Việc | Ghi chú |
 |---|---|
 | Giữ bản trên máy này | Phase 1 không ghi đè khi xung đột. Cần API gửi lại với phiên bản mới nhất (hoặc cờ ghi đè có kiểm soát). Chưa có thì ẩn lựa chọn này, chỉ giữ bản đã lưu. |
-| Lý do lỗi | API cần trả mã lý do theo mục (danh mục ẩn, ví đã xoá…) để app hiện câu ngắn; không có thì "Chưa gửi được". |
+| Lý do lỗi | Xong một phần (H1): app dịch mã lỗi theo mục có sẵn (`ACCOUNT_NOT_FOUND` → ví đã bị xoá, `TRANSACTION_NOT_FOUND`, `VALIDATION_ERROR` → dữ liệu không còn hợp lệ, còn lại → chưa gửi được). Muốn "Danh mục đã bị ẩn" thì API cần mã riêng. |
 | Gợi ý trùng dạng sheet | Phase 1 hiện gợi ý khác; đổi sang sheet màn 6. |
-| Giờ đồng bộ lần cuối, tiến độ x/n | Lưu thời điểm gửi thành công gần nhất; đếm theo lô gửi (tối đa 50 mục). |
-| Cập nhật app | Nút mở App Store / Google Play. |
+| Giờ đồng bộ lần cuối, tiến độ x/n | Giờ lần cuối xong (lưu cùng hàng đợi, xoá khi đăng xuất). Tiến độ x/n không làm: một lô là một lần gọi. |
+| Cập nhật app | Nút mở App Store / Google Play: chưa làm (cần gói `url_launcher` và đường dẫn store khi app lên store). |
 | Ví, danh mục | Chưa đồng bộ ở Phase 1; khi có thì dùng cùng màn này. |
 | Copy l10n | Thay `syncPending`, `syncConflict`, `syncDuplicate`… bằng chữ ở bảng trên. |

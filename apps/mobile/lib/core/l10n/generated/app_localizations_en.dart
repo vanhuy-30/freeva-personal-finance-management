@@ -371,53 +371,6 @@ class SEn extends S {
   String get transactionLoadMore => 'Load more';
 
   @override
-  String syncPending(int count) {
-    return '$count changes waiting to sync';
-  }
-
-  @override
-  String get syncNow => 'Sync';
-
-  @override
-  String get syncing => 'Syncing';
-
-  @override
-  String get syncConflict =>
-      'Not overwritten. Reload to see the copy on the server.';
-
-  @override
-  String get syncReview =>
-      'The amount differs from the saved copy. Not overwritten.';
-
-  @override
-  String get syncFailedItem => 'This change could not be synced.';
-
-  @override
-  String get syncDiscard => 'Discard';
-
-  @override
-  String get syncSchema =>
-      'Sync is paused because the app and server schemas differ.';
-
-  @override
-  String get syncDuplicate =>
-      'A similar transaction may already exist. This one was still kept.';
-
-  @override
-  String get syncDelete => 'Delete';
-
-  @override
-  String get syncRestore => 'Restore';
-
-  @override
-  String get syncChange => 'Change';
-
-  @override
-  String syncItem(String action, String date) {
-    return '$action · $date';
-  }
-
-  @override
   String get categoryTitle => 'Categories';
 
   @override
@@ -2721,4 +2674,159 @@ class SEn extends S {
   String authLockGreeting(String name) {
     return 'Hi $name';
   }
+
+  @override
+  String get syncTitle => 'Sync';
+
+  @override
+  String syncBannerBoth(int attention, int waiting) {
+    return '$attention changes need you · $waiting more waiting to send';
+  }
+
+  @override
+  String syncBannerAttention(int count) {
+    return '$count changes need you';
+  }
+
+  @override
+  String syncBannerWaiting(int count) {
+    return '$count changes waiting to send';
+  }
+
+  @override
+  String get syncBannerDuplicate => 'You may have recorded one twice';
+
+  @override
+  String get syncOffline => 'No connection';
+
+  @override
+  String get syncUnavailable => 'Couldn’t send yet';
+
+  @override
+  String get syncUnavailableSub => 'Try again later';
+
+  @override
+  String get syncWaitingCard => 'Changes are waiting to send';
+
+  @override
+  String syncLastTime(String when) {
+    return 'Last $when';
+  }
+
+  @override
+  String get syncLastNever => 'Not synced yet';
+
+  @override
+  String syncToday(String time) {
+    return 'today $time';
+  }
+
+  @override
+  String syncOnDay(String date, String time) {
+    return '$date $time';
+  }
+
+  @override
+  String get syncRetry => 'Try again';
+
+  @override
+  String syncSending(int count) {
+    return 'Sending $count changes';
+  }
+
+  @override
+  String get syncSendingSub => 'You can keep using the app';
+
+  @override
+  String get syncAllDone => 'Everything is synced';
+
+  @override
+  String syncSectionAttention(int count) {
+    return 'NEEDS YOU · $count';
+  }
+
+  @override
+  String syncSectionWaiting(int count) {
+    return 'WAITING TO SEND · $count';
+  }
+
+  @override
+  String syncSectionHolding(int count) {
+    return 'KEPT ON THIS DEVICE · $count';
+  }
+
+  @override
+  String get syncActionAdd => 'Add';
+
+  @override
+  String get syncActionEdit => 'Edit';
+
+  @override
+  String get syncActionDelete => 'Delete';
+
+  @override
+  String get syncActionRestore => 'Restore';
+
+  @override
+  String syncItemLine(String action, String detail) {
+    return '$action · $detail';
+  }
+
+  @override
+  String get syncReasonChanged => 'Changed on another device';
+
+  @override
+  String get syncReasonWallet => 'The wallet was removed';
+
+  @override
+  String get syncReasonMissing => 'The transaction was removed elsewhere';
+
+  @override
+  String get syncReasonInvalid => 'The details are no longer valid';
+
+  @override
+  String get syncReasonOther => 'Couldn’t send · Try again later';
+
+  @override
+  String get syncFooter => 'Your data stays on this device until it is sent.';
+
+  @override
+  String get syncUpdateTitle => 'Freeva needs an update';
+
+  @override
+  String get syncUpdateBody => 'To keep syncing. Your changes are kept.';
+
+  @override
+  String get syncDuplicateNote =>
+      'You may have recorded a similar one. Both are kept.';
+
+  @override
+  String get syncDiscardTitle => 'Discard this change?';
+
+  @override
+  String syncDiscardMessage(String name, String amount) {
+    return '$name $amount won’t be saved.';
+  }
+
+  @override
+  String syncDiscardMessageShort(String name) {
+    return '$name won’t be saved.';
+  }
+
+  @override
+  String get syncDiscardKeep => 'Keep it';
+
+  @override
+  String get syncDiscardConfirm => 'Discard';
+
+  @override
+  String syncDiscardSemantics(String name) {
+    return 'Discard change $name';
+  }
+
+  @override
+  String get syncChipReview => 'Needs a look';
+
+  @override
+  String get syncChipWaiting => 'Waiting to sync';
 }
