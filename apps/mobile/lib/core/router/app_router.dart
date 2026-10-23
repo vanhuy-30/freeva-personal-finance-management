@@ -21,6 +21,7 @@ import '../../features/settings/presentation/pages/onboarding_page.dart';
 import '../../features/settings/presentation/pages/change_password_page.dart';
 import '../../features/tags/presentation/pages/tag_page.dart';
 import '../../features/settings/presentation/pages/change_pin_page.dart';
+import '../../features/settings/presentation/pages/pin_setup_page.dart';
 import '../../features/settings/presentation/pages/notification_settings_page.dart';
 import '../../features/settings/presentation/pages/security_page.dart';
 import '../../features/settings/presentation/pages/sessions_page.dart';
@@ -249,6 +250,10 @@ GoRouter _createAppRouter(
             builder: (context, state) => const AuthGate(child: ChangePinPage()),
           ),
           GoRoute(
+            path: 'pin-setup',
+            builder: (context, state) => const AuthGate(child: PinSetupPage()),
+          ),
+          GoRoute(
             path: 'password',
             builder: (context, state) =>
                 const AuthGate(child: ChangePasswordPage()),
@@ -282,12 +287,11 @@ GoRouter _createAppRouter(
       ),
       GoRoute(
         path: '/help/legal',
-        builder: (context, state) => AuthGate(
-          child: LegalPage(
-            document: state.uri.queryParameters['doc'] == 'privacy'
-                ? LegalDocument.privacy
-                : LegalDocument.terms,
-          ),
+        // Public: the sign-up checkbox links here before anyone is signed in.
+        builder: (context, state) => LegalPage(
+          document: state.uri.queryParameters['doc'] == 'privacy'
+              ? LegalDocument.privacy
+              : LegalDocument.terms,
         ),
       ),
       GoRoute(

@@ -38,6 +38,7 @@ void main() {
           ),
         )
         ..stage = AuthStage.unlocked
+        ..hasPin = true
         ..ready = true,
     );
     await registerF2(FakeTransactionRepository(), StubTransactionViewModel());

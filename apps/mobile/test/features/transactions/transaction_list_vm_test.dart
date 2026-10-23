@@ -45,6 +45,7 @@ void main() {
             ),
           )
           ..stage = AuthStage.unlocked
+          ..hasPin = true
           ..ready = true;
     final walletCases = DefaultWalletUseCases(WalletRepositoryImpl(api));
     final analytics = RecordingAnalytics();

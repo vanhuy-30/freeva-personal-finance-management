@@ -3,95 +3,124 @@ import 'package:mobile/features/auth/data/auth_repository_impl.dart';
 import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/auth/domain/auth_use_cases.dart';
 import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dart';
+
 import 'fakes.dart';
 
 void main() {
   late FakeApi api;
+  late MemoryVault vault;
   late DefaultAuthViewModel model;
+  const password = 'correct horse battery 7';
   setUp(() {
     api = FakeApi();
-    model = DefaultAuthViewModel(DefaultAuthUseCases(
-        AuthRepositoryImpl(api, MemoryVault(), FakeBiometrics())));
+    vault = MemoryVault();
+    model = DefaultAuthViewModel(
+      DefaultAuthUseCases(AuthRepositoryImpl(api, vault, FakeBiometrics())),
+    );
   });
   tearDown(() => model.dispose());
-  test('email-first routes existing and new accounts, normalizes email',
-      () async {
-    await model.continueEmail(' Existing@Example.com ');
-    expect(model.step, AuthStep.password);
-    expect(model.email, 'existing@example.com');
-    expect(api.lastBody, {'email': 'existing@example.com'});
-    model.back();
-    api.nextStep = 'register';
-    await model.continueEmail('new@example.com');
-    expect(model.step, AuthStep.register);
-  });
+
   test(
-      'invalid email, network failure and malformed response never guess account state',
-      () async {
-    await model.continueEmail('invalid');
-    expect(model.failure?.code, AuthError.invalidEmail);
-    expect(api.calls, 0);
-    api.failure = const AuthFailure(AuthError.network);
-    await model.continueEmail('new@example.com');
-    expect(model.step, AuthStep.email);
-    api.failure = null;
-    api.nextStep = 'unexpected';
-    await model.continueEmail('new@example.com');
-    expect(model.step, AuthStep.email);
-    expect(model.failure?.code, AuthError.unavailable);
-  });
+    'sign in normalizes the email and opens the app without a PIN',
+    () async {
+      await model.login(' User@Example.com ', password);
+      expect(api.lastPath, 'auth/login');
+      expect(api.lastBody, {'email': 'user@example.com', 'password': password});
+      expect(model.stage, AuthStage.unlocked);
+      expect(model.hasPin, false);
+    },
+  );
+
   test(
-      'registration transitions straight to verification; resend is contextual',
-      () async {
-    api.nextStep = 'register';
-    await model.continueEmail('new@example.com');
-    await model.submitStep(
-        password: 'correct horse battery 7',
-        confirmation: 'correct horse battery 7');
-    expect(api.lastPath, 'auth/register');
-    expect(model.step, AuthStep.verification);
-    // Registration sends the first challenge; mobile does not issue a second one.
-    expect(api.calls, 2);
-    await model.resendVerification();
-    expect(api.lastPath, 'auth/email-verifications');
-    await model.submitStep(token: 'a' * 64);
-    expect(api.lastPath, 'auth/verify-email');
-    expect(model.step, AuthStep.password);
-    expect(model.notice, AuthNotice.verified);
-  });
-  test('a new password without a digit sends no request', () async {
-    api.nextStep = 'register';
-    await model.continueEmail('new@example.com');
-    await model.submitStep(
-        password: 'correct horse battery', confirmation: 'correct horse battery');
+    'sign up registers with the terms flag, signs in, and lands in setup',
+    () async {
+      await model.register(
+        'new@example.com',
+        password,
+        password,
+        termsAccepted: true,
+      );
+      expect(api.calls, 2);
+      expect(api.lastPath, 'auth/login');
+      expect(model.stage, AuthStage.setup);
+      expect(model.email, 'new@example.com');
+      await model.resendVerification();
+      expect(api.lastPath, 'auth/email-verifications');
+      expect(model.notice, AuthNotice.verificationSent);
+    },
+  );
+
+  test(
+    'sign up sends nothing without terms, a digit, or a matching repeat',
+    () async {
+      await model.register(
+        'a@example.com',
+        password,
+        password,
+        termsAccepted: false,
+      );
+      expect(model.failure?.code, AuthError.invalidInput);
+      await model.register(
+        'a@example.com',
+        'correct horse battery',
+        'correct horse battery',
+        termsAccepted: true,
+      );
+      expect(model.failure?.code, AuthError.invalidInput);
+      await model.register(
+        'a@example.com',
+        password,
+        'other',
+        termsAccepted: true,
+      );
+      expect(model.failure?.code, AuthError.passwordMismatch);
+      expect(api.calls, 0);
+      expect(model.stage, AuthStage.signedOut);
+    },
+  );
+
+  test('a failed registration never signs in', () async {
+    api.failure = const AuthFailure(AuthError.rateLimited, retryAfter: 60);
+    await model.register(
+      'a@example.com',
+      password,
+      password,
+      termsAccepted: true,
+    );
     expect(api.calls, 1);
-    expect(model.step, AuthStep.register);
+    expect(model.stage, AuthStage.signedOut);
   });
-  test('mismatched confirmation sends no registration request', () async {
-    api.nextStep = 'register';
-    await model.continueEmail('new@example.com');
-    await model.submitStep(
-        password: 'correct horse battery', confirmation: 'different password');
-    expect(api.calls, 1);
-    expect(model.failure?.code, AuthError.passwordMismatch);
-    expect(model.step, AuthStep.register);
+
+  test('setup can be skipped, leaving no PIN, or finished with one', () async {
+    await model.register(
+      'a@example.com',
+      password,
+      password,
+      termsAccepted: true,
+    );
+    model.finishSetup();
+    expect(model.stage, AuthStage.unlocked);
+    expect(model.hasPin, false);
+    await model.setupPin('123456', '123456', false, 'unlock');
+    expect(model.hasPin, true);
+    model.lock();
+    expect(model.stage, AuthStage.locked);
   });
-  test('forgot password is a guided reset flow and returns to sign in',
-      () async {
-    await model.continueEmail('existing@example.com');
-    model.forgotPassword();
-    expect(model.step, AuthStep.forgotPassword);
-    await model.submitStep();
-    expect(api.lastPath, 'auth/password-resets');
-    expect(model.step, AuthStep.resetPassword);
-    await model.submitStep(
-        token: 'a' * 64,
-        password: 'new password long enough 2',
-        confirmation: 'new password long enough 2');
-    expect(api.lastPath, 'auth/reset-password');
-    expect(model.step, AuthStep.password);
-    expect(model.notice, AuthNotice.passwordChanged);
-    await model.submitStep(password: 'new password long enough 2');
-    expect(model.stage, AuthStage.setupPin);
-  });
+
+  test(
+    'forgot password says "sent" and the reset link signs back in',
+    () async {
+      model.goTo(AuthStep.forgot);
+      await model.requestReset('User@Example.com');
+      expect(api.lastPath, 'auth/password-resets');
+      expect(model.notice, AuthNotice.resetSent);
+      model.startReset('a' * 64);
+      expect(model.step, AuthStep.reset);
+      await model.resetPassword('', password, password);
+      expect(api.lastPath, 'auth/reset-password');
+      expect(api.lastBody?['token'], 'a' * 64);
+      expect(model.step, AuthStep.login);
+      expect(model.notice, AuthNotice.passwordChanged);
+    },
+  );
 }

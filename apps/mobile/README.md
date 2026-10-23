@@ -60,7 +60,7 @@ App dùng email auth API thật; cấu hình origin HTTPS khi chạy:
 fvm flutter run --dart-define=API_BASE_URL=https://freeva-api-staging.onrender.com
 ```
 
-Backend đích phải triển khai `BE-P1-001`/`BE-P1-002`, endpoint `POST /api/v1/auth/email-step` của `MOB-P1-001`, và cấu hình SMTP để nhận mã
+Backend đích phải triển khai `BE-P1-001`/`BE-P1-002` (đăng ký nhận `termsAccepted`, `DS-P2-004`) và cấu hình SMTP để nhận mail
 verify/reset. Không truyền secret qua dart-define; URL là cấu hình public.
 Không có URL mặc định: thiếu/sai cấu hình báo lỗi và không gửi credential.
 Local API cũng cần HTTPS với certificate được thiết bị tin cậy.

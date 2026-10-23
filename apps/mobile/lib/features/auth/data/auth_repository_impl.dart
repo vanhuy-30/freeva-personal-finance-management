@@ -85,31 +85,12 @@ class AuthRepositoryImpl implements AuthRepository, AuthorizedApi {
   }) => _guard(() => _authorized(method, path, body: body, headers: headers));
 
   @override
-  Future<Either<AuthFailure, bool>> accountExists(String email) =>
-      _guard(() async {
-        final result = await _api.request(
-          'POST',
-          'auth/email-step',
-          body: {'email': email},
-        );
-        return switch (result['nextStep']) {
-          'login' => true,
-          'register' => false,
-          _ => throw const AuthFailure(AuthError.unavailable),
-        };
-      });
-
-  @override
   Future<Either<AuthFailure, AuthStage>> restore() => _guard(() async {
     final stored = await _vault.read();
     if (stored == null) return AuthStage.signedOut;
     _record = jsonDecode(stored) as Map<String, dynamic>;
-    if (_record!['pinHash'] == null) {
-      await _clear();
-      return AuthStage.signedOut;
-    }
     await _token();
-    return AuthStage.locked;
+    return _record!['pinHash'] == null ? AuthStage.unlocked : AuthStage.locked;
   });
   @override
   Future<Either<AuthFailure, Unit>> submit(
@@ -124,7 +105,9 @@ class AuthRepositoryImpl implements AuthRepository, AuthorizedApi {
       AuthAction.requestReset => 'password-resets',
       AuthAction.resetPassword => 'reset-password',
     };
-    final result = await _api.request('POST', 'auth/$path', body: fields);
+    final body = <String, dynamic>{...fields};
+    if (action == AuthAction.register) body['termsAccepted'] = true;
+    final result = await _api.request('POST', 'auth/$path', body: body);
     if (action == AuthAction.login) {
       if (result['tokenType'] != 'Bearer' ||
           !RegExp(r'^[a-f0-9]{64}$')
@@ -172,6 +155,9 @@ class AuthRepositoryImpl implements AuthRepository, AuthorizedApi {
     });
     return unit;
   });
+  @override
+  Future<Either<AuthFailure, bool>> pinSet() =>
+      _guard(() async => _record?['pinHash'] != null);
   @override
   Future<Either<AuthFailure, Unit>> unlockPin(String pin) => _guard(() async {
     await _token();

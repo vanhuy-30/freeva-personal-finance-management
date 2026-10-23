@@ -312,7 +312,9 @@ void main() {
         DefaultAuthUseCases(
           AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
         ),
-      )..stage = AuthStage.unlocked;
+      )
+        ..stage = AuthStage.unlocked
+        ..hasPin = true;
       model = DefaultCategoryViewModel(
         DefaultCategoryUseCases(CategoryRepositoryImpl(api)),
         auth,

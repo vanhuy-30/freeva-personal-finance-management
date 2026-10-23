@@ -30,6 +30,7 @@ Future<Widget> homeApp(
         ),
       )
       ..stage = AuthStage.unlocked
+      ..hasPin = true
       ..ready = true,
   );
   return MaterialApp(

@@ -206,6 +206,7 @@ Future<Widget> e1App(
         ),
       )
       ..stage = AuthStage.unlocked
+      ..hasPin = true
       ..ready = true,
   );
   getIt.registerSingleton<CategoryViewModel>(model ?? StubCategoryViewModel());

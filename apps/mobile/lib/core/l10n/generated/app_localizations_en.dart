@@ -25,37 +25,13 @@ class SEn extends S {
   String get authRegister => 'Create account';
 
   @override
-  String get authResendVerification => 'Send verification code';
-
-  @override
-  String get authVerifyEmail => 'Verify email';
-
-  @override
-  String get authForgotPassword => 'Forgot password';
-
-  @override
-  String get authResetPassword => 'Reset password';
-
-  @override
   String get authEmail => 'Email';
 
   @override
   String get authPassword => 'Password';
 
   @override
-  String get authPasswordHelp =>
-      'At least 12 characters, with letters and numbers.';
-
-  @override
-  String get authEmailCode => '64-character code from email';
-
-  @override
-  String get authSuccess =>
-      'Request processed. If you requested a code, check your email if the account is eligible. After verification or password reset, you can sign in.';
-
-  @override
-  String get authInvalidInput =>
-      'Check your email, password, email code, or matching six-digit PINs.';
+  String get authInvalidInput => 'Check your email and password.';
 
   @override
   String get authInvalidCredentials => 'Email or password is incorrect.';
@@ -88,38 +64,10 @@ class SEn extends S {
       'Session expired, was revoked, or PIN attempts exceeded. Please sign in again.';
 
   @override
-  String get authSetupPin => 'Set up PIN';
-
-  @override
-  String get authLocked => 'Freeva is locked';
-
-  @override
-  String get authPinHelp => 'Use a six-digit PIN to unlock this device.';
-
-  @override
-  String get authPin => 'PIN';
-
-  @override
-  String get authConfirmPin => 'Confirm PIN';
-
-  @override
-  String get authEnableBiometric => 'Enable biometric unlock';
-
-  @override
   String get authBiometricReason => 'Authenticate to unlock Freeva';
 
   @override
-  String get authUnlock => 'Unlock';
-
-  @override
   String get authUseBiometric => 'Use biometrics';
-
-  @override
-  String get authForgetDevice => 'Forgot PIN / sign in again';
-
-  @override
-  String get authForgetHelp =>
-      'Removes credentials on this device. The server session remains until expiry or revocation in session management.';
 
   @override
   String get authSessions => 'Manage sessions';
@@ -148,70 +96,23 @@ class SEn extends S {
   String get authLogout => 'Sign out';
 
   @override
-  String get authWelcomeTitle => 'Welcome to Freeva';
-
-  @override
-  String get authWelcomeSubtitle =>
-      'Start your journey to a healthier financial future.';
-
-  @override
-  String get authEmailPlaceholder => 'Enter your email';
-
-  @override
   String get authContinue => 'Continue';
-
-  @override
-  String get authWelcomeBack => 'Welcome back';
-
-  @override
-  String get authLoginSubtitle =>
-      'Enter your password to pick up where you left off.';
-
-  @override
-  String get authCreateTitle => 'Create your Freeva account';
-
-  @override
-  String get authRegisterSubtitle =>
-      'Create a password to start taking care of your finances.';
 
   @override
   String get authCreateAccount => 'Create account';
 
   @override
-  String get authVerifyTitle => 'Check your email';
-
-  @override
-  String get authVerifySubtitle =>
-      'Your verification code was sent when you signed up. Enter it below to finish.';
-
-  @override
-  String get authVerifyAndContinue => 'Verify and continue';
-
-  @override
-  String get authResendCode => 'No code yet? Send again';
-
-  @override
-  String get authCodeResent =>
-      'A new code has been requested. Check your inbox and spam folder.';
-
-  @override
-  String get authVerifiedNotice => 'Email verified. Sign in to continue.';
+  String get authVerifyTitle => 'Confirm your email';
 
   @override
   String get authRecoverTitle => 'Forgot your password?';
 
   @override
-  String get authRecoverSubtitle => 'We’ll send a recovery code to your email.';
+  String get authRecoverSubtitle =>
+      'Enter your email and Freeva sends a reset link.';
 
   @override
-  String get authSendResetCode => 'Send recovery code';
-
-  @override
-  String get authNewPasswordTitle => 'Create a new password';
-
-  @override
-  String get authResetSubtitle =>
-      'Check your email for a recovery code, then choose a new password.';
+  String get authNewPasswordTitle => 'Set a new password';
 
   @override
   String get authNewPassword => 'New password';
@@ -220,11 +121,8 @@ class SEn extends S {
   String get authConfirmPassword => 'Confirm password';
 
   @override
-  String get authSavePassword => 'Save new password';
-
-  @override
   String get authPasswordChanged =>
-      'Password changed. Sign in with your new password.';
+      'Password changed. Sign in with the new one.';
 
   @override
   String get authPasswordMismatch =>
@@ -234,17 +132,7 @@ class SEn extends S {
   String get authInvalidEmail => 'Please enter a valid email address.';
 
   @override
-  String get authShowPassword => 'Show password';
-
-  @override
-  String get authHidePassword => 'Hide password';
-
-  @override
   String get authBack => 'Go back';
-
-  @override
-  String get authSecurityNote =>
-      'Your account is protected by your password and app lock.';
 
   @override
   String get profileTitle => 'Financial profile';
@@ -2535,4 +2423,197 @@ class SEn extends S {
 
   @override
   String get notifySessionSub => 'So you can check it';
+
+  @override
+  String get authOr => 'or';
+
+  @override
+  String get authContinueGoogle => 'Continue with Google';
+
+  @override
+  String get authContinueApple => 'Continue with Apple';
+
+  @override
+  String get authNoAccount => 'Don’t have an account?';
+
+  @override
+  String get authHaveAccount => 'Already have an account?';
+
+  @override
+  String get authLaterLink => 'Later';
+
+  @override
+  String get authDone => 'Done';
+
+  @override
+  String authVerifySent(String email) {
+    return 'Freeva sent a confirmation link to $email.';
+  }
+
+  @override
+  String get authVerifyWhyTitle => 'A confirmed email helps you';
+
+  @override
+  String get authVerifyWhyReset => 'Get your password back if you forget it';
+
+  @override
+  String get authVerifyWhyAlert => 'Get alerts about unusual sign-ins';
+
+  @override
+  String get authVerifyWhyNotice => 'Never miss important account notices';
+
+  @override
+  String get authResendPrompt => 'Didn’t get it?';
+
+  @override
+  String get authResendLink => 'Send again';
+
+  @override
+  String get authVerificationSent => 'Confirmation link sent again.';
+
+  @override
+  String get authVerifyLater =>
+      'You can use the app without confirming. Confirm later in Profile.';
+
+  @override
+  String get authSendResetLink => 'Send reset link';
+
+  @override
+  String get authResetSentTitle => 'Check your email';
+
+  @override
+  String authResetSent(String email) {
+    return 'If $email has an account, Freeva sent a reset link.';
+  }
+
+  @override
+  String get authBackToLogin => 'Back to sign in';
+
+  @override
+  String get authConfirmNewPassword => 'Repeat new password';
+
+  @override
+  String get authSaveAndLogin => 'Save and sign in';
+
+  @override
+  String get authSocialSoon => 'Coming soon';
+
+  @override
+  String get passwordWeak => 'Not enough yet';
+
+  @override
+  String get passwordGood => 'Good';
+
+  @override
+  String get passwordStrong => 'Very strong';
+
+  @override
+  String get passwordRuleLength => 'At least 12 characters';
+
+  @override
+  String get passwordRuleLetterDigit => 'Letters and numbers';
+
+  @override
+  String get passwordRuleSymbol => 'Add a symbol like ! @ # to be stronger';
+
+  @override
+  String get passwordRuleMatch => 'Both passwords match';
+
+  @override
+  String get passwordRuleMet => 'done';
+
+  @override
+  String get passwordRuleNotMet => 'not yet';
+
+  @override
+  String get consentLabel => 'Agree to the terms';
+
+  @override
+  String get consentPrefix => 'I agree to Freeva’s ';
+
+  @override
+  String get consentTerms => 'Terms of Use';
+
+  @override
+  String get consentAnd => ' and ';
+
+  @override
+  String get consentPrivacy => 'Privacy Policy';
+
+  @override
+  String get consentSuffix => '.';
+
+  @override
+  String get authPinSetupTitle => 'Set a PIN';
+
+  @override
+  String get authPinSetupSub => '6 digits to unlock Freeva on this device.';
+
+  @override
+  String get authPinConfirmTitle => 'Repeat your PIN';
+
+  @override
+  String get authPinConfirmSub => 'Enter the 6 digits again to be sure.';
+
+  @override
+  String get authPinConfirmHint => 'If they don’t match you start again.';
+
+  @override
+  String get authPinMismatch => 'The PINs didn’t match. Let’s start again.';
+
+  @override
+  String get authConfirm => 'Confirm';
+
+  @override
+  String get authBiometricTitleFace => 'Set up Face ID';
+
+  @override
+  String get authBiometricSubFace =>
+      'Unlock Freeva with your face, faster than a PIN.';
+
+  @override
+  String get authBiometricTitle => 'Unlock faster';
+
+  @override
+  String get authBiometricSub =>
+      'Use your fingerprint or face instead of typing the PIN.';
+
+  @override
+  String get authBiometricSetup => 'Set up';
+
+  @override
+  String get authLockTitle => 'Enter your PIN';
+
+  @override
+  String get authLockWelcome => 'Welcome back';
+
+  @override
+  String get authForgotPin => 'Forgot your PIN?';
+
+  @override
+  String get authForgotPinMessage =>
+      'You’ll sign in again with your email and password.';
+
+  @override
+  String get authForgotPinConfirm => 'Sign in again';
+
+  @override
+  String get authCancel => 'Cancel';
+
+  @override
+  String pinDigitsEntered(int count, int total) {
+    return '$count of $total digits entered';
+  }
+
+  @override
+  String get meSecPinSetTitle => 'Set a PIN';
+
+  @override
+  String get meSecPinNone => 'Not set';
+
+  @override
+  String get authUseFaceId => 'Unlock with Face ID';
+
+  @override
+  String get meSecPinSetDone => 'PIN set';
 }

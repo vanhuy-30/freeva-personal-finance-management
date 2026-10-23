@@ -41,6 +41,7 @@ void main() {
             ),
           )
           ..stage = AuthStage.unlocked
+          ..hasPin = true
           ..ready = true;
     getIt.registerSingleton<AuthViewModel>(auth);
     expansion = _Expansion();

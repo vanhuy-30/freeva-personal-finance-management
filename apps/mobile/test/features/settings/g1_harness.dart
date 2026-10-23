@@ -51,7 +51,8 @@ class G1 {
     final cases = DefaultAuthUseCases(g.repository);
     g.auth = DefaultAuthViewModel(cases)
       ..ready = true
-      ..stage = AuthStage.unlocked;
+      ..stage = AuthStage.unlocked
+      ..hasPin = true;
     g.settings = DefaultSettingsViewModel(
       DefaultSettingsUseCases(SettingsRepositoryImpl(g.preferences)),
       cases,

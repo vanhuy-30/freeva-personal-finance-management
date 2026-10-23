@@ -223,7 +223,9 @@ void main() {
         DefaultAuthUseCases(
           AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
         ),
-      )..stage = AuthStage.unlocked;
+      )
+        ..stage = AuthStage.unlocked
+        ..hasPin = true;
       model = DefaultWalletViewModel(
         DefaultWalletUseCases(WalletRepositoryImpl(api)),
         auth,

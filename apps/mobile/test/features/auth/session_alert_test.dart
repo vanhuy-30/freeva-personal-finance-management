@@ -5,7 +5,6 @@ import 'package:mobile/core/di/injection.dart';
 import 'package:mobile/core/l10n/generated/app_localizations.dart';
 import 'package:mobile/core/theme/app_theme.dart';
 import 'package:mobile/features/auth/data/auth_repository_impl.dart';
-import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/auth/domain/auth_use_cases.dart';
 import 'package:mobile/features/auth/domain/session_alert_notifier.dart';
 import 'package:mobile/features/auth/domain/session_notice.dart';
@@ -63,10 +62,7 @@ void main() {
       analytics: analytics,
     );
     addTearDown(model.dispose);
-    await model.submit(AuthAction.login, {
-      'email': 'user@example.com',
-      'password': 'password long enough',
-    });
+    await model.login('user@example.com', 'password long enough');
     await model.setupPin('123456', '123456', false, 'unlock');
     expect(model.newSessionAlert, isFalse);
     expect(vault.seen, contains('current'));
@@ -132,10 +128,7 @@ void main() {
       analytics: analytics,
     );
     addTearDown(model.dispose);
-    await model.submit(AuthAction.login, {
-      'email': 'user@example.com',
-      'password': 'password long enough',
-    });
+    await model.login('user@example.com', 'password long enough');
     await model.setupPin('123456', '123456', false, 'unlock');
     api.sessionItems = [_session('current', current: true), _session('other')];
     model.lock();
@@ -171,10 +164,7 @@ void main() {
       analytics: RecordingAnalytics(),
     );
     addTearDown(model.dispose);
-    await model.submit(AuthAction.login, {
-      'email': 'user@example.com',
-      'password': 'password long enough',
-    });
+    await model.login('user@example.com', 'password long enough');
     await model.setupPin('123456', '123456', false, 'unlock');
     final loaded = (await settings.load()).getOrElse(
       () => const AppPreferences(),

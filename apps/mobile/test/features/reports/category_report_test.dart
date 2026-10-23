@@ -27,6 +27,7 @@ DefaultAuthViewModel _auth() =>
         ),
       )
       ..stage = AuthStage.unlocked
+      ..hasPin = true
       ..ready = true;
 
 void main() {

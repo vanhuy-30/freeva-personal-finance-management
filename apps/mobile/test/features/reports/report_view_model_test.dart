@@ -32,6 +32,7 @@ void main() {
             ),
           )
           ..stage = AuthStage.unlocked
+          ..hasPin = true
           ..ready = true;
     model = DefaultReportViewModel(
       cases,

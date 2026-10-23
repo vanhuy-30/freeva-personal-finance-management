@@ -100,6 +100,7 @@ void main() {
         ),
       );
       auth.stage = AuthStage.unlocked;
+      auth.hasPin = true;
       repo = MemoryProfiles();
       model = DefaultProfileViewModel(ProfileUseCases(repo), auth);
       await Future<void>.delayed(Duration.zero);
