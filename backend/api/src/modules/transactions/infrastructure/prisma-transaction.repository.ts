@@ -146,7 +146,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
         WHERE ${where}`;
       const ids = await tx.$queryRaw<{ id: string }[]>(Prisma.sql`
         SELECT t.id ${listed}
-        ORDER BY t."occurredOn" DESC, t."createdAt" DESC, t.id ASC
+        ORDER BY ${query.sort === 'amountDesc' ? Prisma.sql`ABS(t."amountMinor") DESC, ` : Prisma.empty}t."occurredOn" DESC, t."createdAt" DESC, t.id ASC
         LIMIT ${query.pageSize} OFFSET ${(query.page - 1) * query.pageSize}`);
       const [count] = await tx.$queryRaw<{ total: string; bundles: string }[]>(Prisma.sql`
         SELECT COUNT(*)::text AS total, COUNT(DISTINCT COALESCE(t."transferGroupId", t.id))::text AS bundles ${listed}`);
@@ -211,6 +211,7 @@ function listFilters(userId: string, query: TransactionQuery, search: ParsedTran
     )`);
   }
   if (query.type) parts.push(Prisma.sql`t.type::text = ${query.type}`);
+  if (query.currency) parts.push(Prisma.sql`t."currencyCode" = ${query.currency}`);
   if (query.from) parts.push(Prisma.sql`t."occurredOn" >= ${query.from}::date`);
   if (query.to) parts.push(Prisma.sql`t."occurredOn" <= ${query.to}::date`);
   if (search) parts.push(searchMatch(search));

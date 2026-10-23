@@ -10,6 +10,8 @@ import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/home/presentation/pages/notifications_page.dart';
 import '../../features/transactions/domain/transaction.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
+import '../../features/reports/domain/category_detail.dart';
+import '../../features/reports/presentation/pages/report_category_page.dart';
 import '../../features/reports/presentation/pages/report_page.dart';
 import '../../features/settings/domain/app_preferences.dart';
 import '../../features/settings/presentation/pages/faq_page.dart';
@@ -155,6 +157,14 @@ GoRouter _createAppRouter(
             ],
           ),
         ],
+      ),
+      GoRoute(
+        path: '/reports/category',
+        redirect: (context, state) =>
+            state.extra is CategoryDetailArgs ? null : '/reports',
+        builder: (context, state) => AuthGate(
+          child: ReportCategoryPage(args: state.extra! as CategoryDetailArgs),
+        ),
       ),
       GoRoute(path: '/settings', redirect: (context, state) => '/me'),
       GoRoute(

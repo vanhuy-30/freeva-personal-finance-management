@@ -12,6 +12,7 @@ class BreakdownSlice {
     required this.percent,
     required this.categoryCount,
     required this.transactionCount,
+    required this.memberIds,
   });
 
   final String? id;
@@ -22,6 +23,10 @@ class BreakdownSlice {
   /// Parent categories folded into a "Khác" slice (1 for a named one).
   final int categoryCount;
   final int transactionCount;
+
+  /// Parent-level keys rolled into this slice (null = uncategorised). One for
+  /// a named category, several for "Khác".
+  final List<String?> memberIds;
 
   bool get isOther => name == null;
 }
@@ -76,9 +81,17 @@ Breakdown reportBreakdown(
   final restMinor = rest.fold(BigInt.zero, (a, e) => a + e.value);
   final restCount = rest.fold(0, (a, e) => a + (counts[e.key] ?? 0));
   final parts = [
-    for (final e in head) (e.key, names[e.key], e.value, 1, counts[e.key] ?? 0),
+    for (final e in head)
+      (e.key, names[e.key], e.value, 1, counts[e.key] ?? 0, [e.key]),
     if (restMinor > BigInt.zero)
-      (null, null, restMinor, rest.length, restCount),
+      (
+        null,
+        null,
+        restMinor,
+        rest.length,
+        restCount,
+        [for (final e in rest) e.key],
+      ),
   ];
   final percents = _wholePercents([for (final p in parts) p.$3], total);
   return Breakdown(
@@ -92,6 +105,7 @@ Breakdown reportBreakdown(
           percent: percents[i],
           categoryCount: parts[i].$4,
           transactionCount: parts[i].$5,
+          memberIds: parts[i].$6,
         ),
     ],
   );

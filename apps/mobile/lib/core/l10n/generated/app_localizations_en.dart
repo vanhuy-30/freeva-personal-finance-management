@@ -600,12 +600,6 @@ class SEn extends S {
   String get reportNext => 'Next period';
 
   @override
-  String get reportFrom => 'From';
-
-  @override
-  String get reportTo => 'To';
-
-  @override
   String get reportApply => 'Show this range';
 
   @override
@@ -2079,4 +2073,71 @@ class SEn extends S {
   String reportMonthShort(String month) {
     return 'M$month';
   }
+
+  @override
+  String get reportRangeTitle => 'Choose a date range';
+
+  @override
+  String get reportQuick7 => 'Last 7 days';
+
+  @override
+  String get reportQuick30 => 'Last 30 days';
+
+  @override
+  String get reportQuickQuarter => 'This quarter';
+
+  @override
+  String get reportWeekdays => 'Mon,Tue,Wed,Thu,Fri,Sat,Sun';
+
+  @override
+  String get reportRangePickStart => 'Pick the first day';
+
+  @override
+  String get reportRangePickEnd => 'Now pick the last day';
+
+  @override
+  String reportDayFrom(String date) {
+    return 'From $date';
+  }
+
+  @override
+  String reportDayTo(String date) {
+    return 'To $date';
+  }
+
+  @override
+  String reportDayToday(String date) {
+    return 'Today, $date';
+  }
+
+  @override
+  String reportShareExpense(String percent) {
+    return '$percent% of spending';
+  }
+
+  @override
+  String reportShareIncome(String percent) {
+    return '$percent% of income';
+  }
+
+  @override
+  String reportShareCount(String share, int count) {
+    return '$share · $count transactions';
+  }
+
+  @override
+  String reportBarGeneral(String name) {
+    return '$name (general)';
+  }
+
+  @override
+  String get reportLargest => 'Largest transactions';
+
+  @override
+  String reportSeeAll(int count) {
+    return 'See all $count';
+  }
+
+  @override
+  String get reportLargestError => 'Couldn\'t load transactions';
 }

@@ -22,8 +22,6 @@ abstract class ReportViewModel extends ChangeNotifier {
   bool get trendFailed;
   bool get busy;
   AuthFailure? get failure;
-  String? get rangeFrom;
-  String? get rangeTo;
   bool get canStep;
 
   /// Later periods are locked once the viewed one reaches today.
@@ -41,8 +39,7 @@ abstract class ReportViewModel extends ChangeNotifier {
   Future<void> step(int direction);
   void selectCurrency(String code);
   Future<void> selectTrend(ReportPeriodKind kind);
-  void setRangeEdge({String? from, String? to});
-  Future<void> applyRange();
+  Future<void> applyRange(String from, String to);
 }
 
 @LazySingleton(as: ReportViewModel)
@@ -85,10 +82,6 @@ class DefaultReportViewModel extends ReportViewModel {
   bool busy = false;
   @override
   AuthFailure? failure;
-  @override
-  String? rangeFrom;
-  @override
-  String? rangeTo;
 
   @override
   String get today => calendarDate(_clock());
@@ -161,8 +154,6 @@ class DefaultReportViewModel extends ReportViewModel {
     _chosenCurrency = null;
     kind = ReportPeriodKind.month;
     trendKind = ReportPeriodKind.month;
-    rangeFrom = null;
-    rangeTo = null;
     _clear();
     busy = false;
     notifyListeners();
@@ -215,19 +206,14 @@ class DefaultReportViewModel extends ReportViewModel {
   }
 
   @override
-  Future<void> reload() => kind == ReportPeriodKind.range && data == null
-      ? applyRange()
-      : load(_last);
+  Future<void> reload() => load(_last);
 
   @override
   Future<void> select(ReportPeriodKind next) async {
     if (busy || _stage != AuthStage.unlocked) return;
+    // A custom range comes from the popup through [applyRange].
+    if (next == ReportPeriodKind.range) return;
     kind = next;
-    if (next == ReportPeriodKind.range) {
-      _clear();
-      notifyListeners();
-      return;
-    }
     trendKind = next;
     await load(_currentOf(next));
   }
@@ -270,24 +256,10 @@ class DefaultReportViewModel extends ReportViewModel {
     notifyListeners();
   }
 
+  /// Loads the inclusive range picked in the popup. Ignored while busy.
   @override
-  void setRangeEdge({String? from, String? to}) {
-    if (from != null) rangeFrom = from;
-    if (to != null) rangeTo = to;
-    notifyListeners();
-  }
-
-  @override
-  Future<void> applyRange() async {
-    final from = rangeFrom;
-    final to = rangeTo;
+  Future<void> applyRange(String from, String to) async {
     if (busy || _stage != AuthStage.unlocked) return;
-    kind = ReportPeriodKind.range;
-    if (from == null || to == null) {
-      failure = const AuthFailure(AuthError.invalidInput);
-      notifyListeners();
-      return;
-    }
     await load(ReportPeriodQuery.range(from, to));
   }
 

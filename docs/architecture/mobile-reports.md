@@ -25,7 +25,7 @@ Use case tổng quan chỉ ghép net worth, cashflow tháng và catalog tiền t
 
 Thiết kế: [F-reports.md](../brand/patterns/F-reports.md). Backend: `period=year` và `GET /reports/trend` ([reports.md](reports.md)).
 
-- **Kỳ:** Tuần · Tháng · Năm · Tuỳ chọn. Nút trước/sau gửi `on` theo mốc server đã trả; nút sau khoá khi kỳ đang xem chứa hôm nay (ngày của thiết bị). Khoảng tuỳ chọn tạm dùng hai ô chọn ngày; popup lịch ở F2.
+- **Kỳ:** Tuần · Tháng · Năm · Tuỳ chọn. Nút trước/sau gửi `on` theo mốc server đã trả; nút sau khoá khi kỳ đang xem chứa hôm nay (ngày của thiết bị). Khoảng tuỳ chọn mở popup lịch (F2).
 - **Thẻ tổng:** Thu, Chi, Chi trung bình/ngày (chia số ngày đã qua của kỳ đang chạy, hoặc cả kỳ), Còn lại = thu − chi. "So với kỳ trước" gọi thêm cashflow kỳ liền trước (khoảng tuỳ chọn lùi đúng số ngày của nó); làm tròn % nửa ra xa 0, màu xám, không hiện khi kỳ trước chưa có chi.
 - **Xu hướng:** một lần gọi `/reports/trend`, tách riêng với tổng: lỗi chỉ ẩn khối này. Công tắc Tuần/Tháng/Năm của khối chỉ tải lại xu hướng. Kỳ đang xem tô `data.1`; nhãn giá trị rút gọn (`9,32tr`) bớt khi chữ lớn, nhãn trợ năng đọc đủ số.
 - **Phân tích:** Chi · Thu gộp danh mục con về cha, ba nhóm đầu rồi "Khác" (tổng % luôn 100). Ví: Vào/Ra/Chuyển ví và số ròng mỗi ví, sắp theo |ròng|, chạm mở chi tiết ví.
@@ -34,9 +34,15 @@ Thiết kế: [F-reports.md](../brand/patterns/F-reports.md). Backend: `period=y
 - **Trống:** kỳ không có số liệu → minh hoạ + "Về tháng này/tuần này/năm nay" (kỳ hiện tại thì chỉ lời nhắc).
 - Chữ lớn / 320 pt: tổng xếp một cột, biểu đồ tròn đặt chú thích bên dưới, công tắc xu hướng xuống dòng riêng.
 
+### F2: chi tiết danh mục và popup khoảng ngày
+
+- **Chi tiết danh mục** (`/reports/category`, màn đẩy, nhận `CategoryDetailArgs` qua `extra`, không mở lại bằng deep link): chạm một dòng danh mục ở thẻ Phân tích. Dùng chính báo cáo đang xem nên số khớp màn chính, kể cả tháng tài chính. Tổng, "38% tổng chi · N giao dịch", thanh theo danh mục con (dòng của chính cha ghi "(chung)" khi cha còn có con); "Khác" liệt kê từng danh mục bị gộp.
+- **Giao dịch lớn nhất:** `GET /transactions?type&categoryId…&from&to&currency&sort=amountDesc&pageSize=3`; N lấy từ `total`. Ẩn khi nhóm có thu chưa phân loại (API không lọc "không danh mục"). "Xem cả N" đặt `TransactionFilter` (loại, danh mục, khoảng tuỳ chọn) rồi mở `/transactions`; danh sách đó chưa lọc theo loại tiền.
+- **Popup khoảng ngày:** chip 7/30 ngày qua và Quý này (từ đầu quý dương lịch đến hôm nay), lịch bắt đầu thứ Hai, chạm lần 1 chọn ngày đầu, lần 2 ngày cuối (ngày sớm hơn thì đổi ngày đầu, lần 3 chọn lại). Ngày tương lai và ngày cách ngày đầu quá 3660 ngày bị khoá. Huỷ giữ nguyên kỳ đang xem. Chữ lớn: hai nút xếp dọc.
+
 ## Giới hạn
 
-Chưa có ngân sách, chi lớn (F2), tài sản ròng theo thời gian, CSV, search hay quy đổi FX. Không hàng đợi offline. Chưa native build hoặc E2E staging. API báo cáo cần có trước khi smoke trên server thật.
+Chưa có ngân sách, tài sản ròng theo thời gian, CSV, search hay quy đổi FX. Không hàng đợi offline. Chưa native build hoặc E2E staging. API báo cáo cần có trước khi smoke trên server thật.
 
 ## Kiểm chứng
 

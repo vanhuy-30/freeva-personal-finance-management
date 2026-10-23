@@ -45,10 +45,12 @@ export class TransactionQueryDto {
   @Type(() => Number) @IsInt() @Min(1) @Max(2147483647) page = 1;
   @Type(() => Number) @IsInt() @Min(1) @Max(100) pageSize = 50;
   @IsIn(['active', 'deleted', 'all']) status: 'active' | 'deleted' | 'all' = 'active';
+  @IsIn(['date', 'amountDesc']) sort: 'date' | 'amountDesc' = 'date';
   @ValidateIf(optional) @Transform(many) @IsArray() @ArrayMaxSize(20) @ArrayUnique() @IsUUID('all', { each: true }) accountId?: string[];
   @ValidateIf(optional) @Transform(many) @IsArray() @ArrayMaxSize(50) @ArrayUnique() @IsUUID('all', { each: true }) categoryId?: string[];
   @ValidateIf(optional) @Transform(many) @IsArray() @ArrayMaxSize(20) @ArrayUnique() @IsUUID('all', { each: true }) tagId?: string[];
   @ValidateIf(optional) @IsIn(TRANSACTION_TYPES) type?: TransactionType;
+  @ValidateIf(optional) @IsString() @Matches(/^[A-Z]{3}(?![\s\S])/) currency?: string;
   @ValidateIf(optional) @IsString() @Matches(/^\d{4}-\d{2}-\d{2}(?![\s\S])/) from?: string;
   @ValidateIf(optional) @IsString() @Matches(/^\d{4}-\d{2}-\d{2}(?![\s\S])/) to?: string;
   @ValidateIf(optional) @IsString() @MaxLength(200) search?: string;

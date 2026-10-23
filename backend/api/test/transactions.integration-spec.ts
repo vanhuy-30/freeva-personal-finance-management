@@ -180,7 +180,7 @@ describe('BE-P1-005 HTTP + PostgreSQL', () => {
     expect(await prisma.transaction.count({ where: { userId: owner } })).toBe(0);
     const created = await create(data); const id = created.legs[0].id;
     for (const patch of [{}, { version: null }, { version: 0 }, { version: 2147483647 }, { version: 1, type: 'income' }, { version: 1, deleted: null }]) expect((await request('PATCH', `/${id}`, patch)).status).toBe(400);
-    for (const path of ['?page=0', '?pageSize=101', '?from=2026-02-29', '?from=2026-10-01&to=2026-09-01', '?status=bad', '?owner=x', '/bad-id']) expect((await request('GET', path)).status).toBe(400);
+    for (const path of ['?page=0', '?pageSize=101', '?from=2026-02-29', '?from=2026-10-01&to=2026-09-01', '?status=bad', '?sort=bad', '?currency=vnd', '?owner=x', '/bad-id']) expect((await request('GET', path)).status).toBe(400);
     expect((await request('DELETE', `/${id}`)).status).toBe(400);
   });
   it('stores immutable manual FX with exact minor-digit conversion and edits both legs together', async () => {
@@ -346,6 +346,18 @@ describe('BE-P1-005 HTTP + PostgreSQL', () => {
       { currency: 'USD', incomeMinor: '1250', expenseMinor: '0', transferInMinor: '0', transferOutMinor: '0' },
       { currency: 'VND', incomeMinor: '18500000', expenseMinor: '-114000', transferInMinor: '500000', transferOutMinor: '-500000' },
     ]);
+    const biggest = await list('type=expense&sort=amountDesc&pageSize=2');
+    expect(biggest.items.map(item => item.id)).toEqual([pho.legs[0].id, grab.legs[0].id]);
+    expect(biggest.total).toBe(3);
+    const largestIncome = await list('type=income&sort=amountDesc');
+    expect(largestIncome.items[0].id).not.toBe(largestIncome.items[1].id);
+    expect((await list('type=expense')).items[0].id).toBe(grab.legs[0].id);
+    expect((await request('GET', '?sort=smallest')).status).toBe(400);
+    const usd = await list('currency=USD&sort=amountDesc');
+    expect(usd.items).toHaveLength(1);
+    expect(usd.total).toBe(1);
+    expect((await list('currency=VND&type=income')).total).toBe(1);
+    expect((await request('GET', '?currency=usd')).status).toBe(400);
     const paged = await list('pageSize=1');
     expect(paged.items).toHaveLength(1);
     expect(paged.summary.count).toBe(6);

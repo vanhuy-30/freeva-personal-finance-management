@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/money/compact_money.dart';
@@ -6,6 +7,7 @@ import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_card.dart';
 import '../../../../core/widgets/freeva_segmented.dart';
+import '../../domain/category_detail.dart';
 import '../../domain/report.dart';
 import '../../domain/report_breakdown.dart';
 import 'breakdown_rows.dart';
@@ -65,6 +67,10 @@ class _ReportBreakdownCardState extends State<ReportBreakdownCard> {
             )
           else
             _Categories(
+              report: widget.report,
+              kind: view == _View.expense
+                  ? BreakdownKind.expense
+                  : BreakdownKind.income,
               breakdown: reportBreakdown(
                 widget.report,
                 widget.currency,
@@ -83,11 +89,15 @@ class _ReportBreakdownCardState extends State<ReportBreakdownCard> {
 
 class _Categories extends StatelessWidget {
   const _Categories({
+    required this.report,
+    required this.kind,
     required this.breakdown,
     required this.currency,
     required this.digits,
   });
 
+  final CashflowReport report;
+  final BreakdownKind kind;
   final Breakdown breakdown;
   final String currency;
   final int digits;
@@ -161,7 +171,21 @@ class _Categories extends StatelessWidget {
           ),
         ),
         const SizedBox(height: FreevaSpace.s2),
-        BreakdownRows(slices: slices, currency: currency, digits: digits),
+        BreakdownRows(
+          slices: slices,
+          currency: currency,
+          digits: digits,
+          onOpen: (slice) => context.push(
+            '/reports/category',
+            extra: CategoryDetailArgs(
+              report: report,
+              currency: currency,
+              digits: digits,
+              kind: kind,
+              slice: slice,
+            ),
+          ),
+        ),
       ],
     );
   }
