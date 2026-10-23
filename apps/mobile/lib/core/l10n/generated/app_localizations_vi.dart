@@ -43,8 +43,7 @@ class SVi extends S {
   String get authPassword => 'Mật khẩu';
 
   @override
-  String get authPasswordHelp =>
-      'Từ 12 đến 128 ký tự; giữ nguyên khoảng trắng.';
+  String get authPasswordHelp => 'Ít nhất 12 ký tự, có cả chữ và số.';
 
   @override
   String get authEmailCode => 'Mã 64 ký tự trong email';

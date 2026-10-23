@@ -17,7 +17,7 @@
   "authResetPassword": "Reset password",
   "authEmail": "Email",
   "authPassword": "Password",
-  "authPasswordHelp": "12–128 characters; spaces are preserved.",
+  "authPasswordHelp": "At least 12 characters, with letters and numbers.",
   "authEmailCode": "64-character code from email",
   "authSuccess": "Request processed. If you requested a code, check your email if the account is eligible. After verification or password reset, you can sign in.",
   "authInvalidInput": "Check your email, password, email code, or matching six-digit PINs.",

@@ -16,24 +16,45 @@ a,input,button{font-family:inherit}
 .back{width:44px;height:44px;border-radius:999px;border:1px solid #EEF0F6;background:#FFFFFF;color:#22283A;display:flex;align-items:center;justify-content:center;box-sizing:border-box}
 .pf{height:54px;border-radius:999px;border:1px solid #E4E7F0;background:#FFFFFF;display:flex;align-items:center;gap:10px;padding:0 6px 0 18px;color:#5C6378;box-sizing:border-box}
 .pf input{border:none;outline:none;background:transparent;font-size:16px;color:#22283A;flex-grow:1;padding:0;min-width:0}
+.eye{width:44px;height:44px;border:none;background:transparent;color:#5C6378;display:flex;align-items:center;justify-content:center;flex:0 0 44px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .seg{flex:1 1 0;height:5px;border-radius:999px}
+.rule{display:flex;align-items:center;gap:8px;font-size:13px;line-height:18px}
+.ok{width:18px;height:18px;border-radius:999px;background:#E9F5F0;color:#23795A;display:flex;align-items:center;justify-content:center;flex:0 0 18px}
+.no{width:18px;height:18px;border-radius:999px;border:1.5px solid #C9CEDD;box-sizing:border-box;flex:0 0 18px}
 </style>
 </helmet>
-<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; padding: 56px 24px 40px 24px">
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; padding: 56px 24px 32px 24px">
 
   <a href="ObAccount.dc.html" aria-label="Quay lại" class="back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></a>
 
-  <h1 style="margin: 20px 0 0 0; font-size: 28px; line-height: 34px; font-weight: 600; letter-spacing: -0.6px; text-align: center">Tạo tài khoản</h1>
+  <h1 style="margin: 16px 0 0 0; font-size: 28px; line-height: 34px; font-weight: 600; letter-spacing: -0.6px; text-align: center">Tạo tài khoản</h1>
 
-  <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 32px">
+  <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 24px">
     <div class="pf"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"></rect><path d="M3.5 7l8.5 6 8.5-6"></path></svg><label for="re" class="sr">Email</label><input id="re" type="email" placeholder="Email" value="lan@gmail.com"></div>
-    <div class="pf" style="border: 1.5px solid #3F67D1; box-shadow: 0 0 0 4px rgba(86,128,233,.18)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><label for="rp" class="sr">Mật khẩu</label><input id="rp" type="password" placeholder="Mật khẩu" value="maytrangngaythu" style="letter-spacing: 2px"><button aria-label="Hiện mật khẩu" style="width: 44px; height: 44px; border: none; background: transparent; color: #5C6378; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg></button></div>
+    <div class="pf"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><label for="rp" class="sr">Mật khẩu</label><input id="rp" type="password" placeholder="Mật khẩu" value="maytrangngay7" aria-describedby="rh" style="letter-spacing: 2px"><button class="eye" aria-label="Hiện mật khẩu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg></button></div>
+    <div class="pf" style="border: 1.5px solid #3F67D1; box-shadow: 0 0 0 4px rgba(86,128,233,.18)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6z"></path><path d="M9 12l2 2 4-4"></path></svg><label for="rc" class="sr">Nhập lại mật khẩu</label><input id="rc" type="password" placeholder="Nhập lại mật khẩu" value="maytrangngay7" style="letter-spacing: 2px"><button class="eye" aria-label="Hiện mật khẩu nhập lại"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg></button></div>
   </div>
-  <div style="display: flex; align-items: center; gap: 10px; margin-top: 12px; padding: 0 18px" aria-live="polite">
+
+  <div style="display: flex; align-items: center; gap: 10px; margin-top: 14px; padding: 0 4px" aria-live="polite">
     <div style="display: flex; gap: 4px; flex-grow: 1"><span class="seg" style="background: #23795A"></span><span class="seg" style="background: #23795A"></span><span class="seg" style="background: #E4E7F0"></span></div>
     <span style="font-size: 13px; color: #23795A; font-weight: 600">Khá tốt</span>
   </div>
+
+  <div id="rh" style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px; padding: 0 4px" aria-live="polite">
+    <span class="rule"><span class="ok"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg></span><span>Ít nhất 12 ký tự</span></span>
+    <span class="rule"><span class="ok"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg></span><span>Có cả chữ và số</span></span>
+    <span class="rule" style="color: #5C6378"><span class="no"></span><span>Thêm ký hiệu như ! @ # để mạnh hơn</span></span>
+    <span class="rule"><span class="ok"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg></span><span>Hai mật khẩu khớp nhau</span></span>
+  </div>
+
+  <label for="rt" style="display: flex; align-items: flex-start; gap: 12px; margin-top: 20px; padding: 0 4px; font-size: 14px; line-height: 20px; color: #3D4460">
+    <span style="position: relative; width: 22px; height: 22px; flex: 0 0 22px; margin-top: 1px">
+      <input id="rt" type="checkbox" checked style="position: absolute; inset: 0; margin: 0; opacity: 0">
+      <span aria-hidden="true" style="position: absolute; inset: 0; border-radius: 7px; background: #3F67D1; color: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"></path></svg></span>
+    </span>
+    <span>Tôi đồng ý với <a href="#" style="color: #22283A; font-weight: 600; text-decoration: underline; text-underline-offset: 2px">Điều khoản sử dụng</a> và <a href="#" style="color: #22283A; font-weight: 600; text-decoration: underline; text-underline-offset: 2px">Chính sách bảo mật</a> của Freeva.</span>
+  </label>
 
   <a href="AuVerify.dc.html" style="margin-top: 24px; height: 56px; border-radius: 999px; background: #3F67D1; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; text-decoration: none">Tạo tài khoản</a>
 

@@ -1898,7 +1898,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AuthCredentialsRequest'
+              $ref: '#/components/schemas/AuthNewCredentialsRequest'
   /api/v1/auth/login:
     post:
       operationId: login
@@ -3981,7 +3981,24 @@ components:
           minLength: 12
           maxLength: 128
           writeOnly: true
-          description: Not trimmed or normalized.
+          description: Not trimmed or normalized. Login accepts any 12–128 characters, so passwords set before
+            the letter-and-digit rule still work.
+    AuthNewCredentialsRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - email
+      - password
+      properties:
+        email: *id001
+        password: &id004
+          type: string
+          minLength: 12
+          maxLength: 128
+          pattern: ^(?=[\s\S]*\p{L})(?=[\s\S]*\p{Nd})[\s\S]*$
+          writeOnly: true
+          description: Not trimmed or normalized. A new password needs at least one letter and one digit, in any
+            script (DS-P2-004); symbols are optional. Otherwise 400 VALIDATION_ERROR.
     AuthTokenRequest:
       type: object
       additionalProperties: false
@@ -4000,7 +4017,7 @@ components:
       - password
       properties:
         token: *id002
-        password: *id003
+        password: *id004
     AuthAccepted:
       type: object
       additionalProperties: false

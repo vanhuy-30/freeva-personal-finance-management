@@ -20,6 +20,7 @@ import { AuthRateLimitGuard } from './auth-rate-limit.guard';
 import { AuthExceptionFilter } from './auth-exception.filter';
 import {
   CredentialsDto,
+  NewCredentialsDto,
   EmailDto,
   ResetPasswordDto,
   TokenDto,
@@ -57,7 +58,7 @@ export class AuthController {
 
   @Post('register')
   @HttpCode(202)
-  register(@Body() body: CredentialsDto) {
+  register(@Body() body: NewCredentialsDto) {
     return this.auth.register(body.email, body.password);
   }
 

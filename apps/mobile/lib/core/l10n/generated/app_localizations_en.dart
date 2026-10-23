@@ -43,7 +43,8 @@ class SEn extends S {
   String get authPassword => 'Password';
 
   @override
-  String get authPasswordHelp => '12–128 characters; spaces are preserved.';
+  String get authPasswordHelp =>
+      'At least 12 characters, with letters and numbers.';
 
   @override
   String get authEmailCode => '64-character code from email';

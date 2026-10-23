@@ -11,7 +11,7 @@
   "authResetPassword": "Đặt lại mật khẩu",
   "authEmail": "Email",
   "authPassword": "Mật khẩu",
-  "authPasswordHelp": "Từ 12 đến 128 ký tự; giữ nguyên khoảng trắng.",
+  "authPasswordHelp": "Ít nhất 12 ký tự, có cả chữ và số.",
   "authEmailCode": "Mã 64 ký tự trong email",
   "authSuccess": "Đã xử lý yêu cầu. Nếu vừa yêu cầu gửi mã, hãy kiểm tra email nếu tài khoản đủ điều kiện. Sau khi xác thực hoặc đặt lại mật khẩu, bạn có thể đăng nhập.",
   "authInvalidInput": "Kiểm tra email, mật khẩu, mã email hoặc PIN 6 chữ số và xác nhận trùng khớp.",

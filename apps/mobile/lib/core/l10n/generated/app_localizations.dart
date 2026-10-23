@@ -166,7 +166,7 @@ abstract class S {
   /// No description provided for @authPasswordHelp.
   ///
   /// In en, this message translates to:
-  /// **'12–128 characters; spaces are preserved.'**
+  /// **'At least 12 characters, with letters and numbers.'**
   String get authPasswordHelp;
 
   /// No description provided for @authEmailCode.
