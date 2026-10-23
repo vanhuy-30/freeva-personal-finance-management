@@ -42,16 +42,21 @@ class FreevaSegmented<T> extends StatelessWidget {
           child: AnimatedContainer(
             duration: FreevaMotion.fast,
             curve: FreevaMotion.standard,
-            height: 36,
+            // Grows instead of clipping when large text needs two lines.
+            constraints: const BoxConstraints(minHeight: 36),
             alignment: Alignment.center,
-            padding: const EdgeInsets.symmetric(horizontal: 18),
+            padding: EdgeInsets.symmetric(
+              horizontal: expand ? 10 : 18,
+              vertical: 6,
+            ),
             decoration: ShapeDecoration(
               shape: const StadiumBorder(),
               color: on ? c.segmentedSelectedBg : Colors.transparent,
             ),
             child: Text(
               segment.label,
-              maxLines: 1,
+              maxLines: 2,
+              textAlign: TextAlign.center,
               style: FreevaTypography.body.copyWith(
                 fontSize: 14,
                 fontWeight: on ? FontWeight.w600 : FontWeight.w500,

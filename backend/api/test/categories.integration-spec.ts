@@ -245,6 +245,17 @@ describe('BE-P1-006 HTTP + PostgreSQL', () => {
     expect((await request('GET', '/categories?parentId=root&status=all')).body.total).toBe(2);
     expect((await request('GET', `/categories?parentId=${root.id}&status=all`)).body.items[0].id).toBe(child.id);
   });
+  it('DS-P2-003: usage counts active and deleted transactions for the owner only', async () => {
+    const snack = await category('Ăn vặt');
+    expect((await request('GET', `/categories/${snack.id}/usage`)).body).toEqual({ transactionCount: 0 });
+    const first = await request('POST', '/transactions', await expense(snack.id));
+    expect(first.status).toBe(201);
+    await request('POST', '/transactions', await expense(snack.id));
+    await prisma.transaction.updateMany({ where: { id: first.body.legs[0].id }, data: { deletedAt: new Date() } });
+    expect((await request('GET', `/categories/${snack.id}/usage`)).body).toEqual({ transactionCount: 2 });
+    expect((await request('GET', `/categories/${snack.id}/usage`, undefined, otherToken)).status).toBe(404);
+    expect((await request('GET', `/categories/${randomUUID()}/usage`)).status).toBe(404);
+  });
   it('moves active/deleted transactions atomically, preserves balances/tags and invalidates old versions', async () => {
     const source = await category(), target = await category('Target');
     const input = await expense(source.id);

@@ -26,6 +26,7 @@ abstract class CategoryUseCases {
     List<FinanceCategory> categories, {
     String? replacementCategoryId,
   });
+  Future<Either<AuthFailure, int>> usage(FinanceCategory category);
 }
 
 @LazySingleton(as: CategoryUseCases)
@@ -57,10 +58,13 @@ class DefaultCategoryUseCases implements CategoryUseCases {
     if (name.isEmpty ||
         name.length > 100 ||
         categoryParentInvalid(draft.parentId, category?.id, categories) ||
+        (draft.parentId != category?.parentId &&
+            categoryBreaksTwoLevels(draft.parentId, category, categories)) ||
         // An older colour outside the palette may stay as it is.
         (draft.colorToken != category?.colorToken &&
             !_token(draft.colorToken, options.colorTokens)) ||
-        !_token(draft.iconToken, options.iconTokens)) {
+        (draft.iconToken != category?.iconToken &&
+            !_token(draft.iconToken, options.iconTokens))) {
       return Future.value(left(const AuthFailure(AuthError.invalidInput)));
     }
     if (category != null && _stale(category)) {
@@ -85,6 +89,10 @@ class DefaultCategoryUseCases implements CategoryUseCases {
     }
     return _repository.update(category, archived: archived);
   }
+
+  @override
+  Future<Either<AuthFailure, int>> usage(FinanceCategory category) =>
+      _repository.usage(category);
 
   @override
   Future<Either<AuthFailure, void>> delete(

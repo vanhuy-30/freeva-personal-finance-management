@@ -10,8 +10,7 @@ import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dar
 import 'package:mobile/features/categories/data/category_repository_impl.dart';
 import 'package:mobile/features/categories/domain/category_use_cases.dart';
 import 'package:mobile/features/categories/presentation/viewmodels/category_view_model.dart';
-import 'package:mobile/features/categories/presentation/widgets/category_editor.dart';
-import 'package:mobile/features/categories/presentation/widgets/category_editor_form.dart';
+import 'package:mobile/features/categories/presentation/pages/category_editor_page.dart';
 import 'package:mobile/features/categories/domain/category_expansion_repository.dart';
 import 'package:mobile/features/categories/presentation/pages/category_page.dart';
 import 'package:mobile/features/categories/presentation/pages/hidden_categories_page.dart';
@@ -126,31 +125,145 @@ void main() {
     await tester.pump();
     await tester.tap(find.text('Ăn uống'));
     await tester.pumpAndSettle();
-    expect(find.byType(CategoryEditorForm), findsOneWidget);
+    expect(find.byType(CategoryEditorPage), findsOneWidget);
     await tester.enterText(find.byType(TextField).first, 'Private draft');
     auth.lock();
     await tester.pumpAndSettle();
-    expect(find.byType(CategoryEditor), findsNothing);
+    expect(find.byType(CategoryEditorPage), findsNothing);
     expect(find.text('Private draft'), findsNothing);
     expect(model.categories, isEmpty);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('editor keeps an invalid draft on a narrow large-text screen', (
+  void phone(WidgetTester tester) {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+  }
+
+  testWidgets('empty name keeps the draft at 320 pt with 2× text', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(320, 640);
     tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
-    await tester.pumpWidget(app(CategoryEditorForm(model: model), scale: 2));
-    await tester.enterText(find.byType(TextField).first, '   ');
-    await tester.ensureVisible(find.byType(FilledButton));
-    await tester.tap(find.byType(FilledButton));
-    await tester.pumpAndSettle();
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(app(CategoryEditorPage(model: model), scale: 2));
+    await tester.tap(find.text('Lưu danh mục'));
+    await tester.pump();
     expect(api.writes, 0);
-    expect(find.text('   '), findsOneWidget);
-    expect(find.textContaining('1–100'), findsOneWidget);
+    expect(find.text('Đặt tên cho danh mục nhé.'), findsOneWidget);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('adds a subcategory with colour and icon; its parent opens', (
+    tester,
+  ) async {
+    phone(tester);
+    await tester.pumpWidget(app(CategoryEditorPage(model: model)));
+    await tester.enterText(find.byType(TextField).first, 'Trà sữa');
+    await tester.tap(find.text('Danh mục con'));
+    await tester.pump();
+    await tester.tap(find.text('Lưu danh mục'));
+    await tester.pump();
+    expect(find.text('Chọn danh mục chính nhé.'), findsOneWidget);
+    await tester.tap(find.bySemanticsLabel('Thuộc, Chọn danh mục chính'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.bySemanticsLabel('Ăn uống').last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.bySemanticsLabel('Xanh lá'));
+    await tester.tap(find.bySemanticsLabel('Cà phê'));
+    await tester.pump();
+    await tester.tap(find.text('Lưu danh mục'));
+    await tester.pumpAndSettle();
+    final body = api.calls.last.body!;
+    expect(body, containsPair('parentId', 'food'));
+    expect(body, containsPair('colorToken', 'color.semantic.success'));
+    expect(body, containsPair('iconToken', 'coffee'));
+    expect(body, containsPair('kind', 'expense'));
+    expect(model.expanded, contains('food'));
+  });
+
+  testWidgets('a main category with subcategories cannot hide or delete', (
+    tester,
+  ) async {
+    phone(tester);
+    final food = model.categories.firstWhere((c) => c.id == 'food');
+    await tester.pumpWidget(
+      app(CategoryEditorPage(model: model, category: food)),
+    );
+    expect(find.text('Còn 1 danh mục con'), findsOneWidget);
+    expect(find.text('Danh mục con'), findsNothing);
+    final hide = tester.widget<TextButton>(
+      find.ancestor(
+        of: find.text('Ẩn'),
+        matching: find.byWidgetPredicate((w) => w is TextButton),
+      ),
+    );
+    expect(hide.onPressed, isNull);
+  });
+
+  testWidgets('delete moves the transactions to the parent by default', (
+    tester,
+  ) async {
+    phone(tester);
+    api.usageCount = 12;
+    final coffee = model.categories.firstWhere((c) => c.id == 'coffee');
+    CategoryEditResult? result;
+    await tester.pumpWidget(
+      app(
+        Builder(
+          builder: (context) => TextButton(
+            onPressed: () async => result = await openCategoryEditor(
+              context,
+              model,
+              category: coffee,
+            ),
+            child: const Text('open'),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Xoá'));
+    await tester.pumpAndSettle();
+    expect(find.text('Xoá “Cà phê”?'), findsOneWidget);
+    expect(
+      find.text('Không khôi phục được. 12 giao dịch sẽ chuyển sang:'),
+      findsOneWidget,
+    );
+    await tester.tap(
+      find.descendant(of: find.byType(Dialog), matching: find.text('Xoá')),
+    );
+    await tester.pumpAndSettle();
+    expect(api.calls.last.path, contains('replacementCategoryId=food'));
+    expect(result, CategoryEditResult.deleted);
+    expect(model.categories.any((c) => c.id == 'coffee'), isFalse);
+  });
+
+  testWidgets('"Ẩn" hides at once and closes the editor', (tester) async {
+    phone(tester);
+    final coffee = model.categories.firstWhere((c) => c.id == 'coffee');
+    CategoryEditResult? result;
+    await tester.pumpWidget(
+      app(
+        Builder(
+          builder: (context) => TextButton(
+            onPressed: () async => result = await openCategoryEditor(
+              context,
+              model,
+              category: coffee,
+            ),
+            child: const Text('open'),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Ẩn'));
+    await tester.pumpAndSettle();
+    expect(result, CategoryEditResult.hidden);
+    expect(model.categories.firstWhere((c) => c.id == 'coffee').archived, true);
   });
 }

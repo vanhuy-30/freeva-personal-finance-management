@@ -65,6 +65,7 @@ class CategoryTransport implements AuthorizedApi {
   Completer<void>? pending;
   bool paginate = false;
   bool requireReplacement = false;
+  int usageCount = 0;
 
   @override
   Future<Either<AuthFailure, Map<String, dynamic>>> request(
@@ -80,8 +81,11 @@ class CategoryTransport implements AuthorizedApi {
     if (path == 'categories/options') {
       return right({
         'colorTokens': ['color.brand.primary', 'color.semantic.success'],
-        'iconTokens': ['food', 'category'],
+        'iconTokens': ['food', 'coffee', 'shopping'],
       });
+    }
+    if (method == 'GET' && path.endsWith('/usage')) {
+      return right({'transactionCount': usageCount});
     }
     if (path == 'categories/recent') return right({'items': <Object>[]});
     if (method == 'GET' && path.startsWith('categories?')) {
@@ -174,7 +178,7 @@ void main() {
         () => throw StateError('x'),
       );
       expect(managed.items.map((item) => item.id), ['food', 'coffee', 'gift']);
-      expect(managed.options.iconTokens, ['food', 'category']);
+      expect(managed.options.iconTokens, ['food', 'coffee', 'shopping']);
       expect(
         api.calls
             .where((call) => call.path.startsWith('categories?'))
@@ -375,7 +379,7 @@ void main() {
             ),
           ),
         );
-        const draft = CategoryDraft(name: 'Trà', iconToken: 'category');
+        const draft = CategoryDraft(name: 'Trà', iconToken: 'coffee');
         api.failure = const AuthFailure(AuthError.network);
         expect(await model.save(draft, id), isFalse);
         api.failure = null;

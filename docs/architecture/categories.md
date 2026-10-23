@@ -13,6 +13,7 @@ Tất cả `/api/v1/categories` yêu cầu session user, giới hạn owner và 
 |---|---|
 | `POST /defaults` | 204; tạo hoặc bổ sung bộ VN một lần, lặp/concurrent an toàn |
 | `GET /options` | `colorTokens`, `iconTokens` cho metadata |
+| `GET /{id}/usage` | `{transactionCount}`: số giao dịch xoá sẽ chuyển, kể cả đã xoá mềm (`DS-P2-003`) |
 | `GET /` | `{items,page,pageSize,total}`, danh sách phẳng có parentId |
 | `GET /recent` | `{items}`; tối đa 10 danh mục active dùng gần đây |
 | `GET /{id}` | Chi tiết active hoặc archived |

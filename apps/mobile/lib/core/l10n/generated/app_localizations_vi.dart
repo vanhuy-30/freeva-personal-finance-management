@@ -541,84 +541,23 @@ class SVi extends S {
   String get categoryName => 'Tên danh mục';
 
   @override
-  String get categoryParent => 'Danh mục cha';
-
-  @override
-  String get categoryNoParent => 'Không có danh mục cha';
-
-  @override
   String get categoryColor => 'Màu';
-
-  @override
-  String get categoryNoColor => 'Không chọn màu';
 
   @override
   String get categoryIcon => 'Biểu tượng';
 
   @override
-  String get categoryNoIcon => 'Không chọn biểu tượng';
-
-  @override
-  String get categorySystem => 'Danh mục mặc định';
-
-  @override
-  String get categoryShowHidden => 'Xem danh mục đã ẩn';
-
-  @override
-  String get categoryHide => 'Ẩn danh mục';
-
-  @override
-  String get categoryRestore => 'Khôi phục danh mục';
-
-  @override
-  String get categoryHideExplanation =>
-      'Ẩn danh mục khỏi danh sách đang dùng. Giao dịch cũ giữ nguyên danh mục; danh mục đã ẩn không dùng để ghi mới.';
-
-  @override
-  String get categoryHideBlocked =>
-      'Hãy ẩn hoặc chuyển các danh mục con đang dùng trước khi ẩn danh mục này.';
-
-  @override
-  String get categoryDelete => 'Xóa danh mục';
-
-  @override
-  String get categoryDeleteTitle => 'Xóa danh mục vĩnh viễn?';
-
-  @override
-  String get categoryDeleteBody =>
-      'Danh mục bị xóa không khôi phục được. Nếu còn giao dịch, kể cả giao dịch đã xóa mềm, hãy chọn danh mục thay thế.';
-
-  @override
-  String get categoryDeleteBlocked =>
-      'Hãy xóa hoặc chuyển mọi danh mục con, kể cả danh mục đã ẩn, trước khi xóa danh mục này.';
-
-  @override
-  String get categoryReplacement => 'Danh mục thay thế';
-
-  @override
-  String get categoryNoReplacement => 'Không chuyển giao dịch';
-
-  @override
-  String get categoryEmpty => 'Chưa có danh mục.';
-
-  @override
   String get categoryHiddenEmpty => 'Không có danh mục đã ẩn.';
 
   @override
-  String get categoryInvalid =>
-      'Kiểm tra tên (1–100 ký tự), danh mục cha, màu và biểu tượng. Không chọn chính danh mục này hoặc danh mục con làm cha.';
+  String get categoryInvalid => 'Kiểm tra lại tên và danh mục chính.';
 
   @override
   String get categoryConflict =>
-      'Danh mục đã thay đổi ở nơi khác. Tải lại danh sách trước khi sửa tiếp.';
+      'Danh mục vừa đổi ở nơi khác. Mở lại để sửa tiếp.';
 
   @override
-  String get categoryError =>
-      'Không thể tải hoặc lưu danh mục. Vui lòng thử lại.';
-
-  @override
-  String get categoryReloadRequired =>
-      'Dữ liệu đã cũ. Tải lại trước khi sửa tiếp.';
+  String get categoryError => 'Chưa lưu được danh mục. Thử lại nhé.';
 
   @override
   String get reportTitle => 'Báo cáo';
@@ -1714,4 +1653,266 @@ class SVi extends S {
 
   @override
   String get categoryLoadError => 'Chưa tải được danh mục';
+
+  @override
+  String get categoryIconFood => 'Ăn uống';
+
+  @override
+  String get categoryIconCoffee => 'Cà phê';
+
+  @override
+  String get categoryIconGroceries => 'Đi chợ';
+
+  @override
+  String get categoryIconShopping => 'Mua sắm';
+
+  @override
+  String get categoryIconClothes => 'Quần áo';
+
+  @override
+  String get categoryIconGifts => 'Quà tặng';
+
+  @override
+  String get categoryIconTransport => 'Ô tô, xe máy';
+
+  @override
+  String get categoryIconBus => 'Xe buýt';
+
+  @override
+  String get categoryIconFuel => 'Xăng';
+
+  @override
+  String get categoryIconTravel => 'Du lịch';
+
+  @override
+  String get categoryIconHousing => 'Nhà';
+
+  @override
+  String get categoryIconRepair => 'Sửa chữa';
+
+  @override
+  String get categoryIconElectricity => 'Điện';
+
+  @override
+  String get categoryIconWater => 'Nước';
+
+  @override
+  String get categoryIconInternet => 'Internet';
+
+  @override
+  String get categoryIconPhone => 'Điện thoại';
+
+  @override
+  String get categoryIconHealth => 'Sức khỏe';
+
+  @override
+  String get categoryIconMedicine => 'Thuốc';
+
+  @override
+  String get categoryIconSports => 'Thể thao';
+
+  @override
+  String get categoryIconFamily => 'Gia đình';
+
+  @override
+  String get categoryIconPets => 'Thú cưng';
+
+  @override
+  String get categoryIconBeauty => 'Làm đẹp';
+
+  @override
+  String get categoryIconEducation => 'Học tập';
+
+  @override
+  String get categoryIconBooks => 'Sách';
+
+  @override
+  String get categoryIconMusic => 'Âm nhạc';
+
+  @override
+  String get categoryIconEntertainment => 'Phim';
+
+  @override
+  String get categoryIconGames => 'Trò chơi';
+
+  @override
+  String get categoryIconSalary => 'Lương';
+
+  @override
+  String get categoryIconBonus => 'Thưởng';
+
+  @override
+  String get categoryIconInvestment => 'Đầu tư';
+
+  @override
+  String get categoryIconWork => 'Công việc';
+
+  @override
+  String get categoryIconOtherIncome => 'Tiết kiệm';
+
+  @override
+  String get categoryIconBills => 'Thuế, phí';
+
+  @override
+  String get categoryIconInsurance => 'Bảo hiểm';
+
+  @override
+  String get categoryIconSubscription => 'Gói định kỳ';
+
+  @override
+  String get categoryIconOtherExpense => 'Khác';
+
+  @override
+  String get categoryColorNone => 'Không màu';
+
+  @override
+  String get categoryColorBrandPrimary => 'Xanh dương';
+
+  @override
+  String get categoryColorBlueDeep => 'Xanh dương đậm';
+
+  @override
+  String get categoryColorBrandSecondary => 'Xanh trời';
+
+  @override
+  String get categoryColorOceanDeep => 'Xanh biển đậm';
+
+  @override
+  String get categoryColorBrandAccent => 'Tím';
+
+  @override
+  String get categoryColorVioletDeep => 'Tím đậm';
+
+  @override
+  String get categoryColorSuccess => 'Xanh lá';
+
+  @override
+  String get categoryColorWarning => 'Vàng';
+
+  @override
+  String get categoryColorBlueLight => 'Xanh dương nhạt';
+
+  @override
+  String get categoryColorBrandHighlight => 'Xanh trời nhạt';
+
+  @override
+  String get categoryColorVioletLight => 'Tím nhạt';
+
+  @override
+  String get categoryColorGreenLight => 'Xanh lá nhạt';
+
+  @override
+  String get categoryColorYellowLight => 'Vàng nhạt';
+
+  @override
+  String get categoryColorPink => 'Hồng';
+
+  @override
+  String get categoryColorOrange => 'Cam';
+
+  @override
+  String get categoryColorBrown => 'Nâu';
+
+  @override
+  String get categoryColorLime => 'Xanh chanh';
+
+  @override
+  String get categoryColorOlive => 'Ô liu';
+
+  @override
+  String get categoryColorPlum => 'Mận';
+
+  @override
+  String get categoryColorGray => 'Xám';
+
+  @override
+  String get categoryIconGroupFood => 'Ăn uống · mua sắm';
+
+  @override
+  String get categoryIconGroupHome => 'Đi lại · nhà cửa';
+
+  @override
+  String get categoryIconGroupLife => 'Sức khỏe · gia đình · giải trí';
+
+  @override
+  String get categoryIconGroupMoney => 'Thu nhập · tài chính';
+
+  @override
+  String get categoryLevelMain => 'Danh mục chính';
+
+  @override
+  String get categoryLevelChild => 'Danh mục con';
+
+  @override
+  String get categoryParentField => 'Thuộc';
+
+  @override
+  String get categoryPickParent => 'Chọn danh mục chính';
+
+  @override
+  String get categoryParentSheet => 'Thuộc danh mục chính';
+
+  @override
+  String get categoryParentMissing => 'Chọn danh mục chính nhé.';
+
+  @override
+  String get categoryNameMissing => 'Đặt tên cho danh mục nhé.';
+
+  @override
+  String get categoryMoreIcons => 'Thêm biểu tượng';
+
+  @override
+  String get categoryIconSearch => 'Tìm: xăng, thú cưng…';
+
+  @override
+  String get categoryIconSearchLabel => 'Tìm biểu tượng';
+
+  @override
+  String get categoryIconDone => 'Xong';
+
+  @override
+  String get categoryIconNoMatch => 'Không thấy biểu tượng nào.';
+
+  @override
+  String get categorySave => 'Lưu danh mục';
+
+  @override
+  String get categorySaveChanges => 'Lưu thay đổi';
+
+  @override
+  String get categoryHideShort => 'Ẩn';
+
+  @override
+  String get categoryDeleteShort => 'Xoá';
+
+  @override
+  String categoryChildrenBlock(int count) {
+    return 'Còn $count danh mục con';
+  }
+
+  @override
+  String categoryHiddenToast(String name) {
+    return 'Đã ẩn $name';
+  }
+
+  @override
+  String categoryDeletedToast(String name) {
+    return 'Đã xoá $name';
+  }
+
+  @override
+  String categoryDeleteQuestion(String name) {
+    return 'Xoá “$name”?';
+  }
+
+  @override
+  String get categoryDeleteNoUndo => 'Không khôi phục được.';
+
+  @override
+  String categoryDeleteMove(int count) {
+    return 'Không khôi phục được. $count giao dịch sẽ chuyển sang:';
+  }
+
+  @override
+  String get categoryMoveTo => 'Chuyển giao dịch sang';
 }

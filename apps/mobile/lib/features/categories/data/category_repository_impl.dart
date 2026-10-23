@@ -184,6 +184,13 @@ class CategoryRepositoryImpl implements CategoryRepository {
   );
 
   @override
+  Future<Either<AuthFailure, int>> usage(FinanceCategory category) => _request(
+    'GET',
+    'categories/${category.id}/usage',
+    (json) => json['transactionCount'] as int,
+  );
+
+  @override
   Future<Either<AuthFailure, void>> delete(
     FinanceCategory category, {
     String? replacementCategoryId,

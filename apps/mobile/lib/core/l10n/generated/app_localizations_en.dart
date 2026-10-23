@@ -541,84 +541,23 @@ class SEn extends S {
   String get categoryName => 'Category name';
 
   @override
-  String get categoryParent => 'Parent category';
-
-  @override
-  String get categoryNoParent => 'No parent';
-
-  @override
   String get categoryColor => 'Color';
-
-  @override
-  String get categoryNoColor => 'No color';
 
   @override
   String get categoryIcon => 'Icon';
 
   @override
-  String get categoryNoIcon => 'No icon';
-
-  @override
-  String get categorySystem => 'Default category';
-
-  @override
-  String get categoryShowHidden => 'Show hidden categories';
-
-  @override
-  String get categoryHide => 'Hide category';
-
-  @override
-  String get categoryRestore => 'Restore category';
-
-  @override
-  String get categoryHideExplanation =>
-      'Hiding archives the category from the active list. Existing transactions keep it; hidden categories cannot be used for new records.';
-
-  @override
-  String get categoryHideBlocked =>
-      'Hide or move active child categories before hiding this one.';
-
-  @override
-  String get categoryDelete => 'Delete category';
-
-  @override
-  String get categoryDeleteTitle => 'Delete this category permanently?';
-
-  @override
-  String get categoryDeleteBody =>
-      'A deleted category cannot be restored. If any transaction still references it, including a soft-deleted one, choose a replacement.';
-
-  @override
-  String get categoryDeleteBlocked =>
-      'Delete or move every child, including hidden ones, before deleting this category.';
-
-  @override
-  String get categoryReplacement => 'Replacement category';
-
-  @override
-  String get categoryNoReplacement => 'Do not move transactions';
-
-  @override
-  String get categoryEmpty => 'No categories yet.';
-
-  @override
   String get categoryHiddenEmpty => 'No hidden categories.';
 
   @override
-  String get categoryInvalid =>
-      'Check the name (1–100 characters), parent, color and icon. A category cannot be its own parent or sit under its child.';
+  String get categoryInvalid => 'Check the name and main category.';
 
   @override
   String get categoryConflict =>
-      'This category changed elsewhere. Reload the list before editing again.';
+      'This category changed elsewhere. Open it again to edit.';
 
   @override
-  String get categoryError =>
-      'Could not load or save categories. Please try again.';
-
-  @override
-  String get categoryReloadRequired =>
-      'The data is stale. Reload before editing again.';
+  String get categoryError => 'Couldn\'t save the category. Try again.';
 
   @override
   String get reportTitle => 'Reports';
@@ -1736,4 +1675,278 @@ class SEn extends S {
 
   @override
   String get categoryLoadError => 'Couldn\'t load categories';
+
+  @override
+  String get categoryIconFood => 'Food';
+
+  @override
+  String get categoryIconCoffee => 'Coffee';
+
+  @override
+  String get categoryIconGroceries => 'Groceries';
+
+  @override
+  String get categoryIconShopping => 'Shopping';
+
+  @override
+  String get categoryIconClothes => 'Clothes';
+
+  @override
+  String get categoryIconGifts => 'Gifts';
+
+  @override
+  String get categoryIconTransport => 'Car, motorbike';
+
+  @override
+  String get categoryIconBus => 'Bus';
+
+  @override
+  String get categoryIconFuel => 'Fuel';
+
+  @override
+  String get categoryIconTravel => 'Travel';
+
+  @override
+  String get categoryIconHousing => 'Home';
+
+  @override
+  String get categoryIconRepair => 'Repairs';
+
+  @override
+  String get categoryIconElectricity => 'Electricity';
+
+  @override
+  String get categoryIconWater => 'Water';
+
+  @override
+  String get categoryIconInternet => 'Internet';
+
+  @override
+  String get categoryIconPhone => 'Phone';
+
+  @override
+  String get categoryIconHealth => 'Health';
+
+  @override
+  String get categoryIconMedicine => 'Medicine';
+
+  @override
+  String get categoryIconSports => 'Sports';
+
+  @override
+  String get categoryIconFamily => 'Family';
+
+  @override
+  String get categoryIconPets => 'Pets';
+
+  @override
+  String get categoryIconBeauty => 'Beauty';
+
+  @override
+  String get categoryIconEducation => 'Learning';
+
+  @override
+  String get categoryIconBooks => 'Books';
+
+  @override
+  String get categoryIconMusic => 'Music';
+
+  @override
+  String get categoryIconEntertainment => 'Movies';
+
+  @override
+  String get categoryIconGames => 'Games';
+
+  @override
+  String get categoryIconSalary => 'Salary';
+
+  @override
+  String get categoryIconBonus => 'Bonus';
+
+  @override
+  String get categoryIconInvestment => 'Investing';
+
+  @override
+  String get categoryIconWork => 'Work';
+
+  @override
+  String get categoryIconOtherIncome => 'Savings';
+
+  @override
+  String get categoryIconBills => 'Taxes, fees';
+
+  @override
+  String get categoryIconInsurance => 'Insurance';
+
+  @override
+  String get categoryIconSubscription => 'Subscriptions';
+
+  @override
+  String get categoryIconOtherExpense => 'Other';
+
+  @override
+  String get categoryColorNone => 'No colour';
+
+  @override
+  String get categoryColorBrandPrimary => 'Blue';
+
+  @override
+  String get categoryColorBlueDeep => 'Deep blue';
+
+  @override
+  String get categoryColorBrandSecondary => 'Sky';
+
+  @override
+  String get categoryColorOceanDeep => 'Deep ocean';
+
+  @override
+  String get categoryColorBrandAccent => 'Violet';
+
+  @override
+  String get categoryColorVioletDeep => 'Deep violet';
+
+  @override
+  String get categoryColorSuccess => 'Green';
+
+  @override
+  String get categoryColorWarning => 'Yellow';
+
+  @override
+  String get categoryColorBlueLight => 'Light blue';
+
+  @override
+  String get categoryColorBrandHighlight => 'Light sky';
+
+  @override
+  String get categoryColorVioletLight => 'Light violet';
+
+  @override
+  String get categoryColorGreenLight => 'Light green';
+
+  @override
+  String get categoryColorYellowLight => 'Light yellow';
+
+  @override
+  String get categoryColorPink => 'Pink';
+
+  @override
+  String get categoryColorOrange => 'Orange';
+
+  @override
+  String get categoryColorBrown => 'Brown';
+
+  @override
+  String get categoryColorLime => 'Lime';
+
+  @override
+  String get categoryColorOlive => 'Olive';
+
+  @override
+  String get categoryColorPlum => 'Plum';
+
+  @override
+  String get categoryColorGray => 'Grey';
+
+  @override
+  String get categoryIconGroupFood => 'Food · shopping';
+
+  @override
+  String get categoryIconGroupHome => 'Getting around · home';
+
+  @override
+  String get categoryIconGroupLife => 'Health · family · fun';
+
+  @override
+  String get categoryIconGroupMoney => 'Income · money';
+
+  @override
+  String get categoryLevelMain => 'Main category';
+
+  @override
+  String get categoryLevelChild => 'Subcategory';
+
+  @override
+  String get categoryParentField => 'Under';
+
+  @override
+  String get categoryPickParent => 'Pick a main category';
+
+  @override
+  String get categoryParentSheet => 'Main category';
+
+  @override
+  String get categoryParentMissing => 'Pick a main category.';
+
+  @override
+  String get categoryNameMissing => 'Give it a name.';
+
+  @override
+  String get categoryMoreIcons => 'More icons';
+
+  @override
+  String get categoryIconSearch => 'Search: fuel, pets…';
+
+  @override
+  String get categoryIconSearchLabel => 'Search icons';
+
+  @override
+  String get categoryIconDone => 'Done';
+
+  @override
+  String get categoryIconNoMatch => 'No icons match.';
+
+  @override
+  String get categorySave => 'Save category';
+
+  @override
+  String get categorySaveChanges => 'Save changes';
+
+  @override
+  String get categoryHideShort => 'Hide';
+
+  @override
+  String get categoryDeleteShort => 'Delete';
+
+  @override
+  String categoryChildrenBlock(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count subcategories left',
+      one: '1 subcategory left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String categoryHiddenToast(String name) {
+    return '$name hidden';
+  }
+
+  @override
+  String categoryDeletedToast(String name) {
+    return '$name deleted';
+  }
+
+  @override
+  String categoryDeleteQuestion(String name) {
+    return 'Delete “$name”?';
+  }
+
+  @override
+  String get categoryDeleteNoUndo => 'This can\'t be undone.';
+
+  @override
+  String categoryDeleteMove(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count transactions move',
+      one: '1 transaction moves',
+    );
+    return 'This can\'t be undone. $_temp0 to:';
+  }
+
+  @override
+  String get categoryMoveTo => 'Move transactions to';
 }

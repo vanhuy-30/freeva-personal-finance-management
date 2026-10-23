@@ -1,6 +1,6 @@
 # Nhóm E — Danh mục
 
-Trạng thái: **chốt thiết kế 2026-10-21**, chưa code. Task: `DS-P2-003` (màn Danh mục).
+Trạng thái: **chốt thiết kế 2026-10-21**, đã code 2026-10-23 (E1 + E2). Task: `DS-P2-003` (màn Danh mục).
 Canvas: trang **05 · Patterns**, hàng E
 (<https://claude.ai/artifact/SmyaVvz57doJiAM6Kn678T>, riêng tư). Spec chung:
 [design-system.md](../design-system.md).
@@ -64,6 +64,7 @@ Màu chỉ dùng cho chấm, nền ô icon (bậc nhạt) và biểu tượng; k
 | Tab Chi · Thu | Xong (E1): danh mục mới lấy tab đang mở, con lấy theo cha; "both" hiện ở cả hai tab (chốt 2026-10-23). |
 | Màu danh mục ngoài màn Danh mục | Chốt 2026-10-23: chỉ dùng ở các màn nhóm E; dòng giao dịch, sheet chọn, Tổng quan giữ ô icon trung tính như thiết kế B/C. |
 | Hai cấp | Xong (E1): backend chặn khi tạo/đổi cha; dữ liệu cũ lồng sâu hiện dưới danh mục chính trên cùng. |
-| Chặn ẩn/xoá | Danh mục chính còn danh mục con đang dùng: nút Ẩn/Xoá mờ, dòng "Còn N danh mục con". |
-| Số giao dịch khi xoá | Cần API trả số giao dịch (kể cả đã xoá mềm) để hiện "12 giao dịch sẽ chuyển sang". |
-| Copy l10n | Thay chuỗi `category*` dài (`categoryHideExplanation`, `categoryDeleteBody`, `categoryInvalid`…) bằng chữ ngắn ở trên. |
+| Chặn ẩn/xoá | Xong (E2): Ẩn mờ khi còn con đang dùng, Xoá mờ khi còn con (kể cả đã ẩn); dòng "Còn N danh mục con". |
+| Số giao dịch khi xoá | Xong (E2): `GET /categories/{id}/usage`. Ô chọn đích mặc định là danh mục cha, nếu không thì danh mục đầu tiên cùng tab. |
+| Màn hẹp / chữ lớn | Segmented cho phép hai dòng thay vì cắt chữ (áp cho mọi segmented `expand`). |
+| Copy l10n | Xong: bỏ chuỗi `category*` dài, rút gọn chuỗi lỗi. |

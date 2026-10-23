@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:mobile/core/di/injection.dart';
 import 'package:mobile/core/l10n/generated/app_localizations.dart';
 import 'package:mobile/core/theme/app_theme.dart';
+import 'package:mobile/features/auth/data/auth_repository_impl.dart';
 import 'package:mobile/features/auth/domain/auth_repository.dart';
+import 'package:mobile/features/auth/domain/auth_use_cases.dart';
+import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dart';
 import 'package:mobile/features/categories/domain/finance_category.dart';
 import 'package:mobile/features/categories/presentation/viewmodels/category_view_model.dart';
+
+import '../auth/fakes.dart';
 
 FinanceCategory _cat(
   String id,
@@ -115,7 +120,28 @@ class StubCategoryViewModel extends ChangeNotifier
   List<FinanceCategory> categories;
   @override
   CategoryOptions options = const CategoryOptions(
-    colorTokens: ['color.brand.primary'],
+    colorTokens: [
+      'color.brand.primary',
+      'color.category.blueDeep',
+      'color.brand.secondary',
+      'color.category.oceanDeep',
+      'color.brand.accent',
+      'color.category.violetDeep',
+      'color.semantic.success',
+      'color.semantic.warning',
+      'color.category.blueLight',
+      'color.brand.highlight',
+      'color.category.violetLight',
+      'color.category.greenLight',
+      'color.category.yellowLight',
+      'color.category.pink',
+      'color.category.orange',
+      'color.category.brown',
+      'color.category.lime',
+      'color.category.olive',
+      'color.category.plum',
+      'color.category.gray',
+    ],
     iconTokens: ['food'],
   );
   @override
@@ -140,6 +166,9 @@ class StubCategoryViewModel extends ChangeNotifier
   }) async => true;
   @override
   Future<bool> archive(FinanceCategory category) async => true;
+  int usageCount = 12;
+  @override
+  Future<int?> usage(FinanceCategory category) async => usageCount;
   @override
   Future<bool> restore(FinanceCategory category) async {
     restored.add(category.id);
@@ -170,6 +199,15 @@ Future<Widget> e1App(
   double scale = 1,
 }) async {
   await getIt.reset();
+  getIt.registerSingleton<AuthViewModel>(
+    DefaultAuthViewModel(
+        DefaultAuthUseCases(
+          AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+        ),
+      )
+      ..stage = AuthStage.unlocked
+      ..ready = true,
+  );
   getIt.registerSingleton<CategoryViewModel>(model ?? StubCategoryViewModel());
   return MaterialApp(
     debugShowCheckedModeBanner: false,

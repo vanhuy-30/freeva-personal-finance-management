@@ -32,5 +32,6 @@ export class CategoryService {
     this.validateColor(dto.colorToken);
     return response(await this.repository.update(userId, id, dto));
   }
+  async usage(userId: string, id: string) { return { transactionCount: await this.repository.transactionCount(userId, id) }; }
   delete(userId: string, id: string, version: number, replacement?: string) { return this.repository.delete(userId, id, version, replacement); }
 }

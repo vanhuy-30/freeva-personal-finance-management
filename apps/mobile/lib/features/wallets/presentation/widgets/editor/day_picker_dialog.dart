@@ -4,7 +4,7 @@ import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../../core/theme/theme_context.dart';
 import '../../../../../core/theme/tokens.g.dart';
 import '../../../../../core/widgets/freeva_button.dart';
-import 'picker_field.dart';
+import '../../../../../core/widgets/freeva_picker_field.dart';
 
 /// What the day popup returns; [day] null means "Để trống".
 class DayChoice {

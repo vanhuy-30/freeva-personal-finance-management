@@ -26,6 +26,20 @@ bool categoryParentInvalid(
   }
 }
 
+/// Two levels only: a new parent must be a main category, and a category
+/// with subcategories cannot get a parent.
+bool categoryBreaksTwoLevels(
+  String? parentId,
+  FinanceCategory? self,
+  List<FinanceCategory> categories,
+) {
+  if (parentId == null) return false;
+  final parent = categories.where((c) => c.id == parentId).firstOrNull;
+  return parent == null ||
+      parent.parentId != null ||
+      (self != null && categoryHasChild(self, categories));
+}
+
 bool categoryHasActiveChild(
   FinanceCategory category,
   List<FinanceCategory> categories,

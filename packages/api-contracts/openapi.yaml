@@ -215,6 +215,49 @@ paths:
             const: root
           description: Omit for all levels; root for null parent; UUID for direct children. Foreign/missing parent
             returns 404.
+  /api/v1/categories/{id}/usage:
+    get:
+      operationId: getCategoryUsage
+      summary: Count transactions that deleting this category would move
+      description: Every transaction of the owner in this category, soft-deleted ones included (the same rows DELETE
+        moves to replacementCategoryId). Used by the delete popup (DS-P2-003).
+      tags:
+      - Categories
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Usage
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [transactionCount]
+                properties:
+                  transactionCount:
+                    type: integer
+                    minimum: 0
+        '400':
+          $ref: '#/components/responses/CategoryValidationError'
+        '401':
+          $ref: '#/components/responses/CategoryUnauthorized'
+        '404':
+          $ref: '#/components/responses/CategoryNotFound'
+        '503':
+          $ref: '#/components/responses/CategoryUnavailable'
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
   /api/v1/categories/{id}:
     get:
       operationId: getCategory

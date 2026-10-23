@@ -28,6 +28,9 @@ abstract class CategoryViewModel extends ChangeNotifier {
     String? replacementCategoryId,
   });
 
+  /// How many transactions deleting [category] moves; null when unknown.
+  Future<int?> usage(FinanceCategory category);
+
   /// Restores a hidden category, then its hidden subcategories (they are
   /// listed under it in "Danh mục đã ẩn"). False if any step fails.
   Future<bool> restore(FinanceCategory category);
@@ -220,6 +223,15 @@ class DefaultCategoryViewModel extends CategoryViewModel {
     busy = false;
     notifyListeners();
     return result.isRight();
+  }
+
+  @override
+  Future<int?> usage(FinanceCategory category) async {
+    final result = await _cases.usage(category);
+    return result.fold((error) {
+      if (error.code == AuthError.expired) _auth.sessionExpired();
+      return null;
+    }, (count) => count);
   }
 
   @override

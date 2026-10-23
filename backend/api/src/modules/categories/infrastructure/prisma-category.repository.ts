@@ -164,6 +164,13 @@ export class PrismaCategoryRepository implements CategoryRepository {
         archivedAt: archived ? current.archivedAt ?? new Date() : null, version: { increment: 1 } }, select });
     });
   }
+  transactionCount(userId: string, id: string) {
+    return this.prisma.$transaction(async tx => {
+      await this.get(tx, userId, id);
+      // Same rows delete moves: every transaction of the owner in this category, deleted or not.
+      return tx.transaction.count({ where: { userId, categoryId: id } });
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead });
+  }
   delete(userId: string, id: string, version: number, replacementCategoryId?: string) {
     return this.write(userId, async tx => {
       const current = await this.get(tx, userId, id);

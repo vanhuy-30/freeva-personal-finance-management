@@ -1075,119 +1075,17 @@ abstract class S {
   /// **'Category name'**
   String get categoryName;
 
-  /// No description provided for @categoryParent.
-  ///
-  /// In en, this message translates to:
-  /// **'Parent category'**
-  String get categoryParent;
-
-  /// No description provided for @categoryNoParent.
-  ///
-  /// In en, this message translates to:
-  /// **'No parent'**
-  String get categoryNoParent;
-
   /// No description provided for @categoryColor.
   ///
   /// In en, this message translates to:
   /// **'Color'**
   String get categoryColor;
 
-  /// No description provided for @categoryNoColor.
-  ///
-  /// In en, this message translates to:
-  /// **'No color'**
-  String get categoryNoColor;
-
   /// No description provided for @categoryIcon.
   ///
   /// In en, this message translates to:
   /// **'Icon'**
   String get categoryIcon;
-
-  /// No description provided for @categoryNoIcon.
-  ///
-  /// In en, this message translates to:
-  /// **'No icon'**
-  String get categoryNoIcon;
-
-  /// No description provided for @categorySystem.
-  ///
-  /// In en, this message translates to:
-  /// **'Default category'**
-  String get categorySystem;
-
-  /// No description provided for @categoryShowHidden.
-  ///
-  /// In en, this message translates to:
-  /// **'Show hidden categories'**
-  String get categoryShowHidden;
-
-  /// No description provided for @categoryHide.
-  ///
-  /// In en, this message translates to:
-  /// **'Hide category'**
-  String get categoryHide;
-
-  /// No description provided for @categoryRestore.
-  ///
-  /// In en, this message translates to:
-  /// **'Restore category'**
-  String get categoryRestore;
-
-  /// No description provided for @categoryHideExplanation.
-  ///
-  /// In en, this message translates to:
-  /// **'Hiding archives the category from the active list. Existing transactions keep it; hidden categories cannot be used for new records.'**
-  String get categoryHideExplanation;
-
-  /// No description provided for @categoryHideBlocked.
-  ///
-  /// In en, this message translates to:
-  /// **'Hide or move active child categories before hiding this one.'**
-  String get categoryHideBlocked;
-
-  /// No description provided for @categoryDelete.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete category'**
-  String get categoryDelete;
-
-  /// No description provided for @categoryDeleteTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete this category permanently?'**
-  String get categoryDeleteTitle;
-
-  /// No description provided for @categoryDeleteBody.
-  ///
-  /// In en, this message translates to:
-  /// **'A deleted category cannot be restored. If any transaction still references it, including a soft-deleted one, choose a replacement.'**
-  String get categoryDeleteBody;
-
-  /// No description provided for @categoryDeleteBlocked.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete or move every child, including hidden ones, before deleting this category.'**
-  String get categoryDeleteBlocked;
-
-  /// No description provided for @categoryReplacement.
-  ///
-  /// In en, this message translates to:
-  /// **'Replacement category'**
-  String get categoryReplacement;
-
-  /// No description provided for @categoryNoReplacement.
-  ///
-  /// In en, this message translates to:
-  /// **'Do not move transactions'**
-  String get categoryNoReplacement;
-
-  /// No description provided for @categoryEmpty.
-  ///
-  /// In en, this message translates to:
-  /// **'No categories yet.'**
-  String get categoryEmpty;
 
   /// No description provided for @categoryHiddenEmpty.
   ///
@@ -1198,26 +1096,20 @@ abstract class S {
   /// No description provided for @categoryInvalid.
   ///
   /// In en, this message translates to:
-  /// **'Check the name (1–100 characters), parent, color and icon. A category cannot be its own parent or sit under its child.'**
+  /// **'Check the name and main category.'**
   String get categoryInvalid;
 
   /// No description provided for @categoryConflict.
   ///
   /// In en, this message translates to:
-  /// **'This category changed elsewhere. Reload the list before editing again.'**
+  /// **'This category changed elsewhere. Open it again to edit.'**
   String get categoryConflict;
 
   /// No description provided for @categoryError.
   ///
   /// In en, this message translates to:
-  /// **'Could not load or save categories. Please try again.'**
+  /// **'Couldn\'t save the category. Try again.'**
   String get categoryError;
-
-  /// No description provided for @categoryReloadRequired.
-  ///
-  /// In en, this message translates to:
-  /// **'The data is stale. Reload before editing again.'**
-  String get categoryReloadRequired;
 
   /// No description provided for @reportTitle.
   ///
@@ -3138,6 +3030,510 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Couldn\'t load categories'**
   String get categoryLoadError;
+
+  /// No description provided for @categoryIconFood.
+  ///
+  /// In en, this message translates to:
+  /// **'Food'**
+  String get categoryIconFood;
+
+  /// No description provided for @categoryIconCoffee.
+  ///
+  /// In en, this message translates to:
+  /// **'Coffee'**
+  String get categoryIconCoffee;
+
+  /// No description provided for @categoryIconGroceries.
+  ///
+  /// In en, this message translates to:
+  /// **'Groceries'**
+  String get categoryIconGroceries;
+
+  /// No description provided for @categoryIconShopping.
+  ///
+  /// In en, this message translates to:
+  /// **'Shopping'**
+  String get categoryIconShopping;
+
+  /// No description provided for @categoryIconClothes.
+  ///
+  /// In en, this message translates to:
+  /// **'Clothes'**
+  String get categoryIconClothes;
+
+  /// No description provided for @categoryIconGifts.
+  ///
+  /// In en, this message translates to:
+  /// **'Gifts'**
+  String get categoryIconGifts;
+
+  /// No description provided for @categoryIconTransport.
+  ///
+  /// In en, this message translates to:
+  /// **'Car, motorbike'**
+  String get categoryIconTransport;
+
+  /// No description provided for @categoryIconBus.
+  ///
+  /// In en, this message translates to:
+  /// **'Bus'**
+  String get categoryIconBus;
+
+  /// No description provided for @categoryIconFuel.
+  ///
+  /// In en, this message translates to:
+  /// **'Fuel'**
+  String get categoryIconFuel;
+
+  /// No description provided for @categoryIconTravel.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel'**
+  String get categoryIconTravel;
+
+  /// No description provided for @categoryIconHousing.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get categoryIconHousing;
+
+  /// No description provided for @categoryIconRepair.
+  ///
+  /// In en, this message translates to:
+  /// **'Repairs'**
+  String get categoryIconRepair;
+
+  /// No description provided for @categoryIconElectricity.
+  ///
+  /// In en, this message translates to:
+  /// **'Electricity'**
+  String get categoryIconElectricity;
+
+  /// No description provided for @categoryIconWater.
+  ///
+  /// In en, this message translates to:
+  /// **'Water'**
+  String get categoryIconWater;
+
+  /// No description provided for @categoryIconInternet.
+  ///
+  /// In en, this message translates to:
+  /// **'Internet'**
+  String get categoryIconInternet;
+
+  /// No description provided for @categoryIconPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get categoryIconPhone;
+
+  /// No description provided for @categoryIconHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Health'**
+  String get categoryIconHealth;
+
+  /// No description provided for @categoryIconMedicine.
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine'**
+  String get categoryIconMedicine;
+
+  /// No description provided for @categoryIconSports.
+  ///
+  /// In en, this message translates to:
+  /// **'Sports'**
+  String get categoryIconSports;
+
+  /// No description provided for @categoryIconFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'Family'**
+  String get categoryIconFamily;
+
+  /// No description provided for @categoryIconPets.
+  ///
+  /// In en, this message translates to:
+  /// **'Pets'**
+  String get categoryIconPets;
+
+  /// No description provided for @categoryIconBeauty.
+  ///
+  /// In en, this message translates to:
+  /// **'Beauty'**
+  String get categoryIconBeauty;
+
+  /// No description provided for @categoryIconEducation.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning'**
+  String get categoryIconEducation;
+
+  /// No description provided for @categoryIconBooks.
+  ///
+  /// In en, this message translates to:
+  /// **'Books'**
+  String get categoryIconBooks;
+
+  /// No description provided for @categoryIconMusic.
+  ///
+  /// In en, this message translates to:
+  /// **'Music'**
+  String get categoryIconMusic;
+
+  /// No description provided for @categoryIconEntertainment.
+  ///
+  /// In en, this message translates to:
+  /// **'Movies'**
+  String get categoryIconEntertainment;
+
+  /// No description provided for @categoryIconGames.
+  ///
+  /// In en, this message translates to:
+  /// **'Games'**
+  String get categoryIconGames;
+
+  /// No description provided for @categoryIconSalary.
+  ///
+  /// In en, this message translates to:
+  /// **'Salary'**
+  String get categoryIconSalary;
+
+  /// No description provided for @categoryIconBonus.
+  ///
+  /// In en, this message translates to:
+  /// **'Bonus'**
+  String get categoryIconBonus;
+
+  /// No description provided for @categoryIconInvestment.
+  ///
+  /// In en, this message translates to:
+  /// **'Investing'**
+  String get categoryIconInvestment;
+
+  /// No description provided for @categoryIconWork.
+  ///
+  /// In en, this message translates to:
+  /// **'Work'**
+  String get categoryIconWork;
+
+  /// No description provided for @categoryIconOtherIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings'**
+  String get categoryIconOtherIncome;
+
+  /// No description provided for @categoryIconBills.
+  ///
+  /// In en, this message translates to:
+  /// **'Taxes, fees'**
+  String get categoryIconBills;
+
+  /// No description provided for @categoryIconInsurance.
+  ///
+  /// In en, this message translates to:
+  /// **'Insurance'**
+  String get categoryIconInsurance;
+
+  /// No description provided for @categoryIconSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscriptions'**
+  String get categoryIconSubscription;
+
+  /// No description provided for @categoryIconOtherExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get categoryIconOtherExpense;
+
+  /// No description provided for @categoryColorNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No colour'**
+  String get categoryColorNone;
+
+  /// No description provided for @categoryColorBrandPrimary.
+  ///
+  /// In en, this message translates to:
+  /// **'Blue'**
+  String get categoryColorBrandPrimary;
+
+  /// No description provided for @categoryColorBlueDeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Deep blue'**
+  String get categoryColorBlueDeep;
+
+  /// No description provided for @categoryColorBrandSecondary.
+  ///
+  /// In en, this message translates to:
+  /// **'Sky'**
+  String get categoryColorBrandSecondary;
+
+  /// No description provided for @categoryColorOceanDeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Deep ocean'**
+  String get categoryColorOceanDeep;
+
+  /// No description provided for @categoryColorBrandAccent.
+  ///
+  /// In en, this message translates to:
+  /// **'Violet'**
+  String get categoryColorBrandAccent;
+
+  /// No description provided for @categoryColorVioletDeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Deep violet'**
+  String get categoryColorVioletDeep;
+
+  /// No description provided for @categoryColorSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Green'**
+  String get categoryColorSuccess;
+
+  /// No description provided for @categoryColorWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Yellow'**
+  String get categoryColorWarning;
+
+  /// No description provided for @categoryColorBlueLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light blue'**
+  String get categoryColorBlueLight;
+
+  /// No description provided for @categoryColorBrandHighlight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light sky'**
+  String get categoryColorBrandHighlight;
+
+  /// No description provided for @categoryColorVioletLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light violet'**
+  String get categoryColorVioletLight;
+
+  /// No description provided for @categoryColorGreenLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light green'**
+  String get categoryColorGreenLight;
+
+  /// No description provided for @categoryColorYellowLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light yellow'**
+  String get categoryColorYellowLight;
+
+  /// No description provided for @categoryColorPink.
+  ///
+  /// In en, this message translates to:
+  /// **'Pink'**
+  String get categoryColorPink;
+
+  /// No description provided for @categoryColorOrange.
+  ///
+  /// In en, this message translates to:
+  /// **'Orange'**
+  String get categoryColorOrange;
+
+  /// No description provided for @categoryColorBrown.
+  ///
+  /// In en, this message translates to:
+  /// **'Brown'**
+  String get categoryColorBrown;
+
+  /// No description provided for @categoryColorLime.
+  ///
+  /// In en, this message translates to:
+  /// **'Lime'**
+  String get categoryColorLime;
+
+  /// No description provided for @categoryColorOlive.
+  ///
+  /// In en, this message translates to:
+  /// **'Olive'**
+  String get categoryColorOlive;
+
+  /// No description provided for @categoryColorPlum.
+  ///
+  /// In en, this message translates to:
+  /// **'Plum'**
+  String get categoryColorPlum;
+
+  /// No description provided for @categoryColorGray.
+  ///
+  /// In en, this message translates to:
+  /// **'Grey'**
+  String get categoryColorGray;
+
+  /// No description provided for @categoryIconGroupFood.
+  ///
+  /// In en, this message translates to:
+  /// **'Food · shopping'**
+  String get categoryIconGroupFood;
+
+  /// No description provided for @categoryIconGroupHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting around · home'**
+  String get categoryIconGroupHome;
+
+  /// No description provided for @categoryIconGroupLife.
+  ///
+  /// In en, this message translates to:
+  /// **'Health · family · fun'**
+  String get categoryIconGroupLife;
+
+  /// No description provided for @categoryIconGroupMoney.
+  ///
+  /// In en, this message translates to:
+  /// **'Income · money'**
+  String get categoryIconGroupMoney;
+
+  /// No description provided for @categoryLevelMain.
+  ///
+  /// In en, this message translates to:
+  /// **'Main category'**
+  String get categoryLevelMain;
+
+  /// No description provided for @categoryLevelChild.
+  ///
+  /// In en, this message translates to:
+  /// **'Subcategory'**
+  String get categoryLevelChild;
+
+  /// No description provided for @categoryParentField.
+  ///
+  /// In en, this message translates to:
+  /// **'Under'**
+  String get categoryParentField;
+
+  /// No description provided for @categoryPickParent.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a main category'**
+  String get categoryPickParent;
+
+  /// No description provided for @categoryParentSheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Main category'**
+  String get categoryParentSheet;
+
+  /// No description provided for @categoryParentMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a main category.'**
+  String get categoryParentMissing;
+
+  /// No description provided for @categoryNameMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Give it a name.'**
+  String get categoryNameMissing;
+
+  /// No description provided for @categoryMoreIcons.
+  ///
+  /// In en, this message translates to:
+  /// **'More icons'**
+  String get categoryMoreIcons;
+
+  /// No description provided for @categoryIconSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search: fuel, pets…'**
+  String get categoryIconSearch;
+
+  /// No description provided for @categoryIconSearchLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Search icons'**
+  String get categoryIconSearchLabel;
+
+  /// No description provided for @categoryIconDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get categoryIconDone;
+
+  /// No description provided for @categoryIconNoMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'No icons match.'**
+  String get categoryIconNoMatch;
+
+  /// No description provided for @categorySave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save category'**
+  String get categorySave;
+
+  /// No description provided for @categorySaveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save changes'**
+  String get categorySaveChanges;
+
+  /// No description provided for @categoryHideShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide'**
+  String get categoryHideShort;
+
+  /// No description provided for @categoryDeleteShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get categoryDeleteShort;
+
+  /// No description provided for @categoryChildrenBlock.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 subcategory left} other{{count} subcategories left}}'**
+  String categoryChildrenBlock(int count);
+
+  /// No description provided for @categoryHiddenToast.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} hidden'**
+  String categoryHiddenToast(String name);
+
+  /// No description provided for @categoryDeletedToast.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} deleted'**
+  String categoryDeletedToast(String name);
+
+  /// No description provided for @categoryDeleteQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete “{name}”?'**
+  String categoryDeleteQuestion(String name);
+
+  /// No description provided for @categoryDeleteNoUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'This can\'t be undone.'**
+  String get categoryDeleteNoUndo;
+
+  /// No description provided for @categoryDeleteMove.
+  ///
+  /// In en, this message translates to:
+  /// **'This can\'t be undone. {count, plural, =1{1 transaction moves} other{{count} transactions move}} to:'**
+  String categoryDeleteMove(int count);
+
+  /// No description provided for @categoryMoveTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Move transactions to'**
+  String get categoryMoveTo;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {
