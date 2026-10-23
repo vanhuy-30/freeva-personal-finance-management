@@ -36,8 +36,6 @@ class _SyncStatusBannerState extends State<SyncStatusBanner> {
         text = s.syncBannerAttention(attention);
       } else if (waiting > 0) {
         text = s.syncBannerWaiting(waiting);
-      } else if (model.duplicateHint) {
-        text = s.syncBannerDuplicate;
       } else {
         return const SizedBox.shrink();
       }

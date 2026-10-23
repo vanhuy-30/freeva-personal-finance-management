@@ -2694,9 +2694,6 @@ class SEn extends S {
   }
 
   @override
-  String get syncBannerDuplicate => 'You may have recorded one twice';
-
-  @override
   String get syncOffline => 'No connection';
 
   @override
@@ -2797,10 +2794,6 @@ class SEn extends S {
   String get syncUpdateBody => 'To keep syncing. Your changes are kept.';
 
   @override
-  String get syncDuplicateNote =>
-      'You may have recorded a similar one. Both are kept.';
-
-  @override
   String get syncDiscardTitle => 'Discard this change?';
 
   @override
@@ -2829,4 +2822,82 @@ class SEn extends S {
 
   @override
   String get syncChipWaiting => 'Waiting to sync';
+
+  @override
+  String get syncViewAction => 'View';
+
+  @override
+  String get syncCompareTitle => 'Choose which to keep';
+
+  @override
+  String syncCompareIntroA(String name) {
+    return '$name was just changed on another device. The differences are ';
+  }
+
+  @override
+  String get syncCompareIntroB => 'highlighted';
+
+  @override
+  String get syncCompareIntroC => '.';
+
+  @override
+  String get syncCompareMine => 'This device’s version';
+
+  @override
+  String syncCompareMineWhen(String when) {
+    return 'You changed it $when';
+  }
+
+  @override
+  String get syncCompareSaved => 'Saved version';
+
+  @override
+  String syncCompareSavedWhen(String when) {
+    return 'Changed elsewhere $when';
+  }
+
+  @override
+  String get syncCompareSavedNoTime => 'Saved on the server';
+
+  @override
+  String get syncCompareDeleted => 'Deleted';
+
+  @override
+  String get syncFieldAmount => 'Amount';
+
+  @override
+  String get syncFieldCategory => 'Category';
+
+  @override
+  String get syncFieldNotes => 'Note';
+
+  @override
+  String get syncFieldDate => 'Date';
+
+  @override
+  String get syncFieldMerchant => 'Store';
+
+  @override
+  String get syncKeepSaved => 'Keep the saved version';
+
+  @override
+  String get syncKeepMine => 'Keep this device’s version';
+
+  @override
+  String get syncDupTitle => 'You may have recorded this already';
+
+  @override
+  String get syncDupSub => 'These two look the same.';
+
+  @override
+  String get syncDupJust => 'JUST RECORDED';
+
+  @override
+  String get syncDupExisting => 'ALREADY THERE';
+
+  @override
+  String get syncDupKeepBoth => 'Keep both';
+
+  @override
+  String get syncDupDeleteNew => 'Delete the new one';
 }

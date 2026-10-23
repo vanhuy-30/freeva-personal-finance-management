@@ -84,6 +84,7 @@ List<SyncQueueItem> applySyncResults(
             status: SyncItemStatus.conflict,
             review: result.review,
             reason: SyncReason.changedElsewhere,
+            server: result.server ?? item.server,
             serverUpdatedAt: result.serverUpdatedAt ?? item.serverUpdatedAt,
           ),
         );
@@ -141,6 +142,34 @@ List<SyncQueueItem> retrySyncItem(List<SyncQueueItem> items, String opId) {
           status: SyncItemStatus.pending,
           review: false,
           reason: null,
+        )
+      else
+        item,
+  ];
+}
+
+/// "Giữ bản trên máy này": sends the change again on top of the server's copy.
+/// Edits, deletes and restores take the server's version; a create that clashed
+/// with an existing transaction becomes an edit of that transaction. Does
+/// nothing without the server copy.
+List<SyncQueueItem> keepLocalSyncItem(List<SyncQueueItem> items, String opId) {
+  return [
+    for (final item in items)
+      if (item.opId == opId &&
+          item.status == SyncItemStatus.conflict &&
+          item.server != null)
+        item.copyWith(
+          status: SyncItemStatus.pending,
+          review: false,
+          reason: null,
+          version: item.server!.version,
+          action: item.action == SyncAction.create
+              ? SyncAction.update
+              : item.action,
+          serverId: item.action == SyncAction.create
+              ? item.server!.id
+              : item.serverId,
+          server: null,
         )
       else
         item,

@@ -114,11 +114,14 @@ void main() {
           status: 'replayed',
           review: false,
           duplicateHint: true,
+          transactionId: 'new-1',
+          duplicateIds: ['old-1'],
         ),
       ];
       await model.flush();
       expect(model.items, isEmpty);
-      expect(model.duplicateHint, isTrue);
+      expect(model.duplicate?.newId, 'new-1');
+      expect(model.duplicate?.existingId, 'old-1');
       expect('${analytics.events}', isNot(contains('op-50')));
       model.dispose();
     },
@@ -158,6 +161,63 @@ void main() {
     expect(model.items, isEmpty);
     expect(repository.batches.last.single.opId, 'one');
   });
+
+  test('each alike pair is asked about once, in order', () async {
+    final repository = _Repository([_item('one'), _item('two')])
+      ..results = const [
+        SyncItemResult(
+          opId: 'one',
+          status: 'applied',
+          review: false,
+          duplicateHint: true,
+          transactionId: 'n1',
+          duplicateIds: ['o1'],
+        ),
+        SyncItemResult(
+          opId: 'two',
+          status: 'applied',
+          review: false,
+          duplicateHint: true,
+          transactionId: 'n2',
+          duplicateIds: ['o2'],
+        ),
+      ];
+    final model = _model(repository, auth, analytics);
+    await model.flush();
+    expect(model.duplicate?.newId, 'n1');
+    model.dismissDuplicate();
+    expect(model.duplicate?.newId, 'n2');
+    model.dismissDuplicate();
+    expect(model.duplicate, isNull);
+  });
+
+  test(
+    'keeping this device\'s version sends it again on the server version',
+    () async {
+      final conflict = _item('one').copyWith(
+        action: SyncAction.update,
+        serverId: 'srv-1',
+        version: 1,
+        status: SyncItemStatus.conflict,
+        reason: SyncReason.changedElsewhere,
+        server: const SyncServerCopy(
+          id: 'srv-1',
+          version: 4,
+          occurredOn: '2026-10-22',
+          amountMinor: '-60000',
+          currencyCode: 'VND',
+        ),
+      );
+      final repository = _Repository([conflict]);
+      final model = _model(repository, auth, analytics);
+      // Let the flush the view model starts on creation finish first.
+      await Future<void>.delayed(Duration.zero);
+      await model.keepLocal('one');
+      expect(repository.batches.single.single.version, 4);
+      expect(repository.batches.single.single.action, SyncAction.update);
+      expect(model.items, isEmpty);
+    },
+  );
 
   test('sign-out clears the queue and lock keeps it', () async {
     final repository = _Repository(const []);

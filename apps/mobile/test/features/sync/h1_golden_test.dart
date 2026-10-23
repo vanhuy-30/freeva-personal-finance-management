@@ -112,7 +112,8 @@ void main() {
     await shot(t, 'sending', model, size: const Size(390, 1000));
   });
   testWidgets('done', skip: !Platform.isMacOS, (t) async {
-    final model = FixedSync(const [])..lastSyncedAt = DateTime(2026, 10, 22, 9, 42);
+    final model = FixedSync(const [])
+      ..lastSyncedAt = DateTime(2026, 10, 22, 9, 42);
     await shot(t, 'done', model, size: const Size(390, 500));
   });
   testWidgets('update needed', skip: !Platform.isMacOS, (t) async {

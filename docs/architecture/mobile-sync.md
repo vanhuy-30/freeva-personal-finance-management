@@ -19,6 +19,8 @@ Payload tiền là chuỗi integer. Vault `FlutterSecureStorage`, key `freeva.sy
 
 Giao diện (`DS-P2-003`, nhóm H): dải trên danh sách Giao dịch mở màn Đồng bộ (`/sync`); dòng giao dịch có chip "Cần xem lại" hoặc icon đồng hồ; mục hàng đợi giữ `reason` (đổi ở máy khác, ví/giao dịch không còn, dữ liệu không hợp lệ, chưa gửi được) dịch từ mã lỗi theo mục của `/sync`; giờ gửi thành công gần nhất lưu cùng hàng đợi (`lastSyncedAt`, xoá khi đăng xuất). "Thử lại" chỉ cho mục lỗi không do dữ liệu; mọi mục bỏ được sau khi xác nhận. Chuỗi vi/en. Màu lấy từ theme.
 
+Xung đột (H2): mục giữ `server` (id, version, ngày, số tiền, danh mục, ghi chú, cửa hàng, giờ sửa) từ bản server trong kết quả `/sync`; màn Chọn bản giữ lại (`/sync/compare/:opId`) so hai bản, mặc định giữ bản đã lưu (bỏ mục trên máy). Giữ bản trên máy này đặt `version` mục theo `server.version` và gửi lại; chỉ ghi đè khi người dùng chọn rõ. Gợi ý trùng: `SyncDuplicate(newId, existingId)` từ kết quả create, hỏi bằng sheet khi ở màn gốc của tab; xoá bản vừa ghi qua `TransactionViewModel.remove` có Hoàn tác.
+
 ## Giới hạn
 
 Không sync ví hay danh mục, không pull cursor, không CRDT, không last-write-wins, không đối soát. Không cơ sở dữ liệu giao dịch đầy đủ. Update hoặc delete mất response có thể thành `conflict` dù server đã áp; mục đó được giữ để người dùng tải lại. Chưa native build hoặc E2E staging.

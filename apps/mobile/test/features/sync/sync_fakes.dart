@@ -27,7 +27,16 @@ class FixedSync extends SyncViewModel {
   @override
   bool schemaMismatch = false;
   @override
-  bool duplicateHint = false;
+  SyncDuplicate? duplicate;
+  @override
+  void dismissDuplicate() {
+    duplicate = null;
+    notifyListeners();
+  }
+
+  final kept = <String>[];
+  @override
+  Future<void> keepLocal(String opId) async => kept.add(opId);
   @override
   int appliedEpoch = 0;
   int flushes = 0;

@@ -2655,9 +2655,6 @@ class SVi extends S {
   }
 
   @override
-  String get syncBannerDuplicate => 'Có thể bạn đã ghi một khoản rồi';
-
-  @override
   String get syncOffline => 'Chưa có mạng';
 
   @override
@@ -2758,10 +2755,6 @@ class SVi extends S {
   String get syncUpdateBody => 'Để tiếp tục đồng bộ. Thay đổi vẫn được giữ.';
 
   @override
-  String get syncDuplicateNote =>
-      'Có thể bạn đã ghi một khoản giống thế. Cả hai đều được giữ.';
-
-  @override
   String get syncDiscardTitle => 'Bỏ thay đổi này?';
 
   @override
@@ -2790,4 +2783,82 @@ class SVi extends S {
 
   @override
   String get syncChipWaiting => 'Chờ đồng bộ';
+
+  @override
+  String get syncViewAction => 'Xem';
+
+  @override
+  String get syncCompareTitle => 'Chọn bản giữ lại';
+
+  @override
+  String syncCompareIntroA(String name) {
+    return '$name vừa được sửa ở máy khác. Khác nhau chỗ ';
+  }
+
+  @override
+  String get syncCompareIntroB => 'tô vàng';
+
+  @override
+  String get syncCompareIntroC => '.';
+
+  @override
+  String get syncCompareMine => 'Bản trên máy này';
+
+  @override
+  String syncCompareMineWhen(String when) {
+    return 'Bạn sửa lúc $when';
+  }
+
+  @override
+  String get syncCompareSaved => 'Bản đã lưu';
+
+  @override
+  String syncCompareSavedWhen(String when) {
+    return 'Sửa ở máy khác lúc $when';
+  }
+
+  @override
+  String get syncCompareSavedNoTime => 'Đã lưu trên máy chủ';
+
+  @override
+  String get syncCompareDeleted => 'Đã xoá';
+
+  @override
+  String get syncFieldAmount => 'Số tiền';
+
+  @override
+  String get syncFieldCategory => 'Danh mục';
+
+  @override
+  String get syncFieldNotes => 'Ghi chú';
+
+  @override
+  String get syncFieldDate => 'Ngày';
+
+  @override
+  String get syncFieldMerchant => 'Cửa hàng';
+
+  @override
+  String get syncKeepSaved => 'Giữ bản đã lưu';
+
+  @override
+  String get syncKeepMine => 'Giữ bản trên máy này';
+
+  @override
+  String get syncDupTitle => 'Có thể bạn đã ghi rồi';
+
+  @override
+  String get syncDupSub => 'Hai khoản này giống nhau.';
+
+  @override
+  String get syncDupJust => 'VỪA GHI';
+
+  @override
+  String get syncDupExisting => 'ĐÃ CÓ';
+
+  @override
+  String get syncDupKeepBoth => 'Giữ cả hai';
+
+  @override
+  String get syncDupDeleteNew => 'Xoá bản vừa ghi';
 }

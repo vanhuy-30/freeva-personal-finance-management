@@ -14,7 +14,9 @@ import '../../features/reports/domain/category_detail.dart';
 import '../../features/reports/presentation/pages/report_category_page.dart';
 import '../../features/reports/presentation/pages/report_page.dart';
 import '../../features/settings/domain/app_preferences.dart';
+import '../../features/sync/presentation/pages/sync_compare_page.dart';
 import '../../features/sync/presentation/pages/sync_page.dart';
+import '../../features/sync/presentation/widgets/sync_duplicate_host.dart';
 import '../../features/settings/presentation/pages/faq_page.dart';
 import '../../features/feedback/presentation/pages/feedback_page.dart';
 import '../../features/settings/presentation/pages/legal_page.dart';
@@ -106,8 +108,9 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
     observers: [LoggingNavigatorObserver(logger)],
     routes: [
       StatefulShellRoute.indexedStack(
-        builder: (context, state, shell) =>
-            AuthGate(child: AppShell(navigationShell: shell)),
+        builder: (context, state, shell) => AuthGate(
+          child: SyncDuplicateHost(child: AppShell(navigationShell: shell)),
+        ),
         branches: [
           StatefulShellBranch(
             routes: [
@@ -186,6 +189,14 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
       GoRoute(
         path: '/sync',
         builder: (context, state) => const AuthGate(child: SyncPage()),
+        routes: [
+          GoRoute(
+            path: 'compare/:opId',
+            builder: (context, state) => AuthGate(
+              child: SyncComparePage(opId: state.pathParameters['opId']!),
+            ),
+          ),
+        ],
       ),
       GoRoute(
         path: '/notifications',

@@ -4878,12 +4878,6 @@ abstract class S {
   /// **'{count} changes waiting to send'**
   String syncBannerWaiting(int count);
 
-  /// No description provided for @syncBannerDuplicate.
-  ///
-  /// In en, this message translates to:
-  /// **'You may have recorded one twice'**
-  String get syncBannerDuplicate;
-
   /// No description provided for @syncOffline.
   ///
   /// In en, this message translates to:
@@ -5052,12 +5046,6 @@ abstract class S {
   /// **'To keep syncing. Your changes are kept.'**
   String get syncUpdateBody;
 
-  /// No description provided for @syncDuplicateNote.
-  ///
-  /// In en, this message translates to:
-  /// **'You may have recorded a similar one. Both are kept.'**
-  String get syncDuplicateNote;
-
   /// No description provided for @syncDiscardTitle.
   ///
   /// In en, this message translates to:
@@ -5105,6 +5093,150 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Waiting to sync'**
   String get syncChipWaiting;
+
+  /// No description provided for @syncViewAction.
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get syncViewAction;
+
+  /// No description provided for @syncCompareTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose which to keep'**
+  String get syncCompareTitle;
+
+  /// No description provided for @syncCompareIntroA.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} was just changed on another device. The differences are '**
+  String syncCompareIntroA(String name);
+
+  /// No description provided for @syncCompareIntroB.
+  ///
+  /// In en, this message translates to:
+  /// **'highlighted'**
+  String get syncCompareIntroB;
+
+  /// No description provided for @syncCompareIntroC.
+  ///
+  /// In en, this message translates to:
+  /// **'.'**
+  String get syncCompareIntroC;
+
+  /// No description provided for @syncCompareMine.
+  ///
+  /// In en, this message translates to:
+  /// **'This device’s version'**
+  String get syncCompareMine;
+
+  /// No description provided for @syncCompareMineWhen.
+  ///
+  /// In en, this message translates to:
+  /// **'You changed it {when}'**
+  String syncCompareMineWhen(String when);
+
+  /// No description provided for @syncCompareSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved version'**
+  String get syncCompareSaved;
+
+  /// No description provided for @syncCompareSavedWhen.
+  ///
+  /// In en, this message translates to:
+  /// **'Changed elsewhere {when}'**
+  String syncCompareSavedWhen(String when);
+
+  /// No description provided for @syncCompareSavedNoTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved on the server'**
+  String get syncCompareSavedNoTime;
+
+  /// No description provided for @syncCompareDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted'**
+  String get syncCompareDeleted;
+
+  /// No description provided for @syncFieldAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get syncFieldAmount;
+
+  /// No description provided for @syncFieldCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get syncFieldCategory;
+
+  /// No description provided for @syncFieldNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get syncFieldNotes;
+
+  /// No description provided for @syncFieldDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get syncFieldDate;
+
+  /// No description provided for @syncFieldMerchant.
+  ///
+  /// In en, this message translates to:
+  /// **'Store'**
+  String get syncFieldMerchant;
+
+  /// No description provided for @syncKeepSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep the saved version'**
+  String get syncKeepSaved;
+
+  /// No description provided for @syncKeepMine.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep this device’s version'**
+  String get syncKeepMine;
+
+  /// No description provided for @syncDupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You may have recorded this already'**
+  String get syncDupTitle;
+
+  /// No description provided for @syncDupSub.
+  ///
+  /// In en, this message translates to:
+  /// **'These two look the same.'**
+  String get syncDupSub;
+
+  /// No description provided for @syncDupJust.
+  ///
+  /// In en, this message translates to:
+  /// **'JUST RECORDED'**
+  String get syncDupJust;
+
+  /// No description provided for @syncDupExisting.
+  ///
+  /// In en, this message translates to:
+  /// **'ALREADY THERE'**
+  String get syncDupExisting;
+
+  /// No description provided for @syncDupKeepBoth.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep both'**
+  String get syncDupKeepBoth;
+
+  /// No description provided for @syncDupDeleteNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete the new one'**
+  String get syncDupDeleteNew;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

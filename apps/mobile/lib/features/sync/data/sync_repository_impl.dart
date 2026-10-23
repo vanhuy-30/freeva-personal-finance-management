@@ -180,7 +180,59 @@ Map<String, dynamic> _json(SyncQueueItem item) => {
   'status': item.status.name,
   'review': item.review,
   'reason': item.reason?.name,
+  'server': item.server == null ? null : _copyJson(item.server!),
 };
+
+Map<String, dynamic> _copyJson(SyncServerCopy copy) => {
+  'id': copy.id,
+  'version': copy.version,
+  'occurredOn': copy.occurredOn,
+  'amountMinor': copy.amountMinor,
+  'currencyCode': copy.currencyCode,
+  'categoryId': copy.categoryId,
+  'notes': copy.notes,
+  'merchant': copy.merchant,
+  'updatedAt': copy.updatedAt?.toUtc().toIso8601String(),
+};
+
+SyncServerCopy _copyFrom(Map<String, dynamic> json) => SyncServerCopy(
+  id: json['id'] as String,
+  version: json['version'] as int,
+  occurredOn: json['occurredOn'] as String,
+  amountMinor: json['amountMinor'] as String,
+  currencyCode: json['currencyCode'] as String,
+  categoryId: json['categoryId'] as String?,
+  notes: json['notes'] as String?,
+  merchant: json['merchant'] as String?,
+  updatedAt: json['updatedAt'] == null
+      ? null
+      : DateTime.parse(json['updatedAt'] as String).toUtc(),
+);
+
+/// The server's bundle as the compact copy kept for comparing. For a transfer
+/// the money-out leg stands for it.
+SyncServerCopy? _copyOfBundle(Object? transaction) {
+  if (transaction is! Map<String, dynamic>) return null;
+  final legs = transaction['legs'];
+  if (legs is! List || legs.isEmpty) return null;
+  final list = legs.cast<Map<String, dynamic>>();
+  final leg = list.firstWhere(
+    (l) => (l['amountMinor'] as String).startsWith('-'),
+    orElse: () => list.first,
+  );
+  final stamp = leg['updatedAt'];
+  return SyncServerCopy(
+    id: leg['id'] as String,
+    version: leg['version'] as int,
+    occurredOn: leg['occurredOn'] as String,
+    amountMinor: leg['amountMinor'] as String,
+    currencyCode: leg['currencyCode'] as String,
+    categoryId: leg['categoryId'] as String?,
+    notes: leg['notes'] as String?,
+    merchant: leg['merchant'] as String?,
+    updatedAt: stamp is String ? DateTime.tryParse(stamp)?.toUtc() : null,
+  );
+}
 
 SyncQueueItem _item(Map<String, dynamic> json) {
   final legs = json['legs'];
@@ -224,19 +276,15 @@ SyncQueueItem _item(Map<String, dynamic> json) {
     reason: json['reason'] == null
         ? null
         : SyncReason.values.byName(json['reason'] as String),
+    server: json['server'] == null
+        ? null
+        : _copyFrom(json['server'] as Map<String, dynamic>),
   );
 }
 
 SyncItemResult _result(Map<String, dynamic> json) {
-  DateTime? updated;
   final transaction = json['transaction'];
-  if (transaction is Map<String, dynamic>) {
-    final legs = transaction['legs'];
-    if (legs is List && legs.isNotEmpty && legs.first is Map<String, dynamic>) {
-      final stamp = legs.first['updatedAt'];
-      if (stamp is String) updated = DateTime.tryParse(stamp)?.toUtc();
-    }
-  }
+  final copy = _copyOfBundle(transaction);
   final duplicates = json['duplicates'];
   final error = json['error'];
   return SyncItemResult(
@@ -244,7 +292,15 @@ SyncItemResult _result(Map<String, dynamic> json) {
     status: json['status'] as String,
     review: json['review'] == true,
     duplicateHint: duplicates is List && duplicates.isNotEmpty,
-    serverUpdatedAt: updated,
+    serverUpdatedAt: copy?.updatedAt,
     errorCode: error is Map<String, dynamic> ? error['code'] as String? : null,
+    server: json['status'] == 'conflict' ? copy : null,
+    transactionId: copy?.id,
+    duplicateIds: duplicates is List
+        ? [
+            for (final d in duplicates)
+              if (d is Map<String, dynamic>) d['id'] as String,
+          ]
+        : const [],
   );
 }

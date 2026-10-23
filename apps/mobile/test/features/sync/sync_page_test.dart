@@ -178,4 +178,26 @@ void main() {
       }
     }
   });
+
+  testWidgets('"Xem" appears only for a conflict that has a server copy', (
+    tester,
+  ) async {
+    await show(tester, app());
+    expect(find.text('Xem'), findsNothing);
+    model.items = [
+      model.items.first.copyWith(
+        server: const SyncServerCopy(
+          id: 'srv-1',
+          version: 2,
+          occurredOn: '2026-10-22',
+          amountMinor: '-60000',
+          currencyCode: 'VND',
+        ),
+      ),
+      ...model.items.skip(1),
+    ];
+    model.notifyListeners();
+    await tester.pump();
+    expect(find.text('Xem'), findsOneWidget);
+  });
 }

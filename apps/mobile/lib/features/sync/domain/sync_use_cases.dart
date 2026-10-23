@@ -12,7 +12,7 @@ class SyncFlushOutcome {
     required this.items,
     this.schemaMismatch = false,
     this.syncFailed = false,
-    this.duplicateHint = false,
+    this.duplicates = const [],
     this.authError,
     this.lastSyncedAt,
   });
@@ -20,7 +20,9 @@ class SyncFlushOutcome {
   final List<SyncQueueItem> items;
   final bool schemaMismatch;
   final bool syncFailed;
-  final bool duplicateHint;
+
+  /// New transactions the server found alike to an earlier one.
+  final List<SyncDuplicate> duplicates;
   final AuthError? authError;
 
   /// Last time the server accepted a batch, if ever.
@@ -34,6 +36,10 @@ abstract class SyncUseCases {
 
   /// Puts a failed change back in line; the next flush sends it.
   Future<List<SyncQueueItem>> retry(String opId);
+
+  /// Keeps the person's own version of a conflict: sends it again on top of
+  /// the server's version.
+  Future<List<SyncQueueItem>> keepLocal(String opId);
   Future<List<SyncQueueItem>> acknowledge({String? clientId, String? serverId});
   Future<SyncFlushOutcome> flush();
   Future<void> clear();
@@ -86,6 +92,15 @@ class DefaultSyncUseCases implements SyncUseCases {
   }
 
   @override
+  Future<List<SyncQueueItem>> keepLocal(String opId) {
+    return _serialized(() async {
+      final next = keepLocalSyncItem(await _repository.read(), opId);
+      await _repository.write(next);
+      return next;
+    });
+  }
+
+  @override
   Future<List<SyncQueueItem>> acknowledge({
     String? clientId,
     String? serverId,
@@ -126,7 +141,15 @@ class DefaultSyncUseCases implements SyncUseCases {
           return SyncFlushOutcome(
             items: next,
             syncFailed: results.any((result) => result.status == 'rejected'),
-            duplicateHint: results.any((result) => result.duplicateHint),
+            duplicates: [
+              for (final result in results)
+                if (result.transactionId != null &&
+                    result.duplicateIds.isNotEmpty)
+                  SyncDuplicate(
+                    newId: result.transactionId!,
+                    existingId: result.duplicateIds.first,
+                  ),
+            ],
             lastSyncedAt: now,
           );
         },
