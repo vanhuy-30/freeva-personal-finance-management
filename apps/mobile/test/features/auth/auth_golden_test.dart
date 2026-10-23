@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mobile/core/di/injection.dart';
 import 'package:mobile/core/l10n/generated/app_localizations.dart';
 import 'package:mobile/core/theme/app_theme.dart';
 import 'package:mobile/features/auth/data/auth_repository_impl.dart';
@@ -14,6 +15,7 @@ import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dar
 
 import '../../core/widgets/widget_test_app.dart' show loadTestFonts;
 import 'fakes.dart';
+import 'setup_deps.dart';
 
 // macOS only. Update: flutter test --update-goldens test/features/auth/auth_golden_test.dart
 void main() {
@@ -32,6 +34,12 @@ void main() {
     t.view.physicalSize = size;
     t.view.devicePixelRatio = 1;
     addTearDown(t.view.reset);
+    await getIt.reset();
+    final deps = await registerSetupDeps();
+    addTearDown(() async {
+      deps.settings.dispose();
+      await getIt.reset();
+    });
     final model = DefaultAuthViewModel(
       DefaultAuthUseCases(
         AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
@@ -133,6 +141,10 @@ void main() {
       then: () async {
         await t.tap(find.text('Xong'));
         await t.pumpAndSettle();
+        for (final skip in ['Để sau', 'Để sau', 'Thiết lập sau']) {
+          await t.tap(find.text(skip));
+          await t.pumpAndSettle();
+        }
         for (final d in ['1', '2', '3', '4']) {
           await t.tap(find.bySemanticsLabel(d));
           await t.pump();
@@ -151,6 +163,88 @@ void main() {
       then: () async {
         await t.tap(find.bySemanticsLabel('1'));
         await t.tap(find.bySemanticsLabel('2'));
+        await t.pump();
+      },
+    );
+  });
+
+  testWidgets('welcome', skip: !Platform.isMacOS, (t) async {
+    await shot(
+      t,
+      'welcome',
+      (m) => AuthPage(model: m),
+      prepare: (m) => m.step = AuthStep.welcome,
+    );
+  });
+  testWidgets('welcome dark compact', skip: !Platform.isMacOS, (t) async {
+    await shot(
+      t,
+      'welcome_compact',
+      (m) => AuthPage(model: m),
+      dark: true,
+      scale: 1.3,
+      size: const Size(320, 900),
+      prepare: (m) => m.step = AuthStep.welcome,
+    );
+  });
+  testWidgets('sign up choice', skip: !Platform.isMacOS, (t) async {
+    await shot(
+      t,
+      'sign_up',
+      (m) => AuthPage(model: m),
+      prepare: (m) => m.step = AuthStep.signUp,
+    );
+  });
+
+  Future<void> toQuestions(WidgetTester t) async {
+    await t.tap(find.text('Xong'));
+    await t.pumpAndSettle();
+  }
+
+  testWidgets('goals', skip: !Platform.isMacOS, (t) async {
+    await shot(
+      t,
+      'goals',
+      (m) => SetupPage(model: m),
+      prepare: (m) => m.stage = AuthStage.setup,
+      then: () async {
+        await toQuestions(t);
+        await t.tap(find.text('Theo dõi chi tiêu'));
+        await t.tap(find.text('Tiết kiệm nhiều hơn'));
+        await t.pump();
+      },
+    );
+  });
+  testWidgets('habits', skip: !Platform.isMacOS, (t) async {
+    await shot(
+      t,
+      'habits',
+      (m) => SetupPage(model: m),
+      size: const Size(390, 900),
+      prepare: (m) => m.stage = AuthStage.setup,
+      then: () async {
+        await toQuestions(t);
+        await t.tap(find.text('Để sau'));
+        await t.pumpAndSettle();
+        await t.tap(find.text('Dùng Excel hoặc Sheets'));
+        await t.tap(find.text('Mỗi tuần'));
+        await t.pump();
+      },
+    );
+  });
+  testWidgets('budget', skip: !Platform.isMacOS, (t) async {
+    await shot(
+      t,
+      'budget',
+      (m) => SetupPage(model: m),
+      prepare: (m) => m.stage = AuthStage.setup,
+      then: () async {
+        await toQuestions(t);
+        await t.tap(find.text('Để sau'));
+        await t.pumpAndSettle();
+        await t.tap(find.text('Để sau'));
+        await t.pumpAndSettle();
+        await t.tap(find.text('10tr'));
         await t.pump();
       },
     );

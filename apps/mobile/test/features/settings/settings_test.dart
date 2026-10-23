@@ -1,10 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/settings/data/settings_repository_impl.dart';
 import 'package:mobile/features/settings/domain/app_preferences.dart';
 import 'package:mobile/features/settings/domain/settings_repository.dart';
 import 'package:mobile/features/settings/domain/settings_use_cases.dart';
-import 'package:mobile/core/router/settings_redirect.dart';
 
 import 'fakes.dart';
 
@@ -24,6 +22,23 @@ void main() {
       sessionAlertsEnabled: false,
       notificationPrompted: true,
       notificationsOptInTracked: true,
+    );
+    final firstRun = decodePreferences(
+      encodePreferences(
+        const AppPreferences(welcomeSeen: true, budgetDraftMinor: 10000000),
+      ),
+    );
+    expect(firstRun.welcomeSeen, isTrue);
+    expect(firstRun.budgetDraftMinor, 10000000);
+    expect(
+      decodePreferences(encodePreferences(saved)).budgetDraftMinor,
+      isNull,
+    );
+    expect(
+      () => decodePreferences(
+        '{"theme":"dark","onboardingCompleted":false,"budgetDraftMinor":-1}',
+      ),
+      throwsFormatException,
     );
     final restored = decodePreferences(encodePreferences(hidden));
     expect(restored.balancesHidden, isTrue);
@@ -74,55 +89,4 @@ void main() {
       expect(restored.onboardingCompleted, isFalse);
     },
   );
-
-  test('onboarding redirect waits for an unlocked session', () {
-    expect(
-      settingsRedirect(
-        stage: AuthStage.unlocked,
-        onboardingCompleted: false,
-        path: '/splash',
-      ),
-      isNull,
-    );
-    expect(
-      settingsRedirect(
-        stage: AuthStage.unlocked,
-        onboardingCompleted: false,
-        path: '/home',
-      ),
-      '/onboarding',
-    );
-    expect(
-      settingsRedirect(
-        stage: AuthStage.unlocked,
-        onboardingCompleted: false,
-        path: '/onboarding',
-      ),
-      isNull,
-    );
-    expect(
-      settingsRedirect(
-        stage: AuthStage.signedOut,
-        onboardingCompleted: false,
-        path: '/home',
-      ),
-      isNull,
-    );
-    expect(
-      settingsRedirect(
-        stage: AuthStage.locked,
-        onboardingCompleted: false,
-        path: '/settings',
-      ),
-      isNull,
-    );
-    expect(
-      settingsRedirect(
-        stage: AuthStage.unlocked,
-        onboardingCompleted: true,
-        path: '/onboarding',
-      ),
-      '/home',
-    );
-  });
 }

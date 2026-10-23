@@ -1825,6 +1825,41 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/profile/onboarding:
+    patch:
+      operationId: saveOnboardingAnswers
+      summary: Save answers from the first-run questions (goals, tracking habit, review cadence)
+      tags: [Profile]
+      security:
+        - UserBearer: []
+      description: Every field is optional; only the fields sent are stored, so a skipped step sends nothing. No version check (these answers are not a preference conflict).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OnboardingAnswers'
+      responses:
+        '204':
+          description: Saved (Cache-Control no-store)
+        '400':
+          description: Unknown value, more than two goals, or an extra field
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
   /api/v1/profile/options:
     get:
       operationId: getProfileOptions
@@ -4002,6 +4037,23 @@ components:
           type: integer
           minimum: 1
           maximum: 2147483646
+    OnboardingAnswers:
+      type: object
+      additionalProperties: false
+      properties:
+        goals:
+          type: array
+          maxItems: 2
+          uniqueItems: true
+          items:
+            type: string
+            enum: [track, save, budget, debt, emergency, understand]
+        trackingHabit:
+          type: string
+          enum: [manual, spreadsheet, app, none]
+        reviewCadence:
+          type: string
+          enum: [daily, weekly, monthly, rarely]
     ProfileOptions:
       type: object
       additionalProperties: false

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../infrastructure/prisma/prisma.service';
-import type { Profile, ProfileRepository, ProfileUpdate } from '../domain/profile.repository';
+import type { OnboardingAnswers, Profile, ProfileRepository, ProfileUpdate } from '../domain/profile.repository';
 
 const select = {
   displayName: true,
@@ -24,6 +24,18 @@ export class PrismaProfileRepository implements ProfileRepository {
       select: { code: true, minorDigits: true },
       orderBy: { code: 'asc' },
     });
+  }
+
+  async saveOnboarding(userId: string, answers: OnboardingAnswers): Promise<boolean> {
+    const changed = await this.prisma.user.updateMany({
+      where: { id: userId },
+      data: {
+        ...(answers.goals ? { onboardingGoals: answers.goals } : {}),
+        ...(answers.trackingHabit ? { trackingHabit: answers.trackingHabit } : {}),
+        ...(answers.reviewCadence ? { reviewCadence: answers.reviewCadence } : {}),
+      },
+    });
+    return changed.count === 1;
   }
 
   async update(userId: string, profile: ProfileUpdate): Promise<Profile | null> {

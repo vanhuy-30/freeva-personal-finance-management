@@ -90,6 +90,9 @@ model User {
   emailVerifiedAt     DateTime? @db.Timestamptz
   termsAcceptedAt     DateTime? @db.Timestamptz
   termsVersion        String?   @db.VarChar(20)
+  onboardingGoals     String[]  @default([])
+  trackingHabit       String?   @db.VarChar(12)
+  reviewCadence       String?   @db.VarChar(10)
   locale              String    @default("vi")
   timezone            String    @default("Asia/Ho_Chi_Minh")
   defaultCurrencyCode String    @db.Char(3)

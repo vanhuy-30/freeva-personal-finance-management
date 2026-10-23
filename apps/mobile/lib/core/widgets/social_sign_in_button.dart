@@ -1,14 +1,15 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../theme/theme_context.dart';
 import '../theme/tokens.g.dart';
 import 'press_scale.dart';
 
-enum SocialProvider { google, apple }
+enum SocialProvider { google, apple, email }
 
-/// "Tiếp tục với Google / Apple": height 54, no border. Google sits on
+/// "Tiếp tục với Google / Apple / email": height 54, no border. Google sits on
 /// `bg.subtle`, Apple on `action.ink`.
 class SocialSignInButton extends StatelessWidget {
   const SocialSignInButton({
@@ -43,12 +44,22 @@ class SocialSignInButton extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  apple
-                      ? Icon(Icons.apple, size: 22, color: fg)
-                      : const SizedBox.square(
-                          dimension: 20,
-                          child: CustomPaint(painter: _GoogleMark()),
-                        ),
+                  switch (provider) {
+                    SocialProvider.apple => Icon(
+                      Icons.apple,
+                      size: 22,
+                      color: fg,
+                    ),
+                    SocialProvider.email => Icon(
+                      LucideIcons.mail,
+                      size: 20,
+                      color: fg,
+                    ),
+                    SocialProvider.google => const SizedBox.square(
+                      dimension: 20,
+                      child: CustomPaint(painter: _GoogleMark()),
+                    ),
+                  },
                   const SizedBox(width: FreevaSpace.s3),
                   Flexible(
                     child: Text(

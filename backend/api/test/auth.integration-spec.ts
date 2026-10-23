@@ -11,6 +11,7 @@ import { AUTH_REPOSITORY } from '../src/modules/auth/domain/auth.repository';
 import { AuthService, TERMS_VERSION } from '../src/modules/auth/auth.service';
 import { AuthCrypto } from '../src/modules/auth/infrastructure/auth-crypto';
 import { AuthMailWorker } from '../src/modules/auth/infrastructure/auth-mail.worker';
+import { PrismaProfileRepository } from '../src/modules/profile/infrastructure/prisma-profile.repository';
 import { PrismaAuthRepository } from '../src/modules/auth/infrastructure/prisma-auth.repository';
 
 const oauthVerify = jest.fn();
@@ -225,6 +226,22 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
       termsAccepted: undefined,
     });
     expect(over.status).toBe(400);
+  });
+
+  it('DS-P2-004 onboarding answers are stored per field and keep what was not sent', async () => {
+    await auth.register('answers@example.test', password);
+    const user = await prisma.user.findUniqueOrThrow({
+      where: { email: 'answers@example.test' },
+    });
+    expect(user.onboardingGoals).toEqual([]);
+    const repository = new PrismaProfileRepository(prisma);
+    expect(await repository.saveOnboarding(user.id, { goals: ['save', 'budget'] })).toBe(true);
+    expect(await repository.saveOnboarding(user.id, { trackingHabit: 'app' })).toBe(true);
+    const saved = await prisma.user.findUniqueOrThrow({ where: { id: user.id } });
+    expect(saved.onboardingGoals).toEqual(['save', 'budget']);
+    expect(saved.trackingHabit).toBe('app');
+    expect(saved.reviewCadence).toBeNull();
+    expect(await repository.saveOnboarding('00000000-0000-4000-8000-000000000000', {})).toBe(false);
   });
 
   it('BE-P1-003 does not merge existing/legacy emails or create unverified identities', async () => {

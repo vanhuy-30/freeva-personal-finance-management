@@ -1,9 +1,9 @@
 import {
-  Body, Controller, Get, Header, Put, Req, UseFilters, UseGuards,
+  Body, Controller, Get, Header, HttpCode, Patch, Put, Req, UseFilters, UseGuards,
 } from '@nestjs/common';
 import { AuthGuard, type AuthRequest } from '../auth/auth.guard';
 import { AuthExceptionFilter } from '../auth/auth-exception.filter';
-import { UpdateProfileDto } from './profile.dto';
+import { OnboardingAnswersDto, UpdateProfileDto } from './profile.dto';
 import { ProfileService } from './profile.service';
 
 @Controller('v1/profile')
@@ -22,6 +22,13 @@ export class ProfileController {
   @Header('Cache-Control', 'no-store')
   options() {
     return this.profiles.options();
+  }
+
+  @Patch('onboarding')
+  @HttpCode(204)
+  @Header('Cache-Control', 'no-store')
+  async saveOnboarding(@Req() request: AuthRequest, @Body() body: OnboardingAnswersDto) {
+    await this.profiles.saveOnboarding(request.session.userId, body);
   }
 
   @Put()

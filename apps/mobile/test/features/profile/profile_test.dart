@@ -5,6 +5,7 @@ import 'package:mobile/features/auth/data/auth_repository_impl.dart';
 import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/auth/domain/auth_use_cases.dart';
 import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dart';
+import 'package:mobile/features/onboarding/domain/onboarding_answers.dart';
 import 'package:mobile/features/profile/data/profile_repository_impl.dart';
 import 'package:mobile/features/profile/domain/profile_use_cases.dart';
 import 'package:mobile/features/profile/presentation/viewmodels/profile_view_model.dart';
@@ -59,6 +60,45 @@ void main() {
       expect(
         (await repo.load()).fold((e) => e.code, (_) => null),
         AuthError.expired,
+      );
+    },
+  );
+  test(
+    'onboarding answers go out as a PATCH with only the set parts',
+    () async {
+      final api = Transport();
+      final repo = ProfileRepositoryImpl(api);
+      final cases = ProfileUseCases(repo);
+      expect(
+        (await cases.saveOnboarding(
+          const OnboardingAnswers(
+            goals: [OnboardingGoal.save, OnboardingGoal.debt],
+          ),
+        )).isRight(),
+        true,
+      );
+      expect(api.method, 'PATCH');
+      expect(api.path, 'profile/onboarding');
+      expect(api.body, {
+        'goals': ['save', 'debt'],
+      });
+      api.method = null;
+      expect(
+        (await cases.saveOnboarding(const OnboardingAnswers())).isRight(),
+        true,
+      );
+      expect(api.method, isNull);
+      expect(
+        (await cases.saveOnboarding(
+          const OnboardingAnswers(
+            goals: [
+              OnboardingGoal.save,
+              OnboardingGoal.debt,
+              OnboardingGoal.track,
+            ],
+          ),
+        )).isLeft(),
+        true,
       );
     },
   );

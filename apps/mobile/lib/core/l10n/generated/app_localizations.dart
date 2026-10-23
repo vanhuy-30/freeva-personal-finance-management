@@ -1141,66 +1141,6 @@ abstract class S {
   /// **'Settings could not be saved on this device. Please try again.'**
   String get settingsStorageError;
 
-  /// No description provided for @onboardingSkip.
-  ///
-  /// In en, this message translates to:
-  /// **'Skip'**
-  String get onboardingSkip;
-
-  /// No description provided for @onboardingNext.
-  ///
-  /// In en, this message translates to:
-  /// **'Next'**
-  String get onboardingNext;
-
-  /// No description provided for @onboardingBack.
-  ///
-  /// In en, this message translates to:
-  /// **'Back'**
-  String get onboardingBack;
-
-  /// No description provided for @onboardingFinish.
-  ///
-  /// In en, this message translates to:
-  /// **'Done'**
-  String get onboardingFinish;
-
-  /// No description provided for @onboardingWelcomeTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Welcome to Freeva'**
-  String get onboardingWelcomeTitle;
-
-  /// No description provided for @onboardingWelcomeBody.
-  ///
-  /// In en, this message translates to:
-  /// **'A short introduction so you can record money without extra help.'**
-  String get onboardingWelcomeBody;
-
-  /// No description provided for @onboardingWalletTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Create a wallet'**
-  String get onboardingWalletTitle;
-
-  /// No description provided for @onboardingWalletBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Add a cash, bank, e-wallet, or credit wallet. Each amount stays in its own currency.'**
-  String get onboardingWalletBody;
-
-  /// No description provided for @onboardingTransactionTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Record the first transaction'**
-  String get onboardingTransactionTitle;
-
-  /// No description provided for @onboardingTransactionBody.
-  ///
-  /// In en, this message translates to:
-  /// **'From Home, record income, an expense, or a transfer between two wallets.'**
-  String get onboardingTransactionBody;
-
   /// No description provided for @faqTitle.
   ///
   /// In en, this message translates to:
@@ -4727,6 +4667,210 @@ abstract class S {
   /// In en, this message translates to:
   /// **'PIN set'**
   String get meSecPinSetDone;
+
+  /// No description provided for @welcomeTitleLine1.
+  ///
+  /// In en, this message translates to:
+  /// **'Money, made clear.'**
+  String get welcomeTitleLine1;
+
+  /// No description provided for @welcomeTitleLine2.
+  ///
+  /// In en, this message translates to:
+  /// **'Life, made light.'**
+  String get welcomeTitleLine2;
+
+  /// No description provided for @welcomeSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Log spending in seconds, every day.'**
+  String get welcomeSub;
+
+  /// No description provided for @welcomeStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Get started'**
+  String get welcomeStart;
+
+  /// No description provided for @welcomeSampleBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Total balance'**
+  String get welcomeSampleBalance;
+
+  /// No description provided for @welcomeSampleFood.
+  ///
+  /// In en, this message translates to:
+  /// **'Pho lunch'**
+  String get welcomeSampleFood;
+
+  /// No description provided for @welcomeSampleSalary.
+  ///
+  /// In en, this message translates to:
+  /// **'Salary'**
+  String get welcomeSampleSalary;
+
+  /// No description provided for @signUpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your Freeva account'**
+  String get signUpTitle;
+
+  /// No description provided for @signUpSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data is safe and moves with you to a new phone.'**
+  String get signUpSub;
+
+  /// No description provided for @authContinueEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with email'**
+  String get authContinueEmail;
+
+  /// No description provided for @signUpTermsPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'By continuing you agree to the '**
+  String get signUpTermsPrefix;
+
+  /// No description provided for @signUpTermsSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'.'**
+  String get signUpTermsSuffix;
+
+  /// No description provided for @onbProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{current}/{total}'**
+  String onbProgress(int current, int total);
+
+  /// No description provided for @onbGoalsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What would you like to improve?'**
+  String get onbGoalsTitle;
+
+  /// No description provided for @onbGoalsSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick up to 2.'**
+  String get onbGoalsSub;
+
+  /// No description provided for @onbGoalTrack.
+  ///
+  /// In en, this message translates to:
+  /// **'Track spending'**
+  String get onbGoalTrack;
+
+  /// No description provided for @onbGoalSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save more'**
+  String get onbGoalSave;
+
+  /// No description provided for @onbGoalBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay on budget'**
+  String get onbGoalBudget;
+
+  /// No description provided for @onbGoalDebt.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage debt'**
+  String get onbGoalDebt;
+
+  /// No description provided for @onbGoalEmergency.
+  ///
+  /// In en, this message translates to:
+  /// **'Build an emergency fund'**
+  String get onbGoalEmergency;
+
+  /// No description provided for @onbGoalUnderstand.
+  ///
+  /// In en, this message translates to:
+  /// **'Understand my finances'**
+  String get onbGoalUnderstand;
+
+  /// No description provided for @onbHabitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How do you manage money now?'**
+  String get onbHabitTitle;
+
+  /// No description provided for @onbHabitManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes by hand'**
+  String get onbHabitManual;
+
+  /// No description provided for @onbHabitSpreadsheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Excel or Sheets'**
+  String get onbHabitSpreadsheet;
+
+  /// No description provided for @onbHabitApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Another app'**
+  String get onbHabitApp;
+
+  /// No description provided for @onbHabitNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Not tracking yet'**
+  String get onbHabitNone;
+
+  /// No description provided for @onbCadenceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How often do you review spending?'**
+  String get onbCadenceTitle;
+
+  /// No description provided for @onbCadenceDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Every day'**
+  String get onbCadenceDaily;
+
+  /// No description provided for @onbCadenceWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Every week'**
+  String get onbCadenceWeekly;
+
+  /// No description provided for @onbCadenceMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Every month'**
+  String get onbCadenceMonthly;
+
+  /// No description provided for @onbCadenceRarely.
+  ///
+  /// In en, this message translates to:
+  /// **'Hardly ever'**
+  String get onbCadenceRarely;
+
+  /// No description provided for @onbBudgetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How much do you plan to spend each month?'**
+  String get onbBudgetTitle;
+
+  /// No description provided for @onbBudgetAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly budget'**
+  String get onbBudgetAmount;
+
+  /// No description provided for @onbBudgetLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up later'**
+  String get onbBudgetLater;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

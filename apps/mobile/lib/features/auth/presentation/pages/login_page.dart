@@ -54,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
       footer: AuthSwitchLink(
         prompt: s.authNoAccount,
         action: s.authRegister,
-        onTap: idle ? () => model.goTo(AuthStep.register) : null,
+        onTap: idle ? () => model.goTo(AuthStep.signUp) : null,
       ),
       children: [
         const SizedBox(height: FreevaSpace.s8),

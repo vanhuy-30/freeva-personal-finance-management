@@ -241,16 +241,6 @@
       }
     }
   },
-  "onboardingSkip": "Skip",
-  "onboardingNext": "Next",
-  "onboardingBack": "Back",
-  "onboardingFinish": "Done",
-  "onboardingWelcomeTitle": "Welcome to Freeva",
-  "onboardingWelcomeBody": "A short introduction so you can record money without extra help.",
-  "onboardingWalletTitle": "Create a wallet",
-  "onboardingWalletBody": "Add a cash, bank, e-wallet, or credit wallet. Each amount stays in its own currency.",
-  "onboardingTransactionTitle": "Record the first transaction",
-  "onboardingTransactionBody": "From Home, record income, an expense, or a transfer between two wallets.",
   "faqTitle": "FAQ",
   "faqWalletQ": "How do I add a wallet?",
   "faqWalletA": "Open Wallets from Home, then create a cash, bank, e-wallet, or credit wallet.",
@@ -1562,5 +1552,49 @@
   "meSecPinSetTitle": "Set a PIN",
   "meSecPinNone": "Not set",
   "authUseFaceId": "Unlock with Face ID",
-  "meSecPinSetDone": "PIN set"
+  "meSecPinSetDone": "PIN set",
+  "welcomeTitleLine1": "Money, made clear.",
+  "welcomeTitleLine2": "Life, made light.",
+  "welcomeSub": "Log spending in seconds, every day.",
+  "welcomeStart": "Get started",
+  "welcomeSampleBalance": "Total balance",
+  "welcomeSampleFood": "Pho lunch",
+  "welcomeSampleSalary": "Salary",
+  "signUpTitle": "Create your Freeva account",
+  "signUpSub": "Your data is safe and moves with you to a new phone.",
+  "authContinueEmail": "Continue with email",
+  "signUpTermsPrefix": "By continuing you agree to the ",
+  "signUpTermsSuffix": ".",
+  "onbProgress": "{current}/{total}",
+  "@onbProgress": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "onbGoalsTitle": "What would you like to improve?",
+  "onbGoalsSub": "Pick up to 2.",
+  "onbGoalTrack": "Track spending",
+  "onbGoalSave": "Save more",
+  "onbGoalBudget": "Stay on budget",
+  "onbGoalDebt": "Manage debt",
+  "onbGoalEmergency": "Build an emergency fund",
+  "onbGoalUnderstand": "Understand my finances",
+  "onbHabitTitle": "How do you manage money now?",
+  "onbHabitManual": "Notes by hand",
+  "onbHabitSpreadsheet": "Excel or Sheets",
+  "onbHabitApp": "Another app",
+  "onbHabitNone": "Not tracking yet",
+  "onbCadenceTitle": "How often do you review spending?",
+  "onbCadenceDaily": "Every day",
+  "onbCadenceWeekly": "Every week",
+  "onbCadenceMonthly": "Every month",
+  "onbCadenceRarely": "Hardly ever",
+  "onbBudgetTitle": "How much do you plan to spend each month?",
+  "onbBudgetAmount": "Monthly budget",
+  "onbBudgetLater": "Set up later"
 }

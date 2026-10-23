@@ -570,39 +570,6 @@ class SVi extends S {
       'Chưa lưu được cài đặt trên thiết bị này. Vui lòng thử lại.';
 
   @override
-  String get onboardingSkip => 'Bỏ qua';
-
-  @override
-  String get onboardingNext => 'Tiếp';
-
-  @override
-  String get onboardingBack => 'Quay lại';
-
-  @override
-  String get onboardingFinish => 'Xong';
-
-  @override
-  String get onboardingWelcomeTitle => 'Chào mừng đến Freeva';
-
-  @override
-  String get onboardingWelcomeBody =>
-      'Vài bước ngắn để bạn tự ghi chép tiền mà không cần hỗ trợ thêm.';
-
-  @override
-  String get onboardingWalletTitle => 'Tạo một ví';
-
-  @override
-  String get onboardingWalletBody =>
-      'Thêm ví tiền mặt, ngân hàng, ví điện tử hoặc thẻ. Mỗi số tiền giữ nguyên loại tiền của ví.';
-
-  @override
-  String get onboardingTransactionTitle => 'Ghi giao dịch đầu tiên';
-
-  @override
-  String get onboardingTransactionBody =>
-      'Từ trang chủ, ghi thu, chi, hoặc chuyển khoản giữa hai ví.';
-
-  @override
   String get faqTitle => 'Câu hỏi thường gặp';
 
   @override
@@ -2577,4 +2544,108 @@ class SVi extends S {
 
   @override
   String get meSecPinSetDone => 'Đã đặt mã PIN';
+
+  @override
+  String get welcomeTitleLine1 => 'Tiền rõ ràng.';
+
+  @override
+  String get welcomeTitleLine2 => 'Sống nhẹ nhàng.';
+
+  @override
+  String get welcomeSub => 'Ghi chi tiêu chỉ vài giây mỗi ngày.';
+
+  @override
+  String get welcomeStart => 'Bắt đầu';
+
+  @override
+  String get welcomeSampleBalance => 'Tổng số dư';
+
+  @override
+  String get welcomeSampleFood => 'Phở Thìn';
+
+  @override
+  String get welcomeSampleSalary => 'Lương';
+
+  @override
+  String get signUpTitle => 'Tạo tài khoản Freeva';
+
+  @override
+  String get signUpSub => 'Dữ liệu được lưu an toàn, đổi máy không mất.';
+
+  @override
+  String get authContinueEmail => 'Tiếp tục với email';
+
+  @override
+  String get signUpTermsPrefix => 'Tiếp tục nghĩa là bạn đồng ý với ';
+
+  @override
+  String get signUpTermsSuffix => '.';
+
+  @override
+  String onbProgress(int current, int total) {
+    return '$current/$total';
+  }
+
+  @override
+  String get onbGoalsTitle => 'Bạn muốn cải thiện điều gì?';
+
+  @override
+  String get onbGoalsSub => 'Chọn tối đa 2.';
+
+  @override
+  String get onbGoalTrack => 'Theo dõi chi tiêu';
+
+  @override
+  String get onbGoalSave => 'Tiết kiệm nhiều hơn';
+
+  @override
+  String get onbGoalBudget => 'Chi đúng ngân sách';
+
+  @override
+  String get onbGoalDebt => 'Quản lý khoản nợ';
+
+  @override
+  String get onbGoalEmergency => 'Lập quỹ dự phòng';
+
+  @override
+  String get onbGoalUnderstand => 'Hiểu rõ tài chính';
+
+  @override
+  String get onbHabitTitle => 'Bạn đang quản lý tiền thế nào?';
+
+  @override
+  String get onbHabitManual => 'Ghi chép bằng tay';
+
+  @override
+  String get onbHabitSpreadsheet => 'Dùng Excel hoặc Sheets';
+
+  @override
+  String get onbHabitApp => 'Dùng một app khác';
+
+  @override
+  String get onbHabitNone => 'Chưa theo dõi gì cả';
+
+  @override
+  String get onbCadenceTitle => 'Bao lâu bạn xem lại chi tiêu?';
+
+  @override
+  String get onbCadenceDaily => 'Mỗi ngày';
+
+  @override
+  String get onbCadenceWeekly => 'Mỗi tuần';
+
+  @override
+  String get onbCadenceMonthly => 'Mỗi tháng';
+
+  @override
+  String get onbCadenceRarely => 'Hầu như không';
+
+  @override
+  String get onbBudgetTitle => 'Mỗi tháng bạn định chi bao nhiêu?';
+
+  @override
+  String get onbBudgetAmount => 'Ngân sách mỗi tháng';
+
+  @override
+  String get onbBudgetLater => 'Thiết lập sau';
 }

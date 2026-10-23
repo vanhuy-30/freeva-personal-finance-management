@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
-import 'package:mobile/core/analytics/analytics_event.dart';
 import 'package:mobile/core/di/injection.dart';
 import 'package:mobile/core/l10n/generated/app_localizations.dart';
 import 'package:mobile/features/auth/data/auth_repository_impl.dart';
@@ -15,7 +13,6 @@ import 'package:mobile/features/settings/domain/app_preferences.dart';
 import 'package:mobile/features/settings/domain/settings_use_cases.dart';
 import 'package:mobile/features/settings/presentation/pages/faq_page.dart';
 import 'package:mobile/features/settings/presentation/pages/legal_page.dart';
-import 'package:mobile/features/settings/presentation/pages/onboarding_page.dart';
 import 'package:mobile/features/settings/presentation/pages/settings_page.dart';
 import 'package:mobile/features/settings/presentation/viewmodels/settings_view_model.dart';
 
@@ -76,39 +73,6 @@ void main() {
         home: child,
       );
 
-  testWidgets('skip completes onboarding once', (tester) async {
-    final router = GoRouter(
-      initialLocation: '/onboarding',
-      routes: [
-        GoRoute(
-          path: '/onboarding',
-          builder: (context, state) => const OnboardingPage(),
-        ),
-        GoRoute(
-          path: '/home',
-          builder: (context, state) => const Scaffold(body: Text('home-ready')),
-        ),
-      ],
-    );
-    addTearDown(router.dispose);
-    await tester.pumpWidget(
-      MaterialApp.router(
-        routerConfig: router,
-        locale: const Locale('en'),
-        supportedLocales: S.supportedLocales,
-        localizationsDelegates: S.localizationsDelegates,
-      ),
-    );
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Skip'));
-    await tester.pumpAndSettle();
-    expect(find.text('home-ready'), findsOneWidget);
-    expect(analytics.events, [
-      AnalyticsEvent.onboardingStarted,
-      AnalyticsEvent.onboardingCompleted,
-    ]);
-  });
-
   testWidgets('settings help screens fit a small display in both locales', (
     tester,
   ) async {
@@ -121,7 +85,6 @@ void main() {
       const FaqPage(),
       const LegalPage(document: LegalDocument.terms),
       const LegalPage(document: LegalDocument.privacy),
-      const OnboardingPage(),
     ];
     for (final locale in ['vi', 'en']) {
       for (final page in pages) {

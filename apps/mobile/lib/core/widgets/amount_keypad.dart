@@ -31,25 +31,33 @@ class AmountKeypad extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        mainAxisSpacing: 6,
-        crossAxisSpacing: 6,
-        mainAxisExtent: FreevaSize.button,
-      ),
+    // Rows, not a GridView: a shrink-wrapped grid cannot be measured by
+    // screens that size their content to the available height.
+    Widget keyFor(String key) => key.isEmpty
+        ? _Key(
+            filled: filled,
+            label: S.of(context).keypadDelete,
+            icon: LucideIcons.delete,
+            onTap: onDelete,
+          )
+        : _Key(label: key, filled: filled, onTap: () => onDigits(key));
+    return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        for (final key in _keys)
-          key.isEmpty
-              ? _Key(
-                  filled: filled,
-                  label: S.of(context).keypadDelete,
-                  icon: LucideIcons.delete,
-                  onTap: onDelete,
-                )
-              : _Key(label: key, filled: filled, onTap: () => onDigits(key)),
+        for (var r = 0; r < _keys.length; r += 3) ...[
+          if (r > 0) const SizedBox(height: 6),
+          SizedBox(
+            height: FreevaSize.button,
+            child: Row(
+              children: [
+                for (var i = r; i < r + 3; i++) ...[
+                  if (i > r) const SizedBox(width: 6),
+                  Expanded(child: keyFor(_keys[i])),
+                ],
+              ],
+            ),
+          ),
+        ],
       ],
     );
   }

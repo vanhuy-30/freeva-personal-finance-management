@@ -9,8 +9,10 @@ import '../../domain/auth_repository.dart';
 import '../../domain/auth_use_cases.dart';
 import '../../domain/session_alert_notifier.dart';
 
-/// Screens of the signed-out flow. [reset] opens from the link in the email.
-enum AuthStep { login, register, forgot, reset }
+/// Screens of the signed-out flow. [welcome] shows once on a fresh install;
+/// [signUp] is the "Tạo tài khoản Freeva" choice; [reset] opens from the link
+/// in the email.
+enum AuthStep { welcome, signUp, login, register, forgot, reset }
 
 enum AuthNotice { verificationSent, resetSent, passwordChanged }
 
@@ -36,6 +38,9 @@ abstract class AuthViewModel extends ChangeNotifier {
   );
   Future<void> resendVerification();
   void goTo(AuthStep step);
+
+  /// Leaves Welcome for [next] and remembers it was shown, so it never repeats.
+  Future<void> leaveWelcome(AuthStep next);
 
   /// Opens the new-password screen for the token from the reset email.
   void startReset(String token);
@@ -201,6 +206,20 @@ class DefaultAuthViewModel extends AuthViewModel {
   }
 
   @override
+  Future<void> leaveWelcome(AuthStep next) async {
+    step = next;
+    notifyListeners();
+    final cases = settings;
+    if (cases == null) return;
+    final loaded = await cases.load();
+    final prefs = loaded.fold<AppPreferences?>((_) => null, (value) => value);
+    // Best effort: if saving fails Welcome simply shows once more.
+    if (prefs != null && !prefs.welcomeSeen) {
+      await cases.save(prefs.copyWith(welcomeSeen: true));
+    }
+  }
+
+  @override
   void finishSetup() {
     if (stage != AuthStage.setup) return;
     stage = AuthStage.unlocked;
@@ -282,6 +301,10 @@ class DefaultAuthViewModel extends AuthViewModel {
     await _run(_useCases.restore, (value) => stage = value);
     if (stage != AuthStage.signedOut) {
       hasPin = (await _useCases.pinSet()).getOrElse(() => false);
+    } else if (settings != null) {
+      final prefs = await settings!.load();
+      final seen = prefs.fold((_) => true, (value) => value.welcomeSeen);
+      if (!seen) step = AuthStep.welcome;
     }
     final available = await _useCases.biometricAvailable();
     biometricAvailable = available.getOrElse(() => false);

@@ -1,6 +1,6 @@
 # Nhóm A — Onboarding và tài khoản
 
-Trạng thái: **chốt thiết kế 2026-10-21, sửa luồng 2026-10-23** (tạo tài khoản trước câu hỏi, xác nhận email bỏ qua được, PIN nhập lại, quy tắc mật khẩu), code A1 (tài khoản và bảo mật) xong 2026-10-23, A2 (onboarding) chưa. Task: `DS-P2-004`.
+Trạng thái: **chốt thiết kế 2026-10-21, sửa luồng 2026-10-23** (tạo tài khoản trước câu hỏi, xác nhận email bỏ qua được, PIN nhập lại, quy tắc mật khẩu), code A1 (tài khoản và bảo mật) và A2a (Welcome, Tạo tài khoản, ba câu hỏi) xong 2026-10-23; A2b (Thiết lập tài chính, checklist trang chính) chưa. Task: `DS-P2-004`.
 Canvas: trang **05 · Patterns**, hai hàng A1 và A2
 (<https://claude.ai/artifact/SmyaVvz57doJiAM6Kn678T>, riêng tư). Spec chung:
 [design-system.md](../design-system.md).
@@ -69,12 +69,12 @@ Mở khoá hằng ngày: màn Mở khoá ở hàng mẫu (avatar chữ cái, "Ch
 |---|---|
 | Link xác nhận email và đặt lại mật khẩu mở thẳng app | Chốt 2026-10-23: bỏ nhập mã 64 ký tự trên UI; backend gửi một link, người dùng bấm trong mail. Cần deep link / universal link (task riêng). |
 | Google, Apple trên mobile | ADR 010 đã có, mobile chưa làm. |
-| Ngân sách tháng (A1.5) | Thuộc `BE-P2-E02`. Chốt 2026-10-23: làm UI, dùng dữ liệu mock/lưu trên máy; nối API khi làm task BE. |
+| Ngân sách tháng (A1.5) | Thuộc `BE-P2-E02`. Chốt 2026-10-23: làm UI; số lưu trên máy (`AppPreferences.budgetDraftMinor`), tiền tệ cố định VND; nối API khi làm task BE. |
 | PIN không còn bắt buộc ngay sau đăng nhập | App hiện bắt đặt PIN; đổi thành bước gợi ý có "Để sau", luôn có màn nhập lại PIN. |
 | Ô "nhập lại mật khẩu" | Giữ (2026-10-23), như app hiện tại. |
 | Quy tắc chữ + số | Xong ở backend + mobile (`DS-P2-004`, 2026-10-23). |
 | Xác nhận email không bắt buộc | Backend đã cho đăng nhập trước khi xác nhận (ADR 009); mobile cần cho đi tiếp sau A2.3 và nơi xác nhận lại trong Cá nhân. |
 | Lưu đồng ý điều khoản | Cần ghi lại thời điểm và phiên bản điều khoản khi đăng ký email (Google/Apple: dòng chữ ở A1.2). |
-| Câu trả lời A1.3–A1.4 | Lưu vào hồ sơ (cần field mới) để cá nhân hoá. |
+| Câu trả lời A1.3–A1.4 | Xong (A2a): `User.onboardingGoals/trackingHabit/reviewCadence`, `PATCH /api/v1/profile/onboarding`, mọi trường tuỳ chọn. Chưa dùng để sắp khối Tổng quan. Chưa có trong `GET /account/export`. |
 | Chế độ khách | **Chưa làm** — cần dữ liệu cục bộ và gộp khi đăng ký; quyết định sau. |
 | Copy l10n | Toàn bộ chuỗi trên thay chuỗi `auth*`, `onboarding*` hiện có trong `app_vi.arb` / `app_en.arb`. |
