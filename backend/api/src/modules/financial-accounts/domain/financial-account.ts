@@ -18,6 +18,8 @@ export interface FinancialAccount extends AccountFields {
   createdAt: Date;
   updatedAt: Date;
   balanceMinor: bigint;
+  /** Any transaction, deleted ones included: type and currency are then locked. */
+  hasTransactions: boolean;
 }
 export type CreateAccount = AccountFields & { clientId: string };
 export type AccountPatch = Partial<AccountFields> & { version: number; archived?: boolean };

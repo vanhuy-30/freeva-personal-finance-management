@@ -28,6 +28,8 @@ class WalletRepositoryImpl implements WalletRepository {
     version: j['version'] as int,
     sortOrder: j['sortOrder'] as int,
     archived: j['archivedAt'] != null,
+    // Older servers omit the flag; they still reject the change on save.
+    hasTransactions: j['hasTransactions'] as bool? ?? false,
   );
   Future<Either<AuthFailure, T>> _request<T>(
     String method,

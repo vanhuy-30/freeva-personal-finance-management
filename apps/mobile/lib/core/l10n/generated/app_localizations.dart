@@ -703,36 +703,6 @@ abstract class S {
   /// **'Initial balance'**
   String get walletInitialBalance;
 
-  /// No description provided for @walletCreditLimit.
-  ///
-  /// In en, this message translates to:
-  /// **'Credit limit (optional)'**
-  String get walletCreditLimit;
-
-  /// No description provided for @walletCloseDay.
-  ///
-  /// In en, this message translates to:
-  /// **'Statement day (1–28, optional)'**
-  String get walletCloseDay;
-
-  /// No description provided for @walletDueDay.
-  ///
-  /// In en, this message translates to:
-  /// **'Payment day (1–28, optional)'**
-  String get walletDueDay;
-
-  /// No description provided for @walletMoneyHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter amounts in the selected currency without thousands separators. For example: VND 10000; USD 10.50.'**
-  String get walletMoneyHint;
-
-  /// No description provided for @walletEditHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Wallet type and currency cannot change once transactions exist. Edit the initial balance only to correct it.'**
-  String get walletEditHint;
-
   /// No description provided for @walletHide.
   ///
   /// In en, this message translates to:
@@ -748,26 +718,20 @@ abstract class S {
   /// No description provided for @walletInvalid.
   ///
   /// In en, this message translates to:
-  /// **'Check the name, amounts and days (1–28). Type or currency may be locked because transactions exist.'**
+  /// **'Check the name and amounts.'**
   String get walletInvalid;
 
   /// No description provided for @walletConflict.
   ///
   /// In en, this message translates to:
-  /// **'This wallet changed elsewhere. Return to the list and reload before editing again.'**
+  /// **'This wallet changed elsewhere. Open it again to edit.'**
   String get walletConflict;
 
   /// No description provided for @walletError.
   ///
   /// In en, this message translates to:
-  /// **'Could not load or save wallets. Please try again.'**
+  /// **'Couldn\'t save the wallet. Try again.'**
   String get walletError;
-
-  /// No description provided for @walletReloadRequired.
-  ///
-  /// In en, this message translates to:
-  /// **'The operation may have been partially saved. Reload the list to get the latest state.'**
-  String get walletReloadRequired;
 
   /// No description provided for @transactionTitle.
   ///
@@ -2916,6 +2880,186 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Pay card'**
   String get creditPay;
+
+  /// No description provided for @walletLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load wallets'**
+  String get walletLoadError;
+
+  /// No description provided for @cardName.
+  ///
+  /// In en, this message translates to:
+  /// **'Card name'**
+  String get cardName;
+
+  /// No description provided for @walletCurrencyField.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get walletCurrencyField;
+
+  /// No description provided for @walletCurrencyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose currency'**
+  String get walletCurrencyTitle;
+
+  /// No description provided for @walletCurrentBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Current balance'**
+  String get walletCurrentBalance;
+
+  /// No description provided for @walletBalanceHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A rough number is fine. You can change it later.'**
+  String get walletBalanceHint;
+
+  /// No description provided for @creditCurrentDebt.
+  ///
+  /// In en, this message translates to:
+  /// **'Current balance owed'**
+  String get creditCurrentDebt;
+
+  /// No description provided for @creditInitialDebt.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting balance owed'**
+  String get creditInitialDebt;
+
+  /// No description provided for @creditLimitField.
+  ///
+  /// In en, this message translates to:
+  /// **'Limit'**
+  String get creditLimitField;
+
+  /// No description provided for @creditCloseField.
+  ///
+  /// In en, this message translates to:
+  /// **'Statement day'**
+  String get creditCloseField;
+
+  /// No description provided for @creditDueField.
+  ///
+  /// In en, this message translates to:
+  /// **'Due day'**
+  String get creditDueField;
+
+  /// No description provided for @creditDayValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Day {day}'**
+  String creditDayValue(int day);
+
+  /// No description provided for @creditPickDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a day'**
+  String get creditPickDay;
+
+  /// No description provided for @creditOptionalHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Limit and days can stay empty.'**
+  String get creditOptionalHint;
+
+  /// No description provided for @walletSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save wallet'**
+  String get walletSave;
+
+  /// No description provided for @creditSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save card'**
+  String get creditSave;
+
+  /// No description provided for @walletSaveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save changes'**
+  String get walletSaveChanges;
+
+  /// No description provided for @walletLockedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Type · Currency'**
+  String get walletLockedLabel;
+
+  /// No description provided for @walletLockedSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'{type}, {currency}, locked because the wallet has transactions'**
+  String walletLockedSemantics(String type, String currency);
+
+  /// No description provided for @walletHiddenToast.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} hidden'**
+  String walletHiddenToast(String name);
+
+  /// No description provided for @walletNameMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Give it a name.'**
+  String get walletNameMissing;
+
+  /// No description provided for @walletAmountInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'That amount doesn\'t look right.'**
+  String get walletAmountInvalid;
+
+  /// No description provided for @dayDueTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Which day is it due?'**
+  String get dayDueTitle;
+
+  /// No description provided for @dayCloseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Which day does it close?'**
+  String get dayCloseTitle;
+
+  /// No description provided for @dayMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Every month'**
+  String get dayMonthly;
+
+  /// No description provided for @dayConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick day {day}'**
+  String dayConfirm(int day);
+
+  /// No description provided for @dayClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave empty'**
+  String get dayClear;
+
+  /// No description provided for @dayCloseMark.
+  ///
+  /// In en, this message translates to:
+  /// **'Statement day'**
+  String get dayCloseMark;
+
+  /// No description provided for @dayDueMark.
+  ///
+  /// In en, this message translates to:
+  /// **'Due day'**
+  String get dayDueMark;
+
+  /// No description provided for @dayMarkedSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'{day}, {mark}'**
+  String dayMarkedSemantics(int day, String mark);
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

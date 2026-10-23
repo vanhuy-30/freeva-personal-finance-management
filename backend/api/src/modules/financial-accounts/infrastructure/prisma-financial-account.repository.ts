@@ -36,15 +36,19 @@ export class PrismaFinancialAccountRepository implements FinancialAccountReposit
 
   private async balances(tx: Prisma.TransactionClient, userId: string, rows: Row[]): Promise<FinancialAccount[]> {
     if (!rows.length) return [];
-    // PostgreSQL SUM(bigint) is numeric. Cast to text to preserve sums beyond int64 too.
+    // PostgreSQL SUM(bigint) is numeric. Cast to text to preserve sums beyond int64 too. Deleted rows count for the
+    // type/currency lock (restoring them must not change denomination) but not for the balance.
     const totals = await tx.$queryRaw<{ accountId: string; total: string }[]>(Prisma.sql`
-      SELECT "accountId", SUM("amountMinor")::text AS total FROM "Transaction"
-      WHERE "userId" = ${userId}::uuid AND "deletedAt" IS NULL
+      SELECT "accountId", COALESCE(SUM("amountMinor") FILTER (WHERE "deletedAt" IS NULL), 0)::text AS total
+      FROM "Transaction"
+      WHERE "userId" = ${userId}::uuid
         AND "accountId" IN (${Prisma.join(rows.map(row => Prisma.sql`${row.id}::uuid`))})
       GROUP BY "accountId"
     `);
     const byId = new Map(totals.map(total => [total.accountId, BigInt(total.total)]));
-    return rows.map(row => ({ ...row, balanceMinor: row.initialBalanceMinor + (byId.get(row.id) ?? 0n) }));
+    return rows.map(row => ({
+      ...row, balanceMinor: row.initialBalanceMinor + (byId.get(row.id) ?? 0n), hasTransactions: byId.has(row.id),
+    }));
   }
 
   private async currency(tx: Prisma.TransactionClient, code: string): Promise<void> {
@@ -65,7 +69,7 @@ export class PrismaFinancialAccountRepository implements FinancialAccountReposit
       }
       await this.currency(tx, input.currencyCode);
       const row = await tx.financialAccount.create({ data: { ...input, userId }, select });
-      return { account: { ...row, balanceMinor: row.initialBalanceMinor }, created: true };
+      return { account: { ...row, balanceMinor: row.initialBalanceMinor, hasTransactions: false }, created: true };
     }, true);
   }
 
@@ -100,7 +104,7 @@ export class PrismaFinancialAccountRepository implements FinancialAccountReposit
       const row = await tx.financialAccount.findFirstOrThrow({ where: { id, userId }, select });
       // Include deleted transactions: changing their denomination/type would corrupt restored history.
       const hasTransactions = await tx.transaction.count({ where: { accountId: id } }) > 0;
-      const fields = updatedFields({ ...row, balanceMinor: row.initialBalanceMinor }, patch, hasTransactions);
+      const fields = updatedFields({ ...row, balanceMinor: row.initialBalanceMinor, hasTransactions }, patch, hasTransactions);
       await this.currency(tx, fields.currencyCode);
       const saved = await tx.financialAccount.update({
         where: { id, userId, version: patch.version },

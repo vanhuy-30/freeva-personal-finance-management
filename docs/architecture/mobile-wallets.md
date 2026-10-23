@@ -10,6 +10,12 @@ Home → **Ví của tôi** (`/wallets`, qua AuthGate). Dùng contract hiện c�
 > nay lưu một lần qua `PUT /financial-accounts/order` (mục "Sắp xếp" dưới đây
 > mô tả cách cũ). Vào/Ra tháng của ví lấy `summary` lọc một ví, tính cả chuyển
 > ví. "Ghi từ ví này" / "Chuyển ví" / "Trả thẻ" mở `/record?from=…&to=…`.
+> D2 thay form thêm/sửa (`WalletEditorPage` + `WalletForm`): thẻ chọn loại,
+> ô tiền tệ, số tiền gõ có phân cách nghìn (`MoneyInputFormatter`, đọc lại bằng
+> chuỗi, không qua double), dư nợ thẻ nhập dương và lưu thành số dư ban đầu âm,
+> popup chọn ngày 1–28. Ví có `hasTransactions` hiện ô khoá thay cho loại và
+> tiền tệ. "Ẩn ví" không hỏi lại, toast Hoàn tác khôi phục ngay. Các mục
+> "Hành vi" và "Sắp xếp" dưới đây là bản Phase 1.
 
 ## Hành vi
 

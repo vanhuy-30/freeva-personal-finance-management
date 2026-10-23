@@ -12,6 +12,7 @@ function response(account: FinancialAccount) {
     statementCloseDay: account.statementCloseDay, paymentDueDay: account.paymentDueDay,
     archivedAt: account.archivedAt?.toISOString() ?? null, version: account.version,
     createdAt: account.createdAt.toISOString(), updatedAt: account.updatedAt.toISOString(),
+    hasTransactions: account.hasTransactions,
   };
 }
 @Injectable()

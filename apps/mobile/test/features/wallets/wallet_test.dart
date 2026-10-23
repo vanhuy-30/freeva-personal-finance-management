@@ -11,7 +11,7 @@ import 'package:mobile/features/wallets/data/wallet_repository_impl.dart';
 import 'package:mobile/features/wallets/domain/wallet.dart';
 import 'package:mobile/features/wallets/domain/wallet_use_cases.dart';
 import 'package:mobile/features/wallets/presentation/viewmodels/wallet_view_model.dart';
-import 'package:mobile/features/wallets/presentation/widgets/wallet_money.dart';
+import 'package:mobile/core/money/money_text.dart';
 
 import '../auth/fakes.dart';
 
@@ -103,24 +103,29 @@ class WalletTransport implements AuthorizedApi {
   }
 }
 
+BigInt? _parse(String text, WalletCurrency c, String locale) =>
+    parseMoneyText(text, c.minorDigits, locale);
+String _format(BigInt minor, WalletCurrency c, String locale) =>
+    formatMoneyText(minor, c.minorDigits, locale);
+
 void main() {
   test('money conversion is exact for int64, large derived balances and locale fractions', () {
     const vnd = WalletCurrency('VND', 0), usd = WalletCurrency('USD', 2);
     expect(
-      parseWalletMoney('9223372036854775807', vnd, 'vi'),
+      _parse('9223372036854775807', vnd, 'vi'),
       BigInt.parse('9223372036854775807'),
     );
-    expect(parseWalletMoney('-0,01', usd, 'vi'), BigInt.from(-1));
-    expect(parseWalletMoney('10.50', usd, 'en'), BigInt.from(1050));
+    expect(_parse('-0,01', usd, 'vi'), BigInt.from(-1));
+    expect(_parse('10.50', usd, 'en'), BigInt.from(1050));
     for (final text in ['1.5', '1,000', '1e3', 'NaN', '']) {
-      expect(parseWalletMoney(text, vnd, 'en'), isNull);
+      expect(_parse(text, vnd, 'en'), isNull);
     }
-    expect(parseWalletMoney('1.001', usd, 'en'), isNull);
+    expect(_parse('1.001', usd, 'en'), isNull);
     expect(
-      walletMoney(BigInt.parse('18446744073709551614'), vnd, 'vi'),
+      _format(BigInt.parse('18446744073709551614'), vnd, 'vi'),
       '18.446.744.073.709.551.614',
     );
-    expect(walletMoney(BigInt.from(-1), usd, 'en'), '-0.01');
+    expect(_format(BigInt.from(-1), usd, 'en'), '-0.01');
   });
   test(
     'repository reads all pages and preserves string money and versions',

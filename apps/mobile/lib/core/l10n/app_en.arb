@@ -121,17 +121,11 @@
   "walletName": "Wallet name",
   "walletType": "Wallet type",
   "walletInitialBalance": "Initial balance",
-  "walletCreditLimit": "Credit limit (optional)",
-  "walletCloseDay": "Statement day (1–28, optional)",
-  "walletDueDay": "Payment day (1–28, optional)",
-  "walletMoneyHint": "Enter amounts in the selected currency without thousands separators. For example: VND 10000; USD 10.50.",
-  "walletEditHint": "Wallet type and currency cannot change once transactions exist. Edit the initial balance only to correct it.",
   "walletHide": "Hide wallet",
   "walletHiddenEmpty": "No hidden wallets.",
-  "walletInvalid": "Check the name, amounts and days (1–28). Type or currency may be locked because transactions exist.",
-  "walletConflict": "This wallet changed elsewhere. Return to the list and reload before editing again.",
-  "walletError": "Could not load or save wallets. Please try again.",
-  "walletReloadRequired": "The operation may have been partially saved. Reload the list to get the latest state.",
+  "walletInvalid": "Check the name and amounts.",
+  "walletConflict": "This wallet changed elsewhere. Open it again to edit.",
+  "walletError": "Couldn't save the wallet. Try again.",
   "transactionTitle": "Transactions",
   "transactionRecord": "Record transaction",
   "transactionExpense": "Expense",
@@ -878,5 +872,76 @@
   },
   "creditNotSet": "Not set",
   "creditRecordFrom": "Record from card",
-  "creditPay": "Pay card"
+  "creditPay": "Pay card",
+  "walletLoadError": "Couldn't load wallets",
+  "cardName": "Card name",
+  "walletCurrencyField": "Currency",
+  "walletCurrencyTitle": "Choose currency",
+  "walletCurrentBalance": "Current balance",
+  "walletBalanceHint": "A rough number is fine. You can change it later.",
+  "creditCurrentDebt": "Current balance owed",
+  "creditInitialDebt": "Starting balance owed",
+  "creditLimitField": "Limit",
+  "creditCloseField": "Statement day",
+  "creditDueField": "Due day",
+  "creditDayValue": "Day {day}",
+  "@creditDayValue": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "creditPickDay": "Pick a day",
+  "creditOptionalHint": "Limit and days can stay empty.",
+  "walletSave": "Save wallet",
+  "creditSave": "Save card",
+  "walletSaveChanges": "Save changes",
+  "walletLockedLabel": "Type · Currency",
+  "walletLockedSemantics": "{type}, {currency}, locked because the wallet has transactions",
+  "@walletLockedSemantics": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "walletHiddenToast": "{name} hidden",
+  "@walletHiddenToast": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "walletNameMissing": "Give it a name.",
+  "walletAmountInvalid": "That amount doesn't look right.",
+  "dayDueTitle": "Which day is it due?",
+  "dayCloseTitle": "Which day does it close?",
+  "dayMonthly": "Every month",
+  "dayConfirm": "Pick day {day}",
+  "@dayConfirm": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "dayClear": "Leave empty",
+  "dayCloseMark": "Statement day",
+  "dayDueMark": "Due day",
+  "dayMarkedSemantics": "{day}, {mark}",
+  "@dayMarkedSemantics": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      },
+      "mark": {
+        "type": "String"
+      }
+    }
+  }
 }

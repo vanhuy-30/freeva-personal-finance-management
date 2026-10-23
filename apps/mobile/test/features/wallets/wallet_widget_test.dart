@@ -1,5 +1,5 @@
 import 'package:mobile/core/di/injection.dart';
-import 'package:mobile/features/wallets/presentation/widgets/wallet_editor.dart';
+import 'package:mobile/features/wallets/presentation/pages/wallet_editor_page.dart';
 import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -13,7 +13,6 @@ import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dar
 import 'package:mobile/features/wallets/data/wallet_repository_impl.dart';
 import 'package:mobile/features/wallets/domain/wallet_use_cases.dart';
 import 'package:mobile/features/wallets/presentation/viewmodels/wallet_view_model.dart';
-import 'package:mobile/features/wallets/presentation/widgets/wallet_editor_form.dart';
 import 'package:mobile/features/wallets/presentation/pages/hidden_wallets_page.dart';
 import 'package:mobile/features/wallets/presentation/pages/wallet_sort_page.dart';
 import 'package:mobile/features/wallets/presentation/widgets/wallet_list_body.dart';
@@ -96,7 +95,7 @@ void main() {
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute<void>(
                 builder: (_) =>
-                    WalletEditor(model: model, wallet: model.wallets.first),
+                    WalletEditorPage(model: model, wallet: model.wallets.first),
               ),
             ),
             child: const Text('open'),
@@ -106,11 +105,11 @@ void main() {
     );
     await tester.tap(find.text('open'));
     await tester.pumpAndSettle();
-    expect(find.byType(WalletEditorForm), findsOneWidget);
+    expect(find.byType(WalletEditorPage), findsOneWidget);
     await tester.enterText(find.byType(TextField).first, 'Private draft');
     auth.lock();
     await tester.pumpAndSettle();
-    expect(find.byType(WalletEditor), findsNothing);
+    expect(find.byType(WalletEditorPage), findsNothing);
     expect(find.text('Private draft'), findsNothing);
     expect(model.wallets, isEmpty);
     expect(tester.takeException(), isNull);
@@ -193,7 +192,7 @@ void main() {
     getIt.registerSingleton<SettingsViewModel>(settings);
     addTearDown(settings.dispose);
     await tester.pumpWidget(
-      app(WalletEditorForm(model: model, wallet: model.wallets.first)),
+      app(WalletEditorPage(model: model, wallet: model.wallets.first)),
     );
     await tester.pump();
     final fields = tester.widgetList<TextField>(find.byType(TextField));
@@ -208,22 +207,106 @@ void main() {
       isTrue,
     );
   });
-  testWidgets(
-    'editor retains invalid draft and supports small screen with large text',
-    (tester) async {
-      tester.view.physicalSize = const Size(320, 640);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-      await tester.pumpWidget(app(WalletEditorForm(model: model), scale: 2));
-      await tester.enterText(find.byType(TextField).first, 'My wallet');
-      await tester.enterText(find.byType(TextField).at(1), '1e3');
-      await tester.ensureVisible(find.byType(FilledButton));
-      await tester.tap(find.byType(FilledButton));
-      await tester.pumpAndSettle();
-      expect(api.writes, 0);
-      expect(find.text('My wallet'), findsOneWidget);
-      expect(tester.takeException(), isNull);
-    },
-  );
+  testWidgets('empty name keeps the draft; fits 320 pt at 2× text', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(320, 640);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(app(WalletEditorPage(model: model), scale: 2));
+    await tester.enterText(find.byType(TextField).at(1), '1500000');
+    await tester.tap(find.text('Lưu ví'));
+    await tester.pumpAndSettle();
+    expect(api.writes, 0);
+    expect(find.text('Đặt tên cho ví nhé.'), findsOneWidget);
+    expect(find.text('1.500.000'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+  testWidgets('adds a bank wallet with a grouped balance', (tester) async {
+    await tester.pumpWidget(app(WalletEditorPage(model: model)));
+    expect(find.bySemanticsLabel('Ngân hàng'), findsOneWidget);
+    await tester.enterText(find.byType(TextField).first, '  Ví lương ');
+    await tester.enterText(find.byType(TextField).at(1), '1500000');
+    await tester.tap(find.text('Lưu ví'));
+    await tester.pumpAndSettle();
+    final body = api.calls.last.body!;
+    expect(api.calls.last.method, 'POST');
+    expect(body['name'], 'Ví lương');
+    expect(body['type'], 'bank');
+    expect(body['initialBalanceMinor'], '1500000');
+    expect(body['creditLimitMinor'], isNull);
+  });
+  testWidgets('adds a card: debt stored negative, due day from the popup', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(app(WalletEditorPage(model: model)));
+    await tester.tap(find.text('Thẻ tín dụng'));
+    await tester.pump();
+    expect(find.text('Tên thẻ'), findsOneWidget);
+    await tester.enterText(find.byType(TextField).at(0), 'Thẻ chính');
+    await tester.enterText(find.byType(TextField).at(1), '11450000');
+    await tester.enterText(find.byType(TextField).at(2), '20000000');
+    await tester.tap(find.bySemanticsLabel('Đến hạn, Chọn ngày'));
+    await tester.pumpAndSettle();
+    expect(find.text('Đến hạn ngày nào?'), findsOneWidget);
+    await tester.tap(find.bySemanticsLabel('25'));
+    await tester.pump();
+    await tester.tap(find.text('Chọn ngày 25'));
+    await tester.pumpAndSettle();
+    expect(find.text('Ngày 25'), findsOneWidget);
+    await tester.tap(find.text('Lưu thẻ'));
+    await tester.pumpAndSettle();
+    final body = api.calls.last.body!;
+    expect(body['type'], 'credit');
+    expect(body['initialBalanceMinor'], '-11450000');
+    expect(body['creditLimitMinor'], '20000000');
+    expect(body['paymentDueDay'], 25);
+    expect(body['statementCloseDay'], isNull);
+  });
+  testWidgets('a wallet with transactions locks type and currency', (
+    tester,
+  ) async {
+    api.rows[0]['hasTransactions'] = true;
+    await model.load();
+    await tester.pumpWidget(
+      app(WalletEditorPage(model: model, wallet: model.wallets.first)),
+    );
+    expect(find.text('Loại ví'), findsNothing);
+    expect(
+      find.bySemanticsLabel('Tiền mặt, VND, đã khoá vì ví có giao dịch'),
+      findsOneWidget,
+    );
+    expect(find.text('Lưu thay đổi'), findsOneWidget);
+    expect(find.text('Số dư ban đầu'), findsOneWidget);
+  });
+  testWidgets('"Ẩn ví" hides at once and closes the editor', (tester) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    WalletEditResult? result;
+    await tester.pumpWidget(
+      app(
+        Builder(
+          builder: (context) => TextButton(
+            onPressed: () async => result = await openWalletEditor(
+              context,
+              model,
+              wallet: model.wallets.first,
+            ),
+            child: const Text('open'),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Ẩn ví'));
+    await tester.tap(find.text('Ẩn ví'));
+    await tester.pumpAndSettle();
+    expect(result, WalletEditResult.hidden);
+    expect(model.wallets.first.archived, isTrue);
+  });
 }

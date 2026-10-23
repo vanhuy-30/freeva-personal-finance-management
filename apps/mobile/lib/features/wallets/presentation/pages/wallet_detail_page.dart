@@ -7,6 +7,7 @@ import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/router/nav_back.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/freeva_icon_button.dart';
+import '../../../../core/widgets/freeva_toast.dart';
 import '../../../../core/widgets/freeva_top_bar.dart';
 import '../../../settings/presentation/widgets/balances_hidden_builder.dart';
 import '../../../transactions/presentation/viewmodels/transaction_view_model.dart';
@@ -14,7 +15,7 @@ import '../../domain/wallet.dart';
 import '../viewmodels/wallet_detail_view_model.dart';
 import '../viewmodels/wallet_view_model.dart';
 import '../widgets/detail/wallet_detail_body.dart';
-import '../widgets/wallet_editor.dart';
+import 'wallet_editor_page.dart';
 
 /// One wallet or credit card (D, màn 3 / 4). Pushed, no bottom nav.
 class WalletDetailPage extends StatefulWidget {
@@ -65,13 +66,26 @@ class _WalletDetailPageState extends State<WalletDetailPage> {
   }
 
   Future<void> _edit(Wallet wallet) async {
-    if (model.busy || model.needsReload || model.currencies.isEmpty) return;
-    await Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (_) => WalletEditor(model: model, wallet: wallet),
-      ),
+    final result = await openWalletEditor(context, model, wallet: wallet);
+    if (!mounted) return;
+    if (result != WalletEditResult.hidden) {
+      await _refresh();
+      return;
+    }
+    // Hidden without asking; the toast undoes it right away.
+    final s = S.of(context);
+    final id = wallet.id;
+    showFreevaToast(
+      context,
+      message: s.walletHiddenToast(wallet.draft.name),
+      actionLabel: s.commonUndo,
+      onAction: () {
+        final hidden = model.byId(id);
+        if (hidden != null && hidden.archived) model.archive(hidden);
+      },
+      aboveNav: false,
     );
-    if (mounted) await _refresh();
+    context.popOrGo('/wallets');
   }
 
   @override

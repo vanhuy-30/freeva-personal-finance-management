@@ -3508,7 +3508,12 @@ components:
       - archivedAt
       - createdAt
       - updatedAt
+      - hasTransactions
       properties:
+        hasTransactions:
+          type: boolean
+          description: True when the account has any transaction, deleted ones included. Type and currencyCode
+            can then no longer change (PATCH returns 409), so clients lock those fields up front.
         id:
           type: string
           format: uuid

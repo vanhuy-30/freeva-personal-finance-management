@@ -8,8 +8,8 @@ import '../../../../core/widgets/freeva_icon_button.dart';
 import '../../../../core/widgets/freeva_top_bar.dart';
 import '../../../settings/presentation/widgets/balances_hidden_builder.dart';
 import '../viewmodels/wallet_view_model.dart';
-import '../widgets/wallet_editor.dart';
 import '../widgets/wallet_list_body.dart';
+import 'wallet_editor_page.dart';
 
 /// Ví của tôi (D1): total, wallets in the user's order, hidden wallets link.
 /// A pushed screen, so no bottom nav.
@@ -40,12 +40,7 @@ class _WalletPageState extends State<WalletPage> {
     super.dispose();
   }
 
-  void _add() {
-    if (model.busy || model.needsReload || model.currencies.isEmpty) return;
-    Navigator.of(
-      context,
-    ).push(MaterialPageRoute<void>(builder: (_) => WalletEditor(model: model)));
-  }
+  void _add() => openWalletEditor(context, model);
 
   @override
   Widget build(BuildContext context) {

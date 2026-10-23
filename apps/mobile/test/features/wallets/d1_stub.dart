@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:mobile/core/di/injection.dart';
 import 'package:mobile/core/l10n/generated/app_localizations.dart';
 import 'package:mobile/core/theme/app_theme.dart';
+import 'package:mobile/features/auth/data/auth_repository_impl.dart';
 import 'package:mobile/features/auth/domain/auth_repository.dart';
+import 'package:mobile/features/auth/domain/auth_use_cases.dart';
+import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dart';
 import 'package:mobile/features/transactions/domain/transaction.dart';
 import 'package:mobile/features/transactions/presentation/viewmodels/transaction_results_view_model.dart';
 import 'package:mobile/features/transactions/presentation/viewmodels/transaction_view_model.dart';
@@ -11,6 +14,7 @@ import 'package:mobile/features/wallets/domain/wallet_flow.dart';
 import 'package:mobile/features/wallets/presentation/viewmodels/wallet_detail_view_model.dart';
 import 'package:mobile/features/wallets/presentation/viewmodels/wallet_view_model.dart';
 
+import '../auth/fakes.dart';
 import '../home/fixtures.dart' show b, wallet;
 import '../transactions/c1_stub.dart';
 
@@ -146,6 +150,15 @@ Future<Widget> d1App(
   double scale = 1,
 }) async {
   await getIt.reset();
+  getIt.registerSingleton<AuthViewModel>(
+    DefaultAuthViewModel(
+        DefaultAuthUseCases(
+          AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+        ),
+      )
+      ..stage = AuthStage.unlocked
+      ..ready = true,
+  );
   final wallets = model ?? StubWalletViewModel();
   getIt.registerSingleton<WalletViewModel>(wallets);
   getIt.registerSingleton<TransactionViewModel>(

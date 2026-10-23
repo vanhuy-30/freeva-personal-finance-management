@@ -46,7 +46,7 @@ class WalletListBody extends StatelessWidget {
     if (empty && model.failure != null && !model.busy) {
       return Center(
         child: ErrorRetry(
-          title: s.walletError,
+          title: s.walletLoadError,
           message: s.homeErrorBody,
           onRetry: model.load,
         ),

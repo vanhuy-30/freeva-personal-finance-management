@@ -1,6 +1,6 @@
 # Nhóm D — Ví
 
-Trạng thái: **chốt thiết kế 2026-10-21**, chưa code. Task: `DS-P2-003` (màn Ví).
+Trạng thái: **chốt thiết kế 2026-10-21**, đã code 2026-10-23 (D1 + D2). Task: `DS-P2-003` (màn Ví).
 Canvas: trang **05 · Patterns**, hàng D
 (<https://claude.ai/artifact/SmyaVvz57doJiAM6Kn678T>, riêng tư). Spec chung:
 [design-system.md](../design-system.md).
@@ -41,11 +41,13 @@ Canvas: trang **05 · Patterns**, hàng D
 | Việc | Ghi chú |
 |---|---|
 | Tổng số dư và ví đã ẩn | Đã chốt ở `DS-P2-003`: API net-worth bỏ ví đã ẩn khỏi tổng, khớp "· 4 ví". |
-| Ví có giao dịch hay chưa | Cần cờ từ API để khoá loại/tiền tệ trước khi người dùng sửa, thay vì báo lỗi lúc lưu. |
+| Ví có giao dịch hay chưa | Xong (D2): API trả `hasTransactions`; form hiện ô khoá. |
+| Màn hẹp / chữ lớn | Khi một hàng không đủ ~330 pt nội dung (320 pt, chữ 1.3×), thẻ chọn loại và các cặp ô (dư nợ + hạn mức, hai ngày) xếp dọc. |
+| Bỏ ngày đã chọn | Trong popup, chạm lại ngày đang chọn để bỏ; nút chính đổi thành "Để trống". |
 | Kéo để sắp xếp | Xong (D1): `PUT /financial-accounts/order` lưu cả thứ tự một lần. Kéo dùng `ReorderableListView`: chỗ thả là khoảng trống, chưa có ô viền đứt `tint.blue`. |
 | Ngày đến hạn kế tiếp, "còn N ngày" | Tính từ `dueDay` theo ngày trên máy, cùng cách khối thẻ ở Tổng quan (chưa theo múi giờ hồ sơ). |
 | Vào / Ra tháng | Chốt 2026-10-23: tính cả chuyển ví vào/ra. `summary` thêm `transferInMinor` / `transferOutMinor`. |
 | Dòng chuyển ví trong chi tiết ví | API lọc theo ví chỉ trả leg của ví đó, nên dòng chưa ghi "Sang MoMo"; tiêu đề là ghi chú hoặc "Chuyển ví". |
 | Trả thẻ | Là Chuyển ví với ví đích là thẻ; hai leg cân bằng như mọi chuyển ví. |
 | Toast Hoàn tác khi ẩn | Hoàn tác = khôi phục ngay. |
-| Copy l10n | Thay các chuỗi `wallet*` dài hiện có (`walletMoneyHint`, `walletEditHint`, `walletHideExplanation`…) bằng chữ ngắn ở trên. |
+| Copy l10n | Xong: đã bỏ `walletMoneyHint`, `walletEditHint`, `walletHideExplanation`… và rút gọn chuỗi lỗi. |

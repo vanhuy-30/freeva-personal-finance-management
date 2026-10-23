@@ -7,7 +7,7 @@ import { CreateAccountDto, ReorderAccountsDto, UpdateAccountDto } from './financ
 
 const current: FinancialAccount = {
   id: randomUUID(), clientId: randomUUID(), name: 'Ví', type: 'cash', currencyCode: 'VND',
-  initialBalanceMinor: 0n, balanceMinor: 0n, sortOrder: 0, creditLimitMinor: null,
+  initialBalanceMinor: 0n, balanceMinor: 0n, hasTransactions: false, sortOrder: 0, creditLimitMinor: null,
   statementCloseDay: null, paymentDueDay: null, version: 1, archivedAt: null,
   createdAt: new Date(), updatedAt: new Date(),
 };

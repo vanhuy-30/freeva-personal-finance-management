@@ -15,6 +15,8 @@ Tất cả endpoint `/api/v1/financial-accounts` yêu cầu Bearer session ngư�
 | `PUT /order` | `{items:[{id,version}]}` liệt kê **mọi** ví đang dùng đúng một lần theo thứ tự mới; trả `{items}` theo thứ tự mới (`DS-P2-003`) |
 | `DELETE /{id}?version=…` | Lưu trữ, trả `204`; không hard-delete hoặc thay đổi giao dịch |
 
+Mỗi ví trả thêm `hasTransactions` (có bất kỳ giao dịch nào, kể cả đã xoá mềm) để client khoá loại/tiền tệ trước khi sửa (`DS-P2-003`); tính trong cùng truy vấn số dư.
+
 List sắp xếp `sortOrder`, `createdAt`, `id` tăng dần. Timestamp ISO 8601; tiền là string integer. Currency lấy từ catalog hiện có (`GET /api/v1/profile/options`), không tự thêm mã tiền tệ từ request.
 
 Tên trim, 1–100 ký tự; `sortOrder` 0–2147483647, mặc định 0. Số tiền đầu vào có tối đa 20 ký tự và nằm trong signed int64; không nhận JSON number, số thập phân hoặc số mũ. Số dư ban đầu được âm. Các trường thẻ nullable, chỉ được có giá trị với `credit`: hạn mức không âm, ngày chốt/thanh toán 1–28. Bỏ qua trường trong PATCH nghĩa là giữ giá trị; chỉ trường thẻ nhận null.

@@ -342,42 +342,19 @@ class SVi extends S {
   String get walletInitialBalance => 'Số dư ban đầu';
 
   @override
-  String get walletCreditLimit => 'Hạn mức tín dụng (không bắt buộc)';
-
-  @override
-  String get walletCloseDay => 'Ngày chốt thẻ (1–28, không bắt buộc)';
-
-  @override
-  String get walletDueDay => 'Ngày thanh toán (1–28, không bắt buộc)';
-
-  @override
-  String get walletMoneyHint =>
-      'Nhập số tiền theo đơn vị tiền tệ đã chọn, không dùng dấu phân cách hàng nghìn. Ví dụ: VND 10000; USD 10,50.';
-
-  @override
-  String get walletEditHint =>
-      'Khi ví có giao dịch, không thể đổi loại ví hoặc tiền tệ. Sửa số dư ban đầu chỉ dùng để đính chính.';
-
-  @override
   String get walletHide => 'Ẩn ví';
 
   @override
   String get walletHiddenEmpty => 'Không có ví đã ẩn.';
 
   @override
-  String get walletInvalid =>
-      'Kiểm tra tên, số tiền và ngày 1–28. Loại ví hoặc tiền tệ có thể đã bị khóa do có giao dịch.';
+  String get walletInvalid => 'Kiểm tra lại tên và số tiền.';
 
   @override
-  String get walletConflict =>
-      'Ví đã thay đổi ở nơi khác. Quay lại danh sách và tải lại trước khi sửa tiếp.';
+  String get walletConflict => 'Ví vừa đổi ở nơi khác. Mở lại để sửa tiếp.';
 
   @override
-  String get walletError => 'Không thể tải hoặc lưu ví. Vui lòng thử lại.';
-
-  @override
-  String get walletReloadRequired =>
-      'Thao tác có thể đã được lưu một phần. Tải lại danh sách để lấy trạng thái mới nhất.';
+  String get walletError => 'Chưa lưu được ví. Thử lại nhé.';
 
   @override
   String get transactionTitle => 'Giao dịch';
@@ -1590,4 +1567,104 @@ class SVi extends S {
 
   @override
   String get creditPay => 'Trả thẻ';
+
+  @override
+  String get walletLoadError => 'Chưa tải được ví';
+
+  @override
+  String get cardName => 'Tên thẻ';
+
+  @override
+  String get walletCurrencyField => 'Tiền tệ';
+
+  @override
+  String get walletCurrencyTitle => 'Chọn tiền tệ';
+
+  @override
+  String get walletCurrentBalance => 'Số dư hiện tại';
+
+  @override
+  String get walletBalanceHint => 'Nhập số gần đúng, có thể sửa lại sau.';
+
+  @override
+  String get creditCurrentDebt => 'Dư nợ hiện tại';
+
+  @override
+  String get creditInitialDebt => 'Dư nợ ban đầu';
+
+  @override
+  String get creditLimitField => 'Hạn mức';
+
+  @override
+  String get creditCloseField => 'Ngày chốt';
+
+  @override
+  String get creditDueField => 'Đến hạn';
+
+  @override
+  String creditDayValue(int day) {
+    return 'Ngày $day';
+  }
+
+  @override
+  String get creditPickDay => 'Chọn ngày';
+
+  @override
+  String get creditOptionalHint => 'Hạn mức và ngày có thể để trống.';
+
+  @override
+  String get walletSave => 'Lưu ví';
+
+  @override
+  String get creditSave => 'Lưu thẻ';
+
+  @override
+  String get walletSaveChanges => 'Lưu thay đổi';
+
+  @override
+  String get walletLockedLabel => 'Loại ví · Tiền tệ';
+
+  @override
+  String walletLockedSemantics(String type, String currency) {
+    return '$type, $currency, đã khoá vì ví có giao dịch';
+  }
+
+  @override
+  String walletHiddenToast(String name) {
+    return 'Đã ẩn $name';
+  }
+
+  @override
+  String get walletNameMissing => 'Đặt tên cho ví nhé.';
+
+  @override
+  String get walletAmountInvalid => 'Số tiền chưa đúng.';
+
+  @override
+  String get dayDueTitle => 'Đến hạn ngày nào?';
+
+  @override
+  String get dayCloseTitle => 'Chốt sao kê ngày nào?';
+
+  @override
+  String get dayMonthly => 'Hằng tháng';
+
+  @override
+  String dayConfirm(int day) {
+    return 'Chọn ngày $day';
+  }
+
+  @override
+  String get dayClear => 'Để trống';
+
+  @override
+  String get dayCloseMark => 'Ngày chốt';
+
+  @override
+  String get dayDueMark => 'Ngày đến hạn';
+
+  @override
+  String dayMarkedSemantics(int day, String mark) {
+    return '$day, $mark';
+  }
 }

@@ -102,6 +102,7 @@ describe('BE-P1-004 HTTP + PostgreSQL', () => {
   it.each(['cash', 'bank', 'ewallet', 'credit'])('creates and reads %s with exact initial balance', async type => {
     const account = await create({ type, ...(type === 'credit' ? { creditLimitMinor: '9223372036854775807', statementCloseDay: 28, paymentDueDay: 1 } : {}) });
     expect(account.balanceMinor).toBe('9007199254740993');
+    expect(account.hasTransactions).toBe(false);
     expect(account.version).toBe(1);
     expect((await request('GET', `/${account.id}`)).body).toEqual(account);
     expect((await request()).body.items).toEqual([account]);
@@ -203,6 +204,8 @@ describe('BE-P1-004 HTTP + PostgreSQL', () => {
     expect((await request('PATCH', `/${account.id}`, { version: 2, currencyCode: 'USD' })).status).toBe(409);
     const onlyDeleted = await create();
     await transaction(onlyDeleted.id, 1n, { deletedAt: new Date() });
+    // A deleted transaction still locks type/currency, and the flag says so before the client tries.
+    expect((await request('GET', `/${onlyDeleted.id}`)).body).toMatchObject({ hasTransactions: true, balanceMinor: onlyDeleted.balanceMinor });
     expect((await request('PATCH', `/${onlyDeleted.id}`, { version: 1, currencyCode: 'USD' })).status).toBe(409);
     expect((await request()).body.items.find((item: { id: string }) => item.id === account.id).balanceMinor).toBe('500');
   });
@@ -213,7 +216,7 @@ describe('BE-P1-004 HTTP + PostgreSQL', () => {
     // Commit between the account read and ledger read, without relying on timing/sleeps.
     const repository = app.get<PrismaFinancialAccountRepository>(FINANCIAL_ACCOUNT_REPOSITORY);
     type BalanceReader = {
-      balances(tx: Prisma.TransactionClient, userId: string, rows: Omit<FinancialAccount, 'balanceMinor'>[]): Promise<FinancialAccount[]>;
+      balances(tx: Prisma.TransactionClient, userId: string, rows: Omit<FinancialAccount, 'balanceMinor' | 'hasTransactions'>[]): Promise<FinancialAccount[]>;
     };
     const reader = repository as unknown as BalanceReader;
     const original = reader.balances.bind(reader);
