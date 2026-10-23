@@ -35,7 +35,7 @@ make mobile                        # Flutter
 make health
 ```
 
-Tài liệu bắt đầu từ [docs/README.md](docs/README.md). Trạng thái dự án: [docs/project-state/STATUS.md](docs/project-state/STATUS.md). Quy tắc AI/dev: [AGENTS.md](AGENTS.md).
+Tài liệu bắt đầu từ [docs/README.md](docs/README.md). Trạng thái dự án: [docs/project-state/STATUS.md](docs/project-state/STATUS.md). AI rules (English): [AGENTS.md](AGENTS.md) (domain) · [CLAUDE.md](CLAUDE.md) (workflow).
 
 ## Task ID
 

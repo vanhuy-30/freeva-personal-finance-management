@@ -1,6 +1,6 @@
 # Hướng dẫn đóng góp
 
-Đọc [docs/README.md](docs/README.md) và [docs/conventions/git.md](docs/conventions/git.md) trước khi mở PR.
+Đọc [docs/README.md](docs/README.md) và [docs/conventions/git.md](docs/conventions/git.md) trước khi mở PR. AI rules (English): [AGENTS.md](AGENTS.md) · [CLAUDE.md](CLAUDE.md).
 
 ## Luồng làm việc
 
