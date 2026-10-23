@@ -1,4 +1,6 @@
-export const REPORT_PERIODS = ['week', 'month', 'range'] as const;
+export const REPORT_PERIODS = ['week', 'month', 'year', 'range'] as const;
+export const TREND_PERIODS = ['week', 'month', 'year'] as const;
+export type TrendPeriodKind = (typeof TREND_PERIODS)[number];
 export type ReportPeriodKind = (typeof REPORT_PERIODS)[number];
 export type ReportMoneyType = 'income' | 'expense' | 'transfer';
 
@@ -25,6 +27,7 @@ export type CategoryAggregate = {
   parentId: string | null;
   type: 'income' | 'expense';
   total: bigint;
+  count: number;
 };
 export type AccountRef = { accountId: string; currency: string; archived: boolean };
 export type AccountMovement = { accountId: string; currency: string; type: ReportMoneyType; total: bigint };
@@ -57,17 +60,61 @@ export function resolvePeriod(query: PeriodQuery, profile: ReportProfile, now = 
   }
   if (query.from !== undefined || query.to !== undefined || anchor === undefined) throw new ReportError('VALIDATION_ERROR');
   const date = parseDate(anchor);
-  const bounds = query.period === 'week' ? weekBounds(date) : monthBounds(date, profile.fiscalMonthStartDay);
+  const bounds = periodBounds(query.period, date, profile.fiscalMonthStartDay);
   return { kind: query.period, ...bounds, timezone: profile.timezone, fiscalMonthStartDay: profile.fiscalMonthStartDay };
+}
+
+const TREND_BUCKETS: Record<TrendPeriodKind, number> = { week: 8, month: 6, year: 5 };
+export type TrendBucket = { from: string; to: string };
+export type TrendRow = { index: number; currency: string; type: 'income' | 'expense'; total: bigint };
+export type TrendSource = { buckets: TrendBucket[]; rows: TrendRow[]; firstOn: string | null };
+
+/** Oldest-first bucket bounds ending at the period that contains the anchor. */
+export function trendBuckets(query: { period: TrendPeriodKind; on?: string }, profile: ReportProfile, now = new Date()): TrendBucket[] {
+  if (profile.fiscalMonthStartDay < 1 || profile.fiscalMonthStartDay > 28) throw new Error('Invalid fiscal month');
+  let anchor = parseDate(query.on ?? todayInTimeZone(profile.timezone, now));
+  const buckets: TrendBucket[] = [];
+  for (let step = 0; step < TREND_BUCKETS[query.period]; step++) {
+    const bounds = periodBounds(query.period, anchor, profile.fiscalMonthStartDay);
+    buckets.unshift(bounds);
+    if (step + 1 < TREND_BUCKETS[query.period]) {
+      const before = parseDate(bounds.from);
+      if (before.year <= 100) break; // Date.UTC maps years 0-99 to 19xx, so history stops here
+      anchor = addDays(before, -1);
+    }
+  }
+  return buckets;
+}
+
+export function buildTrend(period: TrendPeriodKind, source: TrendSource) {
+  const firstYear = source.firstOn === null ? null : Number(source.firstOn.slice(0, 4));
+  const keep = (bucket: TrendBucket, index: number) =>
+    period !== 'year' || index === source.buckets.length - 1 || (firstYear !== null && Number(bucket.to.slice(0, 4)) >= firstYear);
+  const totals = source.buckets.map(() => new Map<string, { income: bigint; expense: bigint }>());
+  for (const row of source.rows) {
+    const item = totals[row.index]?.get(row.currency) ?? { income: 0n, expense: 0n };
+    item[row.type] += row.total;
+    totals[row.index]?.set(row.currency, item);
+  }
+  return {
+    kind: period,
+    buckets: source.buckets.flatMap((bucket, index) => keep(bucket, index) ? [{
+      from: bucket.from, to: bucket.to,
+      totals: [...totals[index]].sort(([left], [right]) => left.localeCompare(right)).map(([currency, item]) => ({
+        currency, incomeMinor: money(item.income), expenseMinor: money(item.expense),
+      })),
+    }] : []),
+  };
 }
 
 export function buildCashflow(period: ResolvedPeriod, source: CashflowSource) {
   const totals = new Map<string, { income: bigint; expense: bigint }>();
-  const categories = new Map<string, { categoryId: string | null; parentId: string | null; currency: string; income: bigint; expense: bigint }>();
+  const categories = new Map<string, { categoryId: string | null; parentId: string | null; currency: string; income: bigint; expense: bigint; count: number }>();
   for (const row of source.categories) {
     const key = `${row.currency}\0${row.categoryId ?? ''}`;
-    const item = categories.get(key) ?? { categoryId: row.categoryId, parentId: row.parentId, currency: row.currency, income: 0n, expense: 0n };
+    const item = categories.get(key) ?? { categoryId: row.categoryId, parentId: row.parentId, currency: row.currency, income: 0n, expense: 0n, count: 0 };
     item[row.type] += row.total;
+    item.count += row.count;
     categories.set(key, item);
     const total = totals.get(row.currency) ?? { income: 0n, expense: 0n };
     total[row.type] += row.total;
@@ -90,7 +137,7 @@ export function buildCashflow(period: ResolvedPeriod, source: CashflowSource) {
       currency, incomeMinor: money(item.income), expenseMinor: money(item.expense), netMinor: money(item.income + item.expense),
     })),
     byCategory: [...categories.values()].filter(item => item.income !== 0n || item.expense !== 0n).sort(compareCategory).map(item => ({
-      categoryId: item.categoryId, parentId: item.parentId, currency: item.currency, incomeMinor: money(item.income), expenseMinor: money(item.expense),
+      categoryId: item.categoryId, parentId: item.parentId, currency: item.currency, incomeMinor: money(item.income), expenseMinor: money(item.expense), transactionCount: item.count,
     })),
     byAccount: [...accounts.values()].filter(item => item.include).sort(compareAccount).map(item => ({
       accountId: item.accountId, currency: item.currency, incomeMinor: money(item.income), expenseMinor: money(item.expense),
@@ -168,6 +215,12 @@ function shiftMonth(year: number, month: number, delta: number): CalendarDate {
   const index = year * 12 + (month - 1) + delta;
   const nextYear = Math.floor(index / 12);
   return { year: nextYear, month: index - nextYear * 12 + 1, day: 1 };
+}
+
+function periodBounds(period: Exclude<ReportPeriodKind, 'range'>, date: CalendarDate, startDay: number) {
+  if (period === 'week') return weekBounds(date);
+  if (period === 'year') return { from: formatDate({ year: date.year, month: 1, day: 1 }), to: formatDate({ year: date.year, month: 12, day: 31 }) };
+  return monthBounds(date, startDay);
 }
 
 function weekBounds(date: CalendarDate) {

@@ -5,7 +5,7 @@ import { CashflowQueryDto } from './report.dto';
 import { ReportService } from './report.service';
 import type { ReportRepository } from './domain/report.repository';
 import {
-  buildCashflow, buildNetWorth, ReportError, resolvePeriod, todayInTimeZone,
+  buildCashflow, buildNetWorth, buildTrend, ReportError, resolvePeriod, todayInTimeZone, trendBuckets,
   type CashflowSource, type ReportProfile,
 } from './domain/report';
 
@@ -69,10 +69,10 @@ describe('BE-P1-007 report totals', () => {
   const period = resolvePeriod({ period: 'month', on: '2026-10-08' }, profile());
   const source = (): CashflowSource => ({
     categories: [
-      { currency: 'VND', categoryId: child, parentId: parent, type: 'expense', total: -400n },
-      { currency: 'VND', categoryId: null, parentId: null, type: 'income', total: 9007199254740993n },
-      { currency: 'USD', categoryId: food, parentId: null, type: 'income', total: 2500n },
-      { currency: 'USD', categoryId: food, parentId: null, type: 'expense', total: -500n },
+      { currency: 'VND', categoryId: child, parentId: parent, type: 'expense', total: -400n, count: 2 },
+      { currency: 'VND', categoryId: null, parentId: null, type: 'income', total: 9007199254740993n, count: 1 },
+      { currency: 'USD', categoryId: food, parentId: null, type: 'income', total: 2500n, count: 3 },
+      { currency: 'USD', categoryId: food, parentId: null, type: 'expense', total: -500n, count: 1 },
     ],
     accounts: [
       { accountId: cash, currency: 'VND', archived: false },
@@ -99,8 +99,9 @@ describe('BE-P1-007 report totals', () => {
     ]);
     expect(report.byCategory.map(row => row.categoryId)).toEqual([food, child, null]);
     expect(report.byCategory.find(row => row.categoryId === child)).toEqual({
-      categoryId: child, parentId: parent, currency: 'VND', incomeMinor: '0', expenseMinor: '-400',
+      categoryId: child, parentId: parent, currency: 'VND', incomeMinor: '0', expenseMinor: '-400', transactionCount: 2,
     });
+    expect(report.byCategory.find(row => row.categoryId === food)?.transactionCount).toBe(4);
     expect(report.byCategory.find(row => row.categoryId === parent)).toBeUndefined();
     expect(report.byAccount.find(row => row.accountId === cash)).toMatchObject({ transferMinor: '-1500', netMinor: '9007199254739493' });
     expect(report.byAccount.find(row => row.accountId === card)?.netMinor).toBe('1100');
@@ -137,9 +138,48 @@ describe('BE-P1-007 report totals', () => {
   });
 });
 
+describe('DS-P2-003 year period and trend', () => {
+  it('resolves a calendar year and rejects the year trend for range', () => {
+    expect(resolvePeriod({ period: 'year', on: '2026-10-08' }, profile(15))).toMatchObject({ kind: 'year', from: '2026-01-01', to: '2026-12-31' });
+    expect(resolvePeriod({ period: 'year', on: '2024-02-29' }, profile())).toMatchObject({ from: '2024-01-01', to: '2024-12-31' });
+    expect(() => resolvePeriod({ period: 'year', from: '2026-01-01' }, profile())).toThrow(ReportError);
+  });
+
+  it('lists oldest-first buckets: 8 Monday weeks, 6 fiscal months, 5 years', () => {
+    const weeks = trendBuckets({ period: 'week', on: '2026-10-08' }, profile());
+    expect(weeks).toHaveLength(8);
+    expect(weeks[7]).toEqual({ from: '2026-10-05', to: '2026-10-11' });
+    expect(weeks[0]).toEqual({ from: '2026-08-17', to: '2026-08-23' });
+    const months = trendBuckets({ period: 'month', on: '2026-10-08' }, profile(15));
+    expect(months.map(bucket => bucket.from)).toEqual(['2026-04-15', '2026-05-15', '2026-06-15', '2026-07-15', '2026-08-15', '2026-09-15']);
+    expect(months[5].to).toBe('2026-10-14');
+    expect(trendBuckets({ period: 'year', on: '2026-10-08' }, profile()).map(bucket => bucket.from.slice(0, 4))).toEqual(['2022', '2023', '2024', '2025', '2026']);
+  });
+
+  it('stops at the earliest supported year instead of failing', () => {
+    expect(trendBuckets({ period: 'year', on: '0100-05-05' }, profile()).map(bucket => bucket.from)).toEqual(['0100-01-01']);
+    expect(trendBuckets({ period: 'year', on: '0101-05-05' }, profile()).map(bucket => bucket.from)).toEqual(['0100-01-01', '0101-01-01']);
+  });
+
+  it('sums per currency, drops empty years before the first transaction, and keeps the current one', () => {
+    const buckets = trendBuckets({ period: 'year', on: '2026-10-08' }, profile());
+    const trend = buildTrend('year', { buckets, firstOn: '2024-03-01', rows: [
+      { index: 2, currency: 'VND', type: 'expense', total: -300n },
+      { index: 2, currency: 'VND', type: 'expense', total: -200n },
+      { index: 4, currency: 'USD', type: 'income', total: 50n },
+    ] });
+    expect(trend.buckets.map(bucket => bucket.from.slice(0, 4))).toEqual(['2024', '2025', '2026']);
+    expect(trend.buckets[0].totals).toEqual([{ currency: 'VND', incomeMinor: '0', expenseMinor: '-500' }]);
+    expect(trend.buckets[1].totals).toEqual([]);
+    expect(trend.buckets[2].totals).toEqual([{ currency: 'USD', incomeMinor: '50', expenseMinor: '0' }]);
+    const empty = buildTrend('year', { buckets, firstOn: null, rows: [] });
+    expect(empty.buckets).toHaveLength(1);
+  });
+});
+
 describe('BE-P1-007 report HTTP contract', () => {
   it('rejects unknown periods and malformed dates before calendar checks', async () => {
-    for (const plain of [{}, { period: 'year' }, { period: 'month', on: '2026-10-08\n' }, { period: 'range', owner: 'x' }]) {
+    for (const plain of [{}, { period: 'decade' }, { period: 'month', on: '2026-10-08\n' }, { period: 'range', owner: 'x' }]) {
       expect(await validate(plainToInstance(CashflowQueryDto, plain), { whitelist: true, forbidNonWhitelisted: true })).not.toHaveLength(0);
     }
     expect(await validate(plainToInstance(CashflowQueryDto, { period: 'month', on: '2026-02-29' }))).toHaveLength(0);
@@ -150,6 +190,7 @@ describe('BE-P1-007 report HTTP contract', () => {
       async cashflow(_userId, periodOf) {
         return { period: periodOf(profile(15)), source: { categories: [], accounts: [], movements: [] } };
       },
+      async trend() { return { buckets: [], rows: [], firstOn: null }; },
       async netWorth() { return [{ currency: 'VND', bucket: 'asset', total: 10n }]; },
     };
     const service = new ReportService(repository);

@@ -1,5 +1,5 @@
 import { IsIn, IsString, Matches, ValidateIf } from 'class-validator';
-import { REPORT_PERIODS, type ReportPeriodKind } from './domain/report';
+import { REPORT_PERIODS, TREND_PERIODS, type ReportPeriodKind, type TrendPeriodKind } from './domain/report';
 
 const optional = (_: unknown, value: unknown) => value !== undefined;
 
@@ -8,4 +8,9 @@ export class CashflowQueryDto {
   @ValidateIf(optional) @IsString() @Matches(/^\d{4}-\d{2}-\d{2}(?![\s\S])/) on?: string;
   @ValidateIf(optional) @IsString() @Matches(/^\d{4}-\d{2}-\d{2}(?![\s\S])/) from?: string;
   @ValidateIf(optional) @IsString() @Matches(/^\d{4}-\d{2}-\d{2}(?![\s\S])/) to?: string;
+}
+
+export class TrendQueryDto {
+  @IsIn(TREND_PERIODS) period!: TrendPeriodKind;
+  @ValidateIf(optional) @IsString() @Matches(/^\d{4}-\d{2}-\d{2}(?![\s\S])/) on?: string;
 }
