@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mobile/core/di/injection.dart';
 import 'package:mobile/core/l10n/generated/app_localizations.dart';
 import 'package:mobile/core/theme/app_theme.dart';
 import 'package:mobile/features/auth/data/auth_repository_impl.dart';
@@ -10,11 +11,15 @@ import 'package:mobile/features/auth/presentation/pages/setup_page.dart';
 import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dart';
 
 import 'fakes.dart';
+import 'setup_deps.dart';
 
 void main() {
   late FakeApi api;
   late DefaultAuthViewModel model;
-  setUp(() {
+  late SetupDeps deps;
+  setUp(() async {
+    await getIt.reset();
+    deps = await registerSetupDeps();
     api = FakeApi();
     model = DefaultAuthViewModel(
       DefaultAuthUseCases(
@@ -22,7 +27,11 @@ void main() {
       ),
     );
   });
-  tearDown(() => model.dispose());
+  tearDown(() async {
+    deps.settings.dispose();
+    model.dispose();
+    await getIt.reset();
+  });
   Widget app() => MaterialApp(
     theme: AppTheme.light,
     locale: const Locale('vi'),
@@ -48,8 +57,14 @@ void main() {
       expect(find.text('Tiếp tục với Apple'), findsOneWidget);
       await tester.tap(find.text('Đăng ký'));
       await tester.pumpAndSettle();
+      expect(find.text('Tạo tài khoản Freeva'), findsOneWidget);
+      await tester.tap(find.text('Tiếp tục với email'));
+      await tester.pumpAndSettle();
       expect(find.text('Tạo tài khoản'), findsNWidgets(2));
       await tester.tap(find.byTooltip('Quay lại'));
+      await tester.pumpAndSettle();
+      expect(find.text('Tạo tài khoản Freeva'), findsOneWidget);
+      await tester.tap(find.text('Đăng nhập').last);
       await tester.pumpAndSettle();
       expect(find.text('Quên mật khẩu?'), findsOneWidget);
     },
@@ -121,7 +136,20 @@ void main() {
         await tester.pumpAndSettle();
         await tester.tap(done);
         await tester.pumpAndSettle();
-        expect(tester.takeException(), isNull, reason: '$locale pin');
+        expect(tester.takeException(), isNull, reason: '$locale goals');
+        // Goals → habits → budget → PIN, each left with its skip button.
+        for (final step in ['habits', 'budget', 'pin']) {
+          final skip = find.text(
+            step == 'pin'
+                ? (locale == 'vi' ? 'Thiết lập sau' : 'Set up later')
+                : (locale == 'vi' ? 'Để sau' : 'Later'),
+          );
+          await tester.ensureVisible(skip);
+          await tester.pumpAndSettle();
+          await tester.tap(skip, warnIfMissed: false);
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull, reason: '$locale $step');
+        }
       }
     },
   );

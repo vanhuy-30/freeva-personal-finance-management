@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../auth/data/authorized_api.dart';
 import '../../auth/domain/auth_repository.dart';
+import '../../onboarding/domain/onboarding_answers.dart';
 import '../domain/profile.dart';
 import '../domain/profile_repository.dart';
 
@@ -60,6 +61,15 @@ class ProfileRepositoryImpl implements ProfileRepository {
           .toList(),
       timezones: (json['timezones'] as List).cast<String>().toSet().toList(),
     ),
+  );
+  @override
+  Future<Either<AuthFailure, Unit>> saveOnboarding(
+    OnboardingAnswers answers,
+  ) => _request(
+    'PATCH',
+    'profile/onboarding',
+    (_) => unit,
+    body: answers.toJson(),
   );
   @override
   Future<Either<AuthFailure, Profile>> save(Profile profile) => _request(

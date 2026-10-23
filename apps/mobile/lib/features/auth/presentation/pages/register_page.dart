@@ -62,7 +62,7 @@ class _RegisterPageState extends State<RegisterPage> {
     final ready = _check.valid && _check.matches && _agreed;
     return AuthScaffold(
       title: s.authCreateAccount,
-      onBack: idle ? () => model.goTo(AuthStep.login) : null,
+      onBack: idle ? () => model.goTo(AuthStep.signUp) : null,
       footer: AuthSwitchLink(
         prompt: s.authHaveAccount,
         action: s.authLogin,

@@ -577,39 +577,6 @@ class SEn extends S {
       'Settings could not be saved on this device. Please try again.';
 
   @override
-  String get onboardingSkip => 'Skip';
-
-  @override
-  String get onboardingNext => 'Next';
-
-  @override
-  String get onboardingBack => 'Back';
-
-  @override
-  String get onboardingFinish => 'Done';
-
-  @override
-  String get onboardingWelcomeTitle => 'Welcome to Freeva';
-
-  @override
-  String get onboardingWelcomeBody =>
-      'A short introduction so you can record money without extra help.';
-
-  @override
-  String get onboardingWalletTitle => 'Create a wallet';
-
-  @override
-  String get onboardingWalletBody =>
-      'Add a cash, bank, e-wallet, or credit wallet. Each amount stays in its own currency.';
-
-  @override
-  String get onboardingTransactionTitle => 'Record the first transaction';
-
-  @override
-  String get onboardingTransactionBody =>
-      'From Home, record income, an expense, or a transfer between two wallets.';
-
-  @override
   String get faqTitle => 'FAQ';
 
   @override
@@ -2616,4 +2583,109 @@ class SEn extends S {
 
   @override
   String get meSecPinSetDone => 'PIN set';
+
+  @override
+  String get welcomeTitleLine1 => 'Money, made clear.';
+
+  @override
+  String get welcomeTitleLine2 => 'Life, made light.';
+
+  @override
+  String get welcomeSub => 'Log spending in seconds, every day.';
+
+  @override
+  String get welcomeStart => 'Get started';
+
+  @override
+  String get welcomeSampleBalance => 'Total balance';
+
+  @override
+  String get welcomeSampleFood => 'Pho lunch';
+
+  @override
+  String get welcomeSampleSalary => 'Salary';
+
+  @override
+  String get signUpTitle => 'Create your Freeva account';
+
+  @override
+  String get signUpSub =>
+      'Your data is safe and moves with you to a new phone.';
+
+  @override
+  String get authContinueEmail => 'Continue with email';
+
+  @override
+  String get signUpTermsPrefix => 'By continuing you agree to the ';
+
+  @override
+  String get signUpTermsSuffix => '.';
+
+  @override
+  String onbProgress(int current, int total) {
+    return '$current/$total';
+  }
+
+  @override
+  String get onbGoalsTitle => 'What would you like to improve?';
+
+  @override
+  String get onbGoalsSub => 'Pick up to 2.';
+
+  @override
+  String get onbGoalTrack => 'Track spending';
+
+  @override
+  String get onbGoalSave => 'Save more';
+
+  @override
+  String get onbGoalBudget => 'Stay on budget';
+
+  @override
+  String get onbGoalDebt => 'Manage debt';
+
+  @override
+  String get onbGoalEmergency => 'Build an emergency fund';
+
+  @override
+  String get onbGoalUnderstand => 'Understand my finances';
+
+  @override
+  String get onbHabitTitle => 'How do you manage money now?';
+
+  @override
+  String get onbHabitManual => 'Notes by hand';
+
+  @override
+  String get onbHabitSpreadsheet => 'Excel or Sheets';
+
+  @override
+  String get onbHabitApp => 'Another app';
+
+  @override
+  String get onbHabitNone => 'Not tracking yet';
+
+  @override
+  String get onbCadenceTitle => 'How often do you review spending?';
+
+  @override
+  String get onbCadenceDaily => 'Every day';
+
+  @override
+  String get onbCadenceWeekly => 'Every week';
+
+  @override
+  String get onbCadenceMonthly => 'Every month';
+
+  @override
+  String get onbCadenceRarely => 'Hardly ever';
+
+  @override
+  String get onbBudgetTitle => 'How much do you plan to spend each month?';
+
+  @override
+  String get onbBudgetAmount => 'Monthly budget';
+
+  @override
+  String get onbBudgetLater => 'Set up later';
 }

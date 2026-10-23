@@ -3,7 +3,10 @@ import 'package:mobile/features/auth/data/auth_repository_impl.dart';
 import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/auth/domain/auth_use_cases.dart';
 import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dart';
+import 'package:mobile/features/settings/data/settings_repository_impl.dart';
+import 'package:mobile/features/settings/domain/settings_use_cases.dart';
 
+import '../settings/fakes.dart';
 import 'fakes.dart';
 
 void main() {
@@ -121,6 +124,29 @@ void main() {
       expect(api.lastBody?['token'], 'a' * 64);
       expect(model.step, AuthStep.login);
       expect(model.notice, AuthNotice.passwordChanged);
+    },
+  );
+
+  test(
+    'Welcome shows on a fresh install, once, and never after sign-out',
+    () async {
+      final cases = DefaultSettingsUseCases(
+        SettingsRepositoryImpl(MemoryPreferences()),
+      );
+      DefaultAuthViewModel fresh() => DefaultAuthViewModel(
+        DefaultAuthUseCases(AuthRepositoryImpl(api, vault, FakeBiometrics())),
+        settings: cases,
+      );
+      final first = fresh();
+      addTearDown(first.dispose);
+      await first.initialize();
+      expect(first.step, AuthStep.welcome);
+      await first.leaveWelcome(AuthStep.signUp);
+      expect(first.step, AuthStep.signUp);
+      final second = fresh();
+      addTearDown(second.dispose);
+      await second.initialize();
+      expect(second.step, AuthStep.login);
     },
   );
 }

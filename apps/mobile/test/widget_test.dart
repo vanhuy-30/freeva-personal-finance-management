@@ -36,8 +36,9 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
     await tester.pumpAndSettle();
     expect(find.textContaining('ví'), findsNothing);
-    expect(find.text('Đăng nhập'), findsNWidgets(2));
-    expect(find.text('Quên mật khẩu?'), findsOneWidget);
+    // A fresh install opens on Welcome.
+    expect(find.text('Bắt đầu'), findsOneWidget);
+    expect(find.text('Đăng nhập'), findsOneWidget);
     // The logo lives on the splash only.
     expect(find.byType(BrandSymbol), findsNothing);
     expect(tester.takeException(), isNull);

@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:mobile/features/auth/data/authorized_api.dart';
 import 'package:mobile/features/auth/domain/auth_repository.dart';
+import 'package:mobile/features/onboarding/domain/onboarding_answers.dart';
 import 'package:mobile/features/profile/domain/profile.dart';
 import 'package:mobile/features/profile/domain/profile_repository.dart';
 
@@ -17,6 +18,7 @@ class MemoryProfiles implements ProfileRepository {
   AuthFailure? failure;
   Future<void>? pending;
   int saves = 0;
+  final List<OnboardingAnswers> onboarding = [];
   @override
   Future<Either<AuthFailure, Profile>> load() async {
     if (pending != null) await pending;
@@ -30,6 +32,15 @@ class MemoryProfiles implements ProfileRepository {
       timezones: ['Asia/Ho_Chi_Minh', 'America/New_York', 'UTC'],
     ),
   );
+  @override
+  Future<Either<AuthFailure, Unit>> saveOnboarding(
+    OnboardingAnswers answers,
+  ) async {
+    if (failure != null) return left(failure!);
+    onboarding.add(answers);
+    return right(unit);
+  }
+
   @override
   Future<Either<AuthFailure, Profile>> save(Profile profile) async {
     saves++;
@@ -50,6 +61,8 @@ class MemoryProfiles implements ProfileRepository {
 class Transport implements AuthorizedApi {
   Map<String, dynamic> response = {};
   Map<String, dynamic>? body;
+  String? method;
+  String? path;
   AuthFailure? failure;
   @override
   Future<Either<AuthFailure, Map<String, dynamic>>> request(
@@ -59,6 +72,8 @@ class Transport implements AuthorizedApi {
     Map<String, String>? headers,
   }) async {
     this.body = body;
+    this.method = method;
+    this.path = path;
     return failure == null ? right(response) : left(failure!);
   }
 }

@@ -17,7 +17,6 @@ import '../../features/settings/domain/app_preferences.dart';
 import '../../features/settings/presentation/pages/faq_page.dart';
 import '../../features/feedback/presentation/pages/feedback_page.dart';
 import '../../features/settings/presentation/pages/legal_page.dart';
-import '../../features/settings/presentation/pages/onboarding_page.dart';
 import '../../features/settings/presentation/pages/change_password_page.dart';
 import '../../features/tags/presentation/pages/tag_page.dart';
 import '../../features/settings/presentation/pages/change_pin_page.dart';
@@ -41,7 +40,6 @@ import '../logging/app_logger.dart';
 import '../logging/logging_navigator_observer.dart';
 import '../widgets/gallery/widget_gallery_page.dart';
 import 'app_shell.dart';
-import 'settings_redirect.dart';
 
 GoRouter? _appRouter;
 RouterRefresh? _refresh;
@@ -59,7 +57,7 @@ GoRouter createAppRouter() {
   final auth = getIt<AuthViewModel>();
   final settings = getIt<SettingsViewModel>();
   _refresh = RouterRefresh([auth, settings]);
-  _appRouter = _createAppRouter(auth, settings, _refresh!, getIt<AppLogger>());
+  _appRouter = _createAppRouter(_refresh!, getIt<AppLogger>());
   return _appRouter!;
 }
 
@@ -100,27 +98,11 @@ class RouterRefresh extends ChangeNotifier {
   }
 }
 
-GoRouter _createAppRouter(
-  AuthViewModel auth,
-  SettingsViewModel settings,
-  Listenable refresh,
-  AppLogger logger,
-) {
+GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
   return GoRouter(
     initialLocation: '/splash',
     refreshListenable: refresh,
     observers: [LoggingNavigatorObserver(logger)],
-    redirect: (context, state) {
-      final next = settingsRedirect(
-        stage: auth.stage,
-        onboardingCompleted: settings.onboardingCompleted,
-        path: state.uri.path,
-      );
-      if (next != null) {
-        logger.op('nav redirect ${state.uri.path} → $next');
-      }
-      return next;
-    },
     routes: [
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) =>
@@ -272,10 +254,6 @@ GoRouter _createAppRouter(
       GoRoute(
         path: '/me/sessions',
         builder: (context, state) => const AuthGate(child: SessionsPage()),
-      ),
-      GoRoute(
-        path: '/onboarding',
-        builder: (context, state) => const AuthGate(child: OnboardingPage()),
       ),
       GoRoute(
         path: '/help/faq',
