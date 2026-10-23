@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
@@ -33,11 +32,7 @@ class _ReportPageState extends State<ReportPage> {
       return Scaffold(
         appBar: AppBar(
           title: Text(s.reportTitle),
-          leading: IconButton(
-            tooltip: s.profileBack,
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => context.go('/home'),
-          ),
+          automaticallyImplyLeading: false,
         ),
         body: SafeArea(
           child: Column(

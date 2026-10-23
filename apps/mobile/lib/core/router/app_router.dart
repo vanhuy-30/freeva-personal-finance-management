@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -15,11 +16,14 @@ import '../../features/settings/presentation/pages/onboarding_page.dart';
 import '../../features/settings/presentation/pages/settings_page.dart';
 import '../../features/settings/presentation/viewmodels/settings_view_model.dart';
 import '../../features/splash/presentation/pages/splash_page.dart';
+import '../../features/transactions/presentation/pages/record_transaction_page.dart';
 import '../../features/transactions/presentation/pages/transaction_page.dart';
 import '../../features/wallets/presentation/pages/wallet_page.dart';
 import '../di/injection.dart';
 import '../logging/app_logger.dart';
 import '../logging/logging_navigator_observer.dart';
+import '../widgets/gallery/widget_gallery_page.dart';
+import 'app_shell.dart';
 import 'settings_redirect.dart';
 
 GoRouter? _appRouter;
@@ -38,12 +42,7 @@ GoRouter createAppRouter() {
   final auth = getIt<AuthViewModel>();
   final settings = getIt<SettingsViewModel>();
   _refresh = RouterRefresh([auth, settings]);
-  _appRouter = _createAppRouter(
-    auth,
-    settings,
-    _refresh!,
-    getIt<AppLogger>(),
-  );
+  _appRouter = _createAppRouter(auth, settings, _refresh!, getIt<AppLogger>());
   return _appRouter!;
 }
 
@@ -106,12 +105,56 @@ GoRouter _createAppRouter(
       return next;
     },
     routes: [
-      GoRoute(
-        path: '/transactions',
-        builder: (context, state) => AuthGate(
-          child: TransactionPage(
-            record: state.uri.queryParameters['record'] == '1',
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, shell) =>
+            AuthGate(child: AppShell(navigationShell: shell)),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/home',
+                pageBuilder: (context, state) => NoTransitionPage(
+                  key: state.pageKey,
+                  child: const HomePage(),
+                ),
+              ),
+            ],
           ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/transactions',
+                builder: (context, state) => TransactionPage(
+                  record: state.uri.queryParameters['record'] == '1',
+                ),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/reports',
+                builder: (context, state) => const ReportPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/me',
+                builder: (context, state) => const SettingsPage(),
+              ),
+            ],
+          ),
+        ],
+      ),
+      GoRoute(path: '/settings', redirect: (context, state) => '/me'),
+      GoRoute(
+        path: '/record',
+        pageBuilder: (context, state) => MaterialPage(
+          key: state.pageKey,
+          fullscreenDialog: true,
+          child: const AuthGate(child: RecordTransactionPage()),
         ),
       ),
       GoRoute(
@@ -123,16 +166,8 @@ GoRouter _createAppRouter(
         builder: (context, state) => const AuthGate(child: CategoryPage()),
       ),
       GoRoute(
-        path: '/reports',
-        builder: (context, state) => const AuthGate(child: ReportPage()),
-      ),
-      GoRoute(
         path: '/profile',
         builder: (context, state) => const AuthGate(child: ProfilePage()),
-      ),
-      GoRoute(
-        path: '/settings',
-        builder: (context, state) => const AuthGate(child: SettingsPage()),
       ),
       GoRoute(
         path: '/onboarding',
@@ -161,14 +196,11 @@ GoRouter _createAppRouter(
         builder: (BuildContext context, GoRouterState state) =>
             const SplashPage(),
       ),
-      GoRoute(
-        path: '/home',
-        pageBuilder: (BuildContext context, GoRouterState state) =>
-            NoTransitionPage(
-              key: state.pageKey,
-              child: const AuthGate(child: HomePage()),
-            ),
-      ),
+      if (kDebugMode)
+        GoRoute(
+          path: '/debug/gallery',
+          builder: (context, state) => const WidgetGalleryPage(),
+        ),
     ],
   );
 }

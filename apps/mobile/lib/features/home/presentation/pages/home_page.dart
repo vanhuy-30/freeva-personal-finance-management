@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/widgets/brand_symbol.dart';
@@ -31,46 +32,46 @@ class _HomePageState extends State<HomePage> {
             const OverviewSection(),
             const SyncStatusBanner(),
             ListTile(
-              leading: const Icon(Icons.person_outline),
+              leading: const Icon(LucideIcons.user),
               title: Text(s.profileTitle),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => context.go('/profile'),
+              trailing: const Icon(LucideIcons.chevronRight),
+              onTap: () => context.push('/profile'),
             ),
             ListTile(
-              leading: const Icon(Icons.account_balance_wallet_outlined),
+              leading: const Icon(LucideIcons.wallet),
               title: Text(s.walletTitle),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => context.go('/wallets'),
+              trailing: const Icon(LucideIcons.chevronRight),
+              onTap: () => context.push('/wallets'),
             ),
             ListTile(
-              leading: const Icon(Icons.category_outlined),
+              leading: const Icon(LucideIcons.shapes),
               title: Text(s.categoryTitle),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => context.go('/categories'),
+              trailing: const Icon(LucideIcons.chevronRight),
+              onTap: () => context.push('/categories'),
             ),
             ListTile(
-              leading: const Icon(Icons.receipt_long_outlined),
+              leading: const Icon(LucideIcons.receipt),
               title: Text(s.transactionTitle),
-              trailing: const Icon(Icons.chevron_right),
+              trailing: const Icon(LucideIcons.chevronRight),
               onTap: () => context.go('/transactions'),
             ),
             ListTile(
-              leading: const Icon(Icons.pie_chart_outline),
+              leading: const Icon(LucideIcons.chartPie),
               title: Text(s.reportTitle),
-              trailing: const Icon(Icons.chevron_right),
+              trailing: const Icon(LucideIcons.chevronRight),
               onTap: () => context.go('/reports'),
             ),
             ListTile(
-              leading: const Icon(Icons.settings_outlined),
+              leading: const Icon(LucideIcons.settings),
               title: Text(s.settingsTitle),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => context.go('/settings'),
+              trailing: const Icon(LucideIcons.chevronRight),
+              onTap: () => context.go('/me'),
             ),
             Align(
               alignment: Alignment.centerLeft,
               child: FilledButton.icon(
-                onPressed: () => context.go('/transactions?record=1'),
-                icon: const Icon(Icons.add),
+                onPressed: () => context.push('/record'),
+                icon: const Icon(LucideIcons.plus),
                 label: Text(s.transactionRecord),
               ),
             ),

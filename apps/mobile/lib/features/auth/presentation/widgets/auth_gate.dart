@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../../core/di/injection.dart';
 import '../../domain/auth_repository.dart';
 import '../pages/auth_page.dart';
@@ -44,7 +45,7 @@ class _AuthGateState extends State<AuthGate> with WidgetsBindingObserver {
       listenable: _model,
       builder: (context, _) {
         if (_covered) {
-          return const Scaffold(body: Center(child: Icon(Icons.lock_outline)));
+          return const Scaffold(body: Center(child: Icon(LucideIcons.lock)));
         }
         if (!_model.ready) {
           return const Scaffold(

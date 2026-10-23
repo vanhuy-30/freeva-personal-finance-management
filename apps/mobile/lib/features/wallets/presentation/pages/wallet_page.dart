@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../../core/router/nav_back.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../viewmodels/wallet_view_model.dart';
@@ -34,8 +35,8 @@ class _WalletPageState extends State<WalletPage> {
           title: Text(s.walletTitle),
           leading: IconButton(
             tooltip: s.profileBack,
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => context.go('/home'),
+            icon: const Icon(LucideIcons.arrowLeft),
+            onPressed: () => context.popOrGo('/home'),
           ),
         ),
         body: SafeArea(
@@ -70,7 +71,7 @@ class _WalletPageState extends State<WalletPage> {
                           child: Text(s.profileReload),
                         ),
                         FilledButton.icon(
-                          icon: const Icon(Icons.add),
+                          icon: const Icon(LucideIcons.plus),
                           label: Text(s.walletAdd),
                           onPressed:
                               model.busy ||

@@ -132,7 +132,7 @@ Lệnh (trong `packages/design-tokens`):
 | `node scripts/check.mjs` | Kiểm tra tham chiếu, tương phản AA cho các cặp chữ/nền ở cả light và dark, và cấm highlight/muted làm chữ. |
 | `pnpm check` | Hai việc trên, báo lỗi nếu `tokens.css` chưa sinh lại. |
 
-Sinh Dart cho Flutter thuộc `DS-P2-002`.
+`node scripts/build-dart.mjs` sinh `apps/mobile/lib/core/theme/tokens.g.dart` (`FreevaColors` light/dark làm `ThemeExtension`, scale, typography, `categoryPalette`). Widget đọc màu qua `context.colors` (`lib/core/theme/theme_context.dart`). Không sửa tay, không `dart format` file sinh ra.
 
 ## 4. Components
 

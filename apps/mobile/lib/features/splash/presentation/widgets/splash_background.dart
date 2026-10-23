@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/tokens.g.dart';
 
 /// Soft overlapping brand washes, with a light center for the navy wordmark.
 class SplashBackground extends StatelessWidget {
@@ -15,7 +15,11 @@ class SplashBackground extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [AppColors.primary, AppColors.highlight, AppColors.primary],
+          colors: [
+            FreevaPrimitive.blue500,
+            FreevaPrimitive.cyan300,
+            FreevaPrimitive.blue500,
+          ],
         ),
       ),
       child: DecoratedBox(
@@ -23,7 +27,10 @@ class SplashBackground extends StatelessWidget {
           gradient: RadialGradient(
             center: Alignment.bottomLeft,
             radius: 1.5,
-            colors: [AppColors.accent, AppColors.accent.withAlpha(0)],
+            colors: [
+              FreevaPrimitive.violet500,
+              FreevaPrimitive.violet500.withAlpha(0),
+            ],
           ),
         ),
         child: DecoratedBox(
@@ -31,7 +38,10 @@ class SplashBackground extends StatelessWidget {
             gradient: RadialGradient(
               center: Alignment.topRight,
               radius: 1.65,
-              colors: [AppColors.surface, AppColors.highlight.withAlpha(0)],
+              colors: [
+                FreevaPrimitive.white,
+                FreevaPrimitive.cyan300.withAlpha(0),
+              ],
             ),
           ),
           child: DecoratedBox(
@@ -40,8 +50,8 @@ class SplashBackground extends StatelessWidget {
                 center: const Alignment(0, -.05),
                 radius: .85,
                 colors: [
-                  AppColors.surface.withAlpha((.85 * 255).round()),
-                  AppColors.surface.withAlpha(0),
+                  FreevaPrimitive.white.withAlpha((.85 * 255).round()),
+                  FreevaPrimitive.white.withAlpha(0),
                 ],
               ),
             ),

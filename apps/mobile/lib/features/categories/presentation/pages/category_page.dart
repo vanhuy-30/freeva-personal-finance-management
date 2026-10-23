@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../../core/router/nav_back.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../viewmodels/category_view_model.dart';
@@ -35,8 +36,8 @@ class _CategoryPageState extends State<CategoryPage> {
           title: Text(s.categoryTitle),
           leading: IconButton(
             tooltip: s.profileBack,
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => context.go('/home'),
+            icon: const Icon(LucideIcons.arrowLeft),
+            onPressed: () => context.popOrGo('/home'),
           ),
         ),
         body: SafeArea(
@@ -71,7 +72,7 @@ class _CategoryPageState extends State<CategoryPage> {
                           child: Text(s.profileReload),
                         ),
                         FilledButton.icon(
-                          icon: const Icon(Icons.add),
+                          icon: const Icon(LucideIcons.plus),
                           label: Text(s.categoryAdd),
                           onPressed: canAdd
                               ? () => Navigator.of(context).push(

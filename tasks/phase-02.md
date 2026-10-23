@@ -10,7 +10,7 @@
 - DoD: [design-system.md](../docs/brand/design-system.md) chốt nguyên tắc, foundations, components, trạng thái, patterns, guidelines. `tokens.json` có ba tầng primitive → semantic (light/dark) → component cùng typography, space, radius, size, elevation, motion. Key `color.*` giữ nguyên ([ADR 012](../docs/architecture/adr/012-design-tokens-v2.md)). `tokens.css` sinh bằng script; `pnpm check` trong `packages/design-tokens` xanh (tương phản AA cả hai mode).
 
 ### DS-P2-002 — Flutter theme và component nền
-- Status: todo
+- Status: done
 - Module: —
 - Gate: post-v1
 - Depends: DS-P2-001

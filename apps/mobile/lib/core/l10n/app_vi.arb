@@ -316,5 +316,19 @@
   "settingsSessionAlertsHelp": "Báo trên máy này khi có phiên đăng nhập khác. Không gồm email, số dư hay tên thiết bị.",
   "sessionAlertTitle": "Phiên đăng nhập mới",
   "sessionAlertBody": "Có phiên đăng nhập khác. Mở Freeva để xem và thu hồi nếu không phải bạn.",
-  "sessionAlertReview": "Xem các phiên"
+  "sessionAlertReview": "Xem các phiên",
+  "navOverview": "Tổng quan",
+  "navTransactions": "Giao dịch",
+  "navReports": "Báo cáo",
+  "navMe": "Cá nhân",
+  "navRecord": "Ghi giao dịch",
+  "commonUndo": "Hoàn tác",
+  "commonRetry": "Thử lại",
+  "commonClose": "Đóng",
+  "commonCancel": "Huỷ",
+  "balanceHiddenSemantics": "số dư đã ẩn",
+  "keypadDelete": "Xoá",
+  "commonLoading": "Đang tải",
+  "passwordShow": "Hiện mật khẩu",
+  "passwordHide": "Ẩn mật khẩu"
 }

@@ -971,4 +971,46 @@ class SVi extends S {
 
   @override
   String get sessionAlertReview => 'Xem các phiên';
+
+  @override
+  String get navOverview => 'Tổng quan';
+
+  @override
+  String get navTransactions => 'Giao dịch';
+
+  @override
+  String get navReports => 'Báo cáo';
+
+  @override
+  String get navMe => 'Cá nhân';
+
+  @override
+  String get navRecord => 'Ghi giao dịch';
+
+  @override
+  String get commonUndo => 'Hoàn tác';
+
+  @override
+  String get commonRetry => 'Thử lại';
+
+  @override
+  String get commonClose => 'Đóng';
+
+  @override
+  String get commonCancel => 'Huỷ';
+
+  @override
+  String get balanceHiddenSemantics => 'số dư đã ẩn';
+
+  @override
+  String get keypadDelete => 'Xoá';
+
+  @override
+  String get commonLoading => 'Đang tải';
+
+  @override
+  String get passwordShow => 'Hiện mật khẩu';
+
+  @override
+  String get passwordHide => 'Ẩn mật khẩu';
 }

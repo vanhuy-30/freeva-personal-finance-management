@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/tokens.g.dart';
 
 class SymbolOrbit extends CustomPainter {
   const SymbolOrbit(this.opacity);
@@ -22,9 +22,9 @@ class SymbolOrbit extends CustomPainter {
       ..strokeCap = StrokeCap.round
       ..shader = SweepGradient(
         colors: [
-          AppColors.surface.withAlpha(0),
-          AppColors.surface.withAlpha((opacity * .35 * 255).round()),
-          AppColors.surface.withAlpha(0),
+          FreevaPrimitive.white.withAlpha(0),
+          FreevaPrimitive.white.withAlpha((opacity * .35 * 255).round()),
+          FreevaPrimitive.white.withAlpha(0),
         ],
       ).createShader(bounds);
     canvas.save();

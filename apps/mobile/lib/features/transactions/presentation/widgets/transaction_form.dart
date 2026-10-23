@@ -306,7 +306,8 @@ class _TransactionFormState extends State<TransactionForm> {
                       tags: model.tags,
                       model: model,
                       onMerchantChanged: () => setState(() {}),
-                      onTagIdsChanged: (value) => setState(() => tagIds = value),
+                      onTagIdsChanged: (value) =>
+                          setState(() => tagIds = value),
                     ),
                     if (invalid && failure != null)
                       Text(

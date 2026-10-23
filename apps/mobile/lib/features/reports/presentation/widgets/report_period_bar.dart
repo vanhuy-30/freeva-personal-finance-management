@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../domain/report.dart';
@@ -39,7 +40,7 @@ class ReportPeriodBar extends StatelessWidget {
                 IconButton(
                   tooltip: s.reportPrevious,
                   onPressed: model.canStep ? () => model.step(-1) : null,
-                  icon: const Icon(Icons.chevron_left),
+                  icon: const Icon(LucideIcons.chevronLeft),
                 ),
                 Expanded(
                   child: Text(
@@ -51,7 +52,7 @@ class ReportPeriodBar extends StatelessWidget {
                 IconButton(
                   tooltip: s.reportNext,
                   onPressed: model.canStep ? () => model.step(1) : null,
-                  icon: const Icon(Icons.chevron_right),
+                  icon: const Icon(LucideIcons.chevronRight),
                 ),
               ],
             ),

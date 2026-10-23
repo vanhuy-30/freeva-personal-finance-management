@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../../core/router/nav_back.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../domain/app_preferences.dart';
 
@@ -19,8 +20,8 @@ class LegalPage extends StatelessWidget {
         title: Text(title),
         leading: IconButton(
           tooltip: s.settingsBack,
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go('/settings'),
+          icon: const Icon(LucideIcons.arrowLeft),
+          onPressed: () => context.popOrGo('/me'),
         ),
       ),
       body: SafeArea(

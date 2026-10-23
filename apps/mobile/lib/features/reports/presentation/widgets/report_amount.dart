@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/theme_context.dart';
 import '../../../settings/presentation/widgets/masked_amount.dart';
 import '../../../wallets/domain/wallet.dart';
 import 'report_money.dart';
@@ -34,8 +34,8 @@ class ReportAmountText extends StatelessWidget {
       Localizations.localeOf(context).toString(),
     );
     final color = switch (tone) {
-      ReportTone.income => AppColors.success,
-      ReportTone.expense => AppColors.danger,
+      ReportTone.income => context.colors.moneyIncome,
+      ReportTone.expense => context.colors.moneyExpense,
       null => null,
     };
     return MaskedAmount(
