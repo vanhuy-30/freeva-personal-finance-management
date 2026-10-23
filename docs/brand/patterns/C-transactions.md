@@ -1,6 +1,6 @@
 # Nhóm C — Giao dịch
 
-Trạng thái: **chốt thiết kế 2026-10-21**, chưa code. Task: `DS-P2-005`.
+Trạng thái: **chốt thiết kế 2026-10-21**. **C1 đã code 2026-10-22**, C2 đang làm. Task: `DS-P2-005`.
 Canvas: trang **05 · Patterns**, hai hàng C1 và C2
 (<https://claude.ai/artifact/SmyaVvz57doJiAM6Kn678T>, riêng tư). Spec chung:
 [design-system.md](../design-system.md).
@@ -58,6 +58,17 @@ Nút + → Ghi chi → Tất cả danh mục (sheet)
 - **Chip nhãn:** nền `tint.violet`, chữ `tint.violetFg`, cao 28 (đọc) / 36 (sửa, có ×).
 - **Thẻ ví Từ / Đến:** hai dòng 60 trong một thẻ, nút đảo chiều 40 nằm trên đường chia.
 - **Thẻ tỷ giá:** dòng "Tỷ giá lúc …" + giá trị, icon bút primary; dòng "Nhận được".
+
+## Trạng thái code
+
+| Việc | Đã làm / còn chờ |
+|---|---|
+| C1.1–C1.7 | Đã làm: danh sách (chip, tổng theo bộ lọc, nhóm theo ngày), tìm kiếm (`/transactions/search`), sheet bộ lọc, không kết quả, sheet chi tiết (Sửa · Sao chép · Xoá + Hoàn tác), Đã xoá (`/transactions/deleted`). |
+| API lọc | `GET /transactions` nhận `accountId`, `categoryId`, `tagId` lặp lại; tìm khớp `merchant`; trả `summary` (số giao dịch, thu/chi theo tiền tệ) cho cả kết quả lọc. |
+| Danh mục cha | Chọn cha thì app tự gồm danh mục con khi gửi bộ lọc. |
+| Khoảng tuỳ chọn | Tạm dùng bộ chọn khoảng ngày của hệ thống; sheet chọn ngày của Freeva làm cùng C2. |
+| Giờ giao dịch | Chỉ có ngày; giờ tách thành `BE-P2-E09 / MOB-P2-E09`. Chi tiết hiện "Hôm nay · 21/10". |
+| C2 | Đang làm (PR thứ hai). |
 
 ## Phụ thuộc khi làm code
 

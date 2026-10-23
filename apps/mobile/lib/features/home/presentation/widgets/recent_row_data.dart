@@ -7,6 +7,7 @@ import '../../../categories/domain/finance_category.dart';
 import '../../../categories/presentation/widgets/category_badge.dart';
 import '../../../sync/domain/sync_item.dart';
 import '../../../transactions/domain/transaction.dart';
+import '../../../transactions/presentation/widgets/transaction_naming.dart';
 import '../../../wallets/domain/wallet.dart';
 
 /// What one "Gần đây" row shows, built from a server transaction or from a
@@ -19,7 +20,7 @@ class RecentRowData {
     required this.minor,
     required this.currency,
     required this.tone,
-    this.serverId,
+    this.bundle,
   });
 
   final IconData icon;
@@ -28,13 +29,18 @@ class RecentRowData {
   final BigInt minor;
   final String currency;
   final MoneyTone tone;
-  final String? serverId;
+
+  /// Server transaction; null while queued on this device.
+  final TransactionBundle? bundle;
 }
 
 class RecentRowNames {
   RecentRowNames(this.s, List<FinanceCategory> categories, List<Wallet> wallets)
     : _categories = {for (final c in categories) c.id: c},
-      _wallets = {for (final w in wallets) w.id: w.draft.name};
+      _wallets = {for (final w in wallets) w.id: w.draft.name},
+      _naming = TransactionNaming(s, categories: categories, wallets: wallets);
+
+  final TransactionNaming _naming;
 
   final S s;
   final Map<String, FinanceCategory> _categories;
@@ -62,20 +68,17 @@ class RecentRowNames {
 
   String wallet(String id) => _wallets[id] ?? '';
 
+  /// Same naming as the transaction list.
   RecentRowData fromBundle(TransactionBundle row) {
-    final first = row.legs.first;
-    final cat = category(row.type, row.categoryId);
-    final detail = row.type == TransactionType.transfer && row.legs.length == 2
-        ? '${wallet(row.legs.first.accountId)} → ${wallet(row.legs.last.accountId)}'
-        : [cat, wallet(first.accountId)].where((p) => p.isNotEmpty).join(' · ');
+    final label = _naming.label(row);
     return RecentRowData(
-      icon: _icon(row.type, row.categoryId),
-      title: title(row.merchant, row.notes, cat),
-      detail: detail,
-      minor: first.amountMinor.abs(),
-      currency: first.currencyCode,
-      tone: tone(row.type),
-      serverId: row.id,
+      icon: label.icon,
+      title: label.title,
+      detail: label.detail,
+      minor: label.minor,
+      currency: label.currency,
+      tone: label.tone,
+      bundle: row,
     );
   }
 

@@ -21,6 +21,8 @@ class ScriptedApi implements AuthorizedApi {
   bool paginate = false;
   Completer<void>? pending;
   Completer<void>? listPending;
+  Map<String, dynamic>? summary;
+  bool deletedRead = false;
 
   @override
   Future<Either<AuthFailure, Map<String, dynamic>>> request(
@@ -87,11 +89,18 @@ class ScriptedApi implements AuthorizedApi {
         'page': page,
         'pageSize': 50,
         'total': paginate ? 2 : 1,
+        if (summary != null) 'summary': summary,
       });
     }
     if (method == 'GET' && path.startsWith('transactions/')) {
       return right({
-        'legs': [_leg('old', accountId: 'card')],
+        'legs': [
+          {
+            ..._leg('old', accountId: 'card'),
+            if (deletedRead) 'deletedAt': '2026-01-03T00:00:00.000Z',
+            if (deletedRead) 'version': 2,
+          },
+        ],
         'fx': null,
       });
     }
@@ -155,18 +164,28 @@ Map<String, dynamic> _leg(String id, {required String accountId}) => {
 };
 
 Map<String, dynamic> _bundle(Map<String, dynamic> body) {
-  final legs = (body['legs'] as List).cast<Map<String, dynamic>>();
+  // A restore PATCH carries no legs; answer with the stored one.
+  final legs =
+      (body['legs'] as List? ??
+              [
+                {
+                  'accountId': 'card',
+                  'currencyCode': 'VND',
+                  'amountMinor': '-1000',
+                },
+              ])
+          .cast<Map<String, dynamic>>();
   return {
     'legs': [
       for (var i = 0; i < legs.length; i++)
         {
           ..._leg('created-$i', accountId: legs[i]['accountId'] as String),
           ...legs[i],
-          'type': body['type'],
-          'occurredOn': body['occurredOn'],
-          'categoryId': body['categoryId'],
-          'notes': body['notes'],
-          'merchant': body['merchant'],
+          if (body.containsKey('type')) 'type': body['type'],
+          if (body.containsKey('occurredOn')) 'occurredOn': body['occurredOn'],
+          if (body.containsKey('categoryId')) 'categoryId': body['categoryId'],
+          if (body.containsKey('notes')) 'notes': body['notes'],
+          if (body.containsKey('merchant')) 'merchant': body['merchant'],
           'tagIds': body['tagIds'] ?? <String>[],
           'transferGroupId': legs.length == 2 ? 'group-1' : null,
           'deletedAt': null,

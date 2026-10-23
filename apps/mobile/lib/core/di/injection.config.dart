@@ -80,6 +80,8 @@ import 'package:mobile/features/transactions/domain/transaction_repository.dart'
     as _i931;
 import 'package:mobile/features/transactions/domain/transaction_use_cases.dart'
     as _i292;
+import 'package:mobile/features/transactions/presentation/viewmodels/transaction_results_view_model.dart'
+    as _i1024;
 import 'package:mobile/features/transactions/presentation/viewmodels/transaction_view_model.dart'
     as _i332;
 import 'package:mobile/features/wallets/data/wallet_repository_impl.dart'
@@ -219,6 +221,15 @@ extension GetItInjectableX on _i174.GetIt {
               gh<_i1020.AnalyticsService>(),
               gh<_i488.SyncViewModel>(),
             ));
+    gh.factoryParam<_i1024.TransactionResultsViewModel, bool?, dynamic>((
+      deleted,
+      _,
+    ) =>
+        _i1024.DefaultTransactionResultsViewModel(
+          gh<_i292.TransactionUseCases>(),
+          gh<_i332.TransactionViewModel>(),
+          deleted: deleted,
+        ));
     gh.lazySingleton<_i1044.ReportViewModel>(
         () => _i1044.DefaultReportViewModel(
               gh<_i146.ReportUseCases>(),

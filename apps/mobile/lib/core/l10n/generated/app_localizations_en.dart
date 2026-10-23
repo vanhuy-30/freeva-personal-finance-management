@@ -1167,4 +1167,183 @@ class SEn extends S {
 
   @override
   String get homeSpokenVnd => 'dong';
+
+  @override
+  String get txSearchAction => 'Search';
+
+  @override
+  String get txFilterAction => 'Filters';
+
+  @override
+  String get txFilterActive => 'Filters on';
+
+  @override
+  String get txPeriodThisWeek => 'This week';
+
+  @override
+  String get txPeriodThisMonth => 'This month';
+
+  @override
+  String get txPeriodLastMonth => 'Last month';
+
+  @override
+  String get txPeriodCustom => 'Custom';
+
+  @override
+  String get txPeriodAllTime => 'All time';
+
+  @override
+  String txMonthChip(String month) {
+    return '$month';
+  }
+
+  @override
+  String txRangeChip(String from, String to) {
+    return '$from – $to';
+  }
+
+  @override
+  String get txToday => 'Today';
+
+  @override
+  String txDayHeader(String day, String date) {
+    return '$day · $date';
+  }
+
+  @override
+  String txChipRemove(String label) {
+    return 'Remove $label';
+  }
+
+  @override
+  String get txFilterReset => 'Reset';
+
+  @override
+  String get txFilterPeriod => 'Time';
+
+  @override
+  String get txFilterWallets => 'Wallets';
+
+  @override
+  String get txFilterCategories => 'Categories';
+
+  @override
+  String get txFilterTags => 'Tags';
+
+  @override
+  String get txFilterAny => 'All';
+
+  @override
+  String get txFilterDeleted => 'Deleted';
+
+  @override
+  String txFilterApply(int count) {
+    return 'Show $count transactions';
+  }
+
+  @override
+  String get txFilterApplyUnknown => 'Show transactions';
+
+  @override
+  String get txFilterDone => 'Done';
+
+  @override
+  String get txNoResultTitle => 'No matching transactions';
+
+  @override
+  String get txNoResultBody => 'Try removing a filter.';
+
+  @override
+  String get txNoResultClear => 'Clear filters';
+
+  @override
+  String get txEmptyTitle => 'No transactions yet';
+
+  @override
+  String get txEmptyBody => 'Your first expense takes seconds.';
+
+  @override
+  String get txEmptyAction => 'Add expense';
+
+  @override
+  String get txSearchHint => 'Search transactions';
+
+  @override
+  String get txSearchCancel => 'Cancel';
+
+  @override
+  String get txSearchClear => 'Clear text';
+
+  @override
+  String txSearchResults(int count) {
+    return '$count results';
+  }
+
+  @override
+  String get txSearchPrompt => 'Search by store, note or amount.';
+
+  @override
+  String get txDetailCategory => 'Category';
+
+  @override
+  String get txDetailWallet => 'Wallet';
+
+  @override
+  String get txDetailDate => 'Date';
+
+  @override
+  String get txDetailTags => 'Tags';
+
+  @override
+  String get txDetailNotes => 'Note';
+
+  @override
+  String get txDetailFrom => 'From';
+
+  @override
+  String get txDetailTo => 'To';
+
+  @override
+  String get txDetailDelete => 'Delete transaction';
+
+  @override
+  String get txDetailCopy => 'Duplicate';
+
+  @override
+  String get txDetailEdit => 'Edit';
+
+  @override
+  String get txKindExpense => 'expense';
+
+  @override
+  String get txKindIncome => 'income';
+
+  @override
+  String get txKindTransfer => 'transfer';
+
+  @override
+  String txDeletedToast(String kind) {
+    return 'Deleted $kind';
+  }
+
+  @override
+  String get txRestoredToast => 'Restored';
+
+  @override
+  String get txTrashTitle => 'Deleted';
+
+  @override
+  String get txTrashBody => 'Restore to bring it back to your list.';
+
+  @override
+  String get txTrashRestore => 'Restore';
+
+  @override
+  String get txTrashEmpty => 'Nothing deleted';
+
+  @override
+  String get txLoadFailed => 'Couldn\'t load transactions';
+
+  @override
+  String get txTransferTitle => 'Transfer';
 }

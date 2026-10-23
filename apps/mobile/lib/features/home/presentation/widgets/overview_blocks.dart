@@ -5,7 +5,8 @@ import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../transactions/presentation/viewmodels/transaction_view_model.dart';
-import '../../../transactions/presentation/widgets/transaction_editor.dart';
+import '../../../transactions/domain/transaction.dart';
+import '../../../transactions/presentation/widgets/transaction_detail_sheet.dart';
 import '../../domain/overview.dart';
 import '../../domain/overview_summary.dart';
 import '../viewmodels/home_view_model.dart';
@@ -29,15 +30,10 @@ class OverviewBlocks extends StatelessWidget {
     Localizations.localeOf(context).toString(),
   ).format(DateTime.parse(from));
 
-  void _open(BuildContext context, String id) {
+  void _open(BuildContext context, TransactionBundle row) {
     final transactions = getIt<TransactionViewModel>();
     if (!transactions.composerReady) transactions.load();
-    Navigator.of(context, rootNavigator: true).push(
-      MaterialPageRoute<void>(
-        builder: (_) =>
-            TransactionEditor(model: transactions, transactionId: id),
-      ),
-    );
+    openTransactionDetail(context, transactions, row);
   }
 
   @override
@@ -83,7 +79,7 @@ class OverviewBlocks extends StatelessWidget {
         RecentTransactions(
           rows: rows,
           digitsOf: digits,
-          onOpen: (id) => _open(context, id),
+          onOpen: (row) => _open(context, row),
         ),
       ],
     );

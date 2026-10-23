@@ -19,7 +19,7 @@ import 'package:mobile/features/transactions/domain/transaction_use_cases.dart';
 import 'package:mobile/features/transactions/presentation/viewmodels/transaction_view_model.dart';
 import 'package:mobile/features/transactions/presentation/widgets/transaction_editor.dart';
 import 'package:mobile/features/transactions/presentation/widgets/transaction_form.dart';
-import 'package:mobile/features/transactions/presentation/widgets/transaction_list.dart';
+import 'package:mobile/features/transactions/presentation/widgets/transaction_list_body.dart';
 import 'package:mobile/features/settings/data/settings_repository_impl.dart';
 import 'package:mobile/features/settings/domain/settings_use_cases.dart';
 import 'package:mobile/features/settings/presentation/viewmodels/settings_view_model.dart';
@@ -118,7 +118,9 @@ void main() {
     (tester) async {
       await tester.pumpWidget(app(TransactionForm(model: model)));
       await tester.pumpAndSettle();
-      final amountField = tester.widget<TextField>(find.byType(TextField).first);
+      final amountField = tester.widget<TextField>(
+        find.byType(TextField).first,
+      );
       expect(amountField.autofocus, isTrue);
       expect(model.preferredAccountId(), 'card');
       expect(model.preferredCategoryId(), 'food');
@@ -202,11 +204,15 @@ void main() {
     await settings.setBalancesHidden(true);
     getIt.registerSingleton<SettingsViewModel>(settings);
     addTearDown(settings.dispose);
-    await tester.pumpWidget(app(TransactionList(model: model, onOpen: (_) {})));
-    expect(find.textContaining('••••'), findsNothing);
+    await tester.pumpWidget(app(TransactionListBody(model: model)));
+    await tester.pump();
+    expect(find.textContaining('••••', findRichText: true), findsNothing);
     expect(
-      find.textContaining(formatMoneyText(BigInt.from(-1000), 0, 'vi')),
-      findsOneWidget,
+      find.textContaining(
+        formatMoneyText(BigInt.from(1000), 0, 'vi'),
+        findRichText: true,
+      ),
+      findsWidgets,
     );
     await tester.pumpWidget(app(TransactionForm(model: model)));
     await tester.enterText(find.byType(TextField).first, '25000');

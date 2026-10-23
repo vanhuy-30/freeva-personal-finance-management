@@ -320,6 +320,47 @@ describe('BE-P1-005 HTTP + PostgreSQL', () => {
     expect(new Set(pages.map(page => page.body.items[0].id)).size).toBe(3);
     for (const secret of [token, '9007199254740993', 'Private transaction note']) expect(logs).not.toContain(secret);
   });
+  it('filters several wallets, categories and tags, searches merchant, and sums the whole result', async () => {
+    const mk = (name: string, currencyCode = 'VND') => prisma.financialAccount.create({ data: { userId: owner, clientId: randomUUID(), name, type: 'cash', currencyCode, initialBalanceMinor: 0n } });
+    const [cash, bank, other2, dollars] = [await mk('Tiền mặt'), await mk('Ngân hàng'), await mk('Khác'), await mk('Đô', 'USD')];
+    const food = await prisma.category.create({ data: { userId: owner, clientId: randomUUID(), name: 'Ăn uống' } });
+    const bus = await prisma.category.create({ data: { userId: owner, clientId: randomUUID(), name: 'Đi lại' } });
+    const trip = await prisma.tag.create({ data: { userId: owner, clientId: randomUUID(), name: 'Du lịch' } });
+    const work = await prisma.tag.create({ data: { userId: owner, clientId: randomUUID(), name: 'Đi làm' } });
+    const leg = (accountId: string, amountMinor: string, currencyCode = 'VND') => ({ clientId: randomUUID(), accountId, currencyCode, amountMinor });
+    const pho = await create({ type: 'expense', categoryId: food.id, occurredOn: '2026-10-21', merchant: 'Phở Thìn', tagIds: [work.id], legs: [leg(cash.id, '-65000')] });
+    const grab = await create({ type: 'expense', categoryId: bus.id, occurredOn: '2026-10-21', merchant: 'Grab', tagIds: [trip.id], legs: [leg(bank.id, '-48000')] });
+    await create({ type: 'expense', categoryId: food.id, occurredOn: '2026-10-20', legs: [leg(other2.id, '-1000')] });
+    await create({ type: 'income', occurredOn: '2026-10-20', legs: [leg(bank.id, '18500000')] });
+    await create({ type: 'income', occurredOn: '2026-10-20', legs: [leg(dollars.id, '1250', 'USD')] });
+    await create({ type: 'transfer', occurredOn: '2026-10-20', legs: [leg(bank.id, '-500000'), leg(cash.id, '500000')] });
+    const list = async (query: string) => {
+      const res = await request('GET', `?${query}`);
+      expect(res.status).toBe(200);
+      return res.body as { total: number; items: { id: string }[]; summary: { count: number; totals: { currency: string; incomeMinor: string; expenseMinor: string }[] } };
+    };
+    const all = await list('');
+    expect(all.total).toBe(7);
+    expect(all.summary.count).toBe(6);
+    expect(all.summary.totals).toEqual([
+      { currency: 'USD', incomeMinor: '1250', expenseMinor: '0' },
+      { currency: 'VND', incomeMinor: '18500000', expenseMinor: '-114000' },
+    ]);
+    const paged = await list('pageSize=1');
+    expect(paged.items).toHaveLength(1);
+    expect(paged.summary.count).toBe(6);
+    const wallets = await list(`accountId=${cash.id}&accountId=${bank.id}&type=expense`);
+    expect(new Set(wallets.items.map(item => item.id))).toEqual(new Set([pho.legs[0].id, grab.legs[0].id]));
+    expect(wallets.summary.totals).toEqual([{ currency: 'VND', incomeMinor: '0', expenseMinor: '-113000' }]);
+    expect((await list(`categoryId=${food.id}&categoryId=${bus.id}`)).summary.count).toBe(3);
+    expect((await list(`tagId=${trip.id}`)).items.map(item => item.id)).toEqual([grab.legs[0].id]);
+    expect((await list(`tagId=${trip.id}&tagId=${work.id}`)).summary.count).toBe(2);
+    expect((await list('search=pho thin')).items.map(item => item.id)).toEqual([pho.legs[0].id]);
+    expect((await list(`search=grab&tagId=${work.id}`)).total).toBe(0);
+    expect((await request('GET', `?accountId=not-a-uuid`)).status).toBe(400);
+    const many = Array.from({ length: 21 }, () => `accountId=${randomUUID()}`).join('&');
+    expect((await request('GET', `?${many}`)).status).toBe(400);
+  });
   it('searches folded notes, category, account, tag and amount for the owner only', async () => {
     const parent = await prisma.category.create({ data: { userId: owner, clientId: randomUUID(), name: 'Sinh hoạt' } });
     const food = await prisma.category.create({ data: { userId: owner, clientId: randomUUID(), name: 'Ăn uống', parentId: parent.id } });

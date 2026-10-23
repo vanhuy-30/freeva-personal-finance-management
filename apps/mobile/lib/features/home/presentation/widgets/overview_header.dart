@@ -50,7 +50,7 @@ class OverviewHeader extends StatelessWidget {
         FreevaIconButton(
           icon: LucideIcons.search,
           label: s.homeSearch,
-          onPressed: () => context.go('/transactions'),
+          onPressed: () => context.push('/transactions/search'),
         ),
         const SizedBox(width: FreevaSpace.s2),
         FreevaIconButton(

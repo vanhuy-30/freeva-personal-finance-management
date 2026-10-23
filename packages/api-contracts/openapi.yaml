@@ -776,14 +776,40 @@ paths:
           default: active
       - in: query
         name: accountId
+        style: form
+        explode: true
         schema:
-          type: string
-          format: uuid
+          type: array
+          maxItems: 20
+          uniqueItems: true
+          items:
+            type: string
+            format: uuid
+        description: Repeat to match any of several wallets (per leg). A single value still works.
       - in: query
         name: categoryId
+        style: form
+        explode: true
         schema:
-          type: string
-          format: uuid
+          type: array
+          maxItems: 50
+          uniqueItems: true
+          items:
+            type: string
+            format: uuid
+        description: Repeat to match any of several categories. The client expands a parent to its children.
+      - in: query
+        name: tagId
+        style: form
+        explode: true
+        schema:
+          type: array
+          maxItems: 20
+          uniqueItems: true
+          items:
+            type: string
+            format: uuid
+        description: Repeat to match transactions carrying any of these tags.
       - in: query
         name: type
         schema:
@@ -810,7 +836,7 @@ paths:
           type: string
           maxLength: 200
           description: >
-            Substring of notes, the leg category name, the account name, or any tag name.
+            Substring of notes, merchant, the leg category name, the account name, or any tag name.
             Matching ignores case and Vietnamese diacritics. A numeric query also matches
             abs(amountMinor): grouped thousands (150.000) as exact minor units, or one
             decimal separator whose fraction is not 3 digits (12.50) scaled by the leg
@@ -3244,7 +3270,10 @@ components:
       - page
       - pageSize
       - total
+      - summary
       properties:
+        summary:
+          $ref: '#/components/schemas/TransactionSummary'
         items:
           type: array
           items:
@@ -3256,6 +3285,33 @@ components:
         total:
           type: integer
           description: Count of legs, including both sides of transfers when both match filters.
+    TransactionSummary:
+      type: object
+      additionalProperties: false
+      required: [count, totals]
+      description: Over the whole filtered result, not only this page.
+      properties:
+        count:
+          type: integer
+          description: Transactions matching the filters; a transfer counts once.
+        totals:
+          type: array
+          description: Per currency, sorted by code; currencies with no income or expense are omitted. Transfers are excluded. No FX conversion.
+          items:
+            type: object
+            additionalProperties: false
+            required: [currency, incomeMinor, expenseMinor]
+            properties:
+              currency:
+                type: string
+                pattern: ^[A-Z]{3}$
+              incomeMinor:
+                type: string
+                pattern: ^-?[0-9]+$
+              expenseMinor:
+                type: string
+                pattern: ^-?[0-9]+$
+                description: Signed (negative or zero).
     CreateFinancialAccount:
       type: object
       additionalProperties: false

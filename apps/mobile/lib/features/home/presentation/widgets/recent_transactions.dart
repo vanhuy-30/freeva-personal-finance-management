@@ -8,6 +8,7 @@ import '../../../../core/widgets/freeva_button.dart';
 import '../../../../core/widgets/freeva_card.dart';
 import '../../../../core/widgets/money_display.dart';
 import '../../../../core/widgets/transaction_row.dart';
+import '../../../transactions/domain/transaction.dart';
 import 'recent_row_data.dart';
 
 /// "Gần đây": up to 3 rows (queued ones first, marked "Chờ đồng bộ") and
@@ -22,7 +23,7 @@ class RecentTransactions extends StatelessWidget {
 
   final List<RecentRowData> rows;
   final int Function(String) digitsOf;
-  final ValueChanged<String> onOpen;
+  final ValueChanged<TransactionBundle> onOpen;
 
   @override
   Widget build(BuildContext context) {
@@ -81,9 +82,9 @@ class RecentTransactions extends StatelessWidget {
                           digitsOf(row.currency),
                           locale,
                         ),
-                        onTap: row.serverId == null
+                        onTap: row.bundle == null
                             ? null
-                            : () => onOpen(row.serverId!),
+                            : () => onOpen(row.bundle!),
                         amount: MoneyDisplay(
                           minor: row.minor,
                           currency: row.currency,
