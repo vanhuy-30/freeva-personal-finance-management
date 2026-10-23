@@ -1,6 +1,7 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
 import {
   PROFILE_REPOSITORY,
+  type OnboardingAnswers,
   type ProfileUpdate,
   type ProfileRepository,
 } from './domain/profile.repository';
@@ -38,6 +39,12 @@ export class ProfileService {
         ]),
       ].sort(),
     };
+  }
+
+  async saveOnboarding(userId: string, answers: OnboardingAnswers) {
+    if (!(await this.repository.saveOnboarding(userId, answers))) {
+      throw error(401, 'SESSION_INVALID');
+    }
   }
 
   async update(userId: string, profile: ProfileUpdate) {

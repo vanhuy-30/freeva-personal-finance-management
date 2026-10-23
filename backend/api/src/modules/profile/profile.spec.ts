@@ -12,6 +12,7 @@ describe('MOB-P1-002 profile HTTP contract', () => {
   const repo = {
     find: jest.fn(async (id: string) => profiles.get(id) ?? null),
     currencies: async () => [{ code: 'VND', minorDigits: 0 }, { code: 'USD', minorDigits: 2 }],
+    saveOnboarding: jest.fn(async (id: string) => profiles.has(id)),
     update: jest.fn(async (id: string, profile: ProfileUpdate) => {
       if (profiles.get(id)?.version !== profile.version) return null;
       const stored = profiles.get(id)!;
@@ -69,5 +70,17 @@ describe('MOB-P1-002 profile HTTP contract', () => {
     const result = await request('GET', undefined, 'a'.repeat(64), 'profile/options');
     expect(result.body.currencies).toContainEqual({ code: 'USD', minorDigits: 2 });
     expect(result.body.timezones).toEqual(expect.arrayContaining(['UTC', 'Asia/Ho_Chi_Minh', 'America/New_York']));
+  });
+  it('DS-P2-004 stores onboarding answers, all optional, and rejects anything else', async () => {
+    const send = (body: object, token: string | null = 'a'.repeat(64)) => fetch(`${base}/api/v1/profile/onboarding`, {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(body) });
+    expect((await send({}, null)).status).toBe(401);
+    expect((await send({ goals: ['save', 'budget'], trackingHabit: 'app', reviewCadence: 'weekly' })).status).toBe(204);
+    expect((await send({ goals: [] })).status).toBe(204);
+    expect(repo.saveOnboarding).toHaveBeenLastCalledWith('owner', { goals: [] });
+    for (const bad of [{ goals: ['save', 'budget', 'debt'] }, { goals: ['save', 'save'] }, { goals: ['x'] },
+      { trackingHabit: 'other' }, { reviewCadence: 'hourly' }, { email: 'a@b.test' }]) {
+      expect((await send(bad)).status).toBe(400);
+    }
   });
 });
