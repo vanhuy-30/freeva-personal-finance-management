@@ -2688,4 +2688,37 @@ class SEn extends S {
 
   @override
   String get onbBudgetLater => 'Set up later';
+
+  @override
+  String get setupWalletsTitle => 'Where is your money?';
+
+  @override
+  String get setupWalletsSub =>
+      'Add wallets and balances. A rough number is enough.';
+
+  @override
+  String get setupAdd => 'Add';
+
+  @override
+  String get setupSkip => 'Skip';
+
+  @override
+  String get checklistTitle => 'Let’s get started';
+
+  @override
+  String get checklistWallet => 'Create a wallet';
+
+  @override
+  String get checklistExpense => 'Record your first expense';
+
+  @override
+  String get checklistRecordNow => 'Record now';
+
+  @override
+  String get checklistPin => 'Lock the app with a PIN';
+
+  @override
+  String authLockGreeting(String name) {
+    return 'Hi $name';
+  }
 }

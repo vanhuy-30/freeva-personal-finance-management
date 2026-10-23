@@ -150,6 +150,17 @@ void main() {
       auth.dispose();
     });
     test(
+      'the saved name is handed to the lock screen on load and on save',
+      () async {
+        repo.value = repo.value.copyWith(displayName: 'Minh');
+        await model.load();
+        expect(auth.name, 'Minh');
+        model.draft = model.saved!.copyWith(displayName: ' Lan ');
+        await model.save();
+        expect(auth.name, 'Lan');
+      },
+    );
+    test(
       'applies locale only after save, reloads saved fields and cancels edits',
       () async {
         model.edit(

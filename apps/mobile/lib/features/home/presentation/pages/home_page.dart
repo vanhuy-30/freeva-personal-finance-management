@@ -10,7 +10,9 @@ import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_banner.dart';
 import '../../../auth/presentation/widgets/session_alert_banner.dart';
 import '../viewmodels/home_view_model.dart';
+import '../../domain/first_run_checklist.dart';
 import '../widgets/balance_section.dart';
+import '../widgets/first_run_card.dart';
 import '../widgets/overview_blocks.dart';
 import '../widgets/overview_header.dart';
 import '../widgets/overview_states.dart';
@@ -95,6 +97,17 @@ class _HomePageState extends State<HomePage> {
                 ],
                 BalanceSection(model: model),
                 gap,
+                if (data != null) ...[
+                  if (FirstRunChecklist.of(
+                        data,
+                        pending: model.pending.length,
+                        hasPin: model.hasPin,
+                      )
+                      case final list when list.visible) ...[
+                    FirstRunCard(checklist: list),
+                    gap,
+                  ],
+                ],
                 const QuickActions(),
                 gap,
                 if (data != null)

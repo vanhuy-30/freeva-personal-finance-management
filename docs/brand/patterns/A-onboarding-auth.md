@@ -1,6 +1,6 @@
 # Nhóm A — Onboarding và tài khoản
 
-Trạng thái: **chốt thiết kế 2026-10-21, sửa luồng 2026-10-23** (tạo tài khoản trước câu hỏi, xác nhận email bỏ qua được, PIN nhập lại, quy tắc mật khẩu), code A1 (tài khoản và bảo mật) và A2a (Welcome, Tạo tài khoản, ba câu hỏi) xong 2026-10-23; A2b (Thiết lập tài chính, checklist trang chính) chưa. Task: `DS-P2-004`.
+Trạng thái: **chốt thiết kế 2026-10-21, sửa luồng 2026-10-23** (tạo tài khoản trước câu hỏi, xác nhận email bỏ qua được, PIN nhập lại, quy tắc mật khẩu), code A1 (tài khoản và bảo mật) và A2a (Welcome, Tạo tài khoản, ba câu hỏi) và A2b (Thiết lập tài chính, checklist trang chính, tên ở màn Mở khoá) xong 2026-10-23. Task: `DS-P2-004`.
 Canvas: trang **05 · Patterns**, hai hàng A1 và A2
 (<https://claude.ai/artifact/SmyaVvz57doJiAM6Kn678T>, riêng tư). Spec chung:
 [design-system.md](../design-system.md).

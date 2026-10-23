@@ -8,7 +8,8 @@ void main() {
   test('sessions are isolated by environment and API origin', () async {
     FlutterSecureStorage.setMockInitialValues({'freeva.auth.v1': 'legacy'});
     SecureAuthVault vault(String env, String url) => SecureAuthVault(
-        AppConfig.fromValues(environment: env, apiBaseUrl: url));
+      AppConfig.fromValues(environment: env, apiBaseUrl: url),
+    );
     final dev = vault('dev', 'https://localhost:8443');
     final staging = vault('staging', 'https://localhost:8443');
     final otherHost = vault('dev', 'https://other.example.test');
@@ -20,7 +21,9 @@ void main() {
     await dev.clear();
     expect(await dev.read(), isNull);
     expect(await staging.read(), 'staging-session');
-    expect(await vault('staging', 'https://localhost:8443/').read(),
-        'staging-session');
+    expect(
+      await vault('staging', 'https://localhost:8443/').read(),
+      'staging-session',
+    );
   });
 }

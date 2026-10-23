@@ -34,6 +34,8 @@ abstract class AuthUseCases {
   Future<Either<AuthFailure, bool>> biometricHardware();
   Future<Either<AuthFailure, bool>> biometricEnabled();
   Future<Either<AuthFailure, String?>> accountEmail();
+  Future<Either<AuthFailure, Unit>> rememberName(String? name);
+  Future<Either<AuthFailure, String?>> savedName();
   Future<Either<AuthFailure, Unit>> setBiometricEnabled(
     bool enabled,
     String reason,
@@ -168,6 +170,11 @@ class DefaultAuthUseCases implements AuthUseCases {
   @override
   Future<Either<AuthFailure, String?>> accountEmail() =>
       _repository.accountEmail();
+  @override
+  Future<Either<AuthFailure, Unit>> rememberName(String? name) =>
+      _repository.rememberName(name);
+  @override
+  Future<Either<AuthFailure, String?>> savedName() => _repository.savedName();
   @override
   Future<Either<AuthFailure, Unit>> setBiometricEnabled(
     bool enabled,

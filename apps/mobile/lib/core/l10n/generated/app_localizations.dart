@@ -4871,6 +4871,66 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Set up later'**
   String get onbBudgetLater;
+
+  /// No description provided for @setupWalletsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Where is your money?'**
+  String get setupWalletsTitle;
+
+  /// No description provided for @setupWalletsSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Add wallets and balances. A rough number is enough.'**
+  String get setupWalletsSub;
+
+  /// No description provided for @setupAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get setupAdd;
+
+  /// No description provided for @setupSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get setupSkip;
+
+  /// No description provided for @checklistTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Let’s get started'**
+  String get checklistTitle;
+
+  /// No description provided for @checklistWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a wallet'**
+  String get checklistWallet;
+
+  /// No description provided for @checklistExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Record your first expense'**
+  String get checklistExpense;
+
+  /// No description provided for @checklistRecordNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Record now'**
+  String get checklistRecordNow;
+
+  /// No description provided for @checklistPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock the app with a PIN'**
+  String get checklistPin;
+
+  /// No description provided for @authLockGreeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Hi {name}'**
+  String authLockGreeting(String name);
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

@@ -4,8 +4,10 @@ import '../../../../core/config/app_config.dart';
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/logging/log_scrub.dart';
 import '../../../../core/network/create_http_client.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';
+
 import '../domain/auth_repository.dart';
 
 abstract class AuthApi {
@@ -70,18 +72,15 @@ class HttpAuthApi implements AuthApi {
             : jsonDecode(response.body) as Map<String, dynamic>;
       }
       _logger?.http('← $method $path ${response.statusCode} ${ms}ms');
-      throw AuthFailure(
-        switch (response.statusCode) {
-          401 => token == null ? AuthError.credentials : AuthError.expired,
-          // Signed in but refused: the current password was wrong.
-          403 when token != null => AuthError.credentials,
-          429 => AuthError.rateLimited,
-          400 => AuthError.invalidToken,
-          409 => AuthError.conflict,
-          _ => AuthError.unavailable,
-        },
-        retryAfter: int.tryParse(response.headers['retry-after'] ?? ''),
-      );
+      throw AuthFailure(switch (response.statusCode) {
+        401 => token == null ? AuthError.credentials : AuthError.expired,
+        // Signed in but refused: the current password was wrong.
+        403 when token != null => AuthError.credentials,
+        429 => AuthError.rateLimited,
+        400 => AuthError.invalidToken,
+        409 => AuthError.conflict,
+        _ => AuthError.unavailable,
+      }, retryAfter: int.tryParse(response.headers['retry-after'] ?? ''));
     } on AuthFailure {
       rethrow;
     } catch (error, stackTrace) {

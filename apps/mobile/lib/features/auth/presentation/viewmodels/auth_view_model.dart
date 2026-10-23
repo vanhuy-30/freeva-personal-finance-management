@@ -50,6 +50,10 @@ abstract class AuthViewModel extends ChangeNotifier {
 
   /// Whether this device has a PIN; without one the app never locks.
   bool get hasPin;
+
+  /// Name kept on this device for the lock screen greeting; null if unknown.
+  String? get name;
+  Future<void> rememberName(String? name);
   bool get loading;
   bool get ready;
   bool get biometricAvailable;
@@ -97,6 +101,8 @@ class DefaultAuthViewModel extends AuthViewModel {
   AuthNotice? notice;
   @override
   bool hasPin = false;
+  @override
+  String? name;
   String _resetToken = '';
 
   @override
@@ -206,6 +212,14 @@ class DefaultAuthViewModel extends AuthViewModel {
   }
 
   @override
+  Future<void> rememberName(String? value) async {
+    final trimmed = value?.trim();
+    name = trimmed == null || trimmed.isEmpty ? null : trimmed;
+    // Best effort: without it the lock screen greets without a name.
+    await _useCases.rememberName(name);
+  }
+
+  @override
   Future<void> leaveWelcome(AuthStep next) async {
     step = next;
     notifyListeners();
@@ -234,6 +248,7 @@ class DefaultAuthViewModel extends AuthViewModel {
     newSessionAlert = false;
     _delivered = false;
     hasPin = false;
+    name = null;
     _resetToken = '';
   }
 
@@ -301,6 +316,7 @@ class DefaultAuthViewModel extends AuthViewModel {
     await _run(_useCases.restore, (value) => stage = value);
     if (stage != AuthStage.signedOut) {
       hasPin = (await _useCases.pinSet()).getOrElse(() => false);
+      name = (await _useCases.savedName()).getOrElse(() => null);
     } else if (settings != null) {
       final prefs = await settings!.load();
       final seen = prefs.fold((_) => true, (value) => value.welcomeSeen);

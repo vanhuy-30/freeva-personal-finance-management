@@ -141,7 +141,7 @@ void main() {
       then: () async {
         await t.tap(find.text('Xong'));
         await t.pumpAndSettle();
-        for (final skip in ['Để sau', 'Để sau', 'Thiết lập sau']) {
+        for (final skip in ['Để sau', 'Để sau', 'Thiết lập sau', 'Bỏ qua']) {
           await t.tap(find.text(skip));
           await t.pumpAndSettle();
         }
@@ -159,6 +159,7 @@ void main() {
       (m) => LockPage(model: m),
       prepare: (m) => m
         ..stage = AuthStage.locked
+        ..name = 'Minh'
         ..biometricAvailable = true,
       then: () async {
         await t.tap(find.bySemanticsLabel('1'));
@@ -246,6 +247,46 @@ void main() {
         await t.pumpAndSettle();
         await t.tap(find.text('10tr'));
         await t.pump();
+      },
+    );
+  });
+
+  Future<void> toWallets(WidgetTester t) async {
+    await toQuestions(t);
+    for (final skip in ['Để sau', 'Để sau', 'Thiết lập sau']) {
+      await t.tap(find.text(skip));
+      await t.pumpAndSettle();
+    }
+  }
+
+  testWidgets('setup wallets', skip: !Platform.isMacOS, (t) async {
+    await shot(
+      t,
+      'wallets',
+      (m) => SetupPage(model: m),
+      prepare: (m) => m.stage = AuthStage.setup,
+      then: () async {
+        await toWallets(t);
+        // Add cash through the real form.
+        await t.tap(find.text('Thêm').first);
+        await t.pumpAndSettle();
+        await t.enterText(find.byType(TextField).at(0), 'Ví của tôi');
+        await t.enterText(find.byType(TextField).at(1), '850000');
+        await t.tap(find.text('Lưu ví'));
+        await t.pumpAndSettle();
+      },
+    );
+  });
+  testWidgets('setup wallet form', skip: !Platform.isMacOS, (t) async {
+    await shot(
+      t,
+      'wallet_form',
+      (m) => SetupPage(model: m),
+      prepare: (m) => m.stage = AuthStage.setup,
+      then: () async {
+        await toWallets(t);
+        await t.tap(find.text('Thêm').last);
+        await t.pumpAndSettle();
       },
     );
   });

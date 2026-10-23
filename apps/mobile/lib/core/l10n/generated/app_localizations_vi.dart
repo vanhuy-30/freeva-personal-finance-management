@@ -2648,4 +2648,36 @@ class SVi extends S {
 
   @override
   String get onbBudgetLater => 'Thiết lập sau';
+
+  @override
+  String get setupWalletsTitle => 'Tiền của bạn ở đâu?';
+
+  @override
+  String get setupWalletsSub => 'Thêm ví và số dư. Ước chừng là đủ.';
+
+  @override
+  String get setupAdd => 'Thêm';
+
+  @override
+  String get setupSkip => 'Bỏ qua';
+
+  @override
+  String get checklistTitle => 'Bắt đầu nào';
+
+  @override
+  String get checklistWallet => 'Tạo ví';
+
+  @override
+  String get checklistExpense => 'Ghi khoản chi đầu tiên';
+
+  @override
+  String get checklistRecordNow => 'Ghi ngay';
+
+  @override
+  String get checklistPin => 'Khoá app bằng PIN';
+
+  @override
+  String authLockGreeting(String name) {
+    return 'Chào $name';
+  }
 }

@@ -76,6 +76,11 @@ abstract class AuthRepository {
 
   /// Email this device signed in with; null for sessions saved before it was kept.
   Future<Either<AuthFailure, String?>> accountEmail();
+
+  /// Name for "Chào {tên}" on the lock screen. Kept with the session record
+  /// on this device and dropped with it; null or blank clears it.
+  Future<Either<AuthFailure, Unit>> rememberName(String? name);
+  Future<Either<AuthFailure, String?>> savedName();
   Future<Either<AuthFailure, Unit>> setBiometricEnabled(
     bool enabled,
     String reason,

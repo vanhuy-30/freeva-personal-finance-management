@@ -263,6 +263,22 @@ class AuthRepositoryImpl implements AuthRepository, AuthorizedApi {
       _guard(() async => _record?['email'] as String?);
 
   @override
+  Future<Either<AuthFailure, Unit>> rememberName(String? name) =>
+      _guard(() async {
+        final record = _record;
+        if (record == null) return unit;
+        final trimmed = name?.trim();
+        final next = {...record}..remove('name');
+        if (trimmed != null && trimmed.isNotEmpty) next['name'] = trimmed;
+        if (next['name'] != record['name']) await _save(next);
+        return unit;
+      });
+
+  @override
+  Future<Either<AuthFailure, String?>> savedName() =>
+      _guard(() async => _record?['name'] as String?);
+
+  @override
   Future<Either<AuthFailure, bool>> biometricEnabled() =>
       _guard(() async => _record?['biometrics'] == true);
   @override

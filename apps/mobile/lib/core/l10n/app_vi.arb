@@ -808,5 +808,15 @@
   "onbCadenceRarely": "Hầu như không",
   "onbBudgetTitle": "Mỗi tháng bạn định chi bao nhiêu?",
   "onbBudgetAmount": "Ngân sách mỗi tháng",
-  "onbBudgetLater": "Thiết lập sau"
+  "onbBudgetLater": "Thiết lập sau",
+  "setupWalletsTitle": "Tiền của bạn ở đâu?",
+  "setupWalletsSub": "Thêm ví và số dư. Ước chừng là đủ.",
+  "setupAdd": "Thêm",
+  "setupSkip": "Bỏ qua",
+  "checklistTitle": "Bắt đầu nào",
+  "checklistWallet": "Tạo ví",
+  "checklistExpense": "Ghi khoản chi đầu tiên",
+  "checklistRecordNow": "Ghi ngay",
+  "checklistPin": "Khoá app bằng PIN",
+  "authLockGreeting": "Chào {name}"
 }

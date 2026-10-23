@@ -1596,5 +1596,22 @@
   "onbCadenceRarely": "Hardly ever",
   "onbBudgetTitle": "How much do you plan to spend each month?",
   "onbBudgetAmount": "Monthly budget",
-  "onbBudgetLater": "Set up later"
+  "onbBudgetLater": "Set up later",
+  "setupWalletsTitle": "Where is your money?",
+  "setupWalletsSub": "Add wallets and balances. A rough number is enough.",
+  "setupAdd": "Add",
+  "setupSkip": "Skip",
+  "checklistTitle": "Let’s get started",
+  "checklistWallet": "Create a wallet",
+  "checklistExpense": "Record your first expense",
+  "checklistRecordNow": "Record now",
+  "checklistPin": "Lock the app with a PIN",
+  "authLockGreeting": "Hi {name}",
+  "@authLockGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
 }

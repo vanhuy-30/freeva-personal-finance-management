@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 
@@ -91,6 +93,7 @@ class DefaultProfileViewModel extends ProfileViewModel {
       await choices.fold((e) => _fail(e), (value) async {
         saved = profile.getOrElse(() => throw StateError('Missing profile'));
         draft = saved;
+        unawaited(_auth.rememberName(saved!.displayName));
         // Preserve a valid legacy IANA alias even if absent from the canonical list.
         options = ProfileOptions(
           currencies: value.currencies,
@@ -137,6 +140,7 @@ class DefaultProfileViewModel extends ProfileViewModel {
     await result.fold((e) => _fail(e), (value) async {
       saved = value;
       draft = value;
+      unawaited(_auth.rememberName(value.displayName));
       locale = value.locale;
       succeeded = true;
     });

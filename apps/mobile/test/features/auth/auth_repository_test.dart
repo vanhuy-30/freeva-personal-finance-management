@@ -67,16 +67,19 @@ void main() {
       expect(vault.value, isNull);
     },
   );
-  test('a session without a PIN restores into the app and has no PIN', () async {
-    await login();
-    final restored = AuthRepositoryImpl(api, vault, biometrics);
-    expect(
-      (await restored.restore()).getOrElse(() => AuthStage.signedOut),
-      AuthStage.unlocked,
-    );
-    expect((await restored.pinSet()).getOrElse(() => true), false);
-    expect(vault.value, isNotNull);
-  });
+  test(
+    'a session without a PIN restores into the app and has no PIN',
+    () async {
+      await login();
+      final restored = AuthRepositoryImpl(api, vault, biometrics);
+      expect(
+        (await restored.restore()).getOrElse(() => AuthStage.signedOut),
+        AuthStage.unlocked,
+      );
+      expect((await restored.pinSet()).getOrElse(() => true), false);
+      expect(vault.value, isNotNull);
+    },
+  );
   test('biometrics require opt-in and cancellation stays locked', () async {
     await setup();
     expect((await repository.unlockBiometric('unlock')).isLeft(), true);
@@ -393,7 +396,10 @@ void main() {
       final cases = DefaultAuthUseCases(repository);
       Future<AuthError?> pin(String a, String b, String c) async =>
           (await cases.changePin(a, b, c)).fold((e) => e.code, (_) => null);
-      expect(await pin('123456', '654321', '654322'), AuthError.passwordMismatch);
+      expect(
+        await pin('123456', '654321', '654322'),
+        AuthError.passwordMismatch,
+      );
       expect(await pin('123456', '123456', '123456'), AuthError.invalidInput);
       expect(await pin('12345', '654321', '654321'), AuthError.invalidInput);
       Future<AuthError?> password(String a, String b, String c) async =>
@@ -425,4 +431,22 @@ void main() {
       expect(api.calls, 0);
     });
   });
+
+  test(
+    'the lock-screen name stays with the session and goes with it',
+    () async {
+      await login();
+      expect((await repository.savedName()).getOrElse(() => 'x'), isNull);
+      await repository.rememberName('  Minh ');
+      expect((await repository.savedName()).getOrElse(() => null), 'Minh');
+      final restarted = AuthRepositoryImpl(api, vault, biometrics);
+      await restarted.restore();
+      expect((await restarted.savedName()).getOrElse(() => null), 'Minh');
+      await repository.rememberName('  ');
+      expect((await repository.savedName()).getOrElse(() => 'x'), isNull);
+      await repository.rememberName('Lan');
+      await repository.forgetDevice();
+      expect((await repository.savedName()).getOrElse(() => 'x'), isNull);
+    },
+  );
 }
