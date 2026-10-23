@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
@@ -121,13 +122,6 @@ class _SyncPageState extends State<SyncPage> {
           ),
           children: [
             SyncStatusCard(model: model, now: now),
-            if (model.duplicateHint) ...[
-              const SizedBox(height: FreevaSpace.s3),
-              Text(
-                s.syncDuplicateNote,
-                style: FreevaTypography.bodyS.copyWith(color: c.textSecondary),
-              ),
-            ],
             if (holding && model.items.isNotEmpty)
               group(s.syncSectionHolding(model.items.length), [
                 for (final item in model.items)
@@ -145,6 +139,11 @@ class _SyncPageState extends State<SyncPage> {
                       item: item,
                       view: view(item),
                       detail: syncReasonLabel(s, item.reason),
+                      onView:
+                          item.status == SyncItemStatus.conflict &&
+                              item.server != null
+                          ? () => context.push('/sync/compare/${item.opId}')
+                          : null,
                       onRetry: syncCanRetry(item)
                           ? () => model.retry(item.opId)
                           : null,

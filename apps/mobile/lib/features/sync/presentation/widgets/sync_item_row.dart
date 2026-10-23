@@ -16,6 +16,7 @@ class SyncItemRow extends StatelessWidget {
     required this.item,
     required this.view,
     required this.detail,
+    this.onView,
     this.onRetry,
     this.onDiscard,
     this.compactAction = false,
@@ -27,6 +28,9 @@ class SyncItemRow extends StatelessWidget {
 
   /// Second line after the action: the reason, or the time.
   final String detail;
+
+  /// "Xem": opens the comparison of a conflict.
+  final VoidCallback? onView;
   final VoidCallback? onRetry;
   final VoidCallback? onDiscard;
 
@@ -91,11 +95,17 @@ class SyncItemRow extends StatelessWidget {
                     padding: const EdgeInsets.only(top: FreevaSpace.s1),
                     child: amount,
                   ),
-                if (!compactAction && (onRetry != null || onDiscard != null))
+                if (!compactAction &&
+                    (onView != null || onRetry != null || onDiscard != null))
                   Padding(
                     padding: const EdgeInsets.only(top: FreevaSpace.s1),
                     child: Wrap(
                       children: [
+                        if (onView != null)
+                          TextButton(
+                            onPressed: onView,
+                            child: Text(s.syncViewAction),
+                          ),
                         if (onRetry != null)
                           TextButton(
                             onPressed: onRetry,

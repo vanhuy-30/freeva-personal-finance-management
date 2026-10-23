@@ -1612,7 +1612,6 @@
       }
     }
   },
-  "syncBannerDuplicate": "You may have recorded one twice",
   "syncOffline": "No connection",
   "syncUnavailable": "Couldn’t send yet",
   "syncUnavailableSub": "Try again later",
@@ -1703,7 +1702,6 @@
   "syncFooter": "Your data stays on this device until it is sent.",
   "syncUpdateTitle": "Freeva needs an update",
   "syncUpdateBody": "To keep syncing. Your changes are kept.",
-  "syncDuplicateNote": "You may have recorded a similar one. Both are kept.",
   "syncDiscardTitle": "Discard this change?",
   "syncDiscardMessage": "{name} {amount} won’t be saved.",
   "@syncDiscardMessage": {
@@ -1735,5 +1733,50 @@
     }
   },
   "syncChipReview": "Needs a look",
-  "syncChipWaiting": "Waiting to sync"
+  "syncChipWaiting": "Waiting to sync",
+  "syncViewAction": "View",
+  "syncCompareTitle": "Choose which to keep",
+  "syncCompareIntroA": "{name} was just changed on another device. The differences are ",
+  "@syncCompareIntroA": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "syncCompareIntroB": "highlighted",
+  "syncCompareIntroC": ".",
+  "syncCompareMine": "This device’s version",
+  "syncCompareMineWhen": "You changed it {when}",
+  "@syncCompareMineWhen": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "syncCompareSaved": "Saved version",
+  "syncCompareSavedWhen": "Changed elsewhere {when}",
+  "@syncCompareSavedWhen": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "syncCompareSavedNoTime": "Saved on the server",
+  "syncCompareDeleted": "Deleted",
+  "syncFieldAmount": "Amount",
+  "syncFieldCategory": "Category",
+  "syncFieldNotes": "Note",
+  "syncFieldDate": "Date",
+  "syncFieldMerchant": "Store",
+  "syncKeepSaved": "Keep the saved version",
+  "syncKeepMine": "Keep this device’s version",
+  "syncDupTitle": "You may have recorded this already",
+  "syncDupSub": "These two look the same.",
+  "syncDupJust": "JUST RECORDED",
+  "syncDupExisting": "ALREADY THERE",
+  "syncDupKeepBoth": "Keep both",
+  "syncDupDeleteNew": "Delete the new one"
 }

@@ -59,7 +59,7 @@ class FakeSyncViewModel extends ChangeNotifier implements SyncViewModel {
   @override
   bool schemaMismatch = false;
   @override
-  bool duplicateHint = false;
+  SyncDuplicate? duplicate;
 
   void applied() {
     appliedEpoch++;

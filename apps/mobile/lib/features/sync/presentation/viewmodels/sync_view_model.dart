@@ -24,13 +24,20 @@ abstract class SyncViewModel extends ChangeNotifier {
   DateTime? get lastSyncedAt;
   bool get syncing;
   bool get schemaMismatch;
-  bool get duplicateHint;
+
+  /// A just-synced transaction that looks like an earlier one; the screen asks
+  /// once, then calls [dismissDuplicate].
+  SyncDuplicate? get duplicate;
+  void dismissDuplicate();
   int get appliedEpoch;
   Future<void> enqueue(SyncMutation mutation);
   Future<void> discard(String opId);
 
   /// Sends a failed change again.
   Future<void> retry(String opId);
+
+  /// Keeps the person's version of a conflict and sends it again.
+  Future<void> keepLocal(String opId);
   Future<void> acknowledge({String? clientId, String? serverId});
   Future<void> flush();
   Future<void> clear();
@@ -72,7 +79,8 @@ class DefaultSyncViewModel extends SyncViewModel {
   @override
   bool schemaMismatch = false;
   @override
-  bool duplicateHint = false;
+  SyncDuplicate? duplicate;
+  final List<SyncDuplicate> _duplicates = [];
   @override
   int get appliedEpoch => _applied;
 
@@ -113,6 +121,19 @@ class DefaultSyncViewModel extends SyncViewModel {
   }
 
   @override
+  void dismissDuplicate() {
+    duplicate = _duplicates.isEmpty ? null : _duplicates.removeAt(0);
+    notifyListeners();
+  }
+
+  @override
+  Future<void> keepLocal(String opId) async {
+    items = await _cases.keepLocal(opId);
+    notifyListeners();
+    await flush();
+  }
+
+  @override
   Future<void> acknowledge({String? clientId, String? serverId}) async {
     items = await _cases.acknowledge(clientId: clientId, serverId: serverId);
     notifyListeners();
@@ -127,7 +148,8 @@ class DefaultSyncViewModel extends SyncViewModel {
     final outcome = await _cases.flush();
     items = outcome.items;
     schemaMismatch = outcome.schemaMismatch;
-    duplicateHint = outcome.duplicateHint;
+    _duplicates.addAll(outcome.duplicates);
+    duplicate ??= _duplicates.isEmpty ? null : _duplicates.removeAt(0);
     lastSyncedAt = outcome.lastSyncedAt ?? lastSyncedAt;
     link = switch (outcome.authError) {
       AuthError.network => SyncLink.offline,
@@ -148,7 +170,8 @@ class DefaultSyncViewModel extends SyncViewModel {
     lastSyncedAt = null;
     link = SyncLink.ok;
     schemaMismatch = false;
-    duplicateHint = false;
+    duplicate = null;
+    _duplicates.clear();
     syncing = false;
     notifyListeners();
   }
