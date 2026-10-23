@@ -12,7 +12,7 @@
 | Phần | Trạng thái | Tài liệu |
 |---|---|---|
 | Foundations, tokens, components, states, guidelines | Chốt | [design-system.md](design-system.md) |
-| **A** Onboarding + tài khoản | **Chốt** 2026-10-21 | [patterns/A-onboarding-auth.md](patterns/A-onboarding-auth.md) |
+| **A** Onboarding + tài khoản | **Chốt** 2026-10-21, sửa luồng 2026-10-23 | [patterns/A-onboarding-auth.md](patterns/A-onboarding-auth.md) |
 | **B** Tổng quan | **Chốt** 2026-10-21 | [patterns/B-overview.md](patterns/B-overview.md) |
 | **C** Giao dịch | **Chốt** 2026-10-21 | [patterns/C-transactions.md](patterns/C-transactions.md) |
 | **D** Ví | **Chốt** 2026-10-21 | [patterns/D-wallets.md](patterns/D-wallets.md) |
@@ -52,7 +52,8 @@ Tám nhóm A–H đã chốt. Còn:
 ## Phản hồi đã nhận (áp cho mọi nhóm)
 
 - **Chữ ngắn, cô đọng.** Tiêu đề ngắn, tối đa một dòng phụ. Giọng ấm nhưng không màu mè.
-- **Không đưa chi tiết kỹ thuật lên UI** (độ dài mã, điều kiện hệ thống, nhãn bước kỹ thuật).
+- **Không đưa chi tiết kỹ thuật lên UI** (độ dài mã, điều kiện hệ thống, nhãn bước kỹ thuật). Ngoại lệ: điều kiện mật khẩu hiện thành danh sách tự tick khi tạo/đặt lại mật khẩu (2026-10-23).
+- **Tạo tài khoản trước khi hỏi cá nhân hoá** (2026-10-23): câu trả lời cần chỗ lưu; bước bảo mật (xác nhận email, PIN, Face ID) luôn có "Để sau" và nút đi tiếp rõ ràng. PIN luôn nhập lại một lần.
 - **Không lạm dụng logo**; logo chỉ ở splash và app icon.
 - **Không bắt người dùng nhập tiền sớm.** Hỏi điều dễ trước, việc tốn công sau và cho bỏ qua.
 - **Mỗi màn không giống Tổng quan:** dùng đúng loại màn trong spec (danh sách, nhập liệu, chi tiết, cài đặt).
