@@ -215,6 +215,49 @@ paths:
             const: root
           description: Omit for all levels; root for null parent; UUID for direct children. Foreign/missing parent
             returns 404.
+  /api/v1/categories/{id}/usage:
+    get:
+      operationId: getCategoryUsage
+      summary: Count transactions that deleting this category would move
+      description: Every transaction of the owner in this category, soft-deleted ones included (the same rows DELETE
+        moves to replacementCategoryId). Used by the delete popup (DS-P2-003).
+      tags:
+      - Categories
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Usage
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [transactionCount]
+                properties:
+                  transactionCount:
+                    type: integer
+                    minimum: 0
+        '400':
+          $ref: '#/components/responses/CategoryValidationError'
+        '401':
+          $ref: '#/components/responses/CategoryUnauthorized'
+        '404':
+          $ref: '#/components/responses/CategoryNotFound'
+        '503':
+          $ref: '#/components/responses/CategoryUnavailable'
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
   /api/v1/categories/{id}:
     get:
       operationId: getCategory
@@ -2559,7 +2602,8 @@ components:
         kind:
           type: string
           enum: [expense, income, both]
-          description: Server-managed; custom defaults to both. Not enforced on transaction write in Phase 1.
+          description: Chi / Thu tab. Set on create (default both); a subcategory always has its parent's kind and
+            takes the new parent's kind when moved. Not enforced on transaction write in Phase 1.
         parentId:
           type:
           - string
@@ -2570,7 +2614,8 @@ components:
           - string
           - 'null'
           maxLength: 100
-          description: Token name from GET /categories/options, never a hex color.
+          description: One of GET /categories/options colorTokens (or null), never a hex color. A row that already holds
+            another catalog key may keep it unchanged.
         iconToken:
           type:
           - string
@@ -2578,19 +2623,40 @@ components:
           enum:
           - category
           - food
-          - transport
-          - housing
-          - bills
+          - coffee
+          - groceries
           - shopping
-          - health
-          - education
-          - entertainment
-          - family
+          - clothes
           - gifts
+          - transport
+          - bus
+          - fuel
           - travel
+          - housing
+          - repair
+          - electricity
+          - water
+          - internet
+          - phone
+          - health
+          - medicine
+          - sports
+          - family
+          - pets
+          - beauty
+          - education
+          - books
+          - music
+          - entertainment
+          - games
           - salary
           - bonus
+          - investment
+          - work
           - other_income
+          - bills
+          - insurance
+          - subscription
           - other_expense
           - null
         groupId:
@@ -2622,7 +2688,13 @@ components:
       required:
       - clientId
       - name
+      description: Two levels only (DS-P2-003) — parentId must be a root category; otherwise 400.
       properties:
+        kind:
+          type: string
+          enum: [expense, income, both]
+          default: both
+          description: Tab the category is created on. Ignored for a subcategory, which takes its parent's kind.
         clientId:
           type: string
           format: uuid
@@ -2641,7 +2713,8 @@ components:
           - string
           - 'null'
           maxLength: 100
-          description: Token name from GET /categories/options, never a hex color.
+          description: One of GET /categories/options colorTokens (or null), never a hex color. A row that already holds
+            another catalog key may keep it unchanged.
         iconToken:
           type:
           - string
@@ -2649,19 +2722,40 @@ components:
           enum:
           - category
           - food
-          - transport
-          - housing
-          - bills
+          - coffee
+          - groceries
           - shopping
-          - health
-          - education
-          - entertainment
-          - family
+          - clothes
           - gifts
+          - transport
+          - bus
+          - fuel
           - travel
+          - housing
+          - repair
+          - electricity
+          - water
+          - internet
+          - phone
+          - health
+          - medicine
+          - sports
+          - family
+          - pets
+          - beauty
+          - education
+          - books
+          - music
+          - entertainment
+          - games
           - salary
           - bonus
+          - investment
+          - work
           - other_income
+          - bills
+          - insurance
+          - subscription
           - other_expense
           - null
     UpdateCategoryRequest:
@@ -2669,6 +2763,8 @@ components:
       additionalProperties: false
       required:
       - version
+      description: A new parentId must be a root, and a category with children cannot get a parent (400 / 409).
+        Rows nested deeper before DS-P2-003 can still be edited in place.
       properties:
         version:
           type: integer
@@ -2689,7 +2785,8 @@ components:
           - string
           - 'null'
           maxLength: 100
-          description: Token name from GET /categories/options, never a hex color.
+          description: One of GET /categories/options colorTokens (or null), never a hex color. A row that already holds
+            another catalog key may keep it unchanged.
         iconToken:
           type:
           - string
@@ -2697,19 +2794,40 @@ components:
           enum:
           - category
           - food
-          - transport
-          - housing
-          - bills
+          - coffee
+          - groceries
           - shopping
-          - health
-          - education
-          - entertainment
-          - family
+          - clothes
           - gifts
+          - transport
+          - bus
+          - fuel
           - travel
+          - housing
+          - repair
+          - electricity
+          - water
+          - internet
+          - phone
+          - health
+          - medicine
+          - sports
+          - family
+          - pets
+          - beauty
+          - education
+          - books
+          - music
+          - entertainment
+          - games
           - salary
           - bonus
+          - investment
+          - work
           - other_income
+          - bills
+          - insurance
+          - subscription
           - other_expense
           - null
         archived:
@@ -2747,9 +2865,13 @@ components:
       required:
       - colorTokens
       - iconTokens
+      description: Picker choices in display order (DS-P2-003). colorTokens is the 20-colour grid after "no colour";
+        iconTokens is 36 icons in four groups of 6, 10, 11 and 9.
       properties:
         colorTokens:
           type: array
+          minItems: 20
+          maxItems: 20
           items:
             type: string
         iconTokens:
@@ -2757,21 +2879,41 @@ components:
           items:
             type: string
             enum:
-            - category
             - food
-            - transport
-            - housing
-            - bills
+            - coffee
+            - groceries
             - shopping
-            - health
-            - education
-            - entertainment
-            - family
+            - clothes
             - gifts
+            - transport
+            - bus
+            - fuel
             - travel
+            - housing
+            - repair
+            - electricity
+            - water
+            - internet
+            - phone
+            - health
+            - medicine
+            - sports
+            - family
+            - pets
+            - beauty
+            - education
+            - books
+            - music
+            - entertainment
+            - games
             - salary
             - bonus
+            - investment
+            - work
             - other_income
+            - bills
+            - insurance
+            - subscription
             - other_expense
     Tag:
       type: object

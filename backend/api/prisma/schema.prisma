@@ -97,6 +97,7 @@ model User {
   updatedAt           DateTime  @updatedAt @db.Timestamptz
   categoriesInitializedAt DateTime? @db.Timestamptz
   categoriesSupplementedAt DateTime? @db.Timestamptz
+  categoryIconsRefreshedAt DateTime? @db.Timestamptz
 
   oauthIdentities OAuthIdentity[]
   authTokens      AuthToken[]

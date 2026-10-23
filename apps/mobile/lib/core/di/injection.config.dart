@@ -33,8 +33,12 @@ import 'package:mobile/features/auth/presentation/auth_presentation_module.dart'
     as _i282;
 import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dart'
     as _i990;
+import 'package:mobile/features/categories/data/category_expansion_repository_impl.dart'
+    as _i226;
 import 'package:mobile/features/categories/data/category_repository_impl.dart'
     as _i613;
+import 'package:mobile/features/categories/domain/category_expansion_repository.dart'
+    as _i444;
 import 'package:mobile/features/categories/domain/category_repository.dart'
     as _i561;
 import 'package:mobile/features/categories/domain/category_use_cases.dart'
@@ -118,6 +122,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i810.LocalDeviceBiometrics());
     gh.lazySingleton<_i1017.FeatureFlagService>(
         () => const _i158.LocalFeatureFlagService());
+    gh.lazySingleton<_i444.CategoryExpansionRepository>(
+        () => _i226.CategoryExpansionRepositoryImpl());
     gh.lazySingleton<_i766.AppLogger>(() => _i760.AppLoggerImpl());
     gh.lazySingleton<_i88.AuthApi>(() => _i88.HttpAuthApi(
           gh<_i467.AppConfig>(),
@@ -188,11 +194,6 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i990.AuthViewModel>(),
           gh<_i1020.AnalyticsService>(),
         ));
-    gh.lazySingleton<_i961.CategoryViewModel>(
-        () => _i961.DefaultCategoryViewModel(
-              gh<_i221.CategoryUseCases>(),
-              gh<_i990.AuthViewModel>(),
-            ));
     gh.lazySingleton<_i336.WalletUseCases>(
         () => _i336.DefaultWalletUseCases(gh<_i107.WalletRepository>()));
     gh.factory<_i281.ProfileUseCases>(
@@ -202,6 +203,12 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i107.WalletRepository>(),
           gh<_i561.CategoryRepository>(),
         ));
+    gh.lazySingleton<_i961.CategoryViewModel>(
+        () => _i961.DefaultCategoryViewModel(
+              gh<_i221.CategoryUseCases>(),
+              gh<_i990.AuthViewModel>(),
+              gh<_i444.CategoryExpansionRepository>(),
+            ));
     gh.lazySingleton<_i887.ProfileViewModel>(
         () => _i887.DefaultProfileViewModel(
               gh<_i281.ProfileUseCases>(),

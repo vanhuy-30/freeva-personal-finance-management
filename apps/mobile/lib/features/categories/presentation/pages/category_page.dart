@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-import '../../../../core/router/nav_back.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
+import '../../../../core/router/nav_back.dart';
+import '../../../../core/widgets/freeva_icon_button.dart';
+import '../../../../core/widgets/freeva_toast.dart';
+import '../../../../core/widgets/freeva_top_bar.dart';
+import '../../domain/finance_category.dart';
 import '../viewmodels/category_view_model.dart';
-import '../widgets/category_editor.dart';
-import '../widgets/category_labels.dart';
-import '../widgets/category_list.dart';
+import '../widgets/category_list_body.dart';
+import 'category_editor_page.dart';
 
+/// Danh mục (E, màn 1). A pushed screen, so no bottom nav.
 class CategoryPage extends StatefulWidget {
   const CategoryPage({super.key});
   @override
@@ -16,85 +20,90 @@ class CategoryPage extends StatefulWidget {
 }
 
 class _CategoryPageState extends State<CategoryPage> {
-  late final CategoryViewModel model;
-  bool archived = false;
+  late final CategoryViewModel model = getIt<CategoryViewModel>();
+  bool income = false;
+
   @override
   void initState() {
     super.initState();
-    model = getIt<CategoryViewModel>();
+    model.addListener(_changed);
     Future.microtask(model.load);
   }
 
+  /// A write that hit a conflict leaves the list stale: fetch it again.
+  void _changed() {
+    if (model.needsReload && !model.busy) Future.microtask(model.load);
+  }
+
   @override
-  Widget build(BuildContext context) => ListenableBuilder(
-    listenable: model,
-    builder: (context, _) {
-      final s = S.of(context);
-      final canAdd = !model.busy && !model.needsReload && model.options.isReady;
-      return Scaffold(
-        appBar: AppBar(
-          title: Text(s.categoryTitle),
-          leading: IconButton(
-            tooltip: s.profileBack,
-            icon: const Icon(LucideIcons.arrowLeft),
-            onPressed: () => context.popOrGo('/home'),
+  void dispose() {
+    model.removeListener(_changed);
+    super.dispose();
+  }
+
+  bool get _ready => !model.busy && !model.needsReload && model.options.isReady;
+
+  Future<void> _open({FinanceCategory? category}) async {
+    if (!_ready) return;
+    final result = await openCategoryEditor(
+      context,
+      model,
+      category: category,
+      kind: income ? CategoryKind.income : CategoryKind.expense,
+    );
+    if (!mounted || category == null || result == null) return;
+    final s = S.of(context);
+    switch (result) {
+      case CategoryEditResult.saved:
+        break;
+      case CategoryEditResult.hidden:
+        // Hidden without asking; "Hoàn tác" restores it right away.
+        showFreevaToast(
+          context,
+          message: s.categoryHiddenToast(category.name),
+          actionLabel: s.commonUndo,
+          onAction: () {
+            final hidden = model.categories
+                .where((c) => c.id == category.id)
+                .firstOrNull;
+            if (hidden != null && hidden.archived) model.restore(hidden);
+          },
+          aboveNav: false,
+        );
+      case CategoryEditResult.deleted:
+        showFreevaToast(
+          context,
+          message: s.categoryDeletedToast(category.name),
+          aboveNav: false,
+        );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    return ListenableBuilder(
+      listenable: model,
+      builder: (context, _) => Scaffold(
+        appBar: FreevaTopBar(
+          title: s.categoryTitle,
+          onLeading: () => context.popOrGo('/home'),
+          action: FreevaIconButton(
+            icon: LucideIcons.plus,
+            label: s.categoryAdd,
+            onPressed: model.options.isReady && !model.needsReload
+                ? _open
+                : null,
           ),
         ),
-        body: SafeArea(
-          child: Column(
-            children: [
-              if (model.busy) const LinearProgressIndicator(),
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    SwitchListTile(
-                      title: Text(s.categoryShowHidden),
-                      value: archived,
-                      onChanged: (value) => setState(() => archived = value),
-                    ),
-                    if (model.failure != null)
-                      Semantics(
-                        liveRegion: true,
-                        child: Text(
-                          categoryError(s, model.failure!),
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.error,
-                          ),
-                        ),
-                      ),
-                    if (model.needsReload) Text(s.categoryReloadRequired),
-                    Wrap(
-                      spacing: 12,
-                      children: [
-                        OutlinedButton(
-                          onPressed: model.busy ? null : model.load,
-                          child: Text(s.profileReload),
-                        ),
-                        FilledButton.icon(
-                          icon: const Icon(LucideIcons.plus),
-                          label: Text(s.categoryAdd),
-                          onPressed: canAdd
-                              ? () => Navigator.of(context).push(
-                                  MaterialPageRoute<void>(
-                                    builder: (_) =>
-                                        CategoryEditor(model: model),
-                                  ),
-                                )
-                              : null,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: CategoryList(model: model, archived: archived),
-              ),
-            ],
-          ),
+        body: CategoryListBody(
+          model: model,
+          income: income,
+          onTab: (value) => setState(() => income = value),
+          onOpen: (category) => _open(category: category),
+          onAdd: _open,
         ),
-      );
-    },
-  );
+      ),
+    );
+  }
 }

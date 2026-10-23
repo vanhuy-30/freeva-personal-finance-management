@@ -13,7 +13,7 @@ import '../wallet_labels.dart';
 import 'credit_card_fields.dart';
 import 'currency_sheet.dart';
 import 'locked_field.dart';
-import 'picker_field.dart';
+import '../../../../../core/widgets/freeva_picker_field.dart';
 import 'wallet_type_grid.dart';
 
 /// Fields of the add / edit form. A wallet with transactions shows type and

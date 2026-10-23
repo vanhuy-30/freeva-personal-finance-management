@@ -20,5 +20,19 @@ export const CATEGORY_COLORS = [
   "color.dark.textMuted",
   "color.dark.surface",
   "color.dark.canvas",
-  "color.dark.onPrimary"
+  "color.dark.onPrimary",
+  "color.category.blueDeep",
+  "color.category.oceanDeep",
+  "color.category.violetDeep",
+  "color.category.blueLight",
+  "color.category.violetLight",
+  "color.category.greenLight",
+  "color.category.yellowLight",
+  "color.category.pink",
+  "color.category.orange",
+  "color.category.brown",
+  "color.category.lime",
+  "color.category.olive",
+  "color.category.plum",
+  "color.category.gray"
 ] as const;

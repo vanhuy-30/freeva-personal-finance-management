@@ -147,6 +147,7 @@ class CategoryRepositoryImpl implements CategoryRepository {
         if (draft.parentId != null) 'parentId': draft.parentId,
         if (draft.colorToken != null) 'colorToken': draft.colorToken,
         if (draft.iconToken != null) 'iconToken': draft.iconToken,
+        'kind': draft.kind.name,
       };
     }
     return {
@@ -180,6 +181,13 @@ class CategoryRepositoryImpl implements CategoryRepository {
     'categories/${category.id}',
     _parse,
     body: {'version': category.version, 'archived': archived},
+  );
+
+  @override
+  Future<Either<AuthFailure, int>> usage(FinanceCategory category) => _request(
+    'GET',
+    'categories/${category.id}/usage',
+    (json) => json['transactionCount'] as int,
   );
 
   @override

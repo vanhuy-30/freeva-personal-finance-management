@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/viewmodels/auth_view_model.dart';
 import '../../features/auth/presentation/widgets/auth_gate.dart';
 import '../../features/categories/presentation/pages/category_page.dart';
+import '../../features/categories/presentation/pages/hidden_categories_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/home/presentation/pages/notifications_page.dart';
 import '../../features/transactions/domain/transaction.dart';
@@ -211,6 +212,13 @@ GoRouter _createAppRouter(
       GoRoute(
         path: '/categories',
         builder: (context, state) => const AuthGate(child: CategoryPage()),
+        routes: [
+          GoRoute(
+            path: 'hidden',
+            builder: (context, state) =>
+                const AuthGate(child: HiddenCategoriesPage()),
+          ),
+        ],
       ),
       GoRoute(
         path: '/profile',

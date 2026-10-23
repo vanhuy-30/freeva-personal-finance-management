@@ -322,6 +322,10 @@ class _Categories implements CategoryRepository {
     FinanceCategory category, {
     String? replacementCategoryId,
   }) => throw UnimplementedError();
+
+  @override
+  Future<Either<AuthFailure, int>> usage(FinanceCategory category) =>
+      throw UnimplementedError();
 }
 
 class _Api implements AuthorizedApi {

@@ -9,7 +9,7 @@ import '../../../../../core/widgets/freeva_text_field.dart';
 import '../../viewmodels/wallet_form.dart';
 import 'day_picker_dialog.dart';
 import 'form_pair.dart';
-import 'picker_field.dart';
+import '../../../../../core/widgets/freeva_picker_field.dart';
 
 /// Card rows of the form: debt + limit, statement day + due day (popup),
 /// and "Hạn mức và ngày có thể để trống."

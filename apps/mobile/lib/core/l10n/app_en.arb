@@ -200,30 +200,12 @@
   "categoryAdd": "Add category",
   "categoryEdit": "Edit category",
   "categoryName": "Category name",
-  "categoryParent": "Parent category",
-  "categoryNoParent": "No parent",
   "categoryColor": "Color",
-  "categoryNoColor": "No color",
   "categoryIcon": "Icon",
-  "categoryNoIcon": "No icon",
-  "categorySystem": "Default category",
-  "categoryShowHidden": "Show hidden categories",
-  "categoryHide": "Hide category",
-  "categoryRestore": "Restore category",
-  "categoryHideExplanation": "Hiding archives the category from the active list. Existing transactions keep it; hidden categories cannot be used for new records.",
-  "categoryHideBlocked": "Hide or move active child categories before hiding this one.",
-  "categoryDelete": "Delete category",
-  "categoryDeleteTitle": "Delete this category permanently?",
-  "categoryDeleteBody": "A deleted category cannot be restored. If any transaction still references it, including a soft-deleted one, choose a replacement.",
-  "categoryDeleteBlocked": "Delete or move every child, including hidden ones, before deleting this category.",
-  "categoryReplacement": "Replacement category",
-  "categoryNoReplacement": "Do not move transactions",
-  "categoryEmpty": "No categories yet.",
   "categoryHiddenEmpty": "No hidden categories.",
-  "categoryInvalid": "Check the name (1–100 characters), parent, color and icon. A category cannot be its own parent or sit under its child.",
-  "categoryConflict": "This category changed elsewhere. Reload the list before editing again.",
-  "categoryError": "Could not load or save categories. Please try again.",
-  "categoryReloadRequired": "The data is stale. Reload before editing again.",
+  "categoryInvalid": "Check the name and main category.",
+  "categoryConflict": "This category changed elsewhere. Open it again to edit.",
+  "categoryError": "Couldn't save the category. Try again.",
   "reportTitle": "Reports",
   "reportOverview": "Overview",
   "reportThisMonth": "This month",
@@ -943,5 +925,165 @@
         "type": "String"
       }
     }
-  }
+  },
+  "categoryTabExpense": "Expense",
+  "categoryTabIncome": "Income",
+  "categoryTabs": "Category type",
+  "categoryChildCount": "{count, plural, =1{1 subcategory} other{{count} subcategories}}",
+  "@categoryChildCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "categoryToggleSemantics": "{name}: show or hide subcategories",
+  "@categoryToggleSemantics": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "categoryHiddenTitle": "Hidden categories",
+  "categoryHiddenHint": "Past transactions keep these categories.",
+  "categoryRestoreShort": "Restore",
+  "categoryRestoreNamed": "Restore {name}",
+  "@categoryRestoreNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "categoryRestored": "{name} is back",
+  "@categoryRestored": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "categoryEmptyTitle": "No categories yet",
+  "categoryEmptyBody": "Add one to get started.",
+  "categoryLoadError": "Couldn't load categories",
+  "categoryIconFood": "Food",
+  "categoryIconCoffee": "Coffee",
+  "categoryIconGroceries": "Groceries",
+  "categoryIconShopping": "Shopping",
+  "categoryIconClothes": "Clothes",
+  "categoryIconGifts": "Gifts",
+  "categoryIconTransport": "Car, motorbike",
+  "categoryIconBus": "Bus",
+  "categoryIconFuel": "Fuel",
+  "categoryIconTravel": "Travel",
+  "categoryIconHousing": "Home",
+  "categoryIconRepair": "Repairs",
+  "categoryIconElectricity": "Electricity",
+  "categoryIconWater": "Water",
+  "categoryIconInternet": "Internet",
+  "categoryIconPhone": "Phone",
+  "categoryIconHealth": "Health",
+  "categoryIconMedicine": "Medicine",
+  "categoryIconSports": "Sports",
+  "categoryIconFamily": "Family",
+  "categoryIconPets": "Pets",
+  "categoryIconBeauty": "Beauty",
+  "categoryIconEducation": "Learning",
+  "categoryIconBooks": "Books",
+  "categoryIconMusic": "Music",
+  "categoryIconEntertainment": "Movies",
+  "categoryIconGames": "Games",
+  "categoryIconSalary": "Salary",
+  "categoryIconBonus": "Bonus",
+  "categoryIconInvestment": "Investing",
+  "categoryIconWork": "Work",
+  "categoryIconOtherIncome": "Savings",
+  "categoryIconBills": "Taxes, fees",
+  "categoryIconInsurance": "Insurance",
+  "categoryIconSubscription": "Subscriptions",
+  "categoryIconOtherExpense": "Other",
+  "categoryColorNone": "No colour",
+  "categoryColorBrandPrimary": "Blue",
+  "categoryColorBlueDeep": "Deep blue",
+  "categoryColorBrandSecondary": "Sky",
+  "categoryColorOceanDeep": "Deep ocean",
+  "categoryColorBrandAccent": "Violet",
+  "categoryColorVioletDeep": "Deep violet",
+  "categoryColorSuccess": "Green",
+  "categoryColorWarning": "Yellow",
+  "categoryColorBlueLight": "Light blue",
+  "categoryColorBrandHighlight": "Light sky",
+  "categoryColorVioletLight": "Light violet",
+  "categoryColorGreenLight": "Light green",
+  "categoryColorYellowLight": "Light yellow",
+  "categoryColorPink": "Pink",
+  "categoryColorOrange": "Orange",
+  "categoryColorBrown": "Brown",
+  "categoryColorLime": "Lime",
+  "categoryColorOlive": "Olive",
+  "categoryColorPlum": "Plum",
+  "categoryColorGray": "Grey",
+  "categoryIconGroupFood": "Food · shopping",
+  "categoryIconGroupHome": "Getting around · home",
+  "categoryIconGroupLife": "Health · family · fun",
+  "categoryIconGroupMoney": "Income · money",
+  "categoryLevelMain": "Main category",
+  "categoryLevelChild": "Subcategory",
+  "categoryParentField": "Under",
+  "categoryPickParent": "Pick a main category",
+  "categoryParentSheet": "Main category",
+  "categoryParentMissing": "Pick a main category.",
+  "categoryNameMissing": "Give it a name.",
+  "categoryMoreIcons": "More icons",
+  "categoryIconSearch": "Search: fuel, pets…",
+  "categoryIconSearchLabel": "Search icons",
+  "categoryIconDone": "Done",
+  "categoryIconNoMatch": "No icons match.",
+  "categorySave": "Save category",
+  "categorySaveChanges": "Save changes",
+  "categoryHideShort": "Hide",
+  "categoryDeleteShort": "Delete",
+  "categoryChildrenBlock": "{count, plural, =1{1 subcategory left} other{{count} subcategories left}}",
+  "@categoryChildrenBlock": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "categoryHiddenToast": "{name} hidden",
+  "@categoryHiddenToast": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "categoryDeletedToast": "{name} deleted",
+  "@categoryDeletedToast": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "categoryDeleteQuestion": "Delete “{name}”?",
+  "@categoryDeleteQuestion": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "categoryDeleteNoUndo": "This can't be undone.",
+  "categoryDeleteMove": "This can't be undone. {count, plural, =1{1 transaction moves} other{{count} transactions move}} to:",
+  "@categoryDeleteMove": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "categoryMoveTo": "Move transactions to"
 }

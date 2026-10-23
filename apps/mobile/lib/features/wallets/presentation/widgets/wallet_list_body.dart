@@ -7,10 +7,10 @@ import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/error_retry.dart';
 import '../../../../core/widgets/freeva_card.dart';
+import '../../../../core/widgets/hidden_items_link.dart';
 import '../../../../core/widgets/skeleton.dart';
 import '../../domain/wallet_totals.dart';
 import '../viewmodels/wallet_view_model.dart';
-import 'hidden_wallets_link.dart';
 import 'wallet_list_row.dart';
 import 'wallet_total_header.dart';
 
@@ -60,7 +60,8 @@ class WalletListBody extends StatelessWidget {
     }
     final link = hiddenCount == 0
         ? null
-        : HiddenWalletsLink(
+        : HiddenItemsLink(
+            label: s.walletHiddenTitle,
             count: hiddenCount,
             onTap: () => context.push('/wallets/hidden'),
           );

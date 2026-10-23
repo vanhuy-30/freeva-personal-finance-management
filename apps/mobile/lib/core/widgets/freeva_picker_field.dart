@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-import '../../../../../core/theme/theme_context.dart';
-import '../../../../../core/theme/tokens.g.dart';
+import '../theme/theme_context.dart';
+import '../theme/tokens.g.dart';
 
 /// Form field that opens a choice (currency, day): label above the value,
 /// optional 32 icon tile in front, chevron at the end. 60 high.
@@ -16,6 +16,8 @@ class PickerField extends StatelessWidget {
     super.key,
   });
 
+  /// Shown above the value; empty when the context already says it (the
+  /// value alone is then read).
   final String label;
   final String value;
 
@@ -31,7 +33,7 @@ class PickerField extends StatelessWidget {
     return Semantics(
       container: true,
       button: true,
-      label: '$label, $value',
+      label: label.isEmpty ? value : '$label, $value',
       excludeSemantics: true,
       child: Material(
         color: c.inputBg,
@@ -59,16 +61,18 @@ class PickerField extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          label,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: FreevaTypography.label.copyWith(
-                            fontWeight: FontWeight.w400,
-                            color: c.textSecondary,
+                        if (label.isNotEmpty) ...[
+                          Text(
+                            label,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: FreevaTypography.label.copyWith(
+                              fontWeight: FontWeight.w400,
+                              color: c.textSecondary,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 2),
+                          const SizedBox(height: 2),
+                        ],
                         Text(
                           value,
                           maxLines: 1,

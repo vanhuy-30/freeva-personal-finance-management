@@ -5,7 +5,8 @@ import { PrismaService } from '../../../infrastructure/prisma/prisma.service';
 import { touchFinancialOwner } from '../../../infrastructure/prisma/financial-owner-lock';
 import type { CategoryRepository } from '../domain/category.repository';
 import {
-  assertParent, assertVersion, CategoryError, DEFAULT_CATEGORIES, supplementPlan,
+  assertPaletteColor, assertParent, assertTwoLevels, assertVersion, CategoryError, DEFAULT_CATEGORIES, iconRefreshPlan,
+  supplementPlan,
   type Category, type CategoryInput, type CategoryPatch, type CategoryQuery, type SupplementRow,
 } from '../domain/category';
 // Explicit public projection: never return userId or internal account data.
@@ -72,35 +73,51 @@ export class PrismaCategoryRepository implements CategoryRepository {
       });
     }
   }
+  /** Specific icons for untouched system defaults; bumps version so other devices refetch. */
+  private async refreshIcons(tx: Prisma.TransactionClient, userId: string) {
+    const rows = await tx.category.findMany({ where: { userId }, select: supplementSelect });
+    for (const update of iconRefreshPlan(rows)) {
+      await tx.category.update({ where: { id: update.id }, data: { iconToken: update.iconToken, version: { increment: 1 } } });
+    }
+  }
   initialize(userId: string) {
     return this.write(userId, async tx => {
       const owner = await tx.user.findUniqueOrThrow({
         where: { id: userId },
-        select: { categoriesInitializedAt: true, categoriesSupplementedAt: true },
+        select: { categoriesInitializedAt: true, categoriesSupplementedAt: true, categoryIconsRefreshedAt: true },
       });
       const now = new Date();
       if (!owner.categoriesInitializedAt) {
         await this.seedDefaults(tx, userId);
         await tx.user.update({
           where: { id: userId },
-          data: { categoriesInitializedAt: now, categoriesSupplementedAt: now },
+          data: { categoriesInitializedAt: now, categoriesSupplementedAt: now, categoryIconsRefreshedAt: now },
         });
         return;
       }
-      if (owner.categoriesSupplementedAt) return;
-      const rows = await tx.category.findMany({ where: { userId }, select: supplementSelect });
-      await this.applySupplement(tx, userId, rows);
-      await tx.user.update({ where: { id: userId }, data: { categoriesSupplementedAt: now } });
+      if (!owner.categoriesSupplementedAt) {
+        const rows = await tx.category.findMany({ where: { userId }, select: supplementSelect });
+        await this.applySupplement(tx, userId, rows);
+        await tx.user.update({ where: { id: userId }, data: { categoriesSupplementedAt: now } });
+      }
+      if (owner.categoryIconsRefreshedAt) return;
+      await this.refreshIcons(tx, userId);
+      await tx.user.update({ where: { id: userId }, data: { categoryIconsRefreshedAt: now } });
     });
   }
   create(userId: string, input: CategoryInput) {
     return this.write(userId, async tx => {
+      const tree = await tx.category.findMany({ where: { userId }, select });
+      // A subcategory always has its parent's kind; normalize before comparing a replay.
+      const parent = input.parentId ? tree.find(row => row.id === input.parentId) : undefined;
+      if (parent) input = { ...input, kind: parent.kind };
       const existing = await tx.category.findUnique({ where: { userId_clientId: { userId, clientId: input.clientId } }, select });
       if (existing) {
         if (existing.isSystem || (Object.keys(input) as (keyof CategoryInput)[]).some(key => existing[key] !== input[key])) throw new CategoryError('CATEGORY_CONFLICT');
         return { category: existing, created: false };
       }
-      assertParent(undefined, input.parentId, await tx.category.findMany({ where: { userId }, select }), true);
+      assertTwoLevels(undefined, input.parentId, tree);
+      assertParent(undefined, input.parentId, tree, true);
       return { category: await tx.category.create({ data: { ...input, userId }, select }), created: true };
     });
   }
@@ -135,11 +152,24 @@ export class PrismaCategoryRepository implements CategoryRepository {
       const tree = await tx.category.findMany({ where: { userId }, select });
       const archived = patch.archived ?? (current.archivedAt !== null);
       if (archived && tree.some(row => row.parentId === id && !row.archivedAt)) throw new CategoryError('CATEGORY_CONFLICT');
+      assertPaletteColor(patch.colorToken, current.colorToken);
+      const moved = patch.parentId !== undefined && patch.parentId !== current.parentId;
+      if (moved) assertTwoLevels(id, patch.parentId ?? null, tree);
       assertParent(id, patch.parentId === undefined ? current.parentId : patch.parentId, tree, !archived);
       const { version: _version, archived: _archived, ...fields } = patch;
+      // Moving under a parent takes its kind, so the subcategory stays on the same Chi / Thu tab.
+      const parent = moved && patch.parentId ? tree.find(row => row.id === patch.parentId) : undefined;
       return tx.category.update({ where: { id, userId, version: patch.version }, data: { ...fields,
+        ...(parent ? { kind: parent.kind } : {}),
         archivedAt: archived ? current.archivedAt ?? new Date() : null, version: { increment: 1 } }, select });
     });
+  }
+  transactionCount(userId: string, id: string) {
+    return this.prisma.$transaction(async tx => {
+      await this.get(tx, userId, id);
+      // Same rows delete moves: every transaction of the owner in this category, deleted or not.
+      return tx.transaction.count({ where: { userId, categoryId: id } });
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead });
   }
   delete(userId: string, id: string, version: number, replacementCategoryId?: string) {
     return this.write(userId, async tx => {

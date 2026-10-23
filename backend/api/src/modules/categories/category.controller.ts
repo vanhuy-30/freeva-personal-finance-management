@@ -23,6 +23,8 @@ export class CategoryController {
   }
   @Get() @Header('Cache-Control', 'no-store')
   list(@Req() req: AuthRequest, @Query() query: CategoryQueryDto) { return this.categories.list(req.session.userId, query); }
+  @Get(':id/usage') @Header('Cache-Control', 'no-store')
+  usage(@Req() req: AuthRequest, @Param() params: CategoryIdDto) { return this.categories.usage(req.session.userId, params.id); }
   @Get(':id') @Header('Cache-Control', 'no-store')
   find(@Req() req: AuthRequest, @Param() params: CategoryIdDto) { return this.categories.find(req.session.userId, params.id); }
   @Patch(':id') @Header('Cache-Control', 'no-store')

@@ -15,6 +15,9 @@ abstract class CategoryRepository {
     FinanceCategory category, {
     required bool archived,
   });
+
+  /// Transactions that deleting [category] would move (deleted ones too).
+  Future<Either<AuthFailure, int>> usage(FinanceCategory category);
   Future<Either<AuthFailure, void>> delete(
     FinanceCategory category, {
     String? replacementCategoryId,

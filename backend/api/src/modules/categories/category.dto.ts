@@ -1,6 +1,6 @@
 import { Transform, Type } from 'class-transformer';
 import { IsBoolean, IsIn, IsInt, IsString, IsUUID, Length, Max, Min, ValidateIf } from 'class-validator';
-import { CATEGORY_ICONS } from './domain/category';
+import { CATEGORY_ICONS, CATEGORY_KINDS, type CategoryKind } from './domain/category';
 const optional = (_: unknown, value: unknown) => value !== undefined;
 const nullable = (_: unknown, value: unknown) => value !== undefined && value !== null;
 const trim = ({ value }: { value: unknown }) => typeof value === 'string' ? value.trim() : value;
@@ -11,6 +11,8 @@ export class CreateCategoryDto {
   @ValidateIf(nullable) @Transform(lower) @IsUUID() parentId?: string | null;
   @ValidateIf(nullable) @IsString() @Length(1, 100) colorToken?: string | null;
   @ValidateIf(nullable) @IsIn(CATEGORY_ICONS) iconToken?: string | null;
+  /** Chi / Thu tab it was created on; a subcategory takes its parent's kind instead. Default both. */
+  @ValidateIf(optional) @IsIn(CATEGORY_KINDS) kind?: CategoryKind;
 }
 export class UpdateCategoryDto {
   @IsInt() @Min(1) @Max(2147483646) version!: number;

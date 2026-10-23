@@ -5,6 +5,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../auth/domain/auth_repository.dart';
 import '../../../auth/presentation/viewmodels/auth_view_model.dart';
+import '../../domain/category_expansion_repository.dart';
 import '../../domain/category_use_cases.dart';
 import '../../domain/finance_category.dart';
 
@@ -26,16 +27,35 @@ abstract class CategoryViewModel extends ChangeNotifier {
     FinanceCategory category, {
     String? replacementCategoryId,
   });
+
+  /// How many transactions deleting [category] moves; null when unknown.
+  Future<int?> usage(FinanceCategory category);
+
+  /// Restores a hidden category, then its hidden subcategories (they are
+  /// listed under it in "Danh mục đã ẩn"). False if any step fails.
+  Future<bool> restore(FinanceCategory category);
+
+  /// Main categories whose subcategories are shown. Starts collapsed and is
+  /// remembered on this device.
+  Set<String> get expanded;
+  void toggleExpanded(String id);
+
+  /// Opens [id], for example after adding a subcategory to it.
+  void expand(String id);
 }
 
 @LazySingleton(as: CategoryViewModel)
 class DefaultCategoryViewModel extends CategoryViewModel {
-  DefaultCategoryViewModel(this._cases, this._auth) {
+  DefaultCategoryViewModel(this._cases, this._auth, [this._expansion]) {
     _stage = _auth.stage;
     _auth.addListener(_authChanged);
   }
   final CategoryUseCases _cases;
   final AuthViewModel _auth;
+  final CategoryExpansionRepository? _expansion;
+  bool _expansionRead = false;
+  @override
+  Set<String> expanded = const {};
   late AuthStage _stage;
   int _epoch = 0;
   @override
@@ -84,6 +104,11 @@ class DefaultCategoryViewModel extends CategoryViewModel {
     busy = true;
     failure = null;
     notifyListeners();
+    if (!_expansionRead && _expansion != null) {
+      _expansionRead = true;
+      expanded = Set.unmodifiable(await _expansion.read());
+      if (epoch != _epoch) return;
+    }
     final result = await _cases.manage();
     if (epoch != _epoch) return;
     result.fold(_fail, (value) {
@@ -198,6 +223,43 @@ class DefaultCategoryViewModel extends CategoryViewModel {
     busy = false;
     notifyListeners();
     return result.isRight();
+  }
+
+  @override
+  Future<int?> usage(FinanceCategory category) async {
+    final result = await _cases.usage(category);
+    return result.fold((error) {
+      if (error.code == AuthError.expired) _auth.sessionExpired();
+      return null;
+    }, (count) => count);
+  }
+
+  @override
+  Future<bool> restore(FinanceCategory category) async {
+    if (!category.archived || !await archive(category)) return false;
+    for (final child in [
+      for (final c in categories)
+        if (c.parentId == category.id && c.archived) c,
+    ]) {
+      if (!await archive(child)) return false;
+    }
+    return true;
+  }
+
+  @override
+  void toggleExpanded(String id) => _setExpanded(
+    expanded.contains(id) ? expanded.difference({id}) : {...expanded, id},
+  );
+
+  @override
+  void expand(String id) {
+    if (!expanded.contains(id)) _setExpanded({...expanded, id});
+  }
+
+  void _setExpanded(Set<String> value) {
+    expanded = Set.unmodifiable(value);
+    notifyListeners();
+    _expansion?.write(expanded);
   }
 
   @override
