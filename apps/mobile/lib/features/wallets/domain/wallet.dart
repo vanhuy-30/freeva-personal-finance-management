@@ -34,6 +34,7 @@ class Wallet {
     required this.version,
     required this.sortOrder,
     required this.archived,
+    this.hasTransactions = false,
   });
   final String id;
   final DateTime createdAt;
@@ -42,4 +43,7 @@ class Wallet {
   final int version;
   final int sortOrder;
   final bool archived;
+
+  /// Any transaction, deleted ones included: type and currency are locked.
+  final bool hasTransactions;
 }

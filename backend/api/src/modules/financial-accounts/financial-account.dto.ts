@@ -1,6 +1,7 @@
 import { Transform, Type } from 'class-transformer';
 import {
-  IsBoolean, IsIn, IsInt, IsString, IsUUID, Length, Matches, Max, MaxLength, Min, ValidateIf,
+  ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsIn, IsInt, IsString, IsUUID, Length, Matches, Max, MaxLength, Min,
+  ValidateIf, ValidateNested,
 } from 'class-validator';
 import { ACCOUNT_TYPES, type AccountType } from './domain/financial-account';
 
@@ -41,4 +42,12 @@ export class ArchiveAccountDto {
 }
 export class AccountIdDto {
   @IsUUID() id!: string;
+}
+export class AccountOrderItemDto {
+  @IsUUID() id!: string;
+  @IsInt() @Min(1) @Max(2147483646) version!: number;
+}
+export class ReorderAccountsDto {
+  @IsArray() @ArrayMinSize(1) @ArrayMaxSize(500) @ValidateNested({ each: true }) @Type(() => AccountOrderItemDto)
+  items!: AccountOrderItemDto[];
 }

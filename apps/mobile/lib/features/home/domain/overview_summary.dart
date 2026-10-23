@@ -122,27 +122,9 @@ List<int> _wholePercents(List<BigInt> parts, BigInt total) {
   return floors;
 }
 
-/// Credit wallets: used = debt (negative balance), next due date from dueDay.
+/// Credit wallets as cards, in wallet order.
 List<CreditCardStatus> creditCards(List<Wallet> wallets, DateTime today) => [
   for (final wallet in wallets)
     if (wallet.draft.type == WalletType.credit)
-      CreditCardStatus(
-        wallet: wallet,
-        used: wallet.balance < BigInt.zero ? -wallet.balance : BigInt.zero,
-        limit: wallet.draft.creditLimit,
-        nextDue: nextDueDate(wallet.draft.dueDay, today),
-      ),
+      CreditCardStatus.of(wallet, today),
 ];
-
-/// Next occurrence of [dueDay] on or after [today]; clamps to month end.
-DateTime? nextDueDate(int? dueDay, DateTime today) {
-  if (dueDay == null || dueDay < 1) return null;
-  DateTime on(int year, int month) {
-    final last = DateTime(year, month + 1, 0).day;
-    return DateTime(year, month, dueDay > last ? last : dueDay);
-  }
-
-  final day = DateTime(today.year, today.month, today.day);
-  final thisMonth = on(today.year, today.month);
-  return thisMonth.isBefore(day) ? on(today.year, today.month + 1) : thisMonth;
-}

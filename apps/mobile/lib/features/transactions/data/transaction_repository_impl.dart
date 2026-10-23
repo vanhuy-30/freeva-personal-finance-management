@@ -186,7 +186,13 @@ TransactionSummary _summary(Object? raw) {
           currency: (row as Map<String, dynamic>)['currency'] as String,
           income: BigInt.parse(row['incomeMinor'] as String),
           expense: BigInt.parse(row['expenseMinor'] as String),
+          transferIn: _optionalMinor(row['transferInMinor']),
+          transferOut: _optionalMinor(row['transferOutMinor']),
         ),
     ],
   );
 }
+
+/// Older servers omit transfer sums; treat that as zero.
+BigInt _optionalMinor(Object? raw) =>
+    raw == null ? BigInt.zero : BigInt.parse(raw as String);

@@ -44,10 +44,13 @@ export interface TransactionQuery {
   accountIds?: string[]; categoryIds?: string[]; tagIds?: string[];
   type?: TransactionType; from?: string; to?: string; search?: string;
 }
-/** Totals over the whole filtered result, not just the page. Transfers are counted once and excluded from income/expense. */
+/**
+ * Totals over the whole filtered result, not just the page. Transfers are counted once and excluded from income/expense;
+ * transfer legs matching the filter are summed apart (in > 0, out < 0) so a one-wallet filter gives that wallet's flow.
+ */
 export interface TransactionSummary {
   count: number;
-  totals: { currency: string; incomeMinor: bigint; expenseMinor: bigint }[];
+  totals: { currency: string; incomeMinor: bigint; expenseMinor: bigint; transferInMinor: bigint; transferOutMinor: bigint }[];
 }
 export function minor(value: string): bigint {
   if (!/^-?[0-9]+(?![\s\S])/.test(value) || value.length > 20) throw new TransactionError('VALIDATION_ERROR');

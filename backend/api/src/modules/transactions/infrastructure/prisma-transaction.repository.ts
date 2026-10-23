@@ -150,17 +150,20 @@ export class PrismaTransactionRepository implements TransactionRepository {
         LIMIT ${query.pageSize} OFFSET ${(query.page - 1) * query.pageSize}`);
       const [count] = await tx.$queryRaw<{ total: string; bundles: string }[]>(Prisma.sql`
         SELECT COUNT(*)::text AS total, COUNT(DISTINCT COALESCE(t."transferGroupId", t.id))::text AS bundles ${listed}`);
-      const totals = await tx.$queryRaw<{ currency: string; income: string; expense: string }[]>(Prisma.sql`
+      const totals = await tx.$queryRaw<{ currency: string; income: string; expense: string; transferIn: string; transferOut: string }[]>(Prisma.sql`
         SELECT t."currencyCode" AS currency,
           COALESCE(SUM(CASE WHEN t.type::text = 'income' THEN t."amountMinor" ELSE 0 END), 0)::text AS income,
-          COALESCE(SUM(CASE WHEN t.type::text = 'expense' THEN t."amountMinor" ELSE 0 END), 0)::text AS expense
+          COALESCE(SUM(CASE WHEN t.type::text = 'expense' THEN t."amountMinor" ELSE 0 END), 0)::text AS expense,
+          COALESCE(SUM(CASE WHEN t.type::text = 'transfer' AND t."amountMinor" > 0 THEN t."amountMinor" ELSE 0 END), 0)::text AS "transferIn",
+          COALESCE(SUM(CASE WHEN t.type::text = 'transfer' AND t."amountMinor" < 0 THEN t."amountMinor" ELSE 0 END), 0)::text AS "transferOut"
         ${listed}
         GROUP BY t."currencyCode" ORDER BY t."currencyCode"`);
       const summary = {
         count: Number(count.bundles),
         totals: totals
-          .map(row => ({ currency: row.currency.trim(), incomeMinor: BigInt(row.income), expenseMinor: BigInt(row.expense) }))
-          .filter(row => row.incomeMinor !== 0n || row.expenseMinor !== 0n),
+          .map(row => ({ currency: row.currency.trim(), incomeMinor: BigInt(row.income), expenseMinor: BigInt(row.expense),
+            transferInMinor: BigInt(row.transferIn), transferOutMinor: BigInt(row.transferOut) }))
+          .filter(row => [row.incomeMinor, row.expenseMinor, row.transferInMinor, row.transferOutMinor].some(value => value !== 0n)),
       };
       if (!ids.length) return { items: [], total: Number(count.total), summary };
       const rows = await tx.transaction.findMany({ where: { userId, id: { in: ids.map(row => row.id) } }, include });

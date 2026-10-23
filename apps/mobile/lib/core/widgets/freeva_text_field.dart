@@ -22,6 +22,7 @@ class FreevaTextField extends StatefulWidget {
     this.onSubmitted,
     this.tabular = false,
     this.maxLines = 1,
+    this.suffix,
     super.key,
   });
 
@@ -37,6 +38,9 @@ class FreevaTextField extends StatefulWidget {
   final ValueChanged<String>? onSubmitted;
   final bool tabular;
   final int maxLines;
+
+  /// Short unit after the value, such as "₫".
+  final String? suffix;
 
   @override
   State<FreevaTextField> createState() => _FreevaTextFieldState();
@@ -115,30 +119,49 @@ class _FreevaTextFieldState extends State<FreevaTextField> {
                 style: FreevaTypography.label.copyWith(color: labelColor),
               ),
               const SizedBox(height: 3),
-              TextField(
-                controller: widget.controller,
-                focusNode: _focus,
-                enabled: !widget.locked,
-                keyboardType: widget.keyboardType,
-                inputFormatters: widget.inputFormatters,
-                textInputAction: widget.textInputAction,
-                onChanged: widget.onChanged,
-                onSubmitted: widget.onSubmitted,
-                maxLines: widget.maxLines,
-                style: valueStyle,
-                // The box above draws border and fill; the theme's
-                // outlined input style must not apply here.
-                decoration: InputDecoration(
-                  isCollapsed: true,
-                  contentPadding: EdgeInsets.zero,
-                  filled: false,
-                  hintText: widget.hint,
-                  hintStyle: valueStyle.copyWith(color: c.textSecondary),
-                  border: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  disabledBorder: InputBorder.none,
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: widget.controller,
+                      focusNode: _focus,
+                      enabled: !widget.locked,
+                      keyboardType: widget.keyboardType,
+                      inputFormatters: widget.inputFormatters,
+                      textInputAction: widget.textInputAction,
+                      onChanged: widget.onChanged,
+                      onSubmitted: widget.onSubmitted,
+                      maxLines: widget.maxLines,
+                      style: valueStyle,
+                      // The box above draws border and fill; the theme's
+                      // outlined input style must not apply here.
+                      decoration: InputDecoration(
+                        isCollapsed: true,
+                        contentPadding: EdgeInsets.zero,
+                        filled: false,
+                        hintText: widget.hint,
+                        hintStyle: valueStyle.copyWith(color: c.textSecondary),
+                        border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                      ),
+                    ),
+                  ),
+                  if (widget.suffix != null)
+                    Padding(
+                      padding: const EdgeInsets.only(left: FreevaSpace.s1),
+                      child: ExcludeSemantics(
+                        child: Text(
+                          widget.suffix!,
+                          style: FreevaTypography.body.copyWith(
+                            fontSize: 14,
+                            color: c.textSecondary,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ],
           ),

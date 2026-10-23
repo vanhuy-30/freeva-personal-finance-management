@@ -9,8 +9,9 @@ import '../../domain/transaction_filter.dart';
 import '../../domain/transaction_use_cases.dart';
 import 'transaction_view_model.dart';
 
-/// A second, short-lived result list (search screen, deleted screen) so the
-/// main list keeps its own filter. Names and dates come from the main model.
+/// A second, short-lived result list (search screen, deleted screen, one
+/// wallet's history) so the main list keeps its own filter. Names and dates
+/// come from the main model.
 abstract class TransactionResultsViewModel extends ChangeNotifier {
   List<TransactionBundle> get rows;
   TransactionSummary get summary;
@@ -32,8 +33,15 @@ class DefaultTransactionResultsViewModel extends TransactionResultsViewModel {
     this._cases,
     this._main, {
     @factoryParam bool? deleted,
+    @factoryParam String? accountId,
   }) : _deleted = deleted ?? false,
-       filter = (deleted ?? false)
+       _wallet = accountId != null,
+       filter = accountId != null
+           ? TransactionFilter(
+               period: PeriodPreset.allTime,
+               accountIds: {accountId},
+             )
+           : (deleted ?? false)
            ? const TransactionFilter(period: PeriodPreset.allTime)
            : TransactionFilter.searching;
 
@@ -42,6 +50,7 @@ class DefaultTransactionResultsViewModel extends TransactionResultsViewModel {
   final TransactionUseCases _cases;
   final TransactionViewModel _main;
   final bool _deleted;
+  final bool _wallet;
   Timer? _timer;
   int _epoch = 0;
   int _page = 1;
@@ -62,8 +71,10 @@ class DefaultTransactionResultsViewModel extends TransactionResultsViewModel {
   @override
   bool get hasMore => _legs.length < _total;
 
-  /// Search with no text shows nothing yet (deleted list always loads).
-  bool get _idle => !_deleted && (filter.search?.trim().isEmpty ?? true);
+  /// Search with no text shows nothing yet (deleted and wallet lists always
+  /// load).
+  bool get _idle =>
+      !_deleted && !_wallet && (filter.search?.trim().isEmpty ?? true);
 
   @override
   void setSearch(String text) {

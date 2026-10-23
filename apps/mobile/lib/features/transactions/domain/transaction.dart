@@ -171,16 +171,26 @@ class TransactionQuery {
 }
 
 class TransactionTotal {
-  const TransactionTotal({
+  TransactionTotal({
     required this.currency,
     required this.income,
     required this.expense,
-  });
+    BigInt? transferIn,
+    BigInt? transferOut,
+  }) : transferIn = transferIn ?? BigInt.zero,
+       transferOut = transferOut ?? BigInt.zero;
   final String currency;
   final BigInt income;
 
   /// Signed: negative or zero.
   final BigInt expense;
+
+  /// Matching transfer legs that add money (≥ 0). With a one-wallet filter:
+  /// money moved into that wallet.
+  final BigInt transferIn;
+
+  /// Matching transfer legs that take money (≤ 0).
+  final BigInt transferOut;
 }
 
 /// Totals over the whole filtered result. A transfer counts once and is not

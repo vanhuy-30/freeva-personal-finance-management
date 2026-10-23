@@ -1,7 +1,7 @@
-import { Body, Controller, Delete, Get, Header, HttpCode, Param, Patch, Post, Query, Req, Res, UseFilters, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Header, HttpCode, Param, Patch, Post, Put, Query, Req, Res, UseFilters, UseGuards } from '@nestjs/common';
 import type { Response } from 'express';
 import { AuthGuard, type AuthRequest } from '../auth/auth.guard';
-import { AccountIdDto, AccountQueryDto, ArchiveAccountDto, CreateAccountDto, UpdateAccountDto } from './financial-account.dto';
+import { AccountIdDto, AccountQueryDto, ArchiveAccountDto, CreateAccountDto, ReorderAccountsDto, UpdateAccountDto } from './financial-account.dto';
 import { FinancialAccountService } from './financial-account.service';
 import { FinancialAccountExceptionFilter } from './financial-account-exception.filter';
 
@@ -20,6 +20,10 @@ export class FinancialAccountController {
   @Get() @Header('Cache-Control', 'no-store')
   list(@Req() request: AuthRequest, @Query() query: AccountQueryDto) {
     return this.accounts.list(request.session.userId, query);
+  }
+  @Put('order') @Header('Cache-Control', 'no-store')
+  reorder(@Req() request: AuthRequest, @Body() body: ReorderAccountsDto) {
+    return this.accounts.reorder(request.session.userId, body);
   }
   @Get(':id') @Header('Cache-Control', 'no-store')
   find(@Req() request: AuthRequest, @Param() params: AccountIdDto) {

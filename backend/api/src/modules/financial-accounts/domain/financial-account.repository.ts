@@ -1,4 +1,4 @@
-import type { AccountPatch, AccountQuery, CreateAccount, FinancialAccount } from './financial-account';
+import type { AccountOrderItem, AccountPatch, AccountQuery, CreateAccount, FinancialAccount } from './financial-account';
 
 export const FINANCIAL_ACCOUNT_REPOSITORY = Symbol('FINANCIAL_ACCOUNT_REPOSITORY');
 export interface FinancialAccountRepository {
@@ -6,4 +6,6 @@ export interface FinancialAccountRepository {
   find(userId: string, id: string): Promise<FinancialAccount>;
   list(userId: string, query: AccountQuery): Promise<{ items: FinancialAccount[]; total: number }>;
   update(userId: string, id: string, patch: AccountPatch): Promise<FinancialAccount>;
+  /** Rewrites the order of all active accounts in one transaction; returns them in the new order. */
+  reorder(userId: string, items: AccountOrderItem[]): Promise<FinancialAccount[]>;
 }

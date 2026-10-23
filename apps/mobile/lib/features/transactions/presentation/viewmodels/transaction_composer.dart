@@ -17,13 +17,27 @@ class TransactionComposer extends ChangeNotifier {
     TransactionBundle? existing,
     this.copy = false,
     TransactionType? initialType,
+    String? fromAccountId,
+    String? toAccountId,
   }) : existing = copy ? null : existing {
     final from = existing;
     type = from?.type ?? initialType ?? TransactionType.expense;
-    accountId = from?.legs.first.accountId ?? model.preferredAccountId();
+    // Opened from a wallet ("Ghi từ ví này", "Trả thẻ"): keep that wallet.
+    final source = wallet(fromAccountId)?.id;
+    _accountTouched = source != null;
+    accountId =
+        from?.legs.first.accountId ?? source ?? model.preferredAccountId();
     counterAccountId = from != null && from.legs.length > 1
         ? from.legs[1].accountId
-        : null;
+        : wallet(toAccountId)?.id;
+    if (from == null &&
+        counterAccountId != null &&
+        accountId == counterAccountId) {
+      accountId = model.wallets
+          .where((w) => !w.archived && w.id != counterAccountId)
+          .firstOrNull
+          ?.id;
+    }
     categoryId = from?.categoryId ?? _defaultCategory();
     // A copy is a new transaction today (C1.5).
     occurredOn = (copy ? null : from?.occurredOn) ?? model.today() ?? '';
@@ -244,7 +258,9 @@ class TransactionComposer extends ChangeNotifier {
     var changed = false;
     if (!_accountTouched) {
       final preferred = model.preferredAccountId();
-      if (preferred != null && preferred != accountId) {
+      if (preferred != null &&
+          preferred != accountId &&
+          preferred != counterAccountId) {
         accountId = preferred;
         changed = true;
       }

@@ -18,6 +18,8 @@ export interface FinancialAccount extends AccountFields {
   createdAt: Date;
   updatedAt: Date;
   balanceMinor: bigint;
+  /** Any transaction, deleted ones included: type and currency are then locked. */
+  hasTransactions: boolean;
 }
 export type CreateAccount = AccountFields & { clientId: string };
 export type AccountPatch = Partial<AccountFields> & { version: number; archived?: boolean };
@@ -79,4 +81,25 @@ export function updatedFields(current: FinancialAccount, patch: AccountPatch, ha
 }
 export function sameCreate(account: FinancialAccount, input: CreateAccount): boolean {
   return (Object.keys(input) as (keyof CreateAccount)[]).every(key => account[key] === input[key]);
+}
+export interface AccountOrderItem { id: string; version: number }
+/**
+ * New sortOrder (= position) for each active account whose position changed. The request must list exactly the
+ * active accounts with their current versions; anything else means the client's list is stale.
+ */
+export function reorderedPositions(
+  active: Pick<FinancialAccount, 'id' | 'version' | 'sortOrder'>[], items: AccountOrderItem[],
+): { id: string; sortOrder: number }[] {
+  if (new Set(items.map(item => item.id)).size !== items.length) throw new AccountError('VALIDATION_ERROR');
+  const byId = new Map(active.map(account => [account.id, account]));
+  if (items.length !== active.length) throw new AccountError('ACCOUNT_CONFLICT');
+  const changes: { id: string; sortOrder: number }[] = [];
+  items.forEach((item, sortOrder) => {
+    const account = byId.get(item.id);
+    if (!account || account.version !== item.version) throw new AccountError('ACCOUNT_CONFLICT');
+    if (account.sortOrder === sortOrder) return;
+    if (account.version >= 2147483647) throw new AccountError('ACCOUNT_CONFLICT');
+    changes.push({ id: item.id, sortOrder });
+  });
+  return changes;
 }

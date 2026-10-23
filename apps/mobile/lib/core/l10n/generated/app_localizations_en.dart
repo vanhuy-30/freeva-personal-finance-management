@@ -339,67 +339,20 @@ class SEn extends S {
   String get walletInitialBalance => 'Initial balance';
 
   @override
-  String get walletCreditLimit => 'Credit limit (optional)';
-
-  @override
-  String get walletCloseDay => 'Statement day (1–28, optional)';
-
-  @override
-  String get walletDueDay => 'Payment day (1–28, optional)';
-
-  @override
-  String get walletMoneyHint =>
-      'Enter amounts in the selected currency without thousands separators. For example: VND 10000; USD 10.50.';
-
-  @override
-  String get walletEditHint =>
-      'Wallet type and currency cannot change once transactions exist. Edit the initial balance only to correct it.';
-
-  @override
-  String get walletShowHidden => 'Show hidden wallets';
-
-  @override
   String get walletHide => 'Hide wallet';
-
-  @override
-  String get walletRestore => 'Restore wallet';
-
-  @override
-  String get walletHideExplanation =>
-      'Hiding archives the wallet from the active list. Its balance and history are preserved and it can be restored later.';
-
-  @override
-  String get walletMoveUp => 'Move up';
-
-  @override
-  String get walletMoveDown => 'Move down';
-
-  @override
-  String get walletEmpty =>
-      'No wallets yet. Add your first wallet to get started.';
 
   @override
   String get walletHiddenEmpty => 'No hidden wallets.';
 
   @override
-  String walletBalance(String amount, String currency) {
-    return 'Balance: $amount $currency';
-  }
-
-  @override
-  String get walletInvalid =>
-      'Check the name, amounts and days (1–28). Type or currency may be locked because transactions exist.';
+  String get walletInvalid => 'Check the name and amounts.';
 
   @override
   String get walletConflict =>
-      'This wallet changed elsewhere. Return to the list and reload before editing again.';
+      'This wallet changed elsewhere. Open it again to edit.';
 
   @override
-  String get walletError => 'Could not load or save wallets. Please try again.';
-
-  @override
-  String get walletReloadRequired =>
-      'The operation may have been partially saved. Reload the list to get the latest state.';
+  String get walletError => 'Couldn\'t save the wallet. Try again.';
 
   @override
   String get transactionTitle => 'Transactions';
@@ -1472,4 +1425,262 @@ class SEn extends S {
 
   @override
   String get txRateInvalid => 'This rate doesn\'t work for this amount.';
+
+  @override
+  String walletTotal(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count wallets',
+      one: '1 wallet',
+    );
+    return 'Total balance · $_temp0';
+  }
+
+  @override
+  String walletOtherTotal(String amount, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count wallets',
+      one: '1 wallet',
+    );
+    return '$amount · $_temp0';
+  }
+
+  @override
+  String get walletSort => 'Sort';
+
+  @override
+  String get walletSortTitle => 'Arrange wallets';
+
+  @override
+  String get walletSortHint => 'Hold and drag, or use the arrows.';
+
+  @override
+  String get walletSortDone => 'Done';
+
+  @override
+  String walletMoveUpNamed(String name) {
+    return 'Move $name up';
+  }
+
+  @override
+  String walletMoveDownNamed(String name) {
+    return 'Move $name down';
+  }
+
+  @override
+  String get walletSortFailed => 'Couldn\'t save the order. Try again.';
+
+  @override
+  String get walletHiddenTitle => 'Hidden wallets';
+
+  @override
+  String get walletHiddenHint => 'History stays. Restore any time.';
+
+  @override
+  String get walletRestoreShort => 'Restore';
+
+  @override
+  String walletRestored(String name) {
+    return '$name is back';
+  }
+
+  @override
+  String walletRestoreNamed(String name) {
+    return 'Restore $name';
+  }
+
+  @override
+  String walletDueOn(String date) {
+    return 'due $date';
+  }
+
+  @override
+  String walletTypeCurrency(String type, String currency) {
+    return '$type · $currency';
+  }
+
+  @override
+  String walletMonthIn(String month) {
+    return 'In, month $month';
+  }
+
+  @override
+  String walletMonthOut(String month) {
+    return 'Out, month $month';
+  }
+
+  @override
+  String get walletRecordFrom => 'Record from here';
+
+  @override
+  String get walletTransfer => 'Transfer';
+
+  @override
+  String get walletEditCard => 'Edit card';
+
+  @override
+  String get walletNoTransactions => 'No transactions yet';
+
+  @override
+  String get walletNoTransactionsBody =>
+      'Record the first one from this wallet.';
+
+  @override
+  String get creditNoTransactionsBody => 'Record the first one from this card.';
+
+  @override
+  String get walletNotFound => 'This wallet isn\'t here';
+
+  @override
+  String get walletEmptyTitle => 'No wallets yet';
+
+  @override
+  String get walletEmptyBody => 'Add your first wallet to start.';
+
+  @override
+  String get creditDebtLabel => 'Balance owed · Credit card';
+
+  @override
+  String get creditAvailableLabel => 'Available';
+
+  @override
+  String creditLimit(String amount) {
+    return 'Limit $amount';
+  }
+
+  @override
+  String get creditDueTitle => 'Payment due';
+
+  @override
+  String creditDaysLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days left',
+      one: '1 day left',
+      zero: 'today',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get creditCloseTitle => 'Statement closes';
+
+  @override
+  String creditCloseValue(int day) {
+    return 'Day $day each month';
+  }
+
+  @override
+  String get creditNotSet => 'Not set';
+
+  @override
+  String get creditRecordFrom => 'Record from card';
+
+  @override
+  String get creditPay => 'Pay card';
+
+  @override
+  String get walletLoadError => 'Couldn\'t load wallets';
+
+  @override
+  String get cardName => 'Card name';
+
+  @override
+  String get walletCurrencyField => 'Currency';
+
+  @override
+  String get walletCurrencyTitle => 'Choose currency';
+
+  @override
+  String get walletCurrentBalance => 'Current balance';
+
+  @override
+  String get walletBalanceHint =>
+      'A rough number is fine. You can change it later.';
+
+  @override
+  String get creditCurrentDebt => 'Current balance owed';
+
+  @override
+  String get creditInitialDebt => 'Starting balance owed';
+
+  @override
+  String get creditLimitField => 'Limit';
+
+  @override
+  String get creditCloseField => 'Statement day';
+
+  @override
+  String get creditDueField => 'Due day';
+
+  @override
+  String creditDayValue(int day) {
+    return 'Day $day';
+  }
+
+  @override
+  String get creditPickDay => 'Pick a day';
+
+  @override
+  String get creditOptionalHint => 'Limit and days can stay empty.';
+
+  @override
+  String get walletSave => 'Save wallet';
+
+  @override
+  String get creditSave => 'Save card';
+
+  @override
+  String get walletSaveChanges => 'Save changes';
+
+  @override
+  String get walletLockedLabel => 'Type · Currency';
+
+  @override
+  String walletLockedSemantics(String type, String currency) {
+    return '$type, $currency, locked because the wallet has transactions';
+  }
+
+  @override
+  String walletHiddenToast(String name) {
+    return '$name hidden';
+  }
+
+  @override
+  String get walletNameMissing => 'Give it a name.';
+
+  @override
+  String get walletAmountInvalid => 'That amount doesn\'t look right.';
+
+  @override
+  String get dayDueTitle => 'Which day is it due?';
+
+  @override
+  String get dayCloseTitle => 'Which day does it close?';
+
+  @override
+  String get dayMonthly => 'Every month';
+
+  @override
+  String dayConfirm(int day) {
+    return 'Pick day $day';
+  }
+
+  @override
+  String get dayClear => 'Leave empty';
+
+  @override
+  String get dayCloseMark => 'Statement day';
+
+  @override
+  String get dayDueMark => 'Due day';
+
+  @override
+  String dayMarkedSemantics(int day, String mark) {
+    return '$day, $mark';
+  }
 }

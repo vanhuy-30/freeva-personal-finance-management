@@ -3,6 +3,8 @@ import '../../reports/domain/report.dart';
 import '../../transactions/domain/transaction.dart';
 import '../../wallets/domain/wallet.dart';
 
+export '../../wallets/domain/credit_card_status.dart';
+
 /// Everything the Overview screen needs, loaded together.
 class OverviewData {
   const OverviewData({
@@ -86,42 +88,4 @@ class SpendingBreakdown {
 
   final BigInt total;
   final List<SpendingSlice> slices;
-}
-
-enum CreditLevel { normal, high, critical }
-
-class CreditCardStatus {
-  const CreditCardStatus({
-    required this.wallet,
-    required this.used,
-    required this.limit,
-    required this.nextDue,
-  });
-
-  final Wallet wallet;
-  final BigInt used;
-  final BigInt? limit;
-  final DateTime? nextDue;
-
-  /// 0–1 of the limit; 0 when there is no limit.
-  double get ratio {
-    final cap = limit;
-    if (cap == null || cap <= BigInt.zero) return 0;
-    final value = used * BigInt.from(10000) ~/ cap;
-    return (value.toInt() / 10000).clamp(0, 1).toDouble();
-  }
-
-  /// < 70% normal, 70–90% high, > 90% critical.
-  CreditLevel get level => ratio > .9
-      ? CreditLevel.critical
-      : ratio >= .7
-      ? CreditLevel.high
-      : CreditLevel.normal;
-
-  bool dueWithin(DateTime today, int days) {
-    final due = nextDue;
-    if (due == null) return false;
-    final diff = due.difference(DateTime(today.year, today.month, today.day));
-    return diff.inDays >= 0 && diff.inDays <= days;
-  }
 }

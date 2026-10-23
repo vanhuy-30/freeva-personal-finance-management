@@ -37,7 +37,10 @@ export class TransactionService {
       items: result.items.map(legResponse), total: result.total, page: query.page, pageSize: query.pageSize,
       summary: {
         count: result.summary.count,
-        totals: result.summary.totals.map(row => ({ currency: row.currency, incomeMinor: row.incomeMinor.toString(), expenseMinor: row.expenseMinor.toString() })),
+        totals: result.summary.totals.map(row => ({
+          currency: row.currency, incomeMinor: row.incomeMinor.toString(), expenseMinor: row.expenseMinor.toString(),
+          transferInMinor: row.transferInMinor.toString(), transferOutMinor: row.transferOutMinor.toString(),
+        })),
       },
     };
   }

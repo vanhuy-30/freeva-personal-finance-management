@@ -22,6 +22,8 @@ class TransactionComposerScreen extends StatefulWidget {
     this.existing,
     this.copy = false,
     this.initialType,
+    this.fromAccountId,
+    this.toAccountId,
     super.key,
   });
 
@@ -29,6 +31,10 @@ class TransactionComposerScreen extends StatefulWidget {
   final TransactionBundle? existing;
   final bool copy;
   final TransactionType? initialType;
+
+  /// Preselected source / destination wallet (from wallet detail).
+  final String? fromAccountId;
+  final String? toAccountId;
 
   @override
   State<TransactionComposerScreen> createState() => _ComposerScreenState();
@@ -42,6 +48,8 @@ class _ComposerScreenState extends State<TransactionComposerScreen>
     existing: widget.existing,
     copy: widget.copy,
     initialType: widget.initialType,
+    fromAccountId: widget.fromAccountId,
+    toAccountId: widget.toAccountId,
   );
   late final merchant = TextEditingController(text: composer.merchant);
   late final notes = TextEditingController(text: composer.notes);

@@ -22,7 +22,10 @@ import '../../features/transactions/presentation/pages/deleted_transactions_page
 import '../../features/transactions/presentation/pages/record_transaction_page.dart';
 import '../../features/transactions/presentation/pages/transaction_page.dart';
 import '../../features/transactions/presentation/pages/transaction_search_page.dart';
+import '../../features/wallets/presentation/pages/hidden_wallets_page.dart';
+import '../../features/wallets/presentation/pages/wallet_detail_page.dart';
 import '../../features/wallets/presentation/pages/wallet_page.dart';
+import '../../features/wallets/presentation/pages/wallet_sort_page.dart';
 import '../di/injection.dart';
 import '../logging/app_logger.dart';
 import '../logging/logging_navigator_observer.dart';
@@ -163,6 +166,8 @@ GoRouter _createAppRouter(
               type: TransactionType.values
                   .where((t) => t.name == state.uri.queryParameters['type'])
                   .firstOrNull,
+              fromAccountId: state.uri.queryParameters['from'],
+              toAccountId: state.uri.queryParameters['to'],
             ),
           ),
         ),
@@ -184,6 +189,24 @@ GoRouter _createAppRouter(
       GoRoute(
         path: '/wallets',
         builder: (context, state) => const AuthGate(child: WalletPage()),
+        routes: [
+          GoRoute(
+            path: 'sort',
+            builder: (context, state) =>
+                const AuthGate(child: WalletSortPage()),
+          ),
+          GoRoute(
+            path: 'hidden',
+            builder: (context, state) =>
+                const AuthGate(child: HiddenWalletsPage()),
+          ),
+          GoRoute(
+            path: ':id',
+            builder: (context, state) => AuthGate(
+              child: WalletDetailPage(walletId: state.pathParameters['id']!),
+            ),
+          ),
+        ],
       ),
       GoRoute(
         path: '/categories',

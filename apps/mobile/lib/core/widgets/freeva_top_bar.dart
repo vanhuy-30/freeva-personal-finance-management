@@ -23,6 +23,7 @@ class FreevaTopBar extends StatelessWidget implements PreferredSizeWidget {
     this.kind = FreevaTopBarKind.push,
     this.action,
     this.onLeading,
+    this.showLeading = true,
     super.key,
   });
 
@@ -35,6 +36,9 @@ class FreevaTopBar extends StatelessWidget implements PreferredSizeWidget {
   /// Back or close. Defaults to popping the route.
   final VoidCallback? onLeading;
 
+  /// False for screens that leave only through their action ("Xong").
+  final bool showLeading;
+
   @override
   Size get preferredSize => const Size.fromHeight(64);
 
@@ -46,6 +50,8 @@ class FreevaTopBar extends StatelessWidget implements PreferredSizeWidget {
     final large = kind == FreevaTopBarKind.largeTitle;
     final leading = large
         ? null
+        : !showLeading
+        ? const SizedBox(width: FreevaSize.touch)
         : FreevaIconButton(
             icon: kind == FreevaTopBarKind.modal
                 ? LucideIcons.x
