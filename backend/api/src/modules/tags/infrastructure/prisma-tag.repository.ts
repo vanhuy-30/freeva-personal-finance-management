@@ -45,10 +45,13 @@ export class PrismaTagRepository implements TagRepository {
   list(userId: string, query: TagQuery) {
     return this.prisma.$transaction(async tx => {
       const where: Prisma.TagWhereInput = { userId };
-      const items = await tx.tag.findMany({
-        where, select, orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
+      const rows = await tx.tag.findMany({
+        where,
+        select: { ...select, _count: { select: { transactions: { where: { transaction: { deletedAt: null } } } } } },
+        orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
         skip: (query.page - 1) * query.pageSize, take: query.pageSize,
       });
+      const items = rows.map(({ _count, ...row }) => ({ ...row, transactionCount: _count.transactions }));
       return { items, total: await tx.tag.count({ where }) };
     }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead });
   }

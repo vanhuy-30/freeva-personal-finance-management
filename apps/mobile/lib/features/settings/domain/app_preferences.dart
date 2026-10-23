@@ -2,8 +2,6 @@ const String appVersionLabel = '0.0.1+1';
 
 enum AppThemePreference { light, dark, system }
 
-enum FeedbackKind { idea, problem }
-
 enum LegalDocument { terms, privacy }
 
 enum SettingsError { storage, invalidInput }

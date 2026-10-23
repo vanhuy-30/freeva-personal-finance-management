@@ -95,7 +95,12 @@ class _SessionsPageState extends State<SessionsPage> {
           onLeading: () => context.popOrGo('/me/security'),
         ),
         body: ListView(
-          padding: EdgeInsets.fromLTRB(margin, FreevaSpace.s2, margin, FreevaSpace.s8),
+          padding: EdgeInsets.fromLTRB(
+            margin,
+            FreevaSpace.s2,
+            margin,
+            FreevaSpace.s8,
+          ),
           children: [
             Text(
               s.meSessionsHint,

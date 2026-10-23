@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/core/analytics/analytics_event.dart';
@@ -15,7 +14,6 @@ import 'package:mobile/features/settings/data/settings_repository_impl.dart';
 import 'package:mobile/features/settings/domain/app_preferences.dart';
 import 'package:mobile/features/settings/domain/settings_use_cases.dart';
 import 'package:mobile/features/settings/presentation/pages/faq_page.dart';
-import 'package:mobile/features/settings/presentation/pages/feedback_page.dart';
 import 'package:mobile/features/settings/presentation/pages/legal_page.dart';
 import 'package:mobile/features/settings/presentation/pages/onboarding_page.dart';
 import 'package:mobile/features/settings/presentation/pages/settings_page.dart';
@@ -110,46 +108,6 @@ void main() {
     ]);
   });
 
-  testWidgets('empty feedback is rejected and a valid note is copied', (
-    tester,
-  ) async {
-    String? copied;
-    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-      SystemChannels.platform,
-      (call) async {
-        if (call.method == 'Clipboard.setData') {
-          copied = (call.arguments as Map)['text'] as String?;
-        }
-        if (call.method == 'Clipboard.getData') {
-          return <String, dynamic>{'text': copied};
-        }
-        return null;
-      },
-    );
-    addTearDown(
-      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-        SystemChannels.platform,
-        null,
-      ),
-    );
-    await tester.pumpWidget(framed(const FeedbackPage(), locale: 'en'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Copy feedback'));
-    await tester.pumpAndSettle();
-    expect(
-      find.text('Enter a message of up to 2000 characters.'),
-      findsOneWidget,
-    );
-    expect(copied, isNull);
-    await tester.enterText(find.byType(TextField), 'lamp is fine');
-    await tester.tap(find.text('Copy feedback'));
-    await tester.pumpAndSettle();
-    expect(copied, contains('lamp is fine'));
-    expect(copied, contains('idea'));
-    expect(copied!.contains('@'), isFalse);
-    expect(find.textContaining('does not send this message'), findsOneWidget);
-  });
-
   testWidgets('settings help screens fit a small display in both locales', (
     tester,
   ) async {
@@ -160,7 +118,6 @@ void main() {
     final pages = [
       const SettingsPage(),
       const FaqPage(),
-      const FeedbackPage(),
       const LegalPage(document: LegalDocument.terms),
       const LegalPage(document: LegalDocument.privacy),
       const OnboardingPage(),

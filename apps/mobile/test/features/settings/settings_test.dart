@@ -75,23 +75,6 @@ void main() {
     },
   );
 
-  test('feedback text stays local and rejects empty or oversized messages', () {
-    final cases = DefaultSettingsUseCases(
-      SettingsRepositoryImpl(MemoryPreferences()),
-    );
-    expect(cases.feedbackText(FeedbackKind.idea, '   ').isLeft(), isTrue);
-    expect(
-      cases.feedbackText(FeedbackKind.problem, 'x' * 2001).isLeft(),
-      isTrue,
-    );
-    final text = cases
-        .feedbackText(FeedbackKind.problem, '  lamp broken  ')
-        .getOrElse(() => '');
-    expect(text, 'Freeva $appVersionLabel\nproblem\nlamp broken');
-    expect(text.contains('@'), isFalse);
-    expect(cases.feedbackText(FeedbackKind.idea, 'x' * 2000).isRight(), isTrue);
-  });
-
   test('onboarding redirect waits for an unlocked session', () {
     expect(
       settingsRedirect(

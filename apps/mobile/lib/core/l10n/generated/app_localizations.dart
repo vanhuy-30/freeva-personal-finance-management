@@ -1321,12 +1321,6 @@ abstract class S {
   /// **'FAQ'**
   String get settingsFaq;
 
-  /// No description provided for @settingsFeedback.
-  ///
-  /// In en, this message translates to:
-  /// **'Send feedback'**
-  String get settingsFeedback;
-
   /// No description provided for @settingsTerms.
   ///
   /// In en, this message translates to:
@@ -1476,54 +1470,6 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Open Settings and choose Light, Dark, or System. Light is the default and stays on this device.'**
   String get faqThemeA;
-
-  /// No description provided for @feedbackTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Feedback'**
-  String get feedbackTitle;
-
-  /// No description provided for @feedbackIdea.
-  ///
-  /// In en, this message translates to:
-  /// **'Idea'**
-  String get feedbackIdea;
-
-  /// No description provided for @feedbackProblem.
-  ///
-  /// In en, this message translates to:
-  /// **'Problem'**
-  String get feedbackProblem;
-
-  /// No description provided for @feedbackMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Message'**
-  String get feedbackMessage;
-
-  /// No description provided for @feedbackCopy.
-  ///
-  /// In en, this message translates to:
-  /// **'Copy feedback'**
-  String get feedbackCopy;
-
-  /// No description provided for @feedbackCopied.
-  ///
-  /// In en, this message translates to:
-  /// **'Copied. A contact address is not configured yet, so Freeva does not send this message.'**
-  String get feedbackCopied;
-
-  /// No description provided for @feedbackInvalid.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter a message of up to 2000 characters.'**
-  String get feedbackInvalid;
-
-  /// No description provided for @feedbackHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'Freeva copies the message on this device. It is not uploaded and is not written to logs.'**
-  String get feedbackHelp;
 
   /// No description provided for @legalDraft.
   ///
@@ -4301,6 +4247,324 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Always on'**
   String get meSecAlways;
+
+  /// No description provided for @tagsSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search tags'**
+  String get tagsSearch;
+
+  /// No description provided for @tagsAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Create tag'**
+  String get tagsAdd;
+
+  /// No description provided for @tagsName.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag name'**
+  String get tagsName;
+
+  /// No description provided for @tagsRenameTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename tag'**
+  String get tagsRenameTitle;
+
+  /// No description provided for @tagsRename.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename'**
+  String get tagsRename;
+
+  /// No description provided for @tagsDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get tagsDelete;
+
+  /// No description provided for @tagsDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete “{name}”?'**
+  String tagsDeleteTitle(String name);
+
+  /// No description provided for @tagsDeleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Transactions stay; only this tag comes off.'**
+  String get tagsDeleteBody;
+
+  /// No description provided for @tagsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No tags yet'**
+  String get tagsEmptyTitle;
+
+  /// No description provided for @tagsEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag transactions to group them your way.'**
+  String get tagsEmptyBody;
+
+  /// No description provided for @tagsNoMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'No tag matches'**
+  String get tagsNoMatch;
+
+  /// No description provided for @tagsLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load tags'**
+  String get tagsLoadError;
+
+  /// No description provided for @tagsRowSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}, {count} transactions'**
+  String tagsRowSemantics(String name, int count);
+
+  /// No description provided for @tagsMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Actions for {name}'**
+  String tagsMore(String name);
+
+  /// No description provided for @fbHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'What would you like to tell Freeva?'**
+  String get fbHeading;
+
+  /// No description provided for @fbKindBug.
+  ///
+  /// In en, this message translates to:
+  /// **'Bug'**
+  String get fbKindBug;
+
+  /// No description provided for @fbKindIdea.
+  ///
+  /// In en, this message translates to:
+  /// **'Idea'**
+  String get fbKindIdea;
+
+  /// No description provided for @fbKindPraise.
+  ///
+  /// In en, this message translates to:
+  /// **'Praise'**
+  String get fbKindPraise;
+
+  /// No description provided for @fbAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'Which part?'**
+  String get fbAbout;
+
+  /// No description provided for @fbTopicRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording'**
+  String get fbTopicRecord;
+
+  /// No description provided for @fbTopicReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports'**
+  String get fbTopicReports;
+
+  /// No description provided for @fbTopicWallets.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallets'**
+  String get fbTopicWallets;
+
+  /// No description provided for @fbTopicCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get fbTopicCategories;
+
+  /// No description provided for @fbTopicAppearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get fbTopicAppearance;
+
+  /// No description provided for @fbTopicOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get fbTopicOther;
+
+  /// No description provided for @fbLabelBug.
+  ///
+  /// In en, this message translates to:
+  /// **'What went wrong?'**
+  String get fbLabelBug;
+
+  /// No description provided for @fbLabelIdea.
+  ///
+  /// In en, this message translates to:
+  /// **'Your idea'**
+  String get fbLabelIdea;
+
+  /// No description provided for @fbLabelPraise.
+  ///
+  /// In en, this message translates to:
+  /// **'What do you like?'**
+  String get fbLabelPraise;
+
+  /// No description provided for @fbCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}/2000'**
+  String fbCount(int count);
+
+  /// No description provided for @fbReply.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply to me by email'**
+  String get fbReply;
+
+  /// No description provided for @fbSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send feedback'**
+  String get fbSend;
+
+  /// No description provided for @fbSending.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending…'**
+  String get fbSending;
+
+  /// No description provided for @fbThanks.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you!'**
+  String get fbThanks;
+
+  /// No description provided for @fbThanksReply.
+  ///
+  /// In en, this message translates to:
+  /// **'Freeva will read it and reply by email.'**
+  String get fbThanksReply;
+
+  /// No description provided for @fbThanksNoReply.
+  ///
+  /// In en, this message translates to:
+  /// **'Freeva will read every message.'**
+  String get fbThanksNoReply;
+
+  /// No description provided for @fbDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get fbDone;
+
+  /// No description provided for @fbError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t send. Try again.'**
+  String get fbError;
+
+  /// No description provided for @faqSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search questions'**
+  String get faqSearch;
+
+  /// No description provided for @faqNoMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'No question matches'**
+  String get faqNoMatch;
+
+  /// No description provided for @faqMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Not finding your answer?'**
+  String get faqMissing;
+
+  /// No description provided for @faqSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send feedback to Freeva'**
+  String get faqSend;
+
+  /// No description provided for @notifyReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders'**
+  String get notifyReminders;
+
+  /// No description provided for @notifyAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts'**
+  String get notifyAlerts;
+
+  /// No description provided for @notifyRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Record reminder'**
+  String get notifyRecord;
+
+  /// No description provided for @notifyRecordSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Every day'**
+  String get notifyRecordSub;
+
+  /// No description provided for @notifyDigest.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending summary'**
+  String get notifyDigest;
+
+  /// No description provided for @notifyDigestSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Every week or month'**
+  String get notifyDigestSub;
+
+  /// No description provided for @notifyBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget running out'**
+  String get notifyBudget;
+
+  /// No description provided for @notifyBudgetSub.
+  ///
+  /// In en, this message translates to:
+  /// **'At 80% and 100% used'**
+  String get notifyBudgetSub;
+
+  /// No description provided for @notifyCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Credit card due'**
+  String get notifyCard;
+
+  /// No description provided for @notifyCardSub.
+  ///
+  /// In en, this message translates to:
+  /// **'3 days before'**
+  String get notifyCardSub;
+
+  /// No description provided for @notifySession.
+  ///
+  /// In en, this message translates to:
+  /// **'New device signed in'**
+  String get notifySession;
+
+  /// No description provided for @notifySessionSub.
+  ///
+  /// In en, this message translates to:
+  /// **'So you can check it'**
+  String get notifySessionSub;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
-import '../../../../core/widgets/freeva_toast.dart';
 import '../../../../core/widgets/settings_group.dart';
 import '../../../../core/widgets/settings_row.dart';
 import '../../../profile/presentation/viewmodels/profile_view_model.dart';
@@ -107,7 +106,7 @@ class AppSettingsGroup extends StatelessWidget {
         SettingsRow(
           icon: LucideIcons.bell,
           title: s.meNotifications,
-          onTap: () => showFreevaToast(context, message: s.meSoon),
+          onTap: () => context.push('/me/notifications'),
         ),
         SettingsRow.toggle(
           icon: LucideIcons.eyeOff,

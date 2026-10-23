@@ -29,7 +29,6 @@ abstract class SettingsViewModel extends ChangeNotifier {
   Future<void> setSessionAlertsEnabled(bool value);
   void beginOnboarding();
   Future<bool> completeOnboarding();
-  String? prepareFeedback(FeedbackKind kind, String message);
   Future<void> refreshBiometrics();
   Future<void> setBiometricEnabled(bool enabled, String reason);
 }
@@ -136,23 +135,6 @@ class DefaultSettingsViewModel extends SettingsViewModel {
     loading = false;
     notifyListeners();
     return savedOk;
-  }
-
-  @override
-  String? prepareFeedback(FeedbackKind kind, String message) {
-    final result = _cases.feedbackText(kind, message);
-    return result.fold(
-      (error) {
-        failure = error;
-        notifyListeners();
-        return null;
-      },
-      (text) {
-        failure = null;
-        notifyListeners();
-        return text;
-      },
-    );
   }
 
   @override

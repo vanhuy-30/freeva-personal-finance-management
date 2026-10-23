@@ -16,6 +16,7 @@ class TagRepositoryImpl implements TagRepository {
     clientId: json['clientId'] as String,
     name: json['name'] as String,
     version: json['version'] as int,
+    transactionCount: json['transactionCount'] as int? ?? 0,
   );
 
   Future<Either<AuthFailure, T>> _request<T>(
@@ -71,4 +72,16 @@ class TagRepositoryImpl implements TagRepository {
     _parse,
     body: {'clientId': clientId, 'name': name},
   );
+
+  @override
+  Future<Either<AuthFailure, Tag>> rename(Tag tag, String name) => _request(
+    'PATCH',
+    'tags/${tag.id}',
+    _parse,
+    body: {'version': tag.version, 'name': name},
+  );
+
+  @override
+  Future<Either<AuthFailure, Unit>> delete(Tag tag) =>
+      _request('DELETE', 'tags/${tag.id}?version=${tag.version}', (_) => unit);
 }

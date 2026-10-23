@@ -41,7 +41,7 @@ class MoneySetupGroup extends StatelessWidget {
           accent: true,
           icon: LucideIcons.tag,
           title: s.meTags,
-          onTap: soon,
+          onTap: () => context.push('/me/tags'),
         ),
         SettingsRow(
           accent: true,
