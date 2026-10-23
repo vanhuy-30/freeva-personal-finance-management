@@ -8,7 +8,7 @@ import { PrismaModule } from '../src/infrastructure/prisma/prisma.module';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
 import { AuthModule } from '../src/modules/auth/auth.module';
 import { AUTH_REPOSITORY } from '../src/modules/auth/domain/auth.repository';
-import { AuthService } from '../src/modules/auth/auth.service';
+import { AuthService, TERMS_VERSION } from '../src/modules/auth/auth.service';
 import { AuthCrypto } from '../src/modules/auth/infrastructure/auth-crypto';
 import { AuthMailWorker } from '../src/modules/auth/infrastructure/auth-mail.worker';
 import { PrismaAuthRepository } from '../src/modules/auth/infrastructure/prisma-auth.repository';
@@ -131,6 +131,10 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
     bearer?: string,
     method = 'POST',
   ) {
+    // Sign-up needs the terms box ticked; pass `termsAccepted: undefined` to leave it out.
+    if (path === 'auth/register' && body && !('termsAccepted' in body)) {
+      body = { ...body, termsAccepted: true };
+    }
     const response = await fetch(`${base}/api/v1/${path}`, {
       method,
       headers: {
@@ -206,6 +210,22 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
       expect(await prisma.user.count()).toBe(1);
     },
   );
+
+  it('DS-P2-004 register records when and to which version of the terms the person agreed', async () => {
+    const before = Date.now();
+    await auth.register('terms@example.test', password);
+    const user = await prisma.user.findUniqueOrThrow({
+      where: { email: 'terms@example.test' },
+    });
+    expect(user.termsVersion).toBe(TERMS_VERSION);
+    expect(user.termsAcceptedAt!.getTime()).toBeGreaterThanOrEqual(before);
+    const over = await request('auth/register', {
+      email: 'no-terms@example.test',
+      password,
+      termsAccepted: undefined,
+    });
+    expect(over.status).toBe(400);
+  });
 
   it('BE-P1-003 does not merge existing/legacy emails or create unverified identities', async () => {
     await auth.register('owner@example.test', password);

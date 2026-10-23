@@ -64,36 +64,47 @@ class _SecurityPageState extends State<SecurityPage> {
           children: [
             SettingsGroup(
               title: s.meSecUnlock,
-              children: [
-                SettingsRow(
-                  icon: LucideIcons.lockKeyhole,
-                  title: s.meSecPin,
-                  subtitle: s.meSecPinSub,
-                  value: s.meSecAlways,
-                  chevron: false,
-                ),
-                if (settings.biometricHardware || settings.biometricEnabled)
-                  SettingsRow.toggle(
-                    icon: LucideIcons.scanFace,
-                    title: s.meSecBiometric,
-                    on: settings.biometricEnabled,
-                    onChanged: (value) {
-                      if (canToggle) _biometric(value);
-                    },
-                  )
-                else
-                  SettingsRow(
-                    icon: LucideIcons.scanFace,
-                    title: s.meSecBiometric,
-                    subtitle: s.settingsBiometricUnavailable,
-                    chevron: false,
-                  ),
-                SettingsRow(
-                  icon: LucideIcons.keyRound,
-                  title: s.meSecChangePin,
-                  onTap: () => context.push('/me/security/pin'),
-                ),
-              ],
+              children: auth.hasPin
+                  ? [
+                      SettingsRow(
+                        icon: LucideIcons.lockKeyhole,
+                        title: s.meSecPin,
+                        subtitle: s.meSecPinSub,
+                        value: s.meSecAlways,
+                        chevron: false,
+                      ),
+                      if (settings.biometricHardware ||
+                          settings.biometricEnabled)
+                        SettingsRow.toggle(
+                          icon: LucideIcons.scanFace,
+                          title: s.meSecBiometric,
+                          on: settings.biometricEnabled,
+                          onChanged: (value) {
+                            if (canToggle) _biometric(value);
+                          },
+                        )
+                      else
+                        SettingsRow(
+                          icon: LucideIcons.scanFace,
+                          title: s.meSecBiometric,
+                          subtitle: s.settingsBiometricUnavailable,
+                          chevron: false,
+                        ),
+                      SettingsRow(
+                        icon: LucideIcons.keyRound,
+                        title: s.meSecChangePin,
+                        onTap: () => context.push('/me/security/pin'),
+                      ),
+                    ]
+                  : [
+                      SettingsRow(
+                        icon: LucideIcons.lockKeyhole,
+                        title: s.meSecPinSetTitle,
+                        subtitle: s.meSecPinSub,
+                        value: s.meSecPinNone,
+                        onTap: () => context.push('/me/security/pin-setup'),
+                      ),
+                    ],
             ),
             SettingsGroup(
               title: s.meSecLogin,

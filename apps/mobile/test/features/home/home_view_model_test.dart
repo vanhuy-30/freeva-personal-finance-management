@@ -29,6 +29,7 @@ void main() {
     );
     auth = DefaultAuthViewModel(authCases)
       ..stage = AuthStage.unlocked
+      ..hasPin = true
       ..ready = true;
     settings = DefaultSettingsViewModel(
       DefaultSettingsUseCases(SettingsRepositoryImpl(MemoryPreferences())),

@@ -67,17 +67,15 @@ void main() {
       expect(vault.value, isNull);
     },
   );
-  test('interrupted PIN setup never grants access after restart', () async {
+  test('a session without a PIN restores into the app and has no PIN', () async {
     await login();
+    final restored = AuthRepositoryImpl(api, vault, biometrics);
     expect(
-      (await AuthRepositoryImpl(
-        api,
-        vault,
-        biometrics,
-      ).restore()).getOrElse(() => AuthStage.unlocked),
-      AuthStage.signedOut,
+      (await restored.restore()).getOrElse(() => AuthStage.signedOut),
+      AuthStage.unlocked,
     );
-    expect(vault.value, isNull);
+    expect((await restored.pinSet()).getOrElse(() => true), false);
+    expect(vault.value, isNotNull);
   });
   test('biometrics require opt-in and cancellation stays locked', () async {
     await setup();
@@ -132,6 +130,7 @@ void main() {
         (await useCases.submit(AuthAction.register, {
           'email': 'bad',
           'password': 'short',
+          'termsAccepted': 'true',
         })).isLeft(),
         true,
       );
@@ -150,6 +149,7 @@ void main() {
         (await useCases.submit(AuthAction.register, {
           'email': 'lan@example.com',
           'password': 'mật khẩu có số 7',
+          'termsAccepted': 'true',
         })).isRight(),
         true,
       );

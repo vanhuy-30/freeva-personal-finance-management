@@ -34,7 +34,9 @@ void main() {
       );
   testWidgets('background hides content immediately and resume requires unlock',
       (tester) async {
-    model.stage = AuthStage.unlocked;
+    model
+      ..stage = AuthStage.unlocked
+      ..hasPin = true;
     await tester.pumpWidget(app());
     expect(find.text('protected content'), findsOneWidget);
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
@@ -42,7 +44,7 @@ void main() {
     expect(find.text('protected content'), findsNothing);
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
     await tester.pumpAndSettle();
-    expect(find.text('Freeva đã khóa'), findsOneWidget);
+    expect(find.text('Nhập mã PIN'), findsOneWidget);
     expect(find.text('protected content'), findsNothing);
   });
   testWidgets(
@@ -59,11 +61,26 @@ void main() {
       expect(tester.takeException(), isNull);
     }
   });
-  testWidgets('PIN setup never renders protected content', (tester) async {
-    model.stage = AuthStage.setupPin;
+  testWidgets('first-run setup shows confirm email, then PIN, never the app',
+      (tester) async {
+    model.stage = AuthStage.setup;
     await tester.pumpWidget(app());
-    expect(find.text('Thiết lập PIN'), findsNWidgets(2));
+    expect(find.text('Xác nhận email'), findsOneWidget);
     expect(find.text('protected content'), findsNothing);
-    expect(find.byType(TextField), findsNWidgets(2));
+    await tester.tap(find.text('Xong'));
+    await tester.pumpAndSettle();
+    expect(find.text('Đặt mã PIN'), findsOneWidget);
+    await tester.tap(find.text('Để sau'));
+    await tester.pumpAndSettle();
+    expect(model.stage, AuthStage.unlocked);
+    expect(find.text('protected content'), findsOneWidget);
+  });
+  testWidgets('without a PIN, backgrounding never locks the app', (tester) async {
+    model.stage = AuthStage.unlocked;
+    await tester.pumpWidget(app());
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    await tester.pumpAndSettle();
+    expect(find.text('protected content'), findsOneWidget);
   });
 }

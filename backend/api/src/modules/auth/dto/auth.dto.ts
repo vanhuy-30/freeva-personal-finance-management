@@ -1,5 +1,6 @@
 import { Transform } from 'class-transformer';
 import {
+  Equals,
   IsEmail,
   IsString,
   Matches,
@@ -36,6 +37,12 @@ export class NewCredentialsDto extends EmailDto {
   @MaxLength(128)
   @Matches(LETTER_AND_DIGIT)
   password!: string;
+}
+
+/** Email sign-up: the person must tick the Terms and Privacy checkbox (DS-P2-004). */
+export class RegisterDto extends NewCredentialsDto {
+  @Equals(true)
+  termsAccepted!: true;
 }
 
 export class TokenDto {

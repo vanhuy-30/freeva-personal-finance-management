@@ -36,10 +36,10 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
     await tester.pumpAndSettle();
     expect(find.textContaining('ví'), findsNothing);
-    expect(find.text('Bắt đầu cùng Freeva'), findsOneWidget);
-    expect(find.text('Tiếp tục'), findsOneWidget);
-    expect(find.text('Đặt lại mật khẩu'), findsNothing);
-    expect(find.byType(BrandSymbol), findsOneWidget);
+    expect(find.text('Đăng nhập'), findsNWidgets(2));
+    expect(find.text('Quên mật khẩu?'), findsOneWidget);
+    // The logo lives on the splash only.
+    expect(find.byType(BrandSymbol), findsNothing);
     expect(tester.takeException(), isNull);
   });
 }

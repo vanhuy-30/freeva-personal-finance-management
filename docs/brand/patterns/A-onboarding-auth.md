@@ -1,6 +1,6 @@
 # Nhóm A — Onboarding và tài khoản
 
-Trạng thái: **chốt thiết kế 2026-10-21, sửa luồng 2026-10-23** (tạo tài khoản trước câu hỏi, xác nhận email bỏ qua được, PIN nhập lại, quy tắc mật khẩu), chưa code giao diện. Task: `DS-P2-004`.
+Trạng thái: **chốt thiết kế 2026-10-21, sửa luồng 2026-10-23** (tạo tài khoản trước câu hỏi, xác nhận email bỏ qua được, PIN nhập lại, quy tắc mật khẩu), code A1 (tài khoản và bảo mật) xong 2026-10-23, A2 (onboarding) chưa. Task: `DS-P2-004`.
 Canvas: trang **05 · Patterns**, hai hàng A1 và A2
 (<https://claude.ai/artifact/SmyaVvz57doJiAM6Kn678T>, riêng tư). Spec chung:
 [design-system.md](../design-system.md).
@@ -39,7 +39,7 @@ Bước 3–5 có thanh tiến độ `1/3 … 3/3`, nút quay lại (trừ bư�
 |---|---|---|
 | 1 | Đăng nhập | Tiêu đề giữa. Ô email + ô mật khẩu (có mắt) trên cùng một màn. "Quên mật khẩu?" gạch chân ở giữa. Nút "Đăng nhập". "hoặc" → Google, Apple. "Chưa có tài khoản? Đăng ký" (→ A1.2) |
 | 2 | Tạo tài khoản bằng email | Ô email, mật khẩu, **nhập lại mật khẩu** (đều có mắt), thanh độ mạnh 3 nấc. Danh sách tự tick: "Ít nhất 12 ký tự" · "Có cả chữ và số" (bắt buộc) · "Thêm ký hiệu như ! @ # để mạnh hơn" (gợi ý) · "Hai mật khẩu khớp nhau". **Checkbox** "Tôi đồng ý với Điều khoản sử dụng và Chính sách bảo mật của Freeva." Nút "Tạo tài khoản" |
-| 3 | Xác nhận email | "Xác nhận email" · "Freeva đã gửi link xác nhận tới …". Thẻ "Email đã xác nhận giúp bạn": lấy lại mật khẩu khi quên · nhận cảnh báo khi có đăng nhập lạ · không lỡ thông báo quan trọng về tài khoản. "Mở ứng dụng Mail", "Gửi lại". **Không bắt buộc:** "Để sau" ở góc phải + "Chưa xác nhận vẫn dùng app bình thường. Bạn có thể xác nhận sau ở Cá nhân." (→ A1.3) |
+| 3 | Xác nhận email | "Xác nhận email" · "Freeva đã gửi link xác nhận tới …". Thẻ "Email đã xác nhận giúp bạn": lấy lại mật khẩu khi quên · nhận cảnh báo khi có đăng nhập lạ · không lỡ thông báo quan trọng về tài khoản. Nút "Xong" (→ A1.3; không mở app Mail từ Freeva), "Gửi lại". **Không bắt buộc:** chữ "Chưa xác nhận vẫn dùng app bình thường. Bạn có thể xác nhận sau ở Cá nhân." |
 | 4 | Đặt mã PIN | Quay lại · "Để sau" (→ A1.7). "Đặt mã PIN" · "6 số để mở khoá Freeva trên máy này." 6 chấm + bàn phím số, nút "Tiếp tục" |
 | 5 | Nhập lại mã PIN | Quay lại · "Để sau". "Nhập lại mã PIN" · "Nhập lại 6 số vừa đặt để chắc chắn." 6 chấm, "Không khớp sẽ được nhập lại từ đầu.", nút "Xác nhận" |
 | 6 | Face ID | "Thiết lập Face ID" · "Mở khoá Freeva bằng khuôn mặt, nhanh hơn nhập PIN." "Thiết lập Face ID" / "Để sau" (→ A1.7) |
@@ -67,9 +67,9 @@ Mở khoá hằng ngày: màn Mở khoá ở hàng mẫu (avatar chữ cái, "Ch
 
 | Việc | Ghi chú |
 |---|---|
-| Link xác nhận email và đặt lại mật khẩu mở thẳng app | Backend hiện gửi mã 64 ký tự; cần deep link / universal link. |
+| Link xác nhận email và đặt lại mật khẩu mở thẳng app | Chốt 2026-10-23: bỏ nhập mã 64 ký tự trên UI; backend gửi một link, người dùng bấm trong mail. Cần deep link / universal link (task riêng). |
 | Google, Apple trên mobile | ADR 010 đã có, mobile chưa làm. |
-| Ngân sách tháng (A1.5) | Thuộc `BE-P2-E02`. Nếu onboarding ra trước: lưu tạm con số, áp khi có ngân sách; hoặc ẩn màn 5. |
+| Ngân sách tháng (A1.5) | Thuộc `BE-P2-E02`. Chốt 2026-10-23: làm UI, dùng dữ liệu mock/lưu trên máy; nối API khi làm task BE. |
 | PIN không còn bắt buộc ngay sau đăng nhập | App hiện bắt đặt PIN; đổi thành bước gợi ý có "Để sau", luôn có màn nhập lại PIN. |
 | Ô "nhập lại mật khẩu" | Giữ (2026-10-23), như app hiện tại. |
 | Quy tắc chữ + số | Xong ở backend + mobile (`DS-P2-004`, 2026-10-23). |

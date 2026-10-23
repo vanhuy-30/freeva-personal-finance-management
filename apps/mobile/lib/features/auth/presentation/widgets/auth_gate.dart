@@ -4,6 +4,7 @@ import '../../../../core/di/injection.dart';
 import '../../domain/auth_repository.dart';
 import '../pages/auth_page.dart';
 import '../pages/lock_page.dart';
+import '../pages/setup_page.dart';
 import '../viewmodels/auth_view_model.dart';
 
 class AuthGate extends StatefulWidget {
@@ -53,9 +54,8 @@ class _AuthGateState extends State<AuthGate> with WidgetsBindingObserver {
         }
         return switch (_model.stage) {
           AuthStage.signedOut => AuthPage(model: _model),
-          AuthStage.setupPin ||
-          AuthStage.locked =>
-            LockPage(key: ValueKey(_model.stage), model: _model),
+          AuthStage.setup => SetupPage(model: _model),
+          AuthStage.locked => LockPage(model: _model),
           AuthStage.unlocked => widget.child,
         };
       });

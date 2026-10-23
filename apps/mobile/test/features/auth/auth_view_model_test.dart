@@ -15,15 +15,16 @@ void main() {
         AuthRepositoryImpl(api, MemoryVault(), FakeBiometrics())));
   });
   tearDown(() => model.dispose());
-  Future<void> login() => model.submit(AuthAction.login,
-      {'email': 'test@example.com', 'password': 'long password here'});
-  test(
-      'login requires PIN setup before protected content and lock clears sessions',
+  Future<void> login() => model.login('test@example.com', 'long password here');
+  test('login opens the app without a PIN; a PIN set later locks it and clears sessions',
       () async {
     await model.initialize();
     expect(model.stage, AuthStage.signedOut);
     await login();
-    expect(model.stage, AuthStage.setupPin);
+    expect(model.stage, AuthStage.unlocked);
+    expect(model.hasPin, false);
+    model.lock();
+    expect(model.stage, AuthStage.unlocked);
     await model.setupPin('123456', '123456', true, 'unlock');
     expect(model.stage, AuthStage.unlocked);
     await model.loadSessions();

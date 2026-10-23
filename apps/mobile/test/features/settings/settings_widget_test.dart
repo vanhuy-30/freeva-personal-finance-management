@@ -38,7 +38,8 @@ void main() {
             ),
           )
           ..ready = true
-          ..stage = AuthStage.unlocked;
+          ..stage = AuthStage.unlocked
+          ..hasPin = true;
     analytics = RecordingAnalytics();
     settings = DefaultSettingsViewModel(
       DefaultSettingsUseCases(SettingsRepositoryImpl(MemoryPreferences())),

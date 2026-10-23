@@ -157,6 +157,7 @@ Future<Widget> d1App(
         ),
       )
       ..stage = AuthStage.unlocked
+      ..hasPin = true
       ..ready = true,
   );
   final wallets = model ?? StubWalletViewModel();

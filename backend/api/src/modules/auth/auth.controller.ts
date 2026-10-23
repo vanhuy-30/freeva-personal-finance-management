@@ -21,7 +21,7 @@ import { AuthExceptionFilter } from './auth-exception.filter';
 import {
   ChangePasswordDto,
   CredentialsDto,
-  NewCredentialsDto,
+  RegisterDto,
   EmailDto,
   ResetPasswordDto,
   TokenDto,
@@ -59,7 +59,7 @@ export class AuthController {
 
   @Post('register')
   @HttpCode(202)
-  register(@Body() body: NewCredentialsDto) {
+  register(@Body() body: RegisterDto) {
     return this.auth.register(body.email, body.password);
   }
 

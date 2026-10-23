@@ -9,31 +9,42 @@ import '../../domain/auth_repository.dart';
 import '../../domain/auth_use_cases.dart';
 import '../../domain/session_alert_notifier.dart';
 
-enum AuthStep {
-  email,
-  password,
-  register,
-  verification,
-  forgotPassword,
-  resetPassword,
-}
+/// Screens of the signed-out flow. [reset] opens from the link in the email.
+enum AuthStep { login, register, forgot, reset }
 
-enum AuthNotice { emailSent, verified, passwordChanged }
+enum AuthNotice { verificationSent, resetSent, passwordChanged }
 
 abstract class AuthViewModel extends ChangeNotifier {
   AuthStage get stage;
   AuthStep get step;
+
+  /// Email last typed on sign-in, sign-up or "Quên mật khẩu".
   String get email;
   AuthNotice? get notice;
-  Future<void> continueEmail(String value);
-  Future<void> submitStep({
-    String password = '',
-    String confirmation = '',
-    String token = '',
+  Future<void> login(String email, String password);
+  Future<void> register(
+    String email,
+    String password,
+    String confirmation, {
+    required bool termsAccepted,
   });
+  Future<void> requestReset(String email);
+  Future<void> resetPassword(
+    String token,
+    String password,
+    String confirmation,
+  );
   Future<void> resendVerification();
-  void back();
-  void forgotPassword();
+  void goTo(AuthStep step);
+
+  /// Opens the new-password screen for the token from the reset email.
+  void startReset(String token);
+
+  /// Ends the first-run setup (verify email, PIN) and opens the app.
+  void finishSetup();
+
+  /// Whether this device has a PIN; without one the app never locks.
+  bool get hasPin;
   bool get loading;
   bool get ready;
   bool get biometricAvailable;
@@ -43,7 +54,6 @@ abstract class AuthViewModel extends ChangeNotifier {
   bool get newSessionAlert;
   List<AuthSession> get sessions;
   Future<void> initialize();
-  Future<void> submit(AuthAction action, Map<String, String> fields);
   Future<void> setupPin(
     String pin,
     String confirmation,
@@ -75,84 +85,137 @@ class DefaultAuthViewModel extends AuthViewModel {
   final SessionAlertNotifier? alerts;
   final AnalyticsService? analytics;
   @override
-  AuthStep step = AuthStep.email;
+  AuthStep step = AuthStep.login;
   @override
   String email = '';
   @override
   AuthNotice? notice;
+  @override
+  bool hasPin = false;
+  String _resetToken = '';
 
   @override
-  Future<void> continueEmail(String value) =>
-      _run(() => _useCases.accountExists(value), (exists) {
-        email = value.trim().toLowerCase();
-        step = exists ? AuthStep.password : AuthStep.register;
-      });
+  Future<void> login(String value, String password) async {
+    email = value.trim().toLowerCase();
+    await _signIn(password);
+    await _noticeSessions();
+  }
+
+  /// Signs in with [email]; a new account lands in [AuthStage.setup].
+  Future<void> _signIn(String password, {bool firstRun = false}) => _run(
+    () => _useCases.submit(AuthAction.login, {
+      'email': email,
+      'password': password,
+    }),
+    (_) {
+      succeeded = true;
+      stage = firstRun ? AuthStage.setup : AuthStage.unlocked;
+      hasPin = false;
+    },
+  );
 
   @override
-  Future<void> submitStep({
-    String password = '',
-    String confirmation = '',
-    String token = '',
+  Future<void> register(
+    String value,
+    String password,
+    String confirmation, {
+    required bool termsAccepted,
   }) async {
     if (loading) return;
-    if ((step == AuthStep.register || step == AuthStep.resetPassword) &&
-        password != confirmation) {
-      failure = const AuthFailure(AuthError.passwordMismatch);
-      succeeded = false;
-      notifyListeners();
+    if (password != confirmation) {
+      _fail(const AuthFailure(AuthError.passwordMismatch));
       return;
     }
-    switch (step) {
-      case AuthStep.email:
-        return;
-      case AuthStep.password:
-        await submit(AuthAction.login, {'email': email, 'password': password});
-      case AuthStep.register:
-        await submit(AuthAction.register, {
-          'email': email,
-          'password': password,
-        });
-      case AuthStep.verification:
-        await submit(AuthAction.verifyEmail, {'token': token.trim()});
-      case AuthStep.forgotPassword:
-        await submit(AuthAction.requestReset, {'email': email});
-      case AuthStep.resetPassword:
-        await submit(AuthAction.resetPassword, {
-          'token': token.trim(),
-          'password': password,
-        });
+    email = value.trim().toLowerCase();
+    await _run(
+      () => _useCases.submit(AuthAction.register, {
+        'email': email,
+        'password': password,
+        'termsAccepted': '$termsAccepted',
+      }),
+      (_) {},
+    );
+    // The server answers 202 whether or not the email is new, so the next
+    // step is always a sign-in: a taken email fails there with the usual
+    // "email or password is wrong".
+    if (failure == null) await _signIn(password, firstRun: true);
+  }
+
+  @override
+  Future<void> requestReset(String value) async {
+    email = value.trim().toLowerCase();
+    await _run(
+      () => _useCases.submit(AuthAction.requestReset, {'email': email}),
+      (_) => notice = AuthNotice.resetSent,
+    );
+  }
+
+  @override
+  void startReset(String token) {
+    _resetToken = token;
+    step = AuthStep.reset;
+    clearMessage();
+  }
+
+  @override
+  Future<void> resetPassword(
+    String token,
+    String password,
+    String confirmation,
+  ) async {
+    if (loading) return;
+    if (password != confirmation) {
+      _fail(const AuthFailure(AuthError.passwordMismatch));
+      return;
     }
+    await _run(
+      () => _useCases.submit(AuthAction.resetPassword, {
+        'token': token.isEmpty ? _resetToken : token,
+        'password': password,
+      }),
+      (_) {
+        stage = AuthStage.signedOut;
+        step = AuthStep.login;
+        notice = AuthNotice.passwordChanged;
+      },
+    );
+  }
+
+  void _fail(AuthFailure error) {
+    failure = error;
+    succeeded = false;
+    notifyListeners();
   }
 
   @override
-  Future<void> resendVerification() =>
-      submit(AuthAction.requestVerification, {'email': email});
+  Future<void> resendVerification() => _run(
+    () => _useCases.submit(AuthAction.requestVerification, {'email': email}),
+    (_) => notice = AuthNotice.verificationSent,
+  );
 
   @override
-  void back() {
+  void goTo(AuthStep next) {
     if (loading) return;
-    step = switch (step) {
-      AuthStep.verification ||
-      AuthStep.forgotPassword ||
-      AuthStep.resetPassword => AuthStep.password,
-      _ => AuthStep.email,
-    };
+    step = next;
     clearMessage();
   }
 
   @override
-  void forgotPassword() {
-    if (loading) return;
-    step = AuthStep.forgotPassword;
-    clearMessage();
+  void finishSetup() {
+    if (stage != AuthStage.setup) return;
+    stage = AuthStage.unlocked;
+    notifyListeners();
+    _noticeSessions();
   }
 
   void _resetFlow() {
-    step = AuthStep.email;
+    step = AuthStep.login;
     email = '';
     notice = null;
     newSessionAlert = false;
     _delivered = false;
+    hasPin = false;
+    _resetToken = '';
   }
 
   @override
@@ -217,43 +280,13 @@ class DefaultAuthViewModel extends AuthViewModel {
   Future<void> initialize() async {
     if (ready || loading) return;
     await _run(_useCases.restore, (value) => stage = value);
+    if (stage != AuthStage.signedOut) {
+      hasPin = (await _useCases.pinSet()).getOrElse(() => false);
+    }
     final available = await _useCases.biometricAvailable();
     biometricAvailable = available.getOrElse(() => false);
     ready = true;
     notifyListeners();
-  }
-
-  @override
-  Future<void> submit(AuthAction action, Map<String, String> fields) async {
-    await _run(() => _useCases.submit(action, fields), (_) {
-      succeeded = true;
-      if (action == AuthAction.login) stage = AuthStage.setupPin;
-      switch (action) {
-        case AuthAction.register:
-          step = AuthStep.verification;
-          succeeded = false;
-        case AuthAction.verifyEmail:
-          step = AuthStep.password;
-          notice = AuthNotice.verified;
-        case AuthAction.requestReset:
-          step = AuthStep.resetPassword;
-          succeeded = false;
-        case AuthAction.resetPassword:
-          stage = AuthStage.signedOut;
-          step = AuthStep.password;
-          notice = AuthNotice.passwordChanged;
-        case AuthAction.requestVerification:
-          notice = AuthNotice.emailSent;
-        case AuthAction.login:
-          break;
-      }
-    });
-    if (action == AuthAction.login && stage == AuthStage.setupPin) {
-      biometricAvailable = (await _useCases.biometricAvailable()).getOrElse(
-        () => false,
-      );
-      notifyListeners();
-    }
   }
 
   @override
@@ -268,6 +301,7 @@ class DefaultAuthViewModel extends AuthViewModel {
       _,
     ) {
       stage = AuthStage.unlocked;
+      hasPin = true;
       biometricAvailable = biometric;
     });
     biometricPrompt = false;
@@ -397,7 +431,7 @@ class DefaultAuthViewModel extends AuthViewModel {
   void lock() {
     _epoch++;
     sessions = [];
-    if (stage == AuthStage.unlocked) stage = AuthStage.locked;
+    if (stage == AuthStage.unlocked && hasPin) stage = AuthStage.locked;
     clearMessage();
   }
 

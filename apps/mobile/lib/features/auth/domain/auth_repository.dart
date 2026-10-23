@@ -2,7 +2,9 @@ import 'package:dartz/dartz.dart';
 
 import 'session_notice.dart';
 
-enum AuthStage { signedOut, setupPin, locked, unlocked }
+/// [setup] is the first run after sign-up (confirm email, then an optional
+/// PIN); everything in it can be skipped. Without a PIN the app never locks.
+enum AuthStage { signedOut, setup, locked, unlocked }
 
 enum AuthAction {
   login,
@@ -44,7 +46,6 @@ class AuthSession {
 
 abstract class AuthRepository {
   Future<Either<AuthFailure, AuthStage>> restore();
-  Future<Either<AuthFailure, bool>> accountExists(String email);
   Future<Either<AuthFailure, Unit>> submit(
     AuthAction action,
     Map<String, String> fields,
@@ -55,6 +56,9 @@ abstract class AuthRepository {
     String reason,
   );
   Future<Either<AuthFailure, Unit>> unlockPin(String pin);
+
+  /// Whether this device has a PIN. Skipping it at sign-up leaves none.
+  Future<Either<AuthFailure, bool>> pinSet();
 
   /// Checks [oldPin] (counted like an unlock attempt) and stores [newPin].
   Future<Either<AuthFailure, Unit>> changePin(String oldPin, String newPin);

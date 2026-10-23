@@ -6,7 +6,6 @@ import 'session_notice.dart';
 
 abstract class AuthUseCases {
   Future<Either<AuthFailure, AuthStage>> restore();
-  Future<Either<AuthFailure, bool>> accountExists(String email);
   Future<Either<AuthFailure, Unit>> submit(
     AuthAction action,
     Map<String, String> fields,
@@ -18,6 +17,7 @@ abstract class AuthUseCases {
     String reason,
   );
   Future<Either<AuthFailure, Unit>> unlockPin(String pin);
+  Future<Either<AuthFailure, bool>> pinSet();
   Future<Either<AuthFailure, Unit>> changePin(
     String oldPin,
     String newPin,
@@ -51,16 +51,6 @@ class DefaultAuthUseCases implements AuthUseCases {
   final AuthRepository _repository;
 
   @override
-  Future<Either<AuthFailure, bool>> accountExists(String email) {
-    final normalized = email.trim().toLowerCase();
-    if (normalized.length > 254 ||
-        !RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$').hasMatch(normalized)) {
-      return Future.value(left(const AuthFailure(AuthError.invalidEmail)));
-    }
-    return _repository.accountExists(normalized);
-  }
-
-  @override
   Future<Either<AuthFailure, AuthStage>> restore() => _repository.restore();
   @override
   Future<Either<AuthFailure, Unit>> submit(
@@ -68,7 +58,8 @@ class DefaultAuthUseCases implements AuthUseCases {
     Map<String, String> fields,
   ) {
     final requiredFields = switch (action) {
-      AuthAction.login || AuthAction.register => {'email', 'password'},
+      AuthAction.login => {'email', 'password'},
+      AuthAction.register => {'email', 'password', 'termsAccepted'},
       AuthAction.requestVerification || AuthAction.requestReset => {'email'},
       AuthAction.verifyEmail => {'token'},
       AuthAction.resetPassword => {'token', 'password'},
@@ -80,6 +71,10 @@ class DefaultAuthUseCases implements AuthUseCases {
     final email = fields['email']?.trim().toLowerCase();
     final password = fields['password'];
     final token = fields['token'];
+    // Sign-up needs the Terms and Privacy box ticked.
+    if (action == AuthAction.register && fields['termsAccepted'] != 'true') {
+      return Future.value(left(const AuthFailure(AuthError.invalidInput)));
+    }
     // A new password needs a letter and a digit (any script); login keeps
     // the length rule only, so older passwords still work.
     final newPassword =
@@ -114,6 +109,8 @@ class DefaultAuthUseCases implements AuthUseCases {
   @override
   Future<Either<AuthFailure, Unit>> unlockPin(String pin) =>
       _repository.unlockPin(pin);
+  @override
+  Future<Either<AuthFailure, bool>> pinSet() => _repository.pinSet();
   @override
   Future<Either<AuthFailure, Unit>> changePin(
     String oldPin,

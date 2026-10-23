@@ -194,6 +194,7 @@ Future<Widget> f1App(Widget page, {bool dark = false, double scale = 1}) async {
           ),
         )
         ..stage = AuthStage.unlocked
+        ..hasPin = true
         ..ready = true;
   getIt.registerSingleton<AuthViewModel>(auth);
   getIt.registerSingleton<ReportViewModel>(

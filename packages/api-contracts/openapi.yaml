@@ -2016,7 +2016,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AuthNewCredentialsRequest'
+              $ref: '#/components/schemas/AuthRegisterRequest'
   /api/v1/auth/login:
     post:
       operationId: login
@@ -4144,12 +4144,13 @@ components:
           writeOnly: true
           description: Not trimmed or normalized. Login accepts any 12–128 characters, so passwords set before
             the letter-and-digit rule still work.
-    AuthNewCredentialsRequest:
+    AuthRegisterRequest:
       type: object
       additionalProperties: false
       required:
       - email
       - password
+      - termsAccepted
       properties:
         email: *id001
         password: &id004
@@ -4160,6 +4161,12 @@ components:
           writeOnly: true
           description: Not trimmed or normalized. A new password needs at least one letter and one digit, in any
             script (DS-P2-004); symbols are optional. Otherwise 400 VALIDATION_ERROR.
+        termsAccepted:
+          type: boolean
+          enum:
+          - true
+          description: The person ticked the Terms and Privacy policy checkbox. The server records the time and the
+            policy version on the user. Otherwise 400 VALIDATION_ERROR.
     AuthTokenRequest:
       type: object
       additionalProperties: false

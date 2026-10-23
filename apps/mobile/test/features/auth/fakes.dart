@@ -58,7 +58,6 @@ class FakeBiometrics implements DeviceBiometrics {
 
 class FakeApi implements AuthApi {
   AuthFailure? failure;
-  String nextStep = 'login';
   List<Map<String, dynamic>>? sessionItems;
   String? lastPath;
   Map<String, dynamic>? lastBody;
@@ -77,7 +76,6 @@ class FakeApi implements AuthApi {
     lastBody = body;
     if (pending != null) await pending;
     if (failure != null) throw failure!;
-    if (path == 'auth/email-step') return {'nextStep': nextStep};
     if (path == 'auth/login') {
       return {
         'accessToken': 'a' * 64,

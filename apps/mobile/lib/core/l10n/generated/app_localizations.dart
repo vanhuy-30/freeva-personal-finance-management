@@ -127,30 +127,6 @@ abstract class S {
   /// **'Create account'**
   String get authRegister;
 
-  /// No description provided for @authResendVerification.
-  ///
-  /// In en, this message translates to:
-  /// **'Send verification code'**
-  String get authResendVerification;
-
-  /// No description provided for @authVerifyEmail.
-  ///
-  /// In en, this message translates to:
-  /// **'Verify email'**
-  String get authVerifyEmail;
-
-  /// No description provided for @authForgotPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Forgot password'**
-  String get authForgotPassword;
-
-  /// No description provided for @authResetPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Reset password'**
-  String get authResetPassword;
-
   /// No description provided for @authEmail.
   ///
   /// In en, this message translates to:
@@ -163,28 +139,10 @@ abstract class S {
   /// **'Password'**
   String get authPassword;
 
-  /// No description provided for @authPasswordHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'At least 12 characters, with letters and numbers.'**
-  String get authPasswordHelp;
-
-  /// No description provided for @authEmailCode.
-  ///
-  /// In en, this message translates to:
-  /// **'64-character code from email'**
-  String get authEmailCode;
-
-  /// No description provided for @authSuccess.
-  ///
-  /// In en, this message translates to:
-  /// **'Request processed. If you requested a code, check your email if the account is eligible. After verification or password reset, you can sign in.'**
-  String get authSuccess;
-
   /// No description provided for @authInvalidInput.
   ///
   /// In en, this message translates to:
-  /// **'Check your email, password, email code, or matching six-digit PINs.'**
+  /// **'Check your email and password.'**
   String get authInvalidInput;
 
   /// No description provided for @authInvalidCredentials.
@@ -235,71 +193,17 @@ abstract class S {
   /// **'Session expired, was revoked, or PIN attempts exceeded. Please sign in again.'**
   String get authExpired;
 
-  /// No description provided for @authSetupPin.
-  ///
-  /// In en, this message translates to:
-  /// **'Set up PIN'**
-  String get authSetupPin;
-
-  /// No description provided for @authLocked.
-  ///
-  /// In en, this message translates to:
-  /// **'Freeva is locked'**
-  String get authLocked;
-
-  /// No description provided for @authPinHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'Use a six-digit PIN to unlock this device.'**
-  String get authPinHelp;
-
-  /// No description provided for @authPin.
-  ///
-  /// In en, this message translates to:
-  /// **'PIN'**
-  String get authPin;
-
-  /// No description provided for @authConfirmPin.
-  ///
-  /// In en, this message translates to:
-  /// **'Confirm PIN'**
-  String get authConfirmPin;
-
-  /// No description provided for @authEnableBiometric.
-  ///
-  /// In en, this message translates to:
-  /// **'Enable biometric unlock'**
-  String get authEnableBiometric;
-
   /// No description provided for @authBiometricReason.
   ///
   /// In en, this message translates to:
   /// **'Authenticate to unlock Freeva'**
   String get authBiometricReason;
 
-  /// No description provided for @authUnlock.
-  ///
-  /// In en, this message translates to:
-  /// **'Unlock'**
-  String get authUnlock;
-
   /// No description provided for @authUseBiometric.
   ///
   /// In en, this message translates to:
   /// **'Use biometrics'**
   String get authUseBiometric;
-
-  /// No description provided for @authForgetDevice.
-  ///
-  /// In en, this message translates to:
-  /// **'Forgot PIN / sign in again'**
-  String get authForgetDevice;
-
-  /// No description provided for @authForgetHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'Removes credentials on this device. The server session remains until expiry or revocation in session management.'**
-  String get authForgetHelp;
 
   /// No description provided for @authSessions.
   ///
@@ -349,53 +253,11 @@ abstract class S {
   /// **'Sign out'**
   String get authLogout;
 
-  /// No description provided for @authWelcomeTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Welcome to Freeva'**
-  String get authWelcomeTitle;
-
-  /// No description provided for @authWelcomeSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Start your journey to a healthier financial future.'**
-  String get authWelcomeSubtitle;
-
-  /// No description provided for @authEmailPlaceholder.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter your email'**
-  String get authEmailPlaceholder;
-
   /// No description provided for @authContinue.
   ///
   /// In en, this message translates to:
   /// **'Continue'**
   String get authContinue;
-
-  /// No description provided for @authWelcomeBack.
-  ///
-  /// In en, this message translates to:
-  /// **'Welcome back'**
-  String get authWelcomeBack;
-
-  /// No description provided for @authLoginSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter your password to pick up where you left off.'**
-  String get authLoginSubtitle;
-
-  /// No description provided for @authCreateTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Create your Freeva account'**
-  String get authCreateTitle;
-
-  /// No description provided for @authRegisterSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Create a password to start taking care of your finances.'**
-  String get authRegisterSubtitle;
 
   /// No description provided for @authCreateAccount.
   ///
@@ -406,38 +268,8 @@ abstract class S {
   /// No description provided for @authVerifyTitle.
   ///
   /// In en, this message translates to:
-  /// **'Check your email'**
+  /// **'Confirm your email'**
   String get authVerifyTitle;
-
-  /// No description provided for @authVerifySubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Your verification code was sent when you signed up. Enter it below to finish.'**
-  String get authVerifySubtitle;
-
-  /// No description provided for @authVerifyAndContinue.
-  ///
-  /// In en, this message translates to:
-  /// **'Verify and continue'**
-  String get authVerifyAndContinue;
-
-  /// No description provided for @authResendCode.
-  ///
-  /// In en, this message translates to:
-  /// **'No code yet? Send again'**
-  String get authResendCode;
-
-  /// No description provided for @authCodeResent.
-  ///
-  /// In en, this message translates to:
-  /// **'A new code has been requested. Check your inbox and spam folder.'**
-  String get authCodeResent;
-
-  /// No description provided for @authVerifiedNotice.
-  ///
-  /// In en, this message translates to:
-  /// **'Email verified. Sign in to continue.'**
-  String get authVerifiedNotice;
 
   /// No description provided for @authRecoverTitle.
   ///
@@ -448,26 +280,14 @@ abstract class S {
   /// No description provided for @authRecoverSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'We’ll send a recovery code to your email.'**
+  /// **'Enter your email and Freeva sends a reset link.'**
   String get authRecoverSubtitle;
-
-  /// No description provided for @authSendResetCode.
-  ///
-  /// In en, this message translates to:
-  /// **'Send recovery code'**
-  String get authSendResetCode;
 
   /// No description provided for @authNewPasswordTitle.
   ///
   /// In en, this message translates to:
-  /// **'Create a new password'**
+  /// **'Set a new password'**
   String get authNewPasswordTitle;
-
-  /// No description provided for @authResetSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Check your email for a recovery code, then choose a new password.'**
-  String get authResetSubtitle;
 
   /// No description provided for @authNewPassword.
   ///
@@ -481,16 +301,10 @@ abstract class S {
   /// **'Confirm password'**
   String get authConfirmPassword;
 
-  /// No description provided for @authSavePassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Save new password'**
-  String get authSavePassword;
-
   /// No description provided for @authPasswordChanged.
   ///
   /// In en, this message translates to:
-  /// **'Password changed. Sign in with your new password.'**
+  /// **'Password changed. Sign in with the new one.'**
   String get authPasswordChanged;
 
   /// No description provided for @authPasswordMismatch.
@@ -505,29 +319,11 @@ abstract class S {
   /// **'Please enter a valid email address.'**
   String get authInvalidEmail;
 
-  /// No description provided for @authShowPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Show password'**
-  String get authShowPassword;
-
-  /// No description provided for @authHidePassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Hide password'**
-  String get authHidePassword;
-
   /// No description provided for @authBack.
   ///
   /// In en, this message translates to:
   /// **'Go back'**
   String get authBack;
-
-  /// No description provided for @authSecurityNote.
-  ///
-  /// In en, this message translates to:
-  /// **'Your account is protected by your password and app lock.'**
-  String get authSecurityNote;
 
   /// No description provided for @profileTitle.
   ///
@@ -4565,6 +4361,372 @@ abstract class S {
   /// In en, this message translates to:
   /// **'So you can check it'**
   String get notifySessionSub;
+
+  /// No description provided for @authOr.
+  ///
+  /// In en, this message translates to:
+  /// **'or'**
+  String get authOr;
+
+  /// No description provided for @authContinueGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Google'**
+  String get authContinueGoogle;
+
+  /// No description provided for @authContinueApple.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Apple'**
+  String get authContinueApple;
+
+  /// No description provided for @authNoAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Don’t have an account?'**
+  String get authNoAccount;
+
+  /// No description provided for @authHaveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account?'**
+  String get authHaveAccount;
+
+  /// No description provided for @authLaterLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get authLaterLink;
+
+  /// No description provided for @authDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get authDone;
+
+  /// No description provided for @authVerifySent.
+  ///
+  /// In en, this message translates to:
+  /// **'Freeva sent a confirmation link to {email}.'**
+  String authVerifySent(String email);
+
+  /// No description provided for @authVerifyWhyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A confirmed email helps you'**
+  String get authVerifyWhyTitle;
+
+  /// No description provided for @authVerifyWhyReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Get your password back if you forget it'**
+  String get authVerifyWhyReset;
+
+  /// No description provided for @authVerifyWhyAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Get alerts about unusual sign-ins'**
+  String get authVerifyWhyAlert;
+
+  /// No description provided for @authVerifyWhyNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Never miss important account notices'**
+  String get authVerifyWhyNotice;
+
+  /// No description provided for @authResendPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Didn’t get it?'**
+  String get authResendPrompt;
+
+  /// No description provided for @authResendLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Send again'**
+  String get authResendLink;
+
+  /// No description provided for @authVerificationSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmation link sent again.'**
+  String get authVerificationSent;
+
+  /// No description provided for @authVerifyLater.
+  ///
+  /// In en, this message translates to:
+  /// **'You can use the app without confirming. Confirm later in Profile.'**
+  String get authVerifyLater;
+
+  /// No description provided for @authSendResetLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Send reset link'**
+  String get authSendResetLink;
+
+  /// No description provided for @authResetSentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your email'**
+  String get authResetSentTitle;
+
+  /// No description provided for @authResetSent.
+  ///
+  /// In en, this message translates to:
+  /// **'If {email} has an account, Freeva sent a reset link.'**
+  String authResetSent(String email);
+
+  /// No description provided for @authBackToLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to sign in'**
+  String get authBackToLogin;
+
+  /// No description provided for @authConfirmNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat new password'**
+  String get authConfirmNewPassword;
+
+  /// No description provided for @authSaveAndLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Save and sign in'**
+  String get authSaveAndLogin;
+
+  /// No description provided for @authSocialSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get authSocialSoon;
+
+  /// No description provided for @passwordWeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough yet'**
+  String get passwordWeak;
+
+  /// No description provided for @passwordGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get passwordGood;
+
+  /// No description provided for @passwordStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Very strong'**
+  String get passwordStrong;
+
+  /// No description provided for @passwordRuleLength.
+  ///
+  /// In en, this message translates to:
+  /// **'At least 12 characters'**
+  String get passwordRuleLength;
+
+  /// No description provided for @passwordRuleLetterDigit.
+  ///
+  /// In en, this message translates to:
+  /// **'Letters and numbers'**
+  String get passwordRuleLetterDigit;
+
+  /// No description provided for @passwordRuleSymbol.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a symbol like ! @ # to be stronger'**
+  String get passwordRuleSymbol;
+
+  /// No description provided for @passwordRuleMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Both passwords match'**
+  String get passwordRuleMatch;
+
+  /// No description provided for @passwordRuleMet.
+  ///
+  /// In en, this message translates to:
+  /// **'done'**
+  String get passwordRuleMet;
+
+  /// No description provided for @passwordRuleNotMet.
+  ///
+  /// In en, this message translates to:
+  /// **'not yet'**
+  String get passwordRuleNotMet;
+
+  /// No description provided for @consentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Agree to the terms'**
+  String get consentLabel;
+
+  /// No description provided for @consentPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'I agree to Freeva’s '**
+  String get consentPrefix;
+
+  /// No description provided for @consentTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Use'**
+  String get consentTerms;
+
+  /// No description provided for @consentAnd.
+  ///
+  /// In en, this message translates to:
+  /// **' and '**
+  String get consentAnd;
+
+  /// No description provided for @consentPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get consentPrivacy;
+
+  /// No description provided for @consentSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'.'**
+  String get consentSuffix;
+
+  /// No description provided for @authPinSetupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a PIN'**
+  String get authPinSetupTitle;
+
+  /// No description provided for @authPinSetupSub.
+  ///
+  /// In en, this message translates to:
+  /// **'6 digits to unlock Freeva on this device.'**
+  String get authPinSetupSub;
+
+  /// No description provided for @authPinConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat your PIN'**
+  String get authPinConfirmTitle;
+
+  /// No description provided for @authPinConfirmSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the 6 digits again to be sure.'**
+  String get authPinConfirmSub;
+
+  /// No description provided for @authPinConfirmHint.
+  ///
+  /// In en, this message translates to:
+  /// **'If they don’t match you start again.'**
+  String get authPinConfirmHint;
+
+  /// No description provided for @authPinMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'The PINs didn’t match. Let’s start again.'**
+  String get authPinMismatch;
+
+  /// No description provided for @authConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get authConfirm;
+
+  /// No description provided for @authBiometricTitleFace.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up Face ID'**
+  String get authBiometricTitleFace;
+
+  /// No description provided for @authBiometricSubFace.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock Freeva with your face, faster than a PIN.'**
+  String get authBiometricSubFace;
+
+  /// No description provided for @authBiometricTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock faster'**
+  String get authBiometricTitle;
+
+  /// No description provided for @authBiometricSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Use your fingerprint or face instead of typing the PIN.'**
+  String get authBiometricSub;
+
+  /// No description provided for @authBiometricSetup.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up'**
+  String get authBiometricSetup;
+
+  /// No description provided for @authLockTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your PIN'**
+  String get authLockTitle;
+
+  /// No description provided for @authLockWelcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back'**
+  String get authLockWelcome;
+
+  /// No description provided for @authForgotPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot your PIN?'**
+  String get authForgotPin;
+
+  /// No description provided for @authForgotPinMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You’ll sign in again with your email and password.'**
+  String get authForgotPinMessage;
+
+  /// No description provided for @authForgotPinConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in again'**
+  String get authForgotPinConfirm;
+
+  /// No description provided for @authCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get authCancel;
+
+  /// No description provided for @pinDigitsEntered.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} of {total} digits entered'**
+  String pinDigitsEntered(int count, int total);
+
+  /// No description provided for @meSecPinSetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a PIN'**
+  String get meSecPinSetTitle;
+
+  /// No description provided for @meSecPinNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get meSecPinNone;
+
+  /// No description provided for @authUseFaceId.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock with Face ID'**
+  String get authUseFaceId;
+
+  /// No description provided for @meSecPinSetDone.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN set'**
+  String get meSecPinSetDone;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {
