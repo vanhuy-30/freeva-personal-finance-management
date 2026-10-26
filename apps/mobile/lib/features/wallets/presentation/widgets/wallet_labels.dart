@@ -15,3 +15,22 @@ String walletError(S s, AuthFailure error) => switch (error.code) {
   AuthError.rateLimited => s.authRateLimited(error.retryAfter ?? 900),
   _ => s.walletError,
 };
+
+/// "VND · Đồng Việt Nam" for the currency field; the code alone when the app
+/// has no name for it.
+String currencyLabel(S s, String code) {
+  final name = switch (code) {
+    'VND' => s.currencyNameVnd,
+    'USD' => s.currencyNameUsd,
+    'EUR' => s.currencyNameEur,
+    'JPY' => s.currencyNameJpy,
+    'KRW' => s.currencyNameKrw,
+    'CNY' => s.currencyNameCny,
+    'SGD' => s.currencyNameSgd,
+    'THB' => s.currencyNameThb,
+    'AUD' => s.currencyNameAud,
+    'GBP' => s.currencyNameGbp,
+    _ => null,
+  };
+  return name == null ? code : s.currencyCodeName(code, name);
+}

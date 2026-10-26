@@ -68,7 +68,12 @@ class WalletListBody extends StatelessWidget {
     return RefreshIndicator(
       onRefresh: model.load,
       child: ListView(
-        padding: EdgeInsets.fromLTRB(margin, 0, margin, FreevaSpace.s8),
+        padding: EdgeInsets.fromLTRB(
+          margin,
+          FreevaSpace.s2,
+          margin,
+          FreevaSpace.s8,
+        ),
         children: [
           if (active.isEmpty)
             EmptyState(
@@ -86,7 +91,9 @@ class WalletListBody extends StatelessWidget {
                   ? null
                   : () => context.push('/wallets/sort'),
             ),
-            const SizedBox(height: FreevaSpace.s4),
+            // Board: 16 under the header, whose amount line is ~2 taller
+            // than ours (the ₫ span's own leading).
+            const SizedBox(height: 18),
             FreevaCard(
               list: true,
               padding: const EdgeInsets.symmetric(
@@ -114,7 +121,7 @@ class WalletListBody extends StatelessWidget {
               ),
             ),
           ],
-          if (link != null) ...[const SizedBox(height: FreevaSpace.s3), link],
+          if (link != null) ...[const SizedBox(height: FreevaSpace.s4), link],
         ],
       ),
     );

@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
@@ -130,6 +132,9 @@ class _WalletEditorPageState extends State<WalletEditorPage> {
           final credit =
               (widget.wallet?.draft.type ?? form.type) == WalletType.credit;
           final failure = _tried ? model.failure : null;
+          // "Thêm ví" board spaces its groups 18; card and edit boards 16.
+          final roomy = !editing && !form.credit;
+          final bottom = math.max(28.0, MediaQuery.paddingOf(context).bottom);
           return Scaffold(
             appBar: FreevaTopBar(
               title: !editing
@@ -142,7 +147,7 @@ class _WalletEditorPageState extends State<WalletEditorPage> {
             body: ListView(
               padding: EdgeInsets.fromLTRB(
                 margin,
-                FreevaSpace.s2,
+                roomy ? 10 : FreevaSpace.s2,
                 margin,
                 FreevaSpace.s6,
               ),
@@ -153,47 +158,48 @@ class _WalletEditorPageState extends State<WalletEditorPage> {
                   amount: amount,
                   limit: limit,
                   onHide: editing && !model.busy ? _hide : null,
+                  gap: roomy ? 18 : FreevaSpace.s4,
                 ),
               ],
             ),
-            bottomNavigationBar: SafeArea(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                  margin,
-                  FreevaSpace.s2,
-                  margin,
-                  FreevaSpace.s4,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (failure != null)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: FreevaSpace.s2),
-                        child: Semantics(
-                          liveRegion: true,
-                          child: Text(
-                            walletError(s, failure),
-                            textAlign: TextAlign.center,
-                            style: FreevaTypography.bodyS.copyWith(
-                              color: c.statusDanger,
-                            ),
+            // Board: the button sits 28 from the bottom edge (or on the
+            // home-indicator inset when that is larger).
+            bottomNavigationBar: Padding(
+              padding: EdgeInsets.fromLTRB(
+                margin,
+                FreevaSpace.s2,
+                margin,
+                bottom,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (failure != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: FreevaSpace.s2),
+                      child: Semantics(
+                        liveRegion: true,
+                        child: Text(
+                          walletError(s, failure),
+                          textAlign: TextAlign.center,
+                          style: FreevaTypography.bodyS.copyWith(
+                            color: c.statusDanger,
                           ),
                         ),
                       ),
-                    FreevaButton(
-                      label: editing
-                          ? s.walletSaveChanges
-                          : form.credit
-                          ? s.creditSave
-                          : s.walletSave,
-                      size: FreevaButtonSize.l,
-                      expand: true,
-                      loading: model.busy,
-                      onPressed: model.busy || model.needsReload ? null : _save,
                     ),
-                  ],
-                ),
+                  FreevaButton(
+                    label: editing
+                        ? s.walletSaveChanges
+                        : form.credit
+                        ? s.creditSave
+                        : s.walletSave,
+                    size: FreevaButtonSize.l,
+                    expand: true,
+                    loading: model.busy,
+                    onPressed: model.busy || model.needsReload ? null : _save,
+                  ),
+                ],
               ),
             ),
           );

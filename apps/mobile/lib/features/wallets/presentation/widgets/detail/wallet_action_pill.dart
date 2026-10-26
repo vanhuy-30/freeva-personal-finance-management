@@ -38,7 +38,7 @@ class WalletActionPill extends StatelessWidget {
             decoration: BoxDecoration(
               color: c.cardBg,
               borderRadius: BorderRadius.circular(FreevaRadius.full),
-              boxShadow: FreevaElevation.s1,
+              boxShadow: FreevaElevation.action,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,

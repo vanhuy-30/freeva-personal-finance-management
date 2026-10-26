@@ -10,7 +10,7 @@ import '../../../../home/presentation/widgets/month_flow_value.dart';
 import '../../../domain/wallet.dart';
 import '../../../domain/wallet_flow.dart';
 import '../wallet_labels.dart';
-import '../wallet_type_icon.dart';
+import '../wallet_type_glyph.dart';
 
 /// Wash card of a wallet: "Ngân hàng · VND", balance, money in / out this
 /// month (transfers included).
@@ -50,7 +50,7 @@ class WalletBalanceCard extends StatelessWidget {
         : flowFailed
         ? Text(
             '—',
-            style: FreevaTypography.titleM.copyWith(color: c.textOnWash),
+            style: WashStatTile.valueStyle.copyWith(color: c.textOnWash),
           )
         : const Padding(
             padding: EdgeInsets.symmetric(vertical: 3),
@@ -65,15 +65,17 @@ class WalletBalanceCard extends StatelessWidget {
               DecoratedBox(
                 decoration: BoxDecoration(
                   color: c.bgSurface.withValues(alpha: .75),
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(FreevaRadius.xs),
                 ),
                 child: SizedBox(
                   width: 28,
                   height: 28,
-                  child: Icon(
-                    walletTypeIconData(wallet.draft.type),
-                    size: 16,
-                    color: c.actionPrimary,
+                  child: Center(
+                    child: WalletTypeGlyph(
+                      type: wallet.draft.type,
+                      size: FreevaSize.iconChip,
+                      color: c.actionPrimary,
+                    ),
                   ),
                 ),
               ),
@@ -92,7 +94,7 @@ class WalletBalanceCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: FreevaSpace.s2),
+          const SizedBox(height: 10),
           FittedBox(
             fit: BoxFit.scaleDown,
             alignment: Alignment.centerLeft,
@@ -103,6 +105,7 @@ class WalletBalanceCard extends StatelessWidget {
               style: compact
                   ? FreevaTypography.moneyDisplayCompact
                   : FreevaTypography.moneyDisplay,
+              currencyColor: c.textOnWash,
               hidden: hidden,
             ),
           ),

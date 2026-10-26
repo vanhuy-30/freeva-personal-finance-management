@@ -1,16 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../domain/wallet.dart';
-
-IconData walletTypeIconData(WalletType type) => switch (type) {
-  WalletType.bank => LucideIcons.landmark,
-  WalletType.cash => LucideIcons.banknote,
-  WalletType.ewallet => LucideIcons.smartphone,
-  WalletType.credit => LucideIcons.creditCard,
-};
+import 'wallet_type_glyph.dart';
 
 /// Two-tone tile per wallet type: bank blue, cash cyan, e-wallet violet,
 /// credit card subtle + ink. [muted] greys it out (hidden wallets).
@@ -18,12 +11,16 @@ class WalletTypeIcon extends StatelessWidget {
   const WalletTypeIcon({
     required this.type,
     this.size = 40,
+    this.iconSize,
     this.muted = false,
     super.key,
   });
 
   final WalletType type;
   final double size;
+
+  /// Glyph size; 20 on a 40 tile, 16 on smaller ones by default.
+  final double? iconSize;
   final bool muted;
 
   @override
@@ -41,15 +38,16 @@ class WalletTypeIcon extends StatelessWidget {
       child: Container(
         width: size,
         height: size,
+        alignment: Alignment.center,
         decoration: BoxDecoration(
           color: bg,
           borderRadius: BorderRadius.circular(
-            size >= 40 ? FreevaRadius.sm : 10,
+            size >= 40 ? FreevaRadius.sm : FreevaRadius.xs,
           ),
         ),
-        child: Icon(
-          walletTypeIconData(type),
-          size: size >= 40 ? FreevaSize.iconInline : 16,
+        child: WalletTypeGlyph(
+          type: type,
+          size: iconSize ?? (size >= 40 ? FreevaSize.iconInline : 16),
           color: fg,
         ),
       ),

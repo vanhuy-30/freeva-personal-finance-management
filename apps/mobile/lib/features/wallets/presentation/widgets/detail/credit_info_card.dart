@@ -72,6 +72,7 @@ class CreditInfoCard extends StatelessWidget {
                   s.creditDaysLeft(days),
                   maxLines: 1,
                   style: FreevaTypography.label.copyWith(
+                    fontWeight: FontWeight.w600,
                     color: c.statusWarning,
                   ),
                 ),

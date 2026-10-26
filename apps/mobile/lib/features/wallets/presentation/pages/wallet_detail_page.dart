@@ -5,6 +5,7 @@ import 'package:mobile/core/theme/lucide_icons.g.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/router/nav_back.dart';
+import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/freeva_icon_button.dart';
 import '../../../../core/widgets/freeva_toast.dart';
@@ -112,7 +113,8 @@ class _WalletDetailPageState extends State<WalletDetailPage> {
             title: wallet.draft.name,
             onLeading: back,
             action: FreevaIconButton(
-              icon: LucideIcons.pencil,
+              icon: LucideIcons.penLine,
+              iconSize: FreevaSize.iconSm,
               label: credit ? s.walletEditCard : s.walletEdit,
               onPressed: () => _edit(wallet),
             ),

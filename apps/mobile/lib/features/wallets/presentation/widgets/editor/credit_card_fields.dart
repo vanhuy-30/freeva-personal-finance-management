@@ -111,7 +111,7 @@ class CreditCardFields extends StatelessWidget {
             onTap: () => pick(closing: false),
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 10),
         Padding(
           padding: const EdgeInsets.only(left: 4),
           child: Text(

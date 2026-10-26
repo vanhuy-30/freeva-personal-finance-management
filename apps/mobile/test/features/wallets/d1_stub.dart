@@ -6,6 +6,7 @@ import 'package:mobile/features/auth/data/auth_repository_impl.dart';
 import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/auth/domain/auth_use_cases.dart';
 import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dart';
+import 'package:mobile/features/categories/domain/finance_category.dart';
 import 'package:mobile/features/transactions/domain/transaction.dart';
 import 'package:mobile/features/transactions/presentation/viewmodels/transaction_results_view_model.dart';
 import 'package:mobile/features/transactions/presentation/viewmodels/transaction_view_model.dart';
@@ -120,6 +121,26 @@ List<TransactionBundle> walletRows() => groupTransactionLegs([
   ),
 ]);
 
+/// The card's day on the WCredit artboard.
+List<TransactionBundle> creditRows() => groupTransactionLegs([
+  tx(
+    'coat',
+    account: 'card',
+    amount: -890000,
+    day: '2026-10-18',
+    category: 'shopping',
+    merchant: 'Áo khoác',
+  ),
+  tx(
+    'dinner',
+    account: 'card',
+    amount: -400000,
+    day: '2026-10-18',
+    category: 'food',
+    merchant: 'Nhà hàng Ngon',
+  ),
+]);
+
 class StubWalletDetail extends ChangeNotifier implements WalletDetailViewModel {
   StubWalletDetail({
     this.walletId = 'vcb',
@@ -163,7 +184,17 @@ Future<Widget> d1App(
   final wallets = model ?? StubWalletViewModel();
   getIt.registerSingleton<WalletViewModel>(wallets);
   getIt.registerSingleton<TransactionViewModel>(
-    StubTransactionViewModel()..wallets = wallets.wallets,
+    StubTransactionViewModel()
+      ..wallets = wallets.wallets
+      ..categories = [
+        ...stubCategories,
+        const FinanceCategory(
+          id: 'shopping',
+          name: 'Mua sắm',
+          parentId: null,
+          iconToken: 'shopping',
+        ),
+      ],
   );
   getIt.registerFactoryParam<WalletDetailViewModel, String, void>(
     (id, _) => detail ?? StubWalletDetail(walletId: id),

@@ -54,11 +54,15 @@ class HiddenWalletsPage extends StatelessWidget {
             padding: EdgeInsets.fromLTRB(margin, 0, margin, FreevaSpace.s8),
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(4, 0, 4, FreevaSpace.s4),
+                padding: const EdgeInsets.fromLTRB(
+                  4,
+                  FreevaSpace.s2,
+                  4,
+                  FreevaSpace.s4,
+                ),
                 child: Text(
                   s.walletHiddenHint,
-                  style: FreevaTypography.body.copyWith(
-                    fontSize: 14,
+                  style: FreevaTypography.bodyM.copyWith(
                     color: c.textSecondary,
                   ),
                 ),

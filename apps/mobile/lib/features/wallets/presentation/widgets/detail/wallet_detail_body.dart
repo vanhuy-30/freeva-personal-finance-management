@@ -42,6 +42,9 @@ class WalletDetailBody extends StatelessWidget {
   final ValueChanged<WalletRecordAction> onRecord;
   final Future<void> Function() onRefresh;
 
+  /// Gap between the sections on the board.
+  static const double _gap = 18;
+
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
@@ -60,12 +63,8 @@ class WalletDetailBody extends StatelessWidget {
       child: RefreshIndicator(
         onRefresh: onRefresh,
         child: ListView(
-          padding: EdgeInsets.fromLTRB(
-            margin,
-            FreevaSpace.s1,
-            margin,
-            FreevaSpace.s8,
-          ),
+          // Board sections sit 18 apart (8 of it comes from the top bar).
+          padding: EdgeInsets.fromLTRB(margin, 10, margin, FreevaSpace.s8),
           children: [
             if (card != null) ...[
               CreditBalanceCard(
@@ -73,7 +72,7 @@ class WalletDetailBody extends StatelessWidget {
                 minorDigits: minorDigits,
                 hidden: hidden,
               ),
-              const SizedBox(height: FreevaSpace.s4),
+              const SizedBox(height: _gap),
               CreditInfoCard(card: card, today: today),
             ] else
               WalletBalanceCard(
@@ -87,7 +86,7 @@ class WalletDetailBody extends StatelessWidget {
                 ).format(today),
                 hidden: hidden,
               ),
-            const SizedBox(height: FreevaSpace.s4),
+            const SizedBox(height: _gap),
             Row(
               children: [
                 Expanded(
@@ -106,14 +105,14 @@ class WalletDetailBody extends StatelessWidget {
                           onTap: () => onRecord(WalletRecordAction.payCard),
                         )
                       : WalletActionPill(
-                          icon: LucideIcons.arrowLeftRight,
+                          icon: LucideIcons.arrowRightLeft,
                           label: s.walletTransfer,
                           onTap: () => onRecord(WalletRecordAction.transfer),
                         ),
                 ),
               ],
             ),
-            const SizedBox(height: FreevaSpace.s5),
+            const SizedBox(height: _gap),
             WalletHistory(
               walletId: wallet.id,
               credit: credit,
