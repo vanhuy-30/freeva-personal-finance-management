@@ -19,6 +19,11 @@ class ProfileRepositoryImpl implements ProfileRepository {
       fiscalDay: json['fiscalMonthStartDay'] as int,
       version: json['version'] as int,
       displayName: _name(json['displayName']),
+      goals: [
+        if (json['goals'] case final List<dynamic> goals)
+          for (final goal in goals)
+            if (goal is String) goal,
+      ],
     );
     if (!['vi', 'en'].contains(value.locale) ||
         !RegExp(r'^[A-Z]{3}$').hasMatch(value.currency) ||

@@ -23,8 +23,8 @@ class ProfileCard extends StatelessWidget {
       onTap: () => context.push('/profile'),
       child: Row(
         children: [
-          AvatarLetter(name: name, email: email),
-          const SizedBox(width: FreevaSpace.s3),
+          AvatarLetter(name: name, email: email, size: 52, letterSize: 18),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

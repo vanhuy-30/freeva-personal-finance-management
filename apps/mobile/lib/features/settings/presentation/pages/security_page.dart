@@ -13,6 +13,7 @@ import '../../../../core/widgets/settings_group.dart';
 import '../../../../core/widgets/settings_row.dart';
 import '../../../auth/presentation/viewmodels/auth_view_model.dart';
 import '../viewmodels/settings_view_model.dart';
+import '../widgets/lead_settings_group.dart';
 
 /// Bảo mật: how the app unlocks and how you sign in.
 class SecurityPage extends StatefulWidget {
@@ -46,6 +47,8 @@ class _SecurityPageState extends State<SecurityPage> {
     builder: (context, _) {
       final s = S.of(context);
       final margin = context.screenMargin;
+      final face = Theme.of(context).platform == TargetPlatform.iOS;
+      final biometricTitle = face ? s.meSecFaceId : s.meSecBiometric;
       final canToggle =
           !settings.biometricBusy &&
           (settings.biometricHardware || settings.biometricEnabled);
@@ -62,49 +65,43 @@ class _SecurityPageState extends State<SecurityPage> {
             FreevaSpace.s8,
           ),
           children: [
-            SettingsGroup(
+            LeadSettingsGroup(
               title: s.meSecUnlock,
-              children: auth.hasPin
-                  ? [
-                      SettingsRow(
-                        icon: LucideIcons.lockKeyhole,
-                        title: s.meSecPin,
-                        subtitle: s.meSecPinSub,
-                        value: s.meSecAlways,
-                        chevron: false,
-                      ),
-                      if (settings.biometricHardware ||
-                          settings.biometricEnabled)
-                        SettingsRow.toggle(
-                          icon: LucideIcons.scanFace,
-                          title: s.meSecBiometric,
-                          on: settings.biometricEnabled,
-                          onChanged: (value) {
-                            if (canToggle) _biometric(value);
-                          },
-                        )
-                      else
-                        SettingsRow(
-                          icon: LucideIcons.scanFace,
-                          title: s.meSecBiometric,
-                          subtitle: s.settingsBiometricUnavailable,
-                          chevron: false,
-                        ),
-                      SettingsRow(
-                        icon: LucideIcons.keyRound,
-                        title: s.meSecChangePin,
-                        onTap: () => context.push('/me/security/pin'),
-                      ),
-                    ]
-                  : [
-                      SettingsRow(
-                        icon: LucideIcons.lockKeyhole,
-                        title: s.meSecPinSetTitle,
-                        subtitle: s.meSecPinSub,
-                        value: s.meSecPinNone,
-                        onTap: () => context.push('/me/security/pin-setup'),
-                      ),
-                    ],
+              children: [
+                SettingsRow.toggle(
+                  icon: LucideIcons.lock,
+                  title: s.meSecPin,
+                  subtitle: s.meSecPinSub,
+                  on: auth.hasPin,
+                  // No "remove PIN" flow yet: turning it off opens Đổi mã PIN.
+                  onChanged: (on) => context.push(
+                    on ? '/me/security/pin-setup' : '/me/security/pin',
+                  ),
+                ),
+                if (auth.hasPin) ...[
+                  if (settings.biometricHardware || settings.biometricEnabled)
+                    SettingsRow.toggle(
+                      icon: LucideIcons.scanFace,
+                      title: biometricTitle,
+                      on: settings.biometricEnabled,
+                      onChanged: (value) {
+                        if (canToggle) _biometric(value);
+                      },
+                    )
+                  else
+                    SettingsRow(
+                      icon: LucideIcons.scanFace,
+                      title: biometricTitle,
+                      subtitle: s.settingsBiometricUnavailable,
+                      chevron: false,
+                    ),
+                  SettingsRow(
+                    icon: LucideIcons.rectangleEllipsis,
+                    title: s.meSecChangePin,
+                    onTap: () => context.push('/me/security/pin'),
+                  ),
+                ],
+              ],
             ),
             SettingsGroup(
               title: s.meSecLogin,
@@ -118,7 +115,7 @@ class _SecurityPageState extends State<SecurityPage> {
                   onTap: () => context.push('/me/sessions'),
                 ),
                 SettingsRow(
-                  icon: LucideIcons.lock,
+                  icon: LucideIcons.key,
                   title: s.meSecChangePassword,
                   onTap: () => context.push('/me/security/password'),
                 ),

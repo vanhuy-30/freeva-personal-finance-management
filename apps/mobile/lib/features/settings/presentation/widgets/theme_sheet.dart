@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
+import '../../../../core/widgets/check_mark.dart';
 import '../../../../core/widgets/freeva_sheet.dart';
 import '../../domain/app_preferences.dart';
 import '../viewmodels/settings_view_model.dart';
@@ -14,6 +14,7 @@ Future<void> showThemeSheet(BuildContext context, SettingsViewModel model) {
   return showFreevaSheet<void>(
     context: context,
     title: s.meTheme,
+    titleGap: FreevaSpace.s4,
     builder: (context) => ListenableBuilder(
       listenable: model,
       builder: (context, _) => Semantics(
@@ -63,57 +64,67 @@ class _ThemeCard extends StatelessWidget {
       button: true,
       selected: selected,
       inMutuallyExclusiveGroup: true,
+      label: label,
+      excludeSemantics: true,
+      onTap: onTap,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
-        child: AnimatedContainer(
-          duration: FreevaMotion.fast,
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: selected ? c.tintBlue : c.bgSurface,
-            borderRadius: BorderRadius.circular(FreevaRadius.md),
-            border: Border.all(
-              color: selected ? c.borderSelected : c.borderDefault,
-              width: selected
-                  ? FreevaBorder.selected
-                  : FreevaBorder.defaultValue,
-            ),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ExcludeSemantics(child: _Thumbnail(preference)),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+        child: Stack(
+          children: [
+            AnimatedContainer(
+              duration: FreevaMotion.fast,
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
+              decoration: BoxDecoration(
+                color: selected ? c.tintBlue : c.bgSurface,
+                borderRadius: BorderRadius.circular(FreevaRadius.lg),
+                border: Border.all(
+                  color: selected ? c.borderFocus : c.borderDefault,
+                  width: selected
+                      ? FreevaBorder.selected
+                      : FreevaBorder.defaultValue,
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Flexible(
-                    child: Text(
-                      label,
-                      textAlign: TextAlign.center,
-                      style: FreevaTypography.bodyS.copyWith(
-                        fontWeight: selected
-                            ? FontWeight.w600
-                            : FontWeight.w500,
-                        color: c.textPrimary,
-                      ),
+                  _Thumbnail(preference),
+                  const SizedBox(height: 10),
+                  Text(
+                    label,
+                    textAlign: TextAlign.center,
+                    style: FreevaTypography.titleM.copyWith(
+                      fontSize: 14,
+                      color: c.textPrimary,
                     ),
                   ),
-                  if (selected) ...[
-                    const SizedBox(width: 4),
-                    Icon(LucideIcons.check, size: 14, color: c.actionPrimary),
-                  ],
                 ],
               ),
-            ],
-          ),
+            ),
+            if (selected)
+              PositionedDirectional(
+                top: 8,
+                end: 8,
+                child: Container(
+                  width: 20,
+                  height: 20,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: c.actionPrimary,
+                    shape: BoxShape.circle,
+                  ),
+                  child: CheckMark(color: c.textOnAction),
+                ),
+              ),
+          ],
         ),
       ),
     );
   }
 }
 
-/// A tiny phone: canvas, a card and two lines, in the colours of the theme.
+/// A tiny screen in the colours of the theme: a card, two lines and the
+/// bottom bar. "Theo máy" is split down the middle, light on the left.
 class _Thumbnail extends StatelessWidget {
   const _Thumbnail(this.preference);
 
@@ -121,62 +132,113 @@ class _Thumbnail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget phone(FreevaColors c) => Container(
-      color: c.bgCanvas,
-      padding: const EdgeInsets.all(6),
+    const light = FreevaColors.light;
+    const dark = FreevaColors.dark;
+    final border = Border.all(color: light.borderDivider);
+    final radius = BorderRadius.circular(FreevaRadius.smd);
+    Widget screen(FreevaColors p, {bool twoLines = true}) => Padding(
+      padding: const EdgeInsets.all(10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(height: 5, width: 24, color: c.textPrimary),
-          const SizedBox(height: 5),
-          Container(
-            height: 16,
-            decoration: BoxDecoration(
-              color: c.cardBg,
-              borderRadius: BorderRadius.circular(4),
+          _Bar(height: 26, radius: 8, color: p.bgWash),
+          const SizedBox(height: 6),
+          _Bar(height: 10, radius: 4, color: p.borderDefault, widthFactor: .7),
+          if (twoLines) ...[
+            const SizedBox(height: 6),
+            _Bar(
+              height: 10,
+              radius: 4,
+              color: p.borderDefault,
+              widthFactor: .5,
             ),
+          ],
+          const Spacer(),
+          _Bar(
+            height: 14,
+            radius: FreevaRadius.full,
+            color: p.navBg,
+            shadow: identical(p, light) ? FreevaElevation.segment : null,
           ),
-          const SizedBox(height: 4),
-          Container(height: 4, color: c.bgTrack),
-          const SizedBox(height: 3),
-          Container(height: 4, width: 30, color: c.bgTrack),
         ],
       ),
     );
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
-      child: SizedBox(
-        height: 64,
-        child: switch (preference) {
-          AppThemePreference.light => phone(FreevaColors.light),
-          AppThemePreference.dark => phone(FreevaColors.dark),
-          AppThemePreference.system => Row(
-            children: [
-              Expanded(
-                child: ClipRect(
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    widthFactor: .5,
-                    child: SizedBox(
-                      width: 90,
-                      child: phone(FreevaColors.light),
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: ClipRect(
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    widthFactor: .5,
-                    child: SizedBox(width: 90, child: phone(FreevaColors.dark)),
-                  ),
-                ),
-              ),
-            ],
+    final content = switch (preference) {
+      AppThemePreference.light => ColoredBox(
+        color: light.bgCanvas,
+        child: screen(light),
+      ),
+      AppThemePreference.dark => ColoredBox(
+        color: dark.bgCanvas,
+        child: screen(dark),
+      ),
+      AppThemePreference.system => Stack(
+        fit: StackFit.expand,
+        children: [
+          ColoredBox(
+            color: light.bgCanvas,
+            child: screen(light, twoLines: false),
           ),
-        },
+          ClipRect(
+            clipper: const _RightHalf(),
+            child: ColoredBox(
+              color: dark.bgCanvas,
+              child: screen(dark, twoLines: false),
+            ),
+          ),
+        ],
+      ),
+    };
+    return ExcludeSemantics(
+      child: Container(
+        height: 110,
+        clipBehavior: Clip.antiAlias,
+        foregroundDecoration: preference == AppThemePreference.dark
+            ? null
+            : BoxDecoration(border: border, borderRadius: radius),
+        decoration: BoxDecoration(borderRadius: radius),
+        child: content,
       ),
     );
   }
+}
+
+class _Bar extends StatelessWidget {
+  const _Bar({
+    required this.height,
+    required this.radius,
+    required this.color,
+    this.widthFactor = 1,
+    this.shadow,
+  });
+
+  final double height;
+  final double radius;
+  final Color color;
+  final double widthFactor;
+  final List<BoxShadow>? shadow;
+
+  @override
+  Widget build(BuildContext context) => FractionallySizedBox(
+    widthFactor: widthFactor,
+    child: Container(
+      height: height,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(radius),
+        boxShadow: shadow,
+      ),
+    ),
+  );
+}
+
+class _RightHalf extends CustomClipper<Rect> {
+  const _RightHalf();
+
+  @override
+  Rect getClip(Size size) =>
+      Rect.fromLTRB(size.width / 2, 0, size.width, size.height);
+
+  @override
+  bool shouldReclip(_RightHalf oldClipper) => false;
 }

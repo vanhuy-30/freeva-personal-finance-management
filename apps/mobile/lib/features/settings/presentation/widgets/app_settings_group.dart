@@ -29,6 +29,8 @@ class AppSettingsGroup extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final saved = profile.saved;
+    final face = Theme.of(context).platform == TargetPlatform.iOS;
+    const rowHeight = 54.0;
     final theme = switch (settings.theme) {
       AppThemePreference.light => s.meThemeLight,
       AppThemePreference.dark => s.meThemeDark,
@@ -38,13 +40,15 @@ class AppSettingsGroup extends StatelessWidget {
       title: s.meGroupApp,
       children: [
         SettingsRow(
-          icon: LucideIcons.palette,
+          minHeight: rowHeight,
+          icon: LucideIcons.sun,
           title: s.meTheme,
           value: theme,
           onTap: () => showThemeSheet(context, settings),
         ),
         SettingsRow(
-          icon: LucideIcons.languages,
+          minHeight: rowHeight,
+          icon: LucideIcons.globe,
           title: s.meLanguage,
           value: saved == null
               ? null
@@ -73,6 +77,7 @@ class AppSettingsGroup extends StatelessWidget {
                 },
         ),
         SettingsRow(
+          minHeight: rowHeight,
           icon: LucideIcons.clock,
           title: s.meTimezone,
           value: saved == null
@@ -106,10 +111,14 @@ class AppSettingsGroup extends StatelessWidget {
         SettingsRow(
           icon: LucideIcons.bell,
           title: s.meNotifications,
+          minHeight: rowHeight,
+          // Only "Máy mới đăng nhập" works so far.
+          value: settings.sessionAlertsEnabled ? s.meNotifyOnCount(1) : null,
           onTap: () => context.push('/me/notifications'),
         ),
         SettingsRow.toggle(
-          icon: LucideIcons.eyeOff,
+          minHeight: rowHeight,
+          icon: LucideIcons.eye,
           title: s.meHideBalances,
           on: settings.balancesHidden,
           onChanged: (value) {
@@ -117,10 +126,11 @@ class AppSettingsGroup extends StatelessWidget {
           },
         ),
         SettingsRow(
-          icon: LucideIcons.shieldCheck,
+          minHeight: rowHeight,
+          icon: LucideIcons.lock,
           title: s.meSecurity,
           value: settings.biometricEnabled
-              ? s.meSecurityValueBiometric
+              ? (face ? s.meSecurityValueFaceId : s.meSecurityValueBiometric)
               : s.meSecurityValuePin,
           onTap: () => context.push('/me/security'),
         ),

@@ -6,10 +6,15 @@ class Profile {
     required this.fiscalDay,
     required this.version,
     this.displayName,
+    this.goals = const [],
   });
 
   /// Greeting name; null until the user sets one (Hồ sơ).
   final String? displayName;
+
+  /// Goals picked at first run (at most 2); empty when skipped or when the
+  /// server does not send them.
+  final List<String> goals;
   final String locale;
   final String currency;
   final String timezone;
@@ -32,6 +37,7 @@ class Profile {
     displayName: identical(displayName, _keep)
         ? this.displayName
         : displayName as String?,
+    goals: goals,
   );
   bool samePreferences(Profile other) =>
       locale == other.locale &&

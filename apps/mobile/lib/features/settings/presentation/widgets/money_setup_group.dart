@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
+import '../../../../core/money/money_text.dart';
+import '../../../../core/theme/theme_context.dart';
 import '../../../../core/widgets/freeva_toast.dart';
 import '../../../../core/widgets/settings_group.dart';
 import '../../../../core/widgets/settings_row.dart';
@@ -10,42 +12,67 @@ import '../../../profile/presentation/viewmodels/profile_view_model.dart';
 import 'choice_sheet.dart';
 import 'profile_actions.dart';
 
-/// THIẾT LẬP TÀI CHÍNH: how you manage money. Budget, goals and tags open
-/// once their screens exist; until then they say "Sắp có".
+/// THIẾT LẬP TÀI CHÍNH: how you manage money, each row with its own tint.
+/// Budget and goals open once their screens exist; until then they say
+/// "Sắp có" but still show the value kept from first run.
 class MoneySetupGroup extends StatelessWidget {
-  const MoneySetupGroup({required this.profile, super.key});
+  const MoneySetupGroup({
+    required this.profile,
+    this.walletCount,
+    this.tagCount,
+    this.budget,
+    super.key,
+  });
 
   final ProfileViewModel profile;
+
+  /// Active wallets; null while unknown.
+  final int? walletCount;
+
+  /// Tags; null while unknown.
+  final int? tagCount;
+
+  /// Monthly budget draft in VND; null when none was typed.
+  final int? budget;
 
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
+    final c = context.colors;
     final saved = profile.saved;
+    final goals = saved?.goals.length ?? 0;
     void soon() => showFreevaToast(context, message: s.meSoon);
+    const rowHeight = 54.0;
     return SettingsGroup(
       title: s.meGroupFinance,
       children: [
         SettingsRow(
-          accent: true,
-          icon: LucideIcons.wallet,
+          tint: (c.tintViolet, c.tintVioletFg),
+          minHeight: rowHeight,
+          icon: LucideIcons.walletMinimal,
           title: s.meWallets,
+          value: walletCount == null ? null : '$walletCount',
           onTap: () => context.push('/wallets'),
         ),
         SettingsRow(
-          accent: true,
+          tint: (c.tintCyan, c.tintCyanFg),
+          minHeight: rowHeight,
           icon: LucideIcons.layoutGrid,
           title: s.meCategories,
           onTap: () => context.push('/categories'),
         ),
         SettingsRow(
-          accent: true,
+          tint: (c.tintBlue, c.tintBlueFg),
+          minHeight: rowHeight,
           icon: LucideIcons.tag,
           title: s.meTags,
+          value: tagCount == null ? null : '$tagCount',
           onTap: () => context.push('/me/tags'),
         ),
         SettingsRow(
-          accent: true,
-          icon: LucideIcons.coins,
+          tint: (c.tintGreen, c.tintGreenFg),
+          minHeight: rowHeight,
+          icon: LucideIcons.banknote,
           title: s.meCurrency,
           value: saved?.currency,
           onTap: saved == null || profile.options == null
@@ -70,14 +97,19 @@ class MoneySetupGroup extends StatelessWidget {
                 },
         ),
         SettingsRow(
-          accent: true,
-          icon: LucideIcons.piggyBank,
+          tint: (c.statusWarningBg, c.statusWarning),
+          minHeight: rowHeight,
+          icon: LucideIcons.chartPie,
           title: s.meBudget,
+          value: budget == null || budget! <= 0
+              ? null
+              : formatMoneyText(BigInt.from(budget!), 0, s.localeName),
           onTap: soon,
         ),
         SettingsRow(
-          accent: true,
-          icon: LucideIcons.calendarDays,
+          tint: (c.tintBlue, c.tintBlueFg),
+          minHeight: rowHeight,
+          icon: LucideIcons.calendar,
           title: s.meFiscal,
           value: saved == null ? null : s.meFiscalDay(saved.fiscalDay),
           onTap: saved == null
@@ -102,9 +134,11 @@ class MoneySetupGroup extends StatelessWidget {
                 },
         ),
         SettingsRow(
-          accent: true,
+          tint: (c.tintViolet, c.tintVioletFg),
+          minHeight: rowHeight,
           icon: LucideIcons.target,
           title: s.meGoals,
+          value: goals == 0 ? null : s.meGoalsCount(goals),
           onTap: soon,
         ),
       ],

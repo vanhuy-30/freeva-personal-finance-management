@@ -81,6 +81,12 @@ class _TagPageState extends State<TagPage> {
         children: [
           ListTile(
             contentPadding: EdgeInsets.zero,
+            leading: const Icon(LucideIcons.list),
+            title: Text(s.tagsViewTransactions),
+            onTap: () => Navigator.of(context).pop('view'),
+          ),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
             leading: const Icon(LucideIcons.pencil),
             title: Text(s.tagsRename),
             onTap: () => Navigator.of(context).pop('rename'),
@@ -101,7 +107,9 @@ class _TagPageState extends State<TagPage> {
       ),
     );
     if (!mounted || action == null) return;
-    if (action == 'rename') {
+    if (action == 'view') {
+      _open(tag);
+    } else if (action == 'rename') {
       final name = await showFreevaInputDialog(
         context: context,
         title: s.tagsRenameTitle,
@@ -191,17 +199,13 @@ class _TagPageState extends State<TagPage> {
             else
               FreevaCard(
                 list: true,
-                padding: EdgeInsets.zero,
+                padding: const EdgeInsets.symmetric(horizontal: FreevaSpace.s4),
                 child: Column(
                   children: [
                     for (final (i, tag) in shown.indexed) ...[
                       if (i > 0)
                         Divider(height: 1, color: context.colors.listDivider),
-                      TagRow(
-                        tag: tag,
-                        onOpen: () => _open(tag),
-                        onMore: () => _more(tag),
-                      ),
+                      TagRow(tag: tag, onTap: () => _more(tag)),
                     ],
                   ],
                 ),

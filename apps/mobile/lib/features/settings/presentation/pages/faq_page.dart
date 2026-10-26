@@ -21,7 +21,7 @@ class FaqPage extends StatefulWidget {
 
 class _FaqPageState extends State<FaqPage> {
   String query = '';
-  int? open;
+  int? open = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -29,11 +29,12 @@ class _FaqPageState extends State<FaqPage> {
     final c = context.colors;
     final margin = context.screenMargin;
     final items = [
-      (s.faqWalletQ, s.faqWalletA),
-      (s.faqTransactionQ, s.faqTransactionA),
-      (s.faqProfileQ, s.faqProfileA),
-      (s.faqLockQ, s.faqLockA),
-      (s.faqThemeQ, s.faqThemeA),
+      (s.faqRecordQ, s.faqRecordA),
+      (s.faqTransferQ, s.faqTransferA),
+      (s.faqDeletedQ, s.faqDeletedA),
+      (s.faqMonthQ, s.faqMonthA),
+      (s.faqLockAppQ, s.faqLockAppA),
+      (s.faqSafeQ, s.faqSafeA),
     ];
     final needle = query.trim().toLowerCase();
     final shown = [
@@ -48,98 +49,69 @@ class _FaqPageState extends State<FaqPage> {
         title: s.faqTitle,
         onLeading: () => context.popOrGo('/me'),
       ),
-      body: ListView(
-        padding: EdgeInsets.fromLTRB(
-          margin,
-          FreevaSpace.s2,
-          margin,
-          FreevaSpace.s8,
-        ),
-        children: [
-          PillSearchField(
-            hint: s.faqSearch,
-            onChanged: (value) => setState(() {
-              query = value;
-              open = null;
-            }),
-          ),
-          const SizedBox(height: FreevaSpace.s4),
-          if (shown.isEmpty)
-            Padding(
-              padding: const EdgeInsets.all(FreevaSpace.s6),
-              child: Text(
-                s.faqNoMatch,
-                textAlign: TextAlign.center,
-                style: FreevaTypography.bodyS.copyWith(color: c.textSecondary),
-              ),
-            )
-          else
-            FreevaCard(
-              list: true,
-              padding: EdgeInsets.zero,
-              child: Column(
-                children: [
-                  for (final (n, (i, item)) in shown.indexed) ...[
-                    if (n > 0) Divider(height: 1, color: c.listDivider),
-                    _Question(
-                      question: item.$1,
-                      answer: item.$2,
-                      expanded: open == i,
-                      onTap: () => setState(() => open = open == i ? null : i),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          const SizedBox(height: FreevaSpace.s4),
-          FreevaCard(
-            list: true,
-            onTap: () => context.push('/help/feedback'),
-            padding: const EdgeInsets.all(FreevaSpace.s4),
-            child: Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: c.tintBlue,
-                    borderRadius: BorderRadius.circular(FreevaRadius.sm),
-                  ),
-                  child: Icon(
-                    LucideIcons.messageSquare,
-                    size: FreevaSize.iconInline,
-                    color: c.tintBlueFg,
-                  ),
+      body: SafeArea(
+        top: false,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.fromLTRB(
+                  margin,
+                  FreevaSpace.s2,
+                  margin,
+                  FreevaSpace.s4,
                 ),
-                const SizedBox(width: FreevaSpace.s3),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        s.faqMissing,
+                children: [
+                  PillSearchField(
+                    hint: s.faqSearch,
+                    onChanged: (value) => setState(() {
+                      query = value;
+                      open = null;
+                    }),
+                  ),
+                  const SizedBox(height: FreevaSpace.s4),
+                  if (shown.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.all(FreevaSpace.s6),
+                      child: Text(
+                        s.faqNoMatch,
+                        textAlign: TextAlign.center,
                         style: FreevaTypography.bodyS.copyWith(
                           color: c.textSecondary,
                         ),
                       ),
-                      Text(
-                        s.faqSend,
-                        style: FreevaTypography.titleM.copyWith(
-                          color: c.textPrimary,
-                        ),
+                    )
+                  else
+                    FreevaCard(
+                      list: true,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: FreevaSpace.s4,
                       ),
-                    ],
-                  ),
-                ),
-                Icon(
-                  LucideIcons.chevronRight,
-                  size: 18,
-                  color: c.textSecondary,
-                ),
-              ],
+                      child: Column(
+                        children: [
+                          for (final (n, (i, item)) in shown.indexed) ...[
+                            if (n > 0) Divider(height: 1, color: c.listDivider),
+                            _Question(
+                              question: item.$1,
+                              answer: item.$2,
+                              expanded: open == i,
+                              onTap: () =>
+                                  setState(() => open = open == i ? null : i),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                ],
+              ),
             ),
-          ),
-        ],
+            Padding(
+              padding: EdgeInsets.fromLTRB(margin, 0, margin, 28),
+              child: _AskCard(onTap: () => context.push('/help/feedback')),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -169,26 +141,27 @@ class _Question extends StatelessWidget {
           expanded: expanded,
           child: InkWell(
             onTap: onTap,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: FreevaSpace.s4,
-                vertical: FreevaSpace.s3,
-              ),
+            splashFactory: NoSplash.splashFactory,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: FreevaSize.row),
               child: Row(
                 children: [
                   Expanded(
                     child: Text(
                       question,
-                      style: FreevaTypography.titleM.copyWith(
+                      style: FreevaTypography.body.copyWith(
+                        fontWeight: expanded
+                            ? FontWeight.w600
+                            : FontWeight.w500,
                         color: c.textPrimary,
                       ),
                     ),
                   ),
-                  const SizedBox(width: FreevaSpace.s2),
+                  const SizedBox(width: FreevaSpace.s3),
                   Icon(
                     expanded ? LucideIcons.chevronUp : LucideIcons.chevronDown,
-                    size: 18,
-                    color: c.textSecondary,
+                    size: FreevaSize.iconSm,
+                    color: expanded ? c.textLink : c.textSecondary,
                   ),
                 ],
               ),
@@ -197,21 +170,85 @@ class _Question extends StatelessWidget {
         ),
         if (expanded)
           Padding(
-            padding: const EdgeInsets.fromLTRB(
-              FreevaSpace.s4,
-              0,
-              FreevaSpace.s4,
-              FreevaSpace.s4,
-            ),
+            padding: const EdgeInsets.only(bottom: FreevaSpace.s4),
             child: Text(
               answer,
-              style: FreevaTypography.body.copyWith(
-                fontSize: 14,
-                color: c.textSecondary,
+              style: FreevaTypography.bodyM.copyWith(
+                height: 21 / 14,
+                color: c.textOnWash,
               ),
             ),
           ),
       ],
+    );
+  }
+}
+
+/// "Chưa thấy câu trả lời?" at the bottom: subtle card, opens Góp ý.
+class _AskCard extends StatelessWidget {
+  const _AskCard({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    final c = context.colors;
+    final radius = BorderRadius.circular(FreevaRadius.lg);
+    return Material(
+      color: c.bgSubtle,
+      borderRadius: radius,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: radius,
+        splashFactory: NoSplash.splashFactory,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: c.bgSurface,
+                  borderRadius: BorderRadius.circular(FreevaRadius.sm),
+                ),
+                child: Icon(
+                  LucideIcons.messageSquare,
+                  size: FreevaSize.iconSm,
+                  color: c.actionPrimary,
+                ),
+              ),
+              const SizedBox(width: FreevaSpace.s3),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      s.faqMissing,
+                      style: FreevaTypography.titleM.copyWith(
+                        color: c.textPrimary,
+                      ),
+                    ),
+                    Text(
+                      s.faqSend,
+                      style: FreevaTypography.bodyS.copyWith(
+                        color: c.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: FreevaSpace.s3),
+              Icon(
+                LucideIcons.chevronRight,
+                size: FreevaSize.iconChip,
+                color: c.textSecondary,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

@@ -8,14 +8,15 @@ import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_dialog.dart';
 import '../../../../core/widgets/freeva_top_bar.dart';
-import '../../../../core/widgets/settings_group.dart';
-import '../../../../core/widgets/settings_row.dart';
 import '../../../auth/presentation/viewmodels/auth_view_model.dart';
 import '../../../auth/presentation/widgets/session_alert_banner.dart';
 import '../../../profile/presentation/viewmodels/profile_view_model.dart';
+import '../../../tags/domain/tag_use_cases.dart';
+import '../../../wallets/presentation/viewmodels/wallet_view_model.dart';
 import '../../domain/app_preferences.dart';
 import '../viewmodels/settings_view_model.dart';
 import '../widgets/app_settings_group.dart';
+import '../widgets/danger_text_button.dart';
 import '../widgets/help_settings_group.dart';
 import '../widgets/money_setup_group.dart';
 import '../widgets/profile_card.dart';
@@ -31,12 +32,33 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   late final SettingsViewModel settings = getIt<SettingsViewModel>();
   late final ProfileViewModel profile = getIt<ProfileViewModel>();
+  final WalletViewModel? wallets = getIt.isRegistered<WalletViewModel>()
+      ? getIt<WalletViewModel>()
+      : null;
+  int? tagCount;
 
   @override
   void initState() {
     super.initState();
     settings.refreshAccount();
     settings.refreshBiometrics();
+    // Fresh copy: first run saves the budget draft through another writer.
+    settings.load();
+    if (wallets case final w? when w.wallets.isEmpty) w.load();
+    _loadTags();
+  }
+
+  Future<void> _loadTags() async {
+    if (!getIt.isRegistered<TagUseCases>()) return;
+    final result = await getIt<TagUseCases>().list();
+    if (!mounted) return;
+    result.fold((_) {}, (tags) => setState(() => tagCount = tags.length));
+  }
+
+  int? get _walletCount {
+    final w = wallets;
+    if (w == null || (w.wallets.isEmpty && w.busy)) return null;
+    return w.active.length;
   }
 
   Future<void> _logout() async {
@@ -45,6 +67,8 @@ class _SettingsPageState extends State<SettingsPage> {
       context: context,
       title: s.meLogoutTitle,
       message: s.meLogoutBody,
+      icon: LucideIcons.logOut,
+      iconTone: FreevaDialogTone.danger,
       cancelLabel: s.commonCancel,
       confirmLabel: s.meLogout,
       destructive: true,
@@ -54,7 +78,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
-    listenable: Listenable.merge([settings, profile]),
+    listenable: Listenable.merge([settings, profile, ?wallets]),
     builder: (context, _) {
       final s = S.of(context);
       final c = context.colors;
@@ -77,26 +101,27 @@ class _SettingsPageState extends State<SettingsPage> {
               name: profile.saved?.displayName,
               email: settings.email,
             ),
-            MoneySetupGroup(profile: profile),
+            MoneySetupGroup(
+              profile: profile,
+              walletCount: _walletCount,
+              tagCount: tagCount,
+              budget: settings.budgetDraftMinor,
+            ),
             AppSettingsGroup(settings: settings, profile: profile),
             const HelpSettingsGroup(),
-            const SizedBox(height: FreevaSpace.s5),
-            SettingsGroup(
-              children: [
-                SettingsRow(
-                  icon: LucideIcons.logOut,
-                  title: s.meLogout,
-                  destructive: true,
-                  onTap: _logout,
-                ),
-              ],
+            const SizedBox(height: FreevaSpace.s4),
+            DangerTextButton(
+              icon: LucideIcons.logOut,
+              label: s.meLogout,
+              onPressed: _logout,
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: FreevaSpace.s4),
-              child: Text(
-                s.settingsVersion(appVersionLabel),
-                textAlign: TextAlign.center,
-                style: FreevaTypography.label.copyWith(color: c.textSecondary),
+            const SizedBox(height: 6),
+            Text(
+              s.settingsVersion(appVersionDisplay),
+              textAlign: TextAlign.center,
+              style: FreevaTypography.label.copyWith(
+                fontWeight: FontWeight.w400,
+                color: c.textDisabled,
               ),
             ),
           ],

@@ -23,21 +23,21 @@ class SessionRow extends StatelessWidget {
     final day = DateFormat(s.reportShortDatePattern, s.localeName);
     final started = day.format(session.createdAt.toLocal());
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: FreevaSpace.s3),
+      padding: const EdgeInsets.symmetric(vertical: 14),
       child: Row(
         children: [
           Container(
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: c.bgSubtle,
+              color: session.current ? c.tintGreen : c.bgSubtle,
               borderRadius: BorderRadius.circular(FreevaRadius.sm),
             ),
             child: ExcludeSemantics(
               child: Icon(
-                session.current ? LucideIcons.smartphone : LucideIcons.monitor,
+                LucideIcons.smartphone,
                 size: FreevaSize.iconInline,
-                color: c.textPrimary,
+                color: session.current ? c.tintGreenFg : c.textOnWash,
               ),
             ),
           ),
@@ -49,24 +49,30 @@ class SessionRow extends StatelessWidget {
                 Text(
                   session.current ? s.meSessionThis : s.meSessionOther,
                   style: FreevaTypography.body.copyWith(
-                    fontWeight: FontWeight.w500,
+                    fontWeight: session.current
+                        ? FontWeight.w600
+                        : FontWeight.w500,
                     color: c.textPrimary,
                   ),
                 ),
+                const SizedBox(height: 2),
                 Text(
                   s.meSessionDates(
                     started,
                     day.format(session.expiresAt.toLocal()),
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: FreevaTypography.label.copyWith(
                     fontWeight: FontWeight.w400,
                     color: c.textSecondary,
+                    fontFeatures: const [FontFeature.tabularFigures()],
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: FreevaSpace.s2),
+          const SizedBox(width: FreevaSpace.s3),
           if (session.current)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -76,7 +82,10 @@ class SessionRow extends StatelessWidget {
               ),
               child: Text(
                 s.meSessionInUse,
-                style: FreevaTypography.label.copyWith(color: c.statusSuccess),
+                style: FreevaTypography.label.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: c.statusSuccess,
+                ),
               ),
             )
           else
@@ -87,8 +96,8 @@ class SessionRow extends StatelessWidget {
               onTap: onRevoke,
               child: FreevaButton(
                 label: s.meRevoke,
-                variant: FreevaButtonVariant.secondary,
-                size: FreevaButtonSize.xs,
+                variant: FreevaButtonVariant.dangerOutline,
+                size: FreevaButtonSize.compact,
                 onPressed: onRevoke,
               ),
             ),

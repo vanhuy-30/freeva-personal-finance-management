@@ -12,6 +12,7 @@ import 'package:mobile/features/profile/domain/profile.dart';
 import 'package:mobile/features/profile/domain/profile_use_cases.dart';
 import 'package:mobile/features/profile/presentation/viewmodels/profile_view_model.dart';
 import 'package:mobile/features/settings/data/settings_repository_impl.dart';
+import 'package:mobile/features/settings/domain/app_preferences.dart';
 import 'package:mobile/features/settings/domain/settings_use_cases.dart';
 import 'package:mobile/features/settings/presentation/viewmodels/settings_view_model.dart';
 
@@ -35,6 +36,8 @@ class G1 {
   static Future<G1> create({
     String? displayName = 'Minh',
     String email = 'minh@gmail.com',
+    int? budgetDraft,
+    List<String> goals = const [],
   }) async {
     tzdata.initializeTimeZones();
     await getIt.reset();
@@ -53,6 +56,10 @@ class G1 {
       ..ready = true
       ..stage = AuthStage.unlocked
       ..hasPin = true;
+    if (budgetDraft != null) {
+      await SettingsRepositoryImpl(g.preferences)
+          .save(AppPreferences(budgetDraftMinor: budgetDraft));
+    }
     g.settings = DefaultSettingsViewModel(
       DefaultSettingsUseCases(SettingsRepositoryImpl(g.preferences)),
       cases,
@@ -68,6 +75,7 @@ class G1 {
         fiscalDay: 1,
         version: 1,
         displayName: displayName,
+        goals: goals,
       );
     g.profile = DefaultProfileViewModel(ProfileUseCases(g.profiles), g.auth);
     await g.profile.load();
@@ -105,7 +113,9 @@ class G1 {
     bool dark = false,
     double scale = 1,
     List<GoRoute> routes = const [],
+    bool ios = false,
   }) {
+    final base = dark ? AppTheme.dark : AppTheme.light;
     final router = GoRouter(
       routes: [
         GoRoute(path: '/', builder: (_, __) => page),
@@ -117,6 +127,10 @@ class G1 {
           '/me/sessions',
           '/me/security/pin',
           '/me/security/password',
+          '/transactions',
+          '/me/notifications',
+          '/me/tags',
+          '/me/security/pin-setup',
           '/help/faq',
           '/help/feedback',
           '/help/legal',
@@ -132,7 +146,7 @@ class G1 {
       listenable: profile,
       builder: (context, _) => MaterialApp.router(
         debugShowCheckedModeBanner: false,
-        theme: dark ? AppTheme.dark : AppTheme.light,
+        theme: ios ? base.copyWith(platform: TargetPlatform.iOS) : base,
         locale: Locale(profile.locale),
         localizationsDelegates: S.localizationsDelegates,
         supportedLocales: S.supportedLocales,
