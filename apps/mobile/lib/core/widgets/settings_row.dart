@@ -3,8 +3,10 @@ import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../theme/theme_context.dart';
 import '../theme/tokens.g.dart';
+import 'freeva_switch.dart';
 
-/// Settings row, 56 high, 32 icon tile. Trailing is one of: a switch
+/// Settings row, 56 high, 32 icon tile, 12 between parts. Trailing is one of:
+/// a [FreevaSwitch]
 /// ([SettingsRow.toggle]), a value + chevron, a chevron, or nothing.
 /// `destructive` rows go last and use the error colour.
 class SettingsRow extends StatelessWidget {
@@ -18,6 +20,8 @@ class SettingsRow extends StatelessWidget {
     this.trailing,
     this.subtitle,
     this.accent = false,
+    this.tint,
+    this.minHeight = FreevaSize.row,
     super.key,
   });
 
@@ -28,12 +32,14 @@ class SettingsRow extends StatelessWidget {
     required ValueChanged<bool> onChanged,
     this.subtitle,
     this.accent = false,
+    this.tint,
+    this.minHeight = FreevaSize.row,
     super.key,
   }) : value = null,
        chevron = false,
        destructive = false,
        onTap = (() => onChanged(!on)),
-       trailing = Switch(value: on, onChanged: onChanged);
+       trailing = FreevaSwitch(value: on, onChanged: onChanged);
 
   final IconData icon;
   final String title;
@@ -49,16 +55,27 @@ class SettingsRow extends StatelessWidget {
   /// Coloured icon tile (money setup) instead of the grey one (app settings).
   final bool accent;
 
+  /// Tile colours (background, glyph), e.g. `(c.statusWarningBg,
+  /// c.statusWarning)`. Overrides [accent]; ignored for [destructive] rows.
+  final (Color, Color)? tint;
+
+  /// Row minimum height: 56, or 54 / 60 on some boards.
+  final double minHeight;
+
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
     final fg = destructive ? c.statusDanger : c.textPrimary;
+    final (tileBg, tileFg) = destructive
+        ? (c.statusDangerBg, fg)
+        : tint ?? (accent ? (c.tintBlue, c.tintBlueFg) : (c.bgSubtle, fg));
+    const gap = SizedBox(width: FreevaSpace.s3);
     return InkWell(
       onTap: onTap,
       splashFactory: NoSplash.splashFactory,
       highlightColor: c.bgSubtle,
       child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: FreevaSize.row),
+        constraints: BoxConstraints(minHeight: minHeight),
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: FreevaSpace.s4,
@@ -70,20 +87,12 @@ class SettingsRow extends StatelessWidget {
                 width: FreevaSize.iconTile,
                 height: FreevaSize.iconTile,
                 decoration: BoxDecoration(
-                  color: destructive
-                      ? c.statusDangerBg
-                      : accent
-                      ? c.tintBlue
-                      : c.bgSubtle,
-                  borderRadius: BorderRadius.circular(10),
+                  color: tileBg,
+                  borderRadius: BorderRadius.circular(FreevaRadius.xs),
                 ),
-                child: Icon(
-                  icon,
-                  size: 18,
-                  color: accent && !destructive ? c.tintBlueFg : fg,
-                ),
+                child: Icon(icon, size: FreevaSize.iconSm, color: tileFg),
               ),
-              const SizedBox(width: FreevaSpace.s3),
+              gap,
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,14 +104,18 @@ class SettingsRow extends StatelessWidget {
                         fontWeight: destructive ? FontWeight.w500 : null,
                       ),
                     ),
-                    if (subtitle != null)
+                    if (subtitle != null) ...[
+                      const SizedBox(height: 2),
                       Text(
                         subtitle!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: FreevaTypography.label.copyWith(
                           fontWeight: FontWeight.w400,
                           color: c.textSecondary,
                         ),
                       ),
+                    ],
                   ],
                 ),
               ),
@@ -113,7 +126,9 @@ class SettingsRow extends StatelessWidget {
                     maxWidth: MediaQuery.sizeOf(context).width * .45,
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.only(left: FreevaSpace.s2),
+                    padding: const EdgeInsetsDirectional.only(
+                      start: FreevaSpace.s3,
+                    ),
                     child: Text(
                       value!,
                       textAlign: TextAlign.end,
@@ -124,13 +139,15 @@ class SettingsRow extends StatelessWidget {
                     ),
                   ),
                 ),
-              if (trailing != null) trailing!,
-              if (chevron && trailing == null && !destructive)
+              if (trailing != null) ...[gap, trailing!],
+              if (chevron && trailing == null && !destructive) ...[
+                gap,
                 Icon(
                   LucideIcons.chevronRight,
-                  size: FreevaSize.iconInline,
+                  size: FreevaSize.iconChip,
                   color: c.textSecondary,
                 ),
+              ],
             ],
           ),
         ),

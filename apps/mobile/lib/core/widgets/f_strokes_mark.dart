@@ -60,3 +60,24 @@ class _FStrokesMarkState extends State<FStrokesMark>
     );
   }
 }
+
+/// Static 120×112 empty-state illustration (boards TxNoResult, RepEmpty).
+class FStrokesIllustration extends StatelessWidget {
+  const FStrokesIllustration({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    return ExcludeSemantics(
+      child: CustomPaint(
+        size: const Size(120, 112),
+        painter: FStrokesIllustrationPainter(
+          ground: c.borderDivider,
+          stem: c.actionPrimary,
+          top: FreevaPrimitive.blue200,
+          middle: FreevaPrimitive.violet200,
+        ),
+      ),
+    );
+  }
+}

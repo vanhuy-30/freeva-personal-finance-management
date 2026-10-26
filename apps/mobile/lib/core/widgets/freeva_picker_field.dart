@@ -5,7 +5,8 @@ import '../theme/theme_context.dart';
 import '../theme/tokens.g.dart';
 
 /// Form field that opens a choice (currency, day): label above the value,
-/// optional 32 icon tile in front, chevron at the end. 60 high.
+/// optional 32 icon tile in front, chevron at the end. 60 high; [compact] is
+/// 56 high with a 15/500 value (CatDelete target picker).
 class PickerField extends StatelessWidget {
   const PickerField({
     required this.label,
@@ -13,6 +14,8 @@ class PickerField extends StatelessWidget {
     required this.onTap,
     this.placeholder = false,
     this.leading,
+    this.compact = false,
+    this.chevronSize,
     super.key,
   });
 
@@ -25,6 +28,13 @@ class PickerField extends StatelessWidget {
   final bool placeholder;
   final Widget? leading;
   final VoidCallback onTap;
+
+  /// 56 high, padding 0 12 0 10, value 15/500.
+  final bool compact;
+
+  /// Chevron size; defaults to 16 next to a [leading] tile, 18 otherwise
+  /// (and 18 when [compact]).
+  final double? chevronSize;
 
   @override
   Widget build(BuildContext context) {
@@ -45,13 +55,13 @@ class PickerField extends StatelessWidget {
           borderRadius: radius,
           onTap: onTap,
           child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 60),
+            constraints: BoxConstraints(minHeight: compact ? 56 : 60),
             child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                leading == null ? FreevaSpace.s4 : 10,
-                FreevaSpace.s2,
-                FreevaSpace.s3,
-                FreevaSpace.s2,
+              padding: EdgeInsetsDirectional.fromSTEB(
+                leading == null ? 14 : 10,
+                compact ? 0 : FreevaSpace.s2,
+                compact ? FreevaSpace.s3 : 14,
+                compact ? 0 : FreevaSpace.s2,
               ),
               child: Row(
                 children: [
@@ -78,7 +88,8 @@ class PickerField extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: FreevaTypography.body.copyWith(
-                            fontSize: 16,
+                            fontSize: compact ? 15 : 16,
+                            fontWeight: compact ? FontWeight.w500 : null,
                             color: placeholder
                                 ? c.textSecondary
                                 : c.textPrimary,
@@ -89,7 +100,11 @@ class PickerField extends StatelessWidget {
                   ),
                   Icon(
                     LucideIcons.chevronDown,
-                    size: 18,
+                    size:
+                        chevronSize ??
+                        (leading != null && !compact
+                            ? FreevaSize.iconChip
+                            : FreevaSize.iconSm),
                     color: c.textSecondary,
                   ),
                 ],
@@ -121,8 +136,8 @@ class FieldIconTile extends StatelessWidget {
     height: FreevaSize.iconTile,
     decoration: BoxDecoration(
       color: background,
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(FreevaRadius.xs),
     ),
-    child: Icon(icon, size: 16, color: foreground),
+    child: Icon(icon, size: FreevaSize.iconChip, color: foreground),
   );
 }

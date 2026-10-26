@@ -17,6 +17,10 @@ enum FreevaTopBarKind {
   modal,
 }
 
+/// Screen header aligned to the 20 margin. The bar is 8 + row + 8 high
+/// (row 44, or 34 for a large title without an action), so content that
+/// starts with the usual 8 top padding sits 16 under the header row, as on
+/// the boards.
 class FreevaTopBar extends StatelessWidget implements PreferredSizeWidget {
   const FreevaTopBar({
     required this.title,
@@ -24,6 +28,7 @@ class FreevaTopBar extends StatelessWidget implements PreferredSizeWidget {
     this.action,
     this.onLeading,
     this.showLeading = true,
+    this.subtitle,
     super.key,
   });
 
@@ -39,24 +44,34 @@ class FreevaTopBar extends StatelessWidget implements PreferredSizeWidget {
   /// False for screens that leave only through their action ("Xong").
   final bool showLeading;
 
+  /// Small line centred under a push/modal title ("Tháng 10, 2026").
+  final String? subtitle;
+
+  static const double _inset = FreevaSpace.s2;
+  static const double _largeRow = 34;
+
+  bool get _large => kind == FreevaTopBarKind.largeTitle;
+
+  double get _rowHeight =>
+      _large && action == null ? _largeRow : FreevaSize.touch;
+
   @override
-  Size get preferredSize => const Size.fromHeight(64);
+  Size get preferredSize => Size.fromHeight(_rowHeight + 2 * _inset);
 
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
     final s = S.of(context);
-    final margin = context.screenMargin - 4;
-    final large = kind == FreevaTopBarKind.largeTitle;
+    final large = _large;
+    final modal = kind == FreevaTopBarKind.modal;
     final leading = large
         ? null
         : !showLeading
         ? const SizedBox(width: FreevaSize.touch)
         : FreevaIconButton(
-            icon: kind == FreevaTopBarKind.modal
-                ? LucideIcons.x
-                : LucideIcons.chevronLeft,
-            label: kind == FreevaTopBarKind.modal ? s.commonClose : s.authBack,
+            icon: modal ? LucideIcons.x : LucideIcons.chevronLeft,
+            iconSize: modal ? FreevaSize.iconSm : null,
+            label: modal ? s.commonClose : s.authBack,
             onPressed: onLeading ?? () => Navigator.of(context).maybePop(),
           );
     final style = large
@@ -64,36 +79,69 @@ class FreevaTopBar extends StatelessWidget implements PreferredSizeWidget {
               ? FreevaTypography.titleXlCompact
               : FreevaTypography.titleXl)
         : FreevaTypography.titleL;
+    Widget heading = Text(
+      title,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      textAlign: large ? TextAlign.start : TextAlign.center,
+      style: style.copyWith(color: c.textPrimary),
+    );
+    if (!large && subtitle != null) {
+      heading = Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          heading,
+          Text(
+            subtitle!,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: FreevaTypography.label.copyWith(
+              fontWeight: FontWeight.w400,
+              color: c.textSecondary,
+            ),
+          ),
+        ],
+      );
+    }
     return Material(
       color: c.bgCanvas,
       child: SafeArea(
         bottom: false,
-        child: SizedBox(
-          height: preferredSize.height,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: margin),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: context.screenMargin,
+            vertical: _inset,
+          ),
+          child: SizedBox(
+            height: _rowHeight,
             child: Row(
               children: [
-                if (leading != null) leading,
+                if (leading != null) ...[
+                  leading,
+                  const SizedBox(width: FreevaSpace.s2),
+                ],
                 Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.only(left: large ? 4 : 0),
-                    child: Semantics(
-                      header: true,
-                      child: Text(
-                        title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: large ? TextAlign.start : TextAlign.center,
-                        style: style.copyWith(color: c.textPrimary),
-                      ),
+                  child: Semantics(
+                    header: true,
+                    // Large text may outgrow the row; it spills into the
+                    // padding instead of being clipped.
+                    child: OverflowBox(
+                      maxHeight: double.infinity,
+                      alignment: large
+                          ? AlignmentDirectional.centerStart
+                          : Alignment.center,
+                      child: heading,
                     ),
                   ),
                 ),
-                if (action != null)
-                  action!
-                else if (!large)
+                if (action != null) ...[
+                  const SizedBox(width: FreevaSpace.s2),
+                  action!,
+                ] else if (!large) ...[
+                  const SizedBox(width: FreevaSpace.s2),
                   const SizedBox(width: FreevaSize.touch),
+                ],
               ],
             ),
           ),

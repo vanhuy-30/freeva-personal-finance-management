@@ -27,7 +27,7 @@ class DashedOutlineButton extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(14),
         child: CustomPaint(
-          painter: _DashPainter(c.borderDefault),
+          painter: _DashPainter(c.borderStrong),
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: FreevaSize.touch),
             child: Row(

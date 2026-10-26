@@ -52,7 +52,7 @@ class HiddenItemsLink extends StatelessWidget {
                     fontFeatures: const [FontFeature.tabularFigures()],
                   ),
                 ),
-                const SizedBox(width: FreevaSpace.s2),
+                const SizedBox(width: 10),
                 Icon(
                   LucideIcons.chevronRight,
                   size: 16,

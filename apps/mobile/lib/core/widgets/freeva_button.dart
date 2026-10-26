@@ -1,4 +1,7 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 import '../theme/theme_context.dart';
 import '../theme/tokens.g.dart';
@@ -33,8 +36,13 @@ class FreevaButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.colors;
     final style = freevaButtonStyle(c, variant, size);
-    final small = size == FreevaButtonSize.s || size == FreevaButtonSize.xs;
-    final iconSize = small ? FreevaSize.iconChip : FreevaSize.iconInline;
+    final iconSize = switch (size) {
+      FreevaButtonSize.l => FreevaSize.iconInline,
+      FreevaButtonSize.m || FreevaButtonSize.dialog => FreevaSize.iconSm,
+      FreevaButtonSize.s ||
+      FreevaButtonSize.xs ||
+      FreevaButtonSize.compact => FreevaSize.iconChip,
+    };
     final content = loading
         ? SizedBox.square(
             dimension: iconSize,
@@ -60,7 +68,7 @@ class FreevaButton extends StatelessWidget {
               ),
             ],
           );
-    final button = TextButton(
+    Widget button = TextButton(
       onPressed: loading ? () {} : onPressed,
       style: style,
       child: Semantics(
@@ -68,9 +76,47 @@ class FreevaButton extends StatelessWidget {
         child: ExcludeSemantics(excluding: loading, child: content),
       ),
     );
-    return PressScale(
-      enabled: onPressed != null && !loading,
-      child: expand ? SizedBox(width: double.infinity, child: button) : button,
+    if (expand) button = SizedBox(width: double.infinity, child: button);
+    if (size == FreevaButtonSize.compact) {
+      button = _TouchTarget(child: button);
+    }
+    return PressScale(enabled: onPressed != null && !loading, child: button);
+  }
+}
+
+/// Lays a smaller button out in a 44-high box and sends taps anywhere in that
+/// box to the button, so a 36 visual keeps a 44 touch target.
+class _TouchTarget extends SingleChildRenderObjectWidget {
+  const _TouchTarget({required Widget super.child});
+
+  @override
+  RenderObject createRenderObject(BuildContext context) => _RenderTouchTarget();
+}
+
+class _RenderTouchTarget extends RenderShiftedBox {
+  _RenderTouchTarget() : super(null);
+
+  @override
+  void performLayout() {
+    final child = this.child!;
+    child.layout(constraints, parentUsesSize: true);
+    size = constraints.constrain(
+      Size(child.size.width, math.max(child.size.height, FreevaSize.touch)),
+    );
+    (child.parentData! as BoxParentData).offset = Alignment.center.alongOffset(
+      Offset(size.width - child.size.width, size.height - child.size.height),
+    );
+  }
+
+  @override
+  bool hitTest(BoxHitTestResult result, {required Offset position}) {
+    if (super.hitTest(result, position: position)) return true;
+    if (!size.contains(position)) return false;
+    final center = child!.size.center(Offset.zero);
+    return result.addWithRawTransform(
+      transform: MatrixUtils.forceToPoint(center),
+      position: center,
+      hitTest: (result, position) => child!.hitTest(result, position: center),
     );
   }
 }
