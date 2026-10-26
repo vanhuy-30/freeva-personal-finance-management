@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../l10n/generated/app_localizations.dart';
 import '../theme/theme_context.dart';

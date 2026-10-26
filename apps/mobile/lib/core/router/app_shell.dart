@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../l10n/generated/app_localizations.dart';
 import '../widgets/freeva_bottom_nav.dart';

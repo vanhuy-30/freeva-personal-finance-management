@@ -49,3 +49,7 @@ flutter:
           weight: 500
         - asset: assets/fonts/Inter-SemiBold.ttf
           weight: 600
+    # Lucide at the canvas stroke (1.75); built by tool/lucide_stroke.
+    - family: Lucide175
+      fonts:
+        - asset: assets/fonts/Lucide175.ttf

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui' show Tristate;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 import 'package:mobile/core/theme/tokens.g.dart';
 import 'package:mobile/core/widgets/freeva_bottom_nav.dart';
 import 'package:mobile/core/widgets/freeva_button.dart';

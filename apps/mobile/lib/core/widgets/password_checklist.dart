@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../features/auth/domain/password_check.dart';
 import '../l10n/generated/app_localizations.dart';
