@@ -70,11 +70,15 @@ void main() {
     model.lastSyncedAt = DateTime.now().toUtc();
     await show(tester, app());
     expect(find.text('Chưa có mạng'), findsOneWidget);
-    expect(find.textContaining('Lần cuối hôm nay'), findsOneWidget);
+    expect(find.textContaining('hôm nay'), findsOneWidget);
     expect(find.text('CẦN BẠN XEM · 2'), findsOneWidget);
     expect(find.text('ĐANG CHỜ GỬI · 1'), findsOneWidget);
-    expect(find.text('Sửa · Đã đổi trên máy khác'), findsOneWidget);
-    expect(find.text('Thêm · Chưa gửi được · Thử lại sau'), findsOneWidget);
+    // Action tag + reason, read as one line.
+    expect(find.bySemanticsLabel('Sửa · Đã đổi trên máy khác'), findsOneWidget);
+    expect(
+      find.bySemanticsLabel('Thêm · Chưa gửi được · Thử lại sau'),
+      findsOneWidget,
+    );
     expect(
       find.text('Dữ liệu vẫn nằm trên máy này cho tới khi gửi xong.'),
       findsOneWidget,
@@ -131,7 +135,7 @@ void main() {
       ),
     ];
     await show(tester, app());
-    expect(find.textContaining('Xoá ·'), findsOneWidget);
+    expect(find.bySemanticsLabel(RegExp('^Xoá · ')), findsOneWidget);
     expect(find.textContaining('−'), findsWidgets);
   });
 
@@ -141,6 +145,9 @@ void main() {
     expect(find.text('Đang gửi 1 thay đổi'), findsOneWidget);
     expect(find.text('Có thể dùng app như bình thường'), findsOneWidget);
     expect(find.byType(LinearProgressIndicator), findsOneWidget);
+    expect(find.text('ĐANG GỬI'), findsOneWidget);
+    expect(find.text('Thêm · −55.000'), findsOneWidget);
+    expect(find.byTooltip('Bỏ thay đổi Highlands'), findsNothing);
   });
 
   testWidgets('needs an update: says so and keeps everything on the device', (
@@ -158,6 +165,10 @@ void main() {
     await show(tester, app());
     expect(find.text('Đã đồng bộ hết'), findsOneWidget);
     expect(find.text('Chưa đồng bộ lần nào'), findsOneWidget);
+    expect(
+      find.text('Dữ liệu vẫn nằm trên máy này cho tới khi gửi xong.'),
+      findsNothing,
+    );
   });
 
   testWidgets('fits a small screen at large text in both languages', (

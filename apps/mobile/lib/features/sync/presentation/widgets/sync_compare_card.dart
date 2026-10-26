@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
+import '../../../../core/widgets/check_mark.dart';
 import '../../../../core/widgets/press_scale.dart';
 
 /// One side of the comparison: a radio card with a key–value list. Values
-/// that differ from the other side sit on a warning wash.
+/// that differ from the other side sit in a small warning pill.
 class SyncCompareCard extends StatelessWidget {
   const SyncCompareCard({
     required this.title,
@@ -28,6 +28,12 @@ class SyncCompareCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
+    // 14 with the browser's normal line height: rows 27 apart, like the board.
+    final key = FreevaTypography.bodyM.copyWith(
+      height: 1.2,
+      color: c.textSecondary,
+    );
+    final value = key.copyWith(color: c.textPrimary);
     return Semantics(
       button: true,
       selected: selected,
@@ -51,22 +57,17 @@ class SyncCompareCard extends StatelessWidget {
             splashFactory: NoSplash.splashFactory,
             onTap: onTap,
             child: Padding(
-              padding: const EdgeInsets.all(FreevaSpace.s4),
+              padding: const EdgeInsets.symmetric(
+                horizontal: FreevaSpace.s4,
+                vertical: 14,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Row(
                     children: [
-                      ExcludeSemantics(
-                        child: Icon(
-                          selected
-                              ? LucideIcons.circleCheck
-                              : LucideIcons.circle,
-                          size: 22,
-                          color: selected ? c.actionPrimary : c.borderDefault,
-                        ),
-                      ),
-                      const SizedBox(width: FreevaSpace.s3),
+                      ExcludeSemantics(child: _Radio(selected: selected)),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,7 +80,8 @@ class SyncCompareCard extends StatelessWidget {
                             ),
                             Text(
                               subtitle,
-                              style: FreevaTypography.bodyS.copyWith(
+                              style: FreevaTypography.label.copyWith(
+                                fontWeight: FontWeight.w400,
                                 color: c.textSecondary,
                               ),
                             ),
@@ -88,52 +90,89 @@ class SyncCompareCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: FreevaSpace.s3),
-                  for (final (label, value, differs) in rows)
-                    Container(
-                      margin: const EdgeInsets.only(top: 4),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: FreevaSpace.s3,
-                        vertical: FreevaSpace.s2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: differs ? c.statusWarningBg : null,
-                        borderRadius: BorderRadius.circular(FreevaRadius.sm),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: Text(
-                              label,
-                              style: FreevaTypography.bodyS.copyWith(
-                                color: c.textSecondary,
-                              ),
-                            ),
+                  for (final (label, text, differs) in rows) ...[
+                    const SizedBox(height: 10),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(label, style: key),
+                        const SizedBox(width: FreevaSpace.s3),
+                        Expanded(
+                          child: Align(
+                            alignment: AlignmentDirectional.centerEnd,
+                            child: differs
+                                ? SyncDiffMark(text: text, style: value)
+                                : Text(
+                                    text,
+                                    textAlign: TextAlign.end,
+                                    style: value,
+                                  ),
                           ),
-                          Expanded(
-                            flex: 3,
-                            child: Text(
-                              value,
-                              textAlign: TextAlign.end,
-                              style: FreevaTypography.body.copyWith(
-                                fontWeight: differs
-                                    ? FontWeight.w600
-                                    : FontWeight.w500,
-                                color: c.textPrimary,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
+                  ],
                 ],
               ),
             ),
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Text that differs between the two copies: warning colours, radius 6.
+class SyncDiffMark extends StatelessWidget {
+  const SyncDiffMark({required this.text, required this.style, super.key});
+
+  final String text;
+  final TextStyle style;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6),
+      decoration: BoxDecoration(
+        color: c.statusWarningBg,
+        borderRadius: BorderRadius.circular(FreevaRadius.xxs),
+      ),
+      child: Text(
+        text,
+        textAlign: TextAlign.end,
+        style: style.copyWith(
+          color: c.statusWarning,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+}
+
+/// 22 radio: grey ring, or a filled blue disc with a white tick.
+class _Radio extends StatelessWidget {
+  const _Radio({required this.selected});
+
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    return AnimatedContainer(
+      duration: FreevaMotion.fast,
+      width: 22,
+      height: 22,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: selected ? c.actionPrimary : null,
+        border: selected
+            ? null
+            : Border.all(color: c.borderStrong, width: FreevaBorder.selected),
+      ),
+      child: selected
+          ? Center(child: CheckMark(color: c.textOnAction, strokeWidth: 3.5))
+          : null,
     );
   }
 }

@@ -29,23 +29,28 @@ class _SyncStatusBannerState extends State<SyncStatusBanner> {
       final c = context.colors;
       final attention = model.attention.length;
       final waiting = model.waiting.length;
-      final String text;
-      if (attention > 0 && waiting > 0) {
-        text = s.syncBannerBoth(attention, waiting);
-      } else if (attention > 0) {
-        text = s.syncBannerAttention(attention);
+      final String title;
+      String? detail;
+      if (attention > 0) {
+        title = s.syncBannerAttention(attention);
+        if (waiting > 0) detail = s.syncBannerOthersWaiting(waiting);
       } else if (waiting > 0) {
-        text = s.syncBannerWaiting(waiting);
+        title = s.syncBannerWaiting(waiting);
       } else {
         return const SizedBox.shrink();
       }
+      final spoken = attention > 0 && waiting > 0
+          ? s.syncBannerBoth(attention, waiting)
+          : title;
       final warn = attention > 0 || model.schemaMismatch;
+      final fg = warn ? c.statusWarning : c.textPrimary;
+      final iconFg = warn ? c.statusWarning : c.textSecondary;
       return Padding(
-        padding: const EdgeInsets.only(bottom: FreevaSpace.s3),
+        padding: const EdgeInsets.only(bottom: FreevaSpace.s4),
         child: Semantics(
           button: true,
           liveRegion: true,
-          label: text,
+          label: spoken,
           excludeSemantics: true,
           child: Material(
             color: warn ? c.statusWarningBg : c.bgSubtle,
@@ -58,29 +63,42 @@ class _SyncStatusBannerState extends State<SyncStatusBanner> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 14,
-                    vertical: 10,
+                    vertical: FreevaSpace.s3,
                   ),
                   child: Row(
                     children: [
                       Icon(
                         warn ? LucideIcons.triangleAlert : LucideIcons.clock,
                         size: FreevaSize.iconInline,
-                        color: warn ? c.statusWarning : c.textSecondary,
+                        color: iconFg,
                       ),
                       const SizedBox(width: 10),
                       Expanded(
-                        child: Text(
-                          text,
-                          style: FreevaTypography.bodyS.copyWith(
-                            fontWeight: FontWeight.w500,
-                            color: warn ? c.statusWarning : c.textPrimary,
-                          ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              title,
+                              style: FreevaTypography.bodyM.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: fg,
+                              ),
+                            ),
+                            if (detail != null)
+                              Text(
+                                detail,
+                                style: FreevaTypography.bodyS.copyWith(
+                                  color: fg,
+                                ),
+                              ),
+                          ],
                         ),
                       ),
+                      const SizedBox(width: 10),
                       Icon(
                         LucideIcons.chevronRight,
-                        size: 18,
-                        color: warn ? c.statusWarning : c.textSecondary,
+                        size: FreevaSize.iconChip,
+                        color: iconFg,
                       ),
                     ],
                   ),

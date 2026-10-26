@@ -55,9 +55,16 @@ class SyncDuplicateBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
+    final c = context.colors;
+    final caption = FreevaTypography.overline.copyWith(
+      letterSpacing: 1,
+      color: c.textSecondary,
+    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        ExcludeSemantics(child: Text(s.syncDupJust, style: caption)),
+        const SizedBox(height: FreevaSpace.s2),
         _Card(
           caption: s.syncDupJust,
           bundle: recorded,
@@ -66,6 +73,8 @@ class SyncDuplicateBody extends StatelessWidget {
           fresh: true,
         ),
         const SizedBox(height: FreevaSpace.s3),
+        ExcludeSemantics(child: Text(s.syncDupExisting, style: caption)),
+        const SizedBox(height: FreevaSpace.s2),
         _Card(
           caption: s.syncDupExisting,
           bundle: existing,
@@ -73,21 +82,29 @@ class SyncDuplicateBody extends StatelessWidget {
           digits: digitsOf(existing.legs.first.currencyCode),
           fresh: false,
         ),
-        const SizedBox(height: FreevaSpace.s5),
-        FreevaButton(
-          label: s.syncDupDeleteNew,
-          variant: FreevaButtonVariant.ink,
-          size: FreevaButtonSize.l,
-          expand: true,
-          onPressed: () => Navigator.of(context).pop(DuplicateChoice.deleteNew),
-        ),
-        const SizedBox(height: FreevaSpace.s2),
-        FreevaButton(
-          label: s.syncDupKeepBoth,
-          variant: FreevaButtonVariant.secondary,
-          size: FreevaButtonSize.l,
-          expand: true,
-          onPressed: () => Navigator.of(context).pop(DuplicateChoice.keepBoth),
+        const SizedBox(height: 18),
+        Row(
+          children: [
+            Expanded(
+              child: FreevaButton(
+                label: s.syncDupKeepBoth,
+                variant: FreevaButtonVariant.secondary,
+                expand: true,
+                onPressed: () =>
+                    Navigator.of(context).pop(DuplicateChoice.keepBoth),
+              ),
+            ),
+            const SizedBox(width: FreevaSpace.s2),
+            Expanded(
+              child: FreevaButton(
+                label: s.syncDupDeleteNew,
+                variant: FreevaButtonVariant.ink,
+                expand: true,
+                onPressed: () =>
+                    Navigator.of(context).pop(DuplicateChoice.deleteNew),
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -126,64 +143,61 @@ class _Card extends StatelessWidget {
       label: '$caption, ${label.title}, ${label.detail}, $when',
       child: ExcludeSemantics(
         child: Container(
-          padding: const EdgeInsets.all(FreevaSpace.s4),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           decoration: BoxDecoration(
             color: fresh ? c.tintBlue : c.bgSurface,
-            borderRadius: BorderRadius.circular(FreevaRadius.lg),
-            border: fresh ? null : Border.all(color: c.borderDefault),
+            borderRadius: BorderRadius.circular(FreevaRadius.md),
+            border: Border.all(
+              color: fresh ? c.actionPrimary : c.borderDefault,
+              width: fresh ? FreevaBorder.selected : FreevaBorder.defaultValue,
+            ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
             children: [
-              Text(
-                caption,
-                style: FreevaTypography.overline.copyWith(
-                  color: fresh ? c.tintBlueFg : c.textSecondary,
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: fresh ? c.bgSurface : c.bgSubtle,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  label.icon,
+                  size: FreevaSize.iconSm,
+                  color: c.textPrimary,
                 ),
               ),
-              const SizedBox(height: FreevaSpace.s2),
-              Row(
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: c.bgSurface,
-                      shape: BoxShape.circle,
+              const SizedBox(width: FreevaSpace.s3),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label.title,
+                      style: FreevaTypography.body.copyWith(
+                        fontWeight: FontWeight.w500,
+                        color: c.textPrimary,
+                      ),
                     ),
-                    child: Icon(label.icon, size: 20, color: c.textPrimary),
-                  ),
-                  const SizedBox(width: FreevaSpace.s3),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          label.title,
-                          style: FreevaTypography.body.copyWith(
-                            fontWeight: FontWeight.w500,
-                            color: c.textPrimary,
-                          ),
-                        ),
-                        Text(
-                          '${label.detail} · $when',
-                          style: FreevaTypography.bodyS.copyWith(
-                            color: c.textSecondary,
-                          ),
-                        ),
-                      ],
+                    const SizedBox(height: 2),
+                    Text(
+                      '${label.detail} · $when',
+                      style: FreevaTypography.label.copyWith(
+                        fontWeight: FontWeight.w400,
+                        color: c.textSecondary,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: FreevaSpace.s2),
-                  MoneyDisplay(
-                    minor: label.minor,
-                    currency: label.currency,
-                    minorDigits: digits,
-                    tone: label.tone,
-                    style: FreevaTypography.titleM,
-                    showCurrency: false,
-                  ),
-                ],
+                  ],
+                ),
+              ),
+              const SizedBox(width: FreevaSpace.s2),
+              MoneyDisplay(
+                minor: label.minor,
+                currency: label.currency,
+                minorDigits: digits,
+                tone: label.tone,
+                style: FreevaTypography.titleM,
+                showCurrency: false,
               ),
             ],
           ),

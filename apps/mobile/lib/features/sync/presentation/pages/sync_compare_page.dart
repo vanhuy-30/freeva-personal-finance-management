@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
@@ -75,7 +74,7 @@ class _SyncComparePageState extends State<SyncComparePage> {
       final name = syncItemView(s, item, transactions).title;
       final now = DateTime.now();
       final saved = item.server!;
-      final base = FreevaTypography.body.copyWith(color: c.textSecondary);
+      final base = FreevaTypography.body.copyWith(color: c.textOnWash);
       return Scaffold(
         appBar: FreevaTopBar(
           title: s.syncCompareTitle,
@@ -84,45 +83,48 @@ class _SyncComparePageState extends State<SyncComparePage> {
         body: ListView(
           padding: EdgeInsets.fromLTRB(
             margin,
-            FreevaSpace.s2,
+            // 14 under the header row, like the board.
+            FreevaSpace.s2 - 2,
             margin,
             FreevaSpace.s6,
           ),
           children: [
-            Text.rich(
-              TextSpan(
-                style: base,
-                children: [
-                  TextSpan(text: s.syncCompareIntroA(name)),
-                  TextSpan(
-                    text: s.syncCompareIntroB,
-                    style: base.copyWith(
-                      color: c.statusWarning,
-                      backgroundColor: c.statusWarningBg,
-                      fontWeight: FontWeight.w600,
+            Padding(
+              padding: const EdgeInsets.fromLTRB(4, 4, 4, 0),
+              child: Text.rich(
+                TextSpan(
+                  style: base,
+                  children: [
+                    TextSpan(text: s.syncCompareIntroA(name)),
+                    WidgetSpan(
+                      alignment: PlaceholderAlignment.middle,
+                      child: SyncDiffMark(
+                        text: s.syncCompareIntroB,
+                        style: base,
+                      ),
                     ),
-                  ),
-                  TextSpan(text: s.syncCompareIntroC),
-                ],
+                    TextSpan(text: s.syncCompareIntroC),
+                  ],
+                ),
               ),
             ),
-            const SizedBox(height: FreevaSpace.s5),
+            const SizedBox(height: 14),
             SyncCompareCard(
               title: s.syncCompareMine,
               subtitle: s.syncCompareMineWhen(
-                syncWhen(s, item.createdAt, now, locale),
+                syncAt(s, item.createdAt, now, locale),
               ),
               selected: _keepMine,
               onTap: () => setState(() => _keepMine = true),
               rows: [for (final f in fields) (f.label, f.mine, f.differs)],
             ),
-            const SizedBox(height: FreevaSpace.s3),
+            const SizedBox(height: 10),
             SyncCompareCard(
               title: s.syncCompareSaved,
               subtitle: saved.updatedAt == null
                   ? s.syncCompareSavedNoTime
                   : s.syncCompareSavedWhen(
-                      syncWhen(s, saved.updatedAt!, now, locale),
+                      syncAt(s, saved.updatedAt!, now, locale),
                     ),
               selected: !_keepMine,
               onTap: () => setState(() => _keepMine = false),
@@ -131,18 +133,12 @@ class _SyncComparePageState extends State<SyncComparePage> {
           ],
         ),
         bottomNavigationBar: SafeArea(
+          minimum: const EdgeInsets.only(bottom: 28),
           child: Padding(
-            padding: EdgeInsets.fromLTRB(
-              margin,
-              FreevaSpace.s2,
-              margin,
-              FreevaSpace.s4,
-            ),
+            padding: EdgeInsets.fromLTRB(margin, FreevaSpace.s2, margin, 0),
             child: FreevaButton(
               label: _keepMine ? s.syncKeepMine : s.syncKeepSaved,
-              icon: _keepMine ? LucideIcons.smartphone : LucideIcons.cloud,
               size: FreevaButtonSize.l,
-              variant: FreevaButtonVariant.ink,
               expand: true,
               loading: model.syncing,
               onPressed: () => _confirm(item),

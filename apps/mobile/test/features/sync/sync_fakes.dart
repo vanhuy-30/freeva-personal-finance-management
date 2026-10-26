@@ -1,3 +1,4 @@
+import 'package:mobile/features/categories/domain/finance_category.dart';
 import 'package:mobile/features/sync/domain/sync_item.dart';
 import 'package:mobile/features/sync/presentation/viewmodels/sync_view_model.dart';
 import 'package:mobile/features/transactions/domain/transaction.dart';
@@ -70,6 +71,8 @@ SyncQueueItem syncItem(
   String? serverId,
   int? amount = -55000,
   String merchant = 'Highlands',
+  String? categoryId,
+  DateTime? createdAt,
 }) => SyncQueueItem(
   opId: opId,
   clientId: '11111111-1111-4111-8111-111111111111',
@@ -78,6 +81,7 @@ SyncQueueItem syncItem(
   type: TransactionType.expense,
   occurredOn: '2026-10-22',
   merchant: merchant,
+  categoryId: categoryId,
   legs: amount == null
       ? const []
       : [
@@ -89,9 +93,32 @@ SyncQueueItem syncItem(
           ),
         ],
   // Local time on purpose: screens print it as is, whatever the time zone.
-  createdAt: DateTime(2026, 10, 22, 9, 12),
+  createdAt: createdAt ?? DateTime(2026, 10, 22, 9, 12),
   retryCount: 0,
   status: status,
   review: false,
   reason: reason,
 );
+
+/// Categories with the canvas icons for the sync screens (Phở → utensils,
+/// Highlands / Cà phê → coffee, Grab / Taxi → car).
+const syncCategories = [
+  FinanceCategory(
+    id: 'food',
+    name: 'Ăn uống',
+    parentId: null,
+    iconToken: 'food',
+  ),
+  FinanceCategory(
+    id: 'coffee',
+    name: 'Cà phê',
+    parentId: 'food',
+    iconToken: 'coffee',
+  ),
+  FinanceCategory(
+    id: 'car',
+    name: 'Đi lại',
+    parentId: null,
+    iconToken: 'transport',
+  ),
+];
