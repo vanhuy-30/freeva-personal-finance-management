@@ -16,10 +16,14 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
     required this.bgWash,
     required this.bgDisabled,
     required this.bgScrim,
+    required this.bgAvatar,
+    required this.bgSwitchOff,
     required this.borderDefault,
     required this.borderDivider,
     required this.borderSelected,
     required this.borderFocus,
+    required this.borderStrong,
+    required this.borderDanger,
     required this.textPrimary,
     required this.textSecondary,
     required this.textOnWash,
@@ -27,6 +31,9 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
     required this.textOnInk,
     required this.textLink,
     required this.textDisabled,
+    required this.textMuted,
+    required this.textOnInkPositive,
+    required this.textOnInkLink,
     required this.actionPrimary,
     required this.actionPrimaryPressed,
     required this.actionInk,
@@ -50,6 +57,7 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
     required this.dataMuted,
     required this.tintBlue,
     required this.tintBlueFg,
+    required this.tintBlueStrongFg,
     required this.tintViolet,
     required this.tintVioletFg,
     required this.tintCyan,
@@ -88,9 +96,12 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
     required this.listBg,
     required this.listDivider,
     required this.sheetBg,
+    required this.sheetHandle,
     required this.sheetScrim,
     required this.toastBg,
     required this.toastFg,
+    required this.toastIcon,
+    required this.toastAction,
     required this.balanceCardBg,
     required this.balanceCardFg,
     required this.balanceCardWashTopRight,
@@ -105,10 +116,14 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
   final Color bgWash;
   final Color bgDisabled;
   final Color bgScrim;
+  final Color bgAvatar;
+  final Color bgSwitchOff;
   final Color borderDefault;
   final Color borderDivider;
   final Color borderSelected;
   final Color borderFocus;
+  final Color borderStrong;
+  final Color borderDanger;
   final Color textPrimary;
   final Color textSecondary;
   final Color textOnWash;
@@ -116,6 +131,9 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
   final Color textOnInk;
   final Color textLink;
   final Color textDisabled;
+  final Color textMuted;
+  final Color textOnInkPositive;
+  final Color textOnInkLink;
   final Color actionPrimary;
   final Color actionPrimaryPressed;
   final Color actionInk;
@@ -139,6 +157,7 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
   final Color dataMuted;
   final Color tintBlue;
   final Color tintBlueFg;
+  final Color tintBlueStrongFg;
   final Color tintViolet;
   final Color tintVioletFg;
   final Color tintCyan;
@@ -177,9 +196,12 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
   final Color listBg;
   final Color listDivider;
   final Color sheetBg;
+  final Color sheetHandle;
   final Color sheetScrim;
   final Color toastBg;
   final Color toastFg;
+  final Color toastIcon;
+  final Color toastAction;
   final Color balanceCardBg;
   final Color balanceCardFg;
   final Color balanceCardWashTopRight;
@@ -194,10 +216,14 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
     bgWash: Color(0xFFECEFFA),
     bgDisabled: Color(0xFFE4E7F0),
     bgScrim: Color(0x7322283A),
+    bgAvatar: Color(0xFFE6EBFB),
+    bgSwitchOff: Color(0xFFD5DAEA),
     borderDefault: Color(0xFFE4E7F0),
     borderDivider: Color(0xFFEEF0F5),
     borderSelected: Color(0xFF22283A),
     borderFocus: Color(0xFF3F67D1),
+    borderStrong: Color(0xFFC9CEDD),
+    borderDanger: Color(0xFFF29B9B),
     textPrimary: Color(0xFF22283A),
     textSecondary: Color(0xFF5C6378),
     textOnWash: Color(0xFF3D4460),
@@ -205,6 +231,9 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
     textOnInk: Color(0xFFFFFFFF),
     textLink: Color(0xFF3F67D1),
     textDisabled: Color(0xFF6B7288),
+    textMuted: Color(0xFF9AA1B8),
+    textOnInkPositive: Color(0xFF7FD8B4),
+    textOnInkLink: Color(0xFF99B2F2),
     actionPrimary: Color(0xFF3F67D1),
     actionPrimaryPressed: Color(0xFF3352AA),
     actionInk: Color(0xFF22283A),
@@ -228,6 +257,7 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
     dataMuted: Color(0xFFDDE6FB),
     tintBlue: Color(0xFFEEF2FD),
     tintBlueFg: Color(0xFF3F67D1),
+    tintBlueStrongFg: Color(0xFF283F82),
     tintViolet: Color(0xFFF4F0FB),
     tintVioletFg: Color(0xFF7048B8),
     tintCyan: Color(0xFFEDF7FD),
@@ -265,10 +295,13 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
     cardBg: Color(0xFFFFFFFF),
     listBg: Color(0xFFFFFFFF),
     listDivider: Color(0xFFEEF0F5),
-    sheetBg: Color(0xFFFFFFFF),
+    sheetBg: Color(0xFFFCFDFF),
+    sheetHandle: Color(0xFFC9CEDD),
     sheetScrim: Color(0x7322283A),
     toastBg: Color(0xFF22283A),
     toastFg: Color(0xFFFFFFFF),
+    toastIcon: Color(0xFF7FD8B4),
+    toastAction: Color(0xFF99B2F2),
     balanceCardBg: Color(0xFFECEFFA),
     balanceCardFg: Color(0xFF3D4460),
     balanceCardWashTopRight: Color(0x8084CEEB),
@@ -284,10 +317,14 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
     bgWash: Color(0xFF232842),
     bgDisabled: Color(0xFF2C3252),
     bgScrim: Color(0x99000000),
+    bgAvatar: Color(0xFF232842),
+    bgSwitchOff: Color(0xFF2C3252),
     borderDefault: Color(0xFF2C3252),
     borderDivider: Color(0xFF2C3252),
     borderSelected: Color(0xFFF4F6FB),
     borderFocus: Color(0xFF99B2F2),
+    borderStrong: Color(0xFF6B7288),
+    borderDanger: Color(0xFFF29B9B),
     textPrimary: Color(0xFFF4F6FB),
     textSecondary: Color(0xFFA9B0C7),
     textOnWash: Color(0xFFC9CEDD),
@@ -295,6 +332,9 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
     textOnInk: Color(0xFF22283A),
     textLink: Color(0xFF99B2F2),
     textDisabled: Color(0xFF9AA1B8),
+    textMuted: Color(0xFF6B7288),
+    textOnInkPositive: Color(0xFF23795A),
+    textOnInkLink: Color(0xFF3F67D1),
     actionPrimary: Color(0xFF3F67D1),
     actionPrimaryPressed: Color(0xFF3352AA),
     actionInk: Color(0xFFF4F6FB),
@@ -318,6 +358,7 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
     dataMuted: Color(0xFF2C3252),
     tintBlue: Color(0xFF232842),
     tintBlueFg: Color(0xFF99B2F2),
+    tintBlueStrongFg: Color(0xFFBCCDF7),
     tintViolet: Color(0xFF232842),
     tintVioletFg: Color(0xFFB59BE2),
     tintCyan: Color(0xFF232842),
@@ -355,10 +396,13 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
     cardBg: Color(0xFF1B1F33),
     listBg: Color(0xFF1B1F33),
     listDivider: Color(0xFF2C3252),
-    sheetBg: Color(0xFF1B1F33),
+    sheetBg: Color(0xFF12141F),
+    sheetHandle: Color(0xFF6B7288),
     sheetScrim: Color(0x99000000),
     toastBg: Color(0xFFF4F6FB),
     toastFg: Color(0xFF22283A),
+    toastIcon: Color(0xFF23795A),
+    toastAction: Color(0xFF3F67D1),
     balanceCardBg: Color(0xFF232842),
     balanceCardFg: Color(0xFFC9CEDD),
     balanceCardWashTopRight: Color(0x3384CEEB),
@@ -375,10 +419,14 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
     Color? bgWash,
     Color? bgDisabled,
     Color? bgScrim,
+    Color? bgAvatar,
+    Color? bgSwitchOff,
     Color? borderDefault,
     Color? borderDivider,
     Color? borderSelected,
     Color? borderFocus,
+    Color? borderStrong,
+    Color? borderDanger,
     Color? textPrimary,
     Color? textSecondary,
     Color? textOnWash,
@@ -386,6 +434,9 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
     Color? textOnInk,
     Color? textLink,
     Color? textDisabled,
+    Color? textMuted,
+    Color? textOnInkPositive,
+    Color? textOnInkLink,
     Color? actionPrimary,
     Color? actionPrimaryPressed,
     Color? actionInk,
@@ -409,6 +460,7 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
     Color? dataMuted,
     Color? tintBlue,
     Color? tintBlueFg,
+    Color? tintBlueStrongFg,
     Color? tintViolet,
     Color? tintVioletFg,
     Color? tintCyan,
@@ -447,9 +499,12 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
     Color? listBg,
     Color? listDivider,
     Color? sheetBg,
+    Color? sheetHandle,
     Color? sheetScrim,
     Color? toastBg,
     Color? toastFg,
+    Color? toastIcon,
+    Color? toastAction,
     Color? balanceCardBg,
     Color? balanceCardFg,
     Color? balanceCardWashTopRight,
@@ -464,10 +519,14 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
       bgWash: bgWash ?? this.bgWash,
       bgDisabled: bgDisabled ?? this.bgDisabled,
       bgScrim: bgScrim ?? this.bgScrim,
+      bgAvatar: bgAvatar ?? this.bgAvatar,
+      bgSwitchOff: bgSwitchOff ?? this.bgSwitchOff,
       borderDefault: borderDefault ?? this.borderDefault,
       borderDivider: borderDivider ?? this.borderDivider,
       borderSelected: borderSelected ?? this.borderSelected,
       borderFocus: borderFocus ?? this.borderFocus,
+      borderStrong: borderStrong ?? this.borderStrong,
+      borderDanger: borderDanger ?? this.borderDanger,
       textPrimary: textPrimary ?? this.textPrimary,
       textSecondary: textSecondary ?? this.textSecondary,
       textOnWash: textOnWash ?? this.textOnWash,
@@ -475,6 +534,9 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
       textOnInk: textOnInk ?? this.textOnInk,
       textLink: textLink ?? this.textLink,
       textDisabled: textDisabled ?? this.textDisabled,
+      textMuted: textMuted ?? this.textMuted,
+      textOnInkPositive: textOnInkPositive ?? this.textOnInkPositive,
+      textOnInkLink: textOnInkLink ?? this.textOnInkLink,
       actionPrimary: actionPrimary ?? this.actionPrimary,
       actionPrimaryPressed: actionPrimaryPressed ?? this.actionPrimaryPressed,
       actionInk: actionInk ?? this.actionInk,
@@ -498,6 +560,7 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
       dataMuted: dataMuted ?? this.dataMuted,
       tintBlue: tintBlue ?? this.tintBlue,
       tintBlueFg: tintBlueFg ?? this.tintBlueFg,
+      tintBlueStrongFg: tintBlueStrongFg ?? this.tintBlueStrongFg,
       tintViolet: tintViolet ?? this.tintViolet,
       tintVioletFg: tintVioletFg ?? this.tintVioletFg,
       tintCyan: tintCyan ?? this.tintCyan,
@@ -536,9 +599,12 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
       listBg: listBg ?? this.listBg,
       listDivider: listDivider ?? this.listDivider,
       sheetBg: sheetBg ?? this.sheetBg,
+      sheetHandle: sheetHandle ?? this.sheetHandle,
       sheetScrim: sheetScrim ?? this.sheetScrim,
       toastBg: toastBg ?? this.toastBg,
       toastFg: toastFg ?? this.toastFg,
+      toastIcon: toastIcon ?? this.toastIcon,
+      toastAction: toastAction ?? this.toastAction,
       balanceCardBg: balanceCardBg ?? this.balanceCardBg,
       balanceCardFg: balanceCardFg ?? this.balanceCardFg,
       balanceCardWashTopRight: balanceCardWashTopRight ?? this.balanceCardWashTopRight,
@@ -558,10 +624,14 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
       bgWash: Color.lerp(bgWash, other.bgWash, t)!,
       bgDisabled: Color.lerp(bgDisabled, other.bgDisabled, t)!,
       bgScrim: Color.lerp(bgScrim, other.bgScrim, t)!,
+      bgAvatar: Color.lerp(bgAvatar, other.bgAvatar, t)!,
+      bgSwitchOff: Color.lerp(bgSwitchOff, other.bgSwitchOff, t)!,
       borderDefault: Color.lerp(borderDefault, other.borderDefault, t)!,
       borderDivider: Color.lerp(borderDivider, other.borderDivider, t)!,
       borderSelected: Color.lerp(borderSelected, other.borderSelected, t)!,
       borderFocus: Color.lerp(borderFocus, other.borderFocus, t)!,
+      borderStrong: Color.lerp(borderStrong, other.borderStrong, t)!,
+      borderDanger: Color.lerp(borderDanger, other.borderDanger, t)!,
       textPrimary: Color.lerp(textPrimary, other.textPrimary, t)!,
       textSecondary: Color.lerp(textSecondary, other.textSecondary, t)!,
       textOnWash: Color.lerp(textOnWash, other.textOnWash, t)!,
@@ -569,6 +639,9 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
       textOnInk: Color.lerp(textOnInk, other.textOnInk, t)!,
       textLink: Color.lerp(textLink, other.textLink, t)!,
       textDisabled: Color.lerp(textDisabled, other.textDisabled, t)!,
+      textMuted: Color.lerp(textMuted, other.textMuted, t)!,
+      textOnInkPositive: Color.lerp(textOnInkPositive, other.textOnInkPositive, t)!,
+      textOnInkLink: Color.lerp(textOnInkLink, other.textOnInkLink, t)!,
       actionPrimary: Color.lerp(actionPrimary, other.actionPrimary, t)!,
       actionPrimaryPressed: Color.lerp(actionPrimaryPressed, other.actionPrimaryPressed, t)!,
       actionInk: Color.lerp(actionInk, other.actionInk, t)!,
@@ -592,6 +665,7 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
       dataMuted: Color.lerp(dataMuted, other.dataMuted, t)!,
       tintBlue: Color.lerp(tintBlue, other.tintBlue, t)!,
       tintBlueFg: Color.lerp(tintBlueFg, other.tintBlueFg, t)!,
+      tintBlueStrongFg: Color.lerp(tintBlueStrongFg, other.tintBlueStrongFg, t)!,
       tintViolet: Color.lerp(tintViolet, other.tintViolet, t)!,
       tintVioletFg: Color.lerp(tintVioletFg, other.tintVioletFg, t)!,
       tintCyan: Color.lerp(tintCyan, other.tintCyan, t)!,
@@ -630,9 +704,12 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
       listBg: Color.lerp(listBg, other.listBg, t)!,
       listDivider: Color.lerp(listDivider, other.listDivider, t)!,
       sheetBg: Color.lerp(sheetBg, other.sheetBg, t)!,
+      sheetHandle: Color.lerp(sheetHandle, other.sheetHandle, t)!,
       sheetScrim: Color.lerp(sheetScrim, other.sheetScrim, t)!,
       toastBg: Color.lerp(toastBg, other.toastBg, t)!,
       toastFg: Color.lerp(toastFg, other.toastFg, t)!,
+      toastIcon: Color.lerp(toastIcon, other.toastIcon, t)!,
+      toastAction: Color.lerp(toastAction, other.toastAction, t)!,
       balanceCardBg: Color.lerp(balanceCardBg, other.balanceCardBg, t)!,
       balanceCardFg: Color.lerp(balanceCardFg, other.balanceCardFg, t)!,
       balanceCardWashTopRight: Color.lerp(balanceCardWashTopRight, other.balanceCardWashTopRight, t)!,
@@ -645,6 +722,7 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
 abstract final class FreevaPrimitive {
   static const Color white = Color(0xFFFFFFFF);
   static const Color blue50 = Color(0xFFEEF2FD);
+  static const Color blue75 = Color(0xFFE6EBFB);
   static const Color blue100 = Color(0xFFDDE6FB);
   static const Color blue200 = Color(0xFFBCCDF7);
   static const Color blue300 = Color(0xFF99B2F2);
@@ -725,9 +803,14 @@ abstract final class FreevaSpace {
 }
 
 abstract final class FreevaRadius {
+  static const double xxs = 6.0;
+  static const double xs = 10.0;
   static const double sm = 12.0;
+  static const double smd = 14.0;
   static const double md = 16.0;
+  static const double mlg = 18.0;
   static const double lg = 20.0;
+  static const double lgx = 22.0;
   static const double xl = 24.0;
   static const double sheet = 28.0;
   static const double full = 999.0;
@@ -748,6 +831,11 @@ abstract final class FreevaSize {
   static const double iconInline = 20.0;
   static const double iconChip = 16.0;
   static const double iconTile = 32.0;
+  static const double buttonDialog = 48.0;
+  static const double buttonCompact = 36.0;
+  static const double pill = 32.0;
+  static const double iconSm = 18.0;
+  static const double iconXs = 14.0;
 }
 
 abstract final class FreevaLayout {
@@ -785,6 +873,15 @@ abstract final class FreevaElevation {
   static const List<BoxShadow> s1 = [BoxShadow(offset: Offset(0.0, 1.0), blurRadius: 2.0, color: Color(0x0A22283A)), BoxShadow(offset: Offset(0.0, 8.0), blurRadius: 24.0, color: Color(0x0D22283A))];
   static const List<BoxShadow> s2 = [BoxShadow(offset: Offset(0.0, 1.0), blurRadius: 2.0, color: Color(0x0D22283A)), BoxShadow(offset: Offset(0.0, 12.0), blurRadius: 32.0, color: Color(0x1F22283A))];
   static const List<BoxShadow> fab = [BoxShadow(offset: Offset(0.0, 8.0), blurRadius: 18.0, color: Color(0x593F67D1))];
+  static const List<BoxShadow> tile = [BoxShadow(offset: Offset(0.0, 1.0), blurRadius: 2.0, color: Color(0x0A22283A)), BoxShadow(offset: Offset(0.0, 6.0), blurRadius: 18.0, color: Color(0x0D22283A))];
+  static const List<BoxShadow> action = [BoxShadow(offset: Offset(0.0, 1.0), blurRadius: 2.0, color: Color(0x0A22283A)), BoxShadow(offset: Offset(0.0, 6.0), blurRadius: 18.0, color: Color(0x0F22283A))];
+  static const List<BoxShadow> raised = [BoxShadow(offset: Offset(0.0, 1.0), blurRadius: 2.0, color: Color(0x0A22283A)), BoxShadow(offset: Offset(0.0, 10.0), blurRadius: 28.0, color: Color(0x0F22283A))];
+  static const List<BoxShadow> segment = [BoxShadow(offset: Offset(0.0, 1.0), blurRadius: 3.0, color: Color(0x1F22283A))];
+  static const List<BoxShadow> swap = [BoxShadow(offset: Offset(0.0, 4.0), blurRadius: 12.0, color: Color(0x1422283A))];
+  static const List<BoxShadow> drag = [BoxShadow(offset: Offset(0.0, 16.0), blurRadius: 32.0, color: Color(0x2922283A))];
+  static const List<BoxShadow> toast = [BoxShadow(offset: Offset(0.0, 12.0), blurRadius: 32.0, color: Color(0x3822283A))];
+  static const List<BoxShadow> sheet = [BoxShadow(offset: Offset(0.0, -12.0), blurRadius: 32.0, color: Color(0x1F22283A))];
+  static const List<BoxShadow> dialog = [BoxShadow(offset: Offset(0.0, 24.0), blurRadius: 48.0, color: Color(0x3822283A))];
 }
 
 abstract final class FreevaMotion {
@@ -895,6 +992,27 @@ abstract final class FreevaTypography {
     height: 1.2727,
     fontWeight: FontWeight.w600,
     letterSpacing: 1.6,
+  );
+  static const TextStyle titleS = TextStyle(
+    fontFamily: 'Inter',
+    fontSize: 20.0,
+    height: 1.3,
+    fontWeight: FontWeight.w600,
+    letterSpacing: 0.0,
+  );
+  static const TextStyle bodyM = TextStyle(
+    fontFamily: 'Inter',
+    fontSize: 14.0,
+    height: 1.4286,
+    fontWeight: FontWeight.w400,
+    letterSpacing: 0.0,
+  );
+  static const TextStyle sectionLabel = TextStyle(
+    fontFamily: 'Inter',
+    fontSize: 12.0,
+    height: 1.3333,
+    fontWeight: FontWeight.w600,
+    letterSpacing: 1.4,
   );
 }
 
