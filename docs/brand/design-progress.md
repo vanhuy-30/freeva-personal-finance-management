@@ -37,6 +37,16 @@ Thứ tự đã chốt: nền tảng → B → C → D → E → F → G → A �
 | A Onboarding/tài khoản | Xong (A1 + A2a + A2b) | A1: Đăng nhập một màn, Tạo tài khoản (danh sách điều kiện, đồng ý điều khoản, `termsAccepted` + migration), Xác nhận email (nút "Xong"), Quên mật khẩu, Mật khẩu mới (chờ deep link), Đặt PIN → Nhập lại → Face ID đều "Để sau" được, màn Mở khoá mới. PIN không còn bắt buộc: không PIN thì app không khoá, Bảo mật có "Đặt mã PIN". Google/Apple: nút báo "Sắp có". A2a: Welcome (một lần), Tạo tài khoản Freeva (Google/Apple "Sắp có", email), Mục tiêu (tối đa 2), Thói quen, Ngân sách tháng (số lưu trên máy, chờ `BE-P2-E02`); câu trả lời lưu ở backend (`PATCH /profile/onboarding`); bỏ màn giới thiệu cũ trong app. A2b: Thiết lập tài chính (mỗi loại một ví, form thêm ví của nhóm D, chạy được khi chưa mở khoá), checklist "Bắt đầu nào" trên Tổng quan (tự tính từ dữ liệu thật; hết khi đã có ví và khoản đầu tiên, dòng PIN chỉ hiện khi chưa có PIN), "Chào {tên}" trên màn Mở khoá (tên lưu cùng phiên trên máy). Chưa làm: xác nhận lại email trong Cá nhân, deep link, Google/Apple thật |
 | H Đồng bộ | Xong (H1 + H2) | H1: banner trên Giao dịch (vàng khi cần xem, trung tính khi chỉ chờ gửi), chip "Cần xem lại" / icon đồng hồ trên dòng, màn Đồng bộ (`/sync`: thẻ trạng thái chưa có mạng / chưa gửi được / đang gửi / đã đồng bộ hết / cần cập nhật, mục cần xem với lý do và Thử lại · Bỏ, mục chờ gửi với ×, giờ lần cuối), popup "Bỏ thay đổi này?". Tiến độ không có số từng mục (một lô một lần gọi); nút "Cập nhật" và "Sửa" để sau. H2: màn Chọn bản giữ lại (so hai bản, chọn sẵn bản đã lưu; giữ bản máy này = gửi lại với `version` mới của server), sheet "Có thể bạn đã ghi rồi" (hiện ở màn gốc của tab, Giữ cả hai / Xoá bản vừa ghi có Hoàn tác). Chưa làm: nút "Cập nhật", nút "Sửa" |
 
+### Rà soát độ khớp UI (`DS-P2-006`, 2026-10-26)
+
+Product owner build app và thấy màn không giống canvas. Nguyên nhân: code viết theo bảng chữ trong `patterns/*.md` thay vì số đo trong từng board `.dc.html`, và golden chỉ so app với chính nó. Đã rà 76 board, sửa token, ~35 widget chung và mọi màn A–H; icon Lucide dựng lại nét 1.75 như canvas (`apps/mobile/tool/lucide_stroke`).
+
+Quyết định của owner trong đợt này: icon nét 1.75; trang chính lần đầu theo board ObHome (không tìm/chuông/nút nhanh); "Hóa đơn" dùng icon điện (seed + migration); dòng Nhãn có mũi tên, chạm mở sheet Xem giao dịch / Đổi tên / Xoá. Đi kèm: `GET /profile` trả `goals` để thẻ tín dụng lên đầu khi mục tiêu là quản lý nợ; Bảo mật có công tắc PIN; Hồ sơ có nút đổi ảnh và "Xoá tài khoản" (toast "Sắp có").
+
+**Quy tắc từ nay:** code màn nào thì lấy giá trị từ board đó, rồi so ảnh: `python3 apps/mobile/tool/design_compare/render.py docs/brand/canvas <out>` và `pairs.py <out> apps/mobile` (design bên trái, golden bên phải), xem từng cặp trước khi báo xong.
+
+Còn lệch có chủ đích hoặc chưa làm: ô thả khi kéo sắp xếp ví, icon "Thể thao" (Lucide không có tạ nằm ngang), nhãn "Email · đã xác nhận" (API chưa có cờ xác nhận), chip "Đã xác nhận {email}" ở Mật khẩu mới (chờ deep link).
+
 ## Việc thiết kế còn lại
 
 Tám nhóm A–H đã chốt. Còn:
