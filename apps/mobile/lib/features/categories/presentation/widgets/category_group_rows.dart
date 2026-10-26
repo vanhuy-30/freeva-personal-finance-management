@@ -69,7 +69,8 @@ class CategoryGroupRows extends StatelessWidget {
                                   color: c.textPrimary,
                                 ),
                               ),
-                              if (count > 0)
+                              if (count > 0) ...[
+                                const SizedBox(height: 2),
                                 Text(
                                   s.categoryChildCount(count),
                                   style: FreevaTypography.label.copyWith(
@@ -77,6 +78,7 @@ class CategoryGroupRows extends StatelessWidget {
                                     color: c.textSecondary,
                                   ),
                                 ),
+                              ],
                             ],
                           ),
                         ),
@@ -86,7 +88,8 @@ class CategoryGroupRows extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: FreevaSpace.s3),
+            // 8 + the 44 cell's 4 inset = the board's 12 gap to the circle.
+            const SizedBox(width: FreevaSpace.s2),
             if (count > 0)
               _ToggleButton(
                 expanded: expanded,
@@ -95,11 +98,11 @@ class CategoryGroupRows extends StatelessWidget {
               )
             else
               SizedBox(
-                width: 36,
+                width: FreevaSize.touch,
                 child: Icon(
                   LucideIcons.chevronRight,
-                  size: 16,
-                  color: c.textDisabled,
+                  size: FreevaSize.iconChip,
+                  color: c.textMuted,
                 ),
               ),
           ],
@@ -183,7 +186,7 @@ class _ToggleButton extends StatelessWidget {
                 child: Icon(
                   expanded ? LucideIcons.chevronUp : LucideIcons.chevronDown,
                   size: 18,
-                  color: expanded ? c.actionPrimary : c.textOnWash,
+                  color: expanded ? c.tintBlueFg : c.textOnWash,
                 ),
               ),
             ),

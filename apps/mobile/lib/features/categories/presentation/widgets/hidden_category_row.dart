@@ -27,8 +27,10 @@ class HiddenCategoryRow extends StatelessWidget {
     final c = context.colors;
     final category = group.parent;
     final count = group.children.length;
+    final restore = busy ? null : onRestore;
+    // 10 + the 44 touch box + 10 = the board's 64 row (40 tile + 12 + 12).
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: FreevaSpace.s3),
+      padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
         children: [
           CategoryIconTile(
@@ -61,24 +63,51 @@ class HiddenCategoryRow extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: FreevaSpace.s2),
+          const SizedBox(width: FreevaSpace.s3),
+          // 36 pill in a 44 touch box.
           Semantics(
             container: true,
             button: true,
+            enabled: restore != null,
             label: s.categoryRestoreNamed(category.name),
+            onTap: restore,
             excludeSemantics: true,
-            child: OutlinedButton.icon(
-              onPressed: busy ? null : onRestore,
-              icon: const Icon(LucideIcons.rotateCcw, size: 14),
-              label: Text(s.categoryRestoreShort),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: c.actionPrimary,
-                side: BorderSide(color: c.borderDefault),
-                minimumSize: const Size(0, FreevaSize.touch),
-                padding: const EdgeInsets.symmetric(horizontal: 14),
-                shape: const StadiumBorder(),
-                textStyle: FreevaTypography.bodyS.copyWith(
-                  fontWeight: FontWeight.w600,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: restore,
+              child: SizedBox(
+                height: FreevaSize.touch,
+                child: Center(
+                  child: OutlinedButton(
+                    onPressed: restore,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: c.actionPrimary,
+                      backgroundColor: c.bgSurface,
+                      disabledForegroundColor: c.textDisabled,
+                      side: BorderSide(color: c.borderDefault),
+                      minimumSize: const Size(0, FreevaSize.buttonCompact),
+                      fixedSize: const Size.fromHeight(
+                        FreevaSize.buttonCompact,
+                      ),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      shape: const StadiumBorder(),
+                      textStyle: FreevaTypography.bodyS.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          LucideIcons.rotateCcw,
+                          size: FreevaSize.iconXs,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(s.categoryRestoreShort),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),

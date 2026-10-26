@@ -4,6 +4,7 @@ import 'package:mobile/core/theme/lucide_icons.g.dart';
 import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../../core/theme/theme_context.dart';
 import '../../../../../core/theme/tokens.g.dart';
+import '../../../../../core/widgets/check_mark.dart';
 import '../category_badge.dart';
 import '../category_names.dart';
 
@@ -50,20 +51,37 @@ class CategoryColorGrid extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: color ?? c.bgSubtle,
+                  // Painted in order: the 5 colour ring first, then the 3
+                  // white ring over it, so a white gap shows.
                   boxShadow: on
                       ? [
-                          BoxShadow(color: c.bgSurface, spreadRadius: 3),
                           BoxShadow(
                             color: color ?? c.textSecondary,
                             spreadRadius: 5,
                           ),
+                          BoxShadow(color: c.bgSurface, spreadRadius: 3),
                         ]
                       : null,
                 ),
                 child: color == null
-                    ? Icon(LucideIcons.ban, size: 16, color: c.textSecondary)
+                    // Board glyph: a circle with a "/" slash inside, i.e.
+                    // Lucide "ban" mirrored.
+                    ? Transform.flip(
+                        flipX: true,
+                        child: Icon(
+                          LucideIcons.ban,
+                          size: FreevaSize.iconSm,
+                          color: c.textMuted,
+                        ),
+                      )
                     : on
-                    ? Icon(LucideIcons.check, size: 16, color: c.textOnAction)
+                    ? Center(
+                        child: CheckMark(
+                          color: c.textOnAction,
+                          size: FreevaSize.iconChip,
+                          strokeWidth: 3,
+                        ),
+                      )
                     : null,
               ),
             ),

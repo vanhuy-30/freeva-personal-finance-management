@@ -5,6 +5,7 @@ import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../../core/theme/theme_context.dart';
 import '../../../../../core/theme/tokens.g.dart';
 import '../../../../../core/widgets/freeva_button.dart';
+import '../../../../../core/widgets/freeva_dialog.dart';
 import '../../../../../core/widgets/freeva_picker_field.dart';
 import '../../../domain/finance_category.dart';
 import '../category_icon_tile.dart';
@@ -61,103 +62,84 @@ class _DeletePopupState extends State<_DeletePopup> {
     final c = context.colors;
     final moves = widget.count > 0;
     final chosen = widget.targets.where((t) => t.id == target).firstOrNull;
-    return Dialog(
-      backgroundColor: c.sheetBg,
-      insetPadding: EdgeInsets.symmetric(horizontal: context.screenMargin),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(FreevaRadius.sheet),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(18, 24, 18, 18),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Center(
-              child: Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: c.statusDangerBg,
-                  borderRadius: BorderRadius.circular(FreevaRadius.md),
-                ),
-                child: Icon(LucideIcons.trash2, color: c.actionDanger),
-              ),
-            ),
-            const SizedBox(height: 10),
-            Semantics(
-              header: true,
-              child: Text(
-                s.categoryDeleteQuestion(widget.category.name),
-                textAlign: TextAlign.center,
-                style: FreevaTypography.titleL.copyWith(color: c.textPrimary),
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              moves
-                  ? s.categoryDeleteMove(widget.count)
-                  : s.categoryDeleteNoUndo,
+    return FreevaDialog(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Center(child: FreevaDialogIcon(icon: LucideIcons.trash)),
+          const SizedBox(height: 10),
+          Semantics(
+            header: true,
+            child: Text(
+              s.categoryDeleteQuestion(widget.category.name),
               textAlign: TextAlign.center,
-              style: FreevaTypography.body.copyWith(
-                fontSize: 14,
-                color: c.textSecondary,
-              ),
+              style: FreevaTypography.titleL.copyWith(color: c.textPrimary),
             ),
-            if (moves) ...[
-              const SizedBox(height: FreevaSpace.s4),
-              // The sentence above ends in "chuyển sang:", so no label here.
-              PickerField(
-                label: '',
-                value: chosen?.name ?? s.categoryPickParent,
-                placeholder: chosen == null,
-                leading: chosen == null
-                    ? null
-                    : CategoryIconTile(
-                        iconToken: chosen.iconToken,
-                        colorToken: chosen.colorToken,
-                        size: 32,
-                      ),
-                onTap: () async {
-                  final id = await showCategoryChoiceSheet(
-                    context,
-                    title: s.categoryMoveTo,
-                    choices: widget.targets,
-                    selected: target,
-                  );
-                  if (id != null) setState(() => target = id);
-                },
-              ),
-            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            moves ? s.categoryDeleteMove(widget.count) : s.categoryDeleteNoUndo,
+            textAlign: TextAlign.center,
+            style: FreevaTypography.body.copyWith(
+              fontSize: 14,
+              color: c.textSecondary,
+            ),
+          ),
+          if (moves) ...[
             const SizedBox(height: FreevaSpace.s4),
-            Row(
-              children: [
-                Expanded(
-                  child: FreevaButton(
-                    label: s.commonCancel,
-                    variant: FreevaButtonVariant.secondary,
-                    size: FreevaButtonSize.s,
-                    expand: true,
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                ),
-                const SizedBox(width: FreevaSpace.s2),
-                Expanded(
-                  child: FreevaButton(
-                    label: s.categoryDeleteShort,
-                    variant: FreevaButtonVariant.destructive,
-                    size: FreevaButtonSize.s,
-                    expand: true,
-                    onPressed: moves && chosen == null
-                        ? null
-                        : () => Navigator.of(context)
-                              .pop(CategoryDeleteChoice(moves ? target : null)),
-                  ),
-                ),
-              ],
+            // The sentence above ends in "chuyển sang:", so no label here.
+            PickerField(
+              label: '',
+              compact: true,
+              value: chosen?.name ?? s.categoryPickParent,
+              placeholder: chosen == null,
+              leading: chosen == null
+                  ? null
+                  : CategoryIconTile(
+                      iconToken: chosen.iconToken,
+                      colorToken: chosen.colorToken,
+                      size: 32,
+                    ),
+              onTap: () async {
+                final id = await showCategoryChoiceSheet(
+                  context,
+                  title: s.categoryMoveTo,
+                  choices: widget.targets,
+                  selected: target,
+                );
+                if (id != null) setState(() => target = id);
+              },
             ),
           ],
-        ),
+          const SizedBox(height: FreevaSpace.s4),
+          Row(
+            children: [
+              Expanded(
+                child: FreevaButton(
+                  label: s.commonCancel,
+                  variant: FreevaButtonVariant.secondary,
+                  size: FreevaButtonSize.dialog,
+                  expand: true,
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ),
+              const SizedBox(width: FreevaSpace.s2),
+              Expanded(
+                child: FreevaButton(
+                  label: s.categoryDeleteShort,
+                  variant: FreevaButtonVariant.destructive,
+                  size: FreevaButtonSize.dialog,
+                  expand: true,
+                  onPressed: moves && chosen == null
+                      ? null
+                      : () => Navigator.of(context)
+                            .pop(CategoryDeleteChoice(moves ? target : null)),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

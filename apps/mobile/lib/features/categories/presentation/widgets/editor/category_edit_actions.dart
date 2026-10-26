@@ -40,14 +40,14 @@ class CategoryEditActions extends StatelessWidget {
           children: [
             TextButton.icon(
               onPressed: onHide,
-              icon: const Icon(LucideIcons.eyeOff, size: 18),
+              icon: const Icon(LucideIcons.archive, size: FreevaSize.iconSm),
               label: Text(s.categoryHideShort),
               style: style(c.textOnWash),
             ),
             const SizedBox(width: FreevaSpace.s2),
             TextButton.icon(
               onPressed: onDelete,
-              icon: const Icon(LucideIcons.trash2, size: 18),
+              icon: const Icon(LucideIcons.trash, size: FreevaSize.iconSm),
               label: Text(s.categoryDeleteShort),
               style: style(c.actionDanger),
             ),

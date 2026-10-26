@@ -56,7 +56,12 @@ class HiddenCategoriesPage extends StatelessWidget {
         builder: (context, _) {
           final groups = hiddenCategoryGroups(model.categories);
           return ListView(
-            padding: EdgeInsets.fromLTRB(margin, 0, margin, FreevaSpace.s8),
+            padding: EdgeInsets.fromLTRB(
+              margin,
+              FreevaSpace.s2,
+              margin,
+              FreevaSpace.s8,
+            ),
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(4, 0, 4, FreevaSpace.s4),
