@@ -19,36 +19,90 @@ class WashSurface extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.colors;
     final radius = BorderRadius.circular(FreevaComponent.balanceCardRadius);
-    Widget layer(Color color, Alignment center, double radius, double stop) =>
-        Positioned.fill(
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: RadialGradient(
-                center: center,
-                radius: radius,
-                colors: [color, color.withValues(alpha: 0)],
-                stops: [0, stop],
-              ),
-            ),
-          ),
-        );
     return ClipRRect(
       borderRadius: radius,
-      child: Stack(
-        children: [
-          Positioned.fill(child: ColoredBox(color: c.balanceCardBg)),
-          layer(c.balanceCardWashTopRight, Alignment.topRight, 1.2, .55),
-          layer(c.balanceCardWashBottomLeft, Alignment.bottomLeft, 0.9, .6),
-          Padding(padding: padding, child: child),
-        ],
+      child: CustomPaint(
+        painter: _WashPainter(
+          bg: c.balanceCardBg,
+          topRight: c.balanceCardWashTopRight,
+          bottomLeft: c.balanceCardWashBottomLeft,
+        ),
+        child: Padding(padding: padding, child: child),
       ),
     );
   }
 }
 
-/// Small white-72% tile on the wash (income / expense of the month).
+/// Paints the two elliptical washes of the board: `120% 90% at 100% 0%`
+/// (fade by 55%) and `90% 80% at 0% 100%` (fade by 60%).
+class _WashPainter extends CustomPainter {
+  const _WashPainter({
+    required this.bg,
+    required this.topRight,
+    required this.bottomLeft,
+  });
+
+  final Color bg;
+  final Color topRight;
+  final Color bottomLeft;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final bounds = Offset.zero & size;
+    canvas.drawRect(bounds, Paint()..color = bg);
+    void ellipse(
+      Color color,
+      Offset center,
+      double rx,
+      double ry,
+      double stop,
+    ) {
+      if (rx <= 0 || ry <= 0) return;
+      canvas
+        ..save()
+        ..clipRect(bounds)
+        ..translate(center.dx, center.dy)
+        ..scale(rx, ry);
+      final paint = Paint()
+        ..shader = RadialGradient(
+          colors: [color, color.withValues(alpha: 0)],
+          stops: [0, stop],
+        ).createShader(Rect.fromCircle(center: Offset.zero, radius: 1));
+      canvas
+        ..drawRect(const Rect.fromLTRB(-1, -1, 1, 1), paint)
+        ..restore();
+    }
+
+    ellipse(
+      topRight,
+      Offset(size.width, 0),
+      size.width * 1.2,
+      size.height * .9,
+      .55,
+    );
+    ellipse(
+      bottomLeft,
+      Offset(0, size.height),
+      size.width * .9,
+      size.height * .8,
+      .6,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_WashPainter old) =>
+      old.bg != bg || old.topRight != topRight || old.bottomLeft != bottomLeft;
+}
+
+/// Small white-72% tile on the wash (income / expense of the month):
+/// padding 10/12, label 12, value [valueStyle]; 55 high.
 class WashStatTile extends StatelessWidget {
   const WashStatTile({required this.label, required this.value, super.key});
+
+  /// Style for the value (15/600, line height 1.2).
+  static final TextStyle valueStyle = FreevaTypography.titleM.copyWith(
+    height: 1.2,
+  );
 
   final String label;
   final Widget value;
@@ -69,6 +123,7 @@ class WashStatTile extends StatelessWidget {
             label,
             style: FreevaTypography.label.copyWith(
               fontWeight: FontWeight.w400,
+              height: 1.2,
               color: c.balanceCardFg,
             ),
           ),
