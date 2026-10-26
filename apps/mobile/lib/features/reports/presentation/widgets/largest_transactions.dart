@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/theme_context.dart';
@@ -39,25 +40,29 @@ class LargestTransactions extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: Semantics(
-                header: true,
-                child: Text(
-                  s.reportLargest,
-                  style: FreevaTypography.titleL.copyWith(color: c.textPrimary),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: FreevaSpace.s1),
+          child: Row(
+            children: [
+              Expanded(
+                child: Semantics(
+                  header: true,
+                  child: Text(
+                    s.reportLargest,
+                    style: FreevaTypography.titleM.copyWith(
+                      color: c.textPrimary,
+                    ),
+                  ),
                 ),
               ),
-            ),
-            if (count != null && count > 0)
-              FreevaButton(
-                label: s.reportSeeAll(count),
-                variant: FreevaButtonVariant.text,
-                size: FreevaButtonSize.xs,
-                onPressed: onSeeAll,
-              ),
-          ],
+              if (count != null && count > 0)
+                FreevaButton(
+                  label: s.reportSeeAll(count),
+                  variant: FreevaButtonVariant.link,
+                  onPressed: onSeeAll,
+                ),
+            ],
+          ),
         ),
         const SizedBox(height: FreevaSpace.s2),
         if (model.failure != null && model.largest.isEmpty)
@@ -71,7 +76,10 @@ class LargestTransactions extends StatelessWidget {
         else
           FreevaCard(
             list: true,
-            padding: const EdgeInsets.symmetric(horizontal: FreevaSpace.s4),
+            padding: const EdgeInsets.symmetric(
+              horizontal: FreevaSpace.s4,
+              vertical: FreevaSpace.s1,
+            ),
             child: Column(
               children: [
                 for (final (i, bundle) in model.largest.indexed) ...[
@@ -87,10 +95,18 @@ class LargestTransactions extends StatelessWidget {
 
   Widget _row(BuildContext context, S s, String locale, TransactionBundle b) {
     final row = names.fromBundle(b);
+    // Every row is in the same slice and period: "Đi chợ · 19/10".
+    final detail = [
+      names.category(b.type, b.categoryId),
+      DateFormat(
+        s.reportShortDatePattern,
+        locale,
+      ).format(DateTime.parse(b.occurredOn)),
+    ].join(' · ');
     return TransactionRow(
       icon: row.icon,
       title: row.title,
-      subtitle: row.detail,
+      subtitle: detail,
       tone: row.tone,
       semanticsLabel: spoken(s, row, digitsOf(row.currency), locale),
       onTap: () => onOpen(b),

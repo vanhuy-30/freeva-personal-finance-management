@@ -101,7 +101,7 @@ class BreakdownRows extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 10),
                     MoneyDisplay(
                       minor: slices[i].minor,
                       currency: currency,
@@ -109,11 +109,11 @@ class BreakdownRows extends StatelessWidget {
                       showCurrency: false,
                       style: FreevaTypography.titleM,
                     ),
-                    const SizedBox(width: 6),
+                    const SizedBox(width: 10),
                     Icon(
                       LucideIcons.chevronRight,
-                      size: 14,
-                      color: c.textSecondary,
+                      size: FreevaSize.iconXs,
+                      color: c.textMuted,
                     ),
                   ],
                 ),

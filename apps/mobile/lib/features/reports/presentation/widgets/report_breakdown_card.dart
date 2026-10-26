@@ -41,7 +41,8 @@ class _ReportBreakdownCardState extends State<ReportBreakdownCard> {
   Widget build(BuildContext context) {
     final s = S.of(context);
     return FreevaCard(
-      padding: const EdgeInsets.fromLTRB(18, 18, 18, 10),
+      // RepMonth: 18 all round; RepWallets: 8 under the last wallet row.
+      padding: EdgeInsets.fromLTRB(18, 18, 18, view == _View.wallets ? 8 : 18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -56,7 +57,9 @@ class _ReportBreakdownCardState extends State<ReportBreakdownCard> {
               FreevaSegment(_View.wallets, s.reportViewWallet),
             ],
           ),
-          const SizedBox(height: FreevaSpace.s3),
+          SizedBox(
+            height: view == _View.wallets ? FreevaSpace.s2 : FreevaSpace.s3,
+          ),
           if (view == _View.wallets)
             ReportWalletRows(
               rows: [
@@ -147,6 +150,9 @@ class _Categories extends StatelessWidget {
                   for (var i = 0; i < slices.length; i++)
                     sliceColor(context, i, slices[i]),
                 ],
+                label: kind == BreakdownKind.expense
+                    ? s.reportDonutTotalExpense
+                    : s.reportDonutTotalIncome,
                 center: total,
               );
               final legend = BreakdownLegend(slices: slices);
@@ -154,7 +160,7 @@ class _Categories extends StatelessWidget {
               // a narrow phone puts it underneath instead.
               final scale = MediaQuery.textScalerOf(context).scale(1);
               final beside =
-                  (box.maxWidth - 112 - FreevaSpace.s4) / scale >= 110;
+                  (box.maxWidth - 128 - FreevaSpace.s4) / scale >= 110;
               if (!beside) {
                 return Column(
                   children: [ring, const SizedBox(height: 12), legend],
@@ -170,7 +176,7 @@ class _Categories extends StatelessWidget {
             },
           ),
         ),
-        const SizedBox(height: FreevaSpace.s2),
+        const SizedBox(height: FreevaSpace.s3),
         BreakdownRows(
           slices: slices,
           currency: currency,

@@ -20,15 +20,25 @@ class ReportWalletRows extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Column(
-    children: [for (final row in rows) _WalletRow(row: row, digits: digits)],
+    children: [
+      for (final (i, row) in rows.indexed)
+        _WalletRow(row: row, digits: digits, divided: i > 0),
+    ],
   );
 }
 
 class _WalletRow extends StatelessWidget {
-  const _WalletRow({required this.row, required this.digits});
+  const _WalletRow({
+    required this.row,
+    required this.digits,
+    required this.divided,
+  });
 
   final CashflowAccountRow row;
   final int digits;
+
+  /// Hairline above every row but the first.
+  final bool divided;
 
   String _flow(S s, String locale) {
     String amount(BigInt minor) => formatMoneyText(minor.abs(), digits, locale);
@@ -57,8 +67,12 @@ class _WalletRow extends StatelessWidget {
       child: InkWell(
         onTap: () => context.push('/wallets/${row.accountId}'),
         child: Container(
-          constraints: const BoxConstraints(minHeight: 56),
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.symmetric(vertical: FreevaSpace.s3),
+          decoration: BoxDecoration(
+            border: divided
+                ? Border(top: BorderSide(color: c.borderDivider))
+                : null,
+          ),
           child: Row(
             children: [
               WalletTypeIcon(type: row.type ?? WalletType.cash),
@@ -74,18 +88,21 @@ class _WalletRow extends StatelessWidget {
                         color: c.textPrimary,
                       ),
                     ),
-                    if (flow.isNotEmpty)
+                    if (flow.isNotEmpty) ...[
+                      const SizedBox(height: 2),
                       Text(
                         flow,
                         style: FreevaTypography.label.copyWith(
+                          fontWeight: FontWeight.w400,
                           color: c.textSecondary,
                           fontFeatures: const [FontFeature.tabularFigures()],
                         ),
                       ),
+                    ],
                   ],
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: FreevaSpace.s3),
               MoneyDisplay(
                 minor: row.netMinor,
                 currency: row.currency,

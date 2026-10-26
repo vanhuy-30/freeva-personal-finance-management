@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
+import '../../../../core/money/money_text.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_card.dart';
@@ -35,6 +36,7 @@ class ReportTotalCard extends StatelessWidget {
     showCurrency: false,
     style: FreevaTypography.titleL.copyWith(
       fontSize: size,
+      height: 1.2,
       fontFeatures: const [FontFeature.tabularFigures()],
     ),
   );
@@ -60,11 +62,7 @@ class ReportTotalCard extends StatelessWidget {
       ),
       _Cell(
         s.reportRemaining,
-        _money(
-          left,
-          left.isNegative ? MoneyTone.expense : MoneyTone.income,
-          16,
-        ),
+        _Remaining(minor: left, currency: currency, digits: digits),
       ),
     ];
     return FreevaCard(
@@ -73,38 +71,90 @@ class ReportTotalCard extends StatelessWidget {
         builder: (context, box) {
           if (!fitsSideBySide(context, box.maxWidth + 2 * 18 + 40)) {
             return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                for (final cell in cells) ...[
-                  cell,
-                  if (cell != cells.last) const SizedBox(height: 14),
-                ],
+                cells[0],
+                const SizedBox(height: 14),
+                cells[1],
+                const SizedBox(height: 14),
+                _Divided(child: cells[2]),
+                const SizedBox(height: 14),
+                _Divided(child: cells[3]),
               ],
             );
           }
+          Widget row(Widget a, Widget b) => Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(child: a),
+              const SizedBox(width: FreevaSpace.s3),
+              Expanded(child: b),
+            ],
+          );
           return Column(
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(child: cells[0]),
-                  Expanded(child: cells[1]),
-                ],
-              ),
+              row(cells[0], cells[1]),
               const SizedBox(height: 14),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(child: cells[2]),
-                  Expanded(child: cells[3]),
-                ],
-              ),
+              row(_Divided(child: cells[2]), _Divided(child: cells[3])),
             ],
           );
         },
       ),
     );
   }
+}
+
+/// "Còn lại": ink like the board, always signed (+ or −).
+class _Remaining extends StatelessWidget {
+  const _Remaining({
+    required this.minor,
+    required this.currency,
+    required this.digits,
+  });
+
+  final BigInt minor;
+  final String currency;
+  final int digits;
+
+  @override
+  Widget build(BuildContext context) {
+    final locale = Localizations.localeOf(context).toString();
+    final text =
+        '${minor.isNegative ? '−' : '+'}'
+        '${formatMoneyText(minor.abs(), digits, locale)}';
+    return Semantics(
+      container: true,
+      label: '$text ${MoneyDisplay.symbolFor(currency)}',
+      excludeSemantics: true,
+      child: Text(
+        text,
+        softWrap: false,
+        style: FreevaTypography.titleL.copyWith(
+          fontSize: 16,
+          height: 1.2,
+          color: context.colors.textPrimary,
+          fontFeatures: const [FontFeature.tabularFigures()],
+        ),
+      ),
+    );
+  }
+}
+
+/// Second-row cell: hairline on top, 12 below it.
+class _Divided extends StatelessWidget {
+  const _Divided({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    width: double.infinity,
+    padding: const EdgeInsets.only(top: FreevaSpace.s3),
+    decoration: BoxDecoration(
+      border: Border(top: BorderSide(color: context.colors.borderDivider)),
+    ),
+    child: child,
+  );
 }
 
 class _Cell extends StatelessWidget {
@@ -122,7 +172,10 @@ class _Cell extends StatelessWidget {
       children: [
         Text(
           label,
-          style: FreevaTypography.label.copyWith(color: c.textSecondary),
+          style: FreevaTypography.label.copyWith(
+            fontWeight: FontWeight.w400,
+            color: c.textSecondary,
+          ),
         ),
         const SizedBox(height: 2),
         value,
@@ -142,16 +195,20 @@ class _Change extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.colors;
     final s = S.of(context);
-    final style = FreevaTypography.label.copyWith(color: c.textSecondary);
+    final style = FreevaTypography.label.copyWith(
+      fontWeight: FontWeight.w400,
+      color: c.textSecondary,
+    );
     return Row(
       children: [
-        if (percent != 0)
+        if (percent != 0) ...[
           Icon(
             percent > 0 ? LucideIcons.arrowUp : LucideIcons.arrowDown,
             size: 12,
             color: c.textSecondary,
           ),
-        const SizedBox(width: 4),
+          const SizedBox(width: 4),
+        ],
         Flexible(
           child: Text(s.reportChange('${percent.abs()}', versus), style: style),
         ),

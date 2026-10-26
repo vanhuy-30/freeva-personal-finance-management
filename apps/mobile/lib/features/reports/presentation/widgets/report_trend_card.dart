@@ -52,7 +52,7 @@ class ReportTrendCard extends StatelessWidget {
               currency: currency,
               digits: digits,
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 14),
             Text.rich(
               TextSpan(
                 children: [
