@@ -46,13 +46,14 @@ class SignUpChoicePage extends StatelessWidget {
             label: s.authContinueEmail,
             onPressed: () => model.goTo(AuthStep.register),
           ),
-          const SizedBox(height: FreevaSpace.s2),
+          // Board: 18 above the link text, 10 below; the link box is 44
+          // around 18 px of text, which covers those gaps.
+          const SizedBox(height: FreevaSpace.s1),
           AuthSwitchLink(
             prompt: s.authHaveAccount,
             action: s.authLogin,
             onTap: () => model.goTo(AuthStep.login),
           ),
-          const SizedBox(height: FreevaSpace.s1),
           const _TermsNote(),
         ],
       ),

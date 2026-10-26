@@ -63,6 +63,8 @@ class _RegisterPageState extends State<RegisterPage> {
     return AuthScaffold(
       title: s.authCreateAccount,
       onBack: idle ? () => model.goTo(AuthStep.signUp) : null,
+      // The switch link is 44 high around 18 px of text: 32 − 12.
+      bottomInset: 20,
       footer: AuthSwitchLink(
         prompt: s.authHaveAccount,
         action: s.authLogin,
@@ -94,7 +96,7 @@ class _RegisterPageState extends State<RegisterPage> {
               const SizedBox(height: 10),
               FreevaPillField(
                 label: s.authConfirmPassword,
-                icon: LucideIcons.lock,
+                icon: LucideIcons.shieldCheck,
                 controller: _repeat,
                 obscure: true,
                 autofillHints: const [AutofillHints.newPassword],
@@ -104,11 +106,11 @@ class _RegisterPageState extends State<RegisterPage> {
             ],
           ),
         ),
-        const SizedBox(height: FreevaSpace.s3),
+        const SizedBox(height: 14),
         PasswordStrengthBar(check: _check),
         const SizedBox(height: FreevaSpace.s3),
         PasswordChecklist(check: _check),
-        const SizedBox(height: FreevaSpace.s3),
+        const SizedBox(height: FreevaSpace.s5),
         ConsentCheckbox(
           checked: _agreed,
           onChanged: (value) => setState(() => _agreed = value),
@@ -116,7 +118,7 @@ class _RegisterPageState extends State<RegisterPage> {
           onPrivacy: () => context.push('/help/legal?doc=privacy'),
         ),
         AuthMessage(model: model),
-        const SizedBox(height: FreevaSpace.s4),
+        const SizedBox(height: FreevaSpace.s6),
         FreevaButton(
           label: s.authCreateAccount,
           size: FreevaButtonSize.l,

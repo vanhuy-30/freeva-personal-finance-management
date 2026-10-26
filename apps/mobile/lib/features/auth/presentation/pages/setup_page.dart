@@ -32,18 +32,20 @@ class SetupPage extends StatefulWidget {
 }
 
 class _SetupPageState extends State<SetupPage> {
-  late final OnboardingViewModel _answers = OnboardingViewModel(
-    getIt<ProfileUseCases>(),
-    getIt<SettingsUseCases>(),
-  );
-  late final SetupWalletsViewModel _wallets = SetupWalletsViewModel(
-    getIt<WalletUseCases>(),
-  );
+  // Built in initState, not lazily: dispose must never reach getIt (it may
+  // already be reset when the tree is torn down).
+  late final OnboardingViewModel _answers;
+  late final SetupWalletsViewModel _wallets;
   var _step = SetupStep.verify;
 
   @override
   void initState() {
     super.initState();
+    _answers = OnboardingViewModel(
+      getIt<ProfileUseCases>(),
+      getIt<SettingsUseCases>(),
+    );
+    _wallets = SetupWalletsViewModel(getIt<WalletUseCases>());
     getIt<SettingsViewModel>().beginOnboarding();
   }
 
@@ -55,6 +57,14 @@ class _SetupPageState extends State<SetupPage> {
   }
 
   void _go(SetupStep step) => setState(() => _step = step);
+
+  /// The account exists already: going back signs out so a mistyped email
+  /// can be registered again.
+  Future<void> _backToRegister() async {
+    final model = widget.model;
+    await model.logout();
+    model.goTo(AuthStep.register);
+  }
 
   /// Questions and wallets are over (answered or skipped): record it and go
   /// to the PIN.
@@ -70,6 +80,7 @@ class _SetupPageState extends State<SetupPage> {
       SetupStep.verify => VerifyEmailStep(
         model: model,
         onDone: () => _go(SetupStep.goals),
+        onBack: () => unawaited(_backToRegister()),
       ),
       SetupStep.goals => GoalsStep(
         model: _answers,

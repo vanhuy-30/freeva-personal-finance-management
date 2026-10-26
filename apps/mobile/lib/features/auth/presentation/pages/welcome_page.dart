@@ -26,7 +26,7 @@ class WelcomePage extends StatelessWidget {
       color: c.textPrimary,
     );
     return AuthScaffold(
-      topGap: 0,
+      topGap: 30,
       footer: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
