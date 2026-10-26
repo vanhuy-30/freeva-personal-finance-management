@@ -2903,4 +2903,174 @@ class SEn extends S {
 
   @override
   String get syncDupDeleteNew => 'Delete the new one';
+
+  @override
+  String syncBannerOthersWaiting(Object count) {
+    return '$count other changes waiting to send';
+  }
+
+  @override
+  String syncLastToday(Object time) {
+    return 'Last synced $time today';
+  }
+
+  @override
+  String get syncSectionSending => 'SENDING';
+
+  @override
+  String get reportDonutTotalExpense => 'Total spent';
+
+  @override
+  String get reportDonutTotalIncome => 'Total income';
+
+  @override
+  String get reportBarGeneralSuffix => '(general)';
+
+  @override
+  String reportEmptyTitleMonth(Object month) {
+    return 'No data for month $month yet';
+  }
+
+  @override
+  String get meLegal => 'Terms and privacy';
+
+  @override
+  String meNotifyOnCount(Object count) {
+    return '$count on';
+  }
+
+  @override
+  String meGoalsCount(Object count) {
+    return '$count goals';
+  }
+
+  @override
+  String get meProfileEmailVerified => 'Email · verified';
+
+  @override
+  String get meProfileEmailUnverified => 'Email · not verified';
+
+  @override
+  String get meDeleteAccount => 'Delete account';
+
+  @override
+  String get meChangeAvatar => 'Change photo';
+
+  @override
+  String get meSecurityValueFaceId => 'PIN · Face ID';
+
+  @override
+  String get meSecFaceId => 'Unlock with Face ID';
+
+  @override
+  String get notifySessionSubAlways => 'Always on so you can check';
+
+  @override
+  String get faqRecordQ => 'How do I record an expense?';
+
+  @override
+  String get faqRecordA =>
+      'Tap + in the middle of the bottom bar, enter the amount, pick a category and save. Wallet and date reuse your last choice.';
+
+  @override
+  String get faqTransferQ => 'Moving money between two wallets?';
+
+  @override
+  String get faqTransferA =>
+      'Tap +, choose Transfer, pick the from and to wallets and enter the amount. Both balances update together.';
+
+  @override
+  String get faqDeletedQ => 'Deleted a transaction by mistake?';
+
+  @override
+  String get faqDeletedA =>
+      'Tap Undo right after deleting. Later you can still restore it from Deleted in Transactions.';
+
+  @override
+  String get faqMonthQ => 'What is a financial month?';
+
+  @override
+  String get faqMonthA =>
+      'It\'s the period your monthly totals cover. If you\'re paid on the 5th, set Month starts on day 5 in Me so the numbers match.';
+
+  @override
+  String get faqLockAppQ => 'Locking the app with PIN or Face ID';
+
+  @override
+  String get faqLockAppA =>
+      'Go to Me, Security to set a PIN. With a PIN you can turn on Face ID. Without a PIN the app doesn\'t lock.';
+
+  @override
+  String get faqSafeQ => 'Is my data safe?';
+
+  @override
+  String get faqSafeA =>
+      'Your data lives in your Freeva account, so changing phones doesn\'t lose it. Lock the app with a PIN so others can\'t see it.';
+
+  @override
+  String get homeOfflineHeading => 'You\'re offline';
+
+  @override
+  String homeOfflineDetail(Object time) {
+    return 'Figures as of $time. You can still record spending.';
+  }
+
+  @override
+  String get homeCreditUsedLabel => 'Used';
+
+  @override
+  String homeCreditLimit(Object limit) {
+    return 'Limit $limit';
+  }
+
+  @override
+  String homeOtherCurrencyMeta(Object currency, Object count) {
+    return '$currency · $count wallets';
+  }
+
+  @override
+  String get homeTotalBalanceLabel => 'Total balance';
+
+  @override
+  String authResetVerified(Object email) {
+    return 'Verified $email';
+  }
+
+  @override
+  String get currencyNameVnd => 'Vietnamese dong';
+
+  @override
+  String get currencyNameUsd => 'US dollar';
+
+  @override
+  String get currencyNameEur => 'Euro';
+
+  @override
+  String get currencyNameJpy => 'Japanese yen';
+
+  @override
+  String get currencyNameKrw => 'South Korean won';
+
+  @override
+  String get currencyNameCny => 'Chinese yuan';
+
+  @override
+  String get currencyNameSgd => 'Singapore dollar';
+
+  @override
+  String get currencyNameThb => 'Thai baht';
+
+  @override
+  String get currencyNameAud => 'Australian dollar';
+
+  @override
+  String get currencyNameGbp => 'British pound';
+
+  @override
+  String currencyCodeName(Object code, Object name) {
+    return '$code · $name';
+  }
+
+  @override
+  String get tagsViewTransactions => 'View transactions';
 }

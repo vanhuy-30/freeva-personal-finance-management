@@ -2864,4 +2864,174 @@ class SVi extends S {
 
   @override
   String get syncDupDeleteNew => 'Xoá bản vừa ghi';
+
+  @override
+  String syncBannerOthersWaiting(Object count) {
+    return '$count thay đổi khác đang chờ gửi';
+  }
+
+  @override
+  String syncLastToday(Object time) {
+    return 'Lần cuối $time hôm nay';
+  }
+
+  @override
+  String get syncSectionSending => 'ĐANG GỬI';
+
+  @override
+  String get reportDonutTotalExpense => 'Tổng chi';
+
+  @override
+  String get reportDonutTotalIncome => 'Tổng thu';
+
+  @override
+  String get reportBarGeneralSuffix => '(chung)';
+
+  @override
+  String reportEmptyTitleMonth(Object month) {
+    return 'Chưa có số liệu tháng $month';
+  }
+
+  @override
+  String get meLegal => 'Điều khoản và quyền riêng tư';
+
+  @override
+  String meNotifyOnCount(Object count) {
+    return '$count đang bật';
+  }
+
+  @override
+  String meGoalsCount(Object count) {
+    return '$count mục tiêu';
+  }
+
+  @override
+  String get meProfileEmailVerified => 'Email · đã xác nhận';
+
+  @override
+  String get meProfileEmailUnverified => 'Email · chưa xác nhận';
+
+  @override
+  String get meDeleteAccount => 'Xoá tài khoản';
+
+  @override
+  String get meChangeAvatar => 'Đổi ảnh đại diện';
+
+  @override
+  String get meSecurityValueFaceId => 'PIN · Face ID';
+
+  @override
+  String get meSecFaceId => 'Mở bằng Face ID';
+
+  @override
+  String get notifySessionSubAlways => 'Luôn báo để bạn kiểm tra';
+
+  @override
+  String get faqRecordQ => 'Ghi một khoản chi thế nào?';
+
+  @override
+  String get faqRecordA =>
+      'Chạm nút + ở giữa thanh dưới, nhập số tiền, chọn danh mục rồi lưu. Ví và ngày lấy sẵn lần gần nhất.';
+
+  @override
+  String get faqTransferQ => 'Chuyển tiền giữa hai ví?';
+
+  @override
+  String get faqTransferA =>
+      'Chạm nút +, chọn Chuyển, chọn ví đi và ví nhận rồi nhập số tiền. Số dư hai ví cập nhật cùng lúc.';
+
+  @override
+  String get faqDeletedQ => 'Xoá nhầm giao dịch thì sao?';
+
+  @override
+  String get faqDeletedA =>
+      'Chạm Hoàn tác ngay khi vừa xoá. Sau đó vẫn khôi phục được trong Giao dịch, mục Đã xoá.';
+
+  @override
+  String get faqMonthQ => 'Tháng tài chính là gì?';
+
+  @override
+  String get faqMonthA =>
+      'Là khoảng tính thu chi mỗi tháng. Nếu lương về ngày 5, chọn Tháng tính từ ngày 5 trong Cá nhân để số liệu khớp với bạn.';
+
+  @override
+  String get faqLockAppQ => 'Khoá app bằng PIN, Face ID';
+
+  @override
+  String get faqLockAppA =>
+      'Vào Cá nhân, Bảo mật để đặt mã PIN. Có PIN rồi thì bật được Face ID. Không đặt PIN thì app không khoá.';
+
+  @override
+  String get faqSafeQ => 'Dữ liệu của tôi có an toàn?';
+
+  @override
+  String get faqSafeA =>
+      'Dữ liệu lưu trong tài khoản Freeva của bạn nên đổi máy không mất. Bạn có thể khoá app bằng PIN để người khác không xem được.';
+
+  @override
+  String get homeOfflineHeading => 'Đang ngoại tuyến';
+
+  @override
+  String homeOfflineDetail(Object time) {
+    return 'Số liệu lúc $time. Vẫn ghi chi được.';
+  }
+
+  @override
+  String get homeCreditUsedLabel => 'Đã dùng';
+
+  @override
+  String homeCreditLimit(Object limit) {
+    return 'Hạn mức $limit';
+  }
+
+  @override
+  String homeOtherCurrencyMeta(Object currency, Object count) {
+    return '$currency · $count ví';
+  }
+
+  @override
+  String get homeTotalBalanceLabel => 'Tổng số dư';
+
+  @override
+  String authResetVerified(Object email) {
+    return 'Đã xác nhận $email';
+  }
+
+  @override
+  String get currencyNameVnd => 'Đồng Việt Nam';
+
+  @override
+  String get currencyNameUsd => 'Đô la Mỹ';
+
+  @override
+  String get currencyNameEur => 'Euro';
+
+  @override
+  String get currencyNameJpy => 'Yên Nhật';
+
+  @override
+  String get currencyNameKrw => 'Won Hàn Quốc';
+
+  @override
+  String get currencyNameCny => 'Nhân dân tệ';
+
+  @override
+  String get currencyNameSgd => 'Đô la Singapore';
+
+  @override
+  String get currencyNameThb => 'Baht Thái';
+
+  @override
+  String get currencyNameAud => 'Đô la Úc';
+
+  @override
+  String get currencyNameGbp => 'Bảng Anh';
+
+  @override
+  String currencyCodeName(Object code, Object name) {
+    return '$code · $name';
+  }
+
+  @override
+  String get tagsViewTransactions => 'Xem giao dịch';
 }

@@ -5243,6 +5243,294 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Delete the new one'**
   String get syncDupDeleteNew;
+
+  /// No description provided for @syncBannerOthersWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} other changes waiting to send'**
+  String syncBannerOthersWaiting(Object count);
+
+  /// No description provided for @syncLastToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Last synced {time} today'**
+  String syncLastToday(Object time);
+
+  /// No description provided for @syncSectionSending.
+  ///
+  /// In en, this message translates to:
+  /// **'SENDING'**
+  String get syncSectionSending;
+
+  /// No description provided for @reportDonutTotalExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Total spent'**
+  String get reportDonutTotalExpense;
+
+  /// No description provided for @reportDonutTotalIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Total income'**
+  String get reportDonutTotalIncome;
+
+  /// No description provided for @reportBarGeneralSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'(general)'**
+  String get reportBarGeneralSuffix;
+
+  /// No description provided for @reportEmptyTitleMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'No data for month {month} yet'**
+  String reportEmptyTitleMonth(Object month);
+
+  /// No description provided for @meLegal.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms and privacy'**
+  String get meLegal;
+
+  /// No description provided for @meNotifyOnCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} on'**
+  String meNotifyOnCount(Object count);
+
+  /// No description provided for @meGoalsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} goals'**
+  String meGoalsCount(Object count);
+
+  /// No description provided for @meProfileEmailVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Email · verified'**
+  String get meProfileEmailVerified;
+
+  /// No description provided for @meProfileEmailUnverified.
+  ///
+  /// In en, this message translates to:
+  /// **'Email · not verified'**
+  String get meProfileEmailUnverified;
+
+  /// No description provided for @meDeleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get meDeleteAccount;
+
+  /// No description provided for @meChangeAvatar.
+  ///
+  /// In en, this message translates to:
+  /// **'Change photo'**
+  String get meChangeAvatar;
+
+  /// No description provided for @meSecurityValueFaceId.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN · Face ID'**
+  String get meSecurityValueFaceId;
+
+  /// No description provided for @meSecFaceId.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock with Face ID'**
+  String get meSecFaceId;
+
+  /// No description provided for @notifySessionSubAlways.
+  ///
+  /// In en, this message translates to:
+  /// **'Always on so you can check'**
+  String get notifySessionSubAlways;
+
+  /// No description provided for @faqRecordQ.
+  ///
+  /// In en, this message translates to:
+  /// **'How do I record an expense?'**
+  String get faqRecordQ;
+
+  /// No description provided for @faqRecordA.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap + in the middle of the bottom bar, enter the amount, pick a category and save. Wallet and date reuse your last choice.'**
+  String get faqRecordA;
+
+  /// No description provided for @faqTransferQ.
+  ///
+  /// In en, this message translates to:
+  /// **'Moving money between two wallets?'**
+  String get faqTransferQ;
+
+  /// No description provided for @faqTransferA.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap +, choose Transfer, pick the from and to wallets and enter the amount. Both balances update together.'**
+  String get faqTransferA;
+
+  /// No description provided for @faqDeletedQ.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted a transaction by mistake?'**
+  String get faqDeletedQ;
+
+  /// No description provided for @faqDeletedA.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Undo right after deleting. Later you can still restore it from Deleted in Transactions.'**
+  String get faqDeletedA;
+
+  /// No description provided for @faqMonthQ.
+  ///
+  /// In en, this message translates to:
+  /// **'What is a financial month?'**
+  String get faqMonthQ;
+
+  /// No description provided for @faqMonthA.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s the period your monthly totals cover. If you\'re paid on the 5th, set Month starts on day 5 in Me so the numbers match.'**
+  String get faqMonthA;
+
+  /// No description provided for @faqLockAppQ.
+  ///
+  /// In en, this message translates to:
+  /// **'Locking the app with PIN or Face ID'**
+  String get faqLockAppQ;
+
+  /// No description provided for @faqLockAppA.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Me, Security to set a PIN. With a PIN you can turn on Face ID. Without a PIN the app doesn\'t lock.'**
+  String get faqLockAppA;
+
+  /// No description provided for @faqSafeQ.
+  ///
+  /// In en, this message translates to:
+  /// **'Is my data safe?'**
+  String get faqSafeQ;
+
+  /// No description provided for @faqSafeA.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data lives in your Freeva account, so changing phones doesn\'t lose it. Lock the app with a PIN so others can\'t see it.'**
+  String get faqSafeA;
+
+  /// No description provided for @homeOfflineHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re offline'**
+  String get homeOfflineHeading;
+
+  /// No description provided for @homeOfflineDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Figures as of {time}. You can still record spending.'**
+  String homeOfflineDetail(Object time);
+
+  /// No description provided for @homeCreditUsedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Used'**
+  String get homeCreditUsedLabel;
+
+  /// No description provided for @homeCreditLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Limit {limit}'**
+  String homeCreditLimit(Object limit);
+
+  /// No description provided for @homeOtherCurrencyMeta.
+  ///
+  /// In en, this message translates to:
+  /// **'{currency} · {count} wallets'**
+  String homeOtherCurrencyMeta(Object currency, Object count);
+
+  /// No description provided for @homeTotalBalanceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total balance'**
+  String get homeTotalBalanceLabel;
+
+  /// No description provided for @authResetVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified {email}'**
+  String authResetVerified(Object email);
+
+  /// No description provided for @currencyNameVnd.
+  ///
+  /// In en, this message translates to:
+  /// **'Vietnamese dong'**
+  String get currencyNameVnd;
+
+  /// No description provided for @currencyNameUsd.
+  ///
+  /// In en, this message translates to:
+  /// **'US dollar'**
+  String get currencyNameUsd;
+
+  /// No description provided for @currencyNameEur.
+  ///
+  /// In en, this message translates to:
+  /// **'Euro'**
+  String get currencyNameEur;
+
+  /// No description provided for @currencyNameJpy.
+  ///
+  /// In en, this message translates to:
+  /// **'Japanese yen'**
+  String get currencyNameJpy;
+
+  /// No description provided for @currencyNameKrw.
+  ///
+  /// In en, this message translates to:
+  /// **'South Korean won'**
+  String get currencyNameKrw;
+
+  /// No description provided for @currencyNameCny.
+  ///
+  /// In en, this message translates to:
+  /// **'Chinese yuan'**
+  String get currencyNameCny;
+
+  /// No description provided for @currencyNameSgd.
+  ///
+  /// In en, this message translates to:
+  /// **'Singapore dollar'**
+  String get currencyNameSgd;
+
+  /// No description provided for @currencyNameThb.
+  ///
+  /// In en, this message translates to:
+  /// **'Thai baht'**
+  String get currencyNameThb;
+
+  /// No description provided for @currencyNameAud.
+  ///
+  /// In en, this message translates to:
+  /// **'Australian dollar'**
+  String get currencyNameAud;
+
+  /// No description provided for @currencyNameGbp.
+  ///
+  /// In en, this message translates to:
+  /// **'British pound'**
+  String get currencyNameGbp;
+
+  /// No description provided for @currencyCodeName.
+  ///
+  /// In en, this message translates to:
+  /// **'{code} · {name}'**
+  String currencyCodeName(Object code, Object name);
+
+  /// No description provided for @tagsViewTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'View transactions'**
+  String get tagsViewTransactions;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {
