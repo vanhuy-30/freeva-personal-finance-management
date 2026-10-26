@@ -35,10 +35,10 @@ class MonthFlowValue extends StatelessWidget {
         minorDigits: minorDigits,
         tone: zero ? MoneyTone.plain : tone,
         style: zero
-            ? FreevaTypography.titleM.copyWith(
+            ? WashStatTile.valueStyle.copyWith(
                 color: context.colors.balanceCardFg,
               )
-            : FreevaTypography.titleM,
+            : WashStatTile.valueStyle,
         showCurrency: false,
       ),
     );

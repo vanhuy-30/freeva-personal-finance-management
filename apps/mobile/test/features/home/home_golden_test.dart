@@ -23,6 +23,7 @@ void main() {
     'loading': false,
     'offline': false,
     'error': false,
+    'firstRun': false,
   };
   for (final MapEntry(key: name, value: dark) in cases.entries) {
     testWidgets('overview $name', skip: !Platform.isMacOS, (tester) async {

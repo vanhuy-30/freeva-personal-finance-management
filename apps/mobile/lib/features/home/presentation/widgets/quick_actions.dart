@@ -16,29 +16,33 @@ class QuickActions extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final c = context.colors;
+    const gap = SizedBox(width: FreevaSpace.s2);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _Action(
-          icon: LucideIcons.arrowDownLeft,
+          icon: LucideIcons.arrowDownToLine,
           color: c.tintGreenFg,
           label: s.homeQuickIncome,
           onTap: () => context.push('/record?type=income'),
         ),
+        gap,
         _Action(
-          icon: LucideIcons.arrowLeftRight,
+          icon: LucideIcons.arrowRightLeft,
           color: c.tintBlueFg,
           label: s.homeQuickTransfer,
           onTap: () => context.push('/record?type=transfer'),
         ),
+        gap,
         _Action(
-          icon: LucideIcons.wallet,
+          icon: LucideIcons.walletMinimal,
           color: c.tintVioletFg,
           label: s.homeQuickWallets,
           onTap: () => context.push('/wallets'),
         ),
+        gap,
         _Action(
-          icon: LucideIcons.shapes,
+          icon: LucideIcons.layoutGrid,
           color: c.tintCyanFg,
           label: s.homeQuickCategories,
           onTap: () => context.push('/categories'),
@@ -81,16 +85,19 @@ class _Action extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: c.bgSurface,
                     borderRadius: BorderRadius.circular(FreevaRadius.lg),
-                    boxShadow: FreevaElevation.s1,
+                    boxShadow: FreevaElevation.action,
                   ),
-                  child: Icon(icon, size: FreevaSize.icon, color: color),
+                  child: Icon(icon, size: 22, color: color),
                 ),
                 const SizedBox(height: FreevaSpace.s2),
                 Text(
                   label,
                   textAlign: TextAlign.center,
                   maxLines: 2,
-                  style: FreevaTypography.label.copyWith(color: c.textPrimary),
+                  style: FreevaTypography.label.copyWith(
+                    height: 1.2,
+                    color: c.textPrimary,
+                  ),
                 ),
               ],
             ),

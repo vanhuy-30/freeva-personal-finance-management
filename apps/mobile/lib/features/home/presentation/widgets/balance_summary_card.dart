@@ -22,6 +22,7 @@ class BalanceSummaryCard extends StatelessWidget {
     required this.hidden,
     required this.onToggleHidden,
     required this.onOpenWallets,
+    this.compact = false,
     super.key,
   });
 
@@ -33,6 +34,9 @@ class BalanceSummaryCard extends StatelessWidget {
   final VoidCallback onToggleHidden;
   final VoidCallback onOpenWallets;
 
+  /// First-run card: label and total only (no eye, no month tiles).
+  final bool compact;
+
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
@@ -41,45 +45,68 @@ class BalanceSummaryCard extends StatelessWidget {
     final label = summary.others.isEmpty
         ? s.homeTotalBalance(main.walletCount)
         : s.homeTotalBalanceIn(main.walletCount, main.currency);
+    final labelText = Text(
+      label,
+      style: FreevaTypography.bodyS.copyWith(
+        fontWeight: FontWeight.w500,
+        height: 1.2,
+        color: c.balanceCardFg,
+      ),
+    );
+    final amount = FittedBox(
+      fit: BoxFit.scaleDown,
+      alignment: AlignmentDirectional.centerStart,
+      child: MoneyDisplay(
+        minor: main.minor,
+        currency: main.currency,
+        minorDigits: digitsOf(main.currency),
+        hidden: hidden,
+        currencyColor: c.textOnWash,
+        style: context.isCompactScreen
+            ? FreevaTypography.moneyDisplayCompact
+            : FreevaTypography.moneyDisplay,
+      ),
+    );
+    if (compact) {
+      return WashSurface(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            labelText,
+            const SizedBox(height: FreevaSpace.s1),
+            amount,
+          ],
+        ),
+      );
+    }
     return WashSurface(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Row is the 44 touch box of the eye; its 36 circle sits flush
+          // with the card padding (the touch box overhangs it by 4).
           Row(
             children: [
-              Expanded(
-                child: Text(
-                  label,
-                  style: FreevaTypography.bodyS.copyWith(
-                    fontWeight: FontWeight.w500,
-                    color: c.balanceCardFg,
-                  ),
+              Expanded(child: labelText),
+              Transform.translate(
+                offset: Offset(
+                  Directionality.of(context) == TextDirection.ltr ? 4 : -4,
+                  0,
                 ),
-              ),
-              FreevaIconButton(
-                kind: FreevaIconButtonKind.onCard,
-                icon: hidden ? LucideIcons.eyeOff : LucideIcons.eye,
-                label: hidden ? s.balanceShow : s.balanceHide,
-                onPressed: onToggleHidden,
+                child: FreevaIconButton(
+                  kind: FreevaIconButtonKind.onCard,
+                  iconSize: FreevaSize.iconChip,
+                  icon: hidden ? LucideIcons.eyeOff : LucideIcons.eye,
+                  label: hidden ? s.balanceShow : s.balanceHide,
+                  onPressed: onToggleHidden,
+                ),
               ),
             ],
           ),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: MoneyDisplay(
-              minor: main.minor,
-              currency: main.currency,
-              minorDigits: digitsOf(main.currency),
-              hidden: hidden,
-              style: context.isCompactScreen
-                  ? FreevaTypography.moneyDisplayCompact
-                  : FreevaTypography.moneyDisplay,
-            ),
-          ),
+          amount,
           for (final other in summary.others)
             Padding(
-              padding: const EdgeInsets.only(top: FreevaSpace.s2),
+              padding: const EdgeInsets.only(top: 6),
               child: CurrencyPill(
                 balance: other,
                 minorDigits: digitsOf(other.currency),

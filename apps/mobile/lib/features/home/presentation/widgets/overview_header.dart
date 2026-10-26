@@ -8,12 +8,21 @@ import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_icon_button.dart';
 
-/// "Thứ Ba, 21/10" · "Chào Minh", search and the notification bell.
+/// "Thứ Ba, 21/10" · "Chào Minh", search and the notification bell. The
+/// first-run Overview shows the greeting only.
 class OverviewHeader extends StatelessWidget {
-  const OverviewHeader({required this.name, required this.today, super.key});
+  const OverviewHeader({
+    required this.name,
+    required this.today,
+    this.actions = true,
+    super.key,
+  });
 
   final String? name;
   final DateTime today;
+
+  /// Search and bell (hidden on the first-run Overview).
+  final bool actions;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +38,10 @@ class OverviewHeader extends StatelessWidget {
             children: [
               Text(
                 toBeginningOfSentenceCase(date),
-                style: FreevaTypography.bodyS.copyWith(color: c.textSecondary),
+                style: FreevaTypography.bodyS.copyWith(
+                  height: 1.2,
+                  color: c.textSecondary,
+                ),
               ),
               Semantics(
                 header: true,
@@ -47,17 +59,20 @@ class OverviewHeader extends StatelessWidget {
             ],
           ),
         ),
-        FreevaIconButton(
-          icon: LucideIcons.search,
-          label: s.homeSearch,
-          onPressed: () => context.push('/transactions/search'),
-        ),
-        const SizedBox(width: FreevaSpace.s2),
-        FreevaIconButton(
-          icon: LucideIcons.bell,
-          label: s.homeNotifications,
-          onPressed: () => context.push('/notifications'),
-        ),
+        if (actions) ...[
+          const SizedBox(width: FreevaSpace.s3),
+          FreevaIconButton(
+            icon: LucideIcons.search,
+            label: s.homeSearch,
+            onPressed: () => context.push('/transactions/search'),
+          ),
+          const SizedBox(width: FreevaSpace.s3),
+          FreevaIconButton(
+            icon: LucideIcons.bell,
+            label: s.homeNotifications,
+            onPressed: () => context.push('/notifications'),
+          ),
+        ],
       ],
     );
   }

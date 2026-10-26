@@ -6,7 +6,8 @@ import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_button.dart';
 
-/// Empty month: "Chưa có khoản chi nào." and "Ghi chi" on one row (B5).
+/// Empty month: "Chưa có khoản chi nào." and a compact primary "Ghi chi" on
+/// one row (B5).
 class SpendingEmptyRow extends StatelessWidget {
   const SpendingEmptyRow({super.key});
 
@@ -18,15 +19,15 @@ class SpendingEmptyRow extends StatelessWidget {
         Expanded(
           child: Text(
             s.homeSpendEmpty,
-            style: FreevaTypography.bodyS.copyWith(
+            style: FreevaTypography.bodyM.copyWith(
               color: context.colors.textSecondary,
             ),
           ),
         ),
+        const SizedBox(width: FreevaSpace.s3),
         FreevaButton(
           label: s.homeSpendRecord,
-          size: FreevaButtonSize.xs,
-          variant: FreevaButtonVariant.secondary,
+          size: FreevaButtonSize.compact,
           onPressed: () => context.push('/record'),
         ),
       ],

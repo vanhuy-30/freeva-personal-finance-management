@@ -7,7 +7,8 @@ import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../domain/overview.dart';
 
-/// Other-currency pill on the balance card: "1.250,00 USD · 1 ví ›".
+/// Other-currency pill on the balance card: "1.250,00" (14/600) · "USD · 1 ví"
+/// (12/500 on-wash) · chevron. 32 high, white 72%.
 class CurrencyPill extends StatelessWidget {
   const CurrencyPill({
     required this.balance,
@@ -30,14 +31,12 @@ class CurrencyPill extends StatelessWidget {
     final amount = hidden
         ? '••••••'
         : formatMoneyText(balance.minor, minorDigits, locale);
-    final text = s.homeOtherCurrency(
-      amount,
-      balance.currency,
-      balance.walletCount,
-    );
+    final meta = s.homeOtherCurrencyMeta(balance.currency, balance.walletCount);
     return Semantics(
       button: true,
-      label: hidden ? '${s.balanceHiddenSemantics}, ${balance.currency}' : text,
+      label: hidden
+          ? '${s.balanceHiddenSemantics}, ${balance.currency}'
+          : s.homeOtherCurrency(amount, balance.currency, balance.walletCount),
       excludeSemantics: true,
       child: Material(
         color: c.bgSurface.withValues(alpha: .72),
@@ -46,27 +45,37 @@ class CurrencyPill extends StatelessWidget {
           customBorder: const StadiumBorder(),
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(12, 0, 8, 0),
+            padding: const EdgeInsets.symmetric(horizontal: FreevaSpace.s3),
             child: SizedBox(
-              height: 32,
+              height: FreevaSize.pill,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  Text(
+                    amount,
+                    maxLines: 1,
+                    style: FreevaTypography.bodyM.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: c.textPrimary,
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                    ),
+                  ),
+                  const SizedBox(width: 6),
                   Flexible(
                     child: Text(
-                      text,
+                      meta,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: FreevaTypography.label.copyWith(
-                        color: c.textPrimary,
-                        fontFeatures: const [FontFeature.tabularFigures()],
+                        color: c.textOnWash,
                       ),
                     ),
                   ),
+                  const SizedBox(width: 6),
                   Icon(
                     LucideIcons.chevronRight,
-                    size: FreevaSize.iconChip,
-                    color: c.balanceCardFg,
+                    size: FreevaSize.iconXs,
+                    color: c.textOnWash,
                   ),
                 ],
               ),

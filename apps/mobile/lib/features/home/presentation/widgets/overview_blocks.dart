@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
-import '../../../../core/theme/tokens.g.dart';
 import '../../../transactions/presentation/viewmodels/transaction_view_model.dart';
 import '../../../transactions/domain/transaction.dart';
 import '../../../transactions/presentation/widgets/transaction_detail_sheet.dart';
@@ -16,11 +15,14 @@ import 'recent_row_data.dart';
 import 'recent_transactions.dart';
 import 'spending_block.dart';
 
-/// Blocks under the quick actions once data is loaded: credit cards (when
-/// the user has a credit wallet), last-month review (new month only),
-/// "Chi tháng", "Gần đây".
+/// Blocks under the quick actions once data is loaded: credit cards first
+/// for the debt goal, "Chi tháng", last-month review (new month only), credit
+/// cards (other goals), "Gần đây".
 class OverviewBlocks extends StatelessWidget {
   const OverviewBlocks({required this.model, required this.data, super.key});
+
+  /// Space between Overview blocks.
+  static const double gap = 22;
 
   final HomeViewModel model;
   final OverviewData data;
@@ -50,18 +52,15 @@ class OverviewBlocks extends StatelessWidget {
         names.fromQueued(item, s.homePendingSync),
       for (final row in data.recent) names.fromBundle(row),
     ].take(3).toList();
-    const gap = SizedBox(height: FreevaSpace.s6);
+    const gap = SizedBox(height: OverviewBlocks.gap);
+    final credit = cards.isEmpty
+        ? null
+        : CreditCardsBlock(cards: cards, today: today, digitsOf: digits);
+    final debtFirst = credit != null && model.debtGoal;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (previous != null && !monthFlow(previous, main).isEmpty) ...[
-          NewMonthReviewCard(
-            monthLabel: _monthLabel(context, previous.period.from),
-            flow: monthFlow(previous, main),
-            minorDigits: digits(main),
-          ),
-          gap,
-        ],
+        if (debtFirst) ...[credit, gap],
         SpendingBlock(
           breakdown: spendingBreakdown(data.month, main, data.categories),
           currency: main,
@@ -71,11 +70,15 @@ class OverviewBlocks extends StatelessWidget {
           digitsOf: digits,
         ),
         gap,
-        // Goal-based ordering (debt goal → above spending) comes with group A.
-        if (cards.isNotEmpty) ...[
-          CreditCardsBlock(cards: cards, today: today, digitsOf: digits),
+        if (previous != null && !monthFlow(previous, main).isEmpty) ...[
+          NewMonthReviewCard(
+            monthLabel: _monthLabel(context, previous.period.from),
+            flow: monthFlow(previous, main),
+            minorDigits: digits(main),
+          ),
           gap,
         ],
+        if (credit != null && !debtFirst) ...[credit, gap],
         RecentTransactions(
           rows: rows,
           digitsOf: digits,

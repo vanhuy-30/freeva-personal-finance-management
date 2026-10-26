@@ -31,6 +31,10 @@ class NewMonthReviewCard extends StatelessWidget {
     return FreevaCard(
       list: true,
       onTap: () => context.go('/reports'),
+      padding: const EdgeInsets.symmetric(
+        horizontal: FreevaSpace.s4,
+        vertical: 14,
+      ),
       child: Row(
         children: [
           Container(
@@ -41,7 +45,7 @@ class NewMonthReviewCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(FreevaRadius.sm),
             ),
             child: Icon(
-              LucideIcons.calendarCheck,
+              LucideIcons.chartPie,
               size: FreevaSize.iconInline,
               color: c.tintBlueFg,
             ),
@@ -53,11 +57,16 @@ class NewMonthReviewCard extends StatelessWidget {
               children: [
                 Text(
                   s.homeReviewMonth(monthLabel),
-                  style: FreevaTypography.titleM.copyWith(color: c.textPrimary),
+                  style: FreevaTypography.titleM.copyWith(
+                    height: 1.2,
+                    color: c.textPrimary,
+                  ),
                 ),
                 Text(
                   s.homeReviewLine(money(flow.expense), money(flow.income)),
-                  style: FreevaTypography.bodyS.copyWith(
+                  style: FreevaTypography.label.copyWith(
+                    fontWeight: FontWeight.w400,
+                    height: 1.25,
                     color: c.textSecondary,
                     fontFeatures: const [FontFeature.tabularFigures()],
                   ),
@@ -67,7 +76,7 @@ class NewMonthReviewCard extends StatelessWidget {
           ),
           Icon(
             LucideIcons.chevronRight,
-            size: FreevaSize.iconInline,
+            size: FreevaSize.iconChip,
             color: c.textSecondary,
           ),
         ],

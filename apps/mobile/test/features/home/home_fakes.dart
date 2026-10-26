@@ -79,6 +79,7 @@ class StubHomeViewModel extends HomeViewModel {
     this.balancesHidden = false,
     this.pending = const [],
     this.hasPin = true,
+    this.debtGoal = false,
   });
 
   @override
@@ -95,6 +96,8 @@ class StubHomeViewModel extends HomeViewModel {
   bool hasPin;
   @override
   List<SyncQueueItem> pending;
+  @override
+  bool debtGoal;
   @override
   DateTime today = DateTime(2026, 10, 21, 9, 30);
   int loads = 0;

@@ -34,6 +34,11 @@ abstract class HomeViewModel extends ChangeNotifier {
   /// Whether this device has a PIN (the checklist asks for one if not).
   bool get hasPin;
 
+  /// Whether the user's goal is "Quản lý khoản nợ": credit cards go above
+  /// "Chi tháng". The profile does not return onboarding goals yet, so this
+  /// stays false until it does.
+  bool get debtGoal => false;
+
   /// Today, for the greeting date.
   DateTime get today;
 
