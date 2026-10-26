@@ -6,6 +6,7 @@ import '../../../../../core/theme/tokens.g.dart';
 import '../../../../../core/widgets/freeva_chip.dart';
 import '../../../../categories/domain/finance_category.dart';
 import '../../../../categories/presentation/widgets/category_badge.dart';
+import '../../../../categories/presentation/widgets/category_icon_tile.dart';
 
 /// Parent row (two-tone icon) with its children as indented chips.
 class CategoryParentGroup extends StatelessWidget {
@@ -26,55 +27,70 @@ class CategoryParentGroup extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.colors;
     final on = parent.id == selected;
+    final (bg, fg) = categoryTwoTone(context, parent.colorToken);
+    // Board: row 44, icon box 32 r12, 15/600 name, 18 check; children
+    // 8 below as 36 chips (13/500, pad 12, gap 6) indented 44; groups 14.
     return Padding(
-      padding: const EdgeInsets.only(bottom: FreevaSpace.s3),
+      padding: const EdgeInsets.only(bottom: 14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          InkWell(
-            onTap: () => onPick(parent.id),
-            child: SizedBox(
-              height: FreevaSize.touch,
-              child: Row(
-                children: [
-                  Container(
-                    width: 32,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      color: c.tintBlue,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Icon(
-                      categoryIcon(parent.iconToken),
-                      size: 18,
-                      color: c.tintBlueFg,
-                    ),
-                  ),
-                  const SizedBox(width: FreevaSpace.s3),
-                  Expanded(
-                    child: Text(
-                      parent.name,
-                      style: FreevaTypography.body.copyWith(
-                        fontWeight: on ? FontWeight.w600 : FontWeight.w500,
-                        color: c.textPrimary,
+          Semantics(
+            button: true,
+            selected: on,
+            label: parent.name,
+            excludeSemantics: true,
+            child: InkWell(
+              onTap: () => onPick(parent.id),
+              child: SizedBox(
+                height: FreevaSize.touch,
+                child: Row(
+                  children: [
+                    Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: bg,
+                        borderRadius: BorderRadius.circular(FreevaRadius.sm),
+                      ),
+                      child: Icon(
+                        categoryIcon(parent.iconToken),
+                        size: FreevaSize.iconSm,
+                        color: fg,
                       ),
                     ),
-                  ),
-                  if (on) Icon(LucideIcons.check, color: c.actionPrimary),
-                ],
+                    const SizedBox(width: FreevaSpace.s3),
+                    Expanded(
+                      child: Text(
+                        parent.name,
+                        style: FreevaTypography.body.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: c.textPrimary,
+                        ),
+                      ),
+                    ),
+                    if (on)
+                      Icon(
+                        LucideIcons.check,
+                        size: FreevaSize.iconSm,
+                        color: c.actionPrimary,
+                      ),
+                  ],
+                ),
               ),
             ),
           ),
           if (children.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.only(left: 44),
+              padding: const EdgeInsets.only(left: 44, top: FreevaSpace.s2),
               child: Wrap(
-                spacing: 8,
-                runSpacing: 8,
+                spacing: 6,
+                runSpacing: 6,
                 children: [
                   for (final kid in children)
                     FreevaChip(
                       label: kid.name,
+                      size: FreevaChipSize.compact,
                       selected: kid.id == selected,
                       onTap: () => onPick(kid.id),
                     ),

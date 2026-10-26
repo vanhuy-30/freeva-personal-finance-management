@@ -31,24 +31,39 @@ class TransactionDetailCard extends StatelessWidget {
     final locale = Localizations.localeOf(context).toString();
     final transfer = bundle.type == TransactionType.transfer;
     final notes = bundle.notes?.trim();
-    Widget row(String name, Widget value) => Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+    // Board: rows 14 top/bottom, key 88 wide 14/22 muted, value 15/500
+    // right-aligned (notes 400).
+    Widget row(String name, Widget value, {bool center = false}) => Padding(
+      padding: const EdgeInsets.symmetric(vertical: 14),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: center
+            ? CrossAxisAlignment.center
+            : CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 96,
+            width: 88,
             child: Text(
               name,
-              style: FreevaTypography.bodyS.copyWith(color: c.textSecondary),
+              style: FreevaTypography.bodyM.copyWith(
+                height: 22 / 14,
+                color: c.textSecondary,
+              ),
             ),
           ),
+          const SizedBox(width: FreevaSpace.s3),
           Expanded(child: value),
         ],
       ),
     );
-    Text value(String text) =>
-        Text(text, style: FreevaTypography.body.copyWith(color: c.textPrimary));
+    Text value(String text, {bool plain = false}) => Text(
+      text,
+      textAlign: TextAlign.end,
+      style: FreevaTypography.body.copyWith(
+        fontWeight: plain ? FontWeight.w400 : FontWeight.w500,
+        height: 22 / 15,
+        color: c.textPrimary,
+      ),
+    );
     final rows = <Widget>[
       if (transfer) ...[
         row(s.txDetailFrom, value(naming.wallet(bundle.legs.first.accountId))),
@@ -71,18 +86,24 @@ class TransactionDetailCard extends StatelessWidget {
         row(
           s.txDetailTags,
           Wrap(
-            runSpacing: 4,
-            children: [for (final t in label.tags) TagChip(t)],
+            alignment: WrapAlignment.end,
+            spacing: 6,
+            runSpacing: 6,
+            children: [
+              // IntrinsicWidth: the chip's centred Container would
+              // otherwise stretch to the row width.
+              for (final t in label.tags)
+                IntrinsicWidth(child: TagChip(t, size: TagChipSize.detail)),
+            ],
           ),
+          center: true,
         ),
-      if (notes != null && notes.isNotEmpty) row(s.txDetailNotes, value(notes)),
+      if (notes != null && notes.isNotEmpty)
+        row(s.txDetailNotes, value(notes, plain: true)),
     ];
     return FreevaCard(
       list: true,
-      padding: const EdgeInsets.symmetric(
-        horizontal: FreevaSpace.s4,
-        vertical: 4,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: FreevaSpace.s4),
       child: Column(
         children: [
           for (final (i, r) in rows.indexed) ...[

@@ -4,6 +4,7 @@ import 'package:mobile/core/theme/lucide_icons.g.dart';
 import '../../../../../core/theme/theme_context.dart';
 import '../../../../../core/theme/tokens.g.dart';
 import '../../../../wallets/domain/wallet.dart';
+import '../../../../wallets/presentation/widgets/wallet_type_glyph.dart';
 
 /// 60-high wallet row in the transfer card: icon, "Từ"/"Đến", name, code.
 class WalletRow extends StatelessWidget {
@@ -45,7 +46,18 @@ class WalletRow extends StatelessWidget {
                   color: iconBg,
                   borderRadius: BorderRadius.circular(FreevaRadius.sm),
                 ),
-                child: Icon(LucideIcons.wallet, size: 18, color: iconFg),
+                alignment: Alignment.center,
+                child: wallet == null
+                    ? Icon(
+                        LucideIcons.wallet,
+                        size: FreevaSize.iconSm,
+                        color: iconFg,
+                      )
+                    : WalletTypeGlyph(
+                        type: wallet!.draft.type,
+                        size: FreevaSize.iconSm,
+                        color: iconFg,
+                      ),
               ),
               const SizedBox(width: FreevaSpace.s3),
               Expanded(
@@ -72,7 +84,7 @@ class WalletRow extends StatelessWidget {
               ),
               if (wallet != null)
                 Padding(
-                  padding: const EdgeInsets.only(right: 52),
+                  padding: const EdgeInsets.only(right: FreevaSize.touch),
                   child: Text(
                     wallet!.draft.currency,
                     style: FreevaTypography.bodyS.copyWith(

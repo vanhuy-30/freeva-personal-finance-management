@@ -66,6 +66,7 @@ class SearchResultsBody extends StatelessWidget {
             mainCurrency: main.profileCurrency,
             today: main.today() ?? '',
             highlight: text,
+            showNet: false,
             onOpen: (row) async {
               await openTransactionDetail(context, main, row);
               await results.reload();

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/money/money_text.dart';
+import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/money_display.dart';
 import '../../../../core/widgets/transaction_row.dart';
+import '../../../../core/widgets/transaction_row_text.dart';
 import '../../../sync/presentation/widgets/sync_mark_chip.dart';
 import '../../domain/transaction.dart';
 import 'transaction_naming.dart';
@@ -21,6 +24,7 @@ class TransactionListRow extends StatelessWidget {
     this.muted = false,
     this.trailing,
     this.mark,
+    this.iconBg,
     super.key,
   });
 
@@ -38,6 +42,9 @@ class TransactionListRow extends StatelessWidget {
   /// Queued change on this row: the chip is also read to screen readers.
   final SyncMark? mark;
 
+  /// Circle colour override (white while the saved row is marked).
+  final Color? iconBg;
+
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
@@ -53,11 +60,26 @@ class TransactionListRow extends StatelessWidget {
       icon: label.icon,
       title: label.title,
       subtitle: label.detail,
-      // Deleted rows: neutral icon (subtle background), muted amount.
-      tone: muted ? MoneyTone.plain : label.tone,
+      tone: label.tone,
+      // Deleted rows: neutral circle, muted glyph and amount.
+      muted: muted,
       tags: label.tags,
       highlight: highlight,
-      trailing: mark == null ? trailing : SyncMarkChip(mark: mark!),
+      iconBg: iconBg,
+      trailing: trailing,
+      subtitleWidget: switch (mark) {
+        SyncMark.review => TransactionRowNote(
+          icon: LucideIcons.triangleAlert,
+          text: s.syncChipReview,
+          color: context.colors.statusWarning,
+          bold: true,
+        ),
+        SyncMark.waiting => TransactionRowNote(
+          icon: LucideIcons.clock,
+          text: s.syncChipWaiting,
+        ),
+        null => null,
+      },
       onTap: onTap,
       semanticsLabel: [
         s.homeSpokenRow(signed, label.title, label.detail),

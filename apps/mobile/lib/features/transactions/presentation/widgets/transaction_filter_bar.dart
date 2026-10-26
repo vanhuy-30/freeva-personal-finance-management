@@ -8,8 +8,9 @@ import '../../domain/transaction.dart';
 import '../../domain/transaction_filter.dart';
 import 'active_filter_chip.dart';
 
-/// Type chips, the period chip (opens the filter sheet) and one ink chip
-/// with × per extra condition (wallet, category, tag).
+/// Type chips and the period chip (opens the filter sheet). Once a wallet,
+/// category or tag condition is on, only ink chips with × for each active
+/// condition (period first; its chip opens the sheet).
 class TransactionFilterBar extends StatelessWidget {
   const TransactionFilterBar({
     required this.filter,
@@ -75,39 +76,57 @@ class TransactionFilterBar extends StatelessWidget {
       label: names(id),
       onRemove: () => onChanged(put({...pick(filter)}..remove(id))),
     );
+    final chips = <Widget>[
+      if (filter.narrowed) ...[
+        // TxNoResult: once a condition is on, the row shows only the
+        // active conditions as ink chips, the period first.
+        ActiveFilterChip(
+          label: filter.period == PeriodPreset.thisMonth
+              ? s.txPeriodThisMonth
+              : periodLabel(s, filter, range, locale),
+          semanticsLabel: s.txFilterPeriod,
+          onRemove: onOpenSheet,
+        ),
+        if (filter.type case final type?)
+          ActiveFilterChip(
+            label: switch (type) {
+              TransactionType.expense => s.transactionExpense,
+              TransactionType.income => s.transactionIncome,
+              TransactionType.transfer => s.transactionTransfer,
+            },
+            onRemove: () => onChanged(filter.copyWith(type: null)),
+          ),
+        for (final id in filter.accountIds)
+          active(
+            id,
+            (f) => f.accountIds,
+            (v) => filter.copyWith(accountIds: v),
+          ),
+        for (final id in filter.categoryIds)
+          active(
+            id,
+            (f) => f.categoryIds,
+            (v) => filter.copyWith(categoryIds: v),
+          ),
+        for (final id in filter.tagIds)
+          active(id, (f) => f.tagIds, (v) => filter.copyWith(tagIds: v)),
+      ] else ...[
+        type(s.transactionAll, null),
+        type(s.transactionExpense, TransactionType.expense),
+        type(s.transactionIncome, TransactionType.income),
+        type(s.transactionTransfer, TransactionType.transfer),
+        FreevaChip(
+          label: periodLabel(s, filter, range, locale),
+          kind: FreevaChipKind.filter,
+          selected: false,
+          trailingIcon: LucideIcons.chevronDown,
+          onTap: onOpenSheet,
+        ),
+      ],
+    ];
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: Row(
-        // Active conditions come first so they are visible without
-        // scrolling (C1.4); then type chips and the period chip.
-        children: [
-          for (final id in filter.accountIds)
-            active(
-              id,
-              (f) => f.accountIds,
-              (v) => filter.copyWith(accountIds: v),
-            ),
-          for (final id in filter.categoryIds)
-            active(
-              id,
-              (f) => f.categoryIds,
-              (v) => filter.copyWith(categoryIds: v),
-            ),
-          for (final id in filter.tagIds)
-            active(id, (f) => f.tagIds, (v) => filter.copyWith(tagIds: v)),
-          type(s.transactionAll, null),
-          type(s.transactionExpense, TransactionType.expense),
-          type(s.transactionIncome, TransactionType.income),
-          type(s.transactionTransfer, TransactionType.transfer),
-          FreevaChip(
-            label: periodLabel(s, filter, range, locale),
-            kind: FreevaChipKind.filter,
-            selected: false,
-            trailingIcon: LucideIcons.chevronDown,
-            onTap: onOpenSheet,
-          ),
-        ],
-      ),
+      child: Row(children: chips),
     );
   }
 }

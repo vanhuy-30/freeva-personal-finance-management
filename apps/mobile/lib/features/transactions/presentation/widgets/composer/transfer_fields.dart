@@ -58,21 +58,29 @@ class TransferFields extends StatelessWidget {
               top: 40,
               child: Tooltip(
                 message: s.txSwap,
-                child: Material(
-                  color: c.bgSurface,
-                  shape: CircleBorder(side: BorderSide(color: c.borderDefault)),
-                  elevation: 2,
-                  shadowColor: c.bgScrim,
-                  child: InkWell(
-                    customBorder: const CircleBorder(),
-                    onTap: composer.destination == null ? null : composer.swap,
-                    child: SizedBox.square(
-                      dimension: 40,
-                      child: Icon(
-                        LucideIcons.arrowUpDown,
-                        size: 18,
-                        color: c.textPrimary,
-                        semanticLabel: s.txSwap,
+                child: DecoratedBox(
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: FreevaElevation.swap,
+                  ),
+                  child: Material(
+                    color: c.bgSurface,
+                    shape: CircleBorder(
+                      side: BorderSide(color: c.borderDefault),
+                    ),
+                    child: InkWell(
+                      customBorder: const CircleBorder(),
+                      onTap: composer.destination == null
+                          ? null
+                          : composer.swap,
+                      child: SizedBox.square(
+                        dimension: 40,
+                        child: Icon(
+                          LucideIcons.arrowUpDown,
+                          size: FreevaSize.iconSm,
+                          color: c.textPrimary,
+                          semanticLabel: s.txSwap,
+                        ),
                       ),
                     ),
                   ),

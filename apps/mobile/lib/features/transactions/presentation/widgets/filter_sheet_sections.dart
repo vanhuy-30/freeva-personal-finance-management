@@ -106,35 +106,37 @@ class FilterSheetSections extends StatelessWidget {
             if (picked != null) onChanged(draft.copyWith(tagIds: picked));
           },
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 20),
         InkWell(
           onTap: onOpenDeleted,
           child: SizedBox(
             height: FreevaSize.touch,
             child: Row(
               children: [
-                Icon(
-                  LucideIcons.trash2,
-                  size: FreevaSize.iconInline,
-                  color: c.textSecondary,
-                ),
+                Icon(LucideIcons.trash, size: 18, color: c.textOnWash),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
                     s.txFilterDeleted,
-                    style: FreevaTypography.body.copyWith(color: c.textPrimary),
+                    style: FreevaTypography.body.copyWith(
+                      fontWeight: FontWeight.w500,
+                      color: c.textOnWash,
+                    ),
                   ),
                 ),
-                if (deleted != null)
+                if (deleted != null) ...[
                   Text(
                     '$deleted',
                     style: FreevaTypography.bodyS.copyWith(
                       color: c.textSecondary,
+                      fontFeatures: const [FontFeature.tabularFigures()],
                     ),
                   ),
+                  const SizedBox(width: 10),
+                ],
                 Icon(
                   LucideIcons.chevronRight,
-                  size: FreevaSize.iconInline,
+                  size: FreevaSize.iconChip,
                   color: c.textSecondary,
                 ),
               ],

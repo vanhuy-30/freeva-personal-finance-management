@@ -74,7 +74,11 @@ class RateCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Icon(LucideIcons.pencil, size: 18, color: c.actionPrimary),
+                  Icon(
+                    LucideIcons.penLine,
+                    size: FreevaSize.iconSm,
+                    color: c.actionPrimary,
+                  ),
                 ],
               ),
             ),
@@ -93,15 +97,38 @@ class RateCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                Text(
-                  received == null
-                      ? '—'
-                      : '${formatMoneyText(received, composer.digitsOf(to), locale)} $to',
-                  style: FreevaTypography.titleL.copyWith(
-                    color: c.textPrimary,
-                    fontFeatures: tabular,
+                if (received == null)
+                  Text(
+                    '—',
+                    style: FreevaTypography.titleL.copyWith(
+                      color: c.textPrimary,
+                    ),
+                  )
+                else
+                  Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text: formatMoneyText(
+                            received,
+                            composer.digitsOf(to),
+                            locale,
+                          ),
+                        ),
+                        TextSpan(
+                          text: ' $to',
+                          style: FreevaTypography.bodyS.copyWith(
+                            fontWeight: FontWeight.w500,
+                            color: c.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                    style: FreevaTypography.titleL.copyWith(
+                      color: c.textPrimary,
+                      fontFeatures: tabular,
+                    ),
                   ),
-                ),
               ],
             ),
           ),

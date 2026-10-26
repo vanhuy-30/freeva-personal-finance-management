@@ -25,12 +25,12 @@ class DeleteCircleButton extends StatelessWidget {
           minimumSize: const Size(FreevaSize.button, FreevaSize.button),
           padding: EdgeInsets.zero,
           shape: const CircleBorder(),
-          side: BorderSide(color: c.statusDanger),
+          side: BorderSide(color: c.borderDanger),
           foregroundColor: c.statusDanger,
         ),
         child: Semantics(
           label: label,
-          child: const Icon(LucideIcons.trash2, size: FreevaSize.iconInline),
+          child: const Icon(LucideIcons.trash, size: FreevaSize.iconInline),
         ),
       ),
     );

@@ -34,11 +34,9 @@ class FilterSelectField extends StatelessWidget {
         child: InkWell(
           borderRadius: radius,
           onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: FreevaSpace.s4,
-              vertical: 10,
-            ),
+          child: Container(
+            constraints: const BoxConstraints(minHeight: FreevaSize.row),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
             child: Row(
               children: [
                 Expanded(
@@ -48,25 +46,28 @@ class FilterSelectField extends StatelessWidget {
                       Text(
                         label,
                         style: FreevaTypography.label.copyWith(
+                          fontWeight: FontWeight.w400,
+                          height: 1.25,
                           color: c.textSecondary,
                         ),
                       ),
-                      const SizedBox(height: 3),
                       Text(
                         value,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: FreevaTypography.body.copyWith(
                           fontWeight: FontWeight.w500,
+                          height: 1.2,
                           color: c.textPrimary,
                         ),
                       ),
                     ],
                   ),
                 ),
+                const SizedBox(width: FreevaSpace.s3),
                 Icon(
-                  LucideIcons.chevronDown,
-                  size: FreevaSize.iconInline,
+                  LucideIcons.chevronRight,
+                  size: FreevaSize.iconSm,
                   color: c.textSecondary,
                 ),
               ],

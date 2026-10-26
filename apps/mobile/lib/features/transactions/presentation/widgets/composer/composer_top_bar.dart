@@ -37,6 +37,7 @@ class ComposerTopBar extends StatelessWidget {
         children: [
           FreevaIconButton(
             icon: LucideIcons.x,
+            iconSize: FreevaSize.iconSm,
             label: s.commonClose,
             onPressed: onClose,
           ),

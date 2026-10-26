@@ -6,8 +6,10 @@ import '../../../../../core/text/vietnamese_fold.dart';
 import '../../../../../core/theme/theme_context.dart';
 import '../../../../../core/theme/tokens.g.dart';
 import '../../../../../core/widgets/freeva_sheet.dart';
-import '../../../../../core/widgets/settings_group.dart';
+import '../../../../../core/widgets/freeva_card.dart';
+import '../../../../../core/widgets/tag_chip.dart';
 import '../../viewmodels/transaction_view_model.dart';
+import '../search_box.dart';
 import 'tag_create_row.dart';
 
 /// "Nhãn" (C2.4): find or create, checkbox list, "Đã chọn". At 20 tags the
@@ -66,49 +68,115 @@ class _BodyState extends State<_Body> {
     final exact = tags.any((t) => foldVietnamese(t.name) == folded);
     Widget row(String id, String name) {
       final on = chosen.contains(id);
-      return CheckboxListTile(
-        contentPadding: EdgeInsets.zero,
-        value: on,
-        activeColor: c.actionPrimary,
-        title: Text(
-          name,
-          style: FreevaTypography.body.copyWith(color: c.textPrimary),
+      final locked = !on && full;
+      // Board `.ck`: 52 high, 22 box radius 7 on the left, 15/500 label.
+      return Semantics(
+        checked: on,
+        enabled: !locked,
+        label: name,
+        excludeSemantics: true,
+        child: InkWell(
+          onTap: locked
+              ? null
+              : () => setState(() => on ? chosen.remove(id) : chosen.add(id)),
+          child: SizedBox(
+            height: 52,
+            child: Row(
+              children: [
+                Container(
+                  width: 22,
+                  height: 22,
+                  decoration: BoxDecoration(
+                    color: on ? c.actionPrimary : null,
+                    borderRadius: BorderRadius.circular(7),
+                    border: on
+                        ? null
+                        : Border.all(
+                            color: c.borderStrong,
+                            width: FreevaBorder.selected,
+                          ),
+                  ),
+                  child: on
+                      ? Icon(
+                          LucideIcons.check,
+                          size: FreevaSize.iconXs,
+                          color: c.textOnAction,
+                        )
+                      : null,
+                ),
+                const SizedBox(width: FreevaSpace.s3),
+                Expanded(
+                  child: Text(
+                    name,
+                    style: FreevaTypography.body.copyWith(
+                      fontWeight: FontWeight.w500,
+                      color: locked ? c.textDisabled : c.textPrimary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
-        onChanged: !on && full
-            ? null
-            : (v) => setState(
-                () => v == true ? chosen.add(id) : chosen.remove(id),
-              ),
       );
     }
+
+    final rows = <Widget>[
+      if (query.isNotEmpty && !exact)
+        TagCreateRow(
+          label: s.txCreateTag(query),
+          busy: creating,
+          onTap: full || creating ? null : _create,
+        ),
+      for (final t in matches.where((t) => !chosen.contains(t.id)))
+        row(t.id, t.name),
+    ];
+    String nameOf(String id) =>
+        tags.where((t) => t.id == id).map((t) => t.name).firstOrNull ?? '';
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                s.transactionTags,
-                style: FreevaTypography.titleL.copyWith(color: c.textPrimary),
-              ),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(chosen),
-              child: Text(s.txFilterDone),
-            ),
-          ],
-        ),
-        TextField(
-          onChanged: (v) => setState(() => query = v.trim()),
-          decoration: InputDecoration(
-            hintText: s.txFindOrCreateTag,
-            prefixIcon: const Icon(
-              LucideIcons.search,
-              size: FreevaSize.iconInline,
+        // Board: 16 under the handle (the sheet gives 14), row 40.
+        Padding(
+          padding: const EdgeInsets.only(top: 2),
+          child: SizedBox(
+            height: 40,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Semantics(
+                    header: true,
+                    child: Text(
+                      s.transactionTags,
+                      style: FreevaTypography.titleL.copyWith(
+                        color: c.textPrimary,
+                      ),
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(chosen),
+                  style: TextButton.styleFrom(
+                    foregroundColor: c.textLink,
+                    minimumSize: const Size(FreevaSize.touch, 40),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: FreevaSpace.s1,
+                    ),
+                    tapTargetSize: MaterialTapTargetSize.padded,
+                  ),
+                  child: Text(s.txFilterDone),
+                ),
+              ],
             ),
           ),
+        ),
+        const SizedBox(height: FreevaSpace.s4),
+        SearchBox(
+          hint: s.txFindOrCreateTag,
+          iconSize: FreevaSize.iconSm,
+          onChanged: (v) => setState(() => query = v.trim()),
         ),
         if (full)
           Padding(
@@ -121,26 +189,54 @@ class _BodyState extends State<_Body> {
         Flexible(
           child: ListView(
             shrinkWrap: true,
+            padding: EdgeInsets.zero,
             children: [
-              if (query.isNotEmpty && !exact)
-                TagCreateRow(
-                  label: s.txCreateTag(query),
-                  busy: creating,
-                  onTap: full || creating ? null : _create,
-                ),
-              for (final t in matches.where((t) => !chosen.contains(t.id)))
-                row(t.id, t.name),
-              if (chosen.isNotEmpty) ...[
-                SectionHeader(s.txSelected),
-                for (final id in chosen)
-                  row(
-                    id,
-                    tags
-                            .where((t) => t.id == id)
-                            .map((t) => t.name)
-                            .firstOrNull ??
-                        '',
+              if (rows.isNotEmpty) ...[
+                const SizedBox(height: FreevaSpace.s4),
+                FreevaCard(
+                  list: true,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: FreevaSpace.s4,
                   ),
+                  child: Column(
+                    children: [
+                      for (final (i, r) in rows.indexed) ...[
+                        if (i > 0) Divider(height: 1, color: c.listDivider),
+                        r,
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+              if (chosen.isNotEmpty) ...[
+                const SizedBox(height: FreevaSpace.s4),
+                Text(
+                  s.txSelected,
+                  style: FreevaTypography.bodyS.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: c.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: FreevaSpace.s2),
+                // Board: read-only violet chips (32); tap one to unpick it.
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final id in chosen)
+                      Semantics(
+                        button: true,
+                        label: s.txChipRemove(nameOf(id)),
+                        excludeSemantics: true,
+                        child: GestureDetector(
+                          onTap: () => setState(() => chosen.remove(id)),
+                          child: IntrinsicWidth(
+                            child: TagChip(nameOf(id), size: TagChipSize.sheet),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ],
             ],
           ),

@@ -10,11 +10,15 @@ class ActiveFilterChip extends StatelessWidget {
   const ActiveFilterChip({
     required this.label,
     required this.onRemove,
+    this.semanticsLabel,
     super.key,
   });
 
   final String label;
   final VoidCallback onRemove;
+
+  /// Spoken label; defaults to "Bỏ {label}".
+  final String? semanticsLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +27,7 @@ class ActiveFilterChip extends StatelessWidget {
       padding: const EdgeInsets.only(right: 8),
       child: Semantics(
         button: true,
-        label: S.of(context).txChipRemove(label),
+        label: semanticsLabel ?? S.of(context).txChipRemove(label),
         excludeSemantics: true,
         child: Material(
           color: c.chipFilterSelectedBg,
@@ -33,7 +37,7 @@ class ActiveFilterChip extends StatelessWidget {
             onTap: onRemove,
             child: Container(
               height: 36,
-              padding: const EdgeInsets.fromLTRB(14, 0, 10, 0),
+              padding: const EdgeInsets.fromLTRB(14, 0, 8, 0),
               alignment: Alignment.center,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -45,7 +49,7 @@ class ActiveFilterChip extends StatelessWidget {
                       color: c.chipFilterSelectedFg,
                     ),
                   ),
-                  const SizedBox(width: 6),
+                  const SizedBox(width: FreevaSpace.s1),
                   Icon(
                     LucideIcons.x,
                     size: FreevaSize.iconChip,

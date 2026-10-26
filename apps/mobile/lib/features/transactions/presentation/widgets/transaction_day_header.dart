@@ -16,6 +16,7 @@ class TransactionDayHeader extends StatelessWidget {
     required this.rows,
     required this.mainCurrency,
     required this.digitsOf,
+    this.showNet = true,
     super.key,
   });
 
@@ -24,6 +25,9 @@ class TransactionDayHeader extends StatelessWidget {
   final List<TransactionBundle> rows;
   final String mainCurrency;
   final int Function(String) digitsOf;
+
+  /// False on search and deleted lists: the day label only.
+  final bool showNet;
 
   /// Day label: "Hôm nay · 21/10" or "Thứ Hai · 20/10".
   static String label(S s, String date, String today, String locale) {
@@ -79,10 +83,11 @@ class TransactionDayHeader extends StatelessWidget {
               ),
             ),
           ),
-          Text(
-            parts.join(' · '),
-            style: style.copyWith(color: c.textSecondary),
-          ),
+          if (showNet)
+            Text(
+              parts.join(' · '),
+              style: style.copyWith(color: c.textSecondary),
+            ),
         ],
       ),
     );

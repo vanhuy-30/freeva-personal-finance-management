@@ -121,26 +121,141 @@ const stubCategories = [
     name: 'Ăn uống',
     parentId: null,
     iconToken: 'food',
+    colorToken: 'color.brand.primary',
+    kind: CategoryKind.expense,
   ),
-  FinanceCategory(id: 'coffee', name: 'Cà phê', parentId: 'food'),
+  FinanceCategory(
+    id: 'coffee',
+    name: 'Cà phê',
+    parentId: 'food',
+    iconToken: 'coffee',
+    colorToken: 'color.brand.accent',
+    kind: CategoryKind.expense,
+  ),
   FinanceCategory(
     id: 'bus',
     name: 'Đi lại',
     parentId: null,
     iconToken: 'transport',
+    colorToken: 'color.brand.secondary',
+    kind: CategoryKind.expense,
+  ),
+  // The rest of the TxCategory board (C2.2).
+  FinanceCategory(
+    id: 'eat_out',
+    name: 'Ăn ngoài',
+    parentId: 'food',
+    iconToken: 'food',
+    kind: CategoryKind.expense,
+  ),
+  FinanceCategory(
+    id: 'groceries',
+    name: 'Đi chợ',
+    parentId: 'food',
+    iconToken: 'groceries',
+    colorToken: 'color.semantic.success',
+    kind: CategoryKind.expense,
+  ),
+  FinanceCategory(
+    id: 'fuel',
+    name: 'Xăng xe',
+    parentId: 'bus',
+    iconToken: 'fuel',
+    kind: CategoryKind.expense,
+  ),
+  FinanceCategory(
+    id: 'parking',
+    name: 'Gửi xe',
+    parentId: 'bus',
+    iconToken: 'transport',
+    kind: CategoryKind.expense,
+  ),
+  FinanceCategory(
+    id: 'taxi',
+    name: 'Taxi',
+    parentId: 'bus',
+    iconToken: 'transport',
+    kind: CategoryKind.expense,
+  ),
+  FinanceCategory(
+    id: 'home',
+    name: 'Nhà cửa',
+    parentId: null,
+    iconToken: 'housing',
+    colorToken: 'color.brand.accent',
+    kind: CategoryKind.expense,
+  ),
+  FinanceCategory(
+    id: 'rent',
+    name: 'Tiền nhà',
+    parentId: 'home',
+    iconToken: 'housing',
+    kind: CategoryKind.expense,
+  ),
+  FinanceCategory(
+    id: 'power',
+    name: 'Điện',
+    parentId: 'home',
+    iconToken: 'electricity',
+    kind: CategoryKind.expense,
+  ),
+  FinanceCategory(
+    id: 'water',
+    name: 'Nước',
+    parentId: 'home',
+    iconToken: 'water',
+    kind: CategoryKind.expense,
+  ),
+  FinanceCategory(
+    id: 'internet',
+    name: 'Internet',
+    parentId: 'home',
+    iconToken: 'internet',
+    kind: CategoryKind.expense,
+  ),
+  FinanceCategory(
+    id: 'shopping',
+    name: 'Mua sắm',
+    parentId: null,
+    iconToken: 'shopping',
+    colorToken: 'color.semantic.success',
+    kind: CategoryKind.expense,
+  ),
+  FinanceCategory(
+    id: 'clothes',
+    name: 'Quần áo',
+    parentId: 'shopping',
+    iconToken: 'clothes',
+    kind: CategoryKind.expense,
+  ),
+  FinanceCategory(
+    id: 'household',
+    name: 'Đồ gia dụng',
+    parentId: 'shopping',
+    iconToken: 'shopping',
+    kind: CategoryKind.expense,
   ),
   FinanceCategory(
     id: 'bills',
     name: 'Hóa đơn',
     parentId: null,
-    iconToken: 'bills',
+    iconToken: 'electricity',
+    kind: CategoryKind.expense,
   ),
   FinanceCategory(
     id: 'salary',
     name: 'Thu nhập',
     parentId: null,
     iconToken: 'salary',
+    colorToken: 'color.semantic.success',
+    kind: CategoryKind.income,
   ),
+];
+
+/// "Hay dùng" on the boards: Ăn uống, Cà phê, Đi lại, Đi chợ.
+final stubRecentCategories = [
+  for (final id in ['food', 'coffee', 'bus', 'groceries'])
+    stubCategories.firstWhere((c) => c.id == id),
 ];
 
 class StubTransactionViewModel extends ChangeNotifier
@@ -176,7 +291,7 @@ class StubTransactionViewModel extends ChangeNotifier
   @override
   List<FinanceCategory> categories = stubCategories;
   @override
-  List<FinanceCategory> recentCategories = stubCategories;
+  List<FinanceCategory> recentCategories = stubRecentCategories;
   @override
   List<Tag> tags = [
     const Tag(id: 'work', clientId: 'c', name: 'Đi làm', version: 1),
@@ -215,7 +330,10 @@ class StubTransactionViewModel extends ChangeNotifier
   String newClientId() => 'client-${_ids++}';
   final saved = <TransactionDraft>[];
   @override
-  Future<bool> save(TransactionDraft draft, {TransactionBundle? existing}) async {
+  Future<bool> save(
+    TransactionDraft draft, {
+    TransactionBundle? existing,
+  }) async {
     saved.add(draft);
     return true;
   }
