@@ -60,12 +60,12 @@ class SocialSignInButton extends StatelessWidget {
                       child: CustomPaint(painter: _GoogleMark()),
                     ),
                   },
-                  const SizedBox(width: FreevaSpace.s3),
+                  const SizedBox(width: 10),
                   Flexible(
                     child: Text(
                       label,
                       style: FreevaTypography.titleM.copyWith(
-                        fontSize: 15,
+                        fontSize: 16,
                         color: fg,
                       ),
                     ),

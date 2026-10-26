@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import '../theme/theme_context.dart';
 import '../theme/tokens.g.dart';
 
-/// The one card with the colour wash. Only on Overview and wallet detail.
+/// The one card with the colour wash. Only on Overview, wallet detail and
+/// the Welcome sample.
 class WashSurface extends StatelessWidget {
   const WashSurface({
     required this.child,

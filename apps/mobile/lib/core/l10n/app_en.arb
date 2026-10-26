@@ -1534,6 +1534,7 @@
   "signUpSub": "Your data is safe and moves with you to a new phone.",
   "authContinueEmail": "Continue with email",
   "signUpTermsPrefix": "By continuing you agree to the ",
+  "signUpTermsLink": "Terms",
   "signUpTermsSuffix": ".",
   "onbProgress": "{current}/{total}",
   "@onbProgress": {

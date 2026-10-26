@@ -2572,6 +2572,9 @@ class SEn extends S {
   String get signUpTermsPrefix => 'By continuing you agree to the ';
 
   @override
+  String get signUpTermsLink => 'Terms';
+
+  @override
   String get signUpTermsSuffix => '.';
 
   @override

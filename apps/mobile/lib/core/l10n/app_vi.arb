@@ -773,6 +773,7 @@
   "signUpSub": "Dữ liệu được lưu an toàn, đổi máy không mất.",
   "authContinueEmail": "Tiếp tục với email",
   "signUpTermsPrefix": "Tiếp tục nghĩa là bạn đồng ý với ",
+  "signUpTermsLink": "Điều khoản",
   "signUpTermsSuffix": ".",
   "onbProgress": "{current}/{total}",
   "onbGoalsTitle": "Bạn muốn cải thiện điều gì?",

@@ -2534,6 +2534,9 @@ class SVi extends S {
   String get signUpTermsPrefix => 'Tiếp tục nghĩa là bạn đồng ý với ';
 
   @override
+  String get signUpTermsLink => 'Điều khoản';
+
+  @override
   String get signUpTermsSuffix => '.';
 
   @override

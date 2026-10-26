@@ -134,12 +134,16 @@ class AuthSwitchLink extends StatelessWidget {
     required this.prompt,
     required this.action,
     required this.onTap,
+    this.actionColor,
     super.key,
   });
 
   final String prompt;
   final String action;
   final VoidCallback? onTap;
+
+  /// Colour of [action]; text primary when null.
+  final Color? actionColor;
 
   @override
   Widget build(BuildContext context) {
@@ -168,7 +172,7 @@ class AuthSwitchLink extends StatelessWidget {
                   action,
                   style: FreevaTypography.titleM.copyWith(
                     fontSize: 15,
-                    color: c.textPrimary,
+                    color: actionColor ?? c.textPrimary,
                   ),
                 ),
               ),

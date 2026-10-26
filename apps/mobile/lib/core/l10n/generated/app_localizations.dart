@@ -4656,6 +4656,12 @@ abstract class S {
   /// **'By continuing you agree to the '**
   String get signUpTermsPrefix;
 
+  /// No description provided for @signUpTermsLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms'**
+  String get signUpTermsLink;
+
   /// No description provided for @signUpTermsSuffix.
   ///
   /// In en, this message translates to:

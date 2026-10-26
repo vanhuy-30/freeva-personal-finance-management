@@ -4,8 +4,8 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
+import '../../../../core/widgets/balance_card.dart';
 import '../../../../core/widgets/freeva_button.dart';
-import '../../../../core/widgets/freeva_card.dart';
 import '../viewmodels/auth_view_model.dart';
 import '../widgets/auth_scaffold.dart';
 
@@ -19,8 +19,14 @@ class WelcomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final c = context.colors;
+    final title = FreevaTypography.titleXl.copyWith(
+      fontSize: 34,
+      height: 40 / 34,
+      letterSpacing: -1,
+      color: c.textPrimary,
+    );
     return AuthScaffold(
-      topGap: FreevaSpace.s2,
+      topGap: 0,
       footer: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -30,149 +36,248 @@ class WelcomePage extends StatelessWidget {
             expand: true,
             onPressed: () => model.leaveWelcome(AuthStep.signUp),
           ),
-          const SizedBox(height: FreevaSpace.s2),
+          const SizedBox(height: FreevaSpace.s1),
           AuthSwitchLink(
             prompt: s.authHaveAccount,
             action: s.authLogin,
+            actionColor: c.textLink,
             onTap: () => model.leaveWelcome(AuthStep.login),
           ),
         ],
       ),
       children: [
-        const _SampleCards(),
-        const SizedBox(height: FreevaSpace.s8),
+        const _Hero(),
+        const SizedBox(height: 28),
         Semantics(
           header: true,
-          child: Text(
-            '${s.welcomeTitleLine1}\n${s.welcomeTitleLine2}',
-            textAlign: TextAlign.center,
-            style: FreevaTypography.titleXl.copyWith(color: c.textPrimary),
+          child: Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(text: '${s.welcomeTitleLine1}\n'),
+                TextSpan(
+                  text: s.welcomeTitleLine2,
+                  style: TextStyle(color: c.textLink),
+                ),
+              ],
+            ),
+            style: title,
           ),
         ),
         const SizedBox(height: FreevaSpace.s3),
         Text(
           s.welcomeSub,
-          textAlign: TextAlign.center,
-          style: FreevaTypography.body.copyWith(color: c.textSecondary),
+          style: FreevaTypography.body.copyWith(
+            fontSize: 16,
+            height: 1.5,
+            color: c.textSecondary,
+          ),
         ),
       ],
     );
   }
 }
 
-/// Decorative piece of the app: a balance card, two rows and the + button.
-/// Hidden from screen readers; the numbers are only an example.
-class _SampleCards extends StatelessWidget {
-  const _SampleCards();
+/// Decorative piece of the app: a balance card on a soft disc, two floating
+/// transaction rows and the + button. Hidden from screen readers; the
+/// numbers are only an example.
+class _Hero extends StatelessWidget {
+  const _Hero();
+
+  static const double _height = 400;
 
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
     final c = context.colors;
     return ExcludeSemantics(
-      child: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(FreevaSpace.s5),
-            decoration: BoxDecoration(
-              color: c.bgWash,
-              borderRadius: BorderRadius.circular(FreevaRadius.xl),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  s.welcomeSampleBalance,
-                  style: FreevaTypography.bodyS.copyWith(color: c.textOnWash),
-                ),
-                const SizedBox(height: FreevaSpace.s1),
-                // Decorative sample: scaling it down is fine here.
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    '24.600.000 ₫',
-                    style: FreevaTypography.moneyDisplay.copyWith(
-                      color: c.textOnWash,
-                    ),
+      child: SizedBox(
+        height: _height,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Positioned(
+              top: 0,
+              left: -100,
+              right: -100,
+              child: Center(
+                child: Container(
+                  width: 340,
+                  height: 340,
+                  decoration: BoxDecoration(
+                    color: c.bgSubtle,
+                    shape: BoxShape.circle,
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
-          const SizedBox(height: FreevaSpace.s3),
-          FreevaCard(
-            list: true,
-            child: Column(
-              children: [
-                _Row(LucideIcons.utensils, s.welcomeSampleFood, '−65.000'),
-                const SizedBox(height: FreevaSpace.s3),
-                _Row(
-                  LucideIcons.banknote,
-                  s.welcomeSampleSalary,
-                  '+18.500.000',
-                  income: true,
+            Positioned(
+              top: 62,
+              left: 40,
+              right: 40,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(
+                    FreevaComponent.balanceCardRadius,
+                  ),
+                  boxShadow: const [
+                    BoxShadow(
+                      offset: Offset(0, 16),
+                      blurRadius: 40,
+                      color: Color(0x1F22283A),
+                    ),
+                  ],
                 ),
-              ],
+                child: WashSurface(
+                  padding: const EdgeInsets.all(18),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        s.welcomeSampleBalance,
+                        style: FreevaTypography.bodyS.copyWith(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: c.textOnWash,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      // Decorative sample: scaling it down is fine here.
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text.rich(
+                          TextSpan(
+                            children: [
+                              const TextSpan(text: '24.600.000 '),
+                              TextSpan(
+                                text: '₫',
+                                style: FreevaTypography.body.copyWith(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  letterSpacing: 0,
+                                  color: c.textOnWash,
+                                ),
+                              ),
+                            ],
+                          ),
+                          style: FreevaTypography.moneyL.copyWith(
+                            height: 32 / 28,
+                            letterSpacing: -0.8,
+                            color: c.textPrimary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
-          ),
-          const SizedBox(height: FreevaSpace.s4),
-          Container(
-            width: FreevaSize.fab,
-            height: FreevaSize.fab,
-            decoration: BoxDecoration(
-              color: c.actionPrimary,
-              shape: BoxShape.circle,
-              boxShadow: FreevaElevation.fab,
+            Positioned(
+              top: 184,
+              left: 4,
+              child: _FloatingRow(
+                icon: LucideIcons.utensils,
+                tint: c.tintBlue,
+                tintFg: c.tintBlueFg,
+                title: s.welcomeSampleFood,
+                amount: '−65.000',
+                amountColor: c.textPrimary,
+              ),
             ),
-            child: Icon(LucideIcons.plus, color: c.textOnAction),
-          ),
-        ],
+            Positioned(
+              top: 258,
+              right: 2,
+              child: _FloatingRow(
+                icon: LucideIcons.arrowUp,
+                tint: c.tintGreen,
+                tintFg: c.tintGreenFg,
+                title: s.welcomeSampleSalary,
+                amount: '+18.500.000',
+                amountColor: c.moneyIncome,
+              ),
+            ),
+            Positioned(
+              top: 330,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: Container(
+                  width: FreevaSize.fab,
+                  height: FreevaSize.fab,
+                  decoration: BoxDecoration(
+                    color: c.actionPrimary,
+                    shape: BoxShape.circle,
+                    boxShadow: const [
+                      BoxShadow(spreadRadius: 8, color: Color(0x265680E9)),
+                    ],
+                  ),
+                  child: Icon(LucideIcons.plus, color: c.textOnAction),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-class _Row extends StatelessWidget {
-  const _Row(this.icon, this.title, this.amount, {this.income = false});
+/// White pill row floating over the disc: tinted icon, name, amount.
+class _FloatingRow extends StatelessWidget {
+  const _FloatingRow({
+    required this.icon,
+    required this.tint,
+    required this.tintFg,
+    required this.title,
+    required this.amount,
+    required this.amountColor,
+  });
 
   final IconData icon;
+  final Color tint;
+  final Color tintFg;
   final String title;
   final String amount;
-  final bool income;
+  final Color amountColor;
 
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
-    return Row(
-      children: [
-        Container(
-          width: 36,
-          height: 36,
-          decoration: BoxDecoration(
-            color: c.tintBlue,
-            borderRadius: BorderRadius.circular(FreevaRadius.sm),
+    final text = FreevaTypography.body.copyWith(
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+      color: c.textPrimary,
+    );
+    return Container(
+      height: 56,
+      padding: const EdgeInsets.fromLTRB(10, 0, 14, 0),
+      decoration: BoxDecoration(
+        color: c.bgSurface,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: FreevaElevation.s2,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(color: tint, shape: BoxShape.circle),
+            child: Icon(icon, size: 17, color: tintFg),
           ),
-          child: Icon(icon, size: 18, color: c.tintBlueFg),
-        ),
-        const SizedBox(width: FreevaSpace.s3),
-        Expanded(child: Text(title, style: FreevaTypography.body)),
-        ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 130),
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerRight,
-            child: Text(
-              amount,
-              style: FreevaTypography.moneyL.copyWith(
-                fontSize: 15,
-                color: income ? c.moneyIncome : c.textPrimary,
-              ),
+          const SizedBox(width: 10),
+          Text(title, style: text),
+          const SizedBox(width: 18),
+          Text(
+            amount,
+            style: text.copyWith(
+              fontWeight: FontWeight.w600,
+              color: amountColor,
+              fontFeatures: const [FontFeature.tabularFigures()],
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
