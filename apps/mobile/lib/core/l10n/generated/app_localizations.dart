@@ -1069,66 +1069,6 @@ abstract class S {
   /// **'FAQ'**
   String get faqTitle;
 
-  /// No description provided for @faqWalletQ.
-  ///
-  /// In en, this message translates to:
-  /// **'How do I add a wallet?'**
-  String get faqWalletQ;
-
-  /// No description provided for @faqWalletA.
-  ///
-  /// In en, this message translates to:
-  /// **'Open Wallets from Home, then create a cash, bank, e-wallet, or credit wallet.'**
-  String get faqWalletA;
-
-  /// No description provided for @faqTransactionQ.
-  ///
-  /// In en, this message translates to:
-  /// **'How do I record a transaction?'**
-  String get faqTransactionQ;
-
-  /// No description provided for @faqTransactionA.
-  ///
-  /// In en, this message translates to:
-  /// **'Open Transactions or use Record transaction on Home. Choose income, an expense, or a transfer with two balanced sides.'**
-  String get faqTransactionA;
-
-  /// No description provided for @faqProfileQ.
-  ///
-  /// In en, this message translates to:
-  /// **'How do I change language, currency, or time zone?'**
-  String get faqProfileQ;
-
-  /// No description provided for @faqProfileA.
-  ///
-  /// In en, this message translates to:
-  /// **'Open Settings, then Language, currency, and time zone. The language changes after the profile is saved.'**
-  String get faqProfileA;
-
-  /// No description provided for @faqLockQ.
-  ///
-  /// In en, this message translates to:
-  /// **'How do I lock the app?'**
-  String get faqLockQ;
-
-  /// No description provided for @faqLockA.
-  ///
-  /// In en, this message translates to:
-  /// **'Freeva locks when you leave the app. Unlock with your six-digit PIN. You can turn on biometrics in Settings after a PIN exists.'**
-  String get faqLockA;
-
-  /// No description provided for @faqThemeQ.
-  ///
-  /// In en, this message translates to:
-  /// **'How do I switch light and dark mode?'**
-  String get faqThemeQ;
-
-  /// No description provided for @faqThemeA.
-  ///
-  /// In en, this message translates to:
-  /// **'Open Settings and choose Light, Dark, or System. Light is the default and stays on this device.'**
-  String get faqThemeA;
-
   /// No description provided for @legalDraft.
   ///
   /// In en, this message translates to:
@@ -1447,18 +1387,6 @@ abstract class S {
   /// **'Due {date}'**
   String homeCreditDue(String date);
 
-  /// No description provided for @homeCreditUsed.
-  ///
-  /// In en, this message translates to:
-  /// **'Used {used} of {limit}'**
-  String homeCreditUsed(String used, String limit);
-
-  /// No description provided for @homeCreditUsedNoLimit.
-  ///
-  /// In en, this message translates to:
-  /// **'Used {used}'**
-  String homeCreditUsedNoLimit(String used);
-
   /// No description provided for @homeRecent.
   ///
   /// In en, this message translates to:
@@ -1482,18 +1410,6 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Waiting to sync'**
   String get homePendingSync;
-
-  /// No description provided for @homeOfflineTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Offline · Figures from {time}'**
-  String homeOfflineTitle(String time);
-
-  /// No description provided for @homeOfflineBody.
-  ///
-  /// In en, this message translates to:
-  /// **'You can still add expenses.'**
-  String get homeOfflineBody;
 
   /// No description provided for @homeErrorTitle.
   ///
@@ -3396,12 +3312,6 @@ abstract class S {
   /// **'{share} · {count} transactions'**
   String reportShareCount(String share, int count);
 
-  /// No description provided for @reportBarGeneral.
-  ///
-  /// In en, this message translates to:
-  /// **'{name} (general)'**
-  String reportBarGeneral(String name);
-
   /// No description provided for @reportLargest.
   ///
   /// In en, this message translates to:
@@ -3569,18 +3479,6 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Send feedback'**
   String get meFeedback;
-
-  /// No description provided for @meTerms.
-  ///
-  /// In en, this message translates to:
-  /// **'Terms of service'**
-  String get meTerms;
-
-  /// No description provided for @mePrivacy.
-  ///
-  /// In en, this message translates to:
-  /// **'Privacy policy'**
-  String get mePrivacy;
 
   /// No description provided for @meSoon.
   ///
@@ -4217,12 +4115,6 @@ abstract class S {
   /// In en, this message translates to:
   /// **'New device signed in'**
   String get notifySession;
-
-  /// No description provided for @notifySessionSub.
-  ///
-  /// In en, this message translates to:
-  /// **'So you can check it'**
-  String get notifySessionSub;
 
   /// No description provided for @authOr.
   ///

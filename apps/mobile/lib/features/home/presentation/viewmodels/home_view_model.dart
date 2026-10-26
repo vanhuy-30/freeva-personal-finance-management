@@ -35,8 +35,7 @@ abstract class HomeViewModel extends ChangeNotifier {
   bool get hasPin;
 
   /// Whether the user's goal is "Quản lý khoản nợ": credit cards go above
-  /// "Chi tháng". The profile does not return onboarding goals yet, so this
-  /// stays false until it does.
+  /// "Chi tháng".
   bool get debtGoal => false;
 
   /// Today, for the greeting date.
@@ -84,6 +83,9 @@ class DefaultHomeViewModel extends HomeViewModel {
 
   @override
   String? get displayName => _profile.saved?.displayName;
+
+  @override
+  bool get debtGoal => _profile.saved?.goals.contains('debt') ?? false;
   @override
   String get currency => _profile.saved?.currency ?? 'VND';
   @override

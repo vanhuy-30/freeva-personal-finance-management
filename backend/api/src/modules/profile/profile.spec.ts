@@ -5,7 +5,7 @@ import { AuthService } from '../auth/auth.service';
 import { PROFILE_REPOSITORY, type Profile, type ProfileUpdate } from './domain/profile.repository';
 import { ProfileController } from './profile.controller';
 import { ProfileService } from './profile.service';
-const initial: Profile = { displayName: null, locale: 'vi', defaultCurrencyCode: 'VND', timezone: 'Asia/Ho_Chi_Minh', fiscalMonthStartDay: 1, version: 1 };
+const initial: Profile = { displayName: null, locale: 'vi', defaultCurrencyCode: 'VND', timezone: 'Asia/Ho_Chi_Minh', fiscalMonthStartDay: 1, version: 1, goals: [] };
 describe('MOB-P1-002 profile HTTP contract', () => {
   let app: INestApplication; let base: string;
   const profiles = new Map<string, Profile>();
@@ -43,9 +43,10 @@ describe('MOB-P1-002 profile HTTP contract', () => {
     expect(result.headers.get('cache-control')).toBe('no-store');
   });
   it('persists four fields for session owner and rejects stale version', async () => {
-    const changes = { ...initial, locale: 'en', defaultCurrencyCode: 'USD', timezone: 'America/New_York', fiscalMonthStartDay: 28 };
-    expect((await request('PUT', changes)).body).toEqual({ ...changes, version: 2 });
-    expect((await request()).body).toEqual({ ...changes, version: 2 });
+    const { goals, ...editable } = initial;
+    const changes = { ...editable, locale: 'en', defaultCurrencyCode: 'USD', timezone: 'America/New_York', fiscalMonthStartDay: 28 };
+    expect((await request('PUT', changes)).body).toEqual({ ...changes, goals, version: 2 });
+    expect((await request()).body).toEqual({ ...changes, goals, version: 2 });
     expect((await request('GET', undefined, 'b'.repeat(64))).body).toEqual(initial);
     expect((await request('PUT', changes)).status).toBe(409);
   });
@@ -59,7 +60,7 @@ describe('MOB-P1-002 profile HTTP contract', () => {
       expect(JSON.stringify(result.body)).not.toContain('sensitive@example.test');
   });
   it('keeps displayName when omitted, trims it, and clears it when blank', async () => {
-    const { displayName: _omit, ...rest } = initial;
+    const { displayName: _omit, goals: _goals, ...rest } = initial;
     expect((await request('PUT', { ...rest, displayName: '  Minh  ' })).body.displayName).toBe('Minh');
     expect((await request('PUT', { ...rest, version: 2 })).body.displayName).toBe('Minh');
     expect((await request('PUT', { ...rest, version: 3, displayName: '   ' })).body.displayName).toBeNull();

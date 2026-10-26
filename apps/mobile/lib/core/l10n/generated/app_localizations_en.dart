@@ -533,41 +533,6 @@ class SEn extends S {
   String get faqTitle => 'FAQ';
 
   @override
-  String get faqWalletQ => 'How do I add a wallet?';
-
-  @override
-  String get faqWalletA =>
-      'Open Wallets from Home, then create a cash, bank, e-wallet, or credit wallet.';
-
-  @override
-  String get faqTransactionQ => 'How do I record a transaction?';
-
-  @override
-  String get faqTransactionA =>
-      'Open Transactions or use Record transaction on Home. Choose income, an expense, or a transfer with two balanced sides.';
-
-  @override
-  String get faqProfileQ => 'How do I change language, currency, or time zone?';
-
-  @override
-  String get faqProfileA =>
-      'Open Settings, then Language, currency, and time zone. The language changes after the profile is saved.';
-
-  @override
-  String get faqLockQ => 'How do I lock the app?';
-
-  @override
-  String get faqLockA =>
-      'Freeva locks when you leave the app. Unlock with your six-digit PIN. You can turn on biometrics in Settings after a PIN exists.';
-
-  @override
-  String get faqThemeQ => 'How do I switch light and dark mode?';
-
-  @override
-  String get faqThemeA =>
-      'Open Settings and choose Light, Dark, or System. Light is the default and stays on this device.';
-
-  @override
   String get legalDraft =>
       'Draft for PRD-P0-002. This is not legal advice and is not in effect. The operating entity and contact channel are not decided yet.';
 
@@ -753,16 +718,6 @@ class SEn extends S {
   }
 
   @override
-  String homeCreditUsed(String used, String limit) {
-    return 'Used $used of $limit';
-  }
-
-  @override
-  String homeCreditUsedNoLimit(String used) {
-    return 'Used $used';
-  }
-
-  @override
   String get homeRecent => 'Recent';
 
   @override
@@ -773,14 +728,6 @@ class SEn extends S {
 
   @override
   String get homePendingSync => 'Waiting to sync';
-
-  @override
-  String homeOfflineTitle(String time) {
-    return 'Offline · Figures from $time';
-  }
-
-  @override
-  String get homeOfflineBody => 'You can still add expenses.';
 
   @override
   String get homeErrorTitle => 'Couldn\'t load your balance';
@@ -1905,11 +1852,6 @@ class SEn extends S {
   }
 
   @override
-  String reportBarGeneral(String name) {
-    return '$name (general)';
-  }
-
-  @override
   String get reportLargest => 'Largest transactions';
 
   @override
@@ -1996,12 +1938,6 @@ class SEn extends S {
 
   @override
   String get meFeedback => 'Send feedback';
-
-  @override
-  String get meTerms => 'Terms of service';
-
-  @override
-  String get mePrivacy => 'Privacy policy';
 
   @override
   String get meSoon => 'Coming soon';
@@ -2340,9 +2276,6 @@ class SEn extends S {
 
   @override
   String get notifySession => 'New device signed in';
-
-  @override
-  String get notifySessionSub => 'So you can check it';
 
   @override
   String get authOr => 'or';

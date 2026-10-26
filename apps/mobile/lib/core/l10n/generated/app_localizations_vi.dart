@@ -528,41 +528,6 @@ class SVi extends S {
   String get faqTitle => 'Câu hỏi thường gặp';
 
   @override
-  String get faqWalletQ => 'Làm sao để thêm ví?';
-
-  @override
-  String get faqWalletA =>
-      'Mở Ví từ trang chủ, rồi tạo ví tiền mặt, ngân hàng, ví điện tử hoặc thẻ.';
-
-  @override
-  String get faqTransactionQ => 'Làm sao để ghi giao dịch?';
-
-  @override
-  String get faqTransactionA =>
-      'Mở Giao dịch hoặc chọn Ghi giao dịch ở trang chủ. Chọn thu, chi, hoặc chuyển khoản cân bằng hai vế.';
-
-  @override
-  String get faqProfileQ => 'Làm sao để đổi ngôn ngữ, tiền tệ hoặc múi giờ?';
-
-  @override
-  String get faqProfileA =>
-      'Mở Cài đặt, rồi Ngôn ngữ, tiền tệ và múi giờ. Ngôn ngữ đổi sau khi hồ sơ được lưu.';
-
-  @override
-  String get faqLockQ => 'Ứng dụng khóa như thế nào?';
-
-  @override
-  String get faqLockA =>
-      'Freeva khóa khi bạn rời ứng dụng. Mở khóa bằng PIN sáu số. Có thể bật sinh trắc trong Cài đặt sau khi đã có PIN.';
-
-  @override
-  String get faqThemeQ => 'Làm sao để đổi sáng và tối?';
-
-  @override
-  String get faqThemeA =>
-      'Mở Cài đặt và chọn Sáng, Tối hoặc Theo hệ thống. Sáng là mặc định và được giữ trên thiết bị này.';
-
-  @override
   String get legalDraft =>
       'Bản nháp cho PRD-P0-002. Đây không phải tư vấn pháp lý và chưa có hiệu lực. Pháp nhân vận hành và kênh liên hệ chưa được chốt.';
 
@@ -748,16 +713,6 @@ class SVi extends S {
   }
 
   @override
-  String homeCreditUsed(String used, String limit) {
-    return 'Đã dùng $used / Hạn mức $limit';
-  }
-
-  @override
-  String homeCreditUsedNoLimit(String used) {
-    return 'Đã dùng $used';
-  }
-
-  @override
   String get homeRecent => 'Gần đây';
 
   @override
@@ -768,14 +723,6 @@ class SVi extends S {
 
   @override
   String get homePendingSync => 'Chờ đồng bộ';
-
-  @override
-  String homeOfflineTitle(String time) {
-    return 'Đang ngoại tuyến · Số liệu lúc $time';
-  }
-
-  @override
-  String get homeOfflineBody => 'Vẫn ghi chi được.';
 
   @override
   String get homeErrorTitle => 'Chưa tải được số dư';
@@ -1868,11 +1815,6 @@ class SVi extends S {
   }
 
   @override
-  String reportBarGeneral(String name) {
-    return '$name (chung)';
-  }
-
-  @override
   String get reportLargest => 'Giao dịch lớn nhất';
 
   @override
@@ -1959,12 +1901,6 @@ class SVi extends S {
 
   @override
   String get meFeedback => 'Góp ý';
-
-  @override
-  String get meTerms => 'Điều khoản dịch vụ';
-
-  @override
-  String get mePrivacy => 'Chính sách bảo mật';
 
   @override
   String get meSoon => 'Sắp có';
@@ -2302,9 +2238,6 @@ class SVi extends S {
 
   @override
   String get notifySession => 'Máy mới đăng nhập';
-
-  @override
-  String get notifySessionSub => 'Báo để bạn kiểm tra';
 
   @override
   String get authOr => 'hoặc';

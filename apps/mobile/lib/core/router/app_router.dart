@@ -283,9 +283,11 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
         path: '/help/legal',
         // Public: the sign-up checkbox links here before anyone is signed in.
         builder: (context, state) => LegalPage(
-          document: state.uri.queryParameters['doc'] == 'privacy'
-              ? LegalDocument.privacy
-              : LegalDocument.terms,
+          document: switch (state.uri.queryParameters['doc']) {
+            'privacy' => LegalDocument.privacy,
+            'all' => LegalDocument.all,
+            _ => LegalDocument.terms,
+          },
         ),
       ),
       GoRoute(
