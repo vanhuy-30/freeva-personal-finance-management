@@ -4,8 +4,9 @@ import { resolve } from 'node:path';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import {
-  assertParent, assertVersion, LEGACY_DEFAULT_CATEGORIES, SUPPLEMENT_CATEGORIES, supplementPlan,
-  type SupplementRow,
+  assertPaletteColor, assertParent, assertTwoLevels, assertVersion, CATEGORY_ICONS, CATEGORY_PALETTE,
+  CATEGORY_PICKER_ICONS, DEFAULT_CATEGORIES, iconRefreshPlan, LEGACY_DEFAULT_CATEGORIES, SUPPLEMENT_CATEGORIES,
+  supplementPlan, type SupplementRow,
 } from './domain/category';
 import { CreateCategoryDto, UpdateCategoryDto, CategoryQueryDto, DeleteCategoryDto } from './category.dto';
 import { CATEGORY_COLORS } from './category-tokens.generated';
@@ -25,11 +26,16 @@ describe('BE-P1-006 domain and DTO', () => {
     expect(await check(dto)).toHaveLength(0);
     expect(dto.name).toBe('Ăn uống'); expect(dto.clientId).toBe(uuid);
   });
-  it.each([{ name: ' ' }, { name: 'x'.repeat(101) }, { parentId: '' }, { iconToken: 'arbitrary' }, { isSystem: true }, { groupId: uuid }, { userId: uuid }, { kind: 'expense' }])('rejects unsupported create %j', async patch => {
+  it.each([{ name: ' ' }, { name: 'x'.repeat(101) }, { parentId: '' }, { iconToken: 'arbitrary' }, { isSystem: true }, { groupId: uuid }, { userId: uuid }, { kind: 'transfer' }])('rejects unsupported create %j', async patch => {
     expect((await check(plainToInstance(CreateCategoryDto, { clientId: uuid, name: 'Valid', ...patch }))).length).toBeGreaterThan(0);
   });
   it.each([{ version: null }, { version: 2147483647 }, { version: 0 }, { version: 1, archived: null }, { version: 1, name: null }, { version: 1, clientId: uuid }, { version: 1, kind: 'income' }])('rejects invalid patch %j', async patch => {
     expect((await check(plainToInstance(UpdateCategoryDto, patch))).length).toBeGreaterThan(0);
+  });
+  it('accepts the Chi / Thu kind on create (DS-P2-003)', async () => {
+    for (const kind of ['expense', 'income', 'both']) {
+      expect(await check(plainToInstance(CreateCategoryDto, { clientId: uuid, name: 'Valid', kind }))).toHaveLength(0);
+    }
   });
   it('validates pagination/root/deletion and strict versions', async () => {
     expect(await check(plainToInstance(CategoryQueryDto, { parentId: 'root' }))).toHaveLength(0);
@@ -102,5 +108,49 @@ describe('BE-P1-011 supplementPlan', () => {
       })),
     ];
     expect(supplementPlan(rows)).toEqual({ kindUpdates: [], creates: [] });
+  });
+});
+describe('DS-P2-003 group E rules', () => {
+  it('allows two levels only; deeper legacy rows are not re-checked here', () => {
+    const tree = [
+      { id: 'root', parentId: null }, { id: 'child', parentId: 'root' }, { id: 'lone', parentId: null },
+    ];
+    expect(() => assertTwoLevels('new', 'root', tree)).not.toThrow();
+    expect(() => assertTwoLevels('new', null, tree)).not.toThrow();
+    expect(() => assertTwoLevels('new', 'child', tree)).toThrow('VALIDATION_ERROR');
+    expect(() => assertTwoLevels('lone', 'lone', tree)).toThrow('VALIDATION_ERROR');
+    expect(() => assertTwoLevels('root', 'lone', tree)).toThrow('CATEGORY_CONFLICT');
+    expect(() => assertTwoLevels('new', 'missing', tree)).toThrow('CATEGORY_NOT_FOUND');
+  });
+  it('palette has 20 distinct catalog colours without the error red; old keys only when unchanged', () => {
+    expect(new Set(CATEGORY_PALETTE).size).toBe(20);
+    for (const color of CATEGORY_PALETTE) expect(CATEGORY_COLORS).toContain(color);
+    expect(CATEGORY_PALETTE).not.toContain('color.semantic.danger');
+    expect(() => assertPaletteColor('color.category.pink')).not.toThrow();
+    expect(() => assertPaletteColor(null)).not.toThrow();
+    expect(() => assertPaletteColor('color.semantic.danger')).toThrow('VALIDATION_ERROR');
+    expect(() => assertPaletteColor('color.semantic.danger', 'color.semantic.danger')).not.toThrow();
+  });
+  it('offers 36 picker icons and keeps every older token valid', () => {
+    expect(new Set(CATEGORY_PICKER_ICONS).size).toBe(36);
+    for (const old of ['category', 'food', 'transport', 'housing', 'bills', 'shopping', 'health', 'education',
+      'entertainment', 'family', 'gifts', 'travel', 'salary', 'bonus', 'other_income', 'other_expense']) {
+      expect(CATEGORY_ICONS).toContain(old);
+    }
+    for (const seed of DEFAULT_CATEGORIES) expect(CATEGORY_ICONS).toContain(seed.iconToken);
+  });
+  it('refreshes icons only on untouched system defaults', () => {
+    expect(iconRefreshPlan([
+      { id: '1', name: 'Cà phê', iconToken: 'food', isSystem: true },
+      { id: '2', name: 'Internet', iconToken: 'bills', isSystem: true },
+      { id: '3', name: 'Cà phê', iconToken: 'gifts', isSystem: true },
+      { id: '4', name: 'Internet', iconToken: 'bills', isSystem: false },
+      { id: '5', name: 'Ăn uống', iconToken: 'food', isSystem: true },
+    ])).toEqual([{ id: '1', iconToken: 'coffee' }, { id: '2', iconToken: 'internet' }]);
+  });
+  it('options list the palette and picker icons in display order', () => {
+    const options = new CategoryService({} as CategoryRepository).options();
+    expect(options.colorTokens).toEqual(CATEGORY_PALETTE);
+    expect(options.iconTokens).toEqual(CATEGORY_PICKER_ICONS);
   });
 });

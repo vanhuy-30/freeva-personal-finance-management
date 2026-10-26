@@ -120,6 +120,7 @@ describe('BE-P1-012 tags HTTP + PostgreSQL', () => {
     });
     expect(created.status).toBe(201);
     expect(created.body.legs[0]).toMatchObject({ tagIds: [tag.id], merchant: 'WinMart', version: 1 });
+    expect((await request('GET', '/tags')).body.items[0].transactionCount).toBe(1);
     expect((await request('DELETE', `/tags/${tag.id}?version=1`)).status).toBe(204);
     const leg = (await request('GET', `/transactions/${created.body.legs[0].id}`)).body.legs[0];
     expect(leg).toMatchObject({ tagIds: [], merchant: 'WinMart', version: 2 });

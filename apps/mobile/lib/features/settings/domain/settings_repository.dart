@@ -16,6 +16,8 @@ const _preferenceKeys = {
   'sessionAlertsEnabled',
   'notificationPrompted',
   'notificationsOptInTracked',
+  'welcomeSeen',
+  'budgetDraftMinor',
 };
 
 AppPreferences decodePreferences(String raw) {
@@ -44,7 +46,16 @@ AppPreferences decodePreferences(String raw) {
       'notificationsOptInTracked',
       false,
     ),
+    welcomeSeen: _preferenceFlag(json, 'welcomeSeen', false),
+    budgetDraftMinor: _preferenceNumber(json, 'budgetDraftMinor'),
   );
+}
+
+int? _preferenceNumber(Map<String, dynamic> json, String key) {
+  final value = json[key];
+  if (value == null) return null;
+  if (value is! int || value < 0) throw const FormatException('preferences');
+  return value;
 }
 
 bool _preferenceFlag(Map<String, dynamic> json, String key, bool fallback) {
@@ -61,4 +72,6 @@ String encodePreferences(AppPreferences value) => jsonEncode({
   'sessionAlertsEnabled': value.sessionAlertsEnabled,
   'notificationPrompted': value.notificationPrompted,
   'notificationsOptInTracked': value.notificationsOptInTracked,
+  'welcomeSeen': value.welcomeSeen,
+  if (value.budgetDraftMinor != null) 'budgetDraftMinor': value.budgetDraftMinor,
 });

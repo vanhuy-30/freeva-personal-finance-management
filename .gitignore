@@ -73,3 +73,6 @@ apps/mobile/config/prod.json
 .local/
 
 apps/mobile/config/dev-*.json
+
+# Flutter golden test failure diffs
+**/test/**/failures/

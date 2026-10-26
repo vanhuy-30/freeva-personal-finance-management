@@ -1,6 +1,8 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../core/storage/secure_storage_factory.dart';
+
 abstract class SyncQueueVault {
   Future<String?> read();
   Future<void> write(String value);
@@ -9,13 +11,7 @@ abstract class SyncQueueVault {
 
 @LazySingleton(as: SyncQueueVault)
 class SecureSyncQueueVault implements SyncQueueVault {
-  SecureSyncQueueVault()
-    : _storage = const FlutterSecureStorage(
-        aOptions: AndroidOptions(encryptedSharedPreferences: true),
-        iOptions: IOSOptions(
-          accessibility: KeychainAccessibility.unlocked_this_device,
-        ),
-      );
+  SecureSyncQueueVault() : _storage = createFreevaSecureStorage();
 
   static const String storageKey = 'freeva.sync.queue.v1';
   final FlutterSecureStorage _storage;

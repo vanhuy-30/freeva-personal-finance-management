@@ -18,6 +18,19 @@ class ReportRepositoryImpl implements ReportRepository {
   ) => _request('GET', _cashflowPath(query), _cashflow);
 
   @override
+  Future<Either<AuthFailure, TrendReport>> trend(
+    ReportPeriodKind kind, {
+    String? on,
+  }) => _request(
+    'GET',
+    Uri(
+      path: 'reports/trend',
+      queryParameters: {'period': kind.name, if (on != null) 'on': on},
+    ).toString(),
+    _trend,
+  );
+
+  @override
   Future<Either<AuthFailure, NetWorthReport>> netWorth() =>
       _request('GET', 'reports/net-worth', _netWorth);
 
@@ -81,6 +94,25 @@ CashflowCategoryRow _category(Map<String, dynamic> json) => CashflowCategoryRow(
   currency: _currency(json['currency']),
   incomeMinor: _money(json['incomeMinor']),
   expenseMinor: _money(json['expenseMinor']),
+  transactionCount: json['transactionCount'] as int,
+);
+
+TrendReport _trend(Map<String, dynamic> json) => TrendReport(
+  kind: ReportPeriodKind.values.byName(json['kind'] as String),
+  buckets: _rows(json['buckets'], _bucket),
+);
+
+TrendBucket _bucket(Map<String, dynamic> json) => TrendBucket(
+  from: _date(json['from']),
+  to: _date(json['to']),
+  totals: _rows(
+    json['totals'],
+    (row) => TrendTotal(
+      currency: _currency(row['currency']),
+      incomeMinor: _money(row['incomeMinor']),
+      expenseMinor: _money(row['expenseMinor']),
+    ),
+  ),
 );
 
 CashflowAccountRow _account(Map<String, dynamic> json) => CashflowAccountRow(

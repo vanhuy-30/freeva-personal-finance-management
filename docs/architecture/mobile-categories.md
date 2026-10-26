@@ -1,5 +1,16 @@
 # UI danh mục — MOB-P1-005
 
+> **UI v2 (`DS-P2-003`, nhóm E):** theo [E-categories.md](../brand/patterns/E-categories.md).
+> E1 thay danh sách (tab Chi · Thu, hai cấp, nút tròn mở/thu, nhớ trạng thái mở trên
+> máy qua `CategoryExpansionRepository`) và thêm "Danh mục đã ẩn"
+> (`/categories/hidden`, khôi phục cả danh mục con đã ẩn). Icon hai tông lấy màu
+> danh mục (`categoryTwoTone`); 36 icon map trong `category_badge.dart`.
+> E2 thay form (`CategoryEditorPage` + `CategoryForm`): ô xem trước + tên, Danh mục
+> chính · con + "Thuộc" (sheet chỉ danh mục chính cùng tab), lưới 20 màu, 11 icon
+> + sheet 36 icon tìm không dấu; sửa có Ẩn (toast Hoàn tác) và Xoá (popup đọc
+> `GET /categories/{id}/usage`, chọn nơi chuyển giao dịch, mặc định danh mục cha).
+> Danh mục chính còn con: Ẩn/Xoá mờ, "Còn N danh mục con". Mô tả dưới đây là Phase 1.
+
 Home có mục **Danh mục** (`/categories`, qua AuthGate). Dùng contract hiện có của
 [BE-P1-006](categories.md). Không đổi API hoặc migration. Nhãn và `groupId` nằm
 ngoài task. Ghi giao dịch vẫn chỉ đọc danh mục active qua `load()`.

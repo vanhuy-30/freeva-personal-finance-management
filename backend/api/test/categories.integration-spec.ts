@@ -167,6 +167,37 @@ describe('BE-P1-006 HTTP + PostgreSQL', () => {
       expect(all.items.find((c: { name: string }) => c.name === name).parentId).toBeNull();
     }
   });
+  it('DS-P2-003: two levels, kind from the tab or the parent, palette colours only', async () => {
+    const food = (await request('POST', '/categories', { clientId: randomUUID(), name: 'Ăn uống riêng', kind: 'expense' })).body;
+    expect(food.kind).toBe('expense');
+    const snack = (await request('POST', '/categories', { clientId: randomUUID(), name: 'Ăn vặt', parentId: food.id, kind: 'income' })).body;
+    expect(snack.kind).toBe('expense');
+    expect((await request('POST', '/categories', { clientId: randomUUID(), name: 'Sâu', parentId: snack.id })).status).toBe(400);
+    const salary = (await request('POST', '/categories', { clientId: randomUUID(), name: 'Lương riêng', kind: 'income' })).body;
+    expect((await request('PATCH', `/categories/${food.id}`, { version: 1, parentId: salary.id })).status).toBe(409);
+    const moved = await request('PATCH', `/categories/${snack.id}`, { version: 1, parentId: salary.id });
+    expect(moved.body).toMatchObject({ parentId: salary.id, kind: 'income' });
+    expect((await request('PATCH', `/categories/${snack.id}`, { version: 2, parentId: null })).body).toMatchObject({ parentId: null, kind: 'income' });
+    expect((await request('GET', '/categories/options')).body.colorTokens).toHaveLength(20);
+    expect((await request('POST', '/categories', { clientId: randomUUID(), name: 'Đỏ', colorToken: 'color.semantic.danger' })).status).toBe(400);
+    expect((await request('POST', '/categories', { clientId: randomUUID(), name: 'Hồng', colorToken: 'color.category.pink', iconToken: 'pets' })).status).toBe(201);
+    const legacy = await prisma.category.create({ data: { userId: owner, clientId: randomUUID(), name: 'Cũ', colorToken: 'color.semantic.danger' } });
+    expect((await request('PATCH', `/categories/${legacy.id}`, { version: 1, name: 'Cũ hơn', colorToken: 'color.semantic.danger' })).status).toBe(200);
+    expect((await request('PATCH', `/categories/${legacy.id}`, { version: 2, colorToken: 'color.neutral.text' })).status).toBe(400);
+  });
+  it('DS-P2-003: refreshes icons of untouched defaults once', async () => {
+    await prisma.user.update({ where: { id: owner }, data: { categoriesInitializedAt: new Date(), categoriesSupplementedAt: new Date() } });
+    const make = (name: string, iconToken: string, isSystem = true) =>
+      prisma.category.create({ data: { userId: owner, clientId: randomUUID(), name, iconToken, isSystem } });
+    const [coffee, edited, custom] = [await make('Cà phê', 'food'), await make('Internet', 'gifts'), await make('Đầu tư', 'other_income', false)];
+    expect((await request('POST', '/categories/defaults')).status).toBe(204);
+    expect(await prisma.category.findUniqueOrThrow({ where: { id: coffee.id } })).toMatchObject({ iconToken: 'coffee', version: 2 });
+    expect((await prisma.category.findUniqueOrThrow({ where: { id: edited.id } })).iconToken).toBe('gifts');
+    expect((await prisma.category.findUniqueOrThrow({ where: { id: custom.id } })).iconToken).toBe('other_income');
+    await prisma.category.update({ where: { id: coffee.id }, data: { iconToken: 'food' } });
+    expect((await request('POST', '/categories/defaults')).status).toBe(204);
+    expect((await prisma.category.findUniqueOrThrow({ where: { id: coffee.id } })).iconToken).toBe('food');
+  });
   it('enforces session, ownership, safe errors and no-store on every route', async () => {
     const c = await category();
     for (const [method, path, body] of [
@@ -196,10 +227,12 @@ describe('BE-P1-006 HTTP + PostgreSQL', () => {
       const result = await request('POST', '/categories', { clientId: randomUUID(), name: 'Private invalid name', ...patch });
       expect(result.status).toBe(400); expect(JSON.stringify(result.body)).not.toContain('Private invalid name');
     }
-    expect((await request('GET', '/categories/options')).body.iconTokens).toContain('category');
+    expect((await request('GET', '/categories/options')).body.iconTokens).toHaveLength(36);
   });
   it('enforces tree cycles, archive order, restore order and child deletion guard', async () => {
-    const root = await category('Root'); const child = await category('Child', root.id); const leaf = await category('Leaf', child.id);
+    const root = await category('Root'); const child = await category('Child', root.id);
+    // Three levels exist only in data saved before DS-P2-003; the API no longer creates them.
+    const leaf = (await request('GET', `/categories/${(await prisma.category.create({ data: { userId: owner, clientId: randomUUID(), name: 'Leaf', parentId: child.id } })).id}`)).body;
     expect((await request('PATCH', `/categories/${root.id}`, { version: 1, parentId: leaf.id })).status).toBe(400);
     expect((await request('PATCH', `/categories/${root.id}`, { version: 1, archived: true })).status).toBe(409);
     expect((await request('DELETE', `/categories/${root.id}?version=1`)).status).toBe(409);
@@ -211,6 +244,17 @@ describe('BE-P1-006 HTTP + PostgreSQL', () => {
     expect((await request('GET', '/categories?status=archived&pageSize=1&page=2')).body.total).toBe(2);
     expect((await request('GET', '/categories?parentId=root&status=all')).body.total).toBe(2);
     expect((await request('GET', `/categories?parentId=${root.id}&status=all`)).body.items[0].id).toBe(child.id);
+  });
+  it('DS-P2-003: usage counts active and deleted transactions for the owner only', async () => {
+    const snack = await category('Ăn vặt');
+    expect((await request('GET', `/categories/${snack.id}/usage`)).body).toEqual({ transactionCount: 0 });
+    const first = await request('POST', '/transactions', await expense(snack.id));
+    expect(first.status).toBe(201);
+    await request('POST', '/transactions', await expense(snack.id));
+    await prisma.transaction.updateMany({ where: { id: first.body.legs[0].id }, data: { deletedAt: new Date() } });
+    expect((await request('GET', `/categories/${snack.id}/usage`)).body).toEqual({ transactionCount: 2 });
+    expect((await request('GET', `/categories/${snack.id}/usage`, undefined, otherToken)).status).toBe(404);
+    expect((await request('GET', `/categories/${randomUUID()}/usage`)).status).toBe(404);
   });
   it('moves active/deleted transactions atomically, preserves balances/tags and invalidates old versions', async () => {
     const source = await category(), target = await category('Target');

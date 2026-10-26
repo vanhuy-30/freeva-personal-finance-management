@@ -19,13 +19,16 @@ abstract class SettingsViewModel extends ChangeNotifier {
   bool get biometricEnabled;
   bool get biometricBusy;
   AuthFailure? get biometricFailure;
+
+  /// Email this device signed in with (shown masked); null when unknown.
+  String? get email;
   Future<void> load();
+  Future<void> refreshAccount();
   Future<void> setTheme(AppThemePreference value);
   Future<void> setBalancesHidden(bool value);
   Future<void> setSessionAlertsEnabled(bool value);
   void beginOnboarding();
   Future<bool> completeOnboarding();
-  String? prepareFeedback(FeedbackKind kind, String message);
   Future<void> refreshBiometrics();
   Future<void> setBiometricEnabled(bool enabled, String reason);
 }
@@ -61,6 +64,8 @@ class DefaultSettingsViewModel extends SettingsViewModel {
   bool biometricBusy = false;
   @override
   AuthFailure? biometricFailure;
+  @override
+  String? email;
 
   @override
   Future<void> load() async {
@@ -78,19 +83,32 @@ class DefaultSettingsViewModel extends SettingsViewModel {
   @override
   Future<void> setTheme(AppThemePreference value) async {
     if (theme == value) return;
-    await _save(_preferences.copyWith(theme: value));
+    await _update((p) => p.copyWith(theme: value));
   }
 
   @override
   Future<void> setBalancesHidden(bool value) async {
     if (balancesHidden == value) return;
-    await _save(_preferences.copyWith(balancesHidden: value));
+    await _update((p) => p.copyWith(balancesHidden: value));
   }
 
   @override
   Future<void> setSessionAlertsEnabled(bool value) async {
     if (sessionAlertsEnabled == value) return;
-    await _save(_preferences.copyWith(sessionAlertsEnabled: value));
+    await _update((p) => p.copyWith(sessionAlertsEnabled: value));
+  }
+
+  /// Applies [change] to the stored preferences, not to this copy: other
+  /// writers (Welcome, the budget draft, session alerts) save them too.
+  Future<void> _update(AppPreferences Function(AppPreferences) change) async {
+    final loaded = await _cases.load();
+    final fresh = loaded.fold<AppPreferences?>((_) => null, (value) => value);
+    if (fresh == null) {
+      loaded.fold((error) => failure = error, (_) {});
+      notifyListeners();
+      return;
+    }
+    await _save(change(fresh));
   }
 
   Future<void> _save(AppPreferences next) async {
@@ -114,9 +132,17 @@ class DefaultSettingsViewModel extends SettingsViewModel {
     if (onboardingCompleted || loading) return onboardingCompleted;
     loading = true;
     notifyListeners();
-    final result = await _cases.save(
-      _preferences.copyWith(onboardingCompleted: true),
-    );
+    // Fresh copy: the first-run flow also writes the Welcome flag and the
+    // budget draft, which this view model's copy may not have.
+    final loaded = await _cases.load();
+    final fresh = loaded.fold<AppPreferences?>((_) => null, (value) => value);
+    if (fresh == null) {
+      loaded.fold((error) => failure = error, (_) {});
+      loading = false;
+      notifyListeners();
+      return false;
+    }
+    final result = await _cases.save(fresh.copyWith(onboardingCompleted: true));
     var savedOk = false;
     result.fold((error) => failure = error, (saved) {
       _preferences = saved;
@@ -133,20 +159,10 @@ class DefaultSettingsViewModel extends SettingsViewModel {
   }
 
   @override
-  String? prepareFeedback(FeedbackKind kind, String message) {
-    final result = _cases.feedbackText(kind, message);
-    return result.fold(
-      (error) {
-        failure = error;
-        notifyListeners();
-        return null;
-      },
-      (text) {
-        failure = null;
-        notifyListeners();
-        return text;
-      },
-    );
+  Future<void> refreshAccount() async {
+    final result = await _auth.accountEmail();
+    email = result.getOrElse(() => null);
+    notifyListeners();
   }
 
   @override

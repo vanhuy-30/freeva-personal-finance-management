@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../auth/data/authorized_api.dart';
 import '../../auth/domain/auth_repository.dart';
+import '../../onboarding/domain/onboarding_answers.dart';
 import '../domain/profile.dart';
 import '../domain/profile_repository.dart';
 
@@ -17,6 +18,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
       timezone: json['timezone'] as String,
       fiscalDay: json['fiscalMonthStartDay'] as int,
       version: json['version'] as int,
+      displayName: _name(json['displayName']),
     );
     if (!['vi', 'en'].contains(value.locale) ||
         !RegExp(r'^[A-Z]{3}$').hasMatch(value.currency) ||
@@ -61,11 +63,21 @@ class ProfileRepositoryImpl implements ProfileRepository {
     ),
   );
   @override
+  Future<Either<AuthFailure, Unit>> saveOnboarding(
+    OnboardingAnswers answers,
+  ) => _request(
+    'PATCH',
+    'profile/onboarding',
+    (_) => unit,
+    body: answers.toJson(),
+  );
+  @override
   Future<Either<AuthFailure, Profile>> save(Profile profile) => _request(
     'PUT',
     'profile',
     _profile,
     body: {
+      'displayName': profile.displayName,
       'locale': profile.locale,
       'defaultCurrencyCode': profile.currency,
       'timezone': profile.timezone,
@@ -73,4 +85,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
       'version': profile.version,
     },
   );
+}
+
+String? _name(Object? value) {
+  final name = value is String ? value.trim() : '';
+  return name.isEmpty ? null : name;
 }

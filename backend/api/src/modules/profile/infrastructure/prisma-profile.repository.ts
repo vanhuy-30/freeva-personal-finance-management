@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../infrastructure/prisma/prisma.service';
-import type { Profile, ProfileRepository } from '../domain/profile.repository';
+import type { OnboardingAnswers, Profile, ProfileRepository, ProfileUpdate } from '../domain/profile.repository';
 
 const select = {
+  displayName: true,
   locale: true,
   defaultCurrencyCode: true,
   timezone: true,
@@ -25,7 +26,19 @@ export class PrismaProfileRepository implements ProfileRepository {
     });
   }
 
-  async update(userId: string, profile: Profile): Promise<Profile | null> {
+  async saveOnboarding(userId: string, answers: OnboardingAnswers): Promise<boolean> {
+    const changed = await this.prisma.user.updateMany({
+      where: { id: userId },
+      data: {
+        ...(answers.goals ? { onboardingGoals: answers.goals } : {}),
+        ...(answers.trackingHabit ? { trackingHabit: answers.trackingHabit } : {}),
+        ...(answers.reviewCadence ? { reviewCadence: answers.reviewCadence } : {}),
+      },
+    });
+    return changed.count === 1;
+  }
+
+  async update(userId: string, profile: ProfileUpdate): Promise<Profile | null> {
     const { version, ...fields } = profile;
     return this.prisma.$transaction(async (tx) => {
       const changed = await tx.user.updateMany({

@@ -1,0 +1,655 @@
+{
+  "v": 3,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-10-21T11:10:00+07:00"
+  },
+  "title": "Freeva Design System",
+  "launch": {
+    "view": "canvas",
+    "page": "f"
+  },
+  "pages": [
+    {
+      "id": "f",
+      "name": "01 · Foundations"
+    },
+    {
+      "id": "t",
+      "name": "02 · Tokens"
+    },
+    {
+      "id": "c",
+      "name": "03 · Components"
+    },
+    {
+      "id": "s",
+      "name": "04 · States"
+    },
+    {
+      "id": "p",
+      "name": "05 · Patterns"
+    },
+    {
+      "id": "g",
+      "name": "06 · Guidelines"
+    }
+  ],
+  "boards": {
+    "Principles.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 640,
+      "page": "f",
+      "title": "Giới thiệu · Nguyên tắc"
+    },
+    "Logo.dc.html": {
+      "x": 0,
+      "y": 760,
+      "w": 1280,
+      "h": 760,
+      "page": "f",
+      "title": "Logo"
+    },
+    "Colors.dc.html": {
+      "x": 0,
+      "y": 1640,
+      "w": 1280,
+      "h": 1180,
+      "page": "f",
+      "title": "Color"
+    },
+    "Type.dc.html": {
+      "x": 0,
+      "y": 2940,
+      "w": 1280,
+      "h": 860,
+      "page": "f",
+      "title": "Typography"
+    },
+    "Layout.dc.html": {
+      "x": 0,
+      "y": 3920,
+      "w": 1280,
+      "h": 900,
+      "page": "f",
+      "title": "Spacing · Grid · Radius · Elevation"
+    },
+    "Icons.dc.html": {
+      "x": 0,
+      "y": 4940,
+      "w": 1280,
+      "h": 760,
+      "page": "f",
+      "title": "Icons & Illustrations"
+    },
+    "Tokens.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 1100,
+      "page": "t",
+      "title": "Design tokens"
+    },
+    "Dark.dc.html": {
+      "x": 0,
+      "y": 1220,
+      "w": 1280,
+      "h": 760,
+      "page": "t",
+      "title": "Semantic tokens · Dark"
+    },
+    "Buttons.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 680,
+      "page": "c",
+      "title": "Buttons"
+    },
+    "Inputs.dc.html": {
+      "x": 0,
+      "y": 800,
+      "w": 1280,
+      "h": 980,
+      "page": "c",
+      "title": "Inputs & Selection"
+    },
+    "Navigation.dc.html": {
+      "x": 0,
+      "y": 1900,
+      "w": 1280,
+      "h": 900,
+      "page": "c",
+      "title": "Navigation"
+    },
+    "Cards.dc.html": {
+      "x": 0,
+      "y": 2920,
+      "w": 1280,
+      "h": 900,
+      "page": "c",
+      "title": "Cards & Data"
+    },
+    "Lists.dc.html": {
+      "x": 0,
+      "y": 3940,
+      "w": 1280,
+      "h": 860,
+      "page": "c",
+      "title": "Lists"
+    },
+    "Feedback.dc.html": {
+      "x": 0,
+      "y": 4920,
+      "w": 1280,
+      "h": 900,
+      "page": "c",
+      "title": "Feedback"
+    },
+    "StateMatrix.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 1000,
+      "page": "s",
+      "title": "Component states"
+    },
+    "Patterns.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 2230,
+      "h": 620,
+      "page": "p",
+      "title": "Patterns"
+    },
+    "SoftHome.dc.html": {
+      "x": 0,
+      "y": 740,
+      "w": 390,
+      "h": 1040,
+      "page": "p",
+      "title": "Data display · Tổng quan"
+    },
+    "ListScreen.dc.html": {
+      "x": 460,
+      "y": 740,
+      "w": 390,
+      "h": 844,
+      "page": "p",
+      "title": "Search · Danh sách giao dịch"
+    },
+    "RecordScreen.dc.html": {
+      "x": 920,
+      "y": 740,
+      "w": 390,
+      "h": 844,
+      "page": "p",
+      "title": "Form · Ghi chi"
+    },
+    "SettingsScreen.dc.html": {
+      "x": 1380,
+      "y": 740,
+      "w": 390,
+      "h": 844,
+      "page": "p",
+      "title": "Settings · Cá nhân"
+    },
+    "LockScreen.dc.html": {
+      "x": 1840,
+      "y": 740,
+      "w": 390,
+      "h": 844,
+      "page": "p",
+      "title": "Authentication · Mở khoá"
+    },
+    "IA.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 820,
+      "page": "g",
+      "title": "Navigation & IA"
+    },
+    "Access.dc.html": {
+      "x": 0,
+      "y": 940,
+      "w": 1280,
+      "h": 860,
+      "page": "g",
+      "title": "Accessibility · Adaptive · Platform"
+    },
+    "Motion.dc.html": {
+      "x": 0,
+      "y": 1920,
+      "w": 1280,
+      "h": 640,
+      "page": "g",
+      "title": "Motion & Interaction"
+    },
+    "Writing.dc.html": {
+      "x": 0,
+      "y": 2680,
+      "w": 1280,
+      "h": 820,
+      "page": "g",
+      "title": "Content & UX writing"
+    },
+    "ObWelcome.dc.html": {
+      "x": 0,
+      "y": 2200,
+      "w": 390,
+      "h": 844,
+      "page": "p",
+      "title": "A1 · 1. Welcome"
+    },
+    "ObGoals.dc.html": {
+      "x": 920,
+      "y": 2200,
+      "w": 390,
+      "h": 844,
+      "page": "p",
+      "title": "A1 · 3. Chọn mục tiêu"
+    },
+    "ObNeeds.dc.html": {
+      "x": 1380,
+      "y": 2200,
+      "w": 390,
+      "h": 844,
+      "page": "p",
+      "title": "A1 · 4. Thói quen"
+    },
+    "ObAccount.dc.html": {
+      "x": 460,
+      "y": 2200,
+      "w": 390,
+      "h": 844,
+      "page": "p",
+      "title": "A1 · 2. Tạo tài khoản"
+    },
+    "ObSetup.dc.html": {
+      "x": 2300,
+      "y": 2200,
+      "w": 390,
+      "h": 844,
+      "page": "p",
+      "title": "A1 · 6. Thiết lập tài chính"
+    },
+    "ObHome.dc.html": {
+      "x": 2760,
+      "y": 2200,
+      "w": 390,
+      "h": 844,
+      "page": "p",
+      "title": "A1 · 7. Trang chính lần đầu"
+    },
+    "AuLogin.dc.html": {
+      "x": 0,
+      "y": 3464,
+      "w": 390,
+      "h": 844,
+      "page": "p",
+      "title": "A2 · 1. Đăng nhập"
+    },
+    "AuRegister.dc.html": {
+      "x": 460,
+      "y": 3464,
+      "w": 390,
+      "h": 844,
+      "page": "p",
+      "title": "A2 · 2. Tạo tài khoản bằng email"
+    },
+    "AuVerify.dc.html": {
+      "x": 920,
+      "y": 3464,
+      "w": 390,
+      "h": 844,
+      "page": "p",
+      "title": "A2 · 3. Xác nhận email"
+    },
+    "ObPin.dc.html": {
+      "x": 1380,
+      "y": 3464,
+      "w": 390,
+      "h": 844,
+      "page": "p",
+      "title": "A2 · 4. Đặt mã PIN"
+    },
+    "ObPinConfirm.dc.html": {
+      "x": 1840,
+      "y": 3464,
+      "w": 390,
+      "h": 844,
+      "page": "p",
+      "title": "A2 · 5. Nhập lại mã PIN"
+    },
+    "ObBiometric.dc.html": {
+      "x": 2300,
+      "y": 3464,
+      "w": 390,
+      "h": 844,
+      "page": "p",
+      "title": "A2 · 6. Thiết lập Face ID"
+    },
+    "AuForgot.dc.html": {
+      "x": 2760,
+      "y": 3464,
+      "w": 390,
+      "h": 844,
+      "page": "p",
+      "title": "A2 · 7. Quên mật khẩu"
+    },
+    "AuReset.dc.html": {
+      "x": 3220,
+      "y": 3464,
+      "w": 390,
+      "h": 844,
+      "page": "p",
+      "title": "A2 · 8. Mật khẩu mới"
+    },
+    "ObBudget.dc.html": {
+      "x": 1840,
+      "y": 2200,
+      "w": 390,
+      "h": 844,
+      "page": "p",
+      "title": "A1 · 5. Ngân sách tháng"
+    },
+    "TxList.dc.html": { "x": 0, "y": 4728, "w": 390, "h": 844, "page": "p", "title": "C1 · 1. Danh sách", "is_interactive": true },
+    "TxSearch.dc.html": { "x": 460, "y": 4728, "w": 390, "h": 844, "page": "p", "title": "C1 · 2. Tìm kiếm", "is_interactive": true },
+    "TxFilter.dc.html": { "x": 920, "y": 4728, "w": 390, "h": 844, "page": "p", "title": "C1 · 3. Bộ lọc (sheet)", "is_interactive": true },
+    "TxNoResult.dc.html": { "x": 1380, "y": 4728, "w": 390, "h": 844, "page": "p", "title": "C1 · 4. Không có kết quả", "is_interactive": true },
+    "TxDetail.dc.html": { "x": 1840, "y": 4728, "w": 390, "h": 844, "page": "p", "title": "C1 · 5. Chi tiết (sheet)", "is_interactive": true },
+    "TxDeleted.dc.html": { "x": 2300, "y": 4728, "w": 390, "h": 844, "page": "p", "title": "C1 · 6. Đã xoá + Hoàn tác", "is_interactive": true },
+    "TxTrash.dc.html": { "x": 2760, "y": 4728, "w": 390, "h": 844, "page": "p", "title": "C1 · 7. Mục Đã xoá", "is_interactive": true },
+    "TxExpense.dc.html": { "x": 0, "y": 5992, "w": 390, "h": 844, "page": "p", "title": "C2 · 1. Ghi chi", "is_interactive": true },
+    "TxCategory.dc.html": { "x": 460, "y": 5992, "w": 390, "h": 844, "page": "p", "title": "C2 · 2. Chọn danh mục (sheet)", "is_interactive": true },
+    "TxMore.dc.html": { "x": 920, "y": 5992, "w": 390, "h": 844, "page": "p", "title": "C2 · 3. Ghi chú, cửa hàng, nhãn", "is_interactive": true },
+    "TxTags.dc.html": { "x": 1380, "y": 5992, "w": 390, "h": 844, "page": "p", "title": "C2 · 4. Nhãn (sheet)", "is_interactive": true },
+    "TxTransfer.dc.html": { "x": 1840, "y": 5992, "w": 390, "h": 844, "page": "p", "title": "C2 · 5. Chuyển ví khác tiền tệ", "is_interactive": true },
+    "TxSaved.dc.html": { "x": 2300, "y": 5992, "w": 390, "h": 844, "page": "p", "title": "C2 · 6. Đã lưu + Hoàn tác", "is_interactive": true },
+    "BHome.dc.html": { "x": 0, "y": 7256, "w": 390, "h": 1040, "page": "p", "title": "B · 1. Tổng quan", "is_interactive": true },
+    "BHidden.dc.html": { "x": 460, "y": 7256, "w": 390, "h": 844, "page": "p", "title": "B · 2. Ẩn số dư", "is_interactive": true },
+    "BMulti.dc.html": { "x": 920, "y": 7256, "w": 390, "h": 844, "page": "p", "title": "B · 3. Nhiều tiền tệ", "is_interactive": true },
+    "BDebt.dc.html": { "x": 1380, "y": 7256, "w": 390, "h": 844, "page": "p", "title": "B · 4. Mục tiêu quản lý nợ", "is_interactive": true },
+    "BNewMonth.dc.html": { "x": 1840, "y": 7256, "w": 390, "h": 844, "page": "p", "title": "B · 5. Đầu tháng", "is_interactive": true },
+    "BLoading.dc.html": { "x": 2300, "y": 7256, "w": 390, "h": 844, "page": "p", "title": "B · 6. Đang tải", "is_interactive": true },
+    "BOffline.dc.html": { "x": 2760, "y": 7256, "w": 390, "h": 844, "page": "p", "title": "B · 7. Ngoại tuyến", "is_interactive": true },
+    "BError.dc.html": { "x": 3220, "y": 7256, "w": 390, "h": 844, "page": "p", "title": "B · 8. Lỗi tải", "is_interactive": true },
+    "WList.dc.html": { "x": 0, "y": 8696, "w": 390, "h": 844, "page": "p", "title": "D · 1. Ví của tôi", "is_interactive": true },
+    "WSort.dc.html": { "x": 460, "y": 8696, "w": 390, "h": 844, "page": "p", "title": "D · 2. Sắp xếp ví", "is_interactive": true },
+    "WDetail.dc.html": { "x": 920, "y": 8696, "w": 390, "h": 844, "page": "p", "title": "D · 3. Chi tiết ví", "is_interactive": true },
+    "WCredit.dc.html": { "x": 1380, "y": 8696, "w": 390, "h": 844, "page": "p", "title": "D · 4. Chi tiết thẻ tín dụng", "is_interactive": true },
+    "WAdd.dc.html": { "x": 1840, "y": 8696, "w": 390, "h": 844, "page": "p", "title": "D · 5. Thêm ví", "is_interactive": true },
+    "WAddCredit.dc.html": { "x": 2300, "y": 8696, "w": 390, "h": 844, "page": "p", "title": "D · 6. Thêm thẻ tín dụng", "is_interactive": true },
+    "WDaySheet.dc.html": { "x": 2760, "y": 8696, "w": 390, "h": 844, "page": "p", "title": "D · 7. Chọn ngày (popup)", "is_interactive": true },
+    "WEdit.dc.html": { "x": 3220, "y": 8696, "w": 390, "h": 844, "page": "p", "title": "D · 8. Sửa ví đã có giao dịch", "is_interactive": true },
+    "WHidden.dc.html": { "x": 3680, "y": 8696, "w": 390, "h": 844, "page": "p", "title": "D · 9. Ví đã ẩn", "is_interactive": true },
+    "CatList.dc.html": { "x": 0, "y": 9940, "w": 390, "h": 844, "page": "p", "title": "E · 1. Danh mục", "is_interactive": true },
+    "CatAdd.dc.html": { "x": 460, "y": 9940, "w": 390, "h": 844, "page": "p", "title": "E · 2. Thêm danh mục", "is_interactive": true },
+    "CatParent.dc.html": { "x": 920, "y": 9940, "w": 390, "h": 844, "page": "p", "title": "E · 3. Thuộc danh mục chính (sheet)", "is_interactive": true },
+    "CatIcons.dc.html": { "x": 1380, "y": 9940, "w": 390, "h": 844, "page": "p", "title": "E · 4. Biểu tượng (sheet)", "is_interactive": true },
+    "CatEdit.dc.html": { "x": 1840, "y": 9940, "w": 390, "h": 844, "page": "p", "title": "E · 5. Sửa danh mục", "is_interactive": true },
+    "CatDelete.dc.html": { "x": 2300, "y": 9940, "w": 390, "h": 844, "page": "p", "title": "E · 6. Xoá (popup)", "is_interactive": true },
+    "CatHidden.dc.html": { "x": 2760, "y": 9940, "w": 390, "h": 844, "page": "p", "title": "E · 7. Danh mục đã ẩn", "is_interactive": true },
+    "RepMonth.dc.html": { "x": 0, "y": 11184, "w": 390, "h": 1500, "page": "p", "title": "F · 1. Báo cáo tháng", "is_interactive": true },
+    "RepWallets.dc.html": { "x": 460, "y": 11184, "w": 390, "h": 844, "page": "p", "title": "F · 2. Theo ví", "is_interactive": true },
+    "RepCategory.dc.html": { "x": 920, "y": 11184, "w": 390, "h": 844, "page": "p", "title": "F · 3. Một danh mục trong kỳ", "is_interactive": true },
+    "RepRange.dc.html": { "x": 1380, "y": 11184, "w": 390, "h": 844, "page": "p", "title": "F · 4. Khoảng tuỳ chọn (popup)", "is_interactive": true },
+    "RepEmpty.dc.html": { "x": 1840, "y": 11184, "w": 390, "h": 844, "page": "p", "title": "F · 5. Kỳ chưa có số liệu", "is_interactive": true },
+    "MeHome.dc.html": { "x": 0, "y": 13084, "w": 390, "h": 1480, "page": "p", "title": "G · 1. Cá nhân", "is_interactive": true },
+    "MeProfile.dc.html": { "x": 460, "y": 13084, "w": 390, "h": 844, "page": "p", "title": "G · 2. Hồ sơ", "is_interactive": true },
+    "MeTheme.dc.html": { "x": 920, "y": 13084, "w": 390, "h": 844, "page": "p", "title": "G · 3. Giao diện (sheet)", "is_interactive": true },
+    "MeSecurity.dc.html": { "x": 1380, "y": 13084, "w": 390, "h": 844, "page": "p", "title": "G · 4. Bảo mật", "is_interactive": true },
+    "MeSessions.dc.html": { "x": 1840, "y": 13084, "w": 390, "h": 844, "page": "p", "title": "G · 5. Phiên đăng nhập", "is_interactive": true },
+    "MeLogout.dc.html": { "x": 2300, "y": 13084, "w": 390, "h": 844, "page": "p", "title": "G · 6. Đăng xuất (popup)", "is_interactive": true },
+    "MeTags.dc.html": { "x": 2760, "y": 13084, "w": 390, "h": 844, "page": "p", "title": "G · 7. Nhãn", "is_interactive": true },
+    "MeFeedback.dc.html": { "x": 3220, "y": 13084, "w": 390, "h": 844, "page": "p", "title": "G · 8. Góp ý", "is_interactive": true },
+    "MeFeedbackSent.dc.html": { "x": 3680, "y": 13084, "w": 390, "h": 844, "page": "p", "title": "G · 9. Đã gửi góp ý", "is_interactive": true },
+    "MeFaq.dc.html": { "x": 4140, "y": 13084, "w": 390, "h": 844, "page": "p", "title": "G · 10. Câu hỏi thường gặp", "is_interactive": true },
+    "MeNotify.dc.html": { "x": 4600, "y": 13084, "w": 390, "h": 844, "page": "p", "title": "G · 11. Thông báo", "is_interactive": true },
+    "SyncBanner.dc.html": { "x": 0, "y": 14964, "w": 390, "h": 844, "page": "p", "title": "H · 1. Báo trên danh sách", "is_interactive": true },
+    "SyncCenter.dc.html": { "x": 460, "y": 14964, "w": 390, "h": 844, "page": "p", "title": "H · 2. Đồng bộ", "is_interactive": true },
+    "SyncRunning.dc.html": { "x": 920, "y": 14964, "w": 390, "h": 844, "page": "p", "title": "H · 3. Đang gửi", "is_interactive": true },
+    "SyncDone.dc.html": { "x": 1380, "y": 14964, "w": 390, "h": 844, "page": "p", "title": "H · 4. Đã đồng bộ hết", "is_interactive": true },
+    "SyncConflict.dc.html": { "x": 1840, "y": 14964, "w": 390, "h": 844, "page": "p", "title": "H · 5. Xung đột · chọn bản giữ lại", "is_interactive": true },
+    "SyncDuplicate.dc.html": { "x": 2300, "y": 14964, "w": 390, "h": 844, "page": "p", "title": "H · 6. Có thể trùng (sheet)", "is_interactive": true },
+    "SyncDiscard.dc.html": { "x": 2760, "y": 14964, "w": 390, "h": 844, "page": "p", "title": "H · 7. Bỏ thay đổi (popup)", "is_interactive": true },
+    "SyncUpdate.dc.html": { "x": 3220, "y": 14964, "w": 390, "h": 844, "page": "p", "title": "H · 8. Cần cập nhật app", "is_interactive": true }
+  },
+  "order": [
+    "Principles.dc.html",
+    "Logo.dc.html",
+    "Colors.dc.html",
+    "Type.dc.html",
+    "Layout.dc.html",
+    "Icons.dc.html",
+    "Tokens.dc.html",
+    "Dark.dc.html",
+    "Buttons.dc.html",
+    "Inputs.dc.html",
+    "Navigation.dc.html",
+    "Cards.dc.html",
+    "Lists.dc.html",
+    "Feedback.dc.html",
+    "StateMatrix.dc.html",
+    "Patterns.dc.html",
+    "SoftHome.dc.html",
+    "ListScreen.dc.html",
+    "RecordScreen.dc.html",
+    "SettingsScreen.dc.html",
+    "LockScreen.dc.html",
+    "ObWelcome.dc.html",
+    "ObGoals.dc.html",
+    "ObNeeds.dc.html",
+    "ObBudget.dc.html",
+    "ObAccount.dc.html",
+    "ObSetup.dc.html",
+    "ObHome.dc.html",
+    "AuLogin.dc.html",
+    "AuRegister.dc.html",
+    "AuVerify.dc.html",
+    "ObPin.dc.html",
+    "ObPinConfirm.dc.html",
+    "ObBiometric.dc.html",
+    "AuForgot.dc.html",
+    "AuReset.dc.html",
+    "TxList.dc.html",
+    "TxSearch.dc.html",
+    "TxFilter.dc.html",
+    "TxNoResult.dc.html",
+    "TxDetail.dc.html",
+    "TxDeleted.dc.html",
+    "TxTrash.dc.html",
+    "TxExpense.dc.html",
+    "TxCategory.dc.html",
+    "TxMore.dc.html",
+    "TxTags.dc.html",
+    "TxTransfer.dc.html",
+    "TxSaved.dc.html",
+    "BHome.dc.html",
+    "BHidden.dc.html",
+    "BMulti.dc.html",
+    "BDebt.dc.html",
+    "BNewMonth.dc.html",
+    "BLoading.dc.html",
+    "BOffline.dc.html",
+    "BError.dc.html",
+    "WList.dc.html",
+    "WSort.dc.html",
+    "WDetail.dc.html",
+    "WCredit.dc.html",
+    "WAdd.dc.html",
+    "WAddCredit.dc.html",
+    "WDaySheet.dc.html",
+    "WEdit.dc.html",
+    "WHidden.dc.html",
+    "CatList.dc.html",
+    "CatAdd.dc.html",
+    "CatParent.dc.html",
+    "CatIcons.dc.html",
+    "CatEdit.dc.html",
+    "CatDelete.dc.html",
+    "CatHidden.dc.html",
+    "RepMonth.dc.html",
+    "RepWallets.dc.html",
+    "RepCategory.dc.html",
+    "RepRange.dc.html",
+    "RepEmpty.dc.html",
+    "MeHome.dc.html",
+    "MeProfile.dc.html",
+    "MeTheme.dc.html",
+    "MeSecurity.dc.html",
+    "MeSessions.dc.html",
+    "MeLogout.dc.html",
+    "MeTags.dc.html",
+    "MeFeedback.dc.html",
+    "MeFeedbackSent.dc.html",
+    "MeFaq.dc.html",
+    "MeNotify.dc.html",
+    "SyncBanner.dc.html",
+    "SyncCenter.dc.html",
+    "SyncRunning.dc.html",
+    "SyncDone.dc.html",
+    "SyncConflict.dc.html",
+    "SyncDuplicate.dc.html",
+    "SyncDiscard.dc.html",
+    "SyncUpdate.dc.html",
+    "IA.dc.html",
+    "Access.dc.html",
+    "Motion.dc.html",
+    "Writing.dc.html"
+  ],
+  "notes": {
+    "tf": {
+      "x": 0,
+      "y": -300,
+      "text": "01 · Foundations",
+      "kind": "title1",
+      "maxW": 1280,
+      "page": "f"
+    },
+    "tt": {
+      "x": 0,
+      "y": -300,
+      "text": "02 · Design tokens",
+      "kind": "title1",
+      "maxW": 1280,
+      "page": "t"
+    },
+    "tc": {
+      "x": 0,
+      "y": -300,
+      "text": "03 · Components",
+      "kind": "title1",
+      "maxW": 1280,
+      "page": "c"
+    },
+    "ts": {
+      "x": 0,
+      "y": -300,
+      "text": "04 · Component states",
+      "kind": "title1",
+      "maxW": 1280,
+      "page": "s"
+    },
+    "tp": {
+      "x": 0,
+      "y": -300,
+      "text": "05 · Patterns",
+      "kind": "title1",
+      "maxW": 2230,
+      "page": "p"
+    },
+    "ta1": {
+      "x": 0,
+      "y": 1920,
+      "text": "A1 · Onboarding",
+      "kind": "title1",
+      "maxW": 3150,
+      "page": "p"
+    },
+    "ta2": {
+      "x": 0,
+      "y": 3184,
+      "text": "A2 · Tài khoản và bảo mật",
+      "kind": "title1",
+      "maxW": 3610,
+      "page": "p"
+    },
+    "tc1": {
+      "x": 0,
+      "y": 4448,
+      "text": "C1 · Giao dịch: xem, tìm, lọc",
+      "kind": "title1",
+      "maxW": 3150,
+      "page": "p"
+    },
+    "tc2": {
+      "x": 0,
+      "y": 5712,
+      "text": "C2 · Ghi chi, chuyển ví",
+      "kind": "title1",
+      "maxW": 3150,
+      "page": "p"
+    },
+    "tb": {
+      "x": 0,
+      "y": 6976,
+      "text": "B · Tổng quan: các trạng thái",
+      "kind": "title1",
+      "maxW": 3610,
+      "page": "p"
+    },
+    "td": {
+      "x": 0,
+      "y": 8416,
+      "text": "D · Ví",
+      "kind": "title1",
+      "maxW": 4070,
+      "page": "p"
+    },
+    "te": {
+      "x": 0,
+      "y": 9660,
+      "text": "E · Danh mục",
+      "kind": "title1",
+      "maxW": 3150,
+      "page": "p"
+    },
+    "tf2": {
+      "x": 0,
+      "y": 10904,
+      "text": "F · Báo cáo",
+      "kind": "title1",
+      "maxW": 2230,
+      "page": "p"
+    },
+    "tgme": {
+      "x": 0,
+      "y": 12804,
+      "text": "G · Cá nhân và cài đặt",
+      "kind": "title1",
+      "maxW": 4990,
+      "page": "p"
+    },
+    "th": {
+      "x": 0,
+      "y": 14684,
+      "text": "H · Đồng bộ",
+      "kind": "title1",
+      "maxW": 3610,
+      "page": "p"
+    },
+    "tg": {
+      "x": 0,
+      "y": -300,
+      "text": "06 · Guidelines",
+      "kind": "title1",
+      "maxW": 1280,
+      "page": "g"
+    }
+  },
+  "designSystems": []
+}

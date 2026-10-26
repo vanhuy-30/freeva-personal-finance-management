@@ -8,9 +8,10 @@ import { PrismaModule } from '../src/infrastructure/prisma/prisma.module';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
 import { AuthModule } from '../src/modules/auth/auth.module';
 import { AUTH_REPOSITORY } from '../src/modules/auth/domain/auth.repository';
-import { AuthService } from '../src/modules/auth/auth.service';
+import { AuthService, TERMS_VERSION } from '../src/modules/auth/auth.service';
 import { AuthCrypto } from '../src/modules/auth/infrastructure/auth-crypto';
 import { AuthMailWorker } from '../src/modules/auth/infrastructure/auth-mail.worker';
+import { PrismaProfileRepository } from '../src/modules/profile/infrastructure/prisma-profile.repository';
 import { PrismaAuthRepository } from '../src/modules/auth/infrastructure/prisma-auth.repository';
 
 const oauthVerify = jest.fn();
@@ -41,7 +42,7 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
   let auth: AuthService;
   let worker: AuthMailWorker;
   let base: string;
-  const password = 'correct horse battery staple';
+  const password = 'correct horse battery staple 7';
 
   it('MOB-P1-001 email-step normalizes, limits, and exposes only routing', async () => {
     const email = 'entry@example.test';
@@ -131,6 +132,10 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
     bearer?: string,
     method = 'POST',
   ) {
+    // Sign-up needs the terms box ticked; pass `termsAccepted: undefined` to leave it out.
+    if (path === 'auth/register' && body && !('termsAccepted' in body)) {
+      body = { ...body, termsAccepted: true };
+    }
     const response = await fetch(`${base}/api/v1/${path}`, {
       method,
       headers: {
@@ -206,6 +211,38 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
       expect(await prisma.user.count()).toBe(1);
     },
   );
+
+  it('DS-P2-004 register records when and to which version of the terms the person agreed', async () => {
+    const before = Date.now();
+    await auth.register('terms@example.test', password);
+    const user = await prisma.user.findUniqueOrThrow({
+      where: { email: 'terms@example.test' },
+    });
+    expect(user.termsVersion).toBe(TERMS_VERSION);
+    expect(user.termsAcceptedAt!.getTime()).toBeGreaterThanOrEqual(before);
+    const over = await request('auth/register', {
+      email: 'no-terms@example.test',
+      password,
+      termsAccepted: undefined,
+    });
+    expect(over.status).toBe(400);
+  });
+
+  it('DS-P2-004 onboarding answers are stored per field and keep what was not sent', async () => {
+    await auth.register('answers@example.test', password);
+    const user = await prisma.user.findUniqueOrThrow({
+      where: { email: 'answers@example.test' },
+    });
+    expect(user.onboardingGoals).toEqual([]);
+    const repository = new PrismaProfileRepository(prisma);
+    expect(await repository.saveOnboarding(user.id, { goals: ['save', 'budget'] })).toBe(true);
+    expect(await repository.saveOnboarding(user.id, { trackingHabit: 'app' })).toBe(true);
+    const saved = await prisma.user.findUniqueOrThrow({ where: { id: user.id } });
+    expect(saved.onboardingGoals).toEqual(['save', 'budget']);
+    expect(saved.trackingHabit).toBe('app');
+    expect(saved.reviewCadence).toBeNull();
+    expect(await repository.saveOnboarding('00000000-0000-4000-8000-000000000000', {})).toBe(false);
+  });
 
   it('BE-P1-003 does not merge existing/legacy emails or create unverified identities', async () => {
     await auth.register('owner@example.test', password);
@@ -449,7 +486,7 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
       (
         await request('auth/register', {
           ...body,
-          password: 'different password value',
+          password: 'different password value 2',
         })
       ).body,
     ).toEqual(first.body);
@@ -526,12 +563,53 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
     ).toBe(401);
   });
 
+  it('DS-P2-003 changes the password while signed in, keeps this session and ends the others', async () => {
+    const email = 'owner@example.test';
+    const first = await verified();
+    const second = (await request('auth/login', { email, password }))
+      .body as { accessToken: string };
+    const next = 'another secure password 9';
+    const change = (current: string, fresh: string, bearer = first.accessToken) =>
+      request(
+        'auth/change-password',
+        { currentPassword: current, newPassword: fresh },
+        bearer,
+      );
+    expect((await change('wrong password entirely 1', next)).status).toBe(403);
+    expect((await change(password, 'no digits in this one')).status).toBe(400);
+    expect((await change(password, password)).status).toBe(400);
+    expect(
+      (await request('auth/change-password', { currentPassword: password, newPassword: next })).status,
+    ).toBe(401);
+    expect((await change(password, next)).status).toBe(204);
+    expect(
+      (await request('sessions', undefined, first.accessToken, 'GET')).status,
+    ).toBe(200);
+    expect(
+      (await request('sessions', undefined, second.accessToken, 'GET')).status,
+    ).toBe(401);
+    expect((await request('auth/login', { email, password })).status).toBe(401);
+    expect(
+      (await request('auth/login', { email, password: next })).status,
+    ).toBe(200);
+    expect(
+      await prisma.auditEvent.count({
+        where: { action: 'auth.change_password', outcome: 'success' },
+      }),
+    ).toBe(1);
+    const tries = [];
+    for (let i = 0; i < 6; i++) {
+      tries.push((await change('wrong password entirely 1', password)).status);
+    }
+    expect(tries).toContain(429);
+  });
+
   it('atomically consumes reset once, changes password, revokes sessions and invalidates other tokens', async () => {
     const login = await verified();
     await request('auth/password-resets', { email: 'owner@example.test' });
     const token = await emailToken('owner@example.test', 'reset_password');
     expect((await request('auth/verify-email', { token })).status).toBe(400);
-    const newPassword = 'brand new secure password';
+    const newPassword = 'brand new secure password 5';
     const responses = await Promise.all(
       [1, 2].map(() =>
         request('auth/reset-password', { token, password: newPassword }),
@@ -747,7 +825,7 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
         (
           await request('auth/reset-password', {
             token,
-            password: 'changed test password',
+            password: 'changed test password 9',
           })
         ).status,
       ).toBe(503);
@@ -774,7 +852,7 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
       (
         await request('auth/reset-password', {
           token,
-          password: 'changed test password',
+          password: 'changed test password 9',
         })
       ).status,
     ).toBe(204);
@@ -821,6 +899,21 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
         })
       ).status,
     ).toBe(400);
+    // DS-P2-004: a new password needs a letter and a digit; symbols optional.
+    for (const weak of ['no digits in this one', '1234567890123']) {
+      expect(
+        (await request('auth/register', { email: 'valid@example.test', password: weak }))
+          .status,
+      ).toBe(400);
+    }
+    expect(
+      (
+        await request('auth/register', {
+          email: 'rule@example.test',
+          password: 'mật khẩu có số 7',
+        })
+      ).status,
+    ).toBe(202);
     expect(
       (await request('sessions', undefined, undefined, 'GET')).status,
     ).toBe(401);

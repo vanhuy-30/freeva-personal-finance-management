@@ -20,6 +20,7 @@ import '../../../wallets/presentation/viewmodels/wallet_view_model.dart';
 import '../../../sync/domain/sync_item.dart';
 import '../../../sync/presentation/viewmodels/sync_view_model.dart';
 import '../../domain/transaction.dart';
+import '../../domain/transaction_filter.dart';
 import '../../domain/transaction_rules.dart';
 import '../../domain/transaction_use_cases.dart';
 import '../transaction_sync.dart';
@@ -37,8 +38,22 @@ abstract class TransactionViewModel extends ChangeNotifier {
   bool get canWrite;
   bool get hasMore;
   bool get needsReload;
-  bool get deleted;
-  TransactionType? get typeFilter;
+
+  /// What the list shows; [summary] covers the whole filtered result.
+  TransactionFilter get filter;
+  TransactionSummary get summary;
+
+  /// Total rows in the list for [filter] (legs, for paging).
+  int get total;
+
+  /// True while the list itself reloads (filter change, refresh).
+  bool get listLoading;
+
+  /// Profile day the month starts on (1–28).
+  int get fiscalDay;
+
+  /// Profile currency: totals lead with it; rows in it omit the code.
+  String get profileCurrency;
   AuthFailure? get failure;
   String newClientId();
   String? today();
@@ -46,9 +61,31 @@ abstract class TransactionViewModel extends ChangeNotifier {
   String? preferredCategoryId();
   Future<void> load();
   Future<void> loadMore();
-  Future<void> showDeleted(bool value);
-  Future<void> filterType(TransactionType? type);
-  Future<void> search(String text);
+  Future<void> setFilter(TransactionFilter value);
+
+  /// API query for [value] with this user's dates and category tree.
+  TransactionQuery queryFor(
+    TransactionFilter value, {
+    int page = 1,
+    int pageSize = 50,
+    bool deleted = false,
+  });
+
+  /// How many transactions [value] would show, for "Xem 24 giao dịch".
+  Future<int?> countFor(TransactionFilter value);
+
+  /// Number of deleted transactions, for the "Đã xoá · N" row.
+  Future<int?> deletedCount();
+
+  /// Undo of [remove]: reads the deleted copy and restores it.
+  Future<bool> undoRemove(TransactionBundle bundle);
+
+  /// Last transaction saved online (null when queued offline). The list
+  /// marks its row briefly and "Hoàn tác" deletes it again.
+  TransactionBundle? get lastSaved;
+
+  /// When [lastSaved] was stored; rows are marked only shortly after.
+  DateTime? get lastSavedAt;
   Future<TransactionBundle?> open(String id);
   Future<Tag?> createTag(String name, {required String clientId});
   Future<bool> save(TransactionDraft draft, {TransactionBundle? existing});
@@ -89,9 +126,9 @@ class DefaultTransactionViewModel extends TransactionViewModel {
   late int _seenApplied;
   bool _pendingSyncReload = false;
   int _epoch = 0;
+  int _listEpoch = 0;
   int _page = 1;
   int _total = 0;
-  String? _search;
   List<TxLeg> _legs = const [];
   List<TxLeg> _recentLegs = const [];
   final Set<String> _tracked = {};
@@ -115,13 +152,25 @@ class DefaultTransactionViewModel extends TransactionViewModel {
   @override
   bool needsReload = false;
   @override
-  bool deleted = false;
+  TransactionFilter filter = TransactionFilter.list;
   @override
-  TransactionType? typeFilter;
+  TransactionSummary summary = TransactionSummary.empty;
+  @override
+  int get total => _total;
+  @override
+  bool listLoading = false;
+  @override
+  int fiscalDay = 1;
+  @override
+  String profileCurrency = 'VND';
+  @override
+  TransactionBundle? lastSaved;
+  @override
+  DateTime? lastSavedAt;
   @override
   AuthFailure? failure;
   @override
-  List<TransactionBundle> get rows => _group(_legs);
+  List<TransactionBundle> get rows => groupTransactionLegs(_legs);
   @override
   bool get hasMore => _legs.length < _total;
   @override
@@ -137,6 +186,7 @@ class DefaultTransactionViewModel extends TransactionViewModel {
     if (_stage == _auth.stage) return;
     _stage = _auth.stage;
     _epoch++;
+    _listEpoch++;
     _reset();
     notifyListeners();
     if (_stage == AuthStage.unlocked) load();
@@ -167,6 +217,10 @@ class DefaultTransactionViewModel extends TransactionViewModel {
     _recentLegs = const [];
     _page = 1;
     _total = 0;
+    filter = TransactionFilter.list;
+    summary = TransactionSummary.empty;
+    listLoading = false;
+    fiscalDay = 1;
     failure = null;
     _loading = false;
     _writing = false;
@@ -221,6 +275,8 @@ class DefaultTransactionViewModel extends TransactionViewModel {
       },
       (value) {
         timeZone = value.timezone;
+        fiscalDay = value.fiscalDay;
+        profileCurrency = value.currency;
         return null;
       },
     );
@@ -273,25 +329,43 @@ class DefaultTransactionViewModel extends TransactionViewModel {
     });
   }
 
-  Future<void> _pageAt(int epoch, {required bool replace}) async {
-    final result = await _cases.list(
-      TransactionQuery(
-        page: replace ? 1 : _page,
-        deleted: deleted,
-        type: typeFilter,
-        search: _search,
-      ),
-    );
-    if (epoch != _epoch) return;
+  @override
+  TransactionQuery queryFor(
+    TransactionFilter value, {
+    int page = 1,
+    int pageSize = 50,
+    bool deleted = false,
+  }) => _query(value, page: page, pageSize: pageSize, deleted: deleted);
+
+  TransactionQuery _query(
+    TransactionFilter value, {
+    int page = 1,
+    int pageSize = 50,
+    bool deleted = false,
+  }) => value.toQuery(
+    today: today() ?? _deviceToday(),
+    fiscalDay: fiscalDay,
+    categories: categories,
+    page: page,
+    pageSize: pageSize,
+    deleted: deleted,
+  );
+
+  /// List page for [filter]. Uses its own epoch so a filter change can
+  /// replace an in-flight page without cancelling reference loads.
+  Future<void> _pageAt(int listEpoch, {required bool replace}) async {
+    final shown = filter;
+    final result = await _cases.list(_query(shown, page: replace ? 1 : _page));
+    if (listEpoch != _listEpoch) return;
     result.fold(_fail, (value) {
       _legs = List.unmodifiable(
         replace ? value.legs : [..._legs, ...value.legs],
       );
       _total = value.total;
       _page = value.page;
-      if (replace && !deleted && typeFilter == null && _search == null) {
-        _recentLegs = value.legs;
-      }
+      summary = value.summary;
+      final unfiltered = shown.type == null && !shown.narrowed;
+      if (replace && unfiltered) _recentLegs = value.legs;
     });
   }
 
@@ -302,11 +376,12 @@ class DefaultTransactionViewModel extends TransactionViewModel {
     _loading = true;
     failure = null;
     notifyListeners();
-    final refsFuture = _references(epoch);
-    final pageFuture = _pageAt(epoch, replace: true);
+    final listEpoch = ++_listEpoch;
     final tagsFuture = _loadTags(epoch);
-    final ready = await refsFuture;
+    // The page needs the profile (time zone, month start) for its dates.
+    final ready = await _references(epoch);
     if (epoch != _epoch) return;
+    final pageFuture = _pageAt(listEpoch, replace: true);
     if (ready) {
       composerReady = true;
       _loading = false;
@@ -325,38 +400,58 @@ class DefaultTransactionViewModel extends TransactionViewModel {
   @override
   Future<void> loadMore() async {
     if (!canWrite || !hasMore || _loading) return;
-    final epoch = ++_epoch;
+    final epoch = ++_listEpoch;
     _loading = true;
     failure = null;
     _page += 1;
     notifyListeners();
     await _pageAt(epoch, replace: false);
-    if (epoch != _epoch) return;
+    if (epoch != _listEpoch) return;
     if (failure != null) _page -= 1;
     _loading = false;
     notifyListeners();
   }
 
   @override
-  Future<void> showDeleted(bool value) async {
-    if (_loading || _writing) return;
-    deleted = value;
-    await load();
+  Future<void> setFilter(TransactionFilter value) async {
+    if (_stage != AuthStage.unlocked) return;
+    filter = value;
+    final listEpoch = ++_listEpoch;
+    listLoading = true;
+    failure = null;
+    notifyListeners();
+    await _pageAt(listEpoch, replace: true);
+    if (listEpoch != _listEpoch) return;
+    listLoading = false;
+    notifyListeners();
   }
 
   @override
-  Future<void> filterType(TransactionType? type) async {
-    if (_loading || _writing) return;
-    typeFilter = type;
-    await load();
+  Future<int?> countFor(TransactionFilter value) async {
+    final result = await _cases.list(_query(value, pageSize: 1));
+    return result.fold((_) => null, (page) => page.summary.count);
   }
 
   @override
-  Future<void> search(String text) async {
-    if (_loading || _writing) return;
-    final trimmed = text.trim();
-    _search = trimmed.isEmpty ? null : trimmed;
-    await load();
+  Future<int?> deletedCount() async {
+    final result = await _cases.list(
+      _query(
+        const TransactionFilter(period: PeriodPreset.allTime),
+        pageSize: 1,
+        deleted: true,
+      ),
+    );
+    return result.fold((_) => null, (page) => page.summary.count);
+  }
+
+  @override
+  Future<bool> undoRemove(TransactionBundle bundle) async {
+    final removed = await _cases.read(bundle.id);
+    return removed.fold((error) {
+      _fail(error);
+      notifyListeners();
+      return false;
+    }, (value) => value.deleted ? restore(value) : Future.value(true));
   }
 
   @override
@@ -392,7 +487,7 @@ class DefaultTransactionViewModel extends TransactionViewModel {
     if (result.isRight()) {
       await _walletScreen.load();
       if (epoch != _epoch) return false;
-      await _pageAt(epoch, replace: true);
+      await _pageAt(++_listEpoch, replace: true);
     }
     if (epoch != _epoch) return false;
     _writing = false;
@@ -474,6 +569,8 @@ class DefaultTransactionViewModel extends TransactionViewModel {
       existing: existing,
     );
     if (epoch != _epoch) return false;
+    lastSaved = result.fold((_) => null, (bundle) => bundle);
+    lastSavedAt = lastSaved == null ? null : DateTime.now();
     if (_offline(result)) {
       final prepared = prepareTransaction(
         draft,
@@ -561,29 +658,16 @@ class DefaultTransactionViewModel extends TransactionViewModel {
   @override
   void dispose() {
     _epoch++;
+    _listEpoch++;
     _auth.removeListener(_authChanged);
     _sync.removeListener(_syncChanged);
     super.dispose();
   }
 }
 
-List<TransactionBundle> _group(List<TxLeg> legs) {
-  final grouped = <String, List<TxLeg>>{};
-  final order = <String>[];
-  for (final leg in legs) {
-    final key = leg.transferGroupId ?? leg.id;
-    if (!grouped.containsKey(key)) order.add(key);
-    grouped.putIfAbsent(key, () => []).add(leg);
-  }
-  return [
-    for (final key in order)
-      TransactionBundle(
-        legs: List.unmodifiable(
-          [...grouped[key]!]..sort((a, b) {
-            final amount = a.amountMinor.compareTo(b.amountMinor);
-            return amount != 0 ? amount : a.id.compareTo(b.id);
-          }),
-        ),
-      ),
-  ];
+String _deviceToday() {
+  final now = DateTime.now();
+  return '${now.year.toString().padLeft(4, '0')}-'
+      '${now.month.toString().padLeft(2, '0')}-'
+      '${now.day.toString().padLeft(2, '0')}';
 }

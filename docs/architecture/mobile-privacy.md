@@ -7,7 +7,7 @@ Không đổi API. Khóa app và màn che khi vào nền vẫn thuộc [mobile-a
 Hai lớp, cùng kiểu app ngân hàng:
 
 - App switcher / recents: AuthGate khóa và che UI; Android `FLAG_SECURE`; iOS cover khi resign active. Không thay bằng việc chỉ che widget số tiền, vì tên ví và ghi chú vẫn có thể lọt vào snapshot.
-- Trên màn đang dùng: nút mắt ở tổng quan Home và công tắc **Ẩn số dư** trong Cài đặt. Bật thì số tiền đang đọc thành `••••` (tổng quan, báo cáo, danh sách ví, danh sách giao dịch). Ô đang nhập khi sửa ví hoặc ghi giao dịch vẫn hiện số đang gõ. Mặc định hiện số. Cờ `balancesHidden` nằm trong preference thiết bị `freeva.preferences.v1`, cùng bản ghi theme. Bản ghi cũ không có cờ này vẫn hiện số. Đăng xuất không xóa preference.
+- Trên màn đang dùng: nút mắt ở thẻ số dư Tổng quan và công tắc **Ẩn số dư** trong Cài đặt. Từ `DS-P2-003` **chỉ ẩn số dư**: tổng số dư, số dư tiền tệ khác, số dư từng ví thành `••••••` (trình đọc màn hình đọc "số dư đã ẩn"). Thu/chi, báo cáo, số tiền giao dịch, hạn mức thẻ vẫn hiện ([B-overview.md](../brand/patterns/B-overview.md)). Ô đang nhập khi sửa ví hoặc ghi giao dịch vẫn hiện số đang gõ. Mặc định hiện số. Cờ `balancesHidden` nằm trong preference thiết bị `freeva.preferences.v1`, cùng bản ghi theme. Bản ghi cũ không có cờ này vẫn hiện số. Đăng xuất không xóa preference.
 
 iOS không chặn screenshot lúc app đang mở. Nút mắt là cách giảm lộ số trong ảnh đó. Android đã chặn screenshot bằng `FLAG_SECURE`.
 

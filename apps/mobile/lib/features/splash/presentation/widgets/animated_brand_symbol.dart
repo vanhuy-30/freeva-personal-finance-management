@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/brand_symbol.dart';
 import 'symbol_piece_clipper.dart';
 import 'symbol_orbit.dart';
@@ -24,9 +24,7 @@ class AnimatedBrandSymbol extends StatelessWidget {
   Widget build(BuildContext context) {
     final glow = reduceMotion
         ? 0.0
-        : math.sin(
-            math.pi * ((progress - .57) / .26).clamp(0.0, 1.0),
-          );
+        : math.sin(math.pi * ((progress - .57) / .26).clamp(0.0, 1.0));
     return Semantics(
       label: S.of(context).appTitle,
       image: true,
@@ -41,9 +39,10 @@ class AnimatedBrandSymbol extends StatelessWidget {
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      AppColors.onPrimary
-                          .withAlpha(((.20 + glow * .18) * 255).round()),
-                      AppColors.onPrimary.withAlpha(0),
+                      FreevaPrimitive.white.withAlpha(
+                        ((.20 + glow * .18) * 255).round(),
+                      ),
+                      FreevaPrimitive.white.withAlpha(0),
                     ],
                   ),
                 ),
@@ -51,9 +50,9 @@ class AnimatedBrandSymbol extends StatelessWidget {
               ),
               Positioned.fill(
                 child: CustomPaint(
-                  painter: SymbolOrbit(reduceMotion
-                      ? 1
-                      : ((progress - .35) / .25).clamp(0.0, 1.0)),
+                  painter: SymbolOrbit(
+                    reduceMotion ? 1 : ((progress - .35) / .25).clamp(0.0, 1.0),
+                  ),
                 ),
               ),
               for (var piece = 0; piece < 3; piece++) _piece(piece),

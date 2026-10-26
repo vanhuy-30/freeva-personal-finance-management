@@ -10,10 +10,17 @@ import 'report_period.dart';
 import 'report_repository.dart';
 
 abstract class ReportUseCases {
-  Future<Either<AuthFailure, OverviewSnapshot>> loadOverview();
   Future<Either<AuthFailure, NamedCashflow>> loadCashflow(
     ReportPeriodQuery query,
   );
+
+  /// Totals of the period before [period]; the screen works without them.
+  Future<Either<AuthFailure, CashflowReport>> loadPrevious(ReportPeriod period);
+
+  Future<Either<AuthFailure, TrendReport>> loadTrend(
+    ReportPeriodKind kind, {
+    String? on,
+  });
 }
 
 @LazySingleton(as: ReportUseCases)
@@ -23,21 +30,6 @@ class DefaultReportUseCases implements ReportUseCases {
   final ReportRepository _reports;
   final WalletRepository _wallets;
   final CategoryRepository _categories;
-
-  @override
-  Future<Either<AuthFailure, OverviewSnapshot>> loadOverview() async {
-    final worth = await _reports.netWorth();
-    return _and(worth, (net) async {
-      final flow = await _reports.cashflow(const ReportPeriodQuery.month());
-      return _and(flow, (month) async {
-        final currencies = await _wallets.currencies();
-        return currencies.fold(
-          left,
-          (codes) => overviewSnapshot(net, month, codes),
-        );
-      });
-    });
-  }
 
   @override
   Future<Either<AuthFailure, NamedCashflow>> loadCashflow(
@@ -60,6 +52,21 @@ class DefaultReportUseCases implements ReportUseCases {
       });
     });
   }
+
+  @override
+  Future<Either<AuthFailure, CashflowReport>> loadPrevious(
+    ReportPeriod period,
+  ) async {
+    final query = previousPeriod(period);
+    if (query == null) return left(const AuthFailure(AuthError.invalidInput));
+    return _reports.cashflow(query);
+  }
+
+  @override
+  Future<Either<AuthFailure, TrendReport>> loadTrend(
+    ReportPeriodKind kind, {
+    String? on,
+  }) => _reports.trend(kind, on: on);
 }
 
 Future<Either<AuthFailure, R>> _and<T, R>(

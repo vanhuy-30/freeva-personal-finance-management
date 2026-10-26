@@ -52,3 +52,7 @@ nullable. Không backfill.
 
 Xem [test README](../../backend/api/test/README.md#tags--merchant--be-p1-012).
 Deploy migration trước API mới. Không deploy staging trong task này.
+
+## Số giao dịch mỗi nhãn (DS-P2-003)
+
+`GET /tags` thêm `transactionCount` cho từng dòng: số leg giao dịch chưa xoá có nhãn đó (chuyển ví có hai leg nên có thể tính hai). `GET /tags/:id` và POST không trả trường này.

@@ -1,0 +1,87 @@
+import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
+
+import '../../../../core/l10n/generated/app_localizations.dart';
+import '../../../../core/money/money_text.dart';
+import '../../../../core/theme/theme_context.dart';
+import '../../../../core/theme/tokens.g.dart';
+import '../../../../core/widgets/money_display.dart';
+import '../../domain/wallet_totals.dart';
+
+/// "Tổng số dư · 4 ví" with the main-currency total, other currencies on a
+/// small line, and the "Sắp xếp" link when there is something to sort.
+class WalletTotalHeader extends StatelessWidget {
+  const WalletTotalHeader({
+    required this.totals,
+    required this.digitsOf,
+    required this.hidden,
+    this.onSort,
+    super.key,
+  });
+
+  /// Main currency first (see [walletTotals]).
+  final List<WalletTotal> totals;
+  final int Function(String) digitsOf;
+  final bool hidden;
+  final VoidCallback? onSort;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    final c = context.colors;
+    final locale = Localizations.localeOf(context).toString();
+    final main = totals.first;
+    final others = totals.skip(1).map((t) {
+      final amount = hidden
+          ? '•••••• ${t.currency}'
+          : '${formatMoneyText(t.minor, digitsOf(t.currency), locale)} '
+                '${t.currency}';
+      return s.walletOtherTotal(amount, t.count);
+    }).toList();
+    final secondary = FreevaTypography.bodyS.copyWith(color: c.textSecondary);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(4, FreevaSpace.s2, 4, 0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(s.walletTotal(main.count), style: secondary),
+                const SizedBox(height: 2),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: MoneyDisplay(
+                    minor: main.minor,
+                    currency: main.currency,
+                    minorDigits: digitsOf(main.currency),
+                    style: FreevaTypography.moneyL,
+                    hidden: hidden,
+                  ),
+                ),
+                for (final line in others) Text(line, style: secondary),
+              ],
+            ),
+          ),
+          if (onSort != null)
+            TextButton.icon(
+              onPressed: onSort,
+              icon: const Icon(LucideIcons.arrowUpDown, size: 16),
+              label: Text(s.walletSort),
+              style: TextButton.styleFrom(
+                foregroundColor: c.actionPrimary,
+                minimumSize: const Size(FreevaSize.touch, FreevaSize.touch),
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                textStyle: FreevaTypography.body.copyWith(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}

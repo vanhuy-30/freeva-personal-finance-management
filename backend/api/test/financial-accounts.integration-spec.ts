@@ -102,6 +102,7 @@ describe('BE-P1-004 HTTP + PostgreSQL', () => {
   it.each(['cash', 'bank', 'ewallet', 'credit'])('creates and reads %s with exact initial balance', async type => {
     const account = await create({ type, ...(type === 'credit' ? { creditLimitMinor: '9223372036854775807', statementCloseDay: 28, paymentDueDay: 1 } : {}) });
     expect(account.balanceMinor).toBe('9007199254740993');
+    expect(account.hasTransactions).toBe(false);
     expect(account.version).toBe(1);
     expect((await request('GET', `/${account.id}`)).body).toEqual(account);
     expect((await request()).body.items).toEqual([account]);
@@ -203,6 +204,8 @@ describe('BE-P1-004 HTTP + PostgreSQL', () => {
     expect((await request('PATCH', `/${account.id}`, { version: 2, currencyCode: 'USD' })).status).toBe(409);
     const onlyDeleted = await create();
     await transaction(onlyDeleted.id, 1n, { deletedAt: new Date() });
+    // A deleted transaction still locks type/currency, and the flag says so before the client tries.
+    expect((await request('GET', `/${onlyDeleted.id}`)).body).toMatchObject({ hasTransactions: true, balanceMinor: onlyDeleted.balanceMinor });
     expect((await request('PATCH', `/${onlyDeleted.id}`, { version: 1, currencyCode: 'USD' })).status).toBe(409);
     expect((await request()).body.items.find((item: { id: string }) => item.id === account.id).balanceMinor).toBe('500');
   });
@@ -213,7 +216,7 @@ describe('BE-P1-004 HTTP + PostgreSQL', () => {
     // Commit between the account read and ledger read, without relying on timing/sleeps.
     const repository = app.get<PrismaFinancialAccountRepository>(FINANCIAL_ACCOUNT_REPOSITORY);
     type BalanceReader = {
-      balances(tx: Prisma.TransactionClient, userId: string, rows: Omit<FinancialAccount, 'balanceMinor'>[]): Promise<FinancialAccount[]>;
+      balances(tx: Prisma.TransactionClient, userId: string, rows: Omit<FinancialAccount, 'balanceMinor' | 'hasTransactions'>[]): Promise<FinancialAccount[]>;
     };
     const reader = repository as unknown as BalanceReader;
     const original = reader.balances.bind(reader);
@@ -272,6 +275,26 @@ describe('BE-P1-004 HTTP + PostgreSQL', () => {
     expect((await request('GET', '?page=2147483647&pageSize=100')).body.items).toEqual([]);
     expect((await request('PATCH', `/${first.id}`, { version: 1, sortOrder: 0 })).status).toBe(200);
     expect((await request()).body.items[0].id).toBe(first.id);
+  });
+
+  it('reorders all active accounts at once and rejects stale lists', async () => {
+    const [first, second, third] = [await create(), await create(), await create()];
+    const hidden = await create();
+    expect((await request('PATCH', `/${hidden.id}`, { version: 1, archived: true })).status).toBe(200);
+    const order = [third, first, second].map(account => ({ id: account.id, version: account.version }));
+    const moved = await request('PUT', '/order', { items: order });
+    expect(moved.status).toBe(200);
+    expect(moved.body.items.map((item: { id: string; sortOrder: number }) => [item.id, item.sortOrder]))
+      .toEqual([[third.id, 0], [first.id, 1], [second.id, 2]]);
+    // All start at sortOrder 0; only accounts whose position changed get a new version.
+    expect(moved.body.items.map((item: { version: number }) => item.version)).toEqual([1, 2, 2]);
+    expect((await request()).body.items.map((item: { id: string }) => item.id)).toEqual([third.id, first.id, second.id]);
+    expect((await request('PUT', '/order', { items: order })).status).toBe(409);
+    expect((await request('PUT', '/order', { items: moved.body.items.slice(0, 2).map((item: { id: string; version: number }) => ({ id: item.id, version: item.version })) })).status).toBe(409);
+    expect((await request('PUT', '/order', { items: [{ id: hidden.id, version: 2 }] })).status).toBe(409);
+    expect((await request('PUT', '/order', { items: [{ id: third.id, version: 2 }, { id: third.id, version: 2 }] })).status).toBe(400);
+    expect((await request('PUT', '/order', { items: moved.body.items.map((item: { id: string; version: number }) => ({ id: item.id, version: item.version })) }, otherToken)).status).toBe(409);
+    expect((await request('PUT', '/order', { items: order }, '')).status).toBe(401);
   });
 
   it('keeps financial data out of HTTP logs and sanitizes infrastructure failures', async () => {

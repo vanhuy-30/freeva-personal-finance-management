@@ -8,4 +8,6 @@ export interface CategoryRepository {
   recent(userId: string): Promise<Category[]>;
   update(userId: string, id: string, patch: CategoryPatch): Promise<Category>;
   delete(userId: string, id: string, version: number, replacementCategoryId?: string): Promise<void>;
+  /** Transactions that would move on delete, soft-deleted ones included. */
+  transactionCount(userId: string, id: string): Promise<number>;
 }

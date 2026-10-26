@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Thêm ví</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"cv11" 1}
+a,button,input{font-family:inherit}
+.tc{height:72px;border-radius:20px;border:1px solid #E4E7F0;background:#FFFFFF;display:flex;align-items:center;gap:10px;padding:0 14px;font-size:14px;font-weight:600;color:#22283A;text-decoration:none;box-sizing:border-box;position:relative}
+.tc.on{background:#EEF2FD;border:1.5px solid #3F67D1}
+.wi{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:0 0 32px}
+.ck{position:absolute;top:8px;right:8px;width:20px;height:20px;border-radius:999px;background:#3F67D1;color:#FFFFFF;display:flex;align-items:center;justify-content:center}
+.fld{border-radius:16px;border:1px solid #E4E7F0;background:#FFFFFF;padding:8px 14px;display:flex;flex-direction:column;gap:2px;box-sizing:border-box;min-height:60px;justify-content:center}
+.fld label,.fl{font-size:12px;color:#5C6378}
+.fld input{border:none;outline:none;background:transparent;font-size:16px;color:#22283A;padding:0}
+.lb{font-size:13px;font-weight:600;color:#5C6378;padding-left:4px}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; padding: 56px 20px 28px 20px; gap: 18px">
+
+  <div style="display: flex; align-items: center; justify-content: space-between">
+    <a href="WList.dc.html" aria-label="Đóng" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #EEF0F6; background: #FFFFFF; color: #22283A; display: flex; align-items: center; justify-content: center; box-sizing: border-box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a>
+    <h1 style="margin: 0; font-size: 17px; line-height: 24px; font-weight: 600">Thêm ví</h1>
+    <span style="width: 44px"></span>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 10px">
+    <span class="lb">Loại ví</span>
+    <div role="radiogroup" aria-label="Loại ví" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+      <a href="#" role="radio" aria-checked="false" class="tc"><span class="wi" style="background: #EDF7FD; color: #2A7FAE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="13" rx="3"></rect><circle cx="12" cy="12.5" r="2.5"></circle></svg></span>Tiền mặt</a>
+      <a href="#" role="radio" aria-checked="true" class="tc on"><span class="wi" style="background: #FFFFFF; color: #3F67D1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-6 9 6M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 21h18"></path></svg></span>Ngân hàng<span class="ck"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg></span></a>
+      <a href="#" role="radio" aria-checked="false" class="tc"><span class="wi" style="background: #F4F0FB; color: #7048B8"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="3"></rect><path d="M11 18h2"></path></svg></span>Ví điện tử</a>
+      <a href="WAddCredit.dc.html" role="radio" aria-checked="false" class="tc"><span class="wi" style="background: #F4F6FB; color: #22283A"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="3"></rect><path d="M2.5 10h19M6 15h4"></path></svg></span>Thẻ tín dụng</a>
+    </div>
+  </div>
+
+  <div class="fld" style="border: 1.5px solid #3F67D1; box-shadow: 0 0 0 4px rgba(86,128,233,.18)"><label for="wn">Tên ví</label><input id="wn" type="text" value="Ví lương" maxlength="100"></div>
+
+  <a href="#" class="fld" style="flex-direction: row; align-items: center; text-decoration: none; color: #22283A"><span style="display: flex; flex-direction: column; flex-grow: 1; gap: 2px"><span class="fl">Tiền tệ</span><span style="font-size: 16px">VND · Đồng Việt Nam</span></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5C6378" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></a>
+
+  <div style="display: flex; flex-direction: column; gap: 6px">
+    <div class="fld"><label for="wb">Số dư hiện tại</label><span class="num" style="display: flex; align-items: baseline; gap: 4px"><input id="wb" type="text" inputmode="numeric" placeholder="0" style="width: 100%"><span style="font-size: 14px; color: #5C6378">₫</span></span></div>
+    <span style="font-size: 13px; color: #5C6378; padding-left: 4px">Nhập số gần đúng, có thể sửa lại sau.</span>
+  </div>
+
+  <a href="WList.dc.html" style="margin-top: auto; height: 56px; border-radius: 999px; background: #3F67D1; color: #FFFFFF; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center; text-decoration: none">Lưu ví</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

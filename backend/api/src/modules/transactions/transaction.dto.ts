@@ -4,6 +4,9 @@ import { TRANSACTION_TYPES, type TransactionType } from './domain/transaction';
 const optional = (_: unknown, value: unknown) => value !== undefined;
 const nullable = (_: unknown, value: unknown) => value !== undefined && value !== null;
 const uuid = ({ value }: { value: unknown }) => typeof value === 'string' ? value.toLowerCase() : value;
+/** Repeated query keys (`?accountId=a&accountId=b`) or a single value → lower-cased array. */
+const many = ({ value }: { value: unknown }) => value === undefined ? undefined
+  : (Array.isArray(value) ? value : [value]).map(item => typeof item === 'string' ? item.toLowerCase() : item);
 const trim = ({ value }: { value: unknown }) => typeof value === 'string' ? value.trim() : value;
 export class TransactionLegDto {
   @Transform(uuid) @IsUUID() clientId!: string;
@@ -42,9 +45,12 @@ export class TransactionQueryDto {
   @Type(() => Number) @IsInt() @Min(1) @Max(2147483647) page = 1;
   @Type(() => Number) @IsInt() @Min(1) @Max(100) pageSize = 50;
   @IsIn(['active', 'deleted', 'all']) status: 'active' | 'deleted' | 'all' = 'active';
-  @ValidateIf(optional) @Transform(uuid) @IsUUID() accountId?: string;
-  @ValidateIf(optional) @Transform(uuid) @IsUUID() categoryId?: string;
+  @IsIn(['date', 'amountDesc']) sort: 'date' | 'amountDesc' = 'date';
+  @ValidateIf(optional) @Transform(many) @IsArray() @ArrayMaxSize(20) @ArrayUnique() @IsUUID('all', { each: true }) accountId?: string[];
+  @ValidateIf(optional) @Transform(many) @IsArray() @ArrayMaxSize(50) @ArrayUnique() @IsUUID('all', { each: true }) categoryId?: string[];
+  @ValidateIf(optional) @Transform(many) @IsArray() @ArrayMaxSize(20) @ArrayUnique() @IsUUID('all', { each: true }) tagId?: string[];
   @ValidateIf(optional) @IsIn(TRANSACTION_TYPES) type?: TransactionType;
+  @ValidateIf(optional) @IsString() @Matches(/^[A-Z]{3}(?![\s\S])/) currency?: string;
   @ValidateIf(optional) @IsString() @Matches(/^\d{4}-\d{2}-\d{2}(?![\s\S])/) from?: string;
   @ValidateIf(optional) @IsString() @Matches(/^\d{4}-\d{2}-\d{2}(?![\s\S])/) to?: string;
   @ValidateIf(optional) @IsString() @MaxLength(200) search?: string;

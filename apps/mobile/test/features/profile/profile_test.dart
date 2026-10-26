@@ -5,6 +5,7 @@ import 'package:mobile/features/auth/data/auth_repository_impl.dart';
 import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/auth/domain/auth_use_cases.dart';
 import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dart';
+import 'package:mobile/features/onboarding/domain/onboarding_answers.dart';
 import 'package:mobile/features/profile/data/profile_repository_impl.dart';
 import 'package:mobile/features/profile/domain/profile_use_cases.dart';
 import 'package:mobile/features/profile/presentation/viewmodels/profile_view_model.dart';
@@ -62,6 +63,72 @@ void main() {
       );
     },
   );
+  test(
+    'onboarding answers go out as a PATCH with only the set parts',
+    () async {
+      final api = Transport();
+      final repo = ProfileRepositoryImpl(api);
+      final cases = ProfileUseCases(repo);
+      expect(
+        (await cases.saveOnboarding(
+          const OnboardingAnswers(
+            goals: [OnboardingGoal.save, OnboardingGoal.debt],
+          ),
+        )).isRight(),
+        true,
+      );
+      expect(api.method, 'PATCH');
+      expect(api.path, 'profile/onboarding');
+      expect(api.body, {
+        'goals': ['save', 'debt'],
+      });
+      api.method = null;
+      expect(
+        (await cases.saveOnboarding(const OnboardingAnswers())).isRight(),
+        true,
+      );
+      expect(api.method, isNull);
+      expect(
+        (await cases.saveOnboarding(
+          const OnboardingAnswers(
+            goals: [
+              OnboardingGoal.save,
+              OnboardingGoal.debt,
+              OnboardingGoal.track,
+            ],
+          ),
+        )).isLeft(),
+        true,
+      );
+    },
+  );
+  test(
+    'reads displayName and sends it back on save (null clears it)',
+    () async {
+      final api = Transport();
+      final repo = ProfileRepositoryImpl(api);
+      api.response = {
+        'displayName': '  Minh ',
+        'locale': 'vi',
+        'defaultCurrencyCode': 'VND',
+        'timezone': 'UTC',
+        'fiscalMonthStartDay': 1,
+        'version': 1,
+      };
+      final loaded = (await repo.load()).getOrElse(() => throw StateError('x'));
+      expect(loaded.displayName, 'Minh');
+      await repo.save(loaded);
+      expect(api.body!['displayName'], 'Minh');
+      await repo.save(loaded.copyWith(displayName: null));
+      expect(api.body!.containsKey('displayName'), isTrue);
+      expect(api.body!['displayName'], isNull);
+      api.response['displayName'] = null;
+      expect(
+        (await repo.load()).getOrElse(() => throw StateError('x')).displayName,
+        isNull,
+      );
+    },
+  );
   group('view model', () {
     late MemoryProfiles repo;
     late DefaultAuthViewModel auth;
@@ -73,6 +140,7 @@ void main() {
         ),
       );
       auth.stage = AuthStage.unlocked;
+      auth.hasPin = true;
       repo = MemoryProfiles();
       model = DefaultProfileViewModel(ProfileUseCases(repo), auth);
       await Future<void>.delayed(Duration.zero);
@@ -81,6 +149,17 @@ void main() {
       model.dispose();
       auth.dispose();
     });
+    test(
+      'the saved name is handed to the lock screen on load and on save',
+      () async {
+        repo.value = repo.value.copyWith(displayName: 'Minh');
+        await model.load();
+        expect(auth.name, 'Minh');
+        model.draft = model.saved!.copyWith(displayName: ' Lan ');
+        await model.save();
+        expect(auth.name, 'Lan');
+      },
+    );
     test(
       'applies locale only after save, reloads saved fields and cancels edits',
       () async {

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Giao diện</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a,button{font-family:inherit}
+.tc{border-radius:20px;border:1px solid #E4E7F0;background:#FFFFFF;padding:10px 10px 12px 10px;display:flex;flex-direction:column;align-items:center;gap:10px;font-size:14px;font-weight:600;color:#22283A;text-decoration:none;position:relative}
+.tc.on{background:#EEF2FD;border:1.5px solid #3F67D1}
+.pv{width:100%;height:110px;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;gap:6px;padding:10px;box-sizing:border-box}
+.ck{position:absolute;top:8px;right:8px;width:20px;height:20px;border-radius:999px;background:#3F67D1;color:#FFFFFF;display:flex;align-items:center;justify-content:center}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif">
+
+  <div aria-hidden="true" style="padding: 56px 20px 0 20px; display: flex; flex-direction: column; gap: 16px">
+    <span style="font-size: 28px; line-height: 34px; font-weight: 600; letter-spacing: -0.6px">Cá nhân</span>
+    <span style="height: 84px; border-radius: 24px; background: #FFFFFF"></span>
+    <span style="height: 162px; border-radius: 20px; background: #FFFFFF"></span>
+  </div>
+  <a href="MeHome.dc.html" aria-label="Đóng" style="position: absolute; inset: 0; background: rgba(34,40,58,.45)"></a>
+
+  <div role="dialog" aria-label="Giao diện" style="position: absolute; left: 0; right: 0; bottom: 0; background: #FCFDFF; border-radius: 28px 28px 0 0; padding: 10px 20px 28px 20px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 -12px 32px rgba(34,40,58,.12)">
+    <span style="align-self: center; width: 36px; height: 4px; border-radius: 999px; background: #C9CEDD"></span>
+    <h2 style="margin: 0; font-size: 17px; line-height: 24px; font-weight: 600">Giao diện</h2>
+    <div role="radiogroup" aria-label="Giao diện" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+      <a href="MeHome.dc.html" role="radio" aria-checked="true" class="tc on">
+        <span class="pv" aria-hidden="true" style="background: #FCFDFF; border: 1px solid #EEF0F5"><span style="height: 26px; border-radius: 8px; background: #ECEFFA"></span><span style="height: 10px; width: 70%; border-radius: 4px; background: #E4E7F0"></span><span style="height: 10px; width: 50%; border-radius: 4px; background: #E4E7F0"></span><span style="margin-top: auto; height: 14px; border-radius: 999px; background: #FFFFFF; box-shadow: 0 2px 6px rgba(34,40,58,.12)"></span></span>
+        Sáng<span class="ck"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg></span>
+      </a>
+      <a href="MeHome.dc.html" role="radio" aria-checked="false" class="tc">
+        <span class="pv" aria-hidden="true" style="background: #12141F"><span style="height: 26px; border-radius: 8px; background: #232842"></span><span style="height: 10px; width: 70%; border-radius: 4px; background: #2C3252"></span><span style="height: 10px; width: 50%; border-radius: 4px; background: #2C3252"></span><span style="margin-top: auto; height: 14px; border-radius: 999px; background: #1B1F33"></span></span>
+        Tối
+      </a>
+      <a href="MeHome.dc.html" role="radio" aria-checked="false" class="tc">
+        <span class="pv" aria-hidden="true" style="background: linear-gradient(90deg, #FCFDFF 50%, #12141F 50%); border: 1px solid #EEF0F5"><span style="height: 26px; border-radius: 8px; background: linear-gradient(90deg, #ECEFFA 50%, #232842 50%)"></span><span style="height: 10px; width: 70%; border-radius: 4px; background: linear-gradient(90deg, #E4E7F0 71%, #2C3252 71%)"></span><span style="margin-top: auto; height: 14px; border-radius: 999px; background: linear-gradient(90deg, #FFFFFF 50%, #1B1F33 50%)"></span></span>
+        Theo máy
+      </a>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

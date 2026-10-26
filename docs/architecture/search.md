@@ -8,7 +8,7 @@ Bearer session, owner từ session, `Cache-Control: no-store`. `search` tối đ
 
 Một leg khớp khi **một** vế sau đúng:
 
-- Chuỗi đã fold là substring của ghi chú, tên danh mục gắn leg, tên ví, hoặc tên nhãn bất kỳ.
+- Chuỗi đã fold là substring của ghi chú, cửa hàng (`merchant`), tên danh mục gắn leg, tên ví, hoặc tên nhãn bất kỳ.
 - Số tiền parse được bằng `abs(amountMinor)`.
 
 Danh mục cha không kéo theo con. Ví và danh mục đã lưu trữ vẫn khớp. Bản xóa theo `status` (mặc định `active`). Vẫn trả leg, sort `occurredOn` giảm, `createdAt` giảm, `id` tăng. `total` đếm leg. List và count cùng snapshot Repeatable Read.

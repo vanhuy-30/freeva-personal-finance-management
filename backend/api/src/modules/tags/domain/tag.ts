@@ -10,6 +10,8 @@ export interface Tag extends TagInput {
   version: number;
   createdAt: Date;
   updatedAt: Date;
+  /** Not-deleted transactions carrying the tag; only on list rows. */
+  transactionCount?: number;
 }
 export interface TagPatch {
   version: number;

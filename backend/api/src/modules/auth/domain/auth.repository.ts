@@ -16,6 +16,11 @@ export interface Session {
   createdAt: Date;
   expiresAt: Date;
 }
+/** When the person agreed, and to which version of the Terms and Privacy policy. */
+export interface TermsConsent {
+  acceptedAt: Date;
+  version: string;
+}
 export interface MailJob {
   id: string;
   email: string;
@@ -28,6 +33,7 @@ export interface AuthRepository {
     email: string,
     passwordHash: string,
     challenge: EmailChallenge,
+    terms: TermsConsent,
   ): Promise<void>;
   findUser(email: string): Promise<AuthUser | null>;
   issueChallenge(
@@ -48,6 +54,18 @@ export interface AuthRepository {
   ): Promise<Session | null>;
   findSession(tokenHash: string): Promise<Session | null>;
   listSessions(userId: string): Promise<Session[]>;
+  findUserById(userId: string): Promise<AuthUser | null>;
+  /**
+   * Swaps the hash only while it still equals [currentHash], ends every other
+   * session and unused email tokens, and records the change. False when the
+   * password changed in the meantime.
+   */
+  changePassword(
+    userId: string,
+    currentHash: string,
+    newHash: string,
+    keepSessionId: string,
+  ): Promise<boolean>;
   revoke(userId: string, sessionId?: string): Promise<void>;
   takeRateLimit(
     key: string,

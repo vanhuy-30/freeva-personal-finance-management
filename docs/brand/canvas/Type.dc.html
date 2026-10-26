@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Freeva · Typography</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"cv11" 1}
+.tr{display:grid;grid-template-columns:130px 150px 1fr;gap:16px;align-items:center;padding:13px 0;border-bottom:1px solid #EEF0F5}
+.tk{font-size:13px;font-weight:600}
+.sp{font-size:12px;color:#5C6378}
+.rule{display:flex;flex-direction:column;gap:6px;padding:14px 0;border-top:1px solid #E4E7F0}
+.rt{font-size:14px;font-weight:600}
+.rd{font-size:13px;line-height:19px;color:#5C6378}
+</style>
+</helmet>
+<div style="width: 1280px; height: 860px; box-sizing: border-box; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; padding: 56px 64px; display: flex; flex-direction: column; gap: 32px">
+
+  <div style="display: flex; justify-content: space-between; align-items: flex-end">
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <span style="font-size: 12px; letter-spacing: 2px; font-weight: 600; color: #5C6378">FOUNDATIONS — TYPOGRAPHY</span>
+      <h1 style="margin: 0; font-size: 40px; line-height: 44px; font-weight: 600; letter-spacing: -1px">Inter, con số đi trước</h1>
+    </div>
+    <span style="font-size: 13px; color: #5C6378">Inter · 400 / 500 / 600 · hỗ trợ đủ dấu tiếng Việt</span>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 56px">
+    <div style="display: flex; flex-direction: column">
+      <div class="tr" style="padding: 0 0 10px 0; border-bottom-color: #E4E7F0; font-size: 12px; font-weight: 600; color: #5C6378"><span>Token</span><span>Cỡ / dòng · đậm · giãn</span><span>Mẫu</span></div>
+      <div class="tr"><span class="tk">money.display</span><span class="sp num">40/44 · 600 · −1.2</span><span class="num" style="display: flex; align-items: baseline; gap: 6px"><span style="font-size: 40px; line-height: 44px; font-weight: 600; letter-spacing: -1.2px">48.250.000</span><span style="font-size: 20px; font-weight: 500; color: #5C6378">₫</span></span></div>
+      <div class="tr"><span class="tk">money.l</span><span class="sp num">28/32 · 600 · −0.6</span><span class="num" style="font-size: 28px; line-height: 32px; font-weight: 600; letter-spacing: -0.6px">65.000 ₫</span></div>
+      <div class="tr"><span class="tk">title.xl</span><span class="sp num">28/34 · 600 · −0.6</span><span style="font-size: 28px; line-height: 34px; font-weight: 600; letter-spacing: -0.6px">Giao dịch</span></div>
+      <div class="tr"><span class="tk">headline</span><span class="sp num">24/30 · 600 · −0.4</span><span style="font-size: 24px; line-height: 30px; font-weight: 600; letter-spacing: -0.4px">Chào Minh</span></div>
+      <div class="tr"><span class="tk">title.l</span><span class="sp num">17/24 · 600</span><span style="font-size: 17px; line-height: 24px; font-weight: 600">Gần đây · Chọn ví</span></div>
+      <div class="tr"><span class="tk">title.m</span><span class="sp num">15/22 · 600</span><span style="font-size: 15px; line-height: 22px; font-weight: 600">Chi tháng 10</span></div>
+      <div class="tr"><span class="tk">body</span><span class="sp num">15/22 · 400–500</span><span style="font-size: 15px; line-height: 22px">Phở Thìn — ghi chú ăn sáng với team</span></div>
+      <div class="tr"><span class="tk">body.s</span><span class="sp num">13/18 · 400</span><span style="font-size: 13px; line-height: 18px; color: #5C6378">Ăn uống · Tiền mặt · 07:42</span></div>
+      <div class="tr"><span class="tk">label</span><span class="sp num">12/16 · 500</span><span style="font-size: 12px; line-height: 16px; font-weight: 500">Ghi thu · Chuyển ví · Danh mục</span></div>
+      <div class="tr" style="border-bottom: none"><span class="tk">overline</span><span class="sp num">11/14 · 600 · +1.6</span><span style="font-size: 11px; line-height: 14px; font-weight: 600; letter-spacing: 1.6px; color: #5C6378">QUẢN LÝ · ỨNG DỤNG</span></div>
+    </div>
+
+    <div style="display: flex; flex-direction: column">
+      <div class="rule"><span class="rt">Số tiền</span><span class="rd">Luôn dùng chữ số tabular (tnum). Ký hiệu ₫ bằng nửa cỡ số, màu muted, đặt sau số. Chi kèm dấu −, thu kèm dấu +, chuyển ví không dấu.</span></div>
+      <div class="rule"><span class="rt">Định dạng VND</span><span class="rd num">Dấu chấm ngăn hàng nghìn: 18.500.000 ₫. Dạng rút gọn trên chip và biểu đồ: 32,4tr · 850k. Không hiển thị số lẻ cho VND.</span></div>
+      <div class="rule"><span class="rt">Dòng có dấu tiếng Việt</span><span class="rd">Line-height tối thiểu 1.3× cỡ chữ để dấu không chạm dòng trên (Ở, Ẵ, Ỷ). Không dùng chữ in hoa cho câu dài.</span></div>
+      <div class="rule"><span class="rt">Màn hẹp 320 pt</span><span class="rd">money.display 32/36, title.xl 24/30, headline 22/28. Số dư không cắt bằng dấu "…": co cỡ trước, xuống dòng sau.</span></div>
+      <div class="rule" style="border-bottom: 1px solid #E4E7F0"><span class="rt">Cỡ chữ hệ thống</span><span class="rd">Co giãn theo cài đặt máy tới 1.3×. Riêng money.display giới hạn 1.15× để thẻ số dư không vỡ bố cục.</span></div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":860}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

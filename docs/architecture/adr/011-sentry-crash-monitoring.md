@@ -20,4 +20,4 @@ Dùng Sentry cho crash staging (`INF-P1-001`).
 
 ## Consequences
 
-SDK 11 phía JS dùng `dataCollection` để tắt user, cookie, header, body, query và biến stack. Flutter SDK 8 vẫn dùng `sendDefaultPii: false`. Event trên dashboard chỉ xuất hiện sau khi người vận hành tạo project Sentry và đặt DSN. Production host chưa chốt; vendor crash staging là Sentry.
+SDK 11 phía JS dùng `dataCollection` để tắt user, cookie, header, body, query và biến stack. Flutter dùng `sentry_flutter` ≥9 (`sendDefaultPii: false`); 8.14.x không build với sentry-cocoa 8.58+ (`SentryBinaryImageCache.image`). Event trên dashboard chỉ xuất hiện sau khi người vận hành tạo project Sentry và đặt DSN. Production host chưa chốt; vendor crash staging là Sentry.

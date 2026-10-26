@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/tokens.g.dart';
 import 'animated_brand_symbol.dart';
 
 class SplashBrandContent extends StatelessWidget {
@@ -50,7 +50,7 @@ class SplashBrandContent extends StatelessWidget {
                     s.brandWordmark,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          color: AppColors.text,
+                          color: FreevaPrimitive.ink900,
                           fontSize: 40,
                           fontWeight: FontWeight.w500,
                           letterSpacing: 9,
@@ -61,7 +61,7 @@ class SplashBrandContent extends StatelessWidget {
                     s.splashTagline,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: AppColors.textMuted,
+                          color: FreevaPrimitive.ink500,
                           fontSize: 17,
                         ),
                   ),

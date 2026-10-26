@@ -28,6 +28,8 @@ class WalletRepositoryImpl implements WalletRepository {
     version: j['version'] as int,
     sortOrder: j['sortOrder'] as int,
     archived: j['archivedAt'] != null,
+    // Older servers omit the flag; they still reject the change on save.
+    hasTransactions: j['hasTransactions'] as bool? ?? false,
   );
   Future<Either<AuthFailure, T>> _request<T>(
     String method,
@@ -117,4 +119,19 @@ class WalletRepositoryImpl implements WalletRepository {
       if (sortOrder != null) 'sortOrder': sortOrder,
     },
   );
+
+  @override
+  Future<Either<AuthFailure, List<Wallet>>> reorder(List<Wallet> active) =>
+      _request(
+        'PUT',
+        'financial-accounts/order',
+        (j) => List<Wallet>.unmodifiable(
+          (j['items'] as List).map((i) => _parse(i as Map<String, dynamic>)),
+        ),
+        body: {
+          'items': [
+            for (final w in active) {'id': w.id, 'version': w.version},
+          ],
+        },
+      );
 }

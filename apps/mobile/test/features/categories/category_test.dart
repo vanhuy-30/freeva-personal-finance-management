@@ -65,6 +65,7 @@ class CategoryTransport implements AuthorizedApi {
   Completer<void>? pending;
   bool paginate = false;
   bool requireReplacement = false;
+  int usageCount = 0;
 
   @override
   Future<Either<AuthFailure, Map<String, dynamic>>> request(
@@ -80,8 +81,11 @@ class CategoryTransport implements AuthorizedApi {
     if (path == 'categories/options') {
       return right({
         'colorTokens': ['color.brand.primary', 'color.semantic.success'],
-        'iconTokens': ['food', 'category'],
+        'iconTokens': ['food', 'coffee', 'shopping'],
       });
+    }
+    if (method == 'GET' && path.endsWith('/usage')) {
+      return right({'transactionCount': usageCount});
     }
     if (path == 'categories/recent') return right({'items': <Object>[]});
     if (method == 'GET' && path.startsWith('categories?')) {
@@ -174,7 +178,7 @@ void main() {
         () => throw StateError('x'),
       );
       expect(managed.items.map((item) => item.id), ['food', 'coffee', 'gift']);
-      expect(managed.options.iconTokens, ['food', 'category']);
+      expect(managed.options.iconTokens, ['food', 'coffee', 'shopping']);
       expect(
         api.calls
             .where((call) => call.path.startsWith('categories?'))
@@ -252,6 +256,52 @@ void main() {
     );
   });
 
+  group('group E lists', () {
+    FinanceCategory cat(
+      String id, {
+      String? parent,
+      CategoryKind kind = CategoryKind.expense,
+      bool archived = false,
+      int day = 1,
+    }) => FinanceCategory(
+      id: id,
+      name: id,
+      parentId: parent,
+      kind: kind,
+      archived: archived,
+      createdAt: DateTime.utc(2026, 10, day),
+    );
+    test('groups by tab; both in each; orphan and deep rows are handled', () {
+      final all = [
+        cat('food', day: 1),
+        cat('snack', parent: 'food', day: 2),
+        cat('deep', parent: 'snack', day: 3),
+        cat('salary', kind: CategoryKind.income, day: 4),
+        cat('gift', kind: CategoryKind.both, day: 5),
+        cat('old', archived: true, day: 6),
+        cat('orphan', parent: 'old', day: 7),
+      ];
+      final spend = categoryGroups(all, income: false);
+      expect(spend.map((g) => g.parent.id), ['food', 'gift', 'orphan']);
+      expect(spend.first.children.map((c) => c.id), ['snack', 'deep']);
+      expect(categoryGroups(all, income: true).map((g) => g.parent.id), [
+        'salary',
+        'gift',
+      ]);
+    });
+    test('hidden list nests hidden children under a hidden parent', () {
+      final hidden = hiddenCategoryGroups([
+        cat('trip', archived: true, day: 1),
+        cat('hotel', parent: 'trip', archived: true, day: 2),
+        cat('food', day: 3),
+        cat('snack', parent: 'food', archived: true, day: 4),
+      ]);
+      expect(hidden.map((g) => (g.parent.id, g.children.length)), [
+        ('trip', 1),
+        ('snack', 0),
+      ]);
+    });
+  });
   group('view model', () {
     late CategoryTransport api;
     late DefaultAuthViewModel auth;
@@ -262,7 +312,9 @@ void main() {
         DefaultAuthUseCases(
           AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
         ),
-      )..stage = AuthStage.unlocked;
+      )
+        ..stage = AuthStage.unlocked
+        ..hasPin = true;
       model = DefaultCategoryViewModel(
         DefaultCategoryUseCases(CategoryRepositoryImpl(api)),
         auth,
@@ -274,6 +326,49 @@ void main() {
       auth.dispose();
     });
 
+    test('restore brings back hidden subcategories too', () async {
+      api.rows.add(
+        categoryJson(
+          'hotel',
+          name: 'Khách sạn',
+          parentId: 'gift',
+          archived: true,
+          createdAt: '2026-10-04T00:00:00Z',
+        ),
+      );
+      await model.load();
+      final gift = model.categories.firstWhere((c) => c.id == 'gift');
+      expect(await model.restore(gift), isTrue);
+      expect(model.categories.where((c) => c.archived), isEmpty);
+      expect(api.writes, 2);
+    });
+    test('new categories send the tab kind; an old colour may stay', () async {
+      final ok = await model.save(
+        const CategoryDraft(name: 'Lương', kind: CategoryKind.income),
+        model.newClientId(),
+      );
+      expect(ok, isTrue);
+      expect(api.calls.last.body!['kind'], 'income');
+      api.rows[0]['colorToken'] = 'color.semantic.danger';
+      await model.load();
+      final food = model.categories.firstWhere((c) => c.id == 'food');
+      expect(
+        await model.save(
+          CategoryDraft(name: 'Ăn', colorToken: food.colorToken),
+          model.newClientId(),
+          category: food,
+        ),
+        isTrue,
+      );
+      expect(
+        await model.save(
+          const CategoryDraft(name: 'Ăn', colorToken: 'color.neutral.text'),
+          model.newClientId(),
+          category: model.categories.firstWhere((c) => c.id == 'food'),
+        ),
+        isFalse,
+      );
+    });
     test(
       'creation retries keep clientId and conflict requires reload',
       () async {
@@ -286,7 +381,7 @@ void main() {
             ),
           ),
         );
-        const draft = CategoryDraft(name: 'Trà', iconToken: 'category');
+        const draft = CategoryDraft(name: 'Trà', iconToken: 'coffee');
         api.failure = const AuthFailure(AuthError.network);
         expect(await model.save(draft, id), isFalse);
         api.failure = null;

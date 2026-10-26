@@ -215,6 +215,49 @@ paths:
             const: root
           description: Omit for all levels; root for null parent; UUID for direct children. Foreign/missing parent
             returns 404.
+  /api/v1/categories/{id}/usage:
+    get:
+      operationId: getCategoryUsage
+      summary: Count transactions that deleting this category would move
+      description: Every transaction of the owner in this category, soft-deleted ones included (the same rows DELETE
+        moves to replacementCategoryId). Used by the delete popup (DS-P2-003).
+      tags:
+      - Categories
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Usage
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [transactionCount]
+                properties:
+                  transactionCount:
+                    type: integer
+                    minimum: 0
+        '400':
+          $ref: '#/components/responses/CategoryValidationError'
+        '401':
+          $ref: '#/components/responses/CategoryUnauthorized'
+        '404':
+          $ref: '#/components/responses/CategoryNotFound'
+        '503':
+          $ref: '#/components/responses/CategoryUnavailable'
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
   /api/v1/categories/{id}:
     get:
       operationId: getCategory
@@ -347,6 +390,63 @@ paths:
         owner. Move all references and increment each transaction version/updatedAt, preserving money, date, account,
         tags and deletedAt. Any failure or version overflow rolls back everything. Empty categories may be deleted
         without replacement. No category restore after deletion.
+  /api/v1/feedback:
+    post:
+      operationId: sendFeedback
+      summary: Send feedback from the app
+      tags:
+      - Feedback
+      security:
+      - UserBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+              - kind
+              - topic
+              - message
+              - allowReply
+              - appVersion
+              properties:
+                kind:
+                  type: string
+                  enum:
+                  - bug
+                  - idea
+                  - praise
+                topic:
+                  type: string
+                  enum:
+                  - record
+                  - reports
+                  - wallets
+                  - categories
+                  - appearance
+                  - other
+                message:
+                  type: string
+                  minLength: 1
+                  maxLength: 2000
+                allowReply:
+                  type: boolean
+                  description: The user agreed to be answered by email.
+                appVersion:
+                  type: string
+                  pattern: ^[0-9A-Za-z.+_-]{1,30}$
+      responses:
+        '204':
+          description: Stored
+        '400':
+          description: Invalid body
+        '401':
+          description: Session missing or expired
+        '429':
+          description: Five messages an hour per user; Retry-After is 3600
+      description: Text only, owned by the user and deleted with the account. Never logged.
   /api/v1/tags:
     post:
       operationId: createTag
@@ -775,15 +875,58 @@ paths:
           - all
           default: active
       - in: query
-        name: accountId
+        name: currency
+        required: false
+        description: ISO 4217 code of the transaction currency.
         schema:
           type: string
-          format: uuid
+          pattern: ^[A-Z]{3}$
+      - in: query
+        name: sort
+        required: false
+        description: date is newest first (default). amountDesc is the largest amount first, ignoring sign.
+        schema:
+          type: string
+          enum:
+          - date
+          - amountDesc
+          default: date
+      - in: query
+        name: accountId
+        style: form
+        explode: true
+        schema:
+          type: array
+          maxItems: 20
+          uniqueItems: true
+          items:
+            type: string
+            format: uuid
+        description: Repeat to match any of several wallets (per leg). A single value still works.
       - in: query
         name: categoryId
+        style: form
+        explode: true
         schema:
-          type: string
-          format: uuid
+          type: array
+          maxItems: 50
+          uniqueItems: true
+          items:
+            type: string
+            format: uuid
+        description: Repeat to match any of several categories. The client expands a parent to its children.
+      - in: query
+        name: tagId
+        style: form
+        explode: true
+        schema:
+          type: array
+          maxItems: 20
+          uniqueItems: true
+          items:
+            type: string
+            format: uuid
+        description: Repeat to match transactions carrying any of these tags.
       - in: query
         name: type
         schema:
@@ -810,7 +953,7 @@ paths:
           type: string
           maxLength: 200
           description: >
-            Substring of notes, the leg category name, the account name, or any tag name.
+            Substring of notes, merchant, the leg category name, the account name, or any tag name.
             Matching ignores case and Vietnamese diacritics. A numeric query also matches
             abs(amountMinor): grouped thousands (150.000) as exact minor units, or one
             decimal separator whose fraction is not 3 digits (12.50) scaled by the leg
@@ -1168,6 +1311,7 @@ paths:
           enum:
           - week
           - month
+          - year
           - range
       - name: on
         in: query
@@ -1176,7 +1320,7 @@ paths:
           type: string
           format: date
           pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
-        description: Anchor calendar date for week or month. Defaults to today in the user timezone. Forbidden for range.
+        description: Anchor calendar date for week, month, or year. Defaults to today in the user timezone. Forbidden for range.
       - name: from
         in: query
         required: false
@@ -1184,7 +1328,7 @@ paths:
           type: string
           format: date
           pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
-        description: Inclusive range start. Required with to for period=range. Forbidden for week and month.
+        description: Inclusive range start. Required with to for period=range. Forbidden for week, month, and year.
       - name: to
         in: query
         required: false
@@ -1209,7 +1353,50 @@ paths:
           $ref: '#/components/responses/ReportUnauthorized'
         '503':
           $ref: '#/components/responses/ReportUnavailable'
-      description: Read-only. Week is Monday through Sunday. Month follows fiscalMonthStartDay in the user timezone. Amounts stay in each account currency; transfers are excluded from income, expense, and net. No FX conversion.
+      description: Read-only. Week is Monday through Sunday. Month follows fiscalMonthStartDay in the user timezone. Year is the calendar year (01-01 to 12-31). Amounts stay in each account currency; transfers are excluded from income, expense, and net. No FX conversion.
+  /api/v1/reports/trend:
+    get:
+      operationId: reportTrend
+      summary: Report expense and income per bucket for the trend chart
+      tags:
+      - Reports
+      security:
+      - UserBearer: []
+      parameters:
+      - name: period
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - week
+          - month
+          - year
+      - name: on
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
+        description: Anchor calendar date of the last bucket. Defaults to today in the user timezone.
+      responses:
+        '200':
+          description: Oldest-first buckets ending at the period that contains the anchor
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/ReportNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrendReport'
+        '400':
+          $ref: '#/components/responses/ReportValidationError'
+        '401':
+          $ref: '#/components/responses/ReportUnauthorized'
+        '503':
+          $ref: '#/components/responses/ReportUnavailable'
+      description: Read-only, one call for the whole chart. Week returns 8 Monday weeks, month 6 months following fiscalMonthStartDay, year up to 5 calendar years (years before the first transaction are dropped, the current year is always kept). Amounts stay in each account currency; transfers are excluded. No FX conversion.
   /api/v1/reports/net-worth:
     get:
       operationId: reportNetWorth
@@ -1220,7 +1407,7 @@ paths:
       - UserBearer: []
       responses:
         '200':
-          description: Current signed totals per currency
+          description: Current signed totals per currency. Hidden (archived) wallets are excluded; a currency appears only if it has an active wallet.
           headers:
             Cache-Control:
               $ref: '#/components/headers/ReportNoStore'
@@ -1328,6 +1515,49 @@ paths:
           default: active
       description: Ordered by sortOrder, createdAt, id ascending. Items, balances and
         total use one database snapshot.
+  /api/v1/financial-accounts/order:
+    put:
+      operationId: reorderFinancialAccounts
+      summary: Set the order of all active financial accounts at once
+      tags:
+      - FinancialAccounts
+      security:
+      - UserBearer: []
+      description: Lists every active account exactly once, in the new order, with its current version. Each
+        account's sortOrder becomes its position; only accounts whose sortOrder changes get a new version. All
+        or nothing in one database transaction. A missing, extra, archived, foreign or stale entry returns 409
+        so the client reloads.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReorderFinancialAccounts'
+      responses:
+        '200':
+          description: Active accounts in the new order
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/FinancialAccountNoStore'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FinancialAccount'
+        '400':
+          $ref: '#/components/responses/FinancialAccountValidationError'
+        '401':
+          $ref: '#/components/responses/FinancialAccountUnauthorized'
+        '409':
+          $ref: '#/components/responses/FinancialAccountConflict'
+        '503':
+          $ref: '#/components/responses/FinancialAccountUnavailable'
   /api/v1/financial-accounts/{id}:
     parameters:
     - name: id
@@ -1595,6 +1825,41 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/profile/onboarding:
+    patch:
+      operationId: saveOnboardingAnswers
+      summary: Save answers from the first-run questions (goals, tracking habit, review cadence)
+      tags: [Profile]
+      security:
+        - UserBearer: []
+      description: Every field is optional; only the fields sent are stored, so a skipped step sends nothing. No version check (these answers are not a preference conflict).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OnboardingAnswers'
+      responses:
+        '204':
+          description: Saved (Cache-Control no-store)
+        '400':
+          description: Unknown value, more than two goals, or an extra field
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
   /api/v1/profile/options:
     get:
       operationId: getProfileOptions
@@ -1786,7 +2051,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AuthCredentialsRequest'
+              $ref: '#/components/schemas/AuthRegisterRequest'
   /api/v1/auth/login:
     post:
       operationId: login
@@ -2023,6 +2288,45 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/AuthResetPasswordRequest'
+  /api/v1/auth/change-password:
+    post:
+      operationId: changePassword
+      summary: Change the password while signed in
+      tags:
+      - Auth
+      security:
+      - UserBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+              - currentPassword
+              - newPassword
+              properties:
+                currentPassword:
+                  type: string
+                  minLength: 1
+                  maxLength: 128
+                newPassword:
+                  type: string
+                  minLength: 12
+                  maxLength: 128
+                  description: At least one letter and one digit (DS-P2-004). Must differ from the current password.
+      responses:
+        '204':
+          description: Changed. This session stays signed in; every other session and unused email token ends.
+        '400':
+          description: New password rejected
+        '401':
+          description: Session missing or expired
+        '403':
+          description: Current password is wrong (code INVALID_CREDENTIALS)
+        '429':
+          description: Too many attempts
   /api/v1/auth/logout:
     post:
       operationId: logout
@@ -2490,7 +2794,8 @@ components:
         kind:
           type: string
           enum: [expense, income, both]
-          description: Server-managed; custom defaults to both. Not enforced on transaction write in Phase 1.
+          description: Chi / Thu tab. Set on create (default both); a subcategory always has its parent's kind and
+            takes the new parent's kind when moved. Not enforced on transaction write in Phase 1.
         parentId:
           type:
           - string
@@ -2501,7 +2806,8 @@ components:
           - string
           - 'null'
           maxLength: 100
-          description: Token name from GET /categories/options, never a hex color.
+          description: One of GET /categories/options colorTokens (or null), never a hex color. A row that already holds
+            another catalog key may keep it unchanged.
         iconToken:
           type:
           - string
@@ -2509,19 +2815,40 @@ components:
           enum:
           - category
           - food
-          - transport
-          - housing
-          - bills
+          - coffee
+          - groceries
           - shopping
-          - health
-          - education
-          - entertainment
-          - family
+          - clothes
           - gifts
+          - transport
+          - bus
+          - fuel
           - travel
+          - housing
+          - repair
+          - electricity
+          - water
+          - internet
+          - phone
+          - health
+          - medicine
+          - sports
+          - family
+          - pets
+          - beauty
+          - education
+          - books
+          - music
+          - entertainment
+          - games
           - salary
           - bonus
+          - investment
+          - work
           - other_income
+          - bills
+          - insurance
+          - subscription
           - other_expense
           - null
         groupId:
@@ -2553,7 +2880,13 @@ components:
       required:
       - clientId
       - name
+      description: Two levels only (DS-P2-003) — parentId must be a root category; otherwise 400.
       properties:
+        kind:
+          type: string
+          enum: [expense, income, both]
+          default: both
+          description: Tab the category is created on. Ignored for a subcategory, which takes its parent's kind.
         clientId:
           type: string
           format: uuid
@@ -2572,7 +2905,8 @@ components:
           - string
           - 'null'
           maxLength: 100
-          description: Token name from GET /categories/options, never a hex color.
+          description: One of GET /categories/options colorTokens (or null), never a hex color. A row that already holds
+            another catalog key may keep it unchanged.
         iconToken:
           type:
           - string
@@ -2580,19 +2914,40 @@ components:
           enum:
           - category
           - food
-          - transport
-          - housing
-          - bills
+          - coffee
+          - groceries
           - shopping
-          - health
-          - education
-          - entertainment
-          - family
+          - clothes
           - gifts
+          - transport
+          - bus
+          - fuel
           - travel
+          - housing
+          - repair
+          - electricity
+          - water
+          - internet
+          - phone
+          - health
+          - medicine
+          - sports
+          - family
+          - pets
+          - beauty
+          - education
+          - books
+          - music
+          - entertainment
+          - games
           - salary
           - bonus
+          - investment
+          - work
           - other_income
+          - bills
+          - insurance
+          - subscription
           - other_expense
           - null
     UpdateCategoryRequest:
@@ -2600,6 +2955,8 @@ components:
       additionalProperties: false
       required:
       - version
+      description: A new parentId must be a root, and a category with children cannot get a parent (400 / 409).
+        Rows nested deeper before DS-P2-003 can still be edited in place.
       properties:
         version:
           type: integer
@@ -2620,7 +2977,8 @@ components:
           - string
           - 'null'
           maxLength: 100
-          description: Token name from GET /categories/options, never a hex color.
+          description: One of GET /categories/options colorTokens (or null), never a hex color. A row that already holds
+            another catalog key may keep it unchanged.
         iconToken:
           type:
           - string
@@ -2628,19 +2986,40 @@ components:
           enum:
           - category
           - food
-          - transport
-          - housing
-          - bills
+          - coffee
+          - groceries
           - shopping
-          - health
-          - education
-          - entertainment
-          - family
+          - clothes
           - gifts
+          - transport
+          - bus
+          - fuel
           - travel
+          - housing
+          - repair
+          - electricity
+          - water
+          - internet
+          - phone
+          - health
+          - medicine
+          - sports
+          - family
+          - pets
+          - beauty
+          - education
+          - books
+          - music
+          - entertainment
+          - games
           - salary
           - bonus
+          - investment
+          - work
           - other_income
+          - bills
+          - insurance
+          - subscription
           - other_expense
           - null
         archived:
@@ -2678,9 +3057,13 @@ components:
       required:
       - colorTokens
       - iconTokens
+      description: Picker choices in display order (DS-P2-003). colorTokens is the 20-colour grid after "no colour";
+        iconTokens is 36 icons in four groups of 6, 10, 11 and 9.
       properties:
         colorTokens:
           type: array
+          minItems: 20
+          maxItems: 20
           items:
             type: string
         iconTokens:
@@ -2688,21 +3071,41 @@ components:
           items:
             type: string
             enum:
-            - category
             - food
-            - transport
-            - housing
-            - bills
+            - coffee
+            - groceries
             - shopping
-            - health
-            - education
-            - entertainment
-            - family
+            - clothes
             - gifts
+            - transport
+            - bus
+            - fuel
             - travel
+            - housing
+            - repair
+            - electricity
+            - water
+            - internet
+            - phone
+            - health
+            - medicine
+            - sports
+            - family
+            - pets
+            - beauty
+            - education
+            - books
+            - music
+            - entertainment
+            - games
             - salary
             - bonus
+            - investment
+            - work
             - other_income
+            - bills
+            - insurance
+            - subscription
             - other_expense
     Tag:
       type: object
@@ -2736,6 +3139,10 @@ components:
         updatedAt:
           type: string
           format: date-time
+        transactionCount:
+          type: integer
+          minimum: 0
+          description: Not-deleted transactions with this tag. Only on GET /tags list items.
     CreateTagRequest:
       type: object
       additionalProperties: false
@@ -3244,7 +3651,10 @@ components:
       - page
       - pageSize
       - total
+      - summary
       properties:
+        summary:
+          $ref: '#/components/schemas/TransactionSummary'
         items:
           type: array
           items:
@@ -3256,6 +3666,41 @@ components:
         total:
           type: integer
           description: Count of legs, including both sides of transfers when both match filters.
+    TransactionSummary:
+      type: object
+      additionalProperties: false
+      required: [count, totals]
+      description: Over the whole filtered result, not only this page.
+      properties:
+        count:
+          type: integer
+          description: Transactions matching the filters; a transfer counts once.
+        totals:
+          type: array
+          description: Per currency, sorted by code; currencies with all four sums zero are omitted. Transfers are excluded from income and expense and summed apart per matching leg. No FX conversion.
+          items:
+            type: object
+            additionalProperties: false
+            required: [currency, incomeMinor, expenseMinor, transferInMinor, transferOutMinor]
+            properties:
+              currency:
+                type: string
+                pattern: ^[A-Z]{3}$
+              incomeMinor:
+                type: string
+                pattern: ^-?[0-9]+$
+              expenseMinor:
+                type: string
+                pattern: ^-?[0-9]+$
+                description: Signed (negative or zero).
+              transferInMinor:
+                type: string
+                pattern: ^-?[0-9]+$
+                description: Sum of matching transfer legs that add money (positive or zero). With one `accountId`, the money moved into that wallet.
+              transferOutMinor:
+                type: string
+                pattern: ^-?[0-9]+$
+                description: Sum of matching transfer legs that take money (negative or zero). With one `accountId`, the money moved out of that wallet.
     CreateFinancialAccount:
       type: object
       additionalProperties: false
@@ -3401,7 +3846,12 @@ components:
       - archivedAt
       - createdAt
       - updatedAt
+      - hasTransactions
       properties:
+        hasTransactions:
+          type: boolean
+          description: True when the account has any transaction, deleted ones included. Type and currencyCode
+            can then no longer change (PATCH returns 409), so clients lock those fields up front.
         id:
           type: string
           format: uuid
@@ -3474,6 +3924,28 @@ components:
         updatedAt:
           type: string
           format: date-time
+    ReorderFinancialAccounts:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          minItems: 1
+          maxItems: 500
+          description: Unique account ids.
+          items:
+            type: object
+            additionalProperties: false
+            required: [id, version]
+            properties:
+              id:
+                type: string
+                format: uuid
+              version:
+                type: integer
+                minimum: 1
+                maximum: 2147483646
     FinancialAccountPage:
       type: object
       additionalProperties: false
@@ -3541,6 +4013,10 @@ components:
       additionalProperties: false
       required: [locale, defaultCurrencyCode, timezone, fiscalMonthStartDay, version]
       properties:
+        displayName:
+          type: [string, 'null']
+          maxLength: 60
+          description: Optional name for greetings. Always returned (null when unset). On PUT, omit to keep the stored name; blank or null clears it. Never logged.
         locale:
           type: string
           enum: [vi, en]
@@ -3561,6 +4037,23 @@ components:
           type: integer
           minimum: 1
           maximum: 2147483646
+    OnboardingAnswers:
+      type: object
+      additionalProperties: false
+      properties:
+        goals:
+          type: array
+          maxItems: 2
+          uniqueItems: true
+          items:
+            type: string
+            enum: [track, save, budget, debt, emergency, understand]
+        trackingHabit:
+          type: string
+          enum: [manual, spreadsheet, app, none]
+        reviewCadence:
+          type: string
+          enum: [daily, weekly, monthly, rarely]
     ProfileOptions:
       type: object
       additionalProperties: false
@@ -3701,7 +4194,31 @@ components:
           minLength: 12
           maxLength: 128
           writeOnly: true
-          description: Not trimmed or normalized.
+          description: Not trimmed or normalized. Login accepts any 12–128 characters, so passwords set before
+            the letter-and-digit rule still work.
+    AuthRegisterRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - email
+      - password
+      - termsAccepted
+      properties:
+        email: *id001
+        password: &id004
+          type: string
+          minLength: 12
+          maxLength: 128
+          pattern: ^(?=[\s\S]*\p{L})(?=[\s\S]*\p{Nd})[\s\S]*$
+          writeOnly: true
+          description: Not trimmed or normalized. A new password needs at least one letter and one digit, in any
+            script (DS-P2-004); symbols are optional. Otherwise 400 VALIDATION_ERROR.
+        termsAccepted:
+          type: boolean
+          enum:
+          - true
+          description: The person ticked the Terms and Privacy policy checkbox. The server records the time and the
+            policy version on the user. Otherwise 400 VALIDATION_ERROR.
     AuthTokenRequest:
       type: object
       additionalProperties: false
@@ -3720,7 +4237,7 @@ components:
       - password
       properties:
         token: *id002
-        password: *id003
+        password: *id004
     AuthAccepted:
       type: object
       additionalProperties: false
@@ -3809,6 +4326,53 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CashflowAccountTotal'
+    TrendReport:
+      type: object
+      additionalProperties: false
+      required:
+      - kind
+      - buckets
+      properties:
+        kind:
+          type: string
+          enum:
+          - week
+          - month
+          - year
+        buckets:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - from
+            - to
+            - totals
+            properties:
+              from:
+                type: string
+                format: date
+              to:
+                type: string
+                format: date
+              totals:
+                type: array
+                description: Currencies with activity in the bucket, sorted by code.
+                items:
+                  type: object
+                  additionalProperties: false
+                  required:
+                  - currency
+                  - incomeMinor
+                  - expenseMinor
+                  properties:
+                    currency:
+                      type: string
+                      pattern: ^[A-Z]{3}$
+                    incomeMinor:
+                      $ref: '#/components/schemas/ReportMoney'
+                    expenseMinor:
+                      $ref: '#/components/schemas/ReportMoney'
     CashflowPeriod:
       type: object
       additionalProperties: false
@@ -3824,6 +4388,7 @@ components:
           enum:
           - week
           - month
+          - year
           - range
         from:
           type: string
@@ -3865,6 +4430,7 @@ components:
       - currency
       - incomeMinor
       - expenseMinor
+      - transactionCount
       properties:
         categoryId:
           type:
@@ -3884,6 +4450,10 @@ components:
           $ref: '#/components/schemas/ReportMoney'
         expenseMinor:
           $ref: '#/components/schemas/ReportMoney'
+        transactionCount:
+          type: integer
+          minimum: 1
+          description: Income and expense transactions counted in this row.
     CashflowAccountTotal:
       type: object
       additionalProperties: false
@@ -4002,11 +4572,14 @@ components:
     AccountExportProfile:
       type: object
       additionalProperties: false
-      required: [email, locale, timezone, defaultCurrencyCode, fiscalMonthStartDay, emailVerifiedAt, categoriesInitializedAt, categoriesSupplementedAt, createdAt, updatedAt]
+      required: [email, displayName, locale, timezone, defaultCurrencyCode, fiscalMonthStartDay, emailVerifiedAt, categoriesInitializedAt, categoriesSupplementedAt, createdAt, updatedAt]
       properties:
         email:
           type: string
           format: email
+        displayName:
+          type: [string, 'null']
+          maxLength: 60
         locale:
           type: string
         timezone:

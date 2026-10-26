@@ -45,6 +45,17 @@ class MemorySyncRepository implements SyncRepository {
   @override
   Future<void> write(List<SyncQueueItem> value) async => items = value;
 
+  DateTime? stamp;
+  @override
+  Future<DateTime?> lastSyncedAt() async => stamp;
+  @override
+  Future<void> markSynced(DateTime at) async => stamp = at;
+  @override
+  Future<void> clear() async {
+    items = const [];
+    stamp = null;
+  }
+
   @override
   Future<Either<AuthFailure, List<SyncItemResult>>> submit(
     List<SyncQueueItem> batch,
@@ -71,6 +82,7 @@ void main() {
             ),
           )
           ..stage = AuthStage.unlocked
+          ..hasPin = true
           ..ready = true;
     final walletCases = DefaultWalletUseCases(WalletRepositoryImpl(api));
     wallets = DefaultWalletViewModel(walletCases, auth);

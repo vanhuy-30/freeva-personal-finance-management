@@ -43,9 +43,15 @@ class DefaultTransactionUseCases implements TransactionUseCases {
     return _repository.list(
       TransactionQuery(
         page: query.page,
+        pageSize: query.pageSize,
         deleted: query.deleted,
         type: query.type,
         search: search == null || search.isEmpty ? null : search,
+        from: query.from,
+        to: query.to,
+        accountIds: query.accountIds,
+        categoryIds: query.categoryIds,
+        tagIds: query.tagIds,
       ),
     );
   }

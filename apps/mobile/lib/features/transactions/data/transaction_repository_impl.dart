@@ -105,15 +105,23 @@ class TransactionRepositoryImpl implements TransactionRepository {
     TransactionQuery query,
   ) {
     final search = query.search;
-    final params = <String, String>{
-      'page': '${query.page}',
-      'pageSize': '50',
-      'status': query.deleted ? 'deleted' : 'active',
-      if (query.type != null) 'type': query.type!.name,
-      if (search != null) 'search': search,
-    };
+    // Repeated keys for multi-value filters (`accountId=a&accountId=b`).
+    final params = <(String, String)>[
+      ('page', '${query.page}'),
+      ('pageSize', '${query.pageSize}'),
+      ('status', query.deleted ? 'deleted' : 'active'),
+      if (query.sort != TransactionSort.date) ('sort', query.sort.name),
+      if (query.type != null) ('type', query.type!.name),
+      if (query.currency != null) ('currency', query.currency!),
+      if (search != null) ('search', search),
+      if (query.from != null) ('from', query.from!),
+      if (query.to != null) ('to', query.to!),
+      for (final id in query.accountIds) ('accountId', id),
+      for (final id in query.categoryIds) ('categoryId', id),
+      for (final id in query.tagIds) ('tagId', id),
+    ];
     final path =
-        'transactions?${params.entries.map((e) => '${e.key}=${Uri.encodeQueryComponent(e.value)}').join('&')}';
+        'transactions?${params.map((e) => '${e.$1}=${Uri.encodeQueryComponent(e.$2)}').join('&')}';
     return _request('GET', path, (json) {
       final legs = (json['items'] as List)
           .map((item) => _leg(item as Map<String, dynamic>))
@@ -122,6 +130,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
         legs: List.unmodifiable(legs),
         page: json['page'] as int,
         total: json['total'] as int,
+        summary: _summary(json['summary']),
       );
     });
   }
@@ -167,3 +176,25 @@ class TransactionRepositoryImpl implements TransactionRepository {
     body: {'version': version, 'deleted': false},
   );
 }
+
+/// Older servers omit `summary`; treat that as empty.
+TransactionSummary _summary(Object? raw) {
+  if (raw is! Map<String, dynamic>) return TransactionSummary.empty;
+  return TransactionSummary(
+    count: raw['count'] as int,
+    totals: [
+      for (final row in raw['totals'] as List)
+        TransactionTotal(
+          currency: (row as Map<String, dynamic>)['currency'] as String,
+          income: BigInt.parse(row['incomeMinor'] as String),
+          expense: BigInt.parse(row['expenseMinor'] as String),
+          transferIn: _optionalMinor(row['transferInMinor']),
+          transferOut: _optionalMinor(row['transferOutMinor']),
+        ),
+    ],
+  );
+}
+
+/// Older servers omit transfer sums; treat that as zero.
+BigInt _optionalMinor(Object? raw) =>
+    raw == null ? BigInt.zero : BigInt.parse(raw as String);

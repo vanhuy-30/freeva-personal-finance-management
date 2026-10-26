@@ -26,6 +26,7 @@ void main() {
             ),
           )
           ..stage = AuthStage.unlocked
+          ..hasPin = true
           ..ready = true;
   });
 
@@ -113,13 +114,108 @@ void main() {
           status: 'replayed',
           review: false,
           duplicateHint: true,
+          transactionId: 'new-1',
+          duplicateIds: ['old-1'],
         ),
       ];
       await model.flush();
       expect(model.items, isEmpty);
-      expect(model.duplicateHint, isTrue);
+      expect(model.duplicate?.newId, 'new-1');
+      expect(model.duplicate?.existingId, 'old-1');
       expect('${analytics.events}', isNot(contains('op-50')));
       model.dispose();
+    },
+  );
+
+  test(
+    'tracks how the last attempt went and when the server last answered',
+    () async {
+      final repository = _Repository([_item('one')]);
+      final model = _model(repository, auth, analytics);
+      repository.failure = const AuthFailure(AuthError.network);
+      await model.flush();
+      expect(model.link, SyncLink.offline);
+      expect(model.lastSyncedAt, isNull);
+      repository.failure = const AuthFailure(AuthError.unavailable);
+      await model.flush();
+      expect(model.link, SyncLink.unavailable);
+      repository.failure = null;
+      await model.flush();
+      expect(model.link, SyncLink.ok);
+      expect(model.lastSyncedAt, isNotNull);
+      expect(repository.stamp, model.lastSyncedAt);
+      await model.clear();
+      expect(model.lastSyncedAt, isNull);
+    },
+  );
+
+  test('retry sends a failed change again and leaves the others', () async {
+    final failed = _item(
+      'one',
+    ).copyWith(status: SyncItemStatus.failed, reason: SyncReason.unavailable);
+    final repository = _Repository([failed, _item('two')]);
+    final model = _model(repository, auth, analytics);
+    await model.flush();
+    expect(model.items.map((i) => i.opId), ['one']);
+    await model.retry('one');
+    expect(model.items, isEmpty);
+    expect(repository.batches.last.single.opId, 'one');
+  });
+
+  test('each alike pair is asked about once, in order', () async {
+    final repository = _Repository([_item('one'), _item('two')])
+      ..results = const [
+        SyncItemResult(
+          opId: 'one',
+          status: 'applied',
+          review: false,
+          duplicateHint: true,
+          transactionId: 'n1',
+          duplicateIds: ['o1'],
+        ),
+        SyncItemResult(
+          opId: 'two',
+          status: 'applied',
+          review: false,
+          duplicateHint: true,
+          transactionId: 'n2',
+          duplicateIds: ['o2'],
+        ),
+      ];
+    final model = _model(repository, auth, analytics);
+    await model.flush();
+    expect(model.duplicate?.newId, 'n1');
+    model.dismissDuplicate();
+    expect(model.duplicate?.newId, 'n2');
+    model.dismissDuplicate();
+    expect(model.duplicate, isNull);
+  });
+
+  test(
+    'keeping this device\'s version sends it again on the server version',
+    () async {
+      final conflict = _item('one').copyWith(
+        action: SyncAction.update,
+        serverId: 'srv-1',
+        version: 1,
+        status: SyncItemStatus.conflict,
+        reason: SyncReason.changedElsewhere,
+        server: const SyncServerCopy(
+          id: 'srv-1',
+          version: 4,
+          occurredOn: '2026-10-22',
+          amountMinor: '-60000',
+          currencyCode: 'VND',
+        ),
+      );
+      final repository = _Repository([conflict]);
+      final model = _model(repository, auth, analytics);
+      // Let the flush the view model starts on creation finish first.
+      await Future<void>.delayed(Duration.zero);
+      await model.keepLocal('one');
+      expect(repository.batches.single.single.version, 4);
+      expect(repository.batches.single.single.action, SyncAction.update);
+      expect(model.items, isEmpty);
     },
   );
 
@@ -179,6 +275,17 @@ class _Repository implements SyncRepository {
 
   @override
   Future<void> write(List<SyncQueueItem> value) async => items = value;
+
+  DateTime? stamp;
+  @override
+  Future<DateTime?> lastSyncedAt() async => stamp;
+  @override
+  Future<void> markSynced(DateTime at) async => stamp = at;
+  @override
+  Future<void> clear() async {
+    items = const [];
+    stamp = null;
+  }
 
   @override
   Future<Either<AuthFailure, List<SyncItemResult>>> submit(

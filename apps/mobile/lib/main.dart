@@ -11,9 +11,11 @@ import 'package:timezone/data/latest.dart' as tzdata;
 import 'core/di/injection.dart';
 import 'core/config/app_config.dart';
 import 'core/l10n/generated/app_localizations.dart';
+import 'core/logging/app_logger.dart';
 import 'core/router/app_router.dart';
 import 'core/sentry/sentry_bootstrap.dart';
 import 'core/theme/app_theme.dart';
+import 'core/theme/tokens.g.dart';
 
 Future<void> main() async {
   await runFreeva(_boot);
@@ -23,10 +25,14 @@ Future<void> _boot() async {
   WidgetsFlutterBinding.ensureInitialized();
   tzdata.initializeTimeZones();
   await configureDependencies();
-  getIt<AppConfig>().validate();
+  final config = getIt<AppConfig>();
+  final logger = getIt<AppLogger>();
+  config.validate();
+  logger.op('boot env=${config.environment.name} api=${config.apiBaseUrl}');
   await getIt<SettingsViewModel>().load();
   getIt<SyncViewModel>();
   createAppRouter();
+  logger.op('boot ready');
   runApp(const FreevaApp());
 }
 
@@ -46,6 +52,10 @@ class FreevaApp extends StatelessWidget {
           darkTheme: AppTheme.dark,
           themeMode: themeModeFor(settings.theme),
           routerConfig: appRouter,
+          builder: (context, child) => MediaQuery.withClampedTextScaling(
+            maxScaleFactor: FreevaTypography.maxTextScale,
+            child: child!,
+          ),
           locale: Locale(profile.locale),
           supportedLocales: S.supportedLocales,
           localizationsDelegates: const [

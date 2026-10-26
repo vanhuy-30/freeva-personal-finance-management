@@ -40,7 +40,21 @@ export interface TransactionLeg extends LegInput {
 export interface TransactionBundle { legs: TransactionLeg[]; fx: (ManualFx & { id: string; fromCode: string; toCode: string }) | null }
 export interface TransactionQuery {
   page: number; pageSize: number; status: 'active' | 'deleted' | 'all';
-  accountId?: string; categoryId?: string; type?: TransactionType; from?: string; to?: string; search?: string;
+  /** `date` is newest first; `amountDesc` is the largest amount first, ignoring sign ("Giao dịch lớn nhất"). */
+  sort?: 'date' | 'amountDesc';
+  /** Any of these (OR within one filter, AND across filters). */
+  accountIds?: string[]; categoryIds?: string[]; tagIds?: string[];
+  type?: TransactionType; from?: string; to?: string; search?: string;
+  /** ISO 4217 code of the transaction (leg) currency. */
+  currency?: string;
+}
+/**
+ * Totals over the whole filtered result, not just the page. Transfers are counted once and excluded from income/expense;
+ * transfer legs matching the filter are summed apart (in > 0, out < 0) so a one-wallet filter gives that wallet's flow.
+ */
+export interface TransactionSummary {
+  count: number;
+  totals: { currency: string; incomeMinor: bigint; expenseMinor: bigint; transferInMinor: bigint; transferOutMinor: bigint }[];
 }
 export function minor(value: string): bigint {
   if (!/^-?[0-9]+(?![\s\S])/.test(value) || value.length > 20) throw new TransactionError('VALIDATION_ERROR');

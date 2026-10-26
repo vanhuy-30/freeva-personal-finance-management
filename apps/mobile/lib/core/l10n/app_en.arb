@@ -11,16 +11,9 @@
   },
   "authLogin": "Sign in",
   "authRegister": "Create account",
-  "authResendVerification": "Send verification code",
-  "authVerifyEmail": "Verify email",
-  "authForgotPassword": "Forgot password",
-  "authResetPassword": "Reset password",
   "authEmail": "Email",
   "authPassword": "Password",
-  "authPasswordHelp": "12–128 characters; spaces are preserved.",
-  "authEmailCode": "64-character code from email",
-  "authSuccess": "Request processed. If you requested a code, check your email if the account is eligible. After verification or password reset, you can sign in.",
-  "authInvalidInput": "Check your email, password, email code, or matching six-digit PINs.",
+  "authInvalidInput": "Check your email and password.",
   "authInvalidCredentials": "Email or password is incorrect.",
   "authInvalidToken": "Code is invalid, already used, or expired.",
   "authRateLimited": "Too many requests. Try again in {seconds} seconds.",
@@ -29,17 +22,8 @@
   "authUnavailable": "Unable to complete. Check service configuration or use your PIN if biometrics are unavailable.",
   "authWrongPin": "Incorrect PIN. After five failed attempts, sign in again.",
   "authExpired": "Session expired, was revoked, or PIN attempts exceeded. Please sign in again.",
-  "authSetupPin": "Set up PIN",
-  "authLocked": "Freeva is locked",
-  "authPinHelp": "Use a six-digit PIN to unlock this device.",
-  "authPin": "PIN",
-  "authConfirmPin": "Confirm PIN",
-  "authEnableBiometric": "Enable biometric unlock",
   "authBiometricReason": "Authenticate to unlock Freeva",
-  "authUnlock": "Unlock",
   "authUseBiometric": "Use biometrics",
-  "authForgetDevice": "Forgot PIN / sign in again",
-  "authForgetHelp": "Removes credentials on this device. The server session remains until expiry or revocation in session management.",
   "authSessions": "Manage sessions",
   "authCurrentSession": "Current session",
   "authOtherSession": "Other session",
@@ -62,36 +46,18 @@
       }
     }
   },
-  "authWelcomeTitle": "Welcome to Freeva",
-  "authWelcomeSubtitle": "Start your journey to a healthier financial future.",
-  "authEmailPlaceholder": "Enter your email",
   "authContinue": "Continue",
-  "authWelcomeBack": "Welcome back",
-  "authLoginSubtitle": "Enter your password to pick up where you left off.",
-  "authCreateTitle": "Create your Freeva account",
-  "authRegisterSubtitle": "Create a password to start taking care of your finances.",
   "authCreateAccount": "Create account",
-  "authVerifyTitle": "Check your email",
-  "authVerifySubtitle": "Your verification code was sent when you signed up. Enter it below to finish.",
-  "authVerifyAndContinue": "Verify and continue",
-  "authResendCode": "No code yet? Send again",
-  "authCodeResent": "A new code has been requested. Check your inbox and spam folder.",
-  "authVerifiedNotice": "Email verified. Sign in to continue.",
+  "authVerifyTitle": "Confirm your email",
   "authRecoverTitle": "Forgot your password?",
-  "authRecoverSubtitle": "We’ll send a recovery code to your email.",
-  "authSendResetCode": "Send recovery code",
-  "authNewPasswordTitle": "Create a new password",
-  "authResetSubtitle": "Check your email for a recovery code, then choose a new password.",
+  "authRecoverSubtitle": "Enter your email and Freeva sends a reset link.",
+  "authNewPasswordTitle": "Set a new password",
   "authNewPassword": "New password",
   "authConfirmPassword": "Confirm password",
-  "authSavePassword": "Save new password",
-  "authPasswordChanged": "Password changed. Sign in with your new password.",
+  "authPasswordChanged": "Password changed. Sign in with the new one.",
   "authPasswordMismatch": "The passwords don’t match. Please try again.",
   "authInvalidEmail": "Please enter a valid email address.",
-  "authShowPassword": "Show password",
-  "authHidePassword": "Hide password",
   "authBack": "Go back",
-  "authSecurityNote": "Your account is protected by your password and app lock.",
   "profileTitle": "Financial profile",
   "profileLanguage": "Language",
   "profileVietnamese": "Vietnamese",
@@ -121,24 +87,11 @@
   "walletName": "Wallet name",
   "walletType": "Wallet type",
   "walletInitialBalance": "Initial balance",
-  "walletCreditLimit": "Credit limit (optional)",
-  "walletCloseDay": "Statement day (1–28, optional)",
-  "walletDueDay": "Payment day (1–28, optional)",
-  "walletMoneyHint": "Enter amounts in the selected currency without thousands separators. For example: VND 10000; USD 10.50.",
-  "walletEditHint": "Wallet type and currency cannot change once transactions exist. Edit the initial balance only to correct it.",
-  "walletShowHidden": "Show hidden wallets",
   "walletHide": "Hide wallet",
-  "walletRestore": "Restore wallet",
-  "walletHideExplanation": "Hiding archives the wallet from the active list. Its balance and history are preserved and it can be restored later.",
-  "walletMoveUp": "Move up",
-  "walletMoveDown": "Move down",
-  "walletEmpty": "No wallets yet. Add your first wallet to get started.",
   "walletHiddenEmpty": "No hidden wallets.",
-  "walletBalance": "Balance: {amount} {currency}",
-  "walletInvalid": "Check the name, amounts and days (1–28). Type or currency may be locked because transactions exist.",
-  "walletConflict": "This wallet changed elsewhere. Return to the list and reload before editing again.",
-  "walletError": "Could not load or save wallets. Please try again.",
-  "walletReloadRequired": "The operation may have been partially saved. Reload the list to get the latest state.",
+  "walletInvalid": "Check the name and amounts.",
+  "walletConflict": "This wallet changed elsewhere. Open it again to edit.",
+  "walletError": "Couldn't save the wallet. Try again.",
   "transactionTitle": "Transactions",
   "transactionRecord": "Record transaction",
   "transactionExpense": "Expense",
@@ -157,7 +110,7 @@
   "transactionTagCreate": "Create tag",
   "transactionTagCreateTitle": "Create a new tag",
   "transactionTagName": "Tag name",
-  "transactionTagLimit": "At most 20 tags on one transaction.",
+  "transactionTagLimit": "Up to 20 tags",
   "transactionSave": "Save",
   "transactionEdit": "Edit transaction",
   "transactionCopy": "Copy",
@@ -179,64 +132,16 @@
   "transactionRate": "Exchange rate",
   "transactionRateHint": "Enter a manual rate. The destination amount must match the smallest currency unit exactly.",
   "transactionLoadMore": "Load more",
-  "syncPending": "{count} changes waiting to sync",
-  "@syncPending": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "syncNow": "Sync",
-  "syncing": "Syncing",
-  "syncConflict": "Not overwritten. Reload to see the copy on the server.",
-  "syncReview": "The amount differs from the saved copy. Not overwritten.",
-  "syncFailedItem": "This change could not be synced.",
-  "syncDiscard": "Discard",
-  "syncSchema": "Sync is paused because the app and server schemas differ.",
-  "syncDuplicate": "A similar transaction may already exist. This one was still kept.",
-  "syncDelete": "Delete",
-  "syncRestore": "Restore",
-  "syncChange": "Change",
-  "syncItem": "{action} · {date}",
-  "@syncItem": {
-    "placeholders": {
-      "action": {
-        "type": "String"
-      },
-      "date": {
-        "type": "String"
-      }
-    }
-  },
   "categoryTitle": "Categories",
   "categoryAdd": "Add category",
   "categoryEdit": "Edit category",
   "categoryName": "Category name",
-  "categoryParent": "Parent category",
-  "categoryNoParent": "No parent",
   "categoryColor": "Color",
-  "categoryNoColor": "No color",
   "categoryIcon": "Icon",
-  "categoryNoIcon": "No icon",
-  "categorySystem": "Default category",
-  "categoryShowHidden": "Show hidden categories",
-  "categoryHide": "Hide category",
-  "categoryRestore": "Restore category",
-  "categoryHideExplanation": "Hiding archives the category from the active list. Existing transactions keep it; hidden categories cannot be used for new records.",
-  "categoryHideBlocked": "Hide or move active child categories before hiding this one.",
-  "categoryDelete": "Delete category",
-  "categoryDeleteTitle": "Delete this category permanently?",
-  "categoryDeleteBody": "A deleted category cannot be restored. If any transaction still references it, including a soft-deleted one, choose a replacement.",
-  "categoryDeleteBlocked": "Delete or move every child, including hidden ones, before deleting this category.",
-  "categoryReplacement": "Replacement category",
-  "categoryNoReplacement": "Do not move transactions",
-  "categoryEmpty": "No categories yet.",
   "categoryHiddenEmpty": "No hidden categories.",
-  "categoryInvalid": "Check the name (1–100 characters), parent, color and icon. A category cannot be its own parent or sit under its child.",
-  "categoryConflict": "This category changed elsewhere. Reload the list before editing again.",
-  "categoryError": "Could not load or save categories. Please try again.",
-  "categoryReloadRequired": "The data is stale. Reload before editing again.",
+  "categoryInvalid": "Check the name and main category.",
+  "categoryConflict": "This category changed elsewhere. Open it again to edit.",
+  "categoryError": "Couldn't save the category. Try again.",
   "reportTitle": "Reports",
   "reportOverview": "Overview",
   "reportThisMonth": "This month",
@@ -245,22 +150,14 @@
   "reportLiabilities": "Liabilities",
   "reportIncome": "Income",
   "reportExpense": "Expense",
-  "reportNet": "Cashflow",
-  "reportTransfer": "Transfer",
   "reportWeek": "Week",
   "reportMonth": "Month",
-  "reportRange": "Date range",
+  "reportRange": "Custom",
   "reportPrevious": "Previous period",
   "reportNext": "Next period",
-  "reportFrom": "From",
-  "reportTo": "To",
   "reportApply": "Show this range",
-  "reportByCategory": "By category",
-  "reportByAccount": "By wallet",
-  "reportUncategorized": "Uncategorized",
-  "reportEmpty": "Nothing to show for this period.",
   "reportError": "Could not load the report. Please try again.",
-  "reportInvalid": "That date range is invalid. The start must be on or before the end, and the dates can be at most 3660 days apart.",
+  "reportInvalid": "That date range isn't valid.",
   "reportPeriod": "{from} – {to}",
   "reportAmount": "{label}: {amount} {currency}",
   "@reportPeriod": {
@@ -286,16 +183,6 @@
       }
     }
   },
-  "@walletBalance": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      },
-      "currency": {
-        "type": "String"
-      }
-    }
-  },
   "settingsTitle": "Settings",
   "settingsBack": "Back",
   "settingsAppearance": "Appearance",
@@ -313,7 +200,6 @@
   "settingsBiometricFailed": "Biometrics were not confirmed. The setting was not changed.",
   "settingsHelp": "Help",
   "settingsFaq": "FAQ",
-  "settingsFeedback": "Send feedback",
   "settingsTerms": "Terms of service (draft)",
   "settingsPrivacy": "Privacy policy (draft)",
   "settingsVersion": "Version {version}",
@@ -325,16 +211,6 @@
       }
     }
   },
-  "onboardingSkip": "Skip",
-  "onboardingNext": "Next",
-  "onboardingBack": "Back",
-  "onboardingFinish": "Done",
-  "onboardingWelcomeTitle": "Welcome to Freeva",
-  "onboardingWelcomeBody": "A short introduction so you can record money without extra help.",
-  "onboardingWalletTitle": "Create a wallet",
-  "onboardingWalletBody": "Add a cash, bank, e-wallet, or credit wallet. Each amount stays in its own currency.",
-  "onboardingTransactionTitle": "Record the first transaction",
-  "onboardingTransactionBody": "From Home, record income, an expense, or a transfer between two wallets.",
   "faqTitle": "FAQ",
   "faqWalletQ": "How do I add a wallet?",
   "faqWalletA": "Open Wallets from Home, then create a cash, bank, e-wallet, or credit wallet.",
@@ -346,22 +222,14 @@
   "faqLockA": "Freeva locks when you leave the app. Unlock with your six-digit PIN. You can turn on biometrics in Settings after a PIN exists.",
   "faqThemeQ": "How do I switch light and dark mode?",
   "faqThemeA": "Open Settings and choose Light, Dark, or System. Light is the default and stays on this device.",
-  "feedbackTitle": "Feedback",
-  "feedbackIdea": "Idea",
-  "feedbackProblem": "Problem",
-  "feedbackMessage": "Message",
-  "feedbackCopy": "Copy feedback",
-  "feedbackCopied": "Copied. A contact address is not configured yet, so Freeva does not send this message.",
-  "feedbackInvalid": "Enter a message of up to 2000 characters.",
-  "feedbackHelp": "Freeva copies the message on this device. It is not uploaded and is not written to logs.",
   "legalDraft": "Draft for PRD-P0-002. This is not legal advice and is not in effect. The operating entity and contact channel are not decided yet.",
   "tosTitle": "Terms of service",
   "tosBody": "Freeva lets you record wallets and transactions you enter. You keep your financial data. The service operator is not decided yet. Account export and deletion are separate release work. This summary does not replace a lawyer-reviewed agreement.",
   "privacyTitle": "Privacy policy",
   "privacyBody": "The account stores email, language, time zone, default currency, and the financial month start day. Amounts you enter are not written to logs. Feedback you compose stays on this device until a contact channel exists. Analytics events do not include email, balances, or account numbers. This summary does not replace a lawyer-reviewed policy.",
   "balanceHiddenMask": "••••",
-  "balanceHide": "Hide amounts",
-  "balanceShow": "Show amounts",
+  "balanceHide": "Hide balances",
+  "balanceShow": "Show balances",
   "settingsPrivacyControls": "Privacy",
   "settingsHideBalances": "Hide balances",
   "settingsHideBalancesHelp": "Masks amounts shown on this device. Fields you are editing still show what you type.",
@@ -369,5 +237,1546 @@
   "settingsSessionAlertsHelp": "Warns on this device when another session appears. The alert does not include an email, balance, or device name.",
   "sessionAlertTitle": "New sign-in",
   "sessionAlertBody": "Another session signed in. Open Freeva to review it and revoke it if it was not you.",
-  "sessionAlertReview": "Review sessions"
+  "sessionAlertReview": "Review sessions",
+  "navOverview": "Overview",
+  "navTransactions": "Transactions",
+  "navReports": "Reports",
+  "navMe": "Me",
+  "navRecord": "Record transaction",
+  "commonUndo": "Undo",
+  "commonRetry": "Try again",
+  "commonClose": "Close",
+  "commonCancel": "Cancel",
+  "balanceHiddenSemantics": "balance hidden",
+  "keypadDelete": "Delete",
+  "commonLoading": "Loading",
+  "passwordShow": "Show password",
+  "passwordHide": "Hide password",
+  "homeDatePattern": "EEEE, MMM d",
+  "homeMonthPattern": "MMMM",
+  "homeGreeting": "Hi {name}",
+  "@homeGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "homeGreetingAnon": "Hi there",
+  "homeSearch": "Search transactions",
+  "homeNotifications": "Notifications",
+  "homeTotalBalance": "Total balance · {count} wallets",
+  "@homeTotalBalance": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeTotalBalanceIn": "Total balance · {count} {currency} wallets",
+  "@homeTotalBalanceIn": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "homeOtherCurrency": "{amount} {currency} · {count} wallets",
+  "@homeOtherCurrency": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeIncomeMonth": "Income in {month}",
+  "@homeIncomeMonth": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "homeExpenseMonth": "Spent in {month}",
+  "@homeExpenseMonth": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "homeQuickIncome": "Add income",
+  "homeQuickTransfer": "Move money",
+  "homeQuickWallets": "My wallets",
+  "homeQuickCategories": "Categories",
+  "homeSpendOther": "Other",
+  "homeSpendEmpty": "No spending yet.",
+  "homeSpendRecord": "Add expense",
+  "homeOtherCurrencySpend": "{currency} wallets: {amount} {currency} spent this month",
+  "@homeOtherCurrencySpend": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "homeReviewMonth": "Look back at {month}",
+  "@homeReviewMonth": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "homeReviewLine": "Spent {expense} · Earned {income}",
+  "@homeReviewLine": {
+    "placeholders": {
+      "expense": {
+        "type": "String"
+      },
+      "income": {
+        "type": "String"
+      }
+    }
+  },
+  "homeCreditTitle": "Credit cards",
+  "homeCreditDue": "Due {date}",
+  "@homeCreditDue": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeCreditUsed": "Used {used} of {limit}",
+  "@homeCreditUsed": {
+    "placeholders": {
+      "used": {
+        "type": "String"
+      },
+      "limit": {
+        "type": "String"
+      }
+    }
+  },
+  "homeCreditUsedNoLimit": "Used {used}",
+  "@homeCreditUsedNoLimit": {
+    "placeholders": {
+      "used": {
+        "type": "String"
+      }
+    }
+  },
+  "homeRecent": "Recent",
+  "homeSeeTransactions": "See transactions",
+  "homeRecentEmpty": "Your transactions will show here",
+  "homePendingSync": "Waiting to sync",
+  "homeOfflineTitle": "Offline · Figures from {time}",
+  "@homeOfflineTitle": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "homeOfflineBody": "You can still add expenses.",
+  "homeErrorTitle": "Couldn't load your balance",
+  "homeErrorBody": "Your data is safe.",
+  "homeSpokenExpense": "minus {amount} {currency}",
+  "@homeSpokenExpense": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "homeSpokenIncome": "plus {amount} {currency}",
+  "@homeSpokenIncome": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "homeSpokenRow": "{amount}, {title}, {detail}",
+  "@homeSpokenRow": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "title": {
+        "type": "String"
+      },
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "homeUncategorized": "Uncategorized",
+  "notificationsEmpty": "No notifications yet",
+  "notificationsEmptyBody": "Reminders and alerts will show here.",
+  "homeSpokenVnd": "dong",
+  "txSearchAction": "Search",
+  "txFilterAction": "Filters",
+  "txFilterActive": "Filters on",
+  "txPeriodThisWeek": "This week",
+  "txPeriodThisMonth": "This month",
+  "txPeriodLastMonth": "Last month",
+  "txPeriodCustom": "Custom",
+  "txPeriodAllTime": "All time",
+  "txMonthChip": "{month}",
+  "@txMonthChip": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "txRangeChip": "{from} – {to}",
+  "@txRangeChip": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "txToday": "Today",
+  "txDayHeader": "{day} · {date}",
+  "@txDayHeader": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "txChipRemove": "Remove {label}",
+  "@txChipRemove": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "txFilterReset": "Reset",
+  "txFilterPeriod": "Time",
+  "txFilterWallets": "Wallets",
+  "txFilterCategories": "Categories",
+  "txFilterTags": "Tags",
+  "txFilterAny": "All",
+  "txFilterDeleted": "Deleted",
+  "txFilterApply": "Show {count} transactions",
+  "@txFilterApply": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "txFilterApplyUnknown": "Show transactions",
+  "txFilterDone": "Done",
+  "txNoResultTitle": "No matching transactions",
+  "txNoResultBody": "Try removing a filter.",
+  "txNoResultClear": "Clear filters",
+  "txEmptyTitle": "No transactions yet",
+  "txEmptyBody": "Your first expense takes seconds.",
+  "txEmptyAction": "Add expense",
+  "txSearchHint": "Search transactions",
+  "txSearchCancel": "Cancel",
+  "txSearchClear": "Clear text",
+  "txSearchResults": "{count} results",
+  "@txSearchResults": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "txSearchPrompt": "Search by store, note or amount.",
+  "txDetailCategory": "Category",
+  "txDetailWallet": "Wallet",
+  "txDetailDate": "Date",
+  "txDetailTags": "Tags",
+  "txDetailNotes": "Note",
+  "txDetailFrom": "From",
+  "txDetailTo": "To",
+  "txDetailDelete": "Delete transaction",
+  "txDetailCopy": "Duplicate",
+  "txDetailEdit": "Edit",
+  "txKindExpense": "expense",
+  "txKindIncome": "income",
+  "txKindTransfer": "transfer",
+  "txDeletedToast": "Deleted {kind}",
+  "@txDeletedToast": {
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "txRestoredToast": "Restored",
+  "txTrashTitle": "Deleted",
+  "txTrashBody": "Restore to bring it back to your list.",
+  "txTrashRestore": "Restore",
+  "txTrashEmpty": "Nothing deleted",
+  "txLoadFailed": "Couldn't load transactions",
+  "txTransferTitle": "Transfer",
+  "txAmountLabel": "Amount",
+  "txTransferAmountLabel": "Amount to move",
+  "txDateLabel": "Date",
+  "txMoreButton": "Note, store, tags",
+  "txSaveExpense": "Save expense",
+  "txSaveIncome": "Save income",
+  "txSaveTransfer": "Save transfer",
+  "txSaveChanges": "Save changes",
+  "txEditTitle": "Edit {kind}",
+  "@txEditTitle": {
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "txMerchantLabel": "Store",
+  "txMerchantHint": "e.g. Corner Café",
+  "txNotesHint": "Add a note",
+  "txAddTag": "Add tag",
+  "txPickCategory": "Choose a category",
+  "txFindCategory": "Find a category",
+  "txFrequent": "Frequent",
+  "txFindOrCreateTag": "Find or create a tag",
+  "txCreateTag": "Create tag “{name}”",
+  "@txCreateTag": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "txSelected": "Selected",
+  "txSwap": "Swap direction",
+  "txPickWallet": "Choose a wallet",
+  "txWalletSubExpense": "The expense comes out of this wallet",
+  "txWalletSubIncome": "The income goes into this wallet",
+  "txRateLabel": "Rate at {time}",
+  "@txRateLabel": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "txRateEmpty": "Enter a rate",
+  "txRateValue": "1 {from} = {rate} {to}",
+  "@txRateValue": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "rate": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "txReceived": "Received",
+  "txRateTitle": "Exchange rate",
+  "txDateTitle": "Choose a date",
+  "txYesterday": "Yesterday",
+  "txSavedToast": "Saved {kind}",
+  "@txSavedToast": {
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "txDiscardTitle": "Discard this {kind}?",
+  "@txDiscardTitle": {
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "txDiscardBody": "The amount and note won't be saved.",
+  "txKeepEditing": "Keep editing",
+  "txDiscard": "Discard",
+  "txAmountMissing": "Enter an amount first.",
+  "txPickDestination": "Choose the wallet that receives it.",
+  "txRateInvalid": "This rate doesn't work for this amount.",
+  "walletTotal": "Total balance · {count, plural, =1{1 wallet} other{{count} wallets}}",
+  "@walletTotal": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "walletOtherTotal": "{amount} · {count, plural, =1{1 wallet} other{{count} wallets}}",
+  "@walletOtherTotal": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "walletSort": "Sort",
+  "walletSortTitle": "Arrange wallets",
+  "walletSortHint": "Hold and drag, or use the arrows.",
+  "walletSortDone": "Done",
+  "walletMoveUpNamed": "Move {name} up",
+  "@walletMoveUpNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "walletMoveDownNamed": "Move {name} down",
+  "@walletMoveDownNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "walletSortFailed": "Couldn't save the order. Try again.",
+  "walletHiddenTitle": "Hidden wallets",
+  "walletHiddenHint": "History stays. Restore any time.",
+  "walletRestoreShort": "Restore",
+  "walletRestored": "{name} is back",
+  "@walletRestored": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "walletRestoreNamed": "Restore {name}",
+  "@walletRestoreNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "walletDueOn": "due {date}",
+  "@walletDueOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "walletTypeCurrency": "{type} · {currency}",
+  "@walletTypeCurrency": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "walletMonthIn": "In, month {month}",
+  "@walletMonthIn": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "walletMonthOut": "Out, month {month}",
+  "@walletMonthOut": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "walletRecordFrom": "Record from here",
+  "walletTransfer": "Transfer",
+  "walletEditCard": "Edit card",
+  "walletNoTransactions": "No transactions yet",
+  "walletNoTransactionsBody": "Record the first one from this wallet.",
+  "creditNoTransactionsBody": "Record the first one from this card.",
+  "walletNotFound": "This wallet isn't here",
+  "walletEmptyTitle": "No wallets yet",
+  "walletEmptyBody": "Add your first wallet to start.",
+  "creditDebtLabel": "Balance owed · Credit card",
+  "creditAvailableLabel": "Available",
+  "creditLimit": "Limit {amount}",
+  "@creditLimit": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "creditDueTitle": "Payment due",
+  "creditDaysLeft": "{count, plural, =0{today} =1{1 day left} other{{count} days left}}",
+  "@creditDaysLeft": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "creditCloseTitle": "Statement closes",
+  "creditCloseValue": "Day {day} each month",
+  "@creditCloseValue": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "creditNotSet": "Not set",
+  "creditRecordFrom": "Record from card",
+  "creditPay": "Pay card",
+  "walletLoadError": "Couldn't load wallets",
+  "cardName": "Card name",
+  "walletCurrencyField": "Currency",
+  "walletCurrencyTitle": "Choose currency",
+  "walletCurrentBalance": "Current balance",
+  "walletBalanceHint": "A rough number is fine. You can change it later.",
+  "creditCurrentDebt": "Current balance owed",
+  "creditInitialDebt": "Starting balance owed",
+  "creditLimitField": "Limit",
+  "creditCloseField": "Statement day",
+  "creditDueField": "Due day",
+  "creditDayValue": "Day {day}",
+  "@creditDayValue": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "creditPickDay": "Pick a day",
+  "creditOptionalHint": "Limit and days can stay empty.",
+  "walletSave": "Save wallet",
+  "creditSave": "Save card",
+  "walletSaveChanges": "Save changes",
+  "walletLockedLabel": "Type · Currency",
+  "walletLockedSemantics": "{type}, {currency}, locked because the wallet has transactions",
+  "@walletLockedSemantics": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "walletHiddenToast": "{name} hidden",
+  "@walletHiddenToast": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "walletNameMissing": "Give it a name.",
+  "walletAmountInvalid": "That amount doesn't look right.",
+  "dayDueTitle": "Which day is it due?",
+  "dayCloseTitle": "Which day does it close?",
+  "dayMonthly": "Every month",
+  "dayConfirm": "Pick day {day}",
+  "@dayConfirm": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "dayClear": "Leave empty",
+  "dayCloseMark": "Statement day",
+  "dayDueMark": "Due day",
+  "dayMarkedSemantics": "{day}, {mark}",
+  "@dayMarkedSemantics": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      },
+      "mark": {
+        "type": "String"
+      }
+    }
+  },
+  "categoryTabExpense": "Expense",
+  "categoryTabIncome": "Income",
+  "categoryTabs": "Category type",
+  "categoryChildCount": "{count, plural, =1{1 subcategory} other{{count} subcategories}}",
+  "@categoryChildCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "categoryToggleSemantics": "{name}: show or hide subcategories",
+  "@categoryToggleSemantics": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "categoryHiddenTitle": "Hidden categories",
+  "categoryHiddenHint": "Past transactions keep these categories.",
+  "categoryRestoreShort": "Restore",
+  "categoryRestoreNamed": "Restore {name}",
+  "@categoryRestoreNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "categoryRestored": "{name} is back",
+  "@categoryRestored": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "categoryEmptyTitle": "No categories yet",
+  "categoryEmptyBody": "Add one to get started.",
+  "categoryLoadError": "Couldn't load categories",
+  "categoryIconFood": "Food",
+  "categoryIconCoffee": "Coffee",
+  "categoryIconGroceries": "Groceries",
+  "categoryIconShopping": "Shopping",
+  "categoryIconClothes": "Clothes",
+  "categoryIconGifts": "Gifts",
+  "categoryIconTransport": "Car, motorbike",
+  "categoryIconBus": "Bus",
+  "categoryIconFuel": "Fuel",
+  "categoryIconTravel": "Travel",
+  "categoryIconHousing": "Home",
+  "categoryIconRepair": "Repairs",
+  "categoryIconElectricity": "Electricity",
+  "categoryIconWater": "Water",
+  "categoryIconInternet": "Internet",
+  "categoryIconPhone": "Phone",
+  "categoryIconHealth": "Health",
+  "categoryIconMedicine": "Medicine",
+  "categoryIconSports": "Sports",
+  "categoryIconFamily": "Family",
+  "categoryIconPets": "Pets",
+  "categoryIconBeauty": "Beauty",
+  "categoryIconEducation": "Learning",
+  "categoryIconBooks": "Books",
+  "categoryIconMusic": "Music",
+  "categoryIconEntertainment": "Movies",
+  "categoryIconGames": "Games",
+  "categoryIconSalary": "Salary",
+  "categoryIconBonus": "Bonus",
+  "categoryIconInvestment": "Investing",
+  "categoryIconWork": "Work",
+  "categoryIconOtherIncome": "Savings",
+  "categoryIconBills": "Taxes, fees",
+  "categoryIconInsurance": "Insurance",
+  "categoryIconSubscription": "Subscriptions",
+  "categoryIconOtherExpense": "Other",
+  "categoryColorNone": "No colour",
+  "categoryColorBrandPrimary": "Blue",
+  "categoryColorBlueDeep": "Deep blue",
+  "categoryColorBrandSecondary": "Sky",
+  "categoryColorOceanDeep": "Deep ocean",
+  "categoryColorBrandAccent": "Violet",
+  "categoryColorVioletDeep": "Deep violet",
+  "categoryColorSuccess": "Green",
+  "categoryColorWarning": "Yellow",
+  "categoryColorBlueLight": "Light blue",
+  "categoryColorBrandHighlight": "Light sky",
+  "categoryColorVioletLight": "Light violet",
+  "categoryColorGreenLight": "Light green",
+  "categoryColorYellowLight": "Light yellow",
+  "categoryColorPink": "Pink",
+  "categoryColorOrange": "Orange",
+  "categoryColorBrown": "Brown",
+  "categoryColorLime": "Lime",
+  "categoryColorOlive": "Olive",
+  "categoryColorPlum": "Plum",
+  "categoryColorGray": "Grey",
+  "categoryIconGroupFood": "Food · shopping",
+  "categoryIconGroupHome": "Getting around · home",
+  "categoryIconGroupLife": "Health · family · fun",
+  "categoryIconGroupMoney": "Income · money",
+  "categoryLevelMain": "Main category",
+  "categoryLevelChild": "Subcategory",
+  "categoryParentField": "Under",
+  "categoryPickParent": "Pick a main category",
+  "categoryParentSheet": "Main category",
+  "categoryParentMissing": "Pick a main category.",
+  "categoryNameMissing": "Give it a name.",
+  "categoryMoreIcons": "More icons",
+  "categoryIconSearch": "Search: fuel, pets…",
+  "categoryIconSearchLabel": "Search icons",
+  "categoryIconDone": "Done",
+  "categoryIconNoMatch": "No icons match.",
+  "categorySave": "Save category",
+  "categorySaveChanges": "Save changes",
+  "categoryHideShort": "Hide",
+  "categoryDeleteShort": "Delete",
+  "categoryChildrenBlock": "{count, plural, =1{1 subcategory left} other{{count} subcategories left}}",
+  "@categoryChildrenBlock": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "categoryHiddenToast": "{name} hidden",
+  "@categoryHiddenToast": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "categoryDeletedToast": "{name} deleted",
+  "@categoryDeletedToast": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "categoryDeleteQuestion": "Delete “{name}”?",
+  "@categoryDeleteQuestion": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "categoryDeleteNoUndo": "This can't be undone.",
+  "categoryDeleteMove": "This can't be undone. {count, plural, =1{1 transaction moves} other{{count} transactions move}} to:",
+  "@categoryDeleteMove": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "categoryMoveTo": "Move transactions to",
+  "reportYear": "Year",
+  "reportYearTitle": "Year {year}",
+  "@reportYearTitle": {
+    "placeholders": {
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "reportMonthTitlePattern": "MMMM, yyyy",
+  "reportShortDatePattern": "MM/dd",
+  "reportRangeDays": "{count} days",
+  "@reportRangeDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reportAverageDay": "Average spend/day",
+  "reportRemaining": "Left",
+  "reportVsMonth": "vs M{month}",
+  "@reportVsMonth": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "reportVsWeek": "vs last week",
+  "reportVsYear": "vs {year}",
+  "@reportVsYear": {
+    "placeholders": {
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "reportVsPeriod": "vs previous period",
+  "reportChange": "{percent}% {versus}",
+  "@reportChange": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      },
+      "versus": {
+        "type": "String"
+      }
+    }
+  },
+  "reportBudgetSet": "Set a monthly budget",
+  "reportBudgetSoon": "Budgets are coming soon",
+  "reportTrendTitle": "Spending trend",
+  "reportTrendAverageWeeks": "Average of {count} weeks",
+  "@reportTrendAverageWeeks": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reportTrendAverageMonths": "Average of {count} months",
+  "@reportTrendAverageMonths": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reportTrendAverageYears": "Average of {count} years",
+  "@reportTrendAverageYears": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reportViewExpense": "Spent",
+  "reportViewIncome": "Income",
+  "reportViewWallet": "Wallets",
+  "reportOther": "Other",
+  "reportOtherCount": "Other · {count} categories",
+  "@reportOtherCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reportFlowIn": "In +{amount}",
+  "@reportFlowIn": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "reportFlowOut": "Out −{amount}",
+  "@reportFlowOut": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "reportFlowTransfer": "Transfers {amount}",
+  "@reportFlowTransfer": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "reportEmptyTitle": "No data for {period}",
+  "@reportEmptyTitle": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "reportEmptyHint": "Record a transaction to see your numbers.",
+  "reportBackWeek": "Back to this week",
+  "reportBackMonth": "Back to this month",
+  "reportBackYear": "Back to this year",
+  "reportUnitThousand": "k",
+  "reportUnitMillion": "M",
+  "reportUnitBillion": "B",
+  "reportDonutSemantics": "{label} {amount} {currency}: {items}",
+  "@reportDonutSemantics": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      },
+      "items": {
+        "type": "String"
+      }
+    }
+  },
+  "reportTrendSemantics": "Spending, last {count}: {items}",
+  "@reportTrendSemantics": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "items": {
+        "type": "String"
+      }
+    }
+  },
+  "reportMonthShort": "M{month}",
+  "@reportMonthShort": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "reportRangeTitle": "Choose a date range",
+  "reportQuick7": "Last 7 days",
+  "reportQuick30": "Last 30 days",
+  "reportQuickQuarter": "This quarter",
+  "reportWeekdays": "Mon,Tue,Wed,Thu,Fri,Sat,Sun",
+  "reportRangePickStart": "Pick the first day",
+  "reportRangePickEnd": "Now pick the last day",
+  "reportDayFrom": "From {date}",
+  "@reportDayFrom": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "reportDayTo": "To {date}",
+  "@reportDayTo": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "reportDayToday": "Today, {date}",
+  "@reportDayToday": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "reportShareExpense": "{percent}% of spending",
+  "@reportShareExpense": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "reportShareIncome": "{percent}% of income",
+  "@reportShareIncome": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "reportShareCount": "{share} · {count} transactions",
+  "@reportShareCount": {
+    "placeholders": {
+      "share": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reportBarGeneral": "{name} (general)",
+  "@reportBarGeneral": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "reportLargest": "Largest transactions",
+  "reportSeeAll": "See all {count}",
+  "@reportSeeAll": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reportLargestError": "Couldn't load transactions",
+  "meTitle": "You",
+  "meGroupFinance": "Money setup",
+  "meGroupApp": "App",
+  "meGroupHelp": "Help",
+  "meWallets": "My wallets",
+  "meCategories": "Categories",
+  "meTags": "Tags",
+  "meCurrency": "Default currency",
+  "meBudget": "Monthly budget",
+  "meFiscal": "Month starts on",
+  "meFiscalDay": "Day {day}",
+  "@meFiscalDay": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "meGoals": "Goals",
+  "meTheme": "Appearance",
+  "meThemeLight": "Light",
+  "meThemeDark": "Dark",
+  "meThemeSystem": "Match device",
+  "meLanguage": "Language",
+  "meTimezone": "Time zone",
+  "meNotifications": "Notifications",
+  "meHideBalances": "Hide balances",
+  "meSecurity": "Security",
+  "meSecurityValueBiometric": "PIN · biometrics",
+  "meSecurityValuePin": "PIN",
+  "meFaq": "FAQ",
+  "meFeedback": "Send feedback",
+  "meTerms": "Terms of service",
+  "mePrivacy": "Privacy policy",
+  "meSoon": "Coming soon",
+  "meLogout": "Log out",
+  "meLogoutTitle": "Log out of this device?",
+  "meLogoutBody": "Your data stays in your account.",
+  "meProfileTitle": "Profile",
+  "meProfileName": "Display name",
+  "meProfileEmail": "Email",
+  "meChange": "Change",
+  "meSave": "Save changes",
+  "meSaved": "Saved",
+  "meSaveError": "Couldn't save. Try again.",
+  "meConflict": "This changed on another device. Reload and try again.",
+  "meAvatarSemantics": "Profile picture, initial {letter}",
+  "@meAvatarSemantics": {
+    "placeholders": {
+      "letter": {
+        "type": "String"
+      }
+    }
+  },
+  "meSecUnlock": "Unlock",
+  "meSecPin": "PIN lock",
+  "meSecPinSub": "When you reopen Freeva",
+  "meSecBiometric": "Unlock with biometrics",
+  "meSecChangePin": "Change PIN",
+  "meSecLogin": "Sign-in",
+  "meSecSessions": "Signed-in devices",
+  "meSecChangePassword": "Change password",
+  "meSessionsHint": "Don't recognise one? Revoke it now.",
+  "meSessionThis": "This device",
+  "meSessionOther": "Another device",
+  "meSessionInUse": "In use",
+  "meSessionDates": "From {from} · expires {to}",
+  "@meSessionDates": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "meRevoke": "Revoke",
+  "meRevokeSemantics": "Revoke the session from {date}",
+  "@meRevokeSemantics": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "meRevokeTitle": "Revoke this session?",
+  "meRevokeBody": "That device will be signed out.",
+  "meRevokeOthers": "Sign out all other devices",
+  "meRevokeOthersTitle": "Sign out all other devices?",
+  "meRevokeOthersBody": "This device stays signed in.",
+  "meChangePinTitle": "Change PIN",
+  "mePinCurrent": "Current PIN",
+  "mePinNew": "New PIN",
+  "mePinRepeat": "Repeat new PIN",
+  "mePinWrong": "Wrong PIN. After 5 misses you sign in again.",
+  "mePinMismatch": "The new PINs don't match.",
+  "mePinSame": "Pick a different PIN.",
+  "mePinInvalid": "A PIN is 6 digits.",
+  "mePinChanged": "PIN changed",
+  "meChangePasswordTitle": "Change password",
+  "mePasswordCurrent": "Current password",
+  "mePasswordNew": "New password",
+  "mePasswordRepeat": "Repeat new password",
+  "mePasswordHint": "At least 12 characters, with letters and digits.",
+  "mePasswordWrong": "That isn't your current password.",
+  "mePasswordWeak": "Use at least 12 characters with letters and digits, different from the old one.",
+  "mePasswordMismatch": "The new passwords don't match.",
+  "mePasswordChanged": "Password changed. Other devices were signed out.",
+  "meBusyRetry": "Try again in {minutes} min.",
+  "@meBusyRetry": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "meNetworkError": "Can't reach Freeva. Check your connection.",
+  "meSecAlways": "Always on",
+  "tagsSearch": "Search tags",
+  "tagsAdd": "Create tag",
+  "tagsName": "Tag name",
+  "tagsRenameTitle": "Rename tag",
+  "tagsRename": "Rename",
+  "tagsDelete": "Delete",
+  "tagsDeleteTitle": "Delete “{name}”?",
+  "@tagsDeleteTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "tagsDeleteBody": "Transactions stay; only this tag comes off.",
+  "tagsEmptyTitle": "No tags yet",
+  "tagsEmptyBody": "Tag transactions to group them your way.",
+  "tagsNoMatch": "No tag matches",
+  "tagsLoadError": "Couldn't load tags",
+  "tagsRowSemantics": "{name}, {count} transactions",
+  "@tagsRowSemantics": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tagsMore": "Actions for {name}",
+  "@tagsMore": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "fbHeading": "What would you like to tell Freeva?",
+  "fbKindBug": "Bug",
+  "fbKindIdea": "Idea",
+  "fbKindPraise": "Praise",
+  "fbAbout": "Which part?",
+  "fbTopicRecord": "Recording",
+  "fbTopicReports": "Reports",
+  "fbTopicWallets": "Wallets",
+  "fbTopicCategories": "Categories",
+  "fbTopicAppearance": "Appearance",
+  "fbTopicOther": "Other",
+  "fbLabelBug": "What went wrong?",
+  "fbLabelIdea": "Your idea",
+  "fbLabelPraise": "What do you like?",
+  "fbCount": "{count}/2000",
+  "@fbCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "fbReply": "Reply to me by email",
+  "fbSend": "Send feedback",
+  "fbSending": "Sending…",
+  "fbThanks": "Thank you!",
+  "fbThanksReply": "Freeva will read it and reply by email.",
+  "fbThanksNoReply": "Freeva will read every message.",
+  "fbDone": "Done",
+  "fbError": "Couldn't send. Try again.",
+  "faqSearch": "Search questions",
+  "faqNoMatch": "No question matches",
+  "faqMissing": "Not finding your answer?",
+  "faqSend": "Send feedback to Freeva",
+  "notifyReminders": "Reminders",
+  "notifyAlerts": "Alerts",
+  "notifyRecord": "Record reminder",
+  "notifyRecordSub": "Every day",
+  "notifyDigest": "Spending summary",
+  "notifyDigestSub": "Every week or month",
+  "notifyBudget": "Budget running out",
+  "notifyBudgetSub": "At 80% and 100% used",
+  "notifyCard": "Credit card due",
+  "notifyCardSub": "3 days before",
+  "notifySession": "New device signed in",
+  "notifySessionSub": "So you can check it",
+  "authOr": "or",
+  "authContinueGoogle": "Continue with Google",
+  "authContinueApple": "Continue with Apple",
+  "authNoAccount": "Don’t have an account?",
+  "authHaveAccount": "Already have an account?",
+  "authLaterLink": "Later",
+  "authDone": "Done",
+  "authVerifySent": "Freeva sent a confirmation link to {email}.",
+  "@authVerifySent": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "authVerifyWhyTitle": "A confirmed email helps you",
+  "authVerifyWhyReset": "Get your password back if you forget it",
+  "authVerifyWhyAlert": "Get alerts about unusual sign-ins",
+  "authVerifyWhyNotice": "Never miss important account notices",
+  "authResendPrompt": "Didn’t get it?",
+  "authResendLink": "Send again",
+  "authVerificationSent": "Confirmation link sent again.",
+  "authVerifyLater": "You can use the app without confirming. Confirm later in Profile.",
+  "authSendResetLink": "Send reset link",
+  "authResetSentTitle": "Check your email",
+  "authResetSent": "If {email} has an account, Freeva sent a reset link.",
+  "@authResetSent": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "authBackToLogin": "Back to sign in",
+  "authConfirmNewPassword": "Repeat new password",
+  "authSaveAndLogin": "Save and sign in",
+  "authSocialSoon": "Coming soon",
+  "passwordWeak": "Not enough yet",
+  "passwordGood": "Good",
+  "passwordStrong": "Very strong",
+  "passwordRuleLength": "At least 12 characters",
+  "passwordRuleLetterDigit": "Letters and numbers",
+  "passwordRuleSymbol": "Add a symbol like ! @ # to be stronger",
+  "passwordRuleMatch": "Both passwords match",
+  "passwordRuleMet": "done",
+  "passwordRuleNotMet": "not yet",
+  "consentLabel": "Agree to the terms",
+  "consentPrefix": "I agree to Freeva’s ",
+  "consentTerms": "Terms of Use",
+  "consentAnd": " and ",
+  "consentPrivacy": "Privacy Policy",
+  "consentSuffix": ".",
+  "authPinSetupTitle": "Set a PIN",
+  "authPinSetupSub": "6 digits to unlock Freeva on this device.",
+  "authPinConfirmTitle": "Repeat your PIN",
+  "authPinConfirmSub": "Enter the 6 digits again to be sure.",
+  "authPinConfirmHint": "If they don’t match you start again.",
+  "authPinMismatch": "The PINs didn’t match. Let’s start again.",
+  "authConfirm": "Confirm",
+  "authBiometricTitleFace": "Set up Face ID",
+  "authBiometricSubFace": "Unlock Freeva with your face, faster than a PIN.",
+  "authBiometricTitle": "Unlock faster",
+  "authBiometricSub": "Use your fingerprint or face instead of typing the PIN.",
+  "authBiometricSetup": "Set up",
+  "authLockTitle": "Enter your PIN",
+  "authLockWelcome": "Welcome back",
+  "authForgotPin": "Forgot your PIN?",
+  "authForgotPinMessage": "You’ll sign in again with your email and password.",
+  "authForgotPinConfirm": "Sign in again",
+  "authCancel": "Cancel",
+  "pinDigitsEntered": "{count} of {total} digits entered",
+  "@pinDigitsEntered": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "meSecPinSetTitle": "Set a PIN",
+  "meSecPinNone": "Not set",
+  "authUseFaceId": "Unlock with Face ID",
+  "meSecPinSetDone": "PIN set",
+  "welcomeTitleLine1": "Money, made clear.",
+  "welcomeTitleLine2": "Life, made light.",
+  "welcomeSub": "Log spending in seconds, every day.",
+  "welcomeStart": "Get started",
+  "welcomeSampleBalance": "Total balance",
+  "welcomeSampleFood": "Pho lunch",
+  "welcomeSampleSalary": "Salary",
+  "signUpTitle": "Create your Freeva account",
+  "signUpSub": "Your data is safe and moves with you to a new phone.",
+  "authContinueEmail": "Continue with email",
+  "signUpTermsPrefix": "By continuing you agree to the ",
+  "signUpTermsSuffix": ".",
+  "onbProgress": "{current}/{total}",
+  "@onbProgress": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "onbGoalsTitle": "What would you like to improve?",
+  "onbGoalsSub": "Pick up to 2.",
+  "onbGoalTrack": "Track spending",
+  "onbGoalSave": "Save more",
+  "onbGoalBudget": "Stay on budget",
+  "onbGoalDebt": "Manage debt",
+  "onbGoalEmergency": "Build an emergency fund",
+  "onbGoalUnderstand": "Understand my finances",
+  "onbHabitTitle": "How do you manage money now?",
+  "onbHabitManual": "Notes by hand",
+  "onbHabitSpreadsheet": "Excel or Sheets",
+  "onbHabitApp": "Another app",
+  "onbHabitNone": "Not tracking yet",
+  "onbCadenceTitle": "How often do you review spending?",
+  "onbCadenceDaily": "Every day",
+  "onbCadenceWeekly": "Every week",
+  "onbCadenceMonthly": "Every month",
+  "onbCadenceRarely": "Hardly ever",
+  "onbBudgetTitle": "How much do you plan to spend each month?",
+  "onbBudgetAmount": "Monthly budget",
+  "onbBudgetLater": "Set up later",
+  "setupWalletsTitle": "Where is your money?",
+  "setupWalletsSub": "Add wallets and balances. A rough number is enough.",
+  "setupAdd": "Add",
+  "setupSkip": "Skip",
+  "checklistTitle": "Let’s get started",
+  "checklistWallet": "Create a wallet",
+  "checklistExpense": "Record your first expense",
+  "checklistRecordNow": "Record now",
+  "checklistPin": "Lock the app with a PIN",
+  "authLockGreeting": "Hi {name}",
+  "@authLockGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "syncTitle": "Sync",
+  "syncBannerBoth": "{attention} changes need you · {waiting} more waiting to send",
+  "@syncBannerBoth": {
+    "placeholders": {
+      "attention": {
+        "type": "int"
+      },
+      "waiting": {
+        "type": "int"
+      }
+    }
+  },
+  "syncBannerAttention": "{count} changes need you",
+  "@syncBannerAttention": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "syncBannerWaiting": "{count} changes waiting to send",
+  "@syncBannerWaiting": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "syncOffline": "No connection",
+  "syncUnavailable": "Couldn’t send yet",
+  "syncUnavailableSub": "Try again later",
+  "syncWaitingCard": "Changes are waiting to send",
+  "syncLastTime": "Last {when}",
+  "@syncLastTime": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "syncLastNever": "Not synced yet",
+  "syncToday": "today {time}",
+  "@syncToday": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "syncOnDay": "{date} {time}",
+  "@syncOnDay": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "syncRetry": "Try again",
+  "syncSending": "Sending {count} changes",
+  "@syncSending": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "syncSendingSub": "You can keep using the app",
+  "syncAllDone": "Everything is synced",
+  "syncSectionAttention": "NEEDS YOU · {count}",
+  "@syncSectionAttention": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "syncSectionWaiting": "WAITING TO SEND · {count}",
+  "@syncSectionWaiting": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "syncSectionHolding": "KEPT ON THIS DEVICE · {count}",
+  "@syncSectionHolding": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "syncActionAdd": "Add",
+  "syncActionEdit": "Edit",
+  "syncActionDelete": "Delete",
+  "syncActionRestore": "Restore",
+  "syncItemLine": "{action} · {detail}",
+  "@syncItemLine": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      },
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "syncReasonChanged": "Changed on another device",
+  "syncReasonWallet": "The wallet was removed",
+  "syncReasonMissing": "The transaction was removed elsewhere",
+  "syncReasonInvalid": "The details are no longer valid",
+  "syncReasonOther": "Couldn’t send · Try again later",
+  "syncFooter": "Your data stays on this device until it is sent.",
+  "syncUpdateTitle": "Freeva needs an update",
+  "syncUpdateBody": "To keep syncing. Your changes are kept.",
+  "syncDiscardTitle": "Discard this change?",
+  "syncDiscardMessage": "{name} {amount} won’t be saved.",
+  "@syncDiscardMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "syncDiscardMessageShort": "{name} won’t be saved.",
+  "@syncDiscardMessageShort": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "syncDiscardKeep": "Keep it",
+  "syncDiscardConfirm": "Discard",
+  "syncDiscardSemantics": "Discard change {name}",
+  "@syncDiscardSemantics": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "syncChipReview": "Needs a look",
+  "syncChipWaiting": "Waiting to sync",
+  "syncViewAction": "View",
+  "syncCompareTitle": "Choose which to keep",
+  "syncCompareIntroA": "{name} was just changed on another device. The differences are ",
+  "@syncCompareIntroA": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "syncCompareIntroB": "highlighted",
+  "syncCompareIntroC": ".",
+  "syncCompareMine": "This device’s version",
+  "syncCompareMineWhen": "You changed it {when}",
+  "@syncCompareMineWhen": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "syncCompareSaved": "Saved version",
+  "syncCompareSavedWhen": "Changed elsewhere {when}",
+  "@syncCompareSavedWhen": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "syncCompareSavedNoTime": "Saved on the server",
+  "syncCompareDeleted": "Deleted",
+  "syncFieldAmount": "Amount",
+  "syncFieldCategory": "Category",
+  "syncFieldNotes": "Note",
+  "syncFieldDate": "Date",
+  "syncFieldMerchant": "Store",
+  "syncKeepSaved": "Keep the saved version",
+  "syncKeepMine": "Keep this device’s version",
+  "syncDupTitle": "You may have recorded this already",
+  "syncDupSub": "These two look the same.",
+  "syncDupJust": "JUST RECORDED",
+  "syncDupExisting": "ALREADY THERE",
+  "syncDupKeepBoth": "Keep both",
+  "syncDupDeleteNew": "Delete the new one"
 }

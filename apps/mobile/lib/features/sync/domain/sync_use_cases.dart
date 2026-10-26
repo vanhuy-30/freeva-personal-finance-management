@@ -12,21 +12,34 @@ class SyncFlushOutcome {
     required this.items,
     this.schemaMismatch = false,
     this.syncFailed = false,
-    this.duplicateHint = false,
+    this.duplicates = const [],
     this.authError,
+    this.lastSyncedAt,
   });
 
   final List<SyncQueueItem> items;
   final bool schemaMismatch;
   final bool syncFailed;
-  final bool duplicateHint;
+
+  /// New transactions the server found alike to an earlier one.
+  final List<SyncDuplicate> duplicates;
   final AuthError? authError;
+
+  /// Last time the server accepted a batch, if ever.
+  final DateTime? lastSyncedAt;
 }
 
 abstract class SyncUseCases {
   Future<List<SyncQueueItem>> load();
   Future<List<SyncQueueItem>> enqueue(SyncMutation mutation);
   Future<List<SyncQueueItem>> discard(String opId);
+
+  /// Puts a failed change back in line; the next flush sends it.
+  Future<List<SyncQueueItem>> retry(String opId);
+
+  /// Keeps the person's own version of a conflict: sends it again on top of
+  /// the server's version.
+  Future<List<SyncQueueItem>> keepLocal(String opId);
   Future<List<SyncQueueItem>> acknowledge({String? clientId, String? serverId});
   Future<SyncFlushOutcome> flush();
   Future<void> clear();
@@ -70,6 +83,24 @@ class DefaultSyncUseCases implements SyncUseCases {
   }
 
   @override
+  Future<List<SyncQueueItem>> retry(String opId) {
+    return _serialized(() async {
+      final next = retrySyncItem(await _repository.read(), opId);
+      await _repository.write(next);
+      return next;
+    });
+  }
+
+  @override
+  Future<List<SyncQueueItem>> keepLocal(String opId) {
+    return _serialized(() async {
+      final next = keepLocalSyncItem(await _repository.read(), opId);
+      await _repository.write(next);
+      return next;
+    });
+  }
+
+  @override
   Future<List<SyncQueueItem>> acknowledge({
     String? clientId,
     String? serverId,
@@ -93,22 +124,36 @@ class DefaultSyncUseCases implements SyncUseCases {
   Future<SyncFlushOutcome> flush() {
     return _serialized(() async {
       final current = await _repository.read();
+      final last = await _repository.lastSyncedAt();
       final batch = pendingSyncBatch(current);
       if (batch.isEmpty) {
-        return SyncFlushOutcome(items: current);
+        return SyncFlushOutcome(items: current, lastSyncedAt: last);
       }
       final posted = await _repository.submit(batch);
-      return posted.fold((failure) => _transport(current, batch, failure), (
-        results,
-      ) async {
-        final next = applySyncResults(current, results);
-        await _repository.write(next);
-        return SyncFlushOutcome(
-          items: next,
-          syncFailed: results.any((result) => result.status == 'rejected'),
-          duplicateHint: results.any((result) => result.duplicateHint),
-        );
-      });
+      return posted.fold(
+        (failure) => _transport(current, batch, failure, last),
+        (results) async {
+          final next = applySyncResults(current, results);
+          await _repository.write(next);
+          // The server answered: that is the last time we were in sync.
+          final now = DateTime.now().toUtc();
+          await _repository.markSynced(now);
+          return SyncFlushOutcome(
+            items: next,
+            syncFailed: results.any((result) => result.status == 'rejected'),
+            duplicates: [
+              for (final result in results)
+                if (result.transactionId != null &&
+                    result.duplicateIds.isNotEmpty)
+                  SyncDuplicate(
+                    newId: result.transactionId!,
+                    existingId: result.duplicateIds.first,
+                  ),
+            ],
+            lastSyncedAt: now,
+          );
+        },
+      );
     });
   }
 
@@ -116,9 +161,14 @@ class DefaultSyncUseCases implements SyncUseCases {
     List<SyncQueueItem> current,
     List<SyncQueueItem> batch,
     AuthFailure failure,
+    DateTime? last,
   ) async {
     if (failure.code == AuthError.conflict) {
-      return SyncFlushOutcome(items: current, schemaMismatch: true);
+      return SyncFlushOutcome(
+        items: current,
+        schemaMismatch: true,
+        lastSyncedAt: last,
+      );
     }
     final opIds = batch.map((item) => item.opId).toSet();
     if (failure.code == AuthError.network ||
@@ -129,6 +179,7 @@ class DefaultSyncUseCases implements SyncUseCases {
         items: next,
         syncFailed: true,
         authError: failure.code,
+        lastSyncedAt: last,
       );
     }
     if (failure.code == AuthError.invalidToken ||
@@ -139,14 +190,19 @@ class DefaultSyncUseCases implements SyncUseCases {
         items: next,
         syncFailed: true,
         authError: failure.code,
+        lastSyncedAt: last,
       );
     }
-    return SyncFlushOutcome(items: current, authError: failure.code);
+    return SyncFlushOutcome(
+      items: current,
+      authError: failure.code,
+      lastSyncedAt: last,
+    );
   }
 
   @override
   Future<void> clear() {
-    return _serialized(() => _repository.write(const []));
+    return _serialized(_repository.clear);
   }
 
   SyncQueueItem _item(SyncMutation mutation) {

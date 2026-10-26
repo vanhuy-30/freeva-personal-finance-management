@@ -24,6 +24,9 @@ class CategoryRepositoryImpl implements CategoryRepository {
     createdAt: json['createdAt'] == null
         ? null
         : DateTime.parse(json['createdAt'] as String),
+    kind:
+        CategoryKind.values.where((k) => k.name == json['kind']).firstOrNull ??
+        CategoryKind.both,
   );
 
   Future<Either<AuthFailure, T>> _request<T>(
@@ -144,6 +147,7 @@ class CategoryRepositoryImpl implements CategoryRepository {
         if (draft.parentId != null) 'parentId': draft.parentId,
         if (draft.colorToken != null) 'colorToken': draft.colorToken,
         if (draft.iconToken != null) 'iconToken': draft.iconToken,
+        'kind': draft.kind.name,
       };
     }
     return {
@@ -177,6 +181,13 @@ class CategoryRepositoryImpl implements CategoryRepository {
     'categories/${category.id}',
     _parse,
     body: {'version': category.version, 'archived': archived},
+  );
+
+  @override
+  Future<Either<AuthFailure, int>> usage(FinanceCategory category) => _request(
+    'GET',
+    'categories/${category.id}/usage',
+    (json) => json['transactionCount'] as int,
   );
 
   @override

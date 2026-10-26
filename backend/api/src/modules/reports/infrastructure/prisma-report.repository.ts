@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../../infrastructure/prisma/prisma.service';
 import type { ReportRepository } from '../domain/report.repository';
 import type {
-  AccountMovement, AccountRef, CategoryAggregate, NetWorthAggregate, ReportMoneyType, ReportProfile, ResolvedPeriod,
+  AccountMovement, AccountRef, CategoryAggregate, NetWorthAggregate, ReportMoneyType, ReportProfile, ResolvedPeriod, TrendBucket, TrendRow, TrendSource,
 } from '../domain/report';
 
 const moneyTypes = new Set<ReportMoneyType>(['income', 'expense', 'transfer']);
@@ -22,6 +22,13 @@ export class PrismaReportRepository implements ReportRepository {
         await this.movements(tx, userId, period),
       ];
       return { period, source: { categories, accounts, movements } };
+    });
+  }
+
+  trend(userId: string, bucketsOf: (profile: ReportProfile) => TrendBucket[]): Promise<TrendSource> {
+    return this.snapshot(async tx => {
+      const buckets = bucketsOf(await this.profile(tx, userId));
+      return { buckets, rows: await this.trendRows(tx, userId, buckets), firstOn: await this.firstOn(tx, userId) };
     });
   }
 
@@ -48,9 +55,9 @@ export class PrismaReportRepository implements ReportRepository {
   }
 
   private async categories(tx: Prisma.TransactionClient, userId: string, period: ResolvedPeriod): Promise<CategoryAggregate[]> {
-    const rows = await tx.$queryRaw<{ currency: string; categoryId: string | null; parentId: string | null; type: string; total: string }[]>(Prisma.sql`
+    const rows = await tx.$queryRaw<{ currency: string; categoryId: string | null; parentId: string | null; type: string; total: string; count: number }[]>(Prisma.sql`
       SELECT t."currencyCode" AS currency, t."categoryId" AS "categoryId", c."parentId" AS "parentId",
-        t.type::text AS type, SUM(t."amountMinor")::text AS total
+        t.type::text AS type, SUM(t."amountMinor")::text AS total, COUNT(*)::int AS count
       FROM "Transaction" t
       LEFT JOIN "Category" c ON c.id = t."categoryId" AND c."userId" = t."userId"
       WHERE t."userId" = ${userId}::uuid AND t."deletedAt" IS NULL
@@ -59,8 +66,29 @@ export class PrismaReportRepository implements ReportRepository {
       GROUP BY t."currencyCode", t."categoryId", c."parentId", t.type
     `);
     return rows.map(row => ({
-      currency: row.currency.trim(), categoryId: row.categoryId, parentId: row.parentId, type: flowType(row.type), total: integer(row.total),
+      currency: row.currency.trim(), categoryId: row.categoryId, parentId: row.parentId, type: flowType(row.type), total: integer(row.total), count: row.count,
     }));
+  }
+
+  private async trendRows(tx: Prisma.TransactionClient, userId: string, buckets: TrendBucket[]): Promise<TrendRow[]> {
+    if (buckets.length === 0) return [];
+    const ranges = Prisma.join(buckets.map((bucket, index) => Prisma.sql`(${index}::int, ${bucket.from}::date, ${bucket.to}::date)`));
+    const rows = await tx.$queryRaw<{ index: number; currency: string; type: string; total: string }[]>(Prisma.sql`
+      SELECT b.idx AS index, t."currencyCode" AS currency, t.type::text AS type, SUM(t."amountMinor")::text AS total
+      FROM (VALUES ${ranges}) AS b(idx, first_on, last_on)
+      JOIN "Transaction" t ON t."occurredOn" >= b.first_on AND t."occurredOn" <= b.last_on
+      WHERE t."userId" = ${userId}::uuid AND t."deletedAt" IS NULL AND t.type::text IN ('income', 'expense')
+      GROUP BY b.idx, t."currencyCode", t.type
+    `);
+    return rows.map(row => ({ index: row.index, currency: row.currency.trim(), type: flowType(row.type), total: integer(row.total) }));
+  }
+
+  private async firstOn(tx: Prisma.TransactionClient, userId: string): Promise<string | null> {
+    const rows = await tx.$queryRaw<{ first: string | null }[]>(Prisma.sql`
+      SELECT MIN("occurredOn")::text AS first FROM "Transaction"
+      WHERE "userId" = ${userId}::uuid AND "deletedAt" IS NULL AND type::text IN ('income', 'expense')
+    `);
+    return rows[0]?.first ?? null;
   }
 
   private async accounts(tx: Prisma.TransactionClient, userId: string): Promise<AccountRef[]> {
@@ -96,7 +124,7 @@ export class PrismaReportRepository implements ReportRepository {
         SELECT "accountId", SUM("amountMinor") AS total FROM "Transaction"
         WHERE "userId" = ${userId}::uuid AND "deletedAt" IS NULL GROUP BY "accountId"
       ) mv ON mv."accountId" = a.id
-      WHERE a."userId" = ${userId}::uuid
+      WHERE a."userId" = ${userId}::uuid AND a."archivedAt" IS NULL
       GROUP BY a."currencyCode", CASE WHEN a.type::text = 'credit' THEN 'liability' ELSE 'asset' END
     `);
     return rows.map(row => {

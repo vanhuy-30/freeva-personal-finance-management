@@ -19,6 +19,9 @@ abstract class WalletUseCases {
     Wallet? wallet,
     required String clientId,
   });
+
+  /// All active wallets in their new order.
+  Future<Either<AuthFailure, List<Wallet>>> reorder(List<Wallet> active);
 }
 
 @LazySingleton(as: WalletUseCases)
@@ -41,6 +44,17 @@ class DefaultWalletUseCases implements WalletUseCases {
       return Future.value(left(const AuthFailure(AuthError.conflict)));
     }
     return _repository.update(wallet, archived: archived, sortOrder: sortOrder);
+  }
+
+  @override
+  Future<Either<AuthFailure, List<Wallet>>> reorder(List<Wallet> active) {
+    final ids = active.map((w) => w.id).toSet();
+    if (active.isEmpty ||
+        ids.length != active.length ||
+        active.any((w) => w.archived || w.version >= 2147483647)) {
+      return Future.value(left(const AuthFailure(AuthError.invalidInput)));
+    }
+    return _repository.reorder(active);
   }
 
   @override

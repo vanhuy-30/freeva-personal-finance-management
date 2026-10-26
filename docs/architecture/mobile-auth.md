@@ -1,17 +1,18 @@
 # Mobile auth và khóa thiết bị — MOB-P1-001
 
 Client Flutter dùng contract `/api/v1` và quyết định email/session ở
-[ADR 009](adr/009-email-auth-sessions.md). Bổ sung `POST /api/v1/auth/email-step`; không thêm refresh token.
+[ADR 009](adr/009-email-auth-sessions.md). Không thêm refresh token. Giao diện theo [nhóm A](../brand/patterns/A-onboarding-auth.md) (`DS-P2-004`); mobile không còn gọi `email-step` (backend vẫn giữ).
 
 ## Luồng
 
-- Splash → auth gate → nhập email → `email-step` chọn đăng nhập hoặc đăng ký. Email đã tồn tại (kể cả legacy) vào nhập password; email mới vào tạo password + xác nhận. Lỗi mạng/response không hợp lệ giữ màn email, không đoán account state.
-- Đăng ký tự gửi mã qua outbox hiện có và UI chuyển ngay sang nhập mã xác thực; chỉ có gửi lại mã tại bước này. Sau xác thực, nhập password để đăng nhập; không giữ password trong ViewModel. Backend vẫn cho login trước verify theo ADR 009, không tự đánh dấu email đã xác thực.
-- “Quên mật khẩu” chỉ xuất hiện tại màn nhập password → gửi mã → nhập mã + password mới → quay lại login. Không có nút reset/verify độc lập ở màn đầu.
-- Login → thiết lập PIN 6 chữ số và xác nhận → home.
+- Splash → auth gate → lần đầu cài là Welcome ("Bắt đầu" → Tạo tài khoản Freeva: Google/Apple "Sắp có", email; hoặc "Đăng nhập"), các lần sau là màn Đăng nhập (email + mật khẩu cùng một màn, "Quên mật khẩu?", Google/Apple, "Đăng ký"). Google/Apple hiện nút nhưng chỉ báo "Sắp có" (OAuth mobile chưa làm).
+- Đăng ký email: email, mật khẩu, nhập lại, danh sách điều kiện tự tick, ô đồng ý Điều khoản và Chính sách (`/help/legal` mở được khi chưa đăng nhập). `POST /auth/register` nhận `termsAccepted: true`; backend ghi `User.termsAcceptedAt` và `termsVersion`. Backend trả 202 dù email đã có hay chưa, nên app đăng nhập ngay bằng mật khẩu vừa nhập (email trùng thất bại ở bước này với lỗi đăng nhập thông thường). Không giữ mật khẩu trong ViewModel sau bước đó.
+- Sau đăng ký: stage `setup` = Xác nhận email (không bắt buộc, nút "Xong", "Gửi lại") → Mục tiêu → Thói quen → Ngân sách (mỗi câu "Để sau" được; trả lời gửi `PATCH /profile/onboarding`, ngân sách lưu trên máy) → Thiết lập tài chính (mỗi loại ví một cái, tạo qua use case ví trực tiếp vì danh sách ví chỉ chạy khi đã mở khoá) → Đặt PIN → Nhập lại PIN → Face ID/vân tay (nếu máy có). Mọi bước có "Để sau". Backend cho login trước verify (ADR 009).
+- "Quên mật khẩu" gửi link; sau khi gửi, màn nói "kiểm tra email". Màn Đặt mật khẩu mới có sẵn (`AuthViewModel.startReset(token)`) nhưng chưa có đường vào cho tới khi làm deep link (task riêng).
+- **PIN không bắt buộc.** Không có PIN thì app không khóa khi vào nền (vẫn che màn hình) và phiên khôi phục thẳng vào app; có PIN thì khởi động lại luôn khóa. Người đã bỏ qua đặt PIN ở Cá nhân → Bảo mật → "Đặt mã PIN". Đăng nhập lại vào thẳng app, không qua bước PIN.
 - UI giữ logo/tokens Freeva, nền surface, input/CTA bo góc, back navigation, password visibility, loading/error, l10n vi/en. Google/Apple chưa hiện vì OAuth chưa triển khai; không đưa legal draft nội bộ thành điều khoản in-app.
-- Mã email là 64 ký tự hex từ mail của backend; không dùng deep link chứa token. Password 12–128 ký tự, không trim. Email trim/lowercase.
-- Login nhận opaque Bearer, hạn tuyệt đối và session ID. Khởi động lại luôn khóa; nếu dừng app giữa bước login và tạo PIN thì yêu cầu login lại.
+- Token trong mail vẫn là 64 ký tự hex; UI không còn ô nhập mã (chốt 2026-10-23), link mở thẳng app sẽ làm ở task riêng. Password 12–128 ký tự, không trim; đăng ký và đặt lại cần thêm ít nhất một chữ và một số (`hasLetterAndDigit`, `DS-P2-004`), đăng nhập chỉ kiểm tra độ dài. Email trim/lowercase.
+- Login nhận opaque Bearer, hạn tuyệt đối và session ID. Khởi động lại khóa nếu có PIN; chưa có PIN thì vào thẳng app.
 - Home có list phiên, thu hồi một phiên/mọi phiên, logout và khóa ngay. Logout online phải thành công mới xóa local; lỗi mạng cho phép thử lại. `401` của request có Bearer xóa credential và yêu cầu login.
 - Quên PIN xóa credential **trên thiết bị**, không giả định đã revoke server. UI nói rõ phiên server còn đến hạn hoặc được thu hồi sau khi login lại.
 
@@ -20,7 +21,7 @@ Client Flutter dùng contract `/api/v1` và quyết định email/session ở
 Mỗi môi trường và API origin có key riêng trong Keychain/Android encrypted secure storage; chuyển backend không tái sử dụng session/PIN của backend khác. Record legacy không tự migrate, cần login lại một lần.
 
 Một record versioned chứa token, expiry,
-session ID, salt/hash PIN, bộ đếm sai và lựa chọn biometric. Không lưu password/PIN thô.
+session ID, email đăng nhập, tên hiển thị (để chào ở màn Mở khoá, `DS-P2-004`), salt/hash PIN, bộ đếm sai và lựa chọn biometric. Không lưu password/PIN thô. Tên bị xoá cùng record khi đăng xuất hoặc quên thiết bị.
 PBKDF2-HMAC-SHA256, 600.000 vòng, salt ngẫu nhiên 32 byte, output 32 byte; chạy isolate để
 không chặn privacy cover/UI. So sánh hash không dừng sớm theo nội dung.
 
@@ -36,7 +37,7 @@ fallback passcode hệ điều hành; hủy/lỗi/không hỗ trợ vẫn có PI
 
 ## Lifecycle và quyền riêng tư
 
-- Auth gate không dựng home khi signed out, đang tạo PIN hoặc locked. Route protected mới phải dùng gate tương tự.
+- Auth gate không dựng home khi signed out, đang thiết lập lần đầu (`setup`) hoặc locked. Route protected mới phải dùng gate tương tự.
 - Inactive/paused/hidden khóa và che UI ngay; kết quả unlock cũ không mở lại sau khi chuyển nền. Inactive do prompt biometric chỉ che, không hủy chính prompt đó; paused vẫn vô hiệu hóa kết quả mở khóa.
 - Android: `FlutterFragmentActivity`, `USE_BIOMETRIC`, `FLAG_SECURE` chặn ảnh chụp/recents, tắt backup app để credential không restore sang máy khác.
 - iOS: native cover opaque khi resign active; Face ID usage description; Keychain `unlocked_this_device`, entitlement access group giới hạn theo bundle ID. iOS không chặn screenshot chủ động lúc app foreground.

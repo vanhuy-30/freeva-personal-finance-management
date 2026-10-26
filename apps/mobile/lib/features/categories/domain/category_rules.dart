@@ -26,6 +26,20 @@ bool categoryParentInvalid(
   }
 }
 
+/// Two levels only: a new parent must be a main category, and a category
+/// with subcategories cannot get a parent.
+bool categoryBreaksTwoLevels(
+  String? parentId,
+  FinanceCategory? self,
+  List<FinanceCategory> categories,
+) {
+  if (parentId == null) return false;
+  final parent = categories.where((c) => c.id == parentId).firstOrNull;
+  return parent == null ||
+      parent.parentId != null ||
+      (self != null && categoryHasChild(self, categories));
+}
+
 bool categoryHasActiveChild(
   FinanceCategory category,
   List<FinanceCategory> categories,
@@ -65,4 +79,69 @@ List<CategoryRow> orderedCategories(List<FinanceCategory> categories) {
 
   walk(null, 0);
   return List.unmodifiable(ordered);
+}
+
+/// A main category with its subcategories, as the Danh mục list shows it.
+class CategoryGroup {
+  const CategoryGroup(this.parent, this.children);
+  final FinanceCategory parent;
+  final List<FinanceCategory> children;
+}
+
+/// Active categories of one tab (Chi or Thu), oldest first. "Both" shows in
+/// either tab. A subcategory whose parent is gone or hidden is shown as a
+/// main one; rows nested deeper before the two-level rule sit under their
+/// top category.
+List<CategoryGroup> categoryGroups(
+  List<FinanceCategory> categories, {
+  required bool income,
+}) {
+  final active = categories.where((c) => !c.archived).toList();
+  final byId = {for (final c in active) c.id: c};
+  String top(FinanceCategory c) {
+    var current = c;
+    final seen = <String>{c.id};
+    while (true) {
+      final parent = byId[current.parentId];
+      if (parent == null || !seen.add(parent.id)) return current.id;
+      current = parent;
+    }
+  }
+
+  final roots = <String, FinanceCategory>{};
+  final children = <String, List<FinanceCategory>>{};
+  for (final row in orderedCategories(active)) {
+    final c = row.category;
+    final root = top(c);
+    if (root == c.id) {
+      roots[c.id] = c;
+    } else {
+      (children[root] ??= []).add(c);
+    }
+  }
+  return [
+    for (final parent in roots.values)
+      if (parent.kind.fits(income))
+        CategoryGroup(parent, List.unmodifiable(children[parent.id] ?? [])),
+  ];
+}
+
+/// Hidden categories as the "Danh mục đã ẩn" list shows them: a hidden
+/// category whose parent is visible (or gone), with its hidden subcategories.
+List<CategoryGroup> hiddenCategoryGroups(List<FinanceCategory> categories) {
+  final hidden = {
+    for (final c in categories)
+      if (c.archived) c.id: c,
+  };
+  return [
+    for (final row in orderedCategories(hidden.values.toList()))
+      if (row.depth == 0)
+        CategoryGroup(
+          row.category,
+          List.unmodifiable([
+            for (final c in hidden.values)
+              if (c.parentId == row.category.id) c,
+          ]),
+        ),
+  ];
 }

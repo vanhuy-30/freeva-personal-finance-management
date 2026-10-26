@@ -1,51 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/tokens.g.dart';
 
+/// Lucide icon for a category token (36 picker icons plus older tokens).
 IconData categoryIcon(String? token) => switch (token) {
-  'food' => Icons.restaurant_outlined,
-  'transport' => Icons.directions_bus_outlined,
-  'housing' => Icons.home_outlined,
-  'bills' => Icons.receipt_long_outlined,
-  'shopping' => Icons.shopping_bag_outlined,
-  'health' => Icons.favorite_outline,
-  'education' => Icons.school_outlined,
-  'entertainment' => Icons.movie_outlined,
-  'family' => Icons.family_restroom_outlined,
-  'gifts' => Icons.card_giftcard_outlined,
-  'travel' => Icons.flight_outlined,
-  'salary' => Icons.payments_outlined,
-  'bonus' => Icons.redeem_outlined,
-  'other_income' => Icons.savings_outlined,
-  'other_expense' => Icons.category_outlined,
-  _ => Icons.category_outlined,
+  'food' => LucideIcons.utensils,
+  'coffee' => LucideIcons.coffee,
+  'groceries' => LucideIcons.shoppingBasket,
+  'shopping' => LucideIcons.shoppingBag,
+  'clothes' => LucideIcons.shirt,
+  'gifts' => LucideIcons.gift,
+  'transport' => LucideIcons.car,
+  'bus' => LucideIcons.bus,
+  'fuel' => LucideIcons.fuel,
+  'travel' => LucideIcons.plane,
+  'housing' => LucideIcons.house,
+  'repair' => LucideIcons.wrench,
+  'electricity' => LucideIcons.zap,
+  'water' => LucideIcons.droplet,
+  'internet' => LucideIcons.wifi,
+  'phone' => LucideIcons.smartphone,
+  'health' => LucideIcons.heartPulse,
+  'medicine' => LucideIcons.pill,
+  'sports' => LucideIcons.dumbbell,
+  'family' => LucideIcons.users,
+  'pets' => LucideIcons.pawPrint,
+  'beauty' => LucideIcons.sparkles,
+  'education' => LucideIcons.graduationCap,
+  'books' => LucideIcons.bookOpen,
+  'music' => LucideIcons.music,
+  'entertainment' => LucideIcons.clapperboard,
+  'games' => LucideIcons.gamepad2,
+  'salary' => LucideIcons.banknote,
+  'bonus' => LucideIcons.award,
+  'investment' => LucideIcons.trendingUp,
+  'work' => LucideIcons.briefcase,
+  'other_income' => LucideIcons.piggyBank,
+  'bills' => LucideIcons.receipt,
+  'insurance' => LucideIcons.shieldCheck,
+  'subscription' => LucideIcons.repeat,
+  'transfer' => LucideIcons.arrowLeftRight,
+  _ => LucideIcons.shapes,
 };
 
 /// Badge fill only. Highlight and muted tokens are never used as text color.
-Color? categoryBadgeColor(String? token) => switch (token) {
-  'color.brand.primary' => AppColors.primary,
-  'color.brand.secondary' => AppColors.secondary,
-  'color.brand.highlight' => AppColors.highlight,
-  'color.brand.muted' => AppColors.muted,
-  'color.brand.accent' => AppColors.accent,
-  'color.semantic.success' => AppColors.success,
-  'color.semantic.danger' => AppColors.danger,
-  'color.semantic.warning' => AppColors.warning,
-  'color.gradient.ctaStart' => AppColors.primary,
-  'color.gradient.ctaEnd' => AppColors.accent,
-  'color.gradient.splashAccent' => AppColors.secondary,
-  'color.neutral.text' => AppColors.text,
-  'color.neutral.textMuted' => AppColors.textMuted,
-  'color.neutral.surface' => AppColors.surface,
-  'color.neutral.canvas' => AppColors.canvas,
-  'color.neutral.onPrimary' => AppColors.onPrimary,
-  'color.dark.text' => AppColors.darkText,
-  'color.dark.textMuted' => AppColors.darkTextMuted,
-  'color.dark.surface' => AppColors.darkSurface,
-  'color.dark.canvas' => AppColors.darkCanvas,
-  'color.dark.onPrimary' => AppColors.onPrimary,
-  _ => null,
-};
+Color? categoryBadgeColor(String? token) => categoryPalette[token];
 
 class CategoryBadge extends StatelessWidget {
   const CategoryBadge({this.colorToken, this.iconToken, super.key});

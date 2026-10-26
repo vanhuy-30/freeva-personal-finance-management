@@ -6,6 +6,7 @@ import type {
   AuthRepository,
   EmailChallenge,
   MailJob,
+  TermsConsent,
   TokenPurpose,
 } from '../domain/auth.repository';
 
@@ -17,11 +18,18 @@ export class PrismaAuthRepository implements AuthRepository {
     email: string,
     passwordHash: string,
     challenge: EmailChallenge,
+    terms: TermsConsent,
   ): Promise<void> {
     try {
       await this.prisma.$transaction(async (tx) => {
         const user = await tx.user.create({
-          data: { email, passwordHash, defaultCurrencyCode: 'VND' },
+          data: {
+            email,
+            passwordHash,
+            defaultCurrencyCode: 'VND',
+            termsAcceptedAt: terms.acceptedAt,
+            termsVersion: terms.version,
+          },
         });
         await this.saveChallenge(tx, user.id, 'verify_email', challenge);
         await tx.auditEvent.create({
@@ -56,6 +64,51 @@ export class PrismaAuthRepository implements AuthRepository {
         passwordHash: true,
         emailVerifiedAt: true,
       },
+    });
+  }
+
+  findUserById(userId: string) {
+    return this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        passwordHash: true,
+        emailVerifiedAt: true,
+      },
+    });
+  }
+
+  async changePassword(
+    userId: string,
+    currentHash: string,
+    newHash: string,
+    keepSessionId: string,
+  ): Promise<boolean> {
+    return this.prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT "id" FROM "User" WHERE "id" = ${userId}::uuid FOR UPDATE`;
+      const user = await tx.user.findUnique({ where: { id: userId } });
+      if (!user || user.passwordHash !== currentHash) return false;
+      await tx.user.update({
+        where: { id: userId },
+        data: { passwordHash: newHash },
+      });
+      await tx.authSession.deleteMany({
+        where: { userId, id: { not: keepSessionId } },
+      });
+      await tx.authToken.deleteMany({ where: { userId } });
+      await tx.authMailJob.deleteMany({ where: { userId } });
+      await tx.auditEvent.create({
+        data: {
+          actorType: 'user',
+          actorId: userId,
+          action: 'auth.change_password',
+          targetType: 'user',
+          targetId: userId,
+          outcome: 'success',
+        },
+      });
+      return true;
     });
   }
 

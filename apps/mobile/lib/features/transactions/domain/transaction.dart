@@ -123,17 +123,94 @@ class TransactionLegCommand {
   final BigInt amountMinor;
 }
 
+/// `date` is newest first; `amountDesc` the largest amount first, ignoring sign.
+enum TransactionSort { date, amountDesc }
+
 class TransactionQuery {
   const TransactionQuery({
     this.page = 1,
     this.deleted = false,
     this.type,
     this.search,
+    this.pageSize = 50,
+    this.from,
+    this.to,
+    this.accountIds = const [],
+    this.categoryIds = const [],
+    this.tagIds = const [],
+    this.sort = TransactionSort.date,
+    this.currency,
   });
   final int page;
+  final int pageSize;
   final bool deleted;
   final TransactionType? type;
   final String? search;
+
+  /// Inclusive calendar dates `yyyy-MM-dd`.
+  final String? from;
+  final String? to;
+
+  /// Match any of the listed wallets / categories / tags.
+  final List<String> accountIds;
+  final List<String> categoryIds;
+  final List<String> tagIds;
+  final TransactionSort sort;
+
+  /// ISO code of the transaction currency.
+  final String? currency;
+
+  TransactionQuery copyWith({
+    int? page,
+    int? pageSize,
+    bool? deleted,
+    String? search,
+  }) => TransactionQuery(
+    page: page ?? this.page,
+    pageSize: pageSize ?? this.pageSize,
+    deleted: deleted ?? this.deleted,
+    type: type,
+    search: search ?? this.search,
+    from: from,
+    to: to,
+    accountIds: accountIds,
+    categoryIds: categoryIds,
+    tagIds: tagIds,
+    sort: sort,
+    currency: currency,
+  );
+}
+
+class TransactionTotal {
+  TransactionTotal({
+    required this.currency,
+    required this.income,
+    required this.expense,
+    BigInt? transferIn,
+    BigInt? transferOut,
+  }) : transferIn = transferIn ?? BigInt.zero,
+       transferOut = transferOut ?? BigInt.zero;
+  final String currency;
+  final BigInt income;
+
+  /// Signed: negative or zero.
+  final BigInt expense;
+
+  /// Matching transfer legs that add money (≥ 0). With a one-wallet filter:
+  /// money moved into that wallet.
+  final BigInt transferIn;
+
+  /// Matching transfer legs that take money (≤ 0).
+  final BigInt transferOut;
+}
+
+/// Totals over the whole filtered result. A transfer counts once and is not
+/// income or expense.
+class TransactionSummary {
+  const TransactionSummary({required this.count, required this.totals});
+  static const empty = TransactionSummary(count: 0, totals: []);
+  final int count;
+  final List<TransactionTotal> totals;
 }
 
 class TransactionListPage {
@@ -141,8 +218,32 @@ class TransactionListPage {
     required this.legs,
     required this.page,
     required this.total,
+    this.summary = TransactionSummary.empty,
   });
   final List<TxLeg> legs;
   final int page;
   final int total;
+  final TransactionSummary summary;
+}
+
+/// Pairs the two legs of a transfer into one bundle, keeping list order.
+List<TransactionBundle> groupTransactionLegs(List<TxLeg> legs) {
+  final grouped = <String, List<TxLeg>>{};
+  final order = <String>[];
+  for (final leg in legs) {
+    final key = leg.transferGroupId ?? leg.id;
+    if (!grouped.containsKey(key)) order.add(key);
+    grouped.putIfAbsent(key, () => []).add(leg);
+  }
+  return [
+    for (final key in order)
+      TransactionBundle(
+        legs: List.unmodifiable(
+          [...grouped[key]!]..sort((a, b) {
+            final amount = a.amountMinor.compareTo(b.amountMinor);
+            return amount != 0 ? amount : a.id.compareTo(b.id);
+          }),
+        ),
+      ),
+  ];
 }

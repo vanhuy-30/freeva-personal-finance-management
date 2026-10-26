@@ -137,36 +137,40 @@ export class PrismaTransactionRepository implements TransactionRepository {
   }
   list(userId: string, query: TransactionQuery) {
     return this.snapshot(async tx => {
-      const search = parseTransactionSearch(query.search);
-      if (search) return this.searchList(tx, userId, query, search);
-      const where: Prisma.TransactionWhereInput = { userId,
-        ...(query.status === 'all' ? {} : { deletedAt: query.status === 'active' ? null : { not: null } }),
-        accountId: query.accountId, categoryId: query.categoryId, type: query.type,
-        occurredOn: { ...(query.from ? { gte: new Date(query.from) } : {}), ...(query.to ? { lte: new Date(query.to) } : {}) },
+      const where = listFilters(userId, query, parseTransactionSearch(query.search));
+      const listed = Prisma.sql`
+        FROM "Transaction" t
+        LEFT JOIN "Category" c ON c.id = t."categoryId" AND c."userId" = t."userId"
+        LEFT JOIN "FinancialAccount" a ON a.id = t."accountId" AND a."userId" = t."userId"
+        JOIN "Currency" ccy ON ccy.code = t."currencyCode"
+        WHERE ${where}`;
+      const ids = await tx.$queryRaw<{ id: string }[]>(Prisma.sql`
+        SELECT t.id ${listed}
+        ORDER BY ${query.sort === 'amountDesc' ? Prisma.sql`ABS(t."amountMinor") DESC, ` : Prisma.empty}t."occurredOn" DESC, t."createdAt" DESC, t.id ASC
+        LIMIT ${query.pageSize} OFFSET ${(query.page - 1) * query.pageSize}`);
+      const [count] = await tx.$queryRaw<{ total: string; bundles: string }[]>(Prisma.sql`
+        SELECT COUNT(*)::text AS total, COUNT(DISTINCT COALESCE(t."transferGroupId", t.id))::text AS bundles ${listed}`);
+      const totals = await tx.$queryRaw<{ currency: string; income: string; expense: string; transferIn: string; transferOut: string }[]>(Prisma.sql`
+        SELECT t."currencyCode" AS currency,
+          COALESCE(SUM(CASE WHEN t.type::text = 'income' THEN t."amountMinor" ELSE 0 END), 0)::text AS income,
+          COALESCE(SUM(CASE WHEN t.type::text = 'expense' THEN t."amountMinor" ELSE 0 END), 0)::text AS expense,
+          COALESCE(SUM(CASE WHEN t.type::text = 'transfer' AND t."amountMinor" > 0 THEN t."amountMinor" ELSE 0 END), 0)::text AS "transferIn",
+          COALESCE(SUM(CASE WHEN t.type::text = 'transfer' AND t."amountMinor" < 0 THEN t."amountMinor" ELSE 0 END), 0)::text AS "transferOut"
+        ${listed}
+        GROUP BY t."currencyCode" ORDER BY t."currencyCode"`);
+      const summary = {
+        count: Number(count.bundles),
+        totals: totals
+          .map(row => ({ currency: row.currency.trim(), incomeMinor: BigInt(row.income), expenseMinor: BigInt(row.expense),
+            transferInMinor: BigInt(row.transferIn), transferOutMinor: BigInt(row.transferOut) }))
+          .filter(row => [row.incomeMinor, row.expenseMinor, row.transferInMinor, row.transferOutMinor].some(value => value !== 0n)),
       };
-      const rows = await tx.transaction.findMany({ where, include, orderBy: [{ occurredOn: 'desc' }, { createdAt: 'desc' }, { id: 'asc' }],
-        skip: (query.page - 1) * query.pageSize, take: query.pageSize });
-      return { items: rows.map(leg), total: await tx.transaction.count({ where }) };
+      if (!ids.length) return { items: [], total: Number(count.total), summary };
+      const rows = await tx.transaction.findMany({ where: { userId, id: { in: ids.map(row => row.id) } }, include });
+      const rank = new Map(ids.map((row, index) => [row.id, index]));
+      rows.sort((left, right) => rank.get(left.id)! - rank.get(right.id)!);
+      return { items: rows.map(leg), total: Number(count.total), summary };
     });
-  }
-  private async searchList(tx: Prisma.TransactionClient, userId: string, query: TransactionQuery, search: ParsedTransactionSearch) {
-    const where = searchFilters(userId, query, search);
-    const listed = Prisma.sql`
-      FROM "Transaction" t
-      LEFT JOIN "Category" c ON c.id = t."categoryId" AND c."userId" = t."userId"
-      LEFT JOIN "FinancialAccount" a ON a.id = t."accountId" AND a."userId" = t."userId"
-      JOIN "Currency" ccy ON ccy.code = t."currencyCode"
-      WHERE ${where}`;
-    const ids = await tx.$queryRaw<{ id: string }[]>(Prisma.sql`
-      SELECT t.id ${listed}
-      ORDER BY t."occurredOn" DESC, t."createdAt" DESC, t.id ASC
-      LIMIT ${query.pageSize} OFFSET ${(query.page - 1) * query.pageSize}`);
-    const [count] = await tx.$queryRaw<{ total: string }[]>(Prisma.sql`SELECT COUNT(*)::text AS total ${listed}`);
-    if (!ids.length) return { items: [], total: Number(count.total) };
-    const rows = await tx.transaction.findMany({ where: { userId, id: { in: ids.map(row => row.id) } }, include });
-    const rank = new Map(ids.map((row, index) => [row.id, index]));
-    rows.sort((left, right) => rank.get(left.id)! - rank.get(right.id)!);
-    return { items: rows.map(leg), total: Number(count.total) };
   }
   update(userId: string, id: string, patch: TransactionPatch) {
     return this.snapshot(async tx => {
@@ -195,22 +199,33 @@ export class PrismaTransactionRepository implements TransactionRepository {
   }
 }
 
-function searchFilters(userId: string, query: TransactionQuery, search: ParsedTransactionSearch) {
+function listFilters(userId: string, query: TransactionQuery, search: ParsedTransactionSearch | null) {
   const parts: Prisma.Sql[] = [Prisma.sql`t."userId" = ${userId}::uuid`];
   if (query.status === 'active') parts.push(Prisma.sql`t."deletedAt" IS NULL`);
   else if (query.status === 'deleted') parts.push(Prisma.sql`t."deletedAt" IS NOT NULL`);
-  if (query.accountId) parts.push(Prisma.sql`t."accountId" = ${query.accountId}::uuid`);
-  if (query.categoryId) parts.push(Prisma.sql`t."categoryId" = ${query.categoryId}::uuid`);
+  if (query.accountIds?.length) parts.push(Prisma.sql`t."accountId" IN (${uuids(query.accountIds)})`);
+  if (query.categoryIds?.length) parts.push(Prisma.sql`t."categoryId" IN (${uuids(query.categoryIds)})`);
+  if (query.tagIds?.length) {
+    parts.push(Prisma.sql`EXISTS (
+      SELECT 1 FROM "TransactionTag" ft WHERE ft."transactionId" = t.id AND ft."tagId" IN (${uuids(query.tagIds)})
+    )`);
+  }
   if (query.type) parts.push(Prisma.sql`t.type::text = ${query.type}`);
+  if (query.currency) parts.push(Prisma.sql`t."currencyCode" = ${query.currency}`);
   if (query.from) parts.push(Prisma.sql`t."occurredOn" >= ${query.from}::date`);
   if (query.to) parts.push(Prisma.sql`t."occurredOn" <= ${query.to}::date`);
-  parts.push(searchMatch(search));
+  if (search) parts.push(searchMatch(search));
   return Prisma.join(parts, ' AND ');
+}
+
+function uuids(values: string[]) {
+  return Prisma.join(values.map(value => Prisma.sql`${value}::uuid`));
 }
 
 function searchMatch(search: ParsedTransactionSearch) {
   const text = Prisma.sql`(
     ${likeFold(Prisma.sql`t.notes`, search.like)}
+    OR ${likeFold(Prisma.sql`t.merchant`, search.like)}
     OR ${likeFold(Prisma.sql`c.name`, search.like)}
     OR ${likeFold(Prisma.sql`a.name`, search.like)}
     OR EXISTS (

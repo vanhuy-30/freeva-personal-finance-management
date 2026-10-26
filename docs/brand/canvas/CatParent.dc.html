@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Chọn danh mục cha</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a,button{font-family:inherit}
+.opt{display:flex;align-items:center;gap:12px;height:56px;text-decoration:none;color:#22283A;font-size:15px;font-weight:500}
+.opt+.opt{border-top:1px solid #EEF0F5}
+.ci{width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:0 0 36px}
+.rd{margin-left:auto;width:22px;height:22px;border-radius:999px;border:1.5px solid #C9CEDD;box-sizing:border-box}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif">
+
+  <div aria-hidden="true" style="padding: 56px 20px 0 20px; display: flex; flex-direction: column; align-items: center; gap: 16px">
+    <span style="font-size: 17px; font-weight: 600; padding: 10px 0">Thêm danh mục</span>
+    <span style="width: 64px; height: 64px; border-radius: 20px; background: #F4F0FB"></span>
+    <span style="align-self: stretch; height: 60px; border-radius: 16px; background: #FFFFFF"></span>
+  </div>
+  <a href="CatAdd.dc.html" aria-label="Đóng" style="position: absolute; inset: 0; background: rgba(34,40,58,.45)"></a>
+
+  <div role="dialog" aria-label="Thuộc danh mục chính" style="position: absolute; left: 0; right: 0; bottom: 0; background: #FCFDFF; border-radius: 28px 28px 0 0; padding: 10px 20px 28px 20px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 -12px 32px rgba(34,40,58,.12)">
+    <span style="align-self: center; width: 36px; height: 4px; border-radius: 999px; background: #C9CEDD"></span>
+    <h2 style="margin: 0; font-size: 17px; line-height: 24px; font-weight: 600">Thuộc danh mục chính</h2>
+
+    <div role="radiogroup" style="background: #FFFFFF; border-radius: 20px; padding: 0 16px; box-shadow: 0 1px 2px rgba(34,40,58,.04), 0 8px 24px rgba(34,40,58,.05)">
+      <a href="CatAdd.dc.html" role="radio" aria-checked="true" class="opt" style="font-weight: 600"><span class="ci" style="background: #EEF2FD; color: #3F67D1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 3v8a3 3 0 0 0 3 3v7M7 3v6M10 3v8a3 3 0 0 1-3 3M17 21V3c-2 1-3 4-3 8h3"></path></svg></span>Ăn uống<span class="rd" style="border: none; background: #3F67D1; display: flex; align-items: center; justify-content: center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg></span></a>
+      <a href="CatAdd.dc.html" role="radio" aria-checked="false" class="opt"><span class="ci" style="background: #EDF7FD; color: #2A7FAE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 17h14M6 17l1.5-6h9L18 17M8 11l1.5-4h5L16 11"></path></svg></span>Đi lại<span class="rd"></span></a>
+      <a href="CatAdd.dc.html" role="radio" aria-checked="false" class="opt"><span class="ci" style="background: #FBF4E0; color: #7A5A00"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"></path></svg></span>Hóa đơn<span class="rd"></span></a>
+      <a href="CatAdd.dc.html" role="radio" aria-checked="false" class="opt"><span class="ci" style="background: #F4F0FB; color: #7048B8"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"></path></svg></span>Nhà ở<span class="rd"></span></a>
+      <a href="CatAdd.dc.html" role="radio" aria-checked="false" class="opt"><span class="ci" style="background: #E9F5F0; color: #23795A"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l1 14H5zM9 7a3 3 0 0 1 6 0"></path></svg></span>Mua sắm<span class="rd"></span></a>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

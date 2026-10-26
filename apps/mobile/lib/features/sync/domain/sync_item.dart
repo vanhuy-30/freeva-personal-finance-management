@@ -7,6 +7,61 @@ enum SyncAction { create, update, delete, restore }
 
 enum SyncItemStatus { pending, conflict, failed }
 
+/// The server's copy of a transaction at the time of a conflict, kept so the
+/// person can compare it with their own change.
+class SyncServerCopy {
+  const SyncServerCopy({
+    required this.id,
+    required this.version,
+    required this.occurredOn,
+    required this.amountMinor,
+    required this.currencyCode,
+    this.categoryId,
+    this.notes,
+    this.merchant,
+    this.updatedAt,
+  });
+
+  final String id;
+  final int version;
+  final String occurredOn;
+
+  /// Signed integer string, as the server sends it.
+  final String amountMinor;
+  final String currencyCode;
+  final String? categoryId;
+  final String? notes;
+  final String? merchant;
+  final DateTime? updatedAt;
+}
+
+/// A queued create that the server accepted but found alike to an earlier
+/// transaction: the new one and the one that was already there.
+class SyncDuplicate {
+  const SyncDuplicate({required this.newId, required this.existingId});
+
+  final String newId;
+  final String existingId;
+}
+
+/// Why a change is waiting for the person (shown as one short line).
+enum SyncReason {
+  /// Someone changed it on another device first.
+  changedElsewhere,
+
+  /// The wallet it uses no longer exists.
+  walletMissing,
+
+  /// The transaction it edits is gone.
+  transactionMissing,
+
+  /// The server refused the data as it is.
+  invalid,
+
+  /// Not sent yet for another reason; trying again later may work.
+  unavailable,
+}
+
 class SyncLeg {
   const SyncLeg({
     required this.clientId,
@@ -74,6 +129,8 @@ class SyncQueueItem {
     this.rate,
     this.quotedAt,
     this.serverUpdatedAt,
+    this.reason,
+    this.server,
   });
 
   final String opId;
@@ -95,6 +152,12 @@ class SyncQueueItem {
   final int retryCount;
   final SyncItemStatus status;
   final bool review;
+
+  /// Set once the item needs attention; null while it is just waiting.
+  final SyncReason? reason;
+
+  /// Server copy to compare with, set on a conflict when it could be read.
+  final SyncServerCopy? server;
 
   static const Object _keep = Object();
 
@@ -118,6 +181,8 @@ class SyncQueueItem {
     int? retryCount,
     SyncItemStatus? status,
     bool? review,
+    Object? reason = _keep,
+    Object? server = _keep,
   }) {
     return SyncQueueItem(
       opId: opId ?? this.opId,
@@ -141,6 +206,8 @@ class SyncQueueItem {
       retryCount: retryCount ?? this.retryCount,
       status: status ?? this.status,
       review: review ?? this.review,
+      reason: reason == _keep ? this.reason : reason as SyncReason?,
+      server: server == _keep ? this.server : server as SyncServerCopy?,
     );
   }
 }
@@ -152,6 +219,10 @@ class SyncItemResult {
     required this.review,
     required this.duplicateHint,
     this.serverUpdatedAt,
+    this.errorCode,
+    this.server,
+    this.transactionId,
+    this.duplicateIds = const [],
   });
 
   final String opId;
@@ -159,4 +230,16 @@ class SyncItemResult {
   final bool review;
   final bool duplicateHint;
   final DateTime? serverUpdatedAt;
+
+  /// Server code for a conflict or rejection (e.g. `ACCOUNT_NOT_FOUND`).
+  final String? errorCode;
+
+  /// The server's copy on a conflict, when it could be read.
+  final SyncServerCopy? server;
+
+  /// Id of the transaction this item created or changed, when returned.
+  final String? transactionId;
+
+  /// Ids of earlier transactions that look the same as a new one.
+  final List<String> duplicateIds;
 }

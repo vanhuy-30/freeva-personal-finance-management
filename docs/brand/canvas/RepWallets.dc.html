@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Báo cáo · Theo ví</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"cv11" 1}
+a,button{font-family:inherit}
+.seg{flex:1 1 0;height:36px;border:none;border-radius:999px;background:transparent;color:#5C6378;font-size:14px;font-weight:500;display:flex;align-items:center;justify-content:center;text-decoration:none}
+.nb{width:40px;height:40px;border-radius:999px;border:1px solid #EEF0F6;background:#FFFFFF;color:#22283A;display:flex;align-items:center;justify-content:center;box-sizing:border-box;text-decoration:none}
+.card{background:#FFFFFF;border-radius:24px;padding:18px;box-shadow:0 1px 2px rgba(34,40,58,.04),0 8px 24px rgba(34,40,58,.05)}
+.k{font-size:12px;color:#5C6378}
+.mini{height:32px;padding:0 12px;border:none;border-radius:999px;background:transparent;color:#5C6378;font-size:13px;font-weight:500;flex:1 1 0;display:flex;align-items:center;justify-content:center;text-decoration:none}
+.w{display:flex;align-items:center;gap:12px;padding:12px 0;text-decoration:none;color:#22283A}
+.w+.w{border-top:1px solid #EEF0F5}
+.wi{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:0 0 40px}
+.ni{width:48px;height:48px;border-radius:999px;color:#5C6378;display:flex;align-items:center;justify-content:center}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; padding: 56px 20px 0 20px; gap: 16px">
+
+  <h1 style="margin: 0; font-size: 28px; line-height: 34px; font-weight: 600; letter-spacing: -0.6px">Báo cáo</h1>
+
+  <div role="tablist" aria-label="Kỳ báo cáo" style="display: flex; background: #EAEDF4; border-radius: 999px; padding: 4px">
+    <a href="#" role="tab" aria-selected="false" class="seg">Tuần</a>
+    <span role="tab" aria-selected="true" class="seg" style="background: #FFFFFF; color: #22283A; font-weight: 600; box-shadow: 0 1px 3px rgba(34,40,58,.12)">Tháng</span>
+    <a href="#" role="tab" aria-selected="false" class="seg">Năm</a>
+    <a href="RepRange.dc.html" role="tab" aria-selected="false" class="seg">Tuỳ chọn</a>
+  </div>
+
+  <div style="display: flex; align-items: center; justify-content: space-between">
+    <a href="#" class="nb" aria-label="Tháng trước"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <span class="num" style="display: flex; flex-direction: column; align-items: center"><span style="font-size: 17px; font-weight: 600">Tháng 10, 2026</span><span style="font-size: 12px; color: #5C6378">01/10 – 31/10</span></span>
+    <span class="nb" aria-disabled="true" aria-label="Tháng sau" style="color: #C9CEDD; border-color: #F4F6FB"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></span>
+  </div>
+
+  <div class="card num" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 12px">
+    <span style="display: flex; flex-direction: column; gap: 2px"><span class="k">Thu</span><span style="font-size: 20px; font-weight: 600; color: #23795A">+18.500.000</span></span>
+    <span style="display: flex; flex-direction: column; gap: 2px"><span class="k">Chi</span><span style="font-size: 20px; font-weight: 600">−9.320.000</span><span style="font-size: 12px; color: #5C6378; display: flex; align-items: center; gap: 4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"></path></svg>6% so với T9</span></span>
+    <span style="grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: baseline; border-top: 1px solid #EEF0F5; padding-top: 12px"><span class="k" style="font-size: 13px">Còn lại</span><span style="font-size: 17px; font-weight: 600">+9.180.000 ₫</span></span>
+  </div>
+
+  <div class="card" style="display: flex; flex-direction: column; gap: 8px; padding-bottom: 8px">
+    <div role="tablist" aria-label="Xem theo" style="display: flex; background: #F4F6FB; border-radius: 999px; padding: 3px">
+      <a href="RepMonth.dc.html" role="tab" aria-selected="false" class="mini">Chi</a>
+      <a href="#" role="tab" aria-selected="false" class="mini">Thu</a>
+      <span role="tab" aria-selected="true" class="mini" style="background: #22283A; color: #FFFFFF; font-weight: 600">Ví</span>
+    </div>
+    <div class="num">
+      <a href="WDetail.dc.html" class="w"><span class="wi" style="background: #EEF2FD; color: #3F67D1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-6 9 6M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 21h18"></path></svg></span><span style="display: flex; flex-direction: column; flex-grow: 1; gap: 2px"><span style="font-size: 15px; font-weight: 500">Vietcombank</span><span style="font-size: 12px; color: #5C6378">Vào +18.500.000 · Ra −1.212.000</span></span><span style="font-size: 15px; font-weight: 600; color: #23795A">+17.288.000</span></a>
+      <a href="WCredit.dc.html" class="w"><span class="wi" style="background: #F4F6FB; color: #22283A"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="3"></rect><path d="M2.5 10h19M6 15h4"></path></svg></span><span style="display: flex; flex-direction: column; flex-grow: 1; gap: 2px"><span style="font-size: 15px; font-weight: 500">Thẻ chính</span><span style="font-size: 12px; color: #5C6378">Ra −4.498.000</span></span><span style="font-size: 15px; font-weight: 600">−4.498.000</span></a>
+      <a href="WDetail.dc.html" class="w"><span class="wi" style="background: #EDF7FD; color: #2A7FAE"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="13" rx="3"></rect><circle cx="12" cy="12.5" r="2.5"></circle></svg></span><span style="display: flex; flex-direction: column; flex-grow: 1; gap: 2px"><span style="font-size: 15px; font-weight: 500">Tiền mặt</span><span style="font-size: 12px; color: #5C6378">Ra −2.430.000</span></span><span style="font-size: 15px; font-weight: 600">−2.430.000</span></a>
+      <a href="WDetail.dc.html" class="w"><span class="wi" style="background: #F4F0FB; color: #7048B8"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="3"></rect><path d="M11 18h2"></path></svg></span><span style="display: flex; flex-direction: column; flex-grow: 1; gap: 2px"><span style="font-size: 15px; font-weight: 500">MoMo</span><span style="font-size: 12px; color: #5C6378">Vào +500.000 · Ra −1.680.000</span></span><span style="font-size: 15px; font-weight: 600">−1.180.000</span></a>
+    </div>
+  </div>
+
+  <nav aria-label="Điều hướng chính" style="position: absolute; left: 20px; right: 20px; bottom: 28px; height: 64px; border-radius: 999px; background: #FFFFFF; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; box-shadow: 0 1px 2px rgba(34,40,58,.05), 0 12px 32px rgba(34,40,58,.12)">
+    <a href="BHome.dc.html" aria-label="Tổng quan" class="ni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"></path></svg></a>
+    <a href="TxList.dc.html" aria-label="Giao dịch" class="ni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h13M7 12h13M7 20h13M3 4h.01M3 12h.01M3 20h.01"></path></svg></a>
+    <a href="TxExpense.dc.html" aria-label="Ghi giao dịch" style="width: 56px; height: 56px; flex: 0 0 56px; border-radius: 999px; background: #3F67D1; color: #FFFFFF; display: flex; align-items: center; justify-content: center; transform: translateY(-26px); box-shadow: 0 0 0 6px #FCFDFF, 0 8px 18px rgba(63,103,209,.35)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></a>
+    <a href="RepMonth.dc.html" aria-label="Báo cáo" aria-current="page" class="ni" style="background: #22283A; color: #FFFFFF"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12A9 9 0 1 1 12 3v9z"></path><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"></path></svg></a>
+    <a href="SettingsScreen.dc.html" aria-label="Cá nhân" class="ni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg></a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

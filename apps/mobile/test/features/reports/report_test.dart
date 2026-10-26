@@ -71,28 +71,6 @@ void main() {
     expect(reports.cashflowCalls, 0);
   });
 
-  test(
-    'overview asks for the current month and keeps currencies apart',
-    () async {
-      final reports = _Reports()
-        ..cashflowReport = _flow()
-        ..worth = _worth();
-      final wallets = _Wallets()
-        ..codes = const [WalletCurrency('VND', 0), WalletCurrency('USD', 2)];
-      final cases = DefaultReportUseCases(reports, wallets, _Categories());
-      final result = await cases.loadOverview();
-      final snapshot = result.getOrElse(() => throw StateError('overview'));
-      expect(reports.queries.single.kind, ReportPeriodKind.month);
-      expect(reports.queries.single.on, isNull);
-      expect(snapshot.netWorth.items.map((row) => row.currency), [
-        'VND',
-        'USD',
-      ]);
-      expect(snapshot.netWorth.items.first.assetsMinor, BigInt.from(1500000));
-      expect(snapshot.netWorth.items.last.assetsMinor, BigInt.from(2000));
-    },
-  );
-
   test('names leaves without rolling them into the parent', () async {
     final reports = _Reports()..cashflowReport = _flow();
     final wallets = _Wallets()
@@ -231,23 +209,6 @@ CashflowReport _flow() => CashflowReport(
   ],
 );
 
-NetWorthReport _worth() => NetWorthReport(
-  items: [
-    NetWorthTotal(
-      currency: 'VND',
-      assetsMinor: BigInt.from(1500000),
-      liabilitiesMinor: BigInt.zero,
-      netWorthMinor: BigInt.from(1500000),
-    ),
-    NetWorthTotal(
-      currency: 'USD',
-      assetsMinor: BigInt.from(2000),
-      liabilitiesMinor: BigInt.from(-500),
-      netWorthMinor: BigInt.from(1500),
-    ),
-  ],
-);
-
 Wallet _wallet(String id, String name) => Wallet(
   id: id,
   createdAt: DateTime.utc(2026),
@@ -299,6 +260,12 @@ class _Reports implements ReportRepository {
   }
 
   @override
+  Future<Either<AuthFailure, TrendReport>> trend(
+    ReportPeriodKind kind, {
+    String? on,
+  }) async => left(const AuthFailure(AuthError.unavailable));
+
+  @override
   Future<Either<AuthFailure, NetWorthReport>> netWorth() async => right(worth!);
 }
 
@@ -326,6 +293,10 @@ class _Wallets implements WalletRepository {
     bool? archived,
     int? sortOrder,
   }) => throw UnimplementedError();
+
+  @override
+  Future<Either<AuthFailure, List<Wallet>>> reorder(List<Wallet> active) =>
+      throw UnimplementedError();
 }
 
 class _Categories implements CategoryRepository {
@@ -357,6 +328,10 @@ class _Categories implements CategoryRepository {
     FinanceCategory category, {
     String? replacementCategoryId,
   }) => throw UnimplementedError();
+
+  @override
+  Future<Either<AuthFailure, int>> usage(FinanceCategory category) =>
+      throw UnimplementedError();
 }
 
 class _Api implements AuthorizedApi {

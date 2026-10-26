@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Freeva · Patterns</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.col{background:#F4F6FB;border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:12px}
+.k{font-size:11px;letter-spacing:1.6px;font-weight:600;color:#5C6378}
+.t{font-size:20px;line-height:26px;font-weight:600;letter-spacing:-.3px}
+.li{display:flex;gap:10px;font-size:13px;line-height:19px;color:#3D4460}
+.n{width:20px;height:20px;border-radius:999px;background:#FFFFFF;color:#22283A;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex:0 0 20px}
+</style>
+</helmet>
+<div style="width: 2230px; height: 620px; box-sizing: border-box; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; gap: 24px; padding: 40px 0 0 0">
+
+  <div style="display: flex; justify-content: space-between; align-items: flex-end; padding: 0 4px">
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <span style="font-size: 12px; letter-spacing: 2px; font-weight: 600; color: #5C6378">PATTERNS</span>
+      <h1 style="margin: 0; font-size: 40px; line-height: 44px; font-weight: 600; letter-spacing: -1px">Cách các component ghép thành luồng</h1>
+    </div>
+    <span style="font-size: 13px; color: #5C6378">Mỗi cột ứng với màn mẫu ngay bên dưới</span>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(5, 390px); column-gap: 70px; flex-grow: 1">
+    <div class="col">
+      <span class="k">DATA DISPLAY</span><span class="t">Con số trước, biểu đồ sau</span>
+      <div class="li"><span class="n">1</span><span>Màn mở đầu bằng một con số lớn duy nhất; mọi số khác nhỏ hơn ít nhất hai bậc.</span></div>
+      <div class="li"><span class="n">2</span><span>Một thẻ có lớp màu. Các khối còn lại là thẻ trắng.</span></div>
+      <div class="li"><span class="n">3</span><span>Số rút gọn (32,4tr) chỉ trong chip và biểu đồ; nhấn vào để xem số đầy đủ.</span></div>
+      <div class="li"><span class="n">4</span><span>Khi bật ẩn số dư, mọi số tiền trên màn đều ẩn — không chỉ thẻ số dư.</span></div>
+    </div>
+    <div class="col">
+      <span class="k">SEARCH &amp; FILTER</span><span class="t">Lọc trước, tìm khi cần</span>
+      <div class="li"><span class="n">1</span><span>Chip lọc luôn hiện dưới tiêu đề; ô tìm mở từ nút kính lúp và đẩy chip xuống.</span></div>
+      <div class="li"><span class="n">2</span><span>Tìm tiếng Việt không dấu ("pho thin" ra "Phở Thìn"), cập nhật sau 300 ms.</span></div>
+      <div class="li"><span class="n">3</span><span>Tổng thu/chi phía trên danh sách đổi theo bộ lọc đang bật.</span></div>
+      <div class="li"><span class="n">4</span><span>Không có kết quả: trạng thái trống kèm nút "Xoá bộ lọc".</span></div>
+    </div>
+    <div class="col">
+      <span class="k">FORM</span><span class="t">Ghi một khoản dưới 10 giây</span>
+      <div class="li"><span class="n">1</span><span>Trường chính (số tiền) lớn, ở trên, được focus sẵn với bàn phím số riêng.</span></div>
+      <div class="li"><span class="n">2</span><span>Mặc định thông minh: ví dùng gần nhất, ngày hôm nay, danh mục hay dùng đứng đầu.</span></div>
+      <div class="li"><span class="n">3</span><span>Trường phụ (ghi chú, nhãn) gấp lại sau một dòng mở rộng.</span></div>
+      <div class="li"><span class="n">4</span><span>Nút lưu cố định ở đáy. Lưu xong: đóng màn + toast có "Hoàn tác".</span></div>
+    </div>
+    <div class="col">
+      <span class="k">SETTINGS</span><span class="t">Nhóm theo việc, không theo kỹ thuật</span>
+      <div class="li"><span class="n">1</span><span>Thẻ hồ sơ trên cùng; email che một phần (m•••@gmail.com).</span></div>
+      <div class="li"><span class="n">2</span><span>Nhóm: Quản lý · Ứng dụng · Hỗ trợ. Mỗi nhóm một thẻ, tối đa 6 dòng.</span></div>
+      <div class="li"><span class="n">3</span><span>Bật/tắt có hiệu lực ngay, không cần nút lưu.</span></div>
+      <div class="li"><span class="n">4</span><span>Đăng xuất, xoá dữ liệu: cuối danh sách, màu lỗi, luôn hỏi xác nhận.</span></div>
+    </div>
+    <div class="col">
+      <span class="k">AUTHENTICATION</span><span class="t">Khoá nhẹ, mở nhanh</span>
+      <div class="li"><span class="n">1</span><span>Mở app: Face ID / vân tay trước, mã PIN 6 số là phương án dự phòng.</span></div>
+      <div class="li"><span class="n">2</span><span>Chưa mở khoá thì không hiện bất kỳ số tiền nào, kể cả ở màn chuyển app.</span></div>
+      <div class="li"><span class="n">3</span><span>Sai 5 lần: yêu cầu đăng nhập lại. Không nói còn bao nhiêu lần đoán.</span></div>
+      <div class="li"><span class="n">4</span><span>Phản hồi: mỗi số nhập là một chấm đầy; sai thì rung và xoá, kèm chữ báo.</span></div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":2230,"height":620}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

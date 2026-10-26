@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  ForbiddenException,
+  HttpException,
   Inject,
   Injectable,
   UnauthorizedException,
@@ -10,6 +12,9 @@ import {
   type TokenPurpose,
 } from './domain/auth.repository';
 import { AuthCrypto } from './infrastructure/auth-crypto';
+
+/** Version of the Terms and Privacy policy people agree to at sign-up. */
+export const TERMS_VERSION = '2026-10';
 
 export const accepted = {
   message: 'If the account is eligible, an email will be sent.',
@@ -53,6 +58,7 @@ export class AuthService {
       email,
       passwordHash,
       this.challenge('verify_email'),
+      { acceptedAt: new Date(), version: TERMS_VERSION },
     );
     return accepted;
   }
@@ -134,6 +140,64 @@ export class AuthService {
         }),
       ),
     };
+  }
+
+  /**
+   * Signed-in password change (DS-P2-003). A wrong current password is 403
+   * (401 means "session expired" to clients); guesses are limited per user.
+   */
+  async changePassword(
+    userId: string,
+    sessionId: string,
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<void> {
+    const retry = await this.repository.takeRateLimit(
+      this.crypto.rateKey(`user:change_password:${userId}`),
+      5,
+      900,
+    );
+    if (retry > 0) {
+      throw new HttpException(
+        {
+          error: {
+            code: 'RATE_LIMITED',
+            message: 'Too many attempts. Try again later.',
+          },
+        },
+        429,
+      );
+    }
+    const user = await this.repository.findUserById(userId);
+    const valid = await this.crypto.verifyPassword(
+      user?.passwordHash ?? null,
+      currentPassword,
+    );
+    if (!valid || !user?.passwordHash) {
+      throw new ForbiddenException({
+        error: { code: 'INVALID_CREDENTIALS', message: 'Invalid credentials' },
+      });
+    }
+    if (currentPassword === newPassword) {
+      throw new BadRequestException({
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Choose a different password',
+          details: [],
+        },
+      });
+    }
+    const changed = await this.repository.changePassword(
+      userId,
+      user.passwordHash,
+      await this.crypto.hashPassword(newPassword),
+      sessionId,
+    );
+    if (!changed) {
+      throw new ForbiddenException({
+        error: { code: 'INVALID_CREDENTIALS', message: 'Invalid credentials' },
+      });
+    }
   }
 
   revoke(userId: string, sessionId?: string) {

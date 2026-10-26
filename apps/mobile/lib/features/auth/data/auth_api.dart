@@ -1,8 +1,13 @@
 import 'dart:convert';
+
 import '../../../../core/config/app_config.dart';
+import '../../../../core/logging/app_logger.dart';
+import '../../../../core/logging/log_scrub.dart';
 import '../../../../core/network/create_http_client.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';
+
 import '../domain/auth_repository.dart';
 
 abstract class AuthApi {
@@ -17,11 +22,14 @@ abstract class AuthApi {
 
 @LazySingleton(as: AuthApi)
 class HttpAuthApi implements AuthApi {
-  HttpAuthApi(AppConfig config)
-      : this.withClient(createHttpClient(config), config.apiBaseUrl);
-  HttpAuthApi.withClient(this._client, this._baseUrl);
+  HttpAuthApi(AppConfig config, AppLogger logger)
+    : this.withClient(createHttpClient(config), config.apiBaseUrl, logger);
+
+  HttpAuthApi.withClient(this._client, this._baseUrl, [this._logger]);
+
   final http.Client _client;
   final String _baseUrl;
+  final AppLogger? _logger;
 
   @override
   Future<Map<String, dynamic>> request(
@@ -40,6 +48,11 @@ class HttpAuthApi implements AuthApi {
         base.hasFragment) {
       throw const AuthFailure(AuthError.unavailable);
     }
+    final started = DateTime.now();
+    _logger?.http(
+      '→ $method $path body=${summarizePayload(body)}'
+      '${token != null ? ' auth=Bearer' : ''}',
+    );
     try {
       final request = http.Request(method, base.resolve('/api/v1/$path'))
         ..followRedirects = false
@@ -51,23 +64,28 @@ class HttpAuthApi implements AuthApi {
           .send(request)
           .then(http.Response.fromStream)
           .timeout(const Duration(seconds: 20));
+      final ms = DateTime.now().difference(started).inMilliseconds;
       if (response.statusCode >= 200 && response.statusCode < 300) {
+        _logger?.http('← $method $path ${response.statusCode} ${ms}ms');
         return response.body.isEmpty
             ? {}
             : jsonDecode(response.body) as Map<String, dynamic>;
       }
-      throw AuthFailure(
-          switch (response.statusCode) {
-            401 => token == null ? AuthError.credentials : AuthError.expired,
-            429 => AuthError.rateLimited,
-            400 => AuthError.invalidToken,
-            409 => AuthError.conflict,
-            _ => AuthError.unavailable,
-          },
-          retryAfter: int.tryParse(response.headers['retry-after'] ?? ''));
+      _logger?.http('← $method $path ${response.statusCode} ${ms}ms');
+      throw AuthFailure(switch (response.statusCode) {
+        401 => token == null ? AuthError.credentials : AuthError.expired,
+        // Signed in but refused: the current password was wrong.
+        403 when token != null => AuthError.credentials,
+        429 => AuthError.rateLimited,
+        400 => AuthError.invalidToken,
+        409 => AuthError.conflict,
+        _ => AuthError.unavailable,
+      }, retryAfter: int.tryParse(response.headers['retry-after'] ?? ''));
     } on AuthFailure {
       rethrow;
-    } catch (_) {
+    } catch (error, stackTrace) {
+      final ms = DateTime.now().difference(started).inMilliseconds;
+      _logger?.error('http $method $path failed ${ms}ms', error, stackTrace);
       throw const AuthFailure(AuthError.network);
     }
   }
