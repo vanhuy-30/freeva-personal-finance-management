@@ -66,7 +66,7 @@ class FreevaChip extends StatelessWidget {
         filter ? 13.0 : 14.0,
       ),
       FreevaChipSize.small => (FreevaSize.pill, FreevaSpace.s3, 13.0),
-      FreevaChipSize.compact => (FreevaSize.buttonCompact, 14.0, 13.0),
+      FreevaChipSize.compact => (FreevaSize.buttonCompact, 12.0, 13.0),
       FreevaChipSize.large => (FreevaSize.touch, FreevaSpace.s4, 14.0),
     };
     final style = FreevaTypography.body.copyWith(

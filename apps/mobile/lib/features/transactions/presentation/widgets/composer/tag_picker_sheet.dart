@@ -230,9 +230,7 @@ class _BodyState extends State<_Body> {
                         excludeSemantics: true,
                         child: GestureDetector(
                           onTap: () => setState(() => chosen.remove(id)),
-                          child: IntrinsicWidth(
-                            child: TagChip(nameOf(id), size: TagChipSize.sheet),
-                          ),
+                          child: TagChip(nameOf(id), size: TagChipSize.sheet),
                         ),
                       ),
                   ],

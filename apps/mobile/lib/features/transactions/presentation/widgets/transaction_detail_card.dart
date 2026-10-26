@@ -90,10 +90,7 @@ class TransactionDetailCard extends StatelessWidget {
             spacing: 6,
             runSpacing: 6,
             children: [
-              // IntrinsicWidth: the chip's centred Container would
-              // otherwise stretch to the row width.
-              for (final t in label.tags)
-                IntrinsicWidth(child: TagChip(t, size: TagChipSize.detail)),
+              for (final t in label.tags) TagChip(t, size: TagChipSize.detail),
             ],
           ),
           center: true,

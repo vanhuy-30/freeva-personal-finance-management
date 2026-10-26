@@ -17,6 +17,7 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
     required this.bgDisabled,
     required this.bgScrim,
     required this.bgAvatar,
+    required this.bgRaised,
     required this.bgSwitchOff,
     required this.borderDefault,
     required this.borderDivider,
@@ -87,6 +88,7 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
     required this.segmentedTrack,
     required this.segmentedSelectedBg,
     required this.segmentedSelectedFg,
+    required this.segmentedRaisedBg,
     required this.navBg,
     required this.navItem,
     required this.navActiveBg,
@@ -117,6 +119,7 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
   final Color bgDisabled;
   final Color bgScrim;
   final Color bgAvatar;
+  final Color bgRaised;
   final Color bgSwitchOff;
   final Color borderDefault;
   final Color borderDivider;
@@ -187,6 +190,7 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
   final Color segmentedTrack;
   final Color segmentedSelectedBg;
   final Color segmentedSelectedFg;
+  final Color segmentedRaisedBg;
   final Color navBg;
   final Color navItem;
   final Color navActiveBg;
@@ -217,6 +221,7 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
     bgDisabled: Color(0xFFE4E7F0),
     bgScrim: Color(0x7322283A),
     bgAvatar: Color(0xFFE6EBFB),
+    bgRaised: Color(0xFFFFFFFF),
     bgSwitchOff: Color(0xFFD5DAEA),
     borderDefault: Color(0xFFE4E7F0),
     borderDivider: Color(0xFFEEF0F5),
@@ -287,6 +292,7 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
     segmentedTrack: Color(0xFFEAEDF4),
     segmentedSelectedBg: Color(0xFF22283A),
     segmentedSelectedFg: Color(0xFFFFFFFF),
+    segmentedRaisedBg: Color(0xFFFFFFFF),
     navBg: Color(0xFFFFFFFF),
     navItem: Color(0xFF5C6378),
     navActiveBg: Color(0xFF22283A),
@@ -318,6 +324,7 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
     bgDisabled: Color(0xFF2C3252),
     bgScrim: Color(0x99000000),
     bgAvatar: Color(0xFF232842),
+    bgRaised: Color(0xFF2C3252),
     bgSwitchOff: Color(0xFF2C3252),
     borderDefault: Color(0xFF2C3252),
     borderDivider: Color(0xFF2C3252),
@@ -388,6 +395,7 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
     segmentedTrack: Color(0xFF232842),
     segmentedSelectedBg: Color(0xFFF4F6FB),
     segmentedSelectedFg: Color(0xFF22283A),
+    segmentedRaisedBg: Color(0xFF2C3252),
     navBg: Color(0xFF1B1F33),
     navItem: Color(0xFFA9B0C7),
     navActiveBg: Color(0xFFF4F6FB),
@@ -420,6 +428,7 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
     Color? bgDisabled,
     Color? bgScrim,
     Color? bgAvatar,
+    Color? bgRaised,
     Color? bgSwitchOff,
     Color? borderDefault,
     Color? borderDivider,
@@ -490,6 +499,7 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
     Color? segmentedTrack,
     Color? segmentedSelectedBg,
     Color? segmentedSelectedFg,
+    Color? segmentedRaisedBg,
     Color? navBg,
     Color? navItem,
     Color? navActiveBg,
@@ -520,6 +530,7 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
       bgDisabled: bgDisabled ?? this.bgDisabled,
       bgScrim: bgScrim ?? this.bgScrim,
       bgAvatar: bgAvatar ?? this.bgAvatar,
+      bgRaised: bgRaised ?? this.bgRaised,
       bgSwitchOff: bgSwitchOff ?? this.bgSwitchOff,
       borderDefault: borderDefault ?? this.borderDefault,
       borderDivider: borderDivider ?? this.borderDivider,
@@ -590,6 +601,7 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
       segmentedTrack: segmentedTrack ?? this.segmentedTrack,
       segmentedSelectedBg: segmentedSelectedBg ?? this.segmentedSelectedBg,
       segmentedSelectedFg: segmentedSelectedFg ?? this.segmentedSelectedFg,
+      segmentedRaisedBg: segmentedRaisedBg ?? this.segmentedRaisedBg,
       navBg: navBg ?? this.navBg,
       navItem: navItem ?? this.navItem,
       navActiveBg: navActiveBg ?? this.navActiveBg,
@@ -625,6 +637,7 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
       bgDisabled: Color.lerp(bgDisabled, other.bgDisabled, t)!,
       bgScrim: Color.lerp(bgScrim, other.bgScrim, t)!,
       bgAvatar: Color.lerp(bgAvatar, other.bgAvatar, t)!,
+      bgRaised: Color.lerp(bgRaised, other.bgRaised, t)!,
       bgSwitchOff: Color.lerp(bgSwitchOff, other.bgSwitchOff, t)!,
       borderDefault: Color.lerp(borderDefault, other.borderDefault, t)!,
       borderDivider: Color.lerp(borderDivider, other.borderDivider, t)!,
@@ -695,6 +708,7 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
       segmentedTrack: Color.lerp(segmentedTrack, other.segmentedTrack, t)!,
       segmentedSelectedBg: Color.lerp(segmentedSelectedBg, other.segmentedSelectedBg, t)!,
       segmentedSelectedFg: Color.lerp(segmentedSelectedFg, other.segmentedSelectedFg, t)!,
+      segmentedRaisedBg: Color.lerp(segmentedRaisedBg, other.segmentedRaisedBg, t)!,
       navBg: Color.lerp(navBg, other.navBg, t)!,
       navItem: Color.lerp(navItem, other.navItem, t)!,
       navActiveBg: Color.lerp(navActiveBg, other.navActiveBg, t)!,

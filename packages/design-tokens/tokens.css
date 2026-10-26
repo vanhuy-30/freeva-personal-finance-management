@@ -26,6 +26,7 @@
   --color-bg-disabled: #e4e7f0;
   --color-bg-scrim: #22283a73;
   --color-bg-avatar: #e6ebfb;
+  --color-bg-raised: #ffffff;
   --color-bg-switch-off: #d5daea;
   --color-border-default: #e4e7f0;
   --color-border-divider: #eef0f5;
@@ -121,6 +122,7 @@
   --color-bg-disabled: #2c3252;
   --color-bg-scrim: #00000099;
   --color-bg-avatar: #232842;
+  --color-bg-raised: #2c3252;
   --color-bg-switch-off: #2c3252;
   --color-border-default: #2c3252;
   --color-border-divider: #2c3252;

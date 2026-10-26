@@ -49,9 +49,9 @@ class TagChip extends StatelessWidget {
     return Container(
       height: detail ? 28 : FreevaSize.pill,
       padding: EdgeInsets.symmetric(horizontal: detail ? 10 : FreevaSpace.s3),
-      alignment: Alignment.center,
       decoration: decoration,
-      child: text,
+      // Hug the label; a centred Container would stretch inside a Wrap.
+      child: Align(widthFactor: 1, child: text),
     );
   }
 }

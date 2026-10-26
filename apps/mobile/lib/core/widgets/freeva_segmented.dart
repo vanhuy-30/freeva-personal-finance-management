@@ -15,7 +15,7 @@ enum FreevaSegmentedStyle {
   /// Ink pill, white text (composer Chi · Thu · Chuyển).
   ink,
 
-  /// White raised pill, ink text (report period).
+  /// White raised pill (lighter navy in dark mode), ink text (report period).
   raised,
 }
 
@@ -80,7 +80,7 @@ class FreevaSegmented<T> extends StatelessWidget {
               color: !on
                   ? Colors.transparent
                   : raised
-                  ? c.bgSurface
+                  ? c.segmentedRaisedBg
                   : c.segmentedSelectedBg,
               shadows: on && raised ? FreevaElevation.segment : null,
             ),

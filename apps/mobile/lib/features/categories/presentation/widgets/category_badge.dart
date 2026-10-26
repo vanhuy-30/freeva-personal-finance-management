@@ -40,7 +40,7 @@ IconData categoryIcon(String? token) => switch (token) {
   'bills' => LucideIcons.receiptText,
   'insurance' => LucideIcons.shield,
   'subscription' => LucideIcons.repeat,
-  'transfer' => LucideIcons.arrowLeftRight,
+  'transfer' => LucideIcons.arrowRightLeft,
   'other_expense' => LucideIcons.layoutGrid,
   _ => LucideIcons.layoutGrid,
 };
