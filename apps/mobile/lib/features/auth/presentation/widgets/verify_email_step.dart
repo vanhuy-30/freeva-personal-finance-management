@@ -17,19 +17,16 @@ import 'key_glyph.dart';
 
 /// Xác nhận email, first screen after sign-up. Optional: "Xong" moves on
 /// whether or not the link was opened, and the account works either way.
+/// No back button: the account already exists, so "back" would sign out.
 class VerifyEmailStep extends StatelessWidget {
   const VerifyEmailStep({
     required this.model,
     required this.onDone,
-    this.onBack,
     super.key,
   });
 
   final AuthViewModel model;
   final VoidCallback onDone;
-
-  /// Back to "Tạo tài khoản" (for a mistyped email).
-  final VoidCallback? onBack;
 
   Future<void> _resend(BuildContext context) async {
     final message = S.of(context).authVerificationSent;
@@ -47,8 +44,7 @@ class VerifyEmailStep extends StatelessWidget {
     final parts = s.authVerifySent('\u0001').split('\u0001');
     final body = FreevaTypography.body.copyWith(color: c.textSecondary);
     return AuthScaffold(
-      onBack: model.loading ? null : onBack,
-      topGap: 0,
+      topGap: FreevaSpace.s4,
       bottomInset: 32,
       footer: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
