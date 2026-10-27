@@ -78,7 +78,11 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
-    listenable: Listenable.merge([settings, profile, ?wallets]),
+    listenable: Listenable.merge([
+      settings,
+      profile,
+      if (wallets != null) wallets!,
+    ]),
     builder: (context, _) {
       final s = S.of(context);
       final c = context.colors;

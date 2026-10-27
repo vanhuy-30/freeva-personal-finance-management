@@ -259,7 +259,7 @@ class SyncItemRow extends StatelessWidget {
         if (stacked) return const [];
         return [
           if (main != null) ...[const SizedBox(width: FreevaSpace.s2), main],
-          ?extra,
+          if (extra != null) extra,
         ];
     }
   }

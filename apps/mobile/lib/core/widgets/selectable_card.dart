@@ -130,7 +130,7 @@ class SelectableCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [?iconWidget, labelText],
+              children: [if (iconWidget != null) iconWidget, labelText],
             ),
           ),
           if (selected) Positioned(top: 12, right: 12, child: check),

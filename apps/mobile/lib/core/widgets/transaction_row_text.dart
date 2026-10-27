@@ -62,7 +62,7 @@ class TransactionRowText extends StatelessWidget {
             color: c.textPrimary,
           ),
         ),
-        ?second,
+        if (second != null) second,
       ],
     );
   }

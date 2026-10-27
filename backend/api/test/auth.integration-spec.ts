@@ -371,7 +371,10 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
       create: { code: 'USD', minorDigits: 2, name: 'US Dollar' } });
     const current = await request('profile', undefined, owner.accessToken, 'GET');
     expect(current.status).toBe(200);
-    const changes = { ...current.body, locale: 'en', defaultCurrencyCode: 'USD',
+    // `goals` is read only on this endpoint, so it is not sent back.
+    const { goals, ...editable } = current.body;
+    expect(goals).toEqual([]);
+    const changes = { ...editable, locale: 'en', defaultCurrencyCode: 'USD',
       timezone: 'America/New_York', fiscalMonthStartDay: 28 };
     const writes = await Promise.all([
       request('profile', changes, owner.accessToken, 'PUT'),
@@ -379,7 +382,7 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
     ]);
     expect(writes.map(r => r.status).sort()).toEqual([200, 409]);
     expect((await request('profile', undefined, owner.accessToken, 'GET')).body)
-      .toEqual({ ...changes, version: current.body.version + 1 });
+      .toEqual({ ...changes, goals, version: current.body.version + 1 });
     expect((await request('profile', undefined, other.accessToken, 'GET')).body)
       .toMatchObject({ locale: 'vi', defaultCurrencyCode: 'VND', fiscalMonthStartDay: 1 });
     await request('auth/logout', undefined, owner.accessToken);
