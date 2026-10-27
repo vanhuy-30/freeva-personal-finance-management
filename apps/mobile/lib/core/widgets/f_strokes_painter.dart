@@ -49,3 +49,74 @@ class FStrokesPainter extends CustomPainter {
   @override
   bool shouldRepaint(FStrokesPainter old) => old.t != t || old.colors != colors;
 }
+
+/// Static empty-state art on a 120×112 box: a ground shadow and the three
+/// F bars (stem, tilted top bar, middle bar). Colours come from the caller so
+/// dark mode can swap them.
+class FStrokesIllustrationPainter extends CustomPainter {
+  const FStrokesIllustrationPainter({
+    required this.ground,
+    required this.stem,
+    required this.top,
+    required this.middle,
+  });
+
+  final Color ground;
+  final Color stem;
+  final Color top;
+  final Color middle;
+
+  static RRect _bar(double x, double y, double w, double h) =>
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(x, y, w, h),
+        const Radius.circular(8),
+      );
+
+  static void _rotated(
+    Canvas canvas,
+    RRect bar,
+    double degrees,
+    Offset pivot,
+    Paint paint,
+  ) {
+    canvas
+      ..save()
+      ..translate(pivot.dx, pivot.dy)
+      ..rotate(degrees * math.pi / 180)
+      ..translate(-pivot.dx, -pivot.dy)
+      ..drawRRect(bar, paint)
+      ..restore();
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.scale(size.width / 120, size.height / 112);
+    canvas
+      ..drawOval(
+        Rect.fromCenter(center: const Offset(60, 102), width: 68, height: 10),
+        Paint()..color = ground,
+      )
+      ..drawRRect(_bar(38, 14, 16, 78), Paint()..color = stem);
+    _rotated(
+      canvas,
+      _bar(46, 8, 48, 16),
+      -6,
+      const Offset(70, 16),
+      Paint()..color = top,
+    );
+    _rotated(
+      canvas,
+      _bar(50, 44, 34, 16),
+      4,
+      const Offset(67, 52),
+      Paint()..color = middle,
+    );
+  }
+
+  @override
+  bool shouldRepaint(FStrokesIllustrationPainter old) =>
+      old.ground != ground ||
+      old.stem != stem ||
+      old.top != top ||
+      old.middle != middle;
+}

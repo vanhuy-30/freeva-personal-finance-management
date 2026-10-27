@@ -9,7 +9,7 @@ import '../../../../core/widgets/progress_bar.dart';
 import '../../domain/overview.dart';
 
 /// One credit card: name + due chip (warning within 7 days), limit bar
-/// coloured by level, "Đã dùng … / Hạn mức …".
+/// coloured by level, "Đã dùng …" left and "Hạn mức …" right.
 class CreditCardRow extends StatelessWidget {
   const CreditCardRow({
     required this.card,
@@ -36,6 +36,11 @@ class CreditCardRow extends StatelessWidget {
       CreditLevel.critical => FreevaPrimitive.red500,
     };
     final limit = card.limit;
+    final secondary = FreevaTypography.bodyS.copyWith(
+      height: 1.2,
+      color: c.textSecondary,
+      fontFeatures: const [FontFeature.tabularFigures()],
+    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -46,23 +51,32 @@ class CreditCardRow extends StatelessWidget {
                 card.wallet.draft.name,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: FreevaTypography.bodyS.copyWith(
-                  fontWeight: FontWeight.w600,
+                style: FreevaTypography.bodyM.copyWith(
+                  fontWeight: FontWeight.w500,
+                  height: 1.2,
                   color: c.textPrimary,
                 ),
               ),
             ),
             if (due != null)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: soon ? c.statusWarningBg : Colors.transparent,
-                  borderRadius: BorderRadius.circular(FreevaRadius.full),
-                ),
+                height: soon ? 24 : null,
+                alignment: Alignment.center,
+                padding: soon
+                    ? const EdgeInsets.symmetric(horizontal: FreevaSpace.s2)
+                    : null,
+                decoration: soon
+                    ? BoxDecoration(
+                        color: c.statusWarningBg,
+                        borderRadius: BorderRadius.circular(FreevaRadius.full),
+                      )
+                    : null,
                 child: Text(
                   s.homeCreditDue(DateFormat('dd/MM', locale).format(due)),
                   maxLines: 1,
                   style: FreevaTypography.label.copyWith(
+                    fontWeight: soon ? FontWeight.w600 : FontWeight.w400,
+                    height: 1.2,
                     color: soon ? c.statusWarning : c.textSecondary,
                   ),
                 ),
@@ -72,15 +86,29 @@ class CreditCardRow extends StatelessWidget {
         const SizedBox(height: FreevaSpace.s2),
         FreevaProgressBar(value: card.ratio, color: barColor),
         const SizedBox(height: FreevaSpace.s2),
-        Text(
-          limit == null
-              ? s.homeCreditUsedNoLimit(money(card.used))
-              : s.homeCreditUsed(money(card.used), money(limit)),
-          style: FreevaTypography.label.copyWith(
-            fontWeight: FontWeight.w400,
-            color: c.textSecondary,
-            fontFeatures: const [FontFeature.tabularFigures()],
-          ),
+        // "Đã dùng" left, "Hạn mức" right; wraps under it on narrow screens.
+        Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          spacing: FreevaSpace.s2,
+          children: [
+            Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(text: '${s.homeCreditUsedLabel} '),
+                  TextSpan(
+                    text: money(card.used),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: c.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
+              style: secondary,
+            ),
+            if (limit != null)
+              Text(s.homeCreditLimit(money(limit)), style: secondary),
+          ],
         ),
       ],
     );

@@ -36,6 +36,7 @@ class TransactionSummaryLine extends StatelessWidget {
             : 0,
       );
     final base = FreevaTypography.bodyS.copyWith(
+      height: 16 / 13,
       color: c.textSecondary,
       fontFeatures: const [FontFeature.tabularFigures()],
     );
@@ -43,7 +44,6 @@ class TransactionSummaryLine extends StatelessWidget {
     String money(BigInt v, String code) =>
         '${formatMoneyText(v.abs(), digitsOf(code), locale)}${code == mainCurrency ? '' : ' $code'}';
     final parts = <List<InlineSpan>>[
-      if (count) [TextSpan(text: s.txSearchResults(summary.count))],
       for (final t in totals) ...[
         if (t.income != BigInt.zero)
           [
@@ -63,16 +63,33 @@ class TransactionSummaryLine extends StatelessWidget {
           ],
       ],
     ];
-    final spans = <InlineSpan>[
-      for (final (i, part) in parts.indexed) ...[
-        if (i > 0) TextSpan(text: count ? ' · ' : '    '),
-        ...part,
+    if (parts.isEmpty && !count) return const SizedBox.shrink();
+    // Board: totals 20 apart; with a count, "3 kết quả" left and the
+    // totals right.
+    final totalsWrap = Wrap(
+      spacing: FreevaSpace.s5,
+      children: [
+        for (final part in parts)
+          Text.rich(TextSpan(children: part), style: base),
       ],
-    ];
-    if (spans.isEmpty) return const SizedBox.shrink();
+    );
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: Text.rich(TextSpan(children: spans), style: base),
+      child: count
+          ? Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(s.txSearchResults(summary.count), style: base),
+                const SizedBox(width: FreevaSpace.s3),
+                Expanded(
+                  child: Align(
+                    alignment: AlignmentDirectional.centerEnd,
+                    child: totalsWrap,
+                  ),
+                ),
+              ],
+            )
+          : totalsWrap,
     );
   }
 }

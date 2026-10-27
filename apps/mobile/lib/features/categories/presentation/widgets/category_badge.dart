@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/theme/tokens.g.dart';
 
@@ -7,12 +7,12 @@ import '../../../../core/theme/tokens.g.dart';
 IconData categoryIcon(String? token) => switch (token) {
   'food' => LucideIcons.utensils,
   'coffee' => LucideIcons.coffee,
-  'groceries' => LucideIcons.shoppingBasket,
-  'shopping' => LucideIcons.shoppingBag,
+  'groceries' => LucideIcons.shoppingCart,
+  'shopping' => LucideIcons.handbag,
   'clothes' => LucideIcons.shirt,
   'gifts' => LucideIcons.gift,
-  'transport' => LucideIcons.car,
-  'bus' => LucideIcons.bus,
+  'transport' => LucideIcons.carFront,
+  'bus' => LucideIcons.busFront,
   'fuel' => LucideIcons.fuel,
   'travel' => LucideIcons.plane,
   'housing' => LucideIcons.house,
@@ -21,27 +21,28 @@ IconData categoryIcon(String? token) => switch (token) {
   'water' => LucideIcons.droplet,
   'internet' => LucideIcons.wifi,
   'phone' => LucideIcons.smartphone,
-  'health' => LucideIcons.heartPulse,
+  'health' => LucideIcons.heart,
   'medicine' => LucideIcons.pill,
   'sports' => LucideIcons.dumbbell,
   'family' => LucideIcons.users,
   'pets' => LucideIcons.pawPrint,
-  'beauty' => LucideIcons.sparkles,
+  'beauty' => LucideIcons.scissors,
   'education' => LucideIcons.graduationCap,
-  'books' => LucideIcons.bookOpen,
+  'books' => LucideIcons.book,
   'music' => LucideIcons.music,
-  'entertainment' => LucideIcons.clapperboard,
+  'entertainment' => LucideIcons.film,
   'games' => LucideIcons.gamepad2,
   'salary' => LucideIcons.banknote,
-  'bonus' => LucideIcons.award,
+  'bonus' => LucideIcons.star,
   'investment' => LucideIcons.trendingUp,
   'work' => LucideIcons.briefcase,
   'other_income' => LucideIcons.piggyBank,
-  'bills' => LucideIcons.receipt,
-  'insurance' => LucideIcons.shieldCheck,
+  'bills' => LucideIcons.receiptText,
+  'insurance' => LucideIcons.shield,
   'subscription' => LucideIcons.repeat,
-  'transfer' => LucideIcons.arrowLeftRight,
-  _ => LucideIcons.shapes,
+  'transfer' => LucideIcons.arrowRightLeft,
+  'other_expense' => LucideIcons.layoutGrid,
+  _ => LucideIcons.layoutGrid,
 };
 
 /// Badge fill only. Highlight and muted tokens are never used as text color.

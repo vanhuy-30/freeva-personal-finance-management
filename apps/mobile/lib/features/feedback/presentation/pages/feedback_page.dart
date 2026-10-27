@@ -74,22 +74,33 @@ class _FeedbackPageState extends State<FeedbackPage> {
           kind: FreevaTopBarKind.modal,
           onLeading: () => context.popOrGo('/me'),
         ),
-        body: ListView(
-          padding: EdgeInsets.fromLTRB(
-            margin,
-            FreevaSpace.s2,
-            margin,
-            FreevaSpace.s8,
+        body: SafeArea(
+          top: false,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.fromLTRB(
+                    margin,
+                    FreevaSpace.s1 + 2,
+                    margin,
+                    14,
+                  ),
+                  children: [FeedbackForm(model: model, message: message)],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(margin, 0, margin, 28),
+                child: FreevaButton(
+                  label: model.sending ? s.fbSending : s.fbSend,
+                  size: FreevaButtonSize.l,
+                  expand: true,
+                  onPressed: model.canSend ? _send : null,
+                ),
+              ),
+            ],
           ),
-          children: [
-            FeedbackForm(model: model, message: message),
-            const SizedBox(height: FreevaSpace.s5),
-            FreevaButton(
-              label: model.sending ? s.fbSending : s.fbSend,
-              expand: true,
-              onPressed: model.canSend ? _send : null,
-            ),
-          ],
         ),
       );
     },

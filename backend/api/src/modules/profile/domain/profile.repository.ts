@@ -6,9 +6,11 @@ export interface Profile {
   timezone: string;
   fiscalMonthStartDay: number;
   version: number;
+  /** Onboarding goals (read only here; set via PATCH /profile/onboarding). */
+  goals: string[];
 }
 /** `displayName` undefined keeps the stored value. */
-export type ProfileUpdate = Omit<Profile, 'displayName'> & { displayName?: string | null };
+export type ProfileUpdate = Omit<Profile, 'displayName' | 'goals'> & { displayName?: string | null };
 /** Only the fields present are stored; the rest keep their value. */
 export interface OnboardingAnswers {
   goals?: string[];

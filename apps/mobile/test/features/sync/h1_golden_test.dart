@@ -24,6 +24,26 @@ void main() {
   setUpAll(loadTestFonts);
   tearDown(() => getIt.reset());
 
+  SyncQueueItem highlands() =>
+      syncItem('h', merchant: 'Highlands', categoryId: 'coffee');
+  SyncQueueItem grab() => syncItem(
+    'g',
+    action: SyncAction.update,
+    merchant: 'Grab',
+    amount: -48000,
+    categoryId: 'car',
+    createdAt: DateTime(2026, 10, 22, 9, 30),
+  );
+  SyncQueueItem coffee() => syncItem(
+    'd',
+    action: SyncAction.delete,
+    merchant: 'Cà phê',
+    amount: -39000,
+    categoryId: 'coffee',
+    createdAt: DateTime(2026, 10, 22, 8, 50),
+  );
+  List<SyncQueueItem> waitingOnly() => [highlands(), grab(), coffee()];
+
   FixedSync mixed() => FixedSync([
     syncItem(
       'conflict',
@@ -32,6 +52,16 @@ void main() {
       reason: SyncReason.changedElsewhere,
       merchant: 'Phở Thìn',
       amount: -65000,
+      categoryId: 'food',
+      serverId: 'srv-1',
+    ).copyWith(
+      server: const SyncServerCopy(
+        id: 'srv-1',
+        version: 2,
+        occurredOn: '2026-10-22',
+        amountMinor: '-60000',
+        currencyCode: 'VND',
+      ),
     ),
     syncItem(
       'invalid',
@@ -39,15 +69,9 @@ void main() {
       reason: SyncReason.invalid,
       merchant: 'Taxi',
       amount: -120000,
+      categoryId: 'car',
     ),
-    syncItem('h', merchant: 'Highlands'),
-    syncItem('g', action: SyncAction.update, merchant: 'Grab', amount: -48000),
-    syncItem(
-      'd',
-      action: SyncAction.delete,
-      merchant: 'Cà phê',
-      amount: -39000,
-    ),
+    ...waitingOnly(),
   ]);
 
   Future<void> shot(
@@ -66,7 +90,9 @@ void main() {
     await getIt.reset();
     getIt
       ..registerSingleton<SyncViewModel>(model)
-      ..registerSingleton<TransactionViewModel>(StubTransactionViewModel());
+      ..registerSingleton<TransactionViewModel>(
+        StubTransactionViewModel()..categories = syncCategories,
+      );
     await t.pumpWidget(
       MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -108,7 +134,7 @@ void main() {
     );
   });
   testWidgets('sending', skip: !Platform.isMacOS, (t) async {
-    final model = mixed()..syncing = true;
+    final model = FixedSync(waitingOnly())..syncing = true;
     await shot(t, 'sending', model, size: const Size(390, 1000));
   });
   testWidgets('done', skip: !Platform.isMacOS, (t) async {
@@ -117,7 +143,7 @@ void main() {
     await shot(t, 'done', model, size: const Size(390, 500));
   });
   testWidgets('update needed', skip: !Platform.isMacOS, (t) async {
-    final model = mixed()..schemaMismatch = true;
+    final model = FixedSync(waitingOnly())..schemaMismatch = true;
     await shot(t, 'update', model, size: const Size(390, 900));
   });
   testWidgets('discard popup', skip: !Platform.isMacOS, (t) async {

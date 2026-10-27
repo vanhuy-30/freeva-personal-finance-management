@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/theme_context.dart';
@@ -50,7 +50,9 @@ class _LoginPageState extends State<LoginPage> {
     final idle = !model.loading;
     return AuthScaffold(
       title: s.authLogin,
-      topGap: 56,
+      topGap: 64,
+      // The switch link is 44 high around 18 px of text: 40 − 12.
+      bottomInset: 28,
       footer: AuthSwitchLink(
         prompt: s.authNoAccount,
         action: s.authRegister,
@@ -82,14 +84,21 @@ class _LoginPageState extends State<LoginPage> {
             ],
           ),
         ),
+        const SizedBox(height: FreevaSpace.s2),
         Center(
           child: TextButton(
             onPressed: idle ? () => model.goTo(AuthStep.forgot) : null,
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.all(FreevaSpace.s3),
+              foregroundColor: c.textOnWash,
+            ),
             child: Text(
               s.authRecoverTitle,
-              style: FreevaTypography.label.copyWith(
-                color: c.textPrimary,
+              style: FreevaTypography.bodyM.copyWith(
+                fontWeight: FontWeight.w500,
+                color: c.textOnWash,
                 decoration: TextDecoration.underline,
+                decorationColor: c.textOnWash,
               ),
             ),
           ),
@@ -130,7 +139,7 @@ class _OrDivider extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: FreevaSpace.s6),
       child: Row(
         children: [
-          Expanded(child: Divider(height: 1, color: c.borderDivider)),
+          Expanded(child: Divider(height: 1, color: c.borderDefault)),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: FreevaSpace.s3),
             child: Text(
@@ -138,7 +147,7 @@ class _OrDivider extends StatelessWidget {
               style: FreevaTypography.bodyS.copyWith(color: c.textSecondary),
             ),
           ),
-          Expanded(child: Divider(height: 1, color: c.borderDivider)),
+          Expanded(child: Divider(height: 1, color: c.borderDefault)),
         ],
       ),
     );

@@ -91,11 +91,32 @@ const categories = [
     iconToken: 'food',
   ),
   FinanceCategory(id: 'pho', name: 'Phở', parentId: 'food'),
-  FinanceCategory(id: 'home', name: 'Nhà ở', parentId: null),
-  FinanceCategory(id: 'bus', name: 'Đi lại', parentId: null),
+  FinanceCategory(
+    id: 'home',
+    name: 'Nhà ở',
+    parentId: null,
+    iconToken: 'housing',
+  ),
+  FinanceCategory(
+    id: 'bus',
+    name: 'Đi lại',
+    parentId: null,
+    iconToken: 'transport',
+  ),
+  FinanceCategory(
+    id: 'coffee',
+    name: 'Cà phê',
+    parentId: null,
+    iconToken: 'coffee',
+  ),
   FinanceCategory(id: 'fun', name: 'Giải trí', parentId: null),
   FinanceCategory(id: 'gift', name: 'Quà tặng', parentId: null),
-  FinanceCategory(id: 'salary', name: 'Thu nhập', parentId: null),
+  FinanceCategory(
+    id: 'salary',
+    name: 'Thu nhập',
+    parentId: null,
+    iconToken: 'salary',
+  ),
 ];
 
 TxLeg leg(

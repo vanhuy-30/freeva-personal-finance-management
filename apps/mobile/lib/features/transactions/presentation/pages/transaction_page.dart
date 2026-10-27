@@ -88,13 +88,13 @@ class _TransactionPageState extends State<TransactionPage> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Board order: title row, sync banner, chips, list; 16 between.
             Padding(
-              padding: EdgeInsets.fromLTRB(
-                margin,
-                FreevaSpace.s2,
-                0,
-                FreevaSpace.s3,
-              ),
+              padding: EdgeInsets.fromLTRB(margin, FreevaSpace.s2, margin, 0),
+              child: const SyncStatusBanner(),
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: margin, bottom: FreevaSpace.s4),
               child: TransactionFilterBar(
                 filter: filter,
                 range: rangeFor(
@@ -107,10 +107,6 @@ class _TransactionPageState extends State<TransactionPage> {
                 onChanged: model.setFilter,
                 onOpenSheet: _openSheet,
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: margin),
-              child: const SyncStatusBanner(),
             ),
             Expanded(
               child: ListenableBuilder(

@@ -12,8 +12,9 @@ class FreevaNavItem {
   final String label;
 }
 
-/// Floating pill nav: 4 icon-only tabs and the + button in the middle, lifted
-/// half above the bar into a notch. Only on the 4 tab roots.
+/// Floating pill nav: 4 icon-only tabs and the + button in the middle,
+/// centred in the bar then lifted 26 into a notch that leaves a 6 px ring all
+/// round. Only on the 4 tab roots.
 class FreevaBottomNav extends StatelessWidget {
   const FreevaBottomNav({
     required this.items,
@@ -30,9 +31,12 @@ class FreevaBottomNav extends StatelessWidget {
   final VoidCallback onAdd;
   final String addLabel;
 
-  /// Height the nav occupies above the safe area, + button included.
+  /// Height the nav occupies above the safe area, + button included (86):
+  /// the button pokes 22 above the bar.
   static const double extent =
-      FreevaComponent.navHeight + FreevaComponent.navFabLift;
+      FreevaComponent.navHeight / 2 +
+      FreevaComponent.navFabLift +
+      FreevaComponent.navFabSize / 2;
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +87,7 @@ class FreevaBottomNav extends StatelessWidget {
                       children: [
                         tab(0),
                         tab(1),
-                        const SizedBox(width: fab + FreevaSpace.s3),
+                        const SizedBox(width: fab),
                         tab(2),
                         tab(3),
                       ],

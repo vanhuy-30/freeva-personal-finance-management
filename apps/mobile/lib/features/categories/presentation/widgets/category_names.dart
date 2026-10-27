@@ -46,14 +46,14 @@ const categoryQuickIcons = [
   'food',
   'coffee',
   'groceries',
-  'shopping',
   'transport',
   'housing',
-  'bills',
+  'electricity',
+  'shopping',
   'health',
-  'entertainment',
-  'salary',
+  'music',
   'gifts',
+  'salary',
 ];
 
 List<String> categoryIconGroupTitles(S s) => [

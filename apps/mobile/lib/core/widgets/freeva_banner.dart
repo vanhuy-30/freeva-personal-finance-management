@@ -35,7 +35,8 @@ class FreevaBanner extends StatelessWidget {
       FreevaBannerTone.success => (c.statusSuccessBg, c.statusSuccess),
       FreevaBannerTone.danger => (c.statusDangerBg, c.statusDanger),
     };
-    final style = FreevaTypography.bodyS.copyWith(color: fg);
+    // Board lines are line-height normal (≈ 1.2): title 14/600, detail 13.
+    final style = FreevaTypography.bodyS.copyWith(height: 1.2, color: fg);
     return Semantics(
       liveRegion: true,
       child: Container(
@@ -54,7 +55,11 @@ class FreevaBanner extends StatelessWidget {
                 children: [
                   Text(
                     message,
-                    style: style.copyWith(fontWeight: FontWeight.w500),
+                    style: FreevaTypography.bodyM.copyWith(
+                      fontWeight: FontWeight.w600,
+                      height: 1.2,
+                      color: fg,
+                    ),
                   ),
                   if (detail != null) Text(detail!, style: style),
                 ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mobile/core/widgets/freeva_switch.dart';
 import 'package:mobile/core/di/injection.dart';
 import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/profile/presentation/pages/profile_page.dart';
@@ -55,10 +56,12 @@ void main() {
       expect(find.text('Tiếng Việt'), findsOneWidget);
       expect(find.text('GMT+7'), findsOneWidget);
       expect(find.text('PIN · Sinh trắc'), findsOneWidget);
+      expect(find.text('1 đang bật'), findsOneWidget);
       expect(find.text('Định dạng ngày'), findsNothing);
       await tester.drag(find.byType(ListView), const Offset(0, -1200));
       await tester.pumpAndSettle();
-      expect(find.text('Phiên bản $appVersionLabel'), findsOneWidget);
+      expect(find.text('Điều khoản và quyền riêng tư'), findsOneWidget);
+      expect(find.text('Phiên bản 0.0.1'), findsOneWidget);
     });
 
     testWidgets('picking a currency or a day saves at once', (tester) async {
@@ -209,7 +212,7 @@ void main() {
       await tester.pumpWidget(g.app(const SecurityPage()));
       await tester.pumpAndSettle();
       expect(find.text('Khoá bằng mã PIN'), findsOneWidget);
-      expect(find.text('Luôn bật'), findsOneWidget);
+      expect(find.byType(FreevaSwitch), findsNWidgets(2));
       expect(find.text('Đổi mã PIN'), findsOneWidget);
       await tester.tap(find.text('Mở bằng sinh trắc'));
       await tester.pumpAndSettle();

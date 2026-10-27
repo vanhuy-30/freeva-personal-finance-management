@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/theme/theme_context.dart';
 import '../../../../../core/theme/tokens.g.dart';
+import '../category_badge.dart';
 import '../category_icon_tile.dart';
 
 /// 44 cell (radius 14) in an icon grid. The chosen one takes the selected
@@ -25,9 +26,12 @@ class CategoryIconCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
+    // Chosen: tint fill, the swatch colour as border, the deep tone glyph.
     final (fill, stroke) = colorToken == null
-        ? (c.tintBlue, c.actionPrimary)
+        ? (c.tintBlue, c.tintBlueFg)
         : categoryTwoTone(context, colorToken);
+    final border =
+        categoryBadgeColor(colorToken ?? 'color.brand.primary') ?? stroke;
     return Semantics(
       container: true,
       inMutuallyExclusiveGroup: true,
@@ -43,9 +47,9 @@ class CategoryIconCell extends StatelessWidget {
           height: FreevaSize.touch,
           decoration: BoxDecoration(
             color: selected ? fill : c.bgSurface,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(FreevaRadius.smd),
             border: Border.all(
-              color: selected ? stroke : c.borderDefault,
+              color: selected ? border : c.borderDefault,
               width: selected
                   ? FreevaBorder.selected
                   : FreevaBorder.defaultValue,

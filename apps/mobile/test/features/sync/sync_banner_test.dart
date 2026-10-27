@@ -52,13 +52,17 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(app());
+    expect(find.text('1 thay đổi cần bạn xem'), findsOneWidget);
+    expect(find.text('1 thay đổi khác đang chờ gửi'), findsOneWidget);
     expect(
-      find.text('1 thay đổi cần bạn xem · 1 thay đổi khác đang chờ gửi'),
+      find.bySemanticsLabel(
+        '1 thay đổi cần bạn xem · 1 thay đổi khác đang chờ gửi',
+      ),
       findsOneWidget,
     );
     await tester.pumpWidget(app(locale: 'en'));
     expect(
-      find.text('1 changes need you · 1 more waiting to send'),
+      find.bySemanticsLabel('1 changes need you · 1 more waiting to send'),
       findsOneWidget,
     );
   });

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
+import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../domain/report.dart';
 import '../viewmodels/report_view_model.dart';
@@ -17,18 +18,30 @@ class ReportEmpty extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
-    final label = periodTitle(
-      s,
-      period,
-      Localizations.localeOf(context).toString(),
-    ).title.toLowerCase();
+    final from = DateTime.parse(period.from);
+    // "Chưa có số liệu tháng 3": a calendar month drops the year; other
+    // periods use their lower-cased title.
+    final title = period.kind == ReportPeriodKind.month && from.day == 1
+        ? s.reportEmptyTitleMonth('${from.month}')
+        : s.reportEmptyTitle(
+            periodTitle(
+              s,
+              period,
+              Localizations.localeOf(context).toString(),
+            ).title.toLowerCase(),
+          );
     final back = !model.atCurrent && period.kind != ReportPeriodKind.range;
-    return Center(
-      child: EmptyState(
-        title: s.reportEmptyTitle(label),
-        message: back ? null : s.reportEmptyHint,
-        actionLabel: back ? backLabel(s, period.kind) : null,
-        onAction: back ? model.backToCurrent : null,
+    // 72 between the stepper and the illustration beyond the list's 16 gap
+    // (the empty state brings 24 of its own).
+    return Padding(
+      padding: const EdgeInsets.only(top: 72 - FreevaSpace.s6),
+      child: Center(
+        child: EmptyState(
+          title: title,
+          message: back ? null : s.reportEmptyHint,
+          actionLabel: back ? backLabel(s, period.kind) : null,
+          onAction: back ? model.backToCurrent : null,
+        ),
       ),
     );
   }

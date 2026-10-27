@@ -167,9 +167,11 @@ class _CategoryEditorPageState extends State<CategoryEditorPage> {
               kind: FreevaTopBarKind.modal,
             ),
             body: ListView(
+              // 6 / 8 under the 60 top bar = the board's 14 (add) / 16
+              // (edit) under the close button.
               padding: EdgeInsets.fromLTRB(
                 margin,
-                FreevaSpace.s2,
+                category == null ? 6 : FreevaSpace.s2,
                 margin,
                 FreevaSpace.s6,
               ),
@@ -188,14 +190,12 @@ class _CategoryEditorPageState extends State<CategoryEditorPage> {
                 ),
               ],
             ),
+            // The save button sits 28 above the screen edge (or the safe
+            // area, whichever is lower).
             bottomNavigationBar: SafeArea(
+              minimum: const EdgeInsets.only(bottom: 28),
               child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                  margin,
-                  FreevaSpace.s2,
-                  margin,
-                  FreevaSpace.s4,
-                ),
+                padding: EdgeInsets.fromLTRB(margin, FreevaSpace.s2, margin, 0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [

@@ -25,6 +25,7 @@ class TransactionDayList extends StatelessWidget {
     this.markFor,
     this.muted = false,
     this.highlightId,
+    this.showNet = true,
     super.key,
   });
 
@@ -48,9 +49,13 @@ class TransactionDayList extends StatelessWidget {
   /// Row to mark as just saved.
   final String? highlightId;
 
+  /// Day net in the header; search and deleted lists show only the day.
+  final bool showNet;
+
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
+    const radius = Radius.circular(FreevaComponent.listRadius);
     final days = <String, List<TransactionBundle>>{};
     for (final row in rows) {
       days.putIfAbsent(row.occurredOn, () => []).add(row);
@@ -65,16 +70,34 @@ class TransactionDayList extends StatelessWidget {
             rows: items,
             mainCurrency: mainCurrency,
             digitsOf: digitsOf,
+            showNet: showNet,
           ),
           FreevaCard(
             list: true,
-            padding: const EdgeInsets.symmetric(horizontal: FreevaSpace.s4),
+            padding: const EdgeInsets.symmetric(vertical: FreevaSpace.s1),
             child: Column(
               children: [
                 for (final (i, row) in items.indexed) ...[
-                  if (i > 0) Divider(height: 1, color: c.listDivider),
+                  if (i > 0)
+                    Divider(
+                      height: 1,
+                      indent: FreevaSpace.s4,
+                      endIndent: rowPadding.right,
+                      color: c.listDivider,
+                    ),
                   if (row.id == highlightId)
-                    SavedRowFlash(key: ValueKey(row.id), child: _row(row))
+                    SavedRowFlash(
+                      key: ValueKey(row.id),
+                      borderRadius: BorderRadius.vertical(
+                        top: i == 0 ? radius : Radius.zero,
+                        bottom: i == items.length - 1 ? radius : Radius.zero,
+                      ),
+                      builder: (t) => _row(
+                        row,
+                        // White circle while the mark is visible.
+                        iconBg: t > .25 ? c.bgSurface : null,
+                      ),
+                    )
                   else
                     _row(row),
                 ],
@@ -87,15 +110,26 @@ class TransactionDayList extends StatelessWidget {
     );
   }
 
-  Widget _row(TransactionBundle row) => TransactionListRow(
-    row: row,
-    label: naming.label(row),
-    digits: digitsOf(row.legs.first.currencyCode),
-    showCurrency: row.legs.first.currencyCode != mainCurrency,
-    highlight: highlight,
-    muted: muted,
-    onTap: () => onOpen(row),
-    trailing: trailingFor?.call(row),
-    mark: markFor?.call(row),
+  /// Board card padding: 16 on the left, 12 on the right when a restore
+  /// button ends the row, else 16.
+  EdgeInsets get rowPadding => EdgeInsets.only(
+    left: FreevaSpace.s4,
+    right: trailingFor != null ? FreevaSpace.s3 : FreevaSpace.s4,
+  );
+
+  Widget _row(TransactionBundle row, {Color? iconBg}) => Padding(
+    padding: rowPadding,
+    child: TransactionListRow(
+      row: row,
+      iconBg: iconBg,
+      label: naming.label(row),
+      digits: digitsOf(row.legs.first.currencyCode),
+      showCurrency: row.legs.first.currencyCode != mainCurrency,
+      highlight: highlight,
+      muted: muted,
+      onTap: () => onOpen(row),
+      trailing: trailingFor?.call(row),
+      mark: markFor?.call(row),
+    ),
   );
 }

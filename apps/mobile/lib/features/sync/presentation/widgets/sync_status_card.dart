@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_button.dart';
-import '../../../../core/widgets/freeva_card.dart';
 import '../viewmodels/sync_view_model.dart';
 import 'sync_labels.dart';
 
 /// Top card of Đồng bộ: sending, update needed, no connection, couldn't
-/// send, or all done. Says what is happening and that nothing is lost.
+/// send, or waiting. Says what is happening and that nothing is lost. The
+/// all-done state is [SyncDoneView], not a card.
 class SyncStatusCard extends StatelessWidget {
   const SyncStatusCard({required this.model, required this.now, super.key});
 
@@ -25,19 +25,23 @@ class SyncStatusCard extends StatelessWidget {
     final stamp = model.lastSyncedAt;
     final last = stamp == null
         ? s.syncLastNever
-        : s.syncLastTime(syncWhen(s, stamp, now, locale));
+        : syncLast(s, stamp, now, locale);
     if (model.schemaMismatch) {
       return _Tile(
-        icon: LucideIcons.triangleAlert,
-        iconBg: c.statusWarningBg,
+        icon: LucideIcons.arrowDownToLine,
+        iconBg: c.bgSurface,
         iconFg: c.statusWarning,
+        textColor: c.statusWarning,
+        background: c.statusWarningBg,
         title: s.syncUpdateTitle,
         subtitle: s.syncUpdateBody,
       );
     }
     if (model.syncing) {
       return _Tile(
-        icon: LucideIcons.refreshCw,
+        icon: LucideIcons.rotateCw,
+        iconBg: c.tintBlue,
+        iconFg: c.tintBlueFg,
         title: s.syncSending(model.waiting.length),
         subtitle: s.syncSendingSub,
         progress: true,
@@ -45,13 +49,14 @@ class SyncStatusCard extends StatelessWidget {
     }
     final retry = FreevaButton(
       label: s.syncRetry,
-      size: FreevaButtonSize.s,
-      variant: FreevaButtonVariant.secondary,
+      size: FreevaButtonSize.xs,
       onPressed: model.flush,
     );
     if (model.link == SyncLink.offline) {
       return _Tile(
         icon: LucideIcons.cloudOff,
+        iconBg: c.statusInfoBg,
+        iconFg: c.statusInfo,
         title: s.syncOffline,
         subtitle: last,
         action: retry,
@@ -60,6 +65,8 @@ class SyncStatusCard extends StatelessWidget {
     if (model.link == SyncLink.unavailable) {
       return _Tile(
         icon: LucideIcons.cloudAlert,
+        iconBg: c.statusWarningBg,
+        iconFg: c.statusWarning,
         title: s.syncUnavailable,
         subtitle: s.syncUnavailableSub,
         action: retry,
@@ -90,6 +97,8 @@ class _Tile extends StatelessWidget {
     required this.subtitle,
     this.iconBg,
     this.iconFg,
+    this.textColor,
+    this.background,
     this.action,
     this.progress = false,
   });
@@ -99,6 +108,12 @@ class _Tile extends StatelessWidget {
   final String subtitle;
   final Color? iconBg;
   final Color? iconFg;
+
+  /// Title and subtitle colour; null keeps primary / secondary.
+  final Color? textColor;
+
+  /// Tinted card without shadow (update needed); null is the white card.
+  final Color? background;
   final Widget? action;
   final bool progress;
 
@@ -113,7 +128,16 @@ class _Tile extends StatelessWidget {
     return Semantics(
       container: true,
       liveRegion: true,
-      child: FreevaCard(
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: FreevaSpace.s4,
+          vertical: background == null ? FreevaSpace.s4 : 18,
+        ),
+        decoration: BoxDecoration(
+          color: background ?? c.cardBg,
+          borderRadius: BorderRadius.circular(FreevaComponent.cardRadius),
+          boxShadow: background == null ? FreevaElevation.s1 : null,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -124,7 +148,7 @@ class _Tile extends StatelessWidget {
                   height: 44,
                   decoration: BoxDecoration(
                     color: iconBg ?? c.bgSubtle,
-                    shape: BoxShape.circle,
+                    borderRadius: BorderRadius.circular(FreevaRadius.smd),
                   ),
                   child: Icon(icon, size: 22, color: iconFg ?? c.textPrimary),
                 ),
@@ -136,13 +160,14 @@ class _Tile extends StatelessWidget {
                       Text(
                         title,
                         style: FreevaTypography.titleM.copyWith(
-                          color: c.textPrimary,
+                          color: textColor ?? c.textPrimary,
                         ),
                       ),
+                      const SizedBox(height: 2),
                       Text(
                         subtitle,
                         style: FreevaTypography.bodyS.copyWith(
-                          color: c.textSecondary,
+                          color: textColor ?? c.textSecondary,
                         ),
                       ),
                     ],
@@ -164,8 +189,8 @@ class _Tile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(FreevaRadius.full),
                 child: LinearProgressIndicator(
                   minHeight: 6,
-                  color: c.actionPrimary,
-                  backgroundColor: c.borderDefault,
+                  color: c.data1,
+                  backgroundColor: c.borderDivider,
                 ),
               ),
             ],

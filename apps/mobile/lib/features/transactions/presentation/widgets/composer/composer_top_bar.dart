@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../../core/theme/theme_context.dart';
@@ -37,6 +37,7 @@ class ComposerTopBar extends StatelessWidget {
         children: [
           FreevaIconButton(
             icon: LucideIcons.x,
+            iconSize: FreevaSize.iconSm,
             label: s.commonClose,
             onPressed: onClose,
           ),

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/core/di/injection.dart';
@@ -119,7 +120,9 @@ void main() {
       t,
       'reset',
       (m) => AuthPage(model: m),
-      prepare: (m) => m.startReset('a' * 64),
+      prepare: (m) => m
+        ..startReset('a' * 64)
+        ..email = 'minh@gmail.com',
     );
   });
   testWidgets('verify email', skip: !Platform.isMacOS, (t) async {
@@ -151,6 +154,61 @@ void main() {
         }
       },
     );
+  });
+  Future<void> toPin(WidgetTester t) async {
+    await t.tap(find.text('Xong'));
+    await t.pumpAndSettle();
+    for (final skip in ['Để sau', 'Để sau', 'Thiết lập sau', 'Bỏ qua']) {
+      await t.tap(find.text(skip));
+      await t.pumpAndSettle();
+    }
+  }
+
+  Future<void> typePin(WidgetTester t) async {
+    for (final d in ['1', '2', '3', '4', '5', '6']) {
+      await t.tap(find.bySemanticsLabel(d));
+      await t.pump();
+    }
+  }
+
+  testWidgets('pin confirm', skip: !Platform.isMacOS, (t) async {
+    await shot(
+      t,
+      'pin_confirm',
+      (m) => SetupPage(model: m),
+      prepare: (m) => m.stage = AuthStage.setup,
+      then: () async {
+        await toPin(t);
+        await typePin(t);
+        await t.tap(find.text('Tiếp tục'));
+        await t.pumpAndSettle();
+        await typePin(t);
+      },
+    );
+  });
+  testWidgets('biometric', skip: !Platform.isMacOS, (t) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+    try {
+      await shot(
+        t,
+        'biometric',
+        (m) => SetupPage(model: m),
+        prepare: (m) => m
+          ..stage = AuthStage.setup
+          ..biometricAvailable = true,
+        then: () async {
+          await toPin(t);
+          await typePin(t);
+          await t.tap(find.text('Tiếp tục'));
+          await t.pumpAndSettle();
+          await typePin(t);
+          await t.tap(find.text('Xác nhận'));
+          await t.pumpAndSettle();
+        },
+      );
+    } finally {
+      debugDefaultTargetPlatformOverride = null;
+    }
   });
   testWidgets('lock', skip: !Platform.isMacOS, (t) async {
     await shot(

@@ -19,6 +19,7 @@ import '../viewmodels/category_report_view_model.dart';
 import '../widgets/category_bars.dart';
 import '../widgets/category_header.dart';
 import '../widgets/largest_transactions.dart';
+import '../widgets/report_period_labels.dart';
 
 /// One slice of the breakdown in the period: total, share, the child
 /// categories and the largest transactions. A pushed screen (no bottom nav).
@@ -71,7 +72,7 @@ class _ReportCategoryPageState extends State<ReportCategoryPage> {
     final args = widget.args;
     final detail = categoryDetail(args);
     final margin = context.screenMargin;
-    const gap = SizedBox(height: FreevaSpace.s5);
+    const gap = SizedBox(height: FreevaSpace.s4);
     return ListenableBuilder(
       listenable: Listenable.merge([model, transactions]),
       builder: (context, _) {
@@ -83,6 +84,11 @@ class _ReportCategoryPageState extends State<ReportCategoryPage> {
         return Scaffold(
           appBar: FreevaTopBar(
             title: args.slice.name ?? s.reportOther,
+            subtitle: periodTitle(
+              s,
+              args.report.period,
+              Localizations.localeOf(context).toString(),
+            ).title,
             onLeading: () => context.popOrGo('/reports'),
           ),
           body: ListView(

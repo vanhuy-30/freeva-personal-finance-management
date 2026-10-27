@@ -55,16 +55,21 @@ class CreditBalanceCard extends StatelessWidget {
               style: context.isCompactScreen
                   ? FreevaTypography.moneyDisplayCompact
                   : FreevaTypography.moneyDisplay,
+              currencyColor: c.textOnWash,
               hidden: hidden,
             ),
           ),
           if (limit != null && available != null) ...[
-            const SizedBox(height: FreevaSpace.s3),
+            const SizedBox(height: 14),
+            // On the wash: white track, primary bar until the warning levels.
             FreevaProgressBar(
               value: card.ratio,
-              color: creditLevelColor(context, card.level),
+              color: card.level == CreditLevel.normal
+                  ? c.actionPrimary
+                  : creditLevelColor(context, card.level),
+              trackColor: c.bgSurface.withValues(alpha: .8),
             ),
-            const SizedBox(height: FreevaSpace.s3),
+            const SizedBox(height: 14),
             Wrap(
               alignment: WrapAlignment.spaceBetween,
               spacing: FreevaSpace.s3,

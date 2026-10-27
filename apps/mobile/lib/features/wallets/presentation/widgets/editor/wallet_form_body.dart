@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../../core/money/money_input_formatter.dart';
@@ -26,6 +26,7 @@ class WalletFormBody extends StatelessWidget {
     required this.limit,
     this.onHide,
     this.showTypes = true,
+    this.gap = FreevaSpace.s4,
     super.key,
   });
 
@@ -41,12 +42,15 @@ class WalletFormBody extends StatelessWidget {
   /// (first-run setup).
   final bool showTypes;
 
+  /// Space between the field groups (16; the "Thêm ví" board uses 18).
+  final double gap;
+
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
     final c = context.colors;
     final locale = Localizations.localeOf(context).toString();
-    const gap = SizedBox(height: FreevaSpace.s4);
+    final spacer = SizedBox(height: gap);
     final type = walletTypeLabel(s, form.type);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -63,7 +67,7 @@ class WalletFormBody extends StatelessWidget {
             ),
           ),
           WalletTypeGrid(selected: form.type, onChanged: form.setType),
-          gap,
+          spacer,
         ],
         FreevaTextField(
           label: form.credit ? s.cardName : s.walletName,
@@ -74,7 +78,7 @@ class WalletFormBody extends StatelessWidget {
               ? s.walletNameMissing
               : null,
         ),
-        gap,
+        spacer,
         if (form.locked)
           LockedField(
             label: s.walletLockedLabel,
@@ -84,7 +88,7 @@ class WalletFormBody extends StatelessWidget {
         else
           PickerField(
             label: s.walletCurrencyField,
-            value: form.currency,
+            value: currencyLabel(s, form.currency),
             onTap: () async {
               final code = await showCurrencyPicker(
                 context,
@@ -94,7 +98,7 @@ class WalletFormBody extends StatelessWidget {
               if (code != null) form.setCurrency(code);
             },
           ),
-        gap,
+        spacer,
         if (form.credit)
           CreditCardFields(form: form, debt: amount, limit: limit)
         else ...[
@@ -129,15 +133,18 @@ class WalletFormBody extends StatelessWidget {
             ),
         ],
         if (onHide != null) ...[
-          const SizedBox(height: FreevaSpace.s3),
+          // Board: page gap 16 + 8 above the text button.
+          const SizedBox(height: FreevaSpace.s6),
           Center(
             child: TextButton.icon(
               onPressed: onHide,
-              icon: const Icon(LucideIcons.eyeOff, size: 18),
+              icon: const Icon(LucideIcons.archive, size: FreevaSize.iconSm),
               label: Text(s.walletHide),
               style: TextButton.styleFrom(
                 foregroundColor: c.textOnWash,
                 minimumSize: const Size(FreevaSize.touch, FreevaSize.touch),
+                padding: const EdgeInsets.symmetric(horizontal: FreevaSpace.s4),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 textStyle: FreevaTypography.body.copyWith(
                   fontWeight: FontWeight.w500,
                 ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/theme_context.dart';
@@ -34,6 +34,7 @@ class ReportPeriodNav extends StatelessWidget {
       children: [
         FreevaSegmented<ReportPeriodKind>(
           expand: true,
+          style: FreevaSegmentedStyle.raised,
           selected: model.kind,
           onChanged: model.busy
               ? (_) {}
@@ -85,6 +86,7 @@ class _Stepper extends StatelessWidget {
         FreevaIconButton(
           icon: LucideIcons.chevronLeft,
           label: s.reportPrevious,
+          kind: FreevaIconButtonKind.stepper,
           onPressed: model.canStep ? () => model.step(-1) : null,
         ),
         Expanded(
@@ -103,6 +105,7 @@ class _Stepper extends StatelessWidget {
                           title.title,
                           textAlign: TextAlign.center,
                           style: FreevaTypography.titleL.copyWith(
+                            height: 1.2,
                             color: c.textPrimary,
                           ),
                         ),
@@ -110,7 +113,11 @@ class _Stepper extends StatelessWidget {
                           Text(
                             title.subtitle!,
                             style: FreevaTypography.label.copyWith(
+                              fontWeight: FontWeight.w400,
                               color: c.textSecondary,
+                              fontFeatures: const [
+                                FontFeature.tabularFigures(),
+                              ],
                             ),
                           ),
                       ],
@@ -121,6 +128,7 @@ class _Stepper extends StatelessWidget {
         FreevaIconButton(
           icon: LucideIcons.chevronRight,
           label: s.reportNext,
+          kind: FreevaIconButtonKind.stepper,
           onPressed: model.canStepNext ? () => model.step(1) : null,
         ),
       ],

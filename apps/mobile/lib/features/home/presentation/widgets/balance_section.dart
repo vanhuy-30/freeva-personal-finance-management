@@ -11,9 +11,12 @@ import 'overview_states.dart';
 
 /// Balance card slot: skeleton (B6), error card (B8) or the wash card.
 class BalanceSection extends StatelessWidget {
-  const BalanceSection({required this.model, super.key});
+  const BalanceSection({required this.model, this.compact = false, super.key});
 
   final HomeViewModel model;
+
+  /// First-run card: label and total only.
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +38,7 @@ class BalanceSection extends StatelessWidget {
       hidden: model.balancesHidden,
       onToggleHidden: model.toggleBalances,
       onOpenWallets: () => context.push('/wallets'),
+      compact: compact,
     );
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/theme_context.dart';
@@ -33,10 +33,10 @@ class HabitsStep extends StatelessWidget {
   };
 
   static IconData habitIcon(TrackingHabit habit) => switch (habit) {
-    TrackingHabit.manual => LucideIcons.pencil,
-    TrackingHabit.spreadsheet => LucideIcons.fileSpreadsheet,
+    TrackingHabit.manual => LucideIcons.pen,
+    TrackingHabit.spreadsheet => LucideIcons.table,
     TrackingHabit.app => LucideIcons.smartphone,
-    TrackingHabit.none => LucideIcons.circleSlash,
+    TrackingHabit.none => LucideIcons.locate,
   };
 
   static String cadenceLabel(S s, ReviewCadence cadence) => switch (cadence) {
@@ -67,15 +67,23 @@ class HabitsStep extends StatelessWidget {
               icon: habitIcon(habit),
               selected: model.habit == habit,
               onTap: () => model.pickHabit(habit),
+              iconBoxSize: 32,
+              iconSize: 17,
+              radio: true,
+              radius: FreevaRadius.mlg,
+              minHeight: 58,
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: FreevaSpace.s2),
           ],
-          const SizedBox(height: FreevaSpace.s4),
+          const SizedBox(height: 20),
           Semantics(
             header: true,
             child: Text(
               s.onbCadenceTitle,
-              style: FreevaTypography.titleM.copyWith(color: c.textPrimary),
+              style: FreevaTypography.titleL.copyWith(
+                height: 24 / 17,
+                color: c.textPrimary,
+              ),
             ),
           ),
           const SizedBox(height: FreevaSpace.s3),
@@ -85,6 +93,7 @@ class HabitsStep extends StatelessWidget {
             children: [
               for (final cadence in ReviewCadence.values)
                 FreevaChip(
+                  size: FreevaChipSize.large,
                   label: cadenceLabel(s, cadence),
                   selected: model.cadence == cadence,
                   onTap: () => model.pickCadence(cadence),

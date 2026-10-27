@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import '../text/vietnamese_fold.dart';
 import '../theme/theme_context.dart';
 
-/// Text with the parts matching [query] (case and diacritics ignored) on a
-/// `tint.blue` background, for search results.
+/// Text with the parts matching [query] (case and diacritics ignored) set in
+/// bold on a `tint.blue` pill (radius 4, 2 px side padding), for search
+/// results.
 class HighlightedText extends StatelessWidget {
   const HighlightedText(
     this.text, {
@@ -30,12 +31,26 @@ class HighlightedText extends StatelessWidget {
         style: style,
       );
     }
-    final mark = style.copyWith(backgroundColor: context.colors.tintBlue);
-    final spans = <TextSpan>[];
+    final mark = style.copyWith(fontWeight: FontWeight.w700);
+    final markBg = context.colors.tintBlue;
+    final spans = <InlineSpan>[];
     var at = 0;
     for (final (start, end) in ranges) {
       if (start > at) spans.add(TextSpan(text: text.substring(at, start)));
-      spans.add(TextSpan(text: text.substring(start, end), style: mark));
+      spans.add(
+        WidgetSpan(
+          alignment: PlaceholderAlignment.baseline,
+          baseline: TextBaseline.alphabetic,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 2),
+            decoration: BoxDecoration(
+              color: markBg,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Text(text.substring(start, end), style: mark),
+          ),
+        ),
+      );
       at = end;
     }
     if (at < text.length) spans.add(TextSpan(text: text.substring(at)));

@@ -95,7 +95,7 @@ void main() {
     final model = StubTransactionViewModel()
       ..wallets = [
         wallet('vcb', 'Vietcombank'),
-        wallet('usd', 'Tiền đô', currency: 'USD'),
+        wallet('usd', 'Tiền đô', currency: 'USD', type: WalletType.cash),
       ]
       ..currencies = const [WalletCurrency('VND', 0), WalletCurrency('USD', 2)];
     await shot(

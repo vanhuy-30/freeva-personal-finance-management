@@ -124,7 +124,7 @@ void main() {
               onPressed: () => showSyncDuplicateSheet(
                 context,
                 recorded: stub.rows[0],
-                existing: stub.rows[1],
+                existing: stub.rows[0],
                 naming: TransactionNaming(
                   S.of(context),
                   categories: stub.categories,

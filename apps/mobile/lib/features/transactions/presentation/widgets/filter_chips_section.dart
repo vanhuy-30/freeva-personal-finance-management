@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/theme_context.dart';
@@ -25,15 +26,14 @@ class FilterChipsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
-    final label = FreevaTypography.label.copyWith(
+    // Board `.lb`: sentence case 13/600, 20 above, 10 to the chips.
+    final label = FreevaTypography.bodyS.copyWith(
+      fontWeight: FontWeight.w600,
       color: context.colors.textSecondary,
     );
     Widget title(String text) => Padding(
       padding: const EdgeInsets.only(top: 20, bottom: 10),
-      child: Text(
-        text.toUpperCase(),
-        style: label.copyWith(letterSpacing: 1.2),
-      ),
+      child: Semantics(header: true, child: Text(text, style: label)),
     );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -51,6 +51,7 @@ class FilterChipsSection extends StatelessWidget {
             ])
               FreevaChip(
                 label: text,
+                icon: p == PeriodPreset.custom ? LucideIcons.calendar : null,
                 selected: draft.period == p,
                 onTap: () => onPickPeriod(p),
               ),

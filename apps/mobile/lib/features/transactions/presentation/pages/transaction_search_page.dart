@@ -47,12 +47,12 @@ class _TransactionSearchPageState extends State<TransactionSearchPage> {
                   margin,
                   FreevaSpace.s2,
                   margin,
-                  FreevaSpace.s3,
+                  FreevaSpace.s4,
                 ),
                 child: SearchFieldBar(onChanged: results.setSearch),
               ),
               Padding(
-                padding: EdgeInsets.only(left: margin, bottom: FreevaSpace.s3),
+                padding: EdgeInsets.only(left: margin, bottom: FreevaSpace.s4),
                 child: TransactionFilterBar(
                   filter: filter,
                   range: rangeFor(

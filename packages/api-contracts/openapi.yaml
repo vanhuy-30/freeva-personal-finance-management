@@ -4037,6 +4037,12 @@ components:
           type: integer
           minimum: 1
           maximum: 2147483646
+        goals:
+          type: array
+          readOnly: true
+          items:
+            type: string
+          description: Onboarding goals saved via PATCH /profile/onboarding. Returned on GET and PUT; not accepted on PUT.
     OnboardingAnswers:
       type: object
       additionalProperties: false

@@ -25,13 +25,17 @@ class SpendingLegend extends StatelessWidget {
             item.$1,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: FreevaTypography.bodyS.copyWith(color: c.textSecondary),
+            style: FreevaTypography.bodyS.copyWith(
+              height: 1.2,
+              color: c.textSecondary,
+            ),
           ),
         ),
         Text(
           '${item.$2}%',
           style: FreevaTypography.bodyS.copyWith(
             fontWeight: FontWeight.w600,
+            height: 1.2,
             color: c.textPrimary,
             fontFeatures: const [FontFeature.tabularFigures()],
           ),

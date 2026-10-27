@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
-import '../../../../core/widgets/freeva_button.dart';
+import '../../../../core/widgets/freeva_button_style.dart';
 import '../../../../core/widgets/freeva_chip.dart';
 import '../../../../core/widgets/freeva_icon_button.dart';
+import '../../../../core/widgets/press_scale.dart';
 import '../../domain/report_range.dart';
 import 'range_calendar.dart';
 
@@ -52,10 +53,13 @@ class _RangeDialogState extends State<_RangeDialog> {
     final c = context.colors;
     final locale = Localizations.localeOf(context).toString();
     final short = DateFormat(s.reportShortDatePattern, locale);
-    final summary = selection.complete
-        ? '${s.reportPeriod(short.format(DateTime.parse(selection.from!)), short.format(DateTime.parse(selection.to!)))}'
-              ' · ${s.reportRangeDays(selection.days!)}'
-        : selection.from == null
+    final span = selection.complete
+        ? s.reportPeriod(
+            short.format(DateTime.parse(selection.from!)),
+            short.format(DateTime.parse(selection.to!)),
+          )
+        : null;
+    final hint = selection.from == null
         ? s.reportRangePickStart
         : s.reportRangePickEnd;
     final quick = {
@@ -63,93 +67,123 @@ class _RangeDialogState extends State<_RangeDialog> {
       QuickRange.last30: s.reportQuick30,
       QuickRange.quarter: s.reportQuickQuarter,
     };
+    // FreevaDialog's look (radius 28, dialog shadow) with the board's
+    // tighter inset 16 and padding 20 / 16 / 16.
     return Dialog(
-      backgroundColor: c.sheetBg,
-      insetPadding: EdgeInsets.symmetric(horizontal: context.screenMargin),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(FreevaRadius.sheet),
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      insetPadding: const EdgeInsets.symmetric(
+        horizontal: FreevaSpace.s4,
+        vertical: FreevaSpace.s6,
       ),
-      child: Semantics(
-        scopesRoute: true,
-        explicitChildNodes: true,
-        namesRoute: true,
-        label: s.reportRangeTitle,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(16, 18, 16, 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Wrap(
-                spacing: FreevaSpace.s2,
-                runSpacing: FreevaSpace.s2,
-                children: [
-                  for (final e in quick.entries)
-                    FreevaChip(
-                      kind: FreevaChipKind.filter,
-                      label: e.value,
-                      selected: false,
-                      onTap: () => setState(() {
-                        selection = quickRange(e.key, widget.today);
-                        month = _firstOf(widget.today);
-                      }),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: c.bgSurface,
+          borderRadius: BorderRadius.circular(FreevaRadius.sheet),
+          boxShadow: FreevaElevation.dialog,
+        ),
+        child: Semantics(
+          scopesRoute: true,
+          explicitChildNodes: true,
+          namesRoute: true,
+          label: s.reportRangeTitle,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: [
+                    for (final e in quick.entries)
+                      FreevaChip(
+                        kind: FreevaChipKind.filter,
+                        size: FreevaChipSize.small,
+                        label: e.value,
+                        selected: false,
+                        onTap: () => setState(() {
+                          selection = quickRange(e.key, widget.today);
+                          month = _firstOf(widget.today);
+                        }),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: FreevaSpace.s3),
+                Row(
+                  children: [
+                    FreevaIconButton(
+                      icon: LucideIcons.chevronLeft,
+                      label: s.reportPrevious,
+                      kind: FreevaIconButtonKind.subtle,
+                      onPressed: () => _shift(-1),
                     ),
-                ],
-              ),
-              const SizedBox(height: FreevaSpace.s3),
-              Row(
-                children: [
-                  FreevaIconButton(
-                    icon: LucideIcons.chevronLeft,
-                    label: s.reportPrevious,
-                    onPressed: () => _shift(-1),
-                  ),
-                  Expanded(
-                    child: Text(
-                      DateFormat(
-                        s.reportMonthTitlePattern,
-                        locale,
-                      ).format(month),
-                      textAlign: TextAlign.center,
-                      style: FreevaTypography.titleM.copyWith(
-                        color: c.textPrimary,
+                    Expanded(
+                      child: Text(
+                        DateFormat(
+                          s.reportMonthTitlePattern,
+                          locale,
+                        ).format(month),
+                        textAlign: TextAlign.center,
+                        style: FreevaTypography.titleM.copyWith(
+                          color: c.textPrimary,
+                        ),
                       ),
                     ),
-                  ),
-                  FreevaIconButton(
-                    icon: LucideIcons.chevronRight,
-                    label: s.reportNext,
-                    onPressed: _atCurrentMonth ? null : () => _shift(1),
-                  ),
-                ],
-              ),
-              const SizedBox(height: FreevaSpace.s2),
-              RangeCalendar(
-                month: month,
-                selection: selection,
-                today: widget.today,
-                onTap: (day) => setState(() => selection = selection.tap(day)),
-              ),
-              const SizedBox(height: FreevaSpace.s3),
-              Semantics(
-                liveRegion: true,
-                child: Text(
-                  summary,
-                  textAlign: TextAlign.center,
-                  style: FreevaTypography.bodyS.copyWith(
-                    color: c.textSecondary,
-                    fontFeatures: const [FontFeature.tabularFigures()],
+                    FreevaIconButton(
+                      icon: LucideIcons.chevronRight,
+                      label: s.reportNext,
+                      kind: FreevaIconButtonKind.subtle,
+                      onPressed: _atCurrentMonth ? null : () => _shift(1),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: FreevaSpace.s3),
+                RangeCalendar(
+                  month: month,
+                  selection: selection,
+                  today: widget.today,
+                  onTap: (day) =>
+                      setState(() => selection = selection.tap(day)),
+                ),
+                const SizedBox(height: FreevaSpace.s3),
+                Semantics(
+                  liveRegion: true,
+                  child: Text.rich(
+                    TextSpan(
+                      children: [
+                        if (span != null) ...[
+                          TextSpan(
+                            text: span,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: c.textPrimary,
+                            ),
+                          ),
+                          TextSpan(
+                            text: ' · ${s.reportRangeDays(selection.days!)}',
+                          ),
+                        ] else
+                          TextSpan(text: hint),
+                      ],
+                    ),
+                    textAlign: TextAlign.center,
+                    style: FreevaTypography.bodyM.copyWith(
+                      color: c.textOnWash,
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: FreevaSpace.s3),
-              _Actions(
-                onCancel: () => Navigator.of(context).pop(),
-                onApply: selection.complete
-                    ? () => Navigator.of(context).pop(selection)
-                    : null,
-              ),
-            ],
+                const SizedBox(height: FreevaSpace.s3),
+                _Actions(
+                  onCancel: () => Navigator.of(context).pop(),
+                  onApply: selection.complete
+                      ? () => Navigator.of(context).pop(selection)
+                      : null,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -168,19 +202,35 @@ class _Actions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
-    final cancel = FreevaButton(
-      label: s.commonCancel,
-      variant: FreevaButtonVariant.secondary,
-      size: FreevaButtonSize.s,
-      expand: true,
-      onPressed: onCancel,
+    final c = context.colors;
+    // Dialog-size buttons (48, 15/600) with only 8 side padding: on the
+    // board the two halves are exactly wide enough for "Xem khoảng này".
+    Widget button(
+      String label,
+      FreevaButtonVariant variant,
+      VoidCallback? onPressed,
+    ) => PressScale(
+      enabled: onPressed != null,
+      child: SizedBox(
+        width: double.infinity,
+        child: TextButton(
+          onPressed: onPressed,
+          style: freevaButtonStyle(c, variant, FreevaButtonSize.dialog)
+              .copyWith(
+                padding: const WidgetStatePropertyAll(
+                  EdgeInsets.symmetric(horizontal: FreevaSpace.s2),
+                ),
+              ),
+          child: Text(label, textAlign: TextAlign.center),
+        ),
+      ),
     );
-    final apply = FreevaButton(
-      label: s.reportApply,
-      size: FreevaButtonSize.s,
-      expand: true,
-      onPressed: onApply,
+    final cancel = button(
+      s.commonCancel,
+      FreevaButtonVariant.secondary,
+      onCancel,
     );
+    final apply = button(s.reportApply, FreevaButtonVariant.primary, onApply);
     if (MediaQuery.textScalerOf(context).scale(1) > 1.15) {
       return Column(
         children: [

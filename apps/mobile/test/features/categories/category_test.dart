@@ -308,13 +308,14 @@ void main() {
     late DefaultCategoryViewModel model;
     setUp(() async {
       api = CategoryTransport();
-      auth = DefaultAuthViewModel(
-        DefaultAuthUseCases(
-          AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
-        ),
-      )
-        ..stage = AuthStage.unlocked
-        ..hasPin = true;
+      auth =
+          DefaultAuthViewModel(
+              DefaultAuthUseCases(
+                AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+              ),
+            )
+            ..stage = AuthStage.unlocked
+            ..hasPin = true;
       model = DefaultCategoryViewModel(
         DefaultCategoryUseCases(CategoryRepositoryImpl(api)),
         auth,

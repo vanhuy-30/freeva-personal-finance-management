@@ -528,41 +528,6 @@ class SVi extends S {
   String get faqTitle => 'Câu hỏi thường gặp';
 
   @override
-  String get faqWalletQ => 'Làm sao để thêm ví?';
-
-  @override
-  String get faqWalletA =>
-      'Mở Ví từ trang chủ, rồi tạo ví tiền mặt, ngân hàng, ví điện tử hoặc thẻ.';
-
-  @override
-  String get faqTransactionQ => 'Làm sao để ghi giao dịch?';
-
-  @override
-  String get faqTransactionA =>
-      'Mở Giao dịch hoặc chọn Ghi giao dịch ở trang chủ. Chọn thu, chi, hoặc chuyển khoản cân bằng hai vế.';
-
-  @override
-  String get faqProfileQ => 'Làm sao để đổi ngôn ngữ, tiền tệ hoặc múi giờ?';
-
-  @override
-  String get faqProfileA =>
-      'Mở Cài đặt, rồi Ngôn ngữ, tiền tệ và múi giờ. Ngôn ngữ đổi sau khi hồ sơ được lưu.';
-
-  @override
-  String get faqLockQ => 'Ứng dụng khóa như thế nào?';
-
-  @override
-  String get faqLockA =>
-      'Freeva khóa khi bạn rời ứng dụng. Mở khóa bằng PIN sáu số. Có thể bật sinh trắc trong Cài đặt sau khi đã có PIN.';
-
-  @override
-  String get faqThemeQ => 'Làm sao để đổi sáng và tối?';
-
-  @override
-  String get faqThemeA =>
-      'Mở Cài đặt và chọn Sáng, Tối hoặc Theo hệ thống. Sáng là mặc định và được giữ trên thiết bị này.';
-
-  @override
   String get legalDraft =>
       'Bản nháp cho PRD-P0-002. Đây không phải tư vấn pháp lý và chưa có hiệu lực. Pháp nhân vận hành và kênh liên hệ chưa được chốt.';
 
@@ -748,16 +713,6 @@ class SVi extends S {
   }
 
   @override
-  String homeCreditUsed(String used, String limit) {
-    return 'Đã dùng $used / Hạn mức $limit';
-  }
-
-  @override
-  String homeCreditUsedNoLimit(String used) {
-    return 'Đã dùng $used';
-  }
-
-  @override
   String get homeRecent => 'Gần đây';
 
   @override
@@ -768,14 +723,6 @@ class SVi extends S {
 
   @override
   String get homePendingSync => 'Chờ đồng bộ';
-
-  @override
-  String homeOfflineTitle(String time) {
-    return 'Đang ngoại tuyến · Số liệu lúc $time';
-  }
-
-  @override
-  String get homeOfflineBody => 'Vẫn ghi chi được.';
 
   @override
   String get homeErrorTitle => 'Chưa tải được số dư';
@@ -1868,11 +1815,6 @@ class SVi extends S {
   }
 
   @override
-  String reportBarGeneral(String name) {
-    return '$name (chung)';
-  }
-
-  @override
   String get reportLargest => 'Giao dịch lớn nhất';
 
   @override
@@ -1959,12 +1901,6 @@ class SVi extends S {
 
   @override
   String get meFeedback => 'Góp ý';
-
-  @override
-  String get meTerms => 'Điều khoản dịch vụ';
-
-  @override
-  String get mePrivacy => 'Chính sách bảo mật';
 
   @override
   String get meSoon => 'Sắp có';
@@ -2304,9 +2240,6 @@ class SVi extends S {
   String get notifySession => 'Máy mới đăng nhập';
 
   @override
-  String get notifySessionSub => 'Báo để bạn kiểm tra';
-
-  @override
   String get authOr => 'hoặc';
 
   @override
@@ -2532,6 +2465,9 @@ class SVi extends S {
 
   @override
   String get signUpTermsPrefix => 'Tiếp tục nghĩa là bạn đồng ý với ';
+
+  @override
+  String get signUpTermsLink => 'Điều khoản';
 
   @override
   String get signUpTermsSuffix => '.';
@@ -2861,4 +2797,174 @@ class SVi extends S {
 
   @override
   String get syncDupDeleteNew => 'Xoá bản vừa ghi';
+
+  @override
+  String syncBannerOthersWaiting(Object count) {
+    return '$count thay đổi khác đang chờ gửi';
+  }
+
+  @override
+  String syncLastToday(Object time) {
+    return 'Lần cuối $time hôm nay';
+  }
+
+  @override
+  String get syncSectionSending => 'ĐANG GỬI';
+
+  @override
+  String get reportDonutTotalExpense => 'Tổng chi';
+
+  @override
+  String get reportDonutTotalIncome => 'Tổng thu';
+
+  @override
+  String get reportBarGeneralSuffix => '(chung)';
+
+  @override
+  String reportEmptyTitleMonth(Object month) {
+    return 'Chưa có số liệu tháng $month';
+  }
+
+  @override
+  String get meLegal => 'Điều khoản và quyền riêng tư';
+
+  @override
+  String meNotifyOnCount(Object count) {
+    return '$count đang bật';
+  }
+
+  @override
+  String meGoalsCount(Object count) {
+    return '$count mục tiêu';
+  }
+
+  @override
+  String get meProfileEmailVerified => 'Email · đã xác nhận';
+
+  @override
+  String get meProfileEmailUnverified => 'Email · chưa xác nhận';
+
+  @override
+  String get meDeleteAccount => 'Xoá tài khoản';
+
+  @override
+  String get meChangeAvatar => 'Đổi ảnh đại diện';
+
+  @override
+  String get meSecurityValueFaceId => 'PIN · Face ID';
+
+  @override
+  String get meSecFaceId => 'Mở bằng Face ID';
+
+  @override
+  String get notifySessionSubAlways => 'Luôn báo để bạn kiểm tra';
+
+  @override
+  String get faqRecordQ => 'Ghi một khoản chi thế nào?';
+
+  @override
+  String get faqRecordA =>
+      'Chạm nút + ở giữa thanh dưới, nhập số tiền, chọn danh mục rồi lưu. Ví và ngày lấy sẵn lần gần nhất.';
+
+  @override
+  String get faqTransferQ => 'Chuyển tiền giữa hai ví?';
+
+  @override
+  String get faqTransferA =>
+      'Chạm nút +, chọn Chuyển, chọn ví đi và ví nhận rồi nhập số tiền. Số dư hai ví cập nhật cùng lúc.';
+
+  @override
+  String get faqDeletedQ => 'Xoá nhầm giao dịch thì sao?';
+
+  @override
+  String get faqDeletedA =>
+      'Chạm Hoàn tác ngay khi vừa xoá. Sau đó vẫn khôi phục được trong Giao dịch, mục Đã xoá.';
+
+  @override
+  String get faqMonthQ => 'Tháng tài chính là gì?';
+
+  @override
+  String get faqMonthA =>
+      'Là khoảng tính thu chi mỗi tháng. Nếu lương về ngày 5, chọn Tháng tính từ ngày 5 trong Cá nhân để số liệu khớp với bạn.';
+
+  @override
+  String get faqLockAppQ => 'Khoá app bằng PIN, Face ID';
+
+  @override
+  String get faqLockAppA =>
+      'Vào Cá nhân, Bảo mật để đặt mã PIN. Có PIN rồi thì bật được Face ID. Không đặt PIN thì app không khoá.';
+
+  @override
+  String get faqSafeQ => 'Dữ liệu của tôi có an toàn?';
+
+  @override
+  String get faqSafeA =>
+      'Dữ liệu lưu trong tài khoản Freeva của bạn nên đổi máy không mất. Bạn có thể khoá app bằng PIN để người khác không xem được.';
+
+  @override
+  String get homeOfflineHeading => 'Đang ngoại tuyến';
+
+  @override
+  String homeOfflineDetail(Object time) {
+    return 'Số liệu lúc $time. Vẫn ghi chi được.';
+  }
+
+  @override
+  String get homeCreditUsedLabel => 'Đã dùng';
+
+  @override
+  String homeCreditLimit(Object limit) {
+    return 'Hạn mức $limit';
+  }
+
+  @override
+  String homeOtherCurrencyMeta(Object currency, Object count) {
+    return '$currency · $count ví';
+  }
+
+  @override
+  String get homeTotalBalanceLabel => 'Tổng số dư';
+
+  @override
+  String authResetVerified(Object email) {
+    return 'Đã xác nhận $email';
+  }
+
+  @override
+  String get currencyNameVnd => 'Đồng Việt Nam';
+
+  @override
+  String get currencyNameUsd => 'Đô la Mỹ';
+
+  @override
+  String get currencyNameEur => 'Euro';
+
+  @override
+  String get currencyNameJpy => 'Yên Nhật';
+
+  @override
+  String get currencyNameKrw => 'Won Hàn Quốc';
+
+  @override
+  String get currencyNameCny => 'Nhân dân tệ';
+
+  @override
+  String get currencyNameSgd => 'Đô la Singapore';
+
+  @override
+  String get currencyNameThb => 'Baht Thái';
+
+  @override
+  String get currencyNameAud => 'Đô la Úc';
+
+  @override
+  String get currencyNameGbp => 'Bảng Anh';
+
+  @override
+  String currencyCodeName(Object code, Object name) {
+    return '$code · $name';
+  }
+
+  @override
+  String get tagsViewTransactions => 'Xem giao dịch';
 }

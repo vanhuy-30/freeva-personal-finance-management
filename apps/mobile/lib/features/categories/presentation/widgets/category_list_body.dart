@@ -53,12 +53,18 @@ class CategoryListBody extends StatelessWidget {
     return RefreshIndicator(
       onRefresh: model.load,
       child: ListView(
-        padding: EdgeInsets.fromLTRB(margin, 0, margin, FreevaSpace.s8),
+        padding: EdgeInsets.fromLTRB(
+          margin,
+          FreevaSpace.s2,
+          margin,
+          FreevaSpace.s8,
+        ),
         children: [
           Semantics(
             label: s.categoryTabs,
             child: FreevaSegmented<bool>(
               expand: true,
+              style: FreevaSegmentedStyle.raised,
               selected: income,
               onChanged: onTab,
               segments: [
@@ -81,6 +87,8 @@ class CategoryListBody extends StatelessWidget {
           else
             FreevaCard(
               list: true,
+              // Right 8: the 44 toggle / chevron cell keeps the 36 circle
+              // 12 from the edge, as on the board.
               padding: const EdgeInsets.fromLTRB(16, 4, 8, 4),
               child: Column(
                 children: [
@@ -97,7 +105,7 @@ class CategoryListBody extends StatelessWidget {
               ),
             ),
           if (hidden > 0) ...[
-            const SizedBox(height: FreevaSpace.s3),
+            const SizedBox(height: FreevaSpace.s4),
             HiddenItemsLink(
               label: s.categoryHiddenTitle,
               count: hidden,

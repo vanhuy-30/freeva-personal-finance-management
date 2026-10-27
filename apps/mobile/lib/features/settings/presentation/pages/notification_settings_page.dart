@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
@@ -10,6 +10,7 @@ import '../../../../core/widgets/freeva_top_bar.dart';
 import '../../../../core/widgets/settings_group.dart';
 import '../../../../core/widgets/settings_row.dart';
 import '../viewmodels/settings_view_model.dart';
+import '../widgets/lead_settings_group.dart';
 
 /// Thông báo. Only "Máy mới đăng nhập" works today; the rest show "Sắp có"
 /// instead of a switch that would do nothing (they need push notifications
@@ -25,12 +26,21 @@ class NotificationSettingsPage extends StatelessWidget {
       builder: (context, _) {
         final s = S.of(context);
         final margin = context.screenMargin;
-        Widget soon(IconData icon, String title, String sub) => SettingsRow(
+        final c = context.colors;
+        const rowHeight = 60.0;
+        Widget soon(
+          IconData icon,
+          String title,
+          String sub, {
+          (Color, Color)? tint,
+        }) => SettingsRow(
           icon: icon,
           title: title,
           subtitle: sub,
           value: s.meSoon,
           chevron: false,
+          tint: tint,
+          minHeight: rowHeight,
         );
         return Scaffold(
           appBar: FreevaTopBar(
@@ -45,7 +55,7 @@ class NotificationSettingsPage extends StatelessWidget {
               FreevaSpace.s8,
             ),
             children: [
-              SettingsGroup(
+              LeadSettingsGroup(
                 title: s.notifyReminders,
                 children: [
                   soon(
@@ -60,15 +70,17 @@ class NotificationSettingsPage extends StatelessWidget {
                 title: s.notifyAlerts,
                 children: [
                   soon(
-                    LucideIcons.piggyBank,
+                    LucideIcons.triangleAlert,
                     s.notifyBudget,
                     s.notifyBudgetSub,
+                    tint: (c.statusWarningBg, c.statusWarning),
                   ),
                   soon(LucideIcons.creditCard, s.notifyCard, s.notifyCardSub),
                   SettingsRow.toggle(
                     icon: LucideIcons.smartphone,
                     title: s.notifySession,
-                    subtitle: s.notifySessionSub,
+                    subtitle: s.notifySessionSubAlways,
+                    minHeight: rowHeight,
                     on: settings.sessionAlertsEnabled,
                     onChanged: (value) {
                       if (!settings.loading) {

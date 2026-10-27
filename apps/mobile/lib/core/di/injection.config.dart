@@ -45,6 +45,9 @@ import 'package:mobile/features/categories/domain/category_use_cases.dart'
     as _i221;
 import 'package:mobile/features/categories/presentation/viewmodels/category_view_model.dart'
     as _i961;
+import 'package:mobile/features/feedback/data/feedback_repository_impl.dart'
+    as _i216;
+import 'package:mobile/features/feedback/domain/feedback.dart' as _i173;
 import 'package:mobile/features/home/domain/overview_use_cases.dart' as _i970;
 import 'package:mobile/features/home/presentation/viewmodels/home_view_model.dart'
     as _i722;
@@ -159,6 +162,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i72.ProfileRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i61.ReportRepository>(
         () => _i931.ReportRepositoryImpl(gh<_i443.AuthorizedApi>()));
+    gh.lazySingleton<_i173.FeedbackRepository>(
+        () => _i216.FeedbackRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i57.TagRepository>(
         () => _i729.TagRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.factory<_i253.AuthUseCases>(
@@ -169,6 +174,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i221.DefaultCategoryUseCases(gh<_i561.CategoryRepository>()));
     gh.lazySingleton<_i112.TagUseCases>(
         () => _i112.DefaultTagUseCases(gh<_i57.TagRepository>()));
+    gh.lazySingleton<_i173.FeedbackUseCases>(
+        () => _i173.DefaultFeedbackUseCases(gh<_i173.FeedbackRepository>()));
     gh.lazySingleton<_i421.SettingsViewModel>(
         () => _i421.DefaultSettingsViewModel(
               gh<_i519.SettingsUseCases>(),

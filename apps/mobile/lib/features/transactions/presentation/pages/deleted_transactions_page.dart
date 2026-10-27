@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
@@ -80,9 +80,12 @@ class _DeletedTransactionsPageState extends State<DeletedTransactionsPage> {
             FreevaSpace.s8,
           ),
           children: [
-            Text(
-              s.txTrashBody,
-              style: FreevaTypography.bodyS.copyWith(color: c.textSecondary),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: FreevaSpace.s1),
+              child: Text(
+                s.txTrashBody,
+                style: FreevaTypography.bodyM.copyWith(color: c.textSecondary),
+              ),
             ),
             const SizedBox(height: FreevaSpace.s4),
             if (results.loading && results.rows.isEmpty)
@@ -102,6 +105,7 @@ class _DeletedTransactionsPageState extends State<DeletedTransactionsPage> {
                 mainCurrency: main.profileCurrency,
                 today: main.today() ?? '',
                 muted: true,
+                showNet: false,
                 onOpen: (_) {},
                 trailingFor: (row) => RestoreButton(
                   label: s.txTrashRestore,
