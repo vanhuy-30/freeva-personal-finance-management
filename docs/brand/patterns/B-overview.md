@@ -11,7 +11,7 @@ Canvas: trang **05 · Patterns**, hàng B
 - Loại màn **Tổng quan**: lời chào, thẻ số dư có lớp màu (chỗ duy nhất có wash), menu nhanh, khối tóm tắt.
 - Thứ tự từ trên xuống: lời chào + tìm + chuông → thẻ số dư → 4 nút nhanh → khối theo mục tiêu (nếu có) → Chi tháng này → Gần đây.
 - Lỗi một phần không chặn cả màn: lời chào, nút nhanh và nút + luôn dùng được.
-- Giữ chuông thông báo dù tính năng thông báo chưa có (`BE-P2-E05`); trước khi có thì mở màn trống.
+- Chuông thông báo mở hộp thư in-app (`BE-P2-E05`).
 
 ## Các màn
 
@@ -51,7 +51,7 @@ Canvas: trang **05 · Patterns**, hàng B
 | Tổng số dư và "· N ví" | API net-worth bỏ ví đã ẩn; "N ví" đếm ví đang dùng theo tiền tệ. |
 | Khối thẻ tín dụng | Hiện khi có ví thẻ tín dụng, dưới khối Chi. Khi nhóm A lưu mục tiêu "Quản lý khoản nợ" thì đưa lên trên. |
 | Ngoại tuyến | Số liệu chỉ giữ trong bộ nhớ (không ghi số dư xuống máy), xoá khi khoá/đăng xuất. Mở app khi mất mạng thì ra thẻ lỗi (màn 8). |
-| Chuông thông báo | Mở màn trống `/notifications` tới khi có `BE-P2-E05`. |
+| Chuông thông báo | Mở hộp thư `/notifications` (`BE-P2-E05`). |
 | Nút tìm, chạm dòng giao dịch | Tạm mở tab Giao dịch / màn sửa giao dịch hiện có; màn tìm và sheet chi tiết thuộc nhóm C. |
 
 ## Phụ thuộc khi làm code
@@ -62,5 +62,5 @@ Canvas: trang **05 · Patterns**, hàng B
 | Khối theo mục tiêu | Cần lưu câu trả lời A1.2 vào hồ sơ (đã ghi ở nhóm A). |
 | Số dư thẻ tín dụng, ngày đến hạn | Ví có `creditLimit`, `dueDay`; cần tính "đã dùng" và ngày đến hạn kế tiếp. |
 | Thời điểm số liệu khi ngoại tuyến | Cần lưu thời điểm tải tổng quan gần nhất. |
-| Chuông thông báo | Chưa có trung tâm thông báo; trước `BE-P2-E05` mở màn trống. |
+| Chuông thông báo | Hộp thư in-app `BE-P2-E05`; push FCM `BE-P2-015`. |
 | Copy l10n | Mọi chuỗi qua `S`, viết tiếng Việt trước. |

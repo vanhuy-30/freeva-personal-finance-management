@@ -4734,6 +4734,132 @@ abstract class S {
   /// **'New device signed in'**
   String get notifySession;
 
+  /// No description provided for @notifyRecurring.
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring due soon'**
+  String get notifyRecurring;
+
+  /// No description provided for @notifyRecurringSub.
+  ///
+  /// In en, this message translates to:
+  /// **'One day before the next run'**
+  String get notifyRecurringSub;
+
+  /// No description provided for @notifyGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal contribution reminder'**
+  String get notifyGoal;
+
+  /// No description provided for @notifyGoalSub.
+  ///
+  /// In en, this message translates to:
+  /// **'When a contribution is due'**
+  String get notifyGoalSub;
+
+  /// No description provided for @notifyDebt.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt due'**
+  String get notifyDebt;
+
+  /// No description provided for @notifyDebtSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Before the due date'**
+  String get notifyDebtSub;
+
+  /// No description provided for @notifyMonthReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Month review'**
+  String get notifyMonthReview;
+
+  /// No description provided for @notifyMonthReviewSub.
+  ///
+  /// In en, this message translates to:
+  /// **'When a month summary is ready'**
+  String get notifyMonthReviewSub;
+
+  /// No description provided for @notifyInsight.
+  ///
+  /// In en, this message translates to:
+  /// **'New insight'**
+  String get notifyInsight;
+
+  /// No description provided for @notifyInsightSub.
+  ///
+  /// In en, this message translates to:
+  /// **'When a new tip is ready'**
+  String get notifyInsightSub;
+
+  /// No description provided for @notifyQuietTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiet hours'**
+  String get notifyQuietTitle;
+
+  /// No description provided for @notifyQuietHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable quiet hours'**
+  String get notifyQuietHours;
+
+  /// No description provided for @notifyQuietEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiet window'**
+  String get notifyQuietEdit;
+
+  /// No description provided for @notifyQuietStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiet hours start'**
+  String get notifyQuietStart;
+
+  /// No description provided for @notifyQuietEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiet hours end'**
+  String get notifyQuietEnd;
+
+  /// No description provided for @notifyQuietWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'{start} – {end}'**
+  String notifyQuietWindow(String start, String end);
+
+  /// No description provided for @notifyMarkAllRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark all read'**
+  String get notifyMarkAllRead;
+
+  /// No description provided for @notifyInboxBudgetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget reached {threshold}%'**
+  String notifyInboxBudgetTitle(String threshold);
+
+  /// No description provided for @notifyInboxBudgetBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You have used {threshold}% of this month’s budget.'**
+  String notifyInboxBudgetBody(String threshold);
+
+  /// No description provided for @notifyInboxRecurringTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring due soon'**
+  String get notifyInboxRecurringTitle;
+
+  /// No description provided for @notifyInboxRecurringBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A recurring transaction runs on {date}.'**
+  String notifyInboxRecurringBody(String date);
+
   /// No description provided for @authOr.
   ///
   /// In en, this message translates to:

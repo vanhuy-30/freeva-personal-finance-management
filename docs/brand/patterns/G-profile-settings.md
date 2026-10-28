@@ -58,7 +58,7 @@ Canvas: trang **05 · Patterns**, hàng G
 |---|---|
 | Hồ sơ | Thêm tên hiển thị, ảnh đại diện (lưu trữ ảnh) vào profile API; mục tiêu lưu từ onboarding. |
 | Ngân sách tháng | `BE-P2-E02`. |
-| Thông báo | Thông báo đẩy `BE-P2-E05`; lưu lựa chọn từng loại, giờ nhắc, nhịp tổng kết, ngưỡng ngân sách. |
+| Thông báo | Hộp thư và công tắc `BE-P2-E05`; giờ yên theo timezone hồ sơ. Push FCM `BE-P2-015`. |
 | Đổi email | API đổi email có xác nhận lại qua thư. |
 | Đổi mật khẩu khi đang đăng nhập | API mới (Phase 1 chỉ có đặt lại qua email). |
 | Xoá tài khoản | API + luồng xác nhận (nhập lại mật khẩu hoặc gõ "XOÁ"); thời gian chờ huỷ là quyết định sản phẩm, chưa chốt. Chưa vẽ popup. |

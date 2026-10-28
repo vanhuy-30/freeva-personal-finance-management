@@ -49,4 +49,4 @@ Thiết kế: [G-profile-settings.md](../brand/patterns/G-profile-settings.md).
 - **Nhãn** (`/me/tags`): tìm, tạo, đổi tên, xoá (hỏi lại) qua menu ⋯ mỗi dòng; số giao dịch lấy từ `GET /tags`. Chạm dòng đặt bộ lọc `tagIds` (mọi thời gian) rồi mở `/transactions`.
 - **Góp ý** (`/help/feedback`): loại (Lỗi/Ý tưởng/Lời khen), chủ đề, nội dung (đếm ký tự), "Trả lời tôi qua email", gửi `POST /feedback` ([feedback.md](feedback.md)); xong hiện màn cảm ơn. Thay cho luồng sao chép Phase 1. Chưa có ảnh chụp màn hình. Lỗi mạng/quá giới hạn báo bằng toast, nội dung vẫn còn.
 - **FAQ**: ô tìm, một câu mở một lúc, thẻ "Gửi góp ý cho Freeva".
-- **Thông báo** (`/me/notifications`): "Máy mới đăng nhập" là công tắc thật (`sessionAlertsEnabled`); nhắc ghi chi, tổng kết, ngân sách, thẻ đến hạn hiện "Sắp có" (cần thông báo đẩy `BE-P2-E05` và ngân sách `BE-P2-E02`).
+- **Thông báo** (`/me/notifications`): ngân sách và định kỳ qua API (`BE-P2-E05`); "Máy mới đăng nhập" vẫn trên máy (`sessionAlertsEnabled`); giờ yên theo timezone hồ sơ; mục tiêu/nợ/thẻ/soát tháng/insight hiện "Sắp có". Push FCM: `BE-P2-015`.

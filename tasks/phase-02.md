@@ -72,11 +72,12 @@
 - Note: API `GET /api/v1/calendar?month=YYYY-MM` (timezone hồ sơ; transfer một mục; định kỳ chiếu từ `nextExecutionDate`; hóa đơn `overdue` khi đọc); OpenAPI. Mobile `/me/calendar` từ Thiết lập tài chính. Phase 3 (nợ/thẻ/mục tiêu) ngoài epic. Kiến trúc: [calendar.md](../docs/architecture/calendar.md).
 
 ### BE-P2-E05 / MOB-P2-E05 — Thông báo và giờ yên (module 17)
-- Status: todo
+- Status: done
 - Module: 17
 - Gate: post-v1
 - Depends: BE-P2-E02
 - DoD: từng loại bật tắt được: ngân sách 80% và vượt, nhắc đóng góp mục tiêu, nợ đến hạn, thẻ đến hạn, định kỳ sắp chạy, soát tháng, insight mới, cảnh báo bảo mật. Giờ yên và timezone hồ sơ được tôn trọng. Nội dung không đưa số dư đầy đủ nếu câu thông báo không cần. Chưa có module nguồn thì loại đó tắt và không gửi.
+- Note: Hộp thư in-app + preference API + worker/evaluate; budget ≥80 và recurring ngày trước lần chạy; security trên máy; giờ yên. Push FCM tách `BE-P2-015`. Kiến trúc: [notifications.md](../docs/architecture/notifications.md).
 
 ### BE-P2-E06 — Mở rộng báo cáo và search (14, 19)
 - Status: todo
@@ -158,3 +159,10 @@ Phase 1 giữ đóng. Các ticket dưới đây không đổi số 28/28.
 - Gate: post-v1
 - Depends: BE-P1-001, MOB-P1-001
 - DoD: Mật khẩu mới (đăng ký, đặt lại, đổi khi đã đăng nhập) tối thiểu **8** ký tự (tối đa 128), vẫn bắt buộc có ít nhất một chữ và một số; không trim. Đăng nhập chỉ kiểm tra độ dài trong khoảng 8–128 để mật khẩu cũ vẫn dùng được. Backend DTO, OpenAPI và test đổi từ 12 xuống 8. Mobile: `PasswordCheck`, use case, danh sách tick và chuỗi l10n vi/en ("Ít nhất 8 ký tự"). Trên app, trước khi gọi API: đăng ký, đăng nhập và quên mật khẩu từ chối email không đúng định dạng sau trim/lowercase; báo lỗi rõ bằng l10n, không gửi request. Backend vẫn là nguồn từ chối cuối. Không đổi Argon2id, không log mật khẩu hay email đầy đủ. Cập nhật [A-onboarding-auth](../docs/brand/patterns/A-onboarding-auth.md) và [mobile-auth](../docs/architecture/mobile-auth.md).
+
+### BE-P2-015 / MOB-P2-015 — Đẩy thông báo qua FCM
+- Status: todo
+- Module: 17
+- Gate: post-v1
+- Depends: BE-P2-E05
+- DoD: Firebase Cloud Messaging là nhà cung cấp push. App đăng ký token FCM theo phiên; đăng xuất và xóa tài khoản xóa token. Khi E05 tạo hàng hộp thư ngoài giờ yên, server gửi một push; trong giờ yên không gửi, hết giờ yên thì gửi một lần nếu hàng vẫn chưa đọc. Payload không có số dư, số tài khoản, email đầy đủ, tên rule hay id phiên. iOS đi qua FCM (APNs do Firebase giữ). Khóa Firebase chỉ trên dashboard / secret CI, không commit. Hộp thư và công tắc E05 giữ nguyên. Cập nhật [notifications.md](../docs/architecture/notifications.md) và câu push trong [mobile-privacy.md](../docs/architecture/mobile-privacy.md).

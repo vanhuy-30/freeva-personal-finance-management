@@ -1384,6 +1384,177 @@ paths:
         Active recurring rules project from `nextExecutionDate` with month/year day clamp.
         Bills with `dueOn` in the month include paid ones; `overdue` is derived on read from
         profile timezone. Amounts are integer minor-unit strings.
+  /api/v1/notification-preferences:
+    get:
+      operationId: getNotificationPreferences
+      summary: Get per-kind toggles and quiet hours
+      tags:
+      - Notifications
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Preferences with availability flags
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationPreferences'
+        '401':
+          $ref: '#/components/responses/NotificationUnauthorized'
+        '503':
+          $ref: '#/components/responses/NotificationUnavailable'
+    put:
+      operationId: putNotificationPreferences
+      summary: Update per-kind toggles and quiet hours
+      tags:
+      - Notifications
+      security:
+      - UserBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutNotificationPreferencesRequest'
+      responses:
+        '200':
+          description: Updated preferences
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationPreferences'
+        '400':
+          $ref: '#/components/responses/NotificationValidationError'
+        '401':
+          $ref: '#/components/responses/NotificationUnauthorized'
+        '409':
+          $ref: '#/components/responses/NotificationConflict'
+        '422':
+          $ref: '#/components/responses/NotificationSourceUnavailable'
+        '503':
+          $ref: '#/components/responses/NotificationUnavailable'
+      description: >
+        Enabling a kind whose source module is not shipped returns 422
+        NOTIFICATION_SOURCE_UNAVAILABLE. Security alerts stay device-local.
+  /api/v1/notifications:
+    get:
+      operationId: listNotifications
+      summary: List in-app inbox notifications
+      tags:
+      - Notifications
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Newest first, up to 100
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationList'
+        '401':
+          $ref: '#/components/responses/NotificationUnauthorized'
+        '503':
+          $ref: '#/components/responses/NotificationUnavailable'
+      description: Rows contain titleKey/bodyKey and params without balances or amounts.
+  /api/v1/notifications/evaluate:
+    post:
+      operationId: evaluateNotifications
+      summary: Evaluate due budget and recurring alerts for the session user
+      tags:
+      - Notifications
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Created count (idempotent)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationEvaluateResult'
+        '401':
+          $ref: '#/components/responses/NotificationUnauthorized'
+        '503':
+          $ref: '#/components/responses/NotificationUnavailable'
+      description: >
+        Respects quiet hours in the profile timezone. Mobile calls on resume;
+        network errors may be ignored. Does not create rows for unavailable kinds.
+  /api/v1/notifications/read-all:
+    post:
+      operationId: markAllNotificationsRead
+      summary: Mark every unread inbox row as read
+      tags:
+      - Notifications
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Number of rows updated
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationReadAllResult'
+        '401':
+          $ref: '#/components/responses/NotificationUnauthorized'
+        '503':
+          $ref: '#/components/responses/NotificationUnavailable'
+  /api/v1/notifications/{id}/read:
+    post:
+      operationId: markNotificationRead
+      summary: Mark one inbox row as read
+      tags:
+      - Notifications
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Updated row
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationItem'
+        '401':
+          $ref: '#/components/responses/NotificationUnauthorized'
+        '404':
+          $ref: '#/components/responses/NotificationNotFound'
+        '503':
+          $ref: '#/components/responses/NotificationUnavailable'
   /api/v1/transactions:
     post:
       operationId: createTransaction
@@ -3586,6 +3757,72 @@ components:
             $ref: '#/components/schemas/ErrorEnvelope'
     CalendarUnavailable:
       description: CALENDAR_UNAVAILABLE or authentication unavailable
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    NotificationValidationError:
+      description: VALIDATION_ERROR
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    NotificationUnauthorized:
+      description: SESSION_INVALID or missing bearer
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    NotificationNotFound:
+      description: NOTIFICATION_NOT_FOUND
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    NotificationConflict:
+      description: NOTIFICATION_CONFLICT
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    NotificationSourceUnavailable:
+      description: NOTIFICATION_SOURCE_UNAVAILABLE
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    NotificationUnavailable:
+      description: NOTIFICATION_UNAVAILABLE or authentication unavailable
       headers:
         Cache-Control:
           schema:
@@ -6101,6 +6338,128 @@ components:
         netWorthMinor:
           $ref: '#/components/schemas/ReportMoney'
           description: assetsMinor + liabilitiesMinor.
+    NotificationKind:
+      type: string
+      enum: [budget, goal, debt, card, recurring, month_review, insight, security]
+    NotificationKindToggle:
+      type: object
+      additionalProperties: false
+      required: [kind, enabled, available, managedLocally]
+      properties:
+        kind:
+          $ref: '#/components/schemas/NotificationKind'
+        enabled:
+          type: boolean
+        available:
+          type: boolean
+          description: False when the source module is not shipped yet.
+        managedLocally:
+          type: boolean
+          description: True for security session alerts stored on device.
+    NotificationPreferences:
+      type: object
+      additionalProperties: false
+      required: [kinds, quietHoursEnabled, quietStart, quietEnd, version, updatedAt]
+      properties:
+        kinds:
+          type: array
+          items:
+            $ref: '#/components/schemas/NotificationKindToggle'
+        quietHoursEnabled:
+          type: boolean
+        quietStart:
+          type: string
+          pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+        quietEnd:
+          type: string
+          pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+        version:
+          type: integer
+          minimum: 1
+        updatedAt:
+          type: string
+          format: date-time
+    PutNotificationPreferencesRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        budgetEnabled:
+          type: boolean
+        goalEnabled:
+          type: boolean
+        debtEnabled:
+          type: boolean
+        cardEnabled:
+          type: boolean
+        recurringEnabled:
+          type: boolean
+        monthReviewEnabled:
+          type: boolean
+        insightEnabled:
+          type: boolean
+        quietHoursEnabled:
+          type: boolean
+        quietStart:
+          type: string
+          pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+        quietEnd:
+          type: string
+          pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+        version:
+          type: integer
+          minimum: 1
+    NotificationItem:
+      type: object
+      additionalProperties: false
+      required: [id, kind, titleKey, bodyKey, params, createdAt, readAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        kind:
+          $ref: '#/components/schemas/NotificationKind'
+        titleKey:
+          type: string
+        bodyKey:
+          type: string
+        params:
+          type: object
+          additionalProperties:
+            oneOf:
+            - type: string
+            - type: number
+          description: No balances, amounts, emails, or rule names.
+        createdAt:
+          type: string
+          format: date-time
+        readAt:
+          type: [string, 'null']
+          format: date-time
+    NotificationList:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/NotificationItem'
+    NotificationEvaluateResult:
+      type: object
+      additionalProperties: false
+      required: [created]
+      properties:
+        created:
+          type: integer
+          minimum: 0
+    NotificationReadAllResult:
+      type: object
+      additionalProperties: false
+      required: [updated]
+      properties:
+        updated:
+          type: integer
+          minimum: 0
     AccountExport:
       type: object
       additionalProperties: false
@@ -6119,6 +6478,8 @@ components:
       - bills
       - budget
       - budgetMonths
+      - notificationPreferences
+      - notifications
       - transactions
       properties:
         schemaVersion:
@@ -6175,10 +6536,92 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AccountExportBudgetMonth'
+        notificationPreferences:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/AccountExportNotificationPreferences'
+        notifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountExportNotification'
         transactions:
           type: array
           items:
             $ref: '#/components/schemas/AccountExportTransaction'
+    AccountExportNotificationPreferences:
+      type: object
+      additionalProperties: false
+      required:
+      - budgetEnabled
+      - goalEnabled
+      - debtEnabled
+      - cardEnabled
+      - recurringEnabled
+      - monthReviewEnabled
+      - insightEnabled
+      - quietHoursEnabled
+      - quietStart
+      - quietEnd
+      - version
+      - createdAt
+      - updatedAt
+      properties:
+        budgetEnabled:
+          type: boolean
+        goalEnabled:
+          type: boolean
+        debtEnabled:
+          type: boolean
+        cardEnabled:
+          type: boolean
+        recurringEnabled:
+          type: boolean
+        monthReviewEnabled:
+          type: boolean
+        insightEnabled:
+          type: boolean
+        quietHoursEnabled:
+          type: boolean
+        quietStart:
+          type: string
+        quietEnd:
+          type: string
+        version:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    AccountExportNotification:
+      type: object
+      additionalProperties: false
+      required: [id, kind, dedupeKey, titleKey, bodyKey, params, createdAt, readAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        kind:
+          type: string
+        dedupeKey:
+          type: string
+        titleKey:
+          type: string
+        bodyKey:
+          type: string
+        params:
+          type: object
+          additionalProperties:
+            oneOf:
+            - type: string
+            - type: number
+        createdAt:
+          type: string
+          format: date-time
+        readAt:
+          type: [string, 'null']
+          format: date-time
     AccountExportProfile:
       type: object
       additionalProperties: false

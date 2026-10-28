@@ -9,4 +9,4 @@ Thu/chi/chuyển theo chu kỳ ngày, tuần, tháng, năm và custom (`interval
 
 Đến hạn server tạo giao dịch thường đúng một lần (occurrence ledger + `clientId` ổn định). Retry, worker và sync không nhân đôi. Tắt thì không tạo thêm. Chuyển khoản định kỳ vẫn hai leg cân bằng. Tháng không có ngày 31 được kẹp về ngày cuối tháng.
 
-Chưa làm trong epic này: skip từng kỳ, xác nhận trước khi ghi, nhắc push (`BE-P2-E05`).
+Chưa làm trong epic này: skip từng kỳ, xác nhận trước khi ghi. Nhắc hộp thư một ngày trước lần chạy thuộc `BE-P2-E05`; push FCM `BE-P2-015`.

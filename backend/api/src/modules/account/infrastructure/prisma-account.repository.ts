@@ -68,6 +68,11 @@ export class PrismaAccountRepository implements AccountRepository {
       orderBy: [{ periodFrom: 'asc' }, { id: 'asc' }],
       include: { categories: { orderBy: [{ categoryId: 'asc' as const }] } },
     });
+    const notificationPreferences = await tx.notificationPreference.findUnique({ where: { userId } });
+    const notifications = await tx.inAppNotification.findMany({
+      where: { userId },
+      orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
+    });
     const transactions = await tx.transaction.findMany({
       where: { userId }, orderBy: order, include: { tags: { select: { tagId: true } } },
     });
@@ -119,12 +124,43 @@ export class PrismaAccountRepository implements AccountRepository {
           limitMinor: line.limitMinor,
         })),
       })),
+      notificationPreferences: notificationPreferences === null ? null : {
+        budgetEnabled: notificationPreferences.budgetEnabled,
+        goalEnabled: notificationPreferences.goalEnabled,
+        debtEnabled: notificationPreferences.debtEnabled,
+        cardEnabled: notificationPreferences.cardEnabled,
+        recurringEnabled: notificationPreferences.recurringEnabled,
+        monthReviewEnabled: notificationPreferences.monthReviewEnabled,
+        insightEnabled: notificationPreferences.insightEnabled,
+        quietHoursEnabled: notificationPreferences.quietHoursEnabled,
+        quietStart: notificationPreferences.quietStart,
+        quietEnd: notificationPreferences.quietEnd,
+        version: notificationPreferences.version,
+        createdAt: notificationPreferences.createdAt,
+        updatedAt: notificationPreferences.updatedAt,
+      },
+      notifications: notifications.map(row => ({
+        id: row.id,
+        kind: row.kind,
+        dedupeKey: row.dedupeKey,
+        titleKey: row.titleKey,
+        bodyKey: row.bodyKey,
+        params: (row.params !== null && typeof row.params === 'object' && !Array.isArray(row.params)
+          ? Object.fromEntries(
+              Object.entries(row.params).filter(([, value]) => typeof value === 'string' || typeof value === 'number'),
+            )
+          : {}) as Record<string, string | number>,
+        createdAt: row.createdAt,
+        readAt: row.readAt,
+      })),
       transactions: transactions.map(row => ({ ...row, tagIds: row.tags.map(tag => tag.tagId) })),
     });
   }
 
   private async removeAccount(tx: Prisma.TransactionClient, userId: string): Promise<boolean> {
     if (!(await lockUser(tx, userId))) return false;
+    await tx.inAppNotification.deleteMany({ where: { userId } });
+    await tx.notificationPreference.deleteMany({ where: { userId } });
     await tx.bill.deleteMany({ where: { userId } });
     await tx.recurringOccurrence.deleteMany({ where: { rule: { userId } } });
     await tx.recurringRule.deleteMany({ where: { userId } });

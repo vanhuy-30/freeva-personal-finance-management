@@ -7,6 +7,7 @@ import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/feedback/domain/feedback.dart';
 import 'package:mobile/features/feedback/presentation/pages/feedback_page.dart';
 import 'package:mobile/features/feedback/presentation/viewmodels/feedback_view_model.dart';
+import 'package:mobile/features/notifications/presentation/viewmodels/notification_view_model.dart';
 import 'package:mobile/features/settings/presentation/pages/faq_page.dart';
 import 'package:mobile/features/settings/presentation/pages/notification_settings_page.dart';
 import 'package:mobile/features/tags/domain/tag.dart';
@@ -16,6 +17,7 @@ import 'package:mobile/features/tags/presentation/viewmodels/tag_manage_view_mod
 import 'package:mobile/features/transactions/domain/transaction_filter.dart';
 import 'package:mobile/features/transactions/presentation/viewmodels/transaction_view_model.dart';
 
+import '../notifications/fake_notification_view_model.dart';
 import '../transactions/c1_stub.dart' show StubTransactionViewModel;
 import 'g1_harness.dart';
 
@@ -90,7 +92,8 @@ void main() {
     feedback = FakeFeedback();
     getIt
       ..registerSingleton<TagUseCases>(tags)
-      ..registerSingleton<FeedbackUseCases>(feedback);
+      ..registerSingleton<FeedbackUseCases>(feedback)
+      ..registerSingleton<NotificationViewModel>(FakeNotificationViewModel());
   });
   tearDown(() async {
     g.dispose();
@@ -192,12 +195,14 @@ void main() {
     expect(find.text('Không có câu hỏi khớp'), findsOneWidget);
   });
 
-  testWidgets('Thông báo: only new-device alerts has a switch', (tester) async {
+  testWidgets('Thông báo: live kinds and session switch', (tester) async {
     tall(tester);
     await tester.pumpWidget(g.app(const NotificationSettingsPage()));
     await tester.pumpAndSettle();
-    expect(find.byType(FreevaSwitch), findsOneWidget);
-    expect(find.text('Sắp có'), findsNWidgets(4));
+    // budget, recurring, session, quiet hours
+    expect(find.byType(FreevaSwitch), findsNWidgets(4));
+    // goal, month review, debt, card, insight
+    expect(find.text('Sắp có'), findsNWidgets(5));
     final before = g.settings.sessionAlertsEnabled;
     await tester.tap(find.text('Máy mới đăng nhập'));
     await tester.pumpAndSettle();

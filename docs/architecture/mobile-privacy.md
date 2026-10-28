@@ -24,7 +24,7 @@ Banner trên Home dẫn tới phần quản lý phiên. Thông báo cục bộ c
 
 Nội dung chỉ nói có phiên đăng nhập khác. Không email, số dư, tên thiết bị, token hay id phiên. Không có payload gắn vào thông báo.
 
-ADR 009 không lưu IP, user agent hay tên thiết bị, nên câu chữ không gọi đây là “thiết bị mới”. Máy đang bị đăng nhập nơi khác chỉ biết khi app được mở khóa lần sau. Email hoặc push tức thì cần định danh thiết bị và nhà cung cấp push, ngoài task này.
+ADR 009 không lưu IP, user agent hay tên thiết bị, nên câu chữ không gọi đây là “thiết bị mới”. Máy đang bị đăng nhập nơi khác chỉ biết khi app được mở khóa lần sau. Push tức thì (FCM) thuộc `BE-P2-015`.
 
 iOS không có khóa Info.plist cho nội dung hộp thoại quyền thông báo cục bộ. Câu giải thích nằm ở công tắc Cài đặt và ở banner.
 

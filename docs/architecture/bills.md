@@ -35,4 +35,4 @@ Có trong `GET /account/export` (`bills`) và xóa theo user. Không log tên h�
 
 Feature `lib/features/bills/`. Màn `/me/bills` từ Thiết lập tài chính (sau Định kỳ). Đánh dấu đã trả chọn giao dịch có sẵn; không mở form ghi mới.
 
-Nhắc đẩy thuộc `BE-P2-E05`. Lịch tháng thuộc `MOB-P2-E04` / [calendar.md](calendar.md).
+Nhắc hóa đơn chưa nằm trong DoD của `BE-P2-E05` (chỉ budget / recurring / security). Lịch tháng thuộc `MOB-P2-E04` / [calendar.md](calendar.md).

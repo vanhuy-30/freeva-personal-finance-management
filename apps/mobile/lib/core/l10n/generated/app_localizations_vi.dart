@@ -2567,6 +2567,77 @@ class SVi extends S {
   String get notifySession => 'Máy mới đăng nhập';
 
   @override
+  String get notifyRecurring => 'Định kỳ sắp chạy';
+
+  @override
+  String get notifyRecurringSub => 'Một ngày trước lần chạy';
+
+  @override
+  String get notifyGoal => 'Nhắc đóng góp mục tiêu';
+
+  @override
+  String get notifyGoalSub => 'Khi đến hạn đóng góp';
+
+  @override
+  String get notifyDebt => 'Nợ đến hạn';
+
+  @override
+  String get notifyDebtSub => 'Trước ngày đến hạn';
+
+  @override
+  String get notifyMonthReview => 'Soát tháng';
+
+  @override
+  String get notifyMonthReviewSub => 'Khi có bản tóm tắt tháng';
+
+  @override
+  String get notifyInsight => 'Insight mới';
+
+  @override
+  String get notifyInsightSub => 'Khi có gợi ý mới';
+
+  @override
+  String get notifyQuietTitle => 'Giờ yên';
+
+  @override
+  String get notifyQuietHours => 'Bật giờ yên';
+
+  @override
+  String get notifyQuietEdit => 'Khung giờ';
+
+  @override
+  String get notifyQuietStart => 'Bắt đầu giờ yên';
+
+  @override
+  String get notifyQuietEnd => 'Hết giờ yên';
+
+  @override
+  String notifyQuietWindow(String start, String end) {
+    return '$start – $end';
+  }
+
+  @override
+  String get notifyMarkAllRead => 'Đọc hết';
+
+  @override
+  String notifyInboxBudgetTitle(String threshold) {
+    return 'Ngân sách đã chạm $threshold%';
+  }
+
+  @override
+  String notifyInboxBudgetBody(String threshold) {
+    return 'Bạn đã dùng đến $threshold% hạn mức tháng này.';
+  }
+
+  @override
+  String get notifyInboxRecurringTitle => 'Định kỳ sắp chạy';
+
+  @override
+  String notifyInboxRecurringBody(String date) {
+    return 'Một giao dịch định kỳ chạy vào $date.';
+  }
+
+  @override
   String get authOr => 'hoặc';
 
   @override

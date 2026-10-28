@@ -7,4 +7,4 @@
 
 Một lần hoặc gắn một giao dịch định kỳ. Có hạn, số cố định hoặc ước tính. Đánh dấu đã trả thì trỏ tới một giao dịch có sẵn. Quá hạn không tự tạo giao dịch.
 
-Nhắc đẩy thuộc `BE-P2-E05`. Lịch tháng thuộc `MOB-P2-E04` / module 15.
+Nhắc hóa đơn chưa nằm trong DoD `BE-P2-E05`. Lịch tháng thuộc `MOB-P2-E04` / module 15.
