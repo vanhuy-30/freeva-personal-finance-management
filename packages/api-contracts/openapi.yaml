@@ -1345,6 +1345,45 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UnpayBillRequest'
+  /api/v1/calendar:
+    get:
+      operationId: getCalendarMonth
+      summary: Month view of posted transactions, projected recurring runs, and bill due dates
+      tags:
+      - Calendar
+      security:
+      - UserBearer: []
+      parameters:
+      - in: query
+        name: month
+        required: true
+        schema:
+          type: string
+          pattern: ^\d{4}-\d{2}$
+        description: Civil calendar month YYYY-MM in the profile timezone (not fiscal month).
+      responses:
+        '200':
+          description: Days that have at least one item, ordered by date
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalendarMonth'
+        '400':
+          $ref: '#/components/responses/CalendarValidationError'
+        '401':
+          $ref: '#/components/responses/CalendarUnauthorized'
+        '503':
+          $ref: '#/components/responses/CalendarUnavailable'
+      description: >
+        Posted non-deleted legs (`occurredOn` in month); transfer pairs appear once.
+        Active recurring rules project from `nextExecutionDate` with month/year day clamp.
+        Bills with `dueOn` in the month include paid ones; `overdue` is derived on read from
+        profile timezone. Amounts are integer minor-unit strings.
   /api/v1/transactions:
     post:
       operationId: createTransaction
@@ -3523,6 +3562,39 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorEnvelope'
+    CalendarValidationError:
+      description: VALIDATION_ERROR
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    CalendarUnauthorized:
+      description: SESSION_INVALID
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    CalendarUnavailable:
+      description: CALENDAR_UNAVAILABLE or authentication unavailable
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
     FinancialAccountValidationError:
       description: VALIDATION_ERROR
       headers:
@@ -4231,6 +4303,121 @@ components:
           type: integer
           minimum: 1
           maximum: 100
+    CalendarMonth:
+      type: object
+      additionalProperties: false
+      required: [month, timezone, today, days]
+      properties:
+        month:
+          type: string
+          pattern: ^\d{4}-\d{2}$
+        timezone:
+          type: string
+          minLength: 1
+          maxLength: 64
+          description: IANA timezone from the user profile.
+        today:
+          type: string
+          format: date
+          description: Calendar date for the profile timezone at request time.
+        days:
+          type: array
+          items:
+            $ref: '#/components/schemas/CalendarDay'
+    CalendarDay:
+      type: object
+      additionalProperties: false
+      required: [date, transactions, recurring, bills]
+      properties:
+        date:
+          type: string
+          format: date
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/CalendarTransactionItem'
+        recurring:
+          type: array
+          items:
+            $ref: '#/components/schemas/CalendarRecurringItem'
+        bills:
+          type: array
+          items:
+            $ref: '#/components/schemas/CalendarBillItem'
+    CalendarTransactionItem:
+      type: object
+      additionalProperties: false
+      required: [id, type, amountMinor, currencyCode, categoryName]
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Representative leg id (lowest id for a transfer pair).
+        type:
+          type: string
+          enum: [income, expense, transfer]
+        amountMinor:
+          type: string
+          pattern: ^-?[0-9]+$
+          maxLength: 20
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        categoryName:
+          type: [string, 'null']
+    CalendarRecurringItem:
+      type: object
+      additionalProperties: false
+      required: [id, type, amountMinor, currencyCode, categoryName, occurredOn]
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Recurring rule id.
+        type:
+          type: string
+          enum: [income, expense, transfer]
+        amountMinor:
+          type: string
+          pattern: ^-?[0-9]+$
+          maxLength: 20
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        categoryName:
+          type: [string, 'null']
+        occurredOn:
+          type: string
+          format: date
+    CalendarBillItem:
+      type: object
+      additionalProperties: false
+      required: [id, name, dueOn, amountMinor, amountKind, currencyCode, paid, overdue]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        dueOn:
+          type: string
+          format: date
+        amountMinor:
+          type: string
+          pattern: ^[1-9][0-9]*$
+          maxLength: 20
+        amountKind:
+          type: string
+          enum: [fixed, estimated]
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        paid:
+          type: boolean
+        overdue:
+          type: boolean
     CreateBillRequest:
       type: object
       additionalProperties: false

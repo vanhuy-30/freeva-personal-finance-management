@@ -45,6 +45,14 @@ import 'package:mobile/features/budgets/domain/budget_repository.dart'
 import 'package:mobile/features/budgets/domain/budget_use_cases.dart' as _i245;
 import 'package:mobile/features/budgets/presentation/viewmodels/budget_view_model.dart'
     as _i137;
+import 'package:mobile/features/calendar/data/calendar_repository_impl.dart'
+    as _i918;
+import 'package:mobile/features/calendar/domain/calendar_repository.dart'
+    as _i791;
+import 'package:mobile/features/calendar/domain/calendar_use_cases.dart'
+    as _i471;
+import 'package:mobile/features/calendar/presentation/viewmodels/calendar_view_model.dart'
+    as _i622;
 import 'package:mobile/features/categories/data/category_expansion_repository_impl.dart'
     as _i226;
 import 'package:mobile/features/categories/data/category_repository_impl.dart'
@@ -172,6 +180,8 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i938.SyncQueueVault>(),
           gh<_i766.AppLogger>(),
         ));
+    gh.lazySingleton<_i791.CalendarRepository>(
+        () => _i918.CalendarRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i931.TransactionRepository>(
         () => _i1020.TransactionRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i821.RecurringRepository>(
@@ -212,6 +222,8 @@ extension GetItInjectableX on _i174.GetIt {
               gh<_i253.AuthUseCases>(),
               gh<_i1020.AnalyticsService>(),
             ));
+    gh.lazySingleton<_i471.CalendarUseCases>(
+        () => _i471.DefaultCalendarUseCases(gh<_i791.CalendarRepository>()));
     gh.lazySingleton<_i990.AuthViewModel>(
         () => authPresentationModule.authViewModel(
               gh<_i253.AuthUseCases>(),
@@ -230,6 +242,10 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i336.DefaultWalletUseCases(gh<_i107.WalletRepository>()));
     gh.factory<_i281.ProfileUseCases>(
         () => _i281.ProfileUseCases(gh<_i4.ProfileRepository>()));
+    gh.lazySingleton<_i622.CalendarViewModel>(() => _i622.CalendarViewModel(
+          gh<_i471.CalendarUseCases>(),
+          gh<_i990.AuthViewModel>(),
+        ));
     gh.lazySingleton<_i146.ReportUseCases>(() => _i146.DefaultReportUseCases(
           gh<_i61.ReportRepository>(),
           gh<_i107.WalletRepository>(),

@@ -1890,7 +1890,47 @@ class SEn extends S {
   String get meBills => 'Bills';
 
   @override
+  String get meCalendar => 'Money calendar';
+
+  @override
   String get meCurrency => 'Default currency';
+
+  @override
+  String get calendarTitle => 'Money calendar';
+
+  @override
+  String get calendarLoadError => 'Couldn’t load calendar';
+
+  @override
+  String get calendarEmptyTitle => 'Nothing this month';
+
+  @override
+  String get calendarEmptyBody =>
+      'No posted transactions, recurring runs, or bills in this month.';
+
+  @override
+  String get calendarPrevMonth => 'Previous month';
+
+  @override
+  String get calendarNextMonth => 'Next month';
+
+  @override
+  String get calendarSectionTransactions => 'Transactions';
+
+  @override
+  String get calendarSectionRecurring => 'Recurring';
+
+  @override
+  String get calendarSectionBills => 'Bills';
+
+  @override
+  String get calendarLegend => 'Dots mark item types on each day';
+
+  @override
+  String get calendarTransfer => 'Transfer';
+
+  @override
+  String get calendarEstimated => 'Estimated';
 
   @override
   String get billsTitle => 'Bills';

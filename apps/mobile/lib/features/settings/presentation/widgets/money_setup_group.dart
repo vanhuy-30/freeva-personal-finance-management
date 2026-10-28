@@ -83,6 +83,13 @@ class MoneySetupGroup extends StatelessWidget {
           onTap: () => context.push('/me/bills'),
         ),
         SettingsRow(
+          tint: (c.tintBlue, c.tintBlueFg),
+          minHeight: rowHeight,
+          icon: LucideIcons.calendarDays,
+          title: s.meCalendar,
+          onTap: () => context.push('/me/calendar'),
+        ),
+        SettingsRow(
           tint: (c.tintGreen, c.tintGreenFg),
           minHeight: rowHeight,
           icon: LucideIcons.banknote,

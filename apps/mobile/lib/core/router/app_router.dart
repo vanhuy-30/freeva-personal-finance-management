@@ -27,6 +27,7 @@ import '../../features/recurring/presentation/pages/recurring_page.dart';
 import '../../features/recurring/presentation/pages/recurring_editor_page.dart';
 import '../../features/bills/presentation/pages/bills_page.dart';
 import '../../features/bills/presentation/pages/bill_editor_page.dart';
+import '../../features/calendar/presentation/pages/calendar_page.dart';
 import '../../features/settings/presentation/pages/change_pin_page.dart';
 import '../../features/settings/presentation/pages/pin_setup_page.dart';
 import '../../features/settings/presentation/pages/notification_settings_page.dart';
@@ -311,6 +312,10 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
             ),
           ),
         ],
+      ),
+      GoRoute(
+        path: '/me/calendar',
+        builder: (context, state) => const AuthGate(child: CalendarPage()),
       ),
       GoRoute(
         path: '/me/sessions',

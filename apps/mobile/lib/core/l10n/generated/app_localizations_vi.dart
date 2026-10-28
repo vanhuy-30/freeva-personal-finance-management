@@ -1853,7 +1853,47 @@ class SVi extends S {
   String get meBills => 'Hóa đơn';
 
   @override
+  String get meCalendar => 'Lịch tài chính';
+
+  @override
   String get meCurrency => 'Tiền tệ mặc định';
+
+  @override
+  String get calendarTitle => 'Lịch tài chính';
+
+  @override
+  String get calendarLoadError => 'Không tải được lịch';
+
+  @override
+  String get calendarEmptyTitle => 'Tháng này trống';
+
+  @override
+  String get calendarEmptyBody =>
+      'Chưa có giao dịch, định kỳ hay hóa đơn trong tháng này.';
+
+  @override
+  String get calendarPrevMonth => 'Tháng trước';
+
+  @override
+  String get calendarNextMonth => 'Tháng sau';
+
+  @override
+  String get calendarSectionTransactions => 'Giao dịch';
+
+  @override
+  String get calendarSectionRecurring => 'Định kỳ';
+
+  @override
+  String get calendarSectionBills => 'Hóa đơn';
+
+  @override
+  String get calendarLegend => 'Chấm màu theo loại mục trên ngày';
+
+  @override
+  String get calendarTransfer => 'Chuyển khoản';
+
+  @override
+  String get calendarEstimated => 'Ước tính';
 
   @override
   String get billsTitle => 'Hóa đơn';

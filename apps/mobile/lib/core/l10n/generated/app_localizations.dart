@@ -3384,11 +3384,89 @@ abstract class S {
   /// **'Bills'**
   String get meBills;
 
+  /// No description provided for @meCalendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Money calendar'**
+  String get meCalendar;
+
   /// No description provided for @meCurrency.
   ///
   /// In en, this message translates to:
   /// **'Default currency'**
   String get meCurrency;
+
+  /// No description provided for @calendarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Money calendar'**
+  String get calendarTitle;
+
+  /// No description provided for @calendarLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t load calendar'**
+  String get calendarLoadError;
+
+  /// No description provided for @calendarEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing this month'**
+  String get calendarEmptyTitle;
+
+  /// No description provided for @calendarEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'No posted transactions, recurring runs, or bills in this month.'**
+  String get calendarEmptyBody;
+
+  /// No description provided for @calendarPrevMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous month'**
+  String get calendarPrevMonth;
+
+  /// No description provided for @calendarNextMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Next month'**
+  String get calendarNextMonth;
+
+  /// No description provided for @calendarSectionTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'Transactions'**
+  String get calendarSectionTransactions;
+
+  /// No description provided for @calendarSectionRecurring.
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring'**
+  String get calendarSectionRecurring;
+
+  /// No description provided for @calendarSectionBills.
+  ///
+  /// In en, this message translates to:
+  /// **'Bills'**
+  String get calendarSectionBills;
+
+  /// No description provided for @calendarLegend.
+  ///
+  /// In en, this message translates to:
+  /// **'Dots mark item types on each day'**
+  String get calendarLegend;
+
+  /// No description provided for @calendarTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer'**
+  String get calendarTransfer;
+
+  /// No description provided for @calendarEstimated.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated'**
+  String get calendarEstimated;
 
   /// No description provided for @billsTitle.
   ///
