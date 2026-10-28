@@ -386,3 +386,25 @@ Coverage: snapshot chỉ của owner, tiền string, giao dịch đã xóa, khô
 
 Kết quả local 2026-10-12: **20 unit suites / 185 tests** (6 tests account mới), **7 HTTP/PostgreSQL suites / 79 tests** (4 tests account mới); API build và OpenAPI validation pass. Không migration; chưa deploy staging.
 
+## Lịch tài chính — BE-P2-E04
+
+`calendar.integration-spec.ts` chạy trong job `test:integration`. Bắt buộc `AUTH_TEST_DATABASE_URL` trỏ DB disposable `auth_test`. Không migration mới.
+
+```sh
+docker run --detach --rm --name freeva-be-p2-e04-test \
+  --publish 127.0.0.1:55450:5432 \
+  --env POSTGRES_USER=auth_test --env POSTGRES_PASSWORD=auth_test_local \
+  --env POSTGRES_DB=auth_test postgres:16-alpine
+docker exec freeva-be-p2-e04-test pg_isready -U auth_test
+DATABASE_URL=postgresql://auth_test:auth_test_local@127.0.0.1:55450/auth_test \
+  pnpm --filter @freeva/api prisma:migrate:deploy
+pnpm --filter @freeva/api test --runInBand --testPathPattern='calendar|recurring/domain/calendar'
+AUTH_TEST_DATABASE_URL=postgresql://auth_test:auth_test_local@127.0.0.1:55450/auth_test \
+  pnpm --filter @freeva/api test:integration --runInBand --testPathPattern=calendar
+pnpm --filter @freeva/api build
+pnpm --package=@redocly/cli dlx redocly lint packages/api-contracts/openapi.yaml --extends minimal
+docker stop freeva-be-p2-e04-test
+```
+
+Coverage: tháng có giao dịch / định kỳ chiếu / hóa đơn, transfer một mục, tháng lệch 400, owner khác không thấy, `Cache-Control: no-store`, log không số tiền / tên hóa đơn.
+

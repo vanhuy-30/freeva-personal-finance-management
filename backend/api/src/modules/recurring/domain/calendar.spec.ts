@@ -1,4 +1,6 @@
-import { addInterval, compareCalendar, dueDates, daysInMonth, formatCalendarParts, parseCalendarParts } from './calendar';
+import {
+  addInterval, compareCalendar, dueDates, daysInMonth, formatCalendarParts, occurrencesInRange, parseCalendarParts,
+} from './calendar';
 
 describe('BE-P2-E01 recurring calendar', () => {
   it('rejects invalid calendar dates', () => {
@@ -77,5 +79,51 @@ describe('BE-P2-E01 recurring calendar', () => {
   it('compares and formats calendar parts', () => {
     expect(compareCalendar('2026-01-01', '2026-01-02')).toBe(-1);
     expect(formatCalendarParts(2026, 1, 5)).toBe('2026-01-05');
+  });
+
+  it('projects occurrences inside a month from nextExecutionDate', () => {
+    expect(occurrencesInRange({
+      nextExecutionDate: '2026-01-31',
+      startDate: '2026-01-31',
+      endDate: null,
+      rangeFrom: '2026-01-01',
+      rangeTo: '2026-03-31',
+      unit: 'month',
+      interval: 1,
+      active: true,
+    })).toEqual(['2026-01-31', '2026-02-28', '2026-03-31']);
+
+    expect(occurrencesInRange({
+      nextExecutionDate: '2026-02-28',
+      startDate: '2026-01-31',
+      endDate: null,
+      rangeFrom: '2026-01-01',
+      rangeTo: '2026-03-31',
+      unit: 'month',
+      interval: 1,
+      active: true,
+    })).toEqual(['2026-02-28', '2026-03-31']);
+
+    expect(occurrencesInRange({
+      nextExecutionDate: '2026-01-15',
+      startDate: '2026-01-15',
+      endDate: '2026-01-20',
+      rangeFrom: '2026-01-01',
+      rangeTo: '2026-01-31',
+      unit: 'day',
+      interval: 1,
+      active: true,
+    })).toEqual(['2026-01-15', '2026-01-16', '2026-01-17', '2026-01-18', '2026-01-19', '2026-01-20']);
+
+    expect(occurrencesInRange({
+      nextExecutionDate: '2026-01-01',
+      startDate: '2026-01-01',
+      endDate: null,
+      rangeFrom: '2026-01-01',
+      rangeTo: '2026-01-31',
+      unit: 'day',
+      interval: 1,
+      active: false,
+    })).toEqual([]);
   });
 });

@@ -64,11 +64,12 @@
 - Note: API `GET/POST /bills`, `GET/PATCH/DELETE /bills/:id`, `POST .../pay` và `.../unpay` (chỉ gắn giao dịch có sẵn); OpenAPI; export/xóa tài khoản. Mobile `/me/bills` từ Thiết lập tài chính. Quá hạn tính khi đọc theo timezone hồ sơ. Nhắc đẩy `BE-P2-E05`; lịch tháng `MOB-P2-E04`. Kiến trúc: [bills.md](../docs/architecture/bills.md).
 
 ### MOB-P2-E04 / BE-P2-E04 — Lịch tài chính bản đầu (module 15)
-- Status: todo
+- Status: done
 - Module: 15
 - Gate: post-v1
 - Depends: BE-P1-005, BE-P2-E01
 - DoD: một tháng hiện giao dịch đã ghi, lần chạy định kỳ và hạn hóa đơn theo timezone hồ sơ.
+- Note: API `GET /api/v1/calendar?month=YYYY-MM` (timezone hồ sơ; transfer một mục; định kỳ chiếu từ `nextExecutionDate`; hóa đơn `overdue` khi đọc); OpenAPI. Mobile `/me/calendar` từ Thiết lập tài chính. Phase 3 (nợ/thẻ/mục tiêu) ngoài epic. Kiến trúc: [calendar.md](../docs/architecture/calendar.md).
 
 ### BE-P2-E05 / MOB-P2-E05 — Thông báo và giờ yên (module 17)
 - Status: todo
