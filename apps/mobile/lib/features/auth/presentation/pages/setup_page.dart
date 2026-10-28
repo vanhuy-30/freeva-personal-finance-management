@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../../../core/di/injection.dart';
+import '../../../budgets/domain/budget_use_cases.dart';
 import '../../../onboarding/presentation/viewmodels/onboarding_view_model.dart';
 import '../../../onboarding/presentation/viewmodels/setup_wallets_view_model.dart';
 import '../../../onboarding/presentation/widgets/setup_wallets_step.dart';
@@ -44,6 +45,7 @@ class _SetupPageState extends State<SetupPage> {
     _answers = OnboardingViewModel(
       getIt<ProfileUseCases>(),
       getIt<SettingsUseCases>(),
+      getIt.isRegistered<BudgetUseCases>() ? getIt<BudgetUseCases>() : null,
     );
     _wallets = SetupWalletsViewModel(getIt<WalletUseCases>());
     getIt<SettingsViewModel>().beginOnboarding();

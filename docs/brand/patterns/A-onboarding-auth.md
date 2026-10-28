@@ -69,7 +69,7 @@ Mở khoá hằng ngày: màn Mở khoá ở hàng mẫu (avatar chữ cái, "Ch
 |---|---|
 | Link xác nhận email và đặt lại mật khẩu mở thẳng app | Chốt 2026-10-23: bỏ nhập mã 64 ký tự trên UI; backend gửi một link, người dùng bấm trong mail. Cần deep link / universal link (task riêng). |
 | Google, Apple trên mobile | ADR 010 đã có, mobile chưa làm. |
-| Ngân sách tháng (A1.5) | Thuộc `BE-P2-E02`. Chốt 2026-10-23: làm UI; số lưu trên máy (`AppPreferences.budgetDraftMinor`), tiền tệ cố định VND; nối API khi làm task BE. |
+| Ngân sách tháng (A1.5) | `BE-P2-E02` / `MOB-P2-E02`: UI giữ; khi có số thì `PUT /budgets/current` nếu chưa có ngân sách, không thì giữ `budgetDraftMinor`. |
 | PIN không còn bắt buộc ngay sau đăng nhập | App hiện bắt đặt PIN; đổi thành bước gợi ý có "Để sau", luôn có màn nhập lại PIN. |
 | Ô "nhập lại mật khẩu" | Giữ (2026-10-23), như app hiện tại. |
 | Quy tắc chữ + số | Xong ở backend + mobile (`DS-P2-004`, 2026-10-23). |

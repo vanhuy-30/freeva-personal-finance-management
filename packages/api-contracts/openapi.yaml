@@ -908,6 +908,140 @@ paths:
           minimum: 1
           maximum: 2147483646
       description: Posted transactions keep their rows; recurringRuleId is set null.
+  /api/v1/budgets/current:
+    get:
+      operationId: getCurrentBudget
+      summary: Current monthly budget with spend against the fiscal month
+      tags:
+      - Budgets
+      security:
+      - UserBearer: []
+      parameters:
+      - in: query
+        name: on
+        required: false
+        schema:
+          type: string
+          format: date
+        description: Calendar day in the profile timezone anchoring the fiscal month. Defaults to today.
+      - in: query
+        name: applyTo
+        required: false
+        schema:
+          type: string
+          enum: [default, month]
+        description: When `default`, return the template only (ignore month overrides).
+          Omit (or `month`) for the effective budget of the fiscal month.
+      responses:
+        '200':
+          description: Budget summary, or budget null when none is set
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BudgetCurrentResponse'
+        '400':
+          $ref: '#/components/responses/BudgetValidationError'
+        '401':
+          $ref: '#/components/responses/BudgetUnauthorized'
+        '503':
+          $ref: '#/components/responses/BudgetUnavailable'
+      description: Spent counts only non-deleted expense transactions in the budget currency
+        within the fiscal month. Income and transfers are excluded. Category lines include
+        descendant spend. Amounts are integer minor-unit strings. When `applyTo` is omitted
+        or `month` and a month override exists for the fiscal month of `on`, it is returned
+        (`isOverride=true`); otherwise the default template is used if present. `applyTo=default`
+        always returns the template so clients can edit every-month limits.
+    put:
+      operationId: putCurrentBudget
+      summary: Create or replace the default template or a month override
+      tags:
+      - Budgets
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Saved budget with spend for the relevant fiscal month
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BudgetSummary'
+        '400':
+          $ref: '#/components/responses/BudgetValidationError'
+        '401':
+          $ref: '#/components/responses/BudgetUnauthorized'
+        '409':
+          $ref: '#/components/responses/BudgetConflict'
+        '503':
+          $ref: '#/components/responses/BudgetUnavailable'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutBudgetRequest'
+      description: Currency is always the profile default currency. `applyTo=default`
+        (omit for the same) updates the template for every month without an override.
+        `applyTo=month` requires `on` and upserts an override for that fiscal month only.
+        Updating requires the current version of that row. Creating must omit version.
+        Category lines replace the whole set. Categories must be expense or both and not
+        archived. Alert thresholds default to 70, 80, 90, 100 when omitted.
+    delete:
+      operationId: deleteCurrentBudget
+      summary: Remove the default template or a month override
+      tags:
+      - Budgets
+      security:
+      - UserBearer: []
+      parameters:
+      - in: query
+        name: applyTo
+        required: false
+        schema:
+          type: string
+          enum: [default, month]
+          default: default
+        description: default removes the template; month removes the override for `on`.
+      - in: query
+        name: on
+        required: false
+        schema:
+          type: string
+          format: date
+        description: Required when applyTo=month. Anchors the fiscal month to delete.
+      - in: query
+        name: version
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483646
+        description: When set, must match the stored version.
+      responses:
+        '204':
+          description: Deleted
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+        '401':
+          $ref: '#/components/responses/BudgetUnauthorized'
+        '404':
+          $ref: '#/components/responses/BudgetNotFound'
+        '409':
+          $ref: '#/components/responses/BudgetConflict'
+        '503':
+          $ref: '#/components/responses/BudgetUnavailable'
   /api/v1/transactions:
     post:
       operationId: createTransaction
@@ -2976,6 +3110,61 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorEnvelope'
+    BudgetValidationError:
+      description: VALIDATION_ERROR
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    BudgetUnauthorized:
+      description: SESSION_INVALID
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    BudgetNotFound:
+      description: BUDGET_NOT_FOUND
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    BudgetConflict:
+      description: BUDGET_CONFLICT stale version
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    BudgetUnavailable:
+      description: BUDGET_UNAVAILABLE or authentication unavailable
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
     FinancialAccountValidationError:
       description: VALIDATION_ERROR
       headers:
@@ -3491,6 +3680,163 @@ components:
           type: integer
         total:
           type: integer
+    BudgetStatus:
+      type: string
+      enum: [healthy, warning, critical, over]
+      description: healthy <70%, warning 70–90%, critical >90% up to 100%, over >100%.
+    BudgetCategoryProgress:
+      type: object
+      additionalProperties: false
+      required: [categoryId, limitMinor, spentMinor, remainingMinor, percentBps, status]
+      properties:
+        categoryId:
+          type: string
+          format: uuid
+        limitMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        spentMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        remainingMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        percentBps:
+          type: integer
+          description: spent * 10000 / limit (7000 = 70.00%).
+        status:
+          $ref: '#/components/schemas/BudgetStatus'
+    BudgetSummary:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - currencyCode
+      - limitMinor
+      - spentMinor
+      - remainingMinor
+      - percentBps
+      - status
+      - alertThresholds
+      - crossedThresholds
+      - categories
+      - period
+      - applyTo
+      - isOverride
+      - version
+      - createdAt
+      - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        limitMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        spentMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        remainingMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        percentBps:
+          type: integer
+          description: spent * 10000 / limit (7000 = 70.00%).
+        status:
+          $ref: '#/components/schemas/BudgetStatus'
+        alertThresholds:
+          type: array
+          minItems: 1
+          maxItems: 4
+          items:
+            type: integer
+            minimum: 1
+            maximum: 100
+        crossedThresholds:
+          type: array
+          items:
+            type: integer
+            minimum: 1
+            maximum: 100
+          description: Alert thresholds already reached for overall spend.
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/BudgetCategoryProgress'
+        period:
+          $ref: '#/components/schemas/CashflowPeriod'
+        applyTo:
+          type: string
+          enum: [default, month]
+          description: default = template row; month = override for this fiscal month.
+        isOverride:
+          type: boolean
+          description: True when the effective limits come from a month override.
+        version:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    BudgetCurrentResponse:
+      type: object
+      additionalProperties: false
+      required: [budget, period]
+      properties:
+        budget:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/BudgetSummary'
+        period:
+          $ref: '#/components/schemas/CashflowPeriod'
+    PutBudgetRequest:
+      type: object
+      additionalProperties: false
+      required: [limitMinor]
+      properties:
+        limitMinor:
+          type: string
+          pattern: ^[1-9][0-9]*$
+          maxLength: 20
+          description: Positive integer minor units of the profile default currency.
+        alertThresholds:
+          type: array
+          minItems: 1
+          maxItems: 4
+          items:
+            type: integer
+            minimum: 1
+            maximum: 100
+          description: Strictly increasing. Defaults to 70, 80, 90, 100.
+        categories:
+          type: array
+          maxItems: 100
+          items:
+            type: object
+            additionalProperties: false
+            required: [categoryId, limitMinor]
+            properties:
+              categoryId:
+                type: string
+                format: uuid
+              limitMinor:
+                type: string
+                pattern: ^[1-9][0-9]*$
+                maxLength: 20
+        applyTo:
+          type: string
+          enum: [default, month]
+          default: default
+        on:
+          type: string
+          format: date
+          description: Required when applyTo=month. Anchors the fiscal month.
+        version:
+          type: integer
+          minimum: 1
+          maximum: 2147483646
+          description: Required when updating an existing row; omit when creating.
     RecurringRule:
       type: object
       additionalProperties: false
@@ -5064,6 +5410,8 @@ components:
       - tags
       - fxQuotes
       - recurringRules
+      - budget
+      - budgetMonths
       - transactions
       properties:
         schemaVersion:
@@ -5108,6 +5456,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AccountExportRecurringRule'
+        budget:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/AccountExportBudget'
+        budgetMonths:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountExportBudgetMonth'
         transactions:
           type: array
           items:
@@ -5359,6 +5715,60 @@ components:
         updatedAt:
           type: string
           format: date-time
+    AccountExportBudget:
+      type: object
+      additionalProperties: false
+      required: [id, currencyCode, limitMinor, alertThresholds, version, categories, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        limitMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        alertThresholds:
+          type: array
+          minItems: 1
+          maxItems: 4
+          items:
+            type: integer
+            minimum: 1
+            maximum: 100
+        version:
+          type: integer
+        categories:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [categoryId, limitMinor]
+            properties:
+              categoryId:
+                type: string
+                format: uuid
+              limitMinor:
+                $ref: '#/components/schemas/ReportMoney'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    AccountExportBudgetMonth:
+      allOf:
+      - $ref: '#/components/schemas/AccountExportBudget'
+      - type: object
+        additionalProperties: false
+        required: [periodFrom, periodTo]
+        properties:
+          periodFrom:
+            type: string
+            format: date
+          periodTo:
+            type: string
+            format: date
     AccountExportTransaction:
       type: object
       additionalProperties: false

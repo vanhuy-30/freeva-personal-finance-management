@@ -1942,6 +1942,119 @@ class SVi extends S {
   String get meBudget => 'Ngân sách tháng';
 
   @override
+  String get budgetTitle => 'Ngân sách tháng';
+
+  @override
+  String get budgetSave => 'Lưu';
+
+  @override
+  String get budgetSaved => 'Đã lưu ngân sách';
+
+  @override
+  String get budgetCleared => 'Đã xoá ngân sách';
+
+  @override
+  String get budgetLoadError => 'Chưa tải được ngân sách';
+
+  @override
+  String get budgetOverallLimit => 'Hạn mức tháng';
+
+  @override
+  String get budgetCategoryLimit => 'Hạn mức danh mục';
+
+  @override
+  String get budgetTapToSet => 'Chạm để đặt';
+
+  @override
+  String get budgetCategoriesTitle => 'Theo danh mục';
+
+  @override
+  String get budgetCategoriesHint =>
+      'Tuỳ chọn: đặt hạn mức cho từng danh mục chi.';
+
+  @override
+  String get budgetAddCategory => 'Thêm danh mục';
+
+  @override
+  String get budgetNoCategories => 'Không còn danh mục chi để thêm';
+
+  @override
+  String get budgetUnknownCategory => 'Danh mục';
+
+  @override
+  String get budgetClearTitle => 'Xoá ngân sách?';
+
+  @override
+  String get budgetClearBody =>
+      'Thanh đã chi trên Tổng quan sẽ ẩn đi đến khi bạn đặt lại.';
+
+  @override
+  String get budgetClearAction => 'Xoá ngân sách';
+
+  @override
+  String get budgetSpentLabel => 'Đã chi';
+
+  @override
+  String get budgetRemainingLabel => 'Còn lại';
+
+  @override
+  String budgetUsedPercent(String percent) {
+    return 'Đã dùng $percent%';
+  }
+
+  @override
+  String budgetLimitLine(String spent, String limit) {
+    return '$spent / $limit';
+  }
+
+  @override
+  String get budgetThresholdsTitle => 'Ngưỡng cảnh báo';
+
+  @override
+  String get budgetScopeDefault => 'Mọi tháng';
+
+  @override
+  String get budgetScopeMonth => 'Tháng này';
+
+  @override
+  String get budgetScopeMonthHint =>
+      'Đang dùng hạn mức mặc định. Lưu sẽ tạo chỉnh riêng cho tháng này.';
+
+  @override
+  String get budgetScopeMonthOverrideHint =>
+      'Tháng này có hạn mức riêng, không theo mặc định.';
+
+  @override
+  String get budgetClearMonthTitle => 'Bỏ chỉnh tháng này?';
+
+  @override
+  String get budgetClearMonthBody =>
+      'Tháng này sẽ lại dùng hạn mức mặc định (nếu có).';
+
+  @override
+  String get budgetClearMonthAction => 'Bỏ chỉnh tháng';
+
+  @override
+  String get budgetMonthCleared => 'Đã bỏ chỉnh tháng này';
+
+  @override
+  String get budgetStatusHealthy => 'Đúng nhịp';
+
+  @override
+  String get budgetStatusWarning => 'Hơi nhanh';
+
+  @override
+  String get budgetStatusCritical => 'Gần hết';
+
+  @override
+  String get budgetStatusOver => 'Vượt ngân sách';
+
+  @override
+  String budgetHomeLine(String spent, String limit) {
+    return 'Đã chi $spent / $limit';
+  }
+
+  @override
   String get meFiscal => 'Tháng tính từ';
 
   @override

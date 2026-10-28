@@ -13,7 +13,13 @@ erDiagram
   User ||--o{ CategoryGroup : owns
   User ||--o{ Tag : owns
   User ||--o{ Transaction : books
+  User ||--o| Budget : defaultLimits
+  User ||--o{ BudgetMonth : monthOverrides
   User ||--o{ FxQuote : quotes
+  Budget ||--o{ BudgetCategory : lines
+  BudgetMonth ||--o{ BudgetMonthCategory : lines
+  Category ||--o{ BudgetCategory : caps
+  Category ||--o{ BudgetMonthCategory : caps
   Currency ||--o{ User : default
   Currency ||--o{ FinancialAccount : denom
   Currency ||--o{ Transaction : denom
@@ -124,6 +130,19 @@ Xóa danh mục: chuyển toàn bộ GD (kể cả soft-delete) trước, tăng 
 | deletedAt | timestamptz? | |
 
 Index `(userId, occurredOn)`, `(transferGroupId)`. Unique `(userId, clientId)`. `recurringRuleId` nullable (`BE-P2-E01`), `ON DELETE SET NULL`.
+
+### Budget / BudgetMonth
+
+Ngân sách mặc định và override theo tháng tài chính (`BE-P2-E02`). Chi tiết: [budgets.md](budgets.md).
+
+| Cột | Kiểu | Ghi chú |
+|---|---|---|
+| limitMinor | BigInt | hạn mức tổng, > 0 |
+| alertThresholds | Int[] | 1–4 số 1–100 tăng dần |
+| periodFrom / periodTo | date | chỉ `BudgetMonth`; biên kỳ `resolvePeriod` month |
+| categories | lines | `BudgetCategory` / `BudgetMonthCategory`; unique theo category |
+
+`Budget`: unique `userId`. `BudgetMonth`: unique `(userId, periodFrom)`.
 
 ### RecurringRule / RecurringOccurrence
 

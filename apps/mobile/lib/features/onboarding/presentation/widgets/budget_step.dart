@@ -12,8 +12,8 @@ import '../../../../core/widgets/freeva_chip.dart';
 import '../viewmodels/onboarding_view_model.dart';
 import 'onboarding_frame.dart';
 
-/// Question 3: monthly budget. The number is kept on the device until the
-/// budget module exists; the currency is the account's (VND for now).
+/// Question 3: monthly budget. Saved to the API when possible; otherwise kept
+/// on the device until the next successful save.
 class BudgetStep extends StatelessWidget {
   const BudgetStep({
     required this.model,

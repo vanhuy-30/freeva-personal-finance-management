@@ -30,7 +30,7 @@ Thiết kế: [F-reports.md](../brand/patterns/F-reports.md). Backend: `period=y
 - **Xu hướng:** một lần gọi `/reports/trend`, tách riêng với tổng: lỗi chỉ ẩn khối này. Công tắc Tuần/Tháng/Năm của khối chỉ tải lại xu hướng. Kỳ đang xem tô `data.1`; nhãn giá trị rút gọn (`9,32tr`) bớt khi chữ lớn, nhãn trợ năng đọc đủ số.
 - **Phân tích:** Chi · Thu gộp danh mục con về cha, ba nhóm đầu rồi "Khác" (tổng % luôn 100). Ví: Vào/Ra/Chuyển ví và số ròng mỗi ví, sắp theo |ròng|, chạm mở chi tiết ví.
 - **Nhiều loại tiền:** mỗi lần một loại (chip khi có hơn một), mặc định tiền hồ sơ; không cộng chéo.
-- **Ngân sách:** chưa có module, thay bằng dòng "Đặt ngân sách tháng" (chỉ ở kỳ Tháng) bấm ra toast "Ngân sách sắp có".
+- **Ngân sách:** kỳ Tháng gọi `GET /budgets/current`; chưa có thì dòng "Đặt ngân sách tháng" mở `/budgets`, đã có thì thẻ % / thanh / còn lại ([budgets.md](budgets.md)).
 - **Trống:** kỳ không có số liệu → minh hoạ + "Về tháng này/tuần này/năm nay" (kỳ hiện tại thì chỉ lời nhắc).
 - Chữ lớn / 320 pt: tổng xếp một cột, biểu đồ tròn đặt chú thích bên dưới, công tắc xu hướng xuống dòng riêng.
 
@@ -42,7 +42,7 @@ Thiết kế: [F-reports.md](../brand/patterns/F-reports.md). Backend: `period=y
 
 ## Giới hạn
 
-Chưa có ngân sách, tài sản ròng theo thời gian, CSV, search hay quy đổi FX. Không hàng đợi offline. Chưa native build hoặc E2E staging. API báo cáo cần có trước khi smoke trên server thật.
+Tài sản ròng theo thời gian, CSV, search và quy đổi FX chưa có. Không hàng đợi offline cho báo cáo/ngân sách. Chưa native build hoặc E2E staging.
 
 ## Kiểm chứng
 

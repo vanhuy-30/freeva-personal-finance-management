@@ -3552,6 +3552,210 @@ abstract class S {
   /// **'Monthly budget'**
   String get meBudget;
 
+  /// No description provided for @budgetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly budget'**
+  String get budgetTitle;
+
+  /// No description provided for @budgetSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get budgetSave;
+
+  /// No description provided for @budgetSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget saved'**
+  String get budgetSaved;
+
+  /// No description provided for @budgetCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget removed'**
+  String get budgetCleared;
+
+  /// No description provided for @budgetLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t load the budget'**
+  String get budgetLoadError;
+
+  /// No description provided for @budgetOverallLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly limit'**
+  String get budgetOverallLimit;
+
+  /// No description provided for @budgetCategoryLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Category limit'**
+  String get budgetCategoryLimit;
+
+  /// No description provided for @budgetTapToSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to set'**
+  String get budgetTapToSet;
+
+  /// No description provided for @budgetCategoriesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'By category'**
+  String get budgetCategoriesTitle;
+
+  /// No description provided for @budgetCategoriesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional: set a limit for each expense category.'**
+  String get budgetCategoriesHint;
+
+  /// No description provided for @budgetAddCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Add category'**
+  String get budgetAddCategory;
+
+  /// No description provided for @budgetNoCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'No expense categories left to add'**
+  String get budgetNoCategories;
+
+  /// No description provided for @budgetUnknownCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get budgetUnknownCategory;
+
+  /// No description provided for @budgetClearTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove budget?'**
+  String get budgetClearTitle;
+
+  /// No description provided for @budgetClearBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The spent bar on Home will hide until you set a budget again.'**
+  String get budgetClearBody;
+
+  /// No description provided for @budgetClearAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove budget'**
+  String get budgetClearAction;
+
+  /// No description provided for @budgetSpentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent'**
+  String get budgetSpentLabel;
+
+  /// No description provided for @budgetRemainingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Left'**
+  String get budgetRemainingLabel;
+
+  /// No description provided for @budgetUsedPercent.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% used'**
+  String budgetUsedPercent(String percent);
+
+  /// No description provided for @budgetLimitLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{spent} / {limit}'**
+  String budgetLimitLine(String spent, String limit);
+
+  /// No description provided for @budgetThresholdsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert thresholds'**
+  String get budgetThresholdsTitle;
+
+  /// No description provided for @budgetScopeDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Every month'**
+  String get budgetScopeDefault;
+
+  /// No description provided for @budgetScopeMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get budgetScopeMonth;
+
+  /// No description provided for @budgetScopeMonthHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Using the default limit. Saving creates an override for this month only.'**
+  String get budgetScopeMonthHint;
+
+  /// No description provided for @budgetScopeMonthOverrideHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This month has its own limit, not the default.'**
+  String get budgetScopeMonthOverrideHint;
+
+  /// No description provided for @budgetClearMonthTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this month’s override?'**
+  String get budgetClearMonthTitle;
+
+  /// No description provided for @budgetClearMonthBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This month will use the default limit again (if one is set).'**
+  String get budgetClearMonthBody;
+
+  /// No description provided for @budgetClearMonthAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove month override'**
+  String get budgetClearMonthAction;
+
+  /// No description provided for @budgetMonthCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'Month override removed'**
+  String get budgetMonthCleared;
+
+  /// No description provided for @budgetStatusHealthy.
+  ///
+  /// In en, this message translates to:
+  /// **'On track'**
+  String get budgetStatusHealthy;
+
+  /// No description provided for @budgetStatusWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'A bit fast'**
+  String get budgetStatusWarning;
+
+  /// No description provided for @budgetStatusCritical.
+  ///
+  /// In en, this message translates to:
+  /// **'Almost out'**
+  String get budgetStatusCritical;
+
+  /// No description provided for @budgetStatusOver.
+  ///
+  /// In en, this message translates to:
+  /// **'Over budget'**
+  String get budgetStatusOver;
+
+  /// No description provided for @budgetHomeLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent {spent} / {limit}'**
+  String budgetHomeLine(String spent, String limit);
+
   /// No description provided for @meFiscal.
   ///
   /// In en, this message translates to:

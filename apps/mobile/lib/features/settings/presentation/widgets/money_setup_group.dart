@@ -13,8 +13,7 @@ import 'choice_sheet.dart';
 import 'profile_actions.dart';
 
 /// THIẾT LẬP TÀI CHÍNH: how you manage money, each row with its own tint.
-/// Budget and goals open once their screens exist; until then they say
-/// "Sắp có" but still show the value kept from first run.
+/// Goals still say "Sắp có"; budget opens the monthly budget screen.
 class MoneySetupGroup extends StatelessWidget {
   const MoneySetupGroup({
     required this.profile,
@@ -111,7 +110,7 @@ class MoneySetupGroup extends StatelessWidget {
           value: budget == null || budget! <= 0
               ? null
               : formatMoneyText(BigInt.from(budget!), 0, s.localeName),
-          onTap: soon,
+          onTap: () => context.push('/budgets'),
         ),
         SettingsRow(
           tint: (c.tintBlue, c.tintBlueFg),

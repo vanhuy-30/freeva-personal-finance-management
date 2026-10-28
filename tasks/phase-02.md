@@ -48,11 +48,12 @@
 - Note: API + worker + OpenAPI + export/xóa tài khoản; mobile danh sách/form từ Cá nhân và `POST .../run` lúc vào app. Kiến trúc: [recurring.md](../docs/architecture/recurring.md).
 
 ### BE-P2-E02 / MOB-P2-E02 — Ngân sách (module 7)
-- Status: todo
+- Status: done
 - Module: 7
 - Gate: v1
 - Depends: BE-P1-005, BE-P1-006, MOB-P1-006
 - DoD: ngân sách tổng tháng và theo danh mục, minor units. Đã chi chỉ tính expense chưa xóa; transfer và income không tính. Mức `<70%` healthy, `70–90%` warning, `>90%` critical, `>100%` over. Ngưỡng cảnh báo mặc định 70, 80, 90, 100 và user sửa được. Home hiện thanh `đã chi / hạn mức` khi có ngân sách. Test một bảng số. Gửi push thuộc `BE-P2-E05`.
+- Note: API `GET/PUT/DELETE /budgets/current` với template mặc định + override theo tháng (`applyTo`/`on`/`isOverride`), OpenAPI, export/xóa tài khoản; mobile `/budgets` (Mọi tháng / Tháng này), Báo cáo tháng, thanh Tổng quan, nối draft onboarding. Kiến trúc: [budgets.md](../docs/architecture/budgets.md).
 
 ### BE-P2-E03 / MOB-P2-E03 — Hóa đơn (module 8)
 - Status: todo

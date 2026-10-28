@@ -30,6 +30,8 @@ function source(): ExportSource {
       version: 1, createdAt: at, updatedAt: at,
     }],
     recurringRules: [],
+    budget: null,
+    budgetMonths: [],
     transactions: [{
       id, clientId, type: 'expense', amountMinor: -150000n, currencyCode: 'VND', occurredOn: day,
       accountId: id, categoryId: null, transferGroupId: null, fxQuoteId: null, recurringRuleId: null,
@@ -111,6 +113,8 @@ describe('BE-P1-010 account repository audit', () => {
       fxQuote: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
       recurringRule: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
       recurringOccurrence: { deleteMany: jest.fn() },
+      budget: { findUnique: jest.fn().mockResolvedValue(null), deleteMany: jest.fn() },
+      budgetMonth: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
       transaction: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
       transactionTag: { deleteMany: jest.fn() },
       auditEvent: { create: jest.fn() },

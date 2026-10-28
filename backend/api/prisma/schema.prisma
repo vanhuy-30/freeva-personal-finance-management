@@ -89,6 +89,8 @@ model Currency {
   fxQuotesTo        FxQuote[]          @relation("FxQuoteTo")
   recurringRules         RecurringRule[] @relation("RecurringCurrency")
   recurringCounterRules  RecurringRule[] @relation("RecurringCounterCurrency")
+  budgets                Budget[]
+  budgetMonths           BudgetMonth[]
 }
 
 model User {
@@ -127,6 +129,8 @@ model User {
   transactions      Transaction[]
   fxQuotes          FxQuote[]
   recurringRules    RecurringRule[]
+  budget            Budget?
+  budgetMonths      BudgetMonth[]
 }
 
 model FinancialAccount {
@@ -195,7 +199,9 @@ model Category {
   parent       Category?      @relation("CategoryTree", fields: [parentId], references: [id])
   children       Category[]     @relation("CategoryTree")
   transactions   Transaction[]
-  recurringRules RecurringRule[]
+  recurringRules     RecurringRule[]
+  budgetLines        BudgetCategory[]
+  budgetMonthLines   BudgetMonthCategory[]
 
   @@unique([userId, clientId])
   @@index([userId, archivedAt])
@@ -267,6 +273,69 @@ model Transaction {
   @@index([accountId])
   @@index([transferGroupId])
   @@index([recurringRuleId])
+}
+
+/// Default monthly spend limit (BE-P2-E02). One row per user; used when a fiscal month has no override.
+model Budget {
+  id              String   @id @default(uuid()) @db.Uuid
+  userId          String   @unique @db.Uuid
+  currencyCode    String   @db.Char(3)
+  limitMinor      BigInt
+  alertThresholds Int[]    @default([])
+  version         Int      @default(1)
+  createdAt       DateTime @default(now()) @db.Timestamptz
+  updatedAt       DateTime @updatedAt @db.Timestamptz
+
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  currency   Currency         @relation(fields: [currencyCode], references: [code])
+  categories BudgetCategory[]
+}
+
+model BudgetCategory {
+  id         String @id @default(uuid()) @db.Uuid
+  budgetId   String @db.Uuid
+  categoryId String @db.Uuid
+  limitMinor BigInt
+
+  budget   Budget   @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id])
+
+  @@unique([budgetId, categoryId])
+  @@index([budgetId])
+}
+
+/// Per fiscal-month override. periodFrom is the inclusive start of the month (resolvePeriod month.from).
+model BudgetMonth {
+  id              String   @id @default(uuid()) @db.Uuid
+  userId          String   @db.Uuid
+  periodFrom      DateTime @db.Date
+  periodTo        DateTime @db.Date
+  currencyCode    String   @db.Char(3)
+  limitMinor      BigInt
+  alertThresholds Int[]    @default([])
+  version         Int      @default(1)
+  createdAt       DateTime @default(now()) @db.Timestamptz
+  updatedAt       DateTime @updatedAt @db.Timestamptz
+
+  user       User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  currency   Currency              @relation(fields: [currencyCode], references: [code])
+  categories BudgetMonthCategory[]
+
+  @@unique([userId, periodFrom])
+  @@index([userId])
+}
+
+model BudgetMonthCategory {
+  id         String @id @default(uuid()) @db.Uuid
+  monthId    String @db.Uuid
+  categoryId String @db.Uuid
+  limitMinor BigInt
+
+  month    BudgetMonth @relation(fields: [monthId], references: [id], onDelete: Cascade)
+  category Category    @relation(fields: [categoryId], references: [id])
+
+  @@unique([monthId, categoryId])
+  @@index([monthId])
 }
 
 /// Template for automatic income/expense/transfer posts (BE-P2-E01). Money is signed BigInt minor units.

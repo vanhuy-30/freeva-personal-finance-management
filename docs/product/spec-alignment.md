@@ -47,9 +47,9 @@ Giữ nguyên số phase và ID đã có. Không dồn ngân sách, mục tiêu,
 | Spec | Hiện trạng | Task |
 |---|---|---|
 | §10 UI lọc danh mục theo `kind` | Tab Chi · Thu và form ghi đã lọc trên client; API chưa từ chối kind lệch | `BE-P2-010` / `MOB-P2-010` |
-| §6.3–6.6 ngân sách, mục tiêu, insight trên Home | Chưa có | `MOB-P2-E02`, `MOB-P3-E01`, `MOB-P5-E04` |
+| §6.3–6.6 ngân sách, mục tiêu, insight trên Home | Ngân sách có thanh trên Home; mục tiêu / insight chưa | `MOB-P2-E02` (ngân sách), `MOB-P3-E01`, `MOB-P5-E04` |
 | §34 CSV | Chỉ JSON | Sau P1 nếu beta cần |
-| §15 ngân sách và ngưỡng 70/80/90/100 | Epic có DoD | `BE-P2-E02` |
+| §15 ngân sách và ngưỡng 70/80/90/100 | API + mobile theo DoD | `BE-P2-E02` / `MOB-P2-E02` |
 | §16 công thức tiết kiệm/tháng | Epic có DoD | `BE-P3-E01` |
 | §18 thẻ: hạn mức còn, dư nợ, ngày sao kê, trả tối thiểu | Ví thẻ chỉ có hạn mức và ngày 1–28 | `BE-P2-E07` |
 | §19 lịch sử tài sản ròng | Chỉ ròng hiện tại | `BE-P4-E02` |
