@@ -827,6 +827,48 @@
   "notifyCard": "Thẻ tín dụng đến hạn",
   "notifyCardSub": "Trước 3 ngày",
   "notifySession": "Máy mới đăng nhập",
+  "notifyRecurring": "Định kỳ sắp chạy",
+  "notifyRecurringSub": "Một ngày trước lần chạy",
+  "notifyGoal": "Nhắc đóng góp mục tiêu",
+  "notifyGoalSub": "Khi đến hạn đóng góp",
+  "notifyDebt": "Nợ đến hạn",
+  "notifyDebtSub": "Trước ngày đến hạn",
+  "notifyMonthReview": "Soát tháng",
+  "notifyMonthReviewSub": "Khi có bản tóm tắt tháng",
+  "notifyInsight": "Insight mới",
+  "notifyInsightSub": "Khi có gợi ý mới",
+  "notifyQuietTitle": "Giờ yên",
+  "notifyQuietHours": "Bật giờ yên",
+  "notifyQuietEdit": "Khung giờ",
+  "notifyQuietStart": "Bắt đầu giờ yên",
+  "notifyQuietEnd": "Hết giờ yên",
+  "notifyQuietWindow": "{start} – {end}",
+  "@notifyQuietWindow": {
+    "placeholders": {
+      "start": { "type": "String" },
+      "end": { "type": "String" }
+    }
+  },
+  "notifyMarkAllRead": "Đọc hết",
+  "notifyInboxBudgetTitle": "Ngân sách đã chạm {threshold}%",
+  "@notifyInboxBudgetTitle": {
+    "placeholders": {
+      "threshold": { "type": "String" }
+    }
+  },
+  "notifyInboxBudgetBody": "Bạn đã dùng đến {threshold}% hạn mức tháng này.",
+  "@notifyInboxBudgetBody": {
+    "placeholders": {
+      "threshold": { "type": "String" }
+    }
+  },
+  "notifyInboxRecurringTitle": "Định kỳ sắp chạy",
+  "notifyInboxRecurringBody": "Một giao dịch định kỳ chạy vào {date}.",
+  "@notifyInboxRecurringBody": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
   "authOr": "hoặc",
   "authContinueGoogle": "Tiếp tục với Google",
   "authContinueApple": "Tiếp tục với Apple",

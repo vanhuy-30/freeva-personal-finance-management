@@ -2605,6 +2605,77 @@ class SEn extends S {
   String get notifySession => 'New device signed in';
 
   @override
+  String get notifyRecurring => 'Recurring due soon';
+
+  @override
+  String get notifyRecurringSub => 'One day before the next run';
+
+  @override
+  String get notifyGoal => 'Goal contribution reminder';
+
+  @override
+  String get notifyGoalSub => 'When a contribution is due';
+
+  @override
+  String get notifyDebt => 'Debt due';
+
+  @override
+  String get notifyDebtSub => 'Before the due date';
+
+  @override
+  String get notifyMonthReview => 'Month review';
+
+  @override
+  String get notifyMonthReviewSub => 'When a month summary is ready';
+
+  @override
+  String get notifyInsight => 'New insight';
+
+  @override
+  String get notifyInsightSub => 'When a new tip is ready';
+
+  @override
+  String get notifyQuietTitle => 'Quiet hours';
+
+  @override
+  String get notifyQuietHours => 'Enable quiet hours';
+
+  @override
+  String get notifyQuietEdit => 'Quiet window';
+
+  @override
+  String get notifyQuietStart => 'Quiet hours start';
+
+  @override
+  String get notifyQuietEnd => 'Quiet hours end';
+
+  @override
+  String notifyQuietWindow(String start, String end) {
+    return '$start – $end';
+  }
+
+  @override
+  String get notifyMarkAllRead => 'Mark all read';
+
+  @override
+  String notifyInboxBudgetTitle(String threshold) {
+    return 'Budget reached $threshold%';
+  }
+
+  @override
+  String notifyInboxBudgetBody(String threshold) {
+    return 'You have used $threshold% of this month’s budget.';
+  }
+
+  @override
+  String get notifyInboxRecurringTitle => 'Recurring due soon';
+
+  @override
+  String notifyInboxRecurringBody(String date) {
+    return 'A recurring transaction runs on $date.';
+  }
+
+  @override
   String get authOr => 'or';
 
   @override

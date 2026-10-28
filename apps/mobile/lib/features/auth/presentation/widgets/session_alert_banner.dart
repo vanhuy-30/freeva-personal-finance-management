@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
+import '../../../profile/presentation/viewmodels/profile_view_model.dart';
 import '../viewmodels/auth_view_model.dart';
 
 class SessionAlertBanner extends StatefulWidget {
@@ -34,9 +35,15 @@ class _SessionAlertBannerState extends State<SessionAlertBanner> {
       final s = S.of(context);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
+        var timezone = 'Asia/Ho_Chi_Minh';
+        if (getIt.isRegistered<ProfileViewModel>()) {
+          timezone =
+              getIt<ProfileViewModel>().saved?.timezone ?? timezone;
+        }
         _auth.deliverSessionNotification(
           s.sessionAlertTitle,
           s.sessionAlertBody,
+          timeZone: timezone,
         );
       });
       return Padding(

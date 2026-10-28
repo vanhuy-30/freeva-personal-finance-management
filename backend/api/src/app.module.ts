@@ -9,6 +9,7 @@ import { RecurringModule } from './modules/recurring/recurring.module';
 import { BudgetModule } from './modules/budgets/budget.module';
 import { BillModule } from './modules/bills/bill.module';
 import { CalendarModule } from './modules/calendar/calendar.module';
+import { NotificationModule } from './modules/notifications/notification.module';
 import { FinancialAccountModule } from './modules/financial-accounts/financial-account.module';
 import { ProfileModule } from './modules/profile/profile.module';
 import { AuthModule } from './modules/auth/auth.module';
@@ -44,6 +45,7 @@ import { HealthModule } from './modules/health/health.module';
     BudgetModule,
     BillModule,
     CalendarModule,
+    NotificationModule,
     SyncModule,
     AccountModule,
     CategoryModule,

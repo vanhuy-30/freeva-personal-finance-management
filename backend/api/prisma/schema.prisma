@@ -133,6 +133,8 @@ model User {
   budget            Budget?
   budgetMonths      BudgetMonth[]
   bills             Bill[]
+  notificationPreference NotificationPreference?
+  notifications     InAppNotification[]
 }
 
 model FinancialAccount {
@@ -422,6 +424,55 @@ model RecurringOccurrence {
 
   @@unique([ruleId, occurredOn])
   @@index([ruleId])
+}
+
+/// Per-user notification toggles and quiet hours (BE-P2-E05). Unavailable kinds stay off.
+model NotificationPreference {
+  userId             String   @id @db.Uuid
+  budgetEnabled      Boolean  @default(true)
+  goalEnabled        Boolean  @default(false)
+  debtEnabled        Boolean  @default(false)
+  cardEnabled        Boolean  @default(false)
+  recurringEnabled   Boolean  @default(true)
+  monthReviewEnabled Boolean  @default(false)
+  insightEnabled     Boolean  @default(false)
+  quietHoursEnabled  Boolean  @default(false)
+  quietStart         String   @default("22:00") @db.VarChar(5)
+  quietEnd           String   @default("07:00") @db.VarChar(5)
+  version            Int      @default(1)
+  createdAt          DateTime @default(now()) @db.Timestamptz
+  updatedAt          DateTime @updatedAt @db.Timestamptz
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum NotificationKind {
+  budget
+  goal
+  debt
+  card
+  recurring
+  month_review
+  insight
+  security
+}
+
+/// In-app inbox row. DedupeKey prevents retries from duplicating the same alert.
+model InAppNotification {
+  id        String           @id @default(uuid()) @db.Uuid
+  userId    String           @db.Uuid
+  kind      NotificationKind
+  dedupeKey String           @db.VarChar(160)
+  titleKey  String           @db.VarChar(64)
+  bodyKey   String           @db.VarChar(64)
+  params    Json             @default("{}")
+  createdAt DateTime         @default(now()) @db.Timestamptz
+  readAt    DateTime?        @db.Timestamptz
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, dedupeKey])
+  @@index([userId, createdAt])
 }
 
 model TransactionTag {

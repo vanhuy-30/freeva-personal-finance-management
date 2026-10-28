@@ -33,6 +33,8 @@ function source(): ExportSource {
     bills: [],
     budget: null,
     budgetMonths: [],
+    notificationPreferences: null,
+    notifications: [],
     transactions: [{
       id, clientId, type: 'expense', amountMinor: -150000n, currencyCode: 'VND', occurredOn: day,
       accountId: id, categoryId: null, transferGroupId: null, fxQuoteId: null, recurringRuleId: null,
@@ -117,6 +119,8 @@ describe('BE-P1-010 account repository audit', () => {
       bill: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
       budget: { findUnique: jest.fn().mockResolvedValue(null), deleteMany: jest.fn() },
       budgetMonth: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
+      notificationPreference: { findUnique: jest.fn().mockResolvedValue(null), deleteMany: jest.fn() },
+      inAppNotification: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
       transaction: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
       transactionTag: { deleteMany: jest.fn() },
       auditEvent: { create: jest.fn() },

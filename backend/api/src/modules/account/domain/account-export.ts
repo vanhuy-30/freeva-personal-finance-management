@@ -25,7 +25,36 @@ export interface AccountExport {
   bills: AccountExportBill[];
   budget: AccountExportBudget | null;
   budgetMonths: AccountExportBudgetMonth[];
+  notificationPreferences: AccountExportNotificationPreferences | null;
+  notifications: AccountExportNotification[];
   transactions: AccountExportTransaction[];
+}
+
+export interface AccountExportNotificationPreferences {
+  budgetEnabled: boolean;
+  goalEnabled: boolean;
+  debtEnabled: boolean;
+  cardEnabled: boolean;
+  recurringEnabled: boolean;
+  monthReviewEnabled: boolean;
+  insightEnabled: boolean;
+  quietHoursEnabled: boolean;
+  quietStart: string;
+  quietEnd: string;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AccountExportNotification {
+  id: string;
+  kind: string;
+  dedupeKey: string;
+  titleKey: string;
+  bodyKey: string;
+  params: Record<string, string | number>;
+  createdAt: string;
+  readAt: string | null;
 }
 
 interface SyncRow {
@@ -237,6 +266,31 @@ export interface ExportSource {
     updatedAt: Date;
     categories: Array<{ categoryId: string; limitMinor: bigint }>;
   }>;
+  notificationPreferences: null | {
+    budgetEnabled: boolean;
+    goalEnabled: boolean;
+    debtEnabled: boolean;
+    cardEnabled: boolean;
+    recurringEnabled: boolean;
+    monthReviewEnabled: boolean;
+    insightEnabled: boolean;
+    quietHoursEnabled: boolean;
+    quietStart: string;
+    quietEnd: string;
+    version: number;
+    createdAt: Date;
+    updatedAt: Date;
+  };
+  notifications: Array<{
+    id: string;
+    kind: string;
+    dedupeKey: string;
+    titleKey: string;
+    bodyKey: string;
+    params: Record<string, string | number>;
+    createdAt: Date;
+    readAt: Date | null;
+  }>;
   transactions: Array<Omit<AccountExportTransaction, 'amountMinor' | 'occurredOn' | 'deletedAt' | 'createdAt' | 'updatedAt' | 'currencyCode'> & {
     currencyCode: string;
     amountMinor: bigint;
@@ -332,6 +386,30 @@ export function toAccountExport(source: ExportSource): AccountExport {
         limitMinor: line.limitMinor.toString(),
       })),
       ...stamps(row),
+    })),
+    notificationPreferences: source.notificationPreferences === null ? null : {
+      budgetEnabled: source.notificationPreferences.budgetEnabled,
+      goalEnabled: source.notificationPreferences.goalEnabled,
+      debtEnabled: source.notificationPreferences.debtEnabled,
+      cardEnabled: source.notificationPreferences.cardEnabled,
+      recurringEnabled: source.notificationPreferences.recurringEnabled,
+      monthReviewEnabled: source.notificationPreferences.monthReviewEnabled,
+      insightEnabled: source.notificationPreferences.insightEnabled,
+      quietHoursEnabled: source.notificationPreferences.quietHoursEnabled,
+      quietStart: source.notificationPreferences.quietStart,
+      quietEnd: source.notificationPreferences.quietEnd,
+      version: source.notificationPreferences.version,
+      ...stamps(source.notificationPreferences),
+    },
+    notifications: source.notifications.map(row => ({
+      id: row.id,
+      kind: row.kind,
+      dedupeKey: row.dedupeKey,
+      titleKey: row.titleKey,
+      bodyKey: row.bodyKey,
+      params: { ...row.params },
+      createdAt: iso(row.createdAt),
+      readAt: row.readAt ? iso(row.readAt) : null,
     })),
     transactions: source.transactions.map(row => ({
       id: row.id, clientId: row.clientId, type: row.type, amountMinor: row.amountMinor.toString(),

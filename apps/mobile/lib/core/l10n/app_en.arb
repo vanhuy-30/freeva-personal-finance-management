@@ -1533,6 +1533,48 @@
   "notifyCard": "Credit card due",
   "notifyCardSub": "3 days before",
   "notifySession": "New device signed in",
+  "notifyRecurring": "Recurring due soon",
+  "notifyRecurringSub": "One day before the next run",
+  "notifyGoal": "Goal contribution reminder",
+  "notifyGoalSub": "When a contribution is due",
+  "notifyDebt": "Debt due",
+  "notifyDebtSub": "Before the due date",
+  "notifyMonthReview": "Month review",
+  "notifyMonthReviewSub": "When a month summary is ready",
+  "notifyInsight": "New insight",
+  "notifyInsightSub": "When a new tip is ready",
+  "notifyQuietTitle": "Quiet hours",
+  "notifyQuietHours": "Enable quiet hours",
+  "notifyQuietEdit": "Quiet window",
+  "notifyQuietStart": "Quiet hours start",
+  "notifyQuietEnd": "Quiet hours end",
+  "notifyQuietWindow": "{start} – {end}",
+  "@notifyQuietWindow": {
+    "placeholders": {
+      "start": { "type": "String" },
+      "end": { "type": "String" }
+    }
+  },
+  "notifyMarkAllRead": "Mark all read",
+  "notifyInboxBudgetTitle": "Budget reached {threshold}%",
+  "@notifyInboxBudgetTitle": {
+    "placeholders": {
+      "threshold": { "type": "String" }
+    }
+  },
+  "notifyInboxBudgetBody": "You have used {threshold}% of this month’s budget.",
+  "@notifyInboxBudgetBody": {
+    "placeholders": {
+      "threshold": { "type": "String" }
+    }
+  },
+  "notifyInboxRecurringTitle": "Recurring due soon",
+  "notifyInboxRecurringBody": "A recurring transaction runs on {date}.",
+  "@notifyInboxRecurringBody": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
   "authOr": "or",
   "authContinueGoogle": "Continue with Google",
   "authContinueApple": "Continue with Apple",

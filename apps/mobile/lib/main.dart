@@ -1,6 +1,8 @@
 import 'features/profile/presentation/viewmodels/profile_view_model.dart';
 import 'features/settings/presentation/theme_mode.dart';
 import 'features/settings/presentation/viewmodels/settings_view_model.dart';
+import 'features/notifications/presentation/viewmodels/notification_view_model.dart';
+import 'features/notifications/presentation/widgets/notification_resume_listener.dart';
 import 'features/recurring/presentation/viewmodels/recurring_view_model.dart';
 import 'features/recurring/presentation/widgets/recurring_resume_listener.dart';
 import 'features/sync/presentation/viewmodels/sync_view_model.dart';
@@ -34,6 +36,7 @@ Future<void> _boot() async {
   await getIt<SettingsViewModel>().load();
   getIt<SyncViewModel>();
   getIt<RecurringViewModel>();
+  getIt<NotificationViewModel>();
   createAppRouter();
   logger.op('boot ready');
   runApp(const FreevaApp());
@@ -50,26 +53,28 @@ class FreevaApp extends StatelessWidget {
       listenable: Listenable.merge([profile, settings]),
       builder: (context, _) => SyncResumeListener(
         child: RecurringResumeListener(
-        child: MaterialApp.router(
-          debugShowCheckedModeBanner: false,
-          onGenerateTitle: (BuildContext context) => S.of(context).appTitle,
-          theme: AppTheme.light,
-          darkTheme: AppTheme.dark,
-          themeMode: themeModeFor(settings.theme),
-          routerConfig: appRouter,
-          builder: (context, child) => MediaQuery.withClampedTextScaling(
-            maxScaleFactor: FreevaTypography.maxTextScale,
-            child: child!,
+          child: NotificationResumeListener(
+            child: MaterialApp.router(
+              debugShowCheckedModeBanner: false,
+              onGenerateTitle: (BuildContext context) => S.of(context).appTitle,
+              theme: AppTheme.light,
+              darkTheme: AppTheme.dark,
+              themeMode: themeModeFor(settings.theme),
+              routerConfig: appRouter,
+              builder: (context, child) => MediaQuery.withClampedTextScaling(
+                maxScaleFactor: FreevaTypography.maxTextScale,
+                child: child!,
+              ),
+              locale: Locale(profile.locale),
+              supportedLocales: S.supportedLocales,
+              localizationsDelegates: const [
+                S.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+            ),
           ),
-          locale: Locale(profile.locale),
-          supportedLocales: S.supportedLocales,
-          localizationsDelegates: const [
-            S.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-        ),
         ),
       ),
     );

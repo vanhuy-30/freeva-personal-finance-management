@@ -71,6 +71,14 @@ import 'package:mobile/features/feedback/domain/feedback.dart' as _i173;
 import 'package:mobile/features/home/domain/overview_use_cases.dart' as _i970;
 import 'package:mobile/features/home/presentation/viewmodels/home_view_model.dart'
     as _i722;
+import 'package:mobile/features/notifications/data/notification_repository_impl.dart'
+    as _i419;
+import 'package:mobile/features/notifications/domain/notification_repository.dart'
+    as _i199;
+import 'package:mobile/features/notifications/domain/notification_use_cases.dart'
+    as _i338;
+import 'package:mobile/features/notifications/presentation/viewmodels/notification_view_model.dart'
+    as _i921;
 import 'package:mobile/features/profile/data/profile_repository_impl.dart'
     as _i72;
 import 'package:mobile/features/profile/domain/profile_repository.dart' as _i4;
@@ -180,6 +188,8 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i938.SyncQueueVault>(),
           gh<_i766.AppLogger>(),
         ));
+    gh.lazySingleton<_i199.NotificationRepository>(
+        () => _i419.NotificationRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i791.CalendarRepository>(
         () => _i918.CalendarRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i931.TransactionRepository>(
@@ -206,6 +216,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i216.FeedbackRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i57.TagRepository>(
         () => _i729.TagRepositoryImpl(gh<_i443.AuthorizedApi>()));
+    gh.lazySingleton<_i338.NotificationUseCases>(() =>
+        _i338.DefaultNotificationUseCases(gh<_i199.NotificationRepository>()));
     gh.factory<_i253.AuthUseCases>(
         () => _i253.DefaultAuthUseCases(gh<_i173.AuthRepository>()));
     gh.lazySingleton<_i665.SyncUseCases>(
@@ -224,20 +236,16 @@ extension GetItInjectableX on _i174.GetIt {
             ));
     gh.lazySingleton<_i471.CalendarUseCases>(
         () => _i471.DefaultCalendarUseCases(gh<_i791.CalendarRepository>()));
+    gh.lazySingleton<_i245.BudgetUseCases>(
+        () => _i245.DefaultBudgetUseCases(gh<_i1073.BudgetRepository>()));
     gh.lazySingleton<_i990.AuthViewModel>(
         () => authPresentationModule.authViewModel(
               gh<_i253.AuthUseCases>(),
               gh<_i519.SettingsUseCases>(),
               gh<_i54.SessionAlertNotifier>(),
               gh<_i1020.AnalyticsService>(),
+              gh<_i338.NotificationUseCases>(),
             ));
-    gh.lazySingleton<_i488.SyncViewModel>(() => _i488.DefaultSyncViewModel(
-          gh<_i665.SyncUseCases>(),
-          gh<_i990.AuthViewModel>(),
-          gh<_i1020.AnalyticsService>(),
-        ));
-    gh.lazySingleton<_i245.BudgetUseCases>(
-        () => _i245.DefaultBudgetUseCases(gh<_i1073.BudgetRepository>()));
     gh.lazySingleton<_i336.WalletUseCases>(
         () => _i336.DefaultWalletUseCases(gh<_i107.WalletRepository>()));
     gh.factory<_i281.ProfileUseCases>(
@@ -278,6 +286,17 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i659.BillUseCases>(),
           gh<_i292.TransactionUseCases>(),
           gh<_i990.AuthViewModel>(),
+        ));
+    gh.lazySingleton<_i921.NotificationViewModel>(
+        () => _i921.DefaultNotificationViewModel(
+              gh<_i338.NotificationUseCases>(),
+              gh<_i990.AuthViewModel>(),
+              gh<_i887.ProfileViewModel>(),
+            ));
+    gh.lazySingleton<_i488.SyncViewModel>(() => _i488.DefaultSyncViewModel(
+          gh<_i665.SyncUseCases>(),
+          gh<_i990.AuthViewModel>(),
+          gh<_i1020.AnalyticsService>(),
         ));
     gh.lazySingleton<_i251.WalletViewModel>(() => _i251.DefaultWalletViewModel(
           gh<_i336.WalletUseCases>(),
