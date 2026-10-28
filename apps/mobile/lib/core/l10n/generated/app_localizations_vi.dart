@@ -1850,7 +1850,92 @@ class SVi extends S {
   String get meRecurring => 'Định kỳ';
 
   @override
+  String get meBills => 'Hóa đơn';
+
+  @override
   String get meCurrency => 'Tiền tệ mặc định';
+
+  @override
+  String get billsTitle => 'Hóa đơn';
+
+  @override
+  String get billsAdd => 'Thêm hóa đơn';
+
+  @override
+  String get billsEdit => 'Sửa hóa đơn';
+
+  @override
+  String get billsDelete => 'Xóa';
+
+  @override
+  String get billsSave => 'Lưu';
+
+  @override
+  String get billsEmptyTitle => 'Chưa có hóa đơn';
+
+  @override
+  String get billsEmptyBody =>
+      'Theo dõi hạn điện, nước, internet. Đánh dấu đã trả bằng một giao dịch có sẵn.';
+
+  @override
+  String get billsLoadError => 'Không tải được hóa đơn';
+
+  @override
+  String get billsName => 'Tên';
+
+  @override
+  String get billsAmount => 'Số tiền';
+
+  @override
+  String get billsAmountFixed => 'Cố định';
+
+  @override
+  String get billsAmountEstimated => 'Ước tính';
+
+  @override
+  String get billsDueOn => 'Hạn (YYYY-MM-DD)';
+
+  @override
+  String get billsRecurring => 'Gắn định kỳ';
+
+  @override
+  String get billsOneOff => 'Một lần';
+
+  @override
+  String get billsLinkedRecurring => 'Đã gắn định kỳ';
+
+  @override
+  String get billsFilterAll => 'Tất cả';
+
+  @override
+  String get billsStatusOpen => 'Mở';
+
+  @override
+  String get billsStatusOverdue => 'Quá hạn';
+
+  @override
+  String get billsStatusPaid => 'Đã trả';
+
+  @override
+  String get billsMarkPaid => 'Đánh dấu đã trả';
+
+  @override
+  String get billsUnpay => 'Bỏ đánh dấu đã trả';
+
+  @override
+  String get billsPickTransaction => 'Chọn giao dịch';
+
+  @override
+  String get billsNoTransactions => 'Chưa có giao dịch để gắn';
+
+  @override
+  String get billsMarkedPaid => 'Đã gắn giao dịch thanh toán';
+
+  @override
+  String get billsClearedPaid => 'Đã bỏ đánh dấu đã trả';
+
+  @override
+  String get billsInvalid => 'Nhập tên và số tiền hợp lệ';
 
   @override
   String get recurringTitle => 'Giao dịch định kỳ';

@@ -3378,11 +3378,179 @@ abstract class S {
   /// **'Recurring'**
   String get meRecurring;
 
+  /// No description provided for @meBills.
+  ///
+  /// In en, this message translates to:
+  /// **'Bills'**
+  String get meBills;
+
   /// No description provided for @meCurrency.
   ///
   /// In en, this message translates to:
   /// **'Default currency'**
   String get meCurrency;
+
+  /// No description provided for @billsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bills'**
+  String get billsTitle;
+
+  /// No description provided for @billsAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add bill'**
+  String get billsAdd;
+
+  /// No description provided for @billsEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit bill'**
+  String get billsEdit;
+
+  /// No description provided for @billsDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get billsDelete;
+
+  /// No description provided for @billsSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get billsSave;
+
+  /// No description provided for @billsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No bills yet'**
+  String get billsEmptyTitle;
+
+  /// No description provided for @billsEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Track utilities and subscriptions. Mark paid by linking an existing transaction.'**
+  String get billsEmptyBody;
+
+  /// No description provided for @billsLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t load bills'**
+  String get billsLoadError;
+
+  /// No description provided for @billsName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get billsName;
+
+  /// No description provided for @billsAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get billsAmount;
+
+  /// No description provided for @billsAmountFixed.
+  ///
+  /// In en, this message translates to:
+  /// **'Fixed'**
+  String get billsAmountFixed;
+
+  /// No description provided for @billsAmountEstimated.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated'**
+  String get billsAmountEstimated;
+
+  /// No description provided for @billsDueOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Due date (YYYY-MM-DD)'**
+  String get billsDueOn;
+
+  /// No description provided for @billsRecurring.
+  ///
+  /// In en, this message translates to:
+  /// **'Link recurring'**
+  String get billsRecurring;
+
+  /// No description provided for @billsOneOff.
+  ///
+  /// In en, this message translates to:
+  /// **'One-off'**
+  String get billsOneOff;
+
+  /// No description provided for @billsLinkedRecurring.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked recurring'**
+  String get billsLinkedRecurring;
+
+  /// No description provided for @billsFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get billsFilterAll;
+
+  /// No description provided for @billsStatusOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get billsStatusOpen;
+
+  /// No description provided for @billsStatusOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get billsStatusOverdue;
+
+  /// No description provided for @billsStatusPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get billsStatusPaid;
+
+  /// No description provided for @billsMarkPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as paid'**
+  String get billsMarkPaid;
+
+  /// No description provided for @billsUnpay.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear paid mark'**
+  String get billsUnpay;
+
+  /// No description provided for @billsPickTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a transaction'**
+  String get billsPickTransaction;
+
+  /// No description provided for @billsNoTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'No transactions to link yet'**
+  String get billsNoTransactions;
+
+  /// No description provided for @billsMarkedPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment linked'**
+  String get billsMarkedPaid;
+
+  /// No description provided for @billsClearedPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid mark cleared'**
+  String get billsClearedPaid;
+
+  /// No description provided for @billsInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid name and amount'**
+  String get billsInvalid;
 
   /// No description provided for @recurringTitle.
   ///

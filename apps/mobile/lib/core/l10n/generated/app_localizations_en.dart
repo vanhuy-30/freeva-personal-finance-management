@@ -1887,7 +1887,92 @@ class SEn extends S {
   String get meRecurring => 'Recurring';
 
   @override
+  String get meBills => 'Bills';
+
+  @override
   String get meCurrency => 'Default currency';
+
+  @override
+  String get billsTitle => 'Bills';
+
+  @override
+  String get billsAdd => 'Add bill';
+
+  @override
+  String get billsEdit => 'Edit bill';
+
+  @override
+  String get billsDelete => 'Delete';
+
+  @override
+  String get billsSave => 'Save';
+
+  @override
+  String get billsEmptyTitle => 'No bills yet';
+
+  @override
+  String get billsEmptyBody =>
+      'Track utilities and subscriptions. Mark paid by linking an existing transaction.';
+
+  @override
+  String get billsLoadError => 'Couldn’t load bills';
+
+  @override
+  String get billsName => 'Name';
+
+  @override
+  String get billsAmount => 'Amount';
+
+  @override
+  String get billsAmountFixed => 'Fixed';
+
+  @override
+  String get billsAmountEstimated => 'Estimated';
+
+  @override
+  String get billsDueOn => 'Due date (YYYY-MM-DD)';
+
+  @override
+  String get billsRecurring => 'Link recurring';
+
+  @override
+  String get billsOneOff => 'One-off';
+
+  @override
+  String get billsLinkedRecurring => 'Linked recurring';
+
+  @override
+  String get billsFilterAll => 'All';
+
+  @override
+  String get billsStatusOpen => 'Open';
+
+  @override
+  String get billsStatusOverdue => 'Overdue';
+
+  @override
+  String get billsStatusPaid => 'Paid';
+
+  @override
+  String get billsMarkPaid => 'Mark as paid';
+
+  @override
+  String get billsUnpay => 'Clear paid mark';
+
+  @override
+  String get billsPickTransaction => 'Choose a transaction';
+
+  @override
+  String get billsNoTransactions => 'No transactions to link yet';
+
+  @override
+  String get billsMarkedPaid => 'Payment linked';
+
+  @override
+  String get billsClearedPaid => 'Paid mark cleared';
+
+  @override
+  String get billsInvalid => 'Enter a valid name and amount';
 
   @override
   String get recurringTitle => 'Recurring';

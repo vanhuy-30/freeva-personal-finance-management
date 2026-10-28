@@ -91,6 +91,7 @@ model Currency {
   recurringCounterRules  RecurringRule[] @relation("RecurringCounterCurrency")
   budgets                Budget[]
   budgetMonths           BudgetMonth[]
+  bills                  Bill[]
 }
 
 model User {
@@ -131,6 +132,7 @@ model User {
   recurringRules    RecurringRule[]
   budget            Budget?
   budgetMonths      BudgetMonth[]
+  bills             Bill[]
 }
 
 model FinancialAccount {
@@ -267,6 +269,7 @@ model Transaction {
   fxQuote       FxQuote?         @relation(fields: [fxQuoteId], references: [id])
   recurringRule RecurringRule?   @relation(fields: [recurringRuleId], references: [id], onDelete: SetNull)
   tags          TransactionTag[]
+  paidBill      Bill?
 
   @@unique([userId, clientId])
   @@index([userId, occurredOn])
@@ -370,9 +373,41 @@ model RecurringRule {
   counterCurrency Currency?             @relation("RecurringCounterCurrency", fields: [counterCurrencyCode], references: [code])
   occurrences     RecurringOccurrence[]
   transactions    Transaction[]
+  bills           Bill[]
 
   @@unique([userId, clientId])
   @@index([userId, active, nextExecutionDate])
+}
+
+/// Payment obligation (BE-P2-E03). Does not post ledger rows; overdue is derived on read.
+enum BillAmountKind {
+  fixed
+  estimated
+}
+
+model Bill {
+  id                 String         @id @default(uuid()) @db.Uuid
+  userId             String         @db.Uuid
+  clientId           String         @db.Uuid
+  name               String         @db.VarChar(80)
+  dueOn              DateTime       @db.Date
+  amountMinor        BigInt
+  amountKind         BillAmountKind
+  currencyCode       String         @db.Char(3)
+  recurringRuleId    String?        @db.Uuid
+  paidTransactionId  String?        @unique @db.Uuid
+  version            Int            @default(1)
+  createdAt          DateTime       @default(now()) @db.Timestamptz
+  updatedAt          DateTime       @updatedAt @db.Timestamptz
+
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  currency        Currency          @relation(fields: [currencyCode], references: [code])
+  recurringRule   RecurringRule?    @relation(fields: [recurringRuleId], references: [id], onDelete: SetNull)
+  paidTransaction Transaction?      @relation(fields: [paidTransactionId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, clientId])
+  @@index([userId, dueOn])
+  @@index([recurringRuleId])
 }
 
 model RecurringOccurrence {

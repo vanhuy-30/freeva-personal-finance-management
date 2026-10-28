@@ -15,6 +15,7 @@ erDiagram
   User ||--o{ Transaction : books
   User ||--o| Budget : defaultLimits
   User ||--o{ BudgetMonth : monthOverrides
+  User ||--o{ Bill : obligations
   User ||--o{ FxQuote : quotes
   Budget ||--o{ BudgetCategory : lines
   BudgetMonth ||--o{ BudgetMonthCategory : lines
@@ -23,11 +24,14 @@ erDiagram
   Currency ||--o{ User : default
   Currency ||--o{ FinancialAccount : denom
   Currency ||--o{ Transaction : denom
+  Currency ||--o{ Bill : denom
   Currency ||--o{ FxQuote : from
   Currency ||--o{ FxQuote : to
   CategoryGroup ||--o{ Category : groups
   Category ||--o{ Category : parent
   FinancialAccount ||--o{ Transaction : posts
+  Bill }o--o| RecurringRule : optionalLink
+  Bill }o--o| Transaction : paidBy
   Category ||--o{ Transaction : classifies
   Transaction ||--o{ TransactionTag : tagged
   Tag ||--o{ TransactionTag : on
@@ -159,6 +163,22 @@ Quy tắc và lần chạy định kỳ (`BE-P2-E01`). Chi tiết: [recurring.md
 | active | bool | tắt thì worker bỏ qua |
 
 `RecurringOccurrence`: unique `(ruleId, occurredOn)` + `transactionClientId` (và counter nếu transfer). Unique `(userId, clientId)` trên rule.
+
+### Bill
+
+Nghĩa vụ thanh toán (`BE-P2-E03`). Chi tiết: [bills.md](bills.md).
+
+| Cột | Kiểu | Ghi chú |
+|---|---|---|
+| name | varchar(80) | nhãn |
+| dueOn | date | hạn theo lịch |
+| amountMinor | BigInt | dương |
+| amountKind | enum | `fixed` \| `estimated` |
+| currencyCode | FK Currency | |
+| recurringRuleId | FK? | optional; `ON DELETE SET NULL` |
+| paidTransactionId | FK? unique | đã trả; `ON DELETE SET NULL` |
+
+Unique `(userId, clientId)`. Quá hạn tính khi đọc (timezone hồ sơ). Không tự tạo giao dịch.
 
 ### FxQuote
 
