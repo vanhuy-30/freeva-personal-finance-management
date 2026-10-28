@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../../../core/di/injection.dart';
+import '../../../budgets/domain/budget_use_cases.dart';
 import '../../../onboarding/presentation/viewmodels/onboarding_view_model.dart';
 import '../../../onboarding/presentation/viewmodels/setup_wallets_view_model.dart';
 import '../../../onboarding/presentation/widgets/setup_wallets_step.dart';
@@ -32,18 +33,21 @@ class SetupPage extends StatefulWidget {
 }
 
 class _SetupPageState extends State<SetupPage> {
-  late final OnboardingViewModel _answers = OnboardingViewModel(
-    getIt<ProfileUseCases>(),
-    getIt<SettingsUseCases>(),
-  );
-  late final SetupWalletsViewModel _wallets = SetupWalletsViewModel(
-    getIt<WalletUseCases>(),
-  );
+  // Built in initState, not lazily: dispose must never reach getIt (it may
+  // already be reset when the tree is torn down).
+  late final OnboardingViewModel _answers;
+  late final SetupWalletsViewModel _wallets;
   var _step = SetupStep.verify;
 
   @override
   void initState() {
     super.initState();
+    _answers = OnboardingViewModel(
+      getIt<ProfileUseCases>(),
+      getIt<SettingsUseCases>(),
+      getIt.isRegistered<BudgetUseCases>() ? getIt<BudgetUseCases>() : null,
+    );
+    _wallets = SetupWalletsViewModel(getIt<WalletUseCases>());
     getIt<SettingsViewModel>().beginOnboarding();
   }
 
@@ -55,6 +59,7 @@ class _SetupPageState extends State<SetupPage> {
   }
 
   void _go(SetupStep step) => setState(() => _step = step);
+
 
   /// Questions and wallets are over (answered or skipped): record it and go
   /// to the PIN.

@@ -8,6 +8,7 @@ class FreevaProgressBar extends StatelessWidget {
   const FreevaProgressBar({
     required this.value,
     this.color,
+    this.trackColor,
     this.height = 8,
     this.semanticsLabel,
     super.key,
@@ -16,6 +17,9 @@ class FreevaProgressBar extends StatelessWidget {
   /// 0–1; values outside are clamped.
   final double value;
   final Color? color;
+
+  /// Track colour; default `bg.track`.
+  final Color? trackColor;
   final double height;
   final String? semanticsLabel;
 
@@ -31,7 +35,9 @@ class FreevaProgressBar extends StatelessWidget {
           height: height,
           child: Stack(
             children: [
-              Positioned.fill(child: ColoredBox(color: c.bgTrack)),
+              Positioned.fill(
+                child: ColoredBox(color: trackColor ?? c.bgTrack),
+              ),
               FractionallySizedBox(
                 alignment: Alignment.centerLeft,
                 widthFactor: value.clamp(0, 1).toDouble(),

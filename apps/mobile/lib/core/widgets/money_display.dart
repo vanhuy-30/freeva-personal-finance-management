@@ -9,8 +9,10 @@ import '../theme/tokens.g.dart';
 /// `money.income` and +. Transfer: muted, no sign. Red is never used here.
 enum MoneyTone { plain, expense, income, transfer }
 
-/// Tabular amount in minor units. The currency mark sits after the number at
-/// half size in the muted colour. `hidden` masks it as •••••• and reads
+/// Tabular amount in minor units. On display amounts the currency mark sits
+/// 6 px after the number at half size (16 on `moneyL`), weight 500, in the
+/// muted colour; on small styles (≤ 17) it is part of the same span ("9.320.000
+/// ₫" in one weight and colour). `hidden` masks it as •••••• and reads
 /// "balance hidden" to screen readers. Amounts never truncate with "…".
 class MoneyDisplay extends StatelessWidget {
   const MoneyDisplay({
@@ -23,6 +25,8 @@ class MoneyDisplay extends StatelessWidget {
     this.hidden = false,
     this.muted = false,
     this.semanticsLabel,
+    this.currencyColor,
+    this.currencySize,
     super.key,
   });
 
@@ -39,6 +43,14 @@ class MoneyDisplay extends StatelessWidget {
   /// Keeps the sign but uses the muted colour (deleted transactions).
   final bool muted;
   final String? semanticsLabel;
+
+  /// Colour of a separate ₫ mark (wash cards pass `text.onWash`); default
+  /// `text.secondary`.
+  final Color? currencyColor;
+
+  /// Overrides the ₫ mark size; any size below the number's draws it as a
+  /// separate weight-500 mark.
+  final double? currencySize;
 
   static String symbolFor(String currency) =>
       currency == 'VND' ? '₫' : currency;
@@ -62,10 +74,21 @@ class MoneyDisplay extends StatelessWidget {
             MoneyTone.plain => style.color ?? c.textPrimary,
           };
     final text = hidden ? '••••••' : '$sign$number';
-    // Half size on display amounts; same size on small ones.
     final fontSize = style.fontSize ?? 15;
-    final symbolSize = fontSize >= 24 ? fontSize / 2 : fontSize;
+    final symbolSize =
+        currencySize ??
+        switch (fontSize) {
+          >= 32 => fontSize / 2,
+          >= 24 => 16.0,
+          _ => fontSize,
+        };
+    // Small amounts keep ₫ in the number's own weight and colour.
+    final inlineMark = symbolSize >= fontSize && fontSize <= 17;
     final mark = showCurrency;
+    final base = style.copyWith(
+      color: color,
+      fontFeatures: style.fontFeatures ?? const [FontFeature.tabularFigures()],
+    );
     final display =
         identical(style, FreevaTypography.moneyDisplay) ||
         identical(style, FreevaTypography.moneyDisplayCompact);
@@ -83,20 +106,34 @@ class MoneyDisplay extends StatelessWidget {
         child: Text.rich(
           TextSpan(
             children: [
-              TextSpan(text: text),
-              if (mark)
+              TextSpan(
+                text: text,
+                style: hidden ? const TextStyle(letterSpacing: 2) : null,
+              ),
+              if (mark && inlineMark) TextSpan(text: ' ${symbolFor(currency)}'),
+              if (mark && !inlineMark) ...[
+                // A space sized so the gap before ₫ is 6 px (Inter 500).
                 TextSpan(
-                  text: ' ${symbolFor(currency)}',
+                  text: ' ',
+                  style: TextStyle(
+                    fontSize: symbolSize,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 6 - symbolSize * 0.27,
+                  ),
+                ),
+                TextSpan(
+                  text: symbolFor(currency),
                   style: style.copyWith(
                     fontSize: symbolSize,
                     fontWeight: FontWeight.w500,
                     letterSpacing: 0,
-                    color: c.textSecondary,
+                    color: currencyColor ?? c.textSecondary,
                   ),
                 ),
+              ],
             ],
           ),
-          style: style.copyWith(color: color),
+          style: base,
           softWrap: false,
           overflow: TextOverflow.visible,
         ),

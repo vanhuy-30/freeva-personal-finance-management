@@ -14,6 +14,7 @@ class FieldTile extends StatelessWidget {
     required this.onTap,
     this.iconBg,
     this.iconFg,
+    this.glyph,
     super.key,
   });
 
@@ -23,6 +24,9 @@ class FieldTile extends StatelessWidget {
   final VoidCallback onTap;
   final Color? iconBg;
   final Color? iconFg;
+
+  /// Drawn glyph in place of [icon] (wallet type marks).
+  final Widget? glyph;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +40,7 @@ class FieldTile extends StatelessWidget {
           decoration: BoxDecoration(
             color: c.bgSurface,
             borderRadius: BorderRadius.circular(FreevaRadius.md),
-            boxShadow: FreevaElevation.s1,
+            boxShadow: FreevaElevation.tile,
           ),
           child: Material(
             type: MaterialType.transparency,
@@ -55,11 +59,14 @@ class FieldTile extends StatelessWidget {
                         color: iconBg ?? c.bgSubtle,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Icon(
-                        icon,
-                        size: FreevaSize.iconChip,
-                        color: iconFg ?? c.textPrimary,
-                      ),
+                      alignment: Alignment.center,
+                      child:
+                          glyph ??
+                          Icon(
+                            icon,
+                            size: FreevaSize.iconChip,
+                            color: iconFg ?? c.textPrimary,
+                          ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(

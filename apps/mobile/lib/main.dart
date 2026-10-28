@@ -1,6 +1,8 @@
 import 'features/profile/presentation/viewmodels/profile_view_model.dart';
 import 'features/settings/presentation/theme_mode.dart';
 import 'features/settings/presentation/viewmodels/settings_view_model.dart';
+import 'features/recurring/presentation/viewmodels/recurring_view_model.dart';
+import 'features/recurring/presentation/widgets/recurring_resume_listener.dart';
 import 'features/sync/presentation/viewmodels/sync_view_model.dart';
 import 'features/sync/presentation/widgets/sync_resume_listener.dart';
 
@@ -31,6 +33,7 @@ Future<void> _boot() async {
   logger.op('boot env=${config.environment.name} api=${config.apiBaseUrl}');
   await getIt<SettingsViewModel>().load();
   getIt<SyncViewModel>();
+  getIt<RecurringViewModel>();
   createAppRouter();
   logger.op('boot ready');
   runApp(const FreevaApp());
@@ -46,7 +49,9 @@ class FreevaApp extends StatelessWidget {
     return ListenableBuilder(
       listenable: Listenable.merge([profile, settings]),
       builder: (context, _) => SyncResumeListener(
+        child: RecurringResumeListener(
         child: MaterialApp.router(
+          debugShowCheckedModeBanner: false,
           onGenerateTitle: (BuildContext context) => S.of(context).appTitle,
           theme: AppTheme.light,
           darkTheme: AppTheme.dark,
@@ -64,6 +69,7 @@ class FreevaApp extends StatelessWidget {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
+        ),
         ),
       ),
     );

@@ -22,6 +22,10 @@ abstract class SettingsViewModel extends ChangeNotifier {
 
   /// Email this device signed in with (shown masked); null when unknown.
   String? get email;
+
+  /// Monthly budget typed at first run (VND), kept on this device until the
+  /// budget module exists; null when skipped.
+  int? get budgetDraftMinor => null;
   Future<void> load();
   Future<void> refreshAccount();
   Future<void> setTheme(AppThemePreference value);
@@ -52,6 +56,8 @@ class DefaultSettingsViewModel extends SettingsViewModel {
   bool get balancesHidden => _preferences.balancesHidden;
   @override
   bool get sessionAlertsEnabled => _preferences.sessionAlertsEnabled;
+  @override
+  int? get budgetDraftMinor => _preferences.budgetDraftMinor;
   @override
   bool loading = false;
   @override

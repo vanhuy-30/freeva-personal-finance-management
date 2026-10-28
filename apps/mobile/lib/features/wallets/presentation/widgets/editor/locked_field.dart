@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../../core/theme/theme_context.dart';
 import '../../../../../core/theme/tokens.g.dart';
@@ -28,7 +28,7 @@ class LockedField extends StatelessWidget {
       child: Container(
         constraints: const BoxConstraints(minHeight: 60),
         padding: const EdgeInsets.symmetric(
-          horizontal: FreevaSpace.s4,
+          horizontal: 14,
           vertical: FreevaSpace.s2,
         ),
         decoration: BoxDecoration(
@@ -60,7 +60,12 @@ class LockedField extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(LucideIcons.lock, size: 18, color: c.textSecondary),
+            const SizedBox(width: 10),
+            Icon(
+              LucideIcons.lock,
+              size: FreevaSize.iconChip,
+              color: c.textSecondary,
+            ),
           ],
         ),
       ),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/theme_context.dart';
-import '../../../../core/theme/tokens.g.dart';
+import '../../../../core/widgets/transaction_row_text.dart';
 
 /// What a transaction row says about its queued change.
 enum SyncMark {
@@ -14,7 +14,9 @@ enum SyncMark {
   waiting,
 }
 
-/// "Cần xem lại" (warning chip) or the "Chờ đồng bộ" clock, on a list row.
+/// Second line of a list row with a queued change: "⚠ Cần xem lại" in the
+/// warning colour, or "🕒 Chờ đồng bộ" in the secondary colour. Takes the
+/// place of "category · wallet".
 class SyncMarkChip extends StatelessWidget {
   const SyncMarkChip({required this.mark, super.key});
 
@@ -28,29 +30,18 @@ class SyncMarkChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
-    final s = S.of(context);
-    final text = label(s, mark);
+    final text = label(S.of(context), mark);
     return switch (mark) {
-      SyncMark.review => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-        decoration: BoxDecoration(
-          color: c.statusWarningBg,
-          borderRadius: BorderRadius.circular(FreevaRadius.full),
-        ),
-        child: Text(
-          text,
-          style: FreevaTypography.bodyS.copyWith(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            color: c.statusWarning,
-          ),
-        ),
+      SyncMark.review => TransactionRowNote(
+        icon: LucideIcons.triangleAlert,
+        text: text,
+        color: c.statusWarning,
+        bold: true,
       ),
-      SyncMark.waiting => Icon(
-        LucideIcons.clock,
-        size: 16,
+      SyncMark.waiting => TransactionRowNote(
+        icon: LucideIcons.clock,
+        text: text,
         color: c.textSecondary,
-        semanticLabel: text,
       ),
     };
   }

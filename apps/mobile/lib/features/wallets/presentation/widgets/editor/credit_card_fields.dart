@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../../core/money/money_input_formatter.dart';
@@ -111,7 +111,7 @@ class CreditCardFields extends StatelessWidget {
             onTap: () => pick(closing: false),
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 10),
         Padding(
           padding: const EdgeInsets.only(left: 4),
           child: Text(

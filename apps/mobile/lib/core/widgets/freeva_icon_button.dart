@@ -10,6 +10,13 @@ enum FreevaIconButtonKind {
 
   /// 36 on a card, white 75%; the touch area stays 44.
   onCard,
+
+  /// 40 white circle with a hairline border, 18 glyph (− / + steppers).
+  /// Disabled greys the border and the glyph.
+  stepper,
+
+  /// 36 subtle-grey circle, no border, 16 glyph (secondary actions in rows).
+  subtle,
 }
 
 class FreevaIconButton extends StatelessWidget {
@@ -18,6 +25,7 @@ class FreevaIconButton extends StatelessWidget {
     required this.label,
     required this.onPressed,
     this.kind = FreevaIconButtonKind.bar,
+    this.iconSize,
     super.key,
   });
 
@@ -28,12 +36,44 @@ class FreevaIconButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final FreevaIconButtonKind kind;
 
+  /// Glyph size. Defaults to 20 (bar, onCard), 18 (stepper), 16 (subtle).
+  final double? iconSize;
+
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
-    final bar = kind == FreevaIconButtonKind.bar;
-    final size = bar ? FreevaSize.iconButton : FreevaSize.iconButtonS;
     final enabled = onPressed != null;
+    final (double size, Color bg, Color? border, double glyph) = switch (kind) {
+      FreevaIconButtonKind.bar => (
+        FreevaSize.iconButton,
+        c.bgSurface,
+        c.borderDivider,
+        FreevaSize.iconInline,
+      ),
+      FreevaIconButtonKind.onCard => (
+        FreevaSize.iconButtonS,
+        c.bgSurface.withValues(alpha: .75),
+        null,
+        FreevaSize.iconInline,
+      ),
+      FreevaIconButtonKind.stepper => (
+        FreevaSize.buttonXs,
+        c.bgSurface,
+        enabled ? c.borderDivider : c.bgSubtle,
+        FreevaSize.iconSm,
+      ),
+      FreevaIconButtonKind.subtle => (
+        FreevaSize.iconButtonS,
+        c.bgSubtle,
+        null,
+        FreevaSize.iconChip,
+      ),
+    };
+    final fg = enabled
+        ? c.textPrimary
+        : kind == FreevaIconButtonKind.stepper
+        ? c.borderStrong
+        : c.textDisabled;
     return Tooltip(
       message: label,
       child: Semantics(
@@ -55,16 +95,10 @@ class FreevaIconButton extends StatelessWidget {
                   height: size,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: bar
-                        ? c.bgSurface
-                        : c.bgSurface.withValues(alpha: .75),
-                    border: bar ? Border.all(color: c.borderDivider) : null,
+                    color: bg,
+                    border: border == null ? null : Border.all(color: border),
                   ),
-                  child: Icon(
-                    icon,
-                    size: FreevaSize.iconInline,
-                    color: enabled ? c.textPrimary : c.textDisabled,
-                  ),
+                  child: Icon(icon, size: iconSize ?? glyph, color: fg),
                 ),
               ),
             ),

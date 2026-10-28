@@ -9,14 +9,21 @@ const select = {
   timezone: true,
   fiscalMonthStartDay: true,
   version: true,
+  onboardingGoals: true,
 };
+
+function toProfile(row: { onboardingGoals: string[] } & Omit<Profile, 'goals'> | null): Profile | null {
+  if (!row) return null;
+  const { onboardingGoals, ...rest } = row;
+  return { ...rest, goals: onboardingGoals };
+}
 
 @Injectable()
 export class PrismaProfileRepository implements ProfileRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  find(userId: string) {
-    return this.prisma.user.findUnique({ where: { id: userId }, select });
+  async find(userId: string) {
+    return toProfile(await this.prisma.user.findUnique({ where: { id: userId }, select }));
   }
 
   currencies() {
@@ -46,7 +53,7 @@ export class PrismaProfileRepository implements ProfileRepository {
         data: { ...fields, version: { increment: 1 } },
       });
       if (changed.count !== 1) return null;
-      return tx.user.findUnique({ where: { id: userId }, select });
+      return toProfile(await tx.user.findUnique({ where: { id: userId }, select }));
     });
   }
 }

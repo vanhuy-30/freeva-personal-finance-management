@@ -1,28 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
+import 'search_box.dart';
 
-/// Pill search field focused on open, clear button, and "Huỷ" to go back.
-class SearchFieldBar extends StatefulWidget {
+/// Search box focused on open with its clear button, and "Huỷ" to go back.
+class SearchFieldBar extends StatelessWidget {
   const SearchFieldBar({required this.onChanged, super.key});
 
   final ValueChanged<String> onChanged;
-
-  @override
-  State<SearchFieldBar> createState() => _SearchFieldBarState();
-}
-
-class _SearchFieldBarState extends State<SearchFieldBar> {
-  final controller = TextEditingController();
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,59 +18,24 @@ class _SearchFieldBarState extends State<SearchFieldBar> {
     return Row(
       children: [
         Expanded(
-          child: TextField(
-            controller: controller,
+          child: SearchBox(
+            hint: s.txSearchHint,
+            onChanged: onChanged,
             autofocus: true,
-            textInputAction: TextInputAction.search,
-            onChanged: (value) {
-              setState(() {});
-              widget.onChanged(value);
-            },
-            style: FreevaTypography.body.copyWith(color: c.textPrimary),
-            decoration: InputDecoration(
-              hintText: s.txSearchHint,
-              prefixIcon: Icon(
-                LucideIcons.search,
-                size: FreevaSize.iconInline,
-                color: c.textSecondary,
-              ),
-              suffixIcon: controller.text.isEmpty
-                  ? null
-                  : IconButton(
-                      tooltip: s.txSearchClear,
-                      icon: Icon(
-                        LucideIcons.circleX,
-                        size: FreevaSize.iconInline,
-                        color: c.textSecondary,
-                      ),
-                      onPressed: () {
-                        controller.clear();
-                        setState(() {});
-                        widget.onChanged('');
-                      },
-                    ),
-              constraints: const BoxConstraints(minHeight: 48),
-              contentPadding: const EdgeInsets.symmetric(vertical: 12),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(FreevaRadius.full),
-                borderSide: BorderSide(color: c.inputBorder),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(FreevaRadius.full),
-                borderSide: BorderSide(color: c.inputBorder),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(FreevaRadius.full),
-                borderSide: BorderSide(
-                  color: c.inputBorderFocus,
-                  width: FreevaBorder.selected,
-                ),
-              ),
-            ),
+            clearable: true,
           ),
         ),
+        const SizedBox(width: FreevaSpace.s1),
         TextButton(
           onPressed: () => Navigator.of(context).maybePop(),
+          style: TextButton.styleFrom(
+            foregroundColor: c.textLink,
+            minimumSize: const Size(FreevaSize.touch, FreevaSize.touch),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            textStyle: FreevaTypography.body.copyWith(
+              fontWeight: FontWeight.w500,
+            ),
+          ),
           child: Text(s.txSearchCancel),
         ),
       ],

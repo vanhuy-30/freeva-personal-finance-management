@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
@@ -56,7 +56,12 @@ class HiddenCategoriesPage extends StatelessWidget {
         builder: (context, _) {
           final groups = hiddenCategoryGroups(model.categories);
           return ListView(
-            padding: EdgeInsets.fromLTRB(margin, 0, margin, FreevaSpace.s8),
+            padding: EdgeInsets.fromLTRB(
+              margin,
+              FreevaSpace.s2,
+              margin,
+              FreevaSpace.s8,
+            ),
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(4, 0, 4, FreevaSpace.s4),

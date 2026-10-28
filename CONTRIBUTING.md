@@ -7,7 +7,7 @@
 1. Lấy task ID từ [tasks](tasks) (ví dụ `BE-P0-001`). Nếu chưa có, tạo task rồi mới code.
 2. Branch: `feat/BE-P0-001-short-slug` hoặc làm việc trên `main` nếu team chốt trunk-based thuần (xem convention git).
 3. Commit: `feat(BE-P0-001): mô tả ngắn`.
-4. PR template bắt buộc nêu task ID, phase, DoD.
+4. PR template bắt buộc nêu task ID, phase, chức năng trong app/API, lý do làm, và **Tồn đọng / follow-up** (liệt kê gap còn lại; nếu không có thì ghi **Không có**).
 5. Không commit `.env`, secret, keystore.
 
 ## Definition of Done

@@ -70,16 +70,16 @@ class WalletListRow extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: FreevaTypography.body.copyWith(
                         fontWeight: FontWeight.w500,
+                        height: 1.2,
                         color: c.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       subtitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                       style: FreevaTypography.label.copyWith(
                         fontWeight: FontWeight.w400,
+                        height: 1.2,
                         color: c.textSecondary,
                       ),
                     ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../../core/theme/theme_context.dart';
 import '../../../../../core/theme/tokens.g.dart';
@@ -23,32 +23,36 @@ class TagCreateRow extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: SizedBox(
-        height: FreevaSize.row,
+        height: 52,
         child: Row(
           children: [
             Container(
-              width: 32,
-              height: 32,
+              width: 22,
+              height: 22,
               decoration: BoxDecoration(
                 color: c.tintBlue,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(7),
               ),
               child: busy
                   ? Padding(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(4),
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
                         color: c.actionPrimary,
                       ),
                     )
-                  : Icon(LucideIcons.plus, size: 18, color: c.actionPrimary),
+                  : Icon(
+                      LucideIcons.plus,
+                      size: FreevaSize.iconXs,
+                      color: c.actionPrimary,
+                    ),
             ),
             const SizedBox(width: FreevaSpace.s3),
             Expanded(
               child: Text(
                 label,
                 style: FreevaTypography.body.copyWith(
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w600,
                   color: onTap == null ? c.textDisabled : c.textLink,
                 ),
               ),

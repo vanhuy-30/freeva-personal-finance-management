@@ -3,6 +3,8 @@
 - Task ID: <!-- e.g. MOB-P1-004 -->
 - Phase:
 - Module (nếu có):
+- Chức năng trong app / API: <!-- người dùng làm được gì; vì sao cần -->
+- Tại sao làm: <!-- DoD, phụ thuộc task sau, hoặc bug -->
 
 ## Changes
 <!-- Liệt kê các thay đổi chính, giải thích ngắn gọn các công nghệ được sử dụng -->
@@ -26,6 +28,11 @@
 - [ ] No unnecessary logs/debug code
 - [ ] No breaking changes
 - [ ] Documentation updated (if needed)
+
+## Tồn đọng / follow-up
+<!-- Bắt buộc. Ghi gap so với DoD, test chưa chạy, phạm vi cố ý hoãn. Nếu không có, viết đúng: Không có -->
+
+- Không có
 
 ## Notes
 <!-- Những điểm reviewer cần đặc biệt lưu ý/còn tồn đọng -->

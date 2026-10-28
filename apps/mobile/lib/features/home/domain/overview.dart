@@ -1,3 +1,4 @@
+import '../../budgets/domain/budget.dart';
 import '../../categories/domain/finance_category.dart';
 import '../../reports/domain/report.dart';
 import '../../transactions/domain/transaction.dart';
@@ -16,6 +17,7 @@ class OverviewData {
     required this.categories,
     required this.loadedAt,
     this.previousMonth,
+    this.budget,
   });
 
   final NetWorthReport netWorth;
@@ -23,6 +25,9 @@ class OverviewData {
 
   /// Only loaded when the current month has no income or expense yet.
   final CashflowReport? previousMonth;
+
+  /// Monthly budget for the current fiscal month; null when unset or failed.
+  final BudgetSummary? budget;
 
   /// Active (not hidden) wallets.
   final List<Wallet> wallets;

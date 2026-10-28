@@ -40,7 +40,7 @@ export const LEGACY_DEFAULT_CATEGORIES: readonly DefaultCategorySeed[] = [
   { name: 'Ăn uống', iconToken: 'food', kind: 'expense', parentName: null },
   { name: 'Đi lại', iconToken: 'transport', kind: 'expense', parentName: null },
   { name: 'Nhà ở', iconToken: 'housing', kind: 'expense', parentName: null },
-  { name: 'Hóa đơn', iconToken: 'bills', kind: 'expense', parentName: null },
+  { name: 'Hóa đơn', iconToken: 'electricity', kind: 'expense', parentName: null },
   { name: 'Mua sắm', iconToken: 'shopping', kind: 'expense', parentName: null },
   { name: 'Sức khỏe', iconToken: 'health', kind: 'expense', parentName: null },
   { name: 'Giáo dục', iconToken: 'education', kind: 'expense', parentName: null },

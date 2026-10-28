@@ -4,23 +4,35 @@ import '../theme/theme_context.dart';
 import '../theme/tokens.g.dart';
 import 'freeva_card.dart';
 
-/// Upper-case group title ("ỨNG DỤNG").
+/// Group title. Default: upper-case 12/600, letter-spacing 1.4 ("ỨNG DỤNG");
+/// [SectionHeader.sentence]: sentence case 13/600 (sheet and form labels).
+/// Padding 16 above, 8 below, 4 at the sides.
 class SectionHeader extends StatelessWidget {
-  const SectionHeader(this.title, {super.key});
+  const SectionHeader(this.title, {super.key}) : sentence = false;
+
+  /// Sentence-case label, 13/600, no letter-spacing ("Loại ví").
+  const SectionHeader.sentence(this.title, {super.key}) : sentence = true;
 
   final String title;
 
+  /// Whether the title keeps its case and uses the 13/600 style.
+  final bool sentence;
+
   @override
   Widget build(BuildContext context) {
+    final color = context.colors.textSecondary;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(4, FreevaSpace.s5, 4, FreevaSpace.s2),
+      padding: const EdgeInsets.fromLTRB(4, FreevaSpace.s4, 4, FreevaSpace.s2),
       child: Semantics(
         header: true,
         child: Text(
-          title.toUpperCase(),
-          style: FreevaTypography.overline.copyWith(
-            color: context.colors.textSecondary,
-          ),
+          sentence ? title : title.toUpperCase(),
+          style: sentence
+              ? FreevaTypography.bodyS.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: color,
+                )
+              : FreevaTypography.sectionLabel.copyWith(color: color),
         ),
       ),
     );

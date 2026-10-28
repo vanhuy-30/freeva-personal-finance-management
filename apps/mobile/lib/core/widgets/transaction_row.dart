@@ -7,6 +7,7 @@ import 'transaction_row_text.dart';
 
 /// Transaction row: 40 round icon · title + "category · wallet" · signed
 /// amount without ₫. Up to two tag chips replace the second line's tail.
+/// The category glyph is 18 px in the circle.
 class TransactionRow extends StatelessWidget {
   const TransactionRow({
     required this.icon,
@@ -19,6 +20,10 @@ class TransactionRow extends StatelessWidget {
     this.onTap,
     this.highlight,
     this.trailing,
+    this.muted = false,
+    this.iconBg,
+    this.iconColor,
+    this.subtitleWidget,
     super.key,
   });
 
@@ -41,14 +46,28 @@ class TransactionRow extends StatelessWidget {
   /// Extra action after the amount (restore button on the deleted list).
   final Widget? trailing;
 
+  /// Deleted rows: neutral circle, glyph in `text.secondary`.
+  final bool muted;
+
+  /// Overrides the circle background picked from [tone].
+  final Color? iconBg;
+
+  /// Overrides the glyph colour picked from [tone].
+  final Color? iconColor;
+
+  /// Replaces the second line (see [TransactionRowNote]).
+  final Widget? subtitleWidget;
+
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
-    final (iconBg, iconFg) = switch (tone) {
-      MoneyTone.income => (c.tintGreen, c.tintGreenFg),
-      MoneyTone.transfer => (c.tintBlue, c.tintBlueFg),
-      _ => (c.bgSubtle, c.textPrimary),
-    };
+    final (toneBg, toneFg) = muted
+        ? (c.bgSubtle, c.textSecondary)
+        : switch (tone) {
+            MoneyTone.income => (c.tintGreen, c.tintGreenFg),
+            MoneyTone.transfer => (c.tintBlue, c.tintBlueFg),
+            _ => (c.bgSubtle, c.textPrimary),
+          };
     return Semantics(
       label: semanticsLabel,
       button: onTap != null,
@@ -70,12 +89,12 @@ class TransactionRow extends StatelessWidget {
                       height: 40,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: iconBg,
+                        color: iconBg ?? toneBg,
                       ),
                       child: Icon(
                         icon,
-                        size: FreevaSize.iconInline,
-                        color: iconFg,
+                        size: FreevaSize.iconSm,
+                        color: iconColor ?? toneFg,
                       ),
                     ),
                     const SizedBox(width: FreevaSpace.s3),
@@ -85,6 +104,7 @@ class TransactionRow extends StatelessWidget {
                         subtitle: subtitle,
                         tags: tags,
                         highlight: highlight,
+                        subtitleWidget: subtitleWidget,
                       ),
                     ),
                     const SizedBox(width: FreevaSpace.s3),

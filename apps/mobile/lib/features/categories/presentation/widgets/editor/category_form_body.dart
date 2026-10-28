@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../../core/theme/theme_context.dart';
@@ -42,9 +42,11 @@ class CategoryFormBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final c = context.colors;
-    const gap = SizedBox(height: 14);
-    Widget label(String text) => Padding(
-      padding: const EdgeInsets.only(left: 4, bottom: 10),
+    // CatAdd stacks its blocks 14 apart, CatEdit 16.
+    final space = form.isNew ? 14.0 : FreevaSpace.s4;
+    final gap = SizedBox(height: space);
+    Widget label(String text, {double bottom = 10}) => Padding(
+      padding: EdgeInsets.only(left: 4, bottom: bottom),
       child: Text(
         text,
         style: FreevaTypography.bodyS.copyWith(
@@ -72,7 +74,6 @@ class CategoryFormBody extends StatelessWidget {
       children: [
         if (form.isNew)
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               preview,
               const SizedBox(width: 14),
@@ -80,7 +81,11 @@ class CategoryFormBody extends StatelessWidget {
             ],
           )
         else ...[
-          Center(child: preview),
+          // The board pads the preview 4 above and below.
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: FreevaSpace.s1),
+            child: Center(child: preview),
+          ),
           gap,
           nameField,
         ],
@@ -90,6 +95,7 @@ class CategoryFormBody extends StatelessWidget {
             label: s.categoryTabs,
             child: FreevaSegmented<bool>(
               expand: true,
+              style: FreevaSegmentedStyle.raised,
               selected: form.child,
               onChanged: form.setChild,
               segments: [
@@ -105,6 +111,7 @@ class CategoryFormBody extends StatelessWidget {
             label: s.categoryParentField,
             value: parent?.name ?? s.categoryPickParent,
             placeholder: parent == null,
+            chevronSize: FreevaSize.iconSm,
             leading: parent == null
                 ? null
                 : CategoryIconTile(
@@ -125,14 +132,17 @@ class CategoryFormBody extends StatelessWidget {
           if (form.errors.contains(CategoryFormError.parent))
             FieldErrorHint(s.categoryParentMissing),
         ],
-        const SizedBox(height: FreevaSpace.s5),
-        label(s.categoryColor),
+        gap,
+        // Swatch rows are 44 touch boxes around 34 dots: 5 of each box sits
+        // above the first dot, so the label keeps 10 to the dot.
+        label(s.categoryColor, bottom: 5),
         CategoryColorGrid(
           colors: colors,
           selected: form.colorToken,
           onChanged: form.setColor,
         ),
-        const SizedBox(height: FreevaSpace.s4),
+        // …and 5 below the last dot.
+        SizedBox(height: space - 5),
         if (form.isNew) ...[
           label(s.categoryIcon),
           _QuickIcons(form: form),
@@ -140,6 +150,7 @@ class CategoryFormBody extends StatelessWidget {
           PickerField(
             label: s.categoryIcon,
             value: categoryIconLabel(s, form.iconToken),
+            chevronSize: FreevaSize.iconSm,
             leading: CategoryIconTile(
               iconToken: form.iconToken,
               colorToken: form.colorToken,
@@ -148,7 +159,7 @@ class CategoryFormBody extends StatelessWidget {
             onTap: () => _pickIcon(context, form),
           ),
         if (actions != null) ...[
-          const SizedBox(height: FreevaSpace.s3),
+          SizedBox(height: space + FreevaSpace.s1),
           actions!,
         ],
       ],
@@ -202,13 +213,14 @@ class _QuickIcons extends StatelessWidget {
             child: Container(
               height: FreevaSize.touch,
               decoration: BoxDecoration(
-                color: c.bgSubtle,
-                borderRadius: BorderRadius.circular(14),
+                color: c.bgSurface,
+                borderRadius: BorderRadius.circular(FreevaRadius.smd),
+                border: Border.all(color: c.borderDefault),
               ),
               child: Icon(
                 LucideIcons.ellipsis,
-                size: FreevaSize.iconInline,
-                color: c.textOnWash,
+                size: FreevaSize.iconSm,
+                color: c.actionPrimary,
               ),
             ),
           ),

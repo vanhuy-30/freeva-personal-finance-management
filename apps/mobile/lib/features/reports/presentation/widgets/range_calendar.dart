@@ -32,7 +32,9 @@ class RangeCalendar extends StatelessWidget {
     final length = DateUtils.getDaysInMonth(month.year, month.month);
     final cells = <Widget>[
       for (final name in names)
-        Center(
+        Container(
+          constraints: const BoxConstraints(minHeight: 24),
+          alignment: Alignment.center,
           child: ExcludeSemantics(
             child: Text(
               name,
@@ -60,9 +62,13 @@ class RangeCalendar extends StatelessWidget {
           TableRow(
             children: [
               for (var i = 0; i < 7; i++)
-                r * 7 + i < cells.length
-                    ? cells[r * 7 + i]
-                    : const SizedBox.shrink(),
+                // 2 between rows, so the range strip shows week by week.
+                Padding(
+                  padding: EdgeInsets.only(top: r == 0 ? 0 : 2),
+                  child: r * 7 + i < cells.length
+                      ? cells[r * 7 + i]
+                      : const SizedBox.shrink(),
+                ),
             ],
           ),
       ],
@@ -125,7 +131,10 @@ class _Day extends StatelessWidget {
                 ? BorderRadius.circular(FreevaRadius.full)
                 : null,
             border: isToday && !end
-                ? Border.all(color: c.textPrimary, width: 1.2)
+                ? Border.all(
+                    color: c.borderSelected,
+                    width: FreevaBorder.selected,
+                  )
                 : null,
           ),
           child: Text(
@@ -134,11 +143,11 @@ class _Day extends StatelessWidget {
               fontSize: 14,
               fontWeight: end ? FontWeight.w600 : FontWeight.w500,
               color: locked
-                  ? c.textDisabled
+                  ? c.textMuted
                   : end
                   ? c.textOnAction
                   : inside
-                  ? c.tintBlueFg
+                  ? c.tintBlueStrongFg
                   : c.textPrimary,
               fontFeatures: const [FontFeature.tabularFigures()],
             ),

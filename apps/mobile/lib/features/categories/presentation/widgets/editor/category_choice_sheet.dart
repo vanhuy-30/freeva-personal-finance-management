@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../../core/theme/theme_context.dart';
 import '../../../../../core/theme/tokens.g.dart';
+import '../../../../../core/widgets/check_mark.dart';
 import '../../../../../core/widgets/freeva_card.dart';
 import '../../../../../core/widgets/freeva_sheet.dart';
 import '../../../domain/finance_category.dart';
@@ -93,10 +93,15 @@ class _ChoiceRow extends StatelessWidget {
                   color: selected ? c.actionPrimary : null,
                   border: selected
                       ? null
-                      : Border.all(color: c.borderDefault, width: 1.5),
+                      : Border.all(color: c.borderStrong, width: 1.5),
                 ),
                 child: selected
-                    ? Icon(LucideIcons.check, size: 14, color: c.textOnAction)
+                    ? Center(
+                        child: CheckMark(
+                          color: c.textOnAction,
+                          strokeWidth: 3.5,
+                        ),
+                      )
                     : null,
               ),
             ],

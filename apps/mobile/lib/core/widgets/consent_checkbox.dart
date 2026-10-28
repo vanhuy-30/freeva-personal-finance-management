@@ -1,13 +1,15 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../l10n/generated/app_localizations.dart';
 import '../theme/theme_context.dart';
 import '../theme/tokens.g.dart';
+import 'check_mark.dart';
 
 /// "Tôi đồng ý với Điều khoản sử dụng và Chính sách bảo mật của Freeva."
-/// Box 22 with radius 7; the two links are underlined and open the documents.
+/// Box 22 with radius 7 at x 4, 12 before the 14/20 text, top-aligned with
+/// the first line; the two links (600, underlined) open the documents. The
+/// whole row (at least 44 high) toggles, like an HTML label.
 class ConsentCheckbox extends StatefulWidget {
   const ConsentCheckbox({
     required this.checked,
@@ -42,31 +44,38 @@ class _ConsentCheckboxState extends State<ConsentCheckbox> {
   Widget build(BuildContext context) {
     final c = context.colors;
     final s = S.of(context);
-    final base = FreevaTypography.bodyS.copyWith(
-      fontSize: 13,
-      height: 18 / 13,
-      color: c.textSecondary,
+    final base = FreevaTypography.bodyM.copyWith(
+      height: 20 / 14,
+      color: c.textOnWash,
     );
     final link = base.copyWith(
       color: c.textPrimary,
+      fontWeight: FontWeight.w600,
       decoration: TextDecoration.underline,
+      decorationColor: c.textPrimary,
     );
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Semantics(
-          checked: widget.checked,
-          label: s.consentLabel,
-          child: InkWell(
-            onTap: () => widget.onChanged(!widget.checked),
-            borderRadius: BorderRadius.circular(FreevaRadius.sm),
-            child: SizedBox.square(
-              dimension: FreevaSize.touch,
-              child: Center(
+    void toggle() => widget.onChanged(!widget.checked);
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      excludeFromSemantics: true,
+      onTap: toggle,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: FreevaSize.touch),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: FreevaSpace.s1),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Semantics(
+                checked: widget.checked,
+                label: s.consentLabel,
+                onTap: toggle,
                 child: AnimatedContainer(
                   duration: FreevaMotion.fast,
                   width: 22,
                   height: 22,
+                  margin: const EdgeInsets.only(top: 1),
+                  alignment: Alignment.center,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(7),
                     color: widget.checked
@@ -74,42 +83,44 @@ class _ConsentCheckboxState extends State<ConsentCheckbox> {
                         : Colors.transparent,
                     border: widget.checked
                         ? null
-                        : Border.all(color: c.borderDefault, width: 1.5),
+                        : Border.all(color: c.borderStrong, width: 1.5),
                   ),
                   child: widget.checked
-                      ? Icon(LucideIcons.check, size: 15, color: c.textOnAction)
+                      ? CheckMark(
+                          size: 14,
+                          strokeWidth: 3,
+                          color: c.textOnAction,
+                        )
                       : null,
                 ),
               ),
-            ),
-          ),
-        ),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 13),
-            child: Text.rich(
-              TextSpan(
-                style: base,
-                children: [
-                  TextSpan(text: s.consentPrefix),
+              const SizedBox(width: FreevaSpace.s3),
+              Expanded(
+                child: Text.rich(
                   TextSpan(
-                    text: s.consentTerms,
-                    style: link,
-                    recognizer: _terms,
+                    style: base,
+                    children: [
+                      TextSpan(text: s.consentPrefix),
+                      TextSpan(
+                        text: s.consentTerms,
+                        style: link,
+                        recognizer: _terms,
+                      ),
+                      TextSpan(text: s.consentAnd),
+                      TextSpan(
+                        text: s.consentPrivacy,
+                        style: link,
+                        recognizer: _privacy,
+                      ),
+                      TextSpan(text: s.consentSuffix),
+                    ],
                   ),
-                  TextSpan(text: s.consentAnd),
-                  TextSpan(
-                    text: s.consentPrivacy,
-                    style: link,
-                    recognizer: _privacy,
-                  ),
-                  TextSpan(text: s.consentSuffix),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 }

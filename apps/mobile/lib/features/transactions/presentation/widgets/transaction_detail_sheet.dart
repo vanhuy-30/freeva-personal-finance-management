@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/widgets/freeva_sheet.dart';
@@ -50,7 +49,7 @@ Future<void> openTransactionDetail(
       showFreevaToast(
         context,
         message: s.txDeletedToast(naming.kind(bundle.type)),
-        icon: LucideIcons.trash2,
+        success: true,
         actionLabel: s.commonUndo,
         onAction: () => model.undoRemove(bundle),
       );

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../../core/widgets/freeva_dialog.dart';
@@ -43,7 +42,7 @@ mixin ComposerActions<T extends StatefulWidget> on State<T> {
     showFreevaToast(
       context,
       message: s.txSavedToast(label),
-      icon: LucideIcons.circleCheck,
+      success: true,
       actionLabel: wasNew && saved != null ? s.commonUndo : null,
       onAction: saved == null ? null : () => model.remove(saved),
     );

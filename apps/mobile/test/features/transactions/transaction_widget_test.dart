@@ -141,7 +141,7 @@ void main() {
       expect(find.text('card'), findsOneWidget);
       // 4 key taps + save: well under the 10 s target (QA-P1-001).
       await keys(tester, ['2', '5', '000']);
-      expect(find.text('25.000'), findsOneWidget);
+      expect(find.textContaining('25.000', findRichText: true), findsOneWidget);
       await tester.tap(find.text('Lưu khoản chi'));
       await settle(tester);
       expect(api.writes, 1);
@@ -174,7 +174,7 @@ void main() {
     await keys(tester, ['2', '5']);
     auth.lock();
     await tester.pumpAndSettle();
-    expect(find.text('25'), findsNothing);
+    expect(find.textContaining('25', findRichText: true), findsNothing);
     expect(find.byType(TransactionEditor), findsNothing);
     expect(model.wallets, isEmpty);
     expect(tester.takeException(), isNull);
@@ -270,6 +270,6 @@ void main() {
     await tester.pumpWidget(editor());
     await tester.pumpAndSettle();
     await keys(tester, ['2', '5', '000']);
-    expect(find.text('25.000'), findsOneWidget);
+    expect(find.textContaining('25.000', findRichText: true), findsOneWidget);
   });
 }

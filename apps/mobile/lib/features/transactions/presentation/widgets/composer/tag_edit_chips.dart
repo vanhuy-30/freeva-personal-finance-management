@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../../core/theme/theme_context.dart';
@@ -24,78 +24,112 @@ class TagEditChips extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final c = context.colors;
-    Widget chip({
-      required Widget child,
-      required VoidCallback onTap,
-      required String label,
-      Color? bg,
-      Color? border,
-    }) => Semantics(
-      button: true,
-      label: label,
-      excludeSemantics: true,
-      child: Material(
-        color: bg ?? Colors.transparent,
-        shape: StadiumBorder(
-          side: border == null ? BorderSide.none : BorderSide(color: border),
-        ),
-        child: InkWell(
-          customBorder: const StadiumBorder(),
-          onTap: onTap,
-          child: SizedBox(
-            height: 36,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Center(widthFactor: 1, child: child),
-            ),
-          ),
-        ),
-      ),
-    );
     return Wrap(
       spacing: 8,
       runSpacing: 8,
       children: [
+        // Board `.tag`: 36 high, padding 0 6 0 12, 14/500, × in a 28 box.
         for (final id in ids)
-          chip(
+          Semantics(
+            button: true,
             label: s.txChipRemove(names[id] ?? ''),
-            bg: c.tintViolet,
-            onTap: () => onRemove(id),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  names[id] ?? '',
-                  style: FreevaTypography.bodyS.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: c.tintVioletFg,
+            excludeSemantics: true,
+            child: Material(
+              color: c.tintViolet,
+              shape: const StadiumBorder(),
+              child: InkWell(
+                customBorder: const StadiumBorder(),
+                onTap: () => onRemove(id),
+                child: Container(
+                  height: 36,
+                  padding: const EdgeInsets.fromLTRB(12, 0, 6, 0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        names[id] ?? '',
+                        style: FreevaTypography.bodyM.copyWith(
+                          fontWeight: FontWeight.w500,
+                          color: c.tintVioletFg,
+                        ),
+                      ),
+                      const SizedBox(width: 2),
+                      SizedBox.square(
+                        dimension: 28,
+                        child: Icon(
+                          LucideIcons.x,
+                          size: FreevaSize.iconXs,
+                          color: c.tintVioletFg,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(width: 6),
-                Icon(LucideIcons.x, size: 14, color: c.tintVioletFg),
-              ],
+              ),
             ),
           ),
-        chip(
+        // "+ Thêm nhãn": dashed ink-300 outline, 14/500 text.on-wash.
+        Semantics(
+          button: true,
           label: s.txAddTag,
-          border: c.borderDefault,
-          onTap: onAdd,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(LucideIcons.plus, size: 14, color: c.textLink),
-              const SizedBox(width: 4),
-              Text(
-                s.txAddTag,
-                style: FreevaTypography.bodyS.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: c.textLink,
+          excludeSemantics: true,
+          child: InkWell(
+            customBorder: const StadiumBorder(),
+            onTap: onAdd,
+            child: CustomPaint(
+              painter: _DashedPill(c.borderStrong),
+              child: Container(
+                height: 36,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      LucideIcons.plus,
+                      size: FreevaSize.iconXs,
+                      color: c.textOnWash,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      s.txAddTag,
+                      style: FreevaTypography.bodyM.copyWith(
+                        fontWeight: FontWeight.w500,
+                        color: c.textOnWash,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
+            ),
           ),
         ),
       ],
     );
   }
+}
+
+/// 1 px dashed stadium outline (3 on, 3 off like CSS `dashed`).
+class _DashedPill extends CustomPainter {
+  const _DashedPill(this.color);
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rrect = RRect.fromRectAndRadius(
+      (Offset.zero & size).deflate(.5),
+      Radius.circular(size.height / 2),
+    );
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+    for (final metric in (Path()..addRRect(rrect)).computeMetrics()) {
+      for (double d = 0; d < metric.length; d += 6) {
+        canvas.drawPath(metric.extractPath(d, d + 3), paint);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_DashedPill old) => old.color != color;
 }

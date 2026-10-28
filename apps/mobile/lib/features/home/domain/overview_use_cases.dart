@@ -2,6 +2,8 @@ import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../auth/domain/auth_repository.dart';
+import '../../budgets/domain/budget.dart';
+import '../../budgets/domain/budget_use_cases.dart';
 import '../../categories/domain/category_repository.dart';
 import '../../reports/domain/report.dart';
 import '../../reports/domain/report_repository.dart';
@@ -23,12 +25,14 @@ class DefaultOverviewUseCases implements OverviewUseCases {
     this._wallets,
     this._transactions,
     this._categories,
+    this._budgets,
   );
 
   final ReportRepository _reports;
   final WalletRepository _wallets;
   final TransactionRepository _transactions;
   final CategoryRepository _categories;
+  final BudgetUseCases _budgets;
 
   static const recentCount = 3;
 
@@ -44,6 +48,7 @@ class DefaultOverviewUseCases implements OverviewUseCases {
       const TransactionQuery(pageSize: recentCount * 2),
     );
     final categoriesF = _categories.load();
+    final budgetF = _budgets.current();
     try {
       final worth = _take(await worthF);
       final month = _take(await monthF);
@@ -51,11 +56,17 @@ class DefaultOverviewUseCases implements OverviewUseCases {
       final currencies = _take(await currenciesF);
       final page = _take(await recentF);
       final categories = _take(await categoriesF);
+      // Budget is optional on Home: a failure just hides the progress bar.
+      final BudgetSummary? budget = (await budgetF).fold(
+        (_) => null,
+        (current) => current.budget,
+      );
       return right(
         OverviewData(
           netWorth: worth,
           month: month,
           previousMonth: await _previousIfEmpty(month),
+          budget: budget,
           wallets: [
             for (final w in wallets)
               if (!w.archived) w,

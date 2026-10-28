@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/money/money_text.dart';
@@ -39,10 +39,14 @@ class WalletTotalHeader extends StatelessWidget {
       return s.walletOtherTotal(amount, t.count);
     }).toList();
     final secondary = FreevaTypography.bodyS.copyWith(color: c.textSecondary);
+    // The board lines "Sắp xếp" up with the label line (baseline); its 36
+    // box pushes the label down. Ours keeps the 44 touch height, so the top
+    // padding is tuned to land the label where the board has it.
     return Padding(
-      padding: const EdgeInsets.fromLTRB(4, FreevaSpace.s2, 4, 0),
+      padding: const EdgeInsets.fromLTRB(4, 7, 4, 0),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.baseline,
+        textBaseline: TextBaseline.alphabetic,
         children: [
           Expanded(
             child: Column(
@@ -66,17 +70,35 @@ class WalletTotalHeader extends StatelessWidget {
             ),
           ),
           if (onSort != null)
-            TextButton.icon(
-              onPressed: onSort,
-              icon: const Icon(LucideIcons.arrowUpDown, size: 16),
-              label: Text(s.walletSort),
-              style: TextButton.styleFrom(
-                foregroundColor: c.actionPrimary,
-                minimumSize: const Size(FreevaSize.touch, FreevaSize.touch),
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                textStyle: FreevaTypography.body.copyWith(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
+            Semantics(
+              button: true,
+              child: InkWell(
+                onTap: onSort,
+                borderRadius: BorderRadius.circular(FreevaRadius.full),
+                child: SizedBox(
+                  height: FreevaSize.touch,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(
+                          LucideIcons.arrowUpDown,
+                          size: FreevaSize.iconChip,
+                          color: c.actionPrimary,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          s.walletSort,
+                          style: FreevaTypography.bodyM.copyWith(
+                            fontWeight: FontWeight.w500,
+                            color: c.actionPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),

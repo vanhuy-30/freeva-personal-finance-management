@@ -88,7 +88,7 @@ void main() {
       tester,
       await d1App(
         card,
-        detail: StubWalletDetail(walletId: 'card', rows: []),
+        detail: StubWalletDetail(walletId: 'card', rows: creditRows()),
       ),
       'credit',
     );

@@ -22,6 +22,9 @@ import '../../features/feedback/presentation/pages/feedback_page.dart';
 import '../../features/settings/presentation/pages/legal_page.dart';
 import '../../features/settings/presentation/pages/change_password_page.dart';
 import '../../features/tags/presentation/pages/tag_page.dart';
+import '../../features/budgets/presentation/pages/budget_page.dart';
+import '../../features/recurring/presentation/pages/recurring_page.dart';
+import '../../features/recurring/presentation/pages/recurring_editor_page.dart';
 import '../../features/settings/presentation/pages/change_pin_page.dart';
 import '../../features/settings/presentation/pages/pin_setup_page.dart';
 import '../../features/settings/presentation/pages/notification_settings_page.dart';
@@ -268,6 +271,29 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
         builder: (context, state) => const AuthGate(child: TagPage()),
       ),
       GoRoute(
+        path: '/budgets',
+        builder: (context, state) => AuthGate(
+          child: BudgetPage(on: state.uri.queryParameters['on']),
+        ),
+      ),
+      GoRoute(
+        path: '/me/recurring',
+        builder: (context, state) => const AuthGate(child: RecurringPage()),
+        routes: [
+          GoRoute(
+            path: 'new',
+            builder: (context, state) =>
+                const AuthGate(child: RecurringEditorPage()),
+          ),
+          GoRoute(
+            path: ':id',
+            builder: (context, state) => AuthGate(
+              child: RecurringEditorPage(ruleId: state.pathParameters['id']),
+            ),
+          ),
+        ],
+      ),
+      GoRoute(
         path: '/me/sessions',
         builder: (context, state) => const AuthGate(child: SessionsPage()),
       ),
@@ -283,9 +309,11 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
         path: '/help/legal',
         // Public: the sign-up checkbox links here before anyone is signed in.
         builder: (context, state) => LegalPage(
-          document: state.uri.queryParameters['doc'] == 'privacy'
-              ? LegalDocument.privacy
-              : LegalDocument.terms,
+          document: switch (state.uri.queryParameters['doc']) {
+            'privacy' => LegalDocument.privacy,
+            'all' => LegalDocument.all,
+            _ => LegalDocument.terms,
+          },
         ),
       ),
       GoRoute(

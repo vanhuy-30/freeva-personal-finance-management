@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
@@ -11,9 +12,11 @@ import '../../../../core/widgets/freeva_card.dart';
 import '../../../../core/widgets/freeva_dialog.dart';
 import '../../../../core/widgets/freeva_top_bar.dart';
 import '../../../../core/widgets/money_display.dart';
+import '../../../../core/widgets/settings_group.dart';
 import '../../../transactions/presentation/viewmodels/transaction_view_model.dart';
 import '../../domain/sync_item.dart';
 import '../viewmodels/sync_view_model.dart';
+import '../widgets/sync_done_view.dart';
 import '../widgets/sync_item_row.dart';
 import '../widgets/sync_item_view.dart';
 import '../widgets/sync_labels.dart';
@@ -57,6 +60,7 @@ class _SyncPageState extends State<SyncPage> {
       cancelLabel: s.syncDiscardKeep,
       confirmLabel: s.syncDiscardConfirm,
       destructive: true,
+      icon: LucideIcons.rotateCcw,
     );
     if (confirmed) await model.discard(item.opId);
   }
@@ -71,27 +75,17 @@ class _SyncPageState extends State<SyncPage> {
       final locale = Localizations.localeOf(context).toString();
       final now = DateTime.now();
       final holding = model.schemaMismatch;
+      final sending = model.syncing && !holding;
+      final done =
+          model.items.isEmpty &&
+          !model.syncing &&
+          !holding &&
+          model.link == SyncLink.ok;
       SyncItemView view(SyncQueueItem i) => syncItemView(s, i, transactions);
       Widget group(String title, List<Widget> rows) => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-              FreevaSpace.s1,
-              FreevaSpace.s5,
-              FreevaSpace.s1,
-              FreevaSpace.s2,
-            ),
-            child: Semantics(
-              header: true,
-              child: Text(
-                title,
-                style: FreevaTypography.overline.copyWith(
-                  color: c.textSecondary,
-                ),
-              ),
-            ),
-          ),
+          SectionHeader(title),
           FreevaCard(
             list: true,
             padding: const EdgeInsets.symmetric(horizontal: FreevaSpace.s4),
@@ -108,6 +102,7 @@ class _SyncPageState extends State<SyncPage> {
       );
       final attention = model.attention;
       final waiting = model.waiting;
+      final stamp = model.lastSyncedAt;
       return Scaffold(
         appBar: FreevaTopBar(
           title: s.syncTitle,
@@ -121,13 +116,22 @@ class _SyncPageState extends State<SyncPage> {
             FreevaSpace.s8,
           ),
           children: [
-            SyncStatusCard(model: model, now: now),
+            if (done)
+              SyncDoneView(
+                title: s.syncAllDone,
+                subtitle: stamp == null
+                    ? s.syncLastNever
+                    : syncLast(s, stamp, now, locale),
+              )
+            else
+              SyncStatusCard(model: model, now: now),
             if (holding && model.items.isNotEmpty)
               group(s.syncSectionHolding(model.items.length), [
                 for (final item in model.items)
                   SyncItemRow(
                     item: item,
                     view: view(item),
+                    style: SyncRowStyle.holding,
                     detail: syncClock(item.createdAt, locale),
                   ),
               ])
@@ -144,30 +148,45 @@ class _SyncPageState extends State<SyncPage> {
                               item.server != null
                           ? () => context.push('/sync/compare/${item.opId}')
                           : null,
-                      onRetry: syncCanRetry(item)
+                      onRetry: syncCanRetry(item) && !sending
                           ? () => model.retry(item.opId)
                           : null,
-                      onDiscard: () => _discard(item, view(item)),
+                      onDiscard: sending
+                          ? null
+                          : () => _discard(item, view(item)),
                     ),
                 ]),
               if (waiting.isNotEmpty)
-                group(s.syncSectionWaiting(waiting.length), [
-                  for (final item in waiting)
-                    SyncItemRow(
-                      item: item,
-                      view: view(item),
-                      detail: syncClock(item.createdAt, locale),
-                      compactAction: true,
-                      onDiscard: () => _discard(item, view(item)),
-                    ),
-                ]),
+                group(
+                  sending
+                      ? s.syncSectionSending
+                      : s.syncSectionWaiting(waiting.length),
+                  [
+                    for (final item in waiting)
+                      SyncItemRow(
+                        item: item,
+                        view: view(item),
+                        style: sending
+                            ? SyncRowStyle.sending
+                            : SyncRowStyle.waiting,
+                        detail: syncClock(item.createdAt, locale),
+                        onDiscard: () => _discard(item, view(item)),
+                      ),
+                  ],
+                ),
             ],
-            const SizedBox(height: FreevaSpace.s6),
-            Text(
-              s.syncFooter,
-              textAlign: TextAlign.center,
-              style: FreevaTypography.bodyS.copyWith(color: c.textSecondary),
-            ),
+            if (!done && !sending && !holding) ...[
+              const SizedBox(height: FreevaSpace.s4),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: FreevaSpace.s1),
+                child: Text(
+                  s.syncFooter,
+                  style: FreevaTypography.bodyS.copyWith(
+                    color: c.textSecondary,
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       );

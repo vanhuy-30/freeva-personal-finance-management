@@ -1,9 +1,10 @@
 # STATUS
 
 - **Phase hiện tại:** 2 — Phase 0 **closed** 2026-09-21; Phase 1 **closed** 2026-10-21 (gate sổ cái). Chưa phải product v1 — còn ngân sách / mục tiêu / insight (`Gate: v1` ở phase sau). Đối chiếu spec: [spec-alignment.md](../product/spec-alignment.md).
-- **Cập nhật:** 2026-10-21
+- **Cập nhật:** 2026-10-26
+- **Việc bổ sung Phase 2:** `BE-P2-010` khóa kind lúc ghi; `INF-P2-001` Postgres staging miễn phí (DB Render free đã hết hạn); `MOB-P2-011` xuất/xóa tài khoản trên app; `QA-P2-001` rà hàng đợi offline; `BE-P2-012` câu trả lời đầu gắn tài khoản; `BE-P2-013` quy đổi để hiển thị; `BE-P2-014` mật khẩu tối thiểu 8 + kiểm tra email trên app. Chi tiết: [tasks/phase-02.md](../../tasks/phase-02.md).
 - **CI:** `INF-P0-002` done; cả ba job xanh trên `main`, [run 33521325189](https://github.com/vanhuy-30/freeva-personal-finance-management/actions/runs/33521325189).
-- **Staging:** live — API [Render](https://freeva-api-staging.onrender.com) (`GET /api/health` → 200, `database` = up); admin [Vercel](https://freeva-personal-finance-management.vercel.app) đọc health staging. Stack: `render.yaml` + `apps/web-admin/vercel.json`. Prod hoster TBD tới Store (region VN).
+- **Staging:** API [Render](https://freeva-api-staging.onrender.com) và admin [Vercel](https://freeva-personal-finance-management.vercel.app) đã xanh ngày 2026-09-21. Postgres free trên Render đã hết hạn — chuyển DB: `INF-P2-001`. Prod hoster TBD tới Store (region VN).
 - **Crash monitoring:** `INF-P1-001` done — Sentry trên API, admin và mobile; tắt khi không có DSN; scrub PII. Event live chờ DSN trên dashboard (DECISIONS-OPEN #9, [ADR 011](../architecture/adr/011-sentry-crash-monitoring.md)).
 - **Brand:** board + PNG trong `docs/brand/`; token/theme P0 done. Mobile `MOB-P1-010` done: launcher iOS/Android + symbol splash/home và l10n tagline. Admin `WA-P1-001` done: favicon từ app icon và lockup ở header.
 - **Transfer QA:** `QA-P0-002` done; fixture JSON versioned + contract test cho cùng currency và FX exact. `BE-P1-005` dùng evaluator production và thêm fixture; chỉ nhận FX exact, không làm tròn ngầm.

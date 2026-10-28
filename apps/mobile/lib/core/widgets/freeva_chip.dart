@@ -12,12 +12,27 @@ enum FreevaChipKind {
   filter,
 }
 
+enum FreevaChipSize {
+  /// Choice 40 / filter 36, 14 / 13 pt, padding 14.
+  regular,
+
+  /// 32 high, padding 12, 13/500 (600 selected).
+  small,
+
+  /// Choice chip 36 high, 13/500; selected 600 with a 1.5 ink border.
+  compact,
+
+  /// Choice chip 44 high, padding 16; selected is an ink fill, no border.
+  large,
+}
+
 class FreevaChip extends StatelessWidget {
   const FreevaChip({
     required this.label,
     required this.selected,
     required this.onTap,
     this.kind = FreevaChipKind.choice,
+    this.size = FreevaChipSize.regular,
     this.icon,
     this.trailingIcon,
     super.key,
@@ -27,28 +42,39 @@ class FreevaChip extends StatelessWidget {
   final bool selected;
   final VoidCallback? onTap;
   final FreevaChipKind kind;
+  final FreevaChipSize size;
   final IconData? icon;
 
-  /// For example a chevron on "Tháng 10 ▾".
+  /// For example a chevron on "Tháng 10 ▾"; drawn at 14.
   final IconData? trailingIcon;
 
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
     final filter = kind == FreevaChipKind.filter;
-    final filled = filter && selected;
+    final filled = selected && (filter || size == FreevaChipSize.large);
     final fg = filled ? c.chipFilterSelectedFg : c.textPrimary;
-    final side = selected && !filter
-        ? BorderSide(color: c.chipSelectedBorder, width: FreevaBorder.selected)
-        : filled
+    final side = filled
         ? BorderSide.none
+        : selected
+        ? BorderSide(color: c.chipSelectedBorder, width: FreevaBorder.selected)
         : BorderSide(color: c.chipBorder);
-    final style = (filter ? FreevaTypography.bodyS : FreevaTypography.body)
-        .copyWith(
-          fontSize: filter ? 13 : 14,
-          fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-          color: fg,
-        );
+    final (double height, double padding, double fontSize) = switch (size) {
+      FreevaChipSize.regular => (
+        filter ? FreevaSize.buttonCompact : FreevaSize.buttonXs,
+        14.0,
+        filter ? 13.0 : 14.0,
+      ),
+      FreevaChipSize.small => (FreevaSize.pill, FreevaSpace.s3, 13.0),
+      FreevaChipSize.compact => (FreevaSize.buttonCompact, 12.0, 13.0),
+      FreevaChipSize.large => (FreevaSize.touch, FreevaSpace.s4, 14.0),
+    };
+    final style = FreevaTypography.body.copyWith(
+      fontSize: fontSize,
+      height: fontSize <= 13 ? FreevaTypography.bodyS.height : null,
+      fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+      color: fg,
+    );
     return Semantics(
       button: true,
       selected: selected,
@@ -63,11 +89,11 @@ class FreevaChip extends StatelessWidget {
             onTap: onTap,
             child: ConstrainedBox(
               constraints: BoxConstraints(
-                minHeight: filter ? 36 : FreevaSize.buttonXs,
+                minHeight: height,
                 minWidth: FreevaSize.touch,
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 14),
+                padding: EdgeInsets.symmetric(horizontal: padding),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -78,7 +104,7 @@ class FreevaChip extends StatelessWidget {
                     Text(label, style: style),
                     if (trailingIcon != null) ...[
                       const SizedBox(width: 4),
-                      Icon(trailingIcon, size: FreevaSize.iconChip, color: fg),
+                      Icon(trailingIcon, size: FreevaSize.iconXs, color: fg),
                     ],
                   ],
                 ),

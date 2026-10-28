@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../../../../../core/l10n/generated/app_localizations.dart';
@@ -77,12 +79,14 @@ class _ComposerScreenState extends State<TransactionComposerScreen>
         },
         child: Scaffold(
           body: SafeArea(
+            bottom: false,
             child: Padding(
               padding: EdgeInsets.fromLTRB(
                 margin,
                 FreevaSpace.s2,
                 margin,
-                FreevaSpace.s4,
+                // Board: 28 under the button.
+                math.max(28, MediaQuery.paddingOf(context).bottom),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -90,7 +94,16 @@ class _ComposerScreenState extends State<TransactionComposerScreen>
                   ComposerTopBar(composer: composer, onClose: close),
                   Expanded(
                     child: ListView(
-                      padding: const EdgeInsets.only(top: 18),
+                      // Board gaps: keypad view 18 (+18 above the
+                      // amount), transfer 16 (+6), details 16 (+8 in the
+                      // compact amount).
+                      padding: EdgeInsets.only(
+                        top: details
+                            ? FreevaSpace.s4
+                            : composer.transfer
+                            ? 22
+                            : 36,
+                      ),
                       children: [
                         AmountHeader(
                           minor: composer.amount,
@@ -100,11 +113,16 @@ class _ComposerScreenState extends State<TransactionComposerScreen>
                               ? s.txTransferAmountLabel
                               : s.txAmountLabel,
                           compact: details,
+                          transfer: composer.transfer,
                           onTap: details
                               ? () => setState(() => details = false)
                               : null,
                         ),
-                        const SizedBox(height: 18),
+                        SizedBox(
+                          height: details || composer.transfer
+                              ? FreevaSpace.s4
+                              : FreevaSpace.s5,
+                        ),
                         ComposerBody(
                           composer: composer,
                           details: details,
@@ -112,17 +130,19 @@ class _ComposerScreenState extends State<TransactionComposerScreen>
                           notes: notes,
                           onMore: () => setState(() => details = true),
                         ),
+                        const SizedBox(height: FreevaSpace.s4),
                       ],
                     ),
                   ),
                   if (keypad)
                     AmountKeypad(
                       filled: false,
+                      keyHeight: composer.transfer ? 50 : 54,
                       onDigits: composer.typeKeys,
                       onDelete: composer.backspace,
                     ),
                   ComposerError(composer: composer),
-                  const SizedBox(height: FreevaSpace.s2),
+                  SizedBox(height: composer.transfer ? FreevaSpace.s4 : 18),
                   FreevaButton(
                     label: saveLabel(s),
                     size: FreevaButtonSize.l,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/theme_context.dart';
@@ -59,6 +59,11 @@ class _LockPageState extends State<LockPage> {
     final s = S.of(context);
     final c = context.colors;
     final face = Theme.of(context).platform == TargetPlatform.iOS;
+    // Board: "Quên mã PIN?" sits 40 above the screen edge, home indicator
+    // included; SafeArea covers the indicator.
+    final bottom = (40 - MediaQuery.viewPaddingOf(context).bottom)
+        .clamp(FreevaSpace.s2, 40)
+        .toDouble();
     return Scaffold(
       backgroundColor: c.bgCanvas,
       body: SafeArea(
@@ -70,13 +75,15 @@ class _LockPageState extends State<LockPage> {
                 SliverFillRemaining(
                   hasScrollBody: false,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: FreevaSpace.s8,
-                      vertical: FreevaSpace.s6,
+                    padding: EdgeInsets.fromLTRB(
+                      FreevaSpace.s8,
+                      FreevaSpace.s6,
+                      FreevaSpace.s8,
+                      bottom,
                     ),
                     child: Column(
                       children: [
-                        const SizedBox(height: FreevaSpace.s8),
+                        const SizedBox(height: FreevaSpace.s6),
                         if (model.name != null)
                           AvatarLetter(name: model.name, email: null, size: 72)
                         else
@@ -84,13 +91,13 @@ class _LockPageState extends State<LockPage> {
                             width: 72,
                             height: 72,
                             decoration: BoxDecoration(
-                              color: c.tintBlue,
+                              color: c.bgAvatar,
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
                               LucideIcons.lock,
                               size: 28,
-                              color: c.tintBlueFg,
+                              color: c.actionPrimary,
                             ),
                           ),
                         const SizedBox(height: FreevaSpace.s5),
@@ -101,8 +108,7 @@ class _LockPageState extends State<LockPage> {
                                 ? s.authLockWelcome
                                 : s.authLockGreeting(model.name!),
                             textAlign: TextAlign.center,
-                            style: FreevaTypography.titleXl.copyWith(
-                              fontSize: 24,
+                            style: FreevaTypography.headline.copyWith(
                               color: c.textPrimary,
                             ),
                           ),
@@ -134,16 +140,27 @@ class _LockPageState extends State<LockPage> {
                                   icon: face
                                       ? LucideIcons.scanFace
                                       : LucideIcons.fingerprint,
+                                  iconColor: c.actionPrimary,
+                                  iconSize: 30,
                                   onTap: () => model.unlockBiometric(
                                     s.authBiometricReason,
                                   ),
                                 )
                               : null,
                         ),
-                        const SizedBox(height: FreevaSpace.s2),
+                        const SizedBox(height: FreevaSpace.s6),
                         TextButton(
                           onPressed: model.loading ? null : _forgot,
-                          child: Text(s.authForgotPin),
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.all(FreevaSpace.s3),
+                          ),
+                          child: Text(
+                            s.authForgotPin,
+                            style: FreevaTypography.bodyM.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: c.textLink,
+                            ),
+                          ),
                         ),
                       ],
                     ),

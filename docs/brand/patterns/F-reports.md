@@ -1,6 +1,6 @@
 # Nhóm F — Báo cáo
 
-Trạng thái: **chốt thiết kế 2026-10-21**, chưa code. Task: `DS-P2-003` (màn Báo cáo); ngân sách thuộc `BE-P2-E02` / `MOB-P2-E02`.
+Trạng thái: **chốt thiết kế 2026-10-21**, đã code 2026-10-23 (F1 + F2). Task: `DS-P2-003` (màn Báo cáo); ngân sách thuộc `BE-P2-E02` / `MOB-P2-E02`.
 Canvas: trang **05 · Patterns**, hàng F
 (<https://claude.ai/artifact/SmyaVvz57doJiAM6Kn678T>, riêng tư). Spec chung:
 [design-system.md](../design-system.md).
@@ -46,7 +46,7 @@ Canvas: trang **05 · Patterns**, hàng F
 
 | Việc | Ghi chú |
 |---|---|
-| Ngân sách | `BE-P2-E02` / `MOB-P2-E02`. Chưa có ngân sách thì thay khối bằng một dòng "Đặt ngân sách tháng" (mở form ngân sách). |
+| Ngân sách | `BE-P2-E02` / `MOB-P2-E02`: thẻ tiến độ hoặc dòng "Đặt ngân sách tháng" mở `/budgets`. |
 | Xu hướng | Cần API chuỗi số chi theo tuần/tháng/năm (một lần gọi), không gọi lặp từng kỳ. |
 | Kỳ Năm | API hiện có tuần, tháng, khoảng; thêm `year` hoặc dùng khoảng 01/01–31/12 theo múi giờ hồ sơ. |
 | So với kỳ trước | Gọi thêm kỳ trước, hoặc API trả sẵn. |

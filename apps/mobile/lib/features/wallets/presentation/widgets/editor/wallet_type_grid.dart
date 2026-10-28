@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../../core/theme/theme_context.dart';
 import '../../../../../core/theme/tokens.g.dart';
+import '../../../../../core/widgets/check_mark.dart';
 import '../../../../../core/widgets/press_scale.dart';
 import '../../../domain/wallet.dart';
 import '../wallet_labels.dart';
+import '../wallet_type_glyph.dart';
 import '../wallet_type_icon.dart';
 import 'form_pair.dart';
 
@@ -133,7 +134,11 @@ class _TypeCard extends StatelessWidget {
                     children: [
                       selected
                           ? _SelectedIcon(type: type)
-                          : WalletTypeIcon(type: type, size: 32),
+                          : WalletTypeIcon(
+                              type: type,
+                              size: FreevaSize.iconTile,
+                              iconSize: FreevaSize.iconSm,
+                            ),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
@@ -159,11 +164,8 @@ class _TypeCard extends StatelessWidget {
                         shape: BoxShape.circle,
                         color: c.actionPrimary,
                       ),
-                      child: Icon(
-                        LucideIcons.check,
-                        size: 12,
-                        color: c.textOnAction,
-                      ),
+                      alignment: Alignment.center,
+                      child: CheckMark(color: c.textOnAction, strokeWidth: 3.5),
                     ),
                   ),
               ],
@@ -187,13 +189,14 @@ class _SelectedIcon extends StatelessWidget {
     return Container(
       width: 32,
       height: 32,
+      alignment: Alignment.center,
       decoration: BoxDecoration(
         color: c.bgSurface,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(FreevaRadius.xs),
       ),
-      child: Icon(
-        walletTypeIconData(type),
-        size: 16,
+      child: WalletTypeGlyph(
+        type: type,
+        size: FreevaSize.iconSm,
         color: type == WalletType.credit ? c.textPrimary : c.actionPrimary,
       ),
     );

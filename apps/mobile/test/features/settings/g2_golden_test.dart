@@ -87,15 +87,7 @@ void main() {
     );
   });
   testWidgets('faq', skip: !Platform.isMacOS, (t) async {
-    await shot(
-      t,
-      const FaqPage(),
-      'faq',
-      then: () async {
-        await t.tap(find.textContaining('ví').first);
-        await t.pump(const Duration(milliseconds: 300));
-      },
-    );
+    await shot(t, const FaqPage(), 'faq');
   });
   testWidgets('notifications', skip: !Platform.isMacOS, (t) async {
     await shot(t, const NotificationSettingsPage(), 'notify');

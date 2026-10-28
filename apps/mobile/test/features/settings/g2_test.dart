@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/core/di/injection.dart';
+import 'package:mobile/core/widgets/freeva_switch.dart';
 import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/feedback/domain/feedback.dart';
 import 'package:mobile/features/feedback/presentation/pages/feedback_page.dart';
@@ -124,7 +125,7 @@ void main() {
     model.dispose();
   });
 
-  testWidgets('Nhãn lists counts and opens the filtered transactions', (
+  testWidgets('Nhãn lists counts; a row opens Xem giao dịch, Đổi tên, Xoá', (
     tester,
   ) async {
     tall(tester);
@@ -138,6 +139,10 @@ void main() {
     await tester.pump();
     expect(find.text('Ăn trưa'), findsNothing);
     await tester.tap(find.text('Du lịch'));
+    await tester.pumpAndSettle();
+    expect(find.text('Đổi tên'), findsOneWidget);
+    expect(find.text('Xoá'), findsOneWidget);
+    await tester.tap(find.text('Xem giao dịch'));
     await tester.pumpAndSettle();
     expect(transactions.filter.tagIds, {'b'});
     expect(transactions.filter.period, PeriodPreset.allTime);
@@ -191,7 +196,7 @@ void main() {
     tall(tester);
     await tester.pumpWidget(g.app(const NotificationSettingsPage()));
     await tester.pumpAndSettle();
-    expect(find.byType(Switch), findsOneWidget);
+    expect(find.byType(FreevaSwitch), findsOneWidget);
     expect(find.text('Sắp có'), findsNWidgets(4));
     final before = g.settings.sessionAlertsEnabled;
     await tester.tap(find.text('Máy mới đăng nhập'));

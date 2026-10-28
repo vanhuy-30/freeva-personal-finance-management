@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/features/auth/domain/auth_repository.dart';
+import 'package:mobile/features/budgets/domain/budget.dart';
+import 'package:mobile/features/budgets/domain/budget_use_cases.dart';
 import 'package:mobile/features/categories/domain/category_repository.dart';
 import 'package:mobile/features/categories/domain/finance_category.dart';
 import 'package:mobile/features/home/domain/overview_use_cases.dart';
@@ -26,6 +28,7 @@ void main() {
       _Wallets(),
       transactions,
       _Categories(),
+      _Budgets(),
     );
   });
 
@@ -152,6 +155,28 @@ class _Categories implements CategoryRepository {
   @override
   Future<Either<AuthFailure, CategoryCatalog>> load() async =>
       right(const CategoryCatalog(all: categories, recent: []));
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class _Budgets implements BudgetUseCases {
+  @override
+  Future<Either<AuthFailure, BudgetCurrent>> current({
+    String? on,
+    BudgetApplyTo? applyTo,
+  }) async =>
+      right(
+        const BudgetCurrent(
+          budget: null,
+          period: BudgetPeriod(
+            from: '2026-10-01',
+            to: '2026-10-31',
+            timezone: 'Asia/Ho_Chi_Minh',
+            fiscalMonthStartDay: 1,
+          ),
+        ),
+      );
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
@@ -17,6 +17,7 @@ import '../widgets/overview_blocks.dart';
 import '../widgets/overview_header.dart';
 import '../widgets/overview_states.dart';
 import '../widgets/quick_actions.dart';
+import '../widgets/recent_transactions.dart';
 
 /// Tổng quan. Partial failures never block the greeting, quick actions or +.
 class HomePage extends StatefulWidget {
@@ -68,7 +69,18 @@ class _HomePageState extends State<HomePage> {
       final s = S.of(context);
       final data = model.data;
       final margin = context.screenMargin;
-      const gap = SizedBox(height: 22);
+      final checklist = data == null
+          ? null
+          : FirstRunChecklist.of(
+              data,
+              pending: model.pending.length,
+              hasPin: model.hasPin,
+            );
+      // First run (ObHome): greeting, compact balance, checklist and the
+      // empty "Gần đây" hint only.
+      final firstRun = checklist != null && checklist.visible;
+      final gap = SizedBox(height: firstRun ? FreevaSpace.s5 : 22);
+      final offline = model.status == HomeStatus.offline && data != null;
       return Scaffold(
         body: SafeArea(
           bottom: false,
@@ -82,38 +94,38 @@ class _HomePageState extends State<HomePage> {
                 FreevaLayout.navReserve,
               ),
               children: [
-                OverviewHeader(name: model.displayName, today: model.today),
-                gap,
+                OverviewHeader(
+                  name: model.displayName,
+                  today: model.today,
+                  actions: !firstRun,
+                ),
+                // The offline banner sits 14 under the header, 22 above the card.
+                SizedBox(height: offline ? 14 : gap.height),
                 SessionAlertBanner(onReview: () => context.go('/me')),
-                if (model.status == HomeStatus.offline && data != null) ...[
+                if (offline) ...[
                   FreevaBanner(
                     icon: LucideIcons.cloudOff,
-                    message: s.homeOfflineTitle(
+                    message: s.homeOfflineHeading,
+                    detail: s.homeOfflineDetail(
                       DateFormat.Hm().format(data.loadedAt),
                     ),
-                    detail: s.homeOfflineBody,
                   ),
-                  const SizedBox(height: FreevaSpace.s3),
+                  gap,
                 ],
-                BalanceSection(model: model),
+                BalanceSection(model: model, compact: firstRun),
                 gap,
-                if (data != null) ...[
-                  if (FirstRunChecklist.of(
-                        data,
-                        pending: model.pending.length,
-                        hasPin: model.hasPin,
-                      )
-                      case final list when list.visible) ...[
-                    FirstRunCard(checklist: list),
-                    gap,
-                  ],
+                if (firstRun) ...[
+                  FirstRunCard(checklist: checklist),
+                  gap,
+                  const RecentEmptyHint(),
+                ] else ...[
+                  const QuickActions(),
+                  gap,
+                  if (data != null)
+                    OverviewBlocks(model: model, data: data)
+                  else if (model.status == HomeStatus.loading)
+                    const BlocksSkeleton(),
                 ],
-                const QuickActions(),
-                gap,
-                if (data != null)
-                  OverviewBlocks(model: model, data: data)
-                else if (model.status == HomeStatus.loading)
-                  const BlocksSkeleton(),
               ],
             ),
           ),

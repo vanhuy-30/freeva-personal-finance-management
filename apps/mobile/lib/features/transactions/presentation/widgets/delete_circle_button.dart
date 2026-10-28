@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
@@ -25,12 +25,12 @@ class DeleteCircleButton extends StatelessWidget {
           minimumSize: const Size(FreevaSize.button, FreevaSize.button),
           padding: EdgeInsets.zero,
           shape: const CircleBorder(),
-          side: BorderSide(color: c.statusDanger),
+          side: BorderSide(color: c.borderDanger),
           foregroundColor: c.statusDanger,
         ),
         child: Semantics(
           label: label,
-          child: const Icon(LucideIcons.trash2, size: FreevaSize.iconInline),
+          child: const Icon(LucideIcons.trash, size: FreevaSize.iconInline),
         ),
       ),
     );

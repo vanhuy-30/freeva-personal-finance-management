@@ -39,6 +39,7 @@ List<FinanceCategory> canvasCategories() => [
     'Ăn vặt',
     parent: 'food',
     color: 'color.brand.accent',
+    icon: 'food',
     order: 2,
   ),
   _cat(
@@ -52,7 +53,7 @@ List<FinanceCategory> canvasCategories() => [
     'bills',
     'Hóa đơn',
     color: 'color.semantic.warning',
-    icon: 'bills',
+    icon: 'electricity',
     order: 4,
   ),
   _cat('power', 'Điện nước', parent: 'bills', order: 5),
@@ -75,7 +76,7 @@ List<FinanceCategory> canvasCategories() => [
   _cat(
     'shop',
     'Mua sắm',
-    color: 'color.category.pink',
+    color: 'color.semantic.success',
     icon: 'shopping',
     order: 10,
   ),

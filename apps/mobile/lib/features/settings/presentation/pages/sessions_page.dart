@@ -94,51 +94,73 @@ class _SessionsPageState extends State<SessionsPage> {
           title: s.meSecSessions,
           onLeading: () => context.popOrGo('/me/security'),
         ),
-        body: ListView(
-          padding: EdgeInsets.fromLTRB(
-            margin,
-            FreevaSpace.s2,
-            margin,
-            FreevaSpace.s8,
-          ),
-          children: [
-            Text(
-              s.meSessionsHint,
-              style: FreevaTypography.bodyS.copyWith(color: c.textSecondary),
-            ),
-            const SizedBox(height: FreevaSpace.s4),
-            if (sessions.isEmpty && auth.failure != null && !auth.loading)
-              ErrorRetry(
-                title: s.meSaveError,
-                message: s.homeErrorBody,
-                onRetry: auth.loadSessions,
-              )
-            else
-              FreevaCard(
-                list: true,
-                padding: const EdgeInsets.symmetric(horizontal: FreevaSpace.s4),
-                child: Column(
+        body: SafeArea(
+          top: false,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.fromLTRB(
+                    margin,
+                    FreevaSpace.s2,
+                    margin,
+                    FreevaSpace.s4,
+                  ),
                   children: [
-                    for (final (i, session) in sessions.indexed) ...[
-                      if (i > 0) Divider(height: 1, color: c.listDivider),
-                      SessionRow(
-                        session: session,
-                        onRevoke: () => _revoke(session),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: Text(
+                        s.meSessionsHint,
+                        style: FreevaTypography.bodyM.copyWith(
+                          color: c.textSecondary,
+                        ),
                       ),
-                    ],
+                    ),
+                    const SizedBox(height: FreevaSpace.s4),
+                    if (sessions.isEmpty &&
+                        auth.failure != null &&
+                        !auth.loading)
+                      ErrorRetry(
+                        title: s.meSaveError,
+                        message: s.homeErrorBody,
+                        onRetry: auth.loadSessions,
+                      )
+                    else
+                      FreevaCard(
+                        list: true,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: FreevaSpace.s4,
+                        ),
+                        child: Column(
+                          children: [
+                            for (final (i, session) in sessions.indexed) ...[
+                              if (i > 0)
+                                Divider(height: 1, color: c.listDivider),
+                              SessionRow(
+                                session: session,
+                                onRevoke: () => _revoke(session),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
                   ],
                 ),
               ),
-            if (others) ...[
-              const SizedBox(height: FreevaSpace.s5),
-              FreevaButton(
-                label: s.meRevokeOthers,
-                variant: FreevaButtonVariant.secondary,
-                expand: true,
-                onPressed: security.busy ? null : _revokeOthers,
-              ),
+              if (others)
+                Padding(
+                  padding: EdgeInsets.fromLTRB(margin, 0, margin, 28),
+                  child: FreevaButton(
+                    label: s.meRevokeOthers,
+                    variant: FreevaButtonVariant.dangerOutline,
+                    size: FreevaButtonSize.l,
+                    expand: true,
+                    onPressed: security.busy ? null : _revokeOthers,
+                  ),
+                ),
             ],
-          ],
+          ),
         ),
       );
     },

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/money/compact_money.dart';
@@ -11,8 +12,8 @@ import '../../../../core/widgets/freeva_chip.dart';
 import '../viewmodels/onboarding_view_model.dart';
 import 'onboarding_frame.dart';
 
-/// Question 3: monthly budget. The number is kept on the device until the
-/// budget module exists; the currency is the account's (VND for now).
+/// Question 3: monthly budget. Saved to the API when possible; otherwise kept
+/// on the device until the next successful save.
 class BudgetStep extends StatelessWidget {
   const BudgetStep({
     required this.model,
@@ -50,8 +51,15 @@ class BudgetStep extends StatelessWidget {
           onSkip: onSkip,
           onNext: onNext,
           onBack: onBack,
+          titleGap: 28,
           pinned: AmountKeypad(
             filled: false,
+            keyHeight: 50,
+            gap: 4,
+            radius: FreevaRadius.smd,
+            digitSize: 22,
+            tripleZeroSize: 17,
+            deleteIconSize: 22,
             onDigits: model.typeBudget,
             onDelete: model.deleteBudgetDigit,
           ),
@@ -64,31 +72,63 @@ class BudgetStep extends StatelessWidget {
                   Semantics(
                     label: '${s.onbBudgetAmount}: $amount ₫',
                     child: ExcludeSemantics(
-                      child: Text(
-                        amount,
-                        style: FreevaTypography.moneyDisplay.copyWith(
-                          color: model.budget == 0
-                              ? c.textDisabled
-                              : c.textPrimary,
-                        ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              amount,
+                              style: FreevaTypography.moneyDisplay.copyWith(
+                                height: 44 / 40,
+                                color: model.budget == 0
+                                    ? c.textDisabled
+                                    : c.textPrimary,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: FreevaSpace.s2),
+                          // Caret: the keypad below types into this number.
+                          Container(
+                            width: 2,
+                            height: 34,
+                            decoration: BoxDecoration(
+                              color: c.actionPrimary,
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                   const SizedBox(height: FreevaSpace.s3),
+                  // Currency is fixed to VND until the budget module exists,
+                  // so the pill shows the board's chevron without a picker.
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: FreevaSpace.s3,
-                      vertical: FreevaSpace.s1,
-                    ),
+                    height: FreevaSize.pill,
+                    padding: const EdgeInsets.fromLTRB(12, 0, 10, 0),
                     decoration: BoxDecoration(
                       color: c.bgSubtle,
                       borderRadius: BorderRadius.circular(FreevaRadius.full),
                     ),
-                    child: Text(
-                      'VND ₫',
-                      style: FreevaTypography.label.copyWith(
-                        color: c.textPrimary,
-                      ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'VND ₫',
+                          style: FreevaTypography.bodyS.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: c.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(width: FreevaSpace.s1),
+                        ExcludeSemantics(
+                          child: Icon(
+                            LucideIcons.chevronDown,
+                            size: FreevaSize.iconXs,
+                            color: c.textPrimary,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],

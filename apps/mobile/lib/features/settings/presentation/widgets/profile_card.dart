@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
@@ -23,8 +23,8 @@ class ProfileCard extends StatelessWidget {
       onTap: () => context.push('/profile'),
       child: Row(
         children: [
-          AvatarLetter(name: name, email: email),
-          const SizedBox(width: FreevaSpace.s3),
+          AvatarLetter(name: name, email: email, size: 52, letterSize: 18),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

@@ -146,24 +146,36 @@ abstract final class AppTheme {
         ),
         minTileHeight: FreevaSize.row,
       ),
+      // FreevaSheetBody draws its own handle (36×4) and the sheet shadow;
+      // raw sheets get the canvas surface and no Material handle.
       bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: c.sheetBg,
+        modalBackgroundColor: c.sheetBg,
         surfaceTintColor: Colors.transparent,
         modalBarrierColor: c.sheetScrim,
-        showDragHandle: true,
-        dragHandleColor: c.borderDefault,
+        elevation: 0,
+        modalElevation: 0,
+        showDragHandle: false,
+        dragHandleColor: c.sheetHandle,
+        dragHandleSize: const Size(36, 4),
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
-            top: Radius.circular(FreevaComponent.sheetRadius),
+            top: Radius.circular(FreevaRadius.sheet),
           ),
         ),
       ),
+      // FreevaDialog paints FreevaElevation.dialog itself.
       dialogTheme: DialogThemeData(
         backgroundColor: c.bgSurface,
         surfaceTintColor: Colors.transparent,
         barrierColor: c.bgScrim,
+        elevation: 0,
+        insetPadding: const EdgeInsets.symmetric(
+          horizontal: FreevaLayout.screenMargin,
+          vertical: FreevaSpace.s6,
+        ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(FreevaRadius.xl),
+          borderRadius: BorderRadius.circular(FreevaRadius.sheet),
         ),
         titleTextStyle: FreevaTypography.titleL.copyWith(color: c.textPrimary),
         contentTextStyle: FreevaTypography.body.copyWith(
@@ -184,7 +196,7 @@ abstract final class AppTheme {
         trackColor: WidgetStateProperty.resolveWith(
           (states) => states.contains(WidgetState.selected)
               ? c.actionPrimary
-              : c.bgDisabled,
+              : c.bgSwitchOff,
         ),
         trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
       ),

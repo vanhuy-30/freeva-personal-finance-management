@@ -13,7 +13,13 @@ erDiagram
   User ||--o{ CategoryGroup : owns
   User ||--o{ Tag : owns
   User ||--o{ Transaction : books
+  User ||--o| Budget : defaultLimits
+  User ||--o{ BudgetMonth : monthOverrides
   User ||--o{ FxQuote : quotes
+  Budget ||--o{ BudgetCategory : lines
+  BudgetMonth ||--o{ BudgetMonthCategory : lines
+  Category ||--o{ BudgetCategory : caps
+  Category ||--o{ BudgetMonthCategory : caps
   Currency ||--o{ User : default
   Currency ||--o{ FinancialAccount : denom
   Currency ||--o{ Transaction : denom
@@ -123,7 +129,36 @@ Xóa danh mục: chuyển toàn bộ GD (kể cả soft-delete) trước, tăng 
 | merchant | String? | thu/chi optional; transfer luôn null (`BE-P1-012`) |
 | deletedAt | timestamptz? | |
 
-Index `(userId, occurredOn)`, `(transferGroupId)`. Unique `(userId, clientId)`.
+Index `(userId, occurredOn)`, `(transferGroupId)`. Unique `(userId, clientId)`. `recurringRuleId` nullable (`BE-P2-E01`), `ON DELETE SET NULL`.
+
+### Budget / BudgetMonth
+
+Ngân sách mặc định và override theo tháng tài chính (`BE-P2-E02`). Chi tiết: [budgets.md](budgets.md).
+
+| Cột | Kiểu | Ghi chú |
+|---|---|---|
+| limitMinor | BigInt | hạn mức tổng, > 0 |
+| alertThresholds | Int[] | 1–4 số 1–100 tăng dần |
+| periodFrom / periodTo | date | chỉ `BudgetMonth`; biên kỳ `resolvePeriod` month |
+| categories | lines | `BudgetCategory` / `BudgetMonthCategory`; unique theo category |
+
+`Budget`: unique `userId`. `BudgetMonth`: unique `(userId, periodFrom)`.
+
+### RecurringRule / RecurringOccurrence
+
+Quy tắc và lần chạy định kỳ (`BE-P2-E01`). Chi tiết: [recurring.md](recurring.md).
+
+| Cột (rule) | Kiểu | Ghi chú |
+|---|---|---|
+| type | enum | `income` \| `expense` \| `transfer` |
+| unit / interval | enum / Int | `day\|week\|month\|year`, 1–366 |
+| amountMinor | BigInt | signed |
+| accountId / categoryId | FK | category bắt buộc với expense |
+| counter* / fxRate | optional | transfer; khác tiền cần rate |
+| startDate / endDate / nextExecutionDate | date | calendar date |
+| active | bool | tắt thì worker bỏ qua |
+
+`RecurringOccurrence`: unique `(ruleId, occurredOn)` + `transactionClientId` (và counter nếu transfer). Unique `(userId, clientId)` trên rule.
 
 ### FxQuote
 

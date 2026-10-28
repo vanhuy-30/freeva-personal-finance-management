@@ -3,7 +3,7 @@ import 'package:mobile/features/wallets/presentation/pages/wallet_editor_page.da
 import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/core/l10n/generated/app_localizations.dart';
 import 'package:mobile/core/theme/app_theme.dart';

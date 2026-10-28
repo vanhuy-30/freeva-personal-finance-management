@@ -212,16 +212,6 @@
     }
   },
   "faqTitle": "FAQ",
-  "faqWalletQ": "How do I add a wallet?",
-  "faqWalletA": "Open Wallets from Home, then create a cash, bank, e-wallet, or credit wallet.",
-  "faqTransactionQ": "How do I record a transaction?",
-  "faqTransactionA": "Open Transactions or use Record transaction on Home. Choose income, an expense, or a transfer with two balanced sides.",
-  "faqProfileQ": "How do I change language, currency, or time zone?",
-  "faqProfileA": "Open Settings, then Language, currency, and time zone. The language changes after the profile is saved.",
-  "faqLockQ": "How do I lock the app?",
-  "faqLockA": "Freeva locks when you leave the app. Unlock with your six-digit PIN. You can turn on biometrics in Settings after a PIN exists.",
-  "faqThemeQ": "How do I switch light and dark mode?",
-  "faqThemeA": "Open Settings and choose Light, Dark, or System. Light is the default and stays on this device.",
   "legalDraft": "Draft for PRD-P0-002. This is not legal advice and is not in effect. The operating entity and contact channel are not decided yet.",
   "tosTitle": "Terms of service",
   "tosBody": "Freeva lets you record wallets and transactions you enter. You keep your financial data. The service operator is not decided yet. Account export and deletion are separate release work. This summary does not replace a lawyer-reviewed agreement.",
@@ -360,38 +350,10 @@
       }
     }
   },
-  "homeCreditUsed": "Used {used} of {limit}",
-  "@homeCreditUsed": {
-    "placeholders": {
-      "used": {
-        "type": "String"
-      },
-      "limit": {
-        "type": "String"
-      }
-    }
-  },
-  "homeCreditUsedNoLimit": "Used {used}",
-  "@homeCreditUsedNoLimit": {
-    "placeholders": {
-      "used": {
-        "type": "String"
-      }
-    }
-  },
   "homeRecent": "Recent",
   "homeSeeTransactions": "See transactions",
   "homeRecentEmpty": "Your transactions will show here",
   "homePendingSync": "Waiting to sync",
-  "homeOfflineTitle": "Offline · Figures from {time}",
-  "@homeOfflineTitle": {
-    "placeholders": {
-      "time": {
-        "type": "String"
-      }
-    }
-  },
-  "homeOfflineBody": "You can still add expenses.",
   "homeErrorTitle": "Couldn't load your balance",
   "homeErrorBody": "Your data is safe.",
   "homeSpokenExpense": "minus {amount} {currency}",
@@ -1217,14 +1179,6 @@
       }
     }
   },
-  "reportBarGeneral": "{name} (general)",
-  "@reportBarGeneral": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
   "reportLargest": "Largest transactions",
   "reportSeeAll": "See all {count}",
   "@reportSeeAll": {
@@ -1242,8 +1196,111 @@
   "meWallets": "My wallets",
   "meCategories": "Categories",
   "meTags": "Tags",
+  "meRecurring": "Recurring",
   "meCurrency": "Default currency",
+  "recurringTitle": "Recurring",
+  "recurringAdd": "Add recurring",
+  "recurringEdit": "Edit recurring",
+  "recurringDelete": "Delete",
+  "recurringSave": "Save",
+  "recurringEmptyTitle": "No recurring yet",
+  "recurringEmptyBody": "Set rent, salary, or transfers once and Freeva posts them on schedule.",
+  "recurringLoadError": "Couldn’t load recurring",
+  "recurringAmount": "Amount",
+  "recurringWallet": "Wallet",
+  "recurringCounterWallet": "To wallet",
+  "recurringCategory": "Category",
+  "recurringFrequency": "Frequency",
+  "recurringInterval": "Every",
+  "recurringEvery": "Every {count}",
+  "@recurringEvery": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "recurringUnitDay": "Daily",
+  "recurringUnitWeek": "Weekly",
+  "recurringUnitMonth": "Monthly",
+  "recurringUnitYear": "Yearly",
+  "recurringStart": "Start date (YYYY-MM-DD)",
+  "recurringNextLabel": "Next run (YYYY-MM-DD)",
+  "recurringEnd": "End date (optional)",
+  "recurringActive": "Active",
+  "recurringNext": "Next {date}",
+  "@recurringNext": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "recurringTypeExpense": "Expense",
+  "recurringTypeIncome": "Income",
+  "recurringTypeTransfer": "Transfer",
   "meBudget": "Monthly budget",
+  "budgetTitle": "Monthly budget",
+  "budgetSave": "Save",
+  "budgetSaved": "Budget saved",
+  "budgetCleared": "Budget removed",
+  "budgetLoadError": "Couldn’t load the budget",
+  "budgetOverallLimit": "Monthly limit",
+  "budgetCategoryLimit": "Category limit",
+  "budgetTapToSet": "Tap to set",
+  "budgetCategoriesTitle": "By category",
+  "budgetCategoriesHint": "Optional: set a limit for each expense category.",
+  "budgetAddCategory": "Add category",
+  "budgetNoCategories": "No expense categories left to add",
+  "budgetUnknownCategory": "Category",
+  "budgetClearTitle": "Remove budget?",
+  "budgetClearBody": "The spent bar on Home will hide until you set a budget again.",
+  "budgetClearAction": "Remove budget",
+  "budgetSpentLabel": "Spent",
+  "budgetRemainingLabel": "Left",
+  "budgetUsedPercent": "{percent}% used",
+  "@budgetUsedPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetLimitLine": "{spent} / {limit}",
+  "@budgetLimitLine": {
+    "placeholders": {
+      "spent": {
+        "type": "String"
+      },
+      "limit": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetThresholdsTitle": "Alert thresholds",
+  "budgetScopeDefault": "Every month",
+  "budgetScopeMonth": "This month",
+  "budgetScopeMonthHint": "Using the default limit. Saving creates an override for this month only.",
+  "budgetScopeMonthOverrideHint": "This month has its own limit, not the default.",
+  "budgetClearMonthTitle": "Remove this month’s override?",
+  "budgetClearMonthBody": "This month will use the default limit again (if one is set).",
+  "budgetClearMonthAction": "Remove month override",
+  "budgetMonthCleared": "Month override removed",
+  "budgetStatusHealthy": "On track",
+  "budgetStatusWarning": "A bit fast",
+  "budgetStatusCritical": "Almost out",
+  "budgetStatusOver": "Over budget",
+  "budgetHomeLine": "Spent {spent} / {limit}",
+  "@budgetHomeLine": {
+    "placeholders": {
+      "spent": {
+        "type": "String"
+      },
+      "limit": {
+        "type": "String"
+      }
+    }
+  },
   "meFiscal": "Month starts on",
   "meFiscalDay": "Day {day}",
   "@meFiscalDay": {
@@ -1267,8 +1324,6 @@
   "meSecurityValuePin": "PIN",
   "meFaq": "FAQ",
   "meFeedback": "Send feedback",
-  "meTerms": "Terms of service",
-  "mePrivacy": "Privacy policy",
   "meSoon": "Coming soon",
   "meLogout": "Log out",
   "meLogoutTitle": "Log out of this device?",
@@ -1437,7 +1492,6 @@
   "notifyCard": "Credit card due",
   "notifyCardSub": "3 days before",
   "notifySession": "New device signed in",
-  "notifySessionSub": "So you can check it",
   "authOr": "or",
   "authContinueGoogle": "Continue with Google",
   "authContinueApple": "Continue with Apple",
@@ -1534,6 +1588,7 @@
   "signUpSub": "Your data is safe and moves with you to a new phone.",
   "authContinueEmail": "Continue with email",
   "signUpTermsPrefix": "By continuing you agree to the ",
+  "signUpTermsLink": "Terms",
   "signUpTermsSuffix": ".",
   "onbProgress": "{current}/{total}",
   "@onbProgress": {
@@ -1778,5 +1833,63 @@
   "syncDupJust": "JUST RECORDED",
   "syncDupExisting": "ALREADY THERE",
   "syncDupKeepBoth": "Keep both",
-  "syncDupDeleteNew": "Delete the new one"
+  "syncDupDeleteNew": "Delete the new one",
+  "syncBannerOthersWaiting": "{count} other changes waiting to send",
+  "@syncBannerOthersWaiting": {"placeholders": {"count": {}}},
+  "syncLastToday": "Last synced {time} today",
+  "@syncLastToday": {"placeholders": {"time": {}}},
+  "syncSectionSending": "SENDING",
+  "reportDonutTotalExpense": "Total spent",
+  "reportDonutTotalIncome": "Total income",
+  "reportBarGeneralSuffix": "(general)",
+  "reportEmptyTitleMonth": "No data for month {month} yet",
+  "@reportEmptyTitleMonth": {"placeholders": {"month": {}}},
+  "meLegal": "Terms and privacy",
+  "meNotifyOnCount": "{count} on",
+  "@meNotifyOnCount": {"placeholders": {"count": {}}},
+  "meGoalsCount": "{count} goals",
+  "@meGoalsCount": {"placeholders": {"count": {}}},
+  "meProfileEmailVerified": "Email · verified",
+  "meProfileEmailUnverified": "Email · not verified",
+  "meDeleteAccount": "Delete account",
+  "meChangeAvatar": "Change photo",
+  "meSecurityValueFaceId": "PIN · Face ID",
+  "meSecFaceId": "Unlock with Face ID",
+  "notifySessionSubAlways": "Always on so you can check",
+  "faqRecordQ": "How do I record an expense?",
+  "faqRecordA": "Tap + in the middle of the bottom bar, enter the amount, pick a category and save. Wallet and date reuse your last choice.",
+  "faqTransferQ": "Moving money between two wallets?",
+  "faqTransferA": "Tap +, choose Transfer, pick the from and to wallets and enter the amount. Both balances update together.",
+  "faqDeletedQ": "Deleted a transaction by mistake?",
+  "faqDeletedA": "Tap Undo right after deleting. Later you can still restore it from Deleted in Transactions.",
+  "faqMonthQ": "What is a financial month?",
+  "faqMonthA": "It's the period your monthly totals cover. If you're paid on the 5th, set Month starts on day 5 in Me so the numbers match.",
+  "faqLockAppQ": "Locking the app with PIN or Face ID",
+  "faqLockAppA": "Go to Me, Security to set a PIN. With a PIN you can turn on Face ID. Without a PIN the app doesn't lock.",
+  "faqSafeQ": "Is my data safe?",
+  "faqSafeA": "Your data lives in your Freeva account, so changing phones doesn't lose it. Lock the app with a PIN so others can't see it.",
+  "homeOfflineHeading": "You're offline",
+  "homeOfflineDetail": "Figures as of {time}. You can still record spending.",
+  "@homeOfflineDetail": {"placeholders": {"time": {}}},
+  "homeCreditUsedLabel": "Used",
+  "homeCreditLimit": "Limit {limit}",
+  "@homeCreditLimit": {"placeholders": {"limit": {}}},
+  "homeOtherCurrencyMeta": "{currency} · {count} wallets",
+  "@homeOtherCurrencyMeta": {"placeholders": {"currency": {}, "count": {}}},
+  "homeTotalBalanceLabel": "Total balance",
+  "authResetVerified": "Verified {email}",
+  "@authResetVerified": {"placeholders": {"email": {}}},
+  "currencyNameVnd": "Vietnamese dong",
+  "currencyNameUsd": "US dollar",
+  "currencyNameEur": "Euro",
+  "currencyNameJpy": "Japanese yen",
+  "currencyNameKrw": "South Korean won",
+  "currencyNameCny": "Chinese yuan",
+  "currencyNameSgd": "Singapore dollar",
+  "currencyNameThb": "Thai baht",
+  "currencyNameAud": "Australian dollar",
+  "currencyNameGbp": "British pound",
+  "currencyCodeName": "{code} · {name}",
+  "@currencyCodeName": {"placeholders": {"code": {}, "name": {}}},
+  "tagsViewTransactions": "View transactions"
 }

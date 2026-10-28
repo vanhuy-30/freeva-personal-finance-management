@@ -67,6 +67,8 @@ class _WalletSortPageState extends State<WalletSortPage> {
           style: TextButton.styleFrom(
             foregroundColor: c.actionPrimary,
             minimumSize: const Size(FreevaSize.touch, FreevaSize.touch),
+            padding: EdgeInsets.zero,
+            alignment: Alignment.centerRight,
             textStyle: FreevaTypography.titleM,
           ),
           child: Text(s.walletSortDone),
@@ -76,13 +78,15 @@ class _WalletSortPageState extends State<WalletSortPage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
-            padding: EdgeInsets.fromLTRB(margin + 4, 0, margin, FreevaSpace.s4),
+            padding: EdgeInsets.fromLTRB(
+              margin + 4,
+              FreevaSpace.s2,
+              margin,
+              FreevaSpace.s4,
+            ),
             child: Text(
               s.walletSortHint,
-              style: FreevaTypography.body.copyWith(
-                fontSize: 14,
-                color: c.textSecondary,
-              ),
+              style: FreevaTypography.bodyM.copyWith(color: c.textSecondary),
             ),
           ),
           Expanded(

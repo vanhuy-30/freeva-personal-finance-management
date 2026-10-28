@@ -17,11 +17,12 @@
 - DoD: sinh Dart từ `tokens.json` (không chép tay hex). `AppTheme` light/dark dùng semantic token và `ThemeExtension`. Inter đóng gói trong app. Thêm `lucide_icons_flutter` 4.0.1 và thay các `Icons.*`. Component trong `lib/core/widgets/`: nút, trường nhập, bàn phím số tiền, chip, segmented, bottom nav, thanh trên, sheet, thẻ, dòng giao dịch, toast, banner, hộp thoại, trạng thái trống có animation tự vẽ, skeleton. Đủ 6 trạng thái. Trang gallery chỉ ở debug và golden test light/dark.
 
 ### DS-P2-003 — Refactor màn hình Phase 1 theo design system
-- Status: doing
+- Status: done
 - Module: —
 - Gate: post-v1
 - Depends: DS-P2-002
 - DoD: Tổng quan theo [B-overview.md](../docs/brand/patterns/B-overview.md) (đủ 8 trạng thái; ẩn số dư chỉ ẩn số dư); Ví theo [D-wallets.md](../docs/brand/patterns/D-wallets.md); Danh mục theo [E-categories.md](../docs/brand/patterns/E-categories.md) (màu và biểu tượng mới cần task BE riêng); Báo cáo theo [F-reports.md](../docs/brand/patterns/F-reports.md) (chuỗi xu hướng, kỳ năm cần task BE riêng; khối ngân sách theo `BE-P2-E02`); Cá nhân/Cài đặt theo [G-profile-settings.md](../docs/brand/patterns/G-profile-settings.md) (trường hồ sơ mới, đổi email/mật khẩu, liên kết, xoá tài khoản, API góp ý cần task BE riêng); Đồng bộ theo [H-sync.md](../docs/brand/patterns/H-sync.md) (giữ bản trên máy và mã lý do lỗi cần task BE riêng). Bottom nav chỉ ở màn gốc của tab. Theo thứ tự Tổng quan → Ghi giao dịch → Danh sách giao dịch → Ví → Báo cáo → Cá nhân/Cài đặt/Giới thiệu/Đăng nhập/Khoá. Chỉ đổi View và widget, không đổi ViewModel/use case. Mỗi màn một PR. Không còn hex rời hay `Icons.*` trong `lib/features`. Đo lại ghi chi < 10 giây (QA-P1-001). Chạy được ở màn 320 pt và cỡ chữ 1.3×.
+- Note: B/D/E/F/G/H xong theo [design-progress.md](../docs/brand/design-progress.md). C thuộc `DS-P2-005`; A thuộc `DS-P2-004`. Phần còn lại: ngân sách `BE-P2-E02`, thông báo đẩy `BE-P2-E05`, xoá tài khoản `MOB-P2-011`, mục tiêu/đổi email ở `DS-P2-004`; nút Cập nhật/Sửa sync và vài lệch canvas ghi trong pattern sau `DS-P2-006`.
 
 ### DS-P2-004 — Onboarding và tài khoản theo thiết kế nhóm A
 - Status: todo
@@ -29,7 +30,7 @@
 - Gate: post-v1
 - Depends: DS-P2-002
 - DoD: luồng và màn theo [A-onboarding-auth.md](../docs/brand/patterns/A-onboarding-auth.md): Welcome → Mục tiêu (tối đa 2) → Thói quen → Ngân sách (ẩn hoặc lưu tạm nếu chưa có `BE-P2-E02`) → Tạo tài khoản → Thiết lập tài chính (không bắt buộc) → Trang chính có checklist. Đăng nhập email + mật khẩu một màn. PIN không chặn đường vào app. Deep link xác nhận email / đặt lại mật khẩu và Google/Apple mobile tách task BE/MOB riêng khi làm.
-- Tiến độ: A1 xong 2026-10-23 (đăng nhập, đăng ký + `termsAccepted`, xác nhận email, quên/đặt lại mật khẩu, PIN tuỳ chọn, Mở khoá). A2a xong 2026-10-23 (Welcome, Tạo tài khoản Freeva, Mục tiêu, Thói quen, Ngân sách lưu trên máy; `PATCH /profile/onboarding`; màn giới thiệu cũ bị bỏ). A2b xong 2026-10-23 (Thiết lập tài chính, checklist "Bắt đầu nào", tên ở màn Mở khoá). Còn: đưa câu trả lời vào `GET /account/export`, dùng mục tiêu để sắp khối Tổng quan, nối ngân sách vào `BE-P2-E02`. Việc tách riêng: link xác nhận email / đặt lại mật khẩu mở thẳng app (BE gửi link, MOB deep link; nối vào `AuthViewModel.startReset`), Google/Apple trên mobile, nơi xác nhận lại email trong Cá nhân (cần cờ `emailVerified` trong hồ sơ).
+- Tiến độ: A1 xong 2026-10-23 (đăng nhập, đăng ký + `termsAccepted`, xác nhận email, quên/đặt lại mật khẩu, PIN tuỳ chọn, Mở khoá). A2a xong 2026-10-23 (Welcome, Tạo tài khoản Freeva, Mục tiêu, Thói quen, Ngân sách lưu trên máy; `PATCH /profile/onboarding`; màn giới thiệu cũ bị bỏ). A2b xong 2026-10-23 (Thiết lập tài chính, checklist "Bắt đầu nào", tên ở màn Mở khoá). Câu trả lời và số ngân sách đầu gắn với tài khoản, kể cả export: `BE-P2-012`. Còn trong task này: dùng mục tiêu để sắp khối Tổng quan, nối ngân sách vào `BE-P2-E02`. Việc tách riêng: link xác nhận email / đặt lại mật khẩu mở thẳng app (BE gửi link, MOB deep link; nối vào `AuthViewModel.startReset`), Google/Apple trên mobile, nơi xác nhận lại email trong Cá nhân (cần cờ `emailVerified` trong hồ sơ).
 
 ### DS-P2-005 — Giao dịch theo thiết kế nhóm C
 - Status: done
@@ -39,18 +40,20 @@
 - DoD: màn và luồng theo [C-transactions.md](../docs/brand/patterns/C-transactions.md): danh sách có chip lọc và tổng theo bộ lọc, tìm không dấu, sheet bộ lọc, trạng thái không kết quả, sheet chi tiết (sửa, sao chép, xoá có Hoàn tác), mục Đã xoá, ghi chi/thu với sheet danh mục và sheet nhãn, chuyển ví khác tiền tệ có tỷ giá + thời điểm. Lọc nhiều ví/danh mục, lọc nhãn, tìm theo cửa hàng và tổng theo bộ lọc tách task BE/MOB riêng khi làm.
 
 ### BE-P2-E01 / MOB-P2-E01 — Giao dịch định kỳ (module 6)
-- Status: todo
+- Status: done
 - Module: 6
 - Gate: post-v1
 - Depends: BE-P1-005, MOB-P1-004
 - DoD: chu kỳ ngày, tuần, tháng, năm và custom. Có số tiền, ví, danh mục, ngày bắt đầu, ngày kết thúc, lần chạy tới, bật/tắt. Đến hạn tạo giao dịch đúng một lần; retry và sync không nhân đôi. Tắt thì không tạo thêm. Chuyển khoản định kỳ vẫn là hai leg cân bằng. Test tháng không có ngày 31.
+- Note: API + worker + OpenAPI + export/xóa tài khoản; mobile danh sách/form từ Cá nhân và `POST .../run` lúc vào app. Kiến trúc: [recurring.md](../docs/architecture/recurring.md).
 
 ### BE-P2-E02 / MOB-P2-E02 — Ngân sách (module 7)
-- Status: todo
+- Status: done
 - Module: 7
 - Gate: v1
 - Depends: BE-P1-005, BE-P1-006, MOB-P1-006
 - DoD: ngân sách tổng tháng và theo danh mục, minor units. Đã chi chỉ tính expense chưa xóa; transfer và income không tính. Mức `<70%` healthy, `70–90%` warning, `>90%` critical, `>100%` over. Ngưỡng cảnh báo mặc định 70, 80, 90, 100 và user sửa được. Home hiện thanh `đã chi / hạn mức` khi có ngân sách. Test một bảng số. Gửi push thuộc `BE-P2-E05`.
+- Note: API `GET/PUT/DELETE /budgets/current` với template mặc định + override theo tháng (`applyTo`/`on`/`isOverride`), OpenAPI, export/xóa tài khoản; mobile `/budgets` (Mọi tháng / Tháng này), Báo cáo tháng, thanh Tổng quan, nối draft onboarding. Kiến trúc: [budgets.md](../docs/architecture/budgets.md).
 
 ### BE-P2-E03 / MOB-P2-E03 — Hóa đơn (module 8)
 - Status: todo
@@ -100,3 +103,56 @@
 - Gate: post-v1
 - Depends: DS-P2-005
 - DoD: giao dịch lưu thêm giờ (tuỳ chọn) trong múi giờ hồ sơ; `occurredOn` vẫn là ngày lịch cho báo cáo. API, OpenAPI, sync và form ghi/sửa (ô Thời gian có giờ như thiết kế C2.3, chi tiết "Hôm nay, 12:40"). Tách ra từ nhóm C theo quyết định 2026-10-22.
+
+## Việc bổ sung (2026-10-26)
+
+Phase 1 giữ đóng. Các ticket dưới đây không đổi số 28/28.
+
+### BE-P2-010 / MOB-P2-010 — Khóa thu/chi theo kind
+- Status: todo
+- Module: 4, 5
+- Gate: post-v1
+- Depends: BE-P1-011, MOB-P1-004, MOB-P1-005
+- DoD: Khi ghi hoặc sửa, chi chỉ nhận danh mục `expense` hoặc `both`; thu chỉ nhận `income` hoặc `both`. Chuyển khoản không có danh mục. API từ chối kind lệch (không ghi một phần). `both` vẫn hiện ở cả hai phía. Màn Danh mục (tab Chi · Thu) và form ghi đã lọc trên client — không làm lại hai màn đó. Form đang mở nếu đổi loại mà danh mục không còn hợp thì bỏ chọn và không lưu. Xung đột kind trả lỗi có chữ vi/en, không log tên danh mục hay số tiền. OpenAPI và test owner/kind. Cập nhật câu “một cây” trong [spec-alignment](../docs/product/spec-alignment.md) và [module 5](../docs/product/modules/05-categories.md) khi xong.
+
+### INF-P2-001 — Postgres staging miễn phí thay Render
+- Status: todo
+- Module: 26
+- Gate: ops
+- Depends: INF-P0-004
+- DoD: DB staging trên Render (plan free trong `render.yaml`) đã hết hạn. Chọn một Postgres miễn phí, chạy được Prisma migrate, chỉ cho dữ liệu staging. `DATABASE_URL` đặt trên dashboard host, không commit. API staging có thể giữ Render nếu web service còn sống; health `GET /api/health` trả `database=up` sau migrate. Không seed PII, không dùng làm production, không chốt vendor production (region VN vẫn là DECISIONS-OPEN #5). Cập nhật [staging.md](../docs/infrastructure/staging.md), `render.yaml` (bỏ DB Render đã chết), [DECISIONS-OPEN](../docs/project-state/DECISIONS-OPEN.md) #4 và URL trong [STATUS](../docs/project-state/STATUS.md). Ghi giới hạn plan miễn phí (ngủ, hết hạn, vùng) vào staging.md.
+
+### MOB-P2-011 — Xuất và xóa tài khoản trên app
+- Status: todo
+- Module: 21
+- Gate: post-v1
+- Depends: BE-P1-010, MOB-P1-001
+- DoD: Từ Hồ sơ, người dùng xuất được file JSON của `GET /api/v1/account/export` (chia sẻ hoặc lưu trên máy) và xóa được tài khoản bằng `DELETE /api/v1/account`. Xóa hỏi lại rõ, có hiệu lực ngay, không cửa sổ 30 ngày và không đòi mật khẩu — API hiện không nhận mật khẩu vì tài khoản OAuth có thể không có. Sau xóa thành công: xóa phiên, PIN và hàng đợi sync trên máy, về màn vào app. Lỗi mạng không xóa dữ liệu local và không báo đã xóa. Không log email, ghi chú hay số tiền. Chuỗi vi/en. Sửa câu trong app đang nói xuất/xóa là việc phát hành riêng. Không CSV, không API mới. Trường onboarding trong file export thuộc `BE-P2-012`; nút xuất lưu đúng body API trả về.
+
+### QA-P2-001 — Rà soát hàng đợi offline giao dịch
+- Status: todo
+- Module: 20
+- Gate: post-v1
+- Depends: BE-P1-009, MOB-P1-008
+- DoD: Đi lại hợp đồng [mobile-sync.md](../docs/architecture/mobile-sync.md) trên create, sửa, xóa, khôi phục: gộp mutation, giữ `clientId`, `applied`/`replayed` xóa khỏi hàng, `conflict` không ghi đè, đăng xuất xóa hàng, khóa PIN không xóa, banner và màn chọn bản. Ghi kết quả vào `mobile-sync.md`. Sửa lỗi làm sai hợp đồng đó (trùng giao dịch, ghi đè im lặng, hàng sống sót sau đăng xuất, số dư chờ sync hiện như đã chốt). Không thêm sync ví/danh mục, không CRDT, không pull cursor, không đổi API.
+
+### BE-P2-012 / MOB-P2-012 — Gắn câu trả lời đầu vào tài khoản
+- Status: todo
+- Module: 2, 21
+- Gate: post-v1
+- Depends: DS-P2-004, BE-P1-010
+- DoD: Mục tiêu, thói quen và nhịp xem lại đã lưu bằng `PATCH /profile/onboarding` phải đọc lại được trên hồ sơ, có trong `GET /account/export`, và hiện lại khi đăng nhập máy khác. Số ngân sách tháng nhập lúc đầu lưu trên user, integer minor units theo tiền tệ mặc định của tài khoản, không chỉ trong preference máy; đổi tiền tệ hồ sơ không tự quy đổi số này. Bỏ qua bước thì không ghi đè giá trị đang có. Xóa tài khoản xóa cùng user. Không log số ngân sách. PIN, theme và cờ ẩn số dư vẫn chỉ trên máy. Chưa làm thanh ngân sách hay ngưỡng — đó là `BE-P2-E02`. Chưa sắp khối Tổng quan theo mục tiêu — phần đó ở lại `DS-P2-004`.
+
+### BE-P2-013 / MOB-P2-013 — Quy đổi để hiển thị trên tổng quan và chi tiết
+- Status: todo
+- Module: 3, 4, 14
+- Gate: post-v1
+- Depends: BE-P1-004, BE-P1-005, BE-P1-007, MOB-P1-003, MOB-P1-006
+- DoD: Số lưu trên ví và giao dịch giữ nguyên tiền tệ gốc (minor units, không `double`). Tổng quan cộng tài sản, nợ, ròng, thu và chi của tháng sau khi quy về một tiền tệ hiển thị người dùng chọn trên màn đó; lựa chọn lưu trên tài khoản, mặc định bằng tiền tệ hồ sơ. Chi tiết ví và chi tiết giao dịch hiện số gốc kèm số quy về tiền tệ mặc định trong hồ sơ, cùng tỷ giá và `quotedAt`. Tỷ giá do người dùng nhập, lưu rate + thời điểm; không gọi nguồn giá ngoài (DECISIONS-OPEN #6 vẫn mở). Đổi đúng minor unit thì mới cộng vào tổng; lệch lẻ hoặc thiếu tỷ giá thì giữ dòng gốc và không bịa số, không trộn vào tổng đã quy đổi. Cùng tiền tệ thì không cần tỷ giá. Báo cáo kỳ vẫn tách từng loại tiền. OpenAPI, test một bảng số, log không có số tiền. Khi xong, ghi ngoại lệ hiển thị này vào [ADR 006](../docs/architecture/adr/006-money-and-fx.md) và pattern [B-overview](../docs/brand/patterns/B-overview.md) (màn nhiều tiền tệ đang nói không quy đổi).
+
+### BE-P2-014 / MOB-P2-014 — Mật khẩu tối thiểu 8 và kiểm tra email trên app
+- Status: todo
+- Module: 1
+- Gate: post-v1
+- Depends: BE-P1-001, MOB-P1-001
+- DoD: Mật khẩu mới (đăng ký, đặt lại, đổi khi đã đăng nhập) tối thiểu **8** ký tự (tối đa 128), vẫn bắt buộc có ít nhất một chữ và một số; không trim. Đăng nhập chỉ kiểm tra độ dài trong khoảng 8–128 để mật khẩu cũ vẫn dùng được. Backend DTO, OpenAPI và test đổi từ 12 xuống 8. Mobile: `PasswordCheck`, use case, danh sách tick và chuỗi l10n vi/en ("Ít nhất 8 ký tự"). Trên app, trước khi gọi API: đăng ký, đăng nhập và quên mật khẩu từ chối email không đúng định dạng sau trim/lowercase; báo lỗi rõ bằng l10n, không gửi request. Backend vẫn là nguồn từ chối cuối. Không đổi Argon2id, không log mật khẩu hay email đầy đủ. Cập nhật [A-onboarding-auth](../docs/brand/patterns/A-onboarding-auth.md) và [mobile-auth](../docs/architecture/mobile-auth.md).

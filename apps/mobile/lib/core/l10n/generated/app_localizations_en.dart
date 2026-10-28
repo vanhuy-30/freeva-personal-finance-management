@@ -533,41 +533,6 @@ class SEn extends S {
   String get faqTitle => 'FAQ';
 
   @override
-  String get faqWalletQ => 'How do I add a wallet?';
-
-  @override
-  String get faqWalletA =>
-      'Open Wallets from Home, then create a cash, bank, e-wallet, or credit wallet.';
-
-  @override
-  String get faqTransactionQ => 'How do I record a transaction?';
-
-  @override
-  String get faqTransactionA =>
-      'Open Transactions or use Record transaction on Home. Choose income, an expense, or a transfer with two balanced sides.';
-
-  @override
-  String get faqProfileQ => 'How do I change language, currency, or time zone?';
-
-  @override
-  String get faqProfileA =>
-      'Open Settings, then Language, currency, and time zone. The language changes after the profile is saved.';
-
-  @override
-  String get faqLockQ => 'How do I lock the app?';
-
-  @override
-  String get faqLockA =>
-      'Freeva locks when you leave the app. Unlock with your six-digit PIN. You can turn on biometrics in Settings after a PIN exists.';
-
-  @override
-  String get faqThemeQ => 'How do I switch light and dark mode?';
-
-  @override
-  String get faqThemeA =>
-      'Open Settings and choose Light, Dark, or System. Light is the default and stays on this device.';
-
-  @override
   String get legalDraft =>
       'Draft for PRD-P0-002. This is not legal advice and is not in effect. The operating entity and contact channel are not decided yet.';
 
@@ -753,16 +718,6 @@ class SEn extends S {
   }
 
   @override
-  String homeCreditUsed(String used, String limit) {
-    return 'Used $used of $limit';
-  }
-
-  @override
-  String homeCreditUsedNoLimit(String used) {
-    return 'Used $used';
-  }
-
-  @override
   String get homeRecent => 'Recent';
 
   @override
@@ -773,14 +728,6 @@ class SEn extends S {
 
   @override
   String get homePendingSync => 'Waiting to sync';
-
-  @override
-  String homeOfflineTitle(String time) {
-    return 'Offline · Figures from $time';
-  }
-
-  @override
-  String get homeOfflineBody => 'You can still add expenses.';
 
   @override
   String get homeErrorTitle => 'Couldn\'t load your balance';
@@ -1905,11 +1852,6 @@ class SEn extends S {
   }
 
   @override
-  String reportBarGeneral(String name) {
-    return '$name (general)';
-  }
-
-  @override
   String get reportLargest => 'Largest transactions';
 
   @override
@@ -1942,10 +1884,212 @@ class SEn extends S {
   String get meTags => 'Tags';
 
   @override
+  String get meRecurring => 'Recurring';
+
+  @override
   String get meCurrency => 'Default currency';
 
   @override
+  String get recurringTitle => 'Recurring';
+
+  @override
+  String get recurringAdd => 'Add recurring';
+
+  @override
+  String get recurringEdit => 'Edit recurring';
+
+  @override
+  String get recurringDelete => 'Delete';
+
+  @override
+  String get recurringSave => 'Save';
+
+  @override
+  String get recurringEmptyTitle => 'No recurring yet';
+
+  @override
+  String get recurringEmptyBody =>
+      'Set rent, salary, or transfers once and Freeva posts them on schedule.';
+
+  @override
+  String get recurringLoadError => 'Couldn’t load recurring';
+
+  @override
+  String get recurringAmount => 'Amount';
+
+  @override
+  String get recurringWallet => 'Wallet';
+
+  @override
+  String get recurringCounterWallet => 'To wallet';
+
+  @override
+  String get recurringCategory => 'Category';
+
+  @override
+  String get recurringFrequency => 'Frequency';
+
+  @override
+  String get recurringInterval => 'Every';
+
+  @override
+  String recurringEvery(String count) {
+    return 'Every $count';
+  }
+
+  @override
+  String get recurringUnitDay => 'Daily';
+
+  @override
+  String get recurringUnitWeek => 'Weekly';
+
+  @override
+  String get recurringUnitMonth => 'Monthly';
+
+  @override
+  String get recurringUnitYear => 'Yearly';
+
+  @override
+  String get recurringStart => 'Start date (YYYY-MM-DD)';
+
+  @override
+  String get recurringNextLabel => 'Next run (YYYY-MM-DD)';
+
+  @override
+  String get recurringEnd => 'End date (optional)';
+
+  @override
+  String get recurringActive => 'Active';
+
+  @override
+  String recurringNext(String date) {
+    return 'Next $date';
+  }
+
+  @override
+  String get recurringTypeExpense => 'Expense';
+
+  @override
+  String get recurringTypeIncome => 'Income';
+
+  @override
+  String get recurringTypeTransfer => 'Transfer';
+
+  @override
   String get meBudget => 'Monthly budget';
+
+  @override
+  String get budgetTitle => 'Monthly budget';
+
+  @override
+  String get budgetSave => 'Save';
+
+  @override
+  String get budgetSaved => 'Budget saved';
+
+  @override
+  String get budgetCleared => 'Budget removed';
+
+  @override
+  String get budgetLoadError => 'Couldn’t load the budget';
+
+  @override
+  String get budgetOverallLimit => 'Monthly limit';
+
+  @override
+  String get budgetCategoryLimit => 'Category limit';
+
+  @override
+  String get budgetTapToSet => 'Tap to set';
+
+  @override
+  String get budgetCategoriesTitle => 'By category';
+
+  @override
+  String get budgetCategoriesHint =>
+      'Optional: set a limit for each expense category.';
+
+  @override
+  String get budgetAddCategory => 'Add category';
+
+  @override
+  String get budgetNoCategories => 'No expense categories left to add';
+
+  @override
+  String get budgetUnknownCategory => 'Category';
+
+  @override
+  String get budgetClearTitle => 'Remove budget?';
+
+  @override
+  String get budgetClearBody =>
+      'The spent bar on Home will hide until you set a budget again.';
+
+  @override
+  String get budgetClearAction => 'Remove budget';
+
+  @override
+  String get budgetSpentLabel => 'Spent';
+
+  @override
+  String get budgetRemainingLabel => 'Left';
+
+  @override
+  String budgetUsedPercent(String percent) {
+    return '$percent% used';
+  }
+
+  @override
+  String budgetLimitLine(String spent, String limit) {
+    return '$spent / $limit';
+  }
+
+  @override
+  String get budgetThresholdsTitle => 'Alert thresholds';
+
+  @override
+  String get budgetScopeDefault => 'Every month';
+
+  @override
+  String get budgetScopeMonth => 'This month';
+
+  @override
+  String get budgetScopeMonthHint =>
+      'Using the default limit. Saving creates an override for this month only.';
+
+  @override
+  String get budgetScopeMonthOverrideHint =>
+      'This month has its own limit, not the default.';
+
+  @override
+  String get budgetClearMonthTitle => 'Remove this month’s override?';
+
+  @override
+  String get budgetClearMonthBody =>
+      'This month will use the default limit again (if one is set).';
+
+  @override
+  String get budgetClearMonthAction => 'Remove month override';
+
+  @override
+  String get budgetMonthCleared => 'Month override removed';
+
+  @override
+  String get budgetStatusHealthy => 'On track';
+
+  @override
+  String get budgetStatusWarning => 'A bit fast';
+
+  @override
+  String get budgetStatusCritical => 'Almost out';
+
+  @override
+  String get budgetStatusOver => 'Over budget';
+
+  @override
+  String budgetHomeLine(String spent, String limit) {
+    return 'Spent $spent / $limit';
+  }
 
   @override
   String get meFiscal => 'Month starts on';
@@ -1996,12 +2140,6 @@ class SEn extends S {
 
   @override
   String get meFeedback => 'Send feedback';
-
-  @override
-  String get meTerms => 'Terms of service';
-
-  @override
-  String get mePrivacy => 'Privacy policy';
 
   @override
   String get meSoon => 'Coming soon';
@@ -2342,9 +2480,6 @@ class SEn extends S {
   String get notifySession => 'New device signed in';
 
   @override
-  String get notifySessionSub => 'So you can check it';
-
-  @override
   String get authOr => 'or';
 
   @override
@@ -2570,6 +2705,9 @@ class SEn extends S {
 
   @override
   String get signUpTermsPrefix => 'By continuing you agree to the ';
+
+  @override
+  String get signUpTermsLink => 'Terms';
 
   @override
   String get signUpTermsSuffix => '.';
@@ -2900,4 +3038,174 @@ class SEn extends S {
 
   @override
   String get syncDupDeleteNew => 'Delete the new one';
+
+  @override
+  String syncBannerOthersWaiting(Object count) {
+    return '$count other changes waiting to send';
+  }
+
+  @override
+  String syncLastToday(Object time) {
+    return 'Last synced $time today';
+  }
+
+  @override
+  String get syncSectionSending => 'SENDING';
+
+  @override
+  String get reportDonutTotalExpense => 'Total spent';
+
+  @override
+  String get reportDonutTotalIncome => 'Total income';
+
+  @override
+  String get reportBarGeneralSuffix => '(general)';
+
+  @override
+  String reportEmptyTitleMonth(Object month) {
+    return 'No data for month $month yet';
+  }
+
+  @override
+  String get meLegal => 'Terms and privacy';
+
+  @override
+  String meNotifyOnCount(Object count) {
+    return '$count on';
+  }
+
+  @override
+  String meGoalsCount(Object count) {
+    return '$count goals';
+  }
+
+  @override
+  String get meProfileEmailVerified => 'Email · verified';
+
+  @override
+  String get meProfileEmailUnverified => 'Email · not verified';
+
+  @override
+  String get meDeleteAccount => 'Delete account';
+
+  @override
+  String get meChangeAvatar => 'Change photo';
+
+  @override
+  String get meSecurityValueFaceId => 'PIN · Face ID';
+
+  @override
+  String get meSecFaceId => 'Unlock with Face ID';
+
+  @override
+  String get notifySessionSubAlways => 'Always on so you can check';
+
+  @override
+  String get faqRecordQ => 'How do I record an expense?';
+
+  @override
+  String get faqRecordA =>
+      'Tap + in the middle of the bottom bar, enter the amount, pick a category and save. Wallet and date reuse your last choice.';
+
+  @override
+  String get faqTransferQ => 'Moving money between two wallets?';
+
+  @override
+  String get faqTransferA =>
+      'Tap +, choose Transfer, pick the from and to wallets and enter the amount. Both balances update together.';
+
+  @override
+  String get faqDeletedQ => 'Deleted a transaction by mistake?';
+
+  @override
+  String get faqDeletedA =>
+      'Tap Undo right after deleting. Later you can still restore it from Deleted in Transactions.';
+
+  @override
+  String get faqMonthQ => 'What is a financial month?';
+
+  @override
+  String get faqMonthA =>
+      'It\'s the period your monthly totals cover. If you\'re paid on the 5th, set Month starts on day 5 in Me so the numbers match.';
+
+  @override
+  String get faqLockAppQ => 'Locking the app with PIN or Face ID';
+
+  @override
+  String get faqLockAppA =>
+      'Go to Me, Security to set a PIN. With a PIN you can turn on Face ID. Without a PIN the app doesn\'t lock.';
+
+  @override
+  String get faqSafeQ => 'Is my data safe?';
+
+  @override
+  String get faqSafeA =>
+      'Your data lives in your Freeva account, so changing phones doesn\'t lose it. Lock the app with a PIN so others can\'t see it.';
+
+  @override
+  String get homeOfflineHeading => 'You\'re offline';
+
+  @override
+  String homeOfflineDetail(Object time) {
+    return 'Figures as of $time. You can still record spending.';
+  }
+
+  @override
+  String get homeCreditUsedLabel => 'Used';
+
+  @override
+  String homeCreditLimit(Object limit) {
+    return 'Limit $limit';
+  }
+
+  @override
+  String homeOtherCurrencyMeta(Object currency, Object count) {
+    return '$currency · $count wallets';
+  }
+
+  @override
+  String get homeTotalBalanceLabel => 'Total balance';
+
+  @override
+  String authResetVerified(Object email) {
+    return 'Verified $email';
+  }
+
+  @override
+  String get currencyNameVnd => 'Vietnamese dong';
+
+  @override
+  String get currencyNameUsd => 'US dollar';
+
+  @override
+  String get currencyNameEur => 'Euro';
+
+  @override
+  String get currencyNameJpy => 'Japanese yen';
+
+  @override
+  String get currencyNameKrw => 'South Korean won';
+
+  @override
+  String get currencyNameCny => 'Chinese yuan';
+
+  @override
+  String get currencyNameSgd => 'Singapore dollar';
+
+  @override
+  String get currencyNameThb => 'Thai baht';
+
+  @override
+  String get currencyNameAud => 'Australian dollar';
+
+  @override
+  String get currencyNameGbp => 'British pound';
+
+  @override
+  String currencyCodeName(Object code, Object name) {
+    return '$code · $name';
+  }
+
+  @override
+  String get tagsViewTransactions => 'View transactions';
 }

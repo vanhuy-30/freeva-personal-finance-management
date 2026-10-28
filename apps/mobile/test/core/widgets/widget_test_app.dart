@@ -31,7 +31,6 @@ Future<void> loadTestFonts() async {
     'assets/fonts/Inter-Medium.ttf',
     'assets/fonts/Inter-SemiBold.ttf',
   ]);
-  await load('packages/lucide_icons_flutter/Lucide', [
-    'packages/lucide_icons_flutter/assets/lucide.ttf',
-  ]);
+  await load('Lucide175', ['assets/fonts/Lucide175.ttf']);
+  await load('MaterialIcons', ['fonts/MaterialIcons-Regular.otf']);
 }

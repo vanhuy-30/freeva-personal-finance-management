@@ -27,7 +27,7 @@ class CategoryBars extends StatelessWidget {
     final s = S.of(context);
     final c = context.colors;
     return FreevaCard(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
       child: Column(
         children: [
           for (final (i, bar) in detail.bars.indexed)
@@ -44,9 +44,19 @@ class CategoryBars extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: Text(
-                          bar.general ? s.reportBarGeneral(bar.name) : bar.name,
-                          style: FreevaTypography.body.copyWith(
+                        child: Text.rich(
+                          TextSpan(
+                            text: bar.name,
+                            children: [
+                              // "Ăn uống (chung)": the suffix in grey.
+                              if (bar.general)
+                                TextSpan(
+                                  text: ' ${s.reportBarGeneralSuffix}',
+                                  style: TextStyle(color: c.textSecondary),
+                                ),
+                            ],
+                          ),
+                          style: FreevaTypography.bodyM.copyWith(
                             color: c.textPrimary,
                           ),
                         ),
@@ -57,7 +67,9 @@ class CategoryBars extends StatelessWidget {
                         currency: currency,
                         minorDigits: digits,
                         showCurrency: false,
-                        style: FreevaTypography.titleM,
+                        style: FreevaTypography.bodyM.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ],
                   ),
@@ -68,6 +80,7 @@ class CategoryBars extends StatelessWidget {
                         : (bar.minor * BigInt.from(1000) ~/ detail.total)
                                   .toInt() /
                               1000,
+                    trackColor: c.borderDivider,
                     semanticsLabel: bar.name,
                   ),
                 ],

@@ -11,12 +11,17 @@ class AvatarLetter extends StatelessWidget {
     required this.name,
     required this.email,
     this.size = 56,
+    this.letterSize,
     super.key,
   });
 
   final String? name;
   final String? email;
   final double size;
+
+  /// Letter size from the boards (18 at 52, 34 at 96); null keeps 40% of
+  /// [size] in the headline style.
+  final double? letterSize;
 
   @override
   Widget build(BuildContext context) {
@@ -30,13 +35,19 @@ class AvatarLetter extends StatelessWidget {
         width: size,
         height: size,
         alignment: Alignment.center,
-        decoration: BoxDecoration(color: c.tintBlue, shape: BoxShape.circle),
+        decoration: BoxDecoration(color: c.bgAvatar, shape: BoxShape.circle),
         child: Text(
           letter,
-          style: FreevaTypography.headline.copyWith(
-            fontSize: size * .4,
-            color: c.tintBlueFg,
-          ),
+          style: letterSize == null
+              ? FreevaTypography.headline.copyWith(
+                  fontSize: size * .4,
+                  color: c.tintBlueFg,
+                )
+              : FreevaTypography.titleM.copyWith(
+                  fontSize: letterSize,
+                  height: 1,
+                  color: c.tintBlueFg,
+                ),
         ),
       ),
     );

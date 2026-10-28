@@ -57,6 +57,16 @@ export class PrismaAccountRepository implements AccountRepository {
     const categories = await tx.category.findMany({ where: { userId }, orderBy: order });
     const tags = await tx.tag.findMany({ where: { userId }, orderBy: order });
     const fxQuotes = await tx.fxQuote.findMany({ where: { userId }, orderBy: order });
+    const recurringRules = await tx.recurringRule.findMany({ where: { userId }, orderBy: order });
+    const budget = await tx.budget.findUnique({
+      where: { userId },
+      include: { categories: { orderBy: [{ categoryId: 'asc' as const }] } },
+    });
+    const budgetMonths = await tx.budgetMonth.findMany({
+      where: { userId },
+      orderBy: [{ periodFrom: 'asc' }, { id: 'asc' }],
+      include: { categories: { orderBy: [{ categoryId: 'asc' as const }] } },
+    });
     const transactions = await tx.transaction.findMany({
       where: { userId }, orderBy: order, include: { tags: { select: { tagId: true } } },
     });
@@ -73,12 +83,50 @@ export class PrismaAccountRepository implements AccountRepository {
       categories,
       tags,
       fxQuotes: fxQuotes.map(row => ({ ...row, rate: rateText(row.rate) })),
+      recurringRules: recurringRules.map(row => ({
+        ...row,
+        currencyCode: row.currencyCode,
+        counterCurrencyCode: row.counterCurrencyCode,
+        fxRate: row.fxRate ? rateText(row.fxRate) : null,
+      })),
+      budget: budget === null ? null : {
+        id: budget.id,
+        currencyCode: budget.currencyCode,
+        limitMinor: budget.limitMinor,
+        alertThresholds: budget.alertThresholds,
+        version: budget.version,
+        createdAt: budget.createdAt,
+        updatedAt: budget.updatedAt,
+        categories: budget.categories.map(line => ({
+          categoryId: line.categoryId,
+          limitMinor: line.limitMinor,
+        })),
+      },
+      budgetMonths: budgetMonths.map(row => ({
+        id: row.id,
+        currencyCode: row.currencyCode,
+        limitMinor: row.limitMinor,
+        alertThresholds: row.alertThresholds,
+        version: row.version,
+        periodFrom: row.periodFrom,
+        periodTo: row.periodTo,
+        createdAt: row.createdAt,
+        updatedAt: row.updatedAt,
+        categories: row.categories.map(line => ({
+          categoryId: line.categoryId,
+          limitMinor: line.limitMinor,
+        })),
+      })),
       transactions: transactions.map(row => ({ ...row, tagIds: row.tags.map(tag => tag.tagId) })),
     });
   }
 
   private async removeAccount(tx: Prisma.TransactionClient, userId: string): Promise<boolean> {
     if (!(await lockUser(tx, userId))) return false;
+    await tx.recurringOccurrence.deleteMany({ where: { rule: { userId } } });
+    await tx.recurringRule.deleteMany({ where: { userId } });
+    await tx.budgetMonth.deleteMany({ where: { userId } });
+    await tx.budget.deleteMany({ where: { userId } });
     await tx.transactionTag.deleteMany({ where: { transaction: { userId } } });
     await tx.transaction.deleteMany({ where: { userId } });
     await tx.category.updateMany({ where: { userId }, data: { parentId: null, groupId: null } });

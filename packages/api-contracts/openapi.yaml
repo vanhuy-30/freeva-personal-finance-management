@@ -663,6 +663,385 @@ paths:
       description: Removes TransactionTag links for the owner, increments version/updatedAt on every linked
         transaction including soft-deleted ones, then deletes the tag. Version overflow on a linked transaction
         rolls back. Missing or foreign id returns 404.
+  /api/v1/recurring-transactions:
+    post:
+      operationId: createRecurringTransaction
+      summary: Create a recurring income, expense, or transfer rule
+      tags:
+      - RecurringTransactions
+      security:
+      - UserBearer: []
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Must equal body.clientId (case-insensitive).
+      responses:
+        '201':
+          description: Created
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringRule'
+        '200':
+          description: Matching clientId replay
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringRule'
+        '400':
+          $ref: '#/components/responses/RecurringValidationError'
+        '401':
+          $ref: '#/components/responses/RecurringUnauthorized'
+        '404':
+          $ref: '#/components/responses/RecurringNotFound'
+        '409':
+          $ref: '#/components/responses/RecurringConflict'
+        '503':
+          $ref: '#/components/responses/RecurringUnavailable'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRecurringRequest'
+      description: Amounts are signed integer minor-unit strings. Monthly/yearly dates clamp to the last day of
+        shorter months. Transfers require a counter account and balanced amounts (or fxRate for cross-currency).
+    get:
+      operationId: listRecurringTransactions
+      summary: List own recurring rules
+      tags:
+      - RecurringTransactions
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Page ordered by nextExecutionDate, then createdAt, then id
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringRuleList'
+        '400':
+          $ref: '#/components/responses/RecurringValidationError'
+        '401':
+          $ref: '#/components/responses/RecurringUnauthorized'
+        '503':
+          $ref: '#/components/responses/RecurringUnavailable'
+      parameters:
+      - in: query
+        name: page
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+          default: 1
+      - in: query
+        name: pageSize
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 50
+      - in: query
+        name: active
+        required: false
+        schema:
+          type: boolean
+  /api/v1/recurring-transactions/run:
+    post:
+      operationId: runRecurringTransactions
+      summary: Post due occurrences for the session user
+      tags:
+      - RecurringTransactions
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Counts of newly created and skipped (blocked) occurrences
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringRunResult'
+        '401':
+          $ref: '#/components/responses/RecurringUnauthorized'
+        '503':
+          $ref: '#/components/responses/RecurringUnavailable'
+      description: Uses the profile timezone calendar day. Each due day creates at most one transaction bundle
+        via deterministic clientIds; retries and sync replays stay idempotent. Inactive rules are skipped.
+        At most 36 catch-up posts per rule per call.
+  /api/v1/recurring-transactions/{id}:
+    get:
+      operationId: getRecurringTransaction
+      summary: Get an own recurring rule
+      tags:
+      - RecurringTransactions
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Rule
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringRule'
+        '401':
+          $ref: '#/components/responses/RecurringUnauthorized'
+        '404':
+          $ref: '#/components/responses/RecurringNotFound'
+        '503':
+          $ref: '#/components/responses/RecurringUnavailable'
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+    patch:
+      operationId: updateRecurringTransaction
+      summary: Update an own recurring rule
+      tags:
+      - RecurringTransactions
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Updated
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringRule'
+        '400':
+          $ref: '#/components/responses/RecurringValidationError'
+        '401':
+          $ref: '#/components/responses/RecurringUnauthorized'
+        '404':
+          $ref: '#/components/responses/RecurringNotFound'
+        '409':
+          $ref: '#/components/responses/RecurringConflict'
+        '503':
+          $ref: '#/components/responses/RecurringUnavailable'
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRecurringRequest'
+      description: Does not rewrite transactions already posted from the rule. Type and clientId are immutable.
+    delete:
+      operationId: deleteRecurringTransaction
+      summary: Delete an own recurring rule
+      tags:
+      - RecurringTransactions
+      security:
+      - UserBearer: []
+      responses:
+        '204':
+          description: Deleted
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+        '401':
+          $ref: '#/components/responses/RecurringUnauthorized'
+        '404':
+          $ref: '#/components/responses/RecurringNotFound'
+        '409':
+          $ref: '#/components/responses/RecurringConflict'
+        '503':
+          $ref: '#/components/responses/RecurringUnavailable'
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: version
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483646
+      description: Posted transactions keep their rows; recurringRuleId is set null.
+  /api/v1/budgets/current:
+    get:
+      operationId: getCurrentBudget
+      summary: Current monthly budget with spend against the fiscal month
+      tags:
+      - Budgets
+      security:
+      - UserBearer: []
+      parameters:
+      - in: query
+        name: on
+        required: false
+        schema:
+          type: string
+          format: date
+        description: Calendar day in the profile timezone anchoring the fiscal month. Defaults to today.
+      - in: query
+        name: applyTo
+        required: false
+        schema:
+          type: string
+          enum: [default, month]
+        description: When `default`, return the template only (ignore month overrides).
+          Omit (or `month`) for the effective budget of the fiscal month.
+      responses:
+        '200':
+          description: Budget summary, or budget null when none is set
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BudgetCurrentResponse'
+        '400':
+          $ref: '#/components/responses/BudgetValidationError'
+        '401':
+          $ref: '#/components/responses/BudgetUnauthorized'
+        '503':
+          $ref: '#/components/responses/BudgetUnavailable'
+      description: Spent counts only non-deleted expense transactions in the budget currency
+        within the fiscal month. Income and transfers are excluded. Category lines include
+        descendant spend. Amounts are integer minor-unit strings. When `applyTo` is omitted
+        or `month` and a month override exists for the fiscal month of `on`, it is returned
+        (`isOverride=true`); otherwise the default template is used if present. `applyTo=default`
+        always returns the template so clients can edit every-month limits.
+    put:
+      operationId: putCurrentBudget
+      summary: Create or replace the default template or a month override
+      tags:
+      - Budgets
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Saved budget with spend for the relevant fiscal month
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BudgetSummary'
+        '400':
+          $ref: '#/components/responses/BudgetValidationError'
+        '401':
+          $ref: '#/components/responses/BudgetUnauthorized'
+        '409':
+          $ref: '#/components/responses/BudgetConflict'
+        '503':
+          $ref: '#/components/responses/BudgetUnavailable'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutBudgetRequest'
+      description: Currency is always the profile default currency. `applyTo=default`
+        (omit for the same) updates the template for every month without an override.
+        `applyTo=month` requires `on` and upserts an override for that fiscal month only.
+        Updating requires the current version of that row. Creating must omit version.
+        Category lines replace the whole set. Categories must be expense or both and not
+        archived. Alert thresholds default to 70, 80, 90, 100 when omitted.
+    delete:
+      operationId: deleteCurrentBudget
+      summary: Remove the default template or a month override
+      tags:
+      - Budgets
+      security:
+      - UserBearer: []
+      parameters:
+      - in: query
+        name: applyTo
+        required: false
+        schema:
+          type: string
+          enum: [default, month]
+          default: default
+        description: default removes the template; month removes the override for `on`.
+      - in: query
+        name: on
+        required: false
+        schema:
+          type: string
+          format: date
+        description: Required when applyTo=month. Anchors the fiscal month to delete.
+      - in: query
+        name: version
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483646
+        description: When set, must match the stored version.
+      responses:
+        '204':
+          description: Deleted
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+        '401':
+          $ref: '#/components/responses/BudgetUnauthorized'
+        '404':
+          $ref: '#/components/responses/BudgetNotFound'
+        '409':
+          $ref: '#/components/responses/BudgetConflict'
+        '503':
+          $ref: '#/components/responses/BudgetUnavailable'
   /api/v1/transactions:
     post:
       operationId: createTransaction
@@ -2676,6 +3055,116 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorEnvelope'
+    RecurringValidationError:
+      description: VALIDATION_ERROR
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    RecurringUnauthorized:
+      description: SESSION_INVALID
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    RecurringNotFound:
+      description: 'RECURRING_NOT_FOUND: missing or owned by another user'
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    RecurringConflict:
+      description: 'RECURRING_CONFLICT: stale version, clientId replay mismatch, or archived wallet'
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    RecurringUnavailable:
+      description: RECURRING_UNAVAILABLE or authentication unavailable
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    BudgetValidationError:
+      description: VALIDATION_ERROR
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    BudgetUnauthorized:
+      description: SESSION_INVALID
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    BudgetNotFound:
+      description: BUDGET_NOT_FOUND
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    BudgetConflict:
+      description: BUDGET_CONFLICT stale version
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    BudgetUnavailable:
+      description: BUDGET_UNAVAILABLE or authentication unavailable
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
     FinancialAccountValidationError:
       description: VALIDATION_ERROR
       headers:
@@ -3191,6 +3680,395 @@ components:
           type: integer
         total:
           type: integer
+    BudgetStatus:
+      type: string
+      enum: [healthy, warning, critical, over]
+      description: healthy <70%, warning 70–90%, critical >90% up to 100%, over >100%.
+    BudgetCategoryProgress:
+      type: object
+      additionalProperties: false
+      required: [categoryId, limitMinor, spentMinor, remainingMinor, percentBps, status]
+      properties:
+        categoryId:
+          type: string
+          format: uuid
+        limitMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        spentMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        remainingMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        percentBps:
+          type: integer
+          description: spent * 10000 / limit (7000 = 70.00%).
+        status:
+          $ref: '#/components/schemas/BudgetStatus'
+    BudgetSummary:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - currencyCode
+      - limitMinor
+      - spentMinor
+      - remainingMinor
+      - percentBps
+      - status
+      - alertThresholds
+      - crossedThresholds
+      - categories
+      - period
+      - applyTo
+      - isOverride
+      - version
+      - createdAt
+      - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        limitMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        spentMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        remainingMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        percentBps:
+          type: integer
+          description: spent * 10000 / limit (7000 = 70.00%).
+        status:
+          $ref: '#/components/schemas/BudgetStatus'
+        alertThresholds:
+          type: array
+          minItems: 1
+          maxItems: 4
+          items:
+            type: integer
+            minimum: 1
+            maximum: 100
+        crossedThresholds:
+          type: array
+          items:
+            type: integer
+            minimum: 1
+            maximum: 100
+          description: Alert thresholds already reached for overall spend.
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/BudgetCategoryProgress'
+        period:
+          $ref: '#/components/schemas/CashflowPeriod'
+        applyTo:
+          type: string
+          enum: [default, month]
+          description: default = template row; month = override for this fiscal month.
+        isOverride:
+          type: boolean
+          description: True when the effective limits come from a month override.
+        version:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    BudgetCurrentResponse:
+      type: object
+      additionalProperties: false
+      required: [budget, period]
+      properties:
+        budget:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/BudgetSummary'
+        period:
+          $ref: '#/components/schemas/CashflowPeriod'
+    PutBudgetRequest:
+      type: object
+      additionalProperties: false
+      required: [limitMinor]
+      properties:
+        limitMinor:
+          type: string
+          pattern: ^[1-9][0-9]*$
+          maxLength: 20
+          description: Positive integer minor units of the profile default currency.
+        alertThresholds:
+          type: array
+          minItems: 1
+          maxItems: 4
+          items:
+            type: integer
+            minimum: 1
+            maximum: 100
+          description: Strictly increasing. Defaults to 70, 80, 90, 100.
+        categories:
+          type: array
+          maxItems: 100
+          items:
+            type: object
+            additionalProperties: false
+            required: [categoryId, limitMinor]
+            properties:
+              categoryId:
+                type: string
+                format: uuid
+              limitMinor:
+                type: string
+                pattern: ^[1-9][0-9]*$
+                maxLength: 20
+        applyTo:
+          type: string
+          enum: [default, month]
+          default: default
+        on:
+          type: string
+          format: date
+          description: Required when applyTo=month. Anchors the fiscal month.
+        version:
+          type: integer
+          minimum: 1
+          maximum: 2147483646
+          description: Required when updating an existing row; omit when creating.
+    RecurringRule:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - clientId
+      - type
+      - unit
+      - interval
+      - amountMinor
+      - currencyCode
+      - accountId
+      - categoryId
+      - counterAccountId
+      - counterAmountMinor
+      - counterCurrencyCode
+      - fxRate
+      - startDate
+      - endDate
+      - nextExecutionDate
+      - active
+      - version
+      - createdAt
+      - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        clientId:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [income, expense, transfer]
+        unit:
+          type: string
+          enum: [day, week, month, year]
+        interval:
+          type: integer
+          minimum: 1
+          maximum: 366
+        amountMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        accountId:
+          type: string
+          format: uuid
+        categoryId:
+          type: [string, 'null']
+          format: uuid
+        counterAccountId:
+          type: [string, 'null']
+          format: uuid
+        counterAmountMinor:
+          oneOf:
+          - $ref: '#/components/schemas/ReportMoney'
+          - type: 'null'
+        counterCurrencyCode:
+          type: [string, 'null']
+          pattern: ^[A-Z]{3}$
+        fxRate:
+          type: [string, 'null']
+          pattern: ^\d{1,10}(?:\.\d{1,8})?$
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: [string, 'null']
+          format: date
+        nextExecutionDate:
+          type: string
+          format: date
+        active:
+          type: boolean
+        version:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    CreateRecurringRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - clientId
+      - type
+      - unit
+      - interval
+      - amountMinor
+      - currencyCode
+      - accountId
+      - startDate
+      - nextExecutionDate
+      properties:
+        clientId:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [income, expense, transfer]
+        unit:
+          type: string
+          enum: [day, week, month, year]
+        interval:
+          type: integer
+          minimum: 1
+          maximum: 366
+        amountMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        accountId:
+          type: string
+          format: uuid
+        categoryId:
+          type: [string, 'null']
+          format: uuid
+        counterAccountId:
+          type: [string, 'null']
+          format: uuid
+        counterAmountMinor:
+          oneOf:
+          - $ref: '#/components/schemas/ReportMoney'
+          - type: 'null'
+        counterCurrencyCode:
+          type: [string, 'null']
+          pattern: ^[A-Z]{3}$
+        fxRate:
+          type: [string, 'null']
+          pattern: ^\d{1,10}(?:\.\d{1,8})?$
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: [string, 'null']
+          format: date
+        nextExecutionDate:
+          type: string
+          format: date
+        active:
+          type: boolean
+          default: true
+    UpdateRecurringRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - version
+      properties:
+        version:
+          type: integer
+          minimum: 1
+          maximum: 2147483646
+        unit:
+          type: string
+          enum: [day, week, month, year]
+        interval:
+          type: integer
+          minimum: 1
+          maximum: 366
+        amountMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        accountId:
+          type: string
+          format: uuid
+        categoryId:
+          type: [string, 'null']
+          format: uuid
+        counterAccountId:
+          type: [string, 'null']
+          format: uuid
+        counterAmountMinor:
+          oneOf:
+          - $ref: '#/components/schemas/ReportMoney'
+          - type: 'null'
+        counterCurrencyCode:
+          type: [string, 'null']
+          pattern: ^[A-Z]{3}$
+        fxRate:
+          type: [string, 'null']
+          pattern: ^\d{1,10}(?:\.\d{1,8})?$
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: [string, 'null']
+          format: date
+        nextExecutionDate:
+          type: string
+          format: date
+        active:
+          type: boolean
+    RecurringRuleList:
+      type: object
+      required:
+      - items
+      - page
+      - pageSize
+      - total
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecurringRule'
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        total:
+          type: integer
+    RecurringRunResult:
+      type: object
+      additionalProperties: false
+      required:
+      - created
+      - skipped
+      properties:
+        created:
+          type: integer
+          minimum: 0
+        skipped:
+          type: integer
+          minimum: 0
     TransactionLegInput:
       type: object
       additionalProperties: false
@@ -4037,6 +4915,12 @@ components:
           type: integer
           minimum: 1
           maximum: 2147483646
+        goals:
+          type: array
+          readOnly: true
+          items:
+            type: string
+          description: Onboarding goals saved via PATCH /profile/onboarding. Returned on GET and PUT; not accepted on PUT.
     OnboardingAnswers:
       type: object
       additionalProperties: false
@@ -4525,6 +5409,9 @@ components:
       - categories
       - tags
       - fxQuotes
+      - recurringRules
+      - budget
+      - budgetMonths
       - transactions
       properties:
         schemaVersion:
@@ -4565,6 +5452,18 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AccountExportFxQuote'
+        recurringRules:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountExportRecurringRule'
+        budget:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/AccountExportBudget'
+        budgetMonths:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountExportBudgetMonth'
         transactions:
           type: array
           items:
@@ -4753,10 +5652,127 @@ components:
         updatedAt:
           type: string
           format: date-time
+    AccountExportRecurringRule:
+      type: object
+      additionalProperties: false
+      required: [id, clientId, type, unit, interval, amountMinor, currencyCode, accountId, categoryId, counterAccountId, counterAmountMinor, counterCurrencyCode, fxRate, startDate, endDate, nextExecutionDate, active, version, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        clientId:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [income, expense, transfer]
+        unit:
+          type: string
+          enum: [day, week, month, year]
+        interval:
+          type: integer
+          minimum: 1
+          maximum: 366
+        amountMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        accountId:
+          type: string
+          format: uuid
+        categoryId:
+          type: [string, 'null']
+          format: uuid
+        counterAccountId:
+          type: [string, 'null']
+          format: uuid
+        counterAmountMinor:
+          oneOf:
+          - $ref: '#/components/schemas/ReportMoney'
+          - type: 'null'
+        counterCurrencyCode:
+          type: [string, 'null']
+          pattern: ^[A-Z]{3}$
+        fxRate:
+          type: [string, 'null']
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: [string, 'null']
+          format: date
+        nextExecutionDate:
+          type: string
+          format: date
+        active:
+          type: boolean
+        version:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    AccountExportBudget:
+      type: object
+      additionalProperties: false
+      required: [id, currencyCode, limitMinor, alertThresholds, version, categories, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        limitMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        alertThresholds:
+          type: array
+          minItems: 1
+          maxItems: 4
+          items:
+            type: integer
+            minimum: 1
+            maximum: 100
+        version:
+          type: integer
+        categories:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [categoryId, limitMinor]
+            properties:
+              categoryId:
+                type: string
+                format: uuid
+              limitMinor:
+                $ref: '#/components/schemas/ReportMoney'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    AccountExportBudgetMonth:
+      allOf:
+      - $ref: '#/components/schemas/AccountExportBudget'
+      - type: object
+        additionalProperties: false
+        required: [periodFrom, periodTo]
+        properties:
+          periodFrom:
+            type: string
+            format: date
+          periodTo:
+            type: string
+            format: date
     AccountExportTransaction:
       type: object
       additionalProperties: false
-      required: [id, clientId, type, amountMinor, currencyCode, occurredOn, accountId, categoryId, transferGroupId, fxQuoteId, notes, merchant, deletedAt, tagIds, version, createdAt, updatedAt]
+      required: [id, clientId, type, amountMinor, currencyCode, occurredOn, accountId, categoryId, transferGroupId, fxQuoteId, recurringRuleId, notes, merchant, deletedAt, tagIds, version, createdAt, updatedAt]
       properties:
         id:
           type: string
@@ -4785,6 +5801,9 @@ components:
           type: [string, 'null']
           format: uuid
         fxQuoteId:
+          type: [string, 'null']
+          format: uuid
+        recurringRuleId:
           type: [string, 'null']
           format: uuid
         notes:

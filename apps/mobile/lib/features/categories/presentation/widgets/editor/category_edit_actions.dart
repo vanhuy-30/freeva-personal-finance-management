@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../../core/theme/theme_context.dart';
@@ -40,14 +40,14 @@ class CategoryEditActions extends StatelessWidget {
           children: [
             TextButton.icon(
               onPressed: onHide,
-              icon: const Icon(LucideIcons.eyeOff, size: 18),
+              icon: const Icon(LucideIcons.archive, size: FreevaSize.iconSm),
               label: Text(s.categoryHideShort),
               style: style(c.textOnWash),
             ),
             const SizedBox(width: FreevaSpace.s2),
             TextButton.icon(
               onPressed: onDelete,
-              icon: const Icon(LucideIcons.trash2, size: 18),
+              icon: const Icon(LucideIcons.trash, size: FreevaSize.iconSm),
               label: Text(s.categoryDeleteShort),
               style: style(c.actionDanger),
             ),

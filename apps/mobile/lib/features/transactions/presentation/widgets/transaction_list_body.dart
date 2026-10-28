@@ -63,11 +63,16 @@ class TransactionListBody extends StatelessWidget {
         onRetry: model.load,
       );
     } else if (rows.isEmpty && (filter.narrowed || filter.type != null)) {
-      content = EmptyState(
-        title: s.txNoResultTitle,
-        message: s.txNoResultBody,
-        actionLabel: s.txNoResultClear,
-        onAction: () => model.setFilter(filter.cleared(filter.period)),
+      // Board: illustration 96 below the 16 gap under the chips
+      // (EmptyState adds 24 itself).
+      content = Padding(
+        padding: const EdgeInsets.only(top: 72),
+        child: EmptyState(
+          title: s.txNoResultTitle,
+          message: s.txNoResultBody,
+          actionLabel: s.txNoResultClear,
+          onAction: () => model.setFilter(filter.cleared(filter.period)),
+        ),
       );
     } else if (rows.isEmpty) {
       content = EmptyState(
