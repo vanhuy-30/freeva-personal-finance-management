@@ -22,6 +22,8 @@ export interface AccountExport {
   tags: AccountExportTag[];
   fxQuotes: AccountExportQuote[];
   recurringRules: AccountExportRecurringRule[];
+  budget: AccountExportBudget | null;
+  budgetMonths: AccountExportBudgetMonth[];
   transactions: AccountExportTransaction[];
 }
 
@@ -99,6 +101,27 @@ export interface AccountExportRecurringRule extends Omit<SyncRow, 'createdAt' | 
   updatedAt: string;
 }
 
+export interface AccountExportBudgetCategory {
+  categoryId: string;
+  limitMinor: string;
+}
+
+export interface AccountExportBudget {
+  id: string;
+  currencyCode: string;
+  limitMinor: string;
+  alertThresholds: number[];
+  version: number;
+  categories: AccountExportBudgetCategory[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AccountExportBudgetMonth extends AccountExportBudget {
+  periodFrom: string;
+  periodTo: string;
+}
+
 export interface AccountExportTransaction extends Omit<SyncRow, 'createdAt' | 'updatedAt'> {
   type: 'income' | 'expense' | 'transfer';
   amountMinor: string;
@@ -172,6 +195,28 @@ export interface ExportSource {
     createdAt: Date;
     updatedAt: Date;
   }>;
+  budget: null | {
+    id: string;
+    currencyCode: string;
+    limitMinor: bigint;
+    alertThresholds: number[];
+    version: number;
+    createdAt: Date;
+    updatedAt: Date;
+    categories: Array<{ categoryId: string; limitMinor: bigint }>;
+  };
+  budgetMonths: Array<{
+    id: string;
+    currencyCode: string;
+    limitMinor: bigint;
+    alertThresholds: number[];
+    version: number;
+    periodFrom: Date;
+    periodTo: Date;
+    createdAt: Date;
+    updatedAt: Date;
+    categories: Array<{ categoryId: string; limitMinor: bigint }>;
+  }>;
   transactions: Array<Omit<AccountExportTransaction, 'amountMinor' | 'occurredOn' | 'deletedAt' | 'createdAt' | 'updatedAt' | 'currencyCode'> & {
     currencyCode: string;
     amountMinor: bigint;
@@ -235,6 +280,32 @@ export function toAccountExport(source: ExportSource): AccountExport {
       counterCurrencyCode: row.counterCurrencyCode ? code(row.counterCurrencyCode) : null,
       fxRate: row.fxRate, startDate: day(row.startDate), endDate: row.endDate ? day(row.endDate) : null,
       nextExecutionDate: day(row.nextExecutionDate), active: row.active, version: row.version, ...stamps(row),
+    })),
+    budget: source.budget === null ? null : {
+      id: source.budget.id,
+      currencyCode: code(source.budget.currencyCode),
+      limitMinor: source.budget.limitMinor.toString(),
+      alertThresholds: [...source.budget.alertThresholds],
+      version: source.budget.version,
+      categories: source.budget.categories.map(line => ({
+        categoryId: line.categoryId,
+        limitMinor: line.limitMinor.toString(),
+      })),
+      ...stamps(source.budget),
+    },
+    budgetMonths: source.budgetMonths.map(row => ({
+      id: row.id,
+      currencyCode: code(row.currencyCode),
+      limitMinor: row.limitMinor.toString(),
+      alertThresholds: [...row.alertThresholds],
+      version: row.version,
+      periodFrom: day(row.periodFrom),
+      periodTo: day(row.periodTo),
+      categories: row.categories.map(line => ({
+        categoryId: line.categoryId,
+        limitMinor: line.limitMinor.toString(),
+      })),
+      ...stamps(row),
     })),
     transactions: source.transactions.map(row => ({
       id: row.id, clientId: row.clientId, type: row.type, amountMinor: row.amountMinor.toString(),

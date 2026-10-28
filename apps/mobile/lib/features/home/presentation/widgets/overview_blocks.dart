@@ -68,6 +68,7 @@ class OverviewBlocks extends StatelessWidget {
           monthLabel: _monthLabel(context, data.month.period.from),
           otherCurrencies: otherCurrencySpending(data.month, main),
           digitsOf: digits,
+          budget: data.budget,
         ),
         gap,
         if (previous != null && !monthFlow(previous, main).isEmpty) ...[

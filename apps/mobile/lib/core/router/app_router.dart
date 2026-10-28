@@ -22,6 +22,7 @@ import '../../features/feedback/presentation/pages/feedback_page.dart';
 import '../../features/settings/presentation/pages/legal_page.dart';
 import '../../features/settings/presentation/pages/change_password_page.dart';
 import '../../features/tags/presentation/pages/tag_page.dart';
+import '../../features/budgets/presentation/pages/budget_page.dart';
 import '../../features/recurring/presentation/pages/recurring_page.dart';
 import '../../features/recurring/presentation/pages/recurring_editor_page.dart';
 import '../../features/settings/presentation/pages/change_pin_page.dart';
@@ -268,6 +269,12 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
       GoRoute(
         path: '/me/tags',
         builder: (context, state) => const AuthGate(child: TagPage()),
+      ),
+      GoRoute(
+        path: '/budgets',
+        builder: (context, state) => AuthGate(
+          child: BudgetPage(on: state.uri.queryParameters['on']),
+        ),
       ),
       GoRoute(
         path: '/me/recurring',

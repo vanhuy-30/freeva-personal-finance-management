@@ -1979,6 +1979,119 @@ class SEn extends S {
   String get meBudget => 'Monthly budget';
 
   @override
+  String get budgetTitle => 'Monthly budget';
+
+  @override
+  String get budgetSave => 'Save';
+
+  @override
+  String get budgetSaved => 'Budget saved';
+
+  @override
+  String get budgetCleared => 'Budget removed';
+
+  @override
+  String get budgetLoadError => 'Couldn’t load the budget';
+
+  @override
+  String get budgetOverallLimit => 'Monthly limit';
+
+  @override
+  String get budgetCategoryLimit => 'Category limit';
+
+  @override
+  String get budgetTapToSet => 'Tap to set';
+
+  @override
+  String get budgetCategoriesTitle => 'By category';
+
+  @override
+  String get budgetCategoriesHint =>
+      'Optional: set a limit for each expense category.';
+
+  @override
+  String get budgetAddCategory => 'Add category';
+
+  @override
+  String get budgetNoCategories => 'No expense categories left to add';
+
+  @override
+  String get budgetUnknownCategory => 'Category';
+
+  @override
+  String get budgetClearTitle => 'Remove budget?';
+
+  @override
+  String get budgetClearBody =>
+      'The spent bar on Home will hide until you set a budget again.';
+
+  @override
+  String get budgetClearAction => 'Remove budget';
+
+  @override
+  String get budgetSpentLabel => 'Spent';
+
+  @override
+  String get budgetRemainingLabel => 'Left';
+
+  @override
+  String budgetUsedPercent(String percent) {
+    return '$percent% used';
+  }
+
+  @override
+  String budgetLimitLine(String spent, String limit) {
+    return '$spent / $limit';
+  }
+
+  @override
+  String get budgetThresholdsTitle => 'Alert thresholds';
+
+  @override
+  String get budgetScopeDefault => 'Every month';
+
+  @override
+  String get budgetScopeMonth => 'This month';
+
+  @override
+  String get budgetScopeMonthHint =>
+      'Using the default limit. Saving creates an override for this month only.';
+
+  @override
+  String get budgetScopeMonthOverrideHint =>
+      'This month has its own limit, not the default.';
+
+  @override
+  String get budgetClearMonthTitle => 'Remove this month’s override?';
+
+  @override
+  String get budgetClearMonthBody =>
+      'This month will use the default limit again (if one is set).';
+
+  @override
+  String get budgetClearMonthAction => 'Remove month override';
+
+  @override
+  String get budgetMonthCleared => 'Month override removed';
+
+  @override
+  String get budgetStatusHealthy => 'On track';
+
+  @override
+  String get budgetStatusWarning => 'A bit fast';
+
+  @override
+  String get budgetStatusCritical => 'Almost out';
+
+  @override
+  String get budgetStatusOver => 'Over budget';
+
+  @override
+  String budgetHomeLine(String spent, String limit) {
+    return 'Spent $spent / $limit';
+  }
+
+  @override
   String get meFiscal => 'Month starts on';
 
   @override

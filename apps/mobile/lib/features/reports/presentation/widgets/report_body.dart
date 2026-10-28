@@ -88,7 +88,11 @@ class ReportBody extends StatelessWidget {
       ),
       if (period.kind == ReportPeriodKind.month) ...[
         gap,
-        const ReportBudgetRow(),
+        ReportBudgetRow(
+          period: period,
+          currency: code,
+          minorDigits: digits,
+        ),
       ],
       gap,
       ReportTrendCard(model: model, currency: code, digits: digits),

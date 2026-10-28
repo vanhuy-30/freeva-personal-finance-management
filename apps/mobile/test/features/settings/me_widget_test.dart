@@ -135,7 +135,7 @@ void main() {
       tall(tester);
       await tester.pumpWidget(g.app(const SettingsPage()));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Ngân sách tháng'));
+      await tester.tap(find.text('Mục tiêu'));
       await tester.pump();
       expect(find.text('Sắp có'), findsOneWidget);
     });

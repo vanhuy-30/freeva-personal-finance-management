@@ -46,7 +46,7 @@ Canvas: trang **05 · Patterns**, hàng F
 
 | Việc | Ghi chú |
 |---|---|
-| Ngân sách | `BE-P2-E02` / `MOB-P2-E02`. Chưa có ngân sách thì thay khối bằng một dòng "Đặt ngân sách tháng" (mở form ngân sách). |
+| Ngân sách | `BE-P2-E02` / `MOB-P2-E02`: thẻ tiến độ hoặc dòng "Đặt ngân sách tháng" mở `/budgets`. |
 | Xu hướng | Cần API chuỗi số chi theo tuần/tháng/năm (một lần gọi), không gọi lặp từng kỳ. |
 | Kỳ Năm | API hiện có tuần, tháng, khoảng; thêm `year` hoặc dùng khoảng 01/01–31/12 theo múi giờ hồ sơ. |
 | So với kỳ trước | Gọi thêm kỳ trước, hoặc API trả sẵn. |

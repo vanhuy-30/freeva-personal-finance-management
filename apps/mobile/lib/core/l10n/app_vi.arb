@@ -603,6 +603,67 @@
   "recurringTypeIncome": "Thu",
   "recurringTypeTransfer": "Chuyển",
   "meBudget": "Ngân sách tháng",
+  "budgetTitle": "Ngân sách tháng",
+  "budgetSave": "Lưu",
+  "budgetSaved": "Đã lưu ngân sách",
+  "budgetCleared": "Đã xoá ngân sách",
+  "budgetLoadError": "Chưa tải được ngân sách",
+  "budgetOverallLimit": "Hạn mức tháng",
+  "budgetCategoryLimit": "Hạn mức danh mục",
+  "budgetTapToSet": "Chạm để đặt",
+  "budgetCategoriesTitle": "Theo danh mục",
+  "budgetCategoriesHint": "Tuỳ chọn: đặt hạn mức cho từng danh mục chi.",
+  "budgetAddCategory": "Thêm danh mục",
+  "budgetNoCategories": "Không còn danh mục chi để thêm",
+  "budgetUnknownCategory": "Danh mục",
+  "budgetClearTitle": "Xoá ngân sách?",
+  "budgetClearBody": "Thanh đã chi trên Tổng quan sẽ ẩn đi đến khi bạn đặt lại.",
+  "budgetClearAction": "Xoá ngân sách",
+  "budgetSpentLabel": "Đã chi",
+  "budgetRemainingLabel": "Còn lại",
+  "budgetUsedPercent": "Đã dùng {percent}%",
+  "@budgetUsedPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetLimitLine": "{spent} / {limit}",
+  "@budgetLimitLine": {
+    "placeholders": {
+      "spent": {
+        "type": "String"
+      },
+      "limit": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetThresholdsTitle": "Ngưỡng cảnh báo",
+  "budgetScopeDefault": "Mọi tháng",
+  "budgetScopeMonth": "Tháng này",
+  "budgetScopeMonthHint": "Đang dùng hạn mức mặc định. Lưu sẽ tạo chỉnh riêng cho tháng này.",
+  "budgetScopeMonthOverrideHint": "Tháng này có hạn mức riêng, không theo mặc định.",
+  "budgetClearMonthTitle": "Bỏ chỉnh tháng này?",
+  "budgetClearMonthBody": "Tháng này sẽ lại dùng hạn mức mặc định (nếu có).",
+  "budgetClearMonthAction": "Bỏ chỉnh tháng",
+  "budgetMonthCleared": "Đã bỏ chỉnh tháng này",
+  "budgetStatusHealthy": "Đúng nhịp",
+  "budgetStatusWarning": "Hơi nhanh",
+  "budgetStatusCritical": "Gần hết",
+  "budgetStatusOver": "Vượt ngân sách",
+  "budgetHomeLine": "Đã chi {spent} / {limit}",
+  "@budgetHomeLine": {
+    "placeholders": {
+      "spent": {
+        "type": "String"
+      },
+      "limit": {
+        "type": "String"
+      }
+    }
+  },
   "meFiscal": "Tháng tính từ",
   "meFiscalDay": "Ngày {day}",
   "meGoals": "Mục tiêu",

@@ -8,6 +8,9 @@ import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/allocation_bar.dart';
 import '../../../../core/widgets/freeva_card.dart';
 import '../../../../core/widgets/money_display.dart';
+import '../../../../core/widgets/progress_bar.dart';
+import '../../../../features/budgets/domain/budget.dart';
+import '../../../../features/budgets/presentation/widgets/budget_progress_card.dart';
 import '../../../../features/reports/domain/report.dart';
 import '../../domain/overview.dart';
 import 'spending_empty_row.dart';
@@ -24,6 +27,7 @@ class SpendingBlock extends StatelessWidget {
     required this.monthLabel,
     required this.otherCurrencies,
     required this.digitsOf,
+    this.budget,
     super.key,
   });
 
@@ -33,6 +37,9 @@ class SpendingBlock extends StatelessWidget {
   final String monthLabel;
   final List<CashflowTotal> otherCurrencies;
   final int Function(String) digitsOf;
+
+  /// Shown when the budget currency matches [currency].
+  final BudgetSummary? budget;
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +85,25 @@ class SpendingBlock extends StatelessWidget {
                 AllocationPart(slice.minor.toDouble(), colorAt(i, slice)),
             ],
           ),
+          if (budget case final BudgetSummary b
+              when b.currencyCode == currency) ...[
+            SizedBox(height: gap),
+            FreevaProgressBar(
+              value: b.ratio,
+              color: budgetStatusColor(context, b.status),
+            ),
+            const SizedBox(height: FreevaSpace.s2),
+            Text(
+              s.budgetHomeLine(
+                formatMoneyText(b.spentMinor, minorDigits, locale),
+                formatMoneyText(b.limitMinor, minorDigits, locale),
+              ),
+              style: FreevaTypography.label.copyWith(
+                fontWeight: FontWeight.w400,
+                color: c.textSecondary,
+              ),
+            ),
+          ],
           SizedBox(height: gap),
           if (empty)
             const SpendingEmptyRow()

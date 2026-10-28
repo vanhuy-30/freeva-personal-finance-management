@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 
+import '../../../budgets/domain/budget.dart';
+import '../../../budgets/domain/budget_use_cases.dart';
 import '../../../profile/domain/profile_use_cases.dart';
 import '../../../settings/domain/app_preferences.dart';
 import '../../../settings/domain/settings_use_cases.dart';
@@ -8,10 +10,11 @@ import '../../domain/onboarding_answers.dart';
 /// Choices on the first-run questions. Saving is best effort: the answers
 /// only personalise the app, so a failed save never holds anyone on a screen.
 class OnboardingViewModel extends ChangeNotifier {
-  OnboardingViewModel(this._profile, this._settings);
+  OnboardingViewModel(this._profile, this._settings, [this._budgets]);
 
   final ProfileUseCases _profile;
   final SettingsUseCases _settings;
+  final BudgetUseCases? _budgets;
 
   static const maxGoals = 2;
   static const maxBudgetDigits = 12;
@@ -80,9 +83,34 @@ class OnboardingViewModel extends ChangeNotifier {
     await _profile.saveOnboarding(answers);
   }
 
-  /// Keeps the typed budget on the device until `BE-P2-E02` can take it.
+  /// Tries to create the monthly budget on the server; keeps a device draft
+  /// when the API is unavailable or a budget already exists.
   Future<void> saveBudgetDraft() async {
     if (budget <= 0) return;
+    final amount = BigInt.from(budget);
+    final budgets = _budgets;
+    if (budgets != null) {
+      final current = await budgets.current();
+      final created = await current.fold((_) async => false, (value) async {
+        if (value.budget != null) return true;
+        final put = await budgets.put(
+          BudgetDraft(
+            limitMinor: amount,
+            alertThresholds: List.of(defaultAlertThresholds),
+            categories: const [],
+          ),
+        );
+        return put.isRight();
+      });
+      if (created) {
+        final loaded = await _settings.load();
+        await loaded.fold((_) async {}, (prefs) async {
+          if (prefs.budgetDraftMinor == null) return;
+          await _settings.save(prefs.copyWith(budgetDraftMinor: null));
+        });
+        return;
+      }
+    }
     final loaded = await _settings.load();
     final prefs = loaded.fold<AppPreferences?>((_) => null, (value) => value);
     if (prefs == null) return;

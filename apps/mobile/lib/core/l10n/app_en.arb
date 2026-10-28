@@ -1240,6 +1240,67 @@
   "recurringTypeIncome": "Income",
   "recurringTypeTransfer": "Transfer",
   "meBudget": "Monthly budget",
+  "budgetTitle": "Monthly budget",
+  "budgetSave": "Save",
+  "budgetSaved": "Budget saved",
+  "budgetCleared": "Budget removed",
+  "budgetLoadError": "Couldn’t load the budget",
+  "budgetOverallLimit": "Monthly limit",
+  "budgetCategoryLimit": "Category limit",
+  "budgetTapToSet": "Tap to set",
+  "budgetCategoriesTitle": "By category",
+  "budgetCategoriesHint": "Optional: set a limit for each expense category.",
+  "budgetAddCategory": "Add category",
+  "budgetNoCategories": "No expense categories left to add",
+  "budgetUnknownCategory": "Category",
+  "budgetClearTitle": "Remove budget?",
+  "budgetClearBody": "The spent bar on Home will hide until you set a budget again.",
+  "budgetClearAction": "Remove budget",
+  "budgetSpentLabel": "Spent",
+  "budgetRemainingLabel": "Left",
+  "budgetUsedPercent": "{percent}% used",
+  "@budgetUsedPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetLimitLine": "{spent} / {limit}",
+  "@budgetLimitLine": {
+    "placeholders": {
+      "spent": {
+        "type": "String"
+      },
+      "limit": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetThresholdsTitle": "Alert thresholds",
+  "budgetScopeDefault": "Every month",
+  "budgetScopeMonth": "This month",
+  "budgetScopeMonthHint": "Using the default limit. Saving creates an override for this month only.",
+  "budgetScopeMonthOverrideHint": "This month has its own limit, not the default.",
+  "budgetClearMonthTitle": "Remove this month’s override?",
+  "budgetClearMonthBody": "This month will use the default limit again (if one is set).",
+  "budgetClearMonthAction": "Remove month override",
+  "budgetMonthCleared": "Month override removed",
+  "budgetStatusHealthy": "On track",
+  "budgetStatusWarning": "A bit fast",
+  "budgetStatusCritical": "Almost out",
+  "budgetStatusOver": "Over budget",
+  "budgetHomeLine": "Spent {spent} / {limit}",
+  "@budgetHomeLine": {
+    "placeholders": {
+      "spent": {
+        "type": "String"
+      },
+      "limit": {
+        "type": "String"
+      }
+    }
+  },
   "meFiscal": "Month starts on",
   "meFiscalDay": "Day {day}",
   "@meFiscalDay": {

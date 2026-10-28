@@ -11,6 +11,8 @@ import 'package:mobile/features/auth/data/authorized_api.dart';
 import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/auth/domain/auth_use_cases.dart';
 import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dart';
+import 'package:mobile/features/budgets/domain/budget.dart';
+import 'package:mobile/features/budgets/domain/budget_use_cases.dart';
 import 'package:mobile/features/categories/data/category_repository_impl.dart';
 import 'package:mobile/features/reports/data/report_repository_impl.dart';
 import 'package:mobile/features/reports/domain/report.dart';
@@ -28,6 +30,28 @@ import '../home/home_fakes.dart' show FakeProfileViewModel;
 import '../settings/fakes.dart' show MemoryPreferences;
 import '../transactions/transaction_view_model_test.dart'
     show RecordingAnalytics;
+
+class _NoBudget implements BudgetUseCases {
+  @override
+  Future<Either<AuthFailure, BudgetCurrent>> current({
+    String? on,
+    BudgetApplyTo? applyTo,
+  }) async =>
+      right(
+        const BudgetCurrent(
+          budget: null,
+          period: BudgetPeriod(
+            from: '2026-10-01',
+            to: '2026-10-31',
+            timezone: 'Asia/Ho_Chi_Minh',
+            fiscalMonthStartDay: 1,
+          ),
+        ),
+      );
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
 
 void main() {
   late ReportTransport api;
@@ -63,6 +87,7 @@ void main() {
     getIt.registerSingleton<AuthViewModel>(auth);
     getIt.registerSingleton<WalletRepository>(wallets);
     getIt.registerSingleton<AnalyticsService>(RecordingAnalytics());
+    getIt.registerSingleton<BudgetUseCases>(_NoBudget());
   });
 
   tearDown(() async {
@@ -143,9 +168,7 @@ void main() {
     expect(find.text('Xu hướng chi'), findsOneWidget);
     expect(find.text('Trung bình 2 tháng: 175.000'), findsOneWidget);
     expect(find.text('T10'), findsOneWidget);
-    await tester.tap(find.text('Đặt ngân sách tháng'));
-    await tester.pump();
-    expect(find.text('Ngân sách sắp có'), findsOneWidget);
+    expect(find.text('Đặt ngân sách tháng'), findsOneWidget);
   });
 
   testWidgets('next is disabled on the current month; previous steps back', (
