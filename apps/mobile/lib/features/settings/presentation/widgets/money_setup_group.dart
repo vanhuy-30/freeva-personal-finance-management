@@ -76,6 +76,13 @@ class MoneySetupGroup extends StatelessWidget {
           onTap: () => context.push('/me/recurring'),
         ),
         SettingsRow(
+          tint: (c.tintCyan, c.tintCyanFg),
+          minHeight: rowHeight,
+          icon: LucideIcons.zap,
+          title: s.meBills,
+          onTap: () => context.push('/me/bills'),
+        ),
+        SettingsRow(
           tint: (c.tintGreen, c.tintGreenFg),
           minHeight: rowHeight,
           icon: LucideIcons.banknote,

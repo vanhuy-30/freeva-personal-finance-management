@@ -56,11 +56,12 @@
 - Note: API `GET/PUT/DELETE /budgets/current` với template mặc định + override theo tháng (`applyTo`/`on`/`isOverride`), OpenAPI, export/xóa tài khoản; mobile `/budgets` (Mọi tháng / Tháng này), Báo cáo tháng, thanh Tổng quan, nối draft onboarding. Kiến trúc: [budgets.md](../docs/architecture/budgets.md).
 
 ### BE-P2-E03 / MOB-P2-E03 — Hóa đơn (module 8)
-- Status: todo
+- Status: done
 - Module: 8
 - Gate: post-v1
 - Depends: BE-P2-E01
 - DoD: hóa đơn một lần hoặc gắn một định kỳ. Có hạn, số cố định hoặc ước tính. Đánh dấu đã trả thì trỏ tới một giao dịch. Quá hạn không tự tạo giao dịch.
+- Note: API `GET/POST /bills`, `GET/PATCH/DELETE /bills/:id`, `POST .../pay` và `.../unpay` (chỉ gắn giao dịch có sẵn); OpenAPI; export/xóa tài khoản. Mobile `/me/bills` từ Thiết lập tài chính. Quá hạn tính khi đọc theo timezone hồ sơ. Nhắc đẩy `BE-P2-E05`; lịch tháng `MOB-P2-E04`. Kiến trúc: [bills.md](../docs/architecture/bills.md).
 
 ### MOB-P2-E04 / BE-P2-E04 — Lịch tài chính bản đầu (module 15)
 - Status: todo

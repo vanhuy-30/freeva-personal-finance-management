@@ -58,6 +58,7 @@ export class PrismaAccountRepository implements AccountRepository {
     const tags = await tx.tag.findMany({ where: { userId }, orderBy: order });
     const fxQuotes = await tx.fxQuote.findMany({ where: { userId }, orderBy: order });
     const recurringRules = await tx.recurringRule.findMany({ where: { userId }, orderBy: order });
+    const bills = await tx.bill.findMany({ where: { userId }, orderBy: order });
     const budget = await tx.budget.findUnique({
       where: { userId },
       include: { categories: { orderBy: [{ categoryId: 'asc' as const }] } },
@@ -89,6 +90,7 @@ export class PrismaAccountRepository implements AccountRepository {
         counterCurrencyCode: row.counterCurrencyCode,
         fxRate: row.fxRate ? rateText(row.fxRate) : null,
       })),
+      bills,
       budget: budget === null ? null : {
         id: budget.id,
         currencyCode: budget.currencyCode,
@@ -123,6 +125,7 @@ export class PrismaAccountRepository implements AccountRepository {
 
   private async removeAccount(tx: Prisma.TransactionClient, userId: string): Promise<boolean> {
     if (!(await lockUser(tx, userId))) return false;
+    await tx.bill.deleteMany({ where: { userId } });
     await tx.recurringOccurrence.deleteMany({ where: { rule: { userId } } });
     await tx.recurringRule.deleteMany({ where: { userId } });
     await tx.budgetMonth.deleteMany({ where: { userId } });

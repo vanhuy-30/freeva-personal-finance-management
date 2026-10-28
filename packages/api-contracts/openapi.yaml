@@ -1042,6 +1042,309 @@ paths:
           $ref: '#/components/responses/BudgetConflict'
         '503':
           $ref: '#/components/responses/BudgetUnavailable'
+  /api/v1/bills:
+    post:
+      operationId: createBill
+      summary: Create a one-off or recurring-linked bill
+      tags:
+      - Bills
+      security:
+      - UserBearer: []
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Must equal body.clientId (case-insensitive).
+      responses:
+        '201':
+          description: Created
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bill'
+        '200':
+          description: Matching clientId replay
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bill'
+        '400':
+          $ref: '#/components/responses/BillValidationError'
+        '401':
+          $ref: '#/components/responses/BillUnauthorized'
+        '409':
+          $ref: '#/components/responses/BillConflict'
+        '503':
+          $ref: '#/components/responses/BillUnavailable'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBillRequest'
+      description: Amounts are positive integer minor-unit strings. Linking a recurringRuleId
+        does not auto-create ledger rows. Overdue is derived on read from dueOn and profile timezone.
+    get:
+      operationId: listBills
+      summary: List own bills
+      tags:
+      - Bills
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Page ordered by dueOn, then createdAt, then id
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillList'
+        '400':
+          $ref: '#/components/responses/BillValidationError'
+        '401':
+          $ref: '#/components/responses/BillUnauthorized'
+        '503':
+          $ref: '#/components/responses/BillUnavailable'
+      parameters:
+      - in: query
+        name: page
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+          default: 1
+      - in: query
+        name: pageSize
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 50
+      - in: query
+        name: status
+        required: false
+        schema:
+          type: string
+          enum: [open, overdue, paid]
+  /api/v1/bills/{id}:
+    get:
+      operationId: getBill
+      summary: Get an own bill
+      tags:
+      - Bills
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Bill
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bill'
+        '401':
+          $ref: '#/components/responses/BillUnauthorized'
+        '404':
+          $ref: '#/components/responses/BillNotFound'
+        '503':
+          $ref: '#/components/responses/BillUnavailable'
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+    patch:
+      operationId: updateBill
+      summary: Update an own bill
+      tags:
+      - Bills
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Updated
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bill'
+        '400':
+          $ref: '#/components/responses/BillValidationError'
+        '401':
+          $ref: '#/components/responses/BillUnauthorized'
+        '404':
+          $ref: '#/components/responses/BillNotFound'
+        '409':
+          $ref: '#/components/responses/BillConflict'
+        '503':
+          $ref: '#/components/responses/BillUnavailable'
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBillRequest'
+    delete:
+      operationId: deleteBill
+      summary: Delete an own bill
+      tags:
+      - Bills
+      security:
+      - UserBearer: []
+      responses:
+        '204':
+          description: Deleted
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+        '401':
+          $ref: '#/components/responses/BillUnauthorized'
+        '404':
+          $ref: '#/components/responses/BillNotFound'
+        '409':
+          $ref: '#/components/responses/BillConflict'
+        '503':
+          $ref: '#/components/responses/BillUnavailable'
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: version
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483646
+  /api/v1/bills/{id}/pay:
+    post:
+      operationId: payBill
+      summary: Mark a bill paid by linking an existing transaction
+      tags:
+      - Bills
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Paid pointer set (idempotent when the same transaction is sent again)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bill'
+        '400':
+          $ref: '#/components/responses/BillValidationError'
+        '401':
+          $ref: '#/components/responses/BillUnauthorized'
+        '404':
+          $ref: '#/components/responses/BillNotFound'
+        '409':
+          $ref: '#/components/responses/BillConflict'
+        '503':
+          $ref: '#/components/responses/BillUnavailable'
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PayBillRequest'
+      description: Does not create a transaction. Soft-deleted or foreign transactions are rejected.
+        A transaction may pay at most one bill.
+  /api/v1/bills/{id}/unpay:
+    post:
+      operationId: unpayBill
+      summary: Clear the paid transaction pointer on a bill
+      tags:
+      - Bills
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Pointer cleared (idempotent when already unpaid)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bill'
+        '400':
+          $ref: '#/components/responses/BillValidationError'
+        '401':
+          $ref: '#/components/responses/BillUnauthorized'
+        '404':
+          $ref: '#/components/responses/BillNotFound'
+        '409':
+          $ref: '#/components/responses/BillConflict'
+        '503':
+          $ref: '#/components/responses/BillUnavailable'
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnpayBillRequest'
   /api/v1/transactions:
     post:
       operationId: createTransaction
@@ -3165,6 +3468,61 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorEnvelope'
+    BillValidationError:
+      description: VALIDATION_ERROR
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    BillUnauthorized:
+      description: SESSION_INVALID
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    BillNotFound:
+      description: 'BILL_NOT_FOUND: missing or owned by another user'
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    BillConflict:
+      description: 'BILL_CONFLICT: stale version, clientId replay mismatch, or transaction already linked'
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    BillUnavailable:
+      description: BILL_UNAVAILABLE or authentication unavailable
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
     FinancialAccountValidationError:
       description: VALIDATION_ERROR
       headers:
@@ -3790,6 +4148,167 @@ components:
           - $ref: '#/components/schemas/BudgetSummary'
         period:
           $ref: '#/components/schemas/CashflowPeriod'
+    Bill:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - clientId
+      - name
+      - dueOn
+      - amountMinor
+      - amountKind
+      - currencyCode
+      - recurringRuleId
+      - paidTransactionId
+      - paid
+      - overdue
+      - version
+      - createdAt
+      - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        clientId:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        dueOn:
+          type: string
+          format: date
+        amountMinor:
+          type: string
+          pattern: ^[1-9][0-9]*$
+          maxLength: 20
+          description: Positive integer minor units.
+        amountKind:
+          type: string
+          enum: [fixed, estimated]
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        recurringRuleId:
+          type: [string, 'null']
+          format: uuid
+        paidTransactionId:
+          type: [string, 'null']
+          format: uuid
+        paid:
+          type: boolean
+        overdue:
+          type: boolean
+          description: True when unpaid and dueOn is before today in the profile timezone.
+        version:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    BillList:
+      type: object
+      additionalProperties: false
+      required: [items, total, page, pageSize]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bill'
+        total:
+          type: integer
+          minimum: 0
+        page:
+          type: integer
+          minimum: 1
+        pageSize:
+          type: integer
+          minimum: 1
+          maximum: 100
+    CreateBillRequest:
+      type: object
+      additionalProperties: false
+      required: [clientId, name, dueOn, amountMinor, amountKind, currencyCode]
+      properties:
+        clientId:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        dueOn:
+          type: string
+          format: date
+        amountMinor:
+          type: string
+          pattern: ^[1-9][0-9]*$
+          maxLength: 20
+        amountKind:
+          type: string
+          enum: [fixed, estimated]
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        recurringRuleId:
+          type: [string, 'null']
+          format: uuid
+    UpdateBillRequest:
+      type: object
+      additionalProperties: false
+      required: [version]
+      properties:
+        version:
+          type: integer
+          minimum: 1
+          maximum: 2147483646
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        dueOn:
+          type: string
+          format: date
+        amountMinor:
+          type: string
+          pattern: ^[1-9][0-9]*$
+          maxLength: 20
+        amountKind:
+          type: string
+          enum: [fixed, estimated]
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        recurringRuleId:
+          type: [string, 'null']
+          format: uuid
+    PayBillRequest:
+      type: object
+      additionalProperties: false
+      required: [version, transactionId]
+      properties:
+        version:
+          type: integer
+          minimum: 1
+          maximum: 2147483646
+        transactionId:
+          type: string
+          format: uuid
+    UnpayBillRequest:
+      type: object
+      additionalProperties: false
+      required: [version]
+      properties:
+        version:
+          type: integer
+          minimum: 1
+          maximum: 2147483646
     PutBudgetRequest:
       type: object
       additionalProperties: false
@@ -5410,6 +5929,7 @@ components:
       - tags
       - fxQuotes
       - recurringRules
+      - bills
       - budget
       - budgetMonths
       - transactions
@@ -5456,6 +5976,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AccountExportRecurringRule'
+        bills:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountExportBill'
         budget:
           oneOf:
           - type: 'null'
@@ -5707,6 +6231,46 @@ components:
           format: date
         active:
           type: boolean
+        version:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    AccountExportBill:
+      type: object
+      additionalProperties: false
+      required: [id, clientId, name, dueOn, amountMinor, amountKind, currencyCode, recurringRuleId, paidTransactionId, version, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        clientId:
+          type: string
+          format: uuid
+        name:
+          type: string
+          maxLength: 80
+        dueOn:
+          type: string
+          format: date
+        amountMinor:
+          type: string
+          pattern: ^[1-9][0-9]*$
+        amountKind:
+          type: string
+          enum: [fixed, estimated]
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        recurringRuleId:
+          type: [string, 'null']
+          format: uuid
+        paidTransactionId:
+          type: [string, 'null']
+          format: uuid
         version:
           type: integer
         createdAt:
