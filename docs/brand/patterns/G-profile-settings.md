@@ -18,7 +18,7 @@ Canvas: trang **05 · Patterns**, hàng G
 
 | # | Màn | Nội dung | Ghi chú |
 |---|---|---|---|
-| 1 | Cá nhân | "Cá nhân". Thẻ hồ sơ (avatar chữ cái, tên, email che). **Thiết lập tài chính:** Ví của tôi · Danh mục · Nhãn · Tiền tệ mặc định · Ngân sách tháng · Tháng tính từ · Mục tiêu (mở A1.2). **Ứng dụng:** Giao diện · Ngôn ngữ · Múi giờ · Thông báo · Ẩn số dư (công tắc) · Bảo mật. **Hỗ trợ:** Câu hỏi thường gặp · Góp ý · Điều khoản và quyền riêng tư. "Đăng xuất" (đỏ), "Phiên bản 0.0.1" | Giá trị hiện tại ở bên phải mỗi dòng; icon màu cho Thiết lập tài chính, xám cho Ứng dụng |
+| 1 | Cá nhân | "Cá nhân". Thẻ hồ sơ (avatar chữ cái, tên, email che). **Thiết lập tài chính:** Ví của tôi · Danh mục · Nhãn · Định kỳ (`MOB-P2-E01`) · Tiền tệ mặc định · Ngân sách tháng · Tháng tính từ · Mục tiêu (mở A1.2). **Ứng dụng:** Giao diện · Ngôn ngữ · Múi giờ · Thông báo · Ẩn số dư (công tắc) · Bảo mật. **Hỗ trợ:** Câu hỏi thường gặp · Góp ý · Điều khoản và quyền riêng tư. "Đăng xuất" (đỏ), "Phiên bản 0.0.1" | Giá trị hiện tại ở bên phải mỗi dòng; icon màu cho Thiết lập tài chính, xám cho Ứng dụng |
 | 2 | Hồ sơ | Avatar 96 + nút máy ảnh. Tên hiển thị. Email (đã xác nhận) · "Đổi". "Xoá tài khoản" (đỏ). "Lưu thay đổi" | |
 | 3 | Giao diện (sheet) | 3 thẻ chọn có ảnh thu nhỏ: Sáng · Tối · Theo máy | Đổi ngay khi chọn |
 | 4 | Bảo mật | **Mở khoá:** Khoá bằng mã PIN, Mở bằng Face ID (công tắc), Đổi mã PIN. **Đăng nhập:** Phiên đăng nhập (số), Đổi mật khẩu | Face ID khoá khi chưa có PIN, kèm lý do ngắn |

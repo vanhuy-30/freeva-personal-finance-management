@@ -123,7 +123,23 @@ Xóa danh mục: chuyển toàn bộ GD (kể cả soft-delete) trước, tăng 
 | merchant | String? | thu/chi optional; transfer luôn null (`BE-P1-012`) |
 | deletedAt | timestamptz? | |
 
-Index `(userId, occurredOn)`, `(transferGroupId)`. Unique `(userId, clientId)`.
+Index `(userId, occurredOn)`, `(transferGroupId)`. Unique `(userId, clientId)`. `recurringRuleId` nullable (`BE-P2-E01`), `ON DELETE SET NULL`.
+
+### RecurringRule / RecurringOccurrence
+
+Quy tắc và lần chạy định kỳ (`BE-P2-E01`). Chi tiết: [recurring.md](recurring.md).
+
+| Cột (rule) | Kiểu | Ghi chú |
+|---|---|---|
+| type | enum | `income` \| `expense` \| `transfer` |
+| unit / interval | enum / Int | `day\|week\|month\|year`, 1–366 |
+| amountMinor | BigInt | signed |
+| accountId / categoryId | FK | category bắt buộc với expense |
+| counter* / fxRate | optional | transfer; khác tiền cần rate |
+| startDate / endDate / nextExecutionDate | date | calendar date |
+| active | bool | tắt thì worker bỏ qua |
+
+`RecurringOccurrence`: unique `(ruleId, occurredOn)` + `transactionClientId` (và counter nếu transfer). Unique `(userId, clientId)` trên rule.
 
 ### FxQuote
 

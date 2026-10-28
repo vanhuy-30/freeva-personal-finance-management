@@ -4,6 +4,16 @@ Personal-finance monorepo. Prefer **correct money, privacy, and layers** over sh
 
 Agent workflow: [CLAUDE.md](CLAUDE.md). PR/DoD: [CONTRIBUTING.md](CONTRIBUTING.md). Stack detail: `docs/conventions/`.
 
+## Before implementing a task
+
+Each time you implement a task ID, state clearly up front (chat and PR summary):
+
+1. **What the task is** — title + ID (e.g. `BE-P2-E01` / `MOB-P2-E01`).
+2. **What the feature is in the product** — what the user can do in the app (or what the API enables).
+3. **Why it exists** — product need, DoD, or dependency for later work.
+
+Do not jump straight into file lists without that context. Prefer Vietnamese for product wording when the user writes in Vietnamese.
+
 ## Layout
 
 | Path | Stack |

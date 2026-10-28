@@ -1884,7 +1884,96 @@ class SEn extends S {
   String get meTags => 'Tags';
 
   @override
+  String get meRecurring => 'Recurring';
+
+  @override
   String get meCurrency => 'Default currency';
+
+  @override
+  String get recurringTitle => 'Recurring';
+
+  @override
+  String get recurringAdd => 'Add recurring';
+
+  @override
+  String get recurringEdit => 'Edit recurring';
+
+  @override
+  String get recurringDelete => 'Delete';
+
+  @override
+  String get recurringSave => 'Save';
+
+  @override
+  String get recurringEmptyTitle => 'No recurring yet';
+
+  @override
+  String get recurringEmptyBody =>
+      'Set rent, salary, or transfers once and Freeva posts them on schedule.';
+
+  @override
+  String get recurringLoadError => 'Couldn’t load recurring';
+
+  @override
+  String get recurringAmount => 'Amount';
+
+  @override
+  String get recurringWallet => 'Wallet';
+
+  @override
+  String get recurringCounterWallet => 'To wallet';
+
+  @override
+  String get recurringCategory => 'Category';
+
+  @override
+  String get recurringFrequency => 'Frequency';
+
+  @override
+  String get recurringInterval => 'Every';
+
+  @override
+  String recurringEvery(String count) {
+    return 'Every $count';
+  }
+
+  @override
+  String get recurringUnitDay => 'Daily';
+
+  @override
+  String get recurringUnitWeek => 'Weekly';
+
+  @override
+  String get recurringUnitMonth => 'Monthly';
+
+  @override
+  String get recurringUnitYear => 'Yearly';
+
+  @override
+  String get recurringStart => 'Start date (YYYY-MM-DD)';
+
+  @override
+  String get recurringNextLabel => 'Next run (YYYY-MM-DD)';
+
+  @override
+  String get recurringEnd => 'End date (optional)';
+
+  @override
+  String get recurringActive => 'Active';
+
+  @override
+  String recurringNext(String date) {
+    return 'Next $date';
+  }
+
+  @override
+  String get recurringTypeExpense => 'Expense';
+
+  @override
+  String get recurringTypeIncome => 'Income';
+
+  @override
+  String get recurringTypeTransfer => 'Transfer';
 
   @override
   String get meBudget => 'Monthly budget';

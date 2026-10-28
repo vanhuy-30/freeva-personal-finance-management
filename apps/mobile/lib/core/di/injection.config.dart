@@ -57,6 +57,14 @@ import 'package:mobile/features/profile/domain/profile_repository.dart' as _i4;
 import 'package:mobile/features/profile/domain/profile_use_cases.dart' as _i281;
 import 'package:mobile/features/profile/presentation/viewmodels/profile_view_model.dart'
     as _i887;
+import 'package:mobile/features/recurring/data/recurring_repository_impl.dart'
+    as _i279;
+import 'package:mobile/features/recurring/domain/recurring_repository.dart'
+    as _i821;
+import 'package:mobile/features/recurring/domain/recurring_use_cases.dart'
+    as _i629;
+import 'package:mobile/features/recurring/presentation/viewmodels/recurring_view_model.dart'
+    as _i72;
 import 'package:mobile/features/reports/data/report_repository_impl.dart'
     as _i931;
 import 'package:mobile/features/reports/domain/report_repository.dart' as _i61;
@@ -154,8 +162,12 @@ extension GetItInjectableX on _i174.GetIt {
         ));
     gh.lazySingleton<_i931.TransactionRepository>(
         () => _i1020.TransactionRepositoryImpl(gh<_i443.AuthorizedApi>()));
+    gh.lazySingleton<_i821.RecurringRepository>(
+        () => _i279.RecurringRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i292.TransactionUseCases>(() =>
         _i292.DefaultTransactionUseCases(gh<_i931.TransactionRepository>()));
+    gh.lazySingleton<_i629.RecurringUseCases>(
+        () => _i629.DefaultRecurringUseCases(gh<_i821.RecurringRepository>()));
     gh.lazySingleton<_i107.WalletRepository>(
         () => _i128.WalletRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i4.ProfileRepository>(
@@ -221,6 +233,10 @@ extension GetItInjectableX on _i174.GetIt {
               gh<_i281.ProfileUseCases>(),
               gh<_i990.AuthViewModel>(),
             ));
+    gh.lazySingleton<_i72.RecurringViewModel>(() => _i72.RecurringViewModel(
+          gh<_i629.RecurringUseCases>(),
+          gh<_i990.AuthViewModel>(),
+        ));
     gh.lazySingleton<_i251.WalletViewModel>(() => _i251.DefaultWalletViewModel(
           gh<_i336.WalletUseCases>(),
           gh<_i990.AuthViewModel>(),

@@ -1847,7 +1847,96 @@ class SVi extends S {
   String get meTags => 'Nhãn';
 
   @override
+  String get meRecurring => 'Định kỳ';
+
+  @override
   String get meCurrency => 'Tiền tệ mặc định';
+
+  @override
+  String get recurringTitle => 'Giao dịch định kỳ';
+
+  @override
+  String get recurringAdd => 'Thêm định kỳ';
+
+  @override
+  String get recurringEdit => 'Sửa định kỳ';
+
+  @override
+  String get recurringDelete => 'Xóa';
+
+  @override
+  String get recurringSave => 'Lưu';
+
+  @override
+  String get recurringEmptyTitle => 'Chưa có định kỳ';
+
+  @override
+  String get recurringEmptyBody =>
+      'Thiết lập tiền thuê, lương hoặc chuyển khoản một lần; Freeva sẽ ghi đúng lịch.';
+
+  @override
+  String get recurringLoadError => 'Không tải được định kỳ';
+
+  @override
+  String get recurringAmount => 'Số tiền';
+
+  @override
+  String get recurringWallet => 'Ví';
+
+  @override
+  String get recurringCounterWallet => 'Ví nhận';
+
+  @override
+  String get recurringCategory => 'Danh mục';
+
+  @override
+  String get recurringFrequency => 'Chu kỳ';
+
+  @override
+  String get recurringInterval => 'Mỗi';
+
+  @override
+  String recurringEvery(String count) {
+    return 'Mỗi $count';
+  }
+
+  @override
+  String get recurringUnitDay => 'Ngày';
+
+  @override
+  String get recurringUnitWeek => 'Tuần';
+
+  @override
+  String get recurringUnitMonth => 'Tháng';
+
+  @override
+  String get recurringUnitYear => 'Năm';
+
+  @override
+  String get recurringStart => 'Ngày bắt đầu (YYYY-MM-DD)';
+
+  @override
+  String get recurringNextLabel => 'Lần tới (YYYY-MM-DD)';
+
+  @override
+  String get recurringEnd => 'Ngày kết thúc (tuỳ chọn)';
+
+  @override
+  String get recurringActive => 'Đang bật';
+
+  @override
+  String recurringNext(String date) {
+    return 'Tới $date';
+  }
+
+  @override
+  String get recurringTypeExpense => 'Chi';
+
+  @override
+  String get recurringTypeIncome => 'Thu';
+
+  @override
+  String get recurringTypeTransfer => 'Chuyển';
 
   @override
   String get meBudget => 'Ngân sách tháng';

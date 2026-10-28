@@ -663,6 +663,251 @@ paths:
       description: Removes TransactionTag links for the owner, increments version/updatedAt on every linked
         transaction including soft-deleted ones, then deletes the tag. Version overflow on a linked transaction
         rolls back. Missing or foreign id returns 404.
+  /api/v1/recurring-transactions:
+    post:
+      operationId: createRecurringTransaction
+      summary: Create a recurring income, expense, or transfer rule
+      tags:
+      - RecurringTransactions
+      security:
+      - UserBearer: []
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Must equal body.clientId (case-insensitive).
+      responses:
+        '201':
+          description: Created
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringRule'
+        '200':
+          description: Matching clientId replay
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringRule'
+        '400':
+          $ref: '#/components/responses/RecurringValidationError'
+        '401':
+          $ref: '#/components/responses/RecurringUnauthorized'
+        '404':
+          $ref: '#/components/responses/RecurringNotFound'
+        '409':
+          $ref: '#/components/responses/RecurringConflict'
+        '503':
+          $ref: '#/components/responses/RecurringUnavailable'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRecurringRequest'
+      description: Amounts are signed integer minor-unit strings. Monthly/yearly dates clamp to the last day of
+        shorter months. Transfers require a counter account and balanced amounts (or fxRate for cross-currency).
+    get:
+      operationId: listRecurringTransactions
+      summary: List own recurring rules
+      tags:
+      - RecurringTransactions
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Page ordered by nextExecutionDate, then createdAt, then id
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringRuleList'
+        '400':
+          $ref: '#/components/responses/RecurringValidationError'
+        '401':
+          $ref: '#/components/responses/RecurringUnauthorized'
+        '503':
+          $ref: '#/components/responses/RecurringUnavailable'
+      parameters:
+      - in: query
+        name: page
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+          default: 1
+      - in: query
+        name: pageSize
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 50
+      - in: query
+        name: active
+        required: false
+        schema:
+          type: boolean
+  /api/v1/recurring-transactions/run:
+    post:
+      operationId: runRecurringTransactions
+      summary: Post due occurrences for the session user
+      tags:
+      - RecurringTransactions
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Counts of newly created and skipped (blocked) occurrences
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringRunResult'
+        '401':
+          $ref: '#/components/responses/RecurringUnauthorized'
+        '503':
+          $ref: '#/components/responses/RecurringUnavailable'
+      description: Uses the profile timezone calendar day. Each due day creates at most one transaction bundle
+        via deterministic clientIds; retries and sync replays stay idempotent. Inactive rules are skipped.
+        At most 36 catch-up posts per rule per call.
+  /api/v1/recurring-transactions/{id}:
+    get:
+      operationId: getRecurringTransaction
+      summary: Get an own recurring rule
+      tags:
+      - RecurringTransactions
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Rule
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringRule'
+        '401':
+          $ref: '#/components/responses/RecurringUnauthorized'
+        '404':
+          $ref: '#/components/responses/RecurringNotFound'
+        '503':
+          $ref: '#/components/responses/RecurringUnavailable'
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+    patch:
+      operationId: updateRecurringTransaction
+      summary: Update an own recurring rule
+      tags:
+      - RecurringTransactions
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Updated
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringRule'
+        '400':
+          $ref: '#/components/responses/RecurringValidationError'
+        '401':
+          $ref: '#/components/responses/RecurringUnauthorized'
+        '404':
+          $ref: '#/components/responses/RecurringNotFound'
+        '409':
+          $ref: '#/components/responses/RecurringConflict'
+        '503':
+          $ref: '#/components/responses/RecurringUnavailable'
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRecurringRequest'
+      description: Does not rewrite transactions already posted from the rule. Type and clientId are immutable.
+    delete:
+      operationId: deleteRecurringTransaction
+      summary: Delete an own recurring rule
+      tags:
+      - RecurringTransactions
+      security:
+      - UserBearer: []
+      responses:
+        '204':
+          description: Deleted
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+        '401':
+          $ref: '#/components/responses/RecurringUnauthorized'
+        '404':
+          $ref: '#/components/responses/RecurringNotFound'
+        '409':
+          $ref: '#/components/responses/RecurringConflict'
+        '503':
+          $ref: '#/components/responses/RecurringUnavailable'
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: version
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483646
+      description: Posted transactions keep their rows; recurringRuleId is set null.
   /api/v1/transactions:
     post:
       operationId: createTransaction
@@ -2676,6 +2921,61 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorEnvelope'
+    RecurringValidationError:
+      description: VALIDATION_ERROR
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    RecurringUnauthorized:
+      description: SESSION_INVALID
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    RecurringNotFound:
+      description: 'RECURRING_NOT_FOUND: missing or owned by another user'
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    RecurringConflict:
+      description: 'RECURRING_CONFLICT: stale version, clientId replay mismatch, or archived wallet'
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    RecurringUnavailable:
+      description: RECURRING_UNAVAILABLE or authentication unavailable
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
     FinancialAccountValidationError:
       description: VALIDATION_ERROR
       headers:
@@ -3191,6 +3491,238 @@ components:
           type: integer
         total:
           type: integer
+    RecurringRule:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - clientId
+      - type
+      - unit
+      - interval
+      - amountMinor
+      - currencyCode
+      - accountId
+      - categoryId
+      - counterAccountId
+      - counterAmountMinor
+      - counterCurrencyCode
+      - fxRate
+      - startDate
+      - endDate
+      - nextExecutionDate
+      - active
+      - version
+      - createdAt
+      - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        clientId:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [income, expense, transfer]
+        unit:
+          type: string
+          enum: [day, week, month, year]
+        interval:
+          type: integer
+          minimum: 1
+          maximum: 366
+        amountMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        accountId:
+          type: string
+          format: uuid
+        categoryId:
+          type: [string, 'null']
+          format: uuid
+        counterAccountId:
+          type: [string, 'null']
+          format: uuid
+        counterAmountMinor:
+          oneOf:
+          - $ref: '#/components/schemas/ReportMoney'
+          - type: 'null'
+        counterCurrencyCode:
+          type: [string, 'null']
+          pattern: ^[A-Z]{3}$
+        fxRate:
+          type: [string, 'null']
+          pattern: ^\d{1,10}(?:\.\d{1,8})?$
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: [string, 'null']
+          format: date
+        nextExecutionDate:
+          type: string
+          format: date
+        active:
+          type: boolean
+        version:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    CreateRecurringRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - clientId
+      - type
+      - unit
+      - interval
+      - amountMinor
+      - currencyCode
+      - accountId
+      - startDate
+      - nextExecutionDate
+      properties:
+        clientId:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [income, expense, transfer]
+        unit:
+          type: string
+          enum: [day, week, month, year]
+        interval:
+          type: integer
+          minimum: 1
+          maximum: 366
+        amountMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        accountId:
+          type: string
+          format: uuid
+        categoryId:
+          type: [string, 'null']
+          format: uuid
+        counterAccountId:
+          type: [string, 'null']
+          format: uuid
+        counterAmountMinor:
+          oneOf:
+          - $ref: '#/components/schemas/ReportMoney'
+          - type: 'null'
+        counterCurrencyCode:
+          type: [string, 'null']
+          pattern: ^[A-Z]{3}$
+        fxRate:
+          type: [string, 'null']
+          pattern: ^\d{1,10}(?:\.\d{1,8})?$
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: [string, 'null']
+          format: date
+        nextExecutionDate:
+          type: string
+          format: date
+        active:
+          type: boolean
+          default: true
+    UpdateRecurringRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - version
+      properties:
+        version:
+          type: integer
+          minimum: 1
+          maximum: 2147483646
+        unit:
+          type: string
+          enum: [day, week, month, year]
+        interval:
+          type: integer
+          minimum: 1
+          maximum: 366
+        amountMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        accountId:
+          type: string
+          format: uuid
+        categoryId:
+          type: [string, 'null']
+          format: uuid
+        counterAccountId:
+          type: [string, 'null']
+          format: uuid
+        counterAmountMinor:
+          oneOf:
+          - $ref: '#/components/schemas/ReportMoney'
+          - type: 'null'
+        counterCurrencyCode:
+          type: [string, 'null']
+          pattern: ^[A-Z]{3}$
+        fxRate:
+          type: [string, 'null']
+          pattern: ^\d{1,10}(?:\.\d{1,8})?$
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: [string, 'null']
+          format: date
+        nextExecutionDate:
+          type: string
+          format: date
+        active:
+          type: boolean
+    RecurringRuleList:
+      type: object
+      required:
+      - items
+      - page
+      - pageSize
+      - total
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecurringRule'
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        total:
+          type: integer
+    RecurringRunResult:
+      type: object
+      additionalProperties: false
+      required:
+      - created
+      - skipped
+      properties:
+        created:
+          type: integer
+          minimum: 0
+        skipped:
+          type: integer
+          minimum: 0
     TransactionLegInput:
       type: object
       additionalProperties: false
@@ -4531,6 +5063,7 @@ components:
       - categories
       - tags
       - fxQuotes
+      - recurringRules
       - transactions
       properties:
         schemaVersion:
@@ -4571,6 +5104,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AccountExportFxQuote'
+        recurringRules:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountExportRecurringRule'
         transactions:
           type: array
           items:
@@ -4759,10 +5296,73 @@ components:
         updatedAt:
           type: string
           format: date-time
+    AccountExportRecurringRule:
+      type: object
+      additionalProperties: false
+      required: [id, clientId, type, unit, interval, amountMinor, currencyCode, accountId, categoryId, counterAccountId, counterAmountMinor, counterCurrencyCode, fxRate, startDate, endDate, nextExecutionDate, active, version, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        clientId:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [income, expense, transfer]
+        unit:
+          type: string
+          enum: [day, week, month, year]
+        interval:
+          type: integer
+          minimum: 1
+          maximum: 366
+        amountMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        accountId:
+          type: string
+          format: uuid
+        categoryId:
+          type: [string, 'null']
+          format: uuid
+        counterAccountId:
+          type: [string, 'null']
+          format: uuid
+        counterAmountMinor:
+          oneOf:
+          - $ref: '#/components/schemas/ReportMoney'
+          - type: 'null'
+        counterCurrencyCode:
+          type: [string, 'null']
+          pattern: ^[A-Z]{3}$
+        fxRate:
+          type: [string, 'null']
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: [string, 'null']
+          format: date
+        nextExecutionDate:
+          type: string
+          format: date
+        active:
+          type: boolean
+        version:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
     AccountExportTransaction:
       type: object
       additionalProperties: false
-      required: [id, clientId, type, amountMinor, currencyCode, occurredOn, accountId, categoryId, transferGroupId, fxQuoteId, notes, merchant, deletedAt, tagIds, version, createdAt, updatedAt]
+      required: [id, clientId, type, amountMinor, currencyCode, occurredOn, accountId, categoryId, transferGroupId, fxQuoteId, recurringRuleId, notes, merchant, deletedAt, tagIds, version, createdAt, updatedAt]
       properties:
         id:
           type: string
@@ -4791,6 +5391,9 @@ components:
           type: [string, 'null']
           format: uuid
         fxQuoteId:
+          type: [string, 'null']
+          format: uuid
+        recurringRuleId:
           type: [string, 'null']
           format: uuid
         notes:
