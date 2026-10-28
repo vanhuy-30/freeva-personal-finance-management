@@ -1196,7 +1196,49 @@
   "meWallets": "My wallets",
   "meCategories": "Categories",
   "meTags": "Tags",
+  "meRecurring": "Recurring",
   "meCurrency": "Default currency",
+  "recurringTitle": "Recurring",
+  "recurringAdd": "Add recurring",
+  "recurringEdit": "Edit recurring",
+  "recurringDelete": "Delete",
+  "recurringSave": "Save",
+  "recurringEmptyTitle": "No recurring yet",
+  "recurringEmptyBody": "Set rent, salary, or transfers once and Freeva posts them on schedule.",
+  "recurringLoadError": "Couldn’t load recurring",
+  "recurringAmount": "Amount",
+  "recurringWallet": "Wallet",
+  "recurringCounterWallet": "To wallet",
+  "recurringCategory": "Category",
+  "recurringFrequency": "Frequency",
+  "recurringInterval": "Every",
+  "recurringEvery": "Every {count}",
+  "@recurringEvery": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "recurringUnitDay": "Daily",
+  "recurringUnitWeek": "Weekly",
+  "recurringUnitMonth": "Monthly",
+  "recurringUnitYear": "Yearly",
+  "recurringStart": "Start date (YYYY-MM-DD)",
+  "recurringNextLabel": "Next run (YYYY-MM-DD)",
+  "recurringEnd": "End date (optional)",
+  "recurringActive": "Active",
+  "recurringNext": "Next {date}",
+  "@recurringNext": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "recurringTypeExpense": "Expense",
+  "recurringTypeIncome": "Income",
+  "recurringTypeTransfer": "Transfer",
   "meBudget": "Monthly budget",
   "meFiscal": "Month starts on",
   "meFiscalDay": "Day {day}",

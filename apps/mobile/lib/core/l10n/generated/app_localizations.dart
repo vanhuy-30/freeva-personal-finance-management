@@ -3372,11 +3372,179 @@ abstract class S {
   /// **'Tags'**
   String get meTags;
 
+  /// No description provided for @meRecurring.
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring'**
+  String get meRecurring;
+
   /// No description provided for @meCurrency.
   ///
   /// In en, this message translates to:
   /// **'Default currency'**
   String get meCurrency;
+
+  /// No description provided for @recurringTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring'**
+  String get recurringTitle;
+
+  /// No description provided for @recurringAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add recurring'**
+  String get recurringAdd;
+
+  /// No description provided for @recurringEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit recurring'**
+  String get recurringEdit;
+
+  /// No description provided for @recurringDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get recurringDelete;
+
+  /// No description provided for @recurringSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get recurringSave;
+
+  /// No description provided for @recurringEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No recurring yet'**
+  String get recurringEmptyTitle;
+
+  /// No description provided for @recurringEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Set rent, salary, or transfers once and Freeva posts them on schedule.'**
+  String get recurringEmptyBody;
+
+  /// No description provided for @recurringLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t load recurring'**
+  String get recurringLoadError;
+
+  /// No description provided for @recurringAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get recurringAmount;
+
+  /// No description provided for @recurringWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet'**
+  String get recurringWallet;
+
+  /// No description provided for @recurringCounterWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'To wallet'**
+  String get recurringCounterWallet;
+
+  /// No description provided for @recurringCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get recurringCategory;
+
+  /// No description provided for @recurringFrequency.
+  ///
+  /// In en, this message translates to:
+  /// **'Frequency'**
+  String get recurringFrequency;
+
+  /// No description provided for @recurringInterval.
+  ///
+  /// In en, this message translates to:
+  /// **'Every'**
+  String get recurringInterval;
+
+  /// No description provided for @recurringEvery.
+  ///
+  /// In en, this message translates to:
+  /// **'Every {count}'**
+  String recurringEvery(String count);
+
+  /// No description provided for @recurringUnitDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily'**
+  String get recurringUnitDay;
+
+  /// No description provided for @recurringUnitWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get recurringUnitWeek;
+
+  /// No description provided for @recurringUnitMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get recurringUnitMonth;
+
+  /// No description provided for @recurringUnitYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly'**
+  String get recurringUnitYear;
+
+  /// No description provided for @recurringStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start date (YYYY-MM-DD)'**
+  String get recurringStart;
+
+  /// No description provided for @recurringNextLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Next run (YYYY-MM-DD)'**
+  String get recurringNextLabel;
+
+  /// No description provided for @recurringEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'End date (optional)'**
+  String get recurringEnd;
+
+  /// No description provided for @recurringActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get recurringActive;
+
+  /// No description provided for @recurringNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next {date}'**
+  String recurringNext(String date);
+
+  /// No description provided for @recurringTypeExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get recurringTypeExpense;
+
+  /// No description provided for @recurringTypeIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get recurringTypeIncome;
+
+  /// No description provided for @recurringTypeTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer'**
+  String get recurringTypeTransfer;
 
   /// No description provided for @meBudget.
   ///

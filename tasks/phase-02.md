@@ -40,11 +40,12 @@
 - DoD: màn và luồng theo [C-transactions.md](../docs/brand/patterns/C-transactions.md): danh sách có chip lọc và tổng theo bộ lọc, tìm không dấu, sheet bộ lọc, trạng thái không kết quả, sheet chi tiết (sửa, sao chép, xoá có Hoàn tác), mục Đã xoá, ghi chi/thu với sheet danh mục và sheet nhãn, chuyển ví khác tiền tệ có tỷ giá + thời điểm. Lọc nhiều ví/danh mục, lọc nhãn, tìm theo cửa hàng và tổng theo bộ lọc tách task BE/MOB riêng khi làm.
 
 ### BE-P2-E01 / MOB-P2-E01 — Giao dịch định kỳ (module 6)
-- Status: todo
+- Status: done
 - Module: 6
 - Gate: post-v1
 - Depends: BE-P1-005, MOB-P1-004
 - DoD: chu kỳ ngày, tuần, tháng, năm và custom. Có số tiền, ví, danh mục, ngày bắt đầu, ngày kết thúc, lần chạy tới, bật/tắt. Đến hạn tạo giao dịch đúng một lần; retry và sync không nhân đôi. Tắt thì không tạo thêm. Chuyển khoản định kỳ vẫn là hai leg cân bằng. Test tháng không có ngày 31.
+- Note: API + worker + OpenAPI + export/xóa tài khoản; mobile danh sách/form từ Cá nhân và `POST .../run` lúc vào app. Kiến trúc: [recurring.md](../docs/architecture/recurring.md).
 
 ### BE-P2-E02 / MOB-P2-E02 — Ngân sách (module 7)
 - Status: todo

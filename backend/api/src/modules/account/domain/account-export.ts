@@ -21,6 +21,7 @@ export interface AccountExport {
   categories: AccountExportCategory[];
   tags: AccountExportTag[];
   fxQuotes: AccountExportQuote[];
+  recurringRules: AccountExportRecurringRule[];
   transactions: AccountExportTransaction[];
 }
 
@@ -78,6 +79,26 @@ export interface AccountExportQuote extends Omit<SyncRow, 'createdAt' | 'updated
   updatedAt: string;
 }
 
+export interface AccountExportRecurringRule extends Omit<SyncRow, 'createdAt' | 'updatedAt'> {
+  type: 'income' | 'expense' | 'transfer';
+  unit: 'day' | 'week' | 'month' | 'year';
+  interval: number;
+  amountMinor: string;
+  currencyCode: string;
+  accountId: string;
+  categoryId: string | null;
+  counterAccountId: string | null;
+  counterAmountMinor: string | null;
+  counterCurrencyCode: string | null;
+  fxRate: string | null;
+  startDate: string;
+  endDate: string | null;
+  nextExecutionDate: string;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface AccountExportTransaction extends Omit<SyncRow, 'createdAt' | 'updatedAt'> {
   type: 'income' | 'expense' | 'transfer';
   amountMinor: string;
@@ -87,6 +108,7 @@ export interface AccountExportTransaction extends Omit<SyncRow, 'createdAt' | 'u
   categoryId: string | null;
   transferGroupId: string | null;
   fxQuoteId: string | null;
+  recurringRuleId: string | null;
   notes: string | null;
   merchant: string | null;
   deletedAt: string | null;
@@ -135,6 +157,18 @@ export interface ExportSource {
   fxQuotes: Array<Omit<AccountExportQuote, 'rate' | 'quotedAt' | 'createdAt' | 'updatedAt'> & {
     rate: string;
     quotedAt: Date;
+    createdAt: Date;
+    updatedAt: Date;
+  }>;
+  recurringRules: Array<Omit<AccountExportRecurringRule, 'amountMinor' | 'counterAmountMinor' | 'fxRate' | 'startDate' | 'endDate' | 'nextExecutionDate' | 'createdAt' | 'updatedAt' | 'currencyCode' | 'counterCurrencyCode'> & {
+    currencyCode: string;
+    amountMinor: bigint;
+    counterAmountMinor: bigint | null;
+    counterCurrencyCode: string | null;
+    fxRate: string | null;
+    startDate: Date;
+    endDate: Date | null;
+    nextExecutionDate: Date;
     createdAt: Date;
     updatedAt: Date;
   }>;
@@ -193,11 +227,21 @@ export function toAccountExport(source: ExportSource): AccountExport {
       id: row.id, clientId: row.clientId, fromCode: code(row.fromCode), toCode: code(row.toCode),
       rate: row.rate, quotedAt: iso(row.quotedAt), source: row.source, version: row.version, ...stamps(row),
     })),
+    recurringRules: source.recurringRules.map(row => ({
+      id: row.id, clientId: row.clientId, type: row.type, unit: row.unit, interval: row.interval,
+      amountMinor: row.amountMinor.toString(), currencyCode: code(row.currencyCode), accountId: row.accountId,
+      categoryId: row.categoryId, counterAccountId: row.counterAccountId,
+      counterAmountMinor: row.counterAmountMinor?.toString() ?? null,
+      counterCurrencyCode: row.counterCurrencyCode ? code(row.counterCurrencyCode) : null,
+      fxRate: row.fxRate, startDate: day(row.startDate), endDate: row.endDate ? day(row.endDate) : null,
+      nextExecutionDate: day(row.nextExecutionDate), active: row.active, version: row.version, ...stamps(row),
+    })),
     transactions: source.transactions.map(row => ({
       id: row.id, clientId: row.clientId, type: row.type, amountMinor: row.amountMinor.toString(),
       currencyCode: code(row.currencyCode), occurredOn: day(row.occurredOn), accountId: row.accountId,
       categoryId: row.categoryId, transferGroupId: row.transferGroupId, fxQuoteId: row.fxQuoteId,
-      notes: row.notes, merchant: row.merchant, deletedAt: row.deletedAt ? iso(row.deletedAt) : null,
+      recurringRuleId: row.recurringRuleId, notes: row.notes, merchant: row.merchant,
+      deletedAt: row.deletedAt ? iso(row.deletedAt) : null,
       tagIds: [...row.tagIds].sort(), version: row.version, ...stamps(row),
     })),
   };

@@ -6,6 +6,7 @@ import { touchFinancialOwner } from '../../../infrastructure/prisma/financial-ow
 import type { RecentMatchQuery, TransactionRepository } from '../domain/transaction.repository';
 import { normalizeRate, TransactionError, validateInput, type TransactionBundle, type TransactionInput, type TransactionLeg, type TransactionPatch, type TransactionQuery } from '../domain/transaction';
 import { VIETNAMESE_FOLD_FROM, VIETNAMESE_FOLD_TO, parseTransactionSearch, type AmountSearch, type ParsedTransactionSearch } from '../domain/search';
+import { createTransactionInTx } from './create-transaction-in-tx';
 
 const include = { tags: { select: { tagId: true } }, fxQuote: true } satisfies Prisma.TransactionInclude;
 type Row = Prisma.TransactionGetPayload<{ include: typeof include }>;
@@ -33,10 +34,6 @@ function inputOf(current: TransactionBundle): TransactionInput {
     legs: current.legs.map(({ clientId, accountId, currencyCode, amountMinor }) => ({ clientId, accountId, currencyCode, amountMinor })),
     fx: current.fx ? { rate: current.fx.rate, quotedAt: current.fx.quotedAt } : null };
 }
-const fingerprint = (input: TransactionInput) => JSON.stringify({ type: input.type, occurredOn: input.occurredOn,
-  legs: input.legs.map(item => ({ clientId: item.clientId, accountId: item.accountId, currencyCode: item.currencyCode, amountMinor: item.amountMinor })),
-  categoryId: input.categoryId, notes: input.notes, merchant: input.merchant, tagIds: input.tagIds, fx: input.fx },
-  (_key, value: unknown) => typeof value === 'bigint' ? value.toString() : value);
 @Injectable()
 export class PrismaTransactionRepository implements TransactionRepository {
   constructor(private readonly prisma: PrismaService) {}
@@ -91,26 +88,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
       toCode: input.legs[1].currencyCode, rate: input.fx.rate, quotedAt: input.fx.quotedAt, source: 'manual' } })).id;
   }
   create(userId: string, input: TransactionInput) {
-    return this.snapshot(async tx => {
-      await touchFinancialOwner(tx, userId);
-      const existing = await tx.transaction.findMany({ where: { userId, clientId: { in: input.legs.map(item => item.clientId) } } });
-      if (existing.length) {
-        const current = await this.load(tx, userId, existing[0].id);
-        if (fingerprint(inputOf(current)) !== fingerprint(input)) throw new TransactionError('TRANSACTION_CONFLICT');
-        return { transaction: current, created: false };
-      }
-      await this.accounts(tx, userId, input);
-      await this.references(tx, userId, input);
-      const fxQuoteId = await this.quote(tx, userId, input);
-      const transferGroupId = input.type === 'transfer' ? randomUUID() : null;
-      const rows: Row[] = [];
-      for (const item of input.legs) {
-        rows.push(await tx.transaction.create({ data: { ...item, userId, type: input.type, occurredOn: input.occurredOn,
-          categoryId: input.categoryId, notes: input.notes, merchant: input.merchant, transferGroupId, fxQuoteId,
-          tags: { create: input.tagIds.map(tagId => ({ tagId })) } }, include }));
-      }
-      return { transaction: bundle(rows), created: true };
-    }, true);
+    return this.snapshot(tx => createTransactionInTx(tx, userId, input), true);
   }
   find(userId: string, id: string) { return this.snapshot(tx => this.load(tx, userId, id)); }
   findByClientId(userId: string, clientId: string) {

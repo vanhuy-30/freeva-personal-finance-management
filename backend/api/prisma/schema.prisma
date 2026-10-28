@@ -38,6 +38,13 @@ enum FxQuoteSource {
   provider
 }
 
+enum RecurringUnit {
+  day
+  week
+  month
+  year
+}
+
 enum AuditActorType {
   user
   staff
@@ -80,6 +87,8 @@ model Currency {
   transactions      Transaction[]
   fxQuotesFrom      FxQuote[]          @relation("FxQuoteFrom")
   fxQuotesTo        FxQuote[]          @relation("FxQuoteTo")
+  recurringRules         RecurringRule[] @relation("RecurringCurrency")
+  recurringCounterRules  RecurringRule[] @relation("RecurringCounterCurrency")
 }
 
 model User {
@@ -117,6 +126,7 @@ model User {
   feedback          Feedback[]
   transactions      Transaction[]
   fxQuotes          FxQuote[]
+  recurringRules    RecurringRule[]
 }
 
 model FinancialAccount {
@@ -139,6 +149,8 @@ model FinancialAccount {
   user         User          @relation(fields: [userId], references: [id])
   currency     Currency      @relation(fields: [currencyCode], references: [code])
   transactions Transaction[]
+  recurringSource RecurringRule[] @relation("RecurringSourceAccount")
+  recurringCounter RecurringRule[] @relation("RecurringCounterAccount")
 
   @@unique([userId, clientId])
   @@index([userId, archivedAt])
@@ -181,8 +193,9 @@ model Category {
   user         User           @relation(fields: [userId], references: [id])
   group        CategoryGroup? @relation(fields: [groupId], references: [id])
   parent       Category?      @relation("CategoryTree", fields: [parentId], references: [id])
-  children     Category[]     @relation("CategoryTree")
-  transactions Transaction[]
+  children       Category[]     @relation("CategoryTree")
+  transactions   Transaction[]
+  recurringRules RecurringRule[]
 
   @@unique([userId, clientId])
   @@index([userId, archivedAt])
@@ -233,6 +246,7 @@ model Transaction {
   categoryId      String?         @db.Uuid
   transferGroupId String?         @db.Uuid
   fxQuoteId       String?         @db.Uuid
+  recurringRuleId String?         @db.Uuid
   notes           String?
   merchant        String?
   deletedAt       DateTime?       @db.Timestamptz
@@ -240,17 +254,70 @@ model Transaction {
   createdAt       DateTime        @default(now()) @db.Timestamptz
   updatedAt       DateTime        @updatedAt @db.Timestamptz
 
-  user     User             @relation(fields: [userId], references: [id])
-  account  FinancialAccount @relation(fields: [accountId], references: [id])
-  category Category?        @relation(fields: [categoryId], references: [id])
-  currency Currency         @relation(fields: [currencyCode], references: [code])
-  fxQuote  FxQuote?         @relation(fields: [fxQuoteId], references: [id])
-  tags     TransactionTag[]
+  user          User             @relation(fields: [userId], references: [id])
+  account       FinancialAccount @relation(fields: [accountId], references: [id])
+  category      Category?        @relation(fields: [categoryId], references: [id])
+  currency      Currency         @relation(fields: [currencyCode], references: [code])
+  fxQuote       FxQuote?         @relation(fields: [fxQuoteId], references: [id])
+  recurringRule RecurringRule?   @relation(fields: [recurringRuleId], references: [id], onDelete: SetNull)
+  tags          TransactionTag[]
 
   @@unique([userId, clientId])
   @@index([userId, occurredOn])
   @@index([accountId])
   @@index([transferGroupId])
+  @@index([recurringRuleId])
+}
+
+/// Template for automatic income/expense/transfer posts (BE-P2-E01). Money is signed BigInt minor units.
+model RecurringRule {
+  id                  String          @id @default(uuid()) @db.Uuid
+  userId              String          @db.Uuid
+  clientId            String          @db.Uuid
+  type                TransactionType
+  unit                RecurringUnit
+  interval            Int
+  amountMinor         BigInt
+  currencyCode        String          @db.Char(3)
+  accountId           String          @db.Uuid
+  categoryId          String?         @db.Uuid
+  counterAccountId    String?         @db.Uuid
+  counterAmountMinor  BigInt?
+  counterCurrencyCode String?         @db.Char(3)
+  fxRate              Decimal?        @db.Decimal(18, 8)
+  startDate           DateTime        @db.Date
+  endDate             DateTime?       @db.Date
+  nextExecutionDate   DateTime        @db.Date
+  active              Boolean         @default(true)
+  version             Int             @default(1)
+  createdAt           DateTime        @default(now()) @db.Timestamptz
+  updatedAt           DateTime        @updatedAt @db.Timestamptz
+
+  user            User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account         FinancialAccount      @relation("RecurringSourceAccount", fields: [accountId], references: [id])
+  counterAccount  FinancialAccount?     @relation("RecurringCounterAccount", fields: [counterAccountId], references: [id])
+  category        Category?             @relation(fields: [categoryId], references: [id])
+  currency        Currency              @relation("RecurringCurrency", fields: [currencyCode], references: [code])
+  counterCurrency Currency?             @relation("RecurringCounterCurrency", fields: [counterCurrencyCode], references: [code])
+  occurrences     RecurringOccurrence[]
+  transactions    Transaction[]
+
+  @@unique([userId, clientId])
+  @@index([userId, active, nextExecutionDate])
+}
+
+model RecurringOccurrence {
+  id                  String   @id @default(uuid()) @db.Uuid
+  ruleId              String   @db.Uuid
+  occurredOn          DateTime @db.Date
+  transactionClientId String   @db.Uuid
+  counterClientId     String?  @db.Uuid
+  createdAt           DateTime @default(now()) @db.Timestamptz
+
+  rule RecurringRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+
+  @@unique([ruleId, occurredOn])
+  @@index([ruleId])
 }
 
 model TransactionTag {

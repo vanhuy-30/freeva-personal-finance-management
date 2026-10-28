@@ -559,7 +559,49 @@
   "meWallets": "Ví của tôi",
   "meCategories": "Danh mục",
   "meTags": "Nhãn",
+  "meRecurring": "Định kỳ",
   "meCurrency": "Tiền tệ mặc định",
+  "recurringTitle": "Giao dịch định kỳ",
+  "recurringAdd": "Thêm định kỳ",
+  "recurringEdit": "Sửa định kỳ",
+  "recurringDelete": "Xóa",
+  "recurringSave": "Lưu",
+  "recurringEmptyTitle": "Chưa có định kỳ",
+  "recurringEmptyBody": "Thiết lập tiền thuê, lương hoặc chuyển khoản một lần; Freeva sẽ ghi đúng lịch.",
+  "recurringLoadError": "Không tải được định kỳ",
+  "recurringAmount": "Số tiền",
+  "recurringWallet": "Ví",
+  "recurringCounterWallet": "Ví nhận",
+  "recurringCategory": "Danh mục",
+  "recurringFrequency": "Chu kỳ",
+  "recurringInterval": "Mỗi",
+  "recurringEvery": "Mỗi {count}",
+  "@recurringEvery": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "recurringUnitDay": "Ngày",
+  "recurringUnitWeek": "Tuần",
+  "recurringUnitMonth": "Tháng",
+  "recurringUnitYear": "Năm",
+  "recurringStart": "Ngày bắt đầu (YYYY-MM-DD)",
+  "recurringNextLabel": "Lần tới (YYYY-MM-DD)",
+  "recurringEnd": "Ngày kết thúc (tuỳ chọn)",
+  "recurringActive": "Đang bật",
+  "recurringNext": "Tới {date}",
+  "@recurringNext": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "recurringTypeExpense": "Chi",
+  "recurringTypeIncome": "Thu",
+  "recurringTypeTransfer": "Chuyển",
   "meBudget": "Ngân sách tháng",
   "meFiscal": "Tháng tính từ",
   "meFiscalDay": "Ngày {day}",
