@@ -30,8 +30,10 @@ class _SecurityPageState extends State<SecurityPage> {
   @override
   void initState() {
     super.initState();
-    settings.refreshBiometrics();
-    Future.microtask(auth.loadSessions);
+    Future.microtask(() {
+      settings.refreshBiometrics();
+      auth.loadSessions();
+    });
   }
 
   Future<void> _biometric(bool value) async {
