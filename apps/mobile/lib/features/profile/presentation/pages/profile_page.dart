@@ -36,7 +36,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    settings.refreshAccount();
+    Future.microtask(settings.refreshAccount);
   }
 
   @override

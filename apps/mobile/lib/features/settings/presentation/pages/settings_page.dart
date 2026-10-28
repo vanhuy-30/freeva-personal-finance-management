@@ -40,11 +40,14 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   void initState() {
     super.initState();
-    settings.refreshAccount();
-    settings.refreshBiometrics();
-    // Fresh copy: first run saves the budget draft through another writer.
-    settings.load();
-    if (wallets case final w? when w.wallets.isEmpty) w.load();
+    // Defer: load() notifies before await; FreevaApp listens to settings.
+    Future.microtask(() {
+      settings.refreshAccount();
+      settings.refreshBiometrics();
+      // Fresh copy: first run saves the budget draft through another writer.
+      settings.load();
+      if (wallets case final w? when w.wallets.isEmpty) w.load();
+    });
     _loadTags();
   }
 
