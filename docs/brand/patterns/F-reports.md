@@ -1,6 +1,6 @@
 # Nhóm F — Báo cáo
 
-Trạng thái: **chốt thiết kế 2026-10-21**, chưa code. Task: `DS-P2-003` (màn Báo cáo); ngân sách thuộc `BE-P2-E02` / `MOB-P2-E02`.
+Trạng thái: **chốt thiết kế 2026-10-21**, đã code 2026-10-23 (F1 + F2). Task: `DS-P2-003` (màn Báo cáo); ngân sách thuộc `BE-P2-E02` / `MOB-P2-E02`.
 Canvas: trang **05 · Patterns**, hàng F
 (<https://claude.ai/artifact/SmyaVvz57doJiAM6Kn678T>, riêng tư). Spec chung:
 [design-system.md](../design-system.md).

@@ -1,6 +1,6 @@
 # Nhóm G — Cá nhân và cài đặt
 
-Trạng thái: **chốt thiết kế 2026-10-21**; bỏ dòng Định dạng ngày (2026-10-23). Task: `DS-P2-003` (màn Cá nhân/Cài đặt/Giới thiệu/Đăng nhập/Khoá).
+Trạng thái: **chốt thiết kế 2026-10-21**, đã code 2026-10-23 (G1 + G2); bỏ dòng Định dạng ngày (2026-10-23). Task: `DS-P2-003` (màn Cá nhân/Cài đặt/Giới thiệu/Đăng nhập/Khoá).
 Canvas: trang **05 · Patterns**, hàng G
 (<https://claude.ai/artifact/SmyaVvz57doJiAM6Kn678T>, riêng tư). Spec chung:
 [design-system.md](../design-system.md).

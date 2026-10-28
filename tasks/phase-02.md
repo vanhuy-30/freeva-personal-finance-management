@@ -17,11 +17,12 @@
 - DoD: sinh Dart từ `tokens.json` (không chép tay hex). `AppTheme` light/dark dùng semantic token và `ThemeExtension`. Inter đóng gói trong app. Thêm `lucide_icons_flutter` 4.0.1 và thay các `Icons.*`. Component trong `lib/core/widgets/`: nút, trường nhập, bàn phím số tiền, chip, segmented, bottom nav, thanh trên, sheet, thẻ, dòng giao dịch, toast, banner, hộp thoại, trạng thái trống có animation tự vẽ, skeleton. Đủ 6 trạng thái. Trang gallery chỉ ở debug và golden test light/dark.
 
 ### DS-P2-003 — Refactor màn hình Phase 1 theo design system
-- Status: doing
+- Status: done
 - Module: —
 - Gate: post-v1
 - Depends: DS-P2-002
 - DoD: Tổng quan theo [B-overview.md](../docs/brand/patterns/B-overview.md) (đủ 8 trạng thái; ẩn số dư chỉ ẩn số dư); Ví theo [D-wallets.md](../docs/brand/patterns/D-wallets.md); Danh mục theo [E-categories.md](../docs/brand/patterns/E-categories.md) (màu và biểu tượng mới cần task BE riêng); Báo cáo theo [F-reports.md](../docs/brand/patterns/F-reports.md) (chuỗi xu hướng, kỳ năm cần task BE riêng; khối ngân sách theo `BE-P2-E02`); Cá nhân/Cài đặt theo [G-profile-settings.md](../docs/brand/patterns/G-profile-settings.md) (trường hồ sơ mới, đổi email/mật khẩu, liên kết, xoá tài khoản, API góp ý cần task BE riêng); Đồng bộ theo [H-sync.md](../docs/brand/patterns/H-sync.md) (giữ bản trên máy và mã lý do lỗi cần task BE riêng). Bottom nav chỉ ở màn gốc của tab. Theo thứ tự Tổng quan → Ghi giao dịch → Danh sách giao dịch → Ví → Báo cáo → Cá nhân/Cài đặt/Giới thiệu/Đăng nhập/Khoá. Chỉ đổi View và widget, không đổi ViewModel/use case. Mỗi màn một PR. Không còn hex rời hay `Icons.*` trong `lib/features`. Đo lại ghi chi < 10 giây (QA-P1-001). Chạy được ở màn 320 pt và cỡ chữ 1.3×.
+- Note: B/D/E/F/G/H xong theo [design-progress.md](../docs/brand/design-progress.md). C thuộc `DS-P2-005`; A thuộc `DS-P2-004`. Phần còn lại: ngân sách `BE-P2-E02`, thông báo đẩy `BE-P2-E05`, xoá tài khoản `MOB-P2-011`, mục tiêu/đổi email ở `DS-P2-004`; nút Cập nhật/Sửa sync và vài lệch canvas ghi trong pattern sau `DS-P2-006`.
 
 ### DS-P2-004 — Onboarding và tài khoản theo thiết kế nhóm A
 - Status: todo

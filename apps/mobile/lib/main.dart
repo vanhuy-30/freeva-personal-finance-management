@@ -47,6 +47,7 @@ class FreevaApp extends StatelessWidget {
       listenable: Listenable.merge([profile, settings]),
       builder: (context, _) => SyncResumeListener(
         child: MaterialApp.router(
+          debugShowCheckedModeBanner: false,
           onGenerateTitle: (BuildContext context) => S.of(context).appTitle,
           theme: AppTheme.light,
           darkTheme: AppTheme.dark,
