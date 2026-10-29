@@ -17,6 +17,7 @@ class TxLeg {
     required this.deletedAt,
     required this.version,
     required this.createdAt,
+    this.occurredTime,
   });
   final String id;
   final String clientId;
@@ -25,6 +26,8 @@ class TxLeg {
   final BigInt amountMinor;
   final TransactionType type;
   final String occurredOn;
+  /// Optional local clock `HH:mm` in the profile timezone (`MOB-P2-E09`).
+  final String? occurredTime;
   final String? categoryId;
   final String? notes;
   final String? merchant;
@@ -50,6 +53,7 @@ class TransactionBundle {
   bool get deleted => legs.first.deletedAt != null;
   String get id => legs.first.id;
   String get occurredOn => legs.first.occurredOn;
+  String? get occurredTime => legs.first.occurredTime;
   String? get categoryId => legs.first.categoryId;
   String? get notes => legs.first.notes;
   String? get merchant => legs.first.merchant;
@@ -70,9 +74,11 @@ class TransactionDraft {
     this.tagIds = const [],
     this.rate,
     this.quotedAt,
+    this.occurredTime,
   });
   final TransactionType type;
   final String occurredOn;
+  final String? occurredTime;
   final String accountId;
   final String? counterAccountId;
   final BigInt magnitude;
@@ -97,9 +103,11 @@ class TransactionCommand {
     this.rate,
     this.quotedAt,
     this.version,
+    this.occurredTime,
   });
   final TransactionType type;
   final String occurredOn;
+  final String? occurredTime;
   final String? categoryId;
   final String? notes;
   final String? merchant;

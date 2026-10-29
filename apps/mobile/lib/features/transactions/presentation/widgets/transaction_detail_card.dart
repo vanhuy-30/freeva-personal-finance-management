@@ -79,7 +79,13 @@ class TransactionDetailCard extends StatelessWidget {
       row(
         s.txDetailDate,
         value(
-          TransactionDayHeader.label(s, bundle.occurredOn, today ?? '', locale),
+          TransactionDayHeader.when(
+            s,
+            bundle.occurredOn,
+            today ?? '',
+            locale,
+            time: bundle.occurredTime,
+          ),
         ),
       ),
       if (label.tags.isNotEmpty)

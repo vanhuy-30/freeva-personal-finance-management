@@ -347,6 +347,7 @@ export class PrismaRecurringRepository implements RecurringRepository {
     return {
       type: rule.type,
       occurredOn: toDate(occurredOn),
+      occurredTime: null,
       categoryId: rule.categoryId,
       notes: null,
       merchant: null,

@@ -21,6 +21,7 @@ export class ManualFxDto {
 export class CreateTransactionDto {
   @IsIn(TRANSACTION_TYPES) type!: TransactionType;
   @IsString() @Matches(/^\d{4}-\d{2}-\d{2}(?![\s\S])/) occurredOn!: string;
+  @ValidateIf(nullable) @IsString() @Matches(/^([01]\d|2[0-3]):([0-5]\d)(?![\s\S])/) occurredTime?: string | null;
   @IsArray() @ArrayMinSize(1) @ArrayMaxSize(2) @ValidateNested({ each: true }) @Type(() => TransactionLegDto) legs!: TransactionLegDto[];
   @ValidateIf(nullable) @Transform(uuid) @IsUUID() categoryId?: string | null;
   @ValidateIf(nullable) @IsString() @MaxLength(2000) notes?: string | null;
@@ -31,6 +32,7 @@ export class CreateTransactionDto {
 export class UpdateTransactionDto {
   @IsInt() @Min(1) @Max(2147483646) version!: number;
   @ValidateIf(optional) @IsString() @Matches(/^\d{4}-\d{2}-\d{2}(?![\s\S])/) occurredOn?: string;
+  @ValidateIf(nullable) @IsString() @Matches(/^([01]\d|2[0-3]):([0-5]\d)(?![\s\S])/) occurredTime?: string | null;
   @ValidateIf(optional) @IsArray() @ArrayMinSize(1) @ArrayMaxSize(2) @ValidateNested({ each: true }) @Type(() => TransactionLegDto) legs?: TransactionLegDto[];
   @ValidateIf(nullable) @Transform(uuid) @IsUUID() categoryId?: string | null;
   @ValidateIf(nullable) @IsString() @MaxLength(2000) notes?: string | null;

@@ -29,7 +29,7 @@ Thứ tự đã chốt: nền tảng → B → C → D → E → F → G → A �
 |---|---|---|
 | Nền tảng (`DS-P2-002`) | Xong | Token → Dart, theme, Inter, Lucide, component trong `lib/core/widgets/`, khung 4 tab + nút +, gallery `/debug/gallery`, golden light/dark |
 | B Tổng quan | Xong | 8 trạng thái, `User.displayName`, net-worth bỏ ví đã ẩn, ẩn số dư chỉ ẩn số dư |
-| C Giao dịch | Xong | API lọc nhiều ví/danh mục/nhãn, tìm cửa hàng, `summary`; giờ giao dịch tách `BE-P2-E09` |
+| C Giao dịch | Xong | API lọc nhiều ví/danh mục/nhãn, tìm cửa hàng, `summary`; giờ giao dịch `BE-P2-E09` / `MOB-P2-E09` |
 | D Ví | Xong | D1: danh sách, sắp xếp (`PUT /financial-accounts/order`), chi tiết ví (Vào/Ra tính cả chuyển ví qua `summary.transferIn/OutMinor`), chi tiết thẻ, ví đã ẩn. D2: thêm/sửa ví và thẻ, popup ngày, cờ `hasTransactions` khoá loại/tiền tệ, ẩn có Hoàn tác |
 | E Danh mục | Xong | E1: danh sách Chi · Thu, mở/thu nhớ trên máy, danh mục đã ẩn; API bảng 20 màu, 36 icon, `kind` khi tạo, hai cấp, đổi icon mặc định một lần. E2: thêm/sửa, sheet Thuộc/Biểu tượng, ẩn có Hoàn tác, popup xoá + `GET /categories/{id}/usage` |
 | F Báo cáo | Xong (F1 + F2) | F1: kỳ Tuần/Tháng/Năm/Tuỳ chọn, thẻ tổng (so kỳ trước, trung bình/ngày, còn lại), xu hướng 8 tuần/6 tháng/các năm (`GET /reports/trend`), phân tích Chi · Thu · Ví, trạng thái trống; khối ngân sách tháng từ `BE-P2-E02` / `MOB-P2-E02`. F2: chi tiết danh mục (kể cả "Khác") với "Giao dịch lớn nhất" (`sort=amountDesc`, `currency` trên `GET /transactions`) và "Xem cả N" mở danh sách đã lọc; popup chọn khoảng ngày (chip nhanh, lịch, tối đa 3660 ngày) |

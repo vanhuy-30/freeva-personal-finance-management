@@ -1,13 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { TRANSACTION_REPOSITORY, type RecentMatchQuery, type TransactionRepository } from './domain/transaction.repository';
-import { calendarDate, minor, normalizeRate, TransactionError, type TransactionBundle, type TransactionLeg, type TransactionPatch } from './domain/transaction';
+import { calendarDate, minor, normalizeRate, occurredTime, TransactionError, type TransactionBundle, type TransactionLeg, type TransactionPatch } from './domain/transaction';
 import type { CreateTransactionDto, ManualFxDto, TransactionLegDto, TransactionQueryDto, UpdateTransactionDto } from './transaction.dto';
 const legs = (input: TransactionLegDto[]) => input.map(leg => ({ ...leg, amountMinor: minor(leg.amountMinor) }));
 const fx = (input: ManualFxDto | null) => input === null ? null : { rate: normalizeRate(input.rate), quotedAt: new Date(input.quotedAt) };
 const tags = (ids: string[]) => [...new Set(ids.map(id => id.toLowerCase()))].sort();
 function legResponse(leg: TransactionLeg) {
   return { ...leg, amountMinor: leg.amountMinor.toString(), occurredOn: leg.occurredOn.toISOString().slice(0, 10),
-    deletedAt: leg.deletedAt?.toISOString() ?? null, createdAt: leg.createdAt.toISOString(), updatedAt: leg.updatedAt.toISOString() };
+    occurredTime: leg.occurredTime, deletedAt: leg.deletedAt?.toISOString() ?? null,
+    createdAt: leg.createdAt.toISOString(), updatedAt: leg.updatedAt.toISOString() };
 }
 function response(bundle: TransactionBundle) {
   return { legs: bundle.legs.map(legResponse), fx: bundle.fx ? { ...bundle.fx, quotedAt: bundle.fx.quotedAt.toISOString() } : null };
@@ -16,7 +17,8 @@ function response(bundle: TransactionBundle) {
 export class TransactionService {
   constructor(@Inject(TRANSACTION_REPOSITORY) private readonly repository: TransactionRepository) {}
   async create(userId: string, dto: CreateTransactionDto) {
-    const result = await this.repository.create(userId, { type: dto.type, occurredOn: calendarDate(dto.occurredOn), legs: legs(dto.legs),
+    const result = await this.repository.create(userId, { type: dto.type, occurredOn: calendarDate(dto.occurredOn),
+      occurredTime: occurredTime(dto.occurredTime), legs: legs(dto.legs),
       categoryId: dto.categoryId ?? null, notes: dto.notes ?? null, merchant: dto.merchant ?? null,
       tagIds: tags(dto.tagIds ?? []), fx: fx(dto.fx ?? null) });
     return { transaction: response(result.transaction), created: result.created };
@@ -45,13 +47,14 @@ export class TransactionService {
     };
   }
   async update(userId: string, id: string, dto: UpdateTransactionDto) {
-    const { occurredOn, legs: inputLegs, fx: inputFx, tagIds, ...rest } = dto;
+    const { occurredOn, occurredTime: inputTime, legs: inputLegs, fx: inputFx, tagIds, ...rest } = dto;
     const patch: TransactionPatch = { version: dto.version };
     if (rest.categoryId !== undefined) patch.categoryId = rest.categoryId;
     if (rest.notes !== undefined) patch.notes = rest.notes;
     if (rest.merchant !== undefined) patch.merchant = rest.merchant;
     if (rest.deleted !== undefined) patch.deleted = rest.deleted;
     if (occurredOn !== undefined) patch.occurredOn = calendarDate(occurredOn);
+    if (inputTime !== undefined) patch.occurredTime = occurredTime(inputTime);
     if (inputLegs !== undefined) patch.legs = legs(inputLegs);
     if (inputFx !== undefined) patch.fx = fx(inputFx);
     if (tagIds !== undefined) patch.tagIds = tags(tagIds);

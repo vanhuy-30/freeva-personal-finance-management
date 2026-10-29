@@ -57,6 +57,9 @@ abstract class TransactionViewModel extends ChangeNotifier {
   AuthFailure? get failure;
   String newClientId();
   String? today();
+
+  /// Local clock `HH:mm` in the profile timezone (`MOB-P2-E09`).
+  String? nowTime();
   String? preferredAccountId();
   String? preferredCategoryId();
   Future<void> load();
@@ -249,6 +252,13 @@ class DefaultTransactionViewModel extends TransactionViewModel {
     final zone = timeZone;
     if (zone == null) return null;
     return calendarDate(DateTime.now(), zone);
+  }
+
+  @override
+  String? nowTime() {
+    final zone = timeZone;
+    if (zone == null) return null;
+    return clockTime(DateTime.now(), zone);
   }
 
   @override

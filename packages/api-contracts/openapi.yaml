@@ -5148,6 +5148,13 @@ components:
           type: string
           format: date
           pattern: ^\d{4}-\d{2}-\d{2}$
+        occurredTime:
+          type:
+          - string
+          - 'null'
+          pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+          description: Optional local clock HH:mm in the profile timezone (BE-P2-E09). Does not change occurredOn or report
+            buckets. Null or omitted on create leaves time unset.
         legs:
           type: array
           minItems: 1
@@ -5203,6 +5210,13 @@ components:
           type: string
           format: date
           pattern: ^\d{4}-\d{2}-\d{2}$
+        occurredTime:
+          type:
+          - string
+          - 'null'
+          pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+          description: Optional local clock HH:mm in the profile timezone (BE-P2-E09). Omitted keeps the current value; null
+            clears it. Does not change occurredOn.
         legs:
           type: array
           minItems: 1
@@ -5259,6 +5273,7 @@ components:
       - id
       - type
       - occurredOn
+      - occurredTime
       - categoryId
       - notes
       - merchant
@@ -5298,6 +5313,13 @@ components:
           type: string
           format: date
           pattern: ^\d{4}-\d{2}-\d{2}$
+        occurredTime:
+          type:
+          - string
+          - 'null'
+          pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+          description: Optional local clock HH:mm in the profile timezone. Always present; null when unset. Reports still use
+            occurredOn only.
         categoryId:
           type:
           - string
@@ -7294,7 +7316,7 @@ components:
     AccountExportTransaction:
       type: object
       additionalProperties: false
-      required: [id, clientId, type, amountMinor, currencyCode, occurredOn, accountId, categoryId, transferGroupId, fxQuoteId, recurringRuleId, notes, merchant, deletedAt, tagIds, version, createdAt, updatedAt]
+      required: [id, clientId, type, amountMinor, currencyCode, occurredOn, occurredTime, accountId, categoryId, transferGroupId, fxQuoteId, recurringRuleId, notes, merchant, deletedAt, tagIds, version, createdAt, updatedAt]
       properties:
         id:
           type: string
@@ -7313,6 +7335,9 @@ components:
         occurredOn:
           type: string
           format: date
+        occurredTime:
+          type: [string, 'null']
+          pattern: ^([01]\d|2[0-3]):([0-5]\d)$
         accountId:
           type: string
           format: uuid

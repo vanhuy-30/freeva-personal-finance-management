@@ -170,6 +170,7 @@ export interface AccountExportTransaction extends Omit<SyncRow, 'createdAt' | 'u
   amountMinor: string;
   currencyCode: string;
   occurredOn: string;
+  occurredTime: string | null;
   accountId: string;
   categoryId: string | null;
   transferGroupId: string | null;
@@ -297,6 +298,7 @@ export interface ExportSource {
     currencyCode: string;
     amountMinor: bigint;
     occurredOn: Date;
+    occurredTime: string | null;
     deletedAt: Date | null;
     createdAt: Date;
     updatedAt: Date;
@@ -417,9 +419,9 @@ export function toAccountExport(source: ExportSource): AccountExport {
     })),
     transactions: source.transactions.map(row => ({
       id: row.id, clientId: row.clientId, type: row.type, amountMinor: row.amountMinor.toString(),
-      currencyCode: code(row.currencyCode), occurredOn: day(row.occurredOn), accountId: row.accountId,
-      categoryId: row.categoryId, transferGroupId: row.transferGroupId, fxQuoteId: row.fxQuoteId,
-      recurringRuleId: row.recurringRuleId, notes: row.notes, merchant: row.merchant,
+      currencyCode: code(row.currencyCode), occurredOn: day(row.occurredOn), occurredTime: row.occurredTime,
+      accountId: row.accountId, categoryId: row.categoryId, transferGroupId: row.transferGroupId,
+      fxQuoteId: row.fxQuoteId, recurringRuleId: row.recurringRuleId, notes: row.notes, merchant: row.merchant,
       deletedAt: row.deletedAt ? iso(row.deletedAt) : null,
       tagIds: [...row.tagIds].sort(), version: row.version, ...stamps(row),
     })),

@@ -77,6 +77,12 @@ List<CompareField> compareFields(
         item.occurredOn ?? _none,
         server.occurredOn,
       ),
+    if ((item.occurredTime ?? server.occurredTime) != server.occurredTime)
+      CompareField(
+        s.txTimeLabel,
+        item.occurredTime ?? _none,
+        server.occurredTime ?? _none,
+      ),
     if (text(item.merchant) != text(server.merchant))
       CompareField(
         s.syncFieldMerchant,

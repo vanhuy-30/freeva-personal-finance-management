@@ -39,6 +39,23 @@ class TransactionDayHeader extends StatelessWidget {
     return s.txDayHeader(name, short);
   }
 
+  /// Detail / C2.3: "Hôm nay, 12:40" when [time] is set; otherwise [label].
+  static String when(
+    S s,
+    String date,
+    String today,
+    String locale, {
+    String? time,
+  }) {
+    if (time == null || time.isEmpty) {
+      return label(s, date, today, locale);
+    }
+    final name = date == today
+        ? s.txToday
+        : _titleCase(DateFormat('EEEE', locale).format(DateTime.parse(date)));
+    return s.txDayWithTime(name, time);
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);

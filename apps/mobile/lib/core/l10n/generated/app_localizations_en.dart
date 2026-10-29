@@ -823,6 +823,11 @@ class SEn extends S {
   }
 
   @override
+  String txDayWithTime(String day, String time) {
+    return '$day, $time';
+  }
+
+  @override
   String txChipRemove(String label) {
     return 'Remove $label';
   }
@@ -1053,6 +1058,21 @@ class SEn extends S {
 
   @override
   String get txDateTitle => 'Choose a date';
+
+  @override
+  String get txDateTimeTitle => 'Choose date and time';
+
+  @override
+  String get txTimeLabel => 'Time';
+
+  @override
+  String get txTimeNone => 'No time';
+
+  @override
+  String get txTimeClear => 'Clear time';
+
+  @override
+  String get txDateTimeDone => 'Done';
 
   @override
   String get txYesterday => 'Yesterday';

@@ -36,7 +36,7 @@ function source(): ExportSource {
     notificationPreferences: null,
     notifications: [],
     transactions: [{
-      id, clientId, type: 'expense', amountMinor: -150000n, currencyCode: 'VND', occurredOn: day,
+      id, clientId, type: 'expense', amountMinor: -150000n, currencyCode: 'VND', occurredOn: day, occurredTime: '12:40',
       accountId: id, categoryId: null, transferGroupId: null, fxQuoteId: null, recurringRuleId: null,
       notes: 'cafe', merchant: 'WinMart',
       deletedAt: at, tagIds: [clientId, id], version: 2, createdAt: at, updatedAt: at,
@@ -57,7 +57,7 @@ describe('BE-P1-010 account export mapping', () => {
       }],
       fxQuotes: [{ rate: '25000.00000000' }],
       transactions: [{
-        amountMinor: '-150000', occurredOn: '2026-10-12', deletedAt: at.toISOString(), merchant: 'WinMart',
+        amountMinor: '-150000', occurredOn: '2026-10-12', occurredTime: '12:40', deletedAt: at.toISOString(), merchant: 'WinMart',
         tagIds: [clientId, id].sort(),
       }],
     });

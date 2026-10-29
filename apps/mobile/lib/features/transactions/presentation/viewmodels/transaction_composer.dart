@@ -39,8 +39,11 @@ class TransactionComposer extends ChangeNotifier {
           ?.id;
     }
     categoryId = from?.categoryId ?? _defaultCategory();
-    // A copy is a new transaction today (C1.5).
+    // A copy is a new transaction today (C1.5) with the current clock.
     occurredOn = (copy ? null : from?.occurredOn) ?? model.today() ?? '';
+    occurredTime = copy || from == null
+        ? model.nowTime()
+        : from.occurredTime;
     notes = from?.notes ?? '';
     merchant = from?.merchant ?? '';
     tagIds = List.of(from?.tagIds ?? const []);
@@ -68,6 +71,7 @@ class TransactionComposer extends ChangeNotifier {
   String? counterAccountId;
   String? categoryId;
   late String occurredOn;
+  String? occurredTime;
   late String notes;
   late String merchant;
   late List<String> tagIds;
@@ -198,6 +202,12 @@ class TransactionComposer extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setWhen({required String date, String? time}) {
+    occurredOn = date;
+    occurredTime = time;
+    notifyListeners();
+  }
+
   void setNotes(String value) => notes = value;
   void setMerchant(String value) => merchant = value;
 
@@ -230,6 +240,7 @@ class TransactionComposer extends ChangeNotifier {
     final draft = TransactionDraft(
       type: type,
       occurredOn: occurredOn,
+      occurredTime: occurredTime,
       accountId: from.id,
       counterAccountId: transfer ? counterAccountId : null,
       magnitude: amount,
@@ -284,6 +295,7 @@ class TransactionComposer extends ChangeNotifier {
     counterAccountId,
     categoryId,
     occurredOn,
+    occurredTime,
     notes,
     merchant,
     tagIds.join(','),

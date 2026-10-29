@@ -12,7 +12,7 @@ const include = { tags: { select: { tagId: true } }, fxQuote: true } satisfies P
 type Row = Prisma.TransactionGetPayload<{ include: typeof include }>;
 function leg(row: Row): TransactionLeg {
   return { id: row.id, clientId: row.clientId, accountId: row.accountId, currencyCode: row.currencyCode, amountMinor: row.amountMinor,
-    type: row.type, occurredOn: row.occurredOn, categoryId: row.categoryId, notes: row.notes, merchant: row.merchant,
+    type: row.type, occurredOn: row.occurredOn, occurredTime: row.occurredTime, categoryId: row.categoryId, notes: row.notes, merchant: row.merchant,
     tagIds: row.tags.map(tag => tag.tagId).sort(),
     transferGroupId: row.transferGroupId, fxQuoteId: row.fxQuoteId, deletedAt: row.deletedAt, version: row.version, createdAt: row.createdAt, updatedAt: row.updatedAt };
 }
@@ -21,7 +21,8 @@ function bundle(rows: Row[]): TransactionBundle {
   const first = rows[0];
   if (!first) throw new TransactionError('TRANSACTION_NOT_FOUND');
   if (rows.length !== (first.type === 'transfer' ? 2 : 1) || rows.some(row => row.version !== first.version ||
-    row.occurredOn.getTime() !== first.occurredOn.getTime() || row.deletedAt?.getTime() !== first.deletedAt?.getTime() ||
+    row.occurredOn.getTime() !== first.occurredOn.getTime() || row.occurredTime !== first.occurredTime ||
+    row.deletedAt?.getTime() !== first.deletedAt?.getTime() ||
     row.type !== first.type || row.fxQuoteId !== first.fxQuoteId)) throw new TransactionError('TRANSACTION_CONFLICT');
   const quote = first.fxQuote;
   return { legs: rows.map(leg), fx: quote ? { id: quote.id, fromCode: quote.fromCode, toCode: quote.toCode,
@@ -29,8 +30,8 @@ function bundle(rows: Row[]): TransactionBundle {
 }
 function inputOf(current: TransactionBundle): TransactionInput {
   const first = current.legs[0];
-  return { type: first.type, occurredOn: first.occurredOn, categoryId: first.categoryId, notes: first.notes, merchant: first.merchant,
-    tagIds: first.tagIds,
+  return { type: first.type, occurredOn: first.occurredOn, occurredTime: first.occurredTime,
+    categoryId: first.categoryId, notes: first.notes, merchant: first.merchant, tagIds: first.tagIds,
     legs: current.legs.map(({ clientId, accountId, currencyCode, amountMinor }) => ({ clientId, accountId, currencyCode, amountMinor })),
     fx: current.fx ? { rate: current.fx.rate, quotedAt: current.fx.quotedAt } : null };
 }
@@ -168,7 +169,8 @@ export class PrismaTransactionRepository implements TransactionRepository {
       const rows: Row[] = [];
       for (let index = 0; index < input.legs.length; index++) {
         rows.push(await tx.transaction.update({ where: { id: current.legs[index].id, userId, version: patch.version }, data: {
-          ...input.legs[index], occurredOn: input.occurredOn, categoryId: input.categoryId, notes: input.notes, merchant: input.merchant,
+          ...input.legs[index], occurredOn: input.occurredOn, occurredTime: input.occurredTime,
+          categoryId: input.categoryId, notes: input.notes, merchant: input.merchant,
           fxQuoteId, deletedAt, version: { increment: 1 }, tags: { deleteMany: {}, create: input.tagIds.map(tagId => ({ tagId })) },
         }, include }));
       }

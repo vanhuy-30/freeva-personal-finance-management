@@ -441,6 +441,17 @@
       }
     }
   },
+  "txDayWithTime": "{day}, {time}",
+  "@txDayWithTime": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "txChipRemove": "Remove {label}",
   "@txChipRemove": {
     "placeholders": {
@@ -575,6 +586,11 @@
   "txReceived": "Received",
   "txRateTitle": "Exchange rate",
   "txDateTitle": "Choose a date",
+  "txDateTimeTitle": "Choose date and time",
+  "txTimeLabel": "Time",
+  "txTimeNone": "No time",
+  "txTimeClear": "Clear time",
+  "txDateTimeDone": "Done",
   "txYesterday": "Yesterday",
   "txSavedToast": "Saved {kind}",
   "@txSavedToast": {

@@ -16,8 +16,8 @@ type Row = Prisma.TransactionGetPayload<{ include: typeof include }>;
 function leg(row: Row): TransactionLeg {
   return {
     id: row.id, clientId: row.clientId, accountId: row.accountId, currencyCode: row.currencyCode,
-    amountMinor: row.amountMinor, type: row.type, occurredOn: row.occurredOn, categoryId: row.categoryId,
-    notes: row.notes, merchant: row.merchant, tagIds: row.tags.map(tag => tag.tagId).sort(),
+    amountMinor: row.amountMinor, type: row.type, occurredOn: row.occurredOn, occurredTime: row.occurredTime,
+    categoryId: row.categoryId, notes: row.notes, merchant: row.merchant, tagIds: row.tags.map(tag => tag.tagId).sort(),
     transferGroupId: row.transferGroupId, fxQuoteId: row.fxQuoteId, deletedAt: row.deletedAt,
     version: row.version, createdAt: row.createdAt, updatedAt: row.updatedAt,
   };
@@ -31,6 +31,7 @@ function bundle(rows: Row[]): TransactionBundle {
     rows.length !== (first.type === 'transfer' ? 2 : 1) ||
     rows.some(row => row.version !== first.version ||
       row.occurredOn.getTime() !== first.occurredOn.getTime() ||
+      row.occurredTime !== first.occurredTime ||
       row.deletedAt?.getTime() !== first.deletedAt?.getTime() ||
       row.type !== first.type || row.fxQuoteId !== first.fxQuoteId)
   ) {
@@ -48,8 +49,8 @@ function bundle(rows: Row[]): TransactionBundle {
 function inputOf(current: TransactionBundle): TransactionInput {
   const first = current.legs[0];
   return {
-    type: first.type, occurredOn: first.occurredOn, categoryId: first.categoryId, notes: first.notes,
-    merchant: first.merchant, tagIds: first.tagIds,
+    type: first.type, occurredOn: first.occurredOn, occurredTime: first.occurredTime,
+    categoryId: first.categoryId, notes: first.notes, merchant: first.merchant, tagIds: first.tagIds,
     legs: current.legs.map(({ clientId, accountId, currencyCode, amountMinor }) => ({ clientId, accountId, currencyCode, amountMinor })),
     fx: current.fx ? { rate: current.fx.rate, quotedAt: current.fx.quotedAt } : null,
   };
@@ -57,7 +58,7 @@ function inputOf(current: TransactionBundle): TransactionInput {
 
 const fingerprint = (input: TransactionInput) => JSON.stringify(
   {
-    type: input.type, occurredOn: input.occurredOn,
+    type: input.type, occurredOn: input.occurredOn, occurredTime: input.occurredTime,
     legs: input.legs.map(item => ({
       clientId: item.clientId, accountId: item.accountId, currencyCode: item.currencyCode, amountMinor: item.amountMinor,
     })),
@@ -134,8 +135,9 @@ export async function createTransactionInTx(
   for (const item of input.legs) {
     rows.push(await tx.transaction.create({
       data: {
-        ...item, userId, type: input.type, occurredOn: input.occurredOn, categoryId: input.categoryId,
-        notes: input.notes, merchant: input.merchant, transferGroupId, fxQuoteId, recurringRuleId,
+        ...item, userId, type: input.type, occurredOn: input.occurredOn, occurredTime: input.occurredTime,
+        categoryId: input.categoryId, notes: input.notes, merchant: input.merchant,
+        transferGroupId, fxQuoteId, recurringRuleId,
         tags: { create: input.tagIds.map(tagId => ({ tagId })) },
       },
       include,

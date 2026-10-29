@@ -203,13 +203,26 @@ describe('BE-P1-005 HTTP + PostgreSQL', () => {
     const foreign = await prisma.tag.create({ data: { userId: other, clientId: randomUUID(), name: 'Foreign' } });
     const data = await input('income');
     const created = await create({ ...data, categoryId: category.id, tagIds: [tag.id], merchant: '  WinMart  ' });
-    expect(created.legs[0]).toMatchObject({ categoryId: category.id, tagIds: [tag.id], merchant: 'WinMart' });
+    expect(created.legs[0]).toMatchObject({ categoryId: category.id, tagIds: [tag.id], merchant: 'WinMart', occurredTime: null });
     expect((await request('PATCH', `/${created.legs[0].id}`, { version: 1, tagIds: [foreign.id] })).status).toBe(400);
     const changed = await request('PATCH', `/${created.legs[0].id}`, { version: 1, categoryId: null, tagIds: [], notes: null, merchant: null });
     expect(changed.body.legs[0]).toMatchObject({ categoryId: null, tagIds: [], notes: null, merchant: null });
     expect((await request('POST', '', { ...await input(), categoryId: category.id })).status).toBe(400);
     expect((await request('POST', '', { ...await input('income'), categoryId: randomUUID() })).status).toBe(400);
     expect((await request('POST', '', { ...await input(), merchant: 'Shop' })).status).toBe(400);
+  });
+  it('stores optional occurredTime HH:mm, clears it on PATCH null, and rejects invalid clocks', async () => {
+    const category = await prisma.category.create({ data: { userId: owner, clientId: randomUUID(), name: 'Food' } });
+    const data = await input('expense');
+    expect((await request('POST', '', { ...data, categoryId: category.id, occurredTime: '24:00' })).status).toBe(400);
+    const created = await create({ ...data, categoryId: category.id, occurredTime: '12:40' });
+    expect(created.legs[0]).toMatchObject({ occurredOn: '2026-09-25', occurredTime: '12:40' });
+    const replay = await request('POST', '', { ...data, categoryId: category.id, occurredTime: '12:40' });
+    expect(replay.status).toBe(200);
+    expect((await request('POST', '', { ...data, categoryId: category.id, occurredTime: '13:00' })).status).toBe(409);
+    const cleared = await request('PATCH', `/${created.legs[0].id}`, { version: 1, occurredTime: null });
+    expect(cleared.status).toBe(200);
+    expect(cleared.body.legs[0].occurredTime).toBeNull();
   });
   it('allows only one winner for concurrent updates through opposite transfer legs', async () => {
     const data = await input(); const created = await create(data);

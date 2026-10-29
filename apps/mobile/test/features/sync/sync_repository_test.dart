@@ -22,6 +22,7 @@ void main() {
       action: SyncAction.create,
       type: TransactionType.expense,
       occurredOn: '2026-01-15',
+      occurredTime: '12:40',
       notes: 'secret-note',
       legs: const [
         SyncLeg(
@@ -70,6 +71,7 @@ void main() {
       api.sent?['operations'][0]['body']['legs'][0]['amountMinor'],
       '-150000',
     );
+    expect(api.sent?['operations'][0]['body']['occurredTime'], '12:40');
     expect(api.sent?['operations'][0]['body']['merchant'], isNull);
     expect(api.sent?['operations'][0]['body']['tagIds'], isEmpty);
     expect(logger.messages, isEmpty);

@@ -253,6 +253,8 @@ model Transaction {
   amountMinor     BigInt
   currencyCode    String          @db.Char(3)
   occurredOn      DateTime        @db.Date
+  /// Optional clock time HH:mm in the user's profile timezone (BE-P2-E09). Reports still key off occurredOn.
+  occurredTime    String?         @db.VarChar(5)
   accountId       String          @db.Uuid
   categoryId      String?         @db.Uuid
   transferGroupId String?         @db.Uuid

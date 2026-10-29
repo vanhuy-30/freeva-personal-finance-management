@@ -44,7 +44,7 @@ erDiagram
 
 - **Tiền:** integer minor units (`BigInt`). Không `float` / `double`. Signed: thu dương; chi âm; transfer nguồn âm, đích dương.
 - **Số dư:** `initialBalanceMinor` ± giao dịch chưa xóa. Không cached balance.
-- **Timezone:** `User.timezone` IANA, mặc định `Asia/Ho_Chi_Minh`. `occurredOn` = calendar date theo TZ user (`date`, không UTC wall-clock).
+- **Timezone:** `User.timezone` IANA, mặc định `Asia/Ho_Chi_Minh`. `occurredOn` = calendar date theo TZ user (`date`, không UTC wall-clock). `occurredTime` = giờ địa phương `HH:mm` tuỳ chọn trên cùng ngày; đổi timezone hồ sơ không rewrite hàng cũ.
 - **Kỳ tài chính:** `fiscalMonthStartDay` 1–28.
 - **Transfer:** hai `Transaction` `type=transfer`, cùng `transferGroupId`; cân bằng ở use case Phase 1. Acceptance contract: [transfer-balance-test-cases.md](transfer-balance-test-cases.md).
 - **Credit:** chi tăng nợ (số dư derived âm hơn); thanh toán = transfer từ ví khác.
@@ -126,6 +126,7 @@ Xóa danh mục: chuyển toàn bộ GD (kể cả soft-delete) trước, tăng 
 | amountMinor | BigInt | signed |
 | currencyCode | FK Currency | |
 | occurredOn | date | theo TZ user |
+| occurredTime | `VARCHAR(5)?` | giờ địa phương `HH:mm` tuỳ chọn (`BE-P2-E09`); báo cáo vẫn theo `occurredOn` |
 | accountId | FK FinancialAccount | |
 | categoryId | FK? | thường null với transfer |
 | transferGroupId | UUID? | hai leg cùng giá trị |
