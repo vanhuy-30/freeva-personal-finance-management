@@ -1253,6 +1253,12 @@ class SEn extends S {
   String get creditLimitField => 'Limit';
 
   @override
+  String get creditMinimumField => 'Minimum payment';
+
+  @override
+  String get creditMinimumTitle => 'Minimum payment';
+
+  @override
   String get creditCloseField => 'Statement day';
 
   @override
@@ -1267,7 +1273,8 @@ class SEn extends S {
   String get creditPickDay => 'Pick a day';
 
   @override
-  String get creditOptionalHint => 'Limit and days can stay empty.';
+  String get creditOptionalHint =>
+      'Limit, minimum payment, and days can stay empty.';
 
   @override
   String get walletSave => 'Save wallet';
@@ -2596,10 +2603,10 @@ class SEn extends S {
   String get notifyBudgetSub => 'At 80% and 100% used';
 
   @override
-  String get notifyCard => 'Credit card due';
+  String get notifyCard => 'Credit cards';
 
   @override
-  String get notifyCardSub => '3 days before';
+  String get notifyCardSub => 'Due soon, high balance, and near the limit';
 
   @override
   String get notifySession => 'New device signed in';
@@ -2673,6 +2680,37 @@ class SEn extends S {
   @override
   String notifyInboxRecurringBody(String date) {
     return 'A recurring transaction runs on $date.';
+  }
+
+  @override
+  String get notifyInboxCardDueTitle => 'Card payment due soon';
+
+  @override
+  String notifyInboxCardDueBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'A card payment is due in $count days.',
+      one: 'A card payment is due in 1 day.',
+      zero: 'A card payment is due today.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get notifyInboxCardHighDebtTitle => 'High card balance';
+
+  @override
+  String notifyInboxCardHighDebtBody(String threshold) {
+    return 'You have used $threshold% of this card’s limit.';
+  }
+
+  @override
+  String get notifyInboxCardNearLimitTitle => 'Card near limit';
+
+  @override
+  String notifyInboxCardNearLimitBody(String threshold) {
+    return 'You have used $threshold% of this card’s limit.';
   }
 
   @override

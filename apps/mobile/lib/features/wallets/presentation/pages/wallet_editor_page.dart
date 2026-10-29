@@ -56,6 +56,7 @@ class _WalletEditorPageState extends State<WalletEditorPage> {
   final name = TextEditingController();
   final amount = TextEditingController();
   final limit = TextEditingController();
+  final minimum = TextEditingController();
   bool _filled = false;
 
   /// Errors from earlier screens are not this form's; show only after Lưu.
@@ -76,6 +77,7 @@ class _WalletEditorPageState extends State<WalletEditorPage> {
     final locale = Localizations.localeOf(context).toString();
     amount.text = form.amountText(locale);
     limit.text = form.limitText(locale);
+    minimum.text = form.minimumText(locale);
   }
 
   void _changed() {
@@ -93,6 +95,7 @@ class _WalletEditorPageState extends State<WalletEditorPage> {
       name: name.text,
       amount: amount.text,
       limit: limit.text,
+      minimum: minimum.text,
       locale: Localizations.localeOf(context).toString(),
     );
     if (draft == null) return;
@@ -113,7 +116,7 @@ class _WalletEditorPageState extends State<WalletEditorPage> {
   void dispose() {
     model.removeListener(_changed);
     form.dispose();
-    for (final c in [name, amount, limit]) {
+    for (final c in [name, amount, limit, minimum]) {
       c.dispose();
     }
     super.dispose();
@@ -157,6 +160,7 @@ class _WalletEditorPageState extends State<WalletEditorPage> {
                   name: name,
                   amount: amount,
                   limit: limit,
+                  minimum: minimum,
                   onHide: editing && !model.busy ? _hide : null,
                   gap: roomy ? 18 : FreevaSpace.s4,
                 ),

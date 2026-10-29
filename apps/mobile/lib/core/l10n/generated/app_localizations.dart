@@ -2299,6 +2299,18 @@ abstract class S {
   /// **'Limit'**
   String get creditLimitField;
 
+  /// No description provided for @creditMinimumField.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum payment'**
+  String get creditMinimumField;
+
+  /// No description provided for @creditMinimumTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum payment'**
+  String get creditMinimumTitle;
+
   /// No description provided for @creditCloseField.
   ///
   /// In en, this message translates to:
@@ -2326,7 +2338,7 @@ abstract class S {
   /// No description provided for @creditOptionalHint.
   ///
   /// In en, this message translates to:
-  /// **'Limit and days can stay empty.'**
+  /// **'Limit, minimum payment, and days can stay empty.'**
   String get creditOptionalHint;
 
   /// No description provided for @walletSave.
@@ -4719,13 +4731,13 @@ abstract class S {
   /// No description provided for @notifyCard.
   ///
   /// In en, this message translates to:
-  /// **'Credit card due'**
+  /// **'Credit cards'**
   String get notifyCard;
 
   /// No description provided for @notifyCardSub.
   ///
   /// In en, this message translates to:
-  /// **'3 days before'**
+  /// **'Due soon, high balance, and near the limit'**
   String get notifyCardSub;
 
   /// No description provided for @notifySession.
@@ -4859,6 +4871,42 @@ abstract class S {
   /// In en, this message translates to:
   /// **'A recurring transaction runs on {date}.'**
   String notifyInboxRecurringBody(String date);
+
+  /// No description provided for @notifyInboxCardDueTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Card payment due soon'**
+  String get notifyInboxCardDueTitle;
+
+  /// No description provided for @notifyInboxCardDueBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{A card payment is due today.} =1{A card payment is due in 1 day.} other{A card payment is due in {count} days.}}'**
+  String notifyInboxCardDueBody(int count);
+
+  /// No description provided for @notifyInboxCardHighDebtTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'High card balance'**
+  String get notifyInboxCardHighDebtTitle;
+
+  /// No description provided for @notifyInboxCardHighDebtBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You have used {threshold}% of this card’s limit.'**
+  String notifyInboxCardHighDebtBody(String threshold);
+
+  /// No description provided for @notifyInboxCardNearLimitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Card near limit'**
+  String get notifyInboxCardNearLimitTitle;
+
+  /// No description provided for @notifyInboxCardNearLimitBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You have used {threshold}% of this card’s limit.'**
+  String notifyInboxCardNearLimitBody(String threshold);
 
   /// No description provided for @authOr.
   ///

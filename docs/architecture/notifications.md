@@ -14,10 +14,13 @@ Cảnh báo bảo mật (phiên đăng nhập khác) vẫn so id phiên trên m�
 |---|---|---|
 | `budget` | Ngân sách hiện tại, ngưỡng ≥ 80 | bật |
 | `recurring` | Rule active, ngày trước `nextExecutionDate` | bật |
+| `card` | Ví `credit` đang dùng (`BE-P2-E07`) | bật |
 | `security` | Máy (`sessionAlertsEnabled`) | local |
-| `goal` `debt` `card` `month_review` `insight` | Chưa có module | khóa, `available=false` |
+| `goal` `debt` `month_review` `insight` | Chưa có module | khóa, `available=false` |
 
-Bật loại khóa trả 422 `NOTIFICATION_SOURCE_UNAVAILABLE`. Payload chỉ `titleKey` / `bodyKey` / `params` (ngưỡng, `periodFrom`, `executionDate`) — không số dư, số tiền, tên rule.
+Bật loại khóa trả 422 `NOTIFICATION_SOURCE_UNAVAILABLE`. Payload chỉ `titleKey` / `bodyKey` / `params` (ngưỡng, `periodFrom`, `executionDate`, `days`, `accountId`) — không số dư, số tiền, tên rule hay tên ví.
+
+Cảnh báo thẻ (`card`): sắp đến hạn khi có `paymentDueDay`, dư nợ > 0 và còn 0–3 ngày (timezone hồ sơ); dư nợ cao khi đã dùng ≥ 70% hạn mức; sắp vượt hạn mức khi ≥ 90%. Dedupe theo ngày đến hạn hoặc tháng tài chính + ngưỡng. Không tạo giao dịch trả nợ.
 
 ## Giờ yên
 

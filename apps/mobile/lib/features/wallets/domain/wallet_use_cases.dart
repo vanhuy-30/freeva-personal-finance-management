@@ -74,12 +74,16 @@ class DefaultWalletUseCases implements WalletUseCases {
         draft.initialBalance > max ||
         (draft.creditLimit != null &&
             (draft.creditLimit! < BigInt.zero || draft.creditLimit! > max)) ||
+        (draft.minimumPayment != null &&
+            (draft.minimumPayment! < BigInt.zero ||
+                draft.minimumPayment! > max)) ||
         !day(draft.closeDay) ||
         !day(draft.dueDay) ||
         (draft.type != WalletType.credit &&
             (draft.creditLimit != null ||
                 draft.closeDay != null ||
-                draft.dueDay != null))) {
+                draft.dueDay != null ||
+                draft.minimumPayment != null))) {
       return Future.value(left(const AuthFailure(AuthError.invalidInput)));
     }
     if (wallet != null && wallet.version >= 2147483647) {

@@ -75,6 +75,7 @@ export interface AccountExportAccount extends Omit<SyncRow, 'createdAt' | 'updat
   creditLimitMinor: string | null;
   statementCloseDay: number | null;
   paymentDueDay: number | null;
+  minimumPaymentMinor: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -200,10 +201,11 @@ export interface ExportSource {
     updatedAt: Date;
   };
   oauthProviders: Array<'google' | 'apple'>;
-  financialAccounts: Array<Omit<AccountExportAccount, 'initialBalanceMinor' | 'creditLimitMinor' | 'archivedAt' | 'createdAt' | 'updatedAt' | 'currencyCode'> & {
+  financialAccounts: Array<Omit<AccountExportAccount, 'initialBalanceMinor' | 'creditLimitMinor' | 'minimumPaymentMinor' | 'archivedAt' | 'createdAt' | 'updatedAt' | 'currencyCode'> & {
     currencyCode: string;
     initialBalanceMinor: bigint;
     creditLimitMinor: bigint | null;
+    minimumPaymentMinor: bigint | null;
     archivedAt: Date | null;
     createdAt: Date;
     updatedAt: Date;
@@ -330,7 +332,9 @@ export function toAccountExport(source: ExportSource): AccountExport {
       initialBalanceMinor: row.initialBalanceMinor.toString(), sortOrder: row.sortOrder,
       archivedAt: row.archivedAt ? iso(row.archivedAt) : null,
       creditLimitMinor: row.creditLimitMinor?.toString() ?? null,
-      statementCloseDay: row.statementCloseDay, paymentDueDay: row.paymentDueDay, version: row.version, ...stamps(row),
+      statementCloseDay: row.statementCloseDay, paymentDueDay: row.paymentDueDay,
+      minimumPaymentMinor: row.minimumPaymentMinor?.toString() ?? null,
+      version: row.version, ...stamps(row),
     })),
     categoryGroups: source.categoryGroups.map(row => ({
       id: row.id, clientId: row.clientId, name: row.name, isSystem: row.isSystem,

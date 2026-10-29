@@ -5627,6 +5627,14 @@ components:
           - 'null'
           minimum: 1
           maximum: 28
+        minimumPaymentMinor:
+          type:
+          - string
+          - 'null'
+          pattern: ^-?[0-9]+(?![\s\S])
+          maxLength: 20
+          description: Nonnegative integer minor units, at most 9223372036854775807. Only
+            for credit accounts. Optional; not used to create payments.
       description: Card fields must be null or omitted for non-credit accounts. Omitted
         card fields default to null. clientId is unique per owner; identical normalized
         retries return the existing account, including archived accounts; differing fields
@@ -5687,6 +5695,14 @@ components:
           - 'null'
           minimum: 1
           maximum: 28
+        minimumPaymentMinor:
+          type:
+          - string
+          - 'null'
+          pattern: ^-?[0-9]+(?![\s\S])
+          maxLength: 20
+          description: Nonnegative integer minor units, at most 9223372036854775807. Only
+            for credit accounts. Optional; not used to create payments.
         archived:
           type: boolean
       description: Partial update. Omitted fields are preserved; null is allowed only
@@ -5708,6 +5724,7 @@ components:
       - creditLimitMinor
       - statementCloseDay
       - paymentDueDay
+      - minimumPaymentMinor
       - balanceMinor
       - version
       - archivedAt
@@ -5771,6 +5788,14 @@ components:
           - 'null'
           minimum: 1
           maximum: 28
+        minimumPaymentMinor:
+          type:
+          - string
+          - 'null'
+          pattern: ^-?[0-9]+(?![\s\S])
+          maxLength: 20
+          description: Nonnegative integer minor units, at most 9223372036854775807. Only
+            for credit accounts. Optional; not used to create payments.
         balanceMinor:
           type: string
           pattern: ^-?[0-9]+(?![\s\S])
@@ -6833,7 +6858,7 @@ components:
     AccountExportFinancialAccount:
       type: object
       additionalProperties: false
-      required: [id, clientId, name, type, currencyCode, initialBalanceMinor, sortOrder, archivedAt, creditLimitMinor, statementCloseDay, paymentDueDay, version, createdAt, updatedAt]
+      required: [id, clientId, name, type, currencyCode, initialBalanceMinor, sortOrder, archivedAt, creditLimitMinor, statementCloseDay, paymentDueDay, minimumPaymentMinor, version, createdAt, updatedAt]
       properties:
         id:
           type: string
@@ -6868,6 +6893,10 @@ components:
           type: [integer, 'null']
           minimum: 1
           maximum: 28
+        minimumPaymentMinor:
+          oneOf:
+          - $ref: '#/components/schemas/ReportMoney'
+          - type: 'null'
         version:
           type: integer
         createdAt:

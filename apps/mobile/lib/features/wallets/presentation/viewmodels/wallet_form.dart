@@ -4,7 +4,7 @@ import '../../../../core/money/money_input_formatter.dart';
 import '../../../../core/money/money_text.dart';
 import '../../domain/wallet.dart';
 
-enum WalletFormError { name, amount, limit }
+enum WalletFormError { name, amount, limit, minimum }
 
 /// State of the add / edit wallet form (D, màn 5–8). Amounts stay text until
 /// [build] parses them into minor units. A credit card's debt is typed as a
@@ -83,13 +83,19 @@ class WalletForm extends ChangeNotifier {
     return limit == null ? '' : formatMoneyText(limit, minorDigits, locale);
   }
 
+  String minimumText(String locale) {
+    final value = wallet?.draft.minimumPayment;
+    return value == null ? '' : formatMoneyText(value, minorDigits, locale);
+  }
+
   /// The draft to save, or null after marking what is wrong in [errors].
-  /// Empty amount = 0; empty limit = none.
+  /// Empty amount = 0; empty limit / minimum = none.
   WalletDraft? build({
     required String name,
     required String amount,
     required String limit,
     required String locale,
+    String minimum = '',
   }) {
     final typed = amount.trim().isEmpty
         ? BigInt.zero
@@ -97,11 +103,18 @@ class WalletForm extends ChangeNotifier {
     final cap = limit.trim().isEmpty
         ? null
         : parseGroupedMoney(limit, minorDigits, locale);
+    final minPay = minimum.trim().isEmpty
+        ? null
+        : parseGroupedMoney(minimum, minorDigits, locale);
     errors = {
       if (name.trim().isEmpty) WalletFormError.name,
       if (typed == null) WalletFormError.amount,
       if (credit && limit.trim().isNotEmpty && (cap == null || cap.isNegative))
         WalletFormError.limit,
+      if (credit &&
+          minimum.trim().isNotEmpty &&
+          (minPay == null || minPay.isNegative))
+        WalletFormError.minimum,
     };
     notifyListeners();
     if (errors.isNotEmpty) return null;
@@ -113,6 +126,7 @@ class WalletForm extends ChangeNotifier {
       creditLimit: credit ? cap : null,
       closeDay: credit ? closeDay : null,
       dueDay: credit ? dueDay : null,
+      minimumPayment: credit ? minPay : null,
     );
   }
 }

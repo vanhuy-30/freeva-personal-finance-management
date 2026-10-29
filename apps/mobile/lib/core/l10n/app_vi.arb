@@ -381,11 +381,13 @@
   "creditCurrentDebt": "Dư nợ hiện tại",
   "creditInitialDebt": "Dư nợ ban đầu",
   "creditLimitField": "Hạn mức",
+  "creditMinimumField": "Số trả tối thiểu",
+  "creditMinimumTitle": "Số trả tối thiểu",
   "creditCloseField": "Ngày chốt",
   "creditDueField": "Đến hạn",
   "creditDayValue": "Ngày {day}",
   "creditPickDay": "Chọn ngày",
-  "creditOptionalHint": "Hạn mức và ngày có thể để trống.",
+  "creditOptionalHint": "Hạn mức, số trả tối thiểu và ngày có thể để trống.",
   "walletSave": "Lưu ví",
   "creditSave": "Lưu thẻ",
   "walletSaveChanges": "Lưu thay đổi",
@@ -824,8 +826,8 @@
   "notifyDigestSub": "Mỗi tuần hoặc mỗi tháng",
   "notifyBudget": "Ngân sách sắp hết",
   "notifyBudgetSub": "Khi dùng 80% và 100%",
-  "notifyCard": "Thẻ tín dụng đến hạn",
-  "notifyCardSub": "Trước 3 ngày",
+  "notifyCard": "Thẻ tín dụng",
+  "notifyCardSub": "Sắp đến hạn, dư nợ cao và sắp vượt hạn mức",
   "notifySession": "Máy mới đăng nhập",
   "notifyRecurring": "Định kỳ sắp chạy",
   "notifyRecurringSub": "Một ngày trước lần chạy",
@@ -867,6 +869,27 @@
   "@notifyInboxRecurringBody": {
     "placeholders": {
       "date": { "type": "String" }
+    }
+  },
+  "notifyInboxCardDueTitle": "Thẻ sắp đến hạn",
+  "notifyInboxCardDueBody": "{count, plural, =0{Thẻ đến hạn hôm nay.} =1{Thẻ đến hạn trong 1 ngày.} other{Thẻ đến hạn trong {count} ngày.}}",
+  "@notifyInboxCardDueBody": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "notifyInboxCardHighDebtTitle": "Dư nợ thẻ cao",
+  "notifyInboxCardHighDebtBody": "Bạn đã dùng đến {threshold}% hạn mức thẻ.",
+  "@notifyInboxCardHighDebtBody": {
+    "placeholders": {
+      "threshold": { "type": "String" }
+    }
+  },
+  "notifyInboxCardNearLimitTitle": "Thẻ sắp vượt hạn mức",
+  "notifyInboxCardNearLimitBody": "Bạn đã dùng đến {threshold}% hạn mức thẻ.",
+  "@notifyInboxCardNearLimitBody": {
+    "placeholders": {
+      "threshold": { "type": "String" }
     }
   },
   "authOr": "hoặc",

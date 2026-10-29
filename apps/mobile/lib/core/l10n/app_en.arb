@@ -735,6 +735,8 @@
   "creditCurrentDebt": "Current balance owed",
   "creditInitialDebt": "Starting balance owed",
   "creditLimitField": "Limit",
+  "creditMinimumField": "Minimum payment",
+  "creditMinimumTitle": "Minimum payment",
   "creditCloseField": "Statement day",
   "creditDueField": "Due day",
   "creditDayValue": "Day {day}",
@@ -746,7 +748,7 @@
     }
   },
   "creditPickDay": "Pick a day",
-  "creditOptionalHint": "Limit and days can stay empty.",
+  "creditOptionalHint": "Limit, minimum payment, and days can stay empty.",
   "walletSave": "Save wallet",
   "creditSave": "Save card",
   "walletSaveChanges": "Save changes",
@@ -1530,8 +1532,8 @@
   "notifyDigestSub": "Every week or month",
   "notifyBudget": "Budget running out",
   "notifyBudgetSub": "At 80% and 100% used",
-  "notifyCard": "Credit card due",
-  "notifyCardSub": "3 days before",
+  "notifyCard": "Credit cards",
+  "notifyCardSub": "Due soon, high balance, and near the limit",
   "notifySession": "New device signed in",
   "notifyRecurring": "Recurring due soon",
   "notifyRecurringSub": "One day before the next run",
@@ -1573,6 +1575,27 @@
   "@notifyInboxRecurringBody": {
     "placeholders": {
       "date": { "type": "String" }
+    }
+  },
+  "notifyInboxCardDueTitle": "Card payment due soon",
+  "notifyInboxCardDueBody": "{count, plural, =0{A card payment is due today.} =1{A card payment is due in 1 day.} other{A card payment is due in {count} days.}}",
+  "@notifyInboxCardDueBody": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "notifyInboxCardHighDebtTitle": "High card balance",
+  "notifyInboxCardHighDebtBody": "You have used {threshold}% of this card’s limit.",
+  "@notifyInboxCardHighDebtBody": {
+    "placeholders": {
+      "threshold": { "type": "String" }
+    }
+  },
+  "notifyInboxCardNearLimitTitle": "Card near limit",
+  "notifyInboxCardNearLimitBody": "You have used {threshold}% of this card’s limit.",
+  "@notifyInboxCardNearLimitBody": {
+    "placeholders": {
+      "threshold": { "type": "String" }
     }
   },
   "authOr": "or",

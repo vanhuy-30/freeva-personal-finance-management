@@ -18,12 +18,14 @@ class CreditCardFields extends StatelessWidget {
     required this.form,
     required this.debt,
     required this.limit,
+    required this.minimum,
     super.key,
   });
 
   final WalletForm form;
   final TextEditingController debt;
   final TextEditingController limit;
+  final TextEditingController minimum;
 
   @override
   Widget build(BuildContext context) {
@@ -93,6 +95,22 @@ class CreditCardFields extends StatelessWidget {
                 ? s.walletAmountInvalid
                 : null,
           ),
+        ),
+        const SizedBox(height: FreevaSpace.s4),
+        FreevaTextField(
+          label: s.creditMinimumField,
+          controller: minimum,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          inputFormatters: [
+            MoneyInputFormatter(
+              minorDigits: form.minorDigits,
+              locale: locale,
+            ),
+          ],
+          tabular: true,
+          error: form.errors.contains(WalletFormError.minimum)
+              ? s.walletAmountInvalid
+              : null,
         ),
         const SizedBox(height: FreevaSpace.s4),
         FormPair(

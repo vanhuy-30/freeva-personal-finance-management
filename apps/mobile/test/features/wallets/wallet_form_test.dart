@@ -63,23 +63,35 @@ void main() {
         name: 'Thẻ',
         amount: '11.450.000',
         limit: '20.000.000',
+        minimum: '500.000',
         locale: 'vi',
       )!;
       expect(card.initialBalance, b(-11450000));
       expect(card.creditLimit, b(20000000));
+      expect(card.minimumPayment, b(500000));
       expect(card.dueDay, 25);
       f.setType(WalletType.cash);
-      final cash = f.build(name: 'Ví', amount: '5', limit: '9', locale: 'vi')!;
+      final cash = f.build(
+        name: 'Ví',
+        amount: '5',
+        limit: '9',
+        minimum: '1',
+        locale: 'vi',
+      )!;
       expect(cash.initialBalance, b(5));
-      expect((cash.creditLimit, cash.dueDay), (null, null));
+      expect((cash.creditLimit, cash.dueDay, cash.minimumPayment), (null, null, null));
     });
     test('marks what is wrong instead of saving', () {
       final f = form()..setType(WalletType.credit);
       expect(
-        f.build(name: ' ', amount: '1', limit: '-5', locale: 'vi'),
+        f.build(name: ' ', amount: '1', limit: '-5', minimum: '-1', locale: 'vi'),
         isNull,
       );
-      expect(f.errors, {WalletFormError.name, WalletFormError.limit});
+      expect(f.errors, {
+        WalletFormError.name,
+        WalletFormError.limit,
+        WalletFormError.minimum,
+      });
     });
     test(
       'editing shows debt as positive; locked forms ignore type changes',
@@ -94,6 +106,7 @@ void main() {
               currency: 'VND',
               initialBalance: b(-1500000),
               creditLimit: b(20000000),
+              minimumPayment: b(300000),
             ),
             balance: b(-1500000),
             version: 1,
@@ -104,6 +117,7 @@ void main() {
         );
         expect(f.amountText('vi'), '1.500.000');
         expect(f.limitText('vi'), '20.000.000');
+        expect(f.minimumText('vi'), '300.000');
         expect(f.locked, isTrue);
         f
           ..setType(WalletType.cash)

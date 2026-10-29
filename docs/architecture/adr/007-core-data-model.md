@@ -47,7 +47,7 @@ Phase 0 cần chốt schema lõi (user, ví, giao dịch, danh mục, tiền t�
 ### Credit
 
 - `FinancialAccount.type = credit`. Chi (âm) làm số dư derived càng âm (nợ tăng). Thanh toán = transfer từ ví khác.
-- Optional: `creditLimitMinor`, `statementCloseDay`, `paymentDueDay`.
+- Optional: `creditLimitMinor`, `statementCloseDay`, `paymentDueDay`, `minimumPaymentMinor` (`BE-P2-E07`).
 
 ### Xóa / lưu trữ
 

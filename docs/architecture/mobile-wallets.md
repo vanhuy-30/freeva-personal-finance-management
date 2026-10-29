@@ -21,7 +21,8 @@ Home → **Ví của tôi** (`/wallets`, qua AuthGate). Dùng contract hiện c�
 
 - Danh sách ví đang dùng và bộ lọc ví đã ẩn; tên, loại, số dư và mã tiền tệ.
 - Tạo/sửa tiền mặt, ngân hàng, ví điện tử, thẻ tín dụng. Cấu hình hạn mức,
-  ngày chốt/thanh toán thẻ không bắt buộc; ngày hợp lệ 1–28.
+  số trả tối thiểu (`BE-P2-E07`), ngày chốt/thanh toán thẻ không bắt buộc;
+  ngày hợp lệ 1–28. Chi tiết thẻ hiện dư nợ, hạn mức còn và số trả tối thiểu.
 - Số dư ban đầu cho phép âm và chỉ sửa để đính chính. Backend chặn đổi loại/
   tiền tệ sau khi có giao dịch; API chưa trả cờ khóa nên UI hiển thị hướng dẫn
   và lỗi khi backend từ chối, giữ nguyên bản nháp.

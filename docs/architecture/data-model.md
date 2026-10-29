@@ -94,6 +94,7 @@ Kiểu Prisma. Mọi bảng user-owned (trừ `User`, `Currency`, `SchemaMeta`, 
 | creditLimitMinor | BigInt? | chỉ credit |
 | statementCloseDay | Int? | 1–28 |
 | paymentDueDay | Int? | 1–28 |
+| minimumPaymentMinor | BigInt? | chỉ credit; optional, không âm (`BE-P2-E07`) |
 
 Unique `(userId, clientId)`. CRUD, số dư derived và quy tắc chỉnh sửa/lưu trữ: [BE-P1-004](financial-accounts.md).
 

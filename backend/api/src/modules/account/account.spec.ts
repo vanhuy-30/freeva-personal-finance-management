@@ -20,7 +20,7 @@ function source(): ExportSource {
     financialAccounts: [{
       id, clientId, name: 'Cash', type: 'cash', currencyCode: 'VND', initialBalanceMinor: 9007199254740993n,
       sortOrder: 0, archivedAt: null, creditLimitMinor: null, statementCloseDay: null, paymentDueDay: null,
-      version: 1, createdAt: at, updatedAt: at,
+      minimumPaymentMinor: null, version: 1, createdAt: at, updatedAt: at,
     }],
     categoryGroups: [],
     categories: [],
@@ -52,7 +52,9 @@ describe('BE-P1-010 account export mapping', () => {
       userId: id,
       oauthProviders: ['apple', 'google'],
       profile: { email: 'owner@example.test', emailVerifiedAt: at.toISOString(), categoriesInitializedAt: null },
-      financialAccounts: [{ initialBalanceMinor: '9007199254740993', creditLimitMinor: null }],
+      financialAccounts: [{
+        initialBalanceMinor: '9007199254740993', creditLimitMinor: null, minimumPaymentMinor: null,
+      }],
       fxQuotes: [{ rate: '25000.00000000' }],
       transactions: [{
         amountMinor: '-150000', occurredOn: '2026-10-12', deletedAt: at.toISOString(), merchant: 'WinMart',

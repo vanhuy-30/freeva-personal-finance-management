@@ -150,6 +150,7 @@ model FinancialAccount {
   creditLimitMinor    BigInt?
   statementCloseDay   Int?
   paymentDueDay       Int?
+  minimumPaymentMinor BigInt?
   version             Int                  @default(1)
   createdAt           DateTime             @default(now()) @db.Timestamptz
   updatedAt           DateTime             @updatedAt @db.Timestamptz
@@ -432,7 +433,7 @@ model NotificationPreference {
   budgetEnabled      Boolean  @default(true)
   goalEnabled        Boolean  @default(false)
   debtEnabled        Boolean  @default(false)
-  cardEnabled        Boolean  @default(false)
+  cardEnabled        Boolean  @default(true)
   recurringEnabled   Boolean  @default(true)
   monthReviewEnabled Boolean  @default(false)
   insightEnabled     Boolean  @default(false)

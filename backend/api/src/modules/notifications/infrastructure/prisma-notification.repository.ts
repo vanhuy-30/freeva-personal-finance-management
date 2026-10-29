@@ -194,10 +194,12 @@ export class PrismaNotificationRepository implements NotificationRepository {
       return {
         userId,
         timezone: 'UTC',
+        today: todayInTimeZone('UTC', now),
         prefs: { ...defaultPreference(), createdAt: now, updatedAt: now },
         periodFrom: null,
         crossedThresholds: [],
         recurringSoon: [],
+        creditCards: [],
       };
     }
     const prefs = await this.getPreferences(userId);
@@ -267,13 +269,44 @@ export class PrismaNotificationRepository implements NotificationRepository {
       .map(rule => ({ id: rule.id, nextExecutionDate: dayIso(rule.nextExecutionDate) }))
       .filter(rule => dayBefore(rule.nextExecutionDate) === today);
 
+    const creditRows = await this.prisma.financialAccount.findMany({
+      where: { userId, type: 'credit', archivedAt: null },
+      select: {
+        id: true,
+        paymentDueDay: true,
+        creditLimitMinor: true,
+        initialBalanceMinor: true,
+      },
+      orderBy: { id: 'asc' },
+    });
+    let creditCards: EvaluateUserContext['creditCards'] = [];
+    if (creditRows.length > 0) {
+      const totals = await this.prisma.$queryRaw<{ accountId: string; total: string }[]>(Prisma.sql`
+        SELECT "accountId", COALESCE(SUM("amountMinor") FILTER (WHERE "deletedAt" IS NULL), 0)::text AS total
+        FROM "Transaction"
+        WHERE "userId" = ${userId}::uuid
+          AND "accountId" IN (${Prisma.join(creditRows.map(row => Prisma.sql`${row.id}::uuid`))})
+        GROUP BY "accountId"
+      `);
+      const byId = new Map(totals.map(total => [total.accountId, BigInt(total.total)]));
+      creditCards = creditRows.map(row => ({
+        id: row.id,
+        paymentDueDay: row.paymentDueDay,
+        creditLimitMinor: row.creditLimitMinor,
+        balanceMinor: row.initialBalanceMinor + (byId.get(row.id) ?? 0n),
+      }));
+    }
+
     return {
       userId: user.id,
       timezone: user.timezone,
+      today,
       prefs,
-      periodFrom: budgetRow ? periodFrom : null,
+      // Fiscal month start for card usage dedupe; budget alerts still need crossed thresholds.
+      periodFrom,
       crossedThresholds: crossed,
       recurringSoon,
+      creditCards,
     };
   }
 }

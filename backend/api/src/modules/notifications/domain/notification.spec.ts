@@ -1,10 +1,16 @@
 import {
   budgetDedupeKey,
   budgetNotifyThresholds,
+  cardDueDedupeKey,
+  cardUsageDedupeKey,
+  cardUsageThresholds,
+  creditOutstanding,
   dayBefore,
+  daysBetween,
   isInQuietHours,
   kindToggles,
   localMinutesInTimeZone,
+  nextDueDateIso,
   parseHm,
   assertKindWritable,
   NotificationError,
@@ -56,6 +62,7 @@ describe('BE-P2-E05 kinds and budget thresholds', () => {
       updatedAt: new Date(),
     });
     expect(toggles.find(t => t.kind === 'budget')).toMatchObject({ available: true, enabled: true });
+    expect(toggles.find(t => t.kind === 'card')).toMatchObject({ available: true, enabled: true });
     expect(toggles.find(t => t.kind === 'goal')).toMatchObject({ available: false, enabled: false });
     expect(toggles.find(t => t.kind === 'security')).toMatchObject({
       available: true,
@@ -69,6 +76,7 @@ describe('BE-P2-E05 kinds and budget thresholds', () => {
     );
     expect(() => assertKindWritable('goal', false)).not.toThrow();
     expect(() => assertKindWritable('budget', true)).not.toThrow();
+    expect(() => assertKindWritable('card', true)).not.toThrow();
   });
 
   it('notifies only at 80+ including over', () => {
@@ -80,5 +88,25 @@ describe('BE-P2-E05 kinds and budget thresholds', () => {
   it('computes the calendar day before a run', () => {
     expect(dayBefore('2026-03-01')).toBe('2026-02-28');
     expect(dayBefore('2026-01-01')).toBe('2025-12-31');
+  });
+});
+
+describe('BE-P2-E07 card alert helpers', () => {
+  it('derives outstanding debt and usage thresholds', () => {
+    expect(creditOutstanding(-500n)).toBe(500n);
+    expect(creditOutstanding(100n)).toBe(0n);
+    expect(cardUsageThresholds(699n, 1000n)).toEqual([]);
+    expect(cardUsageThresholds(700n, 1000n)).toEqual([70]);
+    expect(cardUsageThresholds(900n, 1000n)).toEqual([70, 90]);
+    expect(cardUsageThresholds(500n, null)).toEqual([]);
+  });
+
+  it('finds the next due date and days left', () => {
+    expect(nextDueDateIso(15, '2026-10-12')).toBe('2026-10-15');
+    expect(nextDueDateIso(10, '2026-10-12')).toBe('2026-11-10');
+    expect(nextDueDateIso(null, '2026-10-12')).toBeNull();
+    expect(daysBetween('2026-10-12', '2026-10-15')).toBe(3);
+    expect(cardDueDedupeKey('a1', '2026-10-15')).toBe('card|due|a1|2026-10-15');
+    expect(cardUsageDedupeKey('a1', '2026-10-01', 70)).toBe('card|usage|a1|2026-10-01|70');
   });
 });

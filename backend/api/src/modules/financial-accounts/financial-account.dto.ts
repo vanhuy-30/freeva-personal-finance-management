@@ -19,6 +19,7 @@ export class CreateAccountDto {
   @ValidateIf(nullable) @IsString() @MaxLength(20) @Matches(/^-?[0-9]+(?![\s\S])/) creditLimitMinor?: string | null;
   @ValidateIf(nullable) @IsInt() @Min(1) @Max(28) statementCloseDay?: number | null;
   @ValidateIf(nullable) @IsInt() @Min(1) @Max(28) paymentDueDay?: number | null;
+  @ValidateIf(nullable) @IsString() @MaxLength(20) @Matches(/^-?[0-9]+(?![\s\S])/) minimumPaymentMinor?: string | null;
 }
 export class UpdateAccountDto {
   @IsInt() @Min(1) @Max(2147483646) version!: number;
@@ -30,6 +31,7 @@ export class UpdateAccountDto {
   @ValidateIf(nullable) @IsString() @MaxLength(20) @Matches(/^-?[0-9]+(?![\s\S])/) creditLimitMinor?: string | null;
   @ValidateIf(nullable) @IsInt() @Min(1) @Max(28) statementCloseDay?: number | null;
   @ValidateIf(nullable) @IsInt() @Min(1) @Max(28) paymentDueDay?: number | null;
+  @ValidateIf(nullable) @IsString() @MaxLength(20) @Matches(/^-?[0-9]+(?![\s\S])/) minimumPaymentMinor?: string | null;
   @ValidateIf(optional) @IsBoolean() archived?: boolean;
 }
 export class AccountQueryDto {

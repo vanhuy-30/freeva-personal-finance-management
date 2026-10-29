@@ -88,11 +88,12 @@
 - Note: `GET /reports/cashflow` thêm `savingsRateBps`, `comparison` (kỳ liền trước cùng loại), `topMerchants`; `GET /reports/series?window=7d|30d|3m|6m|1y|all`. Search merchant đã có từ `DS-P2-005` — không endpoint search mới. OpenAPI + unit/integration. Kiến trúc: [reports.md](../docs/architecture/reports.md).
 
 ### BE-P2-E07 / MOB-P2-E07 — Vòng đời thẻ tín dụng
-- Status: todo
+- Status: done
 - Module: 3
 - Gate: post-v1
 - Depends: BE-P1-004, BE-P1-007
 - DoD: từ hạn mức và số dư suy ra dư nợ và hạn mức còn. Giữ ngày chốt và ngày đến hạn 1–28. Thêm số trả tối thiểu. Cảnh báo sắp đến hạn, dư nợ cao và sắp vượt hạn mức. Không tự trả nợ.
+- Note: `minimumPaymentMinor` trên ví credit; OpenAPI + export; kind `card` mở khóa (đến hạn 0–3 ngày, dùng ≥70% / ≥90%); form và chi tiết thẻ trên mobile; không tạo giao dịch trả nợ.
 
 ### BE-P2-E08 / MOB-P2-E08 — Soát tháng
 - Status: todo

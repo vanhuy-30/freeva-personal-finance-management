@@ -23,6 +23,9 @@ class WalletRepositoryImpl implements WalletRepository {
           : BigInt.parse(j['creditLimitMinor'] as String),
       closeDay: j['statementCloseDay'] as int?,
       dueDay: j['paymentDueDay'] as int?,
+      minimumPayment: j['minimumPaymentMinor'] == null
+          ? null
+          : BigInt.parse(j['minimumPaymentMinor'] as String),
     ),
     balance: BigInt.parse(j['balanceMinor'] as String),
     version: j['version'] as int,
@@ -102,6 +105,7 @@ class WalletRepositoryImpl implements WalletRepository {
       'creditLimitMinor': d.creditLimit?.toString(),
       'statementCloseDay': d.closeDay,
       'paymentDueDay': d.dueDay,
+      'minimumPaymentMinor': d.minimumPayment?.toString(),
     },
   );
   @override

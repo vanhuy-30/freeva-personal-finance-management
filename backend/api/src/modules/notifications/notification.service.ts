@@ -3,8 +3,16 @@ import {
   assertKindWritable,
   budgetDedupeKey,
   budgetNotifyThresholds,
+  CARD_DUE_WINDOW_DAYS,
+  CARD_NEAR_LIMIT_THRESHOLD,
+  cardDueDedupeKey,
+  cardUsageDedupeKey,
+  cardUsageThresholds,
+  creditOutstanding,
+  daysBetween,
   isInQuietHours,
   kindToggles,
+  nextDueDateIso,
   NotificationError,
   recurringDedupeKey,
   validateQuietWindow,
@@ -140,6 +148,41 @@ export class NotificationService {
           params: { executionDate: rule.nextExecutionDate },
         });
         if (ok) created += 1;
+      }
+    }
+
+    if (context.prefs.cardEnabled) {
+      for (const card of context.creditCards) {
+        const used = creditOutstanding(card.balanceMinor);
+        const due = nextDueDateIso(card.paymentDueDay, context.today);
+        if (due !== null && used > 0n) {
+          const days = daysBetween(context.today, due);
+          if (days >= 0 && days <= CARD_DUE_WINDOW_DAYS) {
+            const ok = await this.repository.createIfAbsent({
+              userId,
+              kind: 'card',
+              dedupeKey: cardDueDedupeKey(card.id, due),
+              titleKey: 'card_due',
+              bodyKey: 'card_due_body',
+              params: { days, accountId: card.id },
+            });
+            if (ok) created += 1;
+          }
+        }
+        if (context.periodFrom !== null) {
+          for (const threshold of cardUsageThresholds(used, card.creditLimitMinor)) {
+            const near = threshold >= CARD_NEAR_LIMIT_THRESHOLD;
+            const ok = await this.repository.createIfAbsent({
+              userId,
+              kind: 'card',
+              dedupeKey: cardUsageDedupeKey(card.id, context.periodFrom, threshold),
+              titleKey: near ? 'card_near_limit' : 'card_high_debt',
+              bodyKey: near ? 'card_near_limit_body' : 'card_high_debt_body',
+              params: { threshold, accountId: card.id },
+            });
+            if (ok) created += 1;
+          }
+        }
       }
     }
 
