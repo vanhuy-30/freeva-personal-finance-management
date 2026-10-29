@@ -96,11 +96,12 @@
 - Note: `minimumPaymentMinor` trên ví credit; OpenAPI + export; kind `card` mở khóa (đến hạn 0–3 ngày, dùng ≥70% / ≥90%); form và chi tiết thẻ trên mobile; không tạo giao dịch trả nợ.
 
 ### BE-P2-E08 / MOB-P2-E08 — Soát tháng
-- Status: todo
+- Status: done
 - Module: 14
 - Gate: post-v1
 - Depends: BE-P1-007
 - DoD: một bản cho tháng đã chọn: thu, chi, tiết kiệm, savings rate, top 3 danh mục. Mọi số lấy từ báo cáo, không tính lại ở client. Phần lời AI gắn ở `BE-P5-E04`; bản không AI vẫn đủ số.
+- Note: `GET /reports/month-review` chiếu cashflow tháng + top 3 lá chi; OpenAPI; mobile `/reports/month-review` từ thẻ Tổng quan và dòng trên Báo cáo tháng. Kiến trúc: [reports.md](../docs/architecture/reports.md), [mobile-reports.md](../docs/architecture/mobile-reports.md).
 
 ### BE-P2-E09 / MOB-P2-E09 — Giờ giao dịch
 - Status: todo

@@ -877,6 +877,42 @@ abstract class S {
   /// **'Expense'**
   String get reportExpense;
 
+  /// No description provided for @monthReviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Month review'**
+  String get monthReviewTitle;
+
+  /// No description provided for @monthReviewOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open month review'**
+  String get monthReviewOpen;
+
+  /// No description provided for @monthReviewSavings.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings'**
+  String get monthReviewSavings;
+
+  /// No description provided for @monthReviewSavingsRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings rate'**
+  String get monthReviewSavingsRate;
+
+  /// No description provided for @monthReviewTopCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Top categories'**
+  String get monthReviewTopCategories;
+
+  /// No description provided for @monthReviewNoCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'No expense categories this month.'**
+  String get monthReviewNoCategories;
+
   /// No description provided for @reportWeek.
   ///
   /// In en, this message translates to:

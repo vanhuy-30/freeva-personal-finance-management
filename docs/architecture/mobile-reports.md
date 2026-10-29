@@ -1,12 +1,12 @@
-# Tổng quan và báo cáo — MOB-P1-006
+# Tổng quan và báo cáo — MOB-P1-006 / MOB-P2-E08
 
-Home có khối **Tổng quan** và mục **Báo cáo** (`/reports`, qua AuthGate). Dùng contract hiện có của
-[BE-P1-007](reports.md). Không đổi API hoặc migration.
+Home có khối **Tổng quan** và mục **Báo cáo** (`/reports`, qua AuthGate). Contract: [reports.md](reports.md).
 
 ## Hành vi
 
 - Tổng quan đọc `GET /reports/net-worth` và `GET /reports/cashflow?period=month` không gửi `on`, để server lấy hôm nay theo timezone của user. Mỗi loại tiền một khối: tài sản, nợ, ròng, rồi thu, chi và dòng tiền của tháng đó.
-- Màn báo cáo lọc `week`, `month` hoặc `range`. Lần đầu tuần hoặc tháng không gửi `on`. Nút kỳ trước/sau gửi `on` bằng ngày liền trước `from` hoặc liền sau `to` mà server đã trả. Tháng tài chính không tính trên client.
+- Thẻ đầu tháng "Xem lại tháng …" mở `/reports/month-review?on=` với `period.from` của tháng trước (`MOB-P2-E08`).
+- Màn báo cáo lọc `week`, `month` hoặc `range`. Lần đầu tuần hoặc tháng không gửi `on`. Nút kỳ trước/sau gửi `on` bằng ngày liền trước `from` hoặc liền sau `to` mà server đã trả. Tháng tài chính không tính trên client. Kỳ Tháng có dòng mở bản soát tháng.
 - Khoảng ngày là `from`/`to` lịch `YYYY-MM-DD`, inclusive, `from <= to`, lệch tối đa 3660 ngày. Client từ chối khoảng sai trước khi gọi API. Không gửi `on`.
 - `totals` là thu/chi/dòng tiền. Dòng danh mục là lá: không cộng lên cha; tên cha chỉ là phụ đề. `categoryId` null hiện “Chưa phân loại”. Dòng ví gồm chuyển khoản. Tên ví lấy từ danh sách `status=all`, tên danh mục từ `manage()` nên danh mục đã ẩn vẫn hiện nếu còn giao dịch.
 - Thiếu tên ví, tên danh mục hoặc số lẻ của loại tiền thì cả lần tải lỗi và có nút tải lại. Không hiện UUID.
@@ -39,6 +39,10 @@ Thiết kế: [F-reports.md](../brand/patterns/F-reports.md). Backend: `period=y
 - **Chi tiết danh mục** (`/reports/category`, màn đẩy, nhận `CategoryDetailArgs` qua `extra`, không mở lại bằng deep link): chạm một dòng danh mục ở thẻ Phân tích. Dùng chính báo cáo đang xem nên số khớp màn chính, kể cả tháng tài chính. Tổng, "38% tổng chi · N giao dịch", thanh theo danh mục con (dòng của chính cha ghi "(chung)" khi cha còn có con); "Khác" liệt kê từng danh mục bị gộp.
 - **Giao dịch lớn nhất:** `GET /transactions?type&categoryId…&from&to&currency&sort=amountDesc&pageSize=3`; N lấy từ `total`. Ẩn khi nhóm có thu chưa phân loại (API không lọc "không danh mục"). "Xem cả N" đặt `TransactionFilter` (loại, danh mục, khoảng tuỳ chọn) rồi mở `/transactions`; danh sách đó chưa lọc theo loại tiền.
 - **Popup khoảng ngày:** chip 7/30 ngày qua và Quý này (từ đầu quý dương lịch đến hôm nay), lịch bắt đầu thứ Hai, chạm lần 1 chọn ngày đầu, lần 2 ngày cuối (ngày sớm hơn thì đổi ngày đầu, lần 3 chọn lại). Ngày tương lai và ngày cách ngày đầu quá 3660 ngày bị khoá. Huỷ giữ nguyên kỳ đang xem. Chữ lớn: hai nút xếp dọc.
+
+### Soát tháng (`MOB-P2-E08`)
+
+Màn đẩy `/reports/month-review`: `GET /reports/month-review`. Client chỉ gắn tên danh mục (`manage()`); không cộng thu − chi, không xếp lại top 3, không nhân tỷ lệ. `savingsRateBps` hiện bằng chia nguyên (3933 → 39,33%); `null` thì gạch. Chip tiền khi có hơn một currency. Kỳ trống: minh họa + về tháng này. Không lời AI.
 
 ## Giới hạn
 

@@ -175,6 +175,58 @@ export function buildTrend(period: TrendPeriodKind, source: TrendSource) {
   };
 }
 
+const TOP_CATEGORIES_PER_CURRENCY = 3;
+
+/** Project a month cashflow into the month-review shape (totals + top 3 expense leaves). */
+export function buildMonthReview(
+  period: ResolvedPeriod,
+  source: CashflowSource,
+) {
+  const cashflow = buildCashflow(period, { categories: source.categories, accounts: [], movements: [] });
+  const byCurrency = new Map<string, typeof cashflow.byCategory>();
+  for (const row of cashflow.byCategory) {
+    if (row.expenseMinor === '0') continue;
+    const list = byCurrency.get(row.currency) ?? [];
+    list.push(row);
+    byCurrency.set(row.currency, list);
+  }
+  return {
+    period: {
+      kind: 'month' as const,
+      from: period.from,
+      to: period.to,
+      timezone: period.timezone,
+      fiscalMonthStartDay: period.fiscalMonthStartDay,
+    },
+    currencies: cashflow.totals.map(total => {
+      const rows = byCurrency.get(total.currency) ?? [];
+      rows.sort((left, right) => {
+        const leftAbs = absMinor(BigInt(left.expenseMinor));
+        const rightAbs = absMinor(BigInt(right.expenseMinor));
+        if (rightAbs > leftAbs) return 1;
+        if (rightAbs < leftAbs) return -1;
+        if (left.categoryId === right.categoryId) return 0;
+        if (left.categoryId === null) return 1;
+        if (right.categoryId === null) return -1;
+        return left.categoryId.localeCompare(right.categoryId);
+      });
+      return {
+        currency: total.currency,
+        incomeMinor: total.incomeMinor,
+        expenseMinor: total.expenseMinor,
+        savingsMinor: total.netMinor,
+        savingsRateBps: total.savingsRateBps,
+        topCategories: rows.slice(0, TOP_CATEGORIES_PER_CURRENCY).map(row => ({
+          categoryId: row.categoryId,
+          parentId: row.parentId,
+          expenseMinor: row.expenseMinor,
+          transactionCount: row.transactionCount,
+        })),
+      };
+    }),
+  };
+}
+
 export function buildCashflow(period: ResolvedPeriod, source: CashflowSource, extras?: CashflowExtras) {
   const previous = extras?.previous ?? { from: period.from, to: period.to, categories: [] };
   const merchants = extras?.merchants ?? [];

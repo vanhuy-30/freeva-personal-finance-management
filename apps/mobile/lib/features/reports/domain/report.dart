@@ -223,3 +223,86 @@ class TrendReport {
   final ReportPeriodKind kind;
   final List<TrendBucket> buckets;
 }
+
+/// One leaf expense category in a month review (server-ranked top 3).
+class MonthReviewCategory {
+  const MonthReviewCategory({
+    required this.categoryId,
+    required this.parentId,
+    required this.expenseMinor,
+    required this.transactionCount,
+    this.name,
+    this.parentName,
+  });
+
+  final String? categoryId;
+  final String? parentId;
+  final BigInt expenseMinor;
+  final int transactionCount;
+  final String? name;
+  final String? parentName;
+
+  MonthReviewCategory withNames(String? name, String? parentName) =>
+      MonthReviewCategory(
+        categoryId: categoryId,
+        parentId: parentId,
+        expenseMinor: expenseMinor,
+        transactionCount: transactionCount,
+        name: name,
+        parentName: parentName,
+      );
+}
+
+/// Totals and top categories for one currency in the month review.
+class MonthReviewCurrency {
+  const MonthReviewCurrency({
+    required this.currency,
+    required this.incomeMinor,
+    required this.expenseMinor,
+    required this.savingsMinor,
+    required this.savingsRateBps,
+    required this.topCategories,
+  });
+
+  final String currency;
+  final BigInt incomeMinor;
+  final BigInt expenseMinor;
+  final BigInt savingsMinor;
+  final int? savingsRateBps;
+  final List<MonthReviewCategory> topCategories;
+
+  MonthReviewCurrency withCategories(List<MonthReviewCategory> categories) =>
+      MonthReviewCurrency(
+        currency: currency,
+        incomeMinor: incomeMinor,
+        expenseMinor: expenseMinor,
+        savingsMinor: savingsMinor,
+        savingsRateBps: savingsRateBps,
+        topCategories: categories,
+      );
+}
+
+/// Server projection of one fiscal month: totals + top expense leaves.
+class MonthReviewReport {
+  const MonthReviewReport({required this.period, required this.currencies});
+
+  final ReportPeriod period;
+  final List<MonthReviewCurrency> currencies;
+
+  MonthReviewReport withCurrencies(List<MonthReviewCurrency> currencies) =>
+      MonthReviewReport(period: period, currencies: currencies);
+}
+
+class NamedMonthReview {
+  const NamedMonthReview({required this.report, required this.currencies});
+
+  final MonthReviewReport report;
+  final List<WalletCurrency> currencies;
+
+  int digitsOf(String currency) =>
+      currencies
+          .where((item) => item.code == currency)
+          .map((item) => item.minorDigits)
+          .firstOrNull ??
+      0;
+}

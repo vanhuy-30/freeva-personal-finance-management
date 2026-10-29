@@ -2335,6 +2335,40 @@ paths:
         '503':
           $ref: '#/components/responses/ReportUnavailable'
       description: Read-only income and expense series. 7d and 30d are single calendar days. 3m, 6m, and 1y are 3, 6, and 12 fiscal months. all is each calendar year from the first income or expense through the anchor year (current year always kept; history stops at year 100). Amounts stay in each account currency; transfers are excluded. No FX conversion.
+  /api/v1/reports/month-review:
+    get:
+      operationId: reportMonthReview
+      summary: Monthly financial review for one fiscal month
+      tags:
+      - Reports
+      security:
+      - UserBearer: []
+      parameters:
+      - name: on
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
+        description: Anchor calendar date of the fiscal month. Defaults to today in the user timezone.
+      responses:
+        '200':
+          description: Income, expense, savings, savings rate, and top 3 expense categories per currency for the fiscal month
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/ReportNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonthReviewReport'
+        '400':
+          $ref: '#/components/responses/ReportValidationError'
+        '401':
+          $ref: '#/components/responses/ReportUnauthorized'
+        '503':
+          $ref: '#/components/responses/ReportUnavailable'
+      description: Read-only projection of monthly cashflow. Period follows fiscalMonthStartDay. Amounts and savingsRateBps match GET /reports/cashflow for the same month. savingsMinor equals netMinor. topCategories are leaf expense rows by |expense| descending (ties by categoryId, null last), max 3 per currency. Category names are not returned. Transfers excluded. No FX conversion. No AI narrative.
   /api/v1/reports/net-worth:
     get:
       operationId: reportNetWorth
@@ -6334,6 +6368,100 @@ components:
           - integer
           - 'null'
           description: netMinor * 10000 / incomeMinor when incomeMinor > 0; otherwise null. 3933 means 39.33%.
+    MonthReviewReport:
+      type: object
+      additionalProperties: false
+      required:
+      - period
+      - currencies
+      properties:
+        period:
+          type: object
+          additionalProperties: false
+          required:
+          - kind
+          - from
+          - to
+          - timezone
+          - fiscalMonthStartDay
+          properties:
+            kind:
+              type: string
+              enum:
+              - month
+            from:
+              type: string
+              format: date
+            to:
+              type: string
+              format: date
+            timezone:
+              type: string
+            fiscalMonthStartDay:
+              type: integer
+              minimum: 1
+              maximum: 28
+        currencies:
+          type: array
+          description: Currencies with income or expense in the month, sorted by code. Amounts match cashflow totals for the same period.
+          items:
+            $ref: '#/components/schemas/MonthReviewCurrency'
+    MonthReviewCurrency:
+      type: object
+      additionalProperties: false
+      required:
+      - currency
+      - incomeMinor
+      - expenseMinor
+      - savingsMinor
+      - savingsRateBps
+      - topCategories
+      properties:
+        currency:
+          type: string
+          pattern: ^[A-Z]{3}$
+        incomeMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        expenseMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        savingsMinor:
+          $ref: '#/components/schemas/ReportMoney'
+          description: Same as cashflow netMinor for the month (income + expense). Transfers excluded.
+        savingsRateBps:
+          type:
+          - integer
+          - 'null'
+          description: Same as cashflow savingsRateBps. 3933 means 39.33%. Null when income is not positive.
+        topCategories:
+          type: array
+          maxItems: 3
+          description: Up to 3 leaf expense categories by |expense| descending, then categoryId (null last).
+          items:
+            $ref: '#/components/schemas/MonthReviewCategory'
+    MonthReviewCategory:
+      type: object
+      additionalProperties: false
+      required:
+      - categoryId
+      - parentId
+      - expenseMinor
+      - transactionCount
+      properties:
+        categoryId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        parentId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        expenseMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        transactionCount:
+          type: integer
+          minimum: 1
     CashflowComparison:
       type: object
       additionalProperties: false

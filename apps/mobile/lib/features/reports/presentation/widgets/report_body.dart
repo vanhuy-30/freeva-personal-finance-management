@@ -7,6 +7,7 @@ import '../../../../core/widgets/error_retry.dart';
 import '../../../../core/widgets/skeleton.dart';
 import '../../domain/report.dart';
 import '../viewmodels/report_view_model.dart';
+import 'month_review_link.dart';
 import 'report_breakdown_card.dart';
 import 'report_budget_row.dart';
 import 'report_currency_chips.dart';
@@ -93,6 +94,8 @@ class ReportBody extends StatelessWidget {
           currency: code,
           minorDigits: digits,
         ),
+        gap,
+        MonthReviewLink(period: period),
       ],
       gap,
       ReportTrendCard(model: model, currency: code, digits: digits),

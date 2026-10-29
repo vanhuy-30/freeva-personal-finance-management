@@ -9,16 +9,20 @@ import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_card.dart';
 import '../../domain/overview.dart';
 
-/// Start of a new month: "Xem lại tháng 10 · Chi … · Thu …", opens Reports.
+/// Start of a new month: "Xem lại tháng 10 · Chi … · Thu …", opens month review.
 class NewMonthReviewCard extends StatelessWidget {
   const NewMonthReviewCard({
     required this.monthLabel,
+    required this.on,
     required this.flow,
     required this.minorDigits,
     super.key,
   });
 
   final String monthLabel;
+
+  /// Anchor date of the reviewed fiscal month (`period.from`).
+  final String on;
   final MonthFlow flow;
   final int minorDigits;
 
@@ -30,7 +34,7 @@ class NewMonthReviewCard extends StatelessWidget {
     String money(BigInt v) => formatMoneyText(v, minorDigits, locale);
     return FreevaCard(
       list: true,
-      onTap: () => context.go('/reports'),
+      onTap: () => context.push('/reports/month-review?on=$on'),
       padding: const EdgeInsets.symmetric(
         horizontal: FreevaSpace.s4,
         vertical: 14,
