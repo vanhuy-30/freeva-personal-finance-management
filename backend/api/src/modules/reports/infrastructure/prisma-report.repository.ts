@@ -3,8 +3,9 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../../infrastructure/prisma/prisma.service';
 import type { ReportRepository } from '../domain/report.repository';
 import type {
-  AccountMovement, AccountRef, CategoryAggregate, NetWorthAggregate, ReportMoneyType, ReportProfile, ResolvedPeriod, TrendBucket, TrendRow, TrendSource,
+  AccountMovement, AccountRef, CategoryAggregate, MerchantAggregate, NetWorthAggregate, ReportMoneyType, ReportProfile, ResolvedPeriod, TrendBucket, TrendRow, TrendSource,
 } from '../domain/report';
+import { previousPeriod } from '../domain/report';
 
 const moneyTypes = new Set<ReportMoneyType>(['income', 'expense', 'transfer']);
 
@@ -16,12 +17,20 @@ export class PrismaReportRepository implements ReportRepository {
     return this.snapshot(async tx => {
       const profile = await this.profile(tx, userId);
       const period = periodOf(profile);
-      const [categories, accounts, movements] = [
-        await this.categories(tx, userId, period),
+      const previous = previousPeriod(period);
+      const [categories, accounts, movements, previousCategories, merchants] = [
+        await this.categories(tx, userId, period.from, period.to),
         await this.accounts(tx, userId),
         await this.movements(tx, userId, period),
+        await this.categories(tx, userId, previous.from, previous.to),
+        await this.merchants(tx, userId, period.from, period.to),
       ];
-      return { period, source: { categories, accounts, movements } };
+      return {
+        period,
+        source: { categories, accounts, movements },
+        previous: { from: previous.from, to: previous.to, categories: previousCategories },
+        merchants,
+      };
     });
   }
 
@@ -29,6 +38,15 @@ export class PrismaReportRepository implements ReportRepository {
     return this.snapshot(async tx => {
       const buckets = bucketsOf(await this.profile(tx, userId));
       return { buckets, rows: await this.trendRows(tx, userId, buckets), firstOn: await this.firstOn(tx, userId) };
+    });
+  }
+
+  series(userId: string, bucketsOf: (profile: ReportProfile, firstOn: string | null) => TrendBucket[]): Promise<TrendSource> {
+    return this.snapshot(async tx => {
+      const profile = await this.profile(tx, userId);
+      const firstOn = await this.firstOn(tx, userId);
+      const buckets = bucketsOf(profile, firstOn);
+      return { buckets, rows: await this.trendRows(tx, userId, buckets), firstOn };
     });
   }
 
@@ -54,19 +72,34 @@ export class PrismaReportRepository implements ReportRepository {
     return user;
   }
 
-  private async categories(tx: Prisma.TransactionClient, userId: string, period: ResolvedPeriod): Promise<CategoryAggregate[]> {
+  private async categories(tx: Prisma.TransactionClient, userId: string, from: string, to: string): Promise<CategoryAggregate[]> {
     const rows = await tx.$queryRaw<{ currency: string; categoryId: string | null; parentId: string | null; type: string; total: string; count: number }[]>(Prisma.sql`
       SELECT t."currencyCode" AS currency, t."categoryId" AS "categoryId", c."parentId" AS "parentId",
         t.type::text AS type, SUM(t."amountMinor")::text AS total, COUNT(*)::int AS count
       FROM "Transaction" t
       LEFT JOIN "Category" c ON c.id = t."categoryId" AND c."userId" = t."userId"
       WHERE t."userId" = ${userId}::uuid AND t."deletedAt" IS NULL
-        AND t."occurredOn" >= ${period.from}::date AND t."occurredOn" <= ${period.to}::date
+        AND t."occurredOn" >= ${from}::date AND t."occurredOn" <= ${to}::date
         AND t.type::text IN ('income', 'expense')
       GROUP BY t."currencyCode", t."categoryId", c."parentId", t.type
     `);
     return rows.map(row => ({
       currency: row.currency.trim(), categoryId: row.categoryId, parentId: row.parentId, type: flowType(row.type), total: integer(row.total), count: row.count,
+    }));
+  }
+
+  private async merchants(tx: Prisma.TransactionClient, userId: string, from: string, to: string): Promise<MerchantAggregate[]> {
+    const rows = await tx.$queryRaw<{ currency: string; merchant: string; expense: string; count: number }[]>(Prisma.sql`
+      SELECT t."currencyCode" AS currency, t.merchant AS merchant,
+        SUM(t."amountMinor")::text AS expense, COUNT(*)::int AS count
+      FROM "Transaction" t
+      WHERE t."userId" = ${userId}::uuid AND t."deletedAt" IS NULL
+        AND t."occurredOn" >= ${from}::date AND t."occurredOn" <= ${to}::date
+        AND t.type::text = 'expense' AND t.merchant IS NOT NULL
+      GROUP BY t."currencyCode", t.merchant
+    `);
+    return rows.map(row => ({
+      currency: row.currency.trim(), merchant: row.merchant, expense: integer(row.expense), count: row.count,
     }));
   }
 

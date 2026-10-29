@@ -45,7 +45,7 @@ nullable. Không backfill.
 - Replay idempotency và fingerprint canonical gồm `merchant`.
 - Sync (`POST /api/v1/sync`) dùng lại DTO giao dịch nên merchant đi theo body.
 - Export JSON gồm `merchant` trên mỗi giao dịch.
-- Search Phase 1 không khớp merchant. Top merchant thuộc phase 2.
+- Search khớp `merchant` (`DS-P2-005` / [search.md](search.md)). Top merchant trên cashflow: `BE-P2-E06` / [reports.md](reports.md).
 - Log: path `merchant` trong Pino redact; HTTP logger không ghi body.
 
 ## Kiểm chứng và rollout
