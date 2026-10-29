@@ -18,6 +18,17 @@ class ReportRepositoryImpl implements ReportRepository {
   ) => _request('GET', _cashflowPath(query), _cashflow);
 
   @override
+  Future<Either<AuthFailure, MonthReviewReport>> monthReview({String? on}) =>
+      _request(
+        'GET',
+        Uri(
+          path: 'reports/month-review',
+          queryParameters: {if (on != null) 'on': on},
+        ).toString(),
+        _monthReview,
+      );
+
+  @override
   Future<Either<AuthFailure, TrendReport>> trend(
     ReportPeriodKind kind, {
     String? on,
@@ -66,6 +77,36 @@ CashflowReport _cashflow(Map<String, dynamic> json) => CashflowReport(
   byCategory: _rows(json['byCategory'], _category),
   byAccount: _rows(json['byAccount'], _account),
 );
+
+MonthReviewReport _monthReview(Map<String, dynamic> json) {
+  final period = _period(json['period'] as Map<String, dynamic>);
+  if (period.kind != ReportPeriodKind.month) throw const FormatException();
+  return MonthReviewReport(
+    period: period,
+    currencies: _rows(json['currencies'], _monthCurrency),
+  );
+}
+
+MonthReviewCurrency _monthCurrency(Map<String, dynamic> json) {
+  final rate = json['savingsRateBps'];
+  if (rate != null && rate is! int) throw const FormatException();
+  return MonthReviewCurrency(
+    currency: _currency(json['currency']),
+    incomeMinor: _money(json['incomeMinor']),
+    expenseMinor: _money(json['expenseMinor']),
+    savingsMinor: _money(json['savingsMinor']),
+    savingsRateBps: rate as int?,
+    topCategories: _rows(json['topCategories'], _monthCategory),
+  );
+}
+
+MonthReviewCategory _monthCategory(Map<String, dynamic> json) =>
+    MonthReviewCategory(
+      categoryId: json['categoryId'] as String?,
+      parentId: json['parentId'] as String?,
+      expenseMinor: _money(json['expenseMinor']),
+      transactionCount: json['transactionCount'] as int,
+    );
 
 ReportPeriod _period(Map<String, dynamic> json) {
   final start = json['fiscalMonthStartDay'] as int;

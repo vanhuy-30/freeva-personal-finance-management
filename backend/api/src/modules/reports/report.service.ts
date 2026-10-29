@@ -1,7 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { REPORT_REPOSITORY, type ReportRepository } from './domain/report.repository';
-import { buildCashflow, buildNetWorth, buildSeries, buildTrend, resolvePeriod, seriesBuckets, trendBuckets } from './domain/report';
-import type { CashflowQueryDto, SeriesQueryDto, TrendQueryDto } from './report.dto';
+import {
+  buildCashflow, buildMonthReview, buildNetWorth, buildSeries, buildTrend, resolvePeriod, seriesBuckets, trendBuckets,
+} from './domain/report';
+import type { CashflowQueryDto, MonthReviewQueryDto, SeriesQueryDto, TrendQueryDto } from './report.dto';
 
 @Injectable()
 export class ReportService {
@@ -11,6 +13,12 @@ export class ReportService {
     return this.repository.cashflow(userId, profile => resolvePeriod(query, profile)).then(result =>
       buildCashflow(result.period, result.source, { previous: result.previous, merchants: result.merchants }),
     );
+  }
+
+  monthReview(userId: string, query: MonthReviewQueryDto) {
+    return this.repository
+      .monthReview(userId, profile => resolvePeriod({ period: 'month', on: query.on }, profile))
+      .then(result => buildMonthReview(result.period, { categories: result.categories, accounts: [], movements: [] }));
   }
 
   async trend(userId: string, query: TrendQueryDto) {

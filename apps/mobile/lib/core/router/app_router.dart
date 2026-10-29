@@ -11,6 +11,7 @@ import '../../features/home/presentation/pages/notifications_page.dart';
 import '../../features/transactions/domain/transaction.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/reports/domain/category_detail.dart';
+import '../../features/reports/presentation/pages/month_review_page.dart';
 import '../../features/reports/presentation/pages/report_category_page.dart';
 import '../../features/reports/presentation/pages/report_page.dart';
 import '../../features/settings/domain/app_preferences.dart';
@@ -163,6 +164,12 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
             state.extra is CategoryDetailArgs ? null : '/reports',
         builder: (context, state) => AuthGate(
           child: ReportCategoryPage(args: state.extra! as CategoryDetailArgs),
+        ),
+      ),
+      GoRoute(
+        path: '/reports/month-review',
+        builder: (context, state) => AuthGate(
+          child: MonthReviewPage(on: state.uri.queryParameters['on']),
         ),
       ),
       GoRoute(path: '/settings', redirect: (context, state) => '/me'),

@@ -34,6 +34,17 @@ export class PrismaReportRepository implements ReportRepository {
     });
   }
 
+  monthReview(userId: string, periodOf: (profile: ReportProfile) => ResolvedPeriod) {
+    return this.snapshot(async tx => {
+      const profile = await this.profile(tx, userId);
+      const period = periodOf(profile);
+      return {
+        period,
+        categories: await this.categories(tx, userId, period.from, period.to),
+      };
+    });
+  }
+
   trend(userId: string, bucketsOf: (profile: ReportProfile) => TrendBucket[]): Promise<TrendSource> {
     return this.snapshot(async tx => {
       const buckets = bucketsOf(await this.profile(tx, userId));

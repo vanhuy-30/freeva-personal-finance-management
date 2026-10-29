@@ -74,6 +74,7 @@ class OverviewBlocks extends StatelessWidget {
         if (previous != null && !monthFlow(previous, main).isEmpty) ...[
           NewMonthReviewCard(
             monthLabel: _monthLabel(context, previous.period.from),
+            on: previous.period.from,
             flow: monthFlow(previous, main),
             minorDigits: digits(main),
           ),

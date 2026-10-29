@@ -6,6 +6,10 @@ import 'report.dart';
 abstract class ReportRepository {
   Future<Either<AuthFailure, CashflowReport>> cashflow(ReportPeriodQuery query);
 
+  /// Fiscal-month review: totals and top expense categories for [on]
+  /// (today when null). Numbers match cashflow for the same month.
+  Future<Either<AuthFailure, MonthReviewReport>> monthReview({String? on});
+
   /// Expense and income per bucket for [kind] (week, month or year), ending at
   /// the period that holds [on] (today when null).
   Future<Either<AuthFailure, TrendReport>> trend(

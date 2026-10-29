@@ -423,6 +423,24 @@ class SVi extends S {
   String get reportExpense => 'Chi';
 
   @override
+  String get monthReviewTitle => 'Soát tháng';
+
+  @override
+  String get monthReviewOpen => 'Xem bản soát tháng';
+
+  @override
+  String get monthReviewSavings => 'Tiết kiệm';
+
+  @override
+  String get monthReviewSavingsRate => 'Tỷ lệ tiết kiệm';
+
+  @override
+  String get monthReviewTopCategories => 'Danh mục hàng đầu';
+
+  @override
+  String get monthReviewNoCategories => 'Chưa có danh mục chi tháng này.';
+
+  @override
   String get reportWeek => 'Tuần';
 
   @override

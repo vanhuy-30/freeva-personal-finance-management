@@ -1,11 +1,11 @@
 import 'reflect-metadata';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
-import { CashflowQueryDto, SeriesQueryDto } from './report.dto';
+import { CashflowQueryDto, MonthReviewQueryDto, SeriesQueryDto } from './report.dto';
 import { ReportService } from './report.service';
 import type { ReportRepository } from './domain/report.repository';
 import {
-  buildCashflow, buildNetWorth, buildSeries, buildTrend, expenseDeltaBps, previousPeriod, ReportError,
+  buildCashflow, buildMonthReview, buildNetWorth, buildSeries, buildTrend, expenseDeltaBps, previousPeriod, ReportError,
   resolvePeriod, savingsRateBps, seriesBuckets, todayInTimeZone, trendBuckets,
   type CashflowSource, type ReportProfile,
 } from './domain/report';
@@ -277,6 +277,78 @@ describe('BE-P2-E06 comparison, savings rate, merchants, and series', () => {
   });
 });
 
+describe('BE-P2-E08 month review', () => {
+  const parent = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
+  const housing = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
+  const food = 'cccccccc-cccc-4ccc-8ccc-cccccccccccc';
+  const transit = 'dddddddd-dddd-4ddd-8ddd-dddddddddddd';
+  const other = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
+  const period = resolvePeriod({ period: 'month', on: '2026-10-08' }, profile(15));
+
+  it('projects savings and rate from the same cashflow totals', () => {
+    const categories = [
+      { currency: 'VND', categoryId: housing, parentId: parent, type: 'expense' as const, total: -700n, count: 2 },
+      { currency: 'VND', categoryId: food, parentId: null, type: 'expense' as const, total: -320n, count: 4 },
+      { currency: 'VND', categoryId: transit, parentId: null, type: 'expense' as const, total: -150n, count: 3 },
+      { currency: 'VND', categoryId: null, parentId: null, type: 'income' as const, total: 3000n, count: 1 },
+    ];
+    const cashflow = buildCashflow(period, { categories, accounts: [], movements: [] });
+    const review = buildMonthReview(period, { categories, accounts: [], movements: [] });
+    expect(review.period).toEqual({
+      kind: 'month', from: '2026-09-15', to: '2026-10-14', timezone: 'Asia/Ho_Chi_Minh', fiscalMonthStartDay: 15,
+    });
+    expect(review.currencies).toEqual([{
+      currency: 'VND',
+      incomeMinor: cashflow.totals[0].incomeMinor,
+      expenseMinor: cashflow.totals[0].expenseMinor,
+      savingsMinor: cashflow.totals[0].netMinor,
+      savingsRateBps: cashflow.totals[0].savingsRateBps,
+      topCategories: [
+        { categoryId: housing, parentId: parent, expenseMinor: '-700', transactionCount: 2 },
+        { categoryId: food, parentId: null, expenseMinor: '-320', transactionCount: 4 },
+        { categoryId: transit, parentId: null, expenseMinor: '-150', transactionCount: 3 },
+      ],
+    }]);
+    expect(review.currencies[0].savingsMinor).toBe('1830');
+    expect(review.currencies[0].savingsRateBps).toBe(6100);
+  });
+
+  it('keeps top 3 expenses, ranks ties by categoryId with null last, and nulls rate without income', () => {
+    const a = '11111111-1111-4111-8111-111111111111';
+    const b = '22222222-2222-4222-8222-222222222222';
+    const categories = [
+      { currency: 'VND', categoryId: a, parentId: null, type: 'expense' as const, total: -100n, count: 1 },
+      { currency: 'VND', categoryId: b, parentId: null, type: 'expense' as const, total: -100n, count: 1 },
+      { currency: 'VND', categoryId: null, parentId: null, type: 'expense' as const, total: -100n, count: 1 },
+      { currency: 'VND', categoryId: other, parentId: null, type: 'expense' as const, total: -50n, count: 1 },
+      { currency: 'USD', categoryId: food, parentId: null, type: 'expense' as const, total: -15n, count: 1 },
+    ];
+    const review = buildMonthReview(period, { categories, accounts: [], movements: [] });
+    expect(review.currencies).toEqual([
+      {
+        currency: 'USD',
+        incomeMinor: '0',
+        expenseMinor: '-15',
+        savingsMinor: '-15',
+        savingsRateBps: null,
+        topCategories: [{ categoryId: food, parentId: null, expenseMinor: '-15', transactionCount: 1 }],
+      },
+      {
+        currency: 'VND',
+        incomeMinor: '0',
+        expenseMinor: '-350',
+        savingsMinor: '-350',
+        savingsRateBps: null,
+        topCategories: [
+          { categoryId: a, parentId: null, expenseMinor: '-100', transactionCount: 1 },
+          { categoryId: b, parentId: null, expenseMinor: '-100', transactionCount: 1 },
+          { categoryId: null, parentId: null, expenseMinor: '-100', transactionCount: 1 },
+        ],
+      },
+    ]);
+  });
+});
+
 describe('BE-P1-007 report HTTP contract', () => {
   it('rejects unknown periods and malformed dates before calendar checks', async () => {
     for (const plain of [{}, { period: 'decade' }, { period: 'month', on: '2026-10-08\n' }, { period: 'range', owner: 'x' }]) {
@@ -285,6 +357,10 @@ describe('BE-P1-007 report HTTP contract', () => {
     expect(await validate(plainToInstance(CashflowQueryDto, { period: 'month', on: '2026-02-29' }))).toHaveLength(0);
     expect(await validate(plainToInstance(SeriesQueryDto, { window: '7d', on: '2026-10-08' }))).toHaveLength(0);
     expect(await validate(plainToInstance(SeriesQueryDto, { window: 'decade' }), { whitelist: true, forbidNonWhitelisted: true })).not.toHaveLength(0);
+    expect(await validate(plainToInstance(MonthReviewQueryDto, { on: '2026-10-08' }))).toHaveLength(0);
+    expect(await validate(plainToInstance(MonthReviewQueryDto, {}), { whitelist: true, forbidNonWhitelisted: true })).toHaveLength(0);
+    expect(await validate(plainToInstance(MonthReviewQueryDto, { on: '2026-10-08\n' }), { whitelist: true, forbidNonWhitelisted: true })).not.toHaveLength(0);
+    expect(await validate(plainToInstance(MonthReviewQueryDto, { period: 'month' }), { whitelist: true, forbidNonWhitelisted: true })).not.toHaveLength(0);
   });
 
   it('resolves the period inside the repository snapshot', async () => {
@@ -298,6 +374,9 @@ describe('BE-P1-007 report HTTP contract', () => {
           merchants: [],
         };
       },
+      async monthReview(_userId, periodOf) {
+        return { period: periodOf(profile(15)), categories: [] };
+      },
       async trend() { return { buckets: [], rows: [], firstOn: null }; },
       async series() { return { buckets: [], rows: [], firstOn: null }; },
       async netWorth() { return [{ currency: 'VND', bucket: 'asset', total: 10n }]; },
@@ -307,6 +386,10 @@ describe('BE-P1-007 report HTTP contract', () => {
       period: { from: '2026-09-15', to: '2026-10-14' },
       comparison: { from: '2026-08-15', to: '2026-09-14' },
       topMerchants: [],
+    });
+    await expect(service.monthReview('user', { on: '2026-10-08' })).resolves.toEqual({
+      period: { kind: 'month', from: '2026-09-15', to: '2026-10-14', timezone: 'Asia/Ho_Chi_Minh', fiscalMonthStartDay: 15 },
+      currencies: [],
     });
     await expect(service.series('user', { window: '7d', on: '2026-10-08' })).resolves.toEqual({ window: '7d', buckets: [] });
     await expect(service.netWorth('user')).resolves.toEqual({ items: [{ currency: 'VND', assetsMinor: '10', liabilitiesMinor: '0', netWorthMinor: '10' }] });

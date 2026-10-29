@@ -426,6 +426,24 @@ class SEn extends S {
   String get reportExpense => 'Expense';
 
   @override
+  String get monthReviewTitle => 'Month review';
+
+  @override
+  String get monthReviewOpen => 'Open month review';
+
+  @override
+  String get monthReviewSavings => 'Savings';
+
+  @override
+  String get monthReviewSavingsRate => 'Savings rate';
+
+  @override
+  String get monthReviewTopCategories => 'Top categories';
+
+  @override
+  String get monthReviewNoCategories => 'No expense categories this month.';
+
+  @override
   String get reportWeek => 'Week';
 
   @override

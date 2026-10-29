@@ -17,7 +17,7 @@ if (!databaseUrl || new URL(databaseUrl).pathname !== '/auth_test') {
 }
 process.env.DATABASE_URL = databaseUrl;
 
-describe('BE-P1-007 / BE-P2-E06 HTTP + PostgreSQL', () => {
+describe('BE-P1-007 / BE-P2-E06 / BE-P2-E08 HTTP + PostgreSQL', () => {
   let app: INestApplication;
   let prisma: PrismaService;
   let base: string;
@@ -201,6 +201,8 @@ describe('BE-P1-007 / BE-P2-E06 HTTP + PostgreSQL', () => {
       '/series?window=decade',
       '/series?window=7d&from=2026-10-01',
       '/cashflow?period=month&userId=x',
+      '/month-review?period=month',
+      '/month-review?on=2026-13-01',
       '/net-worth?period=month',
     ]) {
       const rejected = await request(path);
@@ -344,5 +346,51 @@ describe('BE-P1-007 / BE-P2-E06 HTTP + PostgreSQL', () => {
     expect(JSON.stringify((await request('/series?window=7d', otherToken)).body)).not.toContain('WinMart');
     expect((await request('/series?window=7d', '')).status).toBe(401);
     for (const secret of [token, 'WinMart', 'SecretShop', 'Private report note', '1005']) expect(logs).not.toContain(secret);
+  });
+
+  it('projects month review totals from the same fiscal month as cashflow', async () => {
+    await prisma.user.update({ where: { id: owner }, data: { fiscalMonthStartDay: 15 } });
+    const cash = await account('cash', 'VND', 0n);
+    const housing = await category('Housing');
+    const food = await category('Food');
+    const transit = await category('Transit');
+    const shopping = await category('Shopping');
+    await transaction({ accountId: cash.id, currencyCode: 'VND', type: 'income', amountMinor: 3000n, occurredOn: '2026-09-20' });
+    await transaction({ accountId: cash.id, currencyCode: 'VND', type: 'expense', amountMinor: -700n, occurredOn: '2026-09-21', categoryId: housing.id });
+    await transaction({ accountId: cash.id, currencyCode: 'VND', type: 'expense', amountMinor: -320n, occurredOn: '2026-09-22', categoryId: food.id });
+    await transaction({ accountId: cash.id, currencyCode: 'VND', type: 'expense', amountMinor: -150n, occurredOn: '2026-09-23', categoryId: transit.id });
+    await transaction({ accountId: cash.id, currencyCode: 'VND', type: 'expense', amountMinor: -40n, occurredOn: '2026-09-24', categoryId: shopping.id });
+    await transaction({ accountId: cash.id, currencyCode: 'VND', type: 'expense', amountMinor: -999n, occurredOn: '2026-09-25', categoryId: food.id, deleted: true });
+    await transaction({ accountId: cash.id, currencyCode: 'VND', type: 'transfer', amountMinor: -50n, occurredOn: '2026-09-26', transferGroupId: randomUUID() });
+
+    const cashflow = await request('/cashflow?period=month&on=2026-10-08');
+    const review = await request('/month-review?on=2026-10-08');
+    expect(review.status).toBe(200);
+    const total = (cashflow.body?.totals as { currency: string; incomeMinor: string; expenseMinor: string; netMinor: string; savingsRateBps: number | null }[])
+      .find(row => row.currency === 'VND');
+    expect(review.body).toEqual({
+      period: { kind: 'month', from: '2026-09-15', to: '2026-10-14', timezone: expect.any(String), fiscalMonthStartDay: 15 },
+      currencies: [{
+        currency: 'VND',
+        incomeMinor: total?.incomeMinor,
+        expenseMinor: total?.expenseMinor,
+        savingsMinor: total?.netMinor,
+        savingsRateBps: total?.savingsRateBps,
+        topCategories: [
+          { categoryId: housing.id, parentId: null, expenseMinor: '-700', transactionCount: 1 },
+          { categoryId: food.id, parentId: null, expenseMinor: '-320', transactionCount: 1 },
+          { categoryId: transit.id, parentId: null, expenseMinor: '-150', transactionCount: 1 },
+        ],
+      }],
+    });
+    expect(JSON.stringify(review.body)).not.toContain('Housing');
+    expect(JSON.stringify(review.body)).not.toContain(shopping.id);
+    expect((await request('/month-review?on=2026-10-08', otherToken)).body).toEqual({
+      period: expect.objectContaining({ kind: 'month', from: '2026-10-01', to: '2026-10-31', fiscalMonthStartDay: 1 }),
+      currencies: [],
+    });
+    expect((await request('/month-review?period=month')).status).toBe(400);
+    expect((await request('/month-review', '')).status).toBe(401);
+    for (const secret of [token, 'Housing', 'Private report note', '3000']) expect(logs).not.toContain(secret);
   });
 });
