@@ -26,6 +26,7 @@ Map<String, dynamic> row(String id, {int order = 0, int version = 1}) => {
   'creditLimitMinor': null,
   'statementCloseDay': null,
   'paymentDueDay': null,
+  'minimumPaymentMinor': null,
   'sortOrder': order,
   'version': version,
   'archivedAt': null,
@@ -177,6 +178,13 @@ void main() {
         currency: 'VND',
         initialBalance: BigInt.zero,
         creditLimit: BigInt.from(-1),
+      ),
+      WalletDraft(
+        name: 'x',
+        type: WalletType.credit,
+        currency: 'VND',
+        initialBalance: BigInt.zero,
+        minimumPayment: BigInt.from(-1),
       ),
       WalletDraft(
         name: ' ',

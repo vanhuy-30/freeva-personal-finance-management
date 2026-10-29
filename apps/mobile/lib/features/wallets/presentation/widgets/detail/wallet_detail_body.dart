@@ -73,7 +73,11 @@ class WalletDetailBody extends StatelessWidget {
                 hidden: hidden,
               ),
               const SizedBox(height: _gap),
-              CreditInfoCard(card: card, today: today),
+              CreditInfoCard(
+                card: card,
+                today: today,
+                minorDigits: minorDigits,
+              ),
             ] else
               WalletBalanceCard(
                 wallet: wallet,

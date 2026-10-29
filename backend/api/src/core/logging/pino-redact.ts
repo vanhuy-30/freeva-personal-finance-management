@@ -29,6 +29,7 @@ export const PINO_REDACT_PATHS: string[] = [
   ...nested('amountMinor'),
   ...nested('initialBalanceMinor'),
   ...nested('creditLimitMinor'),
+  ...nested('minimumPaymentMinor'),
   ...nested('balanceMinor'),
   ...nested('incomeMinor'),
   ...nested('expenseMinor'),

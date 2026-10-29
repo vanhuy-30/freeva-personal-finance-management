@@ -1234,6 +1234,12 @@ class SVi extends S {
   String get creditLimitField => 'Hạn mức';
 
   @override
+  String get creditMinimumField => 'Số trả tối thiểu';
+
+  @override
+  String get creditMinimumTitle => 'Số trả tối thiểu';
+
+  @override
   String get creditCloseField => 'Ngày chốt';
 
   @override
@@ -1248,7 +1254,8 @@ class SVi extends S {
   String get creditPickDay => 'Chọn ngày';
 
   @override
-  String get creditOptionalHint => 'Hạn mức và ngày có thể để trống.';
+  String get creditOptionalHint =>
+      'Hạn mức, số trả tối thiểu và ngày có thể để trống.';
 
   @override
   String get walletSave => 'Lưu ví';
@@ -2558,10 +2565,10 @@ class SVi extends S {
   String get notifyBudgetSub => 'Khi dùng 80% và 100%';
 
   @override
-  String get notifyCard => 'Thẻ tín dụng đến hạn';
+  String get notifyCard => 'Thẻ tín dụng';
 
   @override
-  String get notifyCardSub => 'Trước 3 ngày';
+  String get notifyCardSub => 'Sắp đến hạn, dư nợ cao và sắp vượt hạn mức';
 
   @override
   String get notifySession => 'Máy mới đăng nhập';
@@ -2635,6 +2642,37 @@ class SVi extends S {
   @override
   String notifyInboxRecurringBody(String date) {
     return 'Một giao dịch định kỳ chạy vào $date.';
+  }
+
+  @override
+  String get notifyInboxCardDueTitle => 'Thẻ sắp đến hạn';
+
+  @override
+  String notifyInboxCardDueBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Thẻ đến hạn trong $count ngày.',
+      one: 'Thẻ đến hạn trong 1 ngày.',
+      zero: 'Thẻ đến hạn hôm nay.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get notifyInboxCardHighDebtTitle => 'Dư nợ thẻ cao';
+
+  @override
+  String notifyInboxCardHighDebtBody(String threshold) {
+    return 'Bạn đã dùng đến $threshold% hạn mức thẻ.';
+  }
+
+  @override
+  String get notifyInboxCardNearLimitTitle => 'Thẻ sắp vượt hạn mức';
+
+  @override
+  String notifyInboxCardNearLimitBody(String threshold) {
+    return 'Bạn đã dùng đến $threshold% hạn mức thẻ.';
   }
 
   @override

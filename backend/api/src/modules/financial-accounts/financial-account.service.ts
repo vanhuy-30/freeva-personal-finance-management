@@ -10,6 +10,7 @@ function response(account: FinancialAccount) {
     balanceMinor: account.balanceMinor.toString(), sortOrder: account.sortOrder,
     creditLimitMinor: account.creditLimitMinor?.toString() ?? null,
     statementCloseDay: account.statementCloseDay, paymentDueDay: account.paymentDueDay,
+    minimumPaymentMinor: account.minimumPaymentMinor?.toString() ?? null,
     archivedAt: account.archivedAt?.toISOString() ?? null, version: account.version,
     createdAt: account.createdAt.toISOString(), updatedAt: account.updatedAt.toISOString(),
     hasTransactions: account.hasTransactions,
@@ -25,6 +26,7 @@ export class FinancialAccountService {
       sortOrder: dto.sortOrder ?? 0,
       creditLimitMinor: dto.creditLimitMinor == null ? null : minor(dto.creditLimitMinor),
       statementCloseDay: dto.statementCloseDay ?? null, paymentDueDay: dto.paymentDueDay ?? null,
+      minimumPaymentMinor: dto.minimumPaymentMinor == null ? null : minor(dto.minimumPaymentMinor),
     };
     validateCredit(input);
     const result = await this.repository.create(userId, input);
@@ -36,10 +38,13 @@ export class FinancialAccountService {
     return { items: result.items.map(response), page: query.page, pageSize: query.pageSize, total: result.total };
   }
   async update(userId: string, id: string, dto: UpdateAccountDto) {
-    const { initialBalanceMinor, creditLimitMinor, ...rest } = dto;
+    const { initialBalanceMinor, creditLimitMinor, minimumPaymentMinor, ...rest } = dto;
     const patch: AccountPatch = { ...rest };
     if (initialBalanceMinor !== undefined) patch.initialBalanceMinor = minor(initialBalanceMinor);
     if (creditLimitMinor !== undefined) patch.creditLimitMinor = creditLimitMinor === null ? null : minor(creditLimitMinor);
+    if (minimumPaymentMinor !== undefined) {
+      patch.minimumPaymentMinor = minimumPaymentMinor === null ? null : minor(minimumPaymentMinor);
+    }
     return response(await this.repository.update(userId, id, patch));
   }
   async reorder(userId: string, dto: ReorderAccountsDto) {

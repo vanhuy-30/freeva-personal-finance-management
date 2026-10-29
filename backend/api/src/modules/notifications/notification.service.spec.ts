@@ -27,15 +27,18 @@ describe('BE-P2-E05 notification service', () => {
       loadEvaluateContext: jest.fn().mockResolvedValue({
         userId: 'u1',
         timezone: 'Asia/Ho_Chi_Minh',
+        today: '2026-10-28',
         prefs: {
           ...defaultPreference(),
           quietHoursEnabled: false,
+          cardEnabled: false,
           createdAt: now,
           updatedAt: now,
         },
         periodFrom: '2026-10-01',
         crossedThresholds: [70, 80, 100],
         recurringSoon: [{ id: 'r1', nextExecutionDate: '2026-10-29' }],
+        creditCards: [],
       }),
     });
     const service = new NotificationService(repository);
@@ -52,6 +55,78 @@ describe('BE-P2-E05 notification service', () => {
     ]);
   });
 
+  it('creates card due and usage alerts without money params', async () => {
+    const createIfAbsent = jest.fn().mockResolvedValue(true);
+    const repository = repo({
+      createIfAbsent,
+      loadEvaluateContext: jest.fn().mockResolvedValue({
+        userId: 'u1',
+        timezone: 'Asia/Ho_Chi_Minh',
+        today: '2026-10-12',
+        prefs: {
+          ...defaultPreference(),
+          budgetEnabled: false,
+          recurringEnabled: false,
+          cardEnabled: true,
+          createdAt: now,
+          updatedAt: now,
+        },
+        periodFrom: '2026-10-01',
+        crossedThresholds: [],
+        recurringSoon: [],
+        creditCards: [{
+          id: 'card-1',
+          paymentDueDay: 15,
+          creditLimitMinor: 1000n,
+          balanceMinor: -900n,
+        }],
+      }),
+    });
+    const service = new NotificationService(repository);
+    await expect(service.evaluate('u1', now)).resolves.toEqual({ created: 3 });
+    expect(createIfAbsent.mock.calls.map(call => call[0].dedupeKey)).toEqual([
+      'card|due|card-1|2026-10-15',
+      'card|usage|card-1|2026-10-01|70',
+      'card|usage|card-1|2026-10-01|90',
+    ]);
+    for (const call of createIfAbsent.mock.calls) {
+      const params = call[0].params as Record<string, unknown>;
+      expect(JSON.stringify(params)).not.toMatch(/amount|Minor|balance/i);
+      expect(params.accountId).toBe('card-1');
+    }
+  });
+
+  it('skips archived-free zero-debt cards and does not invent payments', async () => {
+    const createIfAbsent = jest.fn().mockResolvedValue(true);
+    const repository = repo({
+      createIfAbsent,
+      loadEvaluateContext: jest.fn().mockResolvedValue({
+        userId: 'u1',
+        timezone: 'Asia/Ho_Chi_Minh',
+        today: '2026-10-12',
+        prefs: {
+          ...defaultPreference(),
+          budgetEnabled: false,
+          recurringEnabled: false,
+          createdAt: now,
+          updatedAt: now,
+        },
+        periodFrom: '2026-10-01',
+        crossedThresholds: [],
+        recurringSoon: [],
+        creditCards: [{
+          id: 'card-2',
+          paymentDueDay: 15,
+          creditLimitMinor: 1000n,
+          balanceMinor: 0n,
+        }],
+      }),
+    });
+    const service = new NotificationService(repository);
+    await expect(service.evaluate('u1', now)).resolves.toEqual({ created: 0 });
+    expect(createIfAbsent).not.toHaveBeenCalled();
+  });
+
   it('skips creation during quiet hours', async () => {
     const createIfAbsent = jest.fn();
     const repository = repo({
@@ -59,6 +134,7 @@ describe('BE-P2-E05 notification service', () => {
       loadEvaluateContext: jest.fn().mockResolvedValue({
         userId: 'u1',
         timezone: 'Asia/Ho_Chi_Minh',
+        today: '2026-10-28',
         prefs: {
           ...defaultPreference(),
           quietHoursEnabled: true,
@@ -70,6 +146,12 @@ describe('BE-P2-E05 notification service', () => {
         periodFrom: '2026-10-01',
         crossedThresholds: [80],
         recurringSoon: [{ id: 'r1', nextExecutionDate: '2026-10-29' }],
+        creditCards: [{
+          id: 'card-1',
+          paymentDueDay: 28,
+          creditLimitMinor: 1000n,
+          balanceMinor: -900n,
+        }],
       }),
     });
     const service = new NotificationService(repository);
@@ -99,10 +181,14 @@ describe('BE-P2-E05 notification service', () => {
       loadEvaluateContext: jest.fn().mockResolvedValue({
         userId: 'u1',
         timezone: 'Asia/Ho_Chi_Minh',
-        prefs: { ...defaultPreference(), createdAt: now, updatedAt: now },
+        today: '2026-10-28',
+        prefs: {
+          ...defaultPreference(), cardEnabled: false, createdAt: now, updatedAt: now,
+        },
         periodFrom: '2026-10-01',
         crossedThresholds: [70],
         recurringSoon: [],
+        creditCards: [],
       }),
     });
     const service = new NotificationService(repository);

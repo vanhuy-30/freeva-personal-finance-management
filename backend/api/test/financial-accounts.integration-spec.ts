@@ -245,7 +245,10 @@ describe('BE-P1-004 HTTP + PostgreSQL', () => {
   it('changes unused type/currency, clears credit fields, archives and restores history', async () => {
     const account = await create({ type: 'credit', creditLimitMinor: '10000', statementCloseDay: 10, paymentDueDay: 20 });
     const changed = await request('PATCH', `/${account.id}`, { version: 1, type: 'bank', currencyCode: 'USD' });
-    expect(changed.body).toMatchObject({ type: 'bank', currencyCode: 'USD', creditLimitMinor: null, statementCloseDay: null, paymentDueDay: null, version: 2 });
+    expect(changed.body).toMatchObject({
+      type: 'bank', currencyCode: 'USD', creditLimitMinor: null, statementCloseDay: null, paymentDueDay: null,
+      minimumPaymentMinor: null, version: 2,
+    });
     await transaction(account.id, -10n, { currencyCode: 'USD' });
     expect((await request('DELETE', `/${account.id}?version=2`)).status).toBe(204);
     const archived = (await request('GET', `/${account.id}`)).body;

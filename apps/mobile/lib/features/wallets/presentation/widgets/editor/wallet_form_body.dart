@@ -24,6 +24,7 @@ class WalletFormBody extends StatelessWidget {
     required this.name,
     required this.amount,
     required this.limit,
+    required this.minimum,
     this.onHide,
     this.showTypes = true,
     this.gap = FreevaSpace.s4,
@@ -34,6 +35,7 @@ class WalletFormBody extends StatelessWidget {
   final TextEditingController name;
   final TextEditingController amount;
   final TextEditingController limit;
+  final TextEditingController minimum;
 
   /// "Ẩn ví" under the fields; only when editing.
   final VoidCallback? onHide;
@@ -100,7 +102,12 @@ class WalletFormBody extends StatelessWidget {
           ),
         spacer,
         if (form.credit)
-          CreditCardFields(form: form, debt: amount, limit: limit)
+          CreditCardFields(
+            form: form,
+            debt: amount,
+            limit: limit,
+            minimum: minimum,
+          )
         else ...[
           FreevaTextField(
             label: form.isNew ? s.walletCurrentBalance : s.walletInitialBalance,

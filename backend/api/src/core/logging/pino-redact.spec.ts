@@ -44,6 +44,7 @@ describe('pino redact (SEC-P0-003)', () => {
       amountMinor: AMOUNT,
       initialBalanceMinor: AMOUNT,
       creditLimitMinor: AMOUNT,
+      minimumPaymentMinor: AMOUNT,
       balanceMinor: AMOUNT,
       incomeMinor: AMOUNT,
       expenseMinor: AMOUNT,
@@ -77,6 +78,7 @@ describe('pino redact (SEC-P0-003)', () => {
       account: {
         initialBalanceMinor: AMOUNT,
         creditLimitMinor: AMOUNT,
+        minimumPaymentMinor: AMOUNT,
         balanceMinor: AMOUNT,
         iban: IBAN,
       },

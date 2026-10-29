@@ -142,7 +142,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                     tint: (c.statusWarningBg, c.statusWarning),
                   ),
                   soon(LucideIcons.handCoins, NotificationKind.debt),
-                  soon(LucideIcons.creditCard, NotificationKind.card),
+                  kindToggle(LucideIcons.creditCard, NotificationKind.card),
                   soon(LucideIcons.sparkles, NotificationKind.insight),
                   SettingsRow.toggle(
                     icon: LucideIcons.smartphone,

@@ -19,7 +19,7 @@ Mỗi ví trả thêm `hasTransactions` (có bất kỳ giao dịch nào, kể c
 
 List sắp xếp `sortOrder`, `createdAt`, `id` tăng dần. Timestamp ISO 8601; tiền là string integer. Currency lấy từ catalog hiện có (`GET /api/v1/profile/options`), không tự thêm mã tiền tệ từ request.
 
-Tên trim, 1–100 ký tự; `sortOrder` 0–2147483647, mặc định 0. Số tiền đầu vào có tối đa 20 ký tự và nằm trong signed int64; không nhận JSON number, số thập phân hoặc số mũ. Số dư ban đầu được âm. Các trường thẻ nullable, chỉ được có giá trị với `credit`: hạn mức không âm, ngày chốt/thanh toán 1–28. Bỏ qua trường trong PATCH nghĩa là giữ giá trị; chỉ trường thẻ nhận null.
+Tên trim, 1–100 ký tự; `sortOrder` 0–2147483647, mặc định 0. Số tiền đầu vào có tối đa 20 ký tự và nằm trong signed int64; không nhận JSON number, số thập phân hoặc số mũ. Số dư ban đầu được âm. Các trường thẻ nullable, chỉ được có giá trị với `credit`: hạn mức và số trả tối thiểu không âm (`minimumPaymentMinor`, `BE-P2-E07`), ngày chốt/thanh toán 1–28. Số trả tối thiểu chỉ ghi nhận; không tạo giao dịch trả nợ. Dư nợ và hạn mức còn suy từ `balanceMinor` và hạn mức ở client. Bỏ qua trường trong PATCH nghĩa là giữ giá trị; chỉ trường thẻ nhận null.
 
 ## Số dư, lịch sử và ghi đồng thời
 

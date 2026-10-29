@@ -9,6 +9,7 @@ export interface AccountFields {
   creditLimitMinor: bigint | null;
   statementCloseDay: number | null;
   paymentDueDay: number | null;
+  minimumPaymentMinor: bigint | null;
 }
 export interface FinancialAccount extends AccountFields {
   id: string;
@@ -42,11 +43,16 @@ export function minor(value: string): bigint {
   return result;
 }
 export function validateCredit(fields: AccountFields): void {
-  const values = [fields.creditLimitMinor, fields.statementCloseDay, fields.paymentDueDay];
+  const values = [
+    fields.creditLimitMinor, fields.statementCloseDay, fields.paymentDueDay, fields.minimumPaymentMinor,
+  ];
   if (fields.type !== 'credit' && values.some(value => value !== null)) {
     throw new AccountError('VALIDATION_ERROR');
   }
   if (fields.creditLimitMinor !== null && fields.creditLimitMinor < 0n) {
+    throw new AccountError('VALIDATION_ERROR');
+  }
+  if (fields.minimumPaymentMinor !== null && fields.minimumPaymentMinor < 0n) {
     throw new AccountError('VALIDATION_ERROR');
   }
 }
@@ -67,14 +73,18 @@ export function updatedFields(current: FinancialAccount, patch: AccountPatch, ha
     creditLimitMinor: patch.creditLimitMinor === undefined ? current.creditLimitMinor : patch.creditLimitMinor,
     statementCloseDay: patch.statementCloseDay === undefined ? current.statementCloseDay : patch.statementCloseDay,
     paymentDueDay: patch.paymentDueDay === undefined ? current.paymentDueDay : patch.paymentDueDay,
+    minimumPaymentMinor: patch.minimumPaymentMinor === undefined
+      ? current.minimumPaymentMinor
+      : patch.minimumPaymentMinor,
   };
   if (current.type === 'credit' && fields.type !== 'credit') {
     // Reject contradictory input, but clear old card configuration automatically.
-    if ([patch.creditLimitMinor, patch.statementCloseDay, patch.paymentDueDay]
+    if ([patch.creditLimitMinor, patch.statementCloseDay, patch.paymentDueDay, patch.minimumPaymentMinor]
       .some(value => value !== undefined && value !== null)) throw new AccountError('VALIDATION_ERROR');
     fields.creditLimitMinor = null;
     fields.statementCloseDay = null;
     fields.paymentDueDay = null;
+    fields.minimumPaymentMinor = null;
   }
   validateCredit(fields);
   return fields;
