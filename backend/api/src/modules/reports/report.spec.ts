@@ -1,11 +1,12 @@
 import 'reflect-metadata';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
-import { CashflowQueryDto } from './report.dto';
+import { CashflowQueryDto, SeriesQueryDto } from './report.dto';
 import { ReportService } from './report.service';
 import type { ReportRepository } from './domain/report.repository';
 import {
-  buildCashflow, buildNetWorth, buildTrend, ReportError, resolvePeriod, todayInTimeZone, trendBuckets,
+  buildCashflow, buildNetWorth, buildSeries, buildTrend, expenseDeltaBps, previousPeriod, ReportError,
+  resolvePeriod, savingsRateBps, seriesBuckets, todayInTimeZone, trendBuckets,
   type CashflowSource, type ReportProfile,
 } from './domain/report';
 
@@ -94,8 +95,8 @@ describe('BE-P1-007 report totals', () => {
   it('keeps currencies separate, excludes transfers from cashflow, and does not roll categories up', () => {
     const report = buildCashflow(period, source());
     expect(report.totals).toEqual([
-      { currency: 'USD', incomeMinor: '2500', expenseMinor: '-500', netMinor: '2000' },
-      { currency: 'VND', incomeMinor: '9007199254740993', expenseMinor: '-400', netMinor: '9007199254740593' },
+      { currency: 'USD', incomeMinor: '2500', expenseMinor: '-500', netMinor: '2000', savingsRateBps: 8000 },
+      { currency: 'VND', incomeMinor: '9007199254740993', expenseMinor: '-400', netMinor: '9007199254740593', savingsRateBps: 9999 },
     ]);
     expect(report.byCategory.map(row => row.categoryId)).toEqual([food, child, null]);
     expect(report.byCategory.find(row => row.categoryId === child)).toEqual({
@@ -108,6 +109,12 @@ describe('BE-P1-007 report totals', () => {
     expect(report.byAccount.find(row => row.accountId === archived)?.transferMinor).toBe('-20');
     expect(report.byAccount.find(row => row.accountId === usd)?.incomeMinor).toBe('2500');
     expect(report.totals).toHaveLength(2);
+    expect(report.comparison.totals).toEqual([]);
+    expect(report.comparison.expenseDeltaBps).toEqual([
+      { currency: 'USD', deltaBps: null },
+      { currency: 'VND', deltaBps: null },
+    ]);
+    expect(report.topMerchants).toEqual([]);
   });
 
   it('includes idle active accounts and omits archived accounts without period activity', () => {
@@ -177,24 +184,131 @@ describe('DS-P2-003 year period and trend', () => {
   });
 });
 
+describe('BE-P2-E06 comparison, savings rate, merchants, and series', () => {
+  it('resolves the adjacent previous period for week, fiscal month, year, and range', () => {
+    expect(previousPeriod(resolvePeriod({ period: 'week', on: '2026-10-08' }, profile()))).toEqual({ from: '2026-09-28', to: '2026-10-04' });
+    expect(previousPeriod(resolvePeriod({ period: 'month', on: '2026-10-08' }, profile(15)))).toEqual({ from: '2026-08-15', to: '2026-09-14' });
+    expect(previousPeriod(resolvePeriod({ period: 'year', on: '2026-10-08' }, profile()))).toEqual({ from: '2025-01-01', to: '2025-12-31' });
+    expect(previousPeriod(resolvePeriod({ period: 'range', from: '2026-10-01', to: '2026-10-07' }, profile()))).toEqual({ from: '2026-09-24', to: '2026-09-30' });
+    expect(() => previousPeriod(resolvePeriod({ period: 'year', on: '0001-06-01' }, profile()))).toThrow(ReportError);
+  });
+
+  it('computes savings rate and expense delta in integer basis points', () => {
+    expect(savingsRateBps(118n, 300n)).toBe(3933);
+    expect(savingsRateBps(-50n, 0n)).toBeNull();
+    expect(savingsRateBps(10n, -1n)).toBeNull();
+    expect(expenseDeltaBps(-106n, -100n)).toBe(600);
+    expect(expenseDeltaBps(-50n, 0n)).toBeNull();
+    expect(expenseDeltaBps(0n, -100n)).toBe(-10000);
+  });
+
+  it('attaches previous totals, expense deltas, and top merchants per currency', () => {
+    const report = buildCashflow(resolvePeriod({ period: 'month', on: '2026-10-08' }, profile()), {
+      categories: [
+        { currency: 'VND', categoryId: null, parentId: null, type: 'income', total: 300n, count: 1 },
+        { currency: 'VND', categoryId: null, parentId: null, type: 'expense', total: -182n, count: 2 },
+        { currency: 'USD', categoryId: null, parentId: null, type: 'expense', total: -10n, count: 1 },
+      ],
+      accounts: [],
+      movements: [],
+    }, {
+      previous: {
+        from: '2026-09-01', to: '2026-09-30',
+        categories: [
+          { currency: 'VND', categoryId: null, parentId: null, type: 'income', total: 200n, count: 1 },
+          { currency: 'VND', categoryId: null, parentId: null, type: 'expense', total: -100n, count: 1 },
+        ],
+      },
+      merchants: [
+        { currency: 'VND', merchant: 'WinMart', expense: -80n, count: 2 },
+        { currency: 'VND', merchant: 'Grab', expense: -100n, count: 1 },
+        { currency: 'VND', merchant: 'Cafe', expense: -2n, count: 1 },
+        { currency: 'USD', merchant: 'Amazon', expense: -10n, count: 1 },
+        { currency: 'VND', merchant: 'grab', expense: -5n, count: 1 },
+      ],
+    });
+    expect(report.totals).toEqual([
+      { currency: 'USD', incomeMinor: '0', expenseMinor: '-10', netMinor: '-10', savingsRateBps: null },
+      { currency: 'VND', incomeMinor: '300', expenseMinor: '-182', netMinor: '118', savingsRateBps: 3933 },
+    ]);
+    expect(report.comparison).toEqual({
+      from: '2026-09-01',
+      to: '2026-09-30',
+      totals: [{ currency: 'VND', incomeMinor: '200', expenseMinor: '-100', netMinor: '100', savingsRateBps: 5000 }],
+      expenseDeltaBps: [
+        { currency: 'USD', deltaBps: null },
+        { currency: 'VND', deltaBps: 8200 },
+      ],
+    });
+    expect(report.topMerchants).toEqual([
+      { currency: 'USD', merchant: 'Amazon', expenseMinor: '-10', transactionCount: 1 },
+      { currency: 'VND', merchant: 'Grab', expenseMinor: '-100', transactionCount: 1 },
+      { currency: 'VND', merchant: 'WinMart', expenseMinor: '-80', transactionCount: 2 },
+      { currency: 'VND', merchant: 'grab', expenseMinor: '-5', transactionCount: 1 },
+      { currency: 'VND', merchant: 'Cafe', expenseMinor: '-2', transactionCount: 1 },
+    ]);
+  });
+
+  it('builds 7d day buckets, fiscal month windows, and all-time years', () => {
+    expect(seriesBuckets({ window: '7d', on: '2026-10-08' }, profile()).map(bucket => bucket.from)).toEqual([
+      '2026-10-02', '2026-10-03', '2026-10-04', '2026-10-05', '2026-10-06', '2026-10-07', '2026-10-08',
+    ]);
+    expect(seriesBuckets({ window: '3m', on: '2026-10-08' }, profile(15)).map(bucket => `${bucket.from}/${bucket.to}`)).toEqual([
+      '2026-07-15/2026-08-14', '2026-08-15/2026-09-14', '2026-09-15/2026-10-14',
+    ]);
+    expect(seriesBuckets({ window: '1y', on: '2026-10-08' }, profile(1))).toHaveLength(12);
+    expect(seriesBuckets({ window: 'all', on: '2026-10-08' }, profile(), '2024-03-01').map(bucket => bucket.from)).toEqual([
+      '2024-01-01', '2025-01-01', '2026-01-01',
+    ]);
+    expect(seriesBuckets({ window: 'all', on: '2026-10-08' }, profile(), null)).toEqual([
+      { from: '2026-01-01', to: '2026-12-31' },
+    ]);
+    const series = buildSeries('7d', {
+      buckets: seriesBuckets({ window: '7d', on: '2026-10-08' }, profile()),
+      firstOn: null,
+      rows: [
+        { index: 6, currency: 'VND', type: 'expense', total: -40n },
+        { index: 0, currency: 'VND', type: 'income', total: 10n },
+      ],
+    });
+    expect(series.window).toBe('7d');
+    expect(series.buckets[0].totals).toEqual([{ currency: 'VND', incomeMinor: '10', expenseMinor: '0' }]);
+    expect(series.buckets[6].totals).toEqual([{ currency: 'VND', incomeMinor: '0', expenseMinor: '-40' }]);
+  });
+});
+
 describe('BE-P1-007 report HTTP contract', () => {
   it('rejects unknown periods and malformed dates before calendar checks', async () => {
     for (const plain of [{}, { period: 'decade' }, { period: 'month', on: '2026-10-08\n' }, { period: 'range', owner: 'x' }]) {
       expect(await validate(plainToInstance(CashflowQueryDto, plain), { whitelist: true, forbidNonWhitelisted: true })).not.toHaveLength(0);
     }
     expect(await validate(plainToInstance(CashflowQueryDto, { period: 'month', on: '2026-02-29' }))).toHaveLength(0);
+    expect(await validate(plainToInstance(SeriesQueryDto, { window: '7d', on: '2026-10-08' }))).toHaveLength(0);
+    expect(await validate(plainToInstance(SeriesQueryDto, { window: 'decade' }), { whitelist: true, forbidNonWhitelisted: true })).not.toHaveLength(0);
   });
 
   it('resolves the period inside the repository snapshot', async () => {
     const repository: ReportRepository = {
       async cashflow(_userId, periodOf) {
-        return { period: periodOf(profile(15)), source: { categories: [], accounts: [], movements: [] } };
+        const period = periodOf(profile(15));
+        return {
+          period,
+          source: { categories: [], accounts: [], movements: [] },
+          previous: { from: '2026-08-15', to: '2026-09-14', categories: [] },
+          merchants: [],
+        };
       },
       async trend() { return { buckets: [], rows: [], firstOn: null }; },
+      async series() { return { buckets: [], rows: [], firstOn: null }; },
       async netWorth() { return [{ currency: 'VND', bucket: 'asset', total: 10n }]; },
     };
     const service = new ReportService(repository);
-    await expect(service.cashflow('user', { period: 'month', on: '2026-10-08' })).resolves.toMatchObject({ period: { from: '2026-09-15', to: '2026-10-14' } });
+    await expect(service.cashflow('user', { period: 'month', on: '2026-10-08' })).resolves.toMatchObject({
+      period: { from: '2026-09-15', to: '2026-10-14' },
+      comparison: { from: '2026-08-15', to: '2026-09-14' },
+      topMerchants: [],
+    });
+    await expect(service.series('user', { window: '7d', on: '2026-10-08' })).resolves.toEqual({ window: '7d', buckets: [] });
     await expect(service.netWorth('user')).resolves.toEqual({ items: [{ currency: 'VND', assetsMinor: '10', liabilitiesMinor: '0', netWorthMinor: '10' }] });
   });
 });

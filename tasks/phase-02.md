@@ -77,11 +77,12 @@
 - DoD: từng loại bật tắt được: ngân sách 80% và vượt, nhắc đóng góp mục tiêu, nợ đến hạn, thẻ đến hạn, định kỳ sắp chạy, soát tháng, insight mới, cảnh báo bảo mật. Giờ yên và timezone hồ sơ được tôn trọng. Nội dung không đưa số dư đầy đủ nếu câu thông báo không cần. Chưa có module nguồn thì loại đó tắt và không gửi.
 
 ### BE-P2-E06 — Mở rộng báo cáo và search (14, 19)
-- Status: todo
+- Status: done
 - Module: 14, 19
 - Gate: post-v1
 - Depends: BE-P1-007, BE-P1-008
 - DoD: so cùng kỳ trước, savings rate = tiết kiệm / thu nhập, xu hướng thu chi cho 7 ngày, 30 ngày, 3 tháng, 6 tháng, 1 năm và toàn bộ. Top merchant chỉ khi `BE-P1-012` đã có merchant.
+- Note: `GET /reports/cashflow` thêm `savingsRateBps`, `comparison` (kỳ liền trước cùng loại), `topMerchants`; `GET /reports/series?window=7d|30d|3m|6m|1y|all`. Search merchant đã có từ `DS-P2-005` — không endpoint search mới. OpenAPI + unit/integration. Kiến trúc: [reports.md](../docs/architecture/reports.md).
 
 ### BE-P2-E07 / MOB-P2-E07 — Vòng đời thẻ tín dụng
 - Status: todo

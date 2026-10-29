@@ -17,7 +17,7 @@ if (!databaseUrl || new URL(databaseUrl).pathname !== '/auth_test') {
 }
 process.env.DATABASE_URL = databaseUrl;
 
-describe('BE-P1-007 HTTP + PostgreSQL', () => {
+describe('BE-P1-007 / BE-P2-E06 HTTP + PostgreSQL', () => {
   let app: INestApplication;
   let prisma: PrismaService;
   let base: string;
@@ -109,12 +109,12 @@ describe('BE-P1-007 HTTP + PostgreSQL', () => {
 
   async function transaction(input: {
     accountId: string; currencyCode: string; type: 'income' | 'expense' | 'transfer'; amountMinor: bigint;
-    occurredOn: string; categoryId?: string; deleted?: boolean; transferGroupId?: string;
+    occurredOn: string; categoryId?: string; deleted?: boolean; transferGroupId?: string; merchant?: string | null;
   }) {
     return prisma.transaction.create({ data: {
       userId: owner, clientId: randomUUID(), accountId: input.accountId, currencyCode: input.currencyCode,
       type: input.type, amountMinor: input.amountMinor, occurredOn: new Date(`${input.occurredOn}T00:00:00.000Z`),
-      categoryId: input.categoryId, transferGroupId: input.transferGroupId,
+      categoryId: input.categoryId, transferGroupId: input.transferGroupId, merchant: input.merchant ?? null,
       ...(input.deleted ? { deletedAt: new Date('2026-10-01T00:00:00.000Z') } : {}),
       notes: 'Private report note',
     } });
@@ -148,9 +148,11 @@ describe('BE-P1-007 HTTP + PostgreSQL', () => {
     expect(report.body).toMatchObject({
       period: { kind: 'month', from: '2026-09-15', to: '2026-10-14', timezone: 'Asia/Ho_Chi_Minh', fiscalMonthStartDay: 15 },
       totals: [
-        { currency: 'USD', incomeMinor: '2500', expenseMinor: '0', netMinor: '2500' },
-        { currency: 'VND', incomeMinor: '1000', expenseMinor: '-405', netMinor: '595' },
+        { currency: 'USD', incomeMinor: '2500', expenseMinor: '0', netMinor: '2500', savingsRateBps: 10000 },
+        { currency: 'VND', incomeMinor: '1000', expenseMinor: '-405', netMinor: '595', savingsRateBps: 5950 },
       ],
+      comparison: { from: '2026-08-15', to: '2026-09-14' },
+      topMerchants: [],
     });
     const categories = report.body?.byCategory as { categoryId: string | null; parentId: string | null; expenseMinor: string }[];
     expect(categories).toEqual(expect.arrayContaining([
@@ -179,7 +181,11 @@ describe('BE-P1-007 HTTP + PostgreSQL', () => {
     await transaction({ accountId: cash.id, currencyCode: 'VND', type: 'income', amountMinor: 9n, occurredOn: '2026-10-11' });
     await transaction({ accountId: cash.id, currencyCode: 'VND', type: 'income', amountMinor: 10n, occurredOn: '2026-10-12' });
     const week = await request('/cashflow?period=week&on=2026-10-08');
-    expect(week.body).toMatchObject({ period: { kind: 'week', from: '2026-10-05', to: '2026-10-11' }, totals: [{ currency: 'VND', incomeMinor: '16', expenseMinor: '0', netMinor: '16' }] });
+    expect(week.body).toMatchObject({
+      period: { kind: 'week', from: '2026-10-05', to: '2026-10-11' },
+      totals: [{ currency: 'VND', incomeMinor: '16', expenseMinor: '0', netMinor: '16', savingsRateBps: 10000 }],
+      comparison: { from: '2026-09-28', to: '2026-10-04' },
+    });
     const range = await request('/cashflow?period=range&from=2024-02-29&to=2024-02-29');
     expect(range.status).toBe(200);
     expect(range.body).toMatchObject({ period: { kind: 'range', from: '2024-02-29', to: '2024-02-29' }, totals: [] });
@@ -192,6 +198,8 @@ describe('BE-P1-007 HTTP + PostgreSQL', () => {
       '/cashflow?period=year&from=2026-01-01',
       '/trend?period=range',
       '/trend?period=week&from=2026-10-01',
+      '/series?window=decade',
+      '/series?window=7d&from=2026-10-01',
       '/cashflow?period=month&userId=x',
       '/net-worth?period=month',
     ]) {
@@ -236,7 +244,11 @@ describe('BE-P1-007 HTTP + PostgreSQL', () => {
     await transaction({ accountId: cash.id, currencyCode: 'VND', type: 'expense', amountMinor: -999n, occurredOn: '2026-10-01', deleted: true });
     await transaction({ accountId: cash.id, currencyCode: 'VND', type: 'transfer', amountMinor: -50n, occurredOn: '2026-10-01', transferGroupId: randomUUID() });
     const year = await request('/cashflow?period=year&on=2026-06-01');
-    expect(year.body).toMatchObject({ period: { kind: 'year', from: '2026-01-01', to: '2026-12-31' }, totals: [{ currency: 'VND', incomeMinor: '900', expenseMinor: '-500' }] });
+    expect(year.body).toMatchObject({
+      period: { kind: 'year', from: '2026-01-01', to: '2026-12-31' },
+      totals: [{ currency: 'VND', incomeMinor: '900', expenseMinor: '-500', netMinor: '400', savingsRateBps: 4444 }],
+      comparison: { from: '2025-01-01', to: '2025-12-31', totals: [{ currency: 'VND', incomeMinor: '0', expenseMinor: '-100', netMinor: '-100', savingsRateBps: null }] },
+    });
     const months = await request('/trend?period=month&on=2026-10-08');
     expect(months.status).toBe(200);
     const buckets = months.body?.buckets as { from: string; to: string; totals: unknown[] }[];
@@ -261,5 +273,76 @@ describe('BE-P1-007 HTTP + PostgreSQL', () => {
     expect(period.timezone).toBe('Pacific/Kiritimati');
     expect(period.fiscalMonthStartDay).toBe(1);
     expect(period.from <= today && today <= period.to).toBe(true);
+  });
+
+  it('compares the previous fiscal month, ranks top merchants, and returns 7d and 3m series', async () => {
+    await prisma.user.update({ where: { id: owner }, data: { fiscalMonthStartDay: 15 } });
+    const cash = await account('cash', 'VND', 0n);
+    const usd = await account('cash', 'USD', 0n);
+    const food = await category('Food');
+    await transaction({ accountId: cash.id, currencyCode: 'VND', type: 'income', amountMinor: 1000n, occurredOn: '2026-09-20' });
+    await transaction({ accountId: cash.id, currencyCode: 'VND', type: 'expense', amountMinor: -400n, occurredOn: '2026-09-21', categoryId: food.id, merchant: 'WinMart' });
+    await transaction({ accountId: cash.id, currencyCode: 'VND', type: 'expense', amountMinor: -100n, occurredOn: '2026-09-22', categoryId: food.id, merchant: 'Grab' });
+    await transaction({ accountId: cash.id, currencyCode: 'VND', type: 'expense', amountMinor: -50n, occurredOn: '2026-09-23', categoryId: food.id, merchant: 'Grab' });
+    await transaction({ accountId: cash.id, currencyCode: 'VND', type: 'expense', amountMinor: -20n, occurredOn: '2026-09-24', categoryId: food.id });
+    await transaction({ accountId: cash.id, currencyCode: 'VND', type: 'expense', amountMinor: -999n, occurredOn: '2026-09-25', categoryId: food.id, merchant: 'SecretShop', deleted: true });
+    await transaction({ accountId: cash.id, currencyCode: 'VND', type: 'income', amountMinor: 200n, occurredOn: '2026-08-20' });
+    await transaction({ accountId: cash.id, currencyCode: 'VND', type: 'expense', amountMinor: -100n, occurredOn: '2026-08-21', categoryId: food.id, merchant: 'Old' });
+    await transaction({ accountId: usd.id, currencyCode: 'USD', type: 'expense', amountMinor: -15n, occurredOn: '2026-09-20', categoryId: food.id, merchant: 'Amazon' });
+    await transaction({ accountId: cash.id, currencyCode: 'VND', type: 'expense', amountMinor: -30n, occurredOn: '2026-10-07', categoryId: food.id, merchant: 'Cafe' });
+    await transaction({ accountId: cash.id, currencyCode: 'VND', type: 'income', amountMinor: 5n, occurredOn: '2026-10-02' });
+
+    const report = await request('/cashflow?period=month&on=2026-10-08');
+    expect(report.status).toBe(200);
+    // Current VND: income 1000+5, expense -400-100-50-20-30 = -600; previous VND expense -100 → delta 50000 bps.
+    expect(report.body).toMatchObject({
+      period: { from: '2026-09-15', to: '2026-10-14' },
+      totals: expect.arrayContaining([
+        expect.objectContaining({ currency: 'VND', incomeMinor: '1005', expenseMinor: '-600', netMinor: '405', savingsRateBps: 4029 }),
+        expect.objectContaining({ currency: 'USD', incomeMinor: '0', expenseMinor: '-15', netMinor: '-15', savingsRateBps: null }),
+      ]),
+      comparison: {
+        from: '2026-08-15',
+        to: '2026-09-14',
+        totals: [{ currency: 'VND', incomeMinor: '200', expenseMinor: '-100', netMinor: '100', savingsRateBps: 5000 }],
+        expenseDeltaBps: expect.arrayContaining([
+          { currency: 'VND', deltaBps: 50000 },
+          { currency: 'USD', deltaBps: null },
+        ]),
+      },
+    });
+    const merchants = report.body?.topMerchants as { currency: string; merchant: string; expenseMinor: string; transactionCount: number }[];
+    expect(merchants).toEqual([
+      { currency: 'USD', merchant: 'Amazon', expenseMinor: '-15', transactionCount: 1 },
+      { currency: 'VND', merchant: 'WinMart', expenseMinor: '-400', transactionCount: 1 },
+      { currency: 'VND', merchant: 'Grab', expenseMinor: '-150', transactionCount: 2 },
+      { currency: 'VND', merchant: 'Cafe', expenseMinor: '-30', transactionCount: 1 },
+    ]);
+    expect(JSON.stringify(report.body)).not.toContain('SecretShop');
+    expect(JSON.stringify(report.body)).not.toContain('Private report note');
+
+    const days = await request('/series?window=7d&on=2026-10-08');
+    expect(days.status).toBe(200);
+    const dayBuckets = days.body?.buckets as { from: string; to: string; totals: { currency: string; incomeMinor: string; expenseMinor: string }[] }[];
+    expect(days.body).toMatchObject({ window: '7d' });
+    expect(dayBuckets).toHaveLength(7);
+    expect(dayBuckets[0]).toEqual({ from: '2026-10-02', to: '2026-10-02', totals: [{ currency: 'VND', incomeMinor: '5', expenseMinor: '0' }] });
+    expect(dayBuckets[5]).toEqual({ from: '2026-10-07', to: '2026-10-07', totals: [{ currency: 'VND', incomeMinor: '0', expenseMinor: '-30' }] });
+    expect(dayBuckets[6].totals).toEqual([]);
+
+    const months = await request('/series?window=3m&on=2026-10-08');
+    expect(months.status).toBe(200);
+    const monthBuckets = months.body?.buckets as { from: string; totals: unknown[] }[];
+    expect(months.body).toMatchObject({ window: '3m' });
+    expect(monthBuckets.map(bucket => bucket.from)).toEqual(['2026-07-15', '2026-08-15', '2026-09-15']);
+    expect(monthBuckets[1].totals).toEqual([{ currency: 'VND', incomeMinor: '200', expenseMinor: '-100' }]);
+    expect(monthBuckets[2].totals).toEqual(expect.arrayContaining([
+      expect.objectContaining({ currency: 'VND', incomeMinor: '1005', expenseMinor: '-600' }),
+      expect.objectContaining({ currency: 'USD', incomeMinor: '0', expenseMinor: '-15' }),
+    ]));
+    expect((await request('/series?window=7d', otherToken)).body).toMatchObject({ window: '7d' });
+    expect(JSON.stringify((await request('/series?window=7d', otherToken)).body)).not.toContain('WinMart');
+    expect((await request('/series?window=7d', '')).status).toBe(401);
+    for (const secret of [token, 'WinMart', 'SecretShop', 'Private report note', '1005']) expect(logs).not.toContain(secret);
   });
 });
