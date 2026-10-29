@@ -101,7 +101,7 @@ void main() {
 
   test('accepts optional occurredTime HH:mm and rejects invalid clocks', () {
     final wallets = [_wallet('card')];
-    final currencies = const [WalletCurrency('VND', 0)];
+    const currencies = [WalletCurrency('VND', 0)];
     final categories = [
       const FinanceCategory(
         id: 'food',
