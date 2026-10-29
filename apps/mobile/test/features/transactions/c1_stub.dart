@@ -21,6 +21,7 @@ TxLeg tx(
   required String account,
   required int amount,
   String day = '2026-10-21',
+  String? time,
   TransactionType type = TransactionType.expense,
   String? category,
   String? merchant,
@@ -36,6 +37,7 @@ TxLeg tx(
   amountMinor: b(amount),
   type: type,
   occurredOn: day,
+  occurredTime: time,
   categoryId: category,
   notes: notes,
   merchant: merchant,
@@ -53,6 +55,7 @@ List<TransactionBundle> canvasRows({bool deleted = false}) =>
         '1',
         account: 'cash',
         amount: -65000,
+        time: '12:40',
         category: 'food',
         merchant: 'Phở Thìn',
         tags: ['work'],
@@ -314,6 +317,8 @@ class StubTransactionViewModel extends ChangeNotifier
   int get total => rows.length;
   @override
   String? today() => '2026-10-21';
+  @override
+  String? nowTime() => '12:40';
   @override
   String? get timeZone => 'Asia/Ho_Chi_Minh';
 

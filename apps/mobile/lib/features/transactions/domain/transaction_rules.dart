@@ -45,6 +45,10 @@ Either<AuthFailure, TransactionCommand> prepareTransaction(
   if (!isCalendarDate(draft.occurredOn) || draft.magnitude <= BigInt.zero) {
     return left(const AuthFailure(AuthError.invalidInput));
   }
+  final occurredTime = draft.occurredTime;
+  if (occurredTime != null && !isClockTime(occurredTime)) {
+    return left(const AuthFailure(AuthError.invalidInput));
+  }
   final notes = draft.notes?.trim();
   final storedNotes = notes == null || notes.isEmpty ? null : notes;
   if (storedNotes != null && storedNotes.length > 2000) {
@@ -105,6 +109,7 @@ Either<AuthFailure, TransactionCommand> prepareTransaction(
       TransactionCommand(
         type: draft.type,
         occurredOn: draft.occurredOn,
+        occurredTime: occurredTime,
         categoryId: draft.categoryId,
         notes: storedNotes,
         merchant: storedMerchant,
@@ -163,6 +168,7 @@ Either<AuthFailure, TransactionCommand> prepareTransaction(
     TransactionCommand(
       type: TransactionType.transfer,
       occurredOn: draft.occurredOn,
+      occurredTime: occurredTime,
       categoryId: null,
       notes: storedNotes,
       merchant: null,

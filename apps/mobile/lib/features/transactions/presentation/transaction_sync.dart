@@ -12,6 +12,7 @@ SyncMutation mutationFromCommand(
     version: command.version,
     type: command.type,
     occurredOn: command.occurredOn,
+    occurredTime: command.occurredTime,
     categoryId: command.categoryId,
     notes: command.notes,
     merchant: command.merchant,
@@ -38,5 +39,6 @@ SyncMutation mutationFromBundle(TransactionBundle bundle, SyncAction action) {
     version: bundle.version,
     type: bundle.type,
     occurredOn: bundle.occurredOn,
+    occurredTime: bundle.occurredTime,
   );
 }

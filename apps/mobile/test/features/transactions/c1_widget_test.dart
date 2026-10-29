@@ -79,6 +79,7 @@ void main() {
     await tester.tap(find.text('Phở Thìn'));
     await tester.pumpAndSettle();
     expect(find.text('Danh mục'), findsOneWidget);
+    expect(find.text('Hôm nay, 12:40'), findsOneWidget);
     expect(find.text('Sao chép'), findsOneWidget);
     expect(find.text('Sửa'), findsOneWidget);
     await tester.tap(find.byTooltip('Xoá giao dịch'));

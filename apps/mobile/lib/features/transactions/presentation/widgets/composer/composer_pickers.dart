@@ -7,6 +7,7 @@ import '../../../domain/transaction.dart';
 import '../../viewmodels/transaction_composer.dart';
 import 'category_picker_sheet.dart';
 import 'date_picker_sheet.dart';
+import 'date_time_picker_sheet.dart';
 import 'rate_dialog.dart';
 import 'tag_picker_sheet.dart';
 import 'wallet_picker_sheet.dart';
@@ -68,6 +69,20 @@ class ComposerPickers {
       today: today,
     );
     if (value != null) composer.setDate(value);
+  }
+
+  /// C2.3 Thời gian: day + optional clock.
+  Future<void> when() async {
+    final today = composer.model.today() ?? composer.occurredOn;
+    final value = await showDateTimePickerSheet(
+      context,
+      date: composer.occurredOn,
+      today: today,
+      time: composer.occurredTime,
+    );
+    if (value != null) {
+      composer.setWhen(date: value.date, time: value.time);
+    }
   }
 
   Future<void> tags() async {

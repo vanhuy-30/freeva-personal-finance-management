@@ -1573,6 +1573,12 @@ abstract class S {
   /// **'{day} · {date}'**
   String txDayHeader(String day, String date);
 
+  /// No description provided for @txDayWithTime.
+  ///
+  /// In en, this message translates to:
+  /// **'{day}, {time}'**
+  String txDayWithTime(String day, String time);
+
   /// No description provided for @txChipRemove.
   ///
   /// In en, this message translates to:
@@ -2004,6 +2010,36 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Choose a date'**
   String get txDateTitle;
+
+  /// No description provided for @txDateTimeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose date and time'**
+  String get txDateTimeTitle;
+
+  /// No description provided for @txTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get txTimeLabel;
+
+  /// No description provided for @txTimeNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No time'**
+  String get txTimeNone;
+
+  /// No description provided for @txTimeClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear time'**
+  String get txTimeClear;
+
+  /// No description provided for @txDateTimeDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get txDateTimeDone;
 
   /// No description provided for @txYesterday.
   ///

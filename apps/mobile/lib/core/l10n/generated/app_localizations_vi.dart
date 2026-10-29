@@ -818,6 +818,11 @@ class SVi extends S {
   }
 
   @override
+  String txDayWithTime(String day, String time) {
+    return '$day, $time';
+  }
+
+  @override
   String txChipRemove(String label) {
     return 'Bỏ $label';
   }
@@ -1048,6 +1053,21 @@ class SVi extends S {
 
   @override
   String get txDateTitle => 'Chọn ngày';
+
+  @override
+  String get txDateTimeTitle => 'Chọn thời gian';
+
+  @override
+  String get txTimeLabel => 'Giờ';
+
+  @override
+  String get txTimeNone => 'Không có giờ';
+
+  @override
+  String get txTimeClear => 'Bỏ giờ';
+
+  @override
+  String get txDateTimeDone => 'Xong';
 
   @override
   String get txYesterday => 'Hôm qua';

@@ -104,11 +104,12 @@
 - Note: `GET /reports/month-review` chiếu cashflow tháng + top 3 lá chi; OpenAPI; mobile `/reports/month-review` từ thẻ Tổng quan và dòng trên Báo cáo tháng. Kiến trúc: [reports.md](../docs/architecture/reports.md), [mobile-reports.md](../docs/architecture/mobile-reports.md).
 
 ### BE-P2-E09 / MOB-P2-E09 — Giờ giao dịch
-- Status: todo
+- Status: done
 - Module: 4
 - Gate: post-v1
 - Depends: DS-P2-005
 - DoD: giao dịch lưu thêm giờ (tuỳ chọn) trong múi giờ hồ sơ; `occurredOn` vẫn là ngày lịch cho báo cáo. API, OpenAPI, sync và form ghi/sửa (ô Thời gian có giờ như thiết kế C2.3, chi tiết "Hôm nay, 12:40"). Tách ra từ nhóm C theo quyết định 2026-10-22.
+- Note: `occurredTime` `VARCHAR(5)?` HH:mm; OpenAPI + export + fingerprint sync; mobile composer/chi tiết; báo cáo không đổi.
 
 ## Việc bổ sung (2026-10-26)
 

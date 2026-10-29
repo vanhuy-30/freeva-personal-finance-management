@@ -11,9 +11,12 @@ export interface LegInput {
   amountMinor: bigint;
 }
 export interface ManualFx { rate: string; quotedAt: Date }
+/** Optional local clock HH:mm in the profile timezone; null = unset. Does not change occurredOn. */
+export const OCCURRED_TIME = /^([01]\d|2[0-3]):([0-5]\d)(?![\s\S])/;
 export interface TransactionInput {
   type: TransactionType;
   occurredOn: Date;
+  occurredTime: string | null;
   legs: LegInput[];
   categoryId: string | null;
   notes: string | null;
@@ -26,6 +29,7 @@ export interface TransactionLeg extends LegInput {
   id: string;
   type: TransactionType;
   occurredOn: Date;
+  occurredTime: string | null;
   categoryId: string | null;
   notes: string | null;
   merchant: string | null;
@@ -68,6 +72,11 @@ export function calendarDate(value: string): Date {
     !Number.isFinite(date.getTime()) || date.toISOString().slice(0, 10) !== value) throw new TransactionError('VALIDATION_ERROR');
   return date;
 }
+export function occurredTime(value: string | null | undefined): string | null {
+  if (value === undefined || value === null) return null;
+  if (!OCCURRED_TIME.test(value)) throw new TransactionError('VALIDATION_ERROR');
+  return value;
+}
 export function validateInput(input: TransactionInput, digits: Record<string, number>): void {
   const { legs, type, fx } = input;
   if (legs.length !== (type === 'transfer' ? 2 : 1)) throw new TransactionError('VALIDATION_ERROR');
@@ -75,6 +84,7 @@ export function validateInput(input: TransactionInput, digits: Record<string, nu
   for (const leg of legs) minor(leg.amountMinor.toString());
   const [source, destination] = legs;
   if (type === 'expense' && input.categoryId === null) throw new TransactionError('VALIDATION_ERROR');
+  if (input.occurredTime !== null && !OCCURRED_TIME.test(input.occurredTime)) throw new TransactionError('VALIDATION_ERROR');
   if (input.merchant !== null && (input.merchant.length < 1 || input.merchant.length > 200)) throw new TransactionError('VALIDATION_ERROR');
   if (type !== 'transfer') {
     if (fx || (type === 'income' ? source.amountMinor <= 0n : source.amountMinor >= 0n)) throw new TransactionError('VALIDATION_ERROR');

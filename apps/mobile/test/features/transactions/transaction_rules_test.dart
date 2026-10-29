@@ -85,6 +85,7 @@ void main() {
     expect(command.notes, 'lunch');
     expect(command.merchant, 'WinMart');
     expect(command.tagIds, ['work']);
+    expect(command.occurredTime, isNull);
     expect(
       defaultAccountId(
         wallets: [
@@ -96,6 +97,51 @@ void main() {
       'card',
     );
     expect(defaultCategoryId(categories), 'food');
+  });
+
+  test('accepts optional occurredTime HH:mm and rejects invalid clocks', () {
+    final wallets = [_wallet('card')];
+    const currencies = [WalletCurrency('VND', 0)];
+    final categories = [
+      const FinanceCategory(
+        id: 'food',
+        name: 'Food',
+        parentId: null,
+        kind: CategoryKind.expense,
+      ),
+    ];
+    final ok = prepareTransaction(
+      TransactionDraft(
+        type: TransactionType.expense,
+        occurredOn: '2026-01-15',
+        occurredTime: '12:40',
+        accountId: 'card',
+        magnitude: BigInt.from(1000),
+        clientIds: const ['11111111-1111-4111-8111-111111111111'],
+        categoryId: 'food',
+      ),
+      wallets,
+      currencies,
+      categories,
+      const [],
+    );
+    expect(ok.getOrElse(() => throw StateError('invalid')).occurredTime, '12:40');
+    final bad = prepareTransaction(
+      TransactionDraft(
+        type: TransactionType.expense,
+        occurredOn: '2026-01-15',
+        occurredTime: '24:00',
+        accountId: 'card',
+        magnitude: BigInt.from(1000),
+        clientIds: const ['11111111-1111-4111-8111-111111111111'],
+        categoryId: 'food',
+      ),
+      wallets,
+      currencies,
+      categories,
+      const [],
+    );
+    expect(bad.isLeft(), isTrue);
   });
 
   test('blank merchant becomes null and transfer forbids merchant', () {
