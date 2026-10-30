@@ -30,18 +30,19 @@ class SymbolPieceClipper extends CustomClipper<Path> {
     final top = piece == 2
         ? const [Offset.zero, Offset(1, 0)]
         : piece == 1
-        ? _upperGap
-        : _lowerGap;
+            ? _upperGap
+            : _lowerGap;
     final bottom = piece == 0
         ? const [Offset(0, 1), Offset(1, 1)]
         : piece == 1
-        ? _lowerGap
-        : _upperGap;
-    return Path()..addPolygon([
-      for (final p in top) Offset(p.dx * size.width, p.dy * size.height),
-      for (final p in bottom.reversed)
-        Offset(p.dx * size.width, p.dy * size.height),
-    ], true);
+            ? _lowerGap
+            : _upperGap;
+    return Path()
+      ..addPolygon([
+        for (final p in top) Offset(p.dx * size.width, p.dy * size.height),
+        for (final p in bottom.reversed)
+          Offset(p.dx * size.width, p.dy * size.height),
+      ], true);
   }
 
   @override

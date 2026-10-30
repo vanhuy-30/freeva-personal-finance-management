@@ -79,21 +79,12 @@ void main() {
         locale: 'vi',
       )!;
       expect(cash.initialBalance, b(5));
-      expect(
-        (cash.creditLimit, cash.dueDay, cash.minimumPayment),
-        (null, null, null),
-      );
+      expect((cash.creditLimit, cash.dueDay, cash.minimumPayment), (null, null, null));
     });
     test('marks what is wrong instead of saving', () {
       final f = form()..setType(WalletType.credit);
       expect(
-        f.build(
-          name: ' ',
-          amount: '1',
-          limit: '-5',
-          minimum: '-1',
-          locale: 'vi',
-        ),
+        f.build(name: ' ', amount: '1', limit: '-5', minimum: '-1', locale: 'vi'),
         isNull,
       );
       expect(f.errors, {

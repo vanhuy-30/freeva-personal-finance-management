@@ -22,7 +22,6 @@ abstract class BudgetViewModel extends ChangeNotifier {
   List<BudgetCategoryDraft> get draftLines;
   List<int> get draftThresholds;
   BudgetApplyTo get applyTo;
-
   /// Fiscal-month anchor when editing a specific month (`period.from`).
   String? get monthOn;
   bool get isOverride;
@@ -255,18 +254,15 @@ class DefaultBudgetViewModel extends BudgetViewModel {
         version: version,
       ),
     );
-    final ok = result.fold(
-      (error) {
-        failure = error;
-        return false;
-      },
-      (saved) {
-        period = saved.period;
-        if (savingMonth) monthOn = saved.period.from;
-        _applyDraft(saved);
-        return true;
-      },
-    );
+    final ok = result.fold((error) {
+      failure = error;
+      return false;
+    }, (saved) {
+      period = saved.period;
+      if (savingMonth) monthOn = saved.period.from;
+      _applyDraft(saved);
+      return true;
+    });
     if (ok && !savingMonth) await _clearDraftPreference();
     busy = false;
     notifyListeners();
@@ -290,16 +286,13 @@ class DefaultBudgetViewModel extends BudgetViewModel {
         on: anchor,
         version: summary!.version,
       );
-      final ok = await result.fold(
-        (error) async {
-          failure = error;
-          return false;
-        },
-        (_) async {
-          await load(on: anchor, applyTo: BudgetApplyTo.month);
-          return true;
-        },
-      );
+      final ok = await result.fold((error) async {
+        failure = error;
+        return false;
+      }, (_) async {
+        await load(on: anchor, applyTo: BudgetApplyTo.month);
+        return true;
+      });
       busy = false;
       notifyListeners();
       return ok;
@@ -310,16 +303,13 @@ class DefaultBudgetViewModel extends BudgetViewModel {
       applyTo: BudgetApplyTo.defaultTemplate,
       version: version,
     );
-    final ok = await result.fold(
-      (error) async {
-        failure = error;
-        return false;
-      },
-      (_) async {
-        await load(applyTo: BudgetApplyTo.defaultTemplate);
-        return true;
-      },
-    );
+    final ok = await result.fold((error) async {
+      failure = error;
+      return false;
+    }, (_) async {
+      await load(applyTo: BudgetApplyTo.defaultTemplate);
+      return true;
+    });
     busy = false;
     notifyListeners();
     return ok;

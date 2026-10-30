@@ -56,7 +56,8 @@ class DefaultBudgetUseCases implements BudgetUseCases {
   Future<Either<AuthFailure, BudgetCurrent>> current({
     String? on,
     BudgetApplyTo? applyTo,
-  }) => _repository.current(on: on, applyTo: applyTo);
+  }) =>
+      _repository.current(on: on, applyTo: applyTo);
 
   @override
   Future<Either<AuthFailure, BudgetSummary>> put(BudgetDraft draft) {

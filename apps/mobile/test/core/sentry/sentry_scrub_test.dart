@@ -38,7 +38,10 @@ void main() {
         ),
       ],
       exceptions: [
-        SentryException(type: 'StateError', value: 'smtp failed for $email'),
+        SentryException(
+          type: 'StateError',
+          value: 'smtp failed for $email',
+        ),
       ],
     );
 

@@ -60,6 +60,7 @@ class _SetupPageState extends State<SetupPage> {
 
   void _go(SetupStep step) => setState(() => _step = step);
 
+
   /// Questions and wallets are over (answered or skipped): record it and go
   /// to the PIN.
   void _toPin() {

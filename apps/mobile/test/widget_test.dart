@@ -1,9 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mobile/features/auth/data/auth_platform.dart';
-
 import 'features/auth/fakes.dart';
-
 import 'package:mobile/core/di/injection.dart';
 import 'package:mobile/core/router/app_router.dart';
 import 'package:mobile/core/config/app_config.dart';
@@ -19,20 +17,15 @@ void main() {
     await getIt.reset();
     await configureDependencies();
     await getIt.unregister<AppConfig>();
-    getIt.registerSingleton<AppConfig>(
-      AppConfig.fromValues(
-        environment: 'dev',
-        apiBaseUrl: 'https://api.example.test',
-      ),
-    );
+    getIt.registerSingleton<AppConfig>(AppConfig.fromValues(
+        environment: 'dev', apiBaseUrl: 'https://api.example.test'));
     await getIt.unregister<DeviceBiometrics>();
     getIt.registerSingleton<DeviceBiometrics>(FakeBiometrics());
     createAppRouter();
   });
 
-  testWidgets('shows splash then login without exposing home', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('shows splash then login without exposing home',
+      (WidgetTester tester) async {
     await tester.pumpWidget(const FreevaApp());
     await tester.pump();
     expect(find.byType(BrandSymbol), findsNWidgets(3));

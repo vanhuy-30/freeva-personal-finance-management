@@ -37,7 +37,8 @@ class _SessionAlertBannerState extends State<SessionAlertBanner> {
         if (!mounted) return;
         var timezone = 'Asia/Ho_Chi_Minh';
         if (getIt.isRegistered<ProfileViewModel>()) {
-          timezone = getIt<ProfileViewModel>().saved?.timezone ?? timezone;
+          timezone =
+              getIt<ProfileViewModel>().saved?.timezone ?? timezone;
         }
         _auth.deliverSessionNotification(
           s.sessionAlertTitle,

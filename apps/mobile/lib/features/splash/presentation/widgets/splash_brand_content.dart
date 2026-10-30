@@ -19,10 +19,14 @@ class SplashBrandContent extends StatelessWidget {
     final s = S.of(context);
     final exit = reduceMotion
         ? 0.0
-        : Curves.easeInOut.transform(((progress - .84) / .16).clamp(0.0, 1.0));
+        : Curves.easeInOut.transform(
+            ((progress - .84) / .16).clamp(0.0, 1.0),
+          );
     final copy = reduceMotion
         ? 1.0
-        : Curves.easeOut.transform(((progress - .38) / .22).clamp(0.0, 1.0));
+        : Curves.easeOut.transform(
+            ((progress - .38) / .22).clamp(0.0, 1.0),
+          );
     return Opacity(
       opacity: 1 - exit,
       child: Transform.scale(
@@ -46,18 +50,20 @@ class SplashBrandContent extends StatelessWidget {
                     s.brandWordmark,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      color: FreevaPrimitive.ink900,
-                      fontSize: 40,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 9,
-                    ),
+                          color: FreevaPrimitive.ink900,
+                          fontSize: 40,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 9,
+                        ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     s.splashTagline,
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyLarge
-                        ?.copyWith(color: FreevaPrimitive.ink500, fontSize: 17),
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: FreevaPrimitive.ink500,
+                          fontSize: 17,
+                        ),
                   ),
                 ],
               ),

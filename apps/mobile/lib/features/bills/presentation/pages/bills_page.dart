@@ -146,9 +146,9 @@ class _BillsPageState extends State<BillsPage> {
                                     children: [
                                       Text(
                                         bill.name,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium,
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.titleMedium,
                                       ),
                                       const SizedBox(height: FreevaSpace.s1),
                                       Text(

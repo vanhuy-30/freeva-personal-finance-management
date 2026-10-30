@@ -114,33 +114,33 @@ class DefaultNotificationViewModel extends NotificationViewModel {
     if (current == null) return false;
     final NotificationPreferencesPatch? patch = switch (kind) {
       NotificationKind.budget => NotificationPreferencesPatch(
-        budgetEnabled: enabled,
-        version: current.version,
-      ),
+          budgetEnabled: enabled,
+          version: current.version,
+        ),
       NotificationKind.goal => NotificationPreferencesPatch(
-        goalEnabled: enabled,
-        version: current.version,
-      ),
+          goalEnabled: enabled,
+          version: current.version,
+        ),
       NotificationKind.debt => NotificationPreferencesPatch(
-        debtEnabled: enabled,
-        version: current.version,
-      ),
+          debtEnabled: enabled,
+          version: current.version,
+        ),
       NotificationKind.card => NotificationPreferencesPatch(
-        cardEnabled: enabled,
-        version: current.version,
-      ),
+          cardEnabled: enabled,
+          version: current.version,
+        ),
       NotificationKind.recurring => NotificationPreferencesPatch(
-        recurringEnabled: enabled,
-        version: current.version,
-      ),
+          recurringEnabled: enabled,
+          version: current.version,
+        ),
       NotificationKind.monthReview => NotificationPreferencesPatch(
-        monthReviewEnabled: enabled,
-        version: current.version,
-      ),
+          monthReviewEnabled: enabled,
+          version: current.version,
+        ),
       NotificationKind.insight => NotificationPreferencesPatch(
-        insightEnabled: enabled,
-        version: current.version,
-      ),
+          insightEnabled: enabled,
+          version: current.version,
+        ),
       NotificationKind.security => null,
     };
     if (patch == null) return false;

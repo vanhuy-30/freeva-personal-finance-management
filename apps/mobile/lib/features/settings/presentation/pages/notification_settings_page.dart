@@ -39,8 +39,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
   Future<void> _pickQuietWindow(S s, NotificationPreferences prefs) async {
     final start = await showTimePicker(
       context: context,
-      initialTime:
-          _hm(prefs.quietStart) ?? const TimeOfDay(hour: 22, minute: 0),
+      initialTime: _hm(prefs.quietStart) ?? const TimeOfDay(hour: 22, minute: 0),
       helpText: s.notifyQuietStart,
     );
     if (!mounted || start == null) return;
@@ -93,11 +92,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
           minHeight: rowHeight,
         );
 
-        Widget kindToggle(
-          IconData icon,
-          NotificationKind kind, {
-          (Color, Color)? tint,
-        }) {
+        Widget kindToggle(IconData icon, NotificationKind kind, {(Color, Color)? tint}) {
           final toggle = prefs?.toggle(kind);
           if (toggle == null || !toggle.available || toggle.managedLocally) {
             return soon(icon, kind);

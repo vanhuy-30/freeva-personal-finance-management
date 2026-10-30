@@ -96,8 +96,9 @@ Future<DateTimePick?> showDateTimePickerSheet(
                           parseHm(selectedTime) ??
                           const TimeOfDay(hour: 12, minute: 0),
                       builder: (context, child) => MediaQuery(
-                        data: MediaQuery.of(context)
-                            .copyWith(alwaysUse24HourFormat: true),
+                        data: MediaQuery.of(
+                          context,
+                        ).copyWith(alwaysUse24HourFormat: true),
                         child: child!,
                       ),
                     );
@@ -126,8 +127,9 @@ Future<DateTimePick?> showDateTimePickerSheet(
             FreevaButton(
               label: s.txDateTimeDone,
               expand: true,
-              onPressed: () => Navigator.of(context)
-                  .pop(DateTimePick(date: selectedDate, time: selectedTime)),
+              onPressed: () => Navigator.of(context).pop(
+                DateTimePick(date: selectedDate, time: selectedTime),
+              ),
             ),
           ],
         );

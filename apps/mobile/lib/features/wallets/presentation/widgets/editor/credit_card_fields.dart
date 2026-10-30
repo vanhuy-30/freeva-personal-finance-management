@@ -102,7 +102,10 @@ class CreditCardFields extends StatelessWidget {
           controller: minimum,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           inputFormatters: [
-            MoneyInputFormatter(minorDigits: form.minorDigits, locale: locale),
+            MoneyInputFormatter(
+              minorDigits: form.minorDigits,
+              locale: locale,
+            ),
           ],
           tabular: true,
           error: form.errors.contains(WalletFormError.minimum)

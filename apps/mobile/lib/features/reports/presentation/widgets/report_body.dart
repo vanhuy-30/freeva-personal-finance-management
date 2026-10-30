@@ -89,7 +89,11 @@ class ReportBody extends StatelessWidget {
       ),
       if (period.kind == ReportPeriodKind.month) ...[
         gap,
-        ReportBudgetRow(period: period, currency: code, minorDigits: digits),
+        ReportBudgetRow(
+          period: period,
+          currency: code,
+          minorDigits: digits,
+        ),
         gap,
         MonthReviewLink(period: period),
       ],

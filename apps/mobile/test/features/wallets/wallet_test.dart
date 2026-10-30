@@ -227,14 +227,13 @@ void main() {
     late DefaultWalletViewModel model;
     setUp(() async {
       api = WalletTransport();
-      auth =
-          DefaultAuthViewModel(
-              DefaultAuthUseCases(
-                AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
-              ),
-            )
-            ..stage = AuthStage.unlocked
-            ..hasPin = true;
+      auth = DefaultAuthViewModel(
+        DefaultAuthUseCases(
+          AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+        ),
+      )
+        ..stage = AuthStage.unlocked
+        ..hasPin = true;
       model = DefaultWalletViewModel(
         DefaultWalletUseCases(WalletRepositoryImpl(api)),
         auth,

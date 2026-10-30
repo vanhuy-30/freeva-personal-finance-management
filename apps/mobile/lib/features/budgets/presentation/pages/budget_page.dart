@@ -165,7 +165,10 @@ class _BudgetPageState extends State<BudgetPage> {
                       setSheet(() {
                         final next = '$digits$value';
                         if (next.length <= 12) {
-                          digits = next.replaceFirst(RegExp(r'^0+(?=.)'), '');
+                          digits = next.replaceFirst(
+                            RegExp(r'^0+(?=.)'),
+                            '',
+                          );
                         }
                       });
                     },
@@ -259,9 +262,7 @@ class _BudgetPageState extends State<BudgetPage> {
                   model.isOverride
                       ? s.budgetScopeMonthOverrideHint
                       : s.budgetScopeMonthHint,
-                  style: FreevaTypography.label.copyWith(
-                    color: c.textSecondary,
-                  ),
+                  style: FreevaTypography.label.copyWith(color: c.textSecondary),
                 ),
               ],
               const SizedBox(height: FreevaSpace.s4),
@@ -402,7 +403,9 @@ class _BudgetPageState extends State<BudgetPage> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            model.draftThresholds.map((t) => '$t%').join(' · '),
+                            model.draftThresholds
+                                .map((t) => '$t%')
+                                .join(' · '),
                             style: FreevaTypography.titleM.copyWith(
                               color: c.textPrimary,
                             ),

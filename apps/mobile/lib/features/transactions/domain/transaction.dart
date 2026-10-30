@@ -26,7 +26,6 @@ class TxLeg {
   final BigInt amountMinor;
   final TransactionType type;
   final String occurredOn;
-
   /// Optional local clock `HH:mm` in the profile timezone (`MOB-P2-E09`).
   final String? occurredTime;
   final String? categoryId;

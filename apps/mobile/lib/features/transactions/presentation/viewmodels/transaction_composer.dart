@@ -41,7 +41,9 @@ class TransactionComposer extends ChangeNotifier {
     categoryId = from?.categoryId ?? _defaultCategory();
     // A copy is a new transaction today (C1.5) with the current clock.
     occurredOn = (copy ? null : from?.occurredOn) ?? model.today() ?? '';
-    occurredTime = copy || from == null ? model.nowTime() : from.occurredTime;
+    occurredTime = copy || from == null
+        ? model.nowTime()
+        : from.occurredTime;
     notes = from?.notes ?? '';
     merchant = from?.merchant ?? '';
     tagIds = List.of(from?.tagIds ?? const []);

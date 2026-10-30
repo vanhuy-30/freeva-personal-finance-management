@@ -12,8 +12,7 @@ String maskEmail(String email) {
 String avatarLetter(String? name, String? email) {
   for (final source in [name, email]) {
     final text = source?.trim() ?? '';
-    if (text.isNotEmpty)
-      return String.fromCharCode(text.runes.first).toUpperCase();
+    if (text.isNotEmpty) return String.fromCharCode(text.runes.first).toUpperCase();
   }
   return '?';
 }
@@ -22,10 +21,7 @@ String avatarLetter(String? name, String? email) {
 /// the bundled database.
 String gmtLabel(String zone, DateTime now) {
   try {
-    final offset = tz
-        .getLocation(zone)
-        .timeZone(now.millisecondsSinceEpoch)
-        .offset;
+    final offset = tz.getLocation(zone).timeZone(now.millisecondsSinceEpoch).offset;
     final minutes = offset ~/ 60000;
     final sign = minutes < 0 ? '-' : '+';
     final hours = minutes.abs() ~/ 60;

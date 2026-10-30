@@ -170,8 +170,7 @@ class RecurringRepositoryImpl implements RecurringRepository {
     } else if (endDate != null) {
       body['endDate'] = endDate;
     }
-    if (nextExecutionDate != null)
-      body['nextExecutionDate'] = nextExecutionDate;
+    if (nextExecutionDate != null) body['nextExecutionDate'] = nextExecutionDate;
     if (active != null) body['active'] = active;
     return _request(
       'PATCH',

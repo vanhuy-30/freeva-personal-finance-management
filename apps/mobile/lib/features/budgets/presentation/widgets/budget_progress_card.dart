@@ -46,7 +46,8 @@ class BudgetProgressCard extends StatelessWidget {
     final percent = (summary.percentBps / 100).toStringAsFixed(
       summary.percentBps % 100 == 0 ? 0 : 1,
     );
-    String money(BigInt value) => formatMoneyText(value, minorDigits, locale);
+    String money(BigInt value) =>
+        formatMoneyText(value, minorDigits, locale);
     return FreevaCard(
       onTap: onTap,
       padding: const EdgeInsets.all(18),
@@ -62,10 +63,7 @@ class BudgetProgressCard extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(FreevaRadius.full),

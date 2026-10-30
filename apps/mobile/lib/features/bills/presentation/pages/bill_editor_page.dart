@@ -117,10 +117,7 @@ class _BillEditorPageState extends State<BillEditorPage> {
     setState(() => saving = false);
     if (!ok) {
       final conflict = model.failure?.code == AuthError.conflict;
-      showFreevaToast(
-        context,
-        message: conflict ? s.meConflict : s.meSaveError,
-      );
+      showFreevaToast(context, message: conflict ? s.meConflict : s.meSaveError);
       return;
     }
     context.popOrGo('/me/bills');
@@ -319,7 +316,10 @@ class _BillEditorPageState extends State<BillEditorPage> {
               ),
           ],
           const SizedBox(height: FreevaSpace.s4),
-          FreevaButton(label: s.billsSave, onPressed: saving ? null : _save),
+          FreevaButton(
+            label: s.billsSave,
+            onPressed: saving ? null : _save,
+          ),
         ],
       ),
     );

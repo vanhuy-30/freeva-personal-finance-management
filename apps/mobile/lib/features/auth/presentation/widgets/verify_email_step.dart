@@ -19,7 +19,11 @@ import 'key_glyph.dart';
 /// whether or not the link was opened, and the account works either way.
 /// No back button: the account already exists, so "back" would sign out.
 class VerifyEmailStep extends StatelessWidget {
-  const VerifyEmailStep({required this.model, required this.onDone, super.key});
+  const VerifyEmailStep({
+    required this.model,
+    required this.onDone,
+    super.key,
+  });
 
   final AuthViewModel model;
   final VoidCallback onDone;

@@ -579,14 +579,12 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
       tintGreen: tintGreen ?? this.tintGreen,
       tintGreenFg: tintGreenFg ?? this.tintGreenFg,
       buttonPrimaryBg: buttonPrimaryBg ?? this.buttonPrimaryBg,
-      buttonPrimaryBgPressed:
-          buttonPrimaryBgPressed ?? this.buttonPrimaryBgPressed,
+      buttonPrimaryBgPressed: buttonPrimaryBgPressed ?? this.buttonPrimaryBgPressed,
       buttonPrimaryFg: buttonPrimaryFg ?? this.buttonPrimaryFg,
       buttonInkBg: buttonInkBg ?? this.buttonInkBg,
       buttonInkFg: buttonInkFg ?? this.buttonInkFg,
       buttonSecondaryBg: buttonSecondaryBg ?? this.buttonSecondaryBg,
-      buttonSecondaryBorder:
-          buttonSecondaryBorder ?? this.buttonSecondaryBorder,
+      buttonSecondaryBorder: buttonSecondaryBorder ?? this.buttonSecondaryBorder,
       buttonSecondaryFg: buttonSecondaryFg ?? this.buttonSecondaryFg,
       buttonDangerBg: buttonDangerBg ?? this.buttonDangerBg,
       buttonDangerFg: buttonDangerFg ?? this.buttonDangerFg,
@@ -621,10 +619,8 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
       toastAction: toastAction ?? this.toastAction,
       balanceCardBg: balanceCardBg ?? this.balanceCardBg,
       balanceCardFg: balanceCardFg ?? this.balanceCardFg,
-      balanceCardWashTopRight:
-          balanceCardWashTopRight ?? this.balanceCardWashTopRight,
-      balanceCardWashBottomLeft:
-          balanceCardWashBottomLeft ?? this.balanceCardWashBottomLeft,
+      balanceCardWashTopRight: balanceCardWashTopRight ?? this.balanceCardWashTopRight,
+      balanceCardWashBottomLeft: balanceCardWashBottomLeft ?? this.balanceCardWashBottomLeft,
     );
   }
 
@@ -657,18 +653,10 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
       textLink: Color.lerp(textLink, other.textLink, t)!,
       textDisabled: Color.lerp(textDisabled, other.textDisabled, t)!,
       textMuted: Color.lerp(textMuted, other.textMuted, t)!,
-      textOnInkPositive: Color.lerp(
-        textOnInkPositive,
-        other.textOnInkPositive,
-        t,
-      )!,
+      textOnInkPositive: Color.lerp(textOnInkPositive, other.textOnInkPositive, t)!,
       textOnInkLink: Color.lerp(textOnInkLink, other.textOnInkLink, t)!,
       actionPrimary: Color.lerp(actionPrimary, other.actionPrimary, t)!,
-      actionPrimaryPressed: Color.lerp(
-        actionPrimaryPressed,
-        other.actionPrimaryPressed,
-        t,
-      )!,
+      actionPrimaryPressed: Color.lerp(actionPrimaryPressed, other.actionPrimaryPressed, t)!,
       actionInk: Color.lerp(actionInk, other.actionInk, t)!,
       actionDanger: Color.lerp(actionDanger, other.actionDanger, t)!,
       focusRing: Color.lerp(focusRing, other.focusRing, t)!,
@@ -690,11 +678,7 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
       dataMuted: Color.lerp(dataMuted, other.dataMuted, t)!,
       tintBlue: Color.lerp(tintBlue, other.tintBlue, t)!,
       tintBlueFg: Color.lerp(tintBlueFg, other.tintBlueFg, t)!,
-      tintBlueStrongFg: Color.lerp(
-        tintBlueStrongFg,
-        other.tintBlueStrongFg,
-        t,
-      )!,
+      tintBlueStrongFg: Color.lerp(tintBlueStrongFg, other.tintBlueStrongFg, t)!,
       tintViolet: Color.lerp(tintViolet, other.tintViolet, t)!,
       tintVioletFg: Color.lerp(tintVioletFg, other.tintVioletFg, t)!,
       tintCyan: Color.lerp(tintCyan, other.tintCyan, t)!,
@@ -702,85 +686,29 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
       tintGreen: Color.lerp(tintGreen, other.tintGreen, t)!,
       tintGreenFg: Color.lerp(tintGreenFg, other.tintGreenFg, t)!,
       buttonPrimaryBg: Color.lerp(buttonPrimaryBg, other.buttonPrimaryBg, t)!,
-      buttonPrimaryBgPressed: Color.lerp(
-        buttonPrimaryBgPressed,
-        other.buttonPrimaryBgPressed,
-        t,
-      )!,
+      buttonPrimaryBgPressed: Color.lerp(buttonPrimaryBgPressed, other.buttonPrimaryBgPressed, t)!,
       buttonPrimaryFg: Color.lerp(buttonPrimaryFg, other.buttonPrimaryFg, t)!,
       buttonInkBg: Color.lerp(buttonInkBg, other.buttonInkBg, t)!,
       buttonInkFg: Color.lerp(buttonInkFg, other.buttonInkFg, t)!,
-      buttonSecondaryBg: Color.lerp(
-        buttonSecondaryBg,
-        other.buttonSecondaryBg,
-        t,
-      )!,
-      buttonSecondaryBorder: Color.lerp(
-        buttonSecondaryBorder,
-        other.buttonSecondaryBorder,
-        t,
-      )!,
-      buttonSecondaryFg: Color.lerp(
-        buttonSecondaryFg,
-        other.buttonSecondaryFg,
-        t,
-      )!,
+      buttonSecondaryBg: Color.lerp(buttonSecondaryBg, other.buttonSecondaryBg, t)!,
+      buttonSecondaryBorder: Color.lerp(buttonSecondaryBorder, other.buttonSecondaryBorder, t)!,
+      buttonSecondaryFg: Color.lerp(buttonSecondaryFg, other.buttonSecondaryFg, t)!,
       buttonDangerBg: Color.lerp(buttonDangerBg, other.buttonDangerBg, t)!,
       buttonDangerFg: Color.lerp(buttonDangerFg, other.buttonDangerFg, t)!,
-      buttonDisabledBg: Color.lerp(
-        buttonDisabledBg,
-        other.buttonDisabledBg,
-        t,
-      )!,
-      buttonDisabledFg: Color.lerp(
-        buttonDisabledFg,
-        other.buttonDisabledFg,
-        t,
-      )!,
+      buttonDisabledBg: Color.lerp(buttonDisabledBg, other.buttonDisabledBg, t)!,
+      buttonDisabledFg: Color.lerp(buttonDisabledFg, other.buttonDisabledFg, t)!,
       inputBg: Color.lerp(inputBg, other.inputBg, t)!,
       inputBorder: Color.lerp(inputBorder, other.inputBorder, t)!,
-      inputBorderFocus: Color.lerp(
-        inputBorderFocus,
-        other.inputBorderFocus,
-        t,
-      )!,
-      inputBorderError: Color.lerp(
-        inputBorderError,
-        other.inputBorderError,
-        t,
-      )!,
+      inputBorderFocus: Color.lerp(inputBorderFocus, other.inputBorderFocus, t)!,
+      inputBorderError: Color.lerp(inputBorderError, other.inputBorderError, t)!,
       chipBorder: Color.lerp(chipBorder, other.chipBorder, t)!,
-      chipSelectedBorder: Color.lerp(
-        chipSelectedBorder,
-        other.chipSelectedBorder,
-        t,
-      )!,
-      chipFilterSelectedBg: Color.lerp(
-        chipFilterSelectedBg,
-        other.chipFilterSelectedBg,
-        t,
-      )!,
-      chipFilterSelectedFg: Color.lerp(
-        chipFilterSelectedFg,
-        other.chipFilterSelectedFg,
-        t,
-      )!,
+      chipSelectedBorder: Color.lerp(chipSelectedBorder, other.chipSelectedBorder, t)!,
+      chipFilterSelectedBg: Color.lerp(chipFilterSelectedBg, other.chipFilterSelectedBg, t)!,
+      chipFilterSelectedFg: Color.lerp(chipFilterSelectedFg, other.chipFilterSelectedFg, t)!,
       segmentedTrack: Color.lerp(segmentedTrack, other.segmentedTrack, t)!,
-      segmentedSelectedBg: Color.lerp(
-        segmentedSelectedBg,
-        other.segmentedSelectedBg,
-        t,
-      )!,
-      segmentedSelectedFg: Color.lerp(
-        segmentedSelectedFg,
-        other.segmentedSelectedFg,
-        t,
-      )!,
-      segmentedRaisedBg: Color.lerp(
-        segmentedRaisedBg,
-        other.segmentedRaisedBg,
-        t,
-      )!,
+      segmentedSelectedBg: Color.lerp(segmentedSelectedBg, other.segmentedSelectedBg, t)!,
+      segmentedSelectedFg: Color.lerp(segmentedSelectedFg, other.segmentedSelectedFg, t)!,
+      segmentedRaisedBg: Color.lerp(segmentedRaisedBg, other.segmentedRaisedBg, t)!,
       navBg: Color.lerp(navBg, other.navBg, t)!,
       navItem: Color.lerp(navItem, other.navItem, t)!,
       navActiveBg: Color.lerp(navActiveBg, other.navActiveBg, t)!,
@@ -798,16 +726,8 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
       toastAction: Color.lerp(toastAction, other.toastAction, t)!,
       balanceCardBg: Color.lerp(balanceCardBg, other.balanceCardBg, t)!,
       balanceCardFg: Color.lerp(balanceCardFg, other.balanceCardFg, t)!,
-      balanceCardWashTopRight: Color.lerp(
-        balanceCardWashTopRight,
-        other.balanceCardWashTopRight,
-        t,
-      )!,
-      balanceCardWashBottomLeft: Color.lerp(
-        balanceCardWashBottomLeft,
-        other.balanceCardWashBottomLeft,
-        t,
-      )!,
+      balanceCardWashTopRight: Color.lerp(balanceCardWashTopRight, other.balanceCardWashTopRight, t)!,
+      balanceCardWashBottomLeft: Color.lerp(balanceCardWashBottomLeft, other.balanceCardWashBottomLeft, t)!,
     );
   }
 }
@@ -964,115 +884,18 @@ abstract final class FreevaComponent {
 
 abstract final class FreevaElevation {
   static const List<BoxShadow> s0 = [];
-  static const List<BoxShadow> s1 = [
-    BoxShadow(
-      offset: Offset(0.0, 1.0),
-      blurRadius: 2.0,
-      color: Color(0x0A22283A),
-    ),
-    BoxShadow(
-      offset: Offset(0.0, 8.0),
-      blurRadius: 24.0,
-      color: Color(0x0D22283A),
-    ),
-  ];
-  static const List<BoxShadow> s2 = [
-    BoxShadow(
-      offset: Offset(0.0, 1.0),
-      blurRadius: 2.0,
-      color: Color(0x0D22283A),
-    ),
-    BoxShadow(
-      offset: Offset(0.0, 12.0),
-      blurRadius: 32.0,
-      color: Color(0x1F22283A),
-    ),
-  ];
-  static const List<BoxShadow> fab = [
-    BoxShadow(
-      offset: Offset(0.0, 8.0),
-      blurRadius: 18.0,
-      color: Color(0x593F67D1),
-    ),
-  ];
-  static const List<BoxShadow> tile = [
-    BoxShadow(
-      offset: Offset(0.0, 1.0),
-      blurRadius: 2.0,
-      color: Color(0x0A22283A),
-    ),
-    BoxShadow(
-      offset: Offset(0.0, 6.0),
-      blurRadius: 18.0,
-      color: Color(0x0D22283A),
-    ),
-  ];
-  static const List<BoxShadow> action = [
-    BoxShadow(
-      offset: Offset(0.0, 1.0),
-      blurRadius: 2.0,
-      color: Color(0x0A22283A),
-    ),
-    BoxShadow(
-      offset: Offset(0.0, 6.0),
-      blurRadius: 18.0,
-      color: Color(0x0F22283A),
-    ),
-  ];
-  static const List<BoxShadow> raised = [
-    BoxShadow(
-      offset: Offset(0.0, 1.0),
-      blurRadius: 2.0,
-      color: Color(0x0A22283A),
-    ),
-    BoxShadow(
-      offset: Offset(0.0, 10.0),
-      blurRadius: 28.0,
-      color: Color(0x0F22283A),
-    ),
-  ];
-  static const List<BoxShadow> segment = [
-    BoxShadow(
-      offset: Offset(0.0, 1.0),
-      blurRadius: 3.0,
-      color: Color(0x1F22283A),
-    ),
-  ];
-  static const List<BoxShadow> swap = [
-    BoxShadow(
-      offset: Offset(0.0, 4.0),
-      blurRadius: 12.0,
-      color: Color(0x1422283A),
-    ),
-  ];
-  static const List<BoxShadow> drag = [
-    BoxShadow(
-      offset: Offset(0.0, 16.0),
-      blurRadius: 32.0,
-      color: Color(0x2922283A),
-    ),
-  ];
-  static const List<BoxShadow> toast = [
-    BoxShadow(
-      offset: Offset(0.0, 12.0),
-      blurRadius: 32.0,
-      color: Color(0x3822283A),
-    ),
-  ];
-  static const List<BoxShadow> sheet = [
-    BoxShadow(
-      offset: Offset(0.0, -12.0),
-      blurRadius: 32.0,
-      color: Color(0x1F22283A),
-    ),
-  ];
-  static const List<BoxShadow> dialog = [
-    BoxShadow(
-      offset: Offset(0.0, 24.0),
-      blurRadius: 48.0,
-      color: Color(0x3822283A),
-    ),
-  ];
+  static const List<BoxShadow> s1 = [BoxShadow(offset: Offset(0.0, 1.0), blurRadius: 2.0, color: Color(0x0A22283A)), BoxShadow(offset: Offset(0.0, 8.0), blurRadius: 24.0, color: Color(0x0D22283A))];
+  static const List<BoxShadow> s2 = [BoxShadow(offset: Offset(0.0, 1.0), blurRadius: 2.0, color: Color(0x0D22283A)), BoxShadow(offset: Offset(0.0, 12.0), blurRadius: 32.0, color: Color(0x1F22283A))];
+  static const List<BoxShadow> fab = [BoxShadow(offset: Offset(0.0, 8.0), blurRadius: 18.0, color: Color(0x593F67D1))];
+  static const List<BoxShadow> tile = [BoxShadow(offset: Offset(0.0, 1.0), blurRadius: 2.0, color: Color(0x0A22283A)), BoxShadow(offset: Offset(0.0, 6.0), blurRadius: 18.0, color: Color(0x0D22283A))];
+  static const List<BoxShadow> action = [BoxShadow(offset: Offset(0.0, 1.0), blurRadius: 2.0, color: Color(0x0A22283A)), BoxShadow(offset: Offset(0.0, 6.0), blurRadius: 18.0, color: Color(0x0F22283A))];
+  static const List<BoxShadow> raised = [BoxShadow(offset: Offset(0.0, 1.0), blurRadius: 2.0, color: Color(0x0A22283A)), BoxShadow(offset: Offset(0.0, 10.0), blurRadius: 28.0, color: Color(0x0F22283A))];
+  static const List<BoxShadow> segment = [BoxShadow(offset: Offset(0.0, 1.0), blurRadius: 3.0, color: Color(0x1F22283A))];
+  static const List<BoxShadow> swap = [BoxShadow(offset: Offset(0.0, 4.0), blurRadius: 12.0, color: Color(0x1422283A))];
+  static const List<BoxShadow> drag = [BoxShadow(offset: Offset(0.0, 16.0), blurRadius: 32.0, color: Color(0x2922283A))];
+  static const List<BoxShadow> toast = [BoxShadow(offset: Offset(0.0, 12.0), blurRadius: 32.0, color: Color(0x3822283A))];
+  static const List<BoxShadow> sheet = [BoxShadow(offset: Offset(0.0, -12.0), blurRadius: 32.0, color: Color(0x1F22283A))];
+  static const List<BoxShadow> dialog = [BoxShadow(offset: Offset(0.0, 24.0), blurRadius: 48.0, color: Color(0x3822283A))];
 }
 
 abstract final class FreevaMotion {

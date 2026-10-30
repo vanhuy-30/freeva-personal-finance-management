@@ -69,9 +69,7 @@ class _RecurringPageState extends State<RecurringPage> {
         action: FreevaIconButton(
           icon: LucideIcons.plus,
           label: s.recurringAdd,
-          onPressed: model.loaded
-              ? () => context.push('/me/recurring/new')
-              : null,
+          onPressed: model.loaded ? () => context.push('/me/recurring/new') : null,
         ),
       ),
       body: ListenableBuilder(
@@ -114,11 +112,7 @@ class _RecurringPageState extends State<RecurringPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '${rule.type == 'income'
-                                ? '+'
-                                : rule.type == 'expense'
-                                ? '−'
-                                : '↔'} '
+                            '${rule.type == 'income' ? '+' : rule.type == 'expense' ? '−' : '↔'} '
                             '$amount $currency',
                             style: Theme.of(context).textTheme.titleMedium,
                           ),

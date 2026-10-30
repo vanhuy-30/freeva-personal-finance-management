@@ -1,4 +1,8 @@
-enum TransactionAnalyticsType { income, expense, transfer }
+enum TransactionAnalyticsType {
+  income,
+  expense,
+  transfer,
+}
 
 /// A privacy-safe analytics event from Freeva's approved catalog.
 ///
@@ -15,12 +19,18 @@ class AnalyticsEvent {
   static const AnalyticsEvent onboardingCompleted = AnalyticsEvent._(
     'onboarding_completed',
   );
-  static const AnalyticsEvent authSignedUp = AnalyticsEvent._('auth_signed_up');
-  static const AnalyticsEvent authSignedIn = AnalyticsEvent._('auth_signed_in');
+  static const AnalyticsEvent authSignedUp = AnalyticsEvent._(
+    'auth_signed_up',
+  );
+  static const AnalyticsEvent authSignedIn = AnalyticsEvent._(
+    'auth_signed_in',
+  );
   static const AnalyticsEvent walletCreated = AnalyticsEvent._(
     'wallet_created',
   );
-  static const AnalyticsEvent reportViewed = AnalyticsEvent._('report_viewed');
+  static const AnalyticsEvent reportViewed = AnalyticsEvent._(
+    'report_viewed',
+  );
   static const AnalyticsEvent transactionEdited = AnalyticsEvent._(
     'transaction_edited',
   );
@@ -50,8 +60,8 @@ class AnalyticsEvent {
   final Map<String, String> _properties;
 
   Map<String, Object> toPayload() => Map<String, Object>.unmodifiable({
-    'event': name,
-    'schema_version': schemaVersion,
-    ..._properties,
-  });
+        'event': name,
+        'schema_version': schemaVersion,
+        ..._properties,
+      });
 }
