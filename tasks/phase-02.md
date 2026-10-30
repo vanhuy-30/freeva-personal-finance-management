@@ -1,5 +1,7 @@
 # Phase 2 — epic
 
+**Closed** 2026-10-30 — 21/22 done; `INF-P2-001` chuyển sang phase sau (chủ dự án quyết, không chặn đóng). Biên bản: [STATUS](../docs/project-state/STATUS.md).
+
 Điều kiện hoàn thành: [phase-02.md](../docs/product/phases/phase-02.md). Phase 1 gate sổ cái **closed** 2026-10-21 — được băm ticket triển khai khi làm epic. `Gate: v1` vẫn là điều kiện product v1.
 
 ### DS-P2-001 — Design system v2: spec và token
@@ -129,7 +131,7 @@ Phase 1 giữ đóng. Các ticket dưới đây không đổi số 28/28.
 - Gate: ops
 - Depends: INF-P0-004
 - DoD: DB staging trên Render (plan free trong `render.yaml`) đã hết hạn. Chọn một Postgres miễn phí, chạy được Prisma migrate, chỉ cho dữ liệu staging. `DATABASE_URL` đặt trên dashboard host, không commit. API staging có thể giữ Render nếu web service còn sống; health `GET /api/health` trả `database=up` sau migrate. Không seed PII, không dùng làm production, không chốt vendor production (region VN vẫn là DECISIONS-OPEN #5). Cập nhật [staging.md](../docs/infrastructure/staging.md), `render.yaml` (bỏ DB Render đã chết), [DECISIONS-OPEN](../docs/project-state/DECISIONS-OPEN.md) #4 và URL trong [STATUS](../docs/project-state/STATUS.md). Ghi giới hạn plan miễn phí (ngủ, hết hạn, vùng) vào staging.md.
-- Note: Hoãn 2026-10-30. Đăng ký Neon bị treo; giai đoạn develop dùng Postgres local (Compose), staging làm lại ở phase sau nếu cần. Staging API hiện chưa có DB sống.
+- Note: Hoãn 2026-10-30. Đăng ký Neon bị treo; giai đoạn develop dùng Postgres local (Compose), staging làm lại ở phase sau nếu cần. Staging API hiện chưa có DB sống. Đóng Phase 2 (2026-10-30): chuyển sang phase sau, không chặn.
 
 ### MOB-P2-011 — Xuất và xóa tài khoản trên app
 - Status: done

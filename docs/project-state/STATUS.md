@@ -1,6 +1,6 @@
 # STATUS
 
-- **Phase hiện tại:** 2 — Phase 0 **closed** 2026-09-21; Phase 1 **closed** 2026-10-21 (gate sổ cái). Chưa phải product v1 — còn ngân sách / mục tiêu / insight (`Gate: v1` ở phase sau). Đối chiếu spec: [spec-alignment.md](../product/spec-alignment.md).
+- **Phase hiện tại:** 3 — Phase 0 **closed** 2026-09-21; Phase 1 **closed** 2026-10-21 (gate sổ cái); Phase 2 **closed** 2026-10-30. Chưa phải product v1 — còn mục tiêu / insight (`Gate: v1` ở Phase 3 / 5). Đối chiếu spec: [spec-alignment.md](../product/spec-alignment.md).
 - **Cập nhật:** 2026-10-30
 - **Việc bổ sung Phase 2:** `BE-P2-010` khóa kind lúc ghi; `INF-P2-001` Postgres staging miễn phí (DB Render free đã hết hạn); `MOB-P2-011` xuất/xóa tài khoản trên app; `QA-P2-001` rà hàng đợi offline; `BE-P2-012` câu trả lời đầu gắn tài khoản; `BE-P2-013` quy đổi để hiển thị; `BE-P2-014` mật khẩu tối thiểu 8 + kiểm tra email trên app. Chi tiết: [tasks/phase-02.md](../../tasks/phase-02.md).
 - **CI:** `INF-P0-002` done; cả ba job xanh trên `main`, [run 33521325189](https://github.com/vanhuy-30/freeva-personal-finance-management/actions/runs/33521325189).
@@ -53,6 +53,10 @@ Chi tiết status từng ID: [tasks/phase-00.md](../../tasks/phase-00.md).
 
 Chi tiết status từng ID: [tasks/phase-01.md](../../tasks/phase-01.md).
 
+## Backlog Phase 2
+
+- **21/22 done.** `INF-P2-001` chuyển phase sau. Chi tiết: [tasks/phase-02.md](../../tasks/phase-02.md).
+
 ## Phase 0 gate — đã đóng (2026-09-21)
 
 Theo [điều kiện hoàn thành Phase 0](../product/phases/phase-00.md) và [DECISIONS-OPEN](DECISIONS-OPEN.md):
@@ -97,6 +101,28 @@ Theo [điều kiện hoàn thành Phase 1](../product/phases/phase-01.md) và [s
 - OAuth: nút Google/Apple trên mobile + live provider smoke (`BE-P1-003` chỉ backend).
 - Product v1: ngân sách / mục tiêu / insight vẫn ở Phase 2 / 3 / 5 (`Gate: v1`).
 - Store: luật sư ToS/privacy, audit append-only, auth staff production, prod hoster VN.
+
+## Phase 2 gate — đã đóng (2026-10-30)
+
+Theo [điều kiện hoàn thành Phase 2](../product/phases/phase-02.md):
+
+| Mục | Trạng thái |
+|---|---|
+| Backlog task P2 | Done 21/22; `INF-P2-001` chuyển phase sau |
+| Đã chi / còn lại theo ngân sách | Done (`BE-P2-E02` / `MOB-P2-E02`, `Gate: v1`) |
+| Không trùng giao dịch định kỳ khi sync/retry | Done (`BE-P2-E01`, `QA-P2-001`) |
+| Nhắc đúng TZ, giờ yên lặng, consent | Done (`BE-P2-E05`, `BE-P2-015` FCM) |
+| Hóa đơn đã trả truy vết được giao dịch | Done (`BE-P2-E03` / `MOB-P2-E03`) |
+
+Đóng theo option **B** (giống Phase 0, 1): backlog xong trên `develop` + residual ghi rõ → mở Phase 3.
+
+### Residual chấp nhận (không chặn đóng Phase 2)
+
+- Staging: `INF-P2-001` — Postgres staging; staging API chưa có DB sống, develop dùng Postgres local.
+- Migration/API Phase 2 chưa deploy staging; test PostgreSQL integration một số task viết nhưng cần Postgres để chạy.
+- Mobile: native build + E2E staging; FCM live push cần cấu hình Firebase.
+- Onboarding: deep link email, Google/Apple mobile, xác nhận lại email trong Cá nhân (nhóm A).
+- Product v1: mục tiêu / insight vẫn ở Phase 3 / 5 (`Gate: v1`).
 
 ## Ghi chú
 

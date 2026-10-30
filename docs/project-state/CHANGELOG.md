@@ -2,6 +2,10 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-10-30
+
+- **Phase 2 closed**: backlog 21/22 done, gồm `BE-P2-E02` ngân sách (`Gate: v1`). `INF-P2-001` (Postgres staging) chuyển phase sau theo quyết định chủ dự án; develop dùng Postgres local. Residual ghi ở [STATUS](STATUS.md).
+
 ## 2026-10-21
 
 - **Phase 1 closed** (option B): backlog 28/28 done; điều kiện sổ cái đạt trên `main`; residual deploy staging, E2E native/Resend, DSN Sentry và nút OAuth mobile ghi rõ. Mở Phase 2 (ngân sách / định kỳ / …). Biên bản: [STATUS](STATUS.md), [phase-01](../product/phases/phase-01.md).
