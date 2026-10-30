@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
 import { PrismaModule } from '../src/infrastructure/prisma/prisma.module';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
+import { AuthMailWorker } from '../src/modules/auth/infrastructure/auth-mail.worker';
 import { PushModule } from '../src/modules/push/push.module';
 
 const databaseUrl = process.env.AUTH_TEST_DATABASE_URL;
@@ -22,7 +23,8 @@ describe('BE-P2-015 push tokens HTTP + PostgreSQL', () => {
     const module = await Test.createTestingModule({
       imports: [
         ConfigModule.forRoot({ ignoreEnvFile: true, isGlobal: true, load: [() => ({
-          AUTH_SECRET_KEY: randomBytes(32).toString('hex'), NODE_ENV: 'test',
+          AUTH_SECRET_KEY: randomBytes(32).toString('hex'), NODE_ENV: 'test', MAIL_PROVIDER: 'smtp',
+          SMTP_HOST: 'localhost', SMTP_PORT: '1025', MAIL_FROM: 'noreply@example.test',
         })] }),
         PrismaModule, PushModule,
       ],
@@ -33,6 +35,7 @@ describe('BE-P2-015 push tokens HTTP + PostgreSQL', () => {
     await app.listen(0, '127.0.0.1');
     base = await app.getUrl();
     prisma = app.get(PrismaService);
+    await app.get(AuthMailWorker).onModuleDestroy();
   });
 
   afterAll(async () => {
