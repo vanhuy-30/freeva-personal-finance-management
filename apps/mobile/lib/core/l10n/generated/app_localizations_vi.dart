@@ -2421,14 +2421,14 @@ class SVi extends S {
   String get mePasswordRepeat => 'Nhập lại mật khẩu mới';
 
   @override
-  String get mePasswordHint => 'Từ 12 ký tự, có cả chữ và số.';
+  String get mePasswordHint => 'Từ 8 ký tự, có cả chữ và số.';
 
   @override
   String get mePasswordWrong => 'Mật khẩu hiện tại chưa đúng.';
 
   @override
   String get mePasswordWeak =>
-      'Dùng từ 12 ký tự, có cả chữ và số, khác mật khẩu cũ.';
+      'Dùng từ 8 ký tự, có cả chữ và số, khác mật khẩu cũ.';
 
   @override
   String get mePasswordMismatch => 'Hai mật khẩu mới chưa khớp.';
@@ -2798,7 +2798,7 @@ class SVi extends S {
   String get passwordStrong => 'Rất chắc chắn';
 
   @override
-  String get passwordRuleLength => 'Ít nhất 12 ký tự';
+  String get passwordRuleLength => 'Ít nhất 8 ký tự';
 
   @override
   String get passwordRuleLetterDigit => 'Có cả chữ và số';

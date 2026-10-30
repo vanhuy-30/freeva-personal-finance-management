@@ -251,7 +251,7 @@ void main() {
       await tester.enterText(fields.at(2), 'no digits in this one');
       await tester.tap(find.text('Lưu thay đổi'));
       await tester.pumpAndSettle();
-      expect(find.textContaining('Dùng từ 12 ký tự'), findsOneWidget);
+      expect(find.textContaining('Dùng từ 8 ký tự'), findsOneWidget);
       await tester.enterText(fields.at(1), 'brand new password 7');
       await tester.enterText(fields.at(2), 'brand new password 7');
       g.api.failure = const AuthFailure(AuthError.credentials);

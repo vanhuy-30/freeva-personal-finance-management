@@ -3416,7 +3416,7 @@ paths:
                   maxLength: 128
                 newPassword:
                   type: string
-                  minLength: 12
+                  minLength: 8
                   maxLength: 128
                   description: At least one letter and one digit (DS-P2-004). Must differ from the current password.
       responses:
@@ -6449,10 +6449,10 @@ components:
         email: *id001
         password: &id003
           type: string
-          minLength: 12
+          minLength: 8
           maxLength: 128
           writeOnly: true
-          description: Not trimmed or normalized. Login accepts any 12–128 characters, so passwords set before
+          description: Not trimmed or normalized. Login accepts any 8–128 characters, so passwords set before
             the letter-and-digit rule still work.
     AuthRegisterRequest:
       type: object
@@ -6465,7 +6465,7 @@ components:
         email: *id001
         password: &id004
           type: string
-          minLength: 12
+          minLength: 8
           maxLength: 128
           pattern: ^(?=[\s\S]*\p{L})(?=[\s\S]*\p{Nd})[\s\S]*$
           writeOnly: true
