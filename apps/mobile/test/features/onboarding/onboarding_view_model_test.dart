@@ -88,4 +88,16 @@ void main() {
       expect(saved.budgetDraftMinor, 15000000);
     },
   );
+
+  test(
+    'a typed budget is also saved on the account; nothing typed sends nothing',
+    () async {
+      await model.saveBudgetDraft();
+      expect(profiles.onboarding, isEmpty);
+      model.setBudget(15000000);
+      await model.saveBudgetDraft();
+      expect(profiles.onboarding.single.budgetMinor, BigInt.from(15000000));
+      expect(profiles.onboarding.single.goals, isNull);
+    },
+  );
 }

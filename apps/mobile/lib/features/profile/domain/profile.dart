@@ -7,6 +7,9 @@ class Profile {
     required this.version,
     this.displayName,
     this.goals = const [],
+    this.habit,
+    this.cadence,
+    this.budgetMinor,
   });
 
   /// Greeting name; null until the user sets one (Hồ sơ).
@@ -15,6 +18,14 @@ class Profile {
   /// Goals picked at first run (at most 2); empty when skipped or when the
   /// server does not send them.
   final List<String> goals;
+
+  /// Other first-run answers; null until answered.
+  final String? habit;
+  final String? cadence;
+
+  /// First monthly budget in minor units of the currency at that time. Kept
+  /// as typed when the profile currency changes; null until typed.
+  final BigInt? budgetMinor;
   final String locale;
   final String currency;
   final String timezone;
@@ -38,6 +49,9 @@ class Profile {
         ? this.displayName
         : displayName as String?,
     goals: goals,
+    habit: habit,
+    cadence: cadence,
+    budgetMinor: budgetMinor,
   );
   bool samePreferences(Profile other) =>
       locale == other.locale &&
