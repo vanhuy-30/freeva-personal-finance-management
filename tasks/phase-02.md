@@ -25,12 +25,12 @@
 - Note: B/D/E/F/G/H xong theo [design-progress.md](../docs/brand/design-progress.md). C thuộc `DS-P2-005`; A thuộc `DS-P2-004`. Phần còn lại: ngân sách `BE-P2-E02`, thông báo đẩy `BE-P2-E05`, xoá tài khoản `MOB-P2-011`, mục tiêu/đổi email ở `DS-P2-004`; nút Cập nhật/Sửa sync và vài lệch canvas ghi trong pattern sau `DS-P2-006`.
 
 ### DS-P2-004 — Onboarding và tài khoản theo thiết kế nhóm A
-- Status: todo
+- Status: done
 - Module: 1, 24
 - Gate: post-v1
 - Depends: DS-P2-002
 - DoD: luồng và màn theo [A-onboarding-auth.md](../docs/brand/patterns/A-onboarding-auth.md): Welcome → Mục tiêu (tối đa 2) → Thói quen → Ngân sách (ẩn hoặc lưu tạm nếu chưa có `BE-P2-E02`) → Tạo tài khoản → Thiết lập tài chính (không bắt buộc) → Trang chính có checklist. Đăng nhập email + mật khẩu một màn. PIN không chặn đường vào app. Deep link xác nhận email / đặt lại mật khẩu và Google/Apple mobile tách task BE/MOB riêng khi làm.
-- Tiến độ: A1 xong 2026-10-23 (đăng nhập, đăng ký + `termsAccepted`, xác nhận email, quên/đặt lại mật khẩu, PIN tuỳ chọn, Mở khoá). A2a xong 2026-10-23 (Welcome, Tạo tài khoản Freeva, Mục tiêu, Thói quen, Ngân sách lưu trên máy; `PATCH /profile/onboarding`; màn giới thiệu cũ bị bỏ). A2b xong 2026-10-23 (Thiết lập tài chính, checklist "Bắt đầu nào", tên ở màn Mở khoá). Câu trả lời và số ngân sách đầu gắn với tài khoản, kể cả export: `BE-P2-012`. Còn trong task này: dùng mục tiêu để sắp khối Tổng quan, nối ngân sách vào `BE-P2-E02`. Việc tách riêng: link xác nhận email / đặt lại mật khẩu mở thẳng app (BE gửi link, MOB deep link; nối vào `AuthViewModel.startReset`), Google/Apple trên mobile, nơi xác nhận lại email trong Cá nhân (cần cờ `emailVerified` trong hồ sơ).
+- Tiến độ: A1 xong 2026-10-23 (đăng nhập, đăng ký + `termsAccepted`, xác nhận email, quên/đặt lại mật khẩu, PIN tuỳ chọn, Mở khoá). A2a xong 2026-10-23 (Welcome, Tạo tài khoản Freeva, Mục tiêu, Thói quen, Ngân sách lưu trên máy; `PATCH /profile/onboarding`; màn giới thiệu cũ bị bỏ). A2b xong 2026-10-23 (Thiết lập tài chính, checklist "Bắt đầu nào", tên ở màn Mở khoá). Câu trả lời và số ngân sách đầu gắn với tài khoản, kể cả export: `BE-P2-012`. Ngân sách đã nối `BE-P2-E02` (2026-10-29): `PUT /budgets/current` khi chưa có ngân sách, không thì giữ `budgetDraftMinor`. Mục tiêu chỉ đổi thứ tự khối Tổng quan ở "Quản lý khoản nợ" (Thẻ tín dụng lên đầu); thiết kế chưa vẽ khối riêng cho 5 mục tiêu còn lại nên giữ nguyên (owner chốt 2026-10-29). Board nhóm A khớp bản trong `docs/brand/canvas/` (2026-10-29). Việc tách riêng: link xác nhận email / đặt lại mật khẩu mở thẳng app (BE gửi link, MOB deep link; nối vào `AuthViewModel.startReset`), Google/Apple trên mobile, nơi xác nhận lại email trong Cá nhân (cần cờ `emailVerified` trong hồ sơ).
 
 ### DS-P2-005 — Giao dịch theo thiết kế nhóm C
 - Status: done
