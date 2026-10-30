@@ -46,7 +46,7 @@ Màn đẩy `/reports/month-review`: `GET /reports/month-review`. Client chỉ g
 
 ## Giới hạn
 
-Tài sản ròng theo thời gian, CSV, search và quy đổi FX chưa có. Không hàng đợi offline cho báo cáo/ngân sách. Chưa native build hoặc E2E staging.
+Tài sản ròng theo thời gian, CSV và search chưa có. Màn Báo cáo vẫn tách từng loại tiền; quy đổi chỉ ở Tổng quan và chi tiết ví/giao dịch, chỉ để hiển thị (`MOB-P2-013`). Không hàng đợi offline cho báo cáo/ngân sách. Chưa native build hoặc E2E staging.
 
 ## Kiểm chứng
 

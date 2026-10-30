@@ -6,7 +6,7 @@ Ngoài phạm vi: ngân sách (`BE-P2-E02`), tài sản ròng theo thời gian t
 
 ## API
 
-Các GET `/api/v1/reports/*` yêu cầu Bearer session, lấy owner từ session và trả `Cache-Control: no-store`. Không nhận hoặc trả `userId`, tên ví, tên danh mục. Tiền là string integer, có thể vượt int64. Không quy đổi FX và không cộng khác loại tiền.
+Các GET `/api/v1/reports/*` yêu cầu Bearer session, lấy owner từ session và trả `Cache-Control: no-store`. Không nhận hoặc trả `userId`, tên ví, tên danh mục. Tiền là string integer, có thể vượt int64. Các mục báo cáo không cộng khác loại tiền. Ngoại lệ hiển thị (`BE-P2-013`): `GET /reports/net-worth` và `GET /reports/cashflow` nhận `displayCurrency` (mã ISO) và thêm khối `converted` với tỷ giá người dùng nhập ([ADR 006](adr/006-money-and-fx.md)); `items`, `totals`, `byCategory`, `byAccount` vẫn tách từng loại tiền. Tiền tệ thiếu tỷ giá hoặc đổi ra số lẻ minor unit nằm trong `converted.unconverted` (`MISSING_RATE` / `FRACTIONAL`) và không vào tổng.
 
 | Method / path | Hành vi |
 |---|---|

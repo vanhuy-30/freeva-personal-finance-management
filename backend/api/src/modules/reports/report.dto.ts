@@ -3,11 +3,17 @@ import { REPORT_PERIODS, SERIES_WINDOWS, TREND_PERIODS, type ReportPeriodKind, t
 
 const optional = (_: unknown, value: unknown) => value !== undefined;
 
+/** Optional currency the response also converts into (BE-P2-013). Display only. */
+export class NetWorthQueryDto {
+  @IsOptional() @IsString() @Matches(/^[A-Z]{3}$/) displayCurrency?: string;
+}
+
 export class CashflowQueryDto {
   @IsIn(REPORT_PERIODS) period!: ReportPeriodKind;
   @ValidateIf(optional) @IsString() @Matches(/^\d{4}-\d{2}-\d{2}(?![\s\S])/) on?: string;
   @ValidateIf(optional) @IsString() @Matches(/^\d{4}-\d{2}-\d{2}(?![\s\S])/) from?: string;
   @ValidateIf(optional) @IsString() @Matches(/^\d{4}-\d{2}-\d{2}(?![\s\S])/) to?: string;
+  @IsOptional() @IsString() @Matches(/^[A-Z]{3}$/) displayCurrency?: string;
 }
 
 export class TrendQueryDto {

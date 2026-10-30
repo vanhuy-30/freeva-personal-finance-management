@@ -3,8 +3,11 @@ import '../../reports/domain/report.dart';
 import '../../wallets/domain/wallet.dart';
 import 'overview.dart';
 
-/// Totals per currency of active wallets. The profile currency leads; the
-/// others become small pills. No FX conversion.
+/// Totals of active wallets. The display currency leads. When the server
+/// converted at least one currency, [BalanceSummary.main] is the converted
+/// total; every currency still keeps its own pill with the original amount.
+/// A currency that did not convert exactly is listed in `unconverted` and is
+/// never added to the converted total.
 BalanceSummary balanceSummary(OverviewData data, String profileCurrency) {
   final counts = <String, int>{};
   for (final wallet in data.wallets) {
@@ -19,6 +22,28 @@ BalanceSummary balanceSummary(OverviewData data, String profileCurrency) {
           walletCount: counts[row.currency]!,
         ),
   ];
+  final converted = data.netWorth.converted;
+  final unconverted = _unconverted(data, counts.keys.toSet());
+  final left = {for (final item in unconverted) item.currency};
+  final included = {
+    for (final b in balances)
+      if (!left.contains(b.currency)) b.currency,
+  };
+  if (converted != null && included.isNotEmpty) {
+    return BalanceSummary(
+      main: CurrencyBalance(
+        currency: converted.currency,
+        minor: converted.netWorthMinor,
+        walletCount: [for (final c in included) counts[c]!].fold(0, (a, b) => a + b),
+      ),
+      others: [
+        for (final b in balances)
+          if (b.currency != converted.currency) b,
+      ],
+      isConverted: true,
+      unconverted: unconverted,
+    );
+  }
   final main =
       balances.where((b) => b.currency == profileCurrency).firstOrNull ??
       (balances.isNotEmpty
@@ -34,7 +59,34 @@ BalanceSummary balanceSummary(OverviewData data, String profileCurrency) {
       for (final b in balances)
         if (b.currency != main.currency) b,
     ],
+    unconverted: unconverted,
   );
+}
+
+/// Wallet currencies and month currencies the server could not convert.
+/// Empty when nothing was asked to convert.
+List<UnconvertedCurrency> _unconverted(OverviewData data, Set<String> wallets) {
+  final seen = <String>{};
+  return [
+    for (final item in [
+      ...?data.netWorth.converted?.unconverted,
+      ...?data.month.converted?.unconverted,
+    ])
+      if (wallets.contains(item.currency) && seen.add(item.currency)) item,
+  ];
+}
+
+/// This month's income and expense: the converted totals when [summary] is
+/// converted, else the row of the main currency.
+MonthFlow monthFlowFor(OverviewData data, BalanceSummary summary) {
+  final converted = data.month.converted;
+  if (summary.isConverted && converted != null) {
+    return MonthFlow(
+      income: converted.incomeMinor.abs(),
+      expense: converted.expenseMinor.abs(),
+    );
+  }
+  return monthFlow(data.month, summary.main.currency);
 }
 
 MonthFlow monthFlow(CashflowReport report, String currency) {

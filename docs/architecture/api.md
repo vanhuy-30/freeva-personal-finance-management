@@ -10,7 +10,7 @@
 { "error": { "code": "VALIDATION_ERROR", "message": "…", "details": [] } }
 ```
 
-- Money fields: string integer `amountMinor` + `currency`. Báo cáo dùng cùng dạng string cho `*Minor`, có thể vượt int64, không quy đổi FX: [reports.md](reports.md) (`BE-P1-007`).
+- Money fields: string integer `amountMinor` + `currency`. Báo cáo dùng cùng dạng string cho `*Minor`, có thể vượt int64, không quy đổi FX trong báo cáo kỳ; khối `converted` chỉ để hiển thị: [reports.md](reports.md) (`BE-P1-007`, `BE-P2-013`). Tỷ giá người dùng nhập: `GET /fx-rates`, `PUT|DELETE /fx-rates/{from}/{to}`; tiền tệ hiển thị: `PUT /profile/display-currency`.
 - `Idempotency-Key` UUID bắt buộc cho POST tạo giao dịch, trùng `legs[0].clientId`; unique owner/clientId cho mỗi leg. [CRUD transactions](transactions.md).
 - `POST /api/v1/sync` áp hàng đợi create/update/delete giao dịch, idempotent theo `clientId`, conflict không ghi đè. [Sync](sync.md) (`BE-P1-009`).
 - `GET /api/v1/account/export` và `DELETE /api/v1/account`: snapshot JSON và xóa tài khoản ngay, audit fail closed. [Account privacy](account-privacy.md) (`BE-P1-010`).

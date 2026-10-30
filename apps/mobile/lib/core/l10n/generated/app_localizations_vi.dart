@@ -3470,4 +3470,49 @@ class SVi extends S {
 
   @override
   String get tagsViewTransactions => 'Xem giao dịch';
+
+  @override
+  String homeTotalConverted(int count, String currency) {
+    return 'Tổng quy đổi $currency · $count ví';
+  }
+
+  @override
+  String homeDisplayCurrencyAction(String currency) {
+    return 'Xem tổng theo $currency';
+  }
+
+  @override
+  String get homeDisplayCurrencyTitle => 'Xem tổng theo';
+
+  @override
+  String homeUnconvertedMissing(String currency) {
+    return '$currency: chưa có tỷ giá, chạm để nhập';
+  }
+
+  @override
+  String homeUnconvertedFractional(String currency) {
+    return '$currency: tỷ giá không đổi chẵn, chạm để sửa';
+  }
+
+  @override
+  String homeRateInputLabel(String from, String to) {
+    return '1 $from = ? $to';
+  }
+
+  @override
+  String get homeRateSaveFailed =>
+      'Chưa lưu được. Kiểm tra tỷ giá rồi thử lại.';
+
+  @override
+  String get convertedRowTitle => 'Quy đổi';
+
+  @override
+  String convertedAmount(String amount) {
+    return '≈ $amount';
+  }
+
+  @override
+  String convertedRateLine(String from, String rate, String to, String time) {
+    return '1 $from = $rate $to · tỷ giá bạn nhập lúc $time';
+  }
 }

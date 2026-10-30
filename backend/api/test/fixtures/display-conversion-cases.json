@@ -1,0 +1,224 @@
+{
+  "digits": {
+    "VND": 0,
+    "USD": 2,
+    "JPY": 0,
+    "EUR": 2
+  },
+  "rates": [
+    {
+      "from": "USD",
+      "to": "VND",
+      "rate": "25000",
+      "quotedAt": "2026-10-30T02:00:00.000Z"
+    },
+    {
+      "from": "JPY",
+      "to": "VND",
+      "rate": "170.5",
+      "quotedAt": "2026-10-30T02:00:00.000Z"
+    },
+    {
+      "from": "VND",
+      "to": "USD",
+      "rate": "0.00004",
+      "quotedAt": "2026-10-30T02:00:00.000Z"
+    },
+    {
+      "from": "EUR",
+      "to": "VND",
+      "rate": "27123.45678912",
+      "quotedAt": "2026-10-30T02:00:00.000Z"
+    }
+  ],
+  "single": [
+    {
+      "id": "DC-001",
+      "note": "same currency, no rate",
+      "amount": "123456",
+      "from": "VND",
+      "to": "VND",
+      "expect": "123456"
+    },
+    {
+      "id": "DC-002",
+      "note": "USD 12.34 to VND exact",
+      "amount": "1234",
+      "from": "USD",
+      "to": "VND",
+      "expect": "308500"
+    },
+    {
+      "id": "DC-003",
+      "note": "negative (debt) keeps its sign",
+      "amount": "-1234",
+      "from": "USD",
+      "to": "VND",
+      "expect": "-308500"
+    },
+    {
+      "id": "DC-004",
+      "note": "JPY zero digits, fractional rate exact",
+      "amount": "1000",
+      "from": "JPY",
+      "to": "VND",
+      "expect": "170500"
+    },
+    {
+      "id": "DC-005",
+      "note": "JPY odd amount gives a fractional dong",
+      "amount": "3",
+      "from": "JPY",
+      "to": "VND",
+      "expectNull": true
+    },
+    {
+      "id": "DC-006",
+      "note": "VND to USD exact at 0.00004",
+      "amount": "250000",
+      "from": "VND",
+      "to": "USD",
+      "expect": "1000"
+    },
+    {
+      "id": "DC-007",
+      "note": "VND to USD not a whole cent",
+      "amount": "250001",
+      "from": "VND",
+      "to": "USD",
+      "expectNull": true
+    },
+    {
+      "id": "DC-008",
+      "note": "no rate for the pair",
+      "amount": "100",
+      "from": "EUR",
+      "to": "USD",
+      "expectNull": true
+    },
+    {
+      "id": "DC-009",
+      "note": "opposite direction is never derived",
+      "amount": "100",
+      "from": "VND",
+      "to": "JPY",
+      "expectNull": true
+    },
+    {
+      "id": "DC-010",
+      "note": "8-decimal rate gives a fractional dong",
+      "amount": "100",
+      "from": "EUR",
+      "to": "VND",
+      "expectNull": true
+    },
+    {
+      "id": "DC-011",
+      "note": "zero converts to zero",
+      "amount": "0",
+      "from": "USD",
+      "to": "VND",
+      "expect": "0"
+    }
+  ],
+  "groups": [
+    {
+      "id": "DG-001",
+      "note": "VND + USD into VND; one table of numbers",
+      "target": "VND",
+      "width": 2,
+      "groups": [
+        {
+          "currency": "VND",
+          "amounts": [
+            "10000000",
+            "-2000000"
+          ]
+        },
+        {
+          "currency": "USD",
+          "amounts": [
+            "120000",
+            "-5000"
+          ]
+        }
+      ],
+      "expectTotals": [
+        "40000000",
+        "-3250000"
+      ],
+      "expectUnconverted": []
+    },
+    {
+      "id": "DG-002",
+      "note": "missing rate keeps the group out of the totals",
+      "target": "VND",
+      "width": 2,
+      "groups": [
+        {
+          "currency": "VND",
+          "amounts": [
+            "500",
+            "0"
+          ]
+        },
+        {
+          "currency": "USD",
+          "amounts": [
+            "900",
+            "0"
+          ]
+        },
+        {
+          "currency": "GBP",
+          "amounts": [
+            "1",
+            "0"
+          ]
+        }
+      ],
+      "expectTotals": [
+        "225500",
+        "0"
+      ],
+      "expectUnconverted": [
+        {
+          "currency": "GBP",
+          "reason": "MISSING_RATE"
+        }
+      ]
+    },
+    {
+      "id": "DG-003",
+      "note": "one fractional amount drops the whole group",
+      "target": "VND",
+      "width": 2,
+      "groups": [
+        {
+          "currency": "JPY",
+          "amounts": [
+            "1000",
+            "3"
+          ]
+        },
+        {
+          "currency": "USD",
+          "amounts": [
+            "100",
+            "0"
+          ]
+        }
+      ],
+      "expectTotals": [
+        "25000",
+        "0"
+      ],
+      "expectUnconverted": [
+        {
+          "currency": "JPY",
+          "reason": "FRACTIONAL"
+        }
+      ]
+    }
+  ]
+}

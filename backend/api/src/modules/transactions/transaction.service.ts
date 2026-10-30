@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { TRANSACTION_REPOSITORY, type RecentMatchQuery, type TransactionRepository } from './domain/transaction.repository';
 import { calendarDate, minor, normalizeRate, occurredTime, TransactionError, type TransactionBundle, type TransactionLeg, type TransactionPatch } from './domain/transaction';
+import { FxRateService } from '../fx-rates/fx-rate.service';
 import type { CreateTransactionDto, ManualFxDto, TransactionLegDto, TransactionQueryDto, UpdateTransactionDto } from './transaction.dto';
 const legs = (input: TransactionLegDto[]) => input.map(leg => ({ ...leg, amountMinor: minor(leg.amountMinor) }));
 const fx = (input: ManualFxDto | null) => input === null ? null : { rate: normalizeRate(input.rate), quotedAt: new Date(input.quotedAt) };
@@ -15,7 +16,10 @@ function response(bundle: TransactionBundle) {
 }
 @Injectable()
 export class TransactionService {
-  constructor(@Inject(TRANSACTION_REPOSITORY) private readonly repository: TransactionRepository) {}
+  constructor(
+    @Inject(TRANSACTION_REPOSITORY) private readonly repository: TransactionRepository,
+    private readonly rates: FxRateService,
+  ) {}
   async create(userId: string, dto: CreateTransactionDto) {
     const result = await this.repository.create(userId, { type: dto.type, occurredOn: calendarDate(dto.occurredOn),
       occurredTime: occurredTime(dto.occurredTime), legs: legs(dto.legs),
@@ -23,7 +27,12 @@ export class TransactionService {
       tagIds: tags(dto.tagIds ?? []), fx: fx(dto.fx ?? null) });
     return { transaction: response(result.transaction), created: result.created };
   }
-  async find(userId: string, id: string) { return response(await this.repository.find(userId, id)); }
+  /** Detail adds each leg in the profile currency (BE-P2-013); stored legs are untouched. */
+  async find(userId: string, id: string) {
+    const bundle = response(await this.repository.find(userId, id));
+    const convert = await this.rates.toProfileCurrency(userId);
+    return { ...bundle, legs: bundle.legs.map(leg => ({ ...leg, converted: convert(BigInt(leg.amountMinor), leg.currencyCode) })) };
+  }
   async findByClientId(userId: string, clientId: string) {
     const bundle = await this.repository.findByClientId(userId, clientId);
     return bundle ? response(bundle) : null;

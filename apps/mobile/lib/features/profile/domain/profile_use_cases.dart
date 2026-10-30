@@ -26,6 +26,16 @@ class ProfileUseCases {
     return _repository.saveOnboarding(answers);
   }
 
+  Future<Either<AuthFailure, Unit>> saveDisplayCurrency(
+    String? code,
+    ProfileOptions options,
+  ) {
+    if (code != null && !options.currencies.contains(code)) {
+      return Future.value(left(const AuthFailure(AuthError.invalidInput)));
+    }
+    return _repository.saveDisplayCurrency(code);
+  }
+
   Future<Either<AuthFailure, Profile>> save(
     Profile profile,
     ProfileOptions options,

@@ -1130,5 +1130,15 @@
   "currencyNameAud": "Đô la Úc",
   "currencyNameGbp": "Bảng Anh",
   "currencyCodeName": "{code} · {name}",
-  "tagsViewTransactions": "Xem giao dịch"
+  "tagsViewTransactions": "Xem giao dịch",
+  "homeTotalConverted": "Tổng quy đổi {currency} · {count} ví",
+  "homeDisplayCurrencyAction": "Xem tổng theo {currency}",
+  "homeDisplayCurrencyTitle": "Xem tổng theo",
+  "homeUnconvertedMissing": "{currency}: chưa có tỷ giá, chạm để nhập",
+  "homeUnconvertedFractional": "{currency}: tỷ giá không đổi chẵn, chạm để sửa",
+  "homeRateInputLabel": "1 {from} = ? {to}",
+  "homeRateSaveFailed": "Chưa lưu được. Kiểm tra tỷ giá rồi thử lại.",
+  "convertedRowTitle": "Quy đổi",
+  "convertedAmount": "≈ {amount}",
+  "convertedRateLine": "1 {from} = {rate} {to} · tỷ giá bạn nhập lúc {time}"
 }

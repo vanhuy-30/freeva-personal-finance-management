@@ -2,15 +2,17 @@ import 'reflect-metadata';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { CashflowQueryDto, MonthReviewQueryDto, SeriesQueryDto } from './report.dto';
+import { FxRateService } from '../fx-rates/fx-rate.service';
 import { ReportService } from './report.service';
 import type { ReportRepository } from './domain/report.repository';
 import {
-  buildCashflow, buildMonthReview, buildNetWorth, buildSeries, buildTrend, expenseDeltaBps, previousPeriod, ReportError,
+  buildCashflow, buildMonthReview, buildNetWorth, buildSeries, buildTrend, convertCashflow, convertNetWorth, expenseDeltaBps, previousPeriod, ReportError,
   resolvePeriod, savingsRateBps, seriesBuckets, todayInTimeZone, trendBuckets,
   type CashflowSource, type ReportProfile,
 } from './domain/report';
 
 const profile = (fiscalMonthStartDay = 1, timezone = 'Asia/Ho_Chi_Minh'): ReportProfile => ({ timezone, fiscalMonthStartDay });
+const noRates = { rate: () => null, digits: () => 0 };
 const day = (days: number) => new Date(Date.UTC(2020, 0, 1) + days * 86_400_000).toISOString().slice(0, 10);
 
 describe('BE-P1-007 report periods', () => {
@@ -381,7 +383,7 @@ describe('BE-P1-007 report HTTP contract', () => {
       async series() { return { buckets: [], rows: [], firstOn: null }; },
       async netWorth() { return [{ currency: 'VND', bucket: 'asset', total: 10n }]; },
     };
-    const service = new ReportService(repository);
+    const service = new ReportService(repository, { book: async () => noRates } as unknown as FxRateService);
     await expect(service.cashflow('user', { period: 'month', on: '2026-10-08' })).resolves.toMatchObject({
       period: { from: '2026-09-15', to: '2026-10-14' },
       comparison: { from: '2026-08-15', to: '2026-09-14' },
@@ -393,5 +395,46 @@ describe('BE-P1-007 report HTTP contract', () => {
     });
     await expect(service.series('user', { window: '7d', on: '2026-10-08' })).resolves.toEqual({ window: '7d', buckets: [] });
     await expect(service.netWorth('user')).resolves.toEqual({ items: [{ currency: 'VND', assetsMinor: '10', liabilitiesMinor: '0', netWorthMinor: '10' }] });
+  });
+  describe('BE-P2-013 display totals', () => {
+    const rates: Record<string, { rate: string; quotedAt: string }> = {
+      'USD>VND': { rate: '25000', quotedAt: '2026-10-30T02:00:00.000Z' },
+      'JPY>VND': { rate: '170.5', quotedAt: '2026-10-30T02:00:00.000Z' },
+    };
+    const digits: Record<string, number> = { VND: 0, USD: 2, JPY: 0, EUR: 2 };
+    const book = { rate: (from: string, to: string) => rates[`${from}>${to}`] ?? null, digits: (code: string) => digits[code] ?? null };
+
+    it('adds assets, debt and net of each convertible currency, and leaves the rest out', () => {
+      const items = buildNetWorth([
+        { currency: 'VND', bucket: 'asset', total: 10_000_000n },
+        { currency: 'VND', bucket: 'liability', total: -2_000_000n },
+        { currency: 'USD', bucket: 'asset', total: 120_000n },
+        { currency: 'USD', bucket: 'liability', total: -5_000n },
+        { currency: 'EUR', bucket: 'asset', total: 100n },
+        { currency: 'JPY', bucket: 'asset', total: 3n },
+      ]).items;
+      expect(convertNetWorth(items, 'VND', book)).toEqual({
+        currency: 'VND', assetsMinor: '40000000', liabilitiesMinor: '-3250000', netWorthMinor: '36750000',
+        unconverted: [{ currency: 'EUR', reason: 'MISSING_RATE' }, { currency: 'JPY', reason: 'FRACTIONAL' }],
+      });
+      expect(items.find(item => item.currency === 'USD')).toEqual({ currency: 'USD', assetsMinor: '120000', liabilitiesMinor: '-5000', netWorthMinor: '115000' });
+    });
+
+    it('converts month income and expense with the same rule', () => {
+      const totals = [
+        { currency: 'USD', incomeMinor: '200000', expenseMinor: '-35000' },
+        { currency: 'VND', incomeMinor: '1000', expenseMinor: '-500' },
+      ];
+      expect(convertCashflow(totals, 'VND', book)).toEqual({
+        currency: 'VND', incomeMinor: '50001000', expenseMinor: '-8750500', netMinor: '41250500', unconverted: [],
+      });
+      expect(convertCashflow(totals, 'USD', book)).toEqual({
+        currency: 'USD', incomeMinor: '200000', expenseMinor: '-35000', netMinor: '165000', unconverted: [{ currency: 'VND', reason: 'MISSING_RATE' }],
+      });
+    });
+
+    it('converts nothing for an empty ledger', () => {
+      expect(convertNetWorth([], 'VND', book)).toEqual({ currency: 'VND', assetsMinor: '0', liabilitiesMinor: '0', netWorthMinor: '0', unconverted: [] });
+    });
   });
 });

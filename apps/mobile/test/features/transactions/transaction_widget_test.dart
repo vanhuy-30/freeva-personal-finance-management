@@ -34,6 +34,8 @@ import '../profile/fakes.dart';
 import '../settings/fakes.dart' show MemoryPreferences;
 import 'transaction_fakes.dart';
 import 'transaction_view_model_test.dart';
+import 'package:mobile/features/fx_rates/domain/fx_rate_use_cases.dart';
+import '../fx_rates/fakes.dart';
 
 void main() {
   setUpAll(tzdata.initializeTimeZones);
@@ -75,6 +77,7 @@ void main() {
       auth,
       analytics,
       sync,
+      FxRateUseCases(MemoryFxRates()),
     );
     await model.load();
   });

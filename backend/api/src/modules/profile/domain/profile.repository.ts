@@ -12,9 +12,11 @@ export interface Profile {
   reviewCadence: string | null;
   /** Minor units as a string; null until typed. Not converted when the profile currency changes. */
   onboardingBudgetMinor: string | null;
+  /** Currency the Overview converts into (BE-P2-013). Null means the default currency. Set via PUT /profile/display-currency. */
+  displayCurrencyCode: string | null;
 }
 /** `displayName` undefined keeps the stored value. */
-export type ProfileUpdate = Omit<Profile, 'displayName' | 'goals' | 'trackingHabit' | 'reviewCadence' | 'onboardingBudgetMinor'> & { displayName?: string | null };
+export type ProfileUpdate = Omit<Profile, 'displayName' | 'goals' | 'trackingHabit' | 'reviewCadence' | 'onboardingBudgetMinor' | 'displayCurrencyCode'> & { displayName?: string | null };
 /** Only the fields present are stored; the rest keep their value. */
 export interface OnboardingAnswers {
   goals?: string[];
@@ -29,4 +31,5 @@ export interface ProfileRepository {
   currencies(): Promise<CurrencyOption[]>;
   update(userId: string, profile: ProfileUpdate): Promise<Profile | null>;
   saveOnboarding(userId: string, answers: OnboardingAnswers): Promise<boolean>;
+  saveDisplayCurrency(userId: string, code: string | null): Promise<boolean>;
 }

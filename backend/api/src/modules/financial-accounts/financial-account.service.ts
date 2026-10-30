@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { FINANCIAL_ACCOUNT_REPOSITORY, type FinancialAccountRepository } from './domain/financial-account.repository';
 import { minor, validateCredit, type AccountPatch, type FinancialAccount } from './domain/financial-account';
+import { FxRateService } from '../fx-rates/fx-rate.service';
 import type { AccountQueryDto, CreateAccountDto, ReorderAccountsDto, UpdateAccountDto } from './financial-account.dto';
 
 function response(account: FinancialAccount) {
@@ -18,7 +19,10 @@ function response(account: FinancialAccount) {
 }
 @Injectable()
 export class FinancialAccountService {
-  constructor(@Inject(FINANCIAL_ACCOUNT_REPOSITORY) private readonly repository: FinancialAccountRepository) {}
+  constructor(
+    @Inject(FINANCIAL_ACCOUNT_REPOSITORY) private readonly repository: FinancialAccountRepository,
+    private readonly rates: FxRateService,
+  ) {}
 
   async create(userId: string, dto: CreateAccountDto) {
     const input = {
@@ -32,7 +36,12 @@ export class FinancialAccountService {
     const result = await this.repository.create(userId, input);
     return { account: response(result.account), created: result.created };
   }
-  async find(userId: string, id: string) { return response(await this.repository.find(userId, id)); }
+  /** Detail adds the balance in the profile currency (BE-P2-013); the stored balance is untouched. */
+  async find(userId: string, id: string) {
+    const account = await this.repository.find(userId, id);
+    const convert = await this.rates.toProfileCurrency(userId);
+    return { ...response(account), converted: convert(account.balanceMinor, account.currencyCode) };
+  }
   async list(userId: string, query: AccountQueryDto) {
     const result = await this.repository.list(userId, query);
     return { items: result.items.map(response), page: query.page, pageSize: query.pageSize, total: result.total };

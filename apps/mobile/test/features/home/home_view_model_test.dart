@@ -21,6 +21,7 @@ void main() {
   late DefaultSettingsViewModel settings;
   late FakeOverviewCases cases;
   late FakeSyncViewModel sync;
+  late FakeProfileViewModel profile;
   late DefaultHomeViewModel model;
 
   setUp(() async {
@@ -39,10 +40,11 @@ void main() {
     await settings.load();
     cases = FakeOverviewCases();
     sync = FakeSyncViewModel();
+    profile = FakeProfileViewModel();
     model = DefaultHomeViewModel(
       cases,
       auth,
-      FakeProfileViewModel(),
+      profile,
       settings,
       sync,
     );
@@ -61,6 +63,26 @@ void main() {
     expect(model.status, HomeStatus.ready);
     expect(model.data, isNotNull);
     expect(model.displayName, 'Minh');
+  });
+
+  test('converts into the saved display currency, else the profile one', () async {
+    cases.results.add(right(overview()));
+    expect(model.displayCurrency, 'VND');
+    await model.load();
+    expect(cases.lastDisplayCurrency, 'VND');
+    expect(model.currencyChoices, ['VND', 'USD']);
+
+    expect(await model.chooseDisplayCurrency('USD'), isTrue);
+    expect(profile.savedDisplayCurrencies, ['USD']);
+    expect(model.displayCurrency, 'USD');
+    expect(model.currency, 'VND');
+    expect(cases.lastDisplayCurrency, 'USD');
+
+    profile.saveDisplayCurrencyResult = false;
+    final calls = cases.calls;
+    expect(await model.chooseDisplayCurrency('VND'), isFalse);
+    expect(model.displayCurrency, 'USD');
+    expect(cases.calls, calls);
   });
 
   test('first load failing shows the error card', () async {

@@ -160,8 +160,9 @@ class _Reports implements ReportRepository {
 
   @override
   Future<Either<AuthFailure, CashflowReport>> cashflow(
-    ReportPeriodQuery query,
-  ) async => left(const AuthFailure(AuthError.unavailable));
+    ReportPeriodQuery query, {
+    String? displayCurrency,
+  }) async => left(const AuthFailure(AuthError.unavailable));
 
   @override
   Future<Either<AuthFailure, MonthReviewReport>> monthReview({
@@ -175,7 +176,7 @@ class _Reports implements ReportRepository {
   }) async => left(const AuthFailure(AuthError.unavailable));
 
   @override
-  Future<Either<AuthFailure, NetWorthReport>> netWorth() async =>
+  Future<Either<AuthFailure, NetWorthReport>> netWorth({String? displayCurrency}) async =>
       left(const AuthFailure(AuthError.unavailable));
 }
 

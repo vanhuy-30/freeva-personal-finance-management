@@ -6,6 +6,41 @@ import 'package:mobile/features/wallets/domain/wallet.dart';
 
 import 'fixtures.dart';
 
+/// [data] as the server answers when the request names a display currency.
+OverviewData converted(
+  OverviewData data, {
+  NetWorthConverted? net,
+  CashflowConverted? flow,
+}) => OverviewData(
+  netWorth: NetWorthReport(items: data.netWorth.items, converted: net),
+  month: CashflowReport(
+    period: data.month.period,
+    totals: data.month.totals,
+    byCategory: data.month.byCategory,
+    byAccount: data.month.byAccount,
+    converted: flow,
+  ),
+  previousMonth: data.previousMonth,
+  budget: data.budget,
+  wallets: data.wallets,
+  currencies: data.currencies,
+  recent: data.recent,
+  categories: data.categories,
+  loadedAt: data.loadedAt,
+);
+
+NetWorthConverted netIn(
+  String currency,
+  int net, [
+  List<UnconvertedCurrency> left = const [],
+]) => NetWorthConverted(
+  currency: currency,
+  assetsMinor: b(net),
+  liabilitiesMinor: BigInt.zero,
+  netWorthMinor: b(net),
+  unconverted: left,
+);
+
 void main() {
   group('balanceSummary', () {
     test('profile currency leads, others become pills, no conversion', () {
@@ -40,6 +75,96 @@ void main() {
         wallets: [wallet('usd', 'USD', currency: 'USD')],
       );
       expect(balanceSummary(data, 'VND').main.currency, 'USD');
+    });
+  });
+
+  group('balanceSummary with a display currency (BE-P2-013)', () {
+    final base = overview(
+      net: [worth('USD', 125000), worth('VND', 48250000)],
+      wallets: [
+        wallet('a', 'A'),
+        wallet('b', 'B'),
+        wallet('usd', 'USD', currency: 'USD'),
+      ],
+    );
+
+    test('main is the converted total and every currency keeps its pill', () {
+      final data = converted(
+        base,
+        net: netIn('VND', 79500000),
+        flow: CashflowConverted(
+          currency: 'VND',
+          incomeMinor: b(40000000),
+          expenseMinor: b(-12000000),
+          unconverted: const [],
+        ),
+      );
+      final summary = balanceSummary(data, 'VND');
+      expect(summary.isConverted, isTrue);
+      expect(summary.main.currency, 'VND');
+      expect(summary.main.minor, b(79500000));
+      expect(summary.main.walletCount, 3);
+      expect(summary.others.single.currency, 'USD');
+      expect(summary.others.single.minor, b(125000));
+      expect(summary.unconverted, isEmpty);
+      final flow = monthFlowFor(data, summary);
+      expect(flow.income, b(40000000));
+      expect(flow.expense, b(12000000));
+    });
+
+    test('a currency left out is listed and its wallets are not counted', () {
+      const missing = UnconvertedCurrency(
+        currency: 'USD',
+        reason: UnconvertedReason.missingRate,
+      );
+      final data = converted(
+        base,
+        net: netIn('VND', 48250000, const [missing]),
+        flow: CashflowConverted(
+          currency: 'VND',
+          incomeMinor: b(18500000),
+          expenseMinor: b(-9320000),
+          unconverted: const [missing],
+        ),
+      );
+      final summary = balanceSummary(data, 'VND');
+      expect(summary.isConverted, isTrue);
+      expect(summary.main.minor, b(48250000));
+      expect(summary.main.walletCount, 2);
+      expect(summary.unconverted.map((u) => u.currency), ['USD']);
+      expect(summary.others.single.minor, b(125000));
+    });
+
+    test('nothing converted falls back to the plain per-currency view', () {
+      const missing = UnconvertedCurrency(
+        currency: 'USD',
+        reason: UnconvertedReason.missingRate,
+      );
+      final data = converted(
+        overview(
+          net: [worth('USD', 5)],
+          wallets: [wallet('usd', 'USD', currency: 'USD')],
+        ),
+        net: netIn('VND', 0, const [missing]),
+        flow: CashflowConverted(
+          currency: 'VND',
+          incomeMinor: BigInt.zero,
+          expenseMinor: BigInt.zero,
+          unconverted: const [missing],
+        ),
+      );
+      final summary = balanceSummary(data, 'VND');
+      expect(summary.isConverted, isFalse);
+      expect(summary.main.currency, 'USD');
+      expect(summary.main.minor, b(5));
+      expect(summary.unconverted.single.currency, 'USD');
+      expect(monthFlowFor(data, summary).isEmpty, isTrue);
+    });
+
+    test('without a converted block nothing changes', () {
+      final summary = balanceSummary(base, 'VND');
+      expect(summary.isConverted, isFalse);
+      expect(summary.unconverted, isEmpty);
     });
   });
 

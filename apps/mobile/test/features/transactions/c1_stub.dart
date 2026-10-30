@@ -15,6 +15,7 @@ import 'package:mobile/features/sync/presentation/viewmodels/sync_view_model.dar
 
 import '../home/fixtures.dart' show b, wallet;
 import '../home/home_fakes.dart' show FakeSyncViewModel;
+import 'package:mobile/core/money/display_converted.dart';
 
 TxLeg tx(
   String id, {
@@ -267,6 +268,12 @@ class StubTransactionViewModel extends ChangeNotifier
     List<TransactionBundle>? rows,
     this.filter = TransactionFilter.list,
   }) : rows = rows ?? canvasRows();
+
+  /// Detail sheet "Quy đổi" line; set per test, null draws nothing.
+  DisplayConverted? converted;
+  @override
+  Future<DisplayConverted?> convertedFor(TransactionBundle bundle) async =>
+      converted;
 
   @override
   List<TransactionBundle> rows;

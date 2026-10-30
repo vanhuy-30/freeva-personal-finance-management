@@ -83,6 +83,9 @@ model Currency {
   name        String
 
   users             User[]             @relation("UserDefaultCurrency")
+  displayUsers      User[]             @relation("UserDisplayCurrency")
+  fxRatesFrom       UserFxRate[]       @relation("UserFxRateFrom")
+  fxRatesTo         UserFxRate[]       @relation("UserFxRateTo")
   financialAccounts FinancialAccount[]
   transactions      Transaction[]
   fxQuotesFrom      FxQuote[]          @relation("FxQuoteFrom")
@@ -106,6 +109,7 @@ model User {
   trackingHabit       String?   @db.VarChar(12)
   reviewCadence       String?   @db.VarChar(10)
   onboardingBudgetMinor BigInt?
+  displayCurrencyCode String?   @db.Char(3)
   locale              String    @default("vi")
   timezone            String    @default("Asia/Ho_Chi_Minh")
   defaultCurrencyCode String    @db.Char(3)
@@ -130,6 +134,8 @@ model User {
   feedback          Feedback[]
   transactions      Transaction[]
   fxQuotes          FxQuote[]
+  fxRates           UserFxRate[]
+  displayCurrency   Currency?          @relation("UserDisplayCurrency", fields: [displayCurrencyCode], references: [code])
   recurringRules    RecurringRule[]
   budget            Budget?
   budgetMonths      BudgetMonth[]
@@ -510,6 +516,25 @@ model FxQuote {
 
   @@unique([userId, clientId])
   @@index([userId, quotedAt])
+}
+
+/// BE-P2-013: user-typed rate, used only to show converted amounts. Never touches the ledger.
+/// One row per direction; the opposite direction is never derived. CHECKs in the migration.
+model UserFxRate {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  fromCode  String   @db.Char(3)
+  toCode    String   @db.Char(3)
+  rate      Decimal  @db.Decimal(18, 8)
+  quotedAt  DateTime @db.Timestamptz
+  createdAt DateTime @default(now()) @db.Timestamptz
+  updatedAt DateTime @updatedAt @db.Timestamptz
+
+  user         User     @relation(fields: [userId], references: [id])
+  fromCurrency Currency @relation("UserFxRateFrom", fields: [fromCode], references: [code])
+  toCurrency   Currency @relation("UserFxRateTo", fields: [toCode], references: [code])
+
+  @@unique([userId, fromCode, toCode])
 }
 
 // Auth data is server-owned, outside the mobile sync model.

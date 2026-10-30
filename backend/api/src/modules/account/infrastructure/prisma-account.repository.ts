@@ -48,7 +48,7 @@ export class PrismaAccountRepository implements AccountRepository {
       select: {
         id: true, email: true, displayName: true, locale: true, timezone: true, defaultCurrencyCode: true,
         fiscalMonthStartDay: true, onboardingGoals: true, trackingHabit: true, reviewCadence: true,
-        onboardingBudgetMinor: true, emailVerifiedAt: true, categoriesInitializedAt: true, categoriesSupplementedAt: true,
+        onboardingBudgetMinor: true, displayCurrencyCode: true, emailVerifiedAt: true, categoriesInitializedAt: true, categoriesSupplementedAt: true,
         createdAt: true, updatedAt: true, oauthIdentities: { select: { provider: true } },
       },
     });
@@ -58,6 +58,7 @@ export class PrismaAccountRepository implements AccountRepository {
     const categories = await tx.category.findMany({ where: { userId }, orderBy: order });
     const tags = await tx.tag.findMany({ where: { userId }, orderBy: order });
     const fxQuotes = await tx.fxQuote.findMany({ where: { userId }, orderBy: order });
+    const fxRates = await tx.userFxRate.findMany({ where: { userId }, orderBy: [{ fromCode: 'asc' }, { toCode: 'asc' }] });
     const recurringRules = await tx.recurringRule.findMany({ where: { userId }, orderBy: order });
     const bills = await tx.bill.findMany({ where: { userId }, orderBy: order });
     const budget = await tx.budget.findUnique({
@@ -90,6 +91,7 @@ export class PrismaAccountRepository implements AccountRepository {
       categories,
       tags,
       fxQuotes: fxQuotes.map(row => ({ ...row, rate: rateText(row.rate) })),
+      fxRates: fxRates.map(row => ({ ...row, rate: rateText(row.rate) })),
       recurringRules: recurringRules.map(row => ({
         ...row,
         currencyCode: row.currencyCode,
@@ -175,6 +177,7 @@ export class PrismaAccountRepository implements AccountRepository {
     await tx.tag.deleteMany({ where: { userId } });
     await tx.financialAccount.deleteMany({ where: { userId } });
     await tx.fxQuote.deleteMany({ where: { userId } });
+    await tx.userFxRate.deleteMany({ where: { userId } });
     await tx.auditEvent.create({ data: audit(userId, 'user.account_delete') });
     await tx.user.delete({ where: { id: userId } });
     return true;

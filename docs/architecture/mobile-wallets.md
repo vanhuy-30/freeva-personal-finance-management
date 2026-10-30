@@ -43,8 +43,8 @@ Tiền ở domain là `BigInt`, HTTP là string integer. Input là đơn vị ti
 không phân cách hàng nghìn; dấu thập phân theo locale (`vi`: dấu phẩy, `en`:
 dấu chấm). `minorDigits` lấy từ currency catalog; dư chữ số thập phân bị từ chối,
 không làm tròn. Formatter tách phần nguyên/lẻ bằng chuỗi, lấy separator từ intl;
-không chuyển tiền qua `double`, kể cả balance derived vượt int64. Không cộng
-số dư khác tiền tệ hoặc tự quy đổi FX.
+không chuyển tiền qua `double`, kể cả balance derived vượt int64. Danh sách ví không cộng
+số dư khác tiền tệ. Chi tiết ví (không phải thẻ tín dụng) hiện thêm dòng "≈ số" quy về tiền tệ hồ sơ kèm tỷ giá và giờ nhập khi server trả `converted` (`MOB-P2-013`); ẩn cùng số dư.
 
 Mỗi editor tạo UUID v4 và giữ cùng `clientId` khi retry POST trong editor đó.
 PATCH gửi version đọc gần nhất; conflict yêu cầu quay lại danh sách tải lại,

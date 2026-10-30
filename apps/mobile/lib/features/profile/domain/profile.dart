@@ -10,6 +10,7 @@ class Profile {
     this.habit,
     this.cadence,
     this.budgetMinor,
+    this.displayCurrency,
   });
 
   /// Greeting name; null until the user sets one (Hồ sơ).
@@ -26,6 +27,10 @@ class Profile {
   /// First monthly budget in minor units of the currency at that time. Kept
   /// as typed when the profile currency changes; null until typed.
   final BigInt? budgetMinor;
+
+  /// Currency the Overview converts into, saved on the account. Null means
+  /// [currency]. Not part of the PUT body; see `saveDisplayCurrency`.
+  final String? displayCurrency;
   final String locale;
   final String currency;
   final String timezone;
@@ -52,7 +57,26 @@ class Profile {
     habit: habit,
     cadence: cadence,
     budgetMinor: budgetMinor,
+    displayCurrency: displayCurrency,
   );
+
+  /// Currency the Overview shows totals in: the saved choice, else [currency].
+  String get overviewCurrency => displayCurrency ?? currency;
+
+  Profile withDisplayCurrency(String? code) => Profile(
+    locale: locale,
+    currency: currency,
+    timezone: timezone,
+    fiscalDay: fiscalDay,
+    version: version,
+    displayName: displayName,
+    goals: goals,
+    habit: habit,
+    cadence: cadence,
+    budgetMinor: budgetMinor,
+    displayCurrency: code,
+  );
+
   bool samePreferences(Profile other) =>
       locale == other.locale &&
       currency == other.currency &&

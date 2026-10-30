@@ -4,7 +4,11 @@ import '../../auth/domain/auth_repository.dart';
 import 'report.dart';
 
 abstract class ReportRepository {
-  Future<Either<AuthFailure, CashflowReport>> cashflow(ReportPeriodQuery query);
+  /// [displayCurrency] also asks for `converted` totals in that currency.
+  Future<Either<AuthFailure, CashflowReport>> cashflow(
+    ReportPeriodQuery query, {
+    String? displayCurrency,
+  });
 
   /// Fiscal-month review: totals and top expense categories for [on]
   /// (today when null). Numbers match cashflow for the same month.
@@ -16,5 +20,5 @@ abstract class ReportRepository {
     ReportPeriodKind kind, {
     String? on,
   });
-  Future<Either<AuthFailure, NetWorthReport>> netWorth();
+  Future<Either<AuthFailure, NetWorthReport>> netWorth({String? displayCurrency});
 }

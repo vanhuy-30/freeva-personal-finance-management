@@ -21,6 +21,9 @@ if (!databaseUrl || new URL(databaseUrl).pathname !== '/auth_test') {
 }
 process.env.DATABASE_URL = databaseUrl;
 
+/** Detail adds `converted` (BE-P2-013); create, list and update responses do not. */
+const plain = <T extends { converted?: unknown }>({ converted: _converted, ...rest }: T) => rest;
+
 describe('BE-P1-004 HTTP + PostgreSQL', () => {
   let app: INestApplication;
   let prisma: PrismaService;
@@ -104,7 +107,8 @@ describe('BE-P1-004 HTTP + PostgreSQL', () => {
     expect(account.balanceMinor).toBe('9007199254740993');
     expect(account.hasTransactions).toBe(false);
     expect(account.version).toBe(1);
-    expect((await request('GET', `/${account.id}`)).body).toEqual(account);
+    expect(plain((await request('GET', `/${account.id}`)).body)).toEqual(account);
+    expect((await request('GET', `/${account.id}`)).body.converted).toBeNull();
     expect((await request()).body.items).toEqual([account]);
   });
 
@@ -251,7 +255,7 @@ describe('BE-P1-004 HTTP + PostgreSQL', () => {
     });
     await transaction(account.id, -10n, { currencyCode: 'USD' });
     expect((await request('DELETE', `/${account.id}?version=2`)).status).toBe(204);
-    const archived = (await request('GET', `/${account.id}`)).body;
+    const archived = plain((await request('GET', `/${account.id}`)).body);
     expect(archived.archivedAt).not.toBeNull();
     expect((await request()).body.total).toBe(0);
     expect((await request('GET', '?status=archived')).body.items).toEqual([archived]);

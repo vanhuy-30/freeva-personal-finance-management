@@ -1,3 +1,5 @@
+import { convertGroups, type RateBook } from '../../../core/money/convert';
+
 export const REPORT_PERIODS = ['week', 'month', 'year', 'range'] as const;
 export const TREND_PERIODS = ['week', 'month', 'year'] as const;
 export const SERIES_WINDOWS = ['7d', '30d', '3m', '6m', '1y', 'all'] as const;
@@ -459,4 +461,21 @@ function monthBounds(date: CalendarDate, startDay: number) {
   const next = shiftMonth(start.year, start.month, 1);
   if (start.year < 1 || next.year > 9999) throw new ReportError('VALIDATION_ERROR');
   return { from: formatDate({ ...start, day: startDay }), to: formatDate(addDays({ ...next, day: startDay }, -1)) };
+}
+
+/**
+ * Display-only totals in one currency (BE-P2-013). `items` stay per currency; a currency whose amounts
+ * do not all convert exactly is listed in `unconverted` and adds nothing to these numbers.
+ */
+export function convertNetWorth(items: ReturnType<typeof buildNetWorth>['items'], target: string, book: RateBook) {
+  const { totals, unconverted } = convertGroups(
+    items.map(item => ({ currency: item.currency, amounts: [BigInt(item.assetsMinor), BigInt(item.liabilitiesMinor)] })), target, 2, book);
+  return { currency: target, assetsMinor: money(totals[0]), liabilitiesMinor: money(totals[1]), netWorthMinor: money(totals[0] + totals[1]), unconverted };
+}
+
+export function convertCashflow(totals: { currency: string; incomeMinor: string; expenseMinor: string }[], target: string, book: RateBook) {
+  const converted = convertGroups(
+    totals.map(item => ({ currency: item.currency, amounts: [BigInt(item.incomeMinor), BigInt(item.expenseMinor)] })), target, 2, book);
+  const [income, expense] = converted.totals;
+  return { currency: target, incomeMinor: money(income), expenseMinor: money(expense), netMinor: money(income + expense), unconverted: converted.unconverted };
 }

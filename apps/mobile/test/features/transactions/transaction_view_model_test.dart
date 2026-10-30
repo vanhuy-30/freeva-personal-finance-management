@@ -29,6 +29,8 @@ import 'package:timezone/data/latest.dart' as tzdata;
 import '../auth/fakes.dart';
 import '../profile/fakes.dart';
 import 'transaction_fakes.dart';
+import 'package:mobile/features/fx_rates/domain/fx_rate_use_cases.dart';
+import '../fx_rates/fakes.dart';
 
 class RecordingAnalytics implements AnalyticsService {
   final events = <Map<String, Object>>[];
@@ -101,6 +103,7 @@ void main() {
       auth,
       analytics,
       sync,
+      FxRateUseCases(MemoryFxRates()),
     );
     await model.load();
   });
@@ -220,6 +223,7 @@ void main() {
       auth,
       analytics,
       sync,
+      FxRateUseCases(MemoryFxRates()),
     );
     final loading = model.load();
     await Future<void>.delayed(Duration.zero);

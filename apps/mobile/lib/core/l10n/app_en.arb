@@ -2028,5 +2028,22 @@
   "currencyNameGbp": "British pound",
   "currencyCodeName": "{code} · {name}",
   "@currencyCodeName": {"placeholders": {"code": {}, "name": {}}},
-  "tagsViewTransactions": "View transactions"
+  "tagsViewTransactions": "View transactions",
+  "homeTotalConverted": "Total in {currency} · {count} wallets",
+  "@homeTotalConverted": {"placeholders": {"count": {"type": "int"}, "currency": {"type": "String"}}},
+  "homeDisplayCurrencyAction": "Show totals in {currency}",
+  "@homeDisplayCurrencyAction": {"placeholders": {"currency": {"type": "String"}}},
+  "homeDisplayCurrencyTitle": "Show totals in",
+  "homeUnconvertedMissing": "{currency}: no rate yet, tap to add",
+  "@homeUnconvertedMissing": {"placeholders": {"currency": {"type": "String"}}},
+  "homeUnconvertedFractional": "{currency}: rate doesn't convert evenly, tap to edit",
+  "@homeUnconvertedFractional": {"placeholders": {"currency": {"type": "String"}}},
+  "homeRateInputLabel": "1 {from} = ? {to}",
+  "@homeRateInputLabel": {"placeholders": {"from": {"type": "String"}, "to": {"type": "String"}}},
+  "homeRateSaveFailed": "Couldn't save. Check the rate and try again.",
+  "convertedRowTitle": "Converted",
+  "convertedAmount": "≈ {amount}",
+  "@convertedAmount": {"placeholders": {"amount": {"type": "String"}}},
+  "convertedRateLine": "1 {from} = {rate} {to} · rate you entered at {time}",
+  "@convertedRateLine": {"placeholders": {"from": {"type": "String"}, "rate": {"type": "String"}, "to": {"type": "String"}, "time": {"type": "String"}}}
 }

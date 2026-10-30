@@ -13,6 +13,7 @@ export interface AccountExport {
     trackingHabit: string | null;
     reviewCadence: string | null;
     onboardingBudgetMinor: string | null;
+    displayCurrencyCode: string | null;
     emailVerifiedAt: string | null;
     categoriesInitializedAt: string | null;
     categoriesSupplementedAt: string | null;
@@ -25,6 +26,7 @@ export interface AccountExport {
   categories: AccountExportCategory[];
   tags: AccountExportTag[];
   fxQuotes: AccountExportQuote[];
+  fxRates: AccountExportFxRate[];
   recurringRules: AccountExportRecurringRule[];
   bills: AccountExportBill[];
   budget: AccountExportBudget | null;
@@ -116,6 +118,16 @@ export interface AccountExportQuote extends Omit<SyncRow, 'createdAt' | 'updated
   updatedAt: string;
 }
 
+/** User-typed rate used only to show converted amounts (BE-P2-013). */
+export interface AccountExportFxRate {
+  fromCode: string;
+  toCode: string;
+  rate: string;
+  quotedAt: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface AccountExportRecurringRule extends Omit<SyncRow, 'createdAt' | 'updatedAt'> {
   type: 'income' | 'expense' | 'transfer';
   unit: 'day' | 'week' | 'month' | 'year';
@@ -203,6 +215,7 @@ export interface ExportSource {
     trackingHabit: string | null;
     reviewCadence: string | null;
     onboardingBudgetMinor: bigint | null;
+    displayCurrencyCode: string | null;
     emailVerifiedAt: Date | null;
     categoriesInitializedAt: Date | null;
     categoriesSupplementedAt: Date | null;
@@ -231,6 +244,12 @@ export interface ExportSource {
   }>;
   tags: Array<Omit<AccountExportTag, 'createdAt' | 'updatedAt'> & { createdAt: Date; updatedAt: Date }>;
   fxQuotes: Array<Omit<AccountExportQuote, 'rate' | 'quotedAt' | 'createdAt' | 'updatedAt'> & {
+    rate: string;
+    quotedAt: Date;
+    createdAt: Date;
+    updatedAt: Date;
+  }>;
+  fxRates: Array<Omit<AccountExportFxRate, 'rate' | 'quotedAt' | 'createdAt' | 'updatedAt'> & {
     rate: string;
     quotedAt: Date;
     createdAt: Date;
@@ -335,6 +354,7 @@ export function toAccountExport(source: ExportSource): AccountExport {
       trackingHabit: user.trackingHabit,
       reviewCadence: user.reviewCadence,
       onboardingBudgetMinor: user.onboardingBudgetMinor?.toString() ?? null,
+      displayCurrencyCode: user.displayCurrencyCode ? code(user.displayCurrencyCode) : null,
       emailVerifiedAt: user.emailVerifiedAt ? iso(user.emailVerifiedAt) : null,
       categoriesInitializedAt: user.categoriesInitializedAt ? iso(user.categoriesInitializedAt) : null,
       categoriesSupplementedAt: user.categoriesSupplementedAt ? iso(user.categoriesSupplementedAt) : null,
@@ -363,6 +383,9 @@ export function toAccountExport(source: ExportSource): AccountExport {
     fxQuotes: source.fxQuotes.map(row => ({
       id: row.id, clientId: row.clientId, fromCode: code(row.fromCode), toCode: code(row.toCode),
       rate: row.rate, quotedAt: iso(row.quotedAt), source: row.source, version: row.version, ...stamps(row),
+    })),
+    fxRates: source.fxRates.map(row => ({
+      fromCode: code(row.fromCode), toCode: code(row.toCode), rate: row.rate, quotedAt: iso(row.quotedAt), ...stamps(row),
     })),
     recurringRules: source.recurringRules.map(row => ({
       id: row.id, clientId: row.clientId, type: row.type, unit: row.unit, interval: row.interval,

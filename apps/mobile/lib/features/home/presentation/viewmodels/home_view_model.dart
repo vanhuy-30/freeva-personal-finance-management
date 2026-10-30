@@ -29,6 +29,13 @@ abstract class HomeViewModel extends ChangeNotifier {
   OverviewData? get data;
   String? get displayName;
   String get currency;
+
+  /// Currency the balance card converts into: the saved choice, else
+  /// [currency].
+  String get displayCurrency;
+
+  /// Currency codes the user may pick; empty until the profile options load.
+  List<String> get currencyChoices;
   bool get balancesHidden;
 
   /// Whether this device has a PIN (the checklist asks for one if not).
@@ -45,6 +52,13 @@ abstract class HomeViewModel extends ChangeNotifier {
   List<SyncQueueItem> get pending;
   Future<void> load();
   Future<void> toggleBalances();
+
+  /// Saves the display currency on the account and reloads. False on failure.
+  Future<bool> chooseDisplayCurrency(String? code);
+
+  /// Saves a typed rate (1 [from] = [rate] [to]) and reloads. False when the
+  /// rate is invalid or the save failed.
+  Future<bool> saveRate(String from, String to, String rate);
 }
 
 @LazySingleton(as: HomeViewModel)
@@ -89,6 +103,10 @@ class DefaultHomeViewModel extends HomeViewModel {
   @override
   String get currency => _profile.saved?.currency ?? 'VND';
   @override
+  String get displayCurrency => _profile.saved?.overviewCurrency ?? 'VND';
+  @override
+  List<String> get currencyChoices => _profile.options?.currencies ?? const [];
+  @override
   bool get balancesHidden => _settings.balancesHidden;
   @override
   bool get hasPin => _auth.hasPin;
@@ -130,7 +148,10 @@ class DefaultHomeViewModel extends HomeViewModel {
       status = HomeStatus.loading;
       notifyListeners();
     }
-    final result = await _cases.load(_clock());
+    final result = await _cases.load(
+      _clock(),
+      displayCurrency: displayCurrency,
+    );
     if (epoch != _epoch) return;
     _busy = false;
     result.fold(
@@ -144,6 +165,33 @@ class DefaultHomeViewModel extends HomeViewModel {
       },
     );
     notifyListeners();
+  }
+
+  @override
+  Future<bool> chooseDisplayCurrency(String? code) async {
+    if (!await _profile.saveDisplayCurrency(code)) return false;
+    await _reload();
+    return true;
+  }
+
+  @override
+  Future<bool> saveRate(String from, String to, String rate) async {
+    final saving = _cases.saveRate(from, to, rate);
+    if (saving == null) return false;
+    final result = await saving;
+    final saved = result.isRight();
+    if (result.fold((f) => f.code == AuthError.expired, (_) => false)) {
+      _auth.sessionExpired();
+    }
+    if (saved) await _reload();
+    return saved;
+  }
+
+  /// Fetches again even while a load is running; its answer is dropped by the
+  /// epoch guard in [load].
+  Future<void> _reload() async {
+    _busy = false;
+    await load();
   }
 
   @override

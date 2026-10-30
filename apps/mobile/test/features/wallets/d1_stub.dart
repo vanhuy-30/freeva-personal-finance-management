@@ -18,6 +18,7 @@ import 'package:mobile/features/wallets/presentation/viewmodels/wallet_view_mode
 import '../auth/fakes.dart';
 import '../home/fixtures.dart' show b, wallet;
 import '../transactions/c1_stub.dart';
+import 'package:mobile/core/money/display_converted.dart';
 
 /// Credit card like the D artboards: debt 11.450.000 of 20.000.000, closes
 /// on the 20th, due on the 25th.
@@ -156,6 +157,8 @@ class StubWalletDetail extends ChangeNotifier implements WalletDetailViewModel {
   WalletFlow? flow;
   @override
   bool flowFailed = false;
+  @override
+  DisplayConverted? converted;
   int reloads = 0;
 
   @override

@@ -116,6 +116,62 @@ void main() {
     );
   });
 
+  test('reads converted totals only when a display currency is asked', () async {
+    final api = _Api()
+      ..json = {
+        'items': [
+          {
+            'currency': 'USD',
+            'assetsMinor': '120000',
+            'liabilitiesMinor': '0',
+            'netWorthMinor': '120000',
+          },
+        ],
+        'converted': {
+          'currency': 'VND',
+          'assetsMinor': '3000000000',
+          'liabilitiesMinor': '-100',
+          'netWorthMinor': '2999999900',
+          'unconverted': [
+            {'currency': 'EUR', 'reason': 'MISSING_RATE'},
+            {'currency': 'JPY', 'reason': 'FRACTIONAL'},
+          ],
+        },
+      };
+    final repo = ReportRepositoryImpl(api);
+    final report = (await repo.netWorth(
+      displayCurrency: 'VND',
+    )).getOrElse(() => throw StateError('parse'));
+    expect(api.paths.single, 'reports/net-worth?displayCurrency=VND');
+    expect(report.converted!.netWorthMinor, BigInt.parse('2999999900'));
+    expect(report.converted!.unconverted.map((u) => u.reason), [
+      UnconvertedReason.missingRate,
+      UnconvertedReason.fractional,
+    ]);
+    expect(report.items.single.currency, 'USD');
+
+    api.json = {'items': <Object>[]};
+    final plain = (await repo.netWorth()).getOrElse(
+      () => throw StateError('parse'),
+    );
+    expect(api.paths.last, 'reports/net-worth');
+    expect(plain.converted, isNull);
+
+    api.json = {
+      'items': <Object>[],
+      'converted': {
+        'currency': 'VND',
+        'assetsMinor': '0',
+        'liabilitiesMinor': '0',
+        'netWorthMinor': '0',
+        'unconverted': [
+          {'currency': 'EUR', 'reason': 'SOMETHING_ELSE'},
+        ],
+      },
+    };
+    expect((await repo.netWorth(displayCurrency: 'VND')).isLeft(), isTrue);
+  });
+
   test('parses money beyond int64 and rejects a JSON number', () async {
     final api = _Api()..json = _json(income: '9223372036854775808');
     final repo = ReportRepositoryImpl(api);
@@ -252,8 +308,9 @@ class _Reports implements ReportRepository {
 
   @override
   Future<Either<AuthFailure, CashflowReport>> cashflow(
-    ReportPeriodQuery query,
-  ) async {
+    ReportPeriodQuery query, {
+    String? displayCurrency,
+  }) async {
     cashflowCalls++;
     queries.add(query);
     return right(cashflowReport!);
@@ -271,7 +328,7 @@ class _Reports implements ReportRepository {
   }) async => left(const AuthFailure(AuthError.unavailable));
 
   @override
-  Future<Either<AuthFailure, NetWorthReport>> netWorth() async => right(worth!);
+  Future<Either<AuthFailure, NetWorthReport>> netWorth({String? displayCurrency}) async => right(worth!);
 }
 
 class _Wallets implements WalletRepository {

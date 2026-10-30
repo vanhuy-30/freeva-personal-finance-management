@@ -22,9 +22,11 @@ import 'package:mobile/features/transactions/presentation/viewmodels/transaction
 import 'package:mobile/features/wallets/data/wallet_repository_impl.dart';
 import 'package:mobile/features/wallets/domain/wallet_use_cases.dart';
 import 'package:mobile/features/wallets/presentation/viewmodels/wallet_view_model.dart';
+import 'package:mobile/features/fx_rates/domain/fx_rate_use_cases.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 
 import '../auth/fakes.dart';
+import '../fx_rates/fakes.dart';
 import '../profile/fakes.dart';
 import 'transaction_fakes.dart';
 import 'transaction_view_model_test.dart'
@@ -63,6 +65,7 @@ void main() {
         auth,
         analytics,
       ),
+      FxRateUseCases(MemoryFxRates()),
     );
     await model.load();
   });

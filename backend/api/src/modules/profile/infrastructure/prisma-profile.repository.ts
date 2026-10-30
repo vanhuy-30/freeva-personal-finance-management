@@ -13,6 +13,7 @@ const select = {
   trackingHabit: true,
   reviewCadence: true,
   onboardingBudgetMinor: true,
+  displayCurrencyCode: true,
 };
 
 type Row = Omit<Profile, 'goals' | 'onboardingBudgetMinor'> & { onboardingGoals: string[]; onboardingBudgetMinor: bigint | null };
@@ -48,6 +49,11 @@ export class PrismaProfileRepository implements ProfileRepository {
         ...(answers.budgetMinor ? { onboardingBudgetMinor: BigInt(answers.budgetMinor) } : {}),
       },
     });
+    return changed.count === 1;
+  }
+
+  async saveDisplayCurrency(userId: string, code: string | null): Promise<boolean> {
+    const changed = await this.prisma.user.updateMany({ where: { id: userId }, data: { displayCurrencyCode: code } });
     return changed.count === 1;
   }
 
