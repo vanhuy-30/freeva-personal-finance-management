@@ -10,12 +10,17 @@ const select = {
   fiscalMonthStartDay: true,
   version: true,
   onboardingGoals: true,
+  trackingHabit: true,
+  reviewCadence: true,
+  onboardingBudgetMinor: true,
 };
 
-function toProfile(row: { onboardingGoals: string[] } & Omit<Profile, 'goals'> | null): Profile | null {
+type Row = Omit<Profile, 'goals' | 'onboardingBudgetMinor'> & { onboardingGoals: string[]; onboardingBudgetMinor: bigint | null };
+
+function toProfile(row: Row | null): Profile | null {
   if (!row) return null;
-  const { onboardingGoals, ...rest } = row;
-  return { ...rest, goals: onboardingGoals };
+  const { onboardingGoals, onboardingBudgetMinor, ...rest } = row;
+  return { ...rest, goals: onboardingGoals, onboardingBudgetMinor: onboardingBudgetMinor?.toString() ?? null };
 }
 
 @Injectable()
@@ -40,6 +45,7 @@ export class PrismaProfileRepository implements ProfileRepository {
         ...(answers.goals ? { onboardingGoals: answers.goals } : {}),
         ...(answers.trackingHabit ? { trackingHabit: answers.trackingHabit } : {}),
         ...(answers.reviewCadence ? { reviewCadence: answers.reviewCadence } : {}),
+        ...(answers.budgetMinor ? { onboardingBudgetMinor: BigInt(answers.budgetMinor) } : {}),
       },
     });
     return changed.count === 1;

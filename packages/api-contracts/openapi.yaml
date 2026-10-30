@@ -5991,6 +5991,21 @@ components:
           items:
             type: string
           description: Onboarding goals saved via PATCH /profile/onboarding. Returned on GET and PUT; not accepted on PUT.
+        trackingHabit:
+          type: [string, 'null']
+          readOnly: true
+          enum: [manual, spreadsheet, app, none, null]
+          description: Saved via PATCH /profile/onboarding; null until answered. Not accepted on PUT.
+        reviewCadence:
+          type: [string, 'null']
+          readOnly: true
+          enum: [daily, weekly, monthly, rarely, null]
+          description: Saved via PATCH /profile/onboarding; null until answered. Not accepted on PUT.
+        onboardingBudgetMinor:
+          type: [string, 'null']
+          readOnly: true
+          pattern: ^[1-9][0-9]{0,17}$
+          description: First monthly budget typed at onboarding, positive integer minor units of the default currency at that time. Null until typed. Changing defaultCurrencyCode does not convert it. Never logged. Not accepted on PUT.
     OnboardingAnswers:
       type: object
       additionalProperties: false
@@ -6008,6 +6023,10 @@ components:
         reviewCadence:
           type: string
           enum: [daily, weekly, monthly, rarely]
+        budgetMinor:
+          type: string
+          pattern: ^[1-9][0-9]{0,17}$
+          description: First monthly budget, positive integer minor units of the profile default currency. Omit to keep the stored value.
     ProfileOptions:
       type: object
       additionalProperties: false
@@ -6971,7 +6990,7 @@ components:
     AccountExportProfile:
       type: object
       additionalProperties: false
-      required: [email, displayName, locale, timezone, defaultCurrencyCode, fiscalMonthStartDay, emailVerifiedAt, categoriesInitializedAt, categoriesSupplementedAt, createdAt, updatedAt]
+      required: [email, displayName, locale, timezone, defaultCurrencyCode, fiscalMonthStartDay, onboardingGoals, trackingHabit, reviewCadence, onboardingBudgetMinor, emailVerifiedAt, categoriesInitializedAt, categoriesSupplementedAt, createdAt, updatedAt]
       properties:
         email:
           type: string
@@ -6990,6 +7009,17 @@ components:
           type: integer
           minimum: 1
           maximum: 28
+        onboardingGoals:
+          type: array
+          items:
+            type: string
+        trackingHabit:
+          type: [string, 'null']
+        reviewCadence:
+          type: [string, 'null']
+        onboardingBudgetMinor:
+          type: [string, 'null']
+          pattern: ^[1-9][0-9]{0,17}$
         emailVerifiedAt:
           type: [string, 'null']
           format: date-time

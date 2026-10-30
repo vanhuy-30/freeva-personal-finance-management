@@ -23,6 +23,12 @@ export class OnboardingAnswersDto {
   @IsOptional()
   @IsIn(REVIEW_CADENCES)
   reviewCadence?: string;
+
+  /** First monthly budget, positive integer minor units of the default currency. */
+  @IsOptional()
+  @IsString()
+  @Matches(/^[1-9][0-9]{0,17}$/)
+  budgetMinor?: string;
 }
 
 export class UpdateProfileDto {

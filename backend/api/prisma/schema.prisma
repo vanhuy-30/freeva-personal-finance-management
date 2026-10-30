@@ -105,6 +105,7 @@ model User {
   onboardingGoals     String[]  @default([])
   trackingHabit       String?   @db.VarChar(12)
   reviewCadence       String?   @db.VarChar(10)
+  onboardingBudgetMinor BigInt?
   locale              String    @default("vi")
   timezone            String    @default("Asia/Ho_Chi_Minh")
   defaultCurrencyCode String    @db.Char(3)

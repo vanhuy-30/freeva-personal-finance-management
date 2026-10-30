@@ -14,7 +14,9 @@ function source(): ExportSource {
     exportedAt: at,
     user: {
       id, email: 'owner@example.test', locale: 'vi', timezone: 'Asia/Ho_Chi_Minh', defaultCurrencyCode: 'VND',
-      displayName: null, fiscalMonthStartDay: 1, emailVerifiedAt: at, categoriesInitializedAt: null, categoriesSupplementedAt: null, createdAt: at, updatedAt: at,
+      displayName: null, fiscalMonthStartDay: 1,
+      onboardingGoals: ['save', 'budget'], trackingHabit: 'app', reviewCadence: 'weekly', onboardingBudgetMinor: 15000000n,
+      emailVerifiedAt: at, categoriesInitializedAt: null, categoriesSupplementedAt: null, createdAt: at, updatedAt: at,
     },
     oauthProviders: ['apple', 'google'],
     financialAccounts: [{
@@ -51,7 +53,10 @@ describe('BE-P1-010 account export mapping', () => {
       schemaVersion: 1,
       userId: id,
       oauthProviders: ['apple', 'google'],
-      profile: { email: 'owner@example.test', emailVerifiedAt: at.toISOString(), categoriesInitializedAt: null },
+      profile: {
+        email: 'owner@example.test', emailVerifiedAt: at.toISOString(), categoriesInitializedAt: null,
+        onboardingGoals: ['save', 'budget'], trackingHabit: 'app', reviewCadence: 'weekly', onboardingBudgetMinor: '15000000',
+      },
       financialAccounts: [{
         initialBalanceMinor: '9007199254740993', creditLimitMinor: null, minimumPaymentMinor: null,
       }],
@@ -106,7 +111,8 @@ describe('BE-P1-010 account repository audit', () => {
       user: {
         findUnique: jest.fn().mockResolvedValue({
           id, email: 'owner@example.test', locale: 'vi', timezone: 'Asia/Ho_Chi_Minh', defaultCurrencyCode: 'VND',
-          displayName: null, fiscalMonthStartDay: 1, emailVerifiedAt: null, categoriesInitializedAt: null, categoriesSupplementedAt: null, createdAt: at, updatedAt: at,
+          displayName: null, fiscalMonthStartDay: 1, onboardingGoals: [], trackingHabit: null, reviewCadence: null, onboardingBudgetMinor: null,
+          emailVerifiedAt: null, categoriesInitializedAt: null, categoriesSupplementedAt: null, createdAt: at, updatedAt: at,
           oauthIdentities: [{ provider: 'google' }],
         }),
         delete: jest.fn(),

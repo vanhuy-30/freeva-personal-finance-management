@@ -8,14 +8,19 @@ export interface Profile {
   version: number;
   /** Onboarding goals (read only here; set via PATCH /profile/onboarding). */
   goals: string[];
+  trackingHabit: string | null;
+  reviewCadence: string | null;
+  /** Minor units as a string; null until typed. Not converted when the profile currency changes. */
+  onboardingBudgetMinor: string | null;
 }
 /** `displayName` undefined keeps the stored value. */
-export type ProfileUpdate = Omit<Profile, 'displayName' | 'goals'> & { displayName?: string | null };
+export type ProfileUpdate = Omit<Profile, 'displayName' | 'goals' | 'trackingHabit' | 'reviewCadence' | 'onboardingBudgetMinor'> & { displayName?: string | null };
 /** Only the fields present are stored; the rest keep their value. */
 export interface OnboardingAnswers {
   goals?: string[];
   trackingHabit?: string;
   reviewCadence?: string;
+  budgetMinor?: string;
 }
 export interface CurrencyOption { code: string; minorDigits: number; }
 export const PROFILE_REPOSITORY = Symbol('PROFILE_REPOSITORY');

@@ -5,7 +5,8 @@ import { AuthService } from '../auth/auth.service';
 import { PROFILE_REPOSITORY, type Profile, type ProfileUpdate } from './domain/profile.repository';
 import { ProfileController } from './profile.controller';
 import { ProfileService } from './profile.service';
-const initial: Profile = { displayName: null, locale: 'vi', defaultCurrencyCode: 'VND', timezone: 'Asia/Ho_Chi_Minh', fiscalMonthStartDay: 1, version: 1, goals: [] };
+const initial: Profile = { displayName: null, locale: 'vi', defaultCurrencyCode: 'VND', timezone: 'Asia/Ho_Chi_Minh', fiscalMonthStartDay: 1, version: 1, goals: [],
+  trackingHabit: null, reviewCadence: null, onboardingBudgetMinor: null };
 describe('MOB-P1-002 profile HTTP contract', () => {
   let app: INestApplication; let base: string;
   const profiles = new Map<string, Profile>();
@@ -43,10 +44,10 @@ describe('MOB-P1-002 profile HTTP contract', () => {
     expect(result.headers.get('cache-control')).toBe('no-store');
   });
   it('persists four fields for session owner and rejects stale version', async () => {
-    const { goals, ...editable } = initial;
+    const { goals, trackingHabit, reviewCadence, onboardingBudgetMinor, ...editable } = initial;
     const changes = { ...editable, locale: 'en', defaultCurrencyCode: 'USD', timezone: 'America/New_York', fiscalMonthStartDay: 28 };
-    expect((await request('PUT', changes)).body).toEqual({ ...changes, goals, version: 2 });
-    expect((await request()).body).toEqual({ ...changes, goals, version: 2 });
+    expect((await request('PUT', changes)).body).toEqual({ ...changes, goals, trackingHabit, reviewCadence, onboardingBudgetMinor, version: 2 });
+    expect((await request()).body).toEqual({ ...changes, goals, trackingHabit, reviewCadence, onboardingBudgetMinor, version: 2 });
     expect((await request('GET', undefined, 'b'.repeat(64))).body).toEqual(initial);
     expect((await request('PUT', changes)).status).toBe(409);
   });
@@ -60,7 +61,7 @@ describe('MOB-P1-002 profile HTTP contract', () => {
       expect(JSON.stringify(result.body)).not.toContain('sensitive@example.test');
   });
   it('keeps displayName when omitted, trims it, and clears it when blank', async () => {
-    const { displayName: _omit, goals: _goals, ...rest } = initial;
+    const { displayName: _omit, goals: _goals, trackingHabit: _h, reviewCadence: _r, onboardingBudgetMinor: _b, ...rest } = initial;
     expect((await request('PUT', { ...rest, displayName: '  Minh  ' })).body.displayName).toBe('Minh');
     expect((await request('PUT', { ...rest, version: 2 })).body.displayName).toBe('Minh');
     expect((await request('PUT', { ...rest, version: 3, displayName: '   ' })).body.displayName).toBeNull();
@@ -77,11 +78,22 @@ describe('MOB-P1-002 profile HTTP contract', () => {
       method: 'PATCH', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(body) });
     expect((await send({}, null)).status).toBe(401);
     expect((await send({ goals: ['save', 'budget'], trackingHabit: 'app', reviewCadence: 'weekly' })).status).toBe(204);
+    expect((await send({ budgetMinor: '15000000' })).status).toBe(204);
+    expect(repo.saveOnboarding).toHaveBeenLastCalledWith('owner', { budgetMinor: '15000000' });
     expect((await send({ goals: [] })).status).toBe(204);
     expect(repo.saveOnboarding).toHaveBeenLastCalledWith('owner', { goals: [] });
     for (const bad of [{ goals: ['save', 'budget', 'debt'] }, { goals: ['save', 'save'] }, { goals: ['x'] },
-      { trackingHabit: 'other' }, { reviewCadence: 'hourly' }, { email: 'a@b.test' }]) {
+      { trackingHabit: 'other' }, { budgetMinor: '0' }, { budgetMinor: '-5' }, { budgetMinor: '1.5' }, { budgetMinor: 5000000 },
+      { budgetMinor: '1234567890123456789' }, { reviewCadence: 'hourly' }, { email: 'a@b.test' }]) {
       expect((await send(bad)).status).toBe(400);
     }
+  });
+  it('BE-P2-012 returns saved answers on GET and keeps the budget number when the currency changes', async () => {
+    profiles.set('owner', { ...initial, goals: ['save'], trackingHabit: 'app', reviewCadence: 'weekly', onboardingBudgetMinor: '15000000' });
+    const { goals, trackingHabit, reviewCadence, onboardingBudgetMinor, ...editable } = initial;
+    const saved = await request('PUT', { ...editable, defaultCurrencyCode: 'USD' });
+    expect(saved.body).toMatchObject({ defaultCurrencyCode: 'USD', goals: ['save'], trackingHabit: 'app', reviewCadence: 'weekly', onboardingBudgetMinor: '15000000' });
+    expect((await request()).body.onboardingBudgetMinor).toBe('15000000');
+    expect((await request('GET', undefined, 'b'.repeat(64))).body.onboardingBudgetMinor).toBeNull();
   });
 });

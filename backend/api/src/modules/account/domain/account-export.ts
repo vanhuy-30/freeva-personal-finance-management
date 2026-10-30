@@ -9,6 +9,10 @@ export interface AccountExport {
     timezone: string;
     defaultCurrencyCode: string;
     fiscalMonthStartDay: number;
+    onboardingGoals: string[];
+    trackingHabit: string | null;
+    reviewCadence: string | null;
+    onboardingBudgetMinor: string | null;
     emailVerifiedAt: string | null;
     categoriesInitializedAt: string | null;
     categoriesSupplementedAt: string | null;
@@ -195,6 +199,10 @@ export interface ExportSource {
     timezone: string;
     defaultCurrencyCode: string;
     fiscalMonthStartDay: number;
+    onboardingGoals: string[];
+    trackingHabit: string | null;
+    reviewCadence: string | null;
+    onboardingBudgetMinor: bigint | null;
     emailVerifiedAt: Date | null;
     categoriesInitializedAt: Date | null;
     categoriesSupplementedAt: Date | null;
@@ -323,6 +331,10 @@ export function toAccountExport(source: ExportSource): AccountExport {
       timezone: user.timezone,
       defaultCurrencyCode: code(user.defaultCurrencyCode),
       fiscalMonthStartDay: user.fiscalMonthStartDay,
+      onboardingGoals: [...user.onboardingGoals],
+      trackingHabit: user.trackingHabit,
+      reviewCadence: user.reviewCadence,
+      onboardingBudgetMinor: user.onboardingBudgetMinor?.toString() ?? null,
       emailVerifiedAt: user.emailVerifiedAt ? iso(user.emailVerifiedAt) : null,
       categoriesInitializedAt: user.categoriesInitializedAt ? iso(user.categoriesInitializedAt) : null,
       categoriesSupplementedAt: user.categoriesSupplementedAt ? iso(user.categoriesSupplementedAt) : null,
