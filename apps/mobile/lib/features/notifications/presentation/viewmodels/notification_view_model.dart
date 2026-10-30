@@ -7,6 +7,7 @@ import '../../../auth/presentation/viewmodels/auth_view_model.dart';
 import '../../../profile/presentation/viewmodels/profile_view_model.dart';
 import '../../domain/notification_models.dart';
 import '../../domain/notification_use_cases.dart';
+import '../../domain/push_registrar.dart';
 
 abstract class NotificationViewModel extends ChangeNotifier {
   bool get busy;
@@ -30,7 +31,12 @@ abstract class NotificationViewModel extends ChangeNotifier {
 
 @LazySingleton(as: NotificationViewModel)
 class DefaultNotificationViewModel extends NotificationViewModel {
-  DefaultNotificationViewModel(this._cases, this._auth, this._profile) {
+  DefaultNotificationViewModel(
+    this._cases,
+    this._auth,
+    this._profile,
+    this._push,
+  ) {
     _stage = _auth.stage;
     _auth.addListener(_authChanged);
   }
@@ -38,6 +44,7 @@ class DefaultNotificationViewModel extends NotificationViewModel {
   final NotificationUseCases _cases;
   final AuthViewModel _auth;
   final ProfileViewModel _profile;
+  final PushRegistrar _push;
   late AuthStage _stage;
   int _epoch = 0;
 
@@ -147,6 +154,8 @@ class DefaultNotificationViewModel extends NotificationViewModel {
     final value = await _guard(() => _cases.putPreferences(patch));
     if (value == null) return false;
     preferences = value;
+    // First moment push matters: ask for permission and register this device.
+    if (enabled) _push.sync(requestPermission: true);
     return true;
   }
 

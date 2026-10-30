@@ -3,6 +3,7 @@ import 'features/settings/presentation/theme_mode.dart';
 import 'features/settings/presentation/viewmodels/settings_view_model.dart';
 import 'features/notifications/presentation/viewmodels/notification_view_model.dart';
 import 'features/notifications/presentation/widgets/notification_resume_listener.dart';
+import 'features/notifications/presentation/widgets/push_registration_listener.dart';
 import 'features/recurring/presentation/viewmodels/recurring_view_model.dart';
 import 'features/recurring/presentation/widgets/recurring_resume_listener.dart';
 import 'features/sync/presentation/viewmodels/sync_view_model.dart';
@@ -54,7 +55,8 @@ class FreevaApp extends StatelessWidget {
       builder: (context, _) => SyncResumeListener(
         child: RecurringResumeListener(
           child: NotificationResumeListener(
-            child: MaterialApp.router(
+            child: PushRegistrationListener(
+              child: MaterialApp.router(
               debugShowCheckedModeBanner: false,
               onGenerateTitle: (BuildContext context) => S.of(context).appTitle,
               theme: AppTheme.light,
@@ -73,6 +75,7 @@ class FreevaApp extends StatelessWidget {
                 GlobalWidgetsLocalizations.delegate,
                 GlobalCupertinoLocalizations.delegate,
               ],
+            ),
             ),
           ),
         ),
