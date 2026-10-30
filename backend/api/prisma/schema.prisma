@@ -82,42 +82,42 @@ model Currency {
   minorDigits Int
   name        String
 
-  users             User[]             @relation("UserDefaultCurrency")
-  displayUsers      User[]             @relation("UserDisplayCurrency")
-  fxRatesFrom       UserFxRate[]       @relation("UserFxRateFrom")
-  fxRatesTo         UserFxRate[]       @relation("UserFxRateTo")
-  financialAccounts FinancialAccount[]
-  transactions      Transaction[]
-  fxQuotesFrom      FxQuote[]          @relation("FxQuoteFrom")
-  fxQuotesTo        FxQuote[]          @relation("FxQuoteTo")
-  recurringRules         RecurringRule[] @relation("RecurringCurrency")
-  recurringCounterRules  RecurringRule[] @relation("RecurringCounterCurrency")
-  budgets                Budget[]
-  budgetMonths           BudgetMonth[]
-  bills                  Bill[]
+  users                 User[]             @relation("UserDefaultCurrency")
+  displayUsers          User[]             @relation("UserDisplayCurrency")
+  fxRatesFrom           UserFxRate[]       @relation("UserFxRateFrom")
+  fxRatesTo             UserFxRate[]       @relation("UserFxRateTo")
+  financialAccounts     FinancialAccount[]
+  transactions          Transaction[]
+  fxQuotesFrom          FxQuote[]          @relation("FxQuoteFrom")
+  fxQuotesTo            FxQuote[]          @relation("FxQuoteTo")
+  recurringRules        RecurringRule[]    @relation("RecurringCurrency")
+  recurringCounterRules RecurringRule[]    @relation("RecurringCounterCurrency")
+  budgets               Budget[]
+  budgetMonths          BudgetMonth[]
+  bills                 Bill[]
 }
 
 model User {
-  id                  String    @id @default(uuid()) @db.Uuid
-  email               String    @unique
-  displayName         String?   @db.VarChar(60)
-  passwordHash        String?
-  emailVerifiedAt     DateTime? @db.Timestamptz
-  termsAcceptedAt     DateTime? @db.Timestamptz
-  termsVersion        String?   @db.VarChar(20)
-  onboardingGoals     String[]  @default([])
-  trackingHabit       String?   @db.VarChar(12)
-  reviewCadence       String?   @db.VarChar(10)
-  onboardingBudgetMinor BigInt?
-  displayCurrencyCode String?   @db.Char(3)
-  locale              String    @default("vi")
-  timezone            String    @default("Asia/Ho_Chi_Minh")
-  defaultCurrencyCode String    @db.Char(3)
-  fiscalMonthStartDay Int       @default(1)
-  version             Int       @default(1)
-  createdAt           DateTime  @default(now()) @db.Timestamptz
-  updatedAt           DateTime  @updatedAt @db.Timestamptz
-  categoriesInitializedAt DateTime? @db.Timestamptz
+  id                       String    @id @default(uuid()) @db.Uuid
+  email                    String    @unique
+  displayName              String?   @db.VarChar(60)
+  passwordHash             String?
+  emailVerifiedAt          DateTime? @db.Timestamptz
+  termsAcceptedAt          DateTime? @db.Timestamptz
+  termsVersion             String?   @db.VarChar(20)
+  onboardingGoals          String[]  @default([])
+  trackingHabit            String?   @db.VarChar(12)
+  reviewCadence            String?   @db.VarChar(10)
+  onboardingBudgetMinor    BigInt?
+  displayCurrencyCode      String?   @db.Char(3)
+  locale                   String    @default("vi")
+  timezone                 String    @default("Asia/Ho_Chi_Minh")
+  defaultCurrencyCode      String    @db.Char(3)
+  fiscalMonthStartDay      Int       @default(1)
+  version                  Int       @default(1)
+  createdAt                DateTime  @default(now()) @db.Timestamptz
+  updatedAt                DateTime  @updatedAt @db.Timestamptz
+  categoriesInitializedAt  DateTime? @db.Timestamptz
   categoriesSupplementedAt DateTime? @db.Timestamptz
   categoryIconsRefreshedAt DateTime? @db.Timestamptz
 
@@ -126,22 +126,23 @@ model User {
   sessions        AuthSession[]
   authMailJobs    AuthMailJob[]
 
-  defaultCurrency   Currency           @relation("UserDefaultCurrency", fields: [defaultCurrencyCode], references: [code])
-  financialAccounts FinancialAccount[]
-  categoryGroups    CategoryGroup[]
-  categories        Category[]
-  tags              Tag[]
-  feedback          Feedback[]
-  transactions      Transaction[]
-  fxQuotes          FxQuote[]
-  fxRates           UserFxRate[]
-  displayCurrency   Currency?          @relation("UserDisplayCurrency", fields: [displayCurrencyCode], references: [code])
-  recurringRules    RecurringRule[]
-  budget            Budget?
-  budgetMonths      BudgetMonth[]
-  bills             Bill[]
+  defaultCurrency        Currency                @relation("UserDefaultCurrency", fields: [defaultCurrencyCode], references: [code])
+  financialAccounts      FinancialAccount[]
+  categoryGroups         CategoryGroup[]
+  categories             Category[]
+  tags                   Tag[]
+  feedback               Feedback[]
+  transactions           Transaction[]
+  fxQuotes               FxQuote[]
+  fxRates                UserFxRate[]
+  displayCurrency        Currency?               @relation("UserDisplayCurrency", fields: [displayCurrencyCode], references: [code])
+  recurringRules         RecurringRule[]
+  budget                 Budget?
+  budgetMonths           BudgetMonth[]
+  bills                  Bill[]
   notificationPreference NotificationPreference?
-  notifications     InAppNotification[]
+  notifications          InAppNotification[]
+  pushTokens             PushToken[]
 }
 
 model FinancialAccount {
@@ -162,10 +163,10 @@ model FinancialAccount {
   createdAt           DateTime             @default(now()) @db.Timestamptz
   updatedAt           DateTime             @updatedAt @db.Timestamptz
 
-  user         User          @relation(fields: [userId], references: [id])
-  currency     Currency      @relation(fields: [currencyCode], references: [code])
-  transactions Transaction[]
-  recurringSource RecurringRule[] @relation("RecurringSourceAccount")
+  user             User            @relation(fields: [userId], references: [id])
+  currency         Currency        @relation(fields: [currencyCode], references: [code])
+  transactions     Transaction[]
+  recurringSource  RecurringRule[] @relation("RecurringSourceAccount")
   recurringCounter RecurringRule[] @relation("RecurringCounterAccount")
 
   @@unique([userId, clientId])
@@ -206,14 +207,14 @@ model Category {
   createdAt  DateTime     @default(now()) @db.Timestamptz
   updatedAt  DateTime     @updatedAt @db.Timestamptz
 
-  user         User           @relation(fields: [userId], references: [id])
-  group        CategoryGroup? @relation(fields: [groupId], references: [id])
-  parent       Category?      @relation("CategoryTree", fields: [parentId], references: [id])
-  children       Category[]     @relation("CategoryTree")
-  transactions   Transaction[]
-  recurringRules     RecurringRule[]
-  budgetLines        BudgetCategory[]
-  budgetMonthLines   BudgetMonthCategory[]
+  user             User                  @relation(fields: [userId], references: [id])
+  group            CategoryGroup?        @relation(fields: [groupId], references: [id])
+  parent           Category?             @relation("CategoryTree", fields: [parentId], references: [id])
+  children         Category[]            @relation("CategoryTree")
+  transactions     Transaction[]
+  recurringRules   RecurringRule[]
+  budgetLines      BudgetCategory[]
+  budgetMonthLines BudgetMonthCategory[]
 
   @@unique([userId, clientId])
   @@index([userId, archivedAt])
@@ -222,14 +223,14 @@ model Category {
 
 /// Support feedback from the Góp ý screen (DS-P2-003). Text only; deleted with the account.
 model Feedback {
-  id          String   @id @default(uuid()) @db.Uuid
-  userId      String   @db.Uuid
-  kind        String   @db.VarChar(10)
-  topic       String   @db.VarChar(20)
-  message     String   @db.VarChar(2000)
-  allowReply  Boolean
-  appVersion  String   @db.VarChar(30)
-  createdAt   DateTime @default(now()) @db.Timestamptz
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @db.Uuid
+  kind       String   @db.VarChar(10)
+  topic      String   @db.VarChar(20)
+  message    String   @db.VarChar(2000)
+  allowReply Boolean
+  appVersion String   @db.VarChar(30)
+  createdAt  DateTime @default(now()) @db.Timestamptz
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -398,24 +399,24 @@ enum BillAmountKind {
 }
 
 model Bill {
-  id                 String         @id @default(uuid()) @db.Uuid
-  userId             String         @db.Uuid
-  clientId           String         @db.Uuid
-  name               String         @db.VarChar(80)
-  dueOn              DateTime       @db.Date
-  amountMinor        BigInt
-  amountKind         BillAmountKind
-  currencyCode       String         @db.Char(3)
-  recurringRuleId    String?        @db.Uuid
-  paidTransactionId  String?        @unique @db.Uuid
-  version            Int            @default(1)
-  createdAt          DateTime       @default(now()) @db.Timestamptz
-  updatedAt          DateTime       @updatedAt @db.Timestamptz
+  id                String         @id @default(uuid()) @db.Uuid
+  userId            String         @db.Uuid
+  clientId          String         @db.Uuid
+  name              String         @db.VarChar(80)
+  dueOn             DateTime       @db.Date
+  amountMinor       BigInt
+  amountKind        BillAmountKind
+  currencyCode      String         @db.Char(3)
+  recurringRuleId   String?        @db.Uuid
+  paidTransactionId String?        @unique @db.Uuid
+  version           Int            @default(1)
+  createdAt         DateTime       @default(now()) @db.Timestamptz
+  updatedAt         DateTime       @updatedAt @db.Timestamptz
 
-  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  currency        Currency          @relation(fields: [currencyCode], references: [code])
-  recurringRule   RecurringRule?    @relation(fields: [recurringRuleId], references: [id], onDelete: SetNull)
-  paidTransaction Transaction?      @relation(fields: [paidTransactionId], references: [id], onDelete: SetNull)
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  currency        Currency       @relation(fields: [currencyCode], references: [code])
+  recurringRule   RecurringRule? @relation(fields: [recurringRuleId], references: [id], onDelete: SetNull)
+  paidTransaction Transaction?   @relation(fields: [paidTransactionId], references: [id], onDelete: SetNull)
 
   @@unique([userId, clientId])
   @@index([userId, dueOn])
@@ -478,11 +479,35 @@ model InAppNotification {
   params    Json             @default("{}")
   createdAt DateTime         @default(now()) @db.Timestamptz
   readAt    DateTime?        @db.Timestamptz
+  /// Set when the FCM push was claimed (BE-P2-015). Null = still to push.
+  pushedAt  DateTime?        @db.Timestamptz
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, dedupeKey])
   @@index([userId, createdAt])
+  @@index([pushedAt, createdAt])
+}
+
+enum PushPlatform {
+  ios
+  android
+}
+
+/// FCM registration token bound to one login session (BE-P2-015). Deleted with the session or user.
+model PushToken {
+  id        String       @id @default(uuid()) @db.Uuid
+  userId    String       @db.Uuid
+  sessionId String       @unique @db.Uuid
+  token     String       @unique @db.VarChar(4096)
+  platform  PushPlatform
+  createdAt DateTime     @default(now()) @db.Timestamptz
+  updatedAt DateTime     @updatedAt @db.Timestamptz
+
+  user    User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  session AuthSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model TransactionTag {
@@ -556,12 +581,13 @@ model AuthToken {
 }
 
 model AuthSession {
-  id        String   @id @default(uuid()) @db.Uuid
-  userId    String   @db.Uuid
-  tokenHash String   @unique @db.Char(64)
-  createdAt DateTime @default(now()) @db.Timestamptz
-  expiresAt DateTime @db.Timestamptz
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String     @id @default(uuid()) @db.Uuid
+  userId    String     @db.Uuid
+  tokenHash String     @unique @db.Char(64)
+  createdAt DateTime   @default(now()) @db.Timestamptz
+  expiresAt DateTime   @db.Timestamptz
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pushToken PushToken?
 
   @@index([userId, createdAt])
   @@index([expiresAt])

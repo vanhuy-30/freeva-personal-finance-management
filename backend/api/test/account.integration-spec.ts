@@ -199,9 +199,14 @@ describe('BE-P1-010 HTTP + PostgreSQL', () => {
     await prisma.authMailJob.create({
       data: { userId: owner, purpose: 'verify_email', encryptedToken: 'cipher', expiresAt: new Date(Date.now() + 60_000) },
     });
+    const session = await prisma.authSession.findUniqueOrThrow({ where: { tokenHash: hash } });
+    await prisma.pushToken.create({
+      data: { userId: owner, sessionId: session.id, token: `fcm-${randomUUID()}-${randomUUID()}`, platform: 'android' },
+    });
     const result = await request('DELETE', '');
     expect(result.status).toBe(204);
     expect(result.body).toBeUndefined();
+    expect(await prisma.pushToken.count({ where: { userId: owner } })).toBe(0);
     expect(await prisma.user.findUnique({ where: { id: owner } })).toBeNull();
     expect(await prisma.financialAccount.count({ where: { userId: owner } })).toBe(0);
     expect(await prisma.transaction.count({ where: { userId: owner } })).toBe(0);

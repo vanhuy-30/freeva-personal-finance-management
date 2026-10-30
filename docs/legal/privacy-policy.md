@@ -52,7 +52,7 @@ Dữ liệu sinh trắc học trên máy chủ (PIN / biometrics chỉ mở khó
 | Xác thực, chống lạm dụng, bảo mật tài khoản | Lợi ích hợp pháp / nghĩa vụ bảo mật | Rate limit, phiên, log kỹ thuật |
 | Gửi email OTP, xác thực, đặt lại mật khẩu | Thực hiện hợp đồng | Nhà cung cấp email TBD |
 | Cải thiện sản phẩm (funnel, crash) | Consent hoặc lợi ích hợp pháp (luật sư chốt) | Không PII tài chính trong event |
-| Thông báo push | Consent | Phase 2–3, chưa bật |
+| Thông báo push | Consent (quyền thông báo của hệ điều hành) | `BE-P2-015`: bật khi build có cấu hình Firebase; chờ luật sư chốt câu chữ |
 | Tuân thủ yêu cầu pháp luật | Nghĩa vụ pháp lý | Khi có căn cứ |
 
 **Không bán** dữ liệu cá nhân. Không dùng dữ liệu tài chính để quảng cáo bên thứ ba.
@@ -130,7 +130,7 @@ Không có bên thứ ba **production**. API + Postgres + Redis + Mailhog chạy
 
 | Bên | Mục đích | Dữ liệu | Phase | Trạng thái |
 |---|---|---|---|---|
-| Nhà cung cấp push (TBD) | Nhắc ghi chi, hóa đơn | Device token, không số dư trong payload | 2–3 | Chưa; cần consent |
+| Firebase Cloud Messaging (Google) | Thông báo ngân sách, định kỳ, thẻ | Device token gắn phiên, không số dư trong payload | 2 | Có trong code (`BE-P2-015`); bật khi có service account; cần consent |
 | Nhà cung cấp AI (TBD) | Gợi ý / phân loại (module 18) | Nội dung user chọn gửi | 5 | Won't MVP; opt-in |
 | Đối tác ngân hàng (không đặt tên) | Đồng bộ sao kê / số dư | Token kết nối, GD từ đối tác | 6 | Chỉ khi có DPA — [RISKS](../project-state/RISKS.md) R6 |
 | Cửa hàng (IAP) | Thu phí Premium | Biên lai store, không chặn ghi chi/xuất/xóa | 7 | Chưa có sản phẩm IAP |

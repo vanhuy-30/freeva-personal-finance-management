@@ -132,6 +132,7 @@ describe('BE-P1-010 account repository audit', () => {
       budgetMonth: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
       notificationPreference: { findUnique: jest.fn().mockResolvedValue(null), deleteMany: jest.fn() },
       inAppNotification: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
+      pushToken: { deleteMany: jest.fn() },
       transaction: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
       transactionTag: { deleteMany: jest.fn() },
       auditEvent: { create: jest.fn() },

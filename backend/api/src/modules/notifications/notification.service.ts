@@ -1,4 +1,5 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger, Optional } from '@nestjs/common';
+import { PUSH_DISPATCHER, type PushDispatcher } from '../push/domain/push-sender';
 import {
   assertKindWritable,
   budgetDedupeKey,
@@ -50,8 +51,11 @@ function notificationResponse(row: NotificationRecord) {
 
 @Injectable()
 export class NotificationService {
+  private readonly logger = new Logger(NotificationService.name);
+
   constructor(
     @Inject(NOTIFICATION_REPOSITORY) private readonly repository: NotificationRepository,
+    @Optional() @Inject(PUSH_DISPATCHER) private readonly push?: PushDispatcher,
   ) {}
 
   async getPreferences(userId: string) {
@@ -115,7 +119,19 @@ export class NotificationService {
     for (const user of users) {
       created += await this.evaluateOne(user.userId, now);
     }
+    await this.drainPush(userId, now);
     return { created };
+  }
+
+  /** FCM push (BE-P2-015). A push failure must never fail the inbox evaluation. */
+  private async drainPush(userId: string | null, now: Date): Promise<void> {
+    if (!this.push) return;
+    try {
+      await this.push.drain(userId, now);
+    } catch (error) {
+      const code = error instanceof Error ? error.name : 'unknown';
+      this.logger.warn({ code }, 'push.drain.failed');
+    }
   }
 
   private async evaluateOne(userId: string, now: Date): Promise<number> {

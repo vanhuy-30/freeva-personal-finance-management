@@ -1498,6 +1498,53 @@ paths:
       description: >
         Respects quiet hours in the profile timezone. Mobile calls on resume;
         network errors may be ignored. Does not create rows for unavailable kinds.
+  /api/v1/push-tokens:
+    put:
+      operationId: putPushToken
+      summary: Register the FCM device token of the current session
+      tags:
+      - Notifications
+      security:
+      - UserBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutPushTokenRequest'
+      responses:
+        '204':
+          description: Token bound to this session (replaces a previous one)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+        '400':
+          description: VALIDATION_ERROR
+        '401':
+          $ref: '#/components/responses/NotificationUnauthorized'
+      description: >
+        One token per login session. Deleted with the session (logout, password
+        change or reset, expiry) and with the account. Push is sent only for
+        inbox rows created outside quiet hours; text carries no balances.
+    delete:
+      operationId: deletePushToken
+      summary: Remove the FCM device token of the current session
+      tags:
+      - Notifications
+      security:
+      - UserBearer: []
+      responses:
+        '204':
+          description: Token removed (idempotent)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+        '401':
+          $ref: '#/components/responses/NotificationUnauthorized'
   /api/v1/notifications/read-all:
     post:
       operationId: markAllNotificationsRead
@@ -4129,6 +4176,22 @@ components:
         checks session storage on every authenticated request. No refresh token in this
         phase.
   schemas:
+    PutPushTokenRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - token
+      - platform
+      properties:
+        token:
+          type: string
+          minLength: 20
+          maxLength: 4096
+        platform:
+          type: string
+          enum:
+          - ios
+          - android
     Category:
       type: object
       additionalProperties: false
