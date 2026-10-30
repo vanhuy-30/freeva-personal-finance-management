@@ -449,4 +449,70 @@ void main() {
       expect((await repository.savedName()).getOrElse(() => 'x'), isNull);
     },
   );
+
+  group('MOB-P2-014 password 8-128 and email check', () {
+    String at(int n) => 'a1' * n;
+    String pw(int n) => at(n).substring(0, n);
+    late DefaultAuthUseCases cases;
+    setUp(() => cases = DefaultAuthUseCases(repository));
+
+    test('new passwords accept 8 and 128, reject 7 and 129', () async {
+      for (final action in [AuthAction.register, AuthAction.resetPassword]) {
+        Future<bool> ok(int n) async => (await cases.submit(action, {
+          if (action == AuthAction.register) 'email': 'lan@example.com',
+          if (action == AuthAction.register) 'termsAccepted': 'true',
+          if (action == AuthAction.resetPassword) 'token': 'a' * 64,
+          'password': pw(n),
+        })).isRight();
+        expect(await ok(8), true);
+        expect(await ok(128), true);
+        expect(await ok(7), false);
+        expect(await ok(129), false);
+      }
+    });
+    test('login keeps the same 8-128 length rule only', () async {
+      Future<bool> ok(String p) async => (await cases.submit(AuthAction.login, {
+        'email': 'lan@example.com',
+        'password': p,
+      })).isRight();
+      expect(await ok('abcdefgh'), true);
+      expect(await ok(pw(128)), true);
+      expect(await ok(pw(7)), false);
+      expect(await ok(pw(129)), false);
+    });
+    test('change password accepts 8 and 128, rejects 7 and 129', () async {
+      Future<AuthError?> next(int n) async => (await cases.changePassword(
+        'old',
+        pw(n),
+        pw(n),
+      )).fold((e) => e.code, (_) => null);
+      expect(await next(7), AuthError.invalidInput);
+      expect(await next(129), AuthError.invalidInput);
+      expect(await next(8), isNot(AuthError.invalidInput));
+      expect(await next(128), isNot(AuthError.invalidInput));
+    });
+    test('a bad email is rejected before any API call', () async {
+      final calls = api.calls;
+      for (final action in [
+        AuthAction.login,
+        AuthAction.register,
+        AuthAction.requestReset,
+        AuthAction.requestVerification,
+      ]) {
+        for (final bad in ['bad', 'a@b', 'a b@c.com', '@c.com', '']) {
+          final result = await cases.submit(action, {
+            'email': bad,
+            if (action == AuthAction.login || action == AuthAction.register)
+              'password': pw(8),
+            if (action == AuthAction.register) 'termsAccepted': 'true',
+          });
+          expect(
+            result.fold((e) => e.code, (_) => null),
+            AuthError.invalidEmail,
+          );
+        }
+      }
+      expect(api.calls, calls);
+    });
+  });
 }

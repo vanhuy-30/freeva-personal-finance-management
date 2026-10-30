@@ -4461,7 +4461,7 @@ abstract class S {
   /// No description provided for @mePasswordHint.
   ///
   /// In en, this message translates to:
-  /// **'At least 12 characters, with letters and digits.'**
+  /// **'At least 8 characters, with letters and digits.'**
   String get mePasswordHint;
 
   /// No description provided for @mePasswordWrong.
@@ -4473,7 +4473,7 @@ abstract class S {
   /// No description provided for @mePasswordWeak.
   ///
   /// In en, this message translates to:
-  /// **'Use at least 12 characters with letters and digits, different from the old one.'**
+  /// **'Use at least 8 characters with letters and digits, different from the old one.'**
   String get mePasswordWeak;
 
   /// No description provided for @mePasswordMismatch.
@@ -5139,7 +5139,7 @@ abstract class S {
   /// No description provided for @passwordRuleLength.
   ///
   /// In en, this message translates to:
-  /// **'At least 12 characters'**
+  /// **'At least 8 characters'**
   String get passwordRuleLength;
 
   /// No description provided for @passwordRuleLetterDigit.

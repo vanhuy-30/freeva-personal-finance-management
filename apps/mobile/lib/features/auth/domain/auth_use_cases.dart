@@ -82,10 +82,13 @@ class DefaultAuthUseCases implements AuthUseCases {
     // the length rule only, so older passwords still work.
     final newPassword =
         action == AuthAction.register || action == AuthAction.resetPassword;
-    if ((email != null &&
-            (email.length > 254 ||
-                !RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$').hasMatch(email))) ||
-        (password != null && (password.length < 12 || password.length > 128)) ||
+    // A bad email is told apart so the screen can say so before any call.
+    if (email != null &&
+        (email.length > 254 ||
+            !RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$').hasMatch(email))) {
+      return Future.value(left(const AuthFailure(AuthError.invalidEmail)));
+    }
+    if ((password != null && !validPasswordLength(password)) ||
         (newPassword && password != null && !hasLetterAndDigit(password)) ||
         (token != null && !RegExp(r'^[a-f0-9]{64}$').hasMatch(token))) {
       return Future.value(left(const AuthFailure(AuthError.invalidInput)));
@@ -144,8 +147,7 @@ class DefaultAuthUseCases implements AuthUseCases {
     }
     if (current.isEmpty ||
         current.length > 128 ||
-        next.length < 12 ||
-        next.length > 128 ||
+        !validPasswordLength(next) ||
         !hasLetterAndDigit(next) ||
         next == current) {
       return Future.value(left(const AuthFailure(AuthError.invalidInput)));
@@ -199,6 +201,13 @@ class DefaultAuthUseCases implements AuthUseCases {
   Future<Either<AuthFailure, Unit>> deleteAccount() =>
       _repository.deleteAccount();
 }
+
+const minPasswordLength = 8;
+const maxPasswordLength = 128;
+
+bool validPasswordLength(String password) =>
+    password.length >= minPasswordLength &&
+    password.length <= maxPasswordLength;
 
 /// At least one letter and one digit, in any script (Vietnamese included).
 bool hasLetterAndDigit(String password) =>

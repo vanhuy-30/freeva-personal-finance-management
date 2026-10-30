@@ -2458,14 +2458,14 @@ class SEn extends S {
 
   @override
   String get mePasswordHint =>
-      'At least 12 characters, with letters and digits.';
+      'At least 8 characters, with letters and digits.';
 
   @override
   String get mePasswordWrong => 'That isn\'t your current password.';
 
   @override
   String get mePasswordWeak =>
-      'Use at least 12 characters with letters and digits, different from the old one.';
+      'Use at least 8 characters with letters and digits, different from the old one.';
 
   @override
   String get mePasswordMismatch => 'The new passwords don\'t match.';
@@ -2835,7 +2835,7 @@ class SEn extends S {
   String get passwordStrong => 'Very strong';
 
   @override
-  String get passwordRuleLength => 'At least 12 characters';
+  String get passwordRuleLength => 'At least 8 characters';
 
   @override
   String get passwordRuleLetterDigit => 'Letters and numbers';

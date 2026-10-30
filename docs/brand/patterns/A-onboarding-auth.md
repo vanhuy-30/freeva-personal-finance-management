@@ -38,7 +38,7 @@ Bước 3–5 có thanh tiến độ `1/3 … 3/3`, nút quay lại (trừ bư�
 | # | Màn | Nội dung |
 |---|---|---|
 | 1 | Đăng nhập | Tiêu đề giữa. Ô email + ô mật khẩu (có mắt) trên cùng một màn. "Quên mật khẩu?" gạch chân ở giữa. Nút "Đăng nhập". "hoặc" → Google, Apple. "Chưa có tài khoản? Đăng ký" (→ A1.2) |
-| 2 | Tạo tài khoản bằng email | Ô email, mật khẩu, **nhập lại mật khẩu** (đều có mắt), thanh độ mạnh 3 nấc. Danh sách tự tick: "Ít nhất 12 ký tự" · "Có cả chữ và số" (bắt buộc) · "Thêm ký hiệu như ! @ # để mạnh hơn" (gợi ý) · "Hai mật khẩu khớp nhau". **Checkbox** "Tôi đồng ý với Điều khoản sử dụng và Chính sách bảo mật của Freeva." Nút "Tạo tài khoản" |
+| 2 | Tạo tài khoản bằng email | Ô email, mật khẩu, **nhập lại mật khẩu** (đều có mắt), thanh độ mạnh 3 nấc. Danh sách tự tick: "Ít nhất 8 ký tự" · "Có cả chữ và số" (bắt buộc) · "Thêm ký hiệu như ! @ # để mạnh hơn" (gợi ý) · "Hai mật khẩu khớp nhau". **Checkbox** "Tôi đồng ý với Điều khoản sử dụng và Chính sách bảo mật của Freeva." Nút "Tạo tài khoản" |
 | 3 | Xác nhận email | "Xác nhận email" · "Freeva đã gửi link xác nhận tới …". Thẻ "Email đã xác nhận giúp bạn": lấy lại mật khẩu khi quên · nhận cảnh báo khi có đăng nhập lạ · không lỡ thông báo quan trọng về tài khoản. Nút "Xong" (→ A1.3; không mở app Mail từ Freeva), "Gửi lại". **Không bắt buộc:** chữ "Chưa xác nhận vẫn dùng app bình thường. Bạn có thể xác nhận sau ở Cá nhân." Không có nút quay lại: tài khoản đã tạo, quay lại sẽ thành đăng xuất (owner 2026-10-27). |
 | 4 | Đặt mã PIN | Quay lại · "Để sau" (→ A1.7). "Đặt mã PIN" · "6 số để mở khoá Freeva trên máy này." 6 chấm + bàn phím số, nút "Tiếp tục" |
 | 5 | Nhập lại mã PIN | Quay lại · "Để sau". "Nhập lại mã PIN" · "Nhập lại 6 số vừa đặt để chắc chắn." 6 chấm, "Không khớp sẽ được nhập lại từ đầu.", nút "Xác nhận" |
@@ -50,7 +50,7 @@ Mở khoá hằng ngày: màn Mở khoá ở hàng mẫu (avatar chữ cái, "Ch
 
 **Luồng:** đăng ký email đi A1.2 → A2.2 → A2.3 → A1.3 → … → A1.6 → A2.4 → A2.5 → A2.6 → A1.7. Google/Apple đi A1.2 → A1.3. Mọi cách đăng ký đều qua PIN và Face ID sau A1.6; bỏ qua thì checklist trang chính nhắc "Khoá app bằng PIN". Đăng nhập lại vào thẳng app, không qua A1.3–A1.5.
 
-**Mật khẩu (chốt 2026-10-23):** mật khẩu mới 12–128 ký tự, có ít nhất một chữ cái và một chữ số (mọi bảng chữ); ký hiệu chỉ là gợi ý. Đăng nhập chỉ kiểm tra độ dài để mật khẩu cũ dùng tiếp. Đã làm ở backend và mobile (`DS-P2-004`).
+**Mật khẩu (chốt 2026-10-23):** mật khẩu mới 8–128 ký tự (hạ từ 12 ở `BE-P2-014`), có ít nhất một chữ cái và một chữ số (mọi bảng chữ); ký hiệu chỉ là gợi ý. Đăng nhập chỉ kiểm tra độ dài (8–128) để mật khẩu cũ dùng tiếp. Đã làm ở backend và mobile (`DS-P2-004`).
 
 ## Thành phần mới (bổ sung vào design system)
 
