@@ -9,6 +9,8 @@ import 'package:mobile/features/auth/data/auth_repository_impl.dart';
 import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/auth/domain/auth_use_cases.dart';
 import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dart';
+import 'package:mobile/features/budgets/domain/budget.dart';
+import 'package:mobile/features/budgets/domain/budget_use_cases.dart';
 import 'package:mobile/features/reports/domain/report.dart';
 import 'package:mobile/features/reports/domain/report_use_cases.dart';
 import 'package:mobile/features/reports/presentation/viewmodels/report_view_model.dart';
@@ -202,6 +204,7 @@ Future<Widget> f1App(Widget page, {bool dark = false, double scale = 1}) async {
         ..hasPin = true
         ..ready = true;
   getIt.registerSingleton<AuthViewModel>(auth);
+  getIt.registerSingleton<BudgetUseCases>(_NoBudget());
   getIt.registerSingleton<ReportViewModel>(
     DefaultReportViewModel(
       StubReportCases(),
@@ -223,4 +226,26 @@ Future<Widget> f1App(Widget page, {bool dark = false, double scale = 1}) async {
       child: page,
     ),
   );
+}
+
+/// No monthly budget set: the report shows no budget row.
+class _NoBudget implements BudgetUseCases {
+  @override
+  Future<Either<AuthFailure, BudgetCurrent>> current({
+    String? on,
+    BudgetApplyTo? applyTo,
+  }) async => right(
+    const BudgetCurrent(
+      budget: null,
+      period: BudgetPeriod(
+        from: '2026-10-01',
+        to: '2026-10-31',
+        timezone: 'Asia/Ho_Chi_Minh',
+        fiscalMonthStartDay: 1,
+      ),
+    ),
+  );
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

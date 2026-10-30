@@ -5,12 +5,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/core/di/injection.dart';
 import 'package:mobile/features/feedback/domain/feedback.dart';
 import 'package:mobile/features/feedback/presentation/pages/feedback_page.dart';
+import 'package:mobile/features/notifications/presentation/viewmodels/notification_view_model.dart';
 import 'package:mobile/features/settings/presentation/pages/faq_page.dart';
 import 'package:mobile/features/settings/presentation/pages/notification_settings_page.dart';
 import 'package:mobile/features/tags/domain/tag_use_cases.dart';
 import 'package:mobile/features/tags/presentation/pages/tag_page.dart';
 
 import '../../core/widgets/widget_test_app.dart' show loadTestFonts;
+import '../notifications/fake_notification_view_model.dart';
 import 'g1_harness.dart';
 import 'g2_test.dart' show FakeFeedback, FakeTags;
 
@@ -35,7 +37,8 @@ void main() {
     addTearDown(g.dispose);
     getIt
       ..registerSingleton<TagUseCases>(FakeTags())
-      ..registerSingleton<FeedbackUseCases>(FakeFeedback());
+      ..registerSingleton<FeedbackUseCases>(FakeFeedback())
+      ..registerSingleton<NotificationViewModel>(FakeNotificationViewModel());
     await t.pumpWidget(g.app(page, dark: dark, scale: scale));
     await t.pump(const Duration(milliseconds: 400));
     await t.pump(const Duration(milliseconds: 400));
