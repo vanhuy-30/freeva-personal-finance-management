@@ -13,9 +13,7 @@ class ProfileUseCases {
   Future<Either<AuthFailure, Profile>> load() => _repository.load();
   Future<Either<AuthFailure, ProfileOptions>> options() =>
       _repository.options();
-  Future<Either<AuthFailure, Unit>> saveOnboarding(
-    OnboardingAnswers answers,
-  ) {
+  Future<Either<AuthFailure, Unit>> saveOnboarding(OnboardingAnswers answers) {
     if ((answers.goals?.length ?? 0) > 2 ||
         (answers.goals?.toSet().length ?? 0) != (answers.goals?.length ?? 0)) {
       return Future.value(left(const AuthFailure(AuthError.invalidInput)));

@@ -45,6 +45,7 @@ abstract class AuthUseCases {
   Future<Either<AuthFailure, Unit>> revoke(String? id);
   Future<Either<AuthFailure, Unit>> logout();
   Future<Either<AuthFailure, Unit>> forgetDevice();
+  Future<Either<AuthFailure, Unit>> deleteAccount();
 }
 
 @Injectable(as: AuthUseCases)
@@ -194,6 +195,9 @@ class DefaultAuthUseCases implements AuthUseCases {
   @override
   Future<Either<AuthFailure, Unit>> forgetDevice() =>
       _repository.forgetDevice();
+  @override
+  Future<Either<AuthFailure, Unit>> deleteAccount() =>
+      _repository.deleteAccount();
 }
 
 /// At least one letter and one digit, in any script (Vietnamese included).

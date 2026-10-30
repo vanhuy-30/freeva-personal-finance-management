@@ -5,6 +5,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../auth/domain/auth_repository.dart';
 import '../../../auth/presentation/viewmodels/auth_view_model.dart';
+import '../../domain/account_export_use_case.dart';
 import '../../domain/profile.dart';
 import '../../domain/profile_use_cases.dart';
 
@@ -21,17 +22,22 @@ abstract class ProfileViewModel extends ChangeNotifier {
   void cancel();
   Future<void> load();
   Future<void> save();
+
+  /// True while an export is being fetched or handed to the OS.
+  bool get exporting;
+  Future<bool> exportData();
 }
 
 @LazySingleton(as: ProfileViewModel)
 class DefaultProfileViewModel extends ProfileViewModel {
-  DefaultProfileViewModel(this._useCases, this._auth) {
+  DefaultProfileViewModel(this._useCases, this._auth, this._export) {
     _stage = _auth.stage;
     _auth.addListener(_authChanged);
     if (_stage == AuthStage.unlocked) Future.microtask(load);
   }
   final ProfileUseCases _useCases;
   final AuthViewModel _auth;
+  final AccountExportUseCase _export;
   late AuthStage _stage;
   int _epoch = 0;
   @override
@@ -147,6 +153,25 @@ class DefaultProfileViewModel extends ProfileViewModel {
     if (epoch != _epoch) return;
     loading = false;
     notifyListeners();
+  }
+
+  @override
+  bool exporting = false;
+
+  @override
+  Future<bool> exportData() async {
+    if (exporting || _stage != AuthStage.unlocked) return false;
+    final epoch = _epoch;
+    exporting = true;
+    failure = null;
+    notifyListeners();
+    final result = await _export(DateTime.now());
+    if (epoch != _epoch) return false;
+    exporting = false;
+    var shared = false;
+    await result.fold((e) => _fail(e), (value) async => shared = value);
+    notifyListeners();
+    return shared;
   }
 
   @override

@@ -93,4 +93,11 @@ abstract class AuthRepository {
   Future<Either<AuthFailure, Unit>> revoke(String? id);
   Future<Either<AuthFailure, Unit>> logout();
   Future<Either<AuthFailure, Unit>> forgetDevice();
+
+  /// The account export JSON exactly as the API returned it.
+  Future<Either<AuthFailure, String>> exportAccount();
+
+  /// Deletes the account on the server, then drops the session and PIN here.
+  /// Nothing local is touched unless the server confirmed.
+  Future<Either<AuthFailure, Unit>> deleteAccount();
 }

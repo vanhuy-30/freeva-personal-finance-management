@@ -46,7 +46,13 @@ void main() {
       analytics,
     );
     await settings.load();
-    profile = DefaultProfileViewModel(ProfileUseCases(MemoryProfiles()), auth);
+    profile = DefaultProfileViewModel(
+      ProfileUseCases(MemoryProfiles()),
+      auth,
+      exportCase(
+        AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+      ),
+    );
     await profile.load();
     getIt.registerSingleton<AuthViewModel>(auth);
     getIt.registerSingleton<SettingsViewModel>(settings);

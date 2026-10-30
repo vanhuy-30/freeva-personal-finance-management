@@ -133,16 +133,26 @@ void main() {
     late MemoryProfiles repo;
     late DefaultAuthViewModel auth;
     late DefaultProfileViewModel model;
+    late FakeApi api;
+    late FakeSharer sharer;
+    late AuthRepositoryImpl authRepo;
     setUp(() async {
-      auth = DefaultAuthViewModel(
-        DefaultAuthUseCases(
-          AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
-        ),
-      );
+      api = FakeApi();
+      sharer = FakeSharer();
+      authRepo = AuthRepositoryImpl(api, MemoryVault(), FakeBiometrics());
+      await authRepo.submit(AuthAction.login, {
+        'email': 'user@example.com',
+        'password': 'password long enough',
+      });
+      auth = DefaultAuthViewModel(DefaultAuthUseCases(authRepo));
       auth.stage = AuthStage.unlocked;
       auth.hasPin = true;
       repo = MemoryProfiles();
-      model = DefaultProfileViewModel(ProfileUseCases(repo), auth);
+      model = DefaultProfileViewModel(
+        ProfileUseCases(repo),
+        auth,
+        exportCase(authRepo, sharer),
+      );
       await Future<void>.delayed(Duration.zero);
     });
     tearDown(() {
@@ -248,6 +258,93 @@ void main() {
       expect(auth.stage, AuthStage.signedOut);
       expect(model.saved, null);
       expect(model.loading, false);
+    });
+  });
+
+  group('account export and delete', () {
+    late FakeApi api;
+    late MemoryVault vault;
+    late AuthRepositoryImpl authRepo;
+    late FakeSharer sharer;
+    late DefaultAuthViewModel auth;
+    late DefaultProfileViewModel model;
+    setUp(() async {
+      api = FakeApi();
+      vault = MemoryVault();
+      sharer = FakeSharer();
+      authRepo = AuthRepositoryImpl(api, vault, FakeBiometrics());
+      await authRepo.submit(AuthAction.login, {
+        'email': 'user@example.com',
+        'password': 'password long enough',
+      });
+      auth = DefaultAuthViewModel(DefaultAuthUseCases(authRepo));
+      auth.stage = AuthStage.unlocked;
+      model = DefaultProfileViewModel(
+        ProfileUseCases(MemoryProfiles()),
+        auth,
+        exportCase(authRepo, sharer),
+      );
+      await Future<void>.delayed(Duration.zero);
+    });
+    tearDown(() {
+      model.dispose();
+      auth.dispose();
+    });
+
+    test('export shares the API body unchanged', () async {
+      api.exportBody = '{"b":1,\n "a":[ 2 ]}';
+      expect(await model.exportData(), isTrue);
+      expect(api.lastPath, 'account/export');
+      expect(sharer.content, '{"b":1,\n "a":[ 2 ]}');
+      expect(sharer.name, matches(RegExp(r'^freeva-export-\d{8}\.json$')));
+      expect(model.exporting, isFalse);
+      expect(model.failure, isNull);
+    });
+
+    test('dismissed share sheet is not a failure', () async {
+      sharer.result = false;
+      expect(await model.exportData(), isFalse);
+      expect(model.failure, isNull);
+    });
+
+    test('network error on export keeps session and shares nothing', () async {
+      api.failure = const AuthFailure(AuthError.network);
+      expect(await model.exportData(), isFalse);
+      expect(model.failure?.code, AuthError.network);
+      expect(sharer.content, isNull);
+      expect(vault.value, isNotNull);
+    });
+
+    test('share failure surfaces as a failure', () async {
+      sharer.fail = true;
+      expect(await model.exportData(), isFalse);
+      expect(model.failure, isNotNull);
+      expect(model.exporting, isFalse);
+    });
+
+    test('delete clears session and goes signed out', () async {
+      await auth.deleteAccount();
+      expect(api.lastPath, 'account');
+      expect(auth.stage, AuthStage.signedOut);
+      expect(vault.value, isNull);
+    });
+
+    test(
+      'network error on delete keeps everything and stays signed in',
+      () async {
+        api.failure = const AuthFailure(AuthError.network);
+        await auth.deleteAccount();
+        expect(auth.failure?.code, AuthError.network);
+        expect(auth.stage, AuthStage.unlocked);
+        expect(vault.value, isNotNull);
+      },
+    );
+
+    test('server refusal on delete keeps everything', () async {
+      api.failure = const AuthFailure(AuthError.unavailable);
+      await auth.deleteAccount();
+      expect(auth.stage, AuthStage.unlocked);
+      expect(vault.value, isNotNull);
     });
   });
 }

@@ -559,7 +559,7 @@ class SEn extends S {
 
   @override
   String get tosBody =>
-      'Freeva lets you record wallets and transactions you enter. You keep your financial data. The service operator is not decided yet. Account export and deletion are separate release work. This summary does not replace a lawyer-reviewed agreement.';
+      'Freeva lets you record wallets and transactions you enter. You keep your financial data. The service operator is not decided yet. You can export your data and delete your account from Profile. This summary does not replace a lawyer-reviewed agreement.';
 
   @override
   String get privacyTitle => 'Privacy policy';
@@ -3367,6 +3367,28 @@ class SEn extends S {
 
   @override
   String get meDeleteAccount => 'Delete account';
+
+  @override
+  String get meExportData => 'Export data';
+
+  @override
+  String get meExportHint => 'Save or send a copy of your data';
+
+  @override
+  String get meExportError => 'Couldn\'t export. Try again.';
+
+  @override
+  String get meDeleteTitle => 'Delete account?';
+
+  @override
+  String get meDeleteBody =>
+      'All your data is deleted right away and can\'t be restored. You can export it first.';
+
+  @override
+  String get meDeleteConfirm => 'Delete permanently';
+
+  @override
+  String get meDeleteError => 'Couldn\'t delete. Your data is untouched.';
 
   @override
   String get meChangeAvatar => 'Change photo';

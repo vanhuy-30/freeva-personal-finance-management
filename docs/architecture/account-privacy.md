@@ -1,6 +1,6 @@
 # Tài khoản — xuất JSON và xóa — BE-P1-010
 
-Contract: [OpenAPI](../../packages/api-contracts/openapi.yaml) `GET /api/v1/account/export` và `DELETE /api/v1/account`. Không CSV, không UI mobile, không analytics.
+Contract: [OpenAPI](../../packages/api-contracts/openapi.yaml) `GET /api/v1/account/export` và `DELETE /api/v1/account`. Không CSV, không analytics. Nút trên app: `MOB-P2-011` ([mobile-profile](mobile-profile.md)).
 
 ## API
 

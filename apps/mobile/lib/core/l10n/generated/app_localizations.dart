@@ -1120,7 +1120,7 @@ abstract class S {
   /// No description provided for @tosBody.
   ///
   /// In en, this message translates to:
-  /// **'Freeva lets you record wallets and transactions you enter. You keep your financial data. The service operator is not decided yet. Account export and deletion are separate release work. This summary does not replace a lawyer-reviewed agreement.'**
+  /// **'Freeva lets you record wallets and transactions you enter. You keep your financial data. The service operator is not decided yet. You can export your data and delete your account from Profile. This summary does not replace a lawyer-reviewed agreement.'**
   String get tosBody;
 
   /// No description provided for @privacyTitle.
@@ -6089,6 +6089,48 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Delete account'**
   String get meDeleteAccount;
+
+  /// No description provided for @meExportData.
+  ///
+  /// In en, this message translates to:
+  /// **'Export data'**
+  String get meExportData;
+
+  /// No description provided for @meExportHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Save or send a copy of your data'**
+  String get meExportHint;
+
+  /// No description provided for @meExportError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t export. Try again.'**
+  String get meExportError;
+
+  /// No description provided for @meDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account?'**
+  String get meDeleteTitle;
+
+  /// No description provided for @meDeleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'All your data is deleted right away and can\'t be restored. You can export it first.'**
+  String get meDeleteBody;
+
+  /// No description provided for @meDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete permanently'**
+  String get meDeleteConfirm;
+
+  /// No description provided for @meDeleteError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t delete. Your data is untouched.'**
+  String get meDeleteError;
 
   /// No description provided for @meChangeAvatar.
   ///

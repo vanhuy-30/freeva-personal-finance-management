@@ -8,7 +8,7 @@ Home và danh sách giao dịch hiện trạng thái sync. Có mạng vẫn gọ
 - Gộp trước khi gửi: sửa bản tạo chưa lên server giữ `clientId`; xóa bản đó thì bỏ khỏi hàng đợi; nhiều lần sửa là một update với version gốc; sửa rồi xóa thành một delete cùng version; xóa rồi khôi phục khi chưa gửi thì bỏ operation.
 - Flush khi vừa mở khóa, app trở lại foreground, hoặc bấm Đồng bộ. `schemaVersion` 1, tối đa 50 operation pending, cũ trước. `applied` và `replayed` xóa khỏi hàng đợi rồi tải lại danh sách và ví. `conflict` giữ mục, không ghi đè; `review` khi số tiền khác. `rejected` giữ mục ở trạng thái failed. Mục server không trả vẫn pending. HTTP 409 schema thì dừng và không xóa hàng đợi. Mạng hoặc unavailable tăng `retryCount`.
 - Gợi ý trùng không chặn tạo và không đưa id vào analytics. Banner chỉ nói có thể đã có giao dịch tương tự.
-- Đăng xuất và quên thiết bị xóa hàng đợi. Khóa PIN không xóa.
+- Đăng xuất, quên thiết bị và xóa tài khoản xóa hàng đợi. Khóa PIN không xóa.
 - Ghi thành công trên mạng thì bỏ mục trùng `clientId` hoặc id server, để không gửi lại.
 
 ## Layer, tiền và quyền riêng tư

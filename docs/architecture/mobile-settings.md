@@ -42,7 +42,7 @@ Thiết kế: [G-profile-settings.md](../brand/patterns/G-profile-settings.md).
 - **Hồ sơ** (`/profile`): tên hiển thị (gửi trong `PUT /profile`, để trống là xoá); email có "Đổi" nhưng chưa làm (cần xác nhận qua thư).
 - **Bảo mật** (`/me/security`): PIN luôn bật; sinh trắc là công tắc; **Đổi mã PIN** nhập PIN cũ (tính như một lần mở khoá, sai 5 lần thì xoá máy), PIN mới, nhập lại; **Đổi mật khẩu** gọi `POST /auth/change-password` (403 là sai mật khẩu hiện tại; máy này giữ phiên, máy khác bị đăng xuất).
 - **Phiên đăng nhập** (`/me/sessions`): Máy này + chip, phiên khác + Thu hồi (hỏi lại), "Đăng xuất mọi máy khác" (thu hồi từng phiên khác, không đụng phiên hiện tại).
-- Chưa có avatar ảnh, xoá tài khoản, đổi email.
+- Chưa có avatar ảnh, đổi email. Xuất dữ liệu và xoá tài khoản: [mobile-profile](mobile-profile.md).
 
 ### G2
 
