@@ -51,6 +51,12 @@ List<SyncQueueItem> coalesceQueue(
       first.status == SyncItemStatus.pending) {
     return items.where((item) => item.serverId != serverId).toList();
   }
+  // Restore then delete before sending: the server copy is already deleted.
+  if (pending.action == SyncAction.delete &&
+      first.action == SyncAction.restore &&
+      first.status == SyncItemStatus.pending) {
+    return items.where((item) => item.serverId != serverId).toList();
+  }
   return [
     ...items.where((item) => item.serverId != serverId),
     pending.copyWith(

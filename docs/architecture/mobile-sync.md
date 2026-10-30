@@ -36,4 +36,21 @@ fvm flutter analyze
 fvm flutter test
 ```
 
-Kết quả: analyzer sạch, toàn bộ 117 Flutter tests pass (9 tests mới).
+Kết quả: analyzer sạch, toàn bộ 117 Flutter tests pass (9 tests mới). Sau QA-P2-001: 548 tests pass.
+
+## Rà soát QA-P2-001 (2026-10-30)
+
+Test: `apps/mobile/test/features/sync/sync_audit_test.dart` cùng các test sync có sẵn.
+
+| Mục hợp đồng | Kết quả |
+|---|---|
+| Gộp mutation (tạo→sửa, tạo→xóa, sửa×N, sửa→xóa, xóa→khôi phục) | Đạt |
+| Khôi phục rồi xóa khi chưa gửi | **Lỗi, đã sửa**: trước đây còn lại một lệnh xóa gửi lên bản đã xóa; nay bỏ cả hai |
+| Giữ `clientId`, không trùng khi tạo hai lần | Đạt |
+| `applied`/`replayed` xóa khỏi hàng | Đạt |
+| `conflict` không ghi đè; sửa tiếp giữ version cũ, chỉ `keepLocal` nâng version | Đạt |
+| Đăng xuất / quên thiết bị / xóa tài khoản xóa hàng | Đạt |
+| Hàng còn trên máy khi app dậy ở trạng thái đã đăng xuất (tắt app giữa lúc đăng xuất) | **Lỗi, đã sửa**: trước đây không bị xóa và có thể gửi sang tài khoản kế tiếp; nay xóa khi auth đã đọc xong phiên mà vẫn `signedOut` |
+| Khóa PIN không xóa; mở khóa thì flush | Đạt |
+| Số dư chờ sync | Đạt: số dư luôn do server suy ra, mục chờ chỉ hiện như bản nháp có nhãn chờ |
+| Phiên hết hạn (`sessionExpired`) | Giữ nguyên: về `signedOut` nên hàng chưa gửi bị xóa theo hợp đồng đăng xuất |

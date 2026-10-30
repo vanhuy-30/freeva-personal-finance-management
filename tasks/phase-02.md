@@ -140,11 +140,12 @@ Phase 1 giữ đóng. Các ticket dưới đây không đổi số 28/28.
 - Note: nút Xuất dữ liệu và Xoá tài khoản ở Hồ sơ; `AuthApi.requestText` giữ nguyên body export; `share_plus` + `path_provider`. Dòng Xuất dữ liệu chưa có trên board thiết kế. Chưa thử share sheet trên máy thật.
 
 ### QA-P2-001 — Rà soát hàng đợi offline giao dịch
-- Status: todo
+- Status: done
 - Module: 20
 - Gate: post-v1
 - Depends: BE-P1-009, MOB-P1-008
 - DoD: Đi lại hợp đồng [mobile-sync.md](../docs/architecture/mobile-sync.md) trên create, sửa, xóa, khôi phục: gộp mutation, giữ `clientId`, `applied`/`replayed` xóa khỏi hàng, `conflict` không ghi đè, đăng xuất xóa hàng, khóa PIN không xóa, banner và màn chọn bản. Ghi kết quả vào `mobile-sync.md`. Sửa lỗi làm sai hợp đồng đó (trùng giao dịch, ghi đè im lặng, hàng sống sót sau đăng xuất, số dư chờ sync hiện như đã chốt). Không thêm sync ví/danh mục, không CRDT, không pull cursor, không đổi API.
+- Note: hai lỗi đã sửa (khôi phục→xóa còn lệnh xóa thừa; hàng cũ không bị xóa khi app dậy ở signedOut). Kết quả từng mục trong mobile-sync.md. Chưa E2E trên máy thật; hết phiên vẫn xóa hàng chưa gửi.
 
 ### BE-P2-012 / MOB-P2-012 — Gắn câu trả lời đầu vào tài khoản
 - Status: done
