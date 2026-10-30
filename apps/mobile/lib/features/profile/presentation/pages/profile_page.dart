@@ -7,9 +7,13 @@ import '../../../../core/router/nav_back.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_button.dart';
+import '../../../../core/widgets/freeva_dialog.dart';
+import '../../../../core/widgets/settings_row.dart';
 import '../../../../core/widgets/freeva_text_field.dart';
 import '../../../../core/widgets/freeva_toast.dart';
 import '../../../../core/widgets/freeva_top_bar.dart';
+import '../../../auth/domain/auth_repository.dart';
+import '../../../auth/presentation/viewmodels/auth_view_model.dart';
 import '../../../settings/domain/account_labels.dart';
 import '../../../settings/presentation/viewmodels/settings_view_model.dart';
 import '../../../settings/presentation/widgets/avatar_letter.dart';
@@ -61,6 +65,33 @@ class _ProfilePageState extends State<ProfilePage> {
     context.popOrGo('/me');
   }
 
+  Future<void> _export() async {
+    final s = S.of(context);
+    await profile.exportData();
+    if (!mounted || profile.failure == null) return;
+    showFreevaToast(context, message: s.meExportError);
+  }
+
+  Future<void> _delete() async {
+    final s = S.of(context);
+    final auth = getIt<AuthViewModel>();
+    final ok = await showFreevaConfirm(
+      context: context,
+      title: s.meDeleteTitle,
+      message: s.meDeleteBody,
+      icon: LucideIcons.trash,
+      iconTone: FreevaDialogTone.danger,
+      cancelLabel: s.commonCancel,
+      confirmLabel: s.meDeleteConfirm,
+      destructive: true,
+    );
+    if (!ok) return;
+    await auth.deleteAccount();
+    // On success the stage is signedOut and AuthGate has left this page.
+    if (!mounted || auth.stage == AuthStage.signedOut) return;
+    showFreevaToast(context, message: s.meDeleteError);
+  }
+
   @override
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: Listenable.merge([profile, settings, name]),
@@ -108,6 +139,14 @@ class _ProfilePageState extends State<ProfilePage> {
                         const SizedBox(height: 14),
                         _EmailField(email: email, onChange: soon),
                       ],
+                      const SizedBox(height: 14),
+                      SettingsRow(
+                        icon: LucideIcons.download,
+                        title: s.meExportData,
+                        subtitle: s.meExportHint,
+                        chevron: false,
+                        onTap: profile.exporting ? null : _export,
+                      ),
                     ],
                   ),
                 ),
@@ -115,7 +154,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 DangerTextButton(
                   icon: LucideIcons.trash,
                   label: s.meDeleteAccount,
-                  onPressed: soon,
+                  onPressed: _delete,
                 ),
                 const SizedBox(height: 14),
                 FreevaButton(

@@ -58,18 +58,14 @@ class NotificationRepositoryImpl implements NotificationRepository {
   );
 
   @override
-  Future<Either<AuthFailure, List<InboxNotification>>> list() => _request(
-    'GET',
-    'notifications',
-    (json) {
-      final items = json['items'];
-      if (items is! List) throw const FormatException('items');
-      return [
-        for (final row in items)
-          _item(Map<String, dynamic>.from(row as Map)),
-      ];
-    },
-  );
+  Future<Either<AuthFailure, List<InboxNotification>>> list() =>
+      _request('GET', 'notifications', (json) {
+        final items = json['items'];
+        if (items is! List) throw const FormatException('items');
+        return [
+          for (final row in items) _item(Map<String, dynamic>.from(row as Map)),
+        ];
+      });
 
   @override
   Future<Either<AuthFailure, InboxNotification>> markRead(String id) =>
@@ -95,8 +91,7 @@ NotificationPreferences _preferences(Map<String, dynamic> json) {
   if (kinds is! List) throw const FormatException('kinds');
   return NotificationPreferences(
     kinds: [
-      for (final row in kinds)
-        _toggle(Map<String, dynamic>.from(row as Map)),
+      for (final row in kinds) _toggle(Map<String, dynamic>.from(row as Map)),
     ],
     quietHoursEnabled: json['quietHoursEnabled'] as bool,
     quietStart: json['quietStart'] as String,

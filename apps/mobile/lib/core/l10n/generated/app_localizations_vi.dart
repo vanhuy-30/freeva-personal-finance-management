@@ -554,7 +554,7 @@ class SVi extends S {
 
   @override
   String get tosBody =>
-      'Freeva để bạn ghi ví và giao dịch do bạn nhập. Bạn giữ dữ liệu tài chính của mình. Đơn vị vận hành chưa được chốt. Xuất và xóa tài khoản là việc phát hành riêng. Bản tóm tắt này không thay điều khoản đã được luật sư rà.';
+      'Freeva để bạn ghi ví và giao dịch do bạn nhập. Bạn giữ dữ liệu tài chính của mình. Đơn vị vận hành chưa được chốt. Bạn có thể xuất dữ liệu và xóa tài khoản trong Hồ sơ. Bản tóm tắt này không thay điều khoản đã được luật sư rà.';
 
   @override
   String get privacyTitle => 'Chính sách bảo mật';
@@ -3327,6 +3327,28 @@ class SVi extends S {
 
   @override
   String get meDeleteAccount => 'Xoá tài khoản';
+
+  @override
+  String get meExportData => 'Xuất dữ liệu';
+
+  @override
+  String get meExportHint => 'Lưu hoặc gửi một bản sao dữ liệu của bạn';
+
+  @override
+  String get meExportError => 'Chưa xuất được. Thử lại nhé.';
+
+  @override
+  String get meDeleteTitle => 'Xóa tài khoản?';
+
+  @override
+  String get meDeleteBody =>
+      'Mọi dữ liệu của bạn sẽ bị xóa ngay và không khôi phục được. Bạn có thể xuất dữ liệu trước.';
+
+  @override
+  String get meDeleteConfirm => 'Xóa vĩnh viễn';
+
+  @override
+  String get meDeleteError => 'Chưa xóa được. Dữ liệu của bạn vẫn còn nguyên.';
 
   @override
   String get meChangeAvatar => 'Đổi ảnh đại diện';

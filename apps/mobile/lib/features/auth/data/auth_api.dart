@@ -18,6 +18,9 @@ abstract class AuthApi {
     String? token,
     Map<String, String>? headers,
   });
+
+  /// Same as [request] but returns the 2xx body exactly as received.
+  Future<String> requestText(String method, String path, {String? token});
 }
 
 @LazySingleton(as: AuthApi)
@@ -33,6 +36,27 @@ class HttpAuthApi implements AuthApi {
 
   @override
   Future<Map<String, dynamic>> request(
+    String method,
+    String path, {
+    Map<String, dynamic>? body,
+    String? token,
+    Map<String, String>? headers,
+  }) async {
+    final text = await _send(
+      method,
+      path,
+      body: body,
+      token: token,
+      headers: headers,
+    );
+    return text.isEmpty ? {} : jsonDecode(text) as Map<String, dynamic>;
+  }
+
+  @override
+  Future<String> requestText(String method, String path, {String? token}) =>
+      _send(method, path, token: token);
+
+  Future<String> _send(
     String method,
     String path, {
     Map<String, dynamic>? body,
@@ -67,9 +91,7 @@ class HttpAuthApi implements AuthApi {
       final ms = DateTime.now().difference(started).inMilliseconds;
       if (response.statusCode >= 200 && response.statusCode < 300) {
         _logger?.http('← $method $path ${response.statusCode} ${ms}ms');
-        return response.body.isEmpty
-            ? {}
-            : jsonDecode(response.body) as Map<String, dynamic>;
+        return response.body;
       }
       _logger?.http('← $method $path ${response.statusCode} ${ms}ms');
       throw AuthFailure(switch (response.statusCode) {

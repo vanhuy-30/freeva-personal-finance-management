@@ -55,7 +55,9 @@ class _ReportBudgetRowState extends State<ReportBudgetRow> {
       _loading = true;
       _failed = false;
     });
-    final result = await getIt<BudgetUseCases>().current(on: widget.period.from);
+    final result = await getIt<BudgetUseCases>().current(
+      on: widget.period.from,
+    );
     if (!mounted) return;
     result.fold(
       (_) => setState(() {

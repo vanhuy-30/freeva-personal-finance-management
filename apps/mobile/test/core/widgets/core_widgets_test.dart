@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import 'dart:ui' show Tristate;
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/core/theme/lucide_icons.g.dart';
 import 'package:mobile/core/theme/tokens.g.dart';

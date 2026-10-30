@@ -82,6 +82,7 @@ abstract class AuthViewModel extends ChangeNotifier {
   Future<void> revoke(AuthSession? session);
   Future<void> logout();
   Future<void> forgetDevice();
+  Future<void> deleteAccount();
   void lock();
   void sessionExpired();
   void clearMessage();
@@ -464,6 +465,12 @@ class DefaultAuthViewModel extends AuthViewModel {
   });
   @override
   Future<void> forgetDevice() => _run(_useCases.forgetDevice, (_) {
+    stage = AuthStage.signedOut;
+    _resetFlow();
+    sessions = [];
+  });
+  @override
+  Future<void> deleteAccount() => _run(_useCases.deleteAccount, (_) {
     stage = AuthStage.signedOut;
     _resetFlow();
     sessions = [];

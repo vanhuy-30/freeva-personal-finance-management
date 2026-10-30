@@ -70,26 +70,26 @@ void main() {
 }
 
 BudgetSummary _summary() => BudgetSummary(
-      id: 'b1',
-      currencyCode: 'VND',
-      limitMinor: BigInt.from(10000000),
-      spentMinor: BigInt.zero,
-      remainingMinor: BigInt.from(10000000),
-      percentBps: 0,
-      status: BudgetStatus.healthy,
-      alertThresholds: const [70, 100],
-      crossedThresholds: const [],
-      categories: const [],
-      period: const BudgetPeriod(
-        from: '2026-10-01',
-        to: '2026-10-31',
-        timezone: 'Asia/Ho_Chi_Minh',
-        fiscalMonthStartDay: 1,
-      ),
-      applyTo: BudgetApplyTo.defaultTemplate,
-      isOverride: false,
-      version: 1,
-    );
+  id: 'b1',
+  currencyCode: 'VND',
+  limitMinor: BigInt.from(10000000),
+  spentMinor: BigInt.zero,
+  remainingMinor: BigInt.from(10000000),
+  percentBps: 0,
+  status: BudgetStatus.healthy,
+  alertThresholds: const [70, 100],
+  crossedThresholds: const [],
+  categories: const [],
+  period: const BudgetPeriod(
+    from: '2026-10-01',
+    to: '2026-10-31',
+    timezone: 'Asia/Ho_Chi_Minh',
+    fiscalMonthStartDay: 1,
+  ),
+  applyTo: BudgetApplyTo.defaultTemplate,
+  isOverride: false,
+  version: 1,
+);
 
 class _Repo implements BudgetRepository {
   int putCalls = 0;

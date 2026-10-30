@@ -20,48 +20,10 @@ void main() {
     expect(formatSavingsRateBps(-250, 'en'), '−2.50%');
   });
 
-  test('parses month review money as strings and rejects JSON numbers', () async {
-    final api = _Api()
-      ..json = {
-        'period': {
-          'kind': 'month',
-          'from': '2026-09-15',
-          'to': '2026-10-14',
-          'timezone': 'Asia/Ho_Chi_Minh',
-          'fiscalMonthStartDay': 15,
-        },
-        'currencies': [
-          {
-            'currency': 'VND',
-            'incomeMinor': '3000',
-            'expenseMinor': '-1170',
-            'savingsMinor': '1830',
-            'savingsRateBps': 6100,
-            'topCategories': [
-              {
-                'categoryId': 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
-                'parentId': 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
-                'expenseMinor': '-700',
-                'transactionCount': 2,
-              },
-            ],
-          },
-        ],
-      };
-    final ok = await ReportRepositoryImpl(api).monthReview(on: '2026-10-08');
-    expect(ok.isRight(), isTrue);
-    final review = ok.getOrElse(() => throw StateError('missing'));
-    expect(review.period.from, '2026-09-15');
-    expect(review.currencies.single.savingsMinor, BigInt.from(1830));
-    expect(review.currencies.single.savingsRateBps, 6100);
-    expect(
-      review.currencies.single.topCategories.single.expenseMinor,
-      BigInt.from(-700),
-    );
-    expect(api.paths.single, contains('reports/month-review'));
-
-    final broken = await ReportRepositoryImpl(
-      _Api()
+  test(
+    'parses month review money as strings and rejects JSON numbers',
+    () async {
+      final api = _Api()
         ..json = {
           'period': {
             'kind': 'month',
@@ -73,17 +35,58 @@ void main() {
           'currencies': [
             {
               'currency': 'VND',
-              'incomeMinor': 3000,
+              'incomeMinor': '3000',
               'expenseMinor': '-1170',
               'savingsMinor': '1830',
               'savingsRateBps': 6100,
-              'topCategories': <Object>[],
+              'topCategories': [
+                {
+                  'categoryId': 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+                  'parentId': 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+                  'expenseMinor': '-700',
+                  'transactionCount': 2,
+                },
+              ],
             },
           ],
-        },
-    ).monthReview();
-    expect(broken.fold((e) => e.code, (_) => null), AuthError.unavailable);
-  });
+        };
+      final ok = await ReportRepositoryImpl(api).monthReview(on: '2026-10-08');
+      expect(ok.isRight(), isTrue);
+      final review = ok.getOrElse(() => throw StateError('missing'));
+      expect(review.period.from, '2026-09-15');
+      expect(review.currencies.single.savingsMinor, BigInt.from(1830));
+      expect(review.currencies.single.savingsRateBps, 6100);
+      expect(
+        review.currencies.single.topCategories.single.expenseMinor,
+        BigInt.from(-700),
+      );
+      expect(api.paths.single, contains('reports/month-review'));
+
+      final broken = await ReportRepositoryImpl(
+        _Api()
+          ..json = {
+            'period': {
+              'kind': 'month',
+              'from': '2026-09-15',
+              'to': '2026-10-14',
+              'timezone': 'Asia/Ho_Chi_Minh',
+              'fiscalMonthStartDay': 15,
+            },
+            'currencies': [
+              {
+                'currency': 'VND',
+                'incomeMinor': 3000,
+                'expenseMinor': '-1170',
+                'savingsMinor': '1830',
+                'savingsRateBps': 6100,
+                'topCategories': <Object>[],
+              },
+            ],
+          },
+      ).monthReview();
+      expect(broken.fold((e) => e.code, (_) => null), AuthError.unavailable);
+    },
+  );
 
   test('names categories and never recomputes savings on the client', () async {
     const housing = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';

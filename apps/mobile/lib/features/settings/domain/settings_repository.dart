@@ -73,5 +73,6 @@ String encodePreferences(AppPreferences value) => jsonEncode({
   'notificationPrompted': value.notificationPrompted,
   'notificationsOptInTracked': value.notificationsOptInTracked,
   'welcomeSeen': value.welcomeSeen,
-  if (value.budgetDraftMinor != null) 'budgetDraftMinor': value.budgetDraftMinor,
+  if (value.budgetDraftMinor != null)
+    'budgetDraftMinor': value.budgetDraftMinor,
 });

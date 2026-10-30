@@ -8,7 +8,9 @@ import 'package:mobile/features/recurring/domain/recurring_use_cases.dart';
 class _FakeRepo implements RecurringRepository {
   RecurringDraft? last;
   @override
-  Future<Either<AuthFailure, RecurringRule>> create(RecurringDraft draft) async {
+  Future<Either<AuthFailure, RecurringRule>> create(
+    RecurringDraft draft,
+  ) async {
     last = draft;
     return right(
       RecurringRule(
@@ -71,52 +73,55 @@ class _FakeRepo implements RecurringRepository {
 }
 
 void main() {
-  test('rejects expense without category and accepts transfer balance', () async {
-    final repo = _FakeRepo();
-    final cases = DefaultRecurringUseCases(repo);
-    final bad = await cases.create(
-      RecurringDraft(
-        clientId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
-        type: 'expense',
-        unit: 'month',
-        interval: 1,
-        amountMinor: BigInt.from(-1000),
-        currencyCode: 'VND',
-        accountId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
-        categoryId: null,
-        counterAccountId: null,
-        counterAmountMinor: null,
-        counterCurrencyCode: null,
-        fxRate: null,
-        startDate: '2026-01-01',
-        endDate: null,
-        nextExecutionDate: '2026-01-01',
-        active: true,
-      ),
-    );
-    expect(bad.isLeft(), isTrue);
+  test(
+    'rejects expense without category and accepts transfer balance',
+    () async {
+      final repo = _FakeRepo();
+      final cases = DefaultRecurringUseCases(repo);
+      final bad = await cases.create(
+        RecurringDraft(
+          clientId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+          type: 'expense',
+          unit: 'month',
+          interval: 1,
+          amountMinor: BigInt.from(-1000),
+          currencyCode: 'VND',
+          accountId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+          categoryId: null,
+          counterAccountId: null,
+          counterAmountMinor: null,
+          counterCurrencyCode: null,
+          fxRate: null,
+          startDate: '2026-01-01',
+          endDate: null,
+          nextExecutionDate: '2026-01-01',
+          active: true,
+        ),
+      );
+      expect(bad.isLeft(), isTrue);
 
-    final ok = await cases.create(
-      RecurringDraft(
-        clientId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
-        type: 'transfer',
-        unit: 'week',
-        interval: 1,
-        amountMinor: BigInt.from(-200000),
-        currencyCode: 'VND',
-        accountId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
-        categoryId: null,
-        counterAccountId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
-        counterAmountMinor: BigInt.from(200000),
-        counterCurrencyCode: 'VND',
-        fxRate: null,
-        startDate: '2026-01-05',
-        endDate: null,
-        nextExecutionDate: '2026-01-05',
-        active: true,
-      ),
-    );
-    expect(ok.isRight(), isTrue);
-    expect(repo.last?.type, 'transfer');
-  });
+      final ok = await cases.create(
+        RecurringDraft(
+          clientId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+          type: 'transfer',
+          unit: 'week',
+          interval: 1,
+          amountMinor: BigInt.from(-200000),
+          currencyCode: 'VND',
+          accountId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+          categoryId: null,
+          counterAccountId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
+          counterAmountMinor: BigInt.from(200000),
+          counterCurrencyCode: 'VND',
+          fxRate: null,
+          startDate: '2026-01-05',
+          endDate: null,
+          nextExecutionDate: '2026-01-05',
+          active: true,
+        ),
+      );
+      expect(ok.isRight(), isTrue);
+      expect(repo.last?.type, 'transfer');
+    },
+  );
 }

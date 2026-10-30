@@ -63,6 +63,20 @@ class FakeApi implements AuthApi {
   Map<String, dynamic>? lastBody;
   int calls = 0;
   Future<void>? pending;
+  String exportBody = '{"schemaVersion":1}';
+  @override
+  Future<String> requestText(
+    String method,
+    String path, {
+    String? token,
+  }) async {
+    calls++;
+    lastPath = path;
+    if (pending != null) await pending;
+    if (failure != null) throw failure!;
+    return exportBody;
+  }
+
   @override
   Future<Map<String, dynamic>> request(
     String method,

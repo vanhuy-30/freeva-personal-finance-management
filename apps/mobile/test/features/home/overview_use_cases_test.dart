@@ -170,18 +170,17 @@ class _Budgets implements BudgetUseCases {
   Future<Either<AuthFailure, BudgetCurrent>> current({
     String? on,
     BudgetApplyTo? applyTo,
-  }) async =>
-      right(
-        const BudgetCurrent(
-          budget: null,
-          period: BudgetPeriod(
-            from: '2026-10-01',
-            to: '2026-10-31',
-            timezone: 'Asia/Ho_Chi_Minh',
-            fiscalMonthStartDay: 1,
-          ),
-        ),
-      );
+  }) async => right(
+    const BudgetCurrent(
+      budget: null,
+      period: BudgetPeriod(
+        from: '2026-10-01',
+        to: '2026-10-31',
+        timezone: 'Asia/Ho_Chi_Minh',
+        fiscalMonthStartDay: 1,
+      ),
+    ),
+  );
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

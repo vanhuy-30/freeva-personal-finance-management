@@ -362,6 +362,26 @@ class AuthRepositoryImpl implements AuthRepository, AuthorizedApi {
     await _clear();
     return unit;
   });
+
+  @override
+  Future<Either<AuthFailure, String>> exportAccount() => _guard(() async {
+    final token = await _token();
+    try {
+      return await _api.requestText('GET', 'account/export', token: token);
+    } on AuthFailure catch (failure) {
+      if (failure.code == AuthError.expired &&
+          _record?['accessToken'] == token) {
+        await _clear();
+      }
+      rethrow;
+    }
+  });
+  @override
+  Future<Either<AuthFailure, Unit>> deleteAccount() => _guard(() async {
+    await _authorized('DELETE', 'account');
+    await _clear();
+    return unit;
+  });
 }
 
 // Keep the KDF off the UI isolate so the privacy cover remains responsive.

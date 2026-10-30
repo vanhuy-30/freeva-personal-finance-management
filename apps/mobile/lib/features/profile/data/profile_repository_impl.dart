@@ -68,14 +68,13 @@ class ProfileRepositoryImpl implements ProfileRepository {
     ),
   );
   @override
-  Future<Either<AuthFailure, Unit>> saveOnboarding(
-    OnboardingAnswers answers,
-  ) => _request(
-    'PATCH',
-    'profile/onboarding',
-    (_) => unit,
-    body: answers.toJson(),
-  );
+  Future<Either<AuthFailure, Unit>> saveOnboarding(OnboardingAnswers answers) =>
+      _request(
+        'PATCH',
+        'profile/onboarding',
+        (_) => unit,
+        body: answers.toJson(),
+      );
   @override
   Future<Either<AuthFailure, Profile>> save(Profile profile) => _request(
     'PUT',
