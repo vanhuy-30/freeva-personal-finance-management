@@ -23,7 +23,7 @@ Tên trim, 1–100 ký tự; `sortOrder` 0–2147483647, mặc định 0. Số t
 
 ## Số dư, lịch sử và ghi đồng thời
 
-- `balanceMinor = initialBalanceMinor + SUM(amountMinor)` của giao dịch cùng owner/ví có `deletedAt = null`. Bao gồm cả transfer; không cached balance, không quy đổi FX hoặc tạo giao dịch số dư ban đầu.
+- `balanceMinor = initialBalanceMinor + SUM(amountMinor)` của giao dịch cùng owner/ví có `deletedAt = null`. Bao gồm cả transfer; không cached balance, không tạo giao dịch số dư ban đầu. Số lưu không bao giờ quy đổi; `GET /financial-accounts/{id}` thêm `converted` (số dư theo tiền tệ hồ sơ, `rate`, `quotedAt`) khi có tỷ giá người dùng nhập và đổi đúng minor unit, ngược lại `null` (`BE-P2-013`).
 - `SUM(bigint)` PostgreSQL đọc qua text rồi chuyển thành JS bigint; số dư derived có thể vượt int64. Các query đọc ví, giao dịch và total dùng cùng snapshot Repeatable Read.
 - Cho sửa số dư ban đầu để đính chính; không sửa giao dịch cũ. Có bất kỳ giao dịch nào, kể cả đã soft-delete, thì khóa đổi `type` và `currencyCode`.
 - Đổi khỏi `credit` khi chưa có giao dịch sẽ xóa cấu hình thẻ trong cùng transaction. Nếu request đồng thời gửi cấu hình thẻ khác null thì trả validation error.

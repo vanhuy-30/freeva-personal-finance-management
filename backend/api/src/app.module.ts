@@ -11,6 +11,7 @@ import { BillModule } from './modules/bills/bill.module';
 import { CalendarModule } from './modules/calendar/calendar.module';
 import { NotificationModule } from './modules/notifications/notification.module';
 import { FinancialAccountModule } from './modules/financial-accounts/financial-account.module';
+import { FxRateModule } from './modules/fx-rates/fx-rate.module';
 import { ProfileModule } from './modules/profile/profile.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { Module } from '@nestjs/common';
@@ -39,6 +40,7 @@ import { HealthModule } from './modules/health/health.module';
     HealthModule,
     AuthModule,
     ProfileModule,
+    FxRateModule,
     FinancialAccountModule,
     TransactionModule,
     RecurringModule,

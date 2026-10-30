@@ -15,7 +15,7 @@ function source(): ExportSource {
     user: {
       id, email: 'owner@example.test', locale: 'vi', timezone: 'Asia/Ho_Chi_Minh', defaultCurrencyCode: 'VND',
       displayName: null, fiscalMonthStartDay: 1,
-      onboardingGoals: ['save', 'budget'], trackingHabit: 'app', reviewCadence: 'weekly', onboardingBudgetMinor: 15000000n,
+      onboardingGoals: ['save', 'budget'], trackingHabit: 'app', reviewCadence: 'weekly', onboardingBudgetMinor: 15000000n, displayCurrencyCode: 'USD',
       emailVerifiedAt: at, categoriesInitializedAt: null, categoriesSupplementedAt: null, createdAt: at, updatedAt: at,
     },
     oauthProviders: ['apple', 'google'],
@@ -31,6 +31,7 @@ function source(): ExportSource {
       id, clientId, fromCode: 'USD', toCode: 'VND', rate: '25000.00000000', quotedAt: at, source: 'manual',
       version: 1, createdAt: at, updatedAt: at,
     }],
+    fxRates: [{ fromCode: 'USD', toCode: 'VND', rate: '25000.00000000', quotedAt: at, createdAt: at, updatedAt: at }],
     recurringRules: [],
     bills: [],
     budget: null,
@@ -55,12 +56,13 @@ describe('BE-P1-010 account export mapping', () => {
       oauthProviders: ['apple', 'google'],
       profile: {
         email: 'owner@example.test', emailVerifiedAt: at.toISOString(), categoriesInitializedAt: null,
-        onboardingGoals: ['save', 'budget'], trackingHabit: 'app', reviewCadence: 'weekly', onboardingBudgetMinor: '15000000',
+        onboardingGoals: ['save', 'budget'], trackingHabit: 'app', reviewCadence: 'weekly', onboardingBudgetMinor: '15000000', displayCurrencyCode: 'USD',
       },
       financialAccounts: [{
         initialBalanceMinor: '9007199254740993', creditLimitMinor: null, minimumPaymentMinor: null,
       }],
       fxQuotes: [{ rate: '25000.00000000' }],
+      fxRates: [{ fromCode: 'USD', toCode: 'VND', rate: '25000.00000000', quotedAt: at.toISOString() }],
       transactions: [{
         amountMinor: '-150000', occurredOn: '2026-10-12', occurredTime: '12:40', deletedAt: at.toISOString(), merchant: 'WinMart',
         tagIds: [clientId, id].sort(),
@@ -111,7 +113,7 @@ describe('BE-P1-010 account repository audit', () => {
       user: {
         findUnique: jest.fn().mockResolvedValue({
           id, email: 'owner@example.test', locale: 'vi', timezone: 'Asia/Ho_Chi_Minh', defaultCurrencyCode: 'VND',
-          displayName: null, fiscalMonthStartDay: 1, onboardingGoals: [], trackingHabit: null, reviewCadence: null, onboardingBudgetMinor: null,
+          displayName: null, fiscalMonthStartDay: 1, onboardingGoals: [], trackingHabit: null, reviewCadence: null, onboardingBudgetMinor: null, displayCurrencyCode: null,
           emailVerifiedAt: null, categoriesInitializedAt: null, categoriesSupplementedAt: null, createdAt: at, updatedAt: at,
           oauthIdentities: [{ provider: 'google' }],
         }),
@@ -122,6 +124,7 @@ describe('BE-P1-010 account repository audit', () => {
       category: { findMany: jest.fn().mockResolvedValue([]), updateMany: jest.fn(), deleteMany: jest.fn() },
       tag: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
       fxQuote: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
+      userFxRate: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
       recurringRule: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
       recurringOccurrence: { deleteMany: jest.fn() },
       bill: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },

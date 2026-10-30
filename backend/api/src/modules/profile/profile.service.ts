@@ -47,6 +47,13 @@ export class ProfileService {
     }
   }
 
+  async saveDisplayCurrency(userId: string, code: string | null) {
+    if (code !== null && !(await this.repository.currencies()).some(c => c.code === code)) {
+      throw error(400, 'VALIDATION_ERROR');
+    }
+    if (!(await this.repository.saveDisplayCurrency(userId, code))) throw error(401, 'SESSION_INVALID');
+  }
+
   async update(userId: string, profile: ProfileUpdate) {
     // Reject offsets and unknown zones; accept IANA aliases used by existing users.
     if (!/^(UTC|[A-Za-z_]+(?:\/[A-Za-z0-9_+\-]+)+)$/.test(profile.timezone)) {

@@ -3,7 +3,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard, type AuthRequest } from '../auth/auth.guard';
 import { AuthExceptionFilter } from '../auth/auth-exception.filter';
-import { OnboardingAnswersDto, UpdateProfileDto } from './profile.dto';
+import { DisplayCurrencyDto, OnboardingAnswersDto, UpdateProfileDto } from './profile.dto';
 import { ProfileService } from './profile.service';
 
 @Controller('v1/profile')
@@ -29,6 +29,13 @@ export class ProfileController {
   @Header('Cache-Control', 'no-store')
   async saveOnboarding(@Req() request: AuthRequest, @Body() body: OnboardingAnswersDto) {
     await this.profiles.saveOnboarding(request.session.userId, body);
+  }
+
+  @Put('display-currency')
+  @HttpCode(204)
+  @Header('Cache-Control', 'no-store')
+  async saveDisplayCurrency(@Req() request: AuthRequest, @Body() body: DisplayCurrencyDto) {
+    await this.profiles.saveDisplayCurrency(request.session.userId, body.currencyCode);
   }
 
   @Put()

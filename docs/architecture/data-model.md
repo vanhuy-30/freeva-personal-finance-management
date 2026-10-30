@@ -182,6 +182,10 @@ Nghĩa vụ thanh toán (`BE-P2-E03`). Chi tiết: [bills.md](bills.md).
 
 Unique `(userId, clientId)`. Quá hạn tính khi đọc (timezone hồ sơ). Không tự tạo giao dịch.
 
+### UserFxRate (BE-P2-013)
+
+Tỷ giá người dùng nhập để hiển thị số quy đổi; không gắn giao dịch, không vào sổ cái. Unique `(userId, fromCode, toCode)`, một dòng mỗi chiều. `rate` Decimal(18,8) > 0, `quotedAt` timestamptz, `fromCode <> toCode`. `User.displayCurrencyCode` (nullable) là tiền tệ Tổng quan quy đổi về; null là tiền tệ hồ sơ.
+
 ### FxQuote
 
 | Cột | Kiểu | Ghi chú |

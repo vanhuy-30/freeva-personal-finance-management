@@ -1,6 +1,6 @@
 import { Transform } from 'class-transformer';
 import {
-  ArrayMaxSize, ArrayUnique, IsArray, IsIn, IsInt, IsOptional, IsString, Matches, Max, MaxLength, Min,
+  ArrayMaxSize, ArrayUnique, IsArray, IsIn, IsInt, IsOptional, IsString, Matches, Max, MaxLength, Min, ValidateIf,
 } from 'class-validator';
 
 export const ONBOARDING_GOALS = ['track', 'save', 'budget', 'debt', 'emergency', 'understand'] as const;
@@ -29,6 +29,14 @@ export class OnboardingAnswersDto {
   @IsString()
   @Matches(/^[1-9][0-9]{0,17}$/)
   budgetMinor?: string;
+}
+
+/** `null` goes back to the default currency of the profile. */
+export class DisplayCurrencyDto {
+  @ValidateIf((_, value) => value !== null)
+  @IsString()
+  @Matches(/^[A-Z]{3}$/)
+  currencyCode!: string | null;
 }
 
 export class UpdateProfileDto {

@@ -2229,6 +2229,13 @@ paths:
           format: date
           pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
         description: Inclusive range end. At most 3660 days after from.
+      - name: displayCurrency
+        in: query
+        required: false
+        schema:
+          type: string
+          pattern: ^[A-Z]{3}$
+        description: Also return `converted`, the totals in this currency (display only, BE-P2-013). Uses the user's own rates; a currency with no rate or a fractional result is listed in `converted.unconverted` and adds nothing. Omit for per-currency items only.
       responses:
         '200':
           description: Period totals by currency, leaf category, and account
@@ -2368,7 +2375,7 @@ paths:
           $ref: '#/components/responses/ReportUnauthorized'
         '503':
           $ref: '#/components/responses/ReportUnavailable'
-      description: Read-only projection of monthly cashflow. Period follows fiscalMonthStartDay. Amounts and savingsRateBps match GET /reports/cashflow for the same month. savingsMinor equals netMinor. topCategories are leaf expense rows by |expense| descending (ties by categoryId, null last), max 3 per currency. Category names are not returned. Transfers excluded. No FX conversion. No AI narrative.
+      description: Read-only projection of monthly cashflow. Period follows fiscalMonthStartDay. Amounts and savingsRateBps match GET /reports/cashflow for the same month. savingsMinor equals netMinor. topCategories are leaf expense rows by |expense| descending (ties by categoryId, null last), max 3 per currency. Category names are not returned. Transfers excluded. No FX conversion here. No AI narrative.
   /api/v1/reports/net-worth:
     get:
       operationId: reportNetWorth
@@ -2377,6 +2384,14 @@ paths:
       - Reports
       security:
       - UserBearer: []
+      parameters:
+      - name: displayCurrency
+        in: query
+        required: false
+        schema:
+          type: string
+          pattern: ^[A-Z]{3}$
+        description: Also return `converted`, the totals in this currency (display only, BE-P2-013). Uses the user's own rates; a currency with no rate or a fractional result is listed in `converted.unconverted` and adds nothing. Omit for per-currency items only.
       responses:
         '200':
           description: Current signed totals per currency. Hidden (archived) wallets are excluded; a currency appears only if it has an active wallet.
@@ -2393,7 +2408,7 @@ paths:
           $ref: '#/components/responses/ReportUnauthorized'
         '503':
           $ref: '#/components/responses/ReportUnavailable'
-      description: Read-only current snapshot. Includes archived accounts. Assets are cash, bank, and ewallet balances; liabilities are credit balances. No period filter and no FX conversion.
+      description: Read-only current snapshot. Includes archived accounts. Assets are cash, bank, and ewallet balances; liabilities are credit balances. No period filter. `items` are never converted; the optional `converted` block is display only (BE-P2-013).
   /api/v1/financial-accounts:
     post:
       operationId: createFinancialAccount
@@ -2793,6 +2808,122 @@ paths:
                 $ref: '#/components/schemas/ErrorEnvelope'
         '503':
           description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/fx-rates:
+    get:
+      operationId: listFxRates
+      summary: List the rates the user typed for display conversion
+      tags: [Profile]
+      security:
+        - UserBearer: []
+      description: Display only (BE-P2-013). These rates never change stored balances or transactions. Only the stored direction is used; the opposite direction is never derived.
+      responses:
+        '200':
+          description: Own rates (Cache-Control no-store)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FxRateList'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/fx-rates/{from}/{to}:
+    parameters:
+      - name: from
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^[A-Z]{3}$
+      - name: to
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^[A-Z]{3}$
+    put:
+      operationId: putFxRate
+      summary: Set or replace the rate for one direction
+      tags: [Profile]
+      security:
+        - UserBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutFxRate'
+      responses:
+        '200':
+          description: Saved (Cache-Control no-store)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FxRate'
+        '400':
+          description: Rate not positive or over 8 decimals, same currency twice, unknown currency, or quotedAt in the future
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    delete:
+      operationId: deleteFxRate
+      summary: Remove the rate for one direction
+      tags: [Profile]
+      security:
+        - UserBearer: []
+      responses:
+        '204':
+          description: Removed
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: No such rate (FX_RATE_NOT_FOUND)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/profile/display-currency:
+    put:
+      operationId: saveDisplayCurrency
+      summary: Choose the currency the Overview converts into
+      tags: [Profile]
+      security:
+        - UserBearer: []
+      description: Stored on the account. `null` goes back to the profile default currency. No version check.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DisplayCurrencyUpdate'
+      responses:
+        '204':
+          description: Saved (Cache-Control no-store)
+        '400':
+          description: Code not in the currency catalog, or an extra field
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Invalid or expired session
           content:
             application/json:
               schema:
@@ -5265,6 +5396,12 @@ components:
     TransactionLeg:
       type: object
       additionalProperties: false
+      properties:
+        converted:
+          readOnly: true
+          description: Amount in the profile default currency. Returned only by GET by id; absent from create, list and update.
+          allOf:
+            - $ref: '#/components/schemas/DisplayConverted'
       required:
       - clientId
       - accountId
@@ -5788,6 +5925,11 @@ components:
       - updatedAt
       - hasTransactions
       properties:
+        converted:
+          readOnly: true
+          description: Balance in the profile default currency. Returned only by GET by id; absent from create, list and update.
+          allOf:
+            - $ref: '#/components/schemas/DisplayConverted'
         hasTransactions:
           type: boolean
           description: True when the account has any transaction, deleted ones included. Type and currencyCode
@@ -6006,6 +6148,11 @@ components:
           readOnly: true
           pattern: ^[1-9][0-9]{0,17}$
           description: First monthly budget typed at onboarding, positive integer minor units of the default currency at that time. Null until typed. Changing defaultCurrencyCode does not convert it. Never logged. Not accepted on PUT.
+        displayCurrencyCode:
+          type: [string, 'null']
+          readOnly: true
+          pattern: ^[A-Z]{3}$
+          description: Currency the Overview converts into. Null means defaultCurrencyCode. Saved via PUT /profile/display-currency. Not accepted on PUT /profile.
     OnboardingAnswers:
       type: object
       additionalProperties: false
@@ -6114,6 +6261,144 @@ components:
           minimum: 1
           maximum: 28
         createdAt:
+          type: string
+          format: date-time
+    FxRate:
+      type: object
+      additionalProperties: false
+      required: [fromCode, toCode, rate, quotedAt]
+      properties:
+        fromCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        toCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        rate:
+          type: string
+          description: Decimal with 8 fractional digits, 1 `fromCode` = rate `toCode`. Not money. Typed by the user, never fetched.
+        quotedAt:
+          type: string
+          format: date-time
+    FxRateList:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/FxRate'
+    PutFxRate:
+      type: object
+      additionalProperties: false
+      required: [rate]
+      properties:
+        rate:
+          type: string
+          pattern: ^[0-9]{1,10}(\.[0-9]{1,8})?$
+          description: Greater than zero.
+        quotedAt:
+          type: string
+          format: date-time
+          description: Omitted means now. Not in the future.
+    DisplayCurrencyUpdate:
+      type: object
+      additionalProperties: false
+      required: [currencyCode]
+      properties:
+        currencyCode:
+          type: [string, 'null']
+          pattern: ^[A-Z]{3}$
+          description: Must exist in the currency catalog. Null means the profile default currency.
+    UnconvertedCurrency:
+      type: object
+      additionalProperties: false
+      required: [currency, reason]
+      properties:
+        currency:
+          type: string
+          pattern: ^[A-Z]{3}$
+        reason:
+          type: string
+          enum: [MISSING_RATE, FRACTIONAL]
+          description: No rate typed for this currency, or an amount would need a fraction of a minor unit. The currency adds nothing to the converted totals.
+    NetWorthConverted:
+      type: object
+      additionalProperties: false
+      required: [currency, assetsMinor, liabilitiesMinor, netWorthMinor, unconverted]
+      description: Display-only totals in `currency`. Only currencies that convert exactly are included.
+      properties:
+        currency:
+          type: string
+          pattern: ^[A-Z]{3}$
+        assetsMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        liabilitiesMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        netWorthMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        unconverted:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnconvertedCurrency'
+    CashflowConverted:
+      type: object
+      additionalProperties: false
+      required: [currency, incomeMinor, expenseMinor, netMinor, unconverted]
+      description: Display-only totals in `currency`. Only currencies that convert exactly are included. byCategory, byAccount and comparison stay per currency.
+      properties:
+        currency:
+          type: string
+          pattern: ^[A-Z]{3}$
+        incomeMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        expenseMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        netMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        unconverted:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnconvertedCurrency'
+    DisplayConverted:
+      type: [object, 'null']
+      additionalProperties: false
+      required: [currencyCode, amountMinor, rate, quotedAt]
+      description: The amount in the profile default currency, with the rate and time used. Null for the profile currency itself, with no rate typed, or when the result would be fractional. Display only; never stored.
+      properties:
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        amountMinor:
+          type: string
+          pattern: ^-?[0-9]+$
+        rate:
+          type: string
+        quotedAt:
+          type: string
+          format: date-time
+    AccountExportFxRate:
+      type: object
+      additionalProperties: false
+      required: [fromCode, toCode, rate, quotedAt, createdAt, updatedAt]
+      properties:
+        fromCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        toCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        rate:
+          type: string
+          description: Decimal with 8 fractional digits. Not money.
+        quotedAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
           type: string
           format: date-time
     ErrorEnvelope:
@@ -6287,6 +6572,8 @@ components:
       - comparison
       - topMerchants
       properties:
+        converted:
+          $ref: '#/components/schemas/CashflowConverted'
         period:
           $ref: '#/components/schemas/CashflowPeriod'
         totals:
@@ -6678,6 +6965,8 @@ components:
       required:
       - items
       properties:
+        converted:
+          $ref: '#/components/schemas/NetWorthConverted'
         items:
           type: array
           items:
@@ -6839,6 +7128,7 @@ components:
       - categories
       - tags
       - fxQuotes
+      - fxRates
       - recurringRules
       - bills
       - budget
@@ -6885,6 +7175,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AccountExportFxQuote'
+        fxRates:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountExportFxRate'
         recurringRules:
           type: array
           items:
@@ -6990,7 +7284,7 @@ components:
     AccountExportProfile:
       type: object
       additionalProperties: false
-      required: [email, displayName, locale, timezone, defaultCurrencyCode, fiscalMonthStartDay, onboardingGoals, trackingHabit, reviewCadence, onboardingBudgetMinor, emailVerifiedAt, categoriesInitializedAt, categoriesSupplementedAt, createdAt, updatedAt]
+      required: [email, displayName, locale, timezone, defaultCurrencyCode, fiscalMonthStartDay, onboardingGoals, trackingHabit, reviewCadence, onboardingBudgetMinor, displayCurrencyCode, emailVerifiedAt, categoriesInitializedAt, categoriesSupplementedAt, createdAt, updatedAt]
       properties:
         email:
           type: string
@@ -7020,6 +7314,9 @@ components:
         onboardingBudgetMinor:
           type: [string, 'null']
           pattern: ^[1-9][0-9]{0,17}$
+        displayCurrencyCode:
+          type: [string, 'null']
+          pattern: ^[A-Z]{3}$
         emailVerifiedAt:
           type: [string, 'null']
           format: date-time

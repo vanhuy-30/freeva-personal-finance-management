@@ -157,17 +157,19 @@ describe('BE-P1-010 HTTP + PostgreSQL', () => {
     const body = result.body as {
       schemaVersion: number;
       userId: string;
-      profile: { email: string; onboardingGoals: string[]; trackingHabit: string | null; reviewCadence: string | null; onboardingBudgetMinor: string | null };
+      profile: { email: string; onboardingGoals: string[]; trackingHabit: string | null; reviewCadence: string | null; onboardingBudgetMinor: string | null; displayCurrencyCode: string | null };
       oauthProviders: string[];
       financialAccounts: Array<{ id: string; initialBalanceMinor: string; name: string }>;
       transactions: Array<{ id: string; amountMinor: string; deletedAt: string | null; notes: string | null; tagIds: string[] }>;
       fxQuotes: Array<{ rate: string }>;
+      fxRates: unknown[];
       categories: Array<{ parentId: string | null }>;
     };
     expect(body.schemaVersion).toBe(1);
     expect(body.userId).toBe(owner);
     expect(body.profile.email).toBe(ownerEmail);
-    expect(body.profile).toMatchObject({ onboardingGoals: [], trackingHabit: null, reviewCadence: null, onboardingBudgetMinor: null });
+    expect(body.profile).toMatchObject({ onboardingGoals: [], trackingHabit: null, reviewCadence: null, onboardingBudgetMinor: null, displayCurrencyCode: null });
+    expect(body.fxRates).toEqual([]);
     expect(body.oauthProviders).toEqual(['google']);
     expect(body.financialAccounts.map(row => row.id)).toEqual([account.id]);
     expect(body.financialAccounts[0].initialBalanceMinor).toBe(amount.toString());

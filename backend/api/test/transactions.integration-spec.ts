@@ -20,6 +20,9 @@ if (!databaseUrl || new URL(databaseUrl).pathname !== '/auth_test') {
 }
 process.env.DATABASE_URL = databaseUrl;
 
+/** Detail adds `converted` to each leg (BE-P2-013); create, list and update responses do not. */
+const plain = (bundle: { legs: Array<{ converted?: unknown }> }) => ({ ...bundle, legs: bundle.legs.map(({ converted: _converted, ...leg }) => leg) });
+
 describe('BE-P1-005 HTTP + PostgreSQL', () => {
   let app: INestApplication;
   let prisma: PrismaService;
@@ -108,7 +111,7 @@ describe('BE-P1-005 HTTP + PostgreSQL', () => {
     const data = await input(type); const created = await create(data); const first = created.legs[0];
     expect(created.legs).toHaveLength(type === 'transfer' ? 2 : 1);
     expect(await balance(first.accountId)).toBe(first.amountMinor);
-    expect((await request('GET', `/${first.id}`)).body).toEqual(created);
+    expect(plain((await request('GET', `/${first.id}`)).body)).toEqual(created);
     expect((await request()).body.total).toBe(created.legs.length);
     const changed = await request('PATCH', `/${created.legs.at(-1).id}`, { version: 1, occurredOn: '2024-02-29', notes: null });
     expect(changed.status).toBe(200);
@@ -294,7 +297,7 @@ describe('BE-P1-005 HTTP + PostgreSQL', () => {
     try {
       expect((await request('PATCH', `/${created.legs[0].id}`, { version: 1, notes: 'Must roll back' })).status).toBe(503);
       expect((await request('DELETE', `/${created.legs[0].id}?version=1`)).status).toBe(503);
-      expect((await request('GET', `/${created.legs[0].id}`)).body).toEqual(created);
+      expect(plain((await request('GET', `/${created.legs[0].id}`)).body)).toEqual(created);
       expect(await balance(data.legs[0].accountId)).toBe(data.legs[0].amountMinor);
     } finally {
       await prisma.$executeRawUnsafe('DROP TRIGGER test_fail_transfer_update ON "Transaction"');
