@@ -19,7 +19,7 @@ Canvas: trang **05 · Patterns**, hàng G
 | # | Màn | Nội dung | Ghi chú |
 |---|---|---|---|
 | 1 | Cá nhân | "Cá nhân". Thẻ hồ sơ (avatar chữ cái, tên, email che). **Thiết lập tài chính:** Ví của tôi · Danh mục · Nhãn · Định kỳ (`MOB-P2-E01`) · Hóa đơn (`MOB-P2-E03`) · Tiền tệ mặc định · Ngân sách tháng · Tháng tính từ · Mục tiêu (mở A1.2). **Ứng dụng:** Giao diện · Ngôn ngữ · Múi giờ · Thông báo · Ẩn số dư (công tắc) · Bảo mật. **Hỗ trợ:** Câu hỏi thường gặp · Góp ý · Điều khoản và quyền riêng tư. "Đăng xuất" (đỏ), "Phiên bản 0.0.1" | Giá trị hiện tại ở bên phải mỗi dòng; icon màu cho Thiết lập tài chính, xám cho Ứng dụng |
-| 2 | Hồ sơ | Avatar 96 + nút máy ảnh. Tên hiển thị. Email (đã xác nhận) · "Đổi". "Xoá tài khoản" (đỏ). "Lưu thay đổi" | |
+| 2 | Hồ sơ | Avatar 96 + nút máy ảnh. Tên hiển thị. Email (đã xác nhận) · "Đổi". Dòng "Xuất dữ liệu" (icon tải xuống, một dòng phụ; chưa có trên board, thêm ở `MOB-P2-011`). "Xoá tài khoản" (đỏ). "Lưu thay đổi" | |
 | 3 | Giao diện (sheet) | 3 thẻ chọn có ảnh thu nhỏ: Sáng · Tối · Theo máy | Đổi ngay khi chọn |
 | 4 | Bảo mật | **Mở khoá:** Khoá bằng mã PIN, Mở bằng Face ID (công tắc), Đổi mã PIN. **Đăng nhập:** Phiên đăng nhập (số), Đổi mật khẩu | Face ID khoá khi chưa có PIN, kèm lý do ngắn |
 | 5 | Phiên đăng nhập | "Không nhận ra phiên nào thì thu hồi ngay." Máy này + chip "Đang dùng"; phiên khác + nút "Thu hồi" (viền đỏ). "Đăng xuất mọi máy khác" | Dòng phụ "Từ 02/10 · hết hạn 01/11" |
@@ -61,7 +61,7 @@ Canvas: trang **05 · Patterns**, hàng G
 | Thông báo | Hộp thư và công tắc `BE-P2-E05`; giờ yên theo timezone hồ sơ. Push FCM `BE-P2-015`. |
 | Đổi email | API đổi email có xác nhận lại qua thư. |
 | Đổi mật khẩu khi đang đăng nhập | API mới (Phase 1 chỉ có đặt lại qua email). |
-| Xoá tài khoản | API + luồng xác nhận (nhập lại mật khẩu hoặc gõ "XOÁ"); thời gian chờ huỷ là quyết định sản phẩm, chưa chốt. Chưa vẽ popup. |
+| Xoá tài khoản | Hộp xác nhận (`MOB-P2-011`): hỏi lại một lần, xoá ngay, không mật khẩu, không thời gian chờ huỷ. Popup chưa vẽ trên board, dùng hộp xác nhận chung. |
 | Góp ý | API nhận nội dung, loại, chủ đề, ảnh, đồng ý liên hệ; Phase 1 chỉ sao chép. Ảnh có thể chứa số dư: nhắc trước khi gửi. |
 | Nhãn | API mới có danh sách và tạo; cần đổi tên, xoá, số giao dịch mỗi nhãn. |
 | Phiên đăng nhập | API không có tên máy; hiện "Máy này" / "Phiên khác". |

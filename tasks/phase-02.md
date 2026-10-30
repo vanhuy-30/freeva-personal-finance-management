@@ -131,11 +131,12 @@ Phase 1 giữ đóng. Các ticket dưới đây không đổi số 28/28.
 - DoD: DB staging trên Render (plan free trong `render.yaml`) đã hết hạn. Chọn một Postgres miễn phí, chạy được Prisma migrate, chỉ cho dữ liệu staging. `DATABASE_URL` đặt trên dashboard host, không commit. API staging có thể giữ Render nếu web service còn sống; health `GET /api/health` trả `database=up` sau migrate. Không seed PII, không dùng làm production, không chốt vendor production (region VN vẫn là DECISIONS-OPEN #5). Cập nhật [staging.md](../docs/infrastructure/staging.md), `render.yaml` (bỏ DB Render đã chết), [DECISIONS-OPEN](../docs/project-state/DECISIONS-OPEN.md) #4 và URL trong [STATUS](../docs/project-state/STATUS.md). Ghi giới hạn plan miễn phí (ngủ, hết hạn, vùng) vào staging.md.
 
 ### MOB-P2-011 — Xuất và xóa tài khoản trên app
-- Status: todo
+- Status: done
 - Module: 21
 - Gate: post-v1
 - Depends: BE-P1-010, MOB-P1-001
 - DoD: Từ Hồ sơ, người dùng xuất được file JSON của `GET /api/v1/account/export` (chia sẻ hoặc lưu trên máy) và xóa được tài khoản bằng `DELETE /api/v1/account`. Xóa hỏi lại rõ, có hiệu lực ngay, không cửa sổ 30 ngày và không đòi mật khẩu — API hiện không nhận mật khẩu vì tài khoản OAuth có thể không có. Sau xóa thành công: xóa phiên, PIN và hàng đợi sync trên máy, về màn vào app. Lỗi mạng không xóa dữ liệu local và không báo đã xóa. Không log email, ghi chú hay số tiền. Chuỗi vi/en. Sửa câu trong app đang nói xuất/xóa là việc phát hành riêng. Không CSV, không API mới. Trường onboarding trong file export thuộc `BE-P2-012`; nút xuất lưu đúng body API trả về.
+- Note: nút Xuất dữ liệu và Xoá tài khoản ở Hồ sơ; `AuthApi.requestText` giữ nguyên body export; `share_plus` + `path_provider`. Dòng Xuất dữ liệu chưa có trên board thiết kế. Chưa thử share sheet trên máy thật.
 
 ### QA-P2-001 — Rà soát hàng đợi offline giao dịch
 - Status: todo

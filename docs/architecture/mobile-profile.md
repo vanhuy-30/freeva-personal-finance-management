@@ -53,3 +53,10 @@ schema mới; tận dụng `User`, `Currency`, `version` hiện có. Chưa deplo
 - 14 PostgreSQL integration tests pass trong database `auth_test` riêng kiểm tra lưu thật,
   reload, hai request đồng thời (200/409), tài khoản khác và token đã revoke.
 - API build pass. Chưa smoke test native device hoặc E2E staging của màn hồ sơ.
+
+## Xuất dữ liệu và xóa tài khoản — MOB-P2-011
+
+- Hồ sơ có dòng "Xuất dữ liệu": lấy `GET /account/export`, ghi file `freeva-export-YYYYMMDD.json` đúng body API (không decode lại), mở share sheet (`share_plus`), rồi xóa file tạm. Đóng share sheet không phải lỗi.
+- "Xoá tài khoản": hộp xác nhận một lần, `DELETE /account`, không mật khẩu, không cửa sổ chờ. Thành công thì xóa phiên, PIN và hàng đợi sync trên máy, về màn vào app. Lỗi mạng hoặc server từ chối thì không xóa gì local và báo chưa xóa được.
+- Không log email, ghi chú hay số tiền. Chưa smoke test share sheet trên máy thật.
+

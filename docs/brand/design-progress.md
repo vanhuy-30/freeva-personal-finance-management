@@ -51,7 +51,7 @@ Còn lệch có chủ đích hoặc chưa làm: ô thả khi kéo sắp xếp v�
 
 Tám nhóm A–H đã chốt. Còn:
 
-- **Popup xoá tài khoản** (nhóm G): chờ quyết định sản phẩm về thời gian chờ huỷ.
+- **Popup xoá tài khoản** và dòng **Xuất dữ liệu** (nhóm G): đã làm bằng hộp xác nhận chung ở `MOB-P2-011`; chưa vẽ trên board.
 
 ## Cách làm đã thống nhất với product owner
 

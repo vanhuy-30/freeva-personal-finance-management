@@ -14,6 +14,7 @@ Client Flutter dùng contract `/api/v1` và quyết định email/session ở
 - Token trong mail vẫn là 64 ký tự hex; UI không còn ô nhập mã (chốt 2026-10-23), link mở thẳng app sẽ làm ở task riêng. Password 12–128 ký tự, không trim; đăng ký và đặt lại cần thêm ít nhất một chữ và một số (`hasLetterAndDigit`, `DS-P2-004`), đăng nhập chỉ kiểm tra độ dài. Email trim/lowercase.
 - Login nhận opaque Bearer, hạn tuyệt đối và session ID. Khởi động lại khóa nếu có PIN; chưa có PIN thì vào thẳng app.
 - Home có list phiên, thu hồi một phiên/mọi phiên, logout và khóa ngay. Logout online phải thành công mới xóa local; lỗi mạng cho phép thử lại. `401` của request có Bearer xóa credential và yêu cầu login.
+- Xóa tài khoản (`MOB-P2-011`): `DELETE /account` phải thành công mới xóa phiên và PIN local; lỗi mạng hoặc server từ chối thì giữ nguyên. Xuất dữ liệu lấy đúng body `GET /account/export`.
 - Quên PIN xóa credential **trên thiết bị**, không giả định đã revoke server. UI nói rõ phiên server còn đến hạn hoặc được thu hồi sau khi login lại.
 
 ## Lưu trữ và giới hạn
