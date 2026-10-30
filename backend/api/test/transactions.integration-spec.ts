@@ -211,6 +211,22 @@ describe('BE-P1-005 HTTP + PostgreSQL', () => {
     expect((await request('POST', '', { ...await input('income'), categoryId: randomUUID() })).status).toBe(400);
     expect((await request('POST', '', { ...await input(), merchant: 'Shop' })).status).toBe(400);
   });
+  it('BE-P2-010 rejects a category whose kind does not fit the type, without a partial write', async () => {
+    const mk = (kind: 'expense' | 'income' | 'both') => prisma.category.create({ data: { userId: owner, clientId: randomUUID(), name: `Kind ${kind}`, kind } });
+    const [expenseOnly, incomeOnly, both] = [await mk('expense'), await mk('income'), await mk('both')];
+    const spend = await input('expense');
+    const wrong = await request('POST', '', { ...spend, categoryId: incomeOnly.id });
+    expect(wrong.status).toBe(400);
+    expect(wrong.body.error.code).toBe('CATEGORY_KIND_MISMATCH');
+    expect(await prisma.transaction.count({ where: { clientId: spend.legs[0].clientId } })).toBe(0);
+    expect((await request('POST', '', { ...await input('income'), categoryId: expenseOnly.id })).status).toBe(400);
+    const created = await create({ ...spend, categoryId: expenseOnly.id });
+    const patched = await request('PATCH', `/${created.legs[0].id}`, { version: 1, categoryId: incomeOnly.id });
+    expect(patched.status).toBe(400);
+    expect(patched.body.error.code).toBe('CATEGORY_KIND_MISMATCH');
+    expect((await request('PATCH', `/${created.legs[0].id}`, { version: 1, categoryId: both.id })).status).toBe(200);
+    expect((await create({ ...await input('income'), categoryId: both.id })).legs[0].categoryId).toBe(both.id);
+  });
   it('stores optional occurredTime HH:mm, clears it on PATCH null, and rejects invalid clocks', async () => {
     const category = await prisma.category.create({ data: { userId: owner, clientId: randomUUID(), name: 'Food' } });
     const data = await input('expense');

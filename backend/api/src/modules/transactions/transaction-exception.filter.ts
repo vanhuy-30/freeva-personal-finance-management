@@ -8,7 +8,7 @@ export class TransactionExceptionFilter implements ExceptionFilter {
     const response = host.switchToHttp().getResponse<Response>();
     response.setHeader('Cache-Control', 'no-store');
     if (exception instanceof TransactionError) {
-      const status = { VALIDATION_ERROR: 400, ACCOUNT_NOT_FOUND: 404, TRANSACTION_NOT_FOUND: 404, TRANSACTION_CONFLICT: 409 }[exception.code];
+      const status = { VALIDATION_ERROR: 400, CATEGORY_KIND_MISMATCH: 400, ACCOUNT_NOT_FOUND: 404, TRANSACTION_NOT_FOUND: 404, TRANSACTION_CONFLICT: 409 }[exception.code];
       response.status(status).json({ error: { code: exception.code, message: 'Transaction request could not be completed', details: [] } });
       return;
     }

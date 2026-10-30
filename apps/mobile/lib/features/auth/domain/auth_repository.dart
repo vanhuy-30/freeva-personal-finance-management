@@ -18,6 +18,9 @@ enum AuthAction {
 enum AuthError {
   conflict,
   invalidInput,
+
+  /// The category's kind does not fit the transaction type (expense/income).
+  categoryKind,
   invalidEmail,
   passwordMismatch,
   credentials,

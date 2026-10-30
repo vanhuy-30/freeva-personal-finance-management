@@ -77,6 +77,10 @@ export function occurredTime(value: string | null | undefined): string | null {
   if (!OCCURRED_TIME.test(value)) throw new TransactionError('VALIDATION_ERROR');
   return value;
 }
+/** Expense takes `expense|both`, income takes `income|both`; transfers carry no category. */
+export function categoryKindFits(type: TransactionType, kind: 'expense' | 'income' | 'both'): boolean {
+  return type !== 'transfer' && (kind === 'both' || kind === type);
+}
 export function validateInput(input: TransactionInput, digits: Record<string, number>): void {
   const { legs, type, fx } = input;
   if (legs.length !== (type === 'transfer' ? 2 : 1)) throw new TransactionError('VALIDATION_ERROR');

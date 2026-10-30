@@ -1,4 +1,6 @@
+import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/core/time/calendar_date.dart';
 import 'package:mobile/features/categories/domain/finance_category.dart';
 import 'package:mobile/features/tags/domain/tag.dart';
@@ -125,7 +127,10 @@ void main() {
       categories,
       const [],
     );
-    expect(ok.getOrElse(() => throw StateError('invalid')).occurredTime, '12:40');
+    expect(
+      ok.getOrElse(() => throw StateError('invalid')).occurredTime,
+      '12:40',
+    );
     final bad = prepareTransaction(
       TransactionDraft(
         type: TransactionType.expense,
@@ -143,6 +148,53 @@ void main() {
     );
     expect(bad.isLeft(), isTrue);
   });
+
+  test(
+    'refuses a category whose kind does not fit the type; both fits all',
+    () {
+      const currencies = [WalletCurrency('VND', 0)];
+      final categories = [
+        const FinanceCategory(
+          id: 'food',
+          name: 'Food',
+          parentId: null,
+          kind: CategoryKind.expense,
+        ),
+        const FinanceCategory(
+          id: 'pay',
+          name: 'Pay',
+          parentId: null,
+          kind: CategoryKind.income,
+        ),
+        const FinanceCategory(id: 'misc', name: 'Misc', parentId: null),
+      ];
+      Either<AuthFailure, TransactionCommand> run(
+        TransactionType type,
+        String id,
+      ) => prepareTransaction(
+        TransactionDraft(
+          type: type,
+          occurredOn: '2026-01-15',
+          accountId: 'card',
+          magnitude: BigInt.from(1000),
+          clientIds: const ['11111111-1111-4111-8111-111111111111'],
+          categoryId: id,
+        ),
+        [_wallet('card')],
+        currencies,
+        categories,
+        const [],
+      );
+      AuthError? code(Either<AuthFailure, TransactionCommand> r) =>
+          r.fold((f) => f.code, (_) => null);
+      expect(code(run(TransactionType.expense, 'pay')), AuthError.categoryKind);
+      expect(code(run(TransactionType.income, 'food')), AuthError.categoryKind);
+      expect(run(TransactionType.expense, 'food').isRight(), isTrue);
+      expect(run(TransactionType.income, 'pay').isRight(), isTrue);
+      expect(run(TransactionType.expense, 'misc').isRight(), isTrue);
+      expect(run(TransactionType.income, 'misc').isRight(), isTrue);
+    },
+  );
 
   test('blank merchant becomes null and transfer forbids merchant', () {
     final blank = prepareTransaction(

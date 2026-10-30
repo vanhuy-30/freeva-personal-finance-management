@@ -5784,6 +5784,18 @@ abstract class S {
   /// **'The details are no longer valid'**
   String get syncReasonInvalid;
 
+  /// No description provided for @syncReasonCategoryKind.
+  ///
+  /// In en, this message translates to:
+  /// **'The category does not fit the transaction type'**
+  String get syncReasonCategoryKind;
+
+  /// No description provided for @transactionCategoryKind.
+  ///
+  /// In en, this message translates to:
+  /// **'This category is not used for the chosen transaction type. Pick another category.'**
+  String get transactionCategoryKind;
+
   /// No description provided for @syncReasonOther.
   ///
   /// In en, this message translates to:

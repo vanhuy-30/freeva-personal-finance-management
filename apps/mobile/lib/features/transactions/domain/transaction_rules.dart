@@ -97,6 +97,11 @@ Either<AuthFailure, TransactionCommand> prepareTransaction(
       !categoryIds.contains(draft.categoryId)) {
     return left(const AuthFailure(AuthError.invalidInput));
   }
+  final chosen = categories.where((item) => item.id == draft.categoryId);
+  if (chosen.isNotEmpty &&
+      !chosen.first.kind.fits(draft.type == TransactionType.income)) {
+    return left(const AuthFailure(AuthError.categoryKind));
+  }
   final signed = draft.type == TransactionType.income
       ? draft.magnitude
       : -draft.magnitude;

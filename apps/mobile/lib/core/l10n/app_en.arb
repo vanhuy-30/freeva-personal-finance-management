@@ -1881,6 +1881,8 @@
   "syncReasonWallet": "The wallet was removed",
   "syncReasonMissing": "The transaction was removed elsewhere",
   "syncReasonInvalid": "The details are no longer valid",
+  "syncReasonCategoryKind": "The category does not fit the transaction type",
+  "transactionCategoryKind": "This category is not used for the chosen transaction type. Pick another category.",
   "syncReasonOther": "Couldn’t send · Try again later",
   "syncFooter": "Your data stays on this device until it is sent.",
   "syncUpdateTitle": "Freeva needs an update",
