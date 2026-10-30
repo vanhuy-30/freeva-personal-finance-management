@@ -181,6 +181,7 @@ SyncReason reasonForCode(String? code) => switch (code) {
   'ACCOUNT_NOT_FOUND' => SyncReason.walletMissing,
   'TRANSACTION_NOT_FOUND' => SyncReason.transactionMissing,
   'VALIDATION_ERROR' => SyncReason.invalid,
+  'CATEGORY_KIND_MISMATCH' => SyncReason.categoryKind,
   _ => SyncReason.unavailable,
 };
 

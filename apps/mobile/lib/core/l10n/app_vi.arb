@@ -1038,6 +1038,8 @@
   "syncReasonWallet": "Ví đã bị xoá",
   "syncReasonMissing": "Giao dịch đã bị xoá ở máy khác",
   "syncReasonInvalid": "Dữ liệu không còn hợp lệ",
+  "syncReasonCategoryKind": "Danh mục không hợp với loại giao dịch",
+  "transactionCategoryKind": "Danh mục này không dùng cho loại giao dịch đã chọn. Hãy chọn danh mục khác.",
   "syncReasonOther": "Chưa gửi được · Thử lại sau",
   "syncFooter": "Dữ liệu vẫn nằm trên máy này cho tới khi gửi xong.",
   "syncUpdateTitle": "Cần cập nhật Freeva",

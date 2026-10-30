@@ -4,7 +4,7 @@ import { PrismaService } from '../../../infrastructure/prisma/prisma.service';
 import { touchFinancialOwner } from '../../../infrastructure/prisma/financial-owner-lock';
 import { todayInTimeZone } from '../../reports/domain/report';
 import { TransactionError } from '../../transactions/domain/transaction-error';
-import { normalizeRate, type TransactionInput } from '../../transactions/domain/transaction';
+import { categoryKindFits, normalizeRate, type TransactionInput } from '../../transactions/domain/transaction';
 import { createTransactionInTx } from '../../transactions/infrastructure/create-transaction-in-tx';
 import { addInterval, anchorDay, dueDates } from '../domain/calendar';
 import { occurrenceClientId } from '../domain/occurrence-id';
@@ -109,8 +109,9 @@ export class PrismaRecurringRepository implements RecurringRepository {
       const counter = accounts.find(item => item.id === input.counterAccountId)!;
       if (counter.currencyCode.trim() !== input.counterCurrencyCode) throw new RecurringError('VALIDATION_ERROR');
     }
-    if (input.categoryId && !await tx.category.findFirst({ where: { id: input.categoryId, userId, archivedAt: null } })) {
-      throw new RecurringError('VALIDATION_ERROR');
+    if (input.categoryId) {
+      const category = await tx.category.findFirst({ where: { id: input.categoryId, userId, archivedAt: null }, select: { kind: true } });
+      if (!category || !categoryKindFits(input.type, category.kind)) throw new RecurringError('VALIDATION_ERROR');
     }
     validateRecurringInput(input, digits);
   }

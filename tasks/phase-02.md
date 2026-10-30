@@ -116,11 +116,12 @@
 Phase 1 giữ đóng. Các ticket dưới đây không đổi số 28/28.
 
 ### BE-P2-010 / MOB-P2-010 — Khóa thu/chi theo kind
-- Status: todo
+- Status: done
 - Module: 4, 5
 - Gate: post-v1
 - Depends: BE-P1-011, MOB-P1-004, MOB-P1-005
 - DoD: Khi ghi hoặc sửa, chi chỉ nhận danh mục `expense` hoặc `both`; thu chỉ nhận `income` hoặc `both`. Chuyển khoản không có danh mục. API từ chối kind lệch (không ghi một phần). `both` vẫn hiện ở cả hai phía. Màn Danh mục (tab Chi · Thu) và form ghi đã lọc trên client — không làm lại hai màn đó. Form đang mở nếu đổi loại mà danh mục không còn hợp thì bỏ chọn và không lưu. Xung đột kind trả lỗi có chữ vi/en, không log tên danh mục hay số tiền. OpenAPI và test owner/kind. Cập nhật câu “một cây” trong [spec-alignment](../docs/product/spec-alignment.md) và [module 5](../docs/product/modules/05-categories.md) khi xong.
+- Note: `CATEGORY_KIND_MISMATCH` (400) ở tạo/sửa giao dịch, luật định kỳ và `/sync` (item `rejected`); mobile `prepareTransaction` + chuỗi vi/en. Test tích hợp viết nhưng chưa chạy (cần Postgres).
 
 ### INF-P2-001 — Postgres staging miễn phí thay Render
 - Status: todo

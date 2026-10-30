@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../../infrastructure/prisma/prisma.service';
 import { touchFinancialOwner } from '../../../infrastructure/prisma/financial-owner-lock';
 import type { RecentMatchQuery, TransactionRepository } from '../domain/transaction.repository';
-import { normalizeRate, TransactionError, validateInput, type TransactionBundle, type TransactionInput, type TransactionLeg, type TransactionPatch, type TransactionQuery } from '../domain/transaction';
+import { categoryKindFits, normalizeRate, TransactionError, validateInput, type TransactionBundle, type TransactionInput, type TransactionLeg, type TransactionPatch, type TransactionQuery } from '../domain/transaction';
 import { VIETNAMESE_FOLD_FROM, VIETNAMESE_FOLD_TO, parseTransactionSearch, type AmountSearch, type ParsedTransactionSearch } from '../domain/search';
 import { createTransactionInTx } from './create-transaction-in-tx';
 
@@ -78,7 +78,11 @@ export class PrismaTransactionRepository implements TransactionRepository {
     await tx.financialAccount.updateMany({ where: { userId, id: { in: ids } }, data: { updatedAt: new Date() } });
   }
   private async references(tx: Prisma.TransactionClient, userId: string, input: TransactionInput) {
-    if (input.categoryId && !await tx.category.findFirst({ where: { id: input.categoryId, userId, archivedAt: null } })) throw new TransactionError('VALIDATION_ERROR');
+    if (input.categoryId) {
+      const category = await tx.category.findFirst({ where: { id: input.categoryId, userId, archivedAt: null }, select: { kind: true } });
+      if (!category) throw new TransactionError('VALIDATION_ERROR');
+      if (!categoryKindFits(input.type, category.kind)) throw new TransactionError('CATEGORY_KIND_MISMATCH');
+    }
     if (await tx.tag.count({ where: { userId, id: { in: input.tagIds } } }) !== input.tagIds.length) throw new TransactionError('VALIDATION_ERROR');
   }
   private async quote(tx: Prisma.TransactionClient, userId: string, input: TransactionInput, current?: TransactionBundle) {

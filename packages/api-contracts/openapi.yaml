@@ -1589,7 +1589,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TransactionBundle'
         '400':
-          description: VALIDATION_ERROR
+          description: 'VALIDATION_ERROR, or CATEGORY_KIND_MISMATCH when the category kind does not fit the type (expense takes expense|both, income takes income|both). Nothing is written.'
           headers:
             Cache-Control:
               schema:
@@ -1961,7 +1961,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TransactionBundle'
         '400':
-          description: VALIDATION_ERROR
+          description: 'VALIDATION_ERROR, or CATEGORY_KIND_MISMATCH when the category kind does not fit the type (expense takes expense|both, income takes income|both). Nothing is written.'
           headers:
             Cache-Control:
               schema:
@@ -2127,7 +2127,7 @@ paths:
               $ref: '#/components/schemas/SyncRequest'
       responses:
         '200':
-          description: Queue accepted. Individual operations may be applied, replayed, conflict or rejected.
+          description: Queue accepted. Individual operations may be applied, replayed, conflict or rejected (a category whose kind does not fit the type is rejected with error.code CATEGORY_KIND_MISMATCH).
           headers:
             Cache-Control:
               schema:

@@ -3153,6 +3153,13 @@ class SVi extends S {
   String get syncReasonInvalid => 'Dữ liệu không còn hợp lệ';
 
   @override
+  String get syncReasonCategoryKind => 'Danh mục không hợp với loại giao dịch';
+
+  @override
+  String get transactionCategoryKind =>
+      'Danh mục này không dùng cho loại giao dịch đã chọn. Hãy chọn danh mục khác.';
+
+  @override
   String get syncReasonOther => 'Chưa gửi được · Thử lại sau';
 
   @override

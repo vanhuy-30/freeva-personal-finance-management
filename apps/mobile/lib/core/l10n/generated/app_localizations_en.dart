@@ -3192,6 +3192,14 @@ class SEn extends S {
   String get syncReasonInvalid => 'The details are no longer valid';
 
   @override
+  String get syncReasonCategoryKind =>
+      'The category does not fit the transaction type';
+
+  @override
+  String get transactionCategoryKind =>
+      'This category is not used for the chosen transaction type. Pick another category.';
+
+  @override
   String get syncReasonOther => 'Couldn’t send · Try again later';
 
   @override

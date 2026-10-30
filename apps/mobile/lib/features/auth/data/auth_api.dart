@@ -77,7 +77,10 @@ class HttpAuthApi implements AuthApi {
         // Signed in but refused: the current password was wrong.
         403 when token != null => AuthError.credentials,
         429 => AuthError.rateLimited,
-        400 => AuthError.invalidToken,
+        400 =>
+          _errorCode(response.body) == 'CATEGORY_KIND_MISMATCH'
+              ? AuthError.categoryKind
+              : AuthError.invalidToken,
         409 => AuthError.conflict,
         _ => AuthError.unavailable,
       }, retryAfter: int.tryParse(response.headers['retry-after'] ?? ''));
@@ -88,5 +91,15 @@ class HttpAuthApi implements AuthApi {
       _logger?.error('http $method $path failed ${ms}ms', error, stackTrace);
       throw const AuthFailure(AuthError.network);
     }
+  }
+}
+
+/// The API's `error.code`, or null when the body is not the usual envelope.
+String? _errorCode(String body) {
+  try {
+    final error = (jsonDecode(body) as Map<String, dynamic>)['error'];
+    return error is Map<String, dynamic> ? error['code'] as String? : null;
+  } catch (_) {
+    return null;
   }
 }

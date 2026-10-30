@@ -60,6 +60,9 @@ enum SyncReason {
   /// The server refused the data as it is.
   invalid,
 
+  /// Its category no longer fits the type (expense/income).
+  categoryKind,
+
   /// Not sent yet for another reason; trying again later may work.
   unavailable,
 }

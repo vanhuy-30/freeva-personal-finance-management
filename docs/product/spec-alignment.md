@@ -39,14 +39,13 @@ Giữ nguyên số phase và ID đã có. Không dồn ngân sách, mục tiêu,
 | §9 ghi chi thường dưới 10 giây | UX siết; bấm giờ thiết bị thật gom smoke residual | `QA-P1-001` |
 | §29 lọc merchant, tag, không dấu | `GET …/transactions?search` | `BE-P1-008` |
 | §33 offline MVP | Queue + `POST /api/v1/sync` | `BE-P1-009`, `MOB-P1-008` |
-| §10 bộ danh mục thiếu + `kind` | API đủ tên + `kind`; cây UI một danh sách | `BE-P1-011`, `MOB-P1-005` |
+| §10 bộ danh mục thiếu + `kind` | API đủ tên + `kind`; tab Chi · Thu; API từ chối kind lệch khi ghi/sửa (`CATEGORY_KIND_MISMATCH`) | `BE-P1-011`, `MOB-P1-005`, `BE-P2-010` |
 | §34 export | JSON đủ cho gate sổ cái; CSV không làm ở P1 | `BE-P1-010` |
 
 ## Lệch cần vá (sau Phase 1)
 
 | Spec | Hiện trạng | Task |
 |---|---|---|
-| §10 UI lọc danh mục theo `kind` | Tab Chi · Thu và form ghi đã lọc trên client; API chưa từ chối kind lệch | `BE-P2-010` / `MOB-P2-010` |
 | §6.3–6.6 ngân sách, mục tiêu, insight trên Home | Ngân sách có thanh trên Home; mục tiêu / insight chưa | `MOB-P2-E02` (ngân sách), `MOB-P3-E01`, `MOB-P5-E04` |
 | §34 CSV | Chỉ JSON | Sau P1 nếu beta cần |
 | §15 ngân sách và ngưỡng 70/80/90/100 | API + mobile theo DoD | `BE-P2-E02` / `MOB-P2-E02` |

@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { Prisma } from '@prisma/client';
 import { touchFinancialOwner } from '../../../infrastructure/prisma/financial-owner-lock';
 import {
+  categoryKindFits,
   normalizeRate,
   TransactionError,
   validateInput,
@@ -114,8 +115,10 @@ export async function createTransactionInTx(
   }
   validateInput(input, digits);
   await tx.financialAccount.updateMany({ where: { userId, id: { in: ids } }, data: { updatedAt: new Date() } });
-  if (input.categoryId && !await tx.category.findFirst({ where: { id: input.categoryId, userId, archivedAt: null } })) {
-    throw new TransactionError('VALIDATION_ERROR');
+  if (input.categoryId) {
+    const category = await tx.category.findFirst({ where: { id: input.categoryId, userId, archivedAt: null }, select: { kind: true } });
+    if (!category) throw new TransactionError('VALIDATION_ERROR');
+    if (!categoryKindFits(input.type, category.kind)) throw new TransactionError('CATEGORY_KIND_MISMATCH');
   }
   if (await tx.tag.count({ where: { userId, id: { in: input.tagIds } } }) !== input.tagIds.length) {
     throw new TransactionError('VALIDATION_ERROR');

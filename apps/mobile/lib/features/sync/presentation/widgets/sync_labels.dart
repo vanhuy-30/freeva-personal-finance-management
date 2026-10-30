@@ -15,6 +15,7 @@ String syncReasonLabel(S s, SyncReason? reason) => switch (reason) {
   SyncReason.walletMissing => s.syncReasonWallet,
   SyncReason.transactionMissing => s.syncReasonMissing,
   SyncReason.invalid => s.syncReasonInvalid,
+  SyncReason.categoryKind => s.syncReasonCategoryKind,
   SyncReason.unavailable || null => s.syncReasonOther,
 };
 
