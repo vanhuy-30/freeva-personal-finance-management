@@ -34,6 +34,14 @@ class MemoryProfiles implements ProfileRepository {
       timezones: ['Asia/Ho_Chi_Minh', 'America/New_York', 'UTC'],
     ),
   );
+  final List<String?> displayCurrencies = [];
+  @override
+  Future<Either<AuthFailure, Unit>> saveDisplayCurrency(String? code) async {
+    if (failure != null) return left(failure!);
+    displayCurrencies.add(code);
+    return right(unit);
+  }
+
   @override
   Future<Either<AuthFailure, Unit>> saveOnboarding(
     OnboardingAnswers answers,

@@ -6341,6 +6341,66 @@ abstract class S {
   /// In en, this message translates to:
   /// **'View transactions'**
   String get tagsViewTransactions;
+
+  /// No description provided for @homeTotalConverted.
+  ///
+  /// In en, this message translates to:
+  /// **'Total in {currency} · {count} wallets'**
+  String homeTotalConverted(int count, String currency);
+
+  /// No description provided for @homeDisplayCurrencyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Show totals in {currency}'**
+  String homeDisplayCurrencyAction(String currency);
+
+  /// No description provided for @homeDisplayCurrencyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Show totals in'**
+  String get homeDisplayCurrencyTitle;
+
+  /// No description provided for @homeUnconvertedMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'{currency}: no rate yet, tap to add'**
+  String homeUnconvertedMissing(String currency);
+
+  /// No description provided for @homeUnconvertedFractional.
+  ///
+  /// In en, this message translates to:
+  /// **'{currency}: rate doesn\'t convert evenly, tap to edit'**
+  String homeUnconvertedFractional(String currency);
+
+  /// No description provided for @homeRateInputLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'1 {from} = ? {to}'**
+  String homeRateInputLabel(String from, String to);
+
+  /// No description provided for @homeRateSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save. Check the rate and try again.'**
+  String get homeRateSaveFailed;
+
+  /// No description provided for @convertedRowTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Converted'**
+  String get convertedRowTitle;
+
+  /// No description provided for @convertedAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'≈ {amount}'**
+  String convertedAmount(String amount);
+
+  /// No description provided for @convertedRateLine.
+  ///
+  /// In en, this message translates to:
+  /// **'1 {from} = {rate} {to} · rate you entered at {time}'**
+  String convertedRateLine(String from, String rate, String to, String time);
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

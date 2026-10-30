@@ -23,6 +23,10 @@ abstract class ProfileViewModel extends ChangeNotifier {
   Future<void> load();
   Future<void> save();
 
+  /// Saves the Overview display currency on the account (null = default).
+  /// Returns false when the server refused or the session changed.
+  Future<bool> saveDisplayCurrency(String? code);
+
   /// True while an export is being fetched or handed to the OS.
   bool get exporting;
   Future<bool> exportData();
@@ -153,6 +157,31 @@ class DefaultProfileViewModel extends ProfileViewModel {
     if (epoch != _epoch) return;
     loading = false;
     notifyListeners();
+  }
+
+  @override
+  Future<bool> saveDisplayCurrency(String? code) async {
+    final current = saved;
+    final choices = options;
+    if (current == null || choices == null || _stage != AuthStage.unlocked) {
+      return false;
+    }
+    final epoch = _epoch;
+    final result = await _useCases.saveDisplayCurrency(code, choices);
+    if (epoch != _epoch) return false;
+    return result.fold(
+      (e) {
+        unawaited(_fail(e));
+        notifyListeners();
+        return false;
+      },
+      (_) {
+        saved = current.withDisplayCurrency(code);
+        draft = draft?.withDisplayCurrency(code);
+        notifyListeners();
+        return true;
+      },
+    );
   }
 
   @override

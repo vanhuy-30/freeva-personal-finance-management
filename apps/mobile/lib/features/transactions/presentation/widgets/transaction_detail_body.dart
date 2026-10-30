@@ -4,6 +4,8 @@ import 'package:mobile/core/theme/lucide_icons.g.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
+import '../../../../core/money/display_converted.dart';
+import '../../../../core/widgets/converted_note.dart';
 import '../../../../core/widgets/freeva_button_style.dart';
 import '../../../../core/widgets/press_scale.dart';
 import '../../../../core/widgets/money_display.dart';
@@ -79,6 +81,7 @@ class TransactionDetailBody extends StatelessWidget {
                 tone: label.tone,
                 style: FreevaTypography.moneyL,
               ),
+              _ConvertedLine(model: model, bundle: bundle),
             ],
           ),
         ),
@@ -157,5 +160,48 @@ class _ActionButton extends StatelessWidget {
         ],
       ),
     ),
+  );
+}
+
+/// The amount in the profile currency with the typed rate, once the server
+/// answers. Nothing is drawn while loading, when it fails, or when there is
+/// no exact conversion.
+class _ConvertedLine extends StatefulWidget {
+  const _ConvertedLine({required this.model, required this.bundle});
+
+  final TransactionViewModel model;
+  final TransactionBundle bundle;
+
+  @override
+  State<_ConvertedLine> createState() => _ConvertedLineState();
+}
+
+class _ConvertedLineState extends State<_ConvertedLine> {
+  late final Future<DisplayConverted?> converted = widget.model.convertedFor(
+    widget.bundle,
+  );
+
+  @override
+  Widget build(BuildContext context) => FutureBuilder<DisplayConverted?>(
+    future: converted,
+    builder: (context, snapshot) {
+      final value = snapshot.data;
+      if (value == null) return const SizedBox.shrink();
+      final digits =
+          widget.model.currencies
+              .where((x) => x.code == value.currency)
+              .map((x) => x.minorDigits)
+              .firstOrNull ??
+          0;
+      return Padding(
+        padding: const EdgeInsets.only(top: FreevaSpace.s2),
+        child: ConvertedNote(
+          value: value,
+          from: widget.bundle.legs.first.currencyCode,
+          minorDigits: digits,
+          textAlign: TextAlign.center,
+        ),
+      );
+    },
   );
 }

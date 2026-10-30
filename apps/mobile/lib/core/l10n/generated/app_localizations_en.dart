@@ -3510,4 +3510,49 @@ class SEn extends S {
 
   @override
   String get tagsViewTransactions => 'View transactions';
+
+  @override
+  String homeTotalConverted(int count, String currency) {
+    return 'Total in $currency · $count wallets';
+  }
+
+  @override
+  String homeDisplayCurrencyAction(String currency) {
+    return 'Show totals in $currency';
+  }
+
+  @override
+  String get homeDisplayCurrencyTitle => 'Show totals in';
+
+  @override
+  String homeUnconvertedMissing(String currency) {
+    return '$currency: no rate yet, tap to add';
+  }
+
+  @override
+  String homeUnconvertedFractional(String currency) {
+    return '$currency: rate doesn\'t convert evenly, tap to edit';
+  }
+
+  @override
+  String homeRateInputLabel(String from, String to) {
+    return '1 $from = ? $to';
+  }
+
+  @override
+  String get homeRateSaveFailed =>
+      'Couldn\'t save. Check the rate and try again.';
+
+  @override
+  String get convertedRowTitle => 'Converted';
+
+  @override
+  String convertedAmount(String amount) {
+    return '≈ $amount';
+  }
+
+  @override
+  String convertedRateLine(String from, String rate, String to, String time) {
+    return '1 $from = $rate $to · rate you entered at $time';
+  }
 }

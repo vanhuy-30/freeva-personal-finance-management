@@ -27,6 +27,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
       habit: _text(json['trackingHabit']),
       cadence: _text(json['reviewCadence']),
       budgetMinor: _minor(json['onboardingBudgetMinor']),
+      displayCurrency: _code(json['displayCurrencyCode']),
     );
     if (!['vi', 'en'].contains(value.locale) ||
         !RegExp(r'^[A-Z]{3}$').hasMatch(value.currency) ||
@@ -71,6 +72,14 @@ class ProfileRepositoryImpl implements ProfileRepository {
     ),
   );
   @override
+  Future<Either<AuthFailure, Unit>> saveDisplayCurrency(String? code) =>
+      _request(
+        'PUT',
+        'profile/display-currency',
+        (_) => unit,
+        body: {'currencyCode': code},
+      );
+  @override
   Future<Either<AuthFailure, Unit>> saveOnboarding(OnboardingAnswers answers) =>
       _request(
         'PATCH',
@@ -98,6 +107,9 @@ String? _name(Object? value) {
   final name = value is String ? value.trim() : '';
   return name.isEmpty ? null : name;
 }
+
+String? _code(Object? value) =>
+    value is String && RegExp(r'^[A-Z]{3}$').hasMatch(value) ? value : null;
 
 String? _text(Object? value) =>
     value is String && value.isNotEmpty ? value : null;

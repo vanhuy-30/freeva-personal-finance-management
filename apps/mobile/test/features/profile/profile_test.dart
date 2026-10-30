@@ -39,6 +39,28 @@ void main() {
       );
     },
   );
+  test('repository reads the display currency and PUTs null to clear it', () async {
+    final api = Transport();
+    final repo = ProfileRepositoryImpl(api);
+    api.response = {
+      'locale': 'vi',
+      'defaultCurrencyCode': 'VND',
+      'timezone': 'UTC',
+      'fiscalMonthStartDay': 1,
+      'version': 1,
+      'displayCurrencyCode': 'USD',
+    };
+    expect((await repo.load()).getOrElse(() => throw StateError('')).displayCurrency, 'USD');
+    api.response['displayCurrencyCode'] = null;
+    expect((await repo.load()).getOrElse(() => throw StateError('')).displayCurrency, isNull);
+    api.response['displayCurrencyCode'] = 'usd';
+    expect((await repo.load()).getOrElse(() => throw StateError('')).displayCurrency, isNull);
+    expect((await repo.saveDisplayCurrency(null)).isRight(), isTrue);
+    expect(api.body, {'currencyCode': null});
+    // The profile PUT never carries the display currency.
+    expect((await repo.save(initial)).isRight(), isTrue);
+    expect(api.body!.containsKey('displayCurrencyCode'), isFalse);
+  });
   test(
     'repository serializes integer day/version and rejects malformed response',
     () async {
@@ -204,6 +226,26 @@ void main() {
     tearDown(() {
       model.dispose();
       auth.dispose();
+    });
+    test('saves the display currency apart from the profile PUT', () async {
+      await model.load();
+      expect(model.saved!.overviewCurrency, model.saved!.currency);
+      expect(await model.saveDisplayCurrency('USD'), isTrue);
+      expect(repo.displayCurrencies, ['USD']);
+      expect(model.saved!.displayCurrency, 'USD');
+      expect(model.saved!.overviewCurrency, 'USD');
+      expect(model.dirty, isFalse);
+      expect(repo.saves, 0);
+
+      expect(await model.saveDisplayCurrency('XXX'), isFalse);
+      expect(repo.displayCurrencies, ['USD']);
+
+      expect(await model.saveDisplayCurrency(null), isTrue);
+      expect(model.saved!.overviewCurrency, model.saved!.currency);
+
+      repo.failure = const AuthFailure(AuthError.network);
+      expect(await model.saveDisplayCurrency('USD'), isFalse);
+      expect(model.saved!.displayCurrency, isNull);
     });
     test(
       'the saved name is handed to the lock screen on load and on save',

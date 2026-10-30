@@ -14,8 +14,9 @@ class ReportRepositoryImpl implements ReportRepository {
 
   @override
   Future<Either<AuthFailure, CashflowReport>> cashflow(
-    ReportPeriodQuery query,
-  ) => _request('GET', _cashflowPath(query), _cashflow);
+    ReportPeriodQuery query, {
+    String? displayCurrency,
+  }) => _request('GET', _cashflowPath(query, displayCurrency), _cashflow);
 
   @override
   Future<Either<AuthFailure, MonthReviewReport>> monthReview({String? on}) =>
@@ -42,8 +43,18 @@ class ReportRepositoryImpl implements ReportRepository {
   );
 
   @override
-  Future<Either<AuthFailure, NetWorthReport>> netWorth() =>
-      _request('GET', 'reports/net-worth', _netWorth);
+  Future<Either<AuthFailure, NetWorthReport>> netWorth({
+    String? displayCurrency,
+  }) => _request(
+    'GET',
+    Uri(
+      path: 'reports/net-worth',
+      queryParameters: displayCurrency == null
+          ? null
+          : {'displayCurrency': displayCurrency},
+    ).toString(),
+    _netWorth,
+  );
 
   Future<Either<AuthFailure, T>> _request<T>(
     String method,
@@ -61,13 +72,14 @@ class ReportRepositoryImpl implements ReportRepository {
   }
 }
 
-String _cashflowPath(ReportPeriodQuery query) => Uri(
+String _cashflowPath(ReportPeriodQuery query, String? displayCurrency) => Uri(
   path: 'reports/cashflow',
   queryParameters: {
     'period': query.kind.name,
     if (query.on != null) 'on': query.on,
     if (query.from != null) 'from': query.from,
     if (query.to != null) 'to': query.to,
+    if (displayCurrency != null) 'displayCurrency': displayCurrency,
   },
 ).toString();
 
@@ -76,6 +88,7 @@ CashflowReport _cashflow(Map<String, dynamic> json) => CashflowReport(
   totals: _rows(json['totals'], _total),
   byCategory: _rows(json['byCategory'], _category),
   byAccount: _rows(json['byAccount'], _account),
+  converted: _converted(json['converted'], _cashflowConverted),
 );
 
 MonthReviewReport _monthReview(Map<String, dynamic> json) {
@@ -165,8 +178,40 @@ CashflowAccountRow _account(Map<String, dynamic> json) => CashflowAccountRow(
   netMinor: _money(json['netMinor']),
 );
 
-NetWorthReport _netWorth(Map<String, dynamic> json) =>
-    NetWorthReport(items: _rows(json['items'], _netWorthTotal));
+NetWorthReport _netWorth(Map<String, dynamic> json) => NetWorthReport(
+  items: _rows(json['items'], _netWorthTotal),
+  converted: _converted(json['converted'], _netWorthConverted),
+);
+
+T? _converted<T>(Object? value, T Function(Map<String, dynamic>) parse) =>
+    value == null ? null : parse(value as Map<String, dynamic>);
+
+NetWorthConverted _netWorthConverted(Map<String, dynamic> json) =>
+    NetWorthConverted(
+      currency: _currency(json['currency']),
+      assetsMinor: _money(json['assetsMinor']),
+      liabilitiesMinor: _money(json['liabilitiesMinor']),
+      netWorthMinor: _money(json['netWorthMinor']),
+      unconverted: _rows(json['unconverted'], _unconverted),
+    );
+
+CashflowConverted _cashflowConverted(Map<String, dynamic> json) =>
+    CashflowConverted(
+      currency: _currency(json['currency']),
+      incomeMinor: _money(json['incomeMinor']),
+      expenseMinor: _money(json['expenseMinor']),
+      unconverted: _rows(json['unconverted'], _unconverted),
+    );
+
+UnconvertedCurrency _unconverted(Map<String, dynamic> json) =>
+    UnconvertedCurrency(
+      currency: _currency(json['currency']),
+      reason: switch (json['reason']) {
+        'MISSING_RATE' => UnconvertedReason.missingRate,
+        'FRACTIONAL' => UnconvertedReason.fractional,
+        _ => throw const FormatException(),
+      },
+    );
 
 NetWorthTotal _netWorthTotal(Map<String, dynamic> json) => NetWorthTotal(
   currency: _currency(json['currency']),

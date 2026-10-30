@@ -89,6 +89,12 @@ class WalletDetailBody extends StatelessWidget {
                   locale,
                 ).format(today),
                 hidden: hidden,
+                converted: detail.converted,
+                convertedDigits: main.currencies
+                        .where((x) => x.code == detail.converted?.currency)
+                        .map((x) => x.minorDigits)
+                        .firstOrNull ??
+                    0,
               ),
             const SizedBox(height: _gap),
             Row(

@@ -6,11 +6,13 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/analytics/analytics_event.dart';
 import '../../../../core/analytics/analytics_service.dart';
+import '../../../../core/money/display_converted.dart';
 import '../../../../core/time/calendar_date.dart';
 import '../../../auth/domain/auth_repository.dart';
 import '../../../auth/presentation/viewmodels/auth_view_model.dart';
 import '../../../categories/domain/category_use_cases.dart';
 import '../../../categories/domain/finance_category.dart';
+import '../../../fx_rates/domain/fx_rate_use_cases.dart';
 import '../../../profile/domain/profile_use_cases.dart';
 import '../../../tags/domain/tag.dart';
 import '../../../tags/domain/tag_use_cases.dart';
@@ -26,6 +28,10 @@ import '../../domain/transaction_use_cases.dart';
 import '../transaction_sync.dart';
 
 abstract class TransactionViewModel extends ChangeNotifier {
+  /// The amount shown in the detail sheet in the profile currency, with the
+  /// typed rate. Null when there is no exact conversion. Display only.
+  Future<DisplayConverted?> convertedFor(TransactionBundle bundle);
+
   List<TransactionBundle> get rows;
   List<Wallet> get wallets;
   List<WalletCurrency> get currencies;
@@ -108,6 +114,7 @@ class DefaultTransactionViewModel extends TransactionViewModel {
     this._auth,
     this._analytics,
     this._sync,
+    this._fx,
   ) {
     _stage = _auth.stage;
     _seenApplied = _sync.appliedEpoch;
@@ -116,6 +123,7 @@ class DefaultTransactionViewModel extends TransactionViewModel {
     if (_stage == AuthStage.unlocked) Future.microtask(load);
   }
 
+  final FxRateUseCases _fx;
   final TransactionUseCases _cases;
   final CategoryUseCases _categoriesUseCases;
   final TagUseCases _tagsUseCases;
@@ -378,6 +386,10 @@ class DefaultTransactionViewModel extends TransactionViewModel {
       if (replace && unfiltered) _recentLegs = value.legs;
     });
   }
+
+  @override
+  Future<DisplayConverted?> convertedFor(TransactionBundle bundle) =>
+      _fx.transactionConverted(bundle.id);
 
   @override
   Future<void> load() async {

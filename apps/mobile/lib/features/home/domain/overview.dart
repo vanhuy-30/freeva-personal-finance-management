@@ -44,7 +44,8 @@ class OverviewData {
   }
 }
 
-/// Sum of active wallets in one currency. Never converted between currencies.
+/// Sum of active wallets in one currency. A row is never converted by itself;
+/// [BalanceSummary.main] may carry a display-only converted total.
 class CurrencyBalance {
   const CurrencyBalance({
     required this.currency,
@@ -58,11 +59,25 @@ class CurrencyBalance {
 }
 
 class BalanceSummary {
-  const BalanceSummary({required this.main, required this.others});
+  const BalanceSummary({
+    required this.main,
+    required this.others,
+    this.isConverted = false,
+    this.unconverted = const [],
+  });
 
-  /// The profile currency (or the first currency that has wallets).
+  /// The display currency (or the first currency that has wallets). With
+  /// [isConverted] it is the converted total of every currency that
+  /// converted exactly (BE-P2-013).
   final CurrencyBalance main;
   final List<CurrencyBalance> others;
+
+  /// True when [main] is a display-only converted total.
+  final bool isConverted;
+
+  /// Currencies with wallets or spending that are left out of the converted
+  /// numbers and still shown as their own lines.
+  final List<UnconvertedCurrency> unconverted;
 }
 
 /// Income and expense of the period as positive magnitudes.

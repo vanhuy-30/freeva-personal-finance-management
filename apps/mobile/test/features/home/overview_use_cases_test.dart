@@ -13,15 +13,18 @@ import 'package:mobile/features/transactions/domain/transaction_repository.dart'
 import 'package:mobile/features/wallets/domain/wallet.dart';
 import 'package:mobile/features/wallets/domain/wallet_repository.dart';
 
+import '../fx_rates/fakes.dart';
 import 'fixtures.dart';
 
 void main() {
   late _Reports reports;
   late _Transactions transactions;
   late DefaultOverviewUseCases cases;
+  late MemoryFxRates rates;
 
   setUp(() {
     reports = _Reports();
+    rates = MemoryFxRates();
     transactions = _Transactions();
     cases = DefaultOverviewUseCases(
       reports,
@@ -29,7 +32,19 @@ void main() {
       transactions,
       _Categories(),
       _Budgets(),
+      rates,
     );
+  });
+
+  test('saves a typed rate with 8 decimals and sends nothing when invalid', () async {
+    final saved = await cases.saveRate('USD', 'VND', ' 25000.5 ')!;
+    expect(saved.isRight(), isTrue);
+    expect(rates.saved, ['USD>VND=25000.50000000']);
+    for (final bad in ['', '0', '-1', 'abc', '1e3', '1.123456789']) {
+      expect(cases.saveRate('USD', 'VND', bad), isNull, reason: bad);
+    }
+    expect(cases.saveRate('USD', 'USD', '1'), isNull);
+    expect(rates.saved, hasLength(1));
   });
 
   test('loads the current month only, hides archived wallets', () async {
@@ -101,8 +116,9 @@ class _Reports implements ReportRepository {
 
   @override
   Future<Either<AuthFailure, CashflowReport>> cashflow(
-    ReportPeriodQuery query,
-  ) async {
+    ReportPeriodQuery query, {
+    String? displayCurrency,
+  }) async {
     queries.add(query);
     return right(months.length > 1 ? months.removeAt(0) : months.single);
   }
@@ -119,7 +135,7 @@ class _Reports implements ReportRepository {
   }) async => left(const AuthFailure(AuthError.unavailable));
 
   @override
-  Future<Either<AuthFailure, NetWorthReport>> netWorth() async =>
+  Future<Either<AuthFailure, NetWorthReport>> netWorth({String? displayCurrency}) async =>
       worthFailure != null
       ? left(worthFailure!)
       : right(NetWorthReport(items: [worth('VND', 100)]));
