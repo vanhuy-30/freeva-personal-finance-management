@@ -124,11 +124,12 @@ Phase 1 giữ đóng. Các ticket dưới đây không đổi số 28/28.
 - Note: `CATEGORY_KIND_MISMATCH` (400) ở tạo/sửa giao dịch, luật định kỳ và `/sync` (item `rejected`); mobile `prepareTransaction` + chuỗi vi/en. Test tích hợp viết nhưng chưa chạy (cần Postgres).
 
 ### INF-P2-001 — Postgres staging miễn phí thay Render
-- Status: todo
+- Status: blocked
 - Module: 26
 - Gate: ops
 - Depends: INF-P0-004
 - DoD: DB staging trên Render (plan free trong `render.yaml`) đã hết hạn. Chọn một Postgres miễn phí, chạy được Prisma migrate, chỉ cho dữ liệu staging. `DATABASE_URL` đặt trên dashboard host, không commit. API staging có thể giữ Render nếu web service còn sống; health `GET /api/health` trả `database=up` sau migrate. Không seed PII, không dùng làm production, không chốt vendor production (region VN vẫn là DECISIONS-OPEN #5). Cập nhật [staging.md](../docs/infrastructure/staging.md), `render.yaml` (bỏ DB Render đã chết), [DECISIONS-OPEN](../docs/project-state/DECISIONS-OPEN.md) #4 và URL trong [STATUS](../docs/project-state/STATUS.md). Ghi giới hạn plan miễn phí (ngủ, hết hạn, vùng) vào staging.md.
+- Note: Hoãn 2026-10-30. Đăng ký Neon bị treo; giai đoạn develop dùng Postgres local (Compose), staging làm lại ở phase sau nếu cần. Staging API hiện chưa có DB sống.
 
 ### MOB-P2-011 — Xuất và xóa tài khoản trên app
 - Status: done
