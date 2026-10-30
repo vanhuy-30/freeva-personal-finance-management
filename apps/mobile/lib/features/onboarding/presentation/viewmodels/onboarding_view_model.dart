@@ -88,6 +88,8 @@ class OnboardingViewModel extends ChangeNotifier {
   Future<void> saveBudgetDraft() async {
     if (budget <= 0) return;
     final amount = BigInt.from(budget);
+    // Also kept on the account so it survives a new device; best effort.
+    await _profile.saveOnboarding(OnboardingAnswers(budgetMinor: amount));
     final budgets = _budgets;
     if (budgets != null) {
       final current = await budgets.current();

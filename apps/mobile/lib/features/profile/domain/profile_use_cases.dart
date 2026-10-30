@@ -18,6 +18,10 @@ class ProfileUseCases {
         (answers.goals?.toSet().length ?? 0) != (answers.goals?.length ?? 0)) {
       return Future.value(left(const AuthFailure(AuthError.invalidInput)));
     }
+    final budget = answers.budgetMinor;
+    if (budget != null && budget <= BigInt.zero) {
+      return Future.value(left(const AuthFailure(AuthError.invalidInput)));
+    }
     if (answers.isEmpty) return Future.value(right(unit));
     return _repository.saveOnboarding(answers);
   }

@@ -20,7 +20,7 @@
 - **Mobile sync:** `MOB-P1-008` done: hàng đợi mutation giao dịch khi mất mạng, gửi lại bằng `POST /api/v1/sync`, conflict không ghi đè. Analyze và 9 tests mới pass (117 tổng); chưa native build/E2E staging. [Chi tiết](../architecture/mobile-sync.md).
 - **Mobile privacy:** `MOB-P1-009` done: nút mắt che số đang đọc, cảnh báo phiên đăng nhập mới bằng banner và thông báo cục bộ. Analyze và 13 tests mới pass (130 tổng); chưa native build/E2E staging. [Chi tiết](../architecture/mobile-privacy.md).
 - **Mobile merchant/tags:** `MOB-P1-011` done: merchant trên thu/chi, gắn/gỡ nhãn. Analyze và 137 Flutter tests pass; chưa native build/E2E staging. [Chi tiết](../architecture/mobile-tags.md).
-- **Onboarding/tài khoản (nhóm A):** `DS-P2-004` done 2026-10-29: 16 màn khớp canvas, ngân sách nối `BE-P2-E02`, mục tiêu Nợ đưa khối Thẻ tín dụng lên đầu. Còn tách riêng: deep link email, Google/Apple mobile, xác nhận lại email trong Cá nhân, `BE-P2-012`. [Chi tiết](../brand/patterns/A-onboarding-auth.md).
+- **Onboarding/tài khoản (nhóm A):** `DS-P2-004` done 2026-10-29: 16 màn khớp canvas, ngân sách nối `BE-P2-E02`, mục tiêu Nợ đưa khối Thẻ tín dụng lên đầu. `BE-P2-012` done 2026-10-30. Còn tách riêng: deep link email, Google/Apple mobile, xác nhận lại email trong Cá nhân. [Chi tiết](../brand/patterns/A-onboarding-auth.md).
 - **Mobile analytics:** `MOB-P0-004` done; catalog typed, debug logger local, `schema_version: 1`, không property tùy ý/PII và chưa có vendor SDK.
 - **Backup/restore:** `BE-P0-005` done; [runbook và bằng chứng local](../../infra/runbooks/backup-restore.md), PostgreSQL 16.14. Production PITR/retention/RPO/RTO chưa triển khai.
 - **Scaffold:** xong trên `main` (`153d3e7`). Health API, admin placeholder, Flutter shell, docs, compose.

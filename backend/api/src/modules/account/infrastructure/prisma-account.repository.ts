@@ -47,7 +47,8 @@ export class PrismaAccountRepository implements AccountRepository {
       where: { id: userId },
       select: {
         id: true, email: true, displayName: true, locale: true, timezone: true, defaultCurrencyCode: true,
-        fiscalMonthStartDay: true, emailVerifiedAt: true, categoriesInitializedAt: true, categoriesSupplementedAt: true,
+        fiscalMonthStartDay: true, onboardingGoals: true, trackingHabit: true, reviewCadence: true,
+        onboardingBudgetMinor: true, emailVerifiedAt: true, categoriesInitializedAt: true, categoriesSupplementedAt: true,
         createdAt: true, updatedAt: true, oauthIdentities: { select: { provider: true } },
       },
     });

@@ -24,6 +24,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
           for (final goal in goals)
             if (goal is String) goal,
       ],
+      habit: _text(json['trackingHabit']),
+      cadence: _text(json['reviewCadence']),
+      budgetMinor: _minor(json['onboardingBudgetMinor']),
     );
     if (!['vi', 'en'].contains(value.locale) ||
         !RegExp(r'^[A-Z]{3}$').hasMatch(value.currency) ||
@@ -94,4 +97,12 @@ class ProfileRepositoryImpl implements ProfileRepository {
 String? _name(Object? value) {
   final name = value is String ? value.trim() : '';
   return name.isEmpty ? null : name;
+}
+
+String? _text(Object? value) =>
+    value is String && value.isNotEmpty ? value : null;
+
+BigInt? _minor(Object? value) {
+  final minor = value is String ? BigInt.tryParse(value) : null;
+  return minor != null && minor > BigInt.zero ? minor : null;
 }

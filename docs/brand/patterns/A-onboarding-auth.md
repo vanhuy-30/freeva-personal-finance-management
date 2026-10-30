@@ -75,6 +75,6 @@ Mở khoá hằng ngày: màn Mở khoá ở hàng mẫu (avatar chữ cái, "Ch
 | Quy tắc chữ + số | Xong ở backend + mobile (`DS-P2-004`, 2026-10-23). |
 | Xác nhận email không bắt buộc | Backend đã cho đăng nhập trước khi xác nhận (ADR 009); mobile cần cho đi tiếp sau A2.3 và nơi xác nhận lại trong Cá nhân. |
 | Lưu đồng ý điều khoản | Cần ghi lại thời điểm và phiên bản điều khoản khi đăng ký email (Google/Apple: dòng chữ ở A1.2). |
-| Câu trả lời A1.3–A1.4 | Xong (A2a): `User.onboardingGoals/trackingHabit/reviewCadence`, `PATCH /api/v1/profile/onboarding`, mọi trường tuỳ chọn. Mục tiêu "Quản lý khoản nợ" đưa khối Thẻ tín dụng lên đầu Tổng quan; các mục tiêu khác chưa có khối (chưa thiết kế, owner chốt giữ nguyên 2026-10-29). Chưa có trong `GET /account/export` (`BE-P2-012`). |
+| Câu trả lời A1.3–A1.4 | Xong (A2a): `User.onboardingGoals/trackingHabit/reviewCadence`, `PATCH /api/v1/profile/onboarding`, mọi trường tuỳ chọn. Mục tiêu "Quản lý khoản nợ" đưa khối Thẻ tín dụng lên đầu Tổng quan; các mục tiêu khác chưa có khối (chưa thiết kế, owner chốt giữ nguyên 2026-10-29). Đọc lại qua `GET /profile` và có trong `GET /account/export` (`BE-P2-012`, 2026-10-30); số ngân sách đầu lưu thêm trên user. |
 | Chế độ khách | **Chưa làm** — cần dữ liệu cục bộ và gộp khi đăng ký; quyết định sau. |
 | Copy l10n | Toàn bộ chuỗi trên thay chuỗi `auth*`, `onboarding*` hiện có trong `app_vi.arb` / `app_en.arb`. |

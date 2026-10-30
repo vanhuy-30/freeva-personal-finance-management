@@ -64,6 +64,52 @@ void main() {
     },
   );
   test(
+    'budget goes out as a string and the profile reads the saved answers',
+    () async {
+      final api = Transport();
+      final repo = ProfileRepositoryImpl(api);
+      final cases = ProfileUseCases(repo);
+      expect(
+        (await cases.saveOnboarding(
+          OnboardingAnswers(budgetMinor: BigInt.from(15000000)),
+        )).isRight(),
+        true,
+      );
+      expect(api.body, {'budgetMinor': '15000000'});
+      api.method = null;
+      expect(
+        (await cases.saveOnboarding(
+          OnboardingAnswers(budgetMinor: BigInt.zero),
+        )).isLeft(),
+        true,
+      );
+      expect(api.method, isNull);
+      api.response = {
+        'locale': 'vi',
+        'defaultCurrencyCode': 'VND',
+        'timezone': 'UTC',
+        'fiscalMonthStartDay': 1,
+        'version': 1,
+        'goals': ['save'],
+        'trackingHabit': 'app',
+        'reviewCadence': 'weekly',
+        'onboardingBudgetMinor': '15000000',
+      };
+      final loaded = (await repo.load()).getOrElse(() => throw StateError('x'));
+      expect(loaded.habit, 'app');
+      expect(loaded.cadence, 'weekly');
+      expect(loaded.budgetMinor, BigInt.from(15000000));
+      api.response = {
+        ...api.response,
+        'onboardingBudgetMinor': 'abc',
+        'trackingHabit': null,
+      };
+      final bad = (await repo.load()).getOrElse(() => throw StateError('x'));
+      expect(bad.budgetMinor, isNull);
+      expect(bad.habit, isNull);
+    },
+  );
+  test(
     'onboarding answers go out as a PATCH with only the set parts',
     () async {
       final api = Transport();
