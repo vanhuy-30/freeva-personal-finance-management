@@ -14,3 +14,4 @@
 | 8 | Quy mô đội / QA / budget | Solo/small; process nhẹ | Mở |
 | 9 | Crash tooling | **Sentry** cho staging (`INF-P1-001`, ADR 011). SDK tắt khi không có DSN. DSN đặt trên Render/Vercel và `--dart-define` mobile; không commit. Event live chờ project Sentry. | Chốt vendor staging 2026-10-12; DSN vận hành còn mở |
 | 10 | Security contact | email TBD | Mở |
+| 11 | Push provider | **Firebase Cloud Messaging** (`BE-P2-015`, ADR 013). Push tắt khi thiếu `FCM_SERVICE_ACCOUNT_*`. Cần owner tạo project Firebase, tải `google-services.json` / `GoogleService-Info.plist` (gitignore), upload APNs key, đặt service account trên host. | Chốt vendor 2026-10-30; project Firebase còn mở |

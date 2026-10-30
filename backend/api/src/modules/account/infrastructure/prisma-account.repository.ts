@@ -162,6 +162,7 @@ export class PrismaAccountRepository implements AccountRepository {
 
   private async removeAccount(tx: Prisma.TransactionClient, userId: string): Promise<boolean> {
     if (!(await lockUser(tx, userId))) return false;
+    await tx.pushToken.deleteMany({ where: { userId } });
     await tx.inAppNotification.deleteMany({ where: { userId } });
     await tx.notificationPreference.deleteMany({ where: { userId } });
     await tx.bill.deleteMany({ where: { userId } });

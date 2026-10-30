@@ -7,3 +7,4 @@
 - Prod: secret manager / hoster (TBD tới Store). Rotate DB password, JWT, store keys.
 - Mobile: không nhúng API secret; chỉ public URL + cert pinning sau này (`SEC-P1`).
 - Staff P0: `STAFF_AUTH_TOKEN` tối thiểu 32 ký tự và `STAFF_ACTOR_ID` UUID trong API env. Token thật không đặt trong `NEXT_PUBLIC_*`, URL, local storage hay repo; rotate khi nghi lộ.
+- Push FCM (`BE-P2-015`): `FCM_SERVICE_ACCOUNT_JSON` hoặc `FCM_SERVICE_ACCOUNT_BASE64` chỉ trên dashboard host / secret CI, không commit; để trống thì push tắt. Mobile dùng `google-services.json` / `GoogleService-Info.plist` (gitignore), không nhúng khóa service account.

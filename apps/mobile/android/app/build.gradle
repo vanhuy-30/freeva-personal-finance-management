@@ -45,3 +45,8 @@ dependencies {
 flutter {
     source = "../.."
 }
+
+// MOB-P2-015: FCM needs the Firebase config; builds without it (CI, forks) still work and push stays off.
+if (file("google-services.json").exists()) {
+    apply plugin: "com.google.gms.google-services"
+}

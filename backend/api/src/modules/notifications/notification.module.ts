@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from '../auth/auth.module';
+import { PushModule } from '../push/push.module';
 import { NOTIFICATION_REPOSITORY } from './domain/notification.repository';
 import { NotificationWorker } from './infrastructure/notification.worker';
 import { PrismaNotificationRepository } from './infrastructure/prisma-notification.repository';
@@ -7,7 +8,7 @@ import { NotificationController } from './notification.controller';
 import { NotificationService } from './notification.service';
 
 @Module({
-  imports: [AuthModule],
+  imports: [AuthModule, PushModule],
   controllers: [NotificationController],
   providers: [
     NotificationService,

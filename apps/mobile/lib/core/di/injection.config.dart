@@ -77,12 +77,18 @@ import 'package:mobile/features/fx_rates/domain/fx_rate_use_cases.dart'
 import 'package:mobile/features/home/domain/overview_use_cases.dart' as _i970;
 import 'package:mobile/features/home/presentation/viewmodels/home_view_model.dart'
     as _i722;
+import 'package:mobile/features/notifications/data/fcm_push_registrar.dart'
+    as _i360;
 import 'package:mobile/features/notifications/data/notification_repository_impl.dart'
     as _i419;
+import 'package:mobile/features/notifications/data/push_token_repository_impl.dart'
+    as _i460;
 import 'package:mobile/features/notifications/domain/notification_repository.dart'
     as _i199;
 import 'package:mobile/features/notifications/domain/notification_use_cases.dart'
     as _i338;
+import 'package:mobile/features/notifications/domain/push_registrar.dart'
+    as _i911;
 import 'package:mobile/features/notifications/presentation/viewmodels/notification_view_model.dart'
     as _i921;
 import 'package:mobile/features/profile/data/profile_repository_impl.dart'
@@ -220,6 +226,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i1036.BudgetRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i659.BillUseCases>(
         () => _i659.DefaultBillUseCases(gh<_i194.BillRepository>()));
+    gh.lazySingleton<_i911.PushTokenRepository>(
+        () => _i460.PushTokenRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.factory<_i410.AccountExportUseCase>(() => _i410.AccountExportUseCase(
           gh<_i173.AuthRepository>(),
           gh<_i1007.AccountFileSharer>(),
@@ -258,6 +266,10 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i471.DefaultCalendarUseCases(gh<_i791.CalendarRepository>()));
     gh.factory<_i1002.FxRateUseCases>(
         () => _i1002.FxRateUseCases(gh<_i406.FxRateRepository>()));
+    gh.lazySingleton<_i911.PushRegistrar>(() => _i360.FcmPushRegistrar(
+          gh<_i911.PushTokenRepository>(),
+          gh<_i54.SessionAlertNotifier>(),
+        ));
     gh.lazySingleton<_i245.BudgetUseCases>(
         () => _i245.DefaultBudgetUseCases(gh<_i1073.BudgetRepository>()));
     gh.lazySingleton<_i990.AuthViewModel>(
@@ -365,6 +377,13 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i1002.FxRateUseCases>(),
           walletId: walletId,
         ));
+    gh.lazySingleton<_i921.NotificationViewModel>(
+        () => _i921.DefaultNotificationViewModel(
+              gh<_i338.NotificationUseCases>(),
+              gh<_i990.AuthViewModel>(),
+              gh<_i887.ProfileViewModel>(),
+              gh<_i911.PushRegistrar>(),
+            ));
     gh.factoryParam<_i1024.TransactionResultsViewModel, bool?, String?>((
       deleted,
       accountId,
@@ -375,12 +394,6 @@ extension GetItInjectableX on _i174.GetIt {
           deleted: deleted,
           accountId: accountId,
         ));
-    gh.lazySingleton<_i921.NotificationViewModel>(
-        () => _i921.DefaultNotificationViewModel(
-              gh<_i338.NotificationUseCases>(),
-              gh<_i990.AuthViewModel>(),
-              gh<_i887.ProfileViewModel>(),
-            ));
     return this;
   }
 }
