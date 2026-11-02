@@ -96,6 +96,7 @@ model Currency {
   budgetMonths          BudgetMonth[]
   bills                 Bill[]
   goals                 Goal[]
+  loans                 Loan[]
 }
 
 model User {
@@ -146,6 +147,8 @@ model User {
   pushTokens             PushToken[]
   goals                  Goal[]
   goalEntries            GoalEntry[]
+  loans                  Loan[]
+  loanPayments           LoanPayment[]
 }
 
 model FinancialAccount {
@@ -172,6 +175,7 @@ model FinancialAccount {
   recurringSource  RecurringRule[] @relation("RecurringSourceAccount")
   recurringCounter RecurringRule[] @relation("RecurringCounterAccount")
   goals            Goal[]
+  loans            Loan[]
 
   @@unique([userId, clientId])
   @@index([userId, archivedAt])
@@ -707,4 +711,71 @@ model GoalEntry {
 
   @@unique([userId, clientId])
   @@index([goalId, createdAt])
+}
+
+enum LoanKind {
+  card
+  personal
+  mortgage
+  other
+}
+
+enum LoanFrequency {
+  weekly
+  monthly
+  quarterly
+  yearly
+}
+
+/// Loan / debt (BE-P3-E02). outstandingMinor is stored; every change goes through LoanPayment
+/// (expense transactions for principal and interest) or an AuditEvent when the number is only corrected.
+model Loan {
+  id               String        @id @default(uuid()) @db.Uuid
+  userId           String        @db.Uuid
+  clientId         String        @db.Uuid
+  kind             LoanKind
+  name             String        @db.VarChar(80)
+  currencyCode     String        @db.Char(3)
+  principalMinor   BigInt
+  outstandingMinor BigInt
+  /// Annual interest rate in basis points (1200 = 12,00%).
+  interestRateBps  Int           @default(0)
+  installmentMinor BigInt?
+  frequency        LoanFrequency @default(monthly)
+  startDate        DateTime      @db.Date
+  endDate          DateTime?     @db.Date
+  nextDueDate      DateTime?     @db.Date
+  accountId        String?       @db.Uuid
+  archivedAt       DateTime?     @db.Timestamptz
+  version          Int           @default(1)
+  createdAt        DateTime      @default(now()) @db.Timestamptz
+  updatedAt        DateTime      @updatedAt @db.Timestamptz
+
+  user     User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account  FinancialAccount? @relation(fields: [accountId], references: [id])
+  currency Currency          @relation(fields: [currencyCode], references: [code])
+  payments LoanPayment[]
+
+  @@unique([userId, clientId])
+  @@index([userId, archivedAt])
+}
+
+model LoanPayment {
+  id                           String   @id @default(uuid()) @db.Uuid
+  loanId                       String   @db.Uuid
+  userId                       String   @db.Uuid
+  clientId                     String   @db.Uuid
+  principalMinor               BigInt
+  interestMinor                BigInt
+  /// Leg clientIds of the expense transactions behind this payment (null when that part is zero).
+  principalTransactionClientId String?  @db.Uuid
+  interestTransactionClientId  String?  @db.Uuid
+  paidOn                       DateTime @db.Date
+  createdAt                    DateTime @default(now()) @db.Timestamptz
+
+  loan Loan @relation(fields: [loanId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, clientId])
+  @@index([loanId, paidOn])
 }

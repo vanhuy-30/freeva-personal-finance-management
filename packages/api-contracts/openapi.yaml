@@ -1757,6 +1757,387 @@ paths:
         '503':
           $ref: '#/components/responses/GoalUnavailable'
       description: "Writes one audit event (`goal.adjust`) and no transaction. `version` must match."
+  /api/v1/loans:
+    get:
+      operationId: listLoans
+      summary: Loans with paid, outstanding and expected interest
+      tags:
+      - Loans
+      security:
+      - UserBearer: []
+      parameters:
+      - in: query
+        name: includeArchived
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Loans oldest first
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoanList'
+        '400':
+          $ref: '#/components/responses/LoanValidationError'
+        '401':
+          $ref: '#/components/responses/LoanUnauthorized'
+        '503':
+          $ref: '#/components/responses/LoanUnavailable'
+    post:
+      operationId: createLoan
+      summary: Record a loan or debt
+      tags:
+      - Loans
+      security:
+      - UserBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateLoanRequest'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Loan'
+        '200':
+          description: Replay of the same clientId
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Loan'
+        '400':
+          $ref: '#/components/responses/LoanValidationError'
+        '409':
+          $ref: '#/components/responses/LoanConflict'
+        '401':
+          $ref: '#/components/responses/LoanUnauthorized'
+        '503':
+          $ref: '#/components/responses/LoanUnavailable'
+      description: "`outstandingMinor` defaults to `principalMinor`. `interestRateBps` is the annual rate (1200 = 12.00%). The optional wallet must share the loan currency. Every create writes one audit line. Interest is computed on the declining balance, in integers, rounded half up."
+  /api/v1/loans/summary:
+    get:
+      operationId: getLoanSummary
+      summary: Total borrowed, paid and still owed per currency
+      tags:
+      - Loans
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Totals over active loans
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoanSummary'
+        '401':
+          $ref: '#/components/responses/LoanUnauthorized'
+        '503':
+          $ref: '#/components/responses/LoanUnavailable'
+  /api/v1/loans/{id}:
+    get:
+      operationId: getLoan
+      summary: One loan
+      tags:
+      - Loans
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: The loan
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Loan'
+        '404':
+          $ref: '#/components/responses/LoanNotFound'
+        '401':
+          $ref: '#/components/responses/LoanUnauthorized'
+        '503':
+          $ref: '#/components/responses/LoanUnavailable'
+    patch:
+      operationId: updateLoan
+      summary: Edit loan terms (needs the current version)
+      tags:
+      - Loans
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateLoanRequest'
+      responses:
+        '200':
+          description: Updated
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Loan'
+        '400':
+          $ref: '#/components/responses/LoanValidationError'
+        '404':
+          $ref: '#/components/responses/LoanNotFound'
+        '409':
+          $ref: '#/components/responses/LoanConflict'
+        '401':
+          $ref: '#/components/responses/LoanUnauthorized'
+        '503':
+          $ref: '#/components/responses/LoanUnavailable'
+    delete:
+      operationId: archiveLoan
+      summary: Archive a loan
+      tags:
+      - Loans
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: version
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+      responses:
+        '204':
+          description: Archived
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+        '400':
+          $ref: '#/components/responses/LoanValidationError'
+        '404':
+          $ref: '#/components/responses/LoanNotFound'
+        '409':
+          $ref: '#/components/responses/LoanConflict'
+        '401':
+          $ref: '#/components/responses/LoanUnauthorized'
+        '503':
+          $ref: '#/components/responses/LoanUnavailable'
+  /api/v1/loans/{id}/schedule:
+    get:
+      operationId: getLoanSchedule
+      summary: Repayment plan with the assumptions behind it
+      tags:
+      - Loans
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Rows of interest, principal and balance
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoanSchedule'
+        '404':
+          $ref: '#/components/responses/LoanNotFound'
+        '401':
+          $ref: '#/components/responses/LoanUnauthorized'
+        '503':
+          $ref: '#/components/responses/LoanUnavailable'
+      description: "Plan for the current outstanding balance at the stored rate and installment. `items` is empty and `expectedInterestMinor` null when there is no installment, or it never covers the interest of a period."
+  /api/v1/loans/{id}/payments:
+    get:
+      operationId: listLoanPayments
+      summary: Payments of a loan, newest first
+      tags:
+      - Loans
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Payments
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoanPaymentList'
+        '404':
+          $ref: '#/components/responses/LoanNotFound'
+        '401':
+          $ref: '#/components/responses/LoanUnauthorized'
+        '503':
+          $ref: '#/components/responses/LoanUnavailable'
+    post:
+      operationId: payLoan
+      summary: Record a payment
+      tags:
+      - Loans
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PayLoanRequest'
+      responses:
+        '201':
+          description: Recorded
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Loan'
+        '200':
+          description: Replay of a recorded clientId
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Loan'
+        '400':
+          $ref: '#/components/responses/LoanValidationError'
+        '404':
+          $ref: '#/components/responses/LoanNotFound'
+        '409':
+          $ref: '#/components/responses/LoanConflict'
+        '422':
+          $ref: '#/components/responses/LoanOverpayment'
+        '401':
+          $ref: '#/components/responses/LoanUnauthorized'
+        '503':
+          $ref: '#/components/responses/LoanUnavailable'
+      description: "One expense transaction for the principal part and one for the interest part, in the same commit as the loan balance. Each needs a category when its part is above zero. Without `principalMinor` / `interestMinor` the interest of the period is taken first and the rest is principal. Only the principal part lowers the balance; paying more than is owed is LOAN_OVERPAYMENT. Principal expenses count in spending reports. `clientId` makes retries idempotent."
+  /api/v1/loans/{id}/adjust:
+    post:
+      operationId: adjustLoan
+      summary: Correct the outstanding amount without moving money
+      tags:
+      - Loans
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdjustLoanRequest'
+      responses:
+        '200':
+          description: Adjusted
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Loan'
+        '400':
+          $ref: '#/components/responses/LoanValidationError'
+        '404':
+          $ref: '#/components/responses/LoanNotFound'
+        '409':
+          $ref: '#/components/responses/LoanConflict'
+        '401':
+          $ref: '#/components/responses/LoanUnauthorized'
+        '503':
+          $ref: '#/components/responses/LoanUnavailable'
+      description: "Writes one audit line `loan.adjust`."
   /api/v1/notification-preferences:
     get:
       operationId: getNotificationPreferences
@@ -4320,6 +4701,72 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorEnvelope'
+    LoanValidationError:
+      description: VALIDATION_ERROR
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    LoanUnauthorized:
+      description: SESSION_INVALID
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    LoanNotFound:
+      description: LOAN_NOT_FOUND
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    LoanConflict:
+      description: LOAN_CONFLICT stale version, or a clientId replayed with different content
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    LoanOverpayment:
+      description: LOAN_OVERPAYMENT the principal part is larger than the outstanding balance
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    LoanUnavailable:
+      description: LOAN_UNAVAILABLE or authentication unavailable
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
     BudgetValidationError:
       description: VALIDATION_ERROR
       headers:
@@ -5180,6 +5627,195 @@ components:
       required: [currentMinor, version]
       properties:
         currentMinor: {type: string, pattern: '^(0|[1-9][0-9]*)$'}
+        version: {type: integer, minimum: 1}
+    LoanKind:
+      type: string
+      enum: [card, personal, mortgage, other]
+    LoanFrequency:
+      type: string
+      enum: [weekly, monthly, quarterly, yearly]
+    Loan:
+      type: object
+      additionalProperties: false
+      required: [id, clientId, kind, name, currencyCode, principalMinor, outstandingMinor, paidMinor, percentBps,
+        interestRateBps, installmentMinor, frequency, startDate, endDate, nextDueDate, periodInterestMinor,
+        remainingPeriods, expectedInterestMinor, status, accountId, archivedAt, version, createdAt, updatedAt]
+      properties:
+        id: {type: string, format: uuid}
+        clientId: {type: string, format: uuid}
+        kind: {$ref: '#/components/schemas/LoanKind'}
+        name: {type: string, maxLength: 80}
+        currencyCode: {type: string, pattern: '^[A-Z]{3}$'}
+        principalMinor: {$ref: '#/components/schemas/ReportMoney'}
+        outstandingMinor: {$ref: '#/components/schemas/ReportMoney'}
+        paidMinor: {$ref: '#/components/schemas/ReportMoney'}
+        percentBps:
+          type: integer
+          description: paid * 10000 / principal, floored (2500 = 25.00%).
+        interestRateBps:
+          type: integer
+          description: Annual rate in basis points (1200 = 12.00%).
+        installmentMinor:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ReportMoney'
+        frequency: {$ref: '#/components/schemas/LoanFrequency'}
+        startDate: {type: string, format: date}
+        endDate: {type: [string, 'null'], format: date}
+        nextDueDate: {type: [string, 'null'], format: date}
+        periodInterestMinor:
+          allOf:
+          - $ref: '#/components/schemas/ReportMoney'
+          description: Interest of one period on the outstanding balance, rounded half up.
+        remainingPeriods:
+          type: [integer, 'null']
+          description: Periods left at the stored installment. Null when there is no installment or it never covers the interest.
+        expectedInterestMinor:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ReportMoney'
+        status:
+          type: string
+          enum: [active, overdue, paid_off]
+        accountId: {type: [string, 'null'], format: uuid}
+        archivedAt: {type: [string, 'null'], format: date-time}
+        version: {type: integer}
+        createdAt: {type: string, format: date-time}
+        updatedAt: {type: string, format: date-time}
+    LoanList:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: {$ref: '#/components/schemas/Loan'}
+    LoanSummary:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [currencyCode, loanCount, principalMinor, paidMinor, outstandingMinor, expectedInterestMinor]
+            properties:
+              currencyCode: {type: string, pattern: '^[A-Z]{3}$'}
+              loanCount: {type: integer}
+              principalMinor: {$ref: '#/components/schemas/ReportMoney'}
+              paidMinor: {$ref: '#/components/schemas/ReportMoney'}
+              outstandingMinor: {$ref: '#/components/schemas/ReportMoney'}
+              expectedInterestMinor: {$ref: '#/components/schemas/ReportMoney'}
+    LoanSchedule:
+      type: object
+      additionalProperties: false
+      required: [loanId, currencyCode, assumption, items, expectedInterestMinor]
+      properties:
+        loanId: {type: string, format: uuid}
+        currencyCode: {type: string, pattern: '^[A-Z]{3}$'}
+        assumption:
+          type: object
+          additionalProperties: false
+          required: [outstandingMinor, interestRateBps, frequency, installmentMinor]
+          properties:
+            outstandingMinor: {$ref: '#/components/schemas/ReportMoney'}
+            interestRateBps: {type: integer}
+            frequency: {$ref: '#/components/schemas/LoanFrequency'}
+            installmentMinor:
+              oneOf:
+              - type: 'null'
+              - $ref: '#/components/schemas/ReportMoney'
+        items:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [index, interestMinor, principalMinor, paymentMinor, outstandingAfterMinor]
+            properties:
+              index: {type: integer, minimum: 1}
+              interestMinor: {$ref: '#/components/schemas/ReportMoney'}
+              principalMinor: {$ref: '#/components/schemas/ReportMoney'}
+              paymentMinor: {$ref: '#/components/schemas/ReportMoney'}
+              outstandingAfterMinor: {$ref: '#/components/schemas/ReportMoney'}
+        expectedInterestMinor:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ReportMoney'
+    LoanPaymentList:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [id, clientId, principalMinor, interestMinor, totalMinor, paidOn, createdAt]
+            properties:
+              id: {type: string, format: uuid}
+              clientId: {type: string, format: uuid}
+              principalMinor: {$ref: '#/components/schemas/ReportMoney'}
+              interestMinor: {$ref: '#/components/schemas/ReportMoney'}
+              totalMinor: {$ref: '#/components/schemas/ReportMoney'}
+              paidOn: {type: string, format: date}
+              createdAt: {type: string, format: date-time}
+    CreateLoanRequest:
+      type: object
+      additionalProperties: false
+      required: [clientId, kind, name, currencyCode, principalMinor, interestRateBps, frequency, startDate]
+      properties:
+        clientId: {type: string, format: uuid}
+        kind: {$ref: '#/components/schemas/LoanKind'}
+        name: {type: string, minLength: 1, maxLength: 80}
+        currencyCode: {type: string, pattern: '^[A-Z]{3}$'}
+        principalMinor: {type: string, pattern: '^[1-9][0-9]*$'}
+        outstandingMinor: {type: string, pattern: '^(0|[1-9][0-9]*)$'}
+        interestRateBps: {type: integer, minimum: 0, maximum: 100000}
+        installmentMinor: {type: [string, 'null'], pattern: '^(0|[1-9][0-9]*)$'}
+        frequency: {$ref: '#/components/schemas/LoanFrequency'}
+        startDate: {type: string, format: date}
+        endDate: {type: [string, 'null'], format: date}
+        nextDueDate: {type: [string, 'null'], format: date}
+        accountId: {type: [string, 'null'], format: uuid}
+    UpdateLoanRequest:
+      type: object
+      additionalProperties: false
+      required: [version]
+      properties:
+        version: {type: integer, minimum: 1}
+        kind: {$ref: '#/components/schemas/LoanKind'}
+        name: {type: string, minLength: 1, maxLength: 80}
+        interestRateBps: {type: integer, minimum: 0, maximum: 100000}
+        installmentMinor: {type: [string, 'null'], pattern: '^(0|[1-9][0-9]*)$'}
+        frequency: {$ref: '#/components/schemas/LoanFrequency'}
+        endDate: {type: [string, 'null'], format: date}
+        nextDueDate: {type: [string, 'null'], format: date}
+        accountId: {type: [string, 'null'], format: uuid}
+    PayLoanRequest:
+      type: object
+      additionalProperties: false
+      required: [clientId, amountMinor, paidOn]
+      properties:
+        clientId: {type: string, format: uuid}
+        amountMinor: {type: string, pattern: '^[1-9][0-9]*$'}
+        accountId:
+          type: [string, 'null']
+          format: uuid
+          description: Wallet the payment leaves (same currency as the loan). Defaults to the loan's linked wallet.
+        principalMinor: {type: [string, 'null'], pattern: '^(0|[1-9][0-9]*)$'}
+        interestMinor: {type: [string, 'null'], pattern: '^(0|[1-9][0-9]*)$'}
+        principalCategoryId: {type: [string, 'null'], format: uuid}
+        interestCategoryId: {type: [string, 'null'], format: uuid}
+        paidOn: {type: string, format: date}
+    AdjustLoanRequest:
+      type: object
+      additionalProperties: false
+      required: [outstandingMinor, version]
+      properties:
+        outstandingMinor: {type: string, pattern: '^(0|[1-9][0-9]*)$'}
         version: {type: integer, minimum: 1}
     BudgetStatus:
       type: string
