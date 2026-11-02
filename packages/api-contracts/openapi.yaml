@@ -2401,6 +2401,7 @@ paths:
           - income
           - expense
           - transfer
+          - adjustment
       - in: query
         name: from
         schema:
@@ -3119,6 +3120,121 @@ paths:
           $ref: '#/components/responses/FinancialAccountConflict'
         '503':
           $ref: '#/components/responses/FinancialAccountUnavailable'
+  /api/v1/financial-accounts/{id}/reconcile:
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    post:
+      operationId: reconcileFinancialAccount
+      summary: Reconcile a wallet to its real balance with a one-leg adjustment
+      description: Server computes delta = target - current balance. A credit card is reconciled against debt (target = -actualBalanceMinor). Zero delta or dryRun writes nothing. The adjustment is not income or expense; it never counts in period totals, budgets or savings rate, and can be edited or deleted through the transaction endpoints. A retry with the same clientId replays the stored adjustment.
+      tags:
+      - Transactions
+      security:
+      - UserBearer: []
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Must equal body.clientId (case-insensitive).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReconcileRequest'
+      responses:
+        '201':
+          description: Adjustment created
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReconcileResult'
+        '200':
+          description: Nothing written (zero delta, dryRun) or clientId replay
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReconcileResult'
+        '400':
+          description: VALIDATION_ERROR
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: SESSION_INVALID or auth error
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: ACCOUNT_NOT_FOUND (also for another owner)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '409':
+          description: 'TRANSACTION_CONFLICT: archived wallet or clientId used by another transaction'
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: TRANSACTIONS_UNAVAILABLE
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
   /api/v1/financial-accounts/{id}:
     parameters:
     - name: id
@@ -6424,6 +6540,7 @@ components:
           - income
           - expense
           - transfer
+          - adjustment
         occurredOn:
           type: string
           format: date
@@ -6480,6 +6597,54 @@ components:
         updatedAt:
           type: string
           format: date-time
+    ReconcileRequest:
+      type: object
+      additionalProperties: false
+      required: [clientId, actualBalanceMinor]
+      properties:
+        clientId:
+          type: string
+          format: uuid
+        actualBalanceMinor:
+          type: string
+          pattern: ^-?[0-9]+$
+          maxLength: 20
+          description: Real balance the user sees; for a credit wallet, the amount owed (debt).
+        occurredOn:
+          type: [string, 'null']
+          format: date
+          description: Defaults to today in the profile timezone.
+        notes:
+          type: [string, 'null']
+          maxLength: 2000
+        dryRun:
+          type: boolean
+          description: Only compute the difference.
+    ReconcileResult:
+      type: object
+      additionalProperties: false
+      required: [accountId, currencyCode, currentBalanceMinor, targetBalanceMinor, deltaMinor, transaction]
+      properties:
+        accountId:
+          type: string
+          format: uuid
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        currentBalanceMinor:
+          type: string
+          pattern: ^-?[0-9]+$
+        targetBalanceMinor:
+          type: string
+          pattern: ^-?[0-9]+$
+          description: Ledger balance to reach; a credit wallet's debt is negative.
+        deltaMinor:
+          type: string
+          pattern: ^-?[0-9]+$
+        transaction:
+          oneOf:
+          - $ref: '#/components/schemas/TransactionBundle'
+          - type: 'null'
     TransactionBundle:
       type: object
       additionalProperties: false
@@ -6715,11 +6880,11 @@ components:
           description: Transactions matching the filters; a transfer counts once.
         totals:
           type: array
-          description: Per currency, sorted by code; currencies with all four sums zero are omitted. Transfers are excluded from income and expense and summed apart per matching leg. No FX conversion.
+          description: Per currency, sorted by code; currencies with all five sums zero are omitted. Wallet reconciliation adjustments are summed apart and are not income or expense. Transfers are excluded from income and expense and summed apart per matching leg. No FX conversion.
           items:
             type: object
             additionalProperties: false
-            required: [currency, incomeMinor, expenseMinor, transferInMinor, transferOutMinor]
+            required: [currency, incomeMinor, expenseMinor, transferInMinor, transferOutMinor, adjustmentMinor]
             properties:
               currency:
                 type: string
@@ -6739,6 +6904,10 @@ components:
                 type: string
                 pattern: ^-?[0-9]+$
                 description: Sum of matching transfer legs that take money (negative or zero). With one `accountId`, the money moved out of that wallet.
+              adjustmentMinor:
+                type: string
+                pattern: ^-?[0-9]+$
+                description: Sum of matching `adjustment` rows (wallet reconciliation, BE-P3-005); signed.
     CreateFinancialAccount:
       type: object
       additionalProperties: false
@@ -7920,6 +8089,7 @@ components:
       - incomeMinor
       - expenseMinor
       - transferMinor
+      - adjustmentMinor
       - netMinor
       properties:
         accountId:
@@ -7934,9 +8104,12 @@ components:
           $ref: '#/components/schemas/ReportMoney'
         transferMinor:
           $ref: '#/components/schemas/ReportMoney'
+        adjustmentMinor:
+          $ref: '#/components/schemas/ReportMoney'
+          description: Wallet reconciliation adjustments (BE-P3-005). Not income or expense; excluded from totals and savings rate.
         netMinor:
           $ref: '#/components/schemas/ReportMoney'
-          description: incomeMinor + expenseMinor + transferMinor for this account.
+          description: incomeMinor + expenseMinor + transferMinor + adjustmentMinor for this account.
     NetWorthReport:
       type: object
       additionalProperties: false
@@ -8692,7 +8865,7 @@ components:
           format: uuid
         type:
           type: string
-          enum: [income, expense, transfer]
+          enum: [income, expense, transfer, adjustment]
         amountMinor:
           $ref: '#/components/schemas/ReportMoney'
         currencyCode:

@@ -133,7 +133,7 @@ export interface AccountExportFxRate {
 }
 
 export interface AccountExportRecurringRule extends Omit<SyncRow, 'createdAt' | 'updatedAt'> {
-  type: 'income' | 'expense' | 'transfer';
+  type: 'income' | 'expense' | 'transfer' | 'adjustment';
   mode: 'auto' | 'remind';
   name: string | null;
   amountKind: 'fixed' | 'estimated';
@@ -247,7 +247,7 @@ export interface AccountExportBudgetMonth extends AccountExportBudget {
 }
 
 export interface AccountExportTransaction extends Omit<SyncRow, 'createdAt' | 'updatedAt'> {
-  type: 'income' | 'expense' | 'transfer';
+  type: 'income' | 'expense' | 'transfer' | 'adjustment';
   amountMinor: string;
   currencyCode: string;
   occurredOn: string;

@@ -2,7 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import { TRANSACTION_REPOSITORY, type RecentMatchQuery, type TransactionRepository } from './domain/transaction.repository';
 import { calendarDate, minor, normalizeRate, occurredTime, TransactionError, type TransactionBundle, type TransactionLeg, type TransactionPatch } from './domain/transaction';
 import { FxRateService } from '../fx-rates/fx-rate.service';
-import type { CreateTransactionDto, ManualFxDto, TransactionLegDto, TransactionQueryDto, UpdateTransactionDto } from './transaction.dto';
+import type { ReconcileResult } from './domain/reconcile';
+import type { CreateTransactionDto, ReconcileDto, ManualFxDto, TransactionLegDto, TransactionQueryDto, UpdateTransactionDto } from './transaction.dto';
 const legs = (input: TransactionLegDto[]) => input.map(leg => ({ ...leg, amountMinor: minor(leg.amountMinor) }));
 const fx = (input: ManualFxDto | null) => input === null ? null : { rate: normalizeRate(input.rate), quotedAt: new Date(input.quotedAt) };
 const tags = (ids: string[]) => [...new Set(ids.map(id => id.toLowerCase()))].sort();
@@ -13,6 +14,11 @@ function legResponse(leg: TransactionLeg) {
 }
 function response(bundle: TransactionBundle) {
   return { legs: bundle.legs.map(legResponse), fx: bundle.fx ? { ...bundle.fx, quotedAt: bundle.fx.quotedAt.toISOString() } : null };
+}
+function reconcileResponse(result: ReconcileResult) {
+  return { accountId: result.accountId, currencyCode: result.currencyCode, currentBalanceMinor: result.currentBalanceMinor.toString(),
+    targetBalanceMinor: result.targetBalanceMinor.toString(), deltaMinor: result.deltaMinor.toString(),
+    transaction: result.transaction ? response(result.transaction) : null };
 }
 @Injectable()
 export class TransactionService {
@@ -50,7 +56,7 @@ export class TransactionService {
         count: result.summary.count,
         totals: result.summary.totals.map(row => ({
           currency: row.currency, incomeMinor: row.incomeMinor.toString(), expenseMinor: row.expenseMinor.toString(),
-          transferInMinor: row.transferInMinor.toString(), transferOutMinor: row.transferOutMinor.toString(),
+          transferInMinor: row.transferInMinor.toString(), transferOutMinor: row.transferOutMinor.toString(), adjustmentMinor: row.adjustmentMinor.toString(),
         })),
       },
     };
@@ -68,6 +74,11 @@ export class TransactionService {
     if (inputFx !== undefined) patch.fx = fx(inputFx);
     if (tagIds !== undefined) patch.tagIds = tags(tagIds);
     return response(await this.repository.update(userId, id, patch));
+  }
+  async reconcile(userId: string, accountId: string, dto: ReconcileDto) {
+    const result = await this.repository.reconcile(userId, accountId, { clientId: dto.clientId, actualBalanceMinor: minor(dto.actualBalanceMinor),
+      occurredOn: dto.occurredOn ?? null, notes: dto.notes ?? null, dryRun: dto.dryRun ?? false });
+    return { result: reconcileResponse(result), created: result.created };
   }
   async delete(userId: string, id: string, version: number): Promise<void> { await this.repository.update(userId, id, { version, deleted: true }); }
 }

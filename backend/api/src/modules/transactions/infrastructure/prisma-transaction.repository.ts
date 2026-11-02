@@ -7,6 +7,9 @@ import type { RecentMatchQuery, TransactionRepository } from '../domain/transact
 import { categoryKindFits, normalizeRate, TransactionError, validateInput, type TransactionBundle, type TransactionInput, type TransactionLeg, type TransactionPatch, type TransactionQuery } from '../domain/transaction';
 import { VIETNAMESE_FOLD_FROM, VIETNAMESE_FOLD_TO, parseTransactionSearch, type AmountSearch, type ParsedTransactionSearch } from '../domain/search';
 import { createTransactionInTx } from './create-transaction-in-tx';
+import { reconcileDelta, reconcileTarget, validateReconcileNotes, type ReconcileInput, type ReconcileResult } from '../domain/reconcile';
+import { calendarDate } from '../domain/transaction';
+import { todayInTimeZone } from '../../reports/domain/report';
 
 const include = { tags: { select: { tagId: true } }, fxQuote: true } satisfies Prisma.TransactionInclude;
 type Row = Prisma.TransactionGetPayload<{ include: typeof include }>;
@@ -107,7 +110,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
       if (!query.legs.length) return [];
       return tx.transaction.findMany({
         where: {
-          userId, deletedAt: null, occurredOn: query.occurredOn,
+          userId, deletedAt: null, occurredOn: query.occurredOn, type: { not: 'adjustment' },
           createdAt: { gte: query.createdAfter, lte: query.createdBefore },
           clientId: { notIn: query.excludeClientIds },
           OR: query.legs.map(leg => ({ accountId: leg.accountId, amountMinor: leg.amountMinor })),
@@ -133,20 +136,21 @@ export class PrismaTransactionRepository implements TransactionRepository {
         LIMIT ${query.pageSize} OFFSET ${(query.page - 1) * query.pageSize}`);
       const [count] = await tx.$queryRaw<{ total: string; bundles: string }[]>(Prisma.sql`
         SELECT COUNT(*)::text AS total, COUNT(DISTINCT COALESCE(t."transferGroupId", t.id))::text AS bundles ${listed}`);
-      const totals = await tx.$queryRaw<{ currency: string; income: string; expense: string; transferIn: string; transferOut: string }[]>(Prisma.sql`
+      const totals = await tx.$queryRaw<{ currency: string; income: string; expense: string; transferIn: string; transferOut: string; adjustment: string }[]>(Prisma.sql`
         SELECT t."currencyCode" AS currency,
           COALESCE(SUM(CASE WHEN t.type::text = 'income' THEN t."amountMinor" ELSE 0 END), 0)::text AS income,
           COALESCE(SUM(CASE WHEN t.type::text = 'expense' THEN t."amountMinor" ELSE 0 END), 0)::text AS expense,
           COALESCE(SUM(CASE WHEN t.type::text = 'transfer' AND t."amountMinor" > 0 THEN t."amountMinor" ELSE 0 END), 0)::text AS "transferIn",
-          COALESCE(SUM(CASE WHEN t.type::text = 'transfer' AND t."amountMinor" < 0 THEN t."amountMinor" ELSE 0 END), 0)::text AS "transferOut"
+          COALESCE(SUM(CASE WHEN t.type::text = 'transfer' AND t."amountMinor" < 0 THEN t."amountMinor" ELSE 0 END), 0)::text AS "transferOut",
+          COALESCE(SUM(CASE WHEN t.type::text = 'adjustment' THEN t."amountMinor" ELSE 0 END), 0)::text AS adjustment
         ${listed}
         GROUP BY t."currencyCode" ORDER BY t."currencyCode"`);
       const summary = {
         count: Number(count.bundles),
         totals: totals
           .map(row => ({ currency: row.currency.trim(), incomeMinor: BigInt(row.income), expenseMinor: BigInt(row.expense),
-            transferInMinor: BigInt(row.transferIn), transferOutMinor: BigInt(row.transferOut) }))
-          .filter(row => [row.incomeMinor, row.expenseMinor, row.transferInMinor, row.transferOutMinor].some(value => value !== 0n)),
+            transferInMinor: BigInt(row.transferIn), transferOutMinor: BigInt(row.transferOut), adjustmentMinor: BigInt(row.adjustment) }))
+          .filter(row => [row.incomeMinor, row.expenseMinor, row.transferInMinor, row.transferOutMinor, row.adjustmentMinor].some(value => value !== 0n)),
       };
       if (!ids.length) return { items: [], total: Number(count.total), summary };
       const rows = await tx.transaction.findMany({ where: { userId, id: { in: ids.map(row => row.id) } }, include });
@@ -154,6 +158,42 @@ export class PrismaTransactionRepository implements TransactionRepository {
       rows.sort((left, right) => rank.get(left.id)! - rank.get(right.id)!);
       return { items: rows.map(leg), total: Number(count.total), summary };
     });
+  }
+  /**
+   * Wallet reconciliation (BE-P3-005): compare the real balance with the ledger and write one one-leg adjustment.
+   * A retry with the same clientId replays the stored adjustment instead of recomputing against the new balance.
+   */
+  reconcile(userId: string, accountId: string, input: ReconcileInput): Promise<ReconcileResult> {
+    validateReconcileNotes(input.notes);
+    return this.snapshot(async tx => {
+      await touchFinancialOwner(tx, userId);
+      await tx.$queryRaw(Prisma.sql`SELECT id FROM "FinancialAccount" WHERE id = ${accountId}::uuid AND "userId" = ${userId}::uuid FOR UPDATE`);
+      const account = await tx.financialAccount.findFirst({ where: { id: accountId, userId }, include: { currency: true } });
+      if (!account) throw new TransactionError('ACCOUNT_NOT_FOUND');
+      const [sum] = await tx.$queryRaw<{ total: string }[]>(Prisma.sql`
+        SELECT COALESCE(SUM("amountMinor"), 0)::text AS total FROM "Transaction"
+        WHERE "userId" = ${userId}::uuid AND "accountId" = ${accountId}::uuid AND "deletedAt" IS NULL`);
+      const target = reconcileTarget(account.type, input.actualBalanceMinor);
+      const replay = await tx.transaction.findFirst({ where: { userId, clientId: input.clientId } });
+      if (replay) {
+        if (replay.type !== 'adjustment' || replay.accountId !== accountId) throw new TransactionError('TRANSACTION_CONFLICT');
+        const current = await this.load(tx, userId, replay.id);
+        return { accountId, currencyCode: account.currencyCode, currentBalanceMinor: account.initialBalanceMinor + BigInt(sum.total),
+          targetBalanceMinor: target, deltaMinor: replay.amountMinor, transaction: current, created: false };
+      }
+      const currentBalance = account.initialBalanceMinor + BigInt(sum.total);
+      const delta = reconcileDelta(account.type, currentBalance, input.actualBalanceMinor);
+      const base = { accountId, currencyCode: account.currencyCode, currentBalanceMinor: currentBalance, targetBalanceMinor: target, deltaMinor: delta };
+      if (delta === 0n || input.dryRun) return { ...base, transaction: null, created: false };
+      const user = await tx.user.findUnique({ where: { id: userId }, select: { timezone: true } });
+      const day = input.occurredOn ?? todayInTimeZone(user?.timezone ?? 'UTC', new Date());
+      const created = await createTransactionInTx(tx, userId, {
+        type: 'adjustment', occurredOn: calendarDate(day), occurredTime: null, categoryId: null, notes: input.notes,
+        merchant: null, tagIds: [], fx: null,
+        legs: [{ clientId: input.clientId, accountId, currencyCode: account.currencyCode, amountMinor: delta }],
+      });
+      return { ...base, transaction: created.transaction, created: created.created };
+    }, true);
   }
   update(userId: string, id: string, patch: TransactionPatch) {
     return this.snapshot(async tx => {

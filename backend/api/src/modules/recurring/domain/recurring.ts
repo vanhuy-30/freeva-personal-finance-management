@@ -82,7 +82,7 @@ function validateRemind(input: RecurringInput): void {
 }
 
 export function validateRecurringInput(input: RecurringInput, digits: Record<string, number>): void {
-  if (!TRANSACTION_TYPES.includes(input.type)) throw new RecurringError('VALIDATION_ERROR');
+  if (!(TRANSACTION_TYPES as readonly string[]).includes(input.type)) throw new RecurringError('VALIDATION_ERROR');
   if (!RECURRING_MODES.includes(input.mode) || !AMOUNT_KINDS.includes(input.amountKind)) {
     throw new RecurringError('VALIDATION_ERROR');
   }
