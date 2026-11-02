@@ -36,6 +36,8 @@ function source(): ExportSource {
     bills: [],
     budget: null,
     budgetMonths: [],
+    goals: [],
+    goalEntries: [],
     notificationPreferences: null,
     notifications: [],
     transactions: [{
@@ -130,6 +132,8 @@ describe('BE-P1-010 account repository audit', () => {
       bill: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
       budget: { findUnique: jest.fn().mockResolvedValue(null), deleteMany: jest.fn() },
       budgetMonth: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
+      goal: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
+      goalEntry: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
       notificationPreference: { findUnique: jest.fn().mockResolvedValue(null), deleteMany: jest.fn() },
       inAppNotification: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
       pushToken: { deleteMany: jest.fn() },

@@ -215,7 +215,7 @@ describe('BE-P1-007 / BE-P2-E06 / BE-P2-E08 HTTP + PostgreSQL', () => {
 
   it('returns current signed net worth per currency, including archived accounts and excluding deleted transactions', async () => {
     const cash = await account('cash', 'VND', huge);
-    const bank = await account('bank', 'VND', -150n);
+    await account('bank', 'VND', -150n);
     const card = await account('credit', 'VND', -300n);
     const stored = await account('ewallet', 'USD', 80n, true);
     const foreign = await prisma.financialAccount.create({ data: { userId: other, clientId: randomUUID(), name: walletName, type: 'cash', currencyCode: 'VND', initialBalanceMinor: 999999n } });

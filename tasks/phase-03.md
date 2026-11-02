@@ -3,11 +3,12 @@
 [phase-03.md](../docs/product/phases/phase-03.md). Phase 2 đã đóng 2026-10-30; băm ticket khi làm epic. `Gate: v1`: mục tiêu (`BE-P3-E01`) và các ticket `P3-001`…`P3-011` thêm 2026-11-02 (gộp chức năng chồng chéo, bổ sung chức năng còn thiếu).
 
 ### BE-P3-E01 / MOB-P3-E01 — Mục tiêu (module 9)
-- Status: todo
+- Status: doing — BE xong 2026-11-02, MOB còn
 - Module: 9
 - Gate: v1
 - Depends: BE-P1-004, BE-P1-005, MOB-P1-006
 - DoD: tên, số đích, số hiện tại, ngày đích, ví liên kết, mức đóng góp tháng, icon và màu bằng token. Có sẵn nhóm quỹ khẩn cấp, mua nhà, mua xe, du lịch, học tập, đám cưới, nghỉ hưu để chọn, user vẫn đặt tên riêng. Đóng góp hoặc rút tạo giao dịch đối ứng, hoặc một dòng audit nếu chỉ sửa số đã có. Công thức có test: đích 120000000, hiện có 40000000, còn 10 tháng → cần 8000000 mỗi tháng. Home hiện `hiện tại / đích` và phần trăm. Không tự chuyển tiền.
+- Note: BE-P3-E01 xong 2026-11-02: `/api/v1/goals` (CRUD, presets, `contribute` / `withdraw` / `adjust`), transfer cân hai chân khi chọn ví nguồn, audit `goal.adjust`, công thức 8.000.000 có test, OpenAPI, export/xoá tài khoản. Kiến trúc: [goals.md](../docs/architecture/goals.md). MOB-P3-E01 (Home `hiện tại / đích`, màn mục tiêu) chưa làm.
 
 ### BE-P3-E02 / MOB-P3-E02 — Vay và công nợ (module 10)
 - Status: todo

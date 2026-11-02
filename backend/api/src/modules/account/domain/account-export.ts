@@ -31,6 +31,8 @@ export interface AccountExport {
   bills: AccountExportBill[];
   budget: AccountExportBudget | null;
   budgetMonths: AccountExportBudgetMonth[];
+  goals: AccountExportGoal[];
+  goalEntries: AccountExportGoalEntry[];
   notificationPreferences: AccountExportNotificationPreferences | null;
   notifications: AccountExportNotification[];
   transactions: AccountExportTransaction[];
@@ -160,6 +162,33 @@ export interface AccountExportBill extends Omit<SyncRow, 'createdAt' | 'updatedA
   updatedAt: string;
 }
 
+export interface AccountExportGoal extends Omit<SyncRow, 'createdAt' | 'updatedAt'> {
+  kind: string;
+  name: string;
+  currencyCode: string;
+  targetMinor: string;
+  currentMinor: string;
+  targetDate: string | null;
+  accountId: string;
+  monthlyContributionMinor: string | null;
+  icon: string;
+  colorToken: string | null;
+  archivedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AccountExportGoalEntry {
+  id: string;
+  goalId: string;
+  clientId: string;
+  kind: string;
+  amountMinor: string;
+  transactionClientId: string | null;
+  occurredOn: string;
+  createdAt: string;
+}
+
 export interface AccountExportBudgetCategory {
   categoryId: string;
   limitMinor: string;
@@ -284,6 +313,34 @@ export interface ExportSource {
     updatedAt: Date;
     categories: Array<{ categoryId: string; limitMinor: bigint }>;
   };
+  goals: Array<{
+    id: string;
+    clientId: string;
+    kind: string;
+    name: string;
+    currencyCode: string;
+    targetMinor: bigint;
+    currentMinor: bigint;
+    targetDate: Date | null;
+    accountId: string;
+    monthlyContributionMinor: bigint | null;
+    icon: string;
+    colorToken: string | null;
+    archivedAt: Date | null;
+    version: number;
+    createdAt: Date;
+    updatedAt: Date;
+  }>;
+  goalEntries: Array<{
+    id: string;
+    goalId: string;
+    clientId: string;
+    kind: string;
+    amountMinor: bigint;
+    transactionClientId: string | null;
+    occurredOn: Date;
+    createdAt: Date;
+  }>;
   budgetMonths: Array<{
     id: string;
     currencyCode: string;
@@ -427,6 +484,19 @@ export function toAccountExport(source: ExportSource): AccountExport {
         limitMinor: line.limitMinor.toString(),
       })),
       ...stamps(row),
+    })),
+    goals: source.goals.map(row => ({
+      id: row.id, clientId: row.clientId, kind: row.kind, name: row.name, currencyCode: code(row.currencyCode),
+      targetMinor: row.targetMinor.toString(), currentMinor: row.currentMinor.toString(),
+      targetDate: row.targetDate ? day(row.targetDate) : null, accountId: row.accountId,
+      monthlyContributionMinor: row.monthlyContributionMinor === null ? null : row.monthlyContributionMinor.toString(),
+      icon: row.icon, colorToken: row.colorToken, archivedAt: row.archivedAt ? iso(row.archivedAt) : null,
+      version: row.version, ...stamps(row),
+    })),
+    goalEntries: source.goalEntries.map(row => ({
+      id: row.id, goalId: row.goalId, clientId: row.clientId, kind: row.kind,
+      amountMinor: row.amountMinor.toString(), transactionClientId: row.transactionClientId,
+      occurredOn: day(row.occurredOn), createdAt: iso(row.createdAt),
     })),
     notificationPreferences: source.notificationPreferences === null ? null : {
       budgetEnabled: source.notificationPreferences.budgetEnabled,

@@ -34,6 +34,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @freeva/api prisma:generate
+      - run: pnpm --filter @freeva/api lint
       - run: pnpm --filter @freeva/api test
       - run: pnpm --filter @freeva/api prisma:migrate:deploy
       - run: pnpm --filter @freeva/api test:integration
