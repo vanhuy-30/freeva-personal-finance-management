@@ -166,6 +166,10 @@ Quy tắc và lần chạy định kỳ (`BE-P2-E01`). Chi tiết: [recurring.md
 
 `RecurringOccurrence`: unique `(ruleId, occurredOn)` + `transactionClientId` (và counter nếu transfer). Unique `(userId, clientId)` trên rule.
 
+### Goal / GoalEntry
+
+Mục tiêu tiết kiệm và sổ đóng góp (`BE-P3-E01`). Chi tiết: [goals.md](goals.md). `Goal.currentMinor` lưu cứng, mọi thay đổi qua `GoalEntry` (kèm transfer cân) hoặc `AuditEvent`.
+
 ### Bill
 
 Nghĩa vụ thanh toán (`BE-P2-E03`). Chi tiết: [bills.md](bills.md).

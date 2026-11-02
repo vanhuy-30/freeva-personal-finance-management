@@ -7,6 +7,7 @@ import { FeedbackModule } from './modules/feedback/feedback.module';
 import { TransactionModule } from './modules/transactions/transaction.module';
 import { RecurringModule } from './modules/recurring/recurring.module';
 import { BudgetModule } from './modules/budgets/budget.module';
+import { GoalModule } from './modules/goals/goal.module';
 import { BillModule } from './modules/bills/bill.module';
 import { CalendarModule } from './modules/calendar/calendar.module';
 import { NotificationModule } from './modules/notifications/notification.module';
@@ -45,6 +46,7 @@ import { HealthModule } from './modules/health/health.module';
     TransactionModule,
     RecurringModule,
     BudgetModule,
+    GoalModule,
     BillModule,
     CalendarModule,
     NotificationModule,

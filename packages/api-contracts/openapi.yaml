@@ -1384,6 +1384,379 @@ paths:
         Active recurring rules project from `nextExecutionDate` with month/year day clamp.
         Bills with `dueOn` in the month include paid ones; `overdue` is derived on read from
         profile timezone. Amounts are integer minor-unit strings.
+  /api/v1/goals/presets:
+    get:
+      operationId: listGoalPresets
+      summary: Ready-made goal groups with catalog icon and colour tokens
+      tags:
+      - Goals
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Presets
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoalPresetList'
+        '401':
+          $ref: '#/components/responses/GoalUnauthorized'
+        '503':
+          $ref: '#/components/responses/GoalUnavailable'
+  /api/v1/goals:
+    get:
+      operationId: listGoals
+      summary: Savings goals with progress and the monthly saving needed
+      tags:
+      - Goals
+      security:
+      - UserBearer: []
+      parameters:
+      - in: query
+        name: includeArchived
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Goals oldest first
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoalList'
+        '400':
+          $ref: '#/components/responses/GoalValidationError'
+        '401':
+          $ref: '#/components/responses/GoalUnauthorized'
+        '503':
+          $ref: '#/components/responses/GoalUnavailable'
+    post:
+      operationId: createGoal
+      summary: Create a savings goal linked to a wallet
+      tags:
+      - Goals
+      security:
+      - UserBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGoalRequest'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+        '200':
+          description: Replay of the same clientId
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+        '400':
+          $ref: '#/components/responses/GoalValidationError'
+        '409':
+          $ref: '#/components/responses/GoalConflict'
+        '401':
+          $ref: '#/components/responses/GoalUnauthorized'
+        '503':
+          $ref: '#/components/responses/GoalUnavailable'
+      description: "The goal currency is the currency of the linked wallet (not archived, owned by the user). `kind` picks a preset icon and colour unless `icon` / `colorToken` are sent; both must be catalog tokens, never hex. A non-zero `currentMinor` writes one audit line."
+  /api/v1/goals/{id}:
+    get:
+      operationId: getGoal
+      summary: One savings goal
+      tags:
+      - Goals
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Goal
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+        '404':
+          $ref: '#/components/responses/GoalNotFound'
+        '401':
+          $ref: '#/components/responses/GoalUnauthorized'
+        '503':
+          $ref: '#/components/responses/GoalUnavailable'
+    patch:
+      operationId: updateGoal
+      summary: Edit name, target, date, monthly contribution, icon or colour
+      tags:
+      - Goals
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateGoalRequest'
+      responses:
+        '200':
+          description: Updated
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+        '400':
+          $ref: '#/components/responses/GoalValidationError'
+        '404':
+          $ref: '#/components/responses/GoalNotFound'
+        '409':
+          $ref: '#/components/responses/GoalConflict'
+        '401':
+          $ref: '#/components/responses/GoalUnauthorized'
+        '503':
+          $ref: '#/components/responses/GoalUnavailable'
+      description: "The linked wallet and currency cannot change. Does not change `currentMinor`; use contribute, withdraw or adjust."
+    delete:
+      operationId: archiveGoal
+      summary: Archive a goal (kept for export)
+      tags:
+      - Goals
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: version
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+      responses:
+        '204':
+          description: Archived
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+        '400':
+          $ref: '#/components/responses/GoalValidationError'
+        '404':
+          $ref: '#/components/responses/GoalNotFound'
+        '409':
+          $ref: '#/components/responses/GoalConflict'
+        '401':
+          $ref: '#/components/responses/GoalUnauthorized'
+        '503':
+          $ref: '#/components/responses/GoalUnavailable'
+  /api/v1/goals/{id}/contribute:
+    post:
+      operationId: contributeGoal
+      summary: Add money to a goal
+      tags:
+      - Goals
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MoveGoalRequest'
+      responses:
+        '201':
+          description: Recorded
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+        '200':
+          description: Replay of a recorded clientId
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+        '400':
+          $ref: '#/components/responses/GoalValidationError'
+        '404':
+          $ref: '#/components/responses/GoalNotFound'
+        '409':
+          $ref: '#/components/responses/GoalConflict'
+        '422':
+          $ref: '#/components/responses/GoalInsufficientBalance'
+        '401':
+          $ref: '#/components/responses/GoalUnauthorized'
+        '503':
+          $ref: '#/components/responses/GoalUnavailable'
+      description: "With `accountId` (another wallet of the same currency) one balanced transfer source → linked wallet is written in the same commit as the goal ledger. Without it the money is already in the linked wallet, only the goal ledger moves. Never runs on its own. `clientId` makes retries idempotent."
+  /api/v1/goals/{id}/withdraw:
+    post:
+      operationId: withdrawGoal
+      summary: Take money out of a goal
+      tags:
+      - Goals
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MoveGoalRequest'
+      responses:
+        '201':
+          description: Recorded
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+        '200':
+          description: Replay of a recorded clientId
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+        '400':
+          $ref: '#/components/responses/GoalValidationError'
+        '404':
+          $ref: '#/components/responses/GoalNotFound'
+        '409':
+          $ref: '#/components/responses/GoalConflict'
+        '422':
+          $ref: '#/components/responses/GoalInsufficientBalance'
+        '401':
+          $ref: '#/components/responses/GoalUnauthorized'
+        '503':
+          $ref: '#/components/responses/GoalUnavailable'
+      description: "Mirror of contribute: with `accountId` one balanced transfer linked wallet → that wallet. Cannot exceed `currentMinor`."
+  /api/v1/goals/{id}/adjust:
+    post:
+      operationId: adjustGoal
+      summary: Correct the saved amount without moving money
+      tags:
+      - Goals
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdjustGoalRequest'
+      responses:
+        '200':
+          description: Adjusted
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+        '400':
+          $ref: '#/components/responses/GoalValidationError'
+        '404':
+          $ref: '#/components/responses/GoalNotFound'
+        '409':
+          $ref: '#/components/responses/GoalConflict'
+        '401':
+          $ref: '#/components/responses/GoalUnauthorized'
+        '503':
+          $ref: '#/components/responses/GoalUnavailable'
+      description: "Writes one audit event (`goal.adjust`) and no transaction. `version` must match."
   /api/v1/notification-preferences:
     get:
       operationId: getNotificationPreferences
@@ -3881,6 +4254,72 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorEnvelope'
+    GoalValidationError:
+      description: VALIDATION_ERROR
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    GoalUnauthorized:
+      description: SESSION_INVALID
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    GoalNotFound:
+      description: GOAL_NOT_FOUND
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    GoalConflict:
+      description: GOAL_CONFLICT stale version, or a clientId replayed with different content
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    GoalInsufficientBalance:
+      description: INSUFFICIENT_GOAL_BALANCE withdraw is larger than the goal holds
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    GoalUnavailable:
+      description: GOAL_UNAVAILABLE or authentication unavailable
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
     BudgetValidationError:
       description: VALIDATION_ERROR
       headers:
@@ -4621,6 +5060,127 @@ components:
           type: integer
         total:
           type: integer
+    GoalKind:
+      type: string
+      enum: [emergency, home, car, travel, education, wedding, retirement, custom]
+    Goal:
+      type: object
+      additionalProperties: false
+      required: [id, clientId, kind, name, currencyCode, targetMinor, currentMinor, remainingMinor, percentBps,
+        targetDate, monthsLeft, requiredPerMonthMinor, monthlyContributionMinor, status, accountId, icon,
+        colorToken, archivedAt, version, createdAt, updatedAt]
+      properties:
+        id: {type: string, format: uuid}
+        clientId: {type: string, format: uuid}
+        kind: {$ref: '#/components/schemas/GoalKind'}
+        name: {type: string, maxLength: 80}
+        currencyCode: {type: string, pattern: '^[A-Z]{3}$'}
+        targetMinor: {$ref: '#/components/schemas/ReportMoney'}
+        currentMinor: {$ref: '#/components/schemas/ReportMoney'}
+        remainingMinor: {$ref: '#/components/schemas/ReportMoney'}
+        percentBps:
+          type: integer
+          description: current * 10000 / target, floored (3333 = 33.33%). Above 10000 when over-saved.
+        targetDate:
+          type: [string, 'null']
+          format: date
+        monthsLeft:
+          type: [integer, 'null']
+          description: Whole calendar months to `targetDate`, a started month counts as one. 0 when the date has passed. Null without a date.
+        requiredPerMonthMinor:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ReportMoney'
+          description: ceil((target - current) / monthsLeft). 0 when reached. Null without a future date.
+        incomeShareBps:
+          type: integer
+          description: requiredPerMonthMinor as a share of average monthly income over the last 90 days (2000 = 20.00%). Omitted when income is unknown.
+        monthlyContributionMinor:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ReportMoney'
+        status:
+          type: string
+          enum: [active, reached, overdue]
+        accountId: {type: string, format: uuid}
+        icon: {type: string}
+        colorToken: {type: [string, 'null']}
+        archivedAt:
+          type: [string, 'null']
+          format: date-time
+        version: {type: integer}
+        createdAt: {type: string, format: date-time}
+        updatedAt: {type: string, format: date-time}
+    GoalList:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: {$ref: '#/components/schemas/Goal'}
+    GoalPresetList:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [kind, icon, colorToken]
+            properties:
+              kind: {$ref: '#/components/schemas/GoalKind'}
+              icon: {type: string}
+              colorToken: {type: string}
+    CreateGoalRequest:
+      type: object
+      additionalProperties: false
+      required: [clientId, kind, name, targetMinor, accountId]
+      properties:
+        clientId: {type: string, format: uuid}
+        kind: {$ref: '#/components/schemas/GoalKind'}
+        name: {type: string, minLength: 1, maxLength: 80}
+        targetMinor: {type: string, pattern: '^[1-9][0-9]*$'}
+        currentMinor: {type: string, pattern: '^(0|[1-9][0-9]*)$'}
+        targetDate: {type: [string, 'null'], format: date}
+        accountId: {type: string, format: uuid}
+        monthlyContributionMinor: {type: [string, 'null'], pattern: '^(0|[1-9][0-9]*)$'}
+        icon: {type: string}
+        colorToken: {type: [string, 'null']}
+    UpdateGoalRequest:
+      type: object
+      additionalProperties: false
+      required: [version]
+      properties:
+        version: {type: integer, minimum: 1}
+        kind: {$ref: '#/components/schemas/GoalKind'}
+        name: {type: string, minLength: 1, maxLength: 80}
+        targetMinor: {type: string, pattern: '^[1-9][0-9]*$'}
+        targetDate: {type: [string, 'null'], format: date}
+        monthlyContributionMinor: {type: [string, 'null'], pattern: '^(0|[1-9][0-9]*)$'}
+        icon: {type: string}
+        colorToken: {type: [string, 'null']}
+    MoveGoalRequest:
+      type: object
+      additionalProperties: false
+      required: [clientId, amountMinor, occurredOn]
+      properties:
+        clientId: {type: string, format: uuid}
+        amountMinor: {type: string, pattern: '^[1-9][0-9]*$'}
+        accountId:
+          type: [string, 'null']
+          format: uuid
+          description: Other wallet (same currency as the goal). Omit when the money already sits in the linked wallet.
+        occurredOn: {type: string, format: date}
+    AdjustGoalRequest:
+      type: object
+      additionalProperties: false
+      required: [currentMinor, version]
+      properties:
+        currentMinor: {type: string, pattern: '^(0|[1-9][0-9]*)$'}
+        version: {type: integer, minimum: 1}
     BudgetStatus:
       type: string
       enum: [healthy, warning, critical, over]
@@ -7196,6 +7756,8 @@ components:
       - bills
       - budget
       - budgetMonths
+      - goals
+      - goalEntries
       - notificationPreferences
       - notifications
       - transactions
@@ -7258,6 +7820,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AccountExportBudgetMonth'
+        goals:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountExportGoal'
+        goalEntries:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountExportGoalEntry'
         notificationPreferences:
           oneOf:
           - type: 'null'
@@ -7270,6 +7840,44 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AccountExportTransaction'
+    AccountExportGoal:
+      type: object
+      additionalProperties: false
+      required: [id, clientId, kind, name, currencyCode, targetMinor, currentMinor, targetDate, accountId,
+        monthlyContributionMinor, icon, colorToken, archivedAt, version, createdAt, updatedAt]
+      properties:
+        id: {type: string, format: uuid}
+        clientId: {type: string, format: uuid}
+        kind: {$ref: '#/components/schemas/GoalKind'}
+        name: {type: string}
+        currencyCode: {type: string, pattern: '^[A-Z]{3}$'}
+        targetMinor: {$ref: '#/components/schemas/ReportMoney'}
+        currentMinor: {$ref: '#/components/schemas/ReportMoney'}
+        targetDate: {type: [string, 'null'], format: date}
+        accountId: {type: string, format: uuid}
+        monthlyContributionMinor:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ReportMoney'
+        icon: {type: string}
+        colorToken: {type: [string, 'null']}
+        archivedAt: {type: [string, 'null'], format: date-time}
+        version: {type: integer}
+        createdAt: {type: string, format: date-time}
+        updatedAt: {type: string, format: date-time}
+    AccountExportGoalEntry:
+      type: object
+      additionalProperties: false
+      required: [id, goalId, clientId, kind, amountMinor, transactionClientId, occurredOn, createdAt]
+      properties:
+        id: {type: string, format: uuid}
+        goalId: {type: string, format: uuid}
+        clientId: {type: string, format: uuid}
+        kind: {type: string, enum: [contribute, withdraw]}
+        amountMinor: {$ref: '#/components/schemas/ReportMoney'}
+        transactionClientId: {type: [string, 'null'], format: uuid}
+        occurredOn: {type: string, format: date}
+        createdAt: {type: string, format: date-time}
     AccountExportNotificationPreferences:
       type: object
       additionalProperties: false

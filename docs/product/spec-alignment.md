@@ -53,7 +53,7 @@ Giữ nguyên số phase và ID đã có. Không dồn ngân sách, mục tiêu,
 | §6.3–6.6 ngân sách, mục tiêu, insight trên Home | Ngân sách có thanh trên Home; mục tiêu / insight chưa | `MOB-P2-E02` (ngân sách), `MOB-P3-E01`; insight `MOB-P5-E04` sau v1 |
 | §34 CSV | Chỉ JSON | Sau P1 nếu beta cần |
 | §15 ngân sách và ngưỡng 70/80/90/100 | API + mobile theo DoD | `BE-P2-E02` / `MOB-P2-E02` |
-| §16 công thức tiết kiệm/tháng | Epic có DoD | `BE-P3-E01` |
+| §16 công thức tiết kiệm/tháng | API có công thức + test (2026-11-02); mobile `MOB-P3-E01` còn | `BE-P3-E01` |
 | §18 thẻ: hạn mức còn, dư nợ, ngày sao kê, trả tối thiểu | API + mobile: hạn mức, ngày 1–28, số trả tối thiểu; dư nợ / hạn mức còn suy từ số dư; cảnh báo hộp thư | `BE-P2-E07` / `MOB-P2-E07` |
 | §19 lịch sử tài sản ròng | Chỉ ròng hiện tại | `BE-P4-E02` |
 | §21 soát tháng | Epic có DoD | `BE-P2-E08` |

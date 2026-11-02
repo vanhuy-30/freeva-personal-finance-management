@@ -95,6 +95,7 @@ model Currency {
   budgets               Budget[]
   budgetMonths          BudgetMonth[]
   bills                 Bill[]
+  goals                 Goal[]
 }
 
 model User {
@@ -143,6 +144,8 @@ model User {
   notificationPreference NotificationPreference?
   notifications          InAppNotification[]
   pushTokens             PushToken[]
+  goals                  Goal[]
+  goalEntries            GoalEntry[]
 }
 
 model FinancialAccount {
@@ -168,6 +171,7 @@ model FinancialAccount {
   transactions     Transaction[]
   recurringSource  RecurringRule[] @relation("RecurringSourceAccount")
   recurringCounter RecurringRule[] @relation("RecurringCounterAccount")
+  goals            Goal[]
 
   @@unique([userId, clientId])
   @@index([userId, archivedAt])
@@ -638,4 +642,69 @@ model OAuthChallenge {
   expiresAt DateTime      @db.Timestamptz
 
   @@index([expiresAt])
+}
+
+enum GoalKind {
+  emergency
+  home
+  car
+  travel
+  education
+  wedding
+  retirement
+  custom
+}
+
+enum GoalEntryKind {
+  contribute
+  withdraw
+}
+
+/// Savings goal (BE-P3-E01). currentMinor is stored; every change goes through GoalEntry
+/// (a balanced transfer when money moves between wallets) or an AuditEvent when the number is only corrected.
+model Goal {
+  id                       String    @id @default(uuid()) @db.Uuid
+  userId                   String    @db.Uuid
+  clientId                 String    @db.Uuid
+  kind                     GoalKind
+  name                     String    @db.VarChar(80)
+  currencyCode             String    @db.Char(3)
+  targetMinor              BigInt
+  currentMinor             BigInt    @default(0)
+  targetDate               DateTime? @db.Date
+  accountId                String    @db.Uuid
+  monthlyContributionMinor BigInt?
+  icon                     String    @db.VarChar(30)
+  colorToken               String?   @db.VarChar(40)
+  archivedAt               DateTime? @db.Timestamptz
+  version                  Int       @default(1)
+  createdAt                DateTime  @default(now()) @db.Timestamptz
+  updatedAt                DateTime  @updatedAt @db.Timestamptz
+
+  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account  FinancialAccount @relation(fields: [accountId], references: [id])
+  currency Currency         @relation(fields: [currencyCode], references: [code])
+  entries  GoalEntry[]
+
+  @@unique([userId, clientId])
+  @@index([userId, archivedAt])
+}
+
+model GoalEntry {
+  id                  String        @id @default(uuid()) @db.Uuid
+  goalId              String        @db.Uuid
+  userId              String        @db.Uuid
+  clientId            String        @db.Uuid
+  kind                GoalEntryKind
+  amountMinor         BigInt
+  /// Leg clientId of the transfer behind this entry; null when no money moved between wallets.
+  transactionClientId String?       @db.Uuid
+  occurredOn          DateTime      @db.Date
+  createdAt           DateTime      @default(now()) @db.Timestamptz
+
+  goal Goal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, clientId])
+  @@index([goalId, createdAt])
 }

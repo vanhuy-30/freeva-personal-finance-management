@@ -70,6 +70,8 @@ export class PrismaAccountRepository implements AccountRepository {
       orderBy: [{ periodFrom: 'asc' }, { id: 'asc' }],
       include: { categories: { orderBy: [{ categoryId: 'asc' as const }] } },
     });
+    const goals = await tx.goal.findMany({ where: { userId }, orderBy: order });
+    const goalEntries = await tx.goalEntry.findMany({ where: { userId }, orderBy: order });
     const notificationPreferences = await tx.notificationPreference.findUnique({ where: { userId } });
     const notifications = await tx.inAppNotification.findMany({
       where: { userId },
@@ -112,6 +114,8 @@ export class PrismaAccountRepository implements AccountRepository {
           limitMinor: line.limitMinor,
         })),
       },
+      goals,
+      goalEntries,
       budgetMonths: budgetMonths.map(row => ({
         id: row.id,
         currencyCode: row.currencyCode,
@@ -166,6 +170,8 @@ export class PrismaAccountRepository implements AccountRepository {
     await tx.inAppNotification.deleteMany({ where: { userId } });
     await tx.notificationPreference.deleteMany({ where: { userId } });
     await tx.bill.deleteMany({ where: { userId } });
+    await tx.goalEntry.deleteMany({ where: { userId } });
+    await tx.goal.deleteMany({ where: { userId } });
     await tx.recurringOccurrence.deleteMany({ where: { rule: { userId } } });
     await tx.recurringRule.deleteMany({ where: { userId } });
     await tx.budgetMonth.deleteMany({ where: { userId } });
