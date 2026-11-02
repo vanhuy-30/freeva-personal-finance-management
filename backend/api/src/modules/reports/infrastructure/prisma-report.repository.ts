@@ -7,7 +7,7 @@ import type {
 } from '../domain/report';
 import { previousPeriod } from '../domain/report';
 
-const moneyTypes = new Set<ReportMoneyType>(['income', 'expense', 'transfer']);
+const moneyTypes = new Set<ReportMoneyType>(['income', 'expense', 'transfer', 'adjustment']);
 
 @Injectable()
 export class PrismaReportRepository implements ReportRepository {

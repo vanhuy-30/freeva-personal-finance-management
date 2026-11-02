@@ -25,6 +25,7 @@ enum TransactionType {
   income
   expense
   transfer
+  adjustment
 }
 
 enum CategoryKind {

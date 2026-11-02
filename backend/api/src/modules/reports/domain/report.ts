@@ -6,7 +6,7 @@ export const SERIES_WINDOWS = ['7d', '30d', '3m', '6m', '1y', 'all'] as const;
 export type TrendPeriodKind = (typeof TREND_PERIODS)[number];
 export type ReportPeriodKind = (typeof REPORT_PERIODS)[number];
 export type SeriesWindow = (typeof SERIES_WINDOWS)[number];
-export type ReportMoneyType = 'income' | 'expense' | 'transfer';
+export type ReportMoneyType = 'income' | 'expense' | 'transfer' | 'adjustment';
 
 export class ReportError extends Error {
   constructor(readonly code: 'VALIDATION_ERROR') {
@@ -242,14 +242,13 @@ export function buildCashflow(period: ResolvedPeriod, source: CashflowSource, ex
     item.count += row.count;
     categories.set(key, item);
   }
-  const accounts = new Map<string, { accountId: string; currency: string; income: bigint; expense: bigint; transfer: bigint; include: boolean }>();
+  const accounts = new Map<string, { accountId: string; currency: string; income: bigint; expense: bigint; transfer: bigint; adjustment: bigint; include: boolean }>();
   for (const account of source.accounts) {
-    accounts.set(account.accountId, { accountId: account.accountId, currency: account.currency, income: 0n, expense: 0n, transfer: 0n, include: !account.archived });
+    accounts.set(account.accountId, { accountId: account.accountId, currency: account.currency, income: 0n, expense: 0n, transfer: 0n, adjustment: 0n, include: !account.archived });
   }
   for (const row of source.movements) {
-    const item = accounts.get(row.accountId) ?? { accountId: row.accountId, currency: row.currency, income: 0n, expense: 0n, transfer: 0n, include: true };
-    if (row.type === 'transfer') item.transfer += row.total;
-    else item[row.type] += row.total;
+    const item = accounts.get(row.accountId) ?? { accountId: row.accountId, currency: row.currency, income: 0n, expense: 0n, transfer: 0n, adjustment: 0n, include: true };
+    item[row.type] += row.total;
     item.include = true;
     accounts.set(row.accountId, item);
   }
@@ -262,7 +261,8 @@ export function buildCashflow(period: ResolvedPeriod, source: CashflowSource, ex
     })),
     byAccount: [...accounts.values()].filter(item => item.include).sort(compareAccount).map(item => ({
       accountId: item.accountId, currency: item.currency, incomeMinor: money(item.income), expenseMinor: money(item.expense),
-      transferMinor: money(item.transfer), netMinor: money(item.income + item.expense + item.transfer),
+      transferMinor: money(item.transfer), adjustmentMinor: money(item.adjustment),
+      netMinor: money(item.income + item.expense + item.transfer + item.adjustment),
     })),
     comparison: {
       from: previous.from,

@@ -65,4 +65,6 @@ Page mặc định 1, pageSize 50, tối đa 100. `status=active` mặc định,
 
 `400 VALIDATION_ERROR`, `401` theo auth service, `404 TRANSACTION_NOT_FOUND`/`ACCOUNT_NOT_FOUND` cho cả ID không tồn tại và khác owner, `409 TRANSACTION_CONFLICT`, `503 TRANSACTIONS_UNAVAILABLE`. Lỗi không phản chiếu input hoặc exception Prisma. HTTP logger không ghi body/query/header, ghi chú, merchant, số tiền hoặc bearer token.
 
-Sync queue giao dịch: [sync.md](sync.md) (`BE-P1-009`). Chưa triển khai đối soát, receipt hoặc batch edit. Không deploy staging trong task này. Lệnh kiểm tra và coverage: [test README](../../backend/api/test/README.md#transactions--be-p1-005).
+Giao dịch `adjustment` (một leg, không danh mục) chỉ được tạo bởi đối soát ví: [wallet-reconciliation.md](wallet-reconciliation.md) (`BE-P3-005`). `type` của `POST` vẫn chỉ nhận income/expense/transfer; filter `type` nhận thêm `adjustment`, và `summary.totals[].adjustmentMinor` tách riêng khỏi thu/chi.
+
+Sync queue giao dịch: [sync.md](sync.md) (`BE-P1-009`). Chưa triển khai receipt hoặc batch edit. Không deploy staging trong task này. Lệnh kiểm tra và coverage: [test README](../../backend/api/test/README.md#transactions--be-p1-005).

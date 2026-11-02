@@ -67,11 +67,12 @@
 ## Chức năng bổ sung (thêm 2026-11-02)
 
 ### BE-P3-005 / MOB-P3-005 — Đối soát số dư ví
-- Status: todo
+- Status: doing — BE xong 2026-11-02, MOB còn
 - Module: 3, 4
 - Gate: v1
 - Depends: BE-P1-004, BE-P1-005
 - DoD: trên chi tiết ví, user nhập số dư thực tế; app hiện chênh lệch và tạo một giao dịch điều chỉnh (`adjustment`) một leg. Điều chỉnh không tính vào thu/chi kỳ, ngân sách, tỷ lệ tiết kiệm; có trong lịch sử ví, export, sổ cái. Sửa hoặc xóa được như giao dịch thường. Ví thẻ tín dụng đối soát theo dư nợ. Test số dư sau điều chỉnh và báo cáo không đổi.
+- Note: BE-P3-005 xong 2026-11-02: `POST /financial-accounts/{id}/reconcile` (tính chênh lệch ở server, `dryRun`, thẻ tín dụng theo dư nợ, idempotent theo `clientId`), `TransactionType` thêm `adjustment` (một leg, không danh mục/FX, chỉ tạo qua reconcile), không vào thu/chi, ngân sách, tỷ lệ tiết kiệm; báo cáo theo ví có `adjustmentMinor`; sửa/xóa qua `/transactions`; có trong export. Migration additive. Kiến trúc: [wallet-reconciliation.md](../docs/architecture/wallet-reconciliation.md). Tồn đọng: MOB-P3-005 chưa làm.
 
 ### BE-P3-006 / MOB-P3-006 — Nhắc ghi chi hằng ngày
 - Status: todo
