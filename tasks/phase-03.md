@@ -49,11 +49,12 @@
 - DoD: thẻ `NewMonthReviewCard` đã có (thu, chi tháng trước, chỉ hiện đầu tháng) thêm hai dòng: danh mục chi tăng nhiều nhất so với tháng trước nữa và ngân sách tháng trước có vượt không. Số lấy từ `GET /reports/month-review` và ngân sách, không AI, bỏ dòng khi thiếu dữ liệu. Đây là "insight" của v1.
 
 ### BE-P3-003 / MOB-P3-003 — Ngưỡng ngân sách mặc định 80 và 100
-- Status: todo
+- Status: doing — BE xong 2026-11-02, MOB còn
 - Module: 7, 17
 - Gate: v1
 - Depends: BE-P2-E02
 - DoD: ngưỡng cảnh báo mặc định đổi từ `70, 80, 90, 100` thành `80, 100`; user vẫn thêm được tới 4 ngưỡng. Ngân sách đã lưu giữ nguyên ngưỡng cũ. Màu trạng thái (healthy / warning / critical / over) không đổi.
+- Note: BE-P3-003 xong 2026-11-02: `DEFAULT_ALERT_THRESHOLDS` = `80, 100`, ngân sách đã lưu giữ ngưỡng cũ (mặc định chỉ áp ở code, không migration), OpenAPI/docs cập nhật. MOB-P3-003 (`defaultAlertThresholds` và gợi ý ngưỡng trên màn ngân sách) chưa làm.
 
 ### MOB-P3-004 — Ẩn quy đổi khi chỉ dùng một loại tiền
 - Status: todo

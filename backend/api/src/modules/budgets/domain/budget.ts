@@ -3,7 +3,7 @@ import { resolvePeriod, type ResolvedPeriod, type ReportProfile } from '../../re
 export const BUDGET_STATUSES = ['healthy', 'warning', 'critical', 'over'] as const;
 export type BudgetStatus = (typeof BUDGET_STATUSES)[number];
 
-export const DEFAULT_ALERT_THRESHOLDS = [70, 80, 90, 100] as const;
+export const DEFAULT_ALERT_THRESHOLDS = [80, 100] as const;
 
 export class BudgetError extends Error {
   constructor(readonly code: 'VALIDATION_ERROR' | 'BUDGET_NOT_FOUND' | 'BUDGET_CONFLICT') {

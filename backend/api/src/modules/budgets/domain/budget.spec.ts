@@ -100,7 +100,8 @@ describe('BE-P2-E02 category lines and thresholds', () => {
     expect(() => normalizeAlertThresholds([90, 80])).toThrow();
     expect(() => normalizeAlertThresholds([0, 100])).toThrow();
     expect(() => normalizeAlertThresholds([70, 80, 90, 100, 101])).toThrow();
-    expect(normalizeAlertThresholds(undefined)).toEqual([70, 80, 90, 100]);
+    expect(normalizeAlertThresholds(undefined)).toEqual([80, 100]);
+    expect(normalizeAlertThresholds([70, 80, 90, 100])).toEqual([70, 80, 90, 100]);
     expect(normalizeAlertThresholds([80, 100])).toEqual([80, 100]);
   });
 });
