@@ -143,6 +143,8 @@ export class PrismaAccountRepository implements AccountRepository {
         recurringEnabled: notificationPreferences.recurringEnabled,
         monthReviewEnabled: notificationPreferences.monthReviewEnabled,
         insightEnabled: notificationPreferences.insightEnabled,
+        dailyLogEnabled: notificationPreferences.dailyLogEnabled,
+        dailyLogTime: notificationPreferences.dailyLogTime,
         quietHoursEnabled: notificationPreferences.quietHoursEnabled,
         quietStart: notificationPreferences.quietStart,
         quietEnd: notificationPreferences.quietEnd,

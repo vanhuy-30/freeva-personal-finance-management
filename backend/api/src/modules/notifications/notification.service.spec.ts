@@ -235,4 +235,103 @@ describe('BE-P2-E05 notification service', () => {
       expect(JSON.stringify(call[0].params)).not.toMatch(/amount|Minor|balance/i);
     }
   });
+  describe('BE-P3-006 daily log reminder', () => {
+    const evening = new Date('2026-10-28T13:30:00.000Z'); // 20:30 ICT
+    const morning = new Date('2026-10-28T03:00:00.000Z'); // 10:00 ICT
+
+    function run(
+      overrides: Record<string, unknown>,
+      at: Date,
+      prefs: Record<string, unknown> = {},
+    ) {
+      const createIfAbsent = jest.fn().mockResolvedValue(true);
+      const repository = repo({
+        createIfAbsent,
+        loadEvaluateContext: jest.fn().mockResolvedValue({
+          userId: 'u1',
+          timezone: 'Asia/Ho_Chi_Minh',
+          today: '2026-10-28',
+          prefs: {
+            ...defaultPreference(),
+            cardEnabled: false,
+            dailyLogEnabled: true,
+            createdAt: at,
+            updatedAt: at,
+            ...prefs,
+          },
+          periodFrom: null,
+          crossedThresholds: [],
+          recurringSoon: [],
+          billsDue: [],
+          creditCards: [],
+          hasTransactionToday: false,
+          ...overrides,
+        }),
+      });
+      return { createIfAbsent, result: new NotificationService(repository).evaluate('u1', at) };
+    }
+
+    it('reminds once per day after the set time when nothing was logged, with no params', async () => {
+      const { createIfAbsent, result } = run({}, evening);
+      await expect(result).resolves.toEqual({ created: 1 });
+      expect(createIfAbsent).toHaveBeenCalledWith({
+        userId: 'u1',
+        kind: 'daily_log',
+        dedupeKey: 'daily_log|2026-10-28',
+        titleKey: 'daily_log',
+        bodyKey: 'daily_log_body',
+        params: {},
+      });
+    });
+
+    it('does not remind before the time, when disabled, or when a transaction exists today', async () => {
+      for (const [overrides, at, prefs] of [
+        [{}, morning, {}],
+        [{}, evening, { dailyLogEnabled: false }],
+        [{ hasTransactionToday: true }, evening, {}],
+      ] as const) {
+        const { createIfAbsent, result } = run(overrides, at, prefs);
+        await expect(result).resolves.toEqual({ created: 0 });
+        expect(createIfAbsent).not.toHaveBeenCalled();
+      }
+    });
+
+    it('respects quiet hours', async () => {
+      const { createIfAbsent, result } = run({}, evening, {
+        quietHoursEnabled: true,
+        quietStart: '20:00',
+        quietEnd: '22:00',
+      });
+      await expect(result).resolves.toEqual({ created: 0 });
+      expect(createIfAbsent).not.toHaveBeenCalled();
+    });
+
+    it('does not count a retried reminder twice', async () => {
+      const createIfAbsent = jest.fn().mockResolvedValue(false);
+      const repository = repo({
+        createIfAbsent,
+        loadEvaluateContext: jest.fn().mockResolvedValue({
+          userId: 'u1',
+          timezone: 'Asia/Ho_Chi_Minh',
+          today: '2026-10-28',
+          prefs: { ...defaultPreference(), cardEnabled: false, dailyLogEnabled: true, createdAt: evening, updatedAt: evening },
+          periodFrom: null,
+          crossedThresholds: [],
+          recurringSoon: [],
+          billsDue: [],
+          creditCards: [],
+          hasTransactionToday: false,
+        }),
+      });
+      await expect(new NotificationService(repository).evaluate('u1', evening)).resolves.toEqual({ created: 0 });
+    });
+
+    it('validates the reminder time and accepts enabling', async () => {
+      const putPreferences = jest.fn().mockResolvedValue({ ...defaultPreference(), createdAt: evening, updatedAt: evening });
+      const service = new NotificationService(repo({ putPreferences }));
+      await service.putPreferences('u1', { dailyLogEnabled: true, dailyLogTime: '21:15' });
+      expect(putPreferences).toHaveBeenCalledWith('u1', expect.objectContaining({ dailyLogEnabled: true, dailyLogTime: '21:15' }));
+      await expect(service.putPreferences('u1', { dailyLogTime: '25:00' })).rejects.toMatchObject({ code: 'VALIDATION_ERROR' });
+    });
+  });
 });

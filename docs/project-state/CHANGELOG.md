@@ -4,6 +4,7 @@ Nhật ký repo/process — không phải App Store release notes.
 
 ## 2026-11-02
 
+- `BE-P3-006`: nhắc ghi chi hằng ngày — loại thông báo `daily_log` (mặc định tắt), `dailyLogEnabled` / `dailyLogTime` (HH:mm, múi giờ hồ sơ) trên `/notification-preferences`; không tạo nếu hôm đó đã có thu/chi/chuyển, tôn trọng giờ yên, một hàng mỗi ngày. Migration `20261102400000_daily_log_reminder` (additive); cần deploy trước API. MOB-P3-006 chưa làm. [Thiết kế](../architecture/notifications.md).
 - `BE-P3-005`: đối soát số dư ví — `POST /api/v1/financial-accounts/{id}/reconcile` tạo giao dịch `adjustment` một leg (không phải thu/chi, không vào ngân sách/tỷ lệ tiết kiệm), thẻ tín dụng theo dư nợ. Migration `20261102300000_transaction_adjustment` (additive, thêm giá trị enum); cần deploy trước API. MOB-P3-005 chưa làm. [Thiết kế](../architecture/wallet-reconciliation.md).
 - `BE-P3-001`: gộp hóa đơn vào giao dịch định kỳ — rule `remind` thay `Bill`, `POST /recurring-transactions/{id}/confirm`, nhắc `bill_due` / `bill_overdue`, lịch đọc từ rule, `/api/v1/bills` trả 410. Migration `20261102200000_recurring_remind_mode` (additive, giữ bảng `Bill`); cần deploy trước API. MOB-P3-001 chưa làm. [Thiết kế](../architecture/bills.md).
 - **Phạm vi product v1 đổi** (quyết định chủ dự án): `BE-P4-E01` / `MOB-P4-E01` và `QA-P4-E01` (tài sản và đầu tư) thành `Gate: v1`; `BE-P5-E03`, `BE-P5-E04`, `BE-P5-E08`, `PRD-P5-E01` (gợi ý danh mục, insight, cờ server, consent AI) thành `post-v1`. Đồng bộ roadmap, MoSCoW, spec-alignment, STATUS, tasks. Roadmap sửa “Phase hiện tại” từ 2 thành 3.

@@ -8145,7 +8145,7 @@ components:
           description: assetsMinor + liabilitiesMinor.
     NotificationKind:
       type: string
-      enum: [budget, goal, debt, card, recurring, month_review, insight, security]
+      enum: [budget, goal, debt, card, recurring, month_review, insight, security, daily_log]
     NotificationKindToggle:
       type: object
       additionalProperties: false
@@ -8164,12 +8164,16 @@ components:
     NotificationPreferences:
       type: object
       additionalProperties: false
-      required: [kinds, quietHoursEnabled, quietStart, quietEnd, version, updatedAt]
+      required: [kinds, dailyLogTime, quietHoursEnabled, quietStart, quietEnd, version, updatedAt]
       properties:
         kinds:
           type: array
           items:
             $ref: '#/components/schemas/NotificationKindToggle'
+        dailyLogTime:
+          type: string
+          description: Daily expense-log reminder time (HH:mm, profile timezone). Used when the daily_log kind is enabled.
+          pattern: ^([01]\d|2[0-3]):([0-5]\d)$
         quietHoursEnabled:
           type: boolean
         quietStart:
@@ -8202,6 +8206,12 @@ components:
           type: boolean
         insightEnabled:
           type: boolean
+        dailyLogEnabled:
+          type: boolean
+          description: Remind to log expenses when nothing was logged today (default off).
+        dailyLogTime:
+          type: string
+          pattern: ^([01]\d|2[0-3]):([0-5]\d)$
         quietHoursEnabled:
           type: boolean
         quietStart:
@@ -8417,6 +8427,8 @@ components:
       - recurringEnabled
       - monthReviewEnabled
       - insightEnabled
+      - dailyLogEnabled
+      - dailyLogTime
       - quietHoursEnabled
       - quietStart
       - quietEnd
@@ -8438,6 +8450,10 @@ components:
           type: boolean
         insightEnabled:
           type: boolean
+        dailyLogEnabled:
+          type: boolean
+        dailyLogTime:
+          type: string
         quietHoursEnabled:
           type: boolean
         quietStart:
