@@ -56,7 +56,7 @@ export class ProfileService {
 
   async update(userId: string, profile: ProfileUpdate) {
     // Reject offsets and unknown zones; accept IANA aliases used by existing users.
-    if (!/^(UTC|[A-Za-z_]+(?:\/[A-Za-z0-9_+\-]+)+)$/.test(profile.timezone)) {
+    if (!/^(UTC|[A-Za-z_]+(?:\/[A-Za-z0-9_+-]+)+)$/.test(profile.timezone)) {
       throw error(400, 'VALIDATION_ERROR');
     }
     try {

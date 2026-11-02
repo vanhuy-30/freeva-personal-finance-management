@@ -24,7 +24,6 @@ describe('BE-P1-012 tags HTTP + PostgreSQL', () => {
   let prisma: PrismaService;
   let base: string;
   let owner: string;
-  let other: string;
   let token: string;
   let otherToken: string;
   let logs = '';
@@ -60,7 +59,7 @@ describe('BE-P1-012 tags HTTP + PostgreSQL', () => {
   }
   beforeEach(async () => {
     const first = await user(); const second = await user();
-    owner = first.id; token = first.bearer; other = second.id; otherToken = second.bearer;
+    owner = first.id; token = first.bearer; otherToken = second.bearer;
     logs = '';
   });
   afterAll(async () => {

@@ -1,6 +1,6 @@
 import { Transform, Type } from 'class-transformer';
 import {
-  IsBoolean, IsIn, IsInt, IsOptional, IsString, IsUUID, Length, Matches, Max, Min, ValidateIf,
+  IsBoolean, IsIn, IsInt, IsString, IsUUID, Length, Matches, Max, Min, ValidateIf,
 } from 'class-validator';
 import { TRANSACTION_TYPES } from '../transactions/domain/transaction';
 import { RECURRING_UNITS } from './domain/calendar';

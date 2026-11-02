@@ -5,7 +5,6 @@ import {
   IsArray,
   IsIn,
   IsInt,
-  IsOptional,
   IsString,
   IsUUID,
   Length,

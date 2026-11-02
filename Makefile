@@ -30,6 +30,7 @@ test:
 	@if [ -d apps/mobile ]; then cd apps/mobile && $(FLUTTER) test; fi
 
 lint:
+	pnpm --filter @freeva/api lint
 	pnpm --filter @freeva/web-admin lint
 	pnpm --filter @freeva/api build
 	@if [ -d apps/mobile ]; then cd apps/mobile && $(FLUTTER) analyze; fi
