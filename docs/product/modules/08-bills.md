@@ -1,6 +1,6 @@
 # Module 8 — Hóa đơn và lịch thanh toán
 
-- **Phase:** 2
+- **Phase:** 2 — gộp vào module 6 (chế độ nhắc và chờ xác nhận) theo `BE-P3-001` (2026-11-02)
 - **Prefix:** `BE`, `MOB`
 - **Task:** `BE-P2-E03` / `MOB-P2-E03`
 - **Kiến trúc:** [bills.md](../../architecture/bills.md)

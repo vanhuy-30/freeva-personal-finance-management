@@ -6,9 +6,11 @@
 
 Sổ cái, tiền integer, transfer hai leg, backend là nguồn số dư, và thứ tự “đúng trước khi nhiều tính năng” **khớp** spec (§12, §13, §43, §55, §56).
 
-**Phase 1 (sổ cái) đã đóng 2026-10-21; vẫn không phải product v1 của spec.** Spec §51 và §57 yêu cầu người dùng mới còn lập được ngân sách, mục tiêu, xem báo cáo và nhận insight. Repo giữ Phase 1 là vòng ghi chép; phần còn lại mang `Gate: v1` ở Phase 2 / 3 / 5.
+**Phase 1 (sổ cái) đã đóng 2026-10-21; vẫn không phải product v1 của spec.** Spec §51 và §57 yêu cầu người dùng mới còn lập được ngân sách, mục tiêu, xem báo cáo và nhận insight. Repo giữ Phase 1 là vòng ghi chép; phần còn lại mang `Gate: v1` ở Phase 2 / 3 / 4.
 
-Giữ nguyên số phase và ID đã có. Không dồn ngân sách, mục tiêu, AI vào Phase 1 đã đóng. Gắn `Gate: v1` cho phần spec bắt buộc trước khi gọi là bản phát hành đầu.
+**Quyết định chủ dự án 2026-11-02:** theo dõi tài sản và đầu tư (module 12) vào product v1; gợi ý danh mục, insight cơ bản và phần AI đi kèm (cờ server, consent AI) ra sau v1. Spec §51 xếp AI cơ bản vào MVP và §52 xếp investment tracking sau MVP; repo đảo hai mục này.
+
+Giữ nguyên số phase và ID đã có. Không dồn ngân sách, mục tiêu, đầu tư vào Phase 1 đã đóng. Gắn `Gate: v1` cho phần spec bắt buộc trước khi gọi là bản phát hành đầu.
 
 ## Khớp
 
@@ -23,11 +25,13 @@ Giữ nguyên số phase và ID đã có. Không dồn ngân sách, mục tiêu,
 
 | Spec | Repo | Lý do |
 |---|---|---|
-| §51 gọi budget, goal, insight cơ bản là MVP | Ngân sách ở Phase 2, mục tiêu ở Phase 3, AI ở Phase 5 | Sổ cái phải đúng trước (§55). Các epic đó mang `Gate: v1`. |
-| §11 có Saving, Investment ngay trong loại tài khoản | Phase 1 có bốn loại: cash, bank, ewallet, credit | Đầu tư là Phase 4. Mục tiêu v1 gắn ví đã có, không cần loại mới. |
-| §48 tab Insights | Phase 1: Home, Giao dịch, `+`, Thêm | Tab Insights mở khi có insight (`BE-P5-E04`). |
+| §51 gọi budget, goal, insight cơ bản là MVP | Ngân sách ở Phase 2, mục tiêu ở Phase 3 (`Gate: v1`). AI ở Phase 5, sau v1 | Sổ cái phải đúng trước (§55). AI ra sau v1 theo quyết định 2026-11-02. |
+| §52 xếp investment tracking sau MVP | Module 12 ở Phase 4, `Gate: v1` | Quyết định 2026-11-02: v1 trả lời đủ "tiền nằm ở đâu" gồm cả tài sản và đầu tư. |
+| §11 có Saving, Investment ngay trong loại tài khoản | Phase 1 có bốn loại: cash, bank, ewallet, credit | Đầu tư là Phase 4 (`Gate: v1`), vị thế tách khỏi ví tiền. Mục tiêu v1 gắn ví đã có, không cần loại mới. |
+| §48 tab Insights | Phase 1: Home, Giao dịch, `+`, Thêm | Tab Insights mở khi có insight (`BE-P5-E04`, sau v1). |
 | Không có module hóa đơn / lịch riêng | Module 8, 15 ở Phase 2 | Bổ sung trên định kỳ và nhắc. Không thay ngân sách. |
-| Mục tiêu là chỗ theo dõi tiết kiệm | Module 11 tiền gửi có kỳ hạn riêng | Không nằm spec v1. Làm sau, được đóng nếu beta không cần. |
+| Mục tiêu là chỗ theo dõi tiết kiệm | Tiền gửi có kỳ hạn là một loại tài sản trong module 12 | Module 11 gộp vào 12 (2026-11-02). |
+| Không có module hóa đơn / lịch riêng | Hóa đơn gộp vào định kỳ, lịch chỉ là màn xem (`BE-P3-001`) | Bớt ba khái niệm chồng nhau (2026-11-02). |
 | §53 import sao kê file | Import file ở Phase 5; API ngân hàng ở Phase 6 | API trực tiếp vẫn là non-goal của v1. |
 
 ## Đã vá trong Phase 1 (đóng 2026-10-21)
@@ -46,7 +50,7 @@ Giữ nguyên số phase và ID đã có. Không dồn ngân sách, mục tiêu,
 
 | Spec | Hiện trạng | Task |
 |---|---|---|
-| §6.3–6.6 ngân sách, mục tiêu, insight trên Home | Ngân sách có thanh trên Home; mục tiêu / insight chưa | `MOB-P2-E02` (ngân sách), `MOB-P3-E01`, `MOB-P5-E04` |
+| §6.3–6.6 ngân sách, mục tiêu, insight trên Home | Ngân sách có thanh trên Home; mục tiêu / insight chưa | `MOB-P2-E02` (ngân sách), `MOB-P3-E01`; insight `MOB-P5-E04` sau v1 |
 | §34 CSV | Chỉ JSON | Sau P1 nếu beta cần |
 | §15 ngân sách và ngưỡng 70/80/90/100 | API + mobile theo DoD | `BE-P2-E02` / `MOB-P2-E02` |
 | §16 công thức tiết kiệm/tháng | Epic có DoD | `BE-P3-E01` |
@@ -65,6 +69,8 @@ Giữ nguyên số phase và ID đã có. Không dồn ngân sách, mục tiêu,
 
 1. Phase 1 `Gate: v1` trong backlog — **đã đóng** 2026-10-21 (gồm `BE-P1-011`).
 2. Should P1 — **đã đóng** (`QA-P1-001`, `BE-P1-012` / `MOB-P1-011`, …); residual smoke không chặn v1.
-3. `Gate: v1` ở phase sau: `BE-P2-E02` / `MOB-P2-E02`, `BE-P3-E01` / `MOB-P3-E01`, `BE-P5-E03` / `MOB-P5-E03`, `BE-P5-E04` / `MOB-P5-E04`, `PRD-P5-E01`.
+3. `Gate: v1` ở phase sau: `BE-P2-E02` / `MOB-P2-E02` (**đã đóng** 2026-10-30), `BE-P3-E01` / `MOB-P3-E01`, `BE-P3-001` … `BE-P3-012` (gộp chồng chéo + bổ sung, 2026-11-02), `BE-P4-E01` / `MOB-P4-E01`, `BE-P4-E02`, `QA-P4-E01`.
 
-Hành trình chấp nhận: đăng ký → ví và số dư → danh mục → ghi thu/chi/chuyển → Home đúng số → ngân sách → mục tiêu → báo cáo → một insight có số lấy từ báo cáo, user xác nhận trước mọi ghi đè.
+Phase 5 không còn `Gate: v1` từ 2026-11-02.
+
+Hành trình chấp nhận: đăng ký → ví và số dư → danh mục → ghi thu/chi/chuyển → Home đúng số → ngân sách → mục tiêu → tài sản và đầu tư (tách khỏi ví, giá có nguồn và thời điểm) → tài sản ròng theo thời gian → báo cáo và thẻ soát tháng. Insight không còn trong hành trình v1.

@@ -1,7 +1,7 @@
 # STATUS
 
-- **Phase hiện tại:** 3 — Phase 0 **closed** 2026-09-21; Phase 1 **closed** 2026-10-21 (gate sổ cái); Phase 2 **closed** 2026-10-30. Chưa phải product v1 — còn mục tiêu / insight (`Gate: v1` ở Phase 3 / 5). Đối chiếu spec: [spec-alignment.md](../product/spec-alignment.md).
-- **Cập nhật:** 2026-10-30
+- **Phase hiện tại:** 3 — Phase 0 **closed** 2026-09-21; Phase 1 **closed** 2026-10-21 (gate sổ cái); Phase 2 **closed** 2026-10-30. Chưa phải product v1 — còn mục tiêu và 12 ticket gộp/bổ sung `P3-001`…`012` (Phase 3), tài sản/đầu tư và tài sản ròng (Phase 4), `Gate: v1`. AI (gợi ý danh mục, insight) ra sau v1 từ 2026-11-02. Đối chiếu spec: [spec-alignment.md](../product/spec-alignment.md).
+- **Cập nhật:** 2026-11-02
 - **Việc bổ sung Phase 2:** `BE-P2-010` khóa kind lúc ghi; `INF-P2-001` Postgres staging miễn phí (DB Render free đã hết hạn); `MOB-P2-011` xuất/xóa tài khoản trên app; `QA-P2-001` rà hàng đợi offline; `BE-P2-012` câu trả lời đầu gắn tài khoản; `BE-P2-013` quy đổi để hiển thị; `BE-P2-014` mật khẩu tối thiểu 8 + kiểm tra email trên app. Chi tiết: [tasks/phase-02.md](../../tasks/phase-02.md).
 - **CI:** `INF-P0-002` done; cả ba job xanh trên `main`, [run 33521325189](https://github.com/vanhuy-30/freeva-personal-finance-management/actions/runs/33521325189).
 - **Staging:** API [Render](https://freeva-api-staging.onrender.com) và admin [Vercel](https://freeva-personal-finance-management.vercel.app) đã xanh ngày 2026-09-21. Postgres free trên Render đã hết hạn; `INF-P2-001` hoãn (2026-10-30), develop dùng Postgres local, staging API chưa có DB sống tới khi làm lại. Prod hoster TBD tới Store (region VN).
@@ -25,7 +25,7 @@
 - **Mobile analytics:** `MOB-P0-004` done; catalog typed, debug logger local, `schema_version: 1`, không property tùy ý/PII và chưa có vendor SDK.
 - **Backup/restore:** `BE-P0-005` done; [runbook và bằng chứng local](../../infra/runbooks/backup-restore.md), PostgreSQL 16.14. Production PITR/retention/RPO/RTO chưa triển khai.
 - **Scaffold:** xong trên `main` (`153d3e7`). Health API, admin placeholder, Flutter shell, docs, compose.
-- **Auth API:** `BE-P1-001` / `BE-P1-002` done; `BE-P1-003` Google/Apple ID token backend done — chưa mobile SDK/UI, chưa live provider smoke.
+- **Auth API:** `BE-P1-001` / `BE-P1-002` done; `BE-P1-003` Google/Apple ID token backend done — mobile mới có nút giữ chỗ (báo “sắp có”), chưa SDK, chưa live provider smoke.
 - **Financial accounts:** `BE-P1-004` done: CRUD bốn loại ví, số dư derived bigint, credit config, sắp xếp/lưu trữ/khôi phục, owner/version/clientId; 117 unit và 33 PostgreSQL integration tests, build/OpenAPI pass. Không migration mới; chưa deploy staging. [Thiết kế](../architecture/financial-accounts.md).
 - **Transactions:** `BE-P1-005` done: CRUD thu/chi/transfer nguyên tử, FX exact/quote bất biến, soft-delete/restore cả cặp, owner/version/Idempotency-Key/clientId, category/tags/filter. 145 unit/HTTP + 51 PostgreSQL tests, build/OpenAPI pass; không migration, chưa deploy staging. [Thiết kế](../architecture/transactions.md).
 - **Categories:** `BE-P1-006` / `BE-P1-011` done: bộ VN, custom, `kind`, supplement một lần. Migration additive cần deploy trước API. [Thiết kế](../architecture/categories.md).
@@ -122,7 +122,7 @@ Theo [điều kiện hoàn thành Phase 2](../product/phases/phase-02.md):
 - Migration/API Phase 2 chưa deploy staging; test PostgreSQL integration một số task viết nhưng cần Postgres để chạy.
 - Mobile: native build + E2E staging; FCM live push cần cấu hình Firebase.
 - Onboarding: deep link email, Google/Apple mobile, xác nhận lại email trong Cá nhân (nhóm A).
-- Product v1: mục tiêu / insight vẫn ở Phase 3 / 5 (`Gate: v1`).
+- Product v1: mục tiêu ở Phase 3 (`Gate: v1`). Phạm vi đổi 2026-11-02: tài sản/đầu tư (Phase 4) vào v1, gợi ý danh mục / insight (Phase 5) ra sau v1.
 
 ## Ghi chú
 

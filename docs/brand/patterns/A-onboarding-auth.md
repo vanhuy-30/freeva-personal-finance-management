@@ -5,6 +5,16 @@ Canvas: trang **05 · Patterns**, hai hàng A1 và A2
 (<https://claude.ai/artifact/SmyaVvz57doJiAM6Kn678T>, riêng tư). Spec chung:
 [design-system.md](../design-system.md).
 
+## Thay đổi chốt 2026-11-02 (chưa vẽ, `DS-P3-012`)
+
+Câu hỏi A1.3–A1.5 thay bằng ba câu, đều bỏ qua được, sau đó tới A1.6 như cũ:
+
+1. **Mục tiêu sử dụng** — Quản lý chi tiêu · Tiết kiệm · Quản lý ngân sách (tối đa 2). Sắp khối Tổng quan.
+2. **Thu nhập hàng tháng** (không bắt buộc) — cơ sở gợi ý ngân sách và tỷ lệ tiết kiệm.
+3. **Mục tiêu tiết kiệm** (không bắt buộc) — tạo mục tiêu thật, hiện số cần để dành mỗi tháng.
+
+Có thu nhập thì thêm màn gợi ý ngân sách ("Dùng mức này" / "Để sau"). Bỏ câu thói quen, nhịp xem lại và màn nhập ngân sách tay. Bảng A1 bên dưới là bản 2026-10-23, giữ tới khi canvas vẽ lại.
+
 ## Nguyên tắc riêng cho nhóm này
 
 - **Chữ ngắn:** tiêu đề tối đa khoảng 6 từ, dòng phụ tối đa một dòng hoặc bỏ hẳn.
@@ -12,7 +22,7 @@ Canvas: trang **05 · Patterns**, hai hàng A1 và A2
 - **Tạo tài khoản trước, câu hỏi sau** (2026-10-23): chưa có chế độ khách nên câu trả lời A1.3–A1.5 cần tài khoản để lưu vào hồ sơ. Người đăng nhập lại không gặp các câu này.
 - **Không hỏi tiền sớm.** Ngân sách và số dư là bước không bắt buộc, đều có "Để sau" / "Bỏ qua".
 - **Logo chỉ ở splash.** Các màn dùng minh hoạ nét vẽ tay hoặc mảnh UI thật của app.
-- Mỗi câu hỏi phải được dùng để cá nhân hoá; câu không dùng thì bỏ.
+- Mỗi câu hỏi phải được dùng để cá nhân hoá; câu không dùng thì bỏ. Thu nhập được hỏi từ 2026-11-02 vì dùng để gợi ý ngân sách; vẫn không bắt buộc.
 
 ## A1 · Onboarding
 

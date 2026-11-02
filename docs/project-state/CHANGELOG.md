@@ -2,6 +2,12 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-11-02
+
+- **Phạm vi product v1 đổi** (quyết định chủ dự án): `BE-P4-E01` / `MOB-P4-E01` và `QA-P4-E01` (tài sản và đầu tư) thành `Gate: v1`; `BE-P5-E03`, `BE-P5-E04`, `BE-P5-E08`, `PRD-P5-E01` (gợi ý danh mục, insight, cờ server, consent AI) thành `post-v1`. Đồng bộ roadmap, MoSCoW, spec-alignment, STATUS, tasks. Roadmap sửa “Phase hiện tại” từ 2 thành 3.
+- **Phạm vi v1 bổ sung** (quyết định chủ dự án): `BE-P4-E02` tài sản ròng thành `Gate: v1`; đầu tư v1 gồm vàng, cổ phiếu, quỹ, tiền gửi, bất động sản, crypto, giá nhập tay, mua = chuyển vào giá vốn. Module 11 gộp vào 12 (`BE-P3-E03` wont). Thêm `P3-001`…`011`: gộp hóa đơn vào định kỳ, thẻ soát tháng, ngưỡng ngân sách 80/100, ẩn quy đổi, đối soát số dư, nhắc ghi chi, cho mượn/đi mượn, hoàn tiền, trả góp thẻ, xuất CSV, nhập CSV. Trạng thái task thêm `wont`.
+- Chốt thêm: trả góp ghi chi một lần lúc mua (`BE-P3-009`); lãi/lỗ bán đầu tư chỉ hiện ở màn đầu tư; onboarding còn ba câu — mục tiêu sử dụng, thu nhập, mục tiêu tiết kiệm (`DS-P3-012` / `BE-P3-012` / `MOB-P3-012`). `MOB-P3-002` thu hẹp vì thẻ soát tháng đã có.
+
 ## 2026-10-30
 
 - **Phase 2 closed**: backlog 21/22 done, gồm `BE-P2-E02` ngân sách (`Gate: v1`). `INF-P2-001` (Postgres staging) chuyển phase sau theo quyết định chủ dự án; develop dùng Postgres local. Residual ghi ở [STATUS](STATUS.md).
