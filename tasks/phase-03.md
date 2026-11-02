@@ -11,11 +11,12 @@
 - Note: BE-P3-E01 xong 2026-11-02: `/api/v1/goals` (CRUD, presets, `contribute` / `withdraw` / `adjust`), transfer cân hai chân khi chọn ví nguồn, audit `goal.adjust`, công thức 8.000.000 có test, OpenAPI, export/xoá tài khoản. Kiến trúc: [goals.md](../docs/architecture/goals.md). MOB-P3-E01 (Home `hiện tại / đích`, màn mục tiêu) chưa làm.
 
 ### BE-P3-E02 / MOB-P3-E02 — Vay và công nợ (module 10)
-- Status: todo
+- Status: doing — BE xong 2026-11-02, MOB còn
 - Module: 10
 - Gate: post-v1
 - Depends: BE-P1-005
 - DoD: loại thẻ, vay cá nhân, vay mua nhà, khác (cho mượn / đi mượn người quen bản nhẹ ở `BE-P3-007`). Có gốc, dư nợ, lãi suất, số tiền mỗi kỳ, tần suất, ngày đến hạn, ngày bắt đầu, ngày kết thúc. Màn hình tổng nợ, đã trả, còn lại. Mỗi lần trả là một giao dịch. Bộ test lãi dùng số cố định, không `double`. Không biến app thành sản phẩm cho vay.
+- Note: BE-P3-E02 xong 2026-11-02: `/api/v1/loans` (CRUD, summary, schedule, payments, adjust), lãi dư nợ giảm dần bằng bigint có test (100tr, 12%/năm → lãi kỳ 1 = 1tr), mỗi lần trả tạo hai expense gốc/lãi, audit `loan.create` / `loan.adjust`, OpenAPI, export/xoá tài khoản. Kiến trúc: [loans.md](../docs/architecture/loans.md). Tồn đọng: phần gốc đang tính vào báo cáo chi tiêu (chưa tách); MOB-P3-E02 (màn tổng nợ) chưa làm.
 
 ### BE-P3-E03 / MOB-P3-E03 — Tiền gửi có kỳ hạn (module 11)
 - Status: wont — gộp vào `BE-P4-E01` (2026-11-02)

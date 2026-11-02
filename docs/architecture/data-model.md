@@ -170,6 +170,10 @@ Quy tắc và lần chạy định kỳ (`BE-P2-E01`). Chi tiết: [recurring.md
 
 Mục tiêu tiết kiệm và sổ đóng góp (`BE-P3-E01`). Chi tiết: [goals.md](goals.md). `Goal.currentMinor` lưu cứng, mọi thay đổi qua `GoalEntry` (kèm transfer cân) hoặc `AuditEvent`.
 
+### Loan / LoanPayment
+
+Khoản vay và sổ trả nợ (`BE-P3-E02`). Chi tiết: [loans.md](loans.md). `Loan.outstandingMinor` lưu cứng, mọi thay đổi qua `LoanPayment` (hai giao dịch expense gốc/lãi) hoặc `AuditEvent`.
+
 ### Bill
 
 Nghĩa vụ thanh toán (`BE-P2-E03`). Chi tiết: [bills.md](bills.md).

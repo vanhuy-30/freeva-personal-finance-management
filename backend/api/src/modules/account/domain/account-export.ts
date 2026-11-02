@@ -33,6 +33,8 @@ export interface AccountExport {
   budgetMonths: AccountExportBudgetMonth[];
   goals: AccountExportGoal[];
   goalEntries: AccountExportGoalEntry[];
+  loans: AccountExportLoan[];
+  loanPayments: AccountExportLoanPayment[];
   notificationPreferences: AccountExportNotificationPreferences | null;
   notifications: AccountExportNotification[];
   transactions: AccountExportTransaction[];
@@ -189,6 +191,36 @@ export interface AccountExportGoalEntry {
   createdAt: string;
 }
 
+export interface AccountExportLoan extends Omit<SyncRow, 'createdAt' | 'updatedAt'> {
+  kind: string;
+  name: string;
+  currencyCode: string;
+  principalMinor: string;
+  outstandingMinor: string;
+  interestRateBps: number;
+  installmentMinor: string | null;
+  frequency: string;
+  startDate: string;
+  endDate: string | null;
+  nextDueDate: string | null;
+  accountId: string | null;
+  archivedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AccountExportLoanPayment {
+  id: string;
+  loanId: string;
+  clientId: string;
+  principalMinor: string;
+  interestMinor: string;
+  principalTransactionClientId: string | null;
+  interestTransactionClientId: string | null;
+  paidOn: string;
+  createdAt: string;
+}
+
 export interface AccountExportBudgetCategory {
   categoryId: string;
   limitMinor: string;
@@ -339,6 +371,37 @@ export interface ExportSource {
     amountMinor: bigint;
     transactionClientId: string | null;
     occurredOn: Date;
+    createdAt: Date;
+  }>;
+  loans: Array<{
+    id: string;
+    clientId: string;
+    kind: string;
+    name: string;
+    currencyCode: string;
+    principalMinor: bigint;
+    outstandingMinor: bigint;
+    interestRateBps: number;
+    installmentMinor: bigint | null;
+    frequency: string;
+    startDate: Date;
+    endDate: Date | null;
+    nextDueDate: Date | null;
+    accountId: string | null;
+    archivedAt: Date | null;
+    version: number;
+    createdAt: Date;
+    updatedAt: Date;
+  }>;
+  loanPayments: Array<{
+    id: string;
+    loanId: string;
+    clientId: string;
+    principalMinor: bigint;
+    interestMinor: bigint;
+    principalTransactionClientId: string | null;
+    interestTransactionClientId: string | null;
+    paidOn: Date;
     createdAt: Date;
   }>;
   budgetMonths: Array<{
@@ -497,6 +560,23 @@ export function toAccountExport(source: ExportSource): AccountExport {
       id: row.id, goalId: row.goalId, clientId: row.clientId, kind: row.kind,
       amountMinor: row.amountMinor.toString(), transactionClientId: row.transactionClientId,
       occurredOn: day(row.occurredOn), createdAt: iso(row.createdAt),
+    })),
+    loans: source.loans.map(row => ({
+      id: row.id, clientId: row.clientId, kind: row.kind, name: row.name, currencyCode: code(row.currencyCode),
+      principalMinor: row.principalMinor.toString(), outstandingMinor: row.outstandingMinor.toString(),
+      interestRateBps: row.interestRateBps,
+      installmentMinor: row.installmentMinor === null ? null : row.installmentMinor.toString(),
+      frequency: row.frequency, startDate: day(row.startDate),
+      endDate: row.endDate ? day(row.endDate) : null, nextDueDate: row.nextDueDate ? day(row.nextDueDate) : null,
+      accountId: row.accountId, archivedAt: row.archivedAt ? iso(row.archivedAt) : null,
+      version: row.version, ...stamps(row),
+    })),
+    loanPayments: source.loanPayments.map(row => ({
+      id: row.id, loanId: row.loanId, clientId: row.clientId,
+      principalMinor: row.principalMinor.toString(), interestMinor: row.interestMinor.toString(),
+      principalTransactionClientId: row.principalTransactionClientId,
+      interestTransactionClientId: row.interestTransactionClientId,
+      paidOn: day(row.paidOn), createdAt: iso(row.createdAt),
     })),
     notificationPreferences: source.notificationPreferences === null ? null : {
       budgetEnabled: source.notificationPreferences.budgetEnabled,

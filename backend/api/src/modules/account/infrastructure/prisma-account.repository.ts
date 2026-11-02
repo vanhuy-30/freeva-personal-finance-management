@@ -72,6 +72,8 @@ export class PrismaAccountRepository implements AccountRepository {
     });
     const goals = await tx.goal.findMany({ where: { userId }, orderBy: order });
     const goalEntries = await tx.goalEntry.findMany({ where: { userId }, orderBy: order });
+    const loans = await tx.loan.findMany({ where: { userId }, orderBy: order });
+    const loanPayments = await tx.loanPayment.findMany({ where: { userId }, orderBy: order });
     const notificationPreferences = await tx.notificationPreference.findUnique({ where: { userId } });
     const notifications = await tx.inAppNotification.findMany({
       where: { userId },
@@ -116,6 +118,8 @@ export class PrismaAccountRepository implements AccountRepository {
       },
       goals,
       goalEntries,
+      loans,
+      loanPayments,
       budgetMonths: budgetMonths.map(row => ({
         id: row.id,
         currencyCode: row.currencyCode,
@@ -170,6 +174,8 @@ export class PrismaAccountRepository implements AccountRepository {
     await tx.inAppNotification.deleteMany({ where: { userId } });
     await tx.notificationPreference.deleteMany({ where: { userId } });
     await tx.bill.deleteMany({ where: { userId } });
+    await tx.loanPayment.deleteMany({ where: { userId } });
+    await tx.loan.deleteMany({ where: { userId } });
     await tx.goalEntry.deleteMany({ where: { userId } });
     await tx.goal.deleteMany({ where: { userId } });
     await tx.recurringOccurrence.deleteMany({ where: { rule: { userId } } });
