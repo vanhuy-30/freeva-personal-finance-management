@@ -44,6 +44,20 @@ export function pushCopy(locale: string, input: PushCopyInput): Copy {
       return lang === 'vi'
         ? { title: 'Thẻ sắp vượt hạn mức', body: `Bạn đã dùng ${param(params, 'threshold')}% hạn mức thẻ.` }
         : { title: 'Card near its limit', body: `You have used ${param(params, 'threshold')}% of a card limit.` };
+    case 'debt_due': {
+      const lent = params.direction === 'lent';
+      const when = days <= 0 ? 'hôm nay' : `trong ${days} ngày`;
+      const whenEn = days <= 0 ? 'today' : `in ${days} day${days === 1 ? '' : 's'}`;
+      return lang === 'vi'
+        ? { title: lent ? 'Sắp đến hạn thu nợ' : 'Sắp đến hạn trả nợ', body: `Một khoản ${lent ? 'cho mượn' : 'đi mượn'} đến hạn ${when}.` }
+        : { title: lent ? 'Money owed to you is due' : 'A debt is due soon', body: `A ${lent ? 'loan you made' : 'debt you owe'} is due ${whenEn}.` };
+    }
+    case 'debt_overdue': {
+      const lent = params.direction === 'lent';
+      return lang === 'vi'
+        ? { title: lent ? 'Khoản cho mượn quá hạn' : 'Khoản đi mượn quá hạn', body: `Đã quá hạn ${days} ngày.` }
+        : { title: lent ? 'Money owed to you is overdue' : 'A debt is overdue', body: `It is ${days} day${days === 1 ? '' : 's'} overdue.` };
+    }
     case 'daily_log':
       return lang === 'vi'
         ? { title: 'Ghi chi hôm nay', body: 'Hôm nay bạn chưa ghi giao dịch nào. Ghi nhanh trước khi quên nhé.' }

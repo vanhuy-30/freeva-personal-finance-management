@@ -1530,6 +1530,325 @@ paths:
         '503':
           $ref: '#/components/responses/GoalUnavailable'
       description: "Writes one audit event (`goal.adjust`) and no transaction. `version` must match."
+  /api/v1/personal-debts:
+    get:
+      operationId: listPersonalDebts
+      summary: Lend / borrow debts, oldest first
+      tags:
+      - PersonalDebts
+      security:
+      - UserBearer: []
+      parameters:
+      - in: query
+        name: includeArchived
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Debts
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonalDebtList'
+        '400':
+          $ref: '#/components/responses/PersonalDebtValidationError'
+        '401':
+          $ref: '#/components/responses/PersonalDebtUnauthorized'
+        '404':
+          $ref: '#/components/responses/PersonalDebtNotFound'
+        '409':
+          $ref: '#/components/responses/PersonalDebtConflict'
+        '503':
+          $ref: '#/components/responses/PersonalDebtUnavailable'
+    post:
+      operationId: createPersonalDebt
+      summary: Record money lent to or borrowed from someone
+      tags:
+      - PersonalDebts
+      security:
+      - UserBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePersonalDebtRequest'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonalDebt'
+        '200':
+          description: Replay of a recorded clientId
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonalDebt'
+        '400':
+          $ref: '#/components/responses/PersonalDebtValidationError'
+        '401':
+          $ref: '#/components/responses/PersonalDebtUnauthorized'
+        '404':
+          $ref: '#/components/responses/PersonalDebtNotFound'
+        '409':
+          $ref: '#/components/responses/PersonalDebtConflict'
+        '503':
+          $ref: '#/components/responses/PersonalDebtUnavailable'
+      description: "Books one `debt` transaction on the wallet in the same commit: lent takes the amount out, borrowed brings it in. The debt currency is the wallet currency. Not income or expense, never counted in budgets or savings rate. No interest (a loan with interest is /loans). `clientId` makes retries idempotent."
+  /api/v1/personal-debts/summary:
+    get:
+      operationId: getPersonalDebtSummary
+      summary: Who owes me and whom I owe, with totals
+      tags:
+      - PersonalDebts
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Open debts split by direction and totals per currency
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonalDebtSummary'
+        '401':
+          $ref: '#/components/responses/PersonalDebtUnauthorized'
+        '503':
+          $ref: '#/components/responses/PersonalDebtUnavailable'
+  /api/v1/personal-debts/{id}:
+    get:
+      operationId: getPersonalDebt
+      summary: One debt
+      tags:
+      - PersonalDebts
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: The debt
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonalDebt'
+        '400':
+          $ref: '#/components/responses/PersonalDebtValidationError'
+        '401':
+          $ref: '#/components/responses/PersonalDebtUnauthorized'
+        '404':
+          $ref: '#/components/responses/PersonalDebtNotFound'
+        '409':
+          $ref: '#/components/responses/PersonalDebtConflict'
+        '503':
+          $ref: '#/components/responses/PersonalDebtUnavailable'
+    patch:
+      operationId: updatePersonalDebt
+      summary: Edit the person, due date or note
+      tags:
+      - PersonalDebts
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePersonalDebtRequest'
+      responses:
+        '200':
+          description: Updated
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonalDebt'
+        '400':
+          $ref: '#/components/responses/PersonalDebtValidationError'
+        '401':
+          $ref: '#/components/responses/PersonalDebtUnauthorized'
+        '404':
+          $ref: '#/components/responses/PersonalDebtNotFound'
+        '409':
+          $ref: '#/components/responses/PersonalDebtConflict'
+        '503':
+          $ref: '#/components/responses/PersonalDebtUnavailable'
+      description: "Amounts never change here; money moves only through payments. Needs the current `version`."
+    delete:
+      operationId: archivePersonalDebt
+      summary: Archive a settled debt
+      tags:
+      - PersonalDebts
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: version
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+      responses:
+        '204':
+          description: Archived
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+        '400':
+          $ref: '#/components/responses/PersonalDebtValidationError'
+        '401':
+          $ref: '#/components/responses/PersonalDebtUnauthorized'
+        '404':
+          $ref: '#/components/responses/PersonalDebtNotFound'
+        '409':
+          $ref: '#/components/responses/PersonalDebtConflict'
+        '503':
+          $ref: '#/components/responses/PersonalDebtUnavailable'
+      description: "Only a settled debt can be archived; an open one answers DEBT_CONFLICT."
+  /api/v1/personal-debts/{id}/payments:
+    get:
+      operationId: listPersonalDebtPayments
+      summary: Payments of a debt, newest first
+      tags:
+      - PersonalDebts
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Payments
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonalDebtPaymentList'
+        '400':
+          $ref: '#/components/responses/PersonalDebtValidationError'
+        '401':
+          $ref: '#/components/responses/PersonalDebtUnauthorized'
+        '404':
+          $ref: '#/components/responses/PersonalDebtNotFound'
+        '409':
+          $ref: '#/components/responses/PersonalDebtConflict'
+        '503':
+          $ref: '#/components/responses/PersonalDebtUnavailable'
+    post:
+      operationId: payPersonalDebt
+      summary: Collect or repay all or part of a debt
+      tags:
+      - PersonalDebts
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PayPersonalDebtRequest'
+      responses:
+        '201':
+          description: Recorded
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonalDebt'
+        '200':
+          description: Replay of a recorded clientId
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonalDebt'
+        '400':
+          $ref: '#/components/responses/PersonalDebtValidationError'
+        '401':
+          $ref: '#/components/responses/PersonalDebtUnauthorized'
+        '404':
+          $ref: '#/components/responses/PersonalDebtNotFound'
+        '409':
+          $ref: '#/components/responses/PersonalDebtConflict'
+        '503':
+          $ref: '#/components/responses/PersonalDebtUnavailable'
+        '422':
+          $ref: '#/components/responses/PersonalDebtOverpayment'
+      description: "One `debt` transaction in the same commit as the new outstanding amount: collecting a loan you made brings money in, repaying a debt you owe sends it out. Paying the whole outstanding amount settles it. More than is left is DEBT_OVERPAYMENT. The wallet must have the debt currency; it defaults to the wallet of the debt."
   /api/v1/loans:
     get:
       operationId: listLoans
@@ -2402,6 +2721,7 @@ paths:
           - expense
           - transfer
           - adjustment
+          - debt
       - in: query
         name: from
         schema:
@@ -4656,6 +4976,72 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorEnvelope'
+    PersonalDebtValidationError:
+      description: VALIDATION_ERROR
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    PersonalDebtUnauthorized:
+      description: SESSION_INVALID
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    PersonalDebtNotFound:
+      description: DEBT_NOT_FOUND
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    PersonalDebtConflict:
+      description: DEBT_CONFLICT stale version, a clientId replayed with different content, or archiving a debt that is not settled
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    PersonalDebtOverpayment:
+      description: DEBT_OVERPAYMENT the payment is larger than the outstanding amount
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    PersonalDebtUnavailable:
+      description: PERSONAL_DEBT_UNAVAILABLE or authentication unavailable
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
     BudgetValidationError:
       description: VALIDATION_ERROR
       headers:
@@ -5517,6 +5903,117 @@ components:
       properties:
         currentMinor: {type: string, pattern: '^(0|[1-9][0-9]*)$'}
         version: {type: integer, minimum: 1}
+    PersonalDebtDirection:
+      type: string
+      enum: [lent, borrowed]
+    PersonalDebt:
+      type: object
+      additionalProperties: false
+      required: [id, clientId, direction, counterparty, currencyCode, principalMinor, outstandingMinor, paidMinor,
+        accountId, occurredOn, dueDate, note, status, archivedAt, version, createdAt, updatedAt]
+      properties:
+        id: {type: string, format: uuid}
+        clientId: {type: string, format: uuid}
+        direction: {$ref: '#/components/schemas/PersonalDebtDirection'}
+        counterparty: {type: string, maxLength: 80}
+        currencyCode: {type: string, pattern: '^[A-Z]{3}$'}
+        principalMinor: {$ref: '#/components/schemas/ReportMoney'}
+        outstandingMinor: {$ref: '#/components/schemas/ReportMoney'}
+        paidMinor: {$ref: '#/components/schemas/ReportMoney'}
+        accountId: {type: string, format: uuid}
+        occurredOn: {type: string, format: date}
+        dueDate: {type: [string, 'null'], format: date}
+        note: {type: [string, 'null'], maxLength: 500}
+        status:
+          type: string
+          enum: [open, overdue, settled]
+        archivedAt: {type: [string, 'null'], format: date-time}
+        version: {type: integer}
+        createdAt: {type: string, format: date-time}
+        updatedAt: {type: string, format: date-time}
+    PersonalDebtList:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: {$ref: '#/components/schemas/PersonalDebt'}
+    PersonalDebtSummary:
+      type: object
+      additionalProperties: false
+      required: [owedToMe, iOwe, totals]
+      properties:
+        owedToMe:
+          type: array
+          description: Open debts you lent.
+          items: {$ref: '#/components/schemas/PersonalDebt'}
+        iOwe:
+          type: array
+          description: Open debts you borrowed.
+          items: {$ref: '#/components/schemas/PersonalDebt'}
+        totals:
+          type: array
+          description: Per currency, sorted by code. Receivable adds to assets and payable to debt in net worth.
+          items:
+            type: object
+            additionalProperties: false
+            required: [currencyCode, receivableMinor, payableMinor, receivableCount, payableCount]
+            properties:
+              currencyCode: {type: string, pattern: '^[A-Z]{3}$'}
+              receivableMinor: {$ref: '#/components/schemas/ReportMoney'}
+              payableMinor: {$ref: '#/components/schemas/ReportMoney'}
+              receivableCount: {type: integer}
+              payableCount: {type: integer}
+    PersonalDebtPaymentList:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [id, clientId, accountId, amountMinor, paidOn, createdAt]
+            properties:
+              id: {type: string, format: uuid}
+              clientId: {type: string, format: uuid}
+              accountId: {type: string, format: uuid}
+              amountMinor: {$ref: '#/components/schemas/ReportMoney'}
+              paidOn: {type: string, format: date}
+              createdAt: {type: string, format: date-time}
+    CreatePersonalDebtRequest:
+      type: object
+      additionalProperties: false
+      required: [clientId, direction, counterparty, amountMinor, accountId, occurredOn]
+      properties:
+        clientId: {type: string, format: uuid}
+        direction: {$ref: '#/components/schemas/PersonalDebtDirection'}
+        counterparty: {type: string, minLength: 1, maxLength: 80}
+        amountMinor: {type: string, pattern: '^[1-9][0-9]*$'}
+        accountId: {type: string, format: uuid}
+        occurredOn: {type: string, format: date}
+        dueDate: {type: [string, 'null'], format: date, description: On or after occurredOn.}
+        note: {type: [string, 'null'], maxLength: 500}
+    UpdatePersonalDebtRequest:
+      type: object
+      additionalProperties: false
+      required: [version]
+      properties:
+        version: {type: integer, minimum: 1}
+        counterparty: {type: string, minLength: 1, maxLength: 80}
+        dueDate: {type: [string, 'null'], format: date}
+        note: {type: [string, 'null'], maxLength: 500}
+    PayPersonalDebtRequest:
+      type: object
+      additionalProperties: false
+      required: [clientId, amountMinor, paidOn]
+      properties:
+        clientId: {type: string, format: uuid}
+        amountMinor: {type: string, pattern: '^[1-9][0-9]*$'}
+        accountId: {type: [string, 'null'], format: uuid}
+        paidOn: {type: string, format: date}
     LoanKind:
       type: string
       enum: [card, personal, mortgage, other]
@@ -6541,6 +7038,7 @@ components:
           - expense
           - transfer
           - adjustment
+          - debt
         occurredOn:
           type: string
           format: date
@@ -6880,11 +7378,11 @@ components:
           description: Transactions matching the filters; a transfer counts once.
         totals:
           type: array
-          description: Per currency, sorted by code; currencies with all five sums zero are omitted. Wallet reconciliation adjustments are summed apart and are not income or expense. Transfers are excluded from income and expense and summed apart per matching leg. No FX conversion.
+          description: Per currency, sorted by code; currencies with all six sums zero are omitted. Lend/borrow legs (`debt`, BE-P3-007) are summed apart and are not income or expense. Wallet reconciliation adjustments are summed apart and are not income or expense. Transfers are excluded from income and expense and summed apart per matching leg. No FX conversion.
           items:
             type: object
             additionalProperties: false
-            required: [currency, incomeMinor, expenseMinor, transferInMinor, transferOutMinor, adjustmentMinor]
+            required: [currency, incomeMinor, expenseMinor, transferInMinor, transferOutMinor, adjustmentMinor, debtMinor]
             properties:
               currency:
                 type: string
@@ -6908,6 +7406,10 @@ components:
                 type: string
                 pattern: ^-?[0-9]+$
                 description: Sum of matching `adjustment` rows (wallet reconciliation, BE-P3-005); signed.
+              debtMinor:
+                type: string
+                pattern: ^-?[0-9]+$
+                description: Sum of matching `debt` rows (lend / borrow money movements, BE-P3-007); signed. Not income or expense.
     CreateFinancialAccount:
       type: object
       additionalProperties: false
@@ -8090,6 +8592,7 @@ components:
       - expenseMinor
       - transferMinor
       - adjustmentMinor
+      - debtMinor
       - netMinor
       properties:
         accountId:
@@ -8107,9 +8610,12 @@ components:
         adjustmentMinor:
           $ref: '#/components/schemas/ReportMoney'
           description: Wallet reconciliation adjustments (BE-P3-005). Not income or expense; excluded from totals and savings rate.
+        debtMinor:
+          $ref: '#/components/schemas/ReportMoney'
+          description: Lend / borrow money movements (BE-P3-007). Not income or expense; excluded from totals, budgets and savings rate.
         netMinor:
           $ref: '#/components/schemas/ReportMoney'
-          description: incomeMinor + expenseMinor + transferMinor + adjustmentMinor for this account.
+          description: incomeMinor + expenseMinor + transferMinor + adjustmentMinor + debtMinor for this account.
     NetWorthReport:
       type: object
       additionalProperties: false
@@ -8881,7 +9387,7 @@ components:
           format: uuid
         type:
           type: string
-          enum: [income, expense, transfer, adjustment]
+          enum: [income, expense, transfer, adjustment, debt]
         amountMinor:
           $ref: '#/components/schemas/ReportMoney'
         currencyCode:

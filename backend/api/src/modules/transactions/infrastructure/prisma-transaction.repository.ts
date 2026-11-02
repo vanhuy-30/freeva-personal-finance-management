@@ -110,7 +110,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
       if (!query.legs.length) return [];
       return tx.transaction.findMany({
         where: {
-          userId, deletedAt: null, occurredOn: query.occurredOn, type: { not: 'adjustment' },
+          userId, deletedAt: null, occurredOn: query.occurredOn, type: { notIn: ['adjustment', 'debt'] },
           createdAt: { gte: query.createdAfter, lte: query.createdBefore },
           clientId: { notIn: query.excludeClientIds },
           OR: query.legs.map(leg => ({ accountId: leg.accountId, amountMinor: leg.amountMinor })),
@@ -136,21 +136,22 @@ export class PrismaTransactionRepository implements TransactionRepository {
         LIMIT ${query.pageSize} OFFSET ${(query.page - 1) * query.pageSize}`);
       const [count] = await tx.$queryRaw<{ total: string; bundles: string }[]>(Prisma.sql`
         SELECT COUNT(*)::text AS total, COUNT(DISTINCT COALESCE(t."transferGroupId", t.id))::text AS bundles ${listed}`);
-      const totals = await tx.$queryRaw<{ currency: string; income: string; expense: string; transferIn: string; transferOut: string; adjustment: string }[]>(Prisma.sql`
+      const totals = await tx.$queryRaw<{ currency: string; income: string; expense: string; transferIn: string; transferOut: string; adjustment: string; debt: string }[]>(Prisma.sql`
         SELECT t."currencyCode" AS currency,
           COALESCE(SUM(CASE WHEN t.type::text = 'income' THEN t."amountMinor" ELSE 0 END), 0)::text AS income,
           COALESCE(SUM(CASE WHEN t.type::text = 'expense' THEN t."amountMinor" ELSE 0 END), 0)::text AS expense,
           COALESCE(SUM(CASE WHEN t.type::text = 'transfer' AND t."amountMinor" > 0 THEN t."amountMinor" ELSE 0 END), 0)::text AS "transferIn",
           COALESCE(SUM(CASE WHEN t.type::text = 'transfer' AND t."amountMinor" < 0 THEN t."amountMinor" ELSE 0 END), 0)::text AS "transferOut",
-          COALESCE(SUM(CASE WHEN t.type::text = 'adjustment' THEN t."amountMinor" ELSE 0 END), 0)::text AS adjustment
+          COALESCE(SUM(CASE WHEN t.type::text = 'adjustment' THEN t."amountMinor" ELSE 0 END), 0)::text AS adjustment,
+          COALESCE(SUM(CASE WHEN t.type::text = 'debt' THEN t."amountMinor" ELSE 0 END), 0)::text AS debt
         ${listed}
         GROUP BY t."currencyCode" ORDER BY t."currencyCode"`);
       const summary = {
         count: Number(count.bundles),
         totals: totals
           .map(row => ({ currency: row.currency.trim(), incomeMinor: BigInt(row.income), expenseMinor: BigInt(row.expense),
-            transferInMinor: BigInt(row.transferIn), transferOutMinor: BigInt(row.transferOut), adjustmentMinor: BigInt(row.adjustment) }))
-          .filter(row => [row.incomeMinor, row.expenseMinor, row.transferInMinor, row.transferOutMinor, row.adjustmentMinor].some(value => value !== 0n)),
+            transferInMinor: BigInt(row.transferIn), transferOutMinor: BigInt(row.transferOut), adjustmentMinor: BigInt(row.adjustment), debtMinor: BigInt(row.debt) }))
+          .filter(row => [row.incomeMinor, row.expenseMinor, row.transferInMinor, row.transferOutMinor, row.adjustmentMinor, row.debtMinor].some(value => value !== 0n)),
       };
       if (!ids.length) return { items: [], total: Number(count.total), summary };
       const rows = await tx.transaction.findMany({ where: { userId, id: { in: ids.map(row => row.id) } }, include });
@@ -200,6 +201,8 @@ export class PrismaTransactionRepository implements TransactionRepository {
       await touchFinancialOwner(tx, userId);
       const current = await this.load(tx, userId, id, true);
       const first = current.legs[0];
+      // Debt legs are owned by /personal-debts (BE-P3-007): editing or deleting one would desync the outstanding amount.
+      if (first.type === 'debt') throw new TransactionError('VALIDATION_ERROR');
       if (first.version !== patch.version || first.version >= 2147483647) throw new TransactionError('TRANSACTION_CONFLICT');
       const { version: _version, deleted, ...fields } = patch;
       const input = { ...inputOf(current), ...fields };

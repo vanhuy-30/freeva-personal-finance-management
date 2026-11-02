@@ -35,6 +35,8 @@ export interface AccountExport {
   goalEntries: AccountExportGoalEntry[];
   loans: AccountExportLoan[];
   loanPayments: AccountExportLoanPayment[];
+  personalDebts: AccountExportPersonalDebt[];
+  personalDebtPayments: AccountExportPersonalDebtPayment[];
   notificationPreferences: AccountExportNotificationPreferences | null;
   notifications: AccountExportNotification[];
   transactions: AccountExportTransaction[];
@@ -135,7 +137,7 @@ export interface AccountExportFxRate {
 }
 
 export interface AccountExportRecurringRule extends Omit<SyncRow, 'createdAt' | 'updatedAt'> {
-  type: 'income' | 'expense' | 'transfer' | 'adjustment';
+  type: 'income' | 'expense' | 'transfer' | 'adjustment' | 'debt';
   mode: 'auto' | 'remind';
   name: string | null;
   amountKind: 'fixed' | 'estimated';
@@ -227,6 +229,33 @@ export interface AccountExportLoanPayment {
   createdAt: string;
 }
 
+export interface AccountExportPersonalDebt extends Omit<SyncRow, 'createdAt' | 'updatedAt'> {
+  direction: string;
+  counterparty: string;
+  currencyCode: string;
+  principalMinor: string;
+  outstandingMinor: string;
+  accountId: string;
+  transactionClientId: string;
+  occurredOn: string;
+  dueDate: string | null;
+  note: string | null;
+  archivedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AccountExportPersonalDebtPayment {
+  id: string;
+  debtId: string;
+  clientId: string;
+  accountId: string;
+  amountMinor: string;
+  transactionClientId: string;
+  paidOn: string;
+  createdAt: string;
+}
+
 export interface AccountExportBudgetCategory {
   categoryId: string;
   limitMinor: string;
@@ -249,7 +278,7 @@ export interface AccountExportBudgetMonth extends AccountExportBudget {
 }
 
 export interface AccountExportTransaction extends Omit<SyncRow, 'createdAt' | 'updatedAt'> {
-  type: 'income' | 'expense' | 'transfer' | 'adjustment';
+  type: 'income' | 'expense' | 'transfer' | 'adjustment' | 'debt';
   amountMinor: string;
   currencyCode: string;
   occurredOn: string;
@@ -407,6 +436,34 @@ export interface ExportSource {
     interestMinor: bigint;
     principalTransactionClientId: string | null;
     interestTransactionClientId: string | null;
+    paidOn: Date;
+    createdAt: Date;
+  }>;
+  personalDebts: Array<{
+    id: string;
+    clientId: string;
+    direction: string;
+    counterparty: string;
+    currencyCode: string;
+    principalMinor: bigint;
+    outstandingMinor: bigint;
+    accountId: string;
+    transactionClientId: string;
+    occurredOn: Date;
+    dueDate: Date | null;
+    note: string | null;
+    archivedAt: Date | null;
+    version: number;
+    createdAt: Date;
+    updatedAt: Date;
+  }>;
+  personalDebtPayments: Array<{
+    id: string;
+    debtId: string;
+    clientId: string;
+    accountId: string;
+    amountMinor: bigint;
+    transactionClientId: string;
     paidOn: Date;
     createdAt: Date;
   }>;
@@ -585,6 +642,20 @@ export function toAccountExport(source: ExportSource): AccountExport {
       principalMinor: row.principalMinor.toString(), interestMinor: row.interestMinor.toString(),
       principalTransactionClientId: row.principalTransactionClientId,
       interestTransactionClientId: row.interestTransactionClientId,
+      paidOn: day(row.paidOn), createdAt: iso(row.createdAt),
+    })),
+    personalDebts: source.personalDebts.map(row => ({
+      id: row.id, clientId: row.clientId, direction: row.direction, counterparty: row.counterparty,
+      currencyCode: code(row.currencyCode),
+      principalMinor: row.principalMinor.toString(), outstandingMinor: row.outstandingMinor.toString(),
+      accountId: row.accountId, transactionClientId: row.transactionClientId, occurredOn: day(row.occurredOn),
+      dueDate: row.dueDate ? day(row.dueDate) : null, note: row.note,
+      archivedAt: row.archivedAt ? iso(row.archivedAt) : null,
+      version: row.version, ...stamps(row),
+    })),
+    personalDebtPayments: source.personalDebtPayments.map(row => ({
+      id: row.id, debtId: row.debtId, clientId: row.clientId, accountId: row.accountId,
+      amountMinor: row.amountMinor.toString(), transactionClientId: row.transactionClientId,
       paidOn: day(row.paidOn), createdAt: iso(row.createdAt),
     })),
     notificationPreferences: source.notificationPreferences === null ? null : {

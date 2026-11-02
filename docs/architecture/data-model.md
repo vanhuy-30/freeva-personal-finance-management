@@ -174,6 +174,10 @@ Mục tiêu tiết kiệm và sổ đóng góp (`BE-P3-E01`). Chi tiết: [goals
 
 Khoản vay và sổ trả nợ (`BE-P3-E02`). Chi tiết: [loans.md](loans.md). `Loan.outstandingMinor` lưu cứng, mọi thay đổi qua `LoanPayment` (hai giao dịch expense gốc/lãi) hoặc `AuditEvent`.
 
+### PersonalDebt / PersonalDebtPayment
+
+Cho mượn / đi mượn không lãi (`BE-P3-007`). Chi tiết: [personal-debts.md](personal-debts.md). `PersonalDebt.outstandingMinor` lưu cứng, mọi thay đổi qua `PersonalDebtPayment`; mỗi lần tiền di chuyển là một giao dịch `debt` một chân (không phải thu/chi).
+
 ### Bill
 
 Nghĩa vụ thanh toán (`BE-P2-E03`). Chi tiết: [bills.md](bills.md).

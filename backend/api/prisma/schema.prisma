@@ -26,6 +26,7 @@ enum TransactionType {
   expense
   transfer
   adjustment
+  debt
 }
 
 enum CategoryKind {
@@ -104,6 +105,7 @@ model Currency {
   bills                 Bill[]
   goals                 Goal[]
   loans                 Loan[]
+  personalDebts         PersonalDebt[]
 }
 
 model User {
@@ -156,6 +158,8 @@ model User {
   goalEntries            GoalEntry[]
   loans                  Loan[]
   loanPayments           LoanPayment[]
+  personalDebts          PersonalDebt[]
+  personalDebtPayments   PersonalDebtPayment[]
 }
 
 model FinancialAccount {
@@ -176,13 +180,15 @@ model FinancialAccount {
   createdAt           DateTime             @default(now()) @db.Timestamptz
   updatedAt           DateTime             @updatedAt @db.Timestamptz
 
-  user             User            @relation(fields: [userId], references: [id])
-  currency         Currency        @relation(fields: [currencyCode], references: [code])
-  transactions     Transaction[]
-  recurringSource  RecurringRule[] @relation("RecurringSourceAccount")
-  recurringCounter RecurringRule[] @relation("RecurringCounterAccount")
-  goals            Goal[]
-  loans            Loan[]
+  user                 User                  @relation(fields: [userId], references: [id])
+  currency             Currency              @relation(fields: [currencyCode], references: [code])
+  transactions         Transaction[]
+  recurringSource      RecurringRule[]       @relation("RecurringSourceAccount")
+  recurringCounter     RecurringRule[]       @relation("RecurringCounterAccount")
+  goals                Goal[]
+  loans                Loan[]
+  personalDebts        PersonalDebt[]
+  personalDebtPayments PersonalDebtPayment[]
 
   @@unique([userId, clientId])
   @@index([userId, archivedAt])
@@ -795,4 +801,59 @@ model LoanPayment {
 
   @@unique([userId, clientId])
   @@index([loanId, paidOn])
+}
+
+enum PersonalDebtDirection {
+  lent
+  borrowed
+}
+
+/// Lend / borrow between people, no interest (BE-P3-007). Money moves through one-leg `debt` transactions,
+/// never income or expense. outstandingMinor is stored; changes go through PersonalDebtPayment.
+model PersonalDebt {
+  id                  String                @id @default(uuid()) @db.Uuid
+  userId              String                @db.Uuid
+  clientId            String                @db.Uuid
+  direction           PersonalDebtDirection
+  counterparty        String                @db.VarChar(80)
+  currencyCode        String                @db.Char(3)
+  principalMinor      BigInt
+  outstandingMinor    BigInt
+  accountId           String                @db.Uuid
+  /// Leg clientId of the transaction that moved the money out of / into the wallet.
+  transactionClientId String                @db.Uuid
+  occurredOn          DateTime              @db.Date
+  dueDate             DateTime?             @db.Date
+  note                String?               @db.VarChar(500)
+  archivedAt          DateTime?             @db.Timestamptz
+  version             Int                   @default(1)
+  createdAt           DateTime              @default(now()) @db.Timestamptz
+  updatedAt           DateTime              @updatedAt @db.Timestamptz
+
+  user     User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account  FinancialAccount      @relation(fields: [accountId], references: [id])
+  currency Currency              @relation(fields: [currencyCode], references: [code])
+  payments PersonalDebtPayment[]
+
+  @@unique([userId, clientId])
+  @@index([userId, archivedAt])
+}
+
+model PersonalDebtPayment {
+  id                  String   @id @default(uuid()) @db.Uuid
+  debtId              String   @db.Uuid
+  userId              String   @db.Uuid
+  clientId            String   @db.Uuid
+  accountId           String   @db.Uuid
+  amountMinor         BigInt
+  transactionClientId String   @db.Uuid
+  paidOn              DateTime @db.Date
+  createdAt           DateTime @default(now()) @db.Timestamptz
+
+  debt    PersonalDebt     @relation(fields: [debtId], references: [id], onDelete: Cascade)
+  user    User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account FinancialAccount @relation(fields: [accountId], references: [id])
+
+  @@unique([userId, clientId])
+  @@index([debtId, paidOn])
 }

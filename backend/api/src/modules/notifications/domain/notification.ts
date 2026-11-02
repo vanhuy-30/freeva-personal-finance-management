@@ -18,6 +18,7 @@ export type NotificationKind = (typeof NOTIFICATION_KINDS)[number];
 export const AVAILABLE_KINDS = new Set<NotificationKind>([
   'budget',
   'recurring',
+  'debt',
   'card',
   'security',
   'daily_log',
@@ -34,6 +35,9 @@ export const BUDGET_NOTIFY_MIN_THRESHOLD = 80;
 
 /** Card due alerts fire when payment is 0–3 calendar days away (profile timezone). */
 export const CARD_DUE_WINDOW_DAYS = 3;
+
+/** Remind about a lend/borrow debt this many days before its due date, then once more when overdue. */
+export const DEBT_REMIND_DAYS = 3;
 
 /** High outstanding vs limit; near-limit is a separate inbox row. */
 export const CARD_HIGH_USAGE_THRESHOLD = 70;
@@ -227,6 +231,11 @@ export function dailyLogDedupeKey(day: string): string {
 /** True once the local clock has reached the reminder time (HH:mm) in `timeZone`. */
 export function isDailyLogDue(dailyLogTime: string, timeZone: string, now: Date): boolean {
   return localMinutesInTimeZone(timeZone, now) >= minutesOfDay(dailyLogTime);
+}
+
+/** Lend / borrow reminder (BE-P3-007): one per debt, due date and stage. */
+export function debtDueDedupeKey(debtId: string, dueDate: string, overdue: boolean): string {
+  return `debt|${overdue ? 'overdue' : 'due'}|${debtId}|${dueDate}`;
 }
 
 export function cardDueDedupeKey(accountId: string, dueDate: string): string {
