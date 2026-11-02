@@ -41,13 +41,7 @@ void main() {
     cases = FakeOverviewCases();
     sync = FakeSyncViewModel();
     profile = FakeProfileViewModel();
-    model = DefaultHomeViewModel(
-      cases,
-      auth,
-      profile,
-      settings,
-      sync,
-    );
+    model = DefaultHomeViewModel(cases, auth, profile, settings, sync);
   });
 
   tearDown(() {
@@ -65,25 +59,28 @@ void main() {
     expect(model.displayName, 'Minh');
   });
 
-  test('converts into the saved display currency, else the profile one', () async {
-    cases.results.add(right(overview()));
-    expect(model.displayCurrency, 'VND');
-    await model.load();
-    expect(cases.lastDisplayCurrency, 'VND');
-    expect(model.currencyChoices, ['VND', 'USD']);
+  test(
+    'converts into the saved display currency, else the profile one',
+    () async {
+      cases.results.add(right(overview()));
+      expect(model.displayCurrency, 'VND');
+      await model.load();
+      expect(cases.lastDisplayCurrency, 'VND');
+      expect(model.currencyChoices, ['VND', 'USD']);
 
-    expect(await model.chooseDisplayCurrency('USD'), isTrue);
-    expect(profile.savedDisplayCurrencies, ['USD']);
-    expect(model.displayCurrency, 'USD');
-    expect(model.currency, 'VND');
-    expect(cases.lastDisplayCurrency, 'USD');
+      expect(await model.chooseDisplayCurrency('USD'), isTrue);
+      expect(profile.savedDisplayCurrencies, ['USD']);
+      expect(model.displayCurrency, 'USD');
+      expect(model.currency, 'VND');
+      expect(cases.lastDisplayCurrency, 'USD');
 
-    profile.saveDisplayCurrencyResult = false;
-    final calls = cases.calls;
-    expect(await model.chooseDisplayCurrency('VND'), isFalse);
-    expect(model.displayCurrency, 'USD');
-    expect(cases.calls, calls);
-  });
+      profile.saveDisplayCurrencyResult = false;
+      final calls = cases.calls;
+      expect(await model.chooseDisplayCurrency('VND'), isFalse);
+      expect(model.displayCurrency, 'USD');
+      expect(cases.calls, calls);
+    },
+  );
 
   test('first load failing shows the error card', () async {
     cases.results.add(left(const AuthFailure(AuthError.network)));

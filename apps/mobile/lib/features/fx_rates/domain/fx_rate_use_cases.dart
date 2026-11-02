@@ -15,8 +15,6 @@ class FxRateUseCases {
       (await _repository.walletConverted(walletId)).fold((_) => null, (v) => v);
 
   Future<DisplayConverted?> transactionConverted(String legId) async =>
-      (await _repository.transactionConverted(legId)).fold(
-        (_) => null,
-        (v) => v,
-      );
+      (await _repository.transactionConverted(legId))
+          .fold((_) => null, (v) => v);
 }

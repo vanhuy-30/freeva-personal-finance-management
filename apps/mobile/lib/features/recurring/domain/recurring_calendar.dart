@@ -26,12 +26,7 @@ int daysInMonth(int year, int month) => DateTime.utc(year, month + 1, 0).day;
 int anchorDay(String startDate) => parseCalendarParts(startDate)!.day;
 
 /// Advance [from] by [interval] units. Month/year keep [preferredDay] clamped.
-String? addInterval(
-  String from,
-  String unit,
-  int interval,
-  int preferredDay,
-) {
+String? addInterval(String from, String unit, int interval, int preferredDay) {
   if (interval < 1 || interval > 366) return null;
   if (preferredDay < 1 || preferredDay > 31) return null;
   final parts = parseCalendarParts(from);

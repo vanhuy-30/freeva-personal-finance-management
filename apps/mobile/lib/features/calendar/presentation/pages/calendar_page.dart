@@ -94,9 +94,7 @@ class _CalendarPageState extends State<CalendarPage> {
             );
           }
           final data = model.month!;
-          final monthLabel = DateFormat.yMMMM(
-            locale,
-          ).format(_monthDate);
+          final monthLabel = DateFormat.yMMMM(locale).format(_monthDate);
           return Column(
             children: [
               Padding(
@@ -157,9 +155,8 @@ class _CalendarPageState extends State<CalendarPage> {
                     children: [
                       Text(
                         s.calendarLegend,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: c.textSecondary,
-                        ),
+                        style: Theme.of(context).textTheme.bodySmall
+                            ?.copyWith(color: c.textSecondary),
                       ),
                       const SizedBox(height: FreevaSpace.s2),
                       Wrap(
@@ -229,9 +226,8 @@ class _MonthGrid extends StatelessWidget {
       for (var i = 0; i < lead; i++) const SizedBox(height: 48),
       for (var day = 1; day <= length; day++)
         _DayCell(
-          iso: DateFormat(
-            'yyyy-MM-dd',
-          ).format(DateTime(month.year, month.month, day)),
+          iso: DateFormat('yyyy-MM-dd')
+              .format(DateTime(month.year, month.month, day)),
           day: day,
           data: data,
           today: today,
@@ -431,11 +427,7 @@ class _DaySheet extends StatelessWidget {
 }
 
 class _Line extends StatelessWidget {
-  const _Line({
-    required this.title,
-    required this.amount,
-    this.subtitle,
-  });
+  const _Line({required this.title, required this.amount, this.subtitle});
 
   final String title;
   final String amount;
@@ -457,9 +449,8 @@ class _Line extends StatelessWidget {
                 if (subtitle != null)
                   Text(
                     subtitle!,
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodySmall?.copyWith(color: c.textSecondary),
+                    style: Theme.of(context).textTheme.bodySmall
+                        ?.copyWith(color: c.textSecondary),
                   ),
               ],
             ),

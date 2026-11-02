@@ -25,7 +25,11 @@ abstract class OverviewUseCases {
 
   /// Saves a rate the user typed (1 [from] = [rate] [to]). Null when [rate]
   /// is not a positive decimal; nothing is sent then.
-  Future<Either<AuthFailure, Unit>>? saveRate(String from, String to, String rate);
+  Future<Either<AuthFailure, Unit>>? saveRate(
+    String from,
+    String to,
+    String rate,
+  );
 }
 
 @LazySingleton(as: OverviewUseCases)

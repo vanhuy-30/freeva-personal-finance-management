@@ -60,7 +60,8 @@ class FxRateRepositoryImpl implements FxRateRepository {
   ) => _request('GET', 'transactions/$legId', (json) {
     for (final leg in json['legs'] as List) {
       final row = leg as Map<String, dynamic>;
-      if (row['id'] == legId) return DisplayConverted.fromJson(row['converted']);
+      if (row['id'] == legId)
+        return DisplayConverted.fromJson(row['converted']);
     }
     return null;
   });

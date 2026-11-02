@@ -15,6 +15,7 @@ import 'package:mobile/features/sync/presentation/viewmodels/sync_view_model.dar
 
 import '../home/fixtures.dart' show b, wallet;
 import '../home/home_fakes.dart' show FakeSyncViewModel;
+
 import 'package:mobile/core/money/display_converted.dart';
 
 TxLeg tx(

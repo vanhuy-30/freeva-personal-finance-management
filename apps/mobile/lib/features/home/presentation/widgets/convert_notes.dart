@@ -69,10 +69,7 @@ class ConvertLine extends StatelessWidget {
 
 /// "USD: chưa có tỷ giá, chạm để nhập" for a currency that is not in the
 /// converted total.
-String unconvertedText(S s, UnconvertedCurrency item) =>
-    switch (item.reason) {
-      UnconvertedReason.missingRate => s.homeUnconvertedMissing(item.currency),
-      UnconvertedReason.fractional => s.homeUnconvertedFractional(
-        item.currency,
-      ),
-    };
+String unconvertedText(S s, UnconvertedCurrency item) => switch (item.reason) {
+  UnconvertedReason.missingRate => s.homeUnconvertedMissing(item.currency),
+  UnconvertedReason.fractional => s.homeUnconvertedFractional(item.currency),
+};
