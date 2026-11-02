@@ -44,6 +44,10 @@ export function pushCopy(locale: string, input: PushCopyInput): Copy {
       return lang === 'vi'
         ? { title: 'Thẻ sắp vượt hạn mức', body: `Bạn đã dùng ${param(params, 'threshold')}% hạn mức thẻ.` }
         : { title: 'Card near its limit', body: `You have used ${param(params, 'threshold')}% of a card limit.` };
+    case 'daily_log':
+      return lang === 'vi'
+        ? { title: 'Ghi chi hôm nay', body: 'Hôm nay bạn chưa ghi giao dịch nào. Ghi nhanh trước khi quên nhé.' }
+        : { title: 'Log today', body: "You haven't logged anything today. Add it before you forget." };
     default:
       return GENERIC[lang];
   }

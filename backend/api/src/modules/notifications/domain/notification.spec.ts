@@ -5,8 +5,10 @@ import {
   cardUsageDedupeKey,
   cardUsageThresholds,
   creditOutstanding,
+  dailyLogDedupeKey,
   dayBefore,
   daysBetween,
+  isDailyLogDue,
   isInQuietHours,
   kindToggles,
   localMinutesInTimeZone,
@@ -108,5 +110,25 @@ describe('BE-P2-E07 card alert helpers', () => {
     expect(daysBetween('2026-10-12', '2026-10-15')).toBe(3);
     expect(cardDueDedupeKey('a1', '2026-10-15')).toBe('card|due|a1|2026-10-15');
     expect(cardUsageDedupeKey('a1', '2026-10-01', 70)).toBe('card|usage|a1|2026-10-01|70');
+  });
+});
+
+describe('BE-P3-006 daily log reminder helpers', () => {
+  it('keys one reminder per local day', () => {
+    expect(dailyLogDedupeKey('2026-11-02')).toBe('daily_log|2026-11-02');
+  });
+
+  it('is due from the reminder time in the profile timezone', () => {
+    // 20:00 ICT = 13:00 UTC
+    expect(isDailyLogDue('20:00', 'Asia/Ho_Chi_Minh', new Date('2026-11-02T12:59:00.000Z'))).toBe(false);
+    expect(isDailyLogDue('20:00', 'Asia/Ho_Chi_Minh', new Date('2026-11-02T13:00:00.000Z'))).toBe(true);
+    expect(isDailyLogDue('20:00', 'America/New_York', new Date('2026-11-02T13:00:00.000Z'))).toBe(false);
+  });
+
+  it('is available, off by default, and writable', () => {
+    const toggles = kindToggles({ ...defaultPreference(), createdAt: new Date(), updatedAt: new Date() });
+    expect(toggles.find(t => t.kind === 'daily_log')).toMatchObject({ available: true, enabled: false });
+    expect(defaultPreference().dailyLogTime).toBe('20:00');
+    expect(() => assertKindWritable('daily_log', true)).not.toThrow();
   });
 });

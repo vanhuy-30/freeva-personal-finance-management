@@ -75,11 +75,12 @@
 - Note: BE-P3-005 xong 2026-11-02: `POST /financial-accounts/{id}/reconcile` (tính chênh lệch ở server, `dryRun`, thẻ tín dụng theo dư nợ, idempotent theo `clientId`), `TransactionType` thêm `adjustment` (một leg, không danh mục/FX, chỉ tạo qua reconcile), không vào thu/chi, ngân sách, tỷ lệ tiết kiệm; báo cáo theo ví có `adjustmentMinor`; sửa/xóa qua `/transactions`; có trong export. Migration additive. Kiến trúc: [wallet-reconciliation.md](../docs/architecture/wallet-reconciliation.md). Tồn đọng: MOB-P3-005 chưa làm.
 
 ### BE-P3-006 / MOB-P3-006 — Nhắc ghi chi hằng ngày
-- Status: todo
+- Status: doing — BE xong 2026-11-02, MOB còn
 - Module: 17
 - Gate: v1
 - Depends: BE-P2-E05, BE-P2-015
 - DoD: loại thông báo `daily_log`, mặc định tắt, user chọn giờ (theo múi giờ hồ sơ), tôn trọng giờ yên. Không gửi nếu hôm đó đã có giao dịch. Bấm thông báo mở thẳng màn ghi giao dịch. Nối công tắc "Nhắc ghi chi" đã có trên màn Thông báo. Tổng kết tuần/tháng trên cùng màn dùng `month_review` khi `MOB-P3-002` xong.
+- Note: BE-P3-006 xong 2026-11-02: loại `daily_log` (mặc định tắt), `dailyLogEnabled` / `dailyLogTime` trên `/notification-preferences`, giờ theo múi giờ hồ sơ, không tạo nếu hôm đó (`occurredOn` = hôm nay) đã có thu/chi/chuyển (điều chỉnh số dư và giao dịch đã xóa không tính), giờ yên chặn, một hàng mỗi ngày, push vi/en không có số tiền. OpenAPI, export cập nhật. Kiến trúc: [notifications.md](../docs/architecture/notifications.md). Tồn đọng: MOB-P3-006 (công tắc, chọn giờ, bấm thông báo mở màn ghi theo `kind = daily_log`) chưa làm; `month_review` vẫn khóa.
 
 ### BE-P3-007 / MOB-P3-007 — Cho mượn và đi mượn
 - Status: todo

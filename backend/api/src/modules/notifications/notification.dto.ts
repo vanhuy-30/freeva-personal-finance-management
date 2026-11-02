@@ -11,6 +11,12 @@ export class PutNotificationPreferencesDto {
   @IsOptional() @IsBoolean() recurringEnabled?: boolean;
   @IsOptional() @IsBoolean() monthReviewEnabled?: boolean;
   @IsOptional() @IsBoolean() insightEnabled?: boolean;
+  @IsOptional() @IsBoolean() dailyLogEnabled?: boolean;
+  @IsOptional()
+  @Transform(trim)
+  @IsString()
+  @Matches(/^([01]\d|2[0-3]):([0-5]\d)$/)
+  dailyLogTime?: string;
   @IsOptional() @IsBoolean() quietHoursEnabled?: boolean;
   @IsOptional()
   @Transform(trim)

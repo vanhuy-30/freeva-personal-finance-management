@@ -11,11 +11,14 @@ import {
   cardUsageDedupeKey,
   cardUsageThresholds,
   creditOutstanding,
+  dailyLogDedupeKey,
   daysBetween,
+  isDailyLogDue,
   isInQuietHours,
   kindToggles,
   nextDueDateIso,
   NotificationError,
+  parseHm,
   recurringDedupeKey,
   validateQuietWindow,
   type NotificationPreferenceRecord,
@@ -30,6 +33,7 @@ import type { PutNotificationPreferencesDto } from './notification.dto';
 function preferenceResponse(prefs: NotificationPreferenceRecord) {
   return {
     kinds: kindToggles(prefs),
+    dailyLogTime: prefs.dailyLogTime,
     quietHoursEnabled: prefs.quietHoursEnabled,
     quietStart: prefs.quietStart,
     quietEnd: prefs.quietEnd,
@@ -73,6 +77,8 @@ export class NotificationService {
       assertKindWritable('month_review', dto.monthReviewEnabled);
     }
     if (dto.insightEnabled !== undefined) assertKindWritable('insight', dto.insightEnabled);
+    if (dto.dailyLogEnabled !== undefined) assertKindWritable('daily_log', dto.dailyLogEnabled);
+    if (dto.dailyLogTime !== undefined) parseHm(dto.dailyLogTime);
 
     const quietStart = dto.quietStart;
     const quietEnd = dto.quietEnd;
@@ -89,6 +95,8 @@ export class NotificationService {
       recurringEnabled: dto.recurringEnabled,
       monthReviewEnabled: dto.monthReviewEnabled,
       insightEnabled: dto.insightEnabled,
+      dailyLogEnabled: dto.dailyLogEnabled,
+      dailyLogTime: dto.dailyLogTime,
       quietHoursEnabled: dto.quietHoursEnabled,
       quietStart: dto.quietStart,
       quietEnd: dto.quietEnd,
@@ -216,6 +224,22 @@ export class NotificationService {
           }
         }
       }
+    }
+
+    if (
+      context.prefs.dailyLogEnabled &&
+      !context.hasTransactionToday &&
+      isDailyLogDue(context.prefs.dailyLogTime, context.timezone, now)
+    ) {
+      const ok = await this.repository.createIfAbsent({
+        userId,
+        kind: 'daily_log',
+        dedupeKey: dailyLogDedupeKey(context.today),
+        titleKey: 'daily_log',
+        bodyKey: 'daily_log_body',
+        params: {},
+      });
+      if (ok) created += 1;
     }
 
     return created;

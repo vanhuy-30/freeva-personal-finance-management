@@ -48,6 +48,8 @@ export interface AccountExportNotificationPreferences {
   recurringEnabled: boolean;
   monthReviewEnabled: boolean;
   insightEnabled: boolean;
+  dailyLogEnabled: boolean;
+  dailyLogTime: string;
   quietHoursEnabled: boolean;
   quietStart: string;
   quietEnd: string;
@@ -428,6 +430,8 @@ export interface ExportSource {
     recurringEnabled: boolean;
     monthReviewEnabled: boolean;
     insightEnabled: boolean;
+    dailyLogEnabled: boolean;
+    dailyLogTime: string;
     quietHoursEnabled: boolean;
     quietStart: string;
     quietEnd: string;
@@ -591,6 +595,8 @@ export function toAccountExport(source: ExportSource): AccountExport {
       recurringEnabled: source.notificationPreferences.recurringEnabled,
       monthReviewEnabled: source.notificationPreferences.monthReviewEnabled,
       insightEnabled: source.notificationPreferences.insightEnabled,
+      dailyLogEnabled: source.notificationPreferences.dailyLogEnabled,
+      dailyLogTime: source.notificationPreferences.dailyLogTime,
       quietHoursEnabled: source.notificationPreferences.quietHoursEnabled,
       quietStart: source.notificationPreferences.quietStart,
       quietEnd: source.notificationPreferences.quietEnd,

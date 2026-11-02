@@ -36,6 +36,8 @@ function mapPrefs(row: {
   recurringEnabled: boolean;
   monthReviewEnabled: boolean;
   insightEnabled: boolean;
+  dailyLogEnabled: boolean;
+  dailyLogTime: string;
   quietHoursEnabled: boolean;
   quietStart: string;
   quietEnd: string;
@@ -51,6 +53,8 @@ function mapPrefs(row: {
     recurringEnabled: row.recurringEnabled,
     monthReviewEnabled: row.monthReviewEnabled,
     insightEnabled: row.insightEnabled,
+    dailyLogEnabled: row.dailyLogEnabled,
+    dailyLogTime: row.dailyLogTime,
     quietHoursEnabled: row.quietHoursEnabled,
     quietStart: row.quietStart,
     quietEnd: row.quietEnd,
@@ -110,6 +114,8 @@ export class PrismaNotificationRepository implements NotificationRepository {
       recurringEnabled: patch.recurringEnabled ?? current.recurringEnabled,
       monthReviewEnabled: patch.monthReviewEnabled ?? current.monthReviewEnabled,
       insightEnabled: patch.insightEnabled ?? current.insightEnabled,
+      dailyLogEnabled: patch.dailyLogEnabled ?? current.dailyLogEnabled,
+      dailyLogTime: patch.dailyLogTime ?? current.dailyLogTime,
       quietHoursEnabled: patch.quietHoursEnabled ?? current.quietHoursEnabled,
       quietStart: patch.quietStart ?? current.quietStart,
       quietEnd: patch.quietEnd ?? current.quietEnd,
@@ -202,6 +208,7 @@ export class PrismaNotificationRepository implements NotificationRepository {
         recurringSoon: [],
         billsDue: [],
         creditCards: [],
+        hasTransactionToday: false,
       };
     }
     const prefs = await this.getPreferences(userId);
@@ -308,6 +315,19 @@ export class PrismaNotificationRepository implements NotificationRepository {
       }));
     }
 
+    // Only checked when the reminder is on and due is decided in the service; cheap indexed lookup.
+    const hasTransactionToday = prefs.dailyLogEnabled
+      ? (await this.prisma.transaction.count({
+          where: {
+            userId,
+            deletedAt: null,
+            type: { in: ['income', 'expense', 'transfer'] },
+            occurredOn: new Date(`${today}T00:00:00.000Z`),
+          },
+          take: 1,
+        })) > 0
+      : false;
+
     return {
       userId: user.id,
       timezone: user.timezone,
@@ -319,6 +339,7 @@ export class PrismaNotificationRepository implements NotificationRepository {
       recurringSoon,
       billsDue,
       creditCards,
+      hasTransactionToday,
     };
   }
 }

@@ -14,6 +14,8 @@ export type PreferencePatch = {
   recurringEnabled?: boolean;
   monthReviewEnabled?: boolean;
   insightEnabled?: boolean;
+  dailyLogEnabled?: boolean;
+  dailyLogTime?: string;
   quietHoursEnabled?: boolean;
   quietStart?: string;
   quietEnd?: string;
@@ -61,6 +63,8 @@ export type EvaluateUserContext = {
   recurringSoon: RecurringSoonRow[];
   billsDue: BillDueRow[];
   creditCards: CreditCardRow[];
+  /** Any income/expense/transfer dated `today` (profile timezone), not deleted. Adjustments do not count. */
+  hasTransactionToday: boolean;
 };
 
 export interface NotificationRepository {

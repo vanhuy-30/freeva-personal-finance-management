@@ -9,15 +9,25 @@ export const NOTIFICATION_KINDS = [
   'month_review',
   'insight',
   'security',
+  'daily_log',
 ] as const;
 
 export type NotificationKind = (typeof NOTIFICATION_KINDS)[number];
 
 /** Kinds whose source module exists today. Others stay locked off. */
-export const AVAILABLE_KINDS = new Set<NotificationKind>(['budget', 'recurring', 'card', 'security']);
+export const AVAILABLE_KINDS = new Set<NotificationKind>([
+  'budget',
+  'recurring',
+  'card',
+  'security',
+  'daily_log',
+]);
 
 export const DEFAULT_QUIET_START = '22:00';
 export const DEFAULT_QUIET_END = '07:00';
+
+/** Daily expense-log reminder time (BE-P3-006), profile timezone. */
+export const DEFAULT_DAILY_LOG_TIME = '20:00';
 
 /** Budget alerts fire at 80% and at/over the limit (100), not at 70. */
 export const BUDGET_NOTIFY_MIN_THRESHOLD = 80;
@@ -56,6 +66,8 @@ export type NotificationPreferenceRecord = QuietHours & {
   recurringEnabled: boolean;
   monthReviewEnabled: boolean;
   insightEnabled: boolean;
+  dailyLogEnabled: boolean;
+  dailyLogTime: string;
   version: number;
   createdAt: Date;
   updatedAt: Date;
@@ -140,6 +152,8 @@ export function defaultPreference(): Omit<NotificationPreferenceRecord, 'created
     recurringEnabled: true,
     monthReviewEnabled: false,
     insightEnabled: false,
+    dailyLogEnabled: false,
+    dailyLogTime: DEFAULT_DAILY_LOG_TIME,
     quietHoursEnabled: false,
     quietStart: DEFAULT_QUIET_START,
     quietEnd: DEFAULT_QUIET_END,
@@ -164,6 +178,8 @@ export function kindToggles(prefs: NotificationPreferenceRecord): KindToggle[] {
         return prefs.monthReviewEnabled;
       case 'insight':
         return prefs.insightEnabled;
+      case 'daily_log':
+        return prefs.dailyLogEnabled;
       case 'security':
         return true;
     }
@@ -201,6 +217,16 @@ export function recurringDedupeKey(ruleId: string, executionDate: string): strin
 
 export function billDueDedupeKey(ruleId: string, dueDate: string, overdue: boolean): string {
   return `bill|${overdue ? 'overdue' : 'due'}|${ruleId}|${dueDate}`;
+}
+
+/** One reminder per local calendar day. */
+export function dailyLogDedupeKey(day: string): string {
+  return `daily_log|${day}`;
+}
+
+/** True once the local clock has reached the reminder time (HH:mm) in `timeZone`. */
+export function isDailyLogDue(dailyLogTime: string, timeZone: string, now: Date): boolean {
+  return localMinutesInTimeZone(timeZone, now) >= minutesOfDay(dailyLogTime);
 }
 
 export function cardDueDedupeKey(accountId: string, dueDate: string): string {

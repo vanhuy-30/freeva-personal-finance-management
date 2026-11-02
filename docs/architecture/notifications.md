@@ -16,6 +16,7 @@ Cảnh báo bảo mật (phiên đăng nhập khác) vẫn so id phiên trên m�
 | `recurring` | Rule active, ngày trước `nextExecutionDate` | bật |
 | `card` | Ví `credit` đang dùng (`BE-P2-E07`) | bật |
 | `security` | Máy (`sessionAlertsEnabled`) | local |
+| `daily_log` | Chưa ghi giao dịch hôm nay (`BE-P3-006`) | tắt |
 | `goal` `debt` `month_review` `insight` | Chưa có module | khóa, `available=false` |
 
 Bật loại khóa trả 422 `NOTIFICATION_SOURCE_UNAVAILABLE`. Payload chỉ `titleKey` / `bodyKey` / `params` (ngưỡng, `periodFrom`, `executionDate`, `days`, `accountId`) — không số dư, số tiền, tên rule hay tên ví.
@@ -54,6 +55,10 @@ Firebase Cloud Messaging là nhà cung cấp push ([ADR 013](adr/013-fcm-push.md
 **Payload.** Chữ vi/en dựng ở server theo `User.locale`, cùng câu với hộp thư: chỉ ngưỡng %, ngày, số ngày. `data` chỉ có `notificationId` và `kind`. Không số dư, số tài khoản, email, tên rule/ví hay id phiên. Hàng có trước migration không bao giờ được push.
 
 **Mobile.** `PushRegistrationListener` đăng ký token sau khi mở khóa và khi resume, chỉ nếu đã được cấp quyền. Quyền được xin khi người dùng bật một loại thông báo (không xin lúc mở app). Đăng xuất / `forgetDevice` xóa token FCM trên máy; server cascade lo phía API. Build thiếu `google-services.json` / `GoogleService-Info.plist` thì push tắt, không lỗi.
+
+## Nhắc ghi chi (BE-P3-006)
+
+Loại `daily_log`, mặc định tắt. `PUT /notification-preferences` nhận `dailyLogEnabled` và `dailyLogTime` (`HH:mm`, mặc định `20:00`, theo `User.timezone`); `GET` trả `dailyLogTime`. Khi bật, evaluate tạo một hàng sau giờ nhắc nếu hôm nay (ngày local) chưa có giao dịch thu/chi/chuyển có `occurredOn` = hôm nay và chưa xóa; giao dịch `adjustment` không tính. Dedupe `daily_log|YYYY-MM-DD`. Giờ yên chặn như các loại khác: hết giờ yên mà trong ngày vẫn chưa ghi thì tạo một lần. Params rỗng; push dùng `kind = daily_log` để mobile mở thẳng màn ghi giao dịch.
 
 ## Hóa đơn (BE-P3-001)
 

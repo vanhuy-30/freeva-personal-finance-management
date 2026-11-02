@@ -468,6 +468,9 @@ model NotificationPreference {
   recurringEnabled   Boolean  @default(true)
   monthReviewEnabled Boolean  @default(false)
   insightEnabled     Boolean  @default(false)
+  dailyLogEnabled    Boolean  @default(false)
+  /// Local reminder time HH:mm in the profile timezone (BE-P3-006).
+  dailyLogTime       String   @default("20:00") @db.VarChar(5)
   quietHoursEnabled  Boolean  @default(false)
   quietStart         String   @default("22:00") @db.VarChar(5)
   quietEnd           String   @default("07:00") @db.VarChar(5)
@@ -487,6 +490,7 @@ enum NotificationKind {
   month_review
   insight
   security
+  daily_log
 }
 
 /// In-app inbox row. DedupeKey prevents retries from duplicating the same alert.
