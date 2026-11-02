@@ -12,6 +12,7 @@ import { httpRequestSerializer } from '../src/core/logging/http-request.serializ
 import { pinoRedactOptions } from '../src/core/logging/pino-redact';
 import { RecurringModule } from '../src/modules/recurring/recurring.module';
 import { RECURRING_REPOSITORY, type RecurringRepository } from '../src/modules/recurring/domain/recurring.repository';
+import { BillModule } from '../src/modules/bills/bill.module';
 import { SyncModule } from '../src/modules/sync/sync.module';
 import { TransactionModule } from '../src/modules/transactions/transaction.module';
 import { occurrenceClientId } from '../src/modules/recurring/domain/occurrence-id';
@@ -40,7 +41,7 @@ describe('BE-P2-E01 recurring HTTP + PostgreSQL', () => {
           SMTP_HOST: 'localhost', SMTP_PORT: '1025', MAIL_FROM: 'noreply@example.test',
         })] }),
         LoggerModule.forRoot({ pinoHttp: [{ serializers: { req: httpRequestSerializer }, redact: pinoRedactOptions }, stream] }),
-        PrismaModule, FinancialAccountModule, TransactionModule, SyncModule, RecurringModule,
+        PrismaModule, FinancialAccountModule, TransactionModule, SyncModule, RecurringModule, BillModule,
       ],
     }).compile();
     app = module.createNestApplication();
@@ -280,5 +281,120 @@ describe('BE-P2-E01 recurring HTTP + PostgreSQL', () => {
     expect(legs).toHaveLength(2);
     expect(legs[0].amountMinor + legs[1].amountMinor).toBe(0n);
     expect(legs[0].transferGroupId).toBe(legs[1].transferGroupId);
+  });
+
+  describe('BE-P3-001 remind mode (bills)', () => {
+    async function bill(extra: object = {}) {
+      const clientId = randomUUID();
+      const created = await request('POST', '/recurring-transactions', {
+        clientId,
+        type: 'expense',
+        mode: 'remind',
+        name: 'Tiền điện',
+        amountKind: 'estimated',
+        remindDaysBefore: 5,
+        repeat: false,
+        unit: 'month',
+        interval: 1,
+        amountMinor: '-850000',
+        currencyCode: 'VND',
+        startDate: '2026-01-10',
+        nextExecutionDate: '2026-01-10',
+        ...extra,
+      }, token, { 'Idempotency-Key': clientId });
+      expect(created.status).toBe(201);
+      return created.body;
+    }
+
+    it('creates a one-off bill without a wallet; run never posts it; overdue is derived', async () => {
+      const created = await bill();
+      expect(created).toMatchObject({ mode: 'remind', endDate: '2026-01-10', accountId: null, overdue: true });
+      const repository = app.get<RecurringRepository>(RECURRING_REPOSITORY);
+      await expect(repository.runDue(owner, new Date('2026-03-01T00:00:00.000Z'))).resolves.toEqual({ created: 0, skipped: 0 });
+      expect(await prisma.transaction.count({ where: { userId: owner } })).toBe(0);
+    });
+
+    it('rejects a remind rule that is not an expense or has no name', async () => {
+      const clientId = randomUUID();
+      const noName = await request('POST', '/recurring-transactions', {
+        clientId, type: 'expense', mode: 'remind', unit: 'month', interval: 1, amountMinor: '-1000',
+        currencyCode: 'VND', startDate: '2026-01-10', nextExecutionDate: '2026-01-10',
+      }, token, { 'Idempotency-Key': clientId });
+      expect(noName.status).toBe(400);
+    });
+
+    it('confirms once: retry and second confirm do not post twice', async () => {
+      const account = await wallet();
+      const cat = await category();
+      const created = await bill({ accountId: account.id, categoryId: cat.id });
+      const body = { version: created.version, occurredOn: '2026-01-10', amountMinor: '900000', paidOn: '2026-01-12' };
+      const first = await request('POST', `/recurring-transactions/${created.id}/confirm`, body);
+      expect(first.status).toBe(200);
+      expect(first.body).toMatchObject({ replayed: false, rule: { active: false, overdue: false } });
+      const again = await request('POST', `/recurring-transactions/${created.id}/confirm`, body);
+      expect(again.status).toBe(200);
+      expect(again.body).toMatchObject({ replayed: true, transactionId: first.body.transactionId });
+      const posted = await prisma.transaction.findMany({ where: { userId: owner } });
+      expect(posted).toHaveLength(1);
+      expect(posted[0]).toMatchObject({ amountMinor: -900000n, type: 'expense', recurringRuleId: created.id });
+      expect(posted[0].occurredOn.toISOString().slice(0, 10)).toBe('2026-01-12');
+      expect(await prisma.recurringOccurrence.count({ where: { ruleId: created.id } })).toBe(1);
+      expect(logs).not.toMatch(/900000|850000|Tiền điện/);
+    });
+
+    it('links an existing expense, and that expense cannot pay a second bill', async () => {
+      const account = await wallet();
+      const cat = await category();
+      const tx = await prisma.transaction.create({
+        data: {
+          userId: owner, clientId: randomUUID(), type: 'expense', amountMinor: -850000n, currencyCode: 'VND',
+          occurredOn: new Date('2026-01-09T00:00:00.000Z'), accountId: account.id, categoryId: cat.id,
+        },
+      });
+      const one = await bill();
+      const two = await bill();
+      const linked = await request('POST', `/recurring-transactions/${one.id}/confirm`, {
+        version: one.version, occurredOn: '2026-01-10', transactionId: tx.id,
+      });
+      expect(linked.status).toBe(200);
+      expect(linked.body.transactionId).toBe(tx.id);
+      expect(await prisma.transaction.count({ where: { userId: owner } })).toBe(1);
+      const reuse = await request('POST', `/recurring-transactions/${two.id}/confirm`, {
+        version: two.version, occurredOn: '2026-01-10', transactionId: tx.id,
+      });
+      expect(reuse.status).toBe(409);
+    });
+
+    it('advances a repeating bill to the next due day and refuses a wrong day or auto rule', async () => {
+      const account = await wallet();
+      const cat = await category();
+      const monthly = await bill({ repeat: undefined, accountId: account.id, categoryId: cat.id });
+      const wrongDay = await request('POST', `/recurring-transactions/${monthly.id}/confirm`, {
+        version: monthly.version, occurredOn: '2026-02-10',
+      });
+      expect(wrongDay.status).toBe(409);
+      const ok = await request('POST', `/recurring-transactions/${monthly.id}/confirm`, {
+        version: monthly.version, occurredOn: '2026-01-10',
+      });
+      expect(ok.body.rule).toMatchObject({ active: true, nextExecutionDate: '2026-02-10' });
+
+      const autoId = randomUUID();
+      const auto = await request('POST', '/recurring-transactions', {
+        clientId: autoId, type: 'expense', unit: 'month', interval: 1, amountMinor: '-1000', currencyCode: 'VND',
+        accountId: account.id, categoryId: cat.id, startDate: '2026-01-10', nextExecutionDate: '2026-01-10',
+      }, token, { 'Idempotency-Key': autoId });
+      const notRemind = await request('POST', `/recurring-transactions/${auto.body.id}/confirm`, {
+        version: auto.body.version, occurredOn: '2026-01-10',
+      });
+      expect(notRemind.status).toBe(400);
+    });
+
+    it('answers 410 on every old /bills route', async () => {
+      for (const [method, path] of [['GET', '/bills'], ['POST', '/bills'], ['GET', `/bills/${randomUUID()}`], ['POST', `/bills/${randomUUID()}/pay`]]) {
+        const res = await request(method, path, method === 'POST' ? {} : undefined);
+        expect(res.status).toBe(410);
+        expect(res.body.error.code).toBe('BILL_GONE');
+      }
+    });
   });
 });

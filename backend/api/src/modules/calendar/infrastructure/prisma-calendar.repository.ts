@@ -1,8 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../infrastructure/prisma/prisma.service';
-import { dayString } from '../../bills/domain/bill';
+import { occurrencesInRange } from '../../recurring/domain/calendar';
 import type { CalendarRepository, CalendarSource } from '../domain/calendar.repository';
 import { CalendarError, profileToday, type CalendarMonthBounds } from '../domain/calendar';
+
+function dayString(value: Date): string {
+  return value.toISOString().slice(0, 10);
+}
 
 @Injectable()
 export class PrismaCalendarRepository implements CalendarRepository {
@@ -18,7 +22,7 @@ export class PrismaCalendarRepository implements CalendarRepository {
     const from = new Date(`${bounds.from}T00:00:00.000Z`);
     const to = new Date(`${bounds.to}T00:00:00.000Z`);
 
-    const [transactions, recurringRules, bills] = await Promise.all([
+    const [transactions, recurringRules, remindRules] = await Promise.all([
       this.prisma.transaction.findMany({
         where: {
           userId,
@@ -37,7 +41,7 @@ export class PrismaCalendarRepository implements CalendarRepository {
         orderBy: [{ occurredOn: 'asc' }, { id: 'asc' }],
       }),
       this.prisma.recurringRule.findMany({
-        where: { userId, active: true },
+        where: { userId, active: true, mode: 'auto' },
         select: {
           id: true,
           type: true,
@@ -53,23 +57,56 @@ export class PrismaCalendarRepository implements CalendarRepository {
         },
         orderBy: [{ id: 'asc' }],
       }),
-      this.prisma.bill.findMany({
-        where: {
-          userId,
-          dueOn: { gte: from, lte: to },
-        },
+      this.prisma.recurringRule.findMany({
+        where: { userId, mode: 'remind' },
         select: {
           id: true,
           name: true,
-          dueOn: true,
           amountMinor: true,
           amountKind: true,
           currencyCode: true,
-          paidTransactionId: true,
+          unit: true,
+          interval: true,
+          startDate: true,
+          endDate: true,
+          nextExecutionDate: true,
+          active: true,
+          occurrences: { where: { occurredOn: { gte: from, lte: to } }, select: { occurredOn: true, transactionClientId: true } },
         },
-        orderBy: [{ dueOn: 'asc' }, { id: 'asc' }],
+        orderBy: [{ id: 'asc' }],
       }),
     ]);
+
+    const clientIds = remindRules.flatMap(rule => rule.occurrences.map(item => item.transactionClientId));
+    const paidTransactions = clientIds.length
+      ? await this.prisma.transaction.findMany({ where: { userId, clientId: { in: clientIds } }, select: { id: true, clientId: true } })
+      : [];
+    const paidIdByClient = new Map(paidTransactions.map(row => [row.clientId, row.id]));
+    const bills: CalendarSource['bills'] = [];
+    for (const rule of remindRules) {
+      const base = {
+        id: rule.id,
+        name: rule.name ?? '',
+        amountMinor: -rule.amountMinor,
+        amountKind: rule.amountKind,
+        currencyCode: rule.currencyCode.trim(),
+      };
+      for (const item of rule.occurrences) {
+        bills.push({ ...base, dueOn: dayString(item.occurredOn), paidTransactionId: paidIdByClient.get(item.transactionClientId) ?? null });
+      }
+      for (const dueOn of occurrencesInRange({
+        nextExecutionDate: dayString(rule.nextExecutionDate),
+        startDate: dayString(rule.startDate),
+        endDate: rule.endDate ? dayString(rule.endDate) : null,
+        rangeFrom: bounds.from,
+        rangeTo: bounds.to,
+        unit: rule.unit,
+        interval: rule.interval,
+        active: rule.active,
+      })) {
+        bills.push({ ...base, dueOn, paidTransactionId: null });
+      }
+    }
 
     return {
       timezone: user.timezone,
@@ -96,15 +133,7 @@ export class PrismaCalendarRepository implements CalendarRepository {
         nextExecutionDate: dayString(row.nextExecutionDate),
         active: row.active,
       })),
-      bills: bills.map(row => ({
-        id: row.id,
-        name: row.name,
-        dueOn: dayString(row.dueOn),
-        amountMinor: row.amountMinor,
-        amountKind: row.amountKind,
-        currencyCode: row.currencyCode,
-        paidTransactionId: row.paidTransactionId,
-      })),
+      bills,
     };
   }
 }

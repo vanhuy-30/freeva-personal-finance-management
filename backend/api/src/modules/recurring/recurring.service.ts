@@ -1,14 +1,20 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { minor, normalizeRate } from '../transactions/domain/transaction';
 import { RECURRING_REPOSITORY, type RecurringRepository } from './domain/recurring.repository';
-import { dayString, parseDay, type RecurringRule } from './domain/recurring';
-import type { CreateRecurringDto, RecurringQueryDto, UpdateRecurringDto } from './recurring.dto';
+import { dayString, parseDay, remindFlags, RecurringError, type RecurringRule } from './domain/recurring';
+import type { ConfirmRecurringDto, CreateRecurringDto, RecurringQueryDto, UpdateRecurringDto } from './recurring.dto';
 
-function response(rule: RecurringRule) {
+function response(rule: RecurringRule, today: string) {
+  const flags = remindFlags(rule, today);
   return {
     id: rule.id,
     clientId: rule.clientId,
     type: rule.type,
+    mode: rule.mode,
+    name: rule.name,
+    amountKind: rule.amountKind,
+    remindDaysBefore: rule.remindDaysBefore,
+    overdue: flags.overdue,
     unit: rule.unit,
     interval: rule.interval,
     amountMinor: rule.amountMinor.toString(),
@@ -34,35 +40,43 @@ export class RecurringService {
   constructor(@Inject(RECURRING_REPOSITORY) private readonly repository: RecurringRepository) {}
 
   async create(userId: string, dto: CreateRecurringDto) {
+    const mode = dto.mode ?? 'auto';
+    const startDate = parseDay(dto.startDate);
     const result = await this.repository.create(userId, {
       clientId: dto.clientId,
       type: dto.type,
+      mode,
+      name: dto.name == null ? null : dto.name.trim(),
+      amountKind: dto.amountKind ?? 'fixed',
+      remindDaysBefore: dto.remindDaysBefore ?? 3,
       unit: dto.unit,
       interval: dto.interval,
       amountMinor: minor(dto.amountMinor),
       currencyCode: dto.currencyCode,
-      accountId: dto.accountId,
+      accountId: dto.accountId ?? null,
       categoryId: dto.categoryId === undefined ? null : dto.categoryId,
       counterAccountId: dto.counterAccountId === undefined ? null : dto.counterAccountId,
       counterAmountMinor: dto.counterAmountMinor == null ? null : minor(dto.counterAmountMinor),
       counterCurrencyCode: dto.counterCurrencyCode === undefined ? null : dto.counterCurrencyCode,
       fxRate: dto.fxRate == null ? null : normalizeRate(dto.fxRate),
-      startDate: parseDay(dto.startDate),
-      endDate: dto.endDate == null ? null : parseDay(dto.endDate),
+      startDate,
+      endDate: dto.repeat === false ? startDate : dto.endDate == null ? null : parseDay(dto.endDate),
       nextExecutionDate: parseDay(dto.nextExecutionDate),
       active: dto.active ?? true,
     });
-    return { rule: response(result.rule), created: result.created };
+    return { rule: response(result.rule, await this.repository.todayForUser(userId)), created: result.created };
   }
 
   async find(userId: string, id: string) {
-    return response(await this.repository.find(userId, id));
+    const rule = await this.repository.find(userId, id);
+    return response(rule, await this.repository.todayForUser(userId));
   }
 
   async list(userId: string, query: RecurringQueryDto) {
     const result = await this.repository.list(userId, query);
+    const today = await this.repository.todayForUser(userId);
     return {
-      items: result.items.map(response),
+      items: result.items.map(rule => response(rule, today)),
       total: result.total,
       page: query.page,
       pageSize: query.pageSize,
@@ -73,7 +87,7 @@ export class RecurringService {
     const {
       version, amountMinor, counterAmountMinor, fxRate, startDate, endDate, nextExecutionDate, ...rest
     } = dto;
-    return response(await this.repository.update(userId, id, {
+    const updated = await this.repository.update(userId, id, {
       version,
       ...rest,
       ...(amountMinor !== undefined ? { amountMinor: minor(amountMinor) } : {}),
@@ -84,7 +98,28 @@ export class RecurringService {
       ...(startDate !== undefined ? { startDate: parseDay(startDate) } : {}),
       ...(endDate !== undefined ? { endDate: endDate === null ? null : parseDay(endDate) } : {}),
       ...(nextExecutionDate !== undefined ? { nextExecutionDate: parseDay(nextExecutionDate) } : {}),
-    }));
+    });
+    return response(updated, await this.repository.todayForUser(userId));
+  }
+
+  async confirm(userId: string, id: string, dto: ConfirmRecurringDto) {
+    if (dto.transactionId !== undefined && (dto.accountId !== undefined || dto.amountMinor !== undefined)) {
+      throw new RecurringError('VALIDATION_ERROR');
+    }
+    const result = await this.repository.confirm(userId, id, {
+      version: dto.version,
+      occurredOn: parseDay(dto.occurredOn),
+      transactionId: dto.transactionId ?? null,
+      accountId: dto.accountId ?? null,
+      categoryId: dto.categoryId ?? null,
+      amountMinor: dto.amountMinor === undefined ? null : minor(dto.amountMinor),
+      paidOn: dto.paidOn === undefined ? null : parseDay(dto.paidOn),
+    });
+    return {
+      rule: response(result.rule, await this.repository.todayForUser(userId)),
+      transactionId: result.transactionId,
+      replayed: result.replayed,
+    };
   }
 
   delete(userId: string, id: string, version: number) {

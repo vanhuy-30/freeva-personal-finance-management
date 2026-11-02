@@ -4,7 +4,7 @@ import {
 import type { Response } from 'express';
 import { AuthGuard, type AuthRequest } from '../auth/auth.guard';
 import { RecurringError } from './domain/recurring';
-import { CreateRecurringDto, DeleteRecurringDto, RecurringIdDto, RecurringQueryDto, UpdateRecurringDto } from './recurring.dto';
+import { ConfirmRecurringDto, CreateRecurringDto, DeleteRecurringDto, RecurringIdDto, RecurringQueryDto, UpdateRecurringDto } from './recurring.dto';
 import { RecurringExceptionFilter } from './recurring-exception.filter';
 import { RecurringService } from './recurring.service';
 
@@ -42,6 +42,11 @@ export class RecurringController {
   @Get(':id') @Header('Cache-Control', 'no-store')
   find(@Req() req: AuthRequest, @Param() params: RecurringIdDto) {
     return this.recurring.find(req.session.userId, params.id);
+  }
+
+  @Post(':id/confirm') @HttpCode(200) @Header('Cache-Control', 'no-store')
+  confirm(@Req() req: AuthRequest, @Param() params: RecurringIdDto, @Body() body: ConfirmRecurringDto) {
+    return this.recurring.confirm(req.session.userId, params.id, body);
   }
 
   @Patch(':id') @Header('Cache-Control', 'no-store')

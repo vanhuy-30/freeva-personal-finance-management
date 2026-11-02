@@ -8,7 +8,7 @@ Một tháng lịch dân sự (`YYYY-MM`) theo `User.timezone`:
 
 - Giao dịch đã ghi (`deletedAt` null, `occurredOn` trong tháng). Chuyển khoản một mục theo `transferGroupId`.
 - Lần chạy định kỳ từ rule `active`, chiếu từ `nextExecutionDate` bằng `addInterval` (kẹp ngày 31). Không chiếu kỳ trước `nextExecutionDate`.
-- Hạn hóa đơn (`dueOn` trong tháng), kể cả đã trả. `overdue` tính khi đọc.
+- Hạn hóa đơn trong tháng, kể cả đã trả. Lấy từ rule `remind` (hạn đang chờ + hạn đã xác nhận); không có dữ liệu riêng. `overdue` tính khi đọc. `id` là id rule.
 
 Phase 3 (trả nợ, đáo hạn thẻ, đóng góp mục tiêu) chưa có trong API này.
 

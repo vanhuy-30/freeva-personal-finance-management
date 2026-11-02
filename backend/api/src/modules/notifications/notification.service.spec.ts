@@ -38,6 +38,7 @@ describe('BE-P2-E05 notification service', () => {
         periodFrom: '2026-10-01',
         crossedThresholds: [70, 80, 100],
         recurringSoon: [{ id: 'r1', nextExecutionDate: '2026-10-29' }],
+        billsDue: [],
         creditCards: [],
       }),
     });
@@ -74,6 +75,7 @@ describe('BE-P2-E05 notification service', () => {
         periodFrom: '2026-10-01',
         crossedThresholds: [],
         recurringSoon: [],
+        billsDue: [],
         creditCards: [{
           id: 'card-1',
           paymentDueDay: 15,
@@ -114,6 +116,7 @@ describe('BE-P2-E05 notification service', () => {
         periodFrom: '2026-10-01',
         crossedThresholds: [],
         recurringSoon: [],
+        billsDue: [],
         creditCards: [{
           id: 'card-2',
           paymentDueDay: 15,
@@ -146,6 +149,7 @@ describe('BE-P2-E05 notification service', () => {
         periodFrom: '2026-10-01',
         crossedThresholds: [80],
         recurringSoon: [{ id: 'r1', nextExecutionDate: '2026-10-29' }],
+        billsDue: [],
         creditCards: [{
           id: 'card-1',
           paymentDueDay: 28,
@@ -188,6 +192,7 @@ describe('BE-P2-E05 notification service', () => {
         periodFrom: '2026-10-01',
         crossedThresholds: [70],
         recurringSoon: [],
+        billsDue: [],
         creditCards: [],
       }),
     });
@@ -198,5 +203,36 @@ describe('BE-P2-E05 notification service', () => {
 
   it('surfaces NotificationError from put', async () => {
     expect(new NotificationError('VALIDATION_ERROR').code).toBe('VALIDATION_ERROR');
+  });
+
+  it('notifies a bill inside its lead window once, and again as overdue, with no money params', async () => {
+    const createIfAbsent = jest.fn().mockResolvedValue(true);
+    const now = new Date('2026-10-28T03:00:00.000Z');
+    const repository = repo({
+      createIfAbsent,
+      loadEvaluateContext: jest.fn().mockResolvedValue({
+        userId: 'u1',
+        timezone: 'Asia/Ho_Chi_Minh',
+        today: '2026-10-28',
+        prefs: { ...defaultPreference(), quietHoursEnabled: false, cardEnabled: false, createdAt: now, updatedAt: now },
+        periodFrom: null,
+        crossedThresholds: [],
+        recurringSoon: [],
+        billsDue: [
+          { id: 'b1', dueDate: '2026-10-30', daysLeft: 2 },
+          { id: 'b2', dueDate: '2026-10-25', daysLeft: -3 },
+        ],
+        creditCards: [],
+      }),
+    });
+    const service = new NotificationService(repository);
+    await expect(service.evaluate('u1', now)).resolves.toEqual({ created: 2 });
+    expect(createIfAbsent.mock.calls.map(call => [call[0].dedupeKey, call[0].titleKey])).toEqual([
+      ['bill|due|b1|2026-10-30', 'bill_due'],
+      ['bill|overdue|b2|2026-10-25', 'bill_overdue'],
+    ]);
+    for (const call of createIfAbsent.mock.calls) {
+      expect(JSON.stringify(call[0].params)).not.toMatch(/amount|Minor|balance/i);
+    }
   });
 });
