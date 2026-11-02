@@ -34,6 +34,13 @@ export type RecurringSoonRow = {
   nextExecutionDate: string;
 };
 
+/** Pending bill (remind rule): within its lead window, or already past due (daysLeft < 0). */
+export type BillDueRow = {
+  id: string;
+  dueDate: string;
+  daysLeft: number;
+};
+
 /** Active credit wallet for card alerts (BE-P2-E07). Balance includes initial + undeleted legs. */
 export type CreditCardRow = {
   id: string;
@@ -52,6 +59,7 @@ export type EvaluateUserContext = {
   periodFrom: string | null;
   crossedThresholds: number[];
   recurringSoon: RecurringSoonRow[];
+  billsDue: BillDueRow[];
   creditCards: CreditCardRow[];
 };
 

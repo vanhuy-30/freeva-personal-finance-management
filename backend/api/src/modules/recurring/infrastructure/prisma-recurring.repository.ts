@@ -8,7 +8,7 @@ import { categoryKindFits, normalizeRate, type TransactionInput } from '../../tr
 import { createTransactionInTx } from '../../transactions/infrastructure/create-transaction-in-tx';
 import { addInterval, anchorDay, dueDates } from '../domain/calendar';
 import { occurrenceClientId } from '../domain/occurrence-id';
-import type { RecurringRepository, RecurringRunResult } from '../domain/recurring.repository';
+import type { ConfirmInput, ConfirmResult, RecurringRepository, RecurringRunResult } from '../domain/recurring.repository';
 import {
   assertRecurringVersion,
   dayString,
@@ -24,6 +24,7 @@ const select = {
   id: true, clientId: true, type: true, unit: true, interval: true, amountMinor: true, currencyCode: true,
   accountId: true, categoryId: true, counterAccountId: true, counterAmountMinor: true, counterCurrencyCode: true,
   fxRate: true, startDate: true, endDate: true, nextExecutionDate: true, active: true, version: true,
+  mode: true, name: true, amountKind: true, remindDaysBefore: true,
   createdAt: true, updatedAt: true,
 } satisfies Prisma.RecurringRuleSelect;
 
@@ -34,6 +35,10 @@ function mapRule(row: Row): RecurringRule {
     id: row.id,
     clientId: row.clientId,
     type: row.type,
+    mode: row.mode,
+    name: row.name,
+    amountKind: row.amountKind,
+    remindDaysBefore: row.remindDaysBefore,
     unit: row.unit,
     interval: row.interval,
     amountMinor: row.amountMinor,
@@ -90,21 +95,27 @@ export class PrismaRecurringRepository implements RecurringRepository {
   }
 
   private async validateAccounts(tx: Prisma.TransactionClient, userId: string, input: RecurringInput): Promise<void> {
-    const ids = [input.accountId, ...(input.counterAccountId ? [input.counterAccountId] : [])].sort();
-    await tx.$queryRaw(Prisma.sql`SELECT id FROM "FinancialAccount" WHERE "userId" = ${userId}::uuid
-      AND id IN (${Prisma.join(ids.map(id => Prisma.sql`${id}::uuid`))}) ORDER BY id FOR UPDATE`);
+    const ids = [...(input.accountId ? [input.accountId] : []), ...(input.counterAccountId ? [input.counterAccountId] : [])].sort();
+    const digits: Record<string, number> = {};
+    if (ids.length) {
+      await tx.$queryRaw(Prisma.sql`SELECT id FROM "FinancialAccount" WHERE "userId" = ${userId}::uuid
+        AND id IN (${Prisma.join(ids.map(id => Prisma.sql`${id}::uuid`))}) ORDER BY id FOR UPDATE`);
+    }
     const accounts = await tx.financialAccount.findMany({
       where: { userId, id: { in: ids } },
       include: { currency: true },
     });
     if (accounts.length !== ids.length) throw new RecurringError('VALIDATION_ERROR');
-    const digits: Record<string, number> = {};
     for (const account of accounts) {
       if (account.archivedAt) throw new RecurringError('RECURRING_CONFLICT');
       digits[account.currencyCode.trim()] = account.currency.minorDigits;
     }
-    const source = accounts.find(item => item.id === input.accountId)!;
-    if (source.currencyCode.trim() !== input.currencyCode) throw new RecurringError('VALIDATION_ERROR');
+    if (input.accountId) {
+      const source = accounts.find(item => item.id === input.accountId)!;
+      if (source.currencyCode.trim() !== input.currencyCode) throw new RecurringError('VALIDATION_ERROR');
+    } else if (!await tx.currency.findUnique({ where: { code: input.currencyCode } })) {
+      throw new RecurringError('VALIDATION_ERROR');
+    }
     if (input.counterAccountId) {
       const counter = accounts.find(item => item.id === input.counterAccountId)!;
       if (counter.currencyCode.trim() !== input.counterCurrencyCode) throw new RecurringError('VALIDATION_ERROR');
@@ -126,6 +137,10 @@ export class PrismaRecurringRepository implements RecurringRepository {
         const current = mapRule(existing);
         if (
           current.type !== input.type ||
+          current.mode !== input.mode ||
+          current.name !== input.name ||
+          current.amountKind !== input.amountKind ||
+          current.remindDaysBefore !== input.remindDaysBefore ||
           current.unit !== input.unit ||
           current.interval !== input.interval ||
           current.amountMinor !== input.amountMinor ||
@@ -151,6 +166,10 @@ export class PrismaRecurringRepository implements RecurringRepository {
           userId,
           clientId: input.clientId,
           type: input.type,
+          mode: input.mode,
+          name: input.name,
+          amountKind: input.amountKind,
+          remindDaysBefore: input.remindDaysBefore,
           unit: input.unit,
           interval: input.interval,
           amountMinor: input.amountMinor,
@@ -181,6 +200,7 @@ export class PrismaRecurringRepository implements RecurringRepository {
       const where: Prisma.RecurringRuleWhereInput = {
         userId,
         ...(query.active === undefined ? {} : { active: query.active }),
+        ...(query.mode === undefined ? {} : { mode: query.mode }),
       };
       const [rows, total] = await Promise.all([
         tx.recurringRule.findMany({
@@ -204,11 +224,15 @@ export class PrismaRecurringRepository implements RecurringRepository {
       const next: RecurringInput = {
         clientId: current.clientId,
         type: current.type,
+        mode: current.mode,
+        name: fields.name === undefined ? current.name : fields.name,
+        amountKind: fields.amountKind ?? current.amountKind,
+        remindDaysBefore: fields.remindDaysBefore ?? current.remindDaysBefore,
         unit: fields.unit ?? current.unit,
         interval: fields.interval ?? current.interval,
         amountMinor: fields.amountMinor ?? current.amountMinor,
         currencyCode: fields.currencyCode ?? current.currencyCode,
-        accountId: fields.accountId ?? current.accountId,
+        accountId: fields.accountId === undefined ? current.accountId : fields.accountId,
         categoryId: fields.categoryId === undefined ? current.categoryId : fields.categoryId,
         counterAccountId: fields.counterAccountId === undefined ? current.counterAccountId : fields.counterAccountId,
         counterAmountMinor: fields.counterAmountMinor === undefined ? current.counterAmountMinor : fields.counterAmountMinor,
@@ -223,6 +247,9 @@ export class PrismaRecurringRepository implements RecurringRepository {
       const row = await tx.recurringRule.update({
         where: { id, userId, version: patch.version },
         data: {
+          name: next.name,
+          amountKind: next.amountKind,
+          remindDaysBefore: next.remindDaysBefore,
           unit: next.unit,
           interval: next.interval,
           amountMinor: next.amountMinor,
@@ -253,10 +280,88 @@ export class PrismaRecurringRepository implements RecurringRepository {
     });
   }
 
+  async todayForUser(userId: string, now = new Date()): Promise<string> {
+    const user = await this.prisma.user.findUnique({ where: { id: userId }, select: { timezone: true } });
+    if (!user) throw new RecurringError('RECURRING_NOT_FOUND');
+    return todayInTimeZone(user.timezone, now);
+  }
+
+  confirm(userId: string, id: string, input: ConfirmInput): Promise<ConfirmResult> {
+    return this.write(userId, async tx => {
+      await tx.$queryRaw`SELECT id FROM "RecurringRule" WHERE id = ${id}::uuid AND "userId" = ${userId}::uuid FOR UPDATE`;
+      const rule = await this.get(tx, userId, id);
+      if (rule.mode !== 'remind') throw new RecurringError('VALIDATION_ERROR');
+      const occurredOn = dayString(input.occurredOn);
+      const existing = await tx.recurringOccurrence.findUnique({
+        where: { ruleId_occurredOn: { ruleId: id, occurredOn: input.occurredOn } },
+      });
+      if (existing) {
+        const paid = await tx.transaction.findFirst({
+          where: { userId, clientId: existing.transactionClientId },
+          select: { id: true, clientId: true },
+        });
+        if (!paid) throw new RecurringError('RECURRING_CONFLICT');
+        if (input.transactionId !== null && input.transactionId !== paid.id) throw new RecurringError('RECURRING_CONFLICT');
+        return { rule, transactionId: paid.id, replayed: true };
+      }
+      assertRecurringVersion(rule.version, input.version);
+      if (!rule.active || dayString(rule.nextExecutionDate) !== occurredOn) throw new RecurringError('RECURRING_CONFLICT');
+
+      let transactionId: string;
+      let transactionClientId: string;
+      if (input.transactionId !== null) {
+        const linked = await tx.transaction.findFirst({
+          where: { id: input.transactionId, userId, deletedAt: null },
+          select: { id: true, clientId: true, type: true },
+        });
+        if (!linked || linked.type !== 'expense') throw new RecurringError('VALIDATION_ERROR');
+        const taken = await tx.recurringOccurrence.findFirst({
+          where: { transactionClientId: linked.clientId, rule: { userId } },
+          select: { id: true },
+        });
+        if (taken) throw new RecurringError('RECURRING_CONFLICT');
+        transactionId = linked.id;
+        transactionClientId = linked.clientId;
+      } else {
+        const accountId = input.accountId ?? rule.accountId;
+        if (accountId === null) throw new RecurringError('VALIDATION_ERROR');
+        const amountMinor = input.amountMinor === null ? rule.amountMinor : -input.amountMinor;
+        const paidOn = input.paidOn ?? toDate(await this.todayForUser(userId));
+        const clientId = occurrenceClientId(rule.id, occurredOn, 0);
+        const posted = await createTransactionInTx(tx, userId, {
+          type: 'expense',
+          occurredOn: paidOn,
+          occurredTime: null,
+          categoryId: input.categoryId ?? rule.categoryId,
+          notes: null,
+          merchant: null,
+          tagIds: [],
+          legs: [{ clientId, accountId, currencyCode: rule.currencyCode, amountMinor }],
+          fx: null,
+        }, { recurringRuleId: rule.id });
+        transactionId = posted.transaction.legs[0].id;
+        transactionClientId = clientId;
+      }
+
+      await tx.recurringOccurrence.create({
+        data: { ruleId: id, occurredOn: input.occurredOn, transactionClientId },
+      });
+      const cursor = addInterval(occurredOn, rule.unit, rule.interval, anchorDay(dayString(rule.startDate)));
+      const finished = rule.endDate !== null && cursor > dayString(rule.endDate);
+      const row = await tx.recurringRule.update({
+        where: { id, userId, version: input.version },
+        data: { nextExecutionDate: toDate(cursor), active: !finished, version: { increment: 1 } },
+        select,
+      });
+      return { rule: mapRule(row), transactionId, replayed: false };
+    });
+  }
+
   async runDue(userId: string | null, now = new Date()): Promise<RecurringRunResult> {
     const due = await this.prisma.recurringRule.findMany({
       where: {
         active: true,
+        mode: 'auto',
         ...(userId ? { userId } : {}),
       },
       select: { id: true, userId: true },
@@ -280,7 +385,7 @@ export class PrismaRecurringRepository implements RecurringRepository {
           await touchFinancialOwner(tx, userId);
           await tx.$queryRaw`SELECT id FROM "RecurringRule" WHERE id = ${ruleId}::uuid AND "userId" = ${userId}::uuid FOR UPDATE`;
           const row = await tx.recurringRule.findFirst({ where: { id: ruleId, userId }, select });
-          if (!row || !row.active) return { created: 0, skipped: 0 };
+          if (!row || !row.active || row.mode !== 'auto') return { created: 0, skipped: 0 };
           const user = await tx.user.findUnique({ where: { id: userId }, select: { timezone: true } });
           if (!user) return { created: 0, skipped: 0 };
           const today = todayInTimeZone(user.timezone, now);
@@ -333,7 +438,7 @@ export class PrismaRecurringRepository implements RecurringRepository {
     const sourceClientId = occurrenceClientId(rule.id, occurredOn, 0);
     const legs = [{
       clientId: sourceClientId,
-      accountId: rule.accountId,
+      accountId: rule.accountId!,
       currencyCode: rule.currencyCode,
       amountMinor: rule.amountMinor,
     }];

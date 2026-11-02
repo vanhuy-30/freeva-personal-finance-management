@@ -1,8 +1,17 @@
 import { daysInMonth, formatCalendarParts, parseCalendarParts, RecurringCalendarError } from '../../recurring/domain/calendar';
 import { todayInTimeZone } from '../../reports/domain/report';
 import type { TransactionType } from '../../transactions/domain/transaction';
-import type { BillAmountKind } from '../../bills/domain/bill';
-import { billFlags } from '../../bills/domain/bill';
+
+export type BillAmountKind = 'fixed' | 'estimated';
+
+/** Derived on read: paid wins; else overdue when the due day is before today in the profile timezone. */
+export function billFlags(bill: { dueOn: string; paidTransactionId: string | null }, today: string): {
+  paid: boolean;
+  overdue: boolean;
+} {
+  if (bill.paidTransactionId !== null) return { paid: true, overdue: false };
+  return { paid: false, overdue: bill.dueOn < today };
+}
 
 export class CalendarError extends Error {
   constructor(readonly code: 'VALIDATION_ERROR') {
@@ -136,10 +145,7 @@ export function buildMonth(options: {
   }
   for (const bill of options.bills) {
     if (bill.dueOn < bounds.from || bill.dueOn > bounds.to) continue;
-    const flags = billFlags(
-      { dueOn: new Date(`${bill.dueOn}T00:00:00.000Z`), paidTransactionId: bill.paidTransactionId },
-      options.today,
-    );
+    const flags = billFlags(bill, options.today);
     day(bill.dueOn).bills.push({ ...bill, paid: flags.paid, overdue: flags.overdue });
   }
 

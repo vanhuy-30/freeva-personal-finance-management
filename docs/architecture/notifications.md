@@ -55,3 +55,6 @@ Firebase Cloud Messaging là nhà cung cấp push ([ADR 013](adr/013-fcm-push.md
 
 **Mobile.** `PushRegistrationListener` đăng ký token sau khi mở khóa và khi resume, chỉ nếu đã được cấp quyền. Quyền được xin khi người dùng bật một loại thông báo (không xin lúc mở app). Đăng xuất / `forgetDevice` xóa token FCM trên máy; server cascade lo phía API. Build thiếu `google-services.json` / `GoogleService-Info.plist` thì push tắt, không lỗi.
 
+## Hóa đơn (BE-P3-001)
+
+Loại `recurring` thêm `bill_due` (trong `remindDaysBefore` ngày trước hạn của rule `remind`) và `bill_overdue` (một lần khi quá hạn), dedupe `bill|due|overdue + ruleId + hạn`. Params chỉ có `ruleId`, `dueDate`, `days`; không có số tiền. Xem [bills.md](bills.md).

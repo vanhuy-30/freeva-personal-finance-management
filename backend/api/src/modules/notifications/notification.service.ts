@@ -2,6 +2,7 @@ import { Inject, Injectable, Logger, Optional } from '@nestjs/common';
 import { PUSH_DISPATCHER, type PushDispatcher } from '../push/domain/push-sender';
 import {
   assertKindWritable,
+  billDueDedupeKey,
   budgetDedupeKey,
   budgetNotifyThresholds,
   CARD_DUE_WINDOW_DAYS,
@@ -162,6 +163,21 @@ export class NotificationService {
           titleKey: 'recurring_soon',
           bodyKey: 'recurring_soon_body',
           params: { executionDate: rule.nextExecutionDate },
+        });
+        if (ok) created += 1;
+      }
+    }
+
+    if (context.prefs.recurringEnabled) {
+      for (const bill of context.billsDue) {
+        const overdue = bill.daysLeft < 0;
+        const ok = await this.repository.createIfAbsent({
+          userId,
+          kind: 'recurring',
+          dedupeKey: billDueDedupeKey(bill.id, bill.dueDate, overdue),
+          titleKey: overdue ? 'bill_overdue' : 'bill_due',
+          bodyKey: overdue ? 'bill_overdue_body' : 'bill_due_body',
+          params: { ruleId: bill.id, dueDate: bill.dueDate, days: Math.abs(bill.daysLeft) },
         });
         if (ok) created += 1;
       }

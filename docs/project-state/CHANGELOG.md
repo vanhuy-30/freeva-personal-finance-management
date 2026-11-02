@@ -4,6 +4,7 @@ Nhật ký repo/process — không phải App Store release notes.
 
 ## 2026-11-02
 
+- `BE-P3-001`: gộp hóa đơn vào giao dịch định kỳ — rule `remind` thay `Bill`, `POST /recurring-transactions/{id}/confirm`, nhắc `bill_due` / `bill_overdue`, lịch đọc từ rule, `/api/v1/bills` trả 410. Migration `20261102200000_recurring_remind_mode` (additive, giữ bảng `Bill`); cần deploy trước API. MOB-P3-001 chưa làm. [Thiết kế](../architecture/bills.md).
 - **Phạm vi product v1 đổi** (quyết định chủ dự án): `BE-P4-E01` / `MOB-P4-E01` và `QA-P4-E01` (tài sản và đầu tư) thành `Gate: v1`; `BE-P5-E03`, `BE-P5-E04`, `BE-P5-E08`, `PRD-P5-E01` (gợi ý danh mục, insight, cờ server, consent AI) thành `post-v1`. Đồng bộ roadmap, MoSCoW, spec-alignment, STATUS, tasks. Roadmap sửa “Phase hiện tại” từ 2 thành 3.
 - **Phạm vi v1 bổ sung** (quyết định chủ dự án): `BE-P4-E02` tài sản ròng thành `Gate: v1`; đầu tư v1 gồm vàng, cổ phiếu, quỹ, tiền gửi, bất động sản, crypto, giá nhập tay, mua = chuyển vào giá vốn. Module 11 gộp vào 12 (`BE-P3-E03` wont). Thêm `P3-001`…`011`: gộp hóa đơn vào định kỳ, thẻ soát tháng, ngưỡng ngân sách 80/100, ẩn quy đổi, đối soát số dư, nhắc ghi chi, cho mượn/đi mượn, hoàn tiền, trả góp thẻ, xuất CSV, nhập CSV. Trạng thái task thêm `wont`.
 - Chốt thêm: trả góp ghi chi một lần lúc mua (`BE-P3-009`); lãi/lỗ bán đầu tư chỉ hiện ở màn đầu tư; onboarding còn ba câu — mục tiêu sử dụng, thu nhập, mục tiêu tiết kiệm (`DS-P3-012` / `BE-P3-012` / `MOB-P3-012`). `MOB-P3-002` thu hẹp vì thẻ soát tháng đã có.

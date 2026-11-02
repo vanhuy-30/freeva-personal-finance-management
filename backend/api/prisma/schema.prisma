@@ -45,6 +45,12 @@ enum RecurringUnit {
   year
 }
 
+/// auto posts on schedule; remind only reminds and waits for a user confirm (BE-P3-001).
+enum RecurringMode {
+  auto
+  remind
+}
+
 enum AuditActorType {
   user
   staff
@@ -372,7 +378,8 @@ model RecurringRule {
   interval            Int
   amountMinor         BigInt
   currencyCode        String          @db.Char(3)
-  accountId           String          @db.Uuid
+  /// Required for auto; optional default wallet for remind.
+  accountId           String?         @db.Uuid
   categoryId          String?         @db.Uuid
   counterAccountId    String?         @db.Uuid
   counterAmountMinor  BigInt?
@@ -382,12 +389,17 @@ model RecurringRule {
   endDate             DateTime?       @db.Date
   nextExecutionDate   DateTime        @db.Date
   active              Boolean         @default(true)
+  mode                RecurringMode   @default(auto)
+  /// Bill-style label, required for remind.
+  name                String?         @db.VarChar(80)
+  amountKind          BillAmountKind  @default(fixed)
+  remindDaysBefore    Int             @default(3)
   version             Int             @default(1)
   createdAt           DateTime        @default(now()) @db.Timestamptz
   updatedAt           DateTime        @updatedAt @db.Timestamptz
 
   user            User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  account         FinancialAccount      @relation("RecurringSourceAccount", fields: [accountId], references: [id])
+  account         FinancialAccount?     @relation("RecurringSourceAccount", fields: [accountId], references: [id])
   counterAccount  FinancialAccount?     @relation("RecurringCounterAccount", fields: [counterAccountId], references: [id])
   category        Category?             @relation(fields: [categoryId], references: [id])
   currency        Currency              @relation("RecurringCurrency", fields: [currencyCode], references: [code])

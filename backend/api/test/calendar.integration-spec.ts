@@ -185,15 +185,20 @@ describe('BE-P2-E04 calendar HTTP + PostgreSQL', () => {
         active: true,
       },
     });
-    await prisma.bill.create({
+    await prisma.recurringRule.create({
       data: {
         userId: owner,
         clientId: randomUUID(),
+        type: 'expense',
+        mode: 'remind',
         name: 'Internet',
-        dueOn: new Date('2026-10-12T00:00:00.000Z'),
-        amountMinor: 199000n,
-        amountKind: 'fixed',
+        unit: 'month',
+        interval: 1,
+        amountMinor: -199000n,
         currencyCode: 'VND',
+        startDate: new Date('2026-10-12T00:00:00.000Z'),
+        endDate: new Date('2026-10-12T00:00:00.000Z'),
+        nextExecutionDate: new Date('2026-10-12T00:00:00.000Z'),
       },
     });
 

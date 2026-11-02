@@ -5,6 +5,7 @@ import { crossedThresholds, totalSpent, type BudgetRecord } from '../../budgets/
 import { resolvePeriod, todayInTimeZone } from '../../reports/domain/report';
 import {
   dayBefore,
+  daysBetween,
   defaultPreference,
   NotificationError,
   type NotificationKind,
@@ -199,6 +200,7 @@ export class PrismaNotificationRepository implements NotificationRepository {
         periodFrom: null,
         crossedThresholds: [],
         recurringSoon: [],
+        billsDue: [],
         creditCards: [],
       };
     }
@@ -263,9 +265,18 @@ export class PrismaNotificationRepository implements NotificationRepository {
     const today = todayInTimeZone(user.timezone, now);
     const rules = await this.prisma.recurringRule.findMany({
       where: { userId, active: true },
-      select: { id: true, nextExecutionDate: true },
+      select: { id: true, nextExecutionDate: true, mode: true, remindDaysBefore: true },
     });
+    const billsDue = rules
+      .filter(rule => rule.mode === 'remind')
+      .map(rule => {
+        const dueDate = dayIso(rule.nextExecutionDate);
+        return { id: rule.id, dueDate, daysLeft: daysBetween(today, dueDate), lead: rule.remindDaysBefore };
+      })
+      .filter(rule => rule.daysLeft <= rule.lead)
+      .map(({ id, dueDate, daysLeft }) => ({ id, dueDate, daysLeft }));
     const recurringSoon = rules
+      .filter(rule => rule.mode === 'auto')
       .map(rule => ({ id: rule.id, nextExecutionDate: dayIso(rule.nextExecutionDate) }))
       .filter(rule => dayBefore(rule.nextExecutionDate) === today);
 
@@ -306,6 +317,7 @@ export class PrismaNotificationRepository implements NotificationRepository {
       periodFrom,
       crossedThresholds: crossed,
       recurringSoon,
+      billsDue,
       creditCards,
     };
   }

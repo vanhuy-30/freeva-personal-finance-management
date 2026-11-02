@@ -134,11 +134,15 @@ export interface AccountExportFxRate {
 
 export interface AccountExportRecurringRule extends Omit<SyncRow, 'createdAt' | 'updatedAt'> {
   type: 'income' | 'expense' | 'transfer';
+  mode: 'auto' | 'remind';
+  name: string | null;
+  amountKind: 'fixed' | 'estimated';
+  remindDaysBefore: number;
   unit: 'day' | 'week' | 'month' | 'year';
   interval: number;
   amountMinor: string;
   currencyCode: string;
-  accountId: string;
+  accountId: string | null;
   categoryId: string | null;
   counterAccountId: string | null;
   counterAmountMinor: string | null;
@@ -508,7 +512,8 @@ export function toAccountExport(source: ExportSource): AccountExport {
       fromCode: code(row.fromCode), toCode: code(row.toCode), rate: row.rate, quotedAt: iso(row.quotedAt), ...stamps(row),
     })),
     recurringRules: source.recurringRules.map(row => ({
-      id: row.id, clientId: row.clientId, type: row.type, unit: row.unit, interval: row.interval,
+      id: row.id, clientId: row.clientId, type: row.type, mode: row.mode, name: row.name,
+      amountKind: row.amountKind, remindDaysBefore: row.remindDaysBefore, unit: row.unit, interval: row.interval,
       amountMinor: row.amountMinor.toString(), currencyCode: code(row.currencyCode), accountId: row.accountId,
       categoryId: row.categoryId, counterAccountId: row.counterAccountId,
       counterAmountMinor: row.counterAmountMinor?.toString() ?? null,

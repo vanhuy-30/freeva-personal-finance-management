@@ -199,6 +199,10 @@ export function recurringDedupeKey(ruleId: string, executionDate: string): strin
   return `recurring|${ruleId}|${executionDate}`;
 }
 
+export function billDueDedupeKey(ruleId: string, dueDate: string, overdue: boolean): string {
+  return `bill|${overdue ? 'overdue' : 'due'}|${ruleId}|${dueDate}`;
+}
+
 export function cardDueDedupeKey(accountId: string, dueDate: string): string {
   return `card|due|${accountId}|${dueDate}`;
 }
