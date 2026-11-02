@@ -4,6 +4,6 @@
 - **Prefix:** `BE`, `MOB`
 - **Epic:** `BE-P2-E02` / `MOB-P2-E02` (xong cơ bản)
 
-Ngân sách tổng tháng và theo danh mục. Hạn mức mặc định lặp mỗi tháng tài chính; có thể chỉnh riêng từng tháng (override). Đã chi / còn lại / %. Mức healthy / warning / critical / over; ngưỡng 70/80/90/100 sửa được. Kiến trúc: [budgets.md](../../architecture/budgets.md).
+Ngân sách tổng tháng và theo danh mục. Hạn mức mặc định lặp mỗi tháng tài chính; có thể chỉnh riêng từng tháng (override). Đã chi / còn lại / %. Mức healthy / warning / critical / over; ngưỡng mặc định 80/100, thêm tới 4 ngưỡng. Kiến trúc: [budgets.md](../../architecture/budgets.md).
 
 Còn sau: copy tháng trước, loại trừ từng giao dịch. Cảnh báo hộp thư ≥80% thuộc `BE-P2-E05`; push FCM `BE-P2-015`.
