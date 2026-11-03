@@ -2,11 +2,11 @@ import { TransactionError } from './transaction-error';
 import { evaluateTransfer } from './transfer-balance';
 export { TransactionError } from './transaction-error';
 export { normalizeRate, convertedMinor } from './transaction-money';
-/** Types a client may create directly. `adjustment` is only written by wallet reconciliation (BE-P3-005), `debt` by lend/borrow (BE-P3-007). */
+/** Types a client may create directly. `adjustment` is only written by wallet reconciliation (BE-P3-005), `debt` by lend/borrow (BE-P3-007), `refund` by POST /transactions/{id}/refunds (BE-P3-008). */
 export const TRANSACTION_TYPES = ['income', 'expense', 'transfer'] as const;
 export type CreatableTransactionType = typeof TRANSACTION_TYPES[number];
 /** Every stored type, for filters and responses. */
-export const STORED_TRANSACTION_TYPES = [...TRANSACTION_TYPES, 'adjustment', 'debt'] as const;
+export const STORED_TRANSACTION_TYPES = [...TRANSACTION_TYPES, 'adjustment', 'debt', 'refund'] as const;
 export type TransactionType = typeof STORED_TRANSACTION_TYPES[number];
 export interface LegInput {
   clientId: string;
@@ -28,7 +28,9 @@ export interface TransactionInput {
   tagIds: string[];
   fx: ManualFx | null;
 }
-export type TransactionPatch = Partial<Omit<TransactionInput, 'type'>> & { version: number; deleted?: boolean };
+/** `refunds` says what to do with active refunds when the original expense is deleted (BE-P3-008). */
+export type RefundDisposition = 'cascade' | 'keep';
+export type TransactionPatch = Partial<Omit<TransactionInput, 'type'>> & { version: number; deleted?: boolean; refunds?: RefundDisposition };
 export interface TransactionLeg extends LegInput {
   id: string;
   type: TransactionType;
@@ -39,6 +41,8 @@ export interface TransactionLeg extends LegInput {
   merchant: string | null;
   tagIds: string[];
   transferGroupId: string | null;
+  /** Only on `refund`: the expense it returns money for. */
+  refundOfId: string | null;
   fxQuoteId: string | null;
   deletedAt: Date | null;
   version: number;
@@ -62,7 +66,7 @@ export interface TransactionQuery {
  */
 export interface TransactionSummary {
   count: number;
-  totals: { currency: string; incomeMinor: bigint; expenseMinor: bigint; transferInMinor: bigint; transferOutMinor: bigint; adjustmentMinor: bigint; debtMinor: bigint }[];
+  totals: { currency: string; incomeMinor: bigint; expenseMinor: bigint; transferInMinor: bigint; transferOutMinor: bigint; adjustmentMinor: bigint; debtMinor: bigint; refundMinor: bigint }[];
 }
 export function minor(value: string): bigint {
   if (!/^-?[0-9]+(?![\s\S])/.test(value) || value.length > 20) throw new TransactionError('VALIDATION_ERROR');
@@ -83,7 +87,7 @@ export function occurredTime(value: string | null | undefined): string | null {
 }
 /** Expense takes `expense|both`, income takes `income|both`; transfers carry no category. */
 export function categoryKindFits(type: TransactionType, kind: 'expense' | 'income' | 'both'): boolean {
-  return type !== 'transfer' && type !== 'adjustment' && type !== 'debt' && (kind === 'both' || kind === type);
+  return type !== 'transfer' && type !== 'adjustment' && type !== 'debt' && type !== 'refund' && (kind === 'both' || kind === type);
 }
 export function validateInput(input: TransactionInput, digits: Record<string, number>): void {
   const { legs, type, fx } = input;
@@ -94,6 +98,10 @@ export function validateInput(input: TransactionInput, digits: Record<string, nu
   if (type === 'expense' && input.categoryId === null) throw new TransactionError('VALIDATION_ERROR');
   if (input.occurredTime !== null && !OCCURRED_TIME.test(input.occurredTime)) throw new TransactionError('VALIDATION_ERROR');
   if (input.merchant !== null && (input.merchant.length < 1 || input.merchant.length > 200)) throw new TransactionError('VALIDATION_ERROR');
+  if (type === 'refund') {
+    if (fx || input.categoryId === null || input.merchant !== null || source.amountMinor <= 0n) throw new TransactionError('VALIDATION_ERROR');
+    return;
+  }
   if (type === 'adjustment' || type === 'debt') {
     if (fx || input.categoryId !== null || input.merchant !== null || source.amountMinor === 0n) throw new TransactionError('VALIDATION_ERROR');
     return;

@@ -1,3 +1,4 @@
+import type { RefundInput } from './refund';
 import type { ReconcileInput, ReconcileResult } from './reconcile';
 import type { TransactionBundle, TransactionInput, TransactionLeg, TransactionPatch, TransactionQuery, TransactionSummary } from './transaction';
 export const TRANSACTION_REPOSITORY = Symbol('TRANSACTION_REPOSITORY');
@@ -24,5 +25,6 @@ export interface TransactionRepository {
   findRecentMatches(userId: string, query: RecentMatchQuery): Promise<RecentMatch[]>;
   list(userId: string, query: TransactionQuery): Promise<{ items: TransactionLeg[]; total: number; summary: TransactionSummary }>;
   update(userId: string, id: string, patch: TransactionPatch): Promise<TransactionBundle>;
+  refund(userId: string, originalId: string, input: RefundInput): Promise<{ transaction: TransactionBundle; created: boolean }>;
   reconcile(userId: string, accountId: string, input: ReconcileInput): Promise<ReconcileResult>;
 }

@@ -1,6 +1,7 @@
 import { Transform, Type } from 'class-transformer';
 import { ArrayMaxSize, ArrayMinSize, ArrayUnique, IsArray, IsBoolean, IsISO8601, IsIn, IsInt, IsObject, IsString, IsUUID, Length, Matches, Max, MaxLength, Min, ValidateIf, ValidateNested } from 'class-validator';
-import { STORED_TRANSACTION_TYPES, TRANSACTION_TYPES, type CreatableTransactionType, type TransactionType } from './domain/transaction';
+import { STORED_TRANSACTION_TYPES, TRANSACTION_TYPES, type CreatableTransactionType, type RefundDisposition, type TransactionType } from './domain/transaction';
+const REFUND_DISPOSITIONS = ['cascade', 'keep'] as const;
 const optional = (_: unknown, value: unknown) => value !== undefined;
 const nullable = (_: unknown, value: unknown) => value !== undefined && value !== null;
 const uuid = ({ value }: { value: unknown }) => typeof value === 'string' ? value.toLowerCase() : value;
@@ -40,6 +41,8 @@ export class UpdateTransactionDto {
   @ValidateIf(optional) @IsArray() @ArrayMaxSize(20) @ArrayUnique() @IsUUID('all', { each: true }) tagIds?: string[];
   @ValidateIf(nullable) @IsObject() @ValidateNested() @Type(() => ManualFxDto) fx?: ManualFxDto | null;
   @ValidateIf(optional) @IsBoolean() deleted?: boolean;
+  /** With `deleted: true` on an expense that has refunds. */
+  @ValidateIf(optional) @IsIn(REFUND_DISPOSITIONS) refunds?: RefundDisposition;
 }
 export class ReconcileDto {
   @Transform(uuid) @IsUUID() clientId!: string;
@@ -48,8 +51,18 @@ export class ReconcileDto {
   @ValidateIf(nullable) @IsString() @MaxLength(2000) notes?: string | null;
   @ValidateIf(optional) @IsBoolean() dryRun?: boolean;
 }
+export class RefundDto {
+  @Transform(uuid) @IsUUID() clientId!: string;
+  @Transform(uuid) @IsUUID() accountId!: string;
+  @IsString() @MaxLength(20) @Matches(/^[0-9]+(?![\s\S])/) amountMinor!: string;
+  @ValidateIf(nullable) @IsString() @Matches(/^\d{4}-\d{2}-\d{2}(?![\s\S])/) occurredOn?: string | null;
+  @ValidateIf(nullable) @IsString() @MaxLength(2000) notes?: string | null;
+}
 export class TransactionIdDto { @Transform(uuid) @IsUUID() id!: string }
-export class DeleteTransactionDto { @Type(() => Number) @IsInt() @Min(1) @Max(2147483646) version!: number }
+export class DeleteTransactionDto {
+  @Type(() => Number) @IsInt() @Min(1) @Max(2147483646) version!: number;
+  @ValidateIf(optional) @IsIn(REFUND_DISPOSITIONS) refunds?: RefundDisposition;
+}
 export class TransactionQueryDto {
   @Type(() => Number) @IsInt() @Min(1) @Max(2147483647) page = 1;
   @Type(() => Number) @IsInt() @Min(1) @Max(100) pageSize = 50;

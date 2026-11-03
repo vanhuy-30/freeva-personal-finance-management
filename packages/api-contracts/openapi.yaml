@@ -2722,6 +2722,7 @@ paths:
           - transfer
           - adjustment
           - debt
+          - refund
       - in: query
         name: from
         schema:
@@ -3005,6 +3006,13 @@ paths:
           type: integer
           minimum: 1
           maximum: 2147483646
+      - in: query
+        name: refunds
+        required: false
+        schema:
+          type: string
+          enum: [cascade, keep]
+        description: Required when the expense still has refunds (BE-P3-008); see UpdateTransaction.refunds.
   /api/v1/sync:
     post:
       operationId: syncTransactions
@@ -3533,6 +3541,121 @@ paths:
                 $ref: '#/components/schemas/ErrorEnvelope'
         '409':
           description: 'TRANSACTION_CONFLICT: archived wallet or clientId used by another transaction'
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: TRANSACTIONS_UNAVAILABLE
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/transactions/{id}/refunds:
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    post:
+      operationId: refundTransaction
+      summary: Refund an expense, fully or in part, into a wallet
+      description: Creates one `refund` row (positive, in the receiving wallet, same category as the expense, same currency). The refund is not income; reports and budgets net it out of the original expense's category and period, whatever date the refund has. The sum of active refunds may not exceed the expense (409 REFUND_EXCEEDS_ORIGINAL). A retry with the same clientId replays the stored refund. Edit or delete it through the transaction endpoints.
+      tags:
+      - Transactions
+      security:
+      - UserBearer: []
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Must equal body.clientId (case-insensitive).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefundRequest'
+      responses:
+        '201':
+          description: Refund created
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionBundle'
+        '200':
+          description: clientId replay
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionBundle'
+        '400':
+          description: VALIDATION_ERROR (also a wallet in another currency)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: SESSION_INVALID or auth error
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: TRANSACTION_NOT_FOUND or ACCOUNT_NOT_FOUND (also for another owner)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '409':
+          description: TRANSACTION_CONFLICT (not an active expense, archived wallet, conflicting replay) or REFUND_EXCEEDS_ORIGINAL
           headers:
             Cache-Control:
               schema:
@@ -6984,6 +7107,10 @@ components:
           type: boolean
           description: Soft-delete or restore the entire transfer pair. Other omitted fields retain their values; type and clientIds
             are immutable.
+        refunds:
+          type: string
+          enum: [cascade, keep]
+          description: 'With `deleted: true` on an expense that has refunds (BE-P3-008). Required then, else 409 REFUND_EXISTS. `cascade` deletes the refunds too (wallets lose that money); `keep` turns them into plain income without a category (wallet balances unchanged).'
     TransactionLeg:
       type: object
       additionalProperties: false
@@ -7007,6 +7134,7 @@ components:
       - merchant
       - tagIds
       - transferGroupId
+      - refundOfId
       - fxQuoteId
       - deletedAt
       - version
@@ -7039,6 +7167,7 @@ components:
           - transfer
           - adjustment
           - debt
+          - refund
         occurredOn:
           type: string
           format: date
@@ -7075,6 +7204,12 @@ components:
           - string
           - 'null'
           format: uuid
+        refundOfId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          description: Only on `refund`; the expense it returns money for (BE-P3-008).
         fxQuoteId:
           type:
           - string
@@ -7095,6 +7230,30 @@ components:
         updatedAt:
           type: string
           format: date-time
+    RefundRequest:
+      type: object
+      additionalProperties: false
+      required: [clientId, accountId, amountMinor]
+      properties:
+        clientId:
+          type: string
+          format: uuid
+        accountId:
+          type: string
+          format: uuid
+          description: Wallet that receives the money. Must use the expense's currency.
+        amountMinor:
+          type: string
+          pattern: ^[0-9]+$
+          maxLength: 20
+          description: Positive; at most the expense amount minus refunds already made.
+        occurredOn:
+          type: [string, 'null']
+          format: date
+          description: Defaults to today in the profile timezone.
+        notes:
+          type: [string, 'null']
+          maxLength: 2000
     ReconcileRequest:
       type: object
       additionalProperties: false
@@ -7382,7 +7541,7 @@ components:
           items:
             type: object
             additionalProperties: false
-            required: [currency, incomeMinor, expenseMinor, transferInMinor, transferOutMinor, adjustmentMinor, debtMinor]
+            required: [currency, incomeMinor, expenseMinor, transferInMinor, transferOutMinor, adjustmentMinor, debtMinor, refundMinor]
             properties:
               currency:
                 type: string
@@ -7410,6 +7569,10 @@ components:
                 type: string
                 pattern: ^-?[0-9]+$
                 description: Sum of matching `debt` rows (lend / borrow money movements, BE-P3-007); signed. Not income or expense.
+              refundMinor:
+                type: string
+                pattern: ^-?[0-9]+$
+                description: Sum of matching `refund` rows (BE-P3-008); positive. Not income; reports net it out of the original expense.
     CreateFinancialAccount:
       type: object
       additionalProperties: false
@@ -8593,6 +8756,7 @@ components:
       - transferMinor
       - adjustmentMinor
       - debtMinor
+      - refundMinor
       - netMinor
       properties:
         accountId:
@@ -8613,9 +8777,12 @@ components:
         debtMinor:
           $ref: '#/components/schemas/ReportMoney'
           description: Lend / borrow money movements (BE-P3-007). Not income or expense; excluded from totals, budgets and savings rate.
+        refundMinor:
+          $ref: '#/components/schemas/ReportMoney'
+          description: Refunds received in this wallet in the period (BE-P3-008), by the refund's own date. Totals and byCategory net them out of the original expense instead.
         netMinor:
           $ref: '#/components/schemas/ReportMoney'
-          description: incomeMinor + expenseMinor + transferMinor + adjustmentMinor + debtMinor for this account.
+          description: incomeMinor + expenseMinor + transferMinor + adjustmentMinor + debtMinor + refundMinor for this account.
     NetWorthReport:
       type: object
       additionalProperties: false
@@ -9377,7 +9544,7 @@ components:
     AccountExportTransaction:
       type: object
       additionalProperties: false
-      required: [id, clientId, type, amountMinor, currencyCode, occurredOn, occurredTime, accountId, categoryId, transferGroupId, fxQuoteId, recurringRuleId, notes, merchant, deletedAt, tagIds, version, createdAt, updatedAt]
+      required: [id, clientId, type, amountMinor, currencyCode, occurredOn, occurredTime, accountId, categoryId, transferGroupId, refundOfId, fxQuoteId, recurringRuleId, notes, merchant, deletedAt, tagIds, version, createdAt, updatedAt]
       properties:
         id:
           type: string
@@ -9387,7 +9554,7 @@ components:
           format: uuid
         type:
           type: string
-          enum: [income, expense, transfer, adjustment, debt]
+          enum: [income, expense, transfer, adjustment, debt, refund]
         amountMinor:
           $ref: '#/components/schemas/ReportMoney'
         currencyCode:
@@ -9406,6 +9573,9 @@ components:
           type: [string, 'null']
           format: uuid
         transferGroupId:
+          type: [string, 'null']
+          format: uuid
+        refundOfId:
           type: [string, 'null']
           format: uuid
         fxQuoteId:

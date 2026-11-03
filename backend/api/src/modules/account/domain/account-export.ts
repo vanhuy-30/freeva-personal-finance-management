@@ -137,7 +137,7 @@ export interface AccountExportFxRate {
 }
 
 export interface AccountExportRecurringRule extends Omit<SyncRow, 'createdAt' | 'updatedAt'> {
-  type: 'income' | 'expense' | 'transfer' | 'adjustment' | 'debt';
+  type: 'income' | 'expense' | 'transfer' | 'adjustment' | 'debt' | 'refund';
   mode: 'auto' | 'remind';
   name: string | null;
   amountKind: 'fixed' | 'estimated';
@@ -278,7 +278,7 @@ export interface AccountExportBudgetMonth extends AccountExportBudget {
 }
 
 export interface AccountExportTransaction extends Omit<SyncRow, 'createdAt' | 'updatedAt'> {
-  type: 'income' | 'expense' | 'transfer' | 'adjustment' | 'debt';
+  type: 'income' | 'expense' | 'transfer' | 'adjustment' | 'debt' | 'refund';
   amountMinor: string;
   currencyCode: string;
   occurredOn: string;
@@ -286,6 +286,8 @@ export interface AccountExportTransaction extends Omit<SyncRow, 'createdAt' | 'u
   accountId: string;
   categoryId: string | null;
   transferGroupId: string | null;
+  /** Only on `refund`: the expense it returns money for. */
+  refundOfId: string | null;
   fxQuoteId: string | null;
   recurringRuleId: string | null;
   notes: string | null;
@@ -687,7 +689,7 @@ export function toAccountExport(source: ExportSource): AccountExport {
     transactions: source.transactions.map(row => ({
       id: row.id, clientId: row.clientId, type: row.type, amountMinor: row.amountMinor.toString(),
       currencyCode: code(row.currencyCode), occurredOn: day(row.occurredOn), occurredTime: row.occurredTime,
-      accountId: row.accountId, categoryId: row.categoryId, transferGroupId: row.transferGroupId,
+      accountId: row.accountId, categoryId: row.categoryId, transferGroupId: row.transferGroupId, refundOfId: row.refundOfId,
       fxQuoteId: row.fxQuoteId, recurringRuleId: row.recurringRuleId, notes: row.notes, merchant: row.merchant,
       deletedAt: row.deletedAt ? iso(row.deletedAt) : null,
       tagIds: [...row.tagIds].sort(), version: row.version, ...stamps(row),

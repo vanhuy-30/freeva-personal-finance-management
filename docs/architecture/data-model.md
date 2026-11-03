@@ -33,6 +33,7 @@ erDiagram
   Bill }o--o| RecurringRule : optionalLink
   Bill }o--o| Transaction : paidBy
   Category ||--o{ Transaction : classifies
+  Transaction ||--o{ Transaction : refundOf
   Transaction ||--o{ TransactionTag : tagged
   Tag ||--o{ TransactionTag : on
   FxQuote ||--o{ Transaction : rates

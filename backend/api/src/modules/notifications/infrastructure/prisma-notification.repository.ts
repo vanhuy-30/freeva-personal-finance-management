@@ -1,3 +1,4 @@
+import { periodSpendRows } from '../../budgets/infrastructure/period-spend-rows';
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../../infrastructure/prisma/prisma.service';
@@ -237,21 +238,7 @@ export class PrismaNotificationRepository implements NotificationRepository {
 
     let crossed: number[] = [];
     if (budgetRow) {
-      const expenses = await this.prisma.transaction.findMany({
-        where: {
-          userId,
-          deletedAt: null,
-          type: 'expense',
-          occurredOn: { gte: periodFromDate, lte: periodToDate },
-        },
-        select: {
-          type: true,
-          amountMinor: true,
-          currencyCode: true,
-          categoryId: true,
-          deletedAt: true,
-        },
-      });
+      const expenses = await periodSpendRows(this.prisma, userId, periodFromDate, periodToDate);
       const record: BudgetRecord = {
         id: budgetRow.id,
         currencyCode: budgetRow.currencyCode,

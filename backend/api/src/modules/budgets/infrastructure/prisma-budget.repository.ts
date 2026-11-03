@@ -1,3 +1,4 @@
+import { periodSpendRows } from './period-spend-rows';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../infrastructure/prisma/prisma.service';
 import { resolvePeriod } from '../../reports/domain/report';
@@ -7,7 +8,6 @@ import {
   validateLimit,
   type BudgetRecord,
   type CategoryRef,
-  type ExpenseRow,
 } from '../domain/budget';
 import type {
   BudgetCurrentQuery,
@@ -44,21 +44,7 @@ export class PrismaBudgetRepository implements BudgetRepository {
         where: { userId },
         include: { categories: { orderBy: [{ categoryId: 'asc' }] } },
       }),
-      this.prisma.transaction.findMany({
-        where: {
-          userId,
-          type: 'expense',
-          deletedAt: null,
-          occurredOn: { gte: new Date(period.from), lte: new Date(period.to) },
-        },
-        select: {
-          type: true,
-          amountMinor: true,
-          currencyCode: true,
-          categoryId: true,
-          deletedAt: true,
-        },
-      }),
+      periodSpendRows(this.prisma, userId, new Date(period.from), new Date(period.to)),
       this.prisma.category.findMany({
         where: { userId },
         select: { id: true, parentId: true, kind: true, archivedAt: true },
@@ -75,7 +61,7 @@ export class PrismaBudgetRepository implements BudgetRepository {
           : null;
     return {
       budget,
-      expenses: expenses as ExpenseRow[],
+      expenses,
       categories: categories as CategoryRef[],
       period,
     };
