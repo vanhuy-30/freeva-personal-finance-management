@@ -1,9 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { TRANSACTION_REPOSITORY, type RecentMatchQuery, type TransactionRepository } from './domain/transaction.repository';
+import { buildTransactionsCsv, CSV_EXPORT_MAX_ROWS } from './domain/csv-export';
 import { calendarDate, minor, normalizeRate, occurredTime, TransactionError, type RefundDisposition, type TransactionBundle, type TransactionLeg, type TransactionPatch } from './domain/transaction';
 import { FxRateService } from '../fx-rates/fx-rate.service';
 import type { ReconcileResult } from './domain/reconcile';
-import type { CreateTransactionDto, ReconcileDto, RefundDto, ManualFxDto, TransactionLegDto, TransactionQueryDto, UpdateTransactionDto } from './transaction.dto';
+import type { CreateTransactionDto, ReconcileDto, RefundDto, ManualFxDto, TransactionLegDto, TransactionCsvQueryDto, TransactionQueryDto, UpdateTransactionDto } from './transaction.dto';
 const legs = (input: TransactionLegDto[]) => input.map(leg => ({ ...leg, amountMinor: minor(leg.amountMinor) }));
 const fx = (input: ManualFxDto | null) => input === null ? null : { rate: normalizeRate(input.rate), quotedAt: new Date(input.quotedAt) };
 const tags = (ids: string[]) => [...new Set(ids.map(id => id.toLowerCase()))].sort();
@@ -60,6 +61,15 @@ export class TransactionService {
         })),
       },
     };
+  }
+  /** BE-P3-010: CSV text (UTF-8 BOM) of the filtered, non-deleted transactions. */
+  async exportCsv(userId: string, query: TransactionCsvQueryDto) {
+    if (query.from) calendarDate(query.from);
+    if (query.to) calendarDate(query.to);
+    if (query.from && query.to && query.from > query.to) throw new TransactionError('VALIDATION_ERROR');
+    const { accountId, categoryId, tagId, ...rest } = query;
+    const rows = await this.repository.listForCsv(userId, { ...rest, page: 1, pageSize: 1, status: 'active', accountIds: accountId, categoryIds: categoryId, tagIds: tagId }, CSV_EXPORT_MAX_ROWS);
+    return buildTransactionsCsv(rows);
   }
   async update(userId: string, id: string, dto: UpdateTransactionDto) {
     const { occurredOn, occurredTime: inputTime, legs: inputLegs, fx: inputFx, tagIds, ...rest } = dto;

@@ -4,6 +4,7 @@ Nhật ký repo/process — không phải App Store release notes.
 
 ## 2026-11-03
 
+- `BE-P3-010`: xuất CSV giao dịch — `GET /api/v1/transactions/export.csv` (bộ lọc như danh sách, UTF-8 BOM, RFC 4180, chặn `= + - @`, `amount` thập phân không theo locale kèm cột `currency`, tối đa 50 000 dòng, audit `user.transactions_export`). Không migration. `MOB-P3-010` chưa làm. [Thiết kế](../architecture/transactions-csv-export.md).
 - `BE-P3-009`: trả góp thẻ tín dụng — `/api/v1/card-installments` (tạo từ một khoản chi trên ví thẻ, chi tiết kèm lịch kỳ, `due` tổng phần trả góp đến hạn theo thẻ, `close` khi trả trước hoặc hủy). Chỉ là lịch: khoản mua vẫn một khoản chi, báo cáo, ngân sách và dư nợ không đổi; xóa khoản chi tự đóng lịch; export/xoá tài khoản. Migration `20261103200000_card_installments` (additive; cần deploy trước API). `MOB-P3-009` chưa làm. [Thiết kế](../architecture/card-installments.md).
 - `BE-P3-008`: hoàn tiền gắn khoản chi gốc — `POST /api/v1/transactions/{id}/refunds` tạo giao dịch `refund` một leg (tổng hoàn ≤ khoản gốc, idempotent theo `clientId`), trừ vào chi của danh mục và ngân sách tại kỳ của khoản gốc thay vì tính thu nhập; xóa khoản gốc còn hoàn tiền cần `refunds=cascade|keep`. Migration `20261103100000_transaction_refund` (additive; cần deploy trước API). `MOB-P3-008` chưa làm. [Thiết kế](../architecture/refunds.md).
 
