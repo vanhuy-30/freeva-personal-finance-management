@@ -43,6 +43,14 @@ export type BillDueRow = {
   daysLeft: number;
 };
 
+/** Open lend/borrow debt within its reminder window or past due (daysLeft < 0). */
+export type DebtDueRow = {
+  id: string;
+  direction: 'lent' | 'borrowed';
+  dueDate: string;
+  daysLeft: number;
+};
+
 /** Active credit wallet for card alerts (BE-P2-E07). Balance includes initial + undeleted legs. */
 export type CreditCardRow = {
   id: string;
@@ -62,6 +70,7 @@ export type EvaluateUserContext = {
   crossedThresholds: number[];
   recurringSoon: RecurringSoonRow[];
   billsDue: BillDueRow[];
+  debtsDue: DebtDueRow[];
   creditCards: CreditCardRow[];
   /** Any income/expense/transfer dated `today` (profile timezone), not deleted. Adjustments do not count. */
   hasTransactionToday: boolean;

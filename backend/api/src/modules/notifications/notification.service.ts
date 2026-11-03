@@ -13,6 +13,7 @@ import {
   creditOutstanding,
   dailyLogDedupeKey,
   daysBetween,
+  debtDueDedupeKey,
   isDailyLogDue,
   isInQuietHours,
   kindToggles,
@@ -186,6 +187,21 @@ export class NotificationService {
           titleKey: overdue ? 'bill_overdue' : 'bill_due',
           bodyKey: overdue ? 'bill_overdue_body' : 'bill_due_body',
           params: { ruleId: bill.id, dueDate: bill.dueDate, days: Math.abs(bill.daysLeft) },
+        });
+        if (ok) created += 1;
+      }
+    }
+
+    if (context.prefs.debtEnabled) {
+      for (const debt of context.debtsDue) {
+        const overdue = debt.daysLeft < 0;
+        const ok = await this.repository.createIfAbsent({
+          userId,
+          kind: 'debt',
+          dedupeKey: debtDueDedupeKey(debt.id, debt.dueDate, overdue),
+          titleKey: overdue ? 'debt_overdue' : 'debt_due',
+          bodyKey: overdue ? 'debt_overdue_body' : 'debt_due_body',
+          params: { debtId: debt.id, direction: debt.direction, dueDate: debt.dueDate, days: Math.abs(debt.daysLeft) },
         });
         if (ok) created += 1;
       }

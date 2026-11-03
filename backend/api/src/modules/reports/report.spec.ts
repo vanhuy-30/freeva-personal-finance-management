@@ -129,7 +129,7 @@ describe('BE-P1-007 report totals', () => {
     expect(report.totals).toEqual([]);
     expect(report.byCategory).toEqual([]);
     expect(report.byAccount).toEqual([{
-      accountId: idle, currency: 'VND', incomeMinor: '0', expenseMinor: '0', transferMinor: '0', adjustmentMinor: '0', netMinor: '0',
+      accountId: idle, currency: 'VND', incomeMinor: '0', expenseMinor: '0', transferMinor: '0', adjustmentMinor: '0', debtMinor: '0', netMinor: '0',
     }]);
   });
 

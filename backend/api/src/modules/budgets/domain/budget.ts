@@ -13,7 +13,7 @@ export class BudgetError extends Error {
 }
 
 export type ExpenseRow = {
-  type: 'income' | 'expense' | 'transfer' | 'adjustment';
+  type: 'income' | 'expense' | 'transfer' | 'adjustment' | 'debt';
   amountMinor: bigint;
   currencyCode: string;
   categoryId: string | null;

@@ -17,7 +17,8 @@ Cảnh báo bảo mật (phiên đăng nhập khác) vẫn so id phiên trên m�
 | `card` | Ví `credit` đang dùng (`BE-P2-E07`) | bật |
 | `security` | Máy (`sessionAlertsEnabled`) | local |
 | `daily_log` | Chưa ghi giao dịch hôm nay (`BE-P3-006`) | tắt |
-| `goal` `debt` `month_review` `insight` | Chưa có module | khóa, `available=false` |
+| `debt` | Khoản cho mượn / đi mượn sắp hạn hoặc quá hạn (`BE-P3-007`) | tắt |
+| `goal` `month_review` `insight` | Chưa có module | khóa, `available=false` |
 
 Bật loại khóa trả 422 `NOTIFICATION_SOURCE_UNAVAILABLE`. Payload chỉ `titleKey` / `bodyKey` / `params` (ngưỡng, `periodFrom`, `executionDate`, `days`, `accountId`) — không số dư, số tiền, tên rule hay tên ví.
 
@@ -63,3 +64,5 @@ Loại `daily_log`, mặc định tắt. `PUT /notification-preferences` nhận 
 ## Hóa đơn (BE-P3-001)
 
 Loại `recurring` thêm `bill_due` (trong `remindDaysBefore` ngày trước hạn của rule `remind`) và `bill_overdue` (một lần khi quá hạn), dedupe `bill|due|overdue + ruleId + hạn`. Params chỉ có `ruleId`, `dueDate`, `days`; không có số tiền. Xem [bills.md](bills.md).
+
+Loại `debt` (`BE-P3-007`), mặc định tắt, công tắc `debtEnabled`. Với khoản cho mượn / đi mượn còn nợ có `dueDate`: tạo `debt_due` khi còn ≤ 3 ngày (dedupe `debt|due|{id}|{dueDate}`) và `debt_overdue` khi quá hạn (`debt|overdue|…`). Params chỉ có `debtId`, `direction`, `dueDate`, `days`; push không có tên người hay số tiền. Chi tiết: [personal-debts.md](personal-debts.md).

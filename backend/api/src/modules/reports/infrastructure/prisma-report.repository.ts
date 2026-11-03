@@ -7,7 +7,7 @@ import type {
 } from '../domain/report';
 import { previousPeriod } from '../domain/report';
 
-const moneyTypes = new Set<ReportMoneyType>(['income', 'expense', 'transfer', 'adjustment']);
+const moneyTypes = new Set<ReportMoneyType>(['income', 'expense', 'transfer', 'adjustment', 'debt']);
 
 @Injectable()
 export class PrismaReportRepository implements ReportRepository {
@@ -171,10 +171,25 @@ export class PrismaReportRepository implements ReportRepository {
       WHERE a."userId" = ${userId}::uuid AND a."archivedAt" IS NULL
       GROUP BY a."currencyCode", CASE WHEN a.type::text = 'credit' THEN 'liability' ELSE 'asset' END
     `);
-    return rows.map(row => {
+    // Lend / borrow (BE-P3-007): what people owe me is an asset, what I owe them a (negative) liability.
+    const debts = await tx.$queryRaw<{ currency: string; direction: string; total: string }[]>(Prisma.sql`
+      SELECT "currencyCode" AS currency, direction::text AS direction, SUM("outstandingMinor")::text AS total
+      FROM "PersonalDebt"
+      WHERE "userId" = ${userId}::uuid AND "archivedAt" IS NULL AND "outstandingMinor" > 0
+      GROUP BY "currencyCode", direction
+    `);
+    const accountRows: NetWorthAggregate[] = rows.map(row => {
       if (row.bucket !== 'asset' && row.bucket !== 'liability') throw new Error('Invalid net worth bucket');
       return { currency: row.currency.trim(), bucket: row.bucket, total: integer(row.total) };
     });
+    const debtRows: NetWorthAggregate[] = debts.map(row => {
+      if (row.direction !== 'lent' && row.direction !== 'borrowed') throw new Error('Invalid debt direction');
+      const total = integer(row.total);
+      return row.direction === 'lent'
+        ? { currency: row.currency.trim(), bucket: 'asset' as const, total }
+        : { currency: row.currency.trim(), bucket: 'liability' as const, total: -total };
+    });
+    return [...accountRows, ...debtRows];
   }
 }
 

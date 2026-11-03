@@ -56,7 +56,7 @@ export class TransactionService {
         count: result.summary.count,
         totals: result.summary.totals.map(row => ({
           currency: row.currency, incomeMinor: row.incomeMinor.toString(), expenseMinor: row.expenseMinor.toString(),
-          transferInMinor: row.transferInMinor.toString(), transferOutMinor: row.transferOutMinor.toString(), adjustmentMinor: row.adjustmentMinor.toString(),
+          transferInMinor: row.transferInMinor.toString(), transferOutMinor: row.transferOutMinor.toString(), adjustmentMinor: row.adjustmentMinor.toString(), debtMinor: row.debtMinor.toString(),
         })),
       },
     };

@@ -6,6 +6,7 @@ import { resolvePeriod, todayInTimeZone } from '../../reports/domain/report';
 import {
   dayBefore,
   daysBetween,
+  DEBT_REMIND_DAYS,
   defaultPreference,
   NotificationError,
   type NotificationKind,
@@ -207,6 +208,7 @@ export class PrismaNotificationRepository implements NotificationRepository {
         crossedThresholds: [],
         recurringSoon: [],
         billsDue: [],
+        debtsDue: [],
         creditCards: [],
         hasTransactionToday: false,
       };
@@ -282,6 +284,19 @@ export class PrismaNotificationRepository implements NotificationRepository {
       })
       .filter(rule => rule.daysLeft <= rule.lead)
       .map(({ id, dueDate, daysLeft }) => ({ id, dueDate, daysLeft }));
+    const debtRows = prefs.debtEnabled
+      ? await this.prisma.personalDebt.findMany({
+          where: { userId, archivedAt: null, outstandingMinor: { gt: 0 }, dueDate: { not: null } },
+          select: { id: true, direction: true, dueDate: true },
+          orderBy: { id: 'asc' },
+        })
+      : [];
+    const debtsDue = debtRows
+      .map(row => {
+        const dueDate = dayIso(row.dueDate!);
+        return { id: row.id, direction: row.direction, dueDate, daysLeft: daysBetween(today, dueDate) };
+      })
+      .filter(row => row.daysLeft <= DEBT_REMIND_DAYS);
     const recurringSoon = rules
       .filter(rule => rule.mode === 'auto')
       .map(rule => ({ id: rule.id, nextExecutionDate: dayIso(rule.nextExecutionDate) }))
@@ -338,6 +353,7 @@ export class PrismaNotificationRepository implements NotificationRepository {
       crossedThresholds: crossed,
       recurringSoon,
       billsDue,
+      debtsDue,
       creditCards,
       hasTransactionToday,
     };

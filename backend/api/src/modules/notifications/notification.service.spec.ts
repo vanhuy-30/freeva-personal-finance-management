@@ -39,6 +39,7 @@ describe('BE-P2-E05 notification service', () => {
         crossedThresholds: [70, 80, 100],
         recurringSoon: [{ id: 'r1', nextExecutionDate: '2026-10-29' }],
         billsDue: [],
+        debtsDue: [],
         creditCards: [],
       }),
     });
@@ -76,6 +77,7 @@ describe('BE-P2-E05 notification service', () => {
         crossedThresholds: [],
         recurringSoon: [],
         billsDue: [],
+        debtsDue: [],
         creditCards: [{
           id: 'card-1',
           paymentDueDay: 15,
@@ -117,6 +119,7 @@ describe('BE-P2-E05 notification service', () => {
         crossedThresholds: [],
         recurringSoon: [],
         billsDue: [],
+        debtsDue: [],
         creditCards: [{
           id: 'card-2',
           paymentDueDay: 15,
@@ -150,6 +153,7 @@ describe('BE-P2-E05 notification service', () => {
         crossedThresholds: [80],
         recurringSoon: [{ id: 'r1', nextExecutionDate: '2026-10-29' }],
         billsDue: [],
+        debtsDue: [],
         creditCards: [{
           id: 'card-1',
           paymentDueDay: 28,
@@ -193,6 +197,7 @@ describe('BE-P2-E05 notification service', () => {
         crossedThresholds: [70],
         recurringSoon: [],
         billsDue: [],
+        debtsDue: [],
         creditCards: [],
       }),
     });
@@ -235,6 +240,60 @@ describe('BE-P2-E05 notification service', () => {
       expect(JSON.stringify(call[0].params)).not.toMatch(/amount|Minor|balance/i);
     }
   });
+  it('BE-P3-007 notifies a debt in its window once and again as overdue, with no names or money', async () => {
+    const createIfAbsent = jest.fn().mockResolvedValue(true);
+    const now = new Date('2026-10-28T03:00:00.000Z');
+    const repository = repo({
+      createIfAbsent,
+      loadEvaluateContext: jest.fn().mockResolvedValue({
+        userId: 'u1',
+        timezone: 'Asia/Ho_Chi_Minh',
+        today: '2026-10-28',
+        prefs: { ...defaultPreference(), quietHoursEnabled: false, cardEnabled: false, debtEnabled: true, createdAt: now, updatedAt: now },
+        periodFrom: null,
+        crossedThresholds: [],
+        recurringSoon: [],
+        billsDue: [],
+        debtsDue: [
+          { id: 'd1', direction: 'lent', dueDate: '2026-10-30', daysLeft: 2 },
+          { id: 'd2', direction: 'borrowed', dueDate: '2026-10-25', daysLeft: -3 },
+        ],
+        creditCards: [],
+      }),
+    });
+    const service = new NotificationService(repository);
+    await expect(service.evaluate('u1', now)).resolves.toEqual({ created: 2 });
+    expect(createIfAbsent.mock.calls.map(call => [call[0].kind, call[0].dedupeKey, call[0].titleKey])).toEqual([
+      ['debt', 'debt|due|d1|2026-10-30', 'debt_due'],
+      ['debt', 'debt|overdue|d2|2026-10-25', 'debt_overdue'],
+    ]);
+    for (const call of createIfAbsent.mock.calls) {
+      expect(JSON.stringify(call[0].params)).not.toMatch(/amount|Minor|balance|name|counterparty/i);
+    }
+  });
+
+  it('BE-P3-007 stays silent when the debt toggle is off', async () => {
+    const createIfAbsent = jest.fn().mockResolvedValue(true);
+    const now = new Date('2026-10-28T03:00:00.000Z');
+    const repository = repo({
+      createIfAbsent,
+      loadEvaluateContext: jest.fn().mockResolvedValue({
+        userId: 'u1',
+        timezone: 'Asia/Ho_Chi_Minh',
+        today: '2026-10-28',
+        prefs: { ...defaultPreference(), quietHoursEnabled: false, cardEnabled: false, debtEnabled: false, createdAt: now, updatedAt: now },
+        periodFrom: null,
+        crossedThresholds: [],
+        recurringSoon: [],
+        billsDue: [],
+        debtsDue: [{ id: 'd1', direction: 'lent', dueDate: '2026-10-30', daysLeft: 2 }],
+        creditCards: [],
+      }),
+    });
+    await expect(new NotificationService(repository).evaluate('u1', now)).resolves.toEqual({ created: 0 });
+    expect(createIfAbsent).not.toHaveBeenCalled();
+  });
+
   describe('BE-P3-006 daily log reminder', () => {
     const evening = new Date('2026-10-28T13:30:00.000Z'); // 20:30 ICT
     const morning = new Date('2026-10-28T03:00:00.000Z'); // 10:00 ICT
@@ -263,6 +322,7 @@ describe('BE-P2-E05 notification service', () => {
           crossedThresholds: [],
           recurringSoon: [],
           billsDue: [],
+          debtsDue: [],
           creditCards: [],
           hasTransactionToday: false,
           ...overrides,
@@ -319,6 +379,7 @@ describe('BE-P2-E05 notification service', () => {
           crossedThresholds: [],
           recurringSoon: [],
           billsDue: [],
+          debtsDue: [],
           creditCards: [],
           hasTransactionToday: false,
         }),

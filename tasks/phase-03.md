@@ -83,11 +83,12 @@
 - Note: BE-P3-006 xong 2026-11-02: loại `daily_log` (mặc định tắt), `dailyLogEnabled` / `dailyLogTime` trên `/notification-preferences`, giờ theo múi giờ hồ sơ, không tạo nếu hôm đó (`occurredOn` = hôm nay) đã có thu/chi/chuyển (điều chỉnh số dư và giao dịch đã xóa không tính), giờ yên chặn, một hàng mỗi ngày, push vi/en không có số tiền. OpenAPI, export cập nhật. Kiến trúc: [notifications.md](../docs/architecture/notifications.md). Tồn đọng: MOB-P3-006 (công tắc, chọn giờ, bấm thông báo mở màn ghi theo `kind = daily_log`) chưa làm; `month_review` vẫn khóa.
 
 ### BE-P3-007 / MOB-P3-007 — Cho mượn và đi mượn
-- Status: todo
+- Status: doing — BE xong 2026-11-02, MOB còn
 - Module: 10
 - Gate: v1
 - Depends: BE-P1-004, BE-P1-005
 - DoD: ghi khoản cho mượn (tiền ra khỏi ví thành khoản phải thu) hoặc đi mượn (tiền vào ví thành khoản phải trả) với tên người, số tiền, ngày, hạn tùy chọn, ghi chú. Trả hoặc thu một phần nhiều lần, tất toán. Không phải thu/chi, không tính ngân sách. Phải thu cộng tài sản, phải trả cộng nợ trên Tổng quan và tài sản ròng. Danh sách "Ai nợ mình / Mình nợ ai" kèm tổng. Nhắc khi tới hạn qua loại `debt`. Không lãi suất (vay có lãi là `BE-P3-E02`).
+- Note: BE-P3-007 xong 2026-11-02: `/api/v1/personal-debts` (CRUD, `summary` ai nợ mình / mình nợ ai, `payments` trả một phần nhiều lần, tất toán), tiền di chuyển bằng giao dịch `debt` một chân (ngoài thu/chi, ngân sách, tỷ lệ tiết kiệm; có trong số dư ví, export, sổ cái), phải thu vào tài sản, phải trả vào nợ của `/reports/net-worth`, nhắc `debt_due` / `debt_overdue` qua loại `debt`, audit `personal_debt.create`, OpenAPI, export/xoá tài khoản. Kiến trúc: [personal-debts.md](../docs/architecture/personal-debts.md). Tồn đọng: chưa xóa được khoản ghi nhầm đã có tiền chuyển; lưu trữ chỉ khi đã tất toán; app chưa biết loại giao dịch `debt` / `adjustment`; MOB-P3-007 chưa làm.
 
 ### BE-P3-008 / MOB-P3-008 — Hoàn tiền gắn khoản chi gốc
 - Status: todo
