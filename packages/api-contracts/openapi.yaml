@@ -4606,6 +4606,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/profile/monthly-income:
+    put:
+      operationId: saveMonthlyIncome
+      summary: Set, change or clear the monthly income
+      tags: [Profile]
+      security:
+        - UserBearer: []
+      description: Stored on the account and used to suggest budgets and savings share. `null` clears it. No version check. Never logged; included in the account export and deleted with the account.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MonthlyIncomeUpdate'
+      responses:
+        '204':
+          description: Saved (Cache-Control no-store)
+        '400':
+          description: Not a positive integer string, or an extra field
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
   /api/v1/profile/display-currency:
     put:
       operationId: saveDisplayCurrency
@@ -4638,7 +4667,7 @@ paths:
   /api/v1/profile/onboarding:
     patch:
       operationId: saveOnboardingAnswers
-      summary: Save answers from the first-run questions (goals, tracking habit, review cadence)
+      summary: Save answers from the first-run questions (goals, monthly income)
       tags: [Profile]
       security:
         - UserBearer: []
@@ -8883,21 +8912,11 @@ components:
           items:
             type: string
           description: Onboarding goals saved via PATCH /profile/onboarding. Returned on GET and PUT; not accepted on PUT.
-        trackingHabit:
-          type: [string, 'null']
-          readOnly: true
-          enum: [manual, spreadsheet, app, none, null]
-          description: Saved via PATCH /profile/onboarding; null until answered. Not accepted on PUT.
-        reviewCadence:
-          type: [string, 'null']
-          readOnly: true
-          enum: [daily, weekly, monthly, rarely, null]
-          description: Saved via PATCH /profile/onboarding; null until answered. Not accepted on PUT.
-        onboardingBudgetMinor:
+        monthlyIncomeMinor:
           type: [string, 'null']
           readOnly: true
           pattern: ^[1-9][0-9]{0,17}$
-          description: First monthly budget typed at onboarding, positive integer minor units of the default currency at that time. Null until typed. Changing defaultCurrencyCode does not convert it. Never logged. Not accepted on PUT.
+          description: Monthly income, positive integer minor units of the default currency at that time. Null until typed. Saved via PATCH /profile/onboarding or PUT /profile/monthly-income. Changing defaultCurrencyCode does not convert it. Never logged. Not accepted on PUT /profile.
         displayCurrencyCode:
           type: [string, 'null']
           readOnly: true
@@ -8913,17 +8932,20 @@ components:
           uniqueItems: true
           items:
             type: string
-            enum: [track, save, budget, debt, emergency, understand]
-        trackingHabit:
-          type: string
-          enum: [manual, spreadsheet, app, none]
-        reviewCadence:
-          type: string
-          enum: [daily, weekly, monthly, rarely]
-        budgetMinor:
+            enum: [track, save, budget]
+        monthlyIncomeMinor:
           type: string
           pattern: ^[1-9][0-9]{0,17}$
-          description: First monthly budget, positive integer minor units of the profile default currency. Omit to keep the stored value.
+          description: Monthly income, positive integer minor units of the profile default currency. Omit to keep the stored value.
+    MonthlyIncomeUpdate:
+      type: object
+      additionalProperties: false
+      required: [monthlyIncomeMinor]
+      properties:
+        monthlyIncomeMinor:
+          type: [string, 'null']
+          pattern: ^[1-9][0-9]{0,17}$
+          description: Positive integer minor units of the profile default currency; `null` clears it.
     ProfileOptions:
       type: object
       additionalProperties: false
@@ -10116,7 +10138,7 @@ components:
     AccountExportProfile:
       type: object
       additionalProperties: false
-      required: [email, displayName, locale, timezone, defaultCurrencyCode, fiscalMonthStartDay, onboardingGoals, trackingHabit, reviewCadence, onboardingBudgetMinor, displayCurrencyCode, emailVerifiedAt, categoriesInitializedAt, categoriesSupplementedAt, createdAt, updatedAt]
+      required: [email, displayName, locale, timezone, defaultCurrencyCode, fiscalMonthStartDay, onboardingGoals, monthlyIncomeMinor, displayCurrencyCode, emailVerifiedAt, categoriesInitializedAt, categoriesSupplementedAt, createdAt, updatedAt]
       properties:
         email:
           type: string
@@ -10139,11 +10161,7 @@ components:
           type: array
           items:
             type: string
-        trackingHabit:
-          type: [string, 'null']
-        reviewCadence:
-          type: [string, 'null']
-        onboardingBudgetMinor:
+        monthlyIncomeMinor:
           type: [string, 'null']
           pattern: ^[1-9][0-9]{0,17}$
         displayCurrencyCode:

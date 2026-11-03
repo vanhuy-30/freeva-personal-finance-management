@@ -1,7 +1,7 @@
 # STATUS
 
 - **Phase hiện tại:** 3 — Phase 0 **closed** 2026-09-21; Phase 1 **closed** 2026-10-21 (gate sổ cái); Phase 2 **closed** 2026-10-30. Chưa phải product v1 — còn mục tiêu và 12 ticket gộp/bổ sung `P3-001`…`012` (Phase 3), tài sản/đầu tư và tài sản ròng (Phase 4), `Gate: v1`. AI (gợi ý danh mục, insight) ra sau v1 từ 2026-11-02. Đối chiếu spec: [spec-alignment.md](../product/spec-alignment.md).
-- **Cập nhật:** 2026-11-02
+- **Cập nhật:** 2026-11-03
 - **Việc bổ sung Phase 2:** `BE-P2-010` khóa kind lúc ghi; `INF-P2-001` Postgres staging miễn phí (DB Render free đã hết hạn); `MOB-P2-011` xuất/xóa tài khoản trên app; `QA-P2-001` rà hàng đợi offline; `BE-P2-012` câu trả lời đầu gắn tài khoản; `BE-P2-013` quy đổi để hiển thị; `BE-P2-014` mật khẩu tối thiểu 8 + kiểm tra email trên app. Chi tiết: [tasks/phase-02.md](../../tasks/phase-02.md).
 - **CI:** `INF-P0-002` done; cả ba job xanh trên `main`, [run 33521325189](https://github.com/vanhuy-30/freeva-personal-finance-management/actions/runs/33521325189).
 - **Staging:** API [Render](https://freeva-api-staging.onrender.com) và admin [Vercel](https://freeva-personal-finance-management.vercel.app) đã xanh ngày 2026-09-21. Postgres free trên Render đã hết hạn; `INF-P2-001` hoãn (2026-10-30), develop dùng Postgres local, staging API chưa có DB sống tới khi làm lại. Prod hoster TBD tới Store (region VN).
@@ -25,6 +25,7 @@
 - **Cho mượn / đi mượn:** `BE-P3-007` done 2026-11-02 (BE): `/personal-debts`, giao dịch `debt` một chân ngoài thu/chi, phải thu/phải trả vào tài sản ròng, nhắc `debt`. `MOB-P3-007` chưa làm. [Chi tiết](../architecture/personal-debts.md).
 - **Nhắc ghi chi:** `BE-P3-006` done 2026-11-02 (BE): loại `daily_log`, giờ nhắc theo múi giờ hồ sơ, bỏ qua nếu hôm đó đã có giao dịch. `MOB-P3-006` chưa làm. [Chi tiết](../architecture/notifications.md).
 - **Nhập CSV:** `BE-P3-011` done 2026-11-03 (BE): preview/commit/undo, preset Freeva/Money Lover/MISA, trùng bị bỏ qua, hoàn tác cả lô; chỉ CSV, tối đa 2 000 dòng. `MOB-P3-011` chưa làm. [Chi tiết](../architecture/transaction-import.md).
+- **Onboarding ba câu:** `BE-P3-012` done 2026-11-03 (BE): `monthlyIncomeMinor` trên hồ sơ (`PUT /profile/monthly-income`), `PATCH /profile/onboarding` chỉ còn `goals` + thu nhập; bỏ thói quen, nhịp xem lại, ngân sách nhập tay (migration gộp goals cũ). `MOB-P3-012` chưa làm — màn onboarding hiện tại sẽ nhận 400. Thu nhập có trong export, xóa cùng tài khoản.
 - **Dự báo số dư:** `BE-P3-E04` done 2026-11-03 (BE): `GET /forecast` theo quy tắc (ví + định kỳ/hóa đơn), nêu giả định, sửa số dư gốc và bỏ khoản; không FX, không dự đoán chi ngoài định kỳ. `MOB-P3-E04` chưa làm. [Chi tiết](../architecture/forecast.md).
 - **Xuất CSV:** `BE-P3-010` done 2026-11-03 (BE): `GET /transactions/export.csv`, UTF-8 BOM + RFC 4180, chặn công thức, số tiền thập phân kèm cột tiền tệ, tối đa 50 000 dòng, audit `user.transactions_export`. Không migration. `MOB-P3-010` chưa làm. [Chi tiết](../architecture/transactions-csv-export.md).
 - **Trả góp thẻ:** `BE-P3-009` done 2026-11-03 (BE): `/card-installments`, lịch trả góp trên khoản chi của ví thẻ (không ghi tiền, khoản mua vẫn tính một lần), `due` cho "số phải trả kỳ này", đóng lịch khi trả trước/hủy. `MOB-P3-009` chưa làm. [Chi tiết](../architecture/card-installments.md).

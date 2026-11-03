@@ -47,6 +47,10 @@ export class ProfileService {
     }
   }
 
+  async saveMonthlyIncome(userId: string, minor: string | null) {
+    if (!(await this.repository.saveMonthlyIncome(userId, minor))) throw error(401, 'SESSION_INVALID');
+  }
+
   async saveDisplayCurrency(userId: string, code: string | null) {
     if (code !== null && !(await this.repository.currencies()).some(c => c.code === code)) {
       throw error(400, 'VALIDATION_ERROR');

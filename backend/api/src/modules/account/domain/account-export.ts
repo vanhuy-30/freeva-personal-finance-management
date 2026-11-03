@@ -10,9 +10,7 @@ export interface AccountExport {
     defaultCurrencyCode: string;
     fiscalMonthStartDay: number;
     onboardingGoals: string[];
-    trackingHabit: string | null;
-    reviewCadence: string | null;
-    onboardingBudgetMinor: string | null;
+    monthlyIncomeMinor: string | null;
     displayCurrencyCode: string | null;
     emailVerifiedAt: string | null;
     categoriesInitializedAt: string | null;
@@ -338,9 +336,7 @@ export interface ExportSource {
     defaultCurrencyCode: string;
     fiscalMonthStartDay: number;
     onboardingGoals: string[];
-    trackingHabit: string | null;
-    reviewCadence: string | null;
-    onboardingBudgetMinor: bigint | null;
+    monthlyIncomeMinor: bigint | null;
     displayCurrencyCode: string | null;
     emailVerifiedAt: Date | null;
     categoriesInitializedAt: Date | null;
@@ -593,9 +589,7 @@ export function toAccountExport(source: ExportSource): AccountExport {
       defaultCurrencyCode: code(user.defaultCurrencyCode),
       fiscalMonthStartDay: user.fiscalMonthStartDay,
       onboardingGoals: [...user.onboardingGoals],
-      trackingHabit: user.trackingHabit,
-      reviewCadence: user.reviewCadence,
-      onboardingBudgetMinor: user.onboardingBudgetMinor?.toString() ?? null,
+      monthlyIncomeMinor: user.monthlyIncomeMinor?.toString() ?? null,
       displayCurrencyCode: user.displayCurrencyCode ? code(user.displayCurrencyCode) : null,
       emailVerifiedAt: user.emailVerifiedAt ? iso(user.emailVerifiedAt) : null,
       categoriesInitializedAt: user.categoriesInitializedAt ? iso(user.categoriesInitializedAt) : null,

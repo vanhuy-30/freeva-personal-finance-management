@@ -10,18 +10,16 @@ const select = {
   fiscalMonthStartDay: true,
   version: true,
   onboardingGoals: true,
-  trackingHabit: true,
-  reviewCadence: true,
-  onboardingBudgetMinor: true,
+  monthlyIncomeMinor: true,
   displayCurrencyCode: true,
 };
 
-type Row = Omit<Profile, 'goals' | 'onboardingBudgetMinor'> & { onboardingGoals: string[]; onboardingBudgetMinor: bigint | null };
+type Row = Omit<Profile, 'goals' | 'monthlyIncomeMinor'> & { onboardingGoals: string[]; monthlyIncomeMinor: bigint | null };
 
 function toProfile(row: Row | null): Profile | null {
   if (!row) return null;
-  const { onboardingGoals, onboardingBudgetMinor, ...rest } = row;
-  return { ...rest, goals: onboardingGoals, onboardingBudgetMinor: onboardingBudgetMinor?.toString() ?? null };
+  const { onboardingGoals, monthlyIncomeMinor, ...rest } = row;
+  return { ...rest, goals: onboardingGoals, monthlyIncomeMinor: monthlyIncomeMinor?.toString() ?? null };
 }
 
 @Injectable()
@@ -44,10 +42,16 @@ export class PrismaProfileRepository implements ProfileRepository {
       where: { id: userId },
       data: {
         ...(answers.goals ? { onboardingGoals: answers.goals } : {}),
-        ...(answers.trackingHabit ? { trackingHabit: answers.trackingHabit } : {}),
-        ...(answers.reviewCadence ? { reviewCadence: answers.reviewCadence } : {}),
-        ...(answers.budgetMinor ? { onboardingBudgetMinor: BigInt(answers.budgetMinor) } : {}),
+        ...(answers.monthlyIncomeMinor ? { monthlyIncomeMinor: BigInt(answers.monthlyIncomeMinor) } : {}),
       },
+    });
+    return changed.count === 1;
+  }
+
+  async saveMonthlyIncome(userId: string, minor: string | null): Promise<boolean> {
+    const changed = await this.prisma.user.updateMany({
+      where: { id: userId },
+      data: { monthlyIncomeMinor: minor === null ? null : BigInt(minor) },
     });
     return changed.count === 1;
   }

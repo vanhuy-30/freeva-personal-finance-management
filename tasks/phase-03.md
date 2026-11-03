@@ -124,7 +124,7 @@
 - Note: BE-P3-011 xong 2026-11-03: `POST /transactions/import/preview` (không ghi), `POST /transactions/import` (một transaction, `clientId` tất định theo `batchClientId`, replay 200), `GET`/`POST …/{id}/undo`. Preset Freeva/Money Lover/MISA/custom, map ví và danh mục, kết quả từng dòng, trùng → `duplicate` và bỏ qua (không ghi đè), chuyển khoản ghép hai dòng, hoàn tác bỏ qua giao dịch đã sửa hoặc có hoàn tiền/trả góp. Migration additive. Kiến trúc: [transaction-import.md](../docs/architecture/transaction-import.md). Tồn đọng: MOB-P3-011 chưa làm; chưa nhập Excel (.xlsx, theo quyết định chỉ CSV trước); header Money Lover/MISA chưa kiểm với file thật; chưa nhập nhãn; chuyển khoản khác tiền tệ chưa ghép; tối đa 2 000 dòng mỗi lần.
 
 ### DS-P3-012 / BE-P3-012 / MOB-P3-012 — Onboarding chỉ hỏi điều dùng được
-- Status: todo
+- Status: doing — DS xong 2026-11-03, BE xong 2026-11-03, MOB còn
 - Module: 1, 2, 7, 9
 - Gate: v1
 - Depends: DS-P2-004, BE-P2-E02, BE-P3-E01
@@ -133,6 +133,7 @@
   2. **Thu nhập hàng tháng** (không bắt buộc): lưu `monthlyIncomeMinor` trên hồ sơ, sửa hoặc xóa được ở Cá nhân. Dùng để gợi ý ngân sách và hiện phần tiết kiệm so với thu nhập. Không log, có trong export, xóa cùng tài khoản.
   3. **Mục tiêu tiết kiệm** (không bắt buộc): tên hoặc nhóm có sẵn, số đích, ngày đích. Tạo một mục tiêu thật (`BE-P3-E01`) và hiện "cần X mỗi tháng"; có thu nhập thì hiện thêm phần trăm thu nhập.
   Có thu nhập thì hiện một màn gợi ý ngân sách (thu nhập trừ số cần tiết kiệm mỗi tháng; quy tắc khi không có mục tiêu chốt ở thiết kế), "Dùng mức này" tạo ngân sách tháng, "Để sau" không tạo gì. Bỏ câu thói quen và nhịp xem lại; migration xóa `trackingHabit`, `reviewCadence`, `onboardingBudgetMinor`; mục tiêu cũ `emergency` gộp vào Tiết kiệm, `debt` và `understand` bỏ; export cập nhật. Thiết kế vẽ lại trên canvas nhóm A trước khi code.
+- Note: BE-P3-012 xong 2026-11-03: `User.monthlyIncomeMinor` (số nguyên dương, minor unit), `PATCH /profile/onboarding` chỉ nhận `goals` (`track|save|budget`, tối đa 2) và `monthlyIncomeMinor`, `PUT /profile/monthly-income` đặt/sửa/xóa (`null`), `GET /profile` và export trả `monthlyIncomeMinor`; migration xóa `trackingHabit`, `reviewCadence`, `onboardingBudgetMinor`, đổi `emergency` → `save`, bỏ `debt`/`understand`. OpenAPI, test đơn vị và PostgreSQL cập nhật. Tồn đọng: màn onboarding hiện tại trên app còn gửi `trackingHabit`/`reviewCadence`/`budgetMinor` nên nhận 400 tới khi làm MOB-P3-012; gợi ý ngân sách (thu nhập − cần để dành, hoặc thu nhập × 80%) là logic client; tạo mục tiêu từ câu 3 dùng `/goals` có sẵn; bật nhắc ghi chi dùng `BE-P3-006`.
 
 
 ### INF-P3-001 — Kiểm tra format Dart trong CI mobile

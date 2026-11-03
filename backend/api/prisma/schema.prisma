@@ -120,9 +120,7 @@ model User {
   termsAcceptedAt          DateTime? @db.Timestamptz
   termsVersion             String?   @db.VarChar(20)
   onboardingGoals          String[]  @default([])
-  trackingHabit            String?   @db.VarChar(12)
-  reviewCadence            String?   @db.VarChar(10)
-  onboardingBudgetMinor    BigInt?
+  monthlyIncomeMinor       BigInt?
   displayCurrencyCode      String?   @db.Char(3)
   locale                   String    @default("vi")
   timezone                 String    @default("Asia/Ho_Chi_Minh")

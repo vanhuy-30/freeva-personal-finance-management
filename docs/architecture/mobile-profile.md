@@ -19,6 +19,8 @@ Từ home chọn **Hồ sơ tài chính**. Hồ sơ thuộc tài khoản đang �
 
 ## Contract và quyền riêng tư
 
+**`monthlyIncomeMinor` (`BE-P3-012`):** thu nhập hàng tháng tuỳ chọn, số nguyên dương theo minor unit của tiền tệ mặc định, không quy đổi khi đổi tiền tệ. Lưu lúc onboarding qua `PATCH /api/v1/profile/onboarding` (cùng `goals`: `track`, `save`, `budget`, tối đa 2) hoặc sửa/xóa qua `PUT /api/v1/profile/monthly-income` (`null` xóa). GET trả, PUT `/profile` không nhận. Không ghi log, có trong export, xóa cùng tài khoản.
+
 **`displayName` (`DS-P2-003`):** tên tuỳ chọn (≤ 60 ký tự) chỉ dùng cho lời chào ở
 Tổng quan. GET luôn trả (null khi chưa đặt); PUT bỏ trường này thì giữ nguyên, chuỗi
 trống hoặc null thì xoá. App hiện chỉ đọc; màn sửa tên thuộc nhóm G. Không ghi log.
