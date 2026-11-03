@@ -164,6 +164,7 @@ model User {
   personalDebts          PersonalDebt[]
   personalDebtPayments   PersonalDebtPayment[]
   cardInstallmentPlans   CardInstallmentPlan[]
+  importBatches          ImportBatch[]
 }
 
 model FinancialAccount {
@@ -296,6 +297,8 @@ model Transaction {
   recurringRuleId String?         @db.Uuid
   /// Set only on `refund` rows: the expense being refunded.
   refundOfId      String?         @db.Uuid
+  /// Set only on rows written by a CSV import (BE-P3-011); undo soft-deletes the whole batch.
+  importBatchId   String?         @db.Uuid
   notes           String?
   merchant        String?
   deletedAt       DateTime?       @db.Timestamptz
@@ -314,9 +317,11 @@ model Transaction {
   tags            TransactionTag[]
   paidBill        Bill?
   installmentPlan CardInstallmentPlan?
+  importBatch     ImportBatch?         @relation(fields: [importBatchId], references: [id], onDelete: SetNull)
 
   @@unique([userId, clientId])
   @@index([userId, occurredOn])
+  @@index([importBatchId])
   @@index([accountId])
   @@index([transferGroupId])
   @@index([recurringRuleId])
@@ -901,4 +906,24 @@ model CardInstallmentPlan {
 
   @@unique([userId, clientId])
   @@index([userId, accountId, status])
+}
+
+/// One CSV import (BE-P3-011). Transactions it created point back here through Transaction.importBatchId.
+model ImportBatch {
+  id             String    @id @default(uuid()) @db.Uuid
+  userId         String    @db.Uuid
+  clientId       String    @db.Uuid
+  preset         String    @db.VarChar(20)
+  rowCount       Int
+  createdCount   Int
+  duplicateCount Int
+  invalidCount   Int
+  undoneAt       DateTime? @db.Timestamptz
+  createdAt      DateTime  @default(now()) @db.Timestamptz
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@unique([userId, clientId])
+  @@index([userId, createdAt])
 }

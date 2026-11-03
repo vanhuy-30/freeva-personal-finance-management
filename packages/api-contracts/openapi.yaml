@@ -3095,6 +3095,170 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/transactions/import/preview:
+    post:
+      operationId: previewTransactionImport
+      tags:
+      - Transactions
+      summary: Preview a CSV import without writing (BE-P3-011)
+      description: >
+        Stateless: the client sends the file text and mapping, the server parses, resolves wallets and categories
+        by name (ignoring case and accents), parses amounts to exact minor units, pairs opposite-signed transfer
+        rows (same day, time, size and currency) into one transfer, and flags rows that already exist (same wallet,
+        day, signed amount, type and merchant/notes, or a transaction_id that already exists). Nothing is written,
+        and wallets or categories are never created: unmatched names come back under unmapped so the client can
+        send walletMap / categoryMap. Types are limited to income, expense and transfer. At most 2000 data rows;
+        the route accepts a 2 MB JSON body. Presets: freeva (the BE-P3-010 export, auto-detected), money_lover,
+        misa (header names are best-effort aliases; override any column with mapping) and custom.
+        Cache-Control no-store; file content is never logged.
+      security:
+      - UserBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionImportRequest'
+      responses:
+        '200':
+          description: Per-row plan
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionImportPreview'
+        '400':
+          $ref: '#/components/responses/TransactionImportError'
+        '401':
+          $ref: '#/components/responses/TransactionImportError'
+        '413':
+          $ref: '#/components/responses/TransactionImportError'
+  /api/v1/transactions/import:
+    post:
+      operationId: commitTransactionImport
+      tags:
+      - Transactions
+      summary: Import transactions from CSV as one undoable batch (BE-P3-011)
+      description: >
+        Same body as the preview plus batchClientId. Ready rows are written in one database transaction through
+        the normal transaction rules (balanced transfers, category kind, archived wallets), each with a clientId
+        derived from batchClientId and the row, so a retry never duplicates. Rows flagged duplicate are skipped
+        unless includeDuplicates is true; nothing is ever overwritten. Invalid rows are reported per row and do
+        not stop the rest. Repeating a batchClientId returns 200 with the stored batch and rows null. Writes audit
+        transaction_import.create (ids only).
+      security:
+      - UserBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionImportCommitRequest'
+      responses:
+        '201':
+          description: Batch created
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionImportResult'
+        '200':
+          description: batchClientId already used; stored batch, rows null
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionImportResult'
+        '400':
+          $ref: '#/components/responses/TransactionImportError'
+        '401':
+          $ref: '#/components/responses/TransactionImportError'
+        '409':
+          $ref: '#/components/responses/TransactionImportError'
+        '413':
+          $ref: '#/components/responses/TransactionImportError'
+  /api/v1/transactions/import/{id}:
+    get:
+      operationId: getTransactionImport
+      tags:
+      - Transactions
+      summary: Read an import batch (BE-P3-011)
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Batch with the count of imported transactions still active
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionImportBatch'
+        '400':
+          $ref: '#/components/responses/TransactionImportError'
+        '401':
+          $ref: '#/components/responses/TransactionImportError'
+        '404':
+          $ref: '#/components/responses/TransactionImportError'
+  /api/v1/transactions/import/{id}/undo:
+    post:
+      operationId: undoTransactionImport
+      tags:
+      - Transactions
+      summary: Undo a whole import batch (BE-P3-011)
+      description: >
+        Soft-deletes every imported transaction still untouched. A transaction edited after the import
+        (version above 1) or tied to an active refund or card installment plan is left alone and listed in skipped
+        with reason modified or linked. Safe to repeat. Writes audit transaction_import.undo.
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Undo result
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionImportUndo'
+        '400':
+          $ref: '#/components/responses/TransactionImportError'
+        '401':
+          $ref: '#/components/responses/TransactionImportError'
+        '404':
+          $ref: '#/components/responses/TransactionImportError'
   /api/v1/transactions/{id}:
     parameters:
     - in: path
@@ -5150,6 +5314,19 @@ components:
         type: string
         const: no-store
   responses:
+    TransactionImportError:
+      description: >
+        VALIDATION_ERROR, FILE_INVALID (no header, no date/amount column, unterminated quote), FILE_TOO_LARGE
+        (more than 2000 rows), IMPORT_NOT_FOUND, IMPORT_CONFLICT, or SESSION_INVALID
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
     CategoryValidationError:
       description: VALIDATION_ERROR
       headers:
@@ -5863,6 +6040,159 @@ components:
         checks session storage on every authenticated request. No refresh token in this
         phase.
   schemas:
+    ImportMapping:
+      type: object
+      additionalProperties: false
+      description: Source header name for each Freeva field; overrides the preset.
+      properties:
+        date: {type: string, maxLength: 100}
+        time: {type: string, maxLength: 100}
+        type: {type: string, maxLength: 100}
+        amount: {type: string, maxLength: 100}
+        currency: {type: string, maxLength: 100}
+        wallet: {type: string, maxLength: 100}
+        category: {type: string, maxLength: 100}
+        merchant: {type: string, maxLength: 100}
+        notes: {type: string, maxLength: 100}
+        id: {type: string, maxLength: 100}
+    TransactionImportRequest:
+      type: object
+      additionalProperties: false
+      required: [text]
+      properties:
+        text:
+          type: string
+          maxLength: 1000000
+          description: CSV text, UTF-8, BOM allowed, comma or semicolon separated.
+        preset:
+          type: string
+          enum: [freeva, money_lover, misa, custom]
+          description: Omitted = detected from the header.
+        dateFormat: {type: string, enum: [iso, dmy, mdy]}
+        numberFormat:
+          type: string
+          enum: [plain, dot_thousands, comma_thousands]
+          description: plain 1234.56; dot_thousands 1.234,56; comma_thousands 1,234.56.
+        mapping:
+          $ref: '#/components/schemas/ImportMapping'
+        walletMap:
+          type: object
+          maxProperties: 500
+          description: Source wallet name to Freeva account id.
+          additionalProperties: {type: string, format: uuid}
+        categoryMap:
+          type: object
+          maxProperties: 500
+          description: Source category name to Freeva category id; null means no category (income only).
+          additionalProperties: {type: string, format: uuid, nullable: true}
+        defaultAccountId:
+          type: string
+          format: uuid
+          description: Wallet for rows without a wallet value.
+    TransactionImportCommitRequest:
+      allOf:
+      - $ref: '#/components/schemas/TransactionImportRequest'
+      - type: object
+        required: [batchClientId]
+        properties:
+          batchClientId: {type: string, format: uuid}
+          includeDuplicates: {type: boolean, default: false}
+    TransactionImportRow:
+      type: object
+      required: [rows, status, errors, type, occurredOn, occurredTime, accountId, toAccountId, currencyCode, amountMinor, categoryId, merchant, notes, duplicateOfId]
+      properties:
+        rows:
+          type: array
+          items: {type: integer, minimum: 1}
+          description: 1-based data rows of the file (two for a paired transfer).
+        status:
+          type: string
+          enum: [ready, duplicate, invalid, created, skipped_duplicate]
+          description: Preview uses ready, duplicate, invalid; commit uses created, skipped_duplicate, invalid.
+        errors:
+          type: array
+          items:
+            type: string
+            enum: [DATE_INVALID, AMOUNT_INVALID, TYPE_UNSUPPORTED, WALLET_UNMAPPED, WALLET_AMBIGUOUS, CATEGORY_UNMAPPED, CATEGORY_AMBIGUOUS, CATEGORY_KIND_MISMATCH, CURRENCY_MISMATCH, TRANSFER_UNPAIRED, TRANSFER_SAME_WALLET, TRANSACTION_CONFLICT, VALIDATION_ERROR, ACCOUNT_NOT_FOUND]
+        type: {type: string, enum: [income, expense, transfer], nullable: true}
+        occurredOn: {type: string, format: date, nullable: true}
+        occurredTime: {type: string, nullable: true}
+        accountId: {type: string, format: uuid, nullable: true, description: Source wallet for a transfer.}
+        toAccountId: {type: string, format: uuid, nullable: true}
+        currencyCode: {type: string, nullable: true}
+        amountMinor: {type: string, nullable: true, description: Absolute amount in minor units.}
+        categoryId: {type: string, format: uuid, nullable: true}
+        merchant: {type: string, nullable: true}
+        notes: {type: string, nullable: true}
+        duplicateOfId: {type: string, format: uuid, nullable: true}
+    TransactionImportPreview:
+      type: object
+      required: [preset, columns, summary, unmapped, rows]
+      properties:
+        preset: {type: string, enum: [freeva, money_lover, misa, custom]}
+        columns:
+          type: object
+          description: Freeva field to the source header it was matched to.
+          additionalProperties: {type: string}
+        summary:
+          type: object
+          required: [rowCount, ready, duplicate, invalid]
+          properties:
+            rowCount: {type: integer}
+            ready: {type: integer}
+            duplicate: {type: integer}
+            invalid: {type: integer}
+        unmapped:
+          type: object
+          required: [wallets, categories]
+          properties:
+            wallets: {type: array, items: {type: string}}
+            categories: {type: array, items: {type: string}}
+        rows:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransactionImportRow'
+    TransactionImportBatch:
+      type: object
+      required: [id, clientId, preset, rowCount, createdCount, duplicateCount, invalidCount, remainingCount, undoneAt, createdAt]
+      properties:
+        id: {type: string, format: uuid}
+        clientId: {type: string, format: uuid}
+        preset: {type: string}
+        rowCount: {type: integer}
+        createdCount: {type: integer}
+        duplicateCount: {type: integer}
+        invalidCount: {type: integer}
+        remainingCount: {type: integer, description: Imported transactions still active.}
+        undoneAt: {type: string, format: date-time, nullable: true}
+        createdAt: {type: string, format: date-time}
+    TransactionImportResult:
+      type: object
+      required: [created, batch, rows]
+      properties:
+        created: {type: boolean}
+        batch:
+          $ref: '#/components/schemas/TransactionImportBatch'
+        rows:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/TransactionImportRow'
+    TransactionImportUndo:
+      type: object
+      required: [batch, undoneCount, skipped]
+      properties:
+        batch:
+          $ref: '#/components/schemas/TransactionImportBatch'
+        undoneCount: {type: integer}
+        skipped:
+          type: array
+          items:
+            type: object
+            required: [transactionId, reason]
+            properties:
+              transactionId: {type: string, format: uuid}
+              reason: {type: string, enum: [modified, linked]}
     PutPushTokenRequest:
       type: object
       additionalProperties: false
