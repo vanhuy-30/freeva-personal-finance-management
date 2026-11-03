@@ -2,6 +2,10 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-11-03
+
+- `BE-P3-008`: hoàn tiền gắn khoản chi gốc — `POST /api/v1/transactions/{id}/refunds` tạo giao dịch `refund` một leg (tổng hoàn ≤ khoản gốc, idempotent theo `clientId`), trừ vào chi của danh mục và ngân sách tại kỳ của khoản gốc thay vì tính thu nhập; xóa khoản gốc còn hoàn tiền cần `refunds=cascade|keep`. Migration `20261103100000_transaction_refund` (additive; cần deploy trước API). `MOB-P3-008` chưa làm. [Thiết kế](../architecture/refunds.md).
+
 ## 2026-11-02
 
 - `INF-P3-001`: job `mobile` thêm `dart format --output=none --set-exit-if-changed lib test tool` sau `flutter pub get`; format toàn bộ `apps/mobile` một lần (65 file, chỉ đổi format).

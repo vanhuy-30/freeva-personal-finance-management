@@ -91,11 +91,12 @@
 - Note: BE-P3-007 xong 2026-11-02: `/api/v1/personal-debts` (CRUD, `summary` ai nợ mình / mình nợ ai, `payments` trả một phần nhiều lần, tất toán), tiền di chuyển bằng giao dịch `debt` một chân (ngoài thu/chi, ngân sách, tỷ lệ tiết kiệm; có trong số dư ví, export, sổ cái), phải thu vào tài sản, phải trả vào nợ của `/reports/net-worth`, nhắc `debt_due` / `debt_overdue` qua loại `debt`, audit `personal_debt.create`, OpenAPI, export/xoá tài khoản. Kiến trúc: [personal-debts.md](../docs/architecture/personal-debts.md). Tồn đọng: chưa xóa được khoản ghi nhầm đã có tiền chuyển; lưu trữ chỉ khi đã tất toán; app chưa biết loại giao dịch `debt` / `adjustment`; MOB-P3-007 chưa làm.
 
 ### BE-P3-008 / MOB-P3-008 — Hoàn tiền gắn khoản chi gốc
-- Status: todo
+- Status: doing — BE xong 2026-11-03, MOB còn
 - Module: 4, 7, 14
 - Gate: v1
 - Depends: BE-P1-005, BE-P2-E02
 - DoD: từ một khoản chi, tạo hoàn tiền (một phần hoặc toàn bộ) vào một ví. Hoàn tiền trỏ về khoản chi gốc, cùng danh mục, trừ vào chi của danh mục và ngân sách tại kỳ của khoản chi gốc thay vì tính là thu nhập. Tổng hoàn không vượt khoản gốc. Xóa khoản gốc thì hỏi xử lý hoàn tiền đi kèm. Test bảng số báo cáo và ngân sách.
+- Note: BE-P3-008 xong 2026-11-03: `POST /transactions/{id}/refunds` (loại `refund` một leg, `refundOfId`, cùng danh mục, cùng tiền tệ, idempotent theo `clientId`), tổng hoàn ≤ khoản gốc kể cả song song, báo cáo/ngân sách/ngưỡng trừ hoàn tiền theo kỳ khoản gốc, xóa gốc còn hoàn tiền → 409 `REFUND_EXISTS` trừ khi `refunds=cascade|keep`, OpenAPI, export/xoá tài khoản. Migration additive. Kiến trúc: [refunds.md](../docs/architecture/refunds.md). Tồn đọng: MOB-P3-008 chưa làm; app chưa biết loại `refund`; hoàn tiền khác tiền tệ chưa hỗ trợ.
 
 ### BE-P3-009 / MOB-P3-009 — Trả góp thẻ tín dụng
 - Status: todo

@@ -27,6 +27,8 @@ enum TransactionType {
   transfer
   adjustment
   debt
+  /// Money back for an expense (BE-P3-008): one positive leg, netted against the original expense's category and period.
+  refund
 }
 
 enum CategoryKind {
@@ -289,6 +291,8 @@ model Transaction {
   transferGroupId String?         @db.Uuid
   fxQuoteId       String?         @db.Uuid
   recurringRuleId String?         @db.Uuid
+  /// Set only on `refund` rows: the expense being refunded.
+  refundOfId      String?         @db.Uuid
   notes           String?
   merchant        String?
   deletedAt       DateTime?       @db.Timestamptz
@@ -302,6 +306,8 @@ model Transaction {
   currency      Currency         @relation(fields: [currencyCode], references: [code])
   fxQuote       FxQuote?         @relation(fields: [fxQuoteId], references: [id])
   recurringRule RecurringRule?   @relation(fields: [recurringRuleId], references: [id], onDelete: SetNull)
+  refundOf      Transaction?     @relation("TransactionRefund", fields: [refundOfId], references: [id], onDelete: NoAction)
+  refunds       Transaction[]    @relation("TransactionRefund")
   tags          TransactionTag[]
   paidBill      Bill?
 
@@ -310,6 +316,7 @@ model Transaction {
   @@index([accountId])
   @@index([transferGroupId])
   @@index([recurringRuleId])
+  @@index([refundOfId])
 }
 
 /// Default monthly spend limit (BE-P2-E02). One row per user; used when a fiscal month has no override.

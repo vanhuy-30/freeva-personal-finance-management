@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { TRANSACTION_REPOSITORY, type RecentMatchQuery, type TransactionRepository } from './domain/transaction.repository';
-import { calendarDate, minor, normalizeRate, occurredTime, TransactionError, type TransactionBundle, type TransactionLeg, type TransactionPatch } from './domain/transaction';
+import { calendarDate, minor, normalizeRate, occurredTime, TransactionError, type RefundDisposition, type TransactionBundle, type TransactionLeg, type TransactionPatch } from './domain/transaction';
 import { FxRateService } from '../fx-rates/fx-rate.service';
 import type { ReconcileResult } from './domain/reconcile';
-import type { CreateTransactionDto, ReconcileDto, ManualFxDto, TransactionLegDto, TransactionQueryDto, UpdateTransactionDto } from './transaction.dto';
+import type { CreateTransactionDto, ReconcileDto, RefundDto, ManualFxDto, TransactionLegDto, TransactionQueryDto, UpdateTransactionDto } from './transaction.dto';
 const legs = (input: TransactionLegDto[]) => input.map(leg => ({ ...leg, amountMinor: minor(leg.amountMinor) }));
 const fx = (input: ManualFxDto | null) => input === null ? null : { rate: normalizeRate(input.rate), quotedAt: new Date(input.quotedAt) };
 const tags = (ids: string[]) => [...new Set(ids.map(id => id.toLowerCase()))].sort();
@@ -56,7 +56,7 @@ export class TransactionService {
         count: result.summary.count,
         totals: result.summary.totals.map(row => ({
           currency: row.currency, incomeMinor: row.incomeMinor.toString(), expenseMinor: row.expenseMinor.toString(),
-          transferInMinor: row.transferInMinor.toString(), transferOutMinor: row.transferOutMinor.toString(), adjustmentMinor: row.adjustmentMinor.toString(), debtMinor: row.debtMinor.toString(),
+          transferInMinor: row.transferInMinor.toString(), transferOutMinor: row.transferOutMinor.toString(), adjustmentMinor: row.adjustmentMinor.toString(), debtMinor: row.debtMinor.toString(), refundMinor: row.refundMinor.toString(),
         })),
       },
     };
@@ -68,6 +68,7 @@ export class TransactionService {
     if (rest.notes !== undefined) patch.notes = rest.notes;
     if (rest.merchant !== undefined) patch.merchant = rest.merchant;
     if (rest.deleted !== undefined) patch.deleted = rest.deleted;
+    if (rest.refunds !== undefined) patch.refunds = rest.refunds;
     if (occurredOn !== undefined) patch.occurredOn = calendarDate(occurredOn);
     if (inputTime !== undefined) patch.occurredTime = occurredTime(inputTime);
     if (inputLegs !== undefined) patch.legs = legs(inputLegs);
@@ -80,5 +81,12 @@ export class TransactionService {
       occurredOn: dto.occurredOn ?? null, notes: dto.notes ?? null, dryRun: dto.dryRun ?? false });
     return { result: reconcileResponse(result), created: result.created };
   }
-  async delete(userId: string, id: string, version: number): Promise<void> { await this.repository.update(userId, id, { version, deleted: true }); }
+  async refund(userId: string, originalId: string, dto: RefundDto) {
+    const result = await this.repository.refund(userId, originalId, { clientId: dto.clientId, accountId: dto.accountId,
+      amountMinor: minor(dto.amountMinor), occurredOn: dto.occurredOn ?? null, notes: dto.notes ?? null });
+    return { transaction: response(result.transaction), created: result.created };
+  }
+  async delete(userId: string, id: string, version: number, refunds?: RefundDisposition): Promise<void> {
+    await this.repository.update(userId, id, { version, deleted: true, ...(refunds ? { refunds } : {}) });
+  }
 }

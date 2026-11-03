@@ -9,6 +9,7 @@ import { VIETNAMESE_FOLD_FROM, VIETNAMESE_FOLD_TO, parseTransactionSearch, type 
 import { createTransactionInTx } from './create-transaction-in-tx';
 import { reconcileDelta, reconcileTarget, validateReconcileNotes, type ReconcileInput, type ReconcileResult } from '../domain/reconcile';
 import { calendarDate } from '../domain/transaction';
+import { assertWithinRefundCap, validateRefundAmount, type RefundInput } from '../domain/refund';
 import { todayInTimeZone } from '../../reports/domain/report';
 
 const include = { tags: { select: { tagId: true } }, fxQuote: true } satisfies Prisma.TransactionInclude;
@@ -17,7 +18,7 @@ function leg(row: Row): TransactionLeg {
   return { id: row.id, clientId: row.clientId, accountId: row.accountId, currencyCode: row.currencyCode, amountMinor: row.amountMinor,
     type: row.type, occurredOn: row.occurredOn, occurredTime: row.occurredTime, categoryId: row.categoryId, notes: row.notes, merchant: row.merchant,
     tagIds: row.tags.map(tag => tag.tagId).sort(),
-    transferGroupId: row.transferGroupId, fxQuoteId: row.fxQuoteId, deletedAt: row.deletedAt, version: row.version, createdAt: row.createdAt, updatedAt: row.updatedAt };
+    transferGroupId: row.transferGroupId, refundOfId: row.refundOfId, fxQuoteId: row.fxQuoteId, deletedAt: row.deletedAt, version: row.version, createdAt: row.createdAt, updatedAt: row.updatedAt };
 }
 function bundle(rows: Row[]): TransactionBundle {
   rows.sort((a, b) => a.amountMinor < b.amountMinor ? -1 : a.amountMinor > b.amountMinor ? 1 : a.id.localeCompare(b.id));
@@ -110,7 +111,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
       if (!query.legs.length) return [];
       return tx.transaction.findMany({
         where: {
-          userId, deletedAt: null, occurredOn: query.occurredOn, type: { notIn: ['adjustment', 'debt'] },
+          userId, deletedAt: null, occurredOn: query.occurredOn, type: { notIn: ['adjustment', 'debt', 'refund'] },
           createdAt: { gte: query.createdAfter, lte: query.createdBefore },
           clientId: { notIn: query.excludeClientIds },
           OR: query.legs.map(leg => ({ accountId: leg.accountId, amountMinor: leg.amountMinor })),
@@ -136,22 +137,23 @@ export class PrismaTransactionRepository implements TransactionRepository {
         LIMIT ${query.pageSize} OFFSET ${(query.page - 1) * query.pageSize}`);
       const [count] = await tx.$queryRaw<{ total: string; bundles: string }[]>(Prisma.sql`
         SELECT COUNT(*)::text AS total, COUNT(DISTINCT COALESCE(t."transferGroupId", t.id))::text AS bundles ${listed}`);
-      const totals = await tx.$queryRaw<{ currency: string; income: string; expense: string; transferIn: string; transferOut: string; adjustment: string; debt: string }[]>(Prisma.sql`
+      const totals = await tx.$queryRaw<{ currency: string; income: string; expense: string; transferIn: string; transferOut: string; adjustment: string; debt: string; refund: string }[]>(Prisma.sql`
         SELECT t."currencyCode" AS currency,
           COALESCE(SUM(CASE WHEN t.type::text = 'income' THEN t."amountMinor" ELSE 0 END), 0)::text AS income,
           COALESCE(SUM(CASE WHEN t.type::text = 'expense' THEN t."amountMinor" ELSE 0 END), 0)::text AS expense,
           COALESCE(SUM(CASE WHEN t.type::text = 'transfer' AND t."amountMinor" > 0 THEN t."amountMinor" ELSE 0 END), 0)::text AS "transferIn",
           COALESCE(SUM(CASE WHEN t.type::text = 'transfer' AND t."amountMinor" < 0 THEN t."amountMinor" ELSE 0 END), 0)::text AS "transferOut",
           COALESCE(SUM(CASE WHEN t.type::text = 'adjustment' THEN t."amountMinor" ELSE 0 END), 0)::text AS adjustment,
-          COALESCE(SUM(CASE WHEN t.type::text = 'debt' THEN t."amountMinor" ELSE 0 END), 0)::text AS debt
+          COALESCE(SUM(CASE WHEN t.type::text = 'debt' THEN t."amountMinor" ELSE 0 END), 0)::text AS debt,
+          COALESCE(SUM(CASE WHEN t.type::text = 'refund' THEN t."amountMinor" ELSE 0 END), 0)::text AS refund
         ${listed}
         GROUP BY t."currencyCode" ORDER BY t."currencyCode"`);
       const summary = {
         count: Number(count.bundles),
         totals: totals
           .map(row => ({ currency: row.currency.trim(), incomeMinor: BigInt(row.income), expenseMinor: BigInt(row.expense),
-            transferInMinor: BigInt(row.transferIn), transferOutMinor: BigInt(row.transferOut), adjustmentMinor: BigInt(row.adjustment), debtMinor: BigInt(row.debt) }))
-          .filter(row => [row.incomeMinor, row.expenseMinor, row.transferInMinor, row.transferOutMinor, row.adjustmentMinor, row.debtMinor].some(value => value !== 0n)),
+            transferInMinor: BigInt(row.transferIn), transferOutMinor: BigInt(row.transferOut), adjustmentMinor: BigInt(row.adjustment), debtMinor: BigInt(row.debt), refundMinor: BigInt(row.refund) }))
+          .filter(row => [row.incomeMinor, row.expenseMinor, row.transferInMinor, row.transferOutMinor, row.adjustmentMinor, row.debtMinor, row.refundMinor].some(value => value !== 0n)),
       };
       if (!ids.length) return { items: [], total: Number(count.total), summary };
       const rows = await tx.transaction.findMany({ where: { userId, id: { in: ids.map(row => row.id) } }, include });
@@ -196,6 +198,56 @@ export class PrismaTransactionRepository implements TransactionRepository {
       return { ...base, transaction: created.transaction, created: created.created };
     }, true);
   }
+  /** Sum of active refunds of one expense, optionally leaving one refund out (its own edit). */
+  private async refunded(tx: Prisma.TransactionClient, userId: string, originalId: string, exceptId?: string): Promise<bigint> {
+    const [sum] = await tx.$queryRaw<{ total: string }[]>(Prisma.sql`
+      SELECT COALESCE(SUM("amountMinor"), 0)::text AS total FROM "Transaction"
+      WHERE "userId" = ${userId}::uuid AND "refundOfId" = ${originalId}::uuid AND type::text = 'refund' AND "deletedAt" IS NULL
+        ${exceptId ? Prisma.sql`AND id <> ${exceptId}::uuid` : Prisma.empty}`);
+    return BigInt(sum.total);
+  }
+  /**
+   * Refund (BE-P3-008): one positive leg in `accountId`, pointing at the expense. The expense row is locked so two
+   * refunds cannot pass the original amount together. A retry with the same clientId replays the stored refund.
+   */
+  refund(userId: string, originalId: string, input: RefundInput) {
+    validateRefundAmount(input.amountMinor);
+    return this.snapshot(async tx => {
+      await touchFinancialOwner(tx, userId);
+      await tx.$queryRaw(Prisma.sql`SELECT id FROM "Transaction" WHERE id = ${originalId}::uuid AND "userId" = ${userId}::uuid FOR UPDATE`);
+      const original = await tx.transaction.findFirst({ where: { id: originalId, userId } });
+      if (!original) throw new TransactionError('TRANSACTION_NOT_FOUND');
+      const replay = await tx.transaction.findFirst({ where: { userId, clientId: input.clientId } });
+      if (replay) {
+        if (replay.type !== 'refund' || replay.refundOfId !== originalId || replay.accountId !== input.accountId ||
+          replay.amountMinor !== input.amountMinor) throw new TransactionError('TRANSACTION_CONFLICT');
+        return { transaction: await this.load(tx, userId, replay.id), created: false };
+      }
+      if (original.type !== 'expense' || original.deletedAt) throw new TransactionError('TRANSACTION_CONFLICT');
+      assertWithinRefundCap(original.amountMinor, await this.refunded(tx, userId, originalId) + input.amountMinor);
+      const user = await tx.user.findUnique({ where: { id: userId }, select: { timezone: true } });
+      const day = input.occurredOn ?? todayInTimeZone(user?.timezone ?? 'UTC', new Date());
+      return createTransactionInTx(tx, userId, {
+        type: 'refund', occurredOn: calendarDate(day), occurredTime: null, categoryId: original.categoryId, notes: input.notes,
+        merchant: null, tagIds: [], fx: null,
+        legs: [{ clientId: input.clientId, accountId: input.accountId, currencyCode: original.currencyCode, amountMinor: input.amountMinor }],
+      }, { refundOfId: originalId });
+    }, true);
+  }
+  /** Deleting an expense that still has refunds needs an explicit choice; otherwise the refunds would dangle. */
+  private async settleRefunds(tx: Prisma.TransactionClient, userId: string, originalId: string, disposition: TransactionPatch['refunds']) {
+    const active = await tx.transaction.findMany({ where: { userId, refundOfId: originalId, deletedAt: null }, select: { id: true, accountId: true } });
+    if (!active.length) return;
+    if (!disposition) throw new TransactionError('REFUND_EXISTS');
+    const ids = [...new Set(active.map(row => row.accountId))].sort();
+    await tx.$queryRaw(Prisma.sql`SELECT id FROM "FinancialAccount" WHERE "userId" = ${userId}::uuid
+      AND id IN (${Prisma.join(ids.map(id => Prisma.sql`${id}::uuid`))}) ORDER BY id FOR UPDATE`);
+    await tx.financialAccount.updateMany({ where: { userId, id: { in: ids } }, data: { updatedAt: new Date() } });
+    const where = { userId, refundOfId: originalId, deletedAt: null };
+    // cascade removes the money from the wallet; keep leaves the wallet balance alone and turns the refund into plain income.
+    if (disposition === 'cascade') await tx.transaction.updateMany({ where, data: { deletedAt: new Date(), version: { increment: 1 } } });
+    else await tx.transaction.updateMany({ where, data: { type: 'income', refundOfId: null, categoryId: null, version: { increment: 1 } } });
+  }
   update(userId: string, id: string, patch: TransactionPatch) {
     return this.snapshot(async tx => {
       await touchFinancialOwner(tx, userId);
@@ -204,13 +256,31 @@ export class PrismaTransactionRepository implements TransactionRepository {
       // Debt legs are owned by /personal-debts (BE-P3-007): editing or deleting one would desync the outstanding amount.
       if (first.type === 'debt') throw new TransactionError('VALIDATION_ERROR');
       if (first.version !== patch.version || first.version >= 2147483647) throw new TransactionError('TRANSACTION_CONFLICT');
-      const { version: _version, deleted, ...fields } = patch;
+      const { version: _version, deleted, refunds: refundDisposition, ...fields } = patch;
       const input = { ...inputOf(current), ...fields };
       if (input.legs.length !== current.legs.length || input.legs.some((item, index) => item.clientId !== current.legs[index].clientId)) throw new TransactionError('TRANSACTION_CONFLICT');
       const deletionOnly = Object.keys(fields).length === 0 && deleted === true;
       if (first.deletedAt && !deletionOnly && deleted !== false) throw new TransactionError('TRANSACTION_CONFLICT');
+      if (first.type === 'refund' && (fields.categoryId !== undefined || fields.merchant !== undefined || fields.fx !== undefined || fields.tagIds !== undefined)) throw new TransactionError('VALIDATION_ERROR');
+      if (first.type === 'refund' && !deletionOnly && first.refundOfId) {
+        const original = await tx.transaction.findFirst({ where: { id: first.refundOfId, userId } });
+        if (!original || original.deletedAt) throw new TransactionError('TRANSACTION_CONFLICT');
+        assertWithinRefundCap(original.amountMinor, await this.refunded(tx, userId, original.id, first.id) + input.legs[0].amountMinor);
+      }
+      if (first.type === 'expense' && deleted === true && !first.deletedAt) await this.settleRefunds(tx, userId, id, refundDisposition);
+      if (first.type === 'expense' && !deletionOnly) {
+        const refundedNow = await this.refunded(tx, userId, id);
+        if (refundedNow > 0n) {
+          // The refunds were measured against this amount, currency and category: keep them consistent.
+          if (input.legs[0].currencyCode !== first.currencyCode) throw new TransactionError('VALIDATION_ERROR');
+          assertWithinRefundCap(input.legs[0].amountMinor, refundedNow);
+          if (input.categoryId !== first.categoryId) {
+            await tx.transaction.updateMany({ where: { userId, refundOfId: id, deletedAt: null }, data: { categoryId: input.categoryId, version: { increment: 1 } } });
+          }
+        }
+      }
       await this.accounts(tx, userId, input, current.legs, !deletionOnly);
-      if (!deletionOnly) await this.references(tx, userId, input);
+      if (!deletionOnly && first.type !== 'refund') await this.references(tx, userId, input);
       const fxQuoteId = await this.quote(tx, userId, input, current);
       const deletedAt = deleted === undefined ? first.deletedAt : deleted ? first.deletedAt ?? new Date() : null;
       const rows: Row[] = [];

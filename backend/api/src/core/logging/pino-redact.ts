@@ -41,6 +41,7 @@ export const PINO_REDACT_PATHS: string[] = [
   ...nested('transferMinor'),
   ...nested('adjustmentMinor'),
   ...nested('debtMinor'),
+  ...nested('refundMinor'),
   ...nested('actualBalanceMinor'),
   ...nested('deltaMinor'),
   ...nested('assetsMinor'),

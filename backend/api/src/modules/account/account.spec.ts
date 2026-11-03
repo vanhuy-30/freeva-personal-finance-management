@@ -46,7 +46,7 @@ function source(): ExportSource {
     notifications: [],
     transactions: [{
       id, clientId, type: 'expense', amountMinor: -150000n, currencyCode: 'VND', occurredOn: day, occurredTime: '12:40',
-      accountId: id, categoryId: null, transferGroupId: null, fxQuoteId: null, recurringRuleId: null,
+      accountId: id, categoryId: null, transferGroupId: null, refundOfId: null, fxQuoteId: null, recurringRuleId: null,
       notes: 'cafe', merchant: 'WinMart',
       deletedAt: at, tagIds: [clientId, id], version: 2, createdAt: at, updatedAt: at,
     }],

@@ -19,7 +19,7 @@ function leg(row: Row): TransactionLeg {
     id: row.id, clientId: row.clientId, accountId: row.accountId, currencyCode: row.currencyCode,
     amountMinor: row.amountMinor, type: row.type, occurredOn: row.occurredOn, occurredTime: row.occurredTime,
     categoryId: row.categoryId, notes: row.notes, merchant: row.merchant, tagIds: row.tags.map(tag => tag.tagId).sort(),
-    transferGroupId: row.transferGroupId, fxQuoteId: row.fxQuoteId, deletedAt: row.deletedAt,
+    transferGroupId: row.transferGroupId, refundOfId: row.refundOfId, fxQuoteId: row.fxQuoteId, deletedAt: row.deletedAt,
     version: row.version, createdAt: row.createdAt, updatedAt: row.updatedAt,
   };
 }
@@ -77,6 +77,8 @@ async function loadBundle(tx: Prisma.TransactionClient, userId: string, id: stri
 
 export type CreateTransactionOptions = {
   recurringRuleId?: string | null;
+  /** Set by POST /transactions/{id}/refunds only (BE-P3-008). */
+  refundOfId?: string | null;
 };
 
 /**
@@ -115,7 +117,8 @@ export async function createTransactionInTx(
   }
   validateInput(input, digits);
   await tx.financialAccount.updateMany({ where: { userId, id: { in: ids } }, data: { updatedAt: new Date() } });
-  if (input.categoryId) {
+  // A refund copies its category from the original expense, which may have been archived since.
+  if (input.categoryId && input.type !== 'refund') {
     const category = await tx.category.findFirst({ where: { id: input.categoryId, userId, archivedAt: null }, select: { kind: true } });
     if (!category) throw new TransactionError('VALIDATION_ERROR');
     if (!categoryKindFits(input.type, category.kind)) throw new TransactionError('CATEGORY_KIND_MISMATCH');
@@ -134,13 +137,14 @@ export async function createTransactionInTx(
   }
   const transferGroupId = input.type === 'transfer' ? randomUUID() : null;
   const recurringRuleId = options.recurringRuleId ?? null;
+  const refundOfId = options.refundOfId ?? null;
   const rows: Row[] = [];
   for (const item of input.legs) {
     rows.push(await tx.transaction.create({
       data: {
         ...item, userId, type: input.type, occurredOn: input.occurredOn, occurredTime: input.occurredTime,
         categoryId: input.categoryId, notes: input.notes, merchant: input.merchant,
-        transferGroupId, fxQuoteId, recurringRuleId,
+        transferGroupId, fxQuoteId, recurringRuleId, refundOfId,
         tags: { create: input.tagIds.map(tagId => ({ tagId })) },
       },
       include,

@@ -13,7 +13,8 @@ export class BudgetError extends Error {
 }
 
 export type ExpenseRow = {
-  type: 'income' | 'expense' | 'transfer' | 'adjustment' | 'debt';
+  /** `refund` rows carry the original expense's category and period and reduce its spend (BE-P3-008). */
+  type: 'income' | 'expense' | 'transfer' | 'adjustment' | 'debt' | 'refund';
   amountMinor: bigint;
   currencyCode: string;
   categoryId: string | null;
@@ -47,12 +48,13 @@ export type BudgetRecord = {
   isOverride: boolean;
 };
 
-/** Absolute spend from non-deleted expenses in the budget currency. Income and transfers ignored. */
+/** Spend from non-deleted expenses in the budget currency, less refunds. Income and transfers ignored. */
 export function totalSpent(rows: ExpenseRow[], currencyCode: string): bigint {
   let sum = 0n;
   for (const row of rows) {
-    if (row.deletedAt !== null || row.type !== 'expense' || row.currencyCode !== currencyCode) continue;
-    sum += abs(row.amountMinor);
+    if (row.deletedAt !== null || row.currencyCode !== currencyCode) continue;
+    if (row.type === 'expense') sum += abs(row.amountMinor);
+    else if (row.type === 'refund') sum -= abs(row.amountMinor);
   }
   return sum;
 }
@@ -69,10 +71,10 @@ export function categorySpent(
 ): bigint {
   let sum = 0n;
   for (const row of rows) {
-    if (row.deletedAt !== null || row.type !== 'expense' || row.currencyCode !== currencyCode) continue;
+    if (row.deletedAt !== null || (row.type !== 'expense' && row.type !== 'refund') || row.currencyCode !== currencyCode) continue;
     if (row.categoryId === null) continue;
     if (row.categoryId !== categoryId && !descendants.has(row.categoryId)) continue;
-    sum += abs(row.amountMinor);
+    sum += row.type === 'refund' ? -abs(row.amountMinor) : abs(row.amountMinor);
   }
   return sum;
 }

@@ -7,7 +7,7 @@ import type {
 } from '../domain/report';
 import { previousPeriod } from '../domain/report';
 
-const moneyTypes = new Set<ReportMoneyType>(['income', 'expense', 'transfer', 'adjustment', 'debt']);
+const moneyTypes = new Set<ReportMoneyType>(['income', 'expense', 'transfer', 'adjustment', 'debt', 'refund']);
 
 @Injectable()
 export class PrismaReportRepository implements ReportRepository {
@@ -86,12 +86,11 @@ export class PrismaReportRepository implements ReportRepository {
   private async categories(tx: Prisma.TransactionClient, userId: string, from: string, to: string): Promise<CategoryAggregate[]> {
     const rows = await tx.$queryRaw<{ currency: string; categoryId: string | null; parentId: string | null; type: string; total: string; count: number }[]>(Prisma.sql`
       SELECT t."currencyCode" AS currency, t."categoryId" AS "categoryId", c."parentId" AS "parentId",
-        t.type::text AS type, SUM(t."amountMinor")::text AS total, COUNT(*)::int AS count
-      FROM "Transaction" t
+        t.type::text AS type, SUM(t."amountMinor")::text AS total, SUM(t.n)::int AS count
+      FROM ${flow} t
       LEFT JOIN "Category" c ON c.id = t."categoryId" AND c."userId" = t."userId"
       WHERE t."userId" = ${userId}::uuid AND t."deletedAt" IS NULL
         AND t."occurredOn" >= ${from}::date AND t."occurredOn" <= ${to}::date
-        AND t.type::text IN ('income', 'expense')
       GROUP BY t."currencyCode", t."categoryId", c."parentId", t.type
     `);
     return rows.map(row => ({
@@ -102,8 +101,8 @@ export class PrismaReportRepository implements ReportRepository {
   private async merchants(tx: Prisma.TransactionClient, userId: string, from: string, to: string): Promise<MerchantAggregate[]> {
     const rows = await tx.$queryRaw<{ currency: string; merchant: string; expense: string; count: number }[]>(Prisma.sql`
       SELECT t."currencyCode" AS currency, t.merchant AS merchant,
-        SUM(t."amountMinor")::text AS expense, COUNT(*)::int AS count
-      FROM "Transaction" t
+        SUM(t."amountMinor")::text AS expense, SUM(t.n)::int AS count
+      FROM ${flow} t
       WHERE t."userId" = ${userId}::uuid AND t."deletedAt" IS NULL
         AND t."occurredOn" >= ${from}::date AND t."occurredOn" <= ${to}::date
         AND t.type::text = 'expense' AND t.merchant IS NOT NULL
@@ -120,8 +119,8 @@ export class PrismaReportRepository implements ReportRepository {
     const rows = await tx.$queryRaw<{ index: number; currency: string; type: string; total: string }[]>(Prisma.sql`
       SELECT b.idx AS index, t."currencyCode" AS currency, t.type::text AS type, SUM(t."amountMinor")::text AS total
       FROM (VALUES ${ranges}) AS b(idx, first_on, last_on)
-      JOIN "Transaction" t ON t."occurredOn" >= b.first_on AND t."occurredOn" <= b.last_on
-      WHERE t."userId" = ${userId}::uuid AND t."deletedAt" IS NULL AND t.type::text IN ('income', 'expense')
+      JOIN ${flow} t ON t."occurredOn" >= b.first_on AND t."occurredOn" <= b.last_on
+      WHERE t."userId" = ${userId}::uuid AND t."deletedAt" IS NULL
       GROUP BY b.idx, t."currencyCode", t.type
     `);
     return rows.map(row => ({ index: row.index, currency: row.currency.trim(), type: flowType(row.type), total: integer(row.total) }));
@@ -192,6 +191,22 @@ export class PrismaReportRepository implements ReportRepository {
     return [...accountRows, ...debtRows];
   }
 }
+
+/**
+ * Income/expense rows for the cashflow queries. A refund (BE-P3-008) is attributed to the expense it returns money for:
+ * same date, category and merchant as the original, typed `expense`, so it cancels part of that expense instead of
+ * counting as income. `n` is 0 for refunds so transaction counts stay the number of real transactions.
+ */
+const flow = Prisma.sql`(
+  SELECT x.id, x."userId", x."currencyCode", x."categoryId", x.type::text AS type, x."amountMinor", x."occurredOn",
+    x.merchant, x."deletedAt", 1 AS n
+  FROM "Transaction" x WHERE x.type::text IN ('income', 'expense')
+  UNION ALL
+  SELECT r.id, r."userId", r."currencyCode", o."categoryId", 'expense' AS type, r."amountMinor", o."occurredOn",
+    o.merchant, r."deletedAt", 0 AS n
+  FROM "Transaction" r JOIN "Transaction" o ON o.id = r."refundOfId" AND o."userId" = r."userId" AND o."deletedAt" IS NULL
+  WHERE r.type::text = 'refund'
+)`;
 
 function flowType(value: string): 'income' | 'expense' {
   if (value === 'income' || value === 'expense') return value;
