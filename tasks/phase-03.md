@@ -134,4 +134,4 @@
 - Module: —
 - Gate: —
 - Depends: INF-P0-002
-- DoD: job `mobile` chạy `dart format --output=none --set-exit-if-changed lib test tool` sau `flutter pub get`, trước codegen (file generated đã commit đúng format). Toàn bộ `apps/mobile` được format một lần (65 file, chỉ đổi format). Analyze và test vẫn xanh.
+- DoD: job `mobile` chạy `dart format --output=none --set-exit-if-changed` trên `lib test tool`, trừ file sinh tự động (`*.g.dart`, `*.config.dart`, `*.freezed.dart`: có gate riêng, `tokens.g.dart` cấm format tay), sau `flutter pub get` và trước codegen. `apps/mobile` được format một lần (62 file, thêm ngoặc cho 3 câu `if` để qua `curly_braces_in_flow_control_structures`). Analyze và test vẫn xanh.

@@ -12,8 +12,9 @@ String maskEmail(String email) {
 String avatarLetter(String? name, String? email) {
   for (final source in [name, email]) {
     final text = source?.trim() ?? '';
-    if (text.isNotEmpty)
+    if (text.isNotEmpty) {
       return String.fromCharCode(text.runes.first).toUpperCase();
+    }
   }
   return '?';
 }
