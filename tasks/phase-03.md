@@ -25,12 +25,13 @@
 - Depends: BE-P1-004
 - DoD: một khoản gửi gắn một ví, lãi có công thức và test, không cộng trùng số dư ví. Spec v1 không yêu cầu module này. Được đóng wont nếu beta không cần, và ghi quyết định vào module 11.
 
-### BE-P3-E04 — Dự báo số dư theo quy tắc
-- Status: todo
+### BE-P3-E04 / MOB-P3-E04 — Dự báo số dư theo quy tắc
+- Status: doing — BE xong 2026-11-03, MOB còn
 - Module: 14, 15
 - Gate: post-v1
 - Depends: BE-P2-E01
 - DoD: dự báo số dư từ số hiện tại cộng các định kỳ đã biết. Màn hình nêu giả định và cho sửa input. Khác forecast AI ở `BE-P5-E06`: không gọi model.
+- Note: BE-P3-E04 xong 2026-11-03: `GET /api/v1/forecast` (`months`, `currencyCode`, `startingBalanceMinor`, `excludeRuleIds`), số dư từ ví không phải thẻ + định kỳ/hóa đơn thu chi, trả `assumptions`, có test số cố định, OpenAPI. Không quy đổi FX, không dự đoán chi tiêu ngoài định kỳ. Kiến trúc: [forecast.md](../docs/architecture/forecast.md). MOB-P3-E04 (màn hình giả định, sửa input) chưa làm.
 
 ## Gộp chức năng chồng chéo (thêm 2026-11-02)
 

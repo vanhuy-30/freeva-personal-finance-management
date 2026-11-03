@@ -1157,6 +1157,68 @@ paths:
         Active recurring rules project from `nextExecutionDate` with month/year day clamp.
         Bills with `dueOn` in the month include paid ones; `overdue` is derived on read from
         profile timezone. Amounts are integer minor-unit strings.
+  /api/v1/forecast:
+    get:
+      operationId: getBalanceForecast
+      summary: Rule-based month-by-month balance forecast from known recurring flows
+      tags:
+      - Forecast
+      security:
+      - UserBearer: []
+      parameters:
+      - in: query
+        name: months
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 12
+          default: 3
+        description: Calendar months ahead, counting the current month.
+      - in: query
+        name: currencyCode
+        schema:
+          type: string
+          pattern: ^[A-Z]{3}$
+        description: Defaults to the profile default currency. No FX conversion; other currencies are listed in assumptions.
+      - in: query
+        name: startingBalanceMinor
+        schema:
+          type: string
+          pattern: ^-?\d{1,18}$
+        description: Overrides the wallet-derived starting balance.
+      - in: query
+        name: excludeRuleIds
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+            format: uuid
+        description: Recurring rules or bills to leave out (comma separated).
+      responses:
+        '200':
+          description: Forecast and the assumptions behind it
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalanceForecast'
+        '400':
+          $ref: '#/components/responses/ForecastValidationError'
+        '401':
+          $ref: '#/components/responses/ForecastUnauthorized'
+        '503':
+          $ref: '#/components/responses/ForecastUnavailable'
+      description: >
+        Starting balance is the sum of non-archived, non-credit wallets in the currency (or the override).
+        Adds active income/expense recurring rules and bills from today to the end of the last month.
+        Transfers are skipped; one-off spending is not predicted. No model is called.
+        Amounts are integer minor-unit strings; expense is negative.
   /api/v1/goals/presets:
     get:
       operationId: listGoalPresets
@@ -5888,6 +5950,39 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorEnvelope'
+    ForecastValidationError:
+      description: VALIDATION_ERROR
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    ForecastUnauthorized:
+      description: SESSION_INVALID
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    ForecastUnavailable:
+      description: FORECAST_UNAVAILABLE or authentication unavailable
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
     NotificationValidationError:
       description: VALIDATION_ERROR
       headers:
@@ -7246,6 +7341,39 @@ components:
           - $ref: '#/components/schemas/BudgetSummary'
         period:
           $ref: '#/components/schemas/CashflowPeriod'
+    BalanceForecast:
+      type: object
+      additionalProperties: false
+      required: [timezone, currencyCode, from, to, startingBalanceMinor, months, assumptions]
+      properties:
+        timezone: {type: string}
+        currencyCode: {type: string}
+        from: {type: string, format: date}
+        to: {type: string, format: date}
+        startingBalanceMinor: {type: string}
+        months:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [month, openingMinor, incomeMinor, expenseMinor, closingMinor]
+            properties:
+              month: {type: string, pattern: '^\d{4}-\d{2}$'}
+              openingMinor: {type: string}
+              incomeMinor: {type: string}
+              expenseMinor: {type: string}
+              closingMinor: {type: string}
+        assumptions:
+          type: object
+          additionalProperties: false
+          required: [balanceSource, includesCreditWallets, includesOneOffSpending, includedRuleIds, excludedRuleIds, otherCurrencyRuleIds]
+          properties:
+            balanceSource: {type: string, enum: [wallets, user]}
+            includesCreditWallets: {type: boolean}
+            includesOneOffSpending: {type: boolean}
+            includedRuleIds: {type: array, items: {type: string, format: uuid}}
+            excludedRuleIds: {type: array, items: {type: string, format: uuid}}
+            otherCurrencyRuleIds: {type: array, items: {type: string, format: uuid}}
     CalendarMonth:
       type: object
       additionalProperties: false
