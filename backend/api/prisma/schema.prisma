@@ -92,22 +92,23 @@ model Currency {
   minorDigits Int
   name        String
 
-  users                 User[]             @relation("UserDefaultCurrency")
-  displayUsers          User[]             @relation("UserDisplayCurrency")
-  fxRatesFrom           UserFxRate[]       @relation("UserFxRateFrom")
-  fxRatesTo             UserFxRate[]       @relation("UserFxRateTo")
+  users                 User[]                @relation("UserDefaultCurrency")
+  displayUsers          User[]                @relation("UserDisplayCurrency")
+  fxRatesFrom           UserFxRate[]          @relation("UserFxRateFrom")
+  fxRatesTo             UserFxRate[]          @relation("UserFxRateTo")
   financialAccounts     FinancialAccount[]
   transactions          Transaction[]
-  fxQuotesFrom          FxQuote[]          @relation("FxQuoteFrom")
-  fxQuotesTo            FxQuote[]          @relation("FxQuoteTo")
-  recurringRules        RecurringRule[]    @relation("RecurringCurrency")
-  recurringCounterRules RecurringRule[]    @relation("RecurringCounterCurrency")
+  fxQuotesFrom          FxQuote[]             @relation("FxQuoteFrom")
+  fxQuotesTo            FxQuote[]             @relation("FxQuoteTo")
+  recurringRules        RecurringRule[]       @relation("RecurringCurrency")
+  recurringCounterRules RecurringRule[]       @relation("RecurringCounterCurrency")
   budgets               Budget[]
   budgetMonths          BudgetMonth[]
   bills                 Bill[]
   goals                 Goal[]
   loans                 Loan[]
   personalDebts         PersonalDebt[]
+  cardInstallmentPlans  CardInstallmentPlan[]
 }
 
 model User {
@@ -162,6 +163,7 @@ model User {
   loanPayments           LoanPayment[]
   personalDebts          PersonalDebt[]
   personalDebtPayments   PersonalDebtPayment[]
+  cardInstallmentPlans   CardInstallmentPlan[]
 }
 
 model FinancialAccount {
@@ -191,6 +193,7 @@ model FinancialAccount {
   loans                Loan[]
   personalDebts        PersonalDebt[]
   personalDebtPayments PersonalDebtPayment[]
+  cardInstallmentPlans CardInstallmentPlan[]
 
   @@unique([userId, clientId])
   @@index([userId, archivedAt])
@@ -300,16 +303,17 @@ model Transaction {
   createdAt       DateTime        @default(now()) @db.Timestamptz
   updatedAt       DateTime        @updatedAt @db.Timestamptz
 
-  user          User             @relation(fields: [userId], references: [id])
-  account       FinancialAccount @relation(fields: [accountId], references: [id])
-  category      Category?        @relation(fields: [categoryId], references: [id])
-  currency      Currency         @relation(fields: [currencyCode], references: [code])
-  fxQuote       FxQuote?         @relation(fields: [fxQuoteId], references: [id])
-  recurringRule RecurringRule?   @relation(fields: [recurringRuleId], references: [id], onDelete: SetNull)
-  refundOf      Transaction?     @relation("TransactionRefund", fields: [refundOfId], references: [id], onDelete: NoAction)
-  refunds       Transaction[]    @relation("TransactionRefund")
-  tags          TransactionTag[]
-  paidBill      Bill?
+  user            User                 @relation(fields: [userId], references: [id])
+  account         FinancialAccount     @relation(fields: [accountId], references: [id])
+  category        Category?            @relation(fields: [categoryId], references: [id])
+  currency        Currency             @relation(fields: [currencyCode], references: [code])
+  fxQuote         FxQuote?             @relation(fields: [fxQuoteId], references: [id])
+  recurringRule   RecurringRule?       @relation(fields: [recurringRuleId], references: [id], onDelete: SetNull)
+  refundOf        Transaction?         @relation("TransactionRefund", fields: [refundOfId], references: [id], onDelete: NoAction)
+  refunds         Transaction[]        @relation("TransactionRefund")
+  tags            TransactionTag[]
+  paidBill        Bill?
+  installmentPlan CardInstallmentPlan?
 
   @@unique([userId, clientId])
   @@index([userId, occurredOn])
@@ -863,4 +867,38 @@ model PersonalDebtPayment {
 
   @@unique([userId, clientId])
   @@index([debtId, paidOn])
+}
+
+enum CardInstallmentStatus {
+  active
+  closed
+}
+
+/// Schedule-only installment plan over one expense on a credit wallet (BE-P3-009). Moves no money:
+/// the purchase stays one expense; paying the card is an ordinary transfer.
+model CardInstallmentPlan {
+  id               String                @id @default(uuid()) @db.Uuid
+  userId           String                @db.Uuid
+  clientId         String                @db.Uuid
+  transactionId    String                @unique @db.Uuid
+  accountId        String                @db.Uuid
+  currencyCode     String                @db.Char(3)
+  totalMinor       BigInt
+  /// Per period; the last period takes what is left so the periods always add up to totalMinor.
+  installmentMinor BigInt
+  installmentCount Int
+  firstDueOn       DateTime              @db.Date
+  status           CardInstallmentStatus @default(active)
+  closedAt         DateTime?             @db.Timestamptz
+  version          Int                   @default(1)
+  createdAt        DateTime              @default(now()) @db.Timestamptz
+  updatedAt        DateTime              @updatedAt @db.Timestamptz
+
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account     FinancialAccount @relation(fields: [accountId], references: [id])
+  currency    Currency         @relation(fields: [currencyCode], references: [code])
+  transaction Transaction      @relation(fields: [transactionId], references: [id])
+
+  @@unique([userId, clientId])
+  @@index([userId, accountId, status])
 }

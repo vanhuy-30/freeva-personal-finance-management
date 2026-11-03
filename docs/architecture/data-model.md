@@ -179,6 +179,10 @@ Khoản vay và sổ trả nợ (`BE-P3-E02`). Chi tiết: [loans.md](loans.md).
 
 Cho mượn / đi mượn không lãi (`BE-P3-007`). Chi tiết: [personal-debts.md](personal-debts.md). `PersonalDebt.outstandingMinor` lưu cứng, mọi thay đổi qua `PersonalDebtPayment`; mỗi lần tiền di chuyển là một giao dịch `debt` một chân (không phải thu/chi).
 
+### CardInstallmentPlan
+
+Lịch trả góp trên một khoản chi của ví thẻ (`BE-P3-009`). Chi tiết: [card-installments.md](card-installments.md). Chỉ là lịch: không tạo giao dịch, không đổi báo cáo hay dư nợ.
+
 ### Bill
 
 Nghĩa vụ thanh toán (`BE-P2-E03`). Chi tiết: [bills.md](bills.md).

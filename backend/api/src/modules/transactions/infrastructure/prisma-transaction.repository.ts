@@ -267,7 +267,11 @@ export class PrismaTransactionRepository implements TransactionRepository {
         if (!original || original.deletedAt) throw new TransactionError('TRANSACTION_CONFLICT');
         assertWithinRefundCap(original.amountMinor, await this.refunded(tx, userId, original.id, first.id) + input.legs[0].amountMinor);
       }
-      if (first.type === 'expense' && deleted === true && !first.deletedAt) await this.settleRefunds(tx, userId, id, refundDisposition);
+      if (first.type === 'expense' && deleted === true && !first.deletedAt) {
+        await this.settleRefunds(tx, userId, id, refundDisposition);
+        // A schedule over a deleted purchase would list money nobody owes any more (BE-P3-009).
+        await tx.cardInstallmentPlan.updateMany({ where: { userId, transactionId: id, status: 'active' }, data: { status: 'closed', closedAt: new Date(), version: { increment: 1 } } });
+      }
       if (first.type === 'expense' && !deletionOnly) {
         const refundedNow = await this.refunded(tx, userId, id);
         if (refundedNow > 0n) {
