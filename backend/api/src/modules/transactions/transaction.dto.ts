@@ -77,3 +77,14 @@ export class TransactionQueryDto {
   @ValidateIf(optional) @IsString() @Matches(/^\d{4}-\d{2}-\d{2}(?![\s\S])/) to?: string;
   @ValidateIf(optional) @IsString() @MaxLength(200) search?: string;
 }
+/** BE-P3-010: same filters as the list, without paging or sort (the file is one date-ordered statement). */
+export class TransactionCsvQueryDto {
+  @ValidateIf(optional) @Transform(many) @IsArray() @ArrayMaxSize(20) @ArrayUnique() @IsUUID('all', { each: true }) accountId?: string[];
+  @ValidateIf(optional) @Transform(many) @IsArray() @ArrayMaxSize(50) @ArrayUnique() @IsUUID('all', { each: true }) categoryId?: string[];
+  @ValidateIf(optional) @Transform(many) @IsArray() @ArrayMaxSize(20) @ArrayUnique() @IsUUID('all', { each: true }) tagId?: string[];
+  @ValidateIf(optional) @IsIn(STORED_TRANSACTION_TYPES) type?: TransactionType;
+  @ValidateIf(optional) @IsString() @Matches(/^[A-Z]{3}(?![\s\S])/) currency?: string;
+  @ValidateIf(optional) @IsString() @Matches(/^\d{4}-\d{2}-\d{2}(?![\s\S])/) from?: string;
+  @ValidateIf(optional) @IsString() @Matches(/^\d{4}-\d{2}-\d{2}(?![\s\S])/) to?: string;
+  @ValidateIf(optional) @IsString() @MaxLength(200) search?: string;
+}

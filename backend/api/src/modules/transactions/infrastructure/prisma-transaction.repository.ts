@@ -10,6 +10,7 @@ import { createTransactionInTx } from './create-transaction-in-tx';
 import { reconcileDelta, reconcileTarget, validateReconcileNotes, type ReconcileInput, type ReconcileResult } from '../domain/reconcile';
 import { calendarDate } from '../domain/transaction';
 import { assertWithinRefundCap, validateRefundAmount, type RefundInput } from '../domain/refund';
+import type { CsvTransactionRow } from '../domain/csv-export';
 import { todayInTimeZone } from '../../reports/domain/report';
 
 const include = { tags: { select: { tagId: true } }, fxQuote: true } satisfies Prisma.TransactionInclude;
@@ -160,6 +161,29 @@ export class PrismaTransactionRepository implements TransactionRepository {
       const rank = new Map(ids.map((row, index) => [row.id, index]));
       rows.sort((left, right) => rank.get(left.id)! - rank.get(right.id)!);
       return { items: rows.map(leg), total: Number(count.total), summary };
+    });
+  }
+  /** Same filters as `list`, oldest first so the file reads like a statement; audit is written in the same transaction (fail closed). */
+  listForCsv(userId: string, query: TransactionQuery, maxRows: number): Promise<CsvTransactionRow[]> {
+    return this.snapshot(async tx => {
+      const where = listFilters(userId, { ...query, status: 'active' }, parseTransactionSearch(query.search));
+      const rows = await tx.$queryRaw<{ id: string; occurredOn: string; occurredTime: string | null; type: string; amountMinor: bigint; currencyCode: string;
+        minorDigits: number; walletName: string | null; categoryName: string | null; merchant: string | null; notes: string | null; tagNames: string[] }[]>(Prisma.sql`
+        SELECT t.id::text AS id, to_char(t."occurredOn", 'YYYY-MM-DD') AS "occurredOn", t."occurredTime" AS "occurredTime", t.type::text AS type,
+          t."amountMinor" AS "amountMinor", t."currencyCode"::text AS "currencyCode", ccy."minorDigits" AS "minorDigits",
+          a.name AS "walletName", c.name AS "categoryName", t.merchant, t.notes,
+          COALESCE((SELECT array_agg(tag.name ORDER BY tag.name) FROM "TransactionTag" tt JOIN "Tag" tag ON tag.id = tt."tagId" AND tag."userId" = t."userId"
+            WHERE tt."transactionId" = t.id), ARRAY[]::text[]) AS "tagNames"
+        FROM "Transaction" t
+        LEFT JOIN "Category" c ON c.id = t."categoryId" AND c."userId" = t."userId"
+        LEFT JOIN "FinancialAccount" a ON a.id = t."accountId" AND a."userId" = t."userId"
+        JOIN "Currency" ccy ON ccy.code = t."currencyCode"
+        WHERE ${where}
+        ORDER BY t."occurredOn" ASC, t."createdAt" ASC, t.id ASC
+        LIMIT ${maxRows + 1}`);
+      if (rows.length > maxRows) throw new TransactionError('VALIDATION_ERROR');
+      await tx.auditEvent.create({ data: { actorType: 'user', actorId: userId, action: 'user.transactions_export', targetType: 'user', targetId: userId, outcome: 'success' } });
+      return rows.map(row => ({ ...row, amountMinor: BigInt(row.amountMinor), minorDigits: Number(row.minorDigits) }));
     });
   }
   /**

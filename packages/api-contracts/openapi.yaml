@@ -2971,6 +2971,130 @@ paths:
             decimal separator whose fraction is not 3 digits (12.50) scaled by the leg
             currency minor digits with no rounding. Combined with from/to and the other
             filters. Blank text does not filter.
+  /api/v1/transactions/export.csv:
+    get:
+      operationId: exportTransactionsCsv
+      tags:
+      - Transactions
+      summary: Export filtered transactions as CSV (BE-P3-010)
+      description: >
+        UTF-8 with BOM so Excel reads Vietnamese, RFC 4180 quoting, CRLF line ends, oldest first, non-deleted
+        legs only. Columns: date, time, type, amount, currency, wallet, category, merchant, notes, tags,
+        transaction_id. amount is a signed plain decimal (minor units shifted by the currency minor digits, no
+        locale grouping) and currency is its own column. Text cells starting with = + - @ are prefixed with a
+        single quote. Tags are joined with a semicolon. A transfer is two rows (one per leg). Not a backup: use
+        the JSON account export for that. Above 50000 rows the request fails with 400; narrow the date range.
+        Writes audit user.transactions_export in the same transaction. Cache-Control no-store; the body is not logged.
+      security:
+      - UserBearer: []
+      parameters:
+      - in: query
+        name: accountId
+        style: form
+        explode: true
+        schema:
+          type: array
+          maxItems: 20
+          uniqueItems: true
+          items:
+            type: string
+            format: uuid
+      - in: query
+        name: categoryId
+        style: form
+        explode: true
+        schema:
+          type: array
+          maxItems: 50
+          uniqueItems: true
+          items:
+            type: string
+            format: uuid
+      - in: query
+        name: tagId
+        style: form
+        explode: true
+        schema:
+          type: array
+          maxItems: 20
+          uniqueItems: true
+          items:
+            type: string
+            format: uuid
+      - in: query
+        name: type
+        schema:
+          type: string
+          enum:
+          - income
+          - expense
+          - transfer
+          - adjustment
+          - debt
+          - refund
+      - in: query
+        name: currency
+        schema:
+          type: string
+          pattern: ^[A-Z]{3}$
+      - in: query
+        name: from
+        schema:
+          type: string
+          format: date
+          pattern: ^\d{4}-\d{2}-\d{2}$
+      - in: query
+        name: to
+        schema:
+          type: string
+          format: date
+          pattern: ^\d{4}-\d{2}-\d{2}$
+      - in: query
+        name: search
+        schema:
+          type: string
+          maxLength: 200
+          description: Same matching as the list search.
+      responses:
+        '200':
+          description: CSV file (Cache-Control no-store, Content-Disposition attachment)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+            Content-Disposition:
+              schema:
+                type: string
+                example: attachment; filename="freeva-transactions-20261103.csv"
+          content:
+            text/csv:
+              schema:
+                type: string
+        '400':
+          description: VALIDATION_ERROR (bad filter, from after to, or more than 50000 rows)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing, expired or revoked session
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
   /api/v1/transactions/{id}:
     parameters:
     - in: path

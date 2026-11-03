@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Header, Headers, HttpCode, Param, Patch, Post, Query, Req, Res, UseFilters, UseGuards } from '@nestjs/common';
 import type { Response } from 'express';
 import { AuthGuard, type AuthRequest } from '../auth/auth.guard';
-import { RefundDto, TransactionIdDto, TransactionQueryDto, DeleteTransactionDto, CreateTransactionDto, UpdateTransactionDto } from './transaction.dto';
+import { RefundDto, TransactionCsvQueryDto, TransactionIdDto, TransactionQueryDto, DeleteTransactionDto, CreateTransactionDto, UpdateTransactionDto } from './transaction.dto';
 import { TransactionService } from './transaction.service';
 import { TransactionError } from './domain/transaction';
 import { TransactionExceptionFilter } from './transaction-exception.filter';
@@ -31,6 +31,13 @@ export class TransactionController {
   @Get() @Header('Cache-Control', 'no-store')
   list(@Req() request: AuthRequest, @Query() query: TransactionQueryDto) {
     return this.transactions.list(request.session.userId, query);
+  }
+  /** BE-P3-010: declared before `:id` so `export.csv` is not read as an id. */
+  @Get('export.csv') @Header('Cache-Control', 'no-store') @Header('Content-Type', 'text/csv; charset=utf-8')
+  async exportCsv(@Req() request: AuthRequest, @Query() query: TransactionCsvQueryDto, @Res({ passthrough: true }) res: Response) {
+    const csv = await this.transactions.exportCsv(request.session.userId, query);
+    res.setHeader('Content-Disposition', `attachment; filename="freeva-transactions-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}.csv"`);
+    return csv;
   }
   @Get(':id') @Header('Cache-Control', 'no-store')
   find(@Req() request: AuthRequest, @Param() params: TransactionIdDto) {

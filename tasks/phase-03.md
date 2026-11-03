@@ -107,11 +107,12 @@
 - Note: BE-P3-009 xong 2026-11-03: `/card-installments` (tạo từ khoản chi trên ví thẻ, chi tiết kèm lịch, `due` theo khoảng ngày, `close`), chỉ là lịch nên báo cáo, ngân sách và dư nợ không đổi, kỳ cuối nhận phần dư để tổng bằng giá mua, xóa khoản chi tự đóng lịch, OpenAPI, export/xoá tài khoản. Migration additive. Kiến trúc: [card-installments.md](../docs/architecture/card-installments.md). Tồn đọng: MOB-P3-009 chưa làm; chưa nhắc đến hạn kỳ trả góp; chưa tạo lại kế hoạch sau khi đóng.
 
 ### BE-P3-010 / MOB-P3-010 — Xuất CSV
-- Status: todo
+- Status: doing — BE xong 2026-11-03, MOB còn
 - Module: 20, 21
 - Gate: v1
 - Depends: BE-P1-010
 - DoD: xuất giao dịch (lọc theo khoảng ngày, ví) ra CSV UTF-8 có BOM để Excel đọc đúng tiếng Việt. RFC 4180, chặn công thức (`=` `+` `-` `@` đầu ô). Số tiền dạng số không định dạng theo locale, kèm cột tiền tệ. Không thay export JSON (bản sao lưu).
+- Note: BE-P3-010 xong 2026-11-03: `GET /transactions/export.csv` (cùng bộ lọc danh sách, UTF-8 BOM, RFC 4180, CRLF, chặn `= + - @`, `amount` thập phân bigint kèm cột `currency`, cũ → mới, tối đa 50 000 dòng), audit `user.transactions_export` fail closed, OpenAPI. Không migration. Kiến trúc: [transactions-csv-export.md](../docs/architecture/transactions-csv-export.md). Tồn đọng: MOB-P3-010 chưa làm (nút xuất, chia sẻ file); chưa có bộ lọc theo ví ở mức tên, chỉ theo `accountId`.
 
 ### BE-P3-011 / MOB-P3-011 — Nhập CSV từ app khác
 - Status: todo
