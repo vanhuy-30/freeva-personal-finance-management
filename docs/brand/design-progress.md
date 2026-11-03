@@ -21,6 +21,20 @@
 | **G** Cá nhân và cài đặt | **Chốt** 2026-10-21 | [patterns/G-profile-settings.md](patterns/G-profile-settings.md) |
 | **H** Đồng bộ | **Chốt** 2026-10-22 | [patterns/H-sync.md](patterns/H-sync.md) |
 
+### Phase 3 (trang canvas **07 · Phase 3**, chốt 2026-11-03, chưa code)
+
+| Phần | Trạng thái | Tài liệu |
+|---|---|---|
+| **I** Mục tiêu | **Chốt** 2026-11-03 | [patterns/I-goals.md](patterns/I-goals.md) |
+| **K** Vay và nợ | **Chốt** 2026-11-03 | [patterns/K-loans-debts.md](patterns/K-loans-debts.md) |
+| **L** Định kỳ và hóa đơn | **Chốt** 2026-11-03 | [patterns/L-recurring-bills.md](patterns/L-recurring-bills.md) |
+| **M** Ví, hoàn tiền, trả góp | **Chốt** 2026-11-03 | [patterns/M-wallet-refund-installment.md](patterns/M-wallet-refund-installment.md) |
+| **N** Dự báo, soát tháng, ngân sách, nhắc | **Chốt** 2026-11-03 | [patterns/N-forecast-alerts.md](patterns/N-forecast-alerts.md) |
+| **O** Cá nhân và dữ liệu | **Chốt** 2026-11-03 | [patterns/O-profile-data.md](patterns/O-profile-data.md) |
+| **A3** Onboarding ba câu | **Chốt** 2026-11-03 | [patterns/A3-onboarding-three-questions.md](patterns/A3-onboarding-three-questions.md) |
+
+Cùng đợt (2026-11-03), canvas được sửa cho khớp app đang chạy (theo golden): mật khẩu 8 ký tự (AuRegister, AuReset), chip "Xem tổng theo VND" (BMulti), dòng "Xem bản soát tháng" (RepMonth), các dòng Định kỳ / Hóa đơn / Lịch và bỏ "Định dạng ngày" (MeHome), "Xuất dữ liệu" (MeProfile), các dòng Thông báo (MeNotify), "Số trả tối thiểu" và nhãn "Loại ví" (WCredit, WAddCredit). Trang 05 có thêm hàng **P2 · Đã có trong app, chưa từng vẽ** (`Cur*.dc.html`, `RevMonth.dc.html`): Ngân sách, Lịch, Hộp thư, Soát tháng, Định kỳ và Hóa đơn bản đang chạy, vẽ lại đúng app để làm mốc.
+
 ## Tiến độ code (Flutter)
 
 Thứ tự đã chốt: nền tảng → B → C → D → E → F → G → A → H. Mỗi nhóm một nhánh + một PR vào `develop`; API nhỏ mà màn cần làm luôn trong PR đó, module lớn (ngân sách, thông báo, chế độ khách, deep link email) để trạng thái trống/ẩn.
@@ -49,9 +63,10 @@ Còn lệch có chủ đích hoặc chưa làm: ô thả khi kéo sắp xếp v�
 
 ## Việc thiết kế còn lại
 
-Tám nhóm A–H đã chốt. Còn:
+Tám nhóm A–H và bảy nhóm Phase 3 đã chốt. Còn:
 
-- **Popup xoá tài khoản** và dòng **Xuất dữ liệu** (nhóm G): đã làm bằng hộp xác nhận chung ở `MOB-P2-011`; chưa vẽ trên board.
+- **Popup xoá tài khoản** (nhóm G): đã làm bằng hộp xác nhận chung ở `MOB-P2-011`; chưa vẽ trên board. Xuất dữ liệu đã vẽ ở nhóm O.
+- **Khoản bạn đi mượn** (nhóm K): chi tiết và sheet trả giống khoản cho mượn, chỉ đổi chữ; chưa vẽ riêng.
 
 ## Cách làm đã thống nhất với product owner
 
@@ -81,10 +96,16 @@ Tám nhóm A–H đã chốt. Còn:
 - **Ẩn số dư chỉ ẩn số dư**, không ẩn thu/chi hay số tiền giao dịch.
 - **Đồng bộ chạy ngầm, không làm mất dữ liệu:** chỉ hiện khi có việc cần người dùng; luôn nói rõ thay đổi vẫn nằm trên máy.
 - **Màu giữ như spec.** Đã thử ba mức tăng màu (icon danh mục hai tông → nền nhuộm xanh → khối màu đậm đầu màn); product owner chọn giữ nguyên. Không đề xuất lại nếu chưa được hỏi.
+- **Không viết chữ kiểu "Freeva làm…, bạn…"** (2026-11-03): nghe như máy giải thích. Dùng ví dụ thực tế ("Hợp với tiền điện, nước") hoặc nói kết quả ("Giao dịch đã có sẽ được bỏ qua").
+- **Nhãn phải đúng cho mọi trường hợp dùng** (2026-11-03): ví dụ "Hỏi trước khi ghi" thay "Nhắc tôi trả" vì định kỳ có cả khoản thu.
+- **Sheet và popup nằm trên màn thật**, không trên khung trống; số liệu mẫu phải khớp giữa các màn liên quan.
+- **Không vẽ màn trùng bố cục chỉ để đổi số**; ghi biến thể bằng ghi chú cạnh board (2026-11-03).
+- **Danh sách cài đặt dài thì tách**: chỗ dùng thường xuyên thành lưới ô, cài đặt chỉnh một lần gộp vào màn con (Cá nhân, 2026-11-03).
 - Product owner gửi ảnh tham chiếu thường xuyên: chỉ dùng để thiết kế, **không lưu vào repo**. Điều rút ra từ ảnh thì ghi thành chữ vào spec hoặc file pattern.
 
 ## Ghi chú kỹ thuật cho người sửa canvas
 
 - Canvas là Artifact loại Design: file `project/canvas.json` (index, `pages`, `boards`, `order`, `notes`) và `project/*.dc.html`. Ảnh logo đã tải lên dạng asset `/_blob/…` (xem `canvas/Logo.dc.html`).
-- Trang canvas: `f` Foundations · `t` Tokens · `c` Components · `s` States · `p` Patterns · `g` Guidelines.
+- Trang canvas: `f` Foundations · `t` Tokens · `c` Components · `s` States · `p` Patterns · `p3` Phase 3 · `g` Guidelines.
+- Board Phase 3 có tiêu đề dạng "I · 1. Tên màn"; màn có sheet/popup dùng nguyên nội dung màn nền bên dưới lớp tối.
 - Màu trong artboard là hex theo token v2 (ink `#22283A`, canvas `#FCFDFF`, action `#3F67D1`, wash ở `.wash`).

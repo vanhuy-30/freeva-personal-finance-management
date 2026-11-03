@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Dự báo số dư</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"cv11" 1}
+a,button{font-family:inherit}
+.ib{width:44px;height:44px;border-radius:999px;border:1px solid #EEF0F6;background:#FFFFFF;color:#22283A;display:flex;align-items:center;justify-content:center;box-sizing:border-box;text-decoration:none;flex:0 0 44px}
+.card{background:#FFFFFF;border-radius:24px;padding:18px;box-shadow:0 1px 2px rgba(34,40,58,.04),0 8px 24px rgba(34,40,58,.05)}
+.grp{background:#FFFFFF;border-radius:20px;overflow:hidden;box-shadow:0 1px 2px rgba(34,40,58,.04),0 8px 24px rgba(34,40,58,.05)}
+.row{display:flex;align-items:center;gap:12px;min-height:54px;padding:8px 16px;font-size:15px;color:#22283A;text-decoration:none;box-sizing:border-box}
+.row+.row{border-top:1px solid #EEF0F5}
+.ri{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:0 0 32px;background:#F4F6FB;color:#3D4460}
+.ti{width:40px;height:40px;border-radius:999px;display:flex;align-items:center;justify-content:center;flex:0 0 40px;background:#F4F6FB;color:#22283A}
+.tx{display:flex;flex-direction:column;flex:1 1 0;min-width:0;gap:2px}
+.t1{font-size:15px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t2{font-size:12px;color:#5C6378;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v{font-size:14px;color:#5C6378;white-space:nowrap}
+.amt{font-size:15px;font-weight:600;white-space:nowrap}
+.gh{font-size:12px;letter-spacing:1.4px;font-weight:600;color:#5C6378;padding:0 4px}
+.k{font-size:12px;color:#5C6378}
+.h2{margin:0;font-size:15px;font-weight:600}
+.fld{border-radius:16px;border:1px solid #E4E7F0;background:#FFFFFF;padding:8px 14px;display:flex;align-items:center;gap:10px;box-sizing:border-box;min-height:60px;text-decoration:none;color:#22283A;min-width:0}
+.fl{font-size:12px;color:#5C6378}
+.fv{font-size:16px;color:#22283A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fi{width:32px;height:32px;border-radius:10px;background:#F4F6FB;color:#3D4460;display:flex;align-items:center;justify-content:center;flex:0 0 32px}
+.btn{height:56px;border-radius:999px;background:#3F67D1;color:#FFFFFF;font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;box-sizing:border-box;flex:0 0 auto}
+.btn2{height:56px;border-radius:999px;border:1px solid #E4E7F0;background:#FFFFFF;color:#22283A;font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;box-sizing:border-box}
+.sbtn{height:48px;border-radius:999px;font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;box-sizing:border-box}
+.chip{height:40px;padding:0 14px;border-radius:999px;border:1px solid #E4E7F0;background:#FFFFFF;color:#22283A;font-size:14px;font-weight:500;white-space:nowrap;display:flex;align-items:center;gap:6px;box-sizing:border-box;text-decoration:none}
+.chip.on{border:1.5px solid #22283A;font-weight:600}
+.seg{flex:1 1 0;height:36px;padding:0 12px;border:none;border-radius:999px;background:transparent;color:#5C6378;font-size:14px;font-weight:500;display:flex;align-items:center;justify-content:center;text-decoration:none;white-space:nowrap}
+.seg.on{background:#22283A;color:#FFFFFF;font-weight:600}
+.tc{height:52px;border-radius:16px;border:1px solid #E4E7F0;background:#FFFFFF;display:flex;align-items:center;gap:10px;padding:0 12px;font-size:15px;font-weight:500;color:#22283A;text-decoration:none;position:relative;box-sizing:border-box;white-space:nowrap}
+.tc.on{background:#EEF2FD;border:1.5px solid #3F67D1;font-weight:600}
+.wi{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:0 0 32px}
+.ck{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:999px;background:#3F67D1;color:#FFFFFF;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px #FCFDFF}
+.tag{height:24px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:500;display:inline-flex;align-items:center;white-space:nowrap}
+.bar{height:8px;border-radius:999px;background:#EEF0F5;overflow:hidden;display:flex}
+.bar>span{border-radius:999px}
+.sw{width:48px;height:28px;border-radius:999px;border:none;padding:3px;display:flex;flex:0 0 48px}
+.kn{width:22px;height:22px;border-radius:999px;background:#FFFFFF;box-shadow:0 1px 3px rgba(34,40,58,.25)}
+.lnk{color:#3F67D1;font-weight:600;text-decoration:none;white-space:nowrap}
+.ni{width:48px;height:48px;border-radius:999px;color:#5C6378;display:flex;align-items:center;justify-content:center}
+.mini{background:#F4F6FB;border-radius:16px;padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.rad{width:22px;height:22px;border-radius:999px;border:1.5px solid #C9CEDD;box-sizing:border-box;flex:0 0 22px;display:flex;align-items:center;justify-content:center}
+.rad.on{border:6px solid #3F67D1}
+.hint{font-size:13px;color:#5C6378;padding-left:4px;line-height:18px}
+</style>
+</helmet>
+<div style="width: 390px; height: 1000px; box-sizing: border-box; position: relative; overflow: hidden; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; padding: 56px 20px 28px 20px; gap: 14px">
+  <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+    <a href="RepMonth.dc.html" class="ib" aria-label="Quay lại"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <h1 style="margin: 0; font-size: 17px; line-height: 24px; font-weight: 600; text-align: center; flex: 1 1 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Dự báo số dư</h1>
+    <span style="width: 44px; flex: 0 0 44px"></span>
+  </div>
+  <div role="tablist" aria-label="Khoảng dự báo" style="display: flex; background: #EAEDF4; border-radius: 999px; padding: 4px"><a href="#" role="tab" aria-selected="true" class="seg on">3 tháng</a><a href="#" role="tab" aria-selected="false" class="seg">6 tháng</a><a href="#" role="tab" aria-selected="false" class="seg">12 tháng</a></div>
+  <div class="card num" style="display: flex; flex-direction: column; gap: 14px">
+    <span class="k" style="margin-bottom: -10px">Cuối tháng 1 còn khoảng</span>
+    <span class="num" style="display: flex; align-items: baseline; gap: 6px"><span style="font-size: 32px; line-height: 36px; font-weight: 600; letter-spacing: -0.9px; color: #22283A">89.200.000</span><span style="font-size: 16px; font-weight: 500; color: #3D4460">₫</span></span>
+    <span style="font-size: 13px; color: #23795A; margin-top: -8px">+40.950.000 so với hôm nay</span>
+    <div style="display: flex; align-items: flex-end; gap: 10px; height: 150px; padding-top: 6px"><div style="display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1 1 0; justify-content: flex-end; height: 100%"><span class="num" style="font-size: 12px; font-weight: 600">48,3tr</span><span style="width: 44px; height: 70px; border-radius: 10px 10px 4px 4px; background: #DDE6FB"></span><span style="font-size: 12px; color: #5C6378">Hôm nay</span></div><div style="display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1 1 0; justify-content: flex-end; height: 100%"><span class="num" style="font-size: 12px; font-weight: 600">65,9tr</span><span style="width: 44px; height: 96px; border-radius: 10px 10px 4px 4px; background: #DDE6FB"></span><span style="font-size: 12px; color: #5C6378">T11</span></div><div style="display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1 1 0; justify-content: flex-end; height: 100%"><span class="num" style="font-size: 12px; font-weight: 600">77,6tr</span><span style="width: 44px; height: 113px; border-radius: 10px 10px 4px 4px; background: #DDE6FB"></span><span style="font-size: 12px; color: #5C6378">T12</span></div><div style="display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1 1 0; justify-content: flex-end; height: 100%"><span class="num" style="font-size: 12px; font-weight: 600">89,2tr</span><span style="width: 44px; height: 130px; border-radius: 10px 10px 4px 4px; background: #3F67D1"></span><span style="font-size: 12px; color: #5C6378">T1</span></div></div>
+  </div>
+  <div class="card" style="display: flex; flex-direction: column; gap: 10px; padding: 16px">
+    <h2 class="h2">Cách tính</h2>
+    <a href="#" class="num" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #22283A; background: #F4F6FB; border-radius: 14px; padding: 10px 12px"><span class="tx"><span class="t2">Bắt đầu từ số dư</span><span style="font-size: 15px; font-weight: 600">48.250.000 · 4 ví</span></span><span class="lnk" style="font-size: 14px">Sửa</span></a>
+    <span style="display: flex; gap: 8px; font-size: 13px; color: #3D4460; line-height: 19px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C6378" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 16v-4M12 8h.01"></path></svg>Chỉ gồm định kỳ và hóa đơn, chưa gồm chi tiêu hằng ngày.</span>
+  </div>
+  <span class="gh">KHOẢN ĐƯỢC TÍNH</span>
+  <div class="grp" style="margin-top: -8px">
+    <div class="row"><span class="ri" style="width: 32px; height: 32px; flex: 0 0 32px; border-radius: 10px; background: #E9F5F0; color: #23795A"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v13M6 11l6 6 6-6M5 20h14"></path></svg></span><span class="tx"><span class="t1">Lương</span><span class="t2 num">Ngày 5 hằng tháng</span></span><span class="num" style="font-size: 14px; font-weight: 600; color: #23795A; ">+18.500.000</span><button role="switch" aria-checked="true" aria-label="Tính Lương" class="sw" style="background: #3F67D1; justify-content: flex-end"><span class="kn"></span></button></div>
+    <div class="row"><span class="ri" style="width: 32px; height: 32px; flex: 0 0 32px; border-radius: 10px; background: #EEF2FD; color: #3F67D1"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"></path></svg></span><span class="tx"><span class="t1">Tiền nhà</span><span class="t2 num">Ngày 1 hằng tháng</span></span><span class="num" style="font-size: 14px; font-weight: 600; color: #22283A; ">−6.000.000</span><button role="switch" aria-checked="true" aria-label="Tính Tiền nhà" class="sw" style="background: #3F67D1; justify-content: flex-end"><span class="kn"></span></button></div>
+    <div class="row"><span class="ri" style="width: 32px; height: 32px; flex: 0 0 32px; border-radius: 10px; background: #FBF4E0; color: #7A5A00"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"></path></svg></span><span class="tx"><span class="t1">Tiền điện</span><span class="t2 num">Ngày 5 · số ước tính</span></span><span class="num" style="font-size: 14px; font-weight: 600; color: #22283A; ">−850.000</span><button role="switch" aria-checked="true" aria-label="Tính Tiền điện" class="sw" style="background: #3F67D1; justify-content: flex-end"><span class="kn"></span></button></div>
+    <div class="row"><span class="ri" style="width: 32px; height: 32px; flex: 0 0 32px; border-radius: 10px; background: #F4F0FB; color: #7048B8"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10L12 5 2 10l10 5 10-5z"></path><path d="M6 12v5c3 2 9 2 12 0v-5"></path></svg></span><span class="tx"><span class="t1">Học phí</span><span class="t2 num">Một lần, 15/11</span></span><span class="num" style="font-size: 14px; font-weight: 600; color: #6B7288; text-decoration: line-through">−6.230.000</span><button role="switch" aria-checked="false" aria-label="Tính Học phí" class="sw" style="background: #D5DAEA; justify-content: flex-start"><span class="kn"></span></button></div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1000}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
