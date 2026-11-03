@@ -99,11 +99,12 @@
 - Note: BE-P3-008 xong 2026-11-03: `POST /transactions/{id}/refunds` (loại `refund` một leg, `refundOfId`, cùng danh mục, cùng tiền tệ, idempotent theo `clientId`), tổng hoàn ≤ khoản gốc kể cả song song, báo cáo/ngân sách/ngưỡng trừ hoàn tiền theo kỳ khoản gốc, xóa gốc còn hoàn tiền → 409 `REFUND_EXISTS` trừ khi `refunds=cascade|keep`, OpenAPI, export/xoá tài khoản. Migration additive. Kiến trúc: [refunds.md](../docs/architecture/refunds.md). Tồn đọng: MOB-P3-008 chưa làm; app chưa biết loại `refund`; hoàn tiền khác tiền tệ chưa hỗ trợ.
 
 ### BE-P3-009 / MOB-P3-009 — Trả góp thẻ tín dụng
-- Status: todo
+- Status: doing — BE xong 2026-11-03, MOB còn
 - Module: 3, 4, 6
 - Gate: v1
 - Depends: BE-P2-E07, BE-P3-001
 - DoD: chốt 2026-11-02 cách ghi một lần. Khoản mua là một khoản chi đủ số tiền vào ngày mua trên ví thẻ, tính vào báo cáo và ngân sách tháng mua; dư nợ thẻ tăng đủ số, khớp sao kê. Đổi khoản chi đó thành kế hoạch trả góp: số kỳ, số mỗi kỳ, kỳ đầu. Kế hoạch chỉ là lịch: "số phải trả kỳ này" của thẻ cộng phần trả góp kỳ đó, lịch hiện các kỳ còn lại. Trả thẻ là chuyển khoản ví → thẻ, không phải chi tiêu mới. Phí chuyển đổi hoặc lãi là khoản chi riêng (danh mục phí), không cộng vào khoản mua. Trả trước hạn hoặc hủy thì đóng lịch, khoản chi gốc không đổi. Test: tổng các kỳ bằng giá mua; báo cáo chỉ đếm khoản mua một lần; dư nợ giảm đúng khi trả từng kỳ.
+- Note: BE-P3-009 xong 2026-11-03: `/card-installments` (tạo từ khoản chi trên ví thẻ, chi tiết kèm lịch, `due` theo khoảng ngày, `close`), chỉ là lịch nên báo cáo, ngân sách và dư nợ không đổi, kỳ cuối nhận phần dư để tổng bằng giá mua, xóa khoản chi tự đóng lịch, OpenAPI, export/xoá tài khoản. Migration additive. Kiến trúc: [card-installments.md](../docs/architecture/card-installments.md). Tồn đọng: MOB-P3-009 chưa làm; chưa nhắc đến hạn kỳ trả góp; chưa tạo lại kế hoạch sau khi đóng.
 
 ### BE-P3-010 / MOB-P3-010 — Xuất CSV
 - Status: todo

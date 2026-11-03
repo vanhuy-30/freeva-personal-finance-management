@@ -37,6 +37,7 @@ export interface AccountExport {
   loanPayments: AccountExportLoanPayment[];
   personalDebts: AccountExportPersonalDebt[];
   personalDebtPayments: AccountExportPersonalDebtPayment[];
+  cardInstallmentPlans: AccountExportCardInstallmentPlan[];
   notificationPreferences: AccountExportNotificationPreferences | null;
   notifications: AccountExportNotification[];
   transactions: AccountExportTransaction[];
@@ -256,6 +257,20 @@ export interface AccountExportPersonalDebtPayment {
   createdAt: string;
 }
 
+export interface AccountExportCardInstallmentPlan extends Omit<SyncRow, 'createdAt' | 'updatedAt'> {
+  transactionId: string;
+  accountId: string;
+  currencyCode: string;
+  totalMinor: string;
+  installmentMinor: string;
+  installmentCount: number;
+  firstDueOn: string;
+  status: string;
+  closedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface AccountExportBudgetCategory {
   categoryId: string;
   limitMinor: string;
@@ -469,6 +484,22 @@ export interface ExportSource {
     paidOn: Date;
     createdAt: Date;
   }>;
+  cardInstallmentPlans: Array<{
+    id: string;
+    clientId: string;
+    transactionId: string;
+    accountId: string;
+    currencyCode: string;
+    totalMinor: bigint;
+    installmentMinor: bigint;
+    installmentCount: number;
+    firstDueOn: Date;
+    status: string;
+    closedAt: Date | null;
+    version: number;
+    createdAt: Date;
+    updatedAt: Date;
+  }>;
   budgetMonths: Array<{
     id: string;
     currencyCode: string;
@@ -659,6 +690,13 @@ export function toAccountExport(source: ExportSource): AccountExport {
       id: row.id, debtId: row.debtId, clientId: row.clientId, accountId: row.accountId,
       amountMinor: row.amountMinor.toString(), transactionClientId: row.transactionClientId,
       paidOn: day(row.paidOn), createdAt: iso(row.createdAt),
+    })),
+    cardInstallmentPlans: source.cardInstallmentPlans.map(row => ({
+      id: row.id, clientId: row.clientId, transactionId: row.transactionId, accountId: row.accountId,
+      currencyCode: code(row.currencyCode), totalMinor: row.totalMinor.toString(),
+      installmentMinor: row.installmentMinor.toString(), installmentCount: row.installmentCount,
+      firstDueOn: day(row.firstDueOn), status: row.status, closedAt: row.closedAt ? iso(row.closedAt) : null,
+      version: row.version, ...stamps(row),
     })),
     notificationPreferences: source.notificationPreferences === null ? null : {
       budgetEnabled: source.notificationPreferences.budgetEnabled,

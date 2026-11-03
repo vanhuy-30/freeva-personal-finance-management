@@ -76,6 +76,7 @@ export class PrismaAccountRepository implements AccountRepository {
     const loanPayments = await tx.loanPayment.findMany({ where: { userId }, orderBy: order });
     const personalDebts = await tx.personalDebt.findMany({ where: { userId }, orderBy: order });
     const personalDebtPayments = await tx.personalDebtPayment.findMany({ where: { userId }, orderBy: order });
+    const cardInstallmentPlans = await tx.cardInstallmentPlan.findMany({ where: { userId }, orderBy: order });
     const notificationPreferences = await tx.notificationPreference.findUnique({ where: { userId } });
     const notifications = await tx.inAppNotification.findMany({
       where: { userId },
@@ -124,6 +125,7 @@ export class PrismaAccountRepository implements AccountRepository {
       loanPayments,
       personalDebts,
       personalDebtPayments,
+      cardInstallmentPlans,
       budgetMonths: budgetMonths.map(row => ({
         id: row.id,
         currencyCode: row.currencyCode,
@@ -180,6 +182,7 @@ export class PrismaAccountRepository implements AccountRepository {
     await tx.inAppNotification.deleteMany({ where: { userId } });
     await tx.notificationPreference.deleteMany({ where: { userId } });
     await tx.bill.deleteMany({ where: { userId } });
+    await tx.cardInstallmentPlan.deleteMany({ where: { userId } });
     await tx.personalDebtPayment.deleteMany({ where: { userId } });
     await tx.personalDebt.deleteMany({ where: { userId } });
     await tx.loanPayment.deleteMany({ where: { userId } });

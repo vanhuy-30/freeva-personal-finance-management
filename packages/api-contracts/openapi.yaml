@@ -1849,6 +1849,230 @@ paths:
         '422':
           $ref: '#/components/responses/PersonalDebtOverpayment'
       description: "One `debt` transaction in the same commit as the new outstanding amount: collecting a loan you made brings money in, repaying a debt you owe sends it out. Paying the whole outstanding amount settles it. More than is left is DEBT_OVERPAYMENT. The wallet must have the debt currency; it defaults to the wallet of the debt."
+  /api/v1/card-installments:
+    get:
+      operationId: listCardInstallments
+      summary: Installment plans over credit-card purchases
+      tags:
+      - CardInstallments
+      security:
+      - UserBearer: []
+      parameters:
+      - in: query
+        name: accountId
+        required: false
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: status
+        required: false
+        schema:
+          type: string
+          enum: [active, closed]
+      responses:
+        '200':
+          description: Plans
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardInstallmentList'
+        '400':
+          $ref: '#/components/responses/CardInstallmentValidationError'
+        '401':
+          $ref: '#/components/responses/CardInstallmentUnauthorized'
+        '404':
+          $ref: '#/components/responses/CardInstallmentNotFound'
+        '409':
+          $ref: '#/components/responses/CardInstallmentConflict'
+        '503':
+          $ref: '#/components/responses/CardInstallmentUnavailable'
+      description: "Schedule-only plans, oldest first. Each item shows what is left and the next period; the full schedule is on the detail."
+    post:
+      operationId: createCardInstallment
+      summary: Turn a credit-card purchase into an installment schedule
+      tags:
+      - CardInstallments
+      security:
+      - UserBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCardInstallmentRequest'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardInstallment'
+        '200':
+          description: Replay of a recorded clientId
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardInstallment'
+        '400':
+          $ref: '#/components/responses/CardInstallmentValidationError'
+        '401':
+          $ref: '#/components/responses/CardInstallmentUnauthorized'
+        '404':
+          $ref: '#/components/responses/CardInstallmentNotFound'
+        '409':
+          $ref: '#/components/responses/CardInstallmentConflict'
+        '503':
+          $ref: '#/components/responses/CardInstallmentUnavailable'
+      description: "The purchase stays one expense on the card, counted once in reports and budgets in the month it was made; card debt and balances do not change. The plan only lists periods: payments are ordinary wallet to card transfers, and any conversion fee or interest is a separate expense. The purchase must be an active expense on a credit wallet with no plan yet. Periods are monthly from `firstDueOn` (not before the purchase day); every period but the last pays `installmentMinor` (default: even split rounded up) and the last takes the rest, so they add up to the price. 2 to 60 periods. `clientId` makes retries idempotent."
+  /api/v1/card-installments/due:
+    get:
+      operationId: getCardInstallmentsDue
+      summary: Instalments falling due in a range, per card
+      tags:
+      - CardInstallments
+      security:
+      - UserBearer: []
+      parameters:
+      - in: query
+        name: from
+        required: true
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: to
+        required: true
+        description: On or after from.
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: accountId
+        required: false
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Due per card
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardInstallmentDue'
+        '400':
+          $ref: '#/components/responses/CardInstallmentValidationError'
+        '401':
+          $ref: '#/components/responses/CardInstallmentUnauthorized'
+        '404':
+          $ref: '#/components/responses/CardInstallmentNotFound'
+        '409':
+          $ref: '#/components/responses/CardInstallmentConflict'
+        '503':
+          $ref: '#/components/responses/CardInstallmentUnavailable'
+      description: "Sum of active-plan periods whose due date is within [from, to], per card wallet. The client adds it to the card amount due for the statement period. Closed plans add nothing."
+  /api/v1/card-installments/{id}:
+    get:
+      operationId: getCardInstallment
+      summary: One plan with its periods
+      tags:
+      - CardInstallments
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Plan
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardInstallment'
+        '400':
+          $ref: '#/components/responses/CardInstallmentValidationError'
+        '401':
+          $ref: '#/components/responses/CardInstallmentUnauthorized'
+        '404':
+          $ref: '#/components/responses/CardInstallmentNotFound'
+        '409':
+          $ref: '#/components/responses/CardInstallmentConflict'
+        '503':
+          $ref: '#/components/responses/CardInstallmentUnavailable'
+      description: "Periods carry `past`, `upcoming` or `closed`."
+  /api/v1/card-installments/{id}/close:
+    post:
+      operationId: closeCardInstallment
+      summary: Close the schedule (prepaid or cancelled)
+      tags:
+      - CardInstallments
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CloseCardInstallmentRequest'
+      responses:
+        '200':
+          description: Closed
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardInstallment'
+        '400':
+          $ref: '#/components/responses/CardInstallmentValidationError'
+        '401':
+          $ref: '#/components/responses/CardInstallmentUnauthorized'
+        '404':
+          $ref: '#/components/responses/CardInstallmentNotFound'
+        '409':
+          $ref: '#/components/responses/CardInstallmentConflict'
+        '503':
+          $ref: '#/components/responses/CardInstallmentUnavailable'
+      description: "Stops the schedule. The purchase expense is unchanged and nothing is booked. Needs the current `version`; closing a closed plan is a conflict. Deleting the purchase closes its plan too."
   /api/v1/loans:
     get:
       operationId: listLoans
@@ -5165,6 +5389,61 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorEnvelope'
+    CardInstallmentValidationError:
+      description: VALIDATION_ERROR
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    CardInstallmentUnauthorized:
+      description: SESSION_INVALID
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    CardInstallmentNotFound:
+      description: PLAN_NOT_FOUND
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    CardInstallmentConflict:
+      description: PLAN_CONFLICT stale or closed plan, a purchase that is not an active expense on a credit wallet or already has a plan, or a clientId replayed with different content
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    CardInstallmentUnavailable:
+      description: INSTALLMENT_UNAVAILABLE or authentication unavailable
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
     BudgetValidationError:
       description: VALIDATION_ERROR
       headers:
@@ -6029,6 +6308,83 @@ components:
     PersonalDebtDirection:
       type: string
       enum: [lent, borrowed]
+    CardInstallment:
+      type: object
+      additionalProperties: false
+      required: [id, clientId, transactionId, accountId, currencyCode, totalMinor, installmentMinor, installmentCount,
+        firstDueOn, status, remainingCount, nextDueOn, nextAmountMinor, closedAt, version, createdAt, updatedAt]
+      properties:
+        id: {type: string, format: uuid}
+        clientId: {type: string, format: uuid}
+        transactionId: {type: string, format: uuid, description: The purchase expense.}
+        accountId: {type: string, format: uuid, description: The credit wallet.}
+        currencyCode: {type: string, pattern: '^[A-Z]{3}$'}
+        totalMinor: {$ref: '#/components/schemas/ReportMoney'}
+        installmentMinor: {$ref: '#/components/schemas/ReportMoney'}
+        installmentCount: {type: integer, minimum: 2, maximum: 60}
+        firstDueOn: {type: string, format: date}
+        status: {type: string, enum: [active, closed]}
+        remainingCount: {type: integer, description: Periods due today or later; 0 when closed.}
+        nextDueOn: {type: [string, 'null'], format: date}
+        nextAmountMinor: {oneOf: [{$ref: '#/components/schemas/ReportMoney'}, {type: 'null'}]}
+        closedAt: {type: [string, 'null'], format: date-time}
+        version: {type: integer}
+        createdAt: {type: string, format: date-time}
+        updatedAt: {type: string, format: date-time}
+        periods:
+          type: array
+          description: Only on create, detail and close.
+          items:
+            type: object
+            additionalProperties: false
+            required: [index, dueOn, amountMinor, state]
+            properties:
+              index: {type: integer, minimum: 1}
+              dueOn: {type: string, format: date}
+              amountMinor: {$ref: '#/components/schemas/ReportMoney'}
+              state: {type: string, enum: [past, upcoming, closed]}
+    CardInstallmentList:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: {$ref: '#/components/schemas/CardInstallment'}
+    CardInstallmentDue:
+      type: object
+      additionalProperties: false
+      required: [from, to, items]
+      properties:
+        from: {type: string, format: date}
+        to: {type: string, format: date}
+        items:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [accountId, currencyCode, dueMinor, planCount]
+            properties:
+              accountId: {type: string, format: uuid}
+              currencyCode: {type: string, pattern: '^[A-Z]{3}$'}
+              dueMinor: {$ref: '#/components/schemas/ReportMoney'}
+              planCount: {type: integer}
+    CreateCardInstallmentRequest:
+      type: object
+      additionalProperties: false
+      required: [clientId, transactionId, installmentCount, firstDueOn]
+      properties:
+        clientId: {type: string, format: uuid}
+        transactionId: {type: string, format: uuid}
+        installmentCount: {type: integer, minimum: 2, maximum: 60}
+        installmentMinor: {type: [string, 'null'], pattern: '^[1-9][0-9]*$', description: Per period; omit for an even split rounded up. The last period takes what is left.}
+        firstDueOn: {type: string, format: date, description: On or after the purchase day.}
+    CloseCardInstallmentRequest:
+      type: object
+      additionalProperties: false
+      required: [version]
+      properties:
+        version: {type: integer, minimum: 1}
     PersonalDebt:
       type: object
       additionalProperties: false
@@ -9039,6 +9395,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AccountExportGoalEntry'
+        cardInstallmentPlans:
+          type: array
+          description: Installment schedules (BE-P3-009). Ids reference the purchase transaction and wallet.
+          items:
+            type: object
+            additionalProperties: true
         notificationPreferences:
           oneOf:
           - type: 'null'
