@@ -15,7 +15,7 @@ function source(): ExportSource {
     user: {
       id, email: 'owner@example.test', locale: 'vi', timezone: 'Asia/Ho_Chi_Minh', defaultCurrencyCode: 'VND',
       displayName: null, fiscalMonthStartDay: 1,
-      onboardingGoals: ['save', 'budget'], trackingHabit: 'app', reviewCadence: 'weekly', onboardingBudgetMinor: 15000000n, displayCurrencyCode: 'USD',
+      onboardingGoals: ['save', 'budget'], monthlyIncomeMinor: 15000000n, displayCurrencyCode: 'USD',
       emailVerifiedAt: at, categoriesInitializedAt: null, categoriesSupplementedAt: null, createdAt: at, updatedAt: at,
     },
     oauthProviders: ['apple', 'google'],
@@ -64,7 +64,7 @@ describe('BE-P1-010 account export mapping', () => {
       oauthProviders: ['apple', 'google'],
       profile: {
         email: 'owner@example.test', emailVerifiedAt: at.toISOString(), categoriesInitializedAt: null,
-        onboardingGoals: ['save', 'budget'], trackingHabit: 'app', reviewCadence: 'weekly', onboardingBudgetMinor: '15000000', displayCurrencyCode: 'USD',
+        onboardingGoals: ['save', 'budget'], monthlyIncomeMinor: '15000000', displayCurrencyCode: 'USD',
       },
       financialAccounts: [{
         initialBalanceMinor: '9007199254740993', creditLimitMinor: null, minimumPaymentMinor: null,
@@ -121,7 +121,7 @@ describe('BE-P1-010 account repository audit', () => {
       user: {
         findUnique: jest.fn().mockResolvedValue({
           id, email: 'owner@example.test', locale: 'vi', timezone: 'Asia/Ho_Chi_Minh', defaultCurrencyCode: 'VND',
-          displayName: null, fiscalMonthStartDay: 1, onboardingGoals: [], trackingHabit: null, reviewCadence: null, onboardingBudgetMinor: null, displayCurrencyCode: null,
+          displayName: null, fiscalMonthStartDay: 1, onboardingGoals: [], monthlyIncomeMinor: null, displayCurrencyCode: null,
           emailVerifiedAt: null, categoriesInitializedAt: null, categoriesSupplementedAt: null, createdAt: at, updatedAt: at,
           oauthIdentities: [{ provider: 'google' }],
         }),
