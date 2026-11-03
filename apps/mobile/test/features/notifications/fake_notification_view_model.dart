@@ -4,15 +4,18 @@ import 'package:mobile/features/notifications/presentation/viewmodels/notificati
 
 class FakeNotificationViewModel extends NotificationViewModel {
   FakeNotificationViewModel({NotificationPreferences? preferences})
-    : preferences = preferences ??
+    : preferences =
+          preferences ??
           NotificationPreferences(
             kinds: [
               for (final kind in NotificationKind.values)
                 NotificationKindToggle(
                   kind: kind,
-                  enabled: kind == NotificationKind.budget ||
+                  enabled:
+                      kind == NotificationKind.budget ||
                       kind == NotificationKind.recurring,
-                  available: kind == NotificationKind.budget ||
+                  available:
+                      kind == NotificationKind.budget ||
                       kind == NotificationKind.recurring ||
                       kind == NotificationKind.security,
                   managedLocally: kind == NotificationKind.security,

@@ -129,3 +129,10 @@
   3. **Mục tiêu tiết kiệm** (không bắt buộc): tên hoặc nhóm có sẵn, số đích, ngày đích. Tạo một mục tiêu thật (`BE-P3-E01`) và hiện "cần X mỗi tháng"; có thu nhập thì hiện thêm phần trăm thu nhập.
   Có thu nhập thì hiện một màn gợi ý ngân sách (thu nhập trừ số cần tiết kiệm mỗi tháng; quy tắc khi không có mục tiêu chốt ở thiết kế), "Dùng mức này" tạo ngân sách tháng, "Để sau" không tạo gì. Bỏ câu thói quen và nhịp xem lại; migration xóa `trackingHabit`, `reviewCadence`, `onboardingBudgetMinor`; mục tiêu cũ `emergency` gộp vào Tiết kiệm, `debt` và `understand` bỏ; export cập nhật. Thiết kế vẽ lại trên canvas nhóm A trước khi code.
 
+
+### INF-P3-001 — Kiểm tra format Dart trong CI mobile
+- Status: done — 2026-11-02
+- Module: —
+- Gate: —
+- Depends: INF-P0-002
+- DoD: job `mobile` chạy `dart format --output=none --set-exit-if-changed` trên `lib test tool`, trừ file sinh tự động (`*.g.dart`, `*.config.dart`, `*.freezed.dart`: có gate riêng, `tokens.g.dart` cấm format tay), sau `flutter pub get` và trước codegen. `apps/mobile` được format một lần (62 file, thêm ngoặc cho 3 câu `if` để qua `curly_braces_in_flow_control_structures`). Analyze và test vẫn xanh.

@@ -90,7 +90,8 @@ class WalletDetailBody extends StatelessWidget {
                 ).format(today),
                 hidden: hidden,
                 converted: detail.converted,
-                convertedDigits: main.currencies
+                convertedDigits:
+                    main.currencies
                         .where((x) => x.code == detail.converted?.currency)
                         .map((x) => x.minorDigits)
                         .firstOrNull ??

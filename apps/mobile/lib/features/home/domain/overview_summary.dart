@@ -34,7 +34,8 @@ BalanceSummary balanceSummary(OverviewData data, String profileCurrency) {
       main: CurrencyBalance(
         currency: converted.currency,
         minor: converted.netWorthMinor,
-        walletCount: [for (final c in included) counts[c]!].fold(0, (a, b) => a + b),
+        walletCount: [for (final c in included) counts[c]!]
+            .fold(0, (a, b) => a + b),
       ),
       others: [
         for (final b in balances)

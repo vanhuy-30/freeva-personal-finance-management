@@ -29,10 +29,7 @@ void main() {
     );
     expect(find.textContaining('≈ 308.500'), findsOneWidget);
     expect(find.textContaining('VND'), findsWidgets);
-    expect(
-      find.textContaining('1 USD = 25000.00000000 VND'),
-      findsOneWidget,
-    );
+    expect(find.textContaining('1 USD = 25000.00000000 VND'), findsOneWidget);
     expect(find.textContaining('09:05, 30/10'), findsOneWidget);
   });
 

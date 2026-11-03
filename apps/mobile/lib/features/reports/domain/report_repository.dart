@@ -20,5 +20,7 @@ abstract class ReportRepository {
     ReportPeriodKind kind, {
     String? on,
   });
-  Future<Either<AuthFailure, NetWorthReport>> netWorth({String? displayCurrency});
+  Future<Either<AuthFailure, NetWorthReport>> netWorth({
+    String? displayCurrency,
+  });
 }

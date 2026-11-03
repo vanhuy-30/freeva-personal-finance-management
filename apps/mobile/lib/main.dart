@@ -57,25 +57,26 @@ class FreevaApp extends StatelessWidget {
           child: NotificationResumeListener(
             child: PushRegistrationListener(
               child: MaterialApp.router(
-              debugShowCheckedModeBanner: false,
-              onGenerateTitle: (BuildContext context) => S.of(context).appTitle,
-              theme: AppTheme.light,
-              darkTheme: AppTheme.dark,
-              themeMode: themeModeFor(settings.theme),
-              routerConfig: appRouter,
-              builder: (context, child) => MediaQuery.withClampedTextScaling(
-                maxScaleFactor: FreevaTypography.maxTextScale,
-                child: child!,
+                debugShowCheckedModeBanner: false,
+                onGenerateTitle: (BuildContext context) =>
+                    S.of(context).appTitle,
+                theme: AppTheme.light,
+                darkTheme: AppTheme.dark,
+                themeMode: themeModeFor(settings.theme),
+                routerConfig: appRouter,
+                builder: (context, child) => MediaQuery.withClampedTextScaling(
+                  maxScaleFactor: FreevaTypography.maxTextScale,
+                  child: child!,
+                ),
+                locale: Locale(profile.locale),
+                supportedLocales: S.supportedLocales,
+                localizationsDelegates: const [
+                  S.delegate,
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
               ),
-              locale: Locale(profile.locale),
-              supportedLocales: S.supportedLocales,
-              localizationsDelegates: const [
-                S.delegate,
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-              ],
-            ),
             ),
           ),
         ),

@@ -39,28 +39,46 @@ void main() {
       );
     },
   );
-  test('repository reads the display currency and PUTs null to clear it', () async {
-    final api = Transport();
-    final repo = ProfileRepositoryImpl(api);
-    api.response = {
-      'locale': 'vi',
-      'defaultCurrencyCode': 'VND',
-      'timezone': 'UTC',
-      'fiscalMonthStartDay': 1,
-      'version': 1,
-      'displayCurrencyCode': 'USD',
-    };
-    expect((await repo.load()).getOrElse(() => throw StateError('')).displayCurrency, 'USD');
-    api.response['displayCurrencyCode'] = null;
-    expect((await repo.load()).getOrElse(() => throw StateError('')).displayCurrency, isNull);
-    api.response['displayCurrencyCode'] = 'usd';
-    expect((await repo.load()).getOrElse(() => throw StateError('')).displayCurrency, isNull);
-    expect((await repo.saveDisplayCurrency(null)).isRight(), isTrue);
-    expect(api.body, {'currencyCode': null});
-    // The profile PUT never carries the display currency.
-    expect((await repo.save(initial)).isRight(), isTrue);
-    expect(api.body!.containsKey('displayCurrencyCode'), isFalse);
-  });
+  test(
+    'repository reads the display currency and PUTs null to clear it',
+    () async {
+      final api = Transport();
+      final repo = ProfileRepositoryImpl(api);
+      api.response = {
+        'locale': 'vi',
+        'defaultCurrencyCode': 'VND',
+        'timezone': 'UTC',
+        'fiscalMonthStartDay': 1,
+        'version': 1,
+        'displayCurrencyCode': 'USD',
+      };
+      expect(
+        (await repo.load())
+            .getOrElse(() => throw StateError(''))
+            .displayCurrency,
+        'USD',
+      );
+      api.response['displayCurrencyCode'] = null;
+      expect(
+        (await repo.load())
+            .getOrElse(() => throw StateError(''))
+            .displayCurrency,
+        isNull,
+      );
+      api.response['displayCurrencyCode'] = 'usd';
+      expect(
+        (await repo.load())
+            .getOrElse(() => throw StateError(''))
+            .displayCurrency,
+        isNull,
+      );
+      expect((await repo.saveDisplayCurrency(null)).isRight(), isTrue);
+      expect(api.body, {'currencyCode': null});
+      // The profile PUT never carries the display currency.
+      expect((await repo.save(initial)).isRight(), isTrue);
+      expect(api.body!.containsKey('displayCurrencyCode'), isFalse);
+    },
+  );
   test(
     'repository serializes integer day/version and rejects malformed response',
     () async {

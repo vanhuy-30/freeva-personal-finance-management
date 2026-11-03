@@ -282,9 +282,8 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
       ),
       GoRoute(
         path: '/budgets',
-        builder: (context, state) => AuthGate(
-          child: BudgetPage(on: state.uri.queryParameters['on']),
-        ),
+        builder: (context, state) =>
+            AuthGate(child: BudgetPage(on: state.uri.queryParameters['on'])),
       ),
       GoRoute(
         path: '/me/recurring',
