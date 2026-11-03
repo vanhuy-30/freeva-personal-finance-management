@@ -115,11 +115,12 @@
 - Note: BE-P3-010 xong 2026-11-03: `GET /transactions/export.csv` (cùng bộ lọc danh sách, UTF-8 BOM, RFC 4180, CRLF, chặn `= + - @`, `amount` thập phân bigint kèm cột `currency`, cũ → mới, tối đa 50 000 dòng), audit `user.transactions_export` fail closed, OpenAPI. Không migration. Kiến trúc: [transactions-csv-export.md](../docs/architecture/transactions-csv-export.md). Tồn đọng: MOB-P3-010 chưa làm (nút xuất, chia sẻ file); chưa có bộ lọc theo ví ở mức tên, chỉ theo `accountId`.
 
 ### BE-P3-011 / MOB-P3-011 — Nhập CSV từ app khác
-- Status: todo
+- Status: doing — BE xong 2026-11-03, MOB còn
 - Module: 13
 - Gate: v1
 - Depends: BE-P1-005, BE-P1-009, BE-P3-010
 - DoD: nhập CSV/Excel: xem trước, map cột (ngày, số tiền, loại, danh mục, ví, ghi chú), map danh mục và ví về dữ liệu Freeva. Có preset cho Money Lover, Sổ thu chi MISA và file mẫu Freeva (trùng định dạng `BE-P3-010`). Kết quả từng dòng; trùng với giao dịch đã có thì đánh dấu, không ghi đè im lặng. Hoàn tác cả lô. Sao kê ngân hàng PDF/Excel vẫn là `BE-P5-E01`.
+- Note: BE-P3-011 xong 2026-11-03: `POST /transactions/import/preview` (không ghi), `POST /transactions/import` (một transaction, `clientId` tất định theo `batchClientId`, replay 200), `GET`/`POST …/{id}/undo`. Preset Freeva/Money Lover/MISA/custom, map ví và danh mục, kết quả từng dòng, trùng → `duplicate` và bỏ qua (không ghi đè), chuyển khoản ghép hai dòng, hoàn tác bỏ qua giao dịch đã sửa hoặc có hoàn tiền/trả góp. Migration additive. Kiến trúc: [transaction-import.md](../docs/architecture/transaction-import.md). Tồn đọng: MOB-P3-011 chưa làm; chưa nhập Excel (.xlsx, theo quyết định chỉ CSV trước); header Money Lover/MISA chưa kiểm với file thật; chưa nhập nhãn; chuyển khoản khác tiền tệ chưa ghép; tối đa 2 000 dòng mỗi lần.
 
 ### DS-P3-012 / BE-P3-012 / MOB-P3-012 — Onboarding chỉ hỏi điều dùng được
 - Status: todo

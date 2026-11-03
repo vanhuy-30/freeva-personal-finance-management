@@ -38,6 +38,7 @@ export interface AccountExport {
   personalDebts: AccountExportPersonalDebt[];
   personalDebtPayments: AccountExportPersonalDebtPayment[];
   cardInstallmentPlans: AccountExportCardInstallmentPlan[];
+  importBatches: AccountExportImportBatch[];
   notificationPreferences: AccountExportNotificationPreferences | null;
   notifications: AccountExportNotification[];
   transactions: AccountExportTransaction[];
@@ -254,6 +255,18 @@ export interface AccountExportPersonalDebtPayment {
   amountMinor: string;
   transactionClientId: string;
   paidOn: string;
+  createdAt: string;
+}
+
+export interface AccountExportImportBatch {
+  id: string;
+  clientId: string;
+  preset: string;
+  rowCount: number;
+  createdCount: number;
+  duplicateCount: number;
+  invalidCount: number;
+  undoneAt: string | null;
   createdAt: string;
 }
 
@@ -484,6 +497,17 @@ export interface ExportSource {
     paidOn: Date;
     createdAt: Date;
   }>;
+  importBatches: Array<{
+    id: string;
+    clientId: string;
+    preset: string;
+    rowCount: number;
+    createdCount: number;
+    duplicateCount: number;
+    invalidCount: number;
+    undoneAt: Date | null;
+    createdAt: Date;
+  }>;
   cardInstallmentPlans: Array<{
     id: string;
     clientId: string;
@@ -697,6 +721,11 @@ export function toAccountExport(source: ExportSource): AccountExport {
       installmentMinor: row.installmentMinor.toString(), installmentCount: row.installmentCount,
       firstDueOn: day(row.firstDueOn), status: row.status, closedAt: row.closedAt ? iso(row.closedAt) : null,
       version: row.version, ...stamps(row),
+    })),
+    importBatches: source.importBatches.map(row => ({
+      id: row.id, clientId: row.clientId, preset: row.preset, rowCount: row.rowCount, createdCount: row.createdCount,
+      duplicateCount: row.duplicateCount, invalidCount: row.invalidCount,
+      undoneAt: row.undoneAt ? iso(row.undoneAt) : null, createdAt: iso(row.createdAt),
     })),
     notificationPreferences: source.notificationPreferences === null ? null : {
       budgetEnabled: source.notificationPreferences.budgetEnabled,

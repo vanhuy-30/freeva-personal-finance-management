@@ -8,6 +8,7 @@ import { TransactionModule } from './modules/transactions/transaction.module';
 import { RecurringModule } from './modules/recurring/recurring.module';
 import { BudgetModule } from './modules/budgets/budget.module';
 import { GoalModule } from './modules/goals/goal.module';
+import { TransactionImportModule } from './modules/transaction-import/transaction-import.module';
 import { CardInstallmentModule } from './modules/card-installments/card-installment.module';
 import { LoanModule } from './modules/loans/loan.module';
 import { PersonalDebtModule } from './modules/personal-debts/personal-debt.module';
@@ -47,6 +48,7 @@ import { HealthModule } from './modules/health/health.module';
     FxRateModule,
     FinancialAccountModule,
     TransactionModule,
+    TransactionImportModule,
     RecurringModule,
     BudgetModule,
     GoalModule,

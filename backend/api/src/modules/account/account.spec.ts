@@ -43,6 +43,7 @@ function source(): ExportSource {
     personalDebts: [],
     personalDebtPayments: [],
     cardInstallmentPlans: [],
+    importBatches: [],
     notificationPreferences: null,
     notifications: [],
     transactions: [{
@@ -143,6 +144,7 @@ describe('BE-P1-010 account repository audit', () => {
       loanPayment: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
       personalDebt: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
       cardInstallmentPlan: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
+      importBatch: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
       personalDebtPayment: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
       notificationPreference: { findUnique: jest.fn().mockResolvedValue(null), deleteMany: jest.fn() },
       inAppNotification: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
