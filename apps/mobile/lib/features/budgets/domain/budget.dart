@@ -112,7 +112,7 @@ class BudgetDraft {
   final int? version;
 }
 
-const defaultAlertThresholds = [70, 80, 90, 100];
+const defaultAlertThresholds = [80, 100];
 
 String budgetApplyToApi(BudgetApplyTo value) =>
     value == BudgetApplyTo.month ? 'month' : 'default';

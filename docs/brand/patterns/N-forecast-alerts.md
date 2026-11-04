@@ -1,6 +1,6 @@
 # Nhóm N — Dự báo, soát tháng, ngân sách, nhắc
 
-Trạng thái: **chốt thiết kế 2026-11-03**, chưa code. Task: `MOB-P3-E04` (dự báo), `MOB-P3-002` (thẻ soát tháng), `MOB-P3-003` (ngưỡng ngân sách), `MOB-P3-006` (nhắc ghi chi); API xong.
+Trạng thái: **chốt thiết kế 2026-11-03**; màn 3 (`MOB-P3-002`) và màn 4 (`MOB-P3-003`) đã code. Task: `MOB-P3-E04` (dự báo), `MOB-P3-002` (thẻ soát tháng), `MOB-P3-003` (ngưỡng ngân sách), `MOB-P3-006` (nhắc ghi chi); API xong.
 Canvas: trang **07 · Phase 3**, hàng N. Spec chung: [design-system.md](../design-system.md).
 
 ## Nguyên tắc riêng cho nhóm này

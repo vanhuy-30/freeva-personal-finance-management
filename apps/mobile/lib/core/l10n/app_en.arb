@@ -1306,6 +1306,9 @@
     }
   },
   "budgetThresholdsTitle": "Alert thresholds",
+  "budgetThresholdsSheetTitle": "Alert me when used",
+  "budgetThresholdsSheetSub": "Pick up to 4 levels.",
+  "budgetThresholdsDefaultHint": "Default is 80% and 100%.",
   "budgetScopeDefault": "Every month",
   "budgetScopeMonth": "This month",
   "budgetScopeMonthHint": "Using the default limit. Saving creates an override for this month only.",

@@ -2069,6 +2069,15 @@ class SVi extends S {
   String get budgetThresholdsTitle => 'Ngưỡng cảnh báo';
 
   @override
+  String get budgetThresholdsSheetTitle => 'Báo khi đã dùng';
+
+  @override
+  String get budgetThresholdsSheetSub => 'Chọn tối đa 4 mốc.';
+
+  @override
+  String get budgetThresholdsDefaultHint => 'Mặc định 80% và 100%.';
+
+  @override
   String get budgetScopeDefault => 'Mọi tháng';
 
   @override
