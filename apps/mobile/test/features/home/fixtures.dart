@@ -1,3 +1,4 @@
+import 'package:mobile/features/budgets/domain/budget.dart';
 import 'package:mobile/features/categories/domain/finance_category.dart';
 import 'package:mobile/features/home/domain/overview.dart';
 import 'package:mobile/features/reports/domain/report.dart';
@@ -194,11 +195,15 @@ OverviewData overview({
   List<NetWorthTotal>? net,
   CashflowReport? flow,
   CashflowReport? previous,
+  CashflowReport? before,
+  BudgetSummary? previousBudget,
   List<TransactionBundle>? rows,
 }) => OverviewData(
   netWorth: NetWorthReport(items: net ?? [worth('VND', 48250000)]),
   month: flow ?? month(),
   previousMonth: previous,
+  monthBefore: before,
+  previousBudget: previousBudget,
   wallets:
       wallets ??
       [
@@ -219,3 +224,27 @@ CashflowTotal usdSpend() => CashflowTotal(
   expenseMinor: b(-3500),
   netMinor: b(-3500),
 );
+
+/// Budget of [spent] against [limit], VND, for the month of [from].
+BudgetSummary budgetOf(int limit, int spent, {String currency = 'VND'}) =>
+    BudgetSummary(
+      id: 'b1',
+      currencyCode: currency,
+      limitMinor: b(limit),
+      spentMinor: b(spent),
+      remainingMinor: b(limit - spent),
+      percentBps: limit == 0 ? 0 : spent * 10000 ~/ limit,
+      status: spent > limit ? BudgetStatus.over : BudgetStatus.healthy,
+      alertThresholds: const [80, 100],
+      crossedThresholds: const [],
+      categories: const [],
+      period: const BudgetPeriod(
+        from: '2026-10-01',
+        to: '2026-10-31',
+        timezone: 'Asia/Ho_Chi_Minh',
+        fiscalMonthStartDay: 1,
+      ),
+      applyTo: BudgetApplyTo.defaultTemplate,
+      isOverride: false,
+      version: 1,
+    );

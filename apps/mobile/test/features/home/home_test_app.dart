@@ -104,6 +104,16 @@ StubHomeViewModel homeState(String name) => switch (name) {
         to: '2026-11-30',
       ),
       previous: month(expense: 11480000),
+      before: month(
+        rows: [
+          spend('food', 2341600),
+          spend('home', 2236800),
+          spend('bus', 1677600),
+        ],
+        from: '2026-09-01',
+        to: '2026-09-30',
+      ),
+      previousBudget: budgetOf(15000000, 15600000),
     ),
   )..today = DateTime(2026, 11, 1, 9, 30),
   'loading' => StubHomeViewModel(status: HomeStatus.loading),

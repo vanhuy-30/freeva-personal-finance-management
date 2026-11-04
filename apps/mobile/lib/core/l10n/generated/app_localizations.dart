@@ -1411,6 +1411,18 @@ abstract class S {
   /// **'Spent {expense} · Earned {income}'**
   String homeReviewLine(String expense, String income);
 
+  /// No description provided for @homeReviewTopIncrease.
+  ///
+  /// In en, this message translates to:
+  /// **'{category} rose the most'**
+  String homeReviewTopIncrease(String category);
+
+  /// No description provided for @homeReviewOverBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Over budget by {percent}%'**
+  String homeReviewOverBudget(int percent);
+
   /// No description provided for @homeCreditTitle.
   ///
   /// In en, this message translates to:
