@@ -2520,10 +2520,39 @@ class SEn extends S {
   String get notifyAlerts => 'Alerts';
 
   @override
-  String get notifyRecord => 'Record reminder';
+  String get notifyRecord => 'Log reminder';
 
   @override
   String get notifyRecordSub => 'Every day';
+
+  @override
+  String notifyRecordAt(String time) {
+    return 'Every day at $time';
+  }
+
+  @override
+  String get notifyTimeTitle => 'Pick a reminder time';
+
+  @override
+  String get notifyTimeHint => 'No reminder on days you already logged.';
+
+  @override
+  String notifyTimePick(String time) {
+    return 'Pick $time';
+  }
+
+  @override
+  String get notifyTimeHour => 'Hour';
+
+  @override
+  String get notifyTimeMinute => 'Minute';
+
+  @override
+  String get notifyInboxDailyLogTitle => 'Log today';
+
+  @override
+  String get notifyInboxDailyLogBody =>
+      'You haven\'t logged anything today. Add it before you forget.';
 
   @override
   String get notifyDigest => 'Spending summary';
@@ -2538,22 +2567,30 @@ class SEn extends S {
   String get notifyBudgetSub => 'At 80% and 100% used';
 
   @override
+  String notifyBudgetAt(String levels) {
+    return 'Alert at $levels';
+  }
+
+  @override
+  String get notifyBudgetLevels => '80% and 100%';
+
+  @override
   String get notifyCard => 'Credit cards';
 
   @override
-  String get notifyCardSub => 'Due soon, high balance, and near the limit';
+  String get notifyCardSub => 'Due soon, near the limit';
 
   @override
   String get notifySession => 'New device signed in';
 
   @override
-  String get notifyRecurring => 'Recurring due soon';
+  String get notifyRecurring => 'Recurring and bills';
 
   @override
-  String get notifyRecurringSub => 'One day before the next run';
+  String get notifyRecurringSub => 'Before the due date and when overdue';
 
   @override
-  String get notifyGoal => 'Goal contribution reminder';
+  String get notifyGoal => 'Goal contributions';
 
   @override
   String get notifyGoalSub => 'When a contribution is due';
@@ -2562,13 +2599,13 @@ class SEn extends S {
   String get notifyDebt => 'Debt due';
 
   @override
-  String get notifyDebtSub => 'Before the due date';
+  String get notifyDebtSub => '3 days before the due date';
 
   @override
   String get notifyMonthReview => 'Month review';
 
   @override
-  String get notifyMonthReviewSub => 'When a month summary is ready';
+  String get notifyMonthReviewSub => 'At the start of each month';
 
   @override
   String get notifyInsight => 'New insight';

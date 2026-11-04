@@ -14,11 +14,11 @@ M = {
  'D': [('WList','wallets/d1_list'),('WSort','wallets/d1_sort'),('WDetail','wallets/d1_detail'),('WCredit','wallets/d1_credit'),('WAdd','wallets/d2_add'),('WAddCredit','wallets/d2_add_card'),('WDaySheet','wallets/d2_day_popup'),('WEdit','wallets/d2_edit_locked'),('WHidden','wallets/d1_hidden')],
  'E': [('CatList','categories/e1_list'),('CatAdd','categories/e2_add'),('CatParent','categories/e2_parent_sheet'),('CatIcons','categories/e2_icon_sheet'),('CatEdit','categories/e2_edit'),('CatDelete','categories/e2_delete'),('CatHidden','categories/e1_hidden')],
  'F': [('RepMonth','reports/f1_month'),('RepWallets','reports/f1_wallets'),('RepCategory','reports/f2_category'),('RepRange','reports/f2_range'),('RepEmpty','reports/f1_empty')],
- 'G': [('MeHome','settings/g1_me'),('MeProfile','settings/g1_profile'),('MeTheme','settings/g1_theme'),('MeSecurity','settings/g1_security'),('MeSessions','settings/g1_sessions'),('MeLogout','settings/g1_logout'),('MeTags','settings/g2_tags'),('MeFeedback','settings/g2_feedback'),('MeFeedbackSent','settings/g2_thanks'),('MeFaq','settings/g2_faq'),('MeNotify','settings/g2_notify')],
+ 'G': [('MeHome','settings/g1_me'),('MeProfile','settings/g1_profile'),('MeTheme','settings/g1_theme'),('MeSecurity','settings/g1_security'),('MeSessions','settings/g1_sessions'),('MeLogout','settings/g1_logout'),('MeTags','settings/g2_tags'),('MeFeedback','settings/g2_feedback'),('MeFeedbackSent','settings/g2_thanks'),('MeFaq','settings/g2_faq')],
 
  'I': [('GoalEmpty','goals/goals_empty'),('GoalList','goals/goals_list'),('GoalAdd','goals/goals_add_dated'),('GoalDetail','goals/goals_detail'),('GoalMove','goals/goals_move_in'),('BHomeGoal','goals/goals_home_block')],
  'L': [('RecList','recurring/rec_list'),('RecEdit','recurring/rec_add_remind'),('RecEditAuto','recurring/rec_edit_auto'),('BillPaid','recurring/rec_paid_sheet')],
- 'N': [('BudgetAlert','budgets/n4_thresholds')],
+ 'N': [('BudgetAlert','budgets/n4_thresholds'),('MeNotify3','settings/g2_notify'),('NotifyTime','settings/g2_notify_time')],
  'H': [('SyncBanner','sync/h1_list'),('SyncCenter','sync/h1_center'),('SyncRunning','sync/h1_sending'),('SyncDone','sync/h1_done'),('SyncConflict','sync/h2_compare'),('SyncDuplicate','sync/h2_duplicate'),('SyncDiscard','sync/h1_discard'),('SyncUpdate','sync/h1_update')],
 }
 os.makedirs(f'{S}/pairs', exist_ok=True)

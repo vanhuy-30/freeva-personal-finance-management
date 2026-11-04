@@ -57,6 +57,27 @@ class FcmPushRegistrar implements PushRegistrar {
   }
 
   @override
+  Stream<String> openedKinds() async* {
+    final messaging = await _ensure();
+    if (messaging == null) return;
+    String? kindOf(RemoteMessage message) {
+      final kind = message.data['kind'];
+      return kind is String && kind.isNotEmpty ? kind : null;
+    }
+
+    try {
+      final initial = await messaging.getInitialMessage();
+      final kind = initial == null ? null : kindOf(initial);
+      if (kind != null) yield kind;
+    } catch (_) {}
+    yield* FirebaseMessaging.onMessageOpenedApp
+        .map(kindOf)
+        .where((kind) => kind != null)
+        .cast<String>()
+        .handleError((Object _) {});
+  }
+
+  @override
   Future<void> clear() async {
     try {
       await _refresh?.cancel();

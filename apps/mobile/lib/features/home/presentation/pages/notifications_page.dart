@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
@@ -6,6 +7,7 @@ import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/freeva_top_bar.dart';
+import '../../../notifications/domain/notification_models.dart';
 import '../../../notifications/presentation/notification_copy.dart';
 import '../../../notifications/presentation/viewmodels/notification_view_model.dart';
 
@@ -26,6 +28,14 @@ class _NotificationsPageState extends State<NotificationsPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _model.loadInbox();
     });
+  }
+
+  /// Marks it read; the daily log reminder also opens "Ghi chi".
+  void _open(InboxNotification item) {
+    if (!item.isRead) _model.markRead(item.id);
+    if (item.kind == NotificationKind.dailyLog) {
+      context.push('/record?type=expense');
+    }
   }
 
   @override
@@ -72,9 +82,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                         borderRadius: BorderRadius.circular(FreevaRadius.md),
                         child: InkWell(
                           borderRadius: BorderRadius.circular(FreevaRadius.md),
-                          onTap: item.isRead || _model.busy
-                              ? null
-                              : () => _model.markRead(item.id),
+                          onTap: _model.busy ? null : () => _open(item),
                           child: Padding(
                             padding: const EdgeInsets.all(FreevaSpace.s4),
                             child: Column(

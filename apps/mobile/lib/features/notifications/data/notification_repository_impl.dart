@@ -49,6 +49,9 @@ class NotificationRepositoryImpl implements NotificationRepository {
       if (patch.monthReviewEnabled != null)
         'monthReviewEnabled': patch.monthReviewEnabled,
       if (patch.insightEnabled != null) 'insightEnabled': patch.insightEnabled,
+      if (patch.dailyLogEnabled != null)
+        'dailyLogEnabled': patch.dailyLogEnabled,
+      if (patch.dailyLogTime != null) 'dailyLogTime': patch.dailyLogTime,
       if (patch.quietHoursEnabled != null)
         'quietHoursEnabled': patch.quietHoursEnabled,
       if (patch.quietStart != null) 'quietStart': patch.quietStart,
@@ -63,7 +66,10 @@ class NotificationRepositoryImpl implements NotificationRepository {
         final items = json['items'];
         if (items is! List) throw const FormatException('items');
         return [
-          for (final row in items) _item(Map<String, dynamic>.from(row as Map)),
+          for (final row in items)
+            // A kind this build does not know yet is skipped, not fatal.
+            if (notificationKindFromApi('${(row as Map)['kind']}') != null)
+              _item(Map<String, dynamic>.from(row)),
         ];
       });
 
@@ -91,8 +97,11 @@ NotificationPreferences _preferences(Map<String, dynamic> json) {
   if (kinds is! List) throw const FormatException('kinds');
   return NotificationPreferences(
     kinds: [
-      for (final row in kinds) _toggle(Map<String, dynamic>.from(row as Map)),
+      for (final row in kinds)
+        if (notificationKindFromApi('${(row as Map)['kind']}') != null)
+          _toggle(Map<String, dynamic>.from(row)),
     ],
+    dailyLogTime: json['dailyLogTime'] as String? ?? '20:00',
     quietHoursEnabled: json['quietHoursEnabled'] as bool,
     quietStart: json['quietStart'] as String,
     quietEnd: json['quietEnd'] as String,

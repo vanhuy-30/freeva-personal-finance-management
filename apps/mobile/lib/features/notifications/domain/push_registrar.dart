@@ -17,4 +17,15 @@ abstract class PushRegistrar {
 
   /// Drops the device token after sign-out so a stale token stops receiving.
   Future<void> clear();
+
+  /// API `kind` of each push the user taps: first the one that launched the
+  /// app (if any), then those tapped while it runs. Empty without Firebase.
+  Stream<String> openedKinds();
 }
+
+/// Screen a tapped notification opens, or null to just open the app.
+/// `daily_log` goes straight to recording an expense (BE-P3-006).
+String? routeForOpenedKind(String kind) => switch (kind) {
+  'daily_log' => '/record?type=expense',
+  _ => null,
+};

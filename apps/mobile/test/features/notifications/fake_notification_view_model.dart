@@ -17,10 +17,14 @@ class FakeNotificationViewModel extends NotificationViewModel {
                   available:
                       kind == NotificationKind.budget ||
                       kind == NotificationKind.recurring ||
+                      kind == NotificationKind.debt ||
+                      kind == NotificationKind.card ||
+                      kind == NotificationKind.dailyLog ||
                       kind == NotificationKind.security,
                   managedLocally: kind == NotificationKind.security,
                 ),
             ],
+            dailyLogTime: '20:00',
             quietHoursEnabled: false,
             quietStart: '22:00',
             quietEnd: '07:00',
@@ -62,6 +66,7 @@ class FakeNotificationViewModel extends NotificationViewModel {
             managedLocally: toggle.managedLocally,
           ),
       ],
+      dailyLogTime: current.dailyLogTime,
       quietHoursEnabled: current.quietHoursEnabled,
       quietStart: current.quietStart,
       quietEnd: current.quietEnd,
@@ -82,6 +87,7 @@ class FakeNotificationViewModel extends NotificationViewModel {
     if (current == null) return false;
     preferences = NotificationPreferences(
       kinds: current.kinds,
+      dailyLogTime: current.dailyLogTime,
       quietHoursEnabled: enabled,
       quietStart: quietStart ?? current.quietStart,
       quietEnd: quietEnd ?? current.quietEnd,
@@ -92,8 +98,30 @@ class FakeNotificationViewModel extends NotificationViewModel {
     return true;
   }
 
+  final List<String> savedDailyLogTimes = [];
+
   @override
-  Future<void> markRead(String id) async {}
+  Future<bool> setDailyLogTime(String hm) async {
+    final current = preferences;
+    if (current == null) return false;
+    savedDailyLogTimes.add(hm);
+    preferences = NotificationPreferences(
+      kinds: current.kinds,
+      dailyLogTime: hm,
+      quietHoursEnabled: current.quietHoursEnabled,
+      quietStart: current.quietStart,
+      quietEnd: current.quietEnd,
+      version: current.version + 1,
+      updatedAt: DateTime.utc(2026, 10, 28),
+    );
+    notifyListeners();
+    return true;
+  }
+
+  final List<String> readIds = [];
+
+  @override
+  Future<void> markRead(String id) async => readIds.add(id);
 
   @override
   Future<void> markAllRead() async {}

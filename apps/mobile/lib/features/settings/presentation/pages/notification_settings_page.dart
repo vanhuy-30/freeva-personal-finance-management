@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/di/injection.dart';
@@ -13,6 +14,7 @@ import '../../../notifications/domain/notification_models.dart';
 import '../../../notifications/presentation/notification_copy.dart';
 import '../../../notifications/presentation/viewmodels/notification_view_model.dart';
 import '../viewmodels/settings_view_model.dart';
+import '../widgets/daily_log_time_dialog.dart';
 import '../widgets/lead_settings_group.dart';
 
 /// Notification toggles. Session alerts stay on-device; other kinds use the API.
@@ -60,6 +62,21 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
     );
   }
 
+  Future<void> _pickDailyLogTime(NotificationPreferences prefs) async {
+    final picked = await showDailyLogTimePicker(
+      context,
+      initial: prefs.dailyLogTime,
+    );
+    if (!mounted || picked == null || picked == prefs.dailyLogTime) return;
+    await _notifications.setDailyLogTime(picked);
+  }
+
+  /// Text before [link] in [line]; the link is always the last part.
+  String _prefix(String line, String link) {
+    final at = line.lastIndexOf(link);
+    return at < 0 ? line : line.substring(0, at);
+  }
+
   TimeOfDay? _hm(String value) {
     final parts = value.split(':');
     if (parts.length != 2) return null;
@@ -97,6 +114,9 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
           IconData icon,
           NotificationKind kind, {
           (Color, Color)? tint,
+          String? subtitle,
+          String? subtitleLink,
+          VoidCallback? onSubtitleLink,
         }) {
           final toggle = prefs?.toggle(kind);
           if (toggle == null || !toggle.available || toggle.managedLocally) {
@@ -105,7 +125,9 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
           return SettingsRow.toggle(
             icon: icon,
             title: notificationKindTitle(s, kind),
-            subtitle: notificationKindSubtitle(s, kind),
+            subtitle: subtitle ?? notificationKindSubtitle(s, kind),
+            subtitleLink: subtitleLink,
+            onSubtitleLink: onSubtitleLink,
             minHeight: rowHeight,
             tint: tint,
             on: toggle.enabled,
@@ -114,6 +136,23 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                 _notifications.setKindEnabled(kind, value);
               }
             },
+          );
+        }
+
+        // "Mỗi ngày lúc 20:00": the time (from the API) is the link.
+        Widget dailyLog() {
+          final time = prefs?.dailyLogTime;
+          if (prefs == null || time == null) {
+            return kindToggle(LucideIcons.penLine, NotificationKind.dailyLog);
+          }
+          return kindToggle(
+            LucideIcons.penLine,
+            NotificationKind.dailyLog,
+            subtitle: _prefix(s.notifyRecordAt(time), time),
+            subtitleLink: time,
+            onSubtitleLink: _notifications.busy
+                ? null
+                : () => _pickDailyLogTime(prefs),
           );
         }
 
@@ -133,22 +172,29 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
               LeadSettingsGroup(
                 title: s.notifyReminders,
                 children: [
+                  dailyLog(),
                   kindToggle(LucideIcons.repeat, NotificationKind.recurring),
                   soon(LucideIcons.target, NotificationKind.goal),
-                  soon(LucideIcons.calendarCheck, NotificationKind.monthReview),
+                  soon(LucideIcons.chartPie, NotificationKind.monthReview),
                 ],
               ),
               SettingsGroup(
                 title: s.notifyAlerts,
                 children: [
+                  // The levels open Ngân sách, where its alert sheet lives.
                   kindToggle(
                     LucideIcons.triangleAlert,
                     NotificationKind.budget,
                     tint: (c.statusWarningBg, c.statusWarning),
+                    subtitle: _prefix(
+                      s.notifyBudgetAt(s.notifyBudgetLevels),
+                      s.notifyBudgetLevels,
+                    ),
+                    subtitleLink: s.notifyBudgetLevels,
+                    onSubtitleLink: () => context.push('/budgets'),
                   ),
-                  soon(LucideIcons.handCoins, NotificationKind.debt),
+                  kindToggle(LucideIcons.handHelping, NotificationKind.debt),
                   kindToggle(LucideIcons.creditCard, NotificationKind.card),
-                  soon(LucideIcons.sparkles, NotificationKind.insight),
                   SettingsRow.toggle(
                     icon: LucideIcons.smartphone,
                     title: s.notifySession,

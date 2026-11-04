@@ -61,6 +61,8 @@ Firebase Cloud Messaging là nhà cung cấp push ([ADR 013](adr/013-fcm-push.md
 
 Loại `daily_log`, mặc định tắt. `PUT /notification-preferences` nhận `dailyLogEnabled` và `dailyLogTime` (`HH:mm`, mặc định `20:00`, theo `User.timezone`); `GET` trả `dailyLogTime`. Khi bật, evaluate tạo một hàng sau giờ nhắc nếu hôm nay (ngày local) chưa có giao dịch thu/chi/chuyển có `occurredOn` = hôm nay và chưa xóa; giao dịch `adjustment` không tính. Dedupe `daily_log|YYYY-MM-DD`. Giờ yên chặn như các loại khác: hết giờ yên mà trong ngày vẫn chưa ghi thì tạo một lần. Params rỗng; push dùng `kind = daily_log` để mobile mở thẳng màn ghi giao dịch.
 
+**Mobile (MOB-P3-006).** Dòng "Nhắc ghi chi" đầu nhóm Nhắc nhở ở `/me/notifications`: công tắc gửi `dailyLogEnabled`; "Mỗi ngày lúc HH:mm" lấy giờ từ `dailyLogTime`, chạm giờ mở popup "Chọn giờ nhắc" (bánh xe giờ và phút bước 15, giờ lẻ của server làm tròn về bước gần nhất) và chỉ gửi `dailyLogTime`, không tự bật. Bấm push (`getInitialMessage` / `onMessageOpenedApp`, `data.kind = daily_log`) hoặc dòng trong hộp thư mở `/record?type=expense`; push lúc app còn khóa chờ tới khi mở khóa. Kind lạ (server thêm sau) bị bỏ qua khi đọc cài đặt và hộp thư, không làm hỏng màn. Màn Thông báo theo board N5: bỏ Insight, "Nợ đến hạn" là công tắc thật, "80% và 100%" mở Ngân sách.
+
 ## Hóa đơn (BE-P3-001)
 
 Loại `recurring` thêm `bill_due` (trong `remindDaysBefore` ngày trước hạn của rule `remind`) và `bill_overdue` (một lần khi quá hạn), dedupe `bill|due|overdue + ruleId + hạn`. Params chỉ có `ruleId`, `dueDate`, `days`; không có số tiền. Xem [bills.md](bills.md).
