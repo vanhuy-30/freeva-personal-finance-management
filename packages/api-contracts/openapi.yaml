@@ -7313,7 +7313,8 @@ components:
         principalCategoryId:
           type: [string, 'null']
           format: uuid
-          description: Expense category of the principal part. Omitted = the user's "Trả nợ" category (created once as a system category).
+          deprecated: true
+          description: Ignored. The principal part is a one-leg `debt` transaction without a category (not spending).
         interestCategoryId:
           type: [string, 'null']
           format: uuid

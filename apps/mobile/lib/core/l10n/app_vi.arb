@@ -1354,7 +1354,7 @@
   "meDebtsCount": "{count} khoản",
   "transactionDebt": "Vay mượn",
   "txKindDebt": "vay mượn",
-  "txDebtTitle": "Khoản mượn",
+  "txDebtTitle": "Vay và nợ",
   "txDebtReadOnly": "Khoản này thuộc Vay và nợ, sửa ở đó không được.",
   "debtsTabPeople": "Người quen",
   "debtsTabLoans": "Khoản vay",

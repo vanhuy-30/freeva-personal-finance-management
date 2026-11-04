@@ -136,7 +136,7 @@ class LoanDraft {
 }
 
 /// A payment split into principal and interest; only principal lowers the
-/// debt. Categories are left to the API ("Trả nợ" / "Lãi vay").
+/// debt. The API books principal as a `debt` row and interest as "Lãi vay".
 class LoanPayment {
   const LoanPayment({
     required this.clientId,

@@ -1,4 +1,6 @@
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
@@ -7,6 +9,7 @@ import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
 import { AuthMailWorker } from '../src/modules/auth/infrastructure/auth-mail.worker';
 import { FinancialAccountModule } from '../src/modules/financial-accounts/financial-account.module';
 import { LoanModule } from '../src/modules/loans/loan.module';
+import { ReportModule } from '../src/modules/reports/report.module';
 import { TransactionModule } from '../src/modules/transactions/transaction.module';
 
 const databaseUrl = process.env.AUTH_TEST_DATABASE_URL;
@@ -30,7 +33,7 @@ describe('BE-P3-E02 loans HTTP + PostgreSQL', () => {
           AUTH_SECRET_KEY: randomBytes(32).toString('hex'), NODE_ENV: 'test', MAIL_PROVIDER: 'smtp',
           SMTP_HOST: 'localhost', SMTP_PORT: '1025', MAIL_FROM: 'noreply@example.test',
         })] }),
-        PrismaModule, FinancialAccountModule, TransactionModule, LoanModule,
+        PrismaModule, FinancialAccountModule, TransactionModule, LoanModule, ReportModule,
       ],
     }).compile();
     app = module.createNestApplication();
@@ -134,7 +137,7 @@ describe('BE-P3-E02 loans HTTP + PostgreSQL', () => {
     expect((await request('POST', '/loans', base, '')).status).toBe(401);
   });
 
-  it('pays with an automatic split: two expenses, balance and due date move, replay is idempotent', async () => {
+  it('pays with an automatic split: principal as a debt row, interest as an expense; balance and due date move, replay is idempotent', async () => {
     const source = await wallet();
     const loan = await createLoan();
     const principalCategory = await category();
@@ -149,7 +152,9 @@ describe('BE-P3-E02 loans HTTP + PostgreSQL', () => {
     expect(paid.body).toMatchObject({ outstandingMinor: '92115121', paidMinor: '7884879', nextDueDate: '2027-01-01' });
     expect(await balance(source.id)).toBe(-8884879n);
     const expenses = await prisma.transaction.findMany({ where: { accountId: source.id }, orderBy: { amountMinor: 'asc' } });
-    expect(expenses.map(row => [row.type, row.amountMinor])).toEqual([['expense', -7884879n], ['expense', -1000000n]]);
+    expect(expenses.map(row => [row.type, row.amountMinor, row.categoryId])).toEqual([
+      ['debt', -7884879n, null], ['expense', -1000000n, interestCategory.id],
+    ]);
     expect((await request('POST', `/loans/${loan.id}/payments`, body)).status).toBe(200);
     expect(await balance(source.id)).toBe(-8884879n);
     expect((await request('POST', `/loans/${loan.id}/payments`, { ...body, amountMinor: '1' })).status).toBe(409);
@@ -158,7 +163,7 @@ describe('BE-P3-E02 loans HTTP + PostgreSQL', () => {
     expect(list.body.items[0]).toMatchObject({ principalMinor: '7884879', interestMinor: '1000000', totalMinor: '8884879' });
   });
 
-  it('falls back to the "Trả nợ" / "Lãi vay" categories when none is sent, created once', async () => {
+  it('falls back to the "Lãi vay" category when none is sent, created once; the principal has no category', async () => {
     const { id: other, bearer: otherToken } = await user();
     const source = await wallet(other);
     const res = await request('POST', '/loans', {
@@ -172,12 +177,59 @@ describe('BE-P3-E02 loans HTTP + PostgreSQL', () => {
       }, otherToken);
       expect(paid.status).toBe(201);
     }
-    const categories = await prisma.category.findMany({ where: { userId: other }, orderBy: { name: 'asc' } });
-    expect(categories.map(row => [row.name, row.kind, row.isSystem])).toEqual([['Lãi vay', 'expense', true], ['Trả nợ', 'expense', true]]);
-    const byName = new Map(categories.map(row => [row.id, row.name]));
-    const expenses = await prisma.transaction.findMany({ where: { userId: other } });
-    expect(expenses).toHaveLength(4);
-    expect(new Set(expenses.map(row => byName.get(row.categoryId!)))).toEqual(new Set(['Trả nợ', 'Lãi vay']));
+    const categories = await prisma.category.findMany({ where: { userId: other } });
+    expect(categories.map(row => [row.name, row.kind, row.isSystem])).toEqual([['Lãi vay', 'expense', true]]);
+    const rows = await prisma.transaction.findMany({ where: { userId: other }, orderBy: [{ type: 'asc' }, { amountMinor: 'asc' }] }); // enum order: expense before debt
+    expect(rows.map(row => [row.type, row.categoryId])).toEqual([
+      ['expense', categories[0]!.id], ['expense', categories[0]!.id], ['debt', null], ['debt', null],
+    ]);
+  });
+
+  it('keeps the principal out of spending, budgets and savings rate but in the wallet balance', async () => {
+    const { id: other, bearer: otherToken } = await user();
+    const source = await wallet(other);
+    const res = await request('POST', '/loans', {
+      clientId: randomUUID(), kind: 'personal', name: 'Vay', currencyCode: 'VND', principalMinor: '100000000',
+      interestRateBps: 1200, installmentMinor: '8884879', frequency: 'monthly', startDate: '2026-11-01', accountId: source.id,
+    }, otherToken);
+    await request('POST', `/loans/${res.body.id}/payments`, {
+      clientId: randomUUID(), amountMinor: '8884879', paidOn: '2026-12-01',
+    }, otherToken);
+    expect(await balance(source.id)).toBe(-8884879n);
+    const report = await request('GET', '/reports/cashflow?period=month&on=2026-12-15', undefined, otherToken);
+    expect(report.status).toBe(200);
+    expect(report.body.totals).toEqual([expect.objectContaining({ currency: 'VND', incomeMinor: '0', expenseMinor: '-1000000' })]);
+    const leg = await prisma.transaction.findFirstOrThrow({ where: { userId: other, type: 'debt' } });
+    expect((await request('PATCH', `/transactions/${leg.id}`, { version: leg.version, notes: 'x' }, otherToken)).status).toBe(400);
+  });
+
+  it('migration 20261104100000 turns earlier principal expenses into debt rows', async () => {
+    const source = await wallet();
+    const loan = await createLoan({ accountId: source.id });
+    const cat = await category();
+    const principalLeg = randomUUID();
+    const refundedLeg = randomUUID();
+    const make = (clientId: string, amount: bigint) => prisma.transaction.create({ data: {
+      userId: owner, clientId, accountId: source.id, currencyCode: 'VND', type: 'expense', amountMinor: amount,
+      occurredOn: new Date('2026-12-01'), categoryId: cat.id,
+    } });
+    const old = await make(principalLeg, -7884879n);
+    const refunded = await make(refundedLeg, -100n);
+    await prisma.transaction.create({ data: {
+      userId: owner, clientId: randomUUID(), accountId: source.id, currencyCode: 'VND', type: 'refund', amountMinor: 50n,
+      occurredOn: new Date('2026-12-02'), categoryId: cat.id, refundOfId: refunded.id,
+    } });
+    for (const leg of [principalLeg, refundedLeg]) {
+      await prisma.loanPayment.create({ data: {
+        loanId: loan.id, userId: owner, clientId: randomUUID(), principalMinor: 1n, interestMinor: 0n,
+        principalTransactionClientId: leg, paidOn: new Date('2026-12-01'),
+      } });
+    }
+    const sql = readFileSync(join(__dirname, '../prisma/migrations/20261104100000_loan_principal_debt/migration.sql'), 'utf8');
+    await prisma.$executeRawUnsafe(sql);
+    const after = await prisma.transaction.findUniqueOrThrow({ where: { id: old.id } });
+    expect([after.type, after.categoryId, after.version]).toEqual(['debt', null, old.version + 1]);
+    expect((await prisma.transaction.findUniqueOrThrow({ where: { id: refunded.id } })).type).toBe('expense');
   });
 
   it('pays with an explicit split and uses the linked wallet', async () => {

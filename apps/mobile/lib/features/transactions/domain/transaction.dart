@@ -6,8 +6,9 @@ enum TransactionType {
   /// One-leg balance fix from wallet reconcile; not income or expense.
   adjustment,
 
-  /// One-leg money move of a personal debt (lend, borrow, repay); not income or
-  /// expense. Only `/personal-debts` writes it; the API refuses edits.
+  /// One-leg money move of a debt (lend, borrow, repay, loan principal); not
+  /// income or expense. Only `/personal-debts` and `/loans` write it; the API
+  /// refuses edits.
   debt,
 }
 

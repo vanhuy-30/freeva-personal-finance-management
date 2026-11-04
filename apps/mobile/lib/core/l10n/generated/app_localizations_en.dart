@@ -4052,7 +4052,7 @@ class SEn extends S {
   String get txKindDebt => 'lending';
 
   @override
-  String get txDebtTitle => 'Personal debt';
+  String get txDebtTitle => 'Loans and debts';
 
   @override
   String get txDebtReadOnly =>

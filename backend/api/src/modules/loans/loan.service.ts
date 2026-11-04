@@ -177,7 +177,6 @@ export class LoanService {
       amountMinor: minor(dto.amountMinor),
       principalMinor: dto.principalMinor == null ? null : minor(dto.principalMinor),
       interestMinor: dto.interestMinor == null ? null : minor(dto.interestMinor),
-      principalCategoryId: dto.principalCategoryId ?? null,
       interestCategoryId: dto.interestCategoryId ?? null,
       paidOn: dto.paidOn,
     });

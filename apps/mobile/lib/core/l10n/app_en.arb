@@ -2314,7 +2314,7 @@
   "@meDebtsCount": {"placeholders": {"count": {"type": "int"}}},
   "transactionDebt": "Lending",
   "txKindDebt": "lending",
-  "txDebtTitle": "Personal debt",
+  "txDebtTitle": "Loans and debts",
   "txDebtReadOnly": "This belongs to Loans and debts and can’t be edited.",
   "debtsTabPeople": "People",
   "debtsTabLoans": "Loans",

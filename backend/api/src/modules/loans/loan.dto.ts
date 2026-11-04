@@ -62,6 +62,7 @@ export class PayLoanDto {
   /** Both or neither; omit to split automatically (interest of the period first). */
   @ValidateIf(nullable) @IsString() @nonNegativeMinor principalMinor?: string | null;
   @ValidateIf(nullable) @IsString() @nonNegativeMinor interestMinor?: string | null;
+  /** Ignored since the principal is a `debt` row (no category); still accepted so older apps keep working. */
   @ValidateIf(nullable) @Transform(lower) @IsUUID() principalCategoryId?: string | null;
   @ValidateIf(nullable) @Transform(lower) @IsUUID() interestCategoryId?: string | null;
   @IsString() @day paidOn!: string;

@@ -13,13 +13,13 @@ Không có việc nào tự chạy. Chỉ khi user gọi:
 
 | Thao tác | Giao dịch | Audit |
 |---|---|---|
-| `POST /loans/{id}/payments` | expense phần gốc + expense phần lãi (mỗi phần > 0), cùng commit với dư nợ | không |
+| `POST /loans/{id}/payments` | phần gốc: một giao dịch `debt` một chân (không danh mục); phần lãi: một expense (mỗi phần > 0), cùng commit với dư nợ | không |
 | `adjust` (sửa số đã có) | không | `loan.adjust` |
 | tạo khoản vay | không | `loan.create` |
 
-Mỗi expense có danh mục (`principalCategoryId`, `interestCategoryId`) khi phần đó > 0; không gửi thì dùng danh mục chi "Trả nợ" (gốc) / "Lãi vay" (lãi) đang hoạt động của user, chưa có thì tạo một lần làm danh mục hệ thống (`LOAN_PAYMENT_CATEGORIES`, cho app `MOB-P3-E02` không có ô chọn danh mục). Chỉ phần gốc làm giảm dư nợ; trả quá dư nợ → `LOAN_OVERPAYMENT` (422). Retry cùng `clientId` trả kết quả cũ; khác nội dung → 409. Id chân giao dịch sinh cố định từ `clientId`. Sau khi trả, `nextDueDate` lùi một kỳ (cuối tháng thì cắt về ngày cuối); trả hết thì `null`.
+Phần gốc là `debt` (như cho mượn / đi mượn, [personal-debts.md](personal-debts.md)): không vào thu/chi, ngân sách, tỷ lệ tiết kiệm, nhưng có trong số dư ví, lịch sử, export, sổ cái; `PATCH`/xoá qua `/transactions` bị chặn (400) để dư nợ không lệch. `principalCategoryId` không còn dùng (vẫn nhận cho app cũ). Phần lãi là chi phí: expense theo `interestCategoryId`, không gửi thì dùng danh mục chi "Lãi vay" đang hoạt động của user, chưa có thì tạo một lần làm danh mục hệ thống (`LOAN_INTEREST_CATEGORY`). Chỉ phần gốc làm giảm dư nợ; trả quá dư nợ → `LOAN_OVERPAYMENT` (422). Retry cùng `clientId` trả kết quả cũ; khác nội dung → 409. Id chân giao dịch sinh cố định từ `clientId`. Sau khi trả, `nextDueDate` lùi một kỳ (cuối tháng thì cắt về ngày cuối); trả hết thì `null`.
 
-**Tồn đọng:** báo cáo và ngân sách đếm mọi expense, nên phần gốc trả nợ hiện tính vào chi tiêu. Tách gốc khỏi báo cáo là việc sau.
+Migration `20261104100000_loan_principal_debt` (chỉ đổi dữ liệu) chuyển các chân gốc đã ghi là expense trước đó sang `debt`, bỏ danh mục, tăng `version` để thiết bị tải lại; bỏ qua dòng đã có hoàn tiền hoặc kế hoạch trả góp thẻ.
 
 ## Công thức
 

@@ -11,8 +11,8 @@ Màn **Vay và nợ** (`/me/debts`, qua AuthGate, không bottom nav) với công
 - **Khoản vay** (`MOB-P3-E02`): thẻ "Còn nợ" + "Đã trả gốc" · "Tháng này cần trả" từ `GET /loans/summary` (`dueThisMonthMinor`), mỗi khoản một thẻ (icon theo loại, "12%/năm · kỳ tới 25/10", tag hạn, thanh tiến độ `percentBps`). Loại `card` của API không chọn được trên app.
 - Thêm/sửa khoản vay: chip Vay mua nhà · Vay tiêu dùng · Khác, tên (tự điền theo loại tới khi sửa tay), số vay ban đầu, còn nợ, lãi suất (%/năm → bps), trả mỗi kỳ, kỳ trả, kỳ tới, bắt đầu/kết thúc (`MM/yyyy`), ví trả. Để trống "Trả mỗi kỳ" thì app tính số trả cố định theo ngày kết thúc bằng đúng công thức của API (`annuityPayment`, test 100tr · 12% · 12 tháng = 8.884.879). Sửa "Còn nợ" gọi `POST /loans/{id}/adjust` sau `PATCH`.
 - Chi tiết khoản vay: còn nợ / gốc, "Đã trả N% gốc · xong vào MM/yyyy" (ngày kỳ cuối của lịch), thẻ Kỳ tới (kỳ 1 của `GET /loans/{id}/schedule`, có `dueDate`) + "Ghi lần trả", "Cách tính", 3 kỳ + "Xem cả lịch" (`/me/debts/loans/:id/schedule`).
-- Sheet "Trả kỳ dd/MM": số tiền, Tiền gốc · Tiền lãi điền sẵn từ kỳ tới (đổi số tiền thì lãi giữ trước, phần còn lại là gốc; sửa một phần thì số tiền đổi theo), ví kèm số dư, ngày hôm nay. App không gửi danh mục: API dùng "Trả nợ" / "Lãi vay".
-- Giao dịch loại `debt` (chân tiền của khoản mượn) hiện trong danh sách và lịch sử ví là "Khoản mượn" (icon bắt tay, dấu theo chiều tiền); chi tiết không có Sửa/Xoá/Sao chép vì API từ chối.
+- Sheet "Trả kỳ dd/MM": số tiền, Tiền gốc · Tiền lãi điền sẵn từ kỳ tới (đổi số tiền thì lãi giữ trước, phần còn lại là gốc; sửa một phần thì số tiền đổi theo), ví kèm số dư, ngày hôm nay. App không gửi danh mục: phần gốc là giao dịch `debt` (không tính chi tiêu), phần lãi là khoản chi "Lãi vay".
+- Giao dịch loại `debt` (chân tiền của khoản mượn) (chân tiền của khoản mượn và phần gốc trả khoản vay) hiện trong danh sách và lịch sử ví là "Vay và nợ" (icon bắt tay, dấu theo chiều tiền); chi tiết không có Sửa/Xoá/Sao chép vì API từ chối.
 
 ## Layer
 

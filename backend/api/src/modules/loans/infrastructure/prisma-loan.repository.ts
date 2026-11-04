@@ -9,7 +9,7 @@ import type { TransactionInput } from '../../transactions/domain/transaction';
 import { createTransactionInTx } from '../../transactions/infrastructure/create-transaction-in-tx';
 import {
   addPeriod,
-  LOAN_PAYMENT_CATEGORIES,
+  LOAN_INTEREST_CATEGORY,
   LoanError,
   splitPayment,
   validateDates,
@@ -104,9 +104,9 @@ export class PrismaLoanRepository implements LoanRepository {
     }
   }
 
-  /** Active expense category named like the fallback for `part`; created once as a system category when missing. */
-  private async fallbackCategory(tx: Prisma.TransactionClient, userId: string, part: 'principal' | 'interest'): Promise<string> {
-    const seed = LOAN_PAYMENT_CATEGORIES[part];
+  /** The user's active "Lãi vay" expense category; created once as a system category when missing. */
+  private async interestCategory(tx: Prisma.TransactionClient, userId: string): Promise<string> {
+    const seed = LOAN_INTEREST_CATEGORY;
     const found = await tx.category.findFirst({
       where: { userId, name: seed.name, archivedAt: null, kind: { in: ['expense', 'both'] } },
       orderBy: [{ isSystem: 'desc' }, { createdAt: 'asc' }],
@@ -275,28 +275,29 @@ export class PrismaLoanRepository implements LoanRepository {
       const accountId = input.accountId ?? row.accountId;
       if (accountId === null) throw new LoanError('VALIDATION_ERROR');
       await this.requireAccount(tx, userId, accountId, row.currencyCode.trim());
-      const parts = [
-        { part: 'principal' as const, amount: split.principalMinor, categoryId: input.principalCategoryId },
-        { part: 'interest' as const, amount: split.interestMinor, categoryId: input.interestCategoryId },
-      ];
+      // Principal lowers the debt: a one-leg `debt` row (not spending). Interest is the cost: an expense.
       const ids: Record<'principal' | 'interest', string | null> = { principal: null, interest: null };
-      for (const { part, amount, categoryId } of parts) {
+      const parts = [
+        { part: 'principal' as const, amount: split.principalMinor },
+        { part: 'interest' as const, amount: split.interestMinor },
+      ];
+      for (const { part, amount } of parts) {
         if (amount === 0n) continue;
-        const resolvedCategoryId = categoryId ?? await this.fallbackCategory(tx, userId, part);
         const legId = legClientId(input.clientId, part);
-        const expense: TransactionInput = {
-          type: 'expense',
+        const principal = part === 'principal';
+        const leg: TransactionInput = {
+          type: principal ? 'debt' : 'expense',
           occurredOn: toDate(input.paidOn),
           occurredTime: null,
           legs: [{ clientId: legId, accountId, currencyCode: row.currencyCode.trim(), amountMinor: -amount }],
-          categoryId: resolvedCategoryId,
+          categoryId: principal ? null : input.interestCategoryId ?? await this.interestCategory(tx, userId),
           notes: null,
           merchant: null,
           tagIds: [],
           fx: null,
         };
         try {
-          await createTransactionInTx(tx, userId, expense);
+          await createTransactionInTx(tx, userId, leg);
         } catch (error) {
           if (error instanceof TransactionError) {
             throw new LoanError(error.code === 'TRANSACTION_CONFLICT' ? 'LOAN_CONFLICT' : 'VALIDATION_ERROR');

@@ -37,7 +37,6 @@ export type LoanPaymentInput = {
   amountMinor: bigint;
   principalMinor: bigint | null;
   interestMinor: bigint | null;
-  principalCategoryId: string | null;
   interestCategoryId: string | null;
   paidOn: string;
 };

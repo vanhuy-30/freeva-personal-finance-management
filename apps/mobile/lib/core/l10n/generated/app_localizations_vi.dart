@@ -3981,7 +3981,7 @@ class SVi extends S {
   String get txKindDebt => 'vay mượn';
 
   @override
-  String get txDebtTitle => 'Khoản mượn';
+  String get txDebtTitle => 'Vay và nợ';
 
   @override
   String get txDebtReadOnly =>

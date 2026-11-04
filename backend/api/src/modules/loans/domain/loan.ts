@@ -188,11 +188,8 @@ export function dueInMonth(rows: ScheduleRow[] | null, nextDueDate: string | nul
   return sum;
 }
 
-/** System expense categories a payment falls back to when the client sends none (created on first use). */
-export const LOAN_PAYMENT_CATEGORIES = {
-  principal: { name: 'Trả nợ', iconToken: 'other_expense' },
-  interest: { name: 'Lãi vay', iconToken: 'bills' },
-} as const;
+/** Expense category of the interest part when the client sends none (created on first use). */
+export const LOAN_INTEREST_CATEGORY = { name: 'Lãi vay', iconToken: 'bills' } as const;
 
 export type LoanStatus = 'paid_off' | 'overdue' | 'active';
 

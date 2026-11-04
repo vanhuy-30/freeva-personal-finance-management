@@ -7173,7 +7173,7 @@ abstract class S {
   /// No description provided for @txDebtTitle.
   ///
   /// In en, this message translates to:
-  /// **'Personal debt'**
+  /// **'Loans and debts'**
   String get txDebtTitle;
 
   /// No description provided for @txDebtReadOnly.
