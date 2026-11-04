@@ -158,14 +158,32 @@ describe('BE-P3-E02 loans HTTP + PostgreSQL', () => {
     expect(list.body.items[0]).toMatchObject({ principalMinor: '7884879', interestMinor: '1000000', totalMinor: '8884879' });
   });
 
-  it('pays with an explicit split, requires a category per non-zero part, uses the linked wallet', async () => {
+  it('falls back to the "Trả nợ" / "Lãi vay" categories when none is sent, created once', async () => {
+    const { id: other, bearer: otherToken } = await user();
+    const source = await wallet(other);
+    const res = await request('POST', '/loans', {
+      clientId: randomUUID(), kind: 'personal', name: 'Vay', currencyCode: 'VND', principalMinor: '100000000',
+      interestRateBps: 1200, installmentMinor: '8884879', frequency: 'monthly', startDate: '2026-11-01', accountId: source.id,
+    }, otherToken);
+    expect(res.status).toBe(201);
+    for (let i = 0; i < 2; i++) {
+      const paid = await request('POST', `/loans/${res.body.id}/payments`, {
+        clientId: randomUUID(), amountMinor: '2000000', paidOn: '2026-12-01',
+      }, otherToken);
+      expect(paid.status).toBe(201);
+    }
+    const categories = await prisma.category.findMany({ where: { userId: other }, orderBy: { name: 'asc' } });
+    expect(categories.map(row => [row.name, row.kind, row.isSystem])).toEqual([['Lãi vay', 'expense', true], ['Trả nợ', 'expense', true]]);
+    const byName = new Map(categories.map(row => [row.id, row.name]));
+    const expenses = await prisma.transaction.findMany({ where: { userId: other } });
+    expect(expenses).toHaveLength(4);
+    expect(new Set(expenses.map(row => byName.get(row.categoryId!)))).toEqual(new Set(['Trả nợ', 'Lãi vay']));
+  });
+
+  it('pays with an explicit split and uses the linked wallet', async () => {
     const source = await wallet();
     const loan = await createLoan({ accountId: source.id });
     const principalCategory = await category();
-    const missing = await request('POST', `/loans/${loan.id}/payments`, {
-      clientId: randomUUID(), amountMinor: '1000', paidOn: '2026-12-01', principalMinor: '1000', interestMinor: '0',
-    });
-    expect(missing.status).toBe(400);
     const lone = await request('POST', `/loans/${loan.id}/payments`, {
       clientId: randomUUID(), amountMinor: '1000', paidOn: '2026-12-01', principalMinor: '1000',
       principalCategoryId: principalCategory.id,
@@ -217,7 +235,9 @@ describe('BE-P3-E02 loans HTTP + PostgreSQL', () => {
     expect(res.status).toBe(200);
     expect(res.body.assumption).toMatchObject({ outstandingMinor: '100000000', interestRateBps: 1200, frequency: 'monthly' });
     expect(res.body.items).toHaveLength(12);
-    expect(res.body.items[0]).toMatchObject({ index: 1, interestMinor: '1000000' });
+    expect(res.body.items[0]).toMatchObject({ index: 1, interestMinor: '1000000', dueDate: '2026-12-01' });
+    expect(res.body.items[1].dueDate).toBe('2027-01-01');
+    expect(res.body.items[11].dueDate).toBe('2027-11-01');
     const principal = res.body.items.reduce((sum: bigint, row: { principalMinor: string }) => sum + BigInt(row.principalMinor), 0n);
     expect(principal).toBe(100000000n);
   });
@@ -233,6 +253,7 @@ describe('BE-P3-E02 loans HTTP + PostgreSQL', () => {
     const summary = await request('GET', '/loans/summary');
     expect(summary.body.items).toEqual([{
       currencyCode: 'VND', loanCount: 2, principalMinor: '4000', paidMinor: '400', outstandingMinor: '3600', expectedInterestMinor: '0',
+      dueThisMonthMinor: '0',
     }]);
     const current = (await request('GET', `/loans/${a.id}`)).body;
     expect((await request('DELETE', `/loans/${a.id}?version=${current.version}`)).status).toBe(204);

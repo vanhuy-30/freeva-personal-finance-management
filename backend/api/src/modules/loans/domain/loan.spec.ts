@@ -1,5 +1,7 @@
 import {
   addPeriod,
+  dueInMonth,
+  scheduleDueDates,
   annuityPayment,
   loanStatus,
   paidMinor,
@@ -68,5 +70,21 @@ describe('BE-P3-E02 loan formulas', () => {
     expect(addPeriod('2026-12-15', 'monthly')).toBe('2027-01-15');
     expect(addPeriod('2026-12-28', 'weekly')).toBe('2027-01-04');
     expect(addPeriod('2024-02-29', 'yearly')).toBe('2025-02-28');
+  });
+
+  it('dates each schedule row one period apart from the next due date', () => {
+    expect(scheduleDueDates('2026-01-31', 'monthly', 3)).toEqual(['2026-01-31', '2026-02-28', '2026-03-28']);
+    expect(scheduleDueDates(null, 'monthly', 2)).toEqual([null, null]);
+  });
+
+  it('sums only the payments due in the current month', () => {
+    const rows = schedule(1_000_000n, 0, 'weekly', 100_000n)!;
+    // weekly from 2026-11-04: 04, 11, 18, 25 November fall in the month
+    expect(dueInMonth(rows, '2026-11-04', 'weekly', '2026-11-04')).toBe(400_000n);
+    expect(dueInMonth(rows, '2026-12-01', 'weekly', '2026-11-04')).toBe(0n);
+    expect(dueInMonth(rows, null, 'weekly', '2026-11-04')).toBe(0n);
+    expect(dueInMonth(null, '2026-11-04', 'weekly', '2026-11-04')).toBe(0n);
+    // overdue rows from an earlier month are not counted
+    expect(dueInMonth(schedule(300_000n, 0, 'monthly', 100_000n), '2026-10-25', 'monthly', '2026-11-04')).toBe(100_000n);
   });
 });

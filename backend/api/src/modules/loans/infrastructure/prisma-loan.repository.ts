@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../../infrastructure/prisma/prisma.service';
@@ -9,6 +9,7 @@ import type { TransactionInput } from '../../transactions/domain/transaction';
 import { createTransactionInTx } from '../../transactions/infrastructure/create-transaction-in-tx';
 import {
   addPeriod,
+  LOAN_PAYMENT_CATEGORIES,
   LoanError,
   splitPayment,
   validateDates,
@@ -101,6 +102,22 @@ export class PrismaLoanRepository implements LoanRepository {
         throw error;
       }
     }
+  }
+
+  /** Active expense category named like the fallback for `part`; created once as a system category when missing. */
+  private async fallbackCategory(tx: Prisma.TransactionClient, userId: string, part: 'principal' | 'interest'): Promise<string> {
+    const seed = LOAN_PAYMENT_CATEGORIES[part];
+    const found = await tx.category.findFirst({
+      where: { userId, name: seed.name, archivedAt: null, kind: { in: ['expense', 'both'] } },
+      orderBy: [{ isSystem: 'desc' }, { createdAt: 'asc' }],
+      select: { id: true },
+    });
+    if (found) return found.id;
+    const created = await tx.category.create({
+      data: { userId, clientId: randomUUID(), name: seed.name, kind: 'expense', iconToken: seed.iconToken, isSystem: true },
+      select: { id: true },
+    });
+    return created.id;
   }
 
   async context(userId: string): Promise<LoanContext> {
@@ -265,14 +282,14 @@ export class PrismaLoanRepository implements LoanRepository {
       const ids: Record<'principal' | 'interest', string | null> = { principal: null, interest: null };
       for (const { part, amount, categoryId } of parts) {
         if (amount === 0n) continue;
-        if (categoryId === null) throw new LoanError('VALIDATION_ERROR');
+        const resolvedCategoryId = categoryId ?? await this.fallbackCategory(tx, userId, part);
         const legId = legClientId(input.clientId, part);
         const expense: TransactionInput = {
           type: 'expense',
           occurredOn: toDate(input.paidOn),
           occurredTime: null,
           legs: [{ clientId: legId, accountId, currencyCode: row.currencyCode.trim(), amountMinor: -amount }],
-          categoryId,
+          categoryId: resolvedCategoryId,
           notes: null,
           merchant: null,
           tagIds: [],

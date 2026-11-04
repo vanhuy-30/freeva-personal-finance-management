@@ -1,11 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { minor } from '../transactions/domain/transaction';
 import {
+  dueInMonth,
   loanStatus,
   paidMinor,
   percentBps,
   periodInterest,
   schedule,
+  scheduleDueDates,
   totalInterest,
   LoanError,
   type LoanRecord,
@@ -67,14 +69,16 @@ export class LoanService {
 
   /** Totals per currency over active loans: borrowed, paid, still owed, and expected interest on the plans that amortize. */
   async summary(userId: string) {
-    const loans = await this.repository.list(userId, false);
-    const totals = new Map<string, { principal: bigint; paid: bigint; outstanding: bigint; interest: bigint; count: number }>();
+    const [loans, context] = await Promise.all([this.repository.list(userId, false), this.repository.context(userId)]);
+    const totals = new Map<string, { principal: bigint; paid: bigint; outstanding: bigint; interest: bigint; due: bigint; count: number }>();
     for (const loan of loans) {
-      const entry = totals.get(loan.currencyCode) ?? { principal: 0n, paid: 0n, outstanding: 0n, interest: 0n, count: 0 };
+      const entry = totals.get(loan.currencyCode) ?? { principal: 0n, paid: 0n, outstanding: 0n, interest: 0n, due: 0n, count: 0 };
+      const rows = plan(loan);
       entry.principal += loan.principalMinor;
       entry.paid += paidMinor(loan.principalMinor, loan.outstandingMinor);
       entry.outstanding += loan.outstandingMinor;
-      entry.interest += totalInterest(plan(loan)) ?? 0n;
+      entry.interest += totalInterest(rows) ?? 0n;
+      entry.due += dueInMonth(rows, loan.nextDueDate, loan.frequency, context.today);
       entry.count += 1;
       totals.set(loan.currencyCode, entry);
     }
@@ -86,6 +90,7 @@ export class LoanService {
         paidMinor: text(entry.paid),
         outstandingMinor: text(entry.outstanding),
         expectedInterestMinor: text(entry.interest),
+        dueThisMonthMinor: text(entry.due),
       })),
     };
   }
@@ -93,12 +98,14 @@ export class LoanService {
   async schedule(userId: string, id: string) {
     const loan = await this.repository.find(userId, id);
     const rows = plan(loan);
+    const dates = scheduleDueDates(loan.nextDueDate, loan.frequency, rows?.length ?? 0);
     return {
       loanId: loan.id,
       currencyCode: loan.currencyCode,
       assumption: { outstandingMinor: text(loan.outstandingMinor), interestRateBps: loan.interestRateBps, frequency: loan.frequency, installmentMinor: orNull(loan.installmentMinor) },
-      items: (rows ?? []).map(row => ({
+      items: (rows ?? []).map((row, i) => ({
         index: row.index,
+        dueDate: dates[i] ?? null,
         interestMinor: text(row.interestMinor),
         principalMinor: text(row.principalMinor),
         paymentMinor: text(row.paymentMinor),

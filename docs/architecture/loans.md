@@ -17,7 +17,7 @@ Không có việc nào tự chạy. Chỉ khi user gọi:
 | `adjust` (sửa số đã có) | không | `loan.adjust` |
 | tạo khoản vay | không | `loan.create` |
 
-Mỗi expense cần danh mục (`principalCategoryId`, `interestCategoryId`) khi phần đó > 0. Chỉ phần gốc làm giảm dư nợ; trả quá dư nợ → `LOAN_OVERPAYMENT` (422). Retry cùng `clientId` trả kết quả cũ; khác nội dung → 409. Id chân giao dịch sinh cố định từ `clientId`. Sau khi trả, `nextDueDate` lùi một kỳ (cuối tháng thì cắt về ngày cuối); trả hết thì `null`.
+Mỗi expense có danh mục (`principalCategoryId`, `interestCategoryId`) khi phần đó > 0; không gửi thì dùng danh mục chi "Trả nợ" (gốc) / "Lãi vay" (lãi) đang hoạt động của user, chưa có thì tạo một lần làm danh mục hệ thống (`LOAN_PAYMENT_CATEGORIES`, cho app `MOB-P3-E02` không có ô chọn danh mục). Chỉ phần gốc làm giảm dư nợ; trả quá dư nợ → `LOAN_OVERPAYMENT` (422). Retry cùng `clientId` trả kết quả cũ; khác nội dung → 409. Id chân giao dịch sinh cố định từ `clientId`. Sau khi trả, `nextDueDate` lùi một kỳ (cuối tháng thì cắt về ngày cuối); trả hết thì `null`.
 
 **Tồn đọng:** báo cáo và ngân sách đếm mọi expense, nên phần gốc trả nợ hiện tính vào chi tiêu. Tách gốc khỏi báo cáo là việc sau.
 
@@ -31,6 +31,8 @@ Số nguyên (`bigint`), không `double`.
 - `splitPayment`: mặc định lãi của kỳ trước, phần còn lại là gốc.
 - `status`: `paid_off` (dư nợ 0) · `overdue` (quá `nextDueDate`) · `active`.
 - `percentBps = (principal - outstanding) * 10000 / principal`, làm tròn xuống.
+- Ngày từng kỳ (`schedule.items[].dueDate`): kỳ 1 = `nextDueDate`, mỗi kỳ sau lùi một kỳ bằng cùng hàm với lúc trả (`addPeriod`, cắt cuối tháng); không có `nextDueDate` thì `null`.
+- `summary.items[].dueThisMonthMinor`: tổng số tiền các kỳ có `dueDate` trong tháng hiện tại theo múi giờ hồ sơ; kỳ quá hạn của tháng trước không tính. Khoản vay không có số trả mỗi kỳ không có lịch nên không góp vào.
 
 ## API
 

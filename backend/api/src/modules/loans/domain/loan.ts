@@ -159,6 +159,41 @@ export function percentBps(principalMinor: bigint, outstandingMinor: bigint): nu
   return Number((paidMinor(principalMinor, outstandingMinor) * 10000n) / principalMinor);
 }
 
+/**
+ * Due date of each schedule row: row 1 falls on `nextDueDate`, each later row one period after the previous one
+ * (same stepping as a payment). All null when the loan has no next due date.
+ */
+export function scheduleDueDates(nextDueDate: string | null, frequency: LoanFrequency, count: number): (string | null)[] {
+  const dates: (string | null)[] = [];
+  let day = nextDueDate;
+  for (let i = 0; i < count; i++) {
+    dates.push(day);
+    day = day === null ? null : addPeriod(day, frequency);
+  }
+  return dates;
+}
+
+/** Sum of the payments of rows whose due date falls in the month of `today` (YYYY-MM-DD). */
+export function dueInMonth(rows: ScheduleRow[] | null, nextDueDate: string | null, frequency: LoanFrequency, today: string): bigint {
+  if (rows === null) return 0n;
+  const month = today.slice(0, 7);
+  const dates = scheduleDueDates(nextDueDate, frequency, rows.length);
+  let sum = 0n;
+  for (let i = 0; i < rows.length; i++) {
+    const day = dates[i];
+    if (day === null || day === undefined) break;
+    if (day.slice(0, 7) > month) break;
+    if (day.slice(0, 7) === month) sum += rows[i]!.paymentMinor;
+  }
+  return sum;
+}
+
+/** System expense categories a payment falls back to when the client sends none (created on first use). */
+export const LOAN_PAYMENT_CATEGORIES = {
+  principal: { name: 'Trả nợ', iconToken: 'other_expense' },
+  interest: { name: 'Lãi vay', iconToken: 'bills' },
+} as const;
+
 export type LoanStatus = 'paid_off' | 'overdue' | 'active';
 
 export function loanStatus(outstandingMinor: bigint, nextDueDate: string | null, today: string): LoanStatus {
