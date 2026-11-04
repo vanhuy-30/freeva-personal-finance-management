@@ -5,21 +5,112 @@ import 'package:injectable/injectable.dart';
 
 import '../../../auth/domain/auth_repository.dart';
 import '../../../auth/presentation/viewmodels/auth_view_model.dart';
+import '../../../profile/presentation/viewmodels/profile_view_model.dart';
+import '../../../transactions/domain/transaction.dart';
+import '../../../transactions/domain/transaction_use_cases.dart';
+import '../../../wallets/domain/wallet.dart';
+import '../../../wallets/presentation/viewmodels/wallet_view_model.dart';
 import '../../domain/recurring_rule.dart';
 import '../../domain/recurring_use_cases.dart';
 
 @LazySingleton()
 class RecurringViewModel extends ChangeNotifier {
-  RecurringViewModel(this._cases, this._auth);
+  RecurringViewModel(
+    this._cases,
+    this._auth,
+    this._wallets,
+    this._profile,
+    this._transactions,
+  );
 
   final RecurringUseCases _cases;
   final AuthViewModel _auth;
+  final WalletViewModel _wallets;
+  final ProfileViewModel _profile;
+  final TransactionUseCases _transactions;
   List<RecurringRule> rules = const [];
   bool loading = false;
   bool loaded = false;
   bool running = false;
   AuthFailure? failure;
   bool _disposed = false;
+
+  /// Bills waiting for "Đã trả" (active remind rules), earliest due first;
+  /// paused remind rules follow.
+  List<RecurringRule> get due {
+    final remind = [
+      for (final rule in rules)
+        if (rule.isRemind && (rule.active || !rule.isOneOff)) rule,
+    ];
+    return [
+      ...remind.where((rule) => rule.active),
+      ...remind.where((rule) => !rule.active),
+    ];
+  }
+
+  /// Rules that post on their own.
+  List<RecurringRule> get automatic => [
+    for (final rule in rules)
+      if (!rule.isRemind) rule,
+  ];
+
+  List<RecurringRule> get _pending => [
+    for (final rule in rules)
+      if (rule.isRemind && rule.active) rule,
+  ];
+
+  /// Currency of the "Cần trả" total: the profile currency when a bill uses
+  /// it, else the first bill's.
+  String get totalCurrency {
+    final main = _profile.saved?.currency ?? 'VND';
+    final pending = _pending;
+    if (pending.isEmpty || pending.any((rule) => rule.currencyCode == main)) {
+      return main;
+    }
+    return pending.first.currencyCode;
+  }
+
+  /// Sum of the pending bills in [totalCurrency] (estimated ones count at
+  /// their estimate).
+  BigInt get dueTotal => _pending
+      .where((rule) => rule.currencyCode == totalCurrency)
+      .fold(BigInt.zero, (sum, rule) => sum + rule.amountMinor.abs());
+
+  int get dueCount => _pending.length;
+
+  int digitsOf(String currency) =>
+      _wallets.currencies
+          .where((item) => item.code == currency)
+          .firstOrNull
+          ?.minorDigits ??
+      (currency == 'VND' ? 0 : 2);
+
+  /// Wallets a bill can be paid from or a rule posts to.
+  List<Wallet> get wallets => _wallets.active;
+
+  Future<void> loadWallets() async {
+    if (_wallets.wallets.isEmpty) await _wallets.load();
+  }
+
+  /// Recent expenses to link as a bill's payment (a pointer, nothing new is
+  /// posted); null when they could not be read.
+  Future<List<TxLeg>?> recentExpenses() async {
+    final result = await _transactions.list(
+      const TransactionQuery(
+        page: 1,
+        pageSize: 30,
+        deleted: false,
+        type: TransactionType.expense,
+      ),
+    );
+    return result.fold((error) {
+      _fail(error);
+      return null;
+    }, (page) => page.legs);
+  }
+
+  /// Today in the profile timezone, `yyyy-MM-dd`.
+  String get today => _wallets.today.toIso8601String().substring(0, 10);
 
   Future<void> load() async {
     if (loading) return;
@@ -64,6 +155,31 @@ class RecurringViewModel extends ChangeNotifier {
     );
   }
 
+  /// "Đã trả" for one due day. Retrying the same [RecurringConfirm] is safe:
+  /// the API answers with the first result (`replayed`).
+  Future<RecurringConfirmResult?> confirm(
+    RecurringRule rule,
+    RecurringConfirm confirm,
+  ) async {
+    final result = await _cases.confirm(rule, confirm);
+    return result.fold(
+      (error) {
+        _fail(error);
+        _notify();
+        return null;
+      },
+      (done) {
+        failure = null;
+        rules = [
+          for (final item in rules)
+            if (item.id == rule.id) done.rule else item,
+        ]..sort((a, b) => a.nextExecutionDate.compareTo(b.nextExecutionDate));
+        _notify();
+        return done;
+      },
+    );
+  }
+
   Future<bool> create(RecurringDraft draft) async {
     final result = await _cases.create(draft);
     return result.fold(
@@ -103,6 +219,9 @@ class RecurringViewModel extends ChangeNotifier {
       clearEnd: draft.endDate == null,
       nextExecutionDate: draft.nextExecutionDate,
       active: draft.active,
+      name: draft.name,
+      amountKind: draft.amountKind,
+      remindDaysBefore: draft.mode == 'remind' ? draft.remindDaysBefore : null,
     );
     return result.fold(
       (error) {

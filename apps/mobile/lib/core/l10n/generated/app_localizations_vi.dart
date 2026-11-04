@@ -1895,9 +1895,6 @@ class SVi extends S {
   String get meRecurring => 'Định kỳ';
 
   @override
-  String get meBills => 'Hóa đơn';
-
-  @override
   String get meCalendar => 'Lịch tài chính';
 
   @override
@@ -1941,58 +1938,6 @@ class SVi extends S {
   String get calendarEstimated => 'Ước tính';
 
   @override
-  String get billsTitle => 'Hóa đơn';
-
-  @override
-  String get billsAdd => 'Thêm hóa đơn';
-
-  @override
-  String get billsEdit => 'Sửa hóa đơn';
-
-  @override
-  String get billsDelete => 'Xóa';
-
-  @override
-  String get billsSave => 'Lưu';
-
-  @override
-  String get billsEmptyTitle => 'Chưa có hóa đơn';
-
-  @override
-  String get billsEmptyBody =>
-      'Theo dõi hạn điện, nước, internet. Đánh dấu đã trả bằng một giao dịch có sẵn.';
-
-  @override
-  String get billsLoadError => 'Không tải được hóa đơn';
-
-  @override
-  String get billsName => 'Tên';
-
-  @override
-  String get billsAmount => 'Số tiền';
-
-  @override
-  String get billsAmountFixed => 'Cố định';
-
-  @override
-  String get billsAmountEstimated => 'Ước tính';
-
-  @override
-  String get billsDueOn => 'Hạn (YYYY-MM-DD)';
-
-  @override
-  String get billsRecurring => 'Gắn định kỳ';
-
-  @override
-  String get billsOneOff => 'Một lần';
-
-  @override
-  String get billsLinkedRecurring => 'Đã gắn định kỳ';
-
-  @override
-  String get billsFilterAll => 'Tất cả';
-
-  @override
   String get billsStatusOpen => 'Mở';
 
   @override
@@ -2002,47 +1947,20 @@ class SVi extends S {
   String get billsStatusPaid => 'Đã trả';
 
   @override
-  String get billsMarkPaid => 'Đánh dấu đã trả';
-
-  @override
-  String get billsUnpay => 'Bỏ đánh dấu đã trả';
-
-  @override
-  String get billsPickTransaction => 'Chọn giao dịch';
-
-  @override
-  String get billsNoTransactions => 'Chưa có giao dịch để gắn';
-
-  @override
-  String get billsMarkedPaid => 'Đã gắn giao dịch thanh toán';
-
-  @override
-  String get billsClearedPaid => 'Đã bỏ đánh dấu đã trả';
-
-  @override
-  String get billsInvalid => 'Nhập tên và số tiền hợp lệ';
-
-  @override
-  String get recurringTitle => 'Giao dịch định kỳ';
+  String get recurringTitle => 'Định kỳ và hóa đơn';
 
   @override
   String get recurringAdd => 'Thêm định kỳ';
 
   @override
-  String get recurringEdit => 'Sửa định kỳ';
-
-  @override
-  String get recurringDelete => 'Xóa';
-
-  @override
   String get recurringSave => 'Lưu';
 
   @override
-  String get recurringEmptyTitle => 'Chưa có định kỳ';
+  String get recurringEmptyTitle => 'Chưa có khoản định kỳ';
 
   @override
   String get recurringEmptyBody =>
-      'Thiết lập tiền thuê, lương hoặc chuyển khoản một lần; Freeva sẽ ghi đúng lịch.';
+      'Thêm tiền nhà, lương hay hóa đơn điện, nước để Freeva ghi hoặc nhắc đúng hạn.';
 
   @override
   String get recurringLoadError => 'Không tải được định kỳ';
@@ -2058,46 +1976,6 @@ class SVi extends S {
 
   @override
   String get recurringCategory => 'Danh mục';
-
-  @override
-  String get recurringFrequency => 'Chu kỳ';
-
-  @override
-  String get recurringInterval => 'Mỗi';
-
-  @override
-  String recurringEvery(String count) {
-    return 'Mỗi $count';
-  }
-
-  @override
-  String get recurringUnitDay => 'Ngày';
-
-  @override
-  String get recurringUnitWeek => 'Tuần';
-
-  @override
-  String get recurringUnitMonth => 'Tháng';
-
-  @override
-  String get recurringUnitYear => 'Năm';
-
-  @override
-  String get recurringStart => 'Ngày bắt đầu (YYYY-MM-DD)';
-
-  @override
-  String get recurringNextLabel => 'Lần tới (YYYY-MM-DD)';
-
-  @override
-  String get recurringEnd => 'Ngày kết thúc (tuỳ chọn)';
-
-  @override
-  String get recurringActive => 'Đang bật';
-
-  @override
-  String recurringNext(String date) {
-    return 'Tới $date';
-  }
 
   @override
   String get recurringTypeExpense => 'Chi';
@@ -3793,4 +3671,188 @@ class SVi extends S {
 
   @override
   String get goalSaveAction => 'Lưu';
+
+  @override
+  String recDueTotal(String amount) {
+    return 'Cần trả $amount';
+  }
+
+  @override
+  String recDueCount(int count) {
+    return '$count hóa đơn chưa trả · xem trên lịch';
+  }
+
+  @override
+  String get recGroupDue => 'CẦN TRẢ';
+
+  @override
+  String get recGroupAuto => 'GHI TỰ ĐỘNG';
+
+  @override
+  String get recTagOverdue => 'Quá hạn';
+
+  @override
+  String get recTagToday => 'Hôm nay';
+
+  @override
+  String recTagDays(int days) {
+    return 'Còn $days ngày';
+  }
+
+  @override
+  String get recTagPaused => 'Tạm dừng';
+
+  @override
+  String recDueOn(String date) {
+    return 'Hạn $date';
+  }
+
+  @override
+  String get recOneOff => 'một lần';
+
+  @override
+  String recAbout(String amount) {
+    return 'khoảng $amount';
+  }
+
+  @override
+  String get recPaid => 'Đã trả';
+
+  @override
+  String recPaidA11y(String name) {
+    return 'Đã trả $name';
+  }
+
+  @override
+  String recDayOfMonth(String day) {
+    return 'Ngày $day hằng tháng';
+  }
+
+  @override
+  String get recEveryDay => 'Hằng ngày';
+
+  @override
+  String get recEveryWeek => 'Hằng tuần';
+
+  @override
+  String get recEveryMonth => 'Hằng tháng';
+
+  @override
+  String get recEveryYear => 'Hằng năm';
+
+  @override
+  String recEveryNDays(String count) {
+    return 'Mỗi $count ngày';
+  }
+
+  @override
+  String recEveryNWeeks(String count) {
+    return 'Mỗi $count tuần';
+  }
+
+  @override
+  String recEveryNMonths(String count) {
+    return 'Mỗi $count tháng';
+  }
+
+  @override
+  String recEveryNYears(String count) {
+    return 'Mỗi $count năm';
+  }
+
+  @override
+  String get recOnce => 'Một lần';
+
+  @override
+  String get recModeAuto => 'Ghi tự động';
+
+  @override
+  String get recModeAutoSub => 'Hợp với lương, tiền nhà';
+
+  @override
+  String get recModeRemind => 'Hỏi trước khi ghi';
+
+  @override
+  String get recModeRemindSub => 'Hợp với tiền điện, nước';
+
+  @override
+  String get recName => 'Tên';
+
+  @override
+  String get recVaries => 'Số tiền mỗi kỳ có thể khác';
+
+  @override
+  String get recVariesSub => 'Nhập số thật khi xác nhận';
+
+  @override
+  String get recRepeat => 'Lặp lại';
+
+  @override
+  String get recFirstDue => 'Hạn đầu tiên';
+
+  @override
+  String get recNextRun => 'Lần tới';
+
+  @override
+  String get recRemindBefore => 'Nhắc trước';
+
+  @override
+  String get recRemindSameDay => 'Đúng ngày';
+
+  @override
+  String recRemindDays(int count) {
+    return '$count ngày';
+  }
+
+  @override
+  String get recPayFrom => 'Trả từ ví';
+
+  @override
+  String get recPause => 'Tạm dừng';
+
+  @override
+  String get recPauseSub => 'Không ghi, không nhắc cho đến khi bật lại';
+
+  @override
+  String get recRemove => 'Xoá định kỳ';
+
+  @override
+  String recPaidTitle(String name) {
+    return 'Đã trả $name?';
+  }
+
+  @override
+  String get recRealAmount => 'Số tiền thật';
+
+  @override
+  String get recPaidOn => 'Ngày trả';
+
+  @override
+  String get recConfirm => 'Xác nhận đã trả';
+
+  @override
+  String get recLinkExisting => 'Đã ghi khoản chi này rồi? Chọn khoản đó';
+
+  @override
+  String get recPickExpense => 'Chọn khoản chi';
+
+  @override
+  String get recNoExpense => 'Chưa có khoản chi để gắn';
+
+  @override
+  String get recConfirmed => 'Đã ghi nhận khoản đã trả';
+
+  @override
+  String get recNeedWallet => 'Chọn ví để trả';
+
+  @override
+  String get recRemoveBody => 'Những khoản đã ghi trước đó vẫn còn.';
+
+  @override
+  String recRemindDaysShort(int count) {
+    return '$count ngày';
+  }
+
+  @override
+  String get recNeedCategory => 'Chọn danh mục';
 }

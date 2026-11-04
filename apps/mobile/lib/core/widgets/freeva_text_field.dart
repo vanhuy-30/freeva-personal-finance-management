@@ -27,6 +27,7 @@ class FreevaTextField extends StatefulWidget {
     this.suffix,
     this.obscureText = false,
     this.leadingIcon,
+    this.leadingTint,
     this.maxLength,
     this.showCounter = false,
     super.key,
@@ -53,6 +54,10 @@ class FreevaTextField extends StatefulWidget {
 
   /// Glyph in a 32 subtle tile (radius 10) in front of the label and value.
   final IconData? leadingIcon;
+
+  /// Fill and glyph colours of the [leadingIcon] tile when it is not the
+  /// neutral one (a category's tones).
+  final (Color, Color)? leadingTint;
 
   /// Hard limit on the number of characters.
   final int? maxLength;
@@ -212,13 +217,13 @@ class _FreevaTextFieldState extends State<FreevaTextField> {
                     width: FreevaSize.iconTile,
                     height: FreevaSize.iconTile,
                     decoration: BoxDecoration(
-                      color: c.bgSubtle,
+                      color: widget.leadingTint?.$1 ?? c.bgSubtle,
                       borderRadius: BorderRadius.circular(FreevaRadius.xs),
                     ),
                     child: Icon(
                       widget.leadingIcon,
                       size: FreevaSize.iconChip,
-                      color: c.textOnWash,
+                      color: widget.leadingTint?.$2 ?? c.textOnWash,
                     ),
                   ),
                 ),

@@ -3462,12 +3462,6 @@ abstract class S {
   /// **'Recurring'**
   String get meRecurring;
 
-  /// No description provided for @meBills.
-  ///
-  /// In en, this message translates to:
-  /// **'Bills'**
-  String get meBills;
-
   /// No description provided for @meCalendar.
   ///
   /// In en, this message translates to:
@@ -3552,108 +3546,6 @@ abstract class S {
   /// **'Estimated'**
   String get calendarEstimated;
 
-  /// No description provided for @billsTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Bills'**
-  String get billsTitle;
-
-  /// No description provided for @billsAdd.
-  ///
-  /// In en, this message translates to:
-  /// **'Add bill'**
-  String get billsAdd;
-
-  /// No description provided for @billsEdit.
-  ///
-  /// In en, this message translates to:
-  /// **'Edit bill'**
-  String get billsEdit;
-
-  /// No description provided for @billsDelete.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete'**
-  String get billsDelete;
-
-  /// No description provided for @billsSave.
-  ///
-  /// In en, this message translates to:
-  /// **'Save'**
-  String get billsSave;
-
-  /// No description provided for @billsEmptyTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'No bills yet'**
-  String get billsEmptyTitle;
-
-  /// No description provided for @billsEmptyBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Track utilities and subscriptions. Mark paid by linking an existing transaction.'**
-  String get billsEmptyBody;
-
-  /// No description provided for @billsLoadError.
-  ///
-  /// In en, this message translates to:
-  /// **'Couldn’t load bills'**
-  String get billsLoadError;
-
-  /// No description provided for @billsName.
-  ///
-  /// In en, this message translates to:
-  /// **'Name'**
-  String get billsName;
-
-  /// No description provided for @billsAmount.
-  ///
-  /// In en, this message translates to:
-  /// **'Amount'**
-  String get billsAmount;
-
-  /// No description provided for @billsAmountFixed.
-  ///
-  /// In en, this message translates to:
-  /// **'Fixed'**
-  String get billsAmountFixed;
-
-  /// No description provided for @billsAmountEstimated.
-  ///
-  /// In en, this message translates to:
-  /// **'Estimated'**
-  String get billsAmountEstimated;
-
-  /// No description provided for @billsDueOn.
-  ///
-  /// In en, this message translates to:
-  /// **'Due date (YYYY-MM-DD)'**
-  String get billsDueOn;
-
-  /// No description provided for @billsRecurring.
-  ///
-  /// In en, this message translates to:
-  /// **'Link recurring'**
-  String get billsRecurring;
-
-  /// No description provided for @billsOneOff.
-  ///
-  /// In en, this message translates to:
-  /// **'One-off'**
-  String get billsOneOff;
-
-  /// No description provided for @billsLinkedRecurring.
-  ///
-  /// In en, this message translates to:
-  /// **'Linked recurring'**
-  String get billsLinkedRecurring;
-
-  /// No description provided for @billsFilterAll.
-  ///
-  /// In en, this message translates to:
-  /// **'All'**
-  String get billsFilterAll;
-
   /// No description provided for @billsStatusOpen.
   ///
   /// In en, this message translates to:
@@ -3672,52 +3564,10 @@ abstract class S {
   /// **'Paid'**
   String get billsStatusPaid;
 
-  /// No description provided for @billsMarkPaid.
-  ///
-  /// In en, this message translates to:
-  /// **'Mark as paid'**
-  String get billsMarkPaid;
-
-  /// No description provided for @billsUnpay.
-  ///
-  /// In en, this message translates to:
-  /// **'Clear paid mark'**
-  String get billsUnpay;
-
-  /// No description provided for @billsPickTransaction.
-  ///
-  /// In en, this message translates to:
-  /// **'Choose a transaction'**
-  String get billsPickTransaction;
-
-  /// No description provided for @billsNoTransactions.
-  ///
-  /// In en, this message translates to:
-  /// **'No transactions to link yet'**
-  String get billsNoTransactions;
-
-  /// No description provided for @billsMarkedPaid.
-  ///
-  /// In en, this message translates to:
-  /// **'Payment linked'**
-  String get billsMarkedPaid;
-
-  /// No description provided for @billsClearedPaid.
-  ///
-  /// In en, this message translates to:
-  /// **'Paid mark cleared'**
-  String get billsClearedPaid;
-
-  /// No description provided for @billsInvalid.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter a valid name and amount'**
-  String get billsInvalid;
-
   /// No description provided for @recurringTitle.
   ///
   /// In en, this message translates to:
-  /// **'Recurring'**
+  /// **'Recurring and bills'**
   String get recurringTitle;
 
   /// No description provided for @recurringAdd.
@@ -3725,18 +3575,6 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Add recurring'**
   String get recurringAdd;
-
-  /// No description provided for @recurringEdit.
-  ///
-  /// In en, this message translates to:
-  /// **'Edit recurring'**
-  String get recurringEdit;
-
-  /// No description provided for @recurringDelete.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete'**
-  String get recurringDelete;
 
   /// No description provided for @recurringSave.
   ///
@@ -3747,13 +3585,13 @@ abstract class S {
   /// No description provided for @recurringEmptyTitle.
   ///
   /// In en, this message translates to:
-  /// **'No recurring yet'**
+  /// **'Nothing recurring yet'**
   String get recurringEmptyTitle;
 
   /// No description provided for @recurringEmptyBody.
   ///
   /// In en, this message translates to:
-  /// **'Set rent, salary, or transfers once and Freeva posts them on schedule.'**
+  /// **'Add rent, salary, or a bill like electricity so Freeva posts or reminds you on time.'**
   String get recurringEmptyBody;
 
   /// No description provided for @recurringLoadError.
@@ -3785,78 +3623,6 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Category'**
   String get recurringCategory;
-
-  /// No description provided for @recurringFrequency.
-  ///
-  /// In en, this message translates to:
-  /// **'Frequency'**
-  String get recurringFrequency;
-
-  /// No description provided for @recurringInterval.
-  ///
-  /// In en, this message translates to:
-  /// **'Every'**
-  String get recurringInterval;
-
-  /// No description provided for @recurringEvery.
-  ///
-  /// In en, this message translates to:
-  /// **'Every {count}'**
-  String recurringEvery(String count);
-
-  /// No description provided for @recurringUnitDay.
-  ///
-  /// In en, this message translates to:
-  /// **'Daily'**
-  String get recurringUnitDay;
-
-  /// No description provided for @recurringUnitWeek.
-  ///
-  /// In en, this message translates to:
-  /// **'Weekly'**
-  String get recurringUnitWeek;
-
-  /// No description provided for @recurringUnitMonth.
-  ///
-  /// In en, this message translates to:
-  /// **'Monthly'**
-  String get recurringUnitMonth;
-
-  /// No description provided for @recurringUnitYear.
-  ///
-  /// In en, this message translates to:
-  /// **'Yearly'**
-  String get recurringUnitYear;
-
-  /// No description provided for @recurringStart.
-  ///
-  /// In en, this message translates to:
-  /// **'Start date (YYYY-MM-DD)'**
-  String get recurringStart;
-
-  /// No description provided for @recurringNextLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Next run (YYYY-MM-DD)'**
-  String get recurringNextLabel;
-
-  /// No description provided for @recurringEnd.
-  ///
-  /// In en, this message translates to:
-  /// **'End date (optional)'**
-  String get recurringEnd;
-
-  /// No description provided for @recurringActive.
-  ///
-  /// In en, this message translates to:
-  /// **'Active'**
-  String get recurringActive;
-
-  /// No description provided for @recurringNext.
-  ///
-  /// In en, this message translates to:
-  /// **'Next {date}'**
-  String recurringNext(String date);
 
   /// No description provided for @recurringTypeExpense.
   ///
@@ -6875,6 +6641,318 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Save'**
   String get goalSaveAction;
+
+  /// No description provided for @recDueTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'To pay {amount}'**
+  String recDueTotal(String amount);
+
+  /// No description provided for @recDueCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 bill unpaid} other{{count} bills unpaid}} · see calendar'**
+  String recDueCount(int count);
+
+  /// No description provided for @recGroupDue.
+  ///
+  /// In en, this message translates to:
+  /// **'TO PAY'**
+  String get recGroupDue;
+
+  /// No description provided for @recGroupAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'AUTOMATIC'**
+  String get recGroupAuto;
+
+  /// No description provided for @recTagOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get recTagOverdue;
+
+  /// No description provided for @recTagToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get recTagToday;
+
+  /// No description provided for @recTagDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, one{1 day left} other{{days} days left}}'**
+  String recTagDays(int days);
+
+  /// No description provided for @recTagPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused'**
+  String get recTagPaused;
+
+  /// No description provided for @recDueOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Due {date}'**
+  String recDueOn(String date);
+
+  /// No description provided for @recOneOff.
+  ///
+  /// In en, this message translates to:
+  /// **'one-off'**
+  String get recOneOff;
+
+  /// No description provided for @recAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'about {amount}'**
+  String recAbout(String amount);
+
+  /// No description provided for @recPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get recPaid;
+
+  /// No description provided for @recPaidA11y.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark {name} as paid'**
+  String recPaidA11y(String name);
+
+  /// No description provided for @recDayOfMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Day {day} every month'**
+  String recDayOfMonth(String day);
+
+  /// No description provided for @recEveryDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Every day'**
+  String get recEveryDay;
+
+  /// No description provided for @recEveryWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Every week'**
+  String get recEveryWeek;
+
+  /// No description provided for @recEveryMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Every month'**
+  String get recEveryMonth;
+
+  /// No description provided for @recEveryYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Every year'**
+  String get recEveryYear;
+
+  /// No description provided for @recEveryNDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Every {count} days'**
+  String recEveryNDays(String count);
+
+  /// No description provided for @recEveryNWeeks.
+  ///
+  /// In en, this message translates to:
+  /// **'Every {count} weeks'**
+  String recEveryNWeeks(String count);
+
+  /// No description provided for @recEveryNMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'Every {count} months'**
+  String recEveryNMonths(String count);
+
+  /// No description provided for @recEveryNYears.
+  ///
+  /// In en, this message translates to:
+  /// **'Every {count} years'**
+  String recEveryNYears(String count);
+
+  /// No description provided for @recOnce.
+  ///
+  /// In en, this message translates to:
+  /// **'Once'**
+  String get recOnce;
+
+  /// No description provided for @recModeAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'Post automatically'**
+  String get recModeAuto;
+
+  /// No description provided for @recModeAutoSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Good for salary, rent'**
+  String get recModeAutoSub;
+
+  /// No description provided for @recModeRemind.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask before posting'**
+  String get recModeRemind;
+
+  /// No description provided for @recModeRemindSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Good for electricity, water'**
+  String get recModeRemindSub;
+
+  /// No description provided for @recName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get recName;
+
+  /// No description provided for @recVaries.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount can differ each time'**
+  String get recVaries;
+
+  /// No description provided for @recVariesSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the real amount when you confirm'**
+  String get recVariesSub;
+
+  /// No description provided for @recRepeat.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat'**
+  String get recRepeat;
+
+  /// No description provided for @recFirstDue.
+  ///
+  /// In en, this message translates to:
+  /// **'First due date'**
+  String get recFirstDue;
+
+  /// No description provided for @recNextRun.
+  ///
+  /// In en, this message translates to:
+  /// **'Next date'**
+  String get recNextRun;
+
+  /// No description provided for @recRemindBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind me'**
+  String get recRemindBefore;
+
+  /// No description provided for @recRemindSameDay.
+  ///
+  /// In en, this message translates to:
+  /// **'On the day'**
+  String get recRemindSameDay;
+
+  /// No description provided for @recRemindDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 day before} other{{count} days before}}'**
+  String recRemindDays(int count);
+
+  /// No description provided for @recPayFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay from'**
+  String get recPayFrom;
+
+  /// No description provided for @recPause.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get recPause;
+
+  /// No description provided for @recPauseSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing is posted or reminded until you turn it back on'**
+  String get recPauseSub;
+
+  /// No description provided for @recRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete recurring'**
+  String get recRemove;
+
+  /// No description provided for @recPaidTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid {name}?'**
+  String recPaidTitle(String name);
+
+  /// No description provided for @recRealAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Actual amount'**
+  String get recRealAmount;
+
+  /// No description provided for @recPaidOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid on'**
+  String get recPaidOn;
+
+  /// No description provided for @recConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm paid'**
+  String get recConfirm;
+
+  /// No description provided for @recLinkExisting.
+  ///
+  /// In en, this message translates to:
+  /// **'Already logged this expense? Pick it'**
+  String get recLinkExisting;
+
+  /// No description provided for @recPickExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick an expense'**
+  String get recPickExpense;
+
+  /// No description provided for @recNoExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'No expense to link yet'**
+  String get recNoExpense;
+
+  /// No description provided for @recConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Marked as paid'**
+  String get recConfirmed;
+
+  /// No description provided for @recNeedWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a wallet to pay from'**
+  String get recNeedWallet;
+
+  /// No description provided for @recRemoveBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Entries already posted stay as they are.'**
+  String get recRemoveBody;
+
+  /// No description provided for @recRemindDaysShort.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 day} other{{count} days}}'**
+  String recRemindDaysShort(int count);
+
+  /// No description provided for @recNeedCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a category'**
+  String get recNeedCategory;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

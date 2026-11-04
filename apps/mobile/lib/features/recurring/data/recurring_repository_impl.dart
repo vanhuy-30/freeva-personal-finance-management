@@ -19,7 +19,7 @@ class RecurringRepositoryImpl implements RecurringRepository {
     interval: json['interval'] as int,
     amountMinor: BigInt.parse(json['amountMinor'] as String),
     currencyCode: json['currencyCode'] as String,
-    accountId: json['accountId'] as String,
+    accountId: json['accountId'] as String?,
     categoryId: json['categoryId'] as String?,
     counterAccountId: json['counterAccountId'] as String?,
     counterAmountMinor: json['counterAmountMinor'] == null
@@ -32,6 +32,11 @@ class RecurringRepositoryImpl implements RecurringRepository {
     nextExecutionDate: json['nextExecutionDate'] as String,
     active: json['active'] as bool,
     version: json['version'] as int,
+    mode: json['mode'] as String,
+    name: json['name'] as String?,
+    amountKind: json['amountKind'] as String,
+    remindDaysBefore: json['remindDaysBefore'] as int,
+    overdue: json['overdue'] as bool,
   );
 
   Future<Either<AuthFailure, T>> _request<T>(
@@ -101,6 +106,11 @@ class RecurringRepositoryImpl implements RecurringRepository {
     'endDate': draft.endDate,
     'nextExecutionDate': draft.nextExecutionDate,
     'active': draft.active,
+    'mode': draft.mode,
+    'name': draft.name,
+    'amountKind': draft.amountKind,
+    'remindDaysBefore': draft.remindDaysBefore,
+    'repeat': draft.repeat,
   };
 
   @override
@@ -134,6 +144,9 @@ class RecurringRepositoryImpl implements RecurringRepository {
     bool clearEnd = false,
     String? nextExecutionDate,
     bool? active,
+    String? name,
+    String? amountKind,
+    int? remindDaysBefore,
   }) {
     final body = <String, dynamic>{'version': rule.version};
     if (unit != null) body['unit'] = unit;
@@ -174,6 +187,11 @@ class RecurringRepositoryImpl implements RecurringRepository {
       body['nextExecutionDate'] = nextExecutionDate;
     }
     if (active != null) body['active'] = active;
+    if (name != null) body['name'] = name;
+    if (amountKind != null) body['amountKind'] = amountKind;
+    if (remindDaysBefore != null) {
+      body['remindDaysBefore'] = remindDaysBefore;
+    }
     return _request(
       'PATCH',
       'recurring-transactions/${rule.id}',
@@ -187,6 +205,29 @@ class RecurringRepositoryImpl implements RecurringRepository {
     'DELETE',
     'recurring-transactions/${rule.id}?version=${rule.version}',
     (_) => unit,
+  );
+
+  @override
+  Future<Either<AuthFailure, RecurringConfirmResult>> confirm(
+    RecurringRule rule,
+    RecurringConfirm confirm,
+  ) => _request(
+    'POST',
+    'recurring-transactions/${rule.id}/confirm',
+    (json) => RecurringConfirmResult(
+      rule: _parse(json['rule'] as Map<String, dynamic>),
+      transactionId: json['transactionId'] as String,
+      replayed: json['replayed'] as bool,
+    ),
+    body: {
+      'version': rule.version,
+      'occurredOn': confirm.occurredOn,
+      if (confirm.transactionId != null) 'transactionId': confirm.transactionId,
+      if (confirm.accountId != null) 'accountId': confirm.accountId,
+      if (confirm.amountMinor != null)
+        'amountMinor': confirm.amountMinor.toString(),
+      if (confirm.paidOn != null) 'paidOn': confirm.paidOn,
+    },
   );
 
   @override
