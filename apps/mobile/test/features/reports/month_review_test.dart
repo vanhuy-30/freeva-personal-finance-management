@@ -9,6 +9,7 @@ import 'package:mobile/features/reports/domain/month_review_format.dart';
 import 'package:mobile/features/reports/domain/report.dart';
 import 'package:mobile/features/reports/domain/report_repository.dart';
 import 'package:mobile/features/reports/domain/report_use_cases.dart';
+import 'package:mobile/features/wallets/domain/reconcile_result.dart';
 import 'package:mobile/features/wallets/domain/wallet.dart';
 import 'package:mobile/features/wallets/domain/wallet_repository.dart';
 
@@ -206,6 +207,14 @@ class _Wallets implements WalletRepository {
     Wallet wallet, {
     bool? archived,
     int? sortOrder,
+  }) => throw UnimplementedError();
+
+  @override
+  Future<Either<AuthFailure, ReconcileResult>> reconcile(
+    Wallet wallet,
+    BigInt actualMinor, {
+    required String clientId,
+    bool dryRun = false,
   }) => throw UnimplementedError();
 
   @override

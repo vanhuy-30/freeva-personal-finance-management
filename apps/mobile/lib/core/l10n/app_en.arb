@@ -2259,5 +2259,23 @@
       }
     }
   },
-  "recNeedCategory": "Pick a category"
+  "recNeedCategory": "Pick a category",
+  "transactionAdjustment": "Adjustment",
+  "txKindAdjustment": "adjustment",
+  "txAdjustTitle": "Balance adjustment",
+  "walletReconcileLink": "Match balance",
+  "walletReconcileTitle": "Match {name} balance",
+  "@walletReconcileTitle": {"placeholders": {"name": {"type": "String"}}},
+  "walletReconcileCurrent": "Balance in app",
+  "walletReconcileCurrentDebt": "Debt in app",
+  "walletReconcileField": "Real balance in your bank app",
+  "walletReconcileFieldDebt": "Real debt in your bank app",
+  "walletReconcileDiff": "Difference",
+  "walletReconcileHint": "The difference is saved as an adjustment, not counted in income or spending.",
+  "walletReconcileConfirm": "Match balance",
+  "walletReconcileDone": "Balance matched",
+  "txAdjustEditTitle": "Edit adjustment",
+  "txAdjustAmount": "Adjustment amount",
+  "txAdjustHint": "Positive raises the wallet, negative lowers it.",
+  "walletReconcileFailed": "Couldn't match the balance. Try again."
 }

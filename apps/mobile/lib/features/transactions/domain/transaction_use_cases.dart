@@ -21,6 +21,12 @@ abstract class TransactionUseCases {
     TransactionBundle? existing,
   });
   Future<Either<AuthFailure, Unit>> remove(TransactionBundle bundle);
+
+  /// Changes the signed amount of an `adjustment`; nothing else on it moves.
+  Future<Either<AuthFailure, TransactionBundle>> adjust(
+    TransactionBundle bundle,
+    BigInt signedMinor,
+  );
   Future<Either<AuthFailure, TransactionBundle>> restore(
     TransactionBundle bundle,
     List<Wallet> wallets,
@@ -82,6 +88,44 @@ class DefaultTransactionUseCases implements TransactionUseCases {
       (value) => existing == null
           ? _repository.create(value)
           : _repository.update(existing.id, value),
+    );
+  }
+
+  @override
+  Future<Either<AuthFailure, TransactionBundle>> adjust(
+    TransactionBundle bundle,
+    BigInt signedMinor,
+  ) {
+    final leg = bundle.legs.first;
+    final max = BigInt.parse('9223372036854775807');
+    if (bundle.type != TransactionType.adjustment ||
+        bundle.deleted ||
+        bundle.version < 1 ||
+        bundle.version > 2147483646 ||
+        signedMinor == BigInt.zero ||
+        signedMinor.abs() > max) {
+      return Future.value(left(const AuthFailure(AuthError.invalidInput)));
+    }
+    return _repository.update(
+      bundle.id,
+      TransactionCommand(
+        type: TransactionType.adjustment,
+        occurredOn: bundle.occurredOn,
+        occurredTime: bundle.occurredTime,
+        categoryId: null,
+        notes: bundle.notes,
+        merchant: null,
+        tagIds: const [],
+        version: bundle.version,
+        legs: [
+          TransactionLegCommand(
+            clientId: leg.clientId,
+            accountId: leg.accountId,
+            currencyCode: leg.currencyCode,
+            amountMinor: signedMinor,
+          ),
+        ],
+      ),
     );
   }
 

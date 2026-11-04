@@ -28,7 +28,7 @@
 | **I** Mục tiêu | **Chốt** 2026-11-03, **đã code** (`MOB-P3-E01`) | [patterns/I-goals.md](patterns/I-goals.md) |
 | **K** Vay và nợ | **Chốt** 2026-11-03 | [patterns/K-loans-debts.md](patterns/K-loans-debts.md) |
 | **L** Định kỳ và hóa đơn | **Chốt** 2026-11-03, **đã code** (`MOB-P3-001`) | [patterns/L-recurring-bills.md](patterns/L-recurring-bills.md) |
-| **M** Ví, hoàn tiền, trả góp | **Chốt** 2026-11-03 | [patterns/M-wallet-refund-installment.md](patterns/M-wallet-refund-installment.md) |
+| **M** Ví, hoàn tiền, trả góp | **Chốt** 2026-11-03; màn 1 (khớp số dư) **đã code** (`MOB-P3-005`) | [patterns/M-wallet-refund-installment.md](patterns/M-wallet-refund-installment.md) |
 | **N** Dự báo, soát tháng, ngân sách, nhắc | **Chốt** 2026-11-03; màn 3 (soát tháng) **đã code** (`MOB-P3-002`), màn 4 (ngưỡng ngân sách) **đã code** (`MOB-P3-003`) | [patterns/N-forecast-alerts.md](patterns/N-forecast-alerts.md) |
 | **O** Cá nhân và dữ liệu | **Chốt** 2026-11-03 | [patterns/O-profile-data.md](patterns/O-profile-data.md) |
 | **A3** Onboarding ba câu | **Chốt** 2026-11-03 | [patterns/A3-onboarding-three-questions.md](patterns/A3-onboarding-three-questions.md) |

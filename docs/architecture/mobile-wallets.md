@@ -87,3 +87,7 @@ Trước phát hành cần backend triển khai BE-P1-004 và profile/options; s
 thiết bị với API thật: tạo bốn loại ví, sửa, đổi thứ tự rồi mở lại, ẩn/khôi phục,
 ngắt mạng khi ghi, khóa/unlock editor và xung đột từ hai client. Chưa kiểm chứng
 E2E staging hoặc native build trong task này.
+
+## Khớp số dư (`MOB-P3-005`)
+
+Sheet mở từ link "Khớp số dư" trên chi tiết ví/thẻ, gọi `POST /financial-accounts/{id}/reconcile` (xem [wallet-reconciliation.md](wallet-reconciliation.md)). Số lấy từ server, không tính tay trên client; thẻ tín dụng nhập dư nợ.

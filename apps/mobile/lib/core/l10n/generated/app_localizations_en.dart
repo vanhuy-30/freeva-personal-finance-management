@@ -3939,4 +3939,58 @@ class SEn extends S {
 
   @override
   String get recNeedCategory => 'Pick a category';
+
+  @override
+  String get transactionAdjustment => 'Adjustment';
+
+  @override
+  String get txKindAdjustment => 'adjustment';
+
+  @override
+  String get txAdjustTitle => 'Balance adjustment';
+
+  @override
+  String get walletReconcileLink => 'Match balance';
+
+  @override
+  String walletReconcileTitle(String name) {
+    return 'Match $name balance';
+  }
+
+  @override
+  String get walletReconcileCurrent => 'Balance in app';
+
+  @override
+  String get walletReconcileCurrentDebt => 'Debt in app';
+
+  @override
+  String get walletReconcileField => 'Real balance in your bank app';
+
+  @override
+  String get walletReconcileFieldDebt => 'Real debt in your bank app';
+
+  @override
+  String get walletReconcileDiff => 'Difference';
+
+  @override
+  String get walletReconcileHint =>
+      'The difference is saved as an adjustment, not counted in income or spending.';
+
+  @override
+  String get walletReconcileConfirm => 'Match balance';
+
+  @override
+  String get walletReconcileDone => 'Balance matched';
+
+  @override
+  String get txAdjustEditTitle => 'Edit adjustment';
+
+  @override
+  String get txAdjustAmount => 'Adjustment amount';
+
+  @override
+  String get txAdjustHint => 'Positive raises the wallet, negative lowers it.';
+
+  @override
+  String get walletReconcileFailed => 'Couldn\'t match the balance. Try again.';
 }

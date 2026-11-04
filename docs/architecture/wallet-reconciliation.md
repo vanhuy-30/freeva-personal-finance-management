@@ -39,4 +39,12 @@ Sửa và xóa adjustment qua `PATCH`/`DELETE /transactions/{id}` như giao dị
 
 Unit: [reconcile.spec.ts](../../backend/api/src/modules/transactions/reconcile.spec.ts) (delta ví thường và thẻ, bigint trên 2^53, validate). PostgreSQL: [reconcile.integration-spec.ts](../../backend/api/test/reconcile.integration-spec.ts) (số dư, replay, dry run, thẻ theo dư nợ, báo cáo không đổi, sửa/xóa, owner khác).
 
-**Tồn đọng:** `MOB-P3-005` (nhập số dư thực tế trên chi tiết ví) chưa làm; chưa deploy staging.
+## Mobile (`MOB-P3-005`, 2026-11-04)
+
+- Lối vào: link "Khớp số dư" dưới thẻ số dư trên chi tiết ví/thẻ ([reconcile_sheet.dart](../../apps/mobile/lib/features/wallets/presentation/widgets/reconcile_sheet.dart)); ví đã ẩn không có link (server trả 409).
+- Mọi số trong sheet do server trả (`currentBalanceMinor`, `deltaMinor`); app chỉ lấy "số gõ − số đang hiện" để đọc chênh lệch (ví thẻ: theo dư nợ). Gõ xong 300 ms thì gọi `dryRun`, bấm nút mới ghi.
+- `clientId` đổi khi số gõ đổi, giữ nguyên khi thử lại.
+- `TransactionType.adjustment` có trong app: hiện trong lịch sử; chi tiết cho Sửa số tiền (sheet riêng, `PATCH /transactions/{id}` chỉ gửi leg mới, không danh mục/FX, không qua hàng đợi offline) và Xoá, không Sao chép.
+- Ví thường nhập được số âm (ví đang âm); ví thẻ chỉ nhập dư nợ ≥ 0.
+
+**Tồn đọng:** sửa điều chỉnh khi offline; chưa deploy staging; chưa chạy trên thiết bị thật.

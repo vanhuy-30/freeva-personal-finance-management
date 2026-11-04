@@ -3874,4 +3874,58 @@ class SVi extends S {
 
   @override
   String get recNeedCategory => 'Chọn danh mục';
+
+  @override
+  String get transactionAdjustment => 'Điều chỉnh';
+
+  @override
+  String get txKindAdjustment => 'điều chỉnh';
+
+  @override
+  String get txAdjustTitle => 'Điều chỉnh số dư';
+
+  @override
+  String get walletReconcileLink => 'Khớp số dư';
+
+  @override
+  String walletReconcileTitle(String name) {
+    return 'Khớp số dư $name';
+  }
+
+  @override
+  String get walletReconcileCurrent => 'Số dư trên app';
+
+  @override
+  String get walletReconcileCurrentDebt => 'Dư nợ trên app';
+
+  @override
+  String get walletReconcileField => 'Số dư thật trong app ngân hàng';
+
+  @override
+  String get walletReconcileFieldDebt => 'Dư nợ thật trong app ngân hàng';
+
+  @override
+  String get walletReconcileDiff => 'Chênh lệch';
+
+  @override
+  String get walletReconcileHint =>
+      'Phần chênh ghi thành khoản điều chỉnh, không tính vào thu chi.';
+
+  @override
+  String get walletReconcileConfirm => 'Khớp số dư';
+
+  @override
+  String get walletReconcileDone => 'Đã khớp số dư';
+
+  @override
+  String get txAdjustEditTitle => 'Sửa điều chỉnh';
+
+  @override
+  String get txAdjustAmount => 'Số tiền điều chỉnh';
+
+  @override
+  String get txAdjustHint => 'Số dương làm ví tăng, số âm làm ví giảm.';
+
+  @override
+  String get walletReconcileFailed => 'Chưa khớp được số dư. Thử lại nhé.';
 }

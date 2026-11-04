@@ -6983,6 +6983,108 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Pick a category'**
   String get recNeedCategory;
+
+  /// No description provided for @transactionAdjustment.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjustment'**
+  String get transactionAdjustment;
+
+  /// No description provided for @txKindAdjustment.
+  ///
+  /// In en, this message translates to:
+  /// **'adjustment'**
+  String get txKindAdjustment;
+
+  /// No description provided for @txAdjustTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance adjustment'**
+  String get txAdjustTitle;
+
+  /// No description provided for @walletReconcileLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Match balance'**
+  String get walletReconcileLink;
+
+  /// No description provided for @walletReconcileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Match {name} balance'**
+  String walletReconcileTitle(String name);
+
+  /// No description provided for @walletReconcileCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance in app'**
+  String get walletReconcileCurrent;
+
+  /// No description provided for @walletReconcileCurrentDebt.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt in app'**
+  String get walletReconcileCurrentDebt;
+
+  /// No description provided for @walletReconcileField.
+  ///
+  /// In en, this message translates to:
+  /// **'Real balance in your bank app'**
+  String get walletReconcileField;
+
+  /// No description provided for @walletReconcileFieldDebt.
+  ///
+  /// In en, this message translates to:
+  /// **'Real debt in your bank app'**
+  String get walletReconcileFieldDebt;
+
+  /// No description provided for @walletReconcileDiff.
+  ///
+  /// In en, this message translates to:
+  /// **'Difference'**
+  String get walletReconcileDiff;
+
+  /// No description provided for @walletReconcileHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The difference is saved as an adjustment, not counted in income or spending.'**
+  String get walletReconcileHint;
+
+  /// No description provided for @walletReconcileConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Match balance'**
+  String get walletReconcileConfirm;
+
+  /// No description provided for @walletReconcileDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance matched'**
+  String get walletReconcileDone;
+
+  /// No description provided for @txAdjustEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit adjustment'**
+  String get txAdjustEditTitle;
+
+  /// No description provided for @txAdjustAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjustment amount'**
+  String get txAdjustAmount;
+
+  /// No description provided for @txAdjustHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Positive raises the wallet, negative lowers it.'**
+  String get txAdjustHint;
+
+  /// No description provided for @walletReconcileFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t match the balance. Try again.'**
+  String get walletReconcileFailed;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

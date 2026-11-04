@@ -16,6 +16,7 @@ import '../../domain/wallet.dart';
 import '../viewmodels/wallet_detail_view_model.dart';
 import '../viewmodels/wallet_view_model.dart';
 import '../widgets/detail/wallet_detail_body.dart';
+import '../widgets/reconcile_sheet.dart';
 import 'wallet_editor_page.dart';
 
 /// One wallet or credit card (D, màn 3 / 4). Pushed, no bottom nav.
@@ -64,6 +65,18 @@ class _WalletDetailPageState extends State<WalletDetailPage> {
       WalletRecordAction.payCard => '/record?type=transfer&to=$id',
     });
     if (mounted) await _refresh();
+  }
+
+  Future<void> _reconcile(Wallet wallet) async {
+    final saved = await showReconcileSheet(context, model, wallet);
+    if (!mounted || saved != true) return;
+    showFreevaToast(
+      context,
+      message: S.of(context).walletReconcileDone,
+      success: true,
+      aboveNav: false,
+    );
+    await _refresh();
   }
 
   Future<void> _edit(Wallet wallet) async {
@@ -128,6 +141,7 @@ class _WalletDetailPageState extends State<WalletDetailPage> {
               main: main,
               detail: detail,
               onRecord: _record,
+              onReconcile: () => _reconcile(wallet),
               onRefresh: _refresh,
             ),
           ),

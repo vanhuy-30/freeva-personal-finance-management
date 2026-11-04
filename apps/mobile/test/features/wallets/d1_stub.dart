@@ -10,6 +10,7 @@ import 'package:mobile/features/categories/domain/finance_category.dart';
 import 'package:mobile/features/transactions/domain/transaction.dart';
 import 'package:mobile/features/transactions/presentation/viewmodels/transaction_results_view_model.dart';
 import 'package:mobile/features/transactions/presentation/viewmodels/transaction_view_model.dart';
+import 'package:mobile/features/wallets/domain/reconcile_result.dart';
 import 'package:mobile/features/wallets/domain/wallet.dart';
 import 'package:mobile/features/wallets/domain/wallet_flow.dart';
 import 'package:mobile/features/wallets/presentation/viewmodels/wallet_detail_view_model.dart';
@@ -85,6 +86,24 @@ class StubWalletViewModel extends WalletViewModel {
   Future<bool> archive(Wallet wallet) async {
     archived.add(wallet.id);
     return true;
+  }
+
+  final reconciled = <(String, BigInt)>[];
+  ReconcileResult? result;
+
+  @override
+  Future<ReconcileResult?> previewReconcile(
+    Wallet wallet,
+    BigInt actualMinor,
+  ) async => result;
+  @override
+  Future<ReconcileResult?> reconcile(
+    Wallet wallet,
+    BigInt actualMinor, {
+    required String clientId,
+  }) async {
+    reconciled.add((wallet.id, actualMinor));
+    return result;
   }
 
   @override

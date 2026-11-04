@@ -5,6 +5,7 @@ import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/auth/domain/auth_use_cases.dart';
 import 'package:mobile/features/profile/domain/profile_use_cases.dart';
 import 'package:mobile/features/settings/data/settings_repository_impl.dart';
+import 'package:mobile/features/wallets/domain/reconcile_result.dart';
 import 'package:mobile/features/wallets/domain/wallet.dart';
 import 'package:mobile/features/wallets/domain/wallet_repository.dart';
 import 'package:mobile/features/wallets/domain/wallet_use_cases.dart';
@@ -53,6 +54,14 @@ class MemoryWalletRepository implements WalletRepository {
     bool? archived,
     int? sortOrder,
   }) async => right(wallet);
+  @override
+  Future<Either<AuthFailure, ReconcileResult>> reconcile(
+    Wallet wallet,
+    BigInt actualMinor, {
+    required String clientId,
+    bool dryRun = false,
+  }) => throw UnimplementedError();
+
   @override
   Future<Either<AuthFailure, List<Wallet>>> reorder(
     List<Wallet> active,

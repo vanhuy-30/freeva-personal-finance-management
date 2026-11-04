@@ -1376,6 +1376,15 @@
    "x": 1840,
    "y": 9920,
    "title": "A3 · 5. Sau giao dịch đầu · mời bật nhắc"
+  },
+  "WAdjustEdit.dc.html": {
+   "x": 3220,
+   "y": 4320,
+   "w": 390,
+   "h": 844,
+   "page": "p3",
+   "title": "M · 1b. Sửa điều chỉnh",
+   "is_interactive": true
   }
  },
  "order": [
@@ -1531,7 +1540,8 @@
   "ObBudgetSuggest.dc.html",
   "GoalEmpty.dc.html",
   "DebtEmpty.dc.html",
-  "DailyLogAsk.dc.html"
+  "DailyLogAsk.dc.html",
+  "WAdjustEdit.dc.html"
  ],
  "notes": {
   "tf": {
@@ -1715,7 +1725,7 @@
    "y": 4040,
    "text": "M · Ví, hoàn tiền, trả góp",
    "kind": "title1",
-   "maxW": 3150,
+   "maxW": 3610,
    "page": "p3"
   },
   "t3_4": {

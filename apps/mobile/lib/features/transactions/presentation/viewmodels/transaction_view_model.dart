@@ -99,6 +99,9 @@ abstract class TransactionViewModel extends ChangeNotifier {
   Future<Tag?> createTag(String name, {required String clientId});
   Future<bool> save(TransactionDraft draft, {TransactionBundle? existing});
   Future<bool> remove(TransactionBundle bundle);
+
+  /// Edits an adjustment's signed amount. Online only: no offline queue.
+  Future<bool> adjust(TransactionBundle bundle, BigInt signedMinor);
   Future<bool> restore(TransactionBundle bundle);
 }
 
@@ -543,6 +546,8 @@ class DefaultTransactionViewModel extends TransactionViewModel {
             TransactionType.income => TransactionAnalyticsType.income,
             TransactionType.expense => TransactionAnalyticsType.expense,
             TransactionType.transfer => TransactionAnalyticsType.transfer,
+            // Never created by the composer; only reconcile writes it.
+            TransactionType.adjustment => TransactionAnalyticsType.expense,
           }),
         );
       }
@@ -624,6 +629,24 @@ class DefaultTransactionViewModel extends TransactionViewModel {
       () => _trackSave(draft, existing),
       clientId: draft.clientIds.first,
       serverId: existing?.id,
+    );
+  }
+
+  @override
+  Future<bool> adjust(TransactionBundle bundle, BigInt signedMinor) async {
+    if (!canWrite || bundle.deleted) return false;
+    final epoch = ++_epoch;
+    _writing = true;
+    failure = null;
+    notifyListeners();
+    final result = await _cases.adjust(bundle, signedMinor);
+    if (epoch != _epoch) return false;
+    lastSaved = result.fold((_) => null, (b) => b);
+    return _afterWrite(
+      epoch,
+      result,
+      () => _analytics.track(AnalyticsEvent.transactionEdited),
+      serverId: bundle.id,
     );
   }
 
