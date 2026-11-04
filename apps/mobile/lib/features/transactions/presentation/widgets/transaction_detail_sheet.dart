@@ -5,6 +5,7 @@ import '../../../../core/widgets/freeva_sheet.dart';
 import '../../../../core/widgets/freeva_toast.dart';
 import '../../domain/transaction.dart';
 import '../viewmodels/transaction_view_model.dart';
+import 'adjustment_sheet.dart';
 import 'transaction_editor.dart';
 import 'transaction_naming.dart';
 import 'transaction_detail_body.dart';
@@ -31,6 +32,10 @@ Future<void> openTransactionDetail(
   final navigator = Navigator.of(context, rootNavigator: true);
   switch (action) {
     case DetailAction.edit:
+      if (bundle.type == TransactionType.adjustment) {
+        await showAdjustmentSheet(context, model, bundle);
+        return;
+      }
       navigator.push(
         MaterialPageRoute<void>(
           builder: (_) =>

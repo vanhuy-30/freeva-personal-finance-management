@@ -93,6 +93,7 @@ class TransactionFilterBar extends StatelessWidget {
               TransactionType.expense => s.transactionExpense,
               TransactionType.income => s.transactionIncome,
               TransactionType.transfer => s.transactionTransfer,
+              TransactionType.adjustment => s.transactionAdjustment,
             },
             onRemove: () => onChanged(filter.copyWith(type: null)),
           ),

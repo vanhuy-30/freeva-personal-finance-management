@@ -1,4 +1,11 @@
-enum TransactionType { income, expense, transfer }
+enum TransactionType {
+  income,
+  expense,
+  transfer,
+
+  /// One-leg balance fix from wallet reconcile; not income or expense.
+  adjustment,
+}
 
 class TxLeg {
   const TxLeg({

@@ -378,6 +378,13 @@ class StubTransactionViewModel extends ChangeNotifier
     return true;
   }
 
+  final adjusted = <(String, BigInt)>[];
+  @override
+  Future<bool> adjust(TransactionBundle bundle, BigInt signedMinor) async {
+    adjusted.add((bundle.id, signedMinor));
+    return true;
+  }
+
   @override
   Future<bool> undoRemove(TransactionBundle bundle) async {
     undone.add(bundle);

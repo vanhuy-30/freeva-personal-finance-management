@@ -1321,5 +1321,23 @@
       }
     }
   },
-  "recNeedCategory": "Chọn danh mục"
+  "recNeedCategory": "Chọn danh mục",
+  "transactionAdjustment": "Điều chỉnh",
+  "txKindAdjustment": "điều chỉnh",
+  "txAdjustTitle": "Điều chỉnh số dư",
+  "walletReconcileLink": "Khớp số dư",
+  "walletReconcileTitle": "Khớp số dư {name}",
+  "@walletReconcileTitle": {"placeholders": {"name": {"type": "String"}}},
+  "walletReconcileCurrent": "Số dư trên app",
+  "walletReconcileCurrentDebt": "Dư nợ trên app",
+  "walletReconcileField": "Số dư thật trong app ngân hàng",
+  "walletReconcileFieldDebt": "Dư nợ thật trong app ngân hàng",
+  "walletReconcileDiff": "Chênh lệch",
+  "walletReconcileHint": "Phần chênh ghi thành khoản điều chỉnh, không tính vào thu chi.",
+  "walletReconcileConfirm": "Khớp số dư",
+  "walletReconcileDone": "Đã khớp số dư",
+  "txAdjustEditTitle": "Sửa điều chỉnh",
+  "txAdjustAmount": "Số tiền điều chỉnh",
+  "txAdjustHint": "Số dương làm ví tăng, số âm làm ví giảm.",
+  "walletReconcileFailed": "Chưa khớp được số dư. Thử lại nhé."
 }

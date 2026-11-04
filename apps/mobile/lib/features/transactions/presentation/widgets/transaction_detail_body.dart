@@ -99,15 +99,18 @@ class TransactionDetailBody extends StatelessWidget {
               label: s.txDetailDelete,
               onPressed: () => close(DetailAction.delete),
             ),
-            const SizedBox(width: FreevaSpace.s2),
-            Expanded(
-              child: _ActionButton(
-                label: s.txDetailCopy,
-                icon: LucideIcons.copy,
-                variant: FreevaButtonVariant.secondary,
-                onPressed: () => close(DetailAction.copy),
+            // An adjustment cannot be copied: only "Khớp số dư" writes one.
+            if (bundle.type != TransactionType.adjustment) ...[
+              const SizedBox(width: FreevaSpace.s2),
+              Expanded(
+                child: _ActionButton(
+                  label: s.txDetailCopy,
+                  icon: LucideIcons.copy,
+                  variant: FreevaButtonVariant.secondary,
+                  onPressed: () => close(DetailAction.copy),
+                ),
               ),
-            ),
+            ],
             const SizedBox(width: FreevaSpace.s2),
             Expanded(
               child: _ActionButton(

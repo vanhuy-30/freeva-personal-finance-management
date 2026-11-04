@@ -29,6 +29,7 @@ class WalletDetailBody extends StatelessWidget {
     required this.main,
     required this.detail,
     required this.onRecord,
+    required this.onReconcile,
     required this.onRefresh,
     super.key,
   });
@@ -40,6 +41,7 @@ class WalletDetailBody extends StatelessWidget {
   final TransactionViewModel main;
   final WalletDetailViewModel detail;
   final ValueChanged<WalletRecordAction> onRecord;
+  final VoidCallback onReconcile;
   final Future<void> Function() onRefresh;
 
   /// Gap between the sections on the board.
@@ -97,6 +99,23 @@ class WalletDetailBody extends StatelessWidget {
                         .firstOrNull ??
                     0,
               ),
+            if (!wallet.archived) ...[
+              const SizedBox(height: FreevaSpace.s2),
+              Align(
+                child: TextButton.icon(
+                  onPressed: onReconcile,
+                  icon: const Icon(LucideIcons.scale, size: FreevaSize.iconSm),
+                  label: Text(s.walletReconcileLink),
+                  style: TextButton.styleFrom(
+                    foregroundColor: context.colors.actionPrimary,
+                    minimumSize: const Size(0, 44),
+                    textStyle: FreevaTypography.bodyM.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
             const SizedBox(height: _gap),
             Row(
               children: [

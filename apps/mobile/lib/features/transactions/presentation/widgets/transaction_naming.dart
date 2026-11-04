@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/widgets/money_display.dart';
@@ -58,22 +59,27 @@ class TransactionNaming {
     _ => MoneyTone.expense,
   };
 
-  IconData icon(TransactionType? type, String? categoryId) =>
-      type == TransactionType.transfer
-      ? categoryIcon('transfer')
-      : categoryIcon(_categories[categoryId]?.iconToken);
+  IconData icon(TransactionType? type, String? categoryId) => switch (type) {
+    TransactionType.transfer => categoryIcon('transfer'),
+    TransactionType.adjustment => LucideIcons.scale,
+    _ => categoryIcon(_categories[categoryId]?.iconToken),
+  };
 
   String kind(TransactionType type) => switch (type) {
     TransactionType.expense => s.txKindExpense,
     TransactionType.income => s.txKindIncome,
     TransactionType.transfer => s.txKindTransfer,
+    TransactionType.adjustment => s.txKindAdjustment,
   };
 
   TransactionLabel label(TransactionBundle row) {
     final first = row.legs.first;
     final notes = _clean(row.notes);
     final merchant = _clean(row.merchant);
-    final category = row.type == TransactionType.transfer
+    final adjustment = row.type == TransactionType.adjustment;
+    final category = adjustment
+        ? s.txAdjustTitle
+        : row.type == TransactionType.transfer
         ? s.txTransferTitle
         : categoryName(row.categoryId) ?? s.homeUncategorized;
     final String title;
@@ -85,6 +91,9 @@ class TransactionNaming {
         wallet(first.accountId),
         to,
       ].where((p) => p.isNotEmpty).join(' → ');
+    } else if (adjustment) {
+      title = category;
+      detail = _join([wallet(first.accountId), if (notes != null) '“$notes”']);
     } else if (merchant != null) {
       title = merchant;
       detail = _join([category, wallet(first.accountId)]);
@@ -99,7 +108,12 @@ class TransactionNaming {
       category: category,
       minor: first.amountMinor.abs(),
       currency: first.currencyCode,
-      tone: tone(row.type),
+      // The sign matters here: it moved the balance up or down.
+      tone: adjustment
+          ? (first.amountMinor >= BigInt.zero
+                ? MoneyTone.income
+                : MoneyTone.expense)
+          : tone(row.type),
       tags: [
         for (final id in row.tagIds)
           if (_tags[id] != null) _tags[id]!,

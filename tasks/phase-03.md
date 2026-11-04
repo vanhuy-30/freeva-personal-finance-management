@@ -70,12 +70,13 @@
 ## Chức năng bổ sung (thêm 2026-11-02)
 
 ### BE-P3-005 / MOB-P3-005 — Đối soát số dư ví
-- Status: doing — BE xong 2026-11-02, MOB còn
+- Status: done — BE xong 2026-11-02, MOB xong 2026-11-04
 - Module: 3, 4
 - Gate: v1
 - Depends: BE-P1-004, BE-P1-005
 - DoD: trên chi tiết ví, user nhập số dư thực tế; app hiện chênh lệch và tạo một giao dịch điều chỉnh (`adjustment`) một leg. Điều chỉnh không tính vào thu/chi kỳ, ngân sách, tỷ lệ tiết kiệm; có trong lịch sử ví, export, sổ cái. Sửa hoặc xóa được như giao dịch thường. Ví thẻ tín dụng đối soát theo dư nợ. Test số dư sau điều chỉnh và báo cáo không đổi.
 - Note: BE-P3-005 xong 2026-11-02: `POST /financial-accounts/{id}/reconcile` (tính chênh lệch ở server, `dryRun`, thẻ tín dụng theo dư nợ, idempotent theo `clientId`), `TransactionType` thêm `adjustment` (một leg, không danh mục/FX, chỉ tạo qua reconcile), không vào thu/chi, ngân sách, tỷ lệ tiết kiệm; báo cáo theo ví có `adjustmentMinor`; sửa/xóa qua `/transactions`; có trong export. Migration additive. Kiến trúc: [wallet-reconciliation.md](../docs/architecture/wallet-reconciliation.md). Tồn đọng: MOB-P3-005 chưa làm.
+- Note: MOB-P3-005 xong 2026-11-04: nút chữ "Khớp số dư" dưới thẻ số dư/dư nợ trên chi tiết ví và thẻ (ví đã ẩn không có), mở sheet theo board `WReconcile`: ô nhập số thật, "Số dư trên app", dải chênh lệch lấy từ `POST …/reconcile` (`dryRun` sau 300 ms khi gõ, số từ server; xanh khi tăng, đỏ khi giảm, 0 thì nút tắt), "Khớp số dư" ghi một `adjustment` (`clientId` giữ theo số đã nhập, retry không nhân đôi). Thẻ tín dụng nhập và hiện **dư nợ**. App biết loại `adjustment`: dòng "Điều chỉnh số dư" trong lịch sử/Tổng quan (dấu theo chiều đổi, icon cân), chi tiết có Sửa (sheet đổi số tiền có dấu, `PATCH /transactions/{id}`, chỉ online) và Xoá, không Sao chép, bộ lọc có nhãn. Ví thường nhập được số dư âm (thẻ vẫn là dư nợ dương). Trước đó `byName` sẽ làm hỏng danh sách khi có điều chỉnh. Golden sáng/tối; golden chi tiết ví/thẻ đổi do có link mới. Tồn đọng: board `WDetail`/`WCredit` đã thêm link "Khớp số dư" và có board `WAdjustEdit` (canvas v145); sửa điều chỉnh chưa xếp hàng offline; chưa chạy trên thiết bị thật/staging.
 
 ### BE-P3-006 / MOB-P3-006 — Nhắc ghi chi hằng ngày
 - Status: doing — BE xong 2026-11-02, MOB còn
