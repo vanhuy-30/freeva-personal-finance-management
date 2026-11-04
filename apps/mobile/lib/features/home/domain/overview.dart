@@ -20,6 +20,7 @@ class OverviewData {
     this.monthBefore,
     this.previousBudget,
     this.budget,
+    this.multiCurrency = true,
   });
 
   final NetWorthReport netWorth;
@@ -37,6 +38,11 @@ class OverviewData {
 
   /// Monthly budget for the current fiscal month; null when unset or failed.
   final BudgetSummary? budget;
+
+  /// Whether wallets or transactions use two or more currencies. When false
+  /// the converted totals, rate lines and display-currency choice are hidden
+  /// (MOB-P3-004); stored rates are kept.
+  final bool multiCurrency;
 
   /// Active (not hidden) wallets.
   final List<Wallet> wallets;

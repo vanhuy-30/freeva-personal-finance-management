@@ -23,8 +23,10 @@ BalanceSummary balanceSummary(OverviewData data, String profileCurrency) {
           walletCount: counts[row.currency]!,
         ),
   ];
-  final converted = data.netWorth.converted;
-  final unconverted = _unconverted(data, counts.keys.toSet());
+  final converted = data.multiCurrency ? data.netWorth.converted : null;
+  final unconverted = data.multiCurrency
+      ? _unconverted(data, counts.keys.toSet())
+      : const <UnconvertedCurrency>[];
   final left = {for (final item in unconverted) item.currency};
   final included = {
     for (final b in balances)

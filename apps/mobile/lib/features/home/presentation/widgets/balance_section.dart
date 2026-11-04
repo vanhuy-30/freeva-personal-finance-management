@@ -40,7 +40,8 @@ class BalanceSection extends StatelessWidget {
       hidden: model.balancesHidden,
       onToggleHidden: model.toggleBalances,
       onOpenWallets: () => context.push('/wallets'),
-      onPickCurrency: compact || model.currencyChoices.isEmpty
+      onPickCurrency:
+          compact || !data.multiCurrency || model.currencyChoices.isEmpty
           ? null
           : () => _pickCurrency(context),
       onFixRate: compact

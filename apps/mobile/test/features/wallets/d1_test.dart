@@ -131,7 +131,7 @@ void main() {
         final converted = DefaultWalletDetailViewModel(
           _Cases(),
           StubTransactionViewModel(),
-          FxRateUseCases(rates),
+          FxRateUseCases(rates, FxWallets()),
           walletId: 'usd',
         );
         addTearDown(converted.dispose);
@@ -143,7 +143,10 @@ void main() {
         final other = DefaultWalletDetailViewModel(
           _Cases(),
           StubTransactionViewModel(),
-          FxRateUseCases(rates..failure = const AuthFailure(AuthError.network)),
+          FxRateUseCases(
+            rates..failure = const AuthFailure(AuthError.network),
+            FxWallets(),
+          ),
           walletId: 'usd',
         );
         addTearDown(other.dispose);
@@ -168,7 +171,7 @@ void main() {
       final detail = DefaultWalletDetailViewModel(
         cases,
         StubTransactionViewModel(),
-        FxRateUseCases(MemoryFxRates()),
+        FxRateUseCases(MemoryFxRates(), FxWallets()),
         walletId: 'vcb',
       );
       addTearDown(detail.dispose);
@@ -187,7 +190,7 @@ void main() {
       final detail = DefaultWalletDetailViewModel(
         cases,
         StubTransactionViewModel(),
-        FxRateUseCases(MemoryFxRates()),
+        FxRateUseCases(MemoryFxRates(), FxWallets()),
         walletId: 'vcb',
       );
       addTearDown(detail.dispose);

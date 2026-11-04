@@ -62,6 +62,20 @@ void main() {
     expect(transactions.query?.pageSize, 6);
   });
 
+  test('multiCurrency counts archived wallets and month totals', () async {
+    reports.months = [month()];
+    final one = (await cases.load(DateTime(2026, 10, 21)))
+        .getOrElse(() => throw StateError('load'));
+    expect(one.multiCurrency, isFalse);
+
+    reports.months = [
+      month(extra: [usdSpend()]),
+    ];
+    final two = (await cases.load(DateTime(2026, 10, 21)))
+        .getOrElse(() => throw StateError('load'));
+    expect(two.multiCurrency, isTrue);
+  });
+
   test('a transfer counts as one recent row', () async {
     reports.months = [month()];
     transactions.legs = [

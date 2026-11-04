@@ -23,6 +23,7 @@ OverviewData converted(
   ),
   previousMonth: data.previousMonth,
   budget: data.budget,
+  multiCurrency: data.multiCurrency,
   wallets: data.wallets,
   currencies: data.currencies,
   recent: data.recent,
@@ -235,6 +236,42 @@ void main() {
     expect(flow.income, b(18500000));
     expect(flow.expense, b(9320000));
     expect(monthFlow(month(), 'USD').isEmpty, isTrue);
+  });
+
+  group('one currency only (MOB-P3-004)', () {
+    OverviewData single() {
+      final base = overview(
+        wallets: [wallet('usd', 'USD', currency: 'USD', balance: 100)],
+        net: [worth('USD', 100)],
+      );
+      return OverviewData(
+        netWorth: NetWorthReport(
+          items: base.netWorth.items,
+          converted: netIn('VND', 2500000, const [
+            UnconvertedCurrency(
+              currency: 'USD',
+              reason: UnconvertedReason.missingRate,
+            ),
+          ]),
+        ),
+        month: base.month,
+        wallets: base.wallets,
+        currencies: base.currencies,
+        recent: base.recent,
+        categories: base.categories,
+        loadedAt: base.loadedAt,
+        multiCurrency: false,
+      );
+    }
+
+    test('ignores the converted total and the unconverted lines', () {
+      final summary = balanceSummary(single(), 'VND');
+      expect(summary.isConverted, isFalse);
+      expect(summary.unconverted, isEmpty);
+      expect(summary.others, isEmpty);
+      expect(summary.main.currency, 'USD');
+      expect(summary.main.minor, b(100));
+    });
   });
 
   group('spendingBreakdown', () {
