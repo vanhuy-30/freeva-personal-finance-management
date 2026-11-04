@@ -18,6 +18,11 @@ class RecurringRule {
     required this.nextExecutionDate,
     required this.active,
     required this.version,
+    this.mode = 'auto',
+    this.name,
+    this.amountKind = 'fixed',
+    this.remindDaysBefore = 3,
+    this.overdue = false,
   });
 
   final String id;
@@ -27,7 +32,7 @@ class RecurringRule {
   final int interval;
   final BigInt amountMinor;
   final String currencyCode;
-  final String accountId;
+  final String? accountId;
   final String? categoryId;
   final String? counterAccountId;
   final BigInt? counterAmountMinor;
@@ -38,6 +43,20 @@ class RecurringRule {
   final String nextExecutionDate;
   final bool active;
   final int version;
+
+  /// `auto` posts on the due day; `remind` waits for "Đã trả" (a bill).
+  final String mode;
+  final String? name;
+
+  /// `fixed` or `estimated` (the real amount is entered when confirming).
+  final String amountKind;
+  final int remindDaysBefore;
+
+  /// Remind rules only: active and the due day is before today.
+  final bool overdue;
+
+  bool get isRemind => mode == 'remind';
+  bool get isOneOff => endDate != null && endDate == startDate;
 
   RecurringRule copyWith({
     String? unit,
@@ -59,6 +78,9 @@ class RecurringRule {
     String? nextExecutionDate,
     bool? active,
     int? version,
+    String? name,
+    String? amountKind,
+    int? remindDaysBefore,
   }) => RecurringRule(
     id: id,
     clientId: clientId,
@@ -84,6 +106,11 @@ class RecurringRule {
     nextExecutionDate: nextExecutionDate ?? this.nextExecutionDate,
     active: active ?? this.active,
     version: version ?? this.version,
+    mode: mode,
+    name: name ?? this.name,
+    amountKind: amountKind ?? this.amountKind,
+    remindDaysBefore: remindDaysBefore ?? this.remindDaysBefore,
+    overdue: overdue,
   );
 }
 
@@ -105,6 +132,11 @@ class RecurringDraft {
     required this.endDate,
     required this.nextExecutionDate,
     required this.active,
+    this.mode = 'auto',
+    this.name,
+    this.amountKind = 'fixed',
+    this.remindDaysBefore = 3,
+    this.repeat = true,
   });
 
   final String clientId;
@@ -113,7 +145,7 @@ class RecurringDraft {
   final int interval;
   final BigInt amountMinor;
   final String currencyCode;
-  final String accountId;
+  final String? accountId;
   final String? categoryId;
   final String? counterAccountId;
   final BigInt? counterAmountMinor;
@@ -123,10 +155,50 @@ class RecurringDraft {
   final String? endDate;
   final String nextExecutionDate;
   final bool active;
+  final String mode;
+  final String? name;
+  final String amountKind;
+  final int remindDaysBefore;
+
+  /// false makes a one-off bill (the API sets endDate = startDate).
+  final bool repeat;
 }
 
 class RecurringRunResult {
   const RecurringRunResult({required this.created, required this.skipped});
   final int created;
   final int skipped;
+}
+
+/// "Đã trả" for one due day of a remind rule. Either [transactionId] links an
+/// expense that already exists, or the API posts one from the other fields.
+class RecurringConfirm {
+  const RecurringConfirm({
+    required this.occurredOn,
+    this.transactionId,
+    this.accountId,
+    this.amountMinor,
+    this.paidOn,
+  });
+
+  /// The due day being confirmed (the rule's `nextExecutionDate`).
+  final String occurredOn;
+  final String? transactionId;
+  final String? accountId;
+
+  /// Positive magnitude of what was really paid.
+  final BigInt? amountMinor;
+  final String? paidOn;
+}
+
+class RecurringConfirmResult {
+  const RecurringConfirmResult({
+    required this.rule,
+    required this.transactionId,
+    required this.replayed,
+  });
+
+  final RecurringRule rule;
+  final String transactionId;
+  final bool replayed;
 }

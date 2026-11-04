@@ -1221,7 +1221,6 @@
   "meCategories": "Categories",
   "meTags": "Tags",
   "meRecurring": "Recurring",
-  "meBills": "Bills",
   "meCalendar": "Money calendar",
   "meCurrency": "Default currency",
   "calendarTitle": "Money calendar",
@@ -1236,71 +1235,19 @@
   "calendarLegend": "Dots mark item types on each day",
   "calendarTransfer": "Transfer",
   "calendarEstimated": "Estimated",
-  "billsTitle": "Bills",
-  "billsAdd": "Add bill",
-  "billsEdit": "Edit bill",
-  "billsDelete": "Delete",
-  "billsSave": "Save",
-  "billsEmptyTitle": "No bills yet",
-  "billsEmptyBody": "Track utilities and subscriptions. Mark paid by linking an existing transaction.",
-  "billsLoadError": "Couldn’t load bills",
-  "billsName": "Name",
-  "billsAmount": "Amount",
-  "billsAmountFixed": "Fixed",
-  "billsAmountEstimated": "Estimated",
-  "billsDueOn": "Due date (YYYY-MM-DD)",
-  "billsRecurring": "Link recurring",
-  "billsOneOff": "One-off",
-  "billsLinkedRecurring": "Linked recurring",
-  "billsFilterAll": "All",
   "billsStatusOpen": "Open",
   "billsStatusOverdue": "Overdue",
   "billsStatusPaid": "Paid",
-  "billsMarkPaid": "Mark as paid",
-  "billsUnpay": "Clear paid mark",
-  "billsPickTransaction": "Choose a transaction",
-  "billsNoTransactions": "No transactions to link yet",
-  "billsMarkedPaid": "Payment linked",
-  "billsClearedPaid": "Paid mark cleared",
-  "billsInvalid": "Enter a valid name and amount",
-  "recurringTitle": "Recurring",
+  "recurringTitle": "Recurring and bills",
   "recurringAdd": "Add recurring",
-  "recurringEdit": "Edit recurring",
-  "recurringDelete": "Delete",
   "recurringSave": "Save",
-  "recurringEmptyTitle": "No recurring yet",
-  "recurringEmptyBody": "Set rent, salary, or transfers once and Freeva posts them on schedule.",
+  "recurringEmptyTitle": "Nothing recurring yet",
+  "recurringEmptyBody": "Add rent, salary, or a bill like electricity so Freeva posts or reminds you on time.",
   "recurringLoadError": "Couldn’t load recurring",
   "recurringAmount": "Amount",
   "recurringWallet": "Wallet",
   "recurringCounterWallet": "To wallet",
   "recurringCategory": "Category",
-  "recurringFrequency": "Frequency",
-  "recurringInterval": "Every",
-  "recurringEvery": "Every {count}",
-  "@recurringEvery": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
-  "recurringUnitDay": "Daily",
-  "recurringUnitWeek": "Weekly",
-  "recurringUnitMonth": "Monthly",
-  "recurringUnitYear": "Yearly",
-  "recurringStart": "Start date (YYYY-MM-DD)",
-  "recurringNextLabel": "Next run (YYYY-MM-DD)",
-  "recurringEnd": "End date (optional)",
-  "recurringActive": "Active",
-  "recurringNext": "Next {date}",
-  "@recurringNext": {
-    "placeholders": {
-      "date": {
-        "type": "String"
-      }
-    }
-  },
   "recurringTypeExpense": "Expense",
   "recurringTypeIncome": "Income",
   "recurringTypeTransfer": "Transfer",
@@ -2143,5 +2090,155 @@
   "goalsSeeAll": "See all",
   "goalPercent": "{percent}%",
   "@goalPercent": {"placeholders": {"percent": {"type": "String"}}},
-  "goalSaveAction": "Save"
+  "goalSaveAction": "Save",
+  "recDueTotal": "To pay {amount}",
+  "@recDueTotal": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "recDueCount": "{count, plural, one{1 bill unpaid} other{{count} bills unpaid}} · see calendar",
+  "@recDueCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "recGroupDue": "TO PAY",
+  "recGroupAuto": "AUTOMATIC",
+  "recTagOverdue": "Overdue",
+  "recTagToday": "Today",
+  "recTagDays": "{days, plural, one{1 day left} other{{days} days left}}",
+  "@recTagDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "recTagPaused": "Paused",
+  "recDueOn": "Due {date}",
+  "@recDueOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "recOneOff": "one-off",
+  "recAbout": "about {amount}",
+  "@recAbout": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "recPaid": "Paid",
+  "recPaidA11y": "Mark {name} as paid",
+  "@recPaidA11y": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "recDayOfMonth": "Day {day} every month",
+  "@recDayOfMonth": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "recEveryDay": "Every day",
+  "recEveryWeek": "Every week",
+  "recEveryMonth": "Every month",
+  "recEveryYear": "Every year",
+  "recEveryNDays": "Every {count} days",
+  "@recEveryNDays": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "recEveryNWeeks": "Every {count} weeks",
+  "@recEveryNWeeks": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "recEveryNMonths": "Every {count} months",
+  "@recEveryNMonths": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "recEveryNYears": "Every {count} years",
+  "@recEveryNYears": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "recOnce": "Once",
+  "recModeAuto": "Post automatically",
+  "recModeAutoSub": "Good for salary, rent",
+  "recModeRemind": "Ask before posting",
+  "recModeRemindSub": "Good for electricity, water",
+  "recName": "Name",
+  "recVaries": "Amount can differ each time",
+  "recVariesSub": "Enter the real amount when you confirm",
+  "recRepeat": "Repeat",
+  "recFirstDue": "First due date",
+  "recNextRun": "Next date",
+  "recRemindBefore": "Remind me",
+  "recRemindSameDay": "On the day",
+  "recRemindDays": "{count, plural, one{1 day before} other{{count} days before}}",
+  "@recRemindDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "recPayFrom": "Pay from",
+  "recPause": "Pause",
+  "recPauseSub": "Nothing is posted or reminded until you turn it back on",
+  "recRemove": "Delete recurring",
+  "recPaidTitle": "Paid {name}?",
+  "@recPaidTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "recRealAmount": "Actual amount",
+  "recPaidOn": "Paid on",
+  "recConfirm": "Confirm paid",
+  "recLinkExisting": "Already logged this expense? Pick it",
+  "recPickExpense": "Pick an expense",
+  "recNoExpense": "No expense to link yet",
+  "recConfirmed": "Marked as paid",
+  "recNeedWallet": "Pick a wallet to pay from",
+  "recRemoveBody": "Entries already posted stay as they are.",
+  "recRemindDaysShort": "{count, plural, one{1 day} other{{count} days}}",
+  "@recRemindDaysShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "recNeedCategory": "Pick a category"
 }

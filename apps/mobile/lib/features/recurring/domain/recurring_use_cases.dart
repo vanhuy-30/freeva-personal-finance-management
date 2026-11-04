@@ -29,8 +29,15 @@ abstract class RecurringUseCases {
     bool clearEnd = false,
     String? nextExecutionDate,
     bool? active,
+    String? name,
+    String? amountKind,
+    int? remindDaysBefore,
   });
   Future<Either<AuthFailure, Unit>> delete(RecurringRule rule);
+  Future<Either<AuthFailure, RecurringConfirmResult>> confirm(
+    RecurringRule rule,
+    RecurringConfirm confirm,
+  );
   Future<Either<AuthFailure, RecurringRunResult>> run();
 }
 
@@ -56,6 +63,28 @@ class DefaultRecurringUseCases implements RecurringUseCases {
     if (draft.endDate != null &&
         (parseCalendarParts(draft.endDate!) == null ||
             draft.endDate!.compareTo(draft.startDate) < 0)) {
+      return const AuthFailure(AuthError.invalidInput);
+    }
+    if (draft.mode != 'auto' && draft.mode != 'remind') {
+      return const AuthFailure(AuthError.invalidInput);
+    }
+    if (draft.remindDaysBefore < 0 || draft.remindDaysBefore > 30) {
+      return const AuthFailure(AuthError.invalidInput);
+    }
+    if (draft.mode == 'remind') {
+      // A bill: one named expense, no counter leg. Wallet and category are
+      // optional defaults for the confirm step.
+      final name = draft.name?.trim() ?? '';
+      if (draft.type != 'expense' ||
+          name.isEmpty ||
+          name.length > 80 ||
+          draft.amountMinor >= BigInt.zero ||
+          draft.counterAccountId != null) {
+        return const AuthFailure(AuthError.invalidInput);
+      }
+      return null;
+    }
+    if (draft.accountId == null) {
       return const AuthFailure(AuthError.invalidInput);
     }
     if (draft.type == 'expense') {
@@ -118,6 +147,9 @@ class DefaultRecurringUseCases implements RecurringUseCases {
     bool clearEnd = false,
     String? nextExecutionDate,
     bool? active,
+    String? name,
+    String? amountKind,
+    int? remindDaysBefore,
   }) {
     final next = rule.copyWith(
       unit: unit,
@@ -138,6 +170,9 @@ class DefaultRecurringUseCases implements RecurringUseCases {
       clearEnd: clearEnd,
       nextExecutionDate: nextExecutionDate,
       active: active,
+      name: name,
+      amountKind: amountKind,
+      remindDaysBefore: remindDaysBefore,
     );
     final error = _validateDraft(
       RecurringDraft(
@@ -157,6 +192,10 @@ class DefaultRecurringUseCases implements RecurringUseCases {
         endDate: next.endDate,
         nextExecutionDate: next.nextExecutionDate,
         active: next.active,
+        mode: next.mode,
+        name: next.name,
+        amountKind: next.amountKind,
+        remindDaysBefore: next.remindDaysBefore,
       ),
     );
     if (error != null) return Future.value(left(error));
@@ -180,12 +219,33 @@ class DefaultRecurringUseCases implements RecurringUseCases {
       clearEnd: clearEnd,
       nextExecutionDate: nextExecutionDate,
       active: active,
+      name: name,
+      amountKind: amountKind,
+      remindDaysBefore: remindDaysBefore,
     );
   }
 
   @override
   Future<Either<AuthFailure, Unit>> delete(RecurringRule rule) =>
       _repository.delete(rule);
+
+  @override
+  Future<Either<AuthFailure, RecurringConfirmResult>> confirm(
+    RecurringRule rule,
+    RecurringConfirm confirm,
+  ) {
+    final amount = confirm.amountMinor;
+    final linked = confirm.transactionId != null;
+    if (!rule.isRemind ||
+        parseCalendarParts(confirm.occurredOn) == null ||
+        (amount != null && amount <= BigInt.zero) ||
+        (linked && (amount != null || confirm.accountId != null)) ||
+        (confirm.paidOn != null &&
+            parseCalendarParts(confirm.paidOn!) == null)) {
+      return Future.value(left(const AuthFailure(AuthError.invalidInput)));
+    }
+    return _repository.confirm(rule, confirm);
+  }
 
   @override
   Future<Either<AuthFailure, RecurringRunResult>> run() => _repository.run();

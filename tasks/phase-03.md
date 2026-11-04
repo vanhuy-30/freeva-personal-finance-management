@@ -36,12 +36,12 @@
 ## Gộp chức năng chồng chéo (thêm 2026-11-02)
 
 ### BE-P3-001 / MOB-P3-001 — Gộp hóa đơn vào giao dịch định kỳ
-- Status: doing — BE xong 2026-11-02, MOB còn
+- Status: done — BE xong 2026-11-02, MOB xong 2026-11-04
 - Module: 6, 8, 15
 - Gate: v1
 - Depends: BE-P2-E01, BE-P2-E03, BE-P2-E05
 - DoD: một rule định kỳ có hai chế độ: tự ghi (như hiện tại) hoặc nhắc và chờ xác nhận (hóa đơn cũ). Chế độ nhắc có hạn trả, số cố định hoặc ước tính, nhắc trước N ngày qua hộp thư và push; "Đã trả" tạo hoặc trỏ tới giao dịch thật, quá hạn không tự ghi. Hóa đơn một lần là rule không lặp. Migration chuyển `Bill` sang rule, giữ liên kết giao dịch đã trả; API `/bills` trả 410 sau một bản chuyển tiếp. Mobile còn một màn "Định kỳ & hóa đơn". Lịch (module 15) chỉ là màn xem dữ liệu đó, không có dữ liệu riêng. Test: retry/sync không nhân đôi, xác nhận hai lần không ghi hai giao dịch.
-- Note: BE-P3-001 xong 2026-11-02: `RecurringRule.mode` = `auto` | `remind`; hóa đơn là rule `remind` (một lần = `repeat: false`), `POST /recurring-transactions/{id}/confirm` trỏ hoặc tạo một expense mỗi hạn, retry/xác nhận hai lần không nhân đôi (test PostgreSQL), quá hạn tính khi đọc và không tự ghi, nhắc `bill_due` / `bill_overdue`, lịch đọc từ rule, `/bills` trả 410, migration `Bill` → rule giữ id/clientId và liên kết giao dịch đã trả. Kiến trúc: [bills.md](../docs/architecture/bills.md). Tồn đọng: chưa có hoàn tác xác nhận; bảng `Bill` chưa xóa; MOB-P3-001 (màn "Định kỳ & hóa đơn", bỏ `/me/bills`) chưa làm nên app hiện tại sẽ nhận 410 ở màn hóa đơn.
+- Note: BE-P3-001 xong 2026-11-02: `RecurringRule.mode` = `auto` | `remind`; hóa đơn là rule `remind` (một lần = `repeat: false`), `POST /recurring-transactions/{id}/confirm` trỏ hoặc tạo một expense mỗi hạn, retry/xác nhận hai lần không nhân đôi (test PostgreSQL), quá hạn tính khi đọc và không tự ghi, nhắc `bill_due` / `bill_overdue`, lịch đọc từ rule, `/bills` trả 410, migration `Bill` → rule giữ id/clientId và liên kết giao dịch đã trả. Kiến trúc: [bills.md](../docs/architecture/bills.md). Tồn đọng: chưa có hoàn tác xác nhận; bảng `Bill` chưa xóa. MOB-P3-001 xong 2026-11-04: màn "Định kỳ và hóa đơn" (`/me/recurring`) thay hai màn, bỏ `features/bills` và dòng Hóa đơn ở Cá nhân; "Đã trả" gọi `POST …/confirm` (số thật, ví, ngày, hoặc gắn khoản chi có sẵn); "Cần trả" và số hóa đơn cộng từ dữ liệu API. [Mobile](../docs/architecture/mobile-recurring-bills.md). Tồn đọng mobile: không đổi được loại (Chi/Thu/Chuyển) và cách ghi của rule đã tạo (API chưa cho); Thu/Chuyển chỉ có "Ghi tự động" vì API chỉ cho hóa đơn là khoản chi; Lịch vẫn đọc `bills` từ `/calendar`; chưa có số khoản ở dòng Định kỳ trong Cá nhân.
 
 ### MOB-P3-002 — Bổ sung thẻ soát tháng trên Tổng quan
 - Status: todo

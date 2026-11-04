@@ -33,11 +33,6 @@ import 'package:mobile/features/auth/presentation/auth_presentation_module.dart'
     as _i282;
 import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dart'
     as _i990;
-import 'package:mobile/features/bills/data/bill_repository_impl.dart' as _i1026;
-import 'package:mobile/features/bills/domain/bill_repository.dart' as _i194;
-import 'package:mobile/features/bills/domain/bill_use_cases.dart' as _i659;
-import 'package:mobile/features/bills/presentation/viewmodels/bill_view_model.dart'
-    as _i151;
 import 'package:mobile/features/budgets/data/budget_repository_impl.dart'
     as _i1036;
 import 'package:mobile/features/budgets/domain/budget_repository.dart'
@@ -221,16 +216,12 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i1020.TransactionRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i821.RecurringRepository>(
         () => _i279.RecurringRepositoryImpl(gh<_i443.AuthorizedApi>()));
-    gh.lazySingleton<_i194.BillRepository>(
-        () => _i1026.BillRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i292.TransactionUseCases>(() =>
         _i292.DefaultTransactionUseCases(gh<_i931.TransactionRepository>()));
     gh.lazySingleton<_i629.RecurringUseCases>(
         () => _i629.DefaultRecurringUseCases(gh<_i821.RecurringRepository>()));
     gh.lazySingleton<_i1073.BudgetRepository>(
         () => _i1036.BudgetRepositoryImpl(gh<_i443.AuthorizedApi>()));
-    gh.lazySingleton<_i659.BillUseCases>(
-        () => _i659.DefaultBillUseCases(gh<_i194.BillRepository>()));
     gh.lazySingleton<_i911.PushTokenRepository>(
         () => _i460.PushTokenRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.factory<_i410.AccountExportUseCase>(() => _i410.AccountExportUseCase(
@@ -317,15 +308,6 @@ extension GetItInjectableX on _i174.GetIt {
               gh<_i990.AuthViewModel>(),
               gh<_i444.CategoryExpansionRepository>(),
             ));
-    gh.lazySingleton<_i72.RecurringViewModel>(() => _i72.RecurringViewModel(
-          gh<_i629.RecurringUseCases>(),
-          gh<_i990.AuthViewModel>(),
-        ));
-    gh.lazySingleton<_i151.BillViewModel>(() => _i151.BillViewModel(
-          gh<_i659.BillUseCases>(),
-          gh<_i292.TransactionUseCases>(),
-          gh<_i990.AuthViewModel>(),
-        ));
     gh.lazySingleton<_i488.SyncViewModel>(() => _i488.DefaultSyncViewModel(
           gh<_i665.SyncUseCases>(),
           gh<_i990.AuthViewModel>(),
@@ -391,6 +373,13 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i332.TransactionViewModel>(),
           gh<_i1002.FxRateUseCases>(),
           walletId: walletId,
+        ));
+    gh.lazySingleton<_i72.RecurringViewModel>(() => _i72.RecurringViewModel(
+          gh<_i629.RecurringUseCases>(),
+          gh<_i990.AuthViewModel>(),
+          gh<_i251.WalletViewModel>(),
+          gh<_i887.ProfileViewModel>(),
+          gh<_i292.TransactionUseCases>(),
         ));
     gh.lazySingleton<_i921.NotificationViewModel>(
         () => _i921.DefaultNotificationViewModel(

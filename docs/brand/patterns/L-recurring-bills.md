@@ -1,6 +1,6 @@
 # Nhóm L — Định kỳ và hóa đơn
 
-Trạng thái: **chốt thiết kế 2026-11-03**, chưa code. Task: `MOB-P3-001` (API `BE-P3-001` xong). Thay màn "Định kỳ" và "Hóa đơn" đang chạy (hàng "P2 · Đã có trong app" trên trang 05).
+Trạng thái: **chốt thiết kế 2026-11-03**, **đã code 2026-11-04** ([mobile](../../architecture/mobile-recurring-bills.md)). Task: `MOB-P3-001` (API `BE-P3-001` xong). Thay màn "Định kỳ" và "Hóa đơn" đang chạy (hàng "P2 · Đã có trong app" trên trang 05).
 Canvas: trang **07 · Phase 3**, hàng L. Spec chung: [design-system.md](../design-system.md).
 
 ## Nguyên tắc riêng cho nhóm này

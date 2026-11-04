@@ -574,7 +574,6 @@
   "meCategories": "Danh mục",
   "meTags": "Nhãn",
   "meRecurring": "Định kỳ",
-  "meBills": "Hóa đơn",
   "meCalendar": "Lịch tài chính",
   "meCurrency": "Tiền tệ mặc định",
   "calendarTitle": "Lịch tài chính",
@@ -589,71 +588,19 @@
   "calendarLegend": "Chấm màu theo loại mục trên ngày",
   "calendarTransfer": "Chuyển khoản",
   "calendarEstimated": "Ước tính",
-  "billsTitle": "Hóa đơn",
-  "billsAdd": "Thêm hóa đơn",
-  "billsEdit": "Sửa hóa đơn",
-  "billsDelete": "Xóa",
-  "billsSave": "Lưu",
-  "billsEmptyTitle": "Chưa có hóa đơn",
-  "billsEmptyBody": "Theo dõi hạn điện, nước, internet. Đánh dấu đã trả bằng một giao dịch có sẵn.",
-  "billsLoadError": "Không tải được hóa đơn",
-  "billsName": "Tên",
-  "billsAmount": "Số tiền",
-  "billsAmountFixed": "Cố định",
-  "billsAmountEstimated": "Ước tính",
-  "billsDueOn": "Hạn (YYYY-MM-DD)",
-  "billsRecurring": "Gắn định kỳ",
-  "billsOneOff": "Một lần",
-  "billsLinkedRecurring": "Đã gắn định kỳ",
-  "billsFilterAll": "Tất cả",
   "billsStatusOpen": "Mở",
   "billsStatusOverdue": "Quá hạn",
   "billsStatusPaid": "Đã trả",
-  "billsMarkPaid": "Đánh dấu đã trả",
-  "billsUnpay": "Bỏ đánh dấu đã trả",
-  "billsPickTransaction": "Chọn giao dịch",
-  "billsNoTransactions": "Chưa có giao dịch để gắn",
-  "billsMarkedPaid": "Đã gắn giao dịch thanh toán",
-  "billsClearedPaid": "Đã bỏ đánh dấu đã trả",
-  "billsInvalid": "Nhập tên và số tiền hợp lệ",
-  "recurringTitle": "Giao dịch định kỳ",
+  "recurringTitle": "Định kỳ và hóa đơn",
   "recurringAdd": "Thêm định kỳ",
-  "recurringEdit": "Sửa định kỳ",
-  "recurringDelete": "Xóa",
   "recurringSave": "Lưu",
-  "recurringEmptyTitle": "Chưa có định kỳ",
-  "recurringEmptyBody": "Thiết lập tiền thuê, lương hoặc chuyển khoản một lần; Freeva sẽ ghi đúng lịch.",
+  "recurringEmptyTitle": "Chưa có khoản định kỳ",
+  "recurringEmptyBody": "Thêm tiền nhà, lương hay hóa đơn điện, nước để Freeva ghi hoặc nhắc đúng hạn.",
   "recurringLoadError": "Không tải được định kỳ",
   "recurringAmount": "Số tiền",
   "recurringWallet": "Ví",
   "recurringCounterWallet": "Ví nhận",
   "recurringCategory": "Danh mục",
-  "recurringFrequency": "Chu kỳ",
-  "recurringInterval": "Mỗi",
-  "recurringEvery": "Mỗi {count}",
-  "@recurringEvery": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
-  "recurringUnitDay": "Ngày",
-  "recurringUnitWeek": "Tuần",
-  "recurringUnitMonth": "Tháng",
-  "recurringUnitYear": "Năm",
-  "recurringStart": "Ngày bắt đầu (YYYY-MM-DD)",
-  "recurringNextLabel": "Lần tới (YYYY-MM-DD)",
-  "recurringEnd": "Ngày kết thúc (tuỳ chọn)",
-  "recurringActive": "Đang bật",
-  "recurringNext": "Tới {date}",
-  "@recurringNext": {
-    "placeholders": {
-      "date": {
-        "type": "String"
-      }
-    }
-  },
   "recurringTypeExpense": "Chi",
   "recurringTypeIncome": "Thu",
   "recurringTypeTransfer": "Chuyển",
@@ -1219,5 +1166,155 @@
   "goalsHomeTitle": "Mục tiêu",
   "goalsSeeAll": "Xem tất cả",
   "goalPercent": "{percent}%",
-  "goalSaveAction": "Lưu"
+  "goalSaveAction": "Lưu",
+  "recDueTotal": "Cần trả {amount}",
+  "@recDueTotal": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "recDueCount": "{count} hóa đơn chưa trả · xem trên lịch",
+  "@recDueCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "recGroupDue": "CẦN TRẢ",
+  "recGroupAuto": "GHI TỰ ĐỘNG",
+  "recTagOverdue": "Quá hạn",
+  "recTagToday": "Hôm nay",
+  "recTagDays": "Còn {days} ngày",
+  "@recTagDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "recTagPaused": "Tạm dừng",
+  "recDueOn": "Hạn {date}",
+  "@recDueOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "recOneOff": "một lần",
+  "recAbout": "khoảng {amount}",
+  "@recAbout": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "recPaid": "Đã trả",
+  "recPaidA11y": "Đã trả {name}",
+  "@recPaidA11y": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "recDayOfMonth": "Ngày {day} hằng tháng",
+  "@recDayOfMonth": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "recEveryDay": "Hằng ngày",
+  "recEveryWeek": "Hằng tuần",
+  "recEveryMonth": "Hằng tháng",
+  "recEveryYear": "Hằng năm",
+  "recEveryNDays": "Mỗi {count} ngày",
+  "@recEveryNDays": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "recEveryNWeeks": "Mỗi {count} tuần",
+  "@recEveryNWeeks": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "recEveryNMonths": "Mỗi {count} tháng",
+  "@recEveryNMonths": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "recEveryNYears": "Mỗi {count} năm",
+  "@recEveryNYears": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "recOnce": "Một lần",
+  "recModeAuto": "Ghi tự động",
+  "recModeAutoSub": "Hợp với lương, tiền nhà",
+  "recModeRemind": "Hỏi trước khi ghi",
+  "recModeRemindSub": "Hợp với tiền điện, nước",
+  "recName": "Tên",
+  "recVaries": "Số tiền mỗi kỳ có thể khác",
+  "recVariesSub": "Nhập số thật khi xác nhận",
+  "recRepeat": "Lặp lại",
+  "recFirstDue": "Hạn đầu tiên",
+  "recNextRun": "Lần tới",
+  "recRemindBefore": "Nhắc trước",
+  "recRemindSameDay": "Đúng ngày",
+  "recRemindDays": "{count} ngày",
+  "@recRemindDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "recPayFrom": "Trả từ ví",
+  "recPause": "Tạm dừng",
+  "recPauseSub": "Không ghi, không nhắc cho đến khi bật lại",
+  "recRemove": "Xoá định kỳ",
+  "recPaidTitle": "Đã trả {name}?",
+  "@recPaidTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "recRealAmount": "Số tiền thật",
+  "recPaidOn": "Ngày trả",
+  "recConfirm": "Xác nhận đã trả",
+  "recLinkExisting": "Đã ghi khoản chi này rồi? Chọn khoản đó",
+  "recPickExpense": "Chọn khoản chi",
+  "recNoExpense": "Chưa có khoản chi để gắn",
+  "recConfirmed": "Đã ghi nhận khoản đã trả",
+  "recNeedWallet": "Chọn ví để trả",
+  "recRemoveBody": "Những khoản đã ghi trước đó vẫn còn.",
+  "recRemindDaysShort": "{count} ngày",
+  "@recRemindDaysShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "recNeedCategory": "Chọn danh mục"
 }

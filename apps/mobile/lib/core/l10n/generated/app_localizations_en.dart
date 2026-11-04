@@ -1932,9 +1932,6 @@ class SEn extends S {
   String get meRecurring => 'Recurring';
 
   @override
-  String get meBills => 'Bills';
-
-  @override
   String get meCalendar => 'Money calendar';
 
   @override
@@ -1978,58 +1975,6 @@ class SEn extends S {
   String get calendarEstimated => 'Estimated';
 
   @override
-  String get billsTitle => 'Bills';
-
-  @override
-  String get billsAdd => 'Add bill';
-
-  @override
-  String get billsEdit => 'Edit bill';
-
-  @override
-  String get billsDelete => 'Delete';
-
-  @override
-  String get billsSave => 'Save';
-
-  @override
-  String get billsEmptyTitle => 'No bills yet';
-
-  @override
-  String get billsEmptyBody =>
-      'Track utilities and subscriptions. Mark paid by linking an existing transaction.';
-
-  @override
-  String get billsLoadError => 'Couldn’t load bills';
-
-  @override
-  String get billsName => 'Name';
-
-  @override
-  String get billsAmount => 'Amount';
-
-  @override
-  String get billsAmountFixed => 'Fixed';
-
-  @override
-  String get billsAmountEstimated => 'Estimated';
-
-  @override
-  String get billsDueOn => 'Due date (YYYY-MM-DD)';
-
-  @override
-  String get billsRecurring => 'Link recurring';
-
-  @override
-  String get billsOneOff => 'One-off';
-
-  @override
-  String get billsLinkedRecurring => 'Linked recurring';
-
-  @override
-  String get billsFilterAll => 'All';
-
-  @override
   String get billsStatusOpen => 'Open';
 
   @override
@@ -2039,47 +1984,20 @@ class SEn extends S {
   String get billsStatusPaid => 'Paid';
 
   @override
-  String get billsMarkPaid => 'Mark as paid';
-
-  @override
-  String get billsUnpay => 'Clear paid mark';
-
-  @override
-  String get billsPickTransaction => 'Choose a transaction';
-
-  @override
-  String get billsNoTransactions => 'No transactions to link yet';
-
-  @override
-  String get billsMarkedPaid => 'Payment linked';
-
-  @override
-  String get billsClearedPaid => 'Paid mark cleared';
-
-  @override
-  String get billsInvalid => 'Enter a valid name and amount';
-
-  @override
-  String get recurringTitle => 'Recurring';
+  String get recurringTitle => 'Recurring and bills';
 
   @override
   String get recurringAdd => 'Add recurring';
 
   @override
-  String get recurringEdit => 'Edit recurring';
-
-  @override
-  String get recurringDelete => 'Delete';
-
-  @override
   String get recurringSave => 'Save';
 
   @override
-  String get recurringEmptyTitle => 'No recurring yet';
+  String get recurringEmptyTitle => 'Nothing recurring yet';
 
   @override
   String get recurringEmptyBody =>
-      'Set rent, salary, or transfers once and Freeva posts them on schedule.';
+      'Add rent, salary, or a bill like electricity so Freeva posts or reminds you on time.';
 
   @override
   String get recurringLoadError => 'Couldn’t load recurring';
@@ -2095,46 +2013,6 @@ class SEn extends S {
 
   @override
   String get recurringCategory => 'Category';
-
-  @override
-  String get recurringFrequency => 'Frequency';
-
-  @override
-  String get recurringInterval => 'Every';
-
-  @override
-  String recurringEvery(String count) {
-    return 'Every $count';
-  }
-
-  @override
-  String get recurringUnitDay => 'Daily';
-
-  @override
-  String get recurringUnitWeek => 'Weekly';
-
-  @override
-  String get recurringUnitMonth => 'Monthly';
-
-  @override
-  String get recurringUnitYear => 'Yearly';
-
-  @override
-  String get recurringStart => 'Start date (YYYY-MM-DD)';
-
-  @override
-  String get recurringNextLabel => 'Next run (YYYY-MM-DD)';
-
-  @override
-  String get recurringEnd => 'End date (optional)';
-
-  @override
-  String get recurringActive => 'Active';
-
-  @override
-  String recurringNext(String date) {
-    return 'Next $date';
-  }
 
   @override
   String get recurringTypeExpense => 'Expense';
@@ -3833,4 +3711,213 @@ class SEn extends S {
 
   @override
   String get goalSaveAction => 'Save';
+
+  @override
+  String recDueTotal(String amount) {
+    return 'To pay $amount';
+  }
+
+  @override
+  String recDueCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count bills unpaid',
+      one: '1 bill unpaid',
+    );
+    return '$_temp0 · see calendar';
+  }
+
+  @override
+  String get recGroupDue => 'TO PAY';
+
+  @override
+  String get recGroupAuto => 'AUTOMATIC';
+
+  @override
+  String get recTagOverdue => 'Overdue';
+
+  @override
+  String get recTagToday => 'Today';
+
+  @override
+  String recTagDays(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days left',
+      one: '1 day left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get recTagPaused => 'Paused';
+
+  @override
+  String recDueOn(String date) {
+    return 'Due $date';
+  }
+
+  @override
+  String get recOneOff => 'one-off';
+
+  @override
+  String recAbout(String amount) {
+    return 'about $amount';
+  }
+
+  @override
+  String get recPaid => 'Paid';
+
+  @override
+  String recPaidA11y(String name) {
+    return 'Mark $name as paid';
+  }
+
+  @override
+  String recDayOfMonth(String day) {
+    return 'Day $day every month';
+  }
+
+  @override
+  String get recEveryDay => 'Every day';
+
+  @override
+  String get recEveryWeek => 'Every week';
+
+  @override
+  String get recEveryMonth => 'Every month';
+
+  @override
+  String get recEveryYear => 'Every year';
+
+  @override
+  String recEveryNDays(String count) {
+    return 'Every $count days';
+  }
+
+  @override
+  String recEveryNWeeks(String count) {
+    return 'Every $count weeks';
+  }
+
+  @override
+  String recEveryNMonths(String count) {
+    return 'Every $count months';
+  }
+
+  @override
+  String recEveryNYears(String count) {
+    return 'Every $count years';
+  }
+
+  @override
+  String get recOnce => 'Once';
+
+  @override
+  String get recModeAuto => 'Post automatically';
+
+  @override
+  String get recModeAutoSub => 'Good for salary, rent';
+
+  @override
+  String get recModeRemind => 'Ask before posting';
+
+  @override
+  String get recModeRemindSub => 'Good for electricity, water';
+
+  @override
+  String get recName => 'Name';
+
+  @override
+  String get recVaries => 'Amount can differ each time';
+
+  @override
+  String get recVariesSub => 'Enter the real amount when you confirm';
+
+  @override
+  String get recRepeat => 'Repeat';
+
+  @override
+  String get recFirstDue => 'First due date';
+
+  @override
+  String get recNextRun => 'Next date';
+
+  @override
+  String get recRemindBefore => 'Remind me';
+
+  @override
+  String get recRemindSameDay => 'On the day';
+
+  @override
+  String recRemindDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days before',
+      one: '1 day before',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get recPayFrom => 'Pay from';
+
+  @override
+  String get recPause => 'Pause';
+
+  @override
+  String get recPauseSub =>
+      'Nothing is posted or reminded until you turn it back on';
+
+  @override
+  String get recRemove => 'Delete recurring';
+
+  @override
+  String recPaidTitle(String name) {
+    return 'Paid $name?';
+  }
+
+  @override
+  String get recRealAmount => 'Actual amount';
+
+  @override
+  String get recPaidOn => 'Paid on';
+
+  @override
+  String get recConfirm => 'Confirm paid';
+
+  @override
+  String get recLinkExisting => 'Already logged this expense? Pick it';
+
+  @override
+  String get recPickExpense => 'Pick an expense';
+
+  @override
+  String get recNoExpense => 'No expense to link yet';
+
+  @override
+  String get recConfirmed => 'Marked as paid';
+
+  @override
+  String get recNeedWallet => 'Pick a wallet to pay from';
+
+  @override
+  String get recRemoveBody => 'Entries already posted stay as they are.';
+
+  @override
+  String recRemindDaysShort(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days',
+      one: '1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get recNeedCategory => 'Pick a category';
 }

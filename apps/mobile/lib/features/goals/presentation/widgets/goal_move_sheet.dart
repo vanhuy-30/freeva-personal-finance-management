@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/money/money_input_formatter.dart';
@@ -10,6 +9,7 @@ import '../../../../core/widgets/freeva_button.dart';
 import '../../../../core/widgets/freeva_card.dart';
 import '../../../../core/widgets/freeva_segmented.dart';
 import '../../../../core/widgets/freeva_sheet.dart';
+import '../../../../core/widgets/sheet_amount_field.dart';
 import '../../../../core/widgets/freeva_toast.dart';
 import '../../../auth/domain/auth_repository.dart';
 import '../../../settings/presentation/widgets/balances_hidden_builder.dart';
@@ -164,7 +164,7 @@ class _MoveSheetState extends State<_MoveSheet> {
                   ),
                 ),
                 const SizedBox(height: 6),
-                _AmountField(
+                SheetAmountField(
                   controller: amount,
                   digits: digits,
                   locale: locale,
@@ -251,77 +251,6 @@ class _MoveSheetState extends State<_MoveSheet> {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _AmountField extends StatelessWidget {
-  const _AmountField({
-    required this.controller,
-    required this.digits,
-    required this.locale,
-    required this.symbol,
-    required this.onChanged,
-  });
-
-  final TextEditingController controller;
-  final int digits;
-  final String locale;
-  final String symbol;
-  final VoidCallback onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final c = context.colors;
-    final style = FreevaTypography.moneyDisplay.copyWith(
-      height: 44 / 40,
-      letterSpacing: -1.4,
-      color: c.textPrimary,
-      fontFeatures: const [FontFeature.tabularFigures()],
-    );
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        IntrinsicWidth(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minWidth: 28, maxWidth: 260),
-            child: TextField(
-              controller: controller,
-              autofocus: true,
-              textAlign: TextAlign.end,
-              style: style,
-              cursorColor: c.actionPrimary,
-              cursorWidth: 2,
-              cursorHeight: 28,
-              keyboardType: TextInputType.numberWithOptions(
-                decimal: digits > 0,
-              ),
-              inputFormatters: [
-                MoneyInputFormatter(minorDigits: digits, locale: locale),
-                LengthLimitingTextInputFormatter(20),
-              ],
-              decoration: const InputDecoration(
-                border: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                filled: false,
-                isDense: true,
-                contentPadding: EdgeInsets.zero,
-              ),
-              onChanged: (_) => onChanged(),
-            ),
-          ),
-        ),
-        const SizedBox(width: 6),
-        Text(
-          symbol,
-          style: FreevaTypography.titleS.copyWith(
-            fontWeight: FontWeight.w500,
-            color: c.textSecondary,
-          ),
-        ),
-      ],
     );
   }
 }

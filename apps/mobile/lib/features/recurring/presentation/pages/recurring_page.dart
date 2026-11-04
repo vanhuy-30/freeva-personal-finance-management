@@ -15,11 +15,17 @@ import '../../../../core/widgets/freeva_icon_button.dart';
 import '../../../../core/widgets/freeva_toast.dart';
 import '../../../../core/widgets/freeva_top_bar.dart';
 import '../../../../core/widgets/skeleton.dart';
-import '../../../auth/domain/auth_repository.dart';
-import '../../../profile/presentation/viewmodels/profile_view_model.dart';
+import '../../../categories/domain/finance_category.dart';
+import '../../../categories/presentation/viewmodels/category_view_model.dart';
 import '../../domain/recurring_rule.dart';
 import '../viewmodels/recurring_view_model.dart';
+import '../widgets/due_summary_card.dart';
+import '../widgets/recurring_labels.dart';
+import '../widgets/recurring_paid_sheet.dart';
+import '../widgets/recurring_row.dart';
 
+/// Định kỳ và hóa đơn: bills waiting for "Đã trả" on top, then the rules
+/// that post on their own. Numbers come from the API as they are.
 class RecurringPage extends StatefulWidget {
   const RecurringPage({super.key});
 
@@ -29,39 +35,35 @@ class RecurringPage extends StatefulWidget {
 
 class _RecurringPageState extends State<RecurringPage> {
   late final RecurringViewModel model = getIt<RecurringViewModel>();
+  late final CategoryViewModel categories = getIt<CategoryViewModel>();
 
   @override
   void initState() {
     super.initState();
-    Future.microtask(model.load);
+    Future.microtask(() {
+      model.load();
+      categories.load();
+    });
   }
 
-  void _failed() {
-    final s = S.of(context);
-    final conflict = model.failure?.code == AuthError.conflict;
-    showFreevaToast(context, message: conflict ? s.meConflict : s.meSaveError);
-    if (conflict) model.load();
-  }
+  FinanceCategory? _category(String? id) =>
+      categories.categories.where((item) => item.id == id).firstOrNull;
 
-  String _unitLabel(S s, RecurringRule rule) {
-    final every = rule.interval == 1
-        ? null
-        : s.recurringEvery(rule.interval.toString());
-    final unit = switch (rule.unit) {
-      'day' => s.recurringUnitDay,
-      'week' => s.recurringUnitWeek,
-      'month' => s.recurringUnitMonth,
-      _ => s.recurringUnitYear,
-    };
-    return every == null ? unit : '$every · $unit';
+  Future<void> _paid(RecurringRule rule) async {
+    final done = await showRecurringPaidSheet(
+      context,
+      model,
+      rule,
+      category: _category(rule.categoryId),
+    );
+    if (done == true && mounted) {
+      showFreevaToast(context, message: S.of(context).recConfirmed);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
-    final c = context.colors;
-    final locale = Localizations.localeOf(context).toString();
-    final currency = getIt<ProfileViewModel>().saved?.currency ?? 'VND';
     return Scaffold(
       appBar: FreevaTopBar(
         title: s.recurringTitle,
@@ -75,8 +77,9 @@ class _RecurringPageState extends State<RecurringPage> {
         ),
       ),
       body: ListenableBuilder(
-        listenable: model,
+        listenable: Listenable.merge([model, categories]),
         builder: (context, _) {
+          final margin = context.screenMargin;
           if (!model.loaded && model.failure != null) {
             return ErrorRetry(
               title: s.recurringLoadError,
@@ -85,12 +88,12 @@ class _RecurringPageState extends State<RecurringPage> {
             );
           }
           if (!model.loaded) {
-            return const Padding(
-              padding: EdgeInsets.all(FreevaSpace.s4),
-              child: SkeletonRows(count: 4),
+            return Padding(
+              padding: EdgeInsets.all(margin),
+              child: const SkeletonRows(count: 4),
             );
           }
-          if (model.rules.isEmpty) {
+          if (model.due.isEmpty && model.automatic.isEmpty) {
             return EmptyState(
               title: s.recurringEmptyTitle,
               message: s.recurringEmptyBody,
@@ -98,54 +101,174 @@ class _RecurringPageState extends State<RecurringPage> {
               onAction: () => context.push('/me/recurring/new'),
             );
           }
-          return ListView.separated(
-            padding: const EdgeInsets.all(FreevaSpace.s4),
-            itemCount: model.rules.length,
-            separatorBuilder: (_, _) => const SizedBox(height: FreevaSpace.s3),
-            itemBuilder: (context, index) {
-              final rule = model.rules[index];
-              final amount = formatMoneyText(rule.amountMinor.abs(), 0, locale);
-              return FreevaCard(
-                onTap: () => context.push('/me/recurring/${rule.id}'),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${rule.type == 'income'
-                                ? '+'
-                                : rule.type == 'expense'
-                                ? '−'
-                                : '↔'} '
-                            '$amount $currency',
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          const SizedBox(height: FreevaSpace.s1),
-                          Text(
-                            '${_unitLabel(s, rule)} · ${s.recurringNext(rule.nextExecutionDate)}',
-                            style: Theme.of(context).textTheme.bodySmall
-                                ?.copyWith(color: c.textSecondary),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Switch.adaptive(
-                      value: rule.active,
-                      onChanged: (value) async {
-                        if (!await model.setActive(rule, value) && mounted) {
-                          _failed();
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              );
-            },
+          return _Body(
+            model: model,
+            category: _category,
+            onPaid: _paid,
+            margin: margin,
           );
         },
       ),
+    );
+  }
+}
+
+class _Body extends StatelessWidget {
+  const _Body({
+    required this.model,
+    required this.category,
+    required this.onPaid,
+    required this.margin,
+  });
+
+  final RecurringViewModel model;
+  final FinanceCategory? Function(String?) category;
+  final ValueChanged<RecurringRule> onPaid;
+  final double margin;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    final locale = Localizations.localeOf(context).toString();
+    final totalDigits = model.digitsOf(model.totalCurrency);
+    final total = formatMoneyText(model.dueTotal, totalDigits, locale);
+    return ListView(
+      padding: EdgeInsets.fromLTRB(margin, FreevaSpace.s2, margin, 28),
+      children: [
+        if (model.dueCount > 0) ...[
+          DueSummaryCard(
+            total: total,
+            count: model.dueCount,
+            onTap: () => context.push('/me/calendar'),
+          ),
+          const SizedBox(height: 14),
+        ],
+        if (model.due.isNotEmpty)
+          _Group(
+            label: s.recGroupDue,
+            children: [
+              for (final rule in model.due) _dueRow(context, s, locale, rule),
+            ],
+          ),
+        if (model.due.isNotEmpty && model.automatic.isNotEmpty)
+          const SizedBox(height: 14),
+        if (model.automatic.isNotEmpty)
+          _Group(
+            label: s.recGroupAuto,
+            children: [
+              for (final rule in model.automatic)
+                _autoRow(context, s, locale, rule),
+            ],
+          ),
+      ],
+    );
+  }
+
+  Widget _dueRow(BuildContext context, S s, String locale, RecurringRule rule) {
+    final c = context.colors;
+    final cat = category(rule.categoryId);
+    final days = daysBetween(model.today, rule.nextExecutionDate);
+    final (tag, bg, fg) = !rule.active
+        ? (s.recTagPaused, c.bgSubtle, c.textOnWash)
+        : rule.overdue
+        ? (s.recTagOverdue, c.statusDangerBg, c.statusDanger)
+        : days == 0
+        ? (s.recTagToday, c.statusWarningBg, c.statusWarning)
+        : days > 0 && days <= 7
+        ? (s.recTagDays(days), c.statusWarningBg, c.statusWarning)
+        : (null, null, null);
+    return RecurringRow(
+      rule: rule,
+      category: cat,
+      title: ruleTitle(s, rule, cat),
+      subtitle: dueLine(
+        s,
+        rule,
+        digits: model.digitsOf(rule.currencyCode),
+        locale: locale,
+        currency: rule.currencyCode == model.totalCurrency
+            ? null
+            : rule.currencyCode,
+      ),
+      amount: '',
+      tag: tag,
+      tagBackground: bg,
+      tagColor: fg,
+      minHeight: 72,
+      onTap: () => context.push('/me/recurring/${rule.id}'),
+      onPaid: rule.active ? () => onPaid(rule) : null,
+      paidLabel: s.recPaid,
+    );
+  }
+
+  Widget _autoRow(
+    BuildContext context,
+    S s,
+    String locale,
+    RecurringRule rule,
+  ) {
+    final c = context.colors;
+    final cat = category(rule.categoryId);
+    final sign = switch (rule.type) {
+      'income' => '+',
+      'expense' => '−',
+      _ => '',
+    };
+    final shown = formatMoneyText(
+      rule.amountMinor.abs(),
+      model.digitsOf(rule.currencyCode),
+      locale,
+    );
+    return RecurringRow(
+      rule: rule,
+      category: cat,
+      title: ruleTitle(s, rule, cat),
+      subtitle: scheduleLabel(s, rule),
+      amount: '$sign$shown',
+      tag: rule.active ? null : s.recTagPaused,
+      tagBackground: c.bgSubtle,
+      tagColor: c.textOnWash,
+      onTap: () => context.push('/me/recurring/${rule.id}'),
+    );
+  }
+}
+
+class _Group extends StatelessWidget {
+  const _Group({required this.label, required this.children});
+
+  final String label;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Text(
+            label,
+            style: FreevaTypography.sectionLabel.copyWith(
+              color: c.textSecondary,
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        FreevaCard(
+          list: true,
+          padding: EdgeInsets.zero,
+          child: Column(
+            children: [
+              for (var i = 0; i < children.length; i++) ...[
+                if (i > 0)
+                  Divider(height: 1, thickness: 1, color: c.listDivider),
+                children[i],
+              ],
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
