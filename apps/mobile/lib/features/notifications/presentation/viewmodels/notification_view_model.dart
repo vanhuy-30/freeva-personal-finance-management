@@ -24,6 +24,9 @@ abstract class NotificationViewModel extends ChangeNotifier {
     String? quietStart,
     String? quietEnd,
   });
+
+  /// Saves the daily log reminder time (`HH:mm`) without changing the switch.
+  Future<bool> setDailyLogTime(String hm);
   Future<void> markRead(String id);
   Future<void> markAllRead();
   Future<void> evaluateQuietly();
@@ -148,6 +151,10 @@ class DefaultNotificationViewModel extends NotificationViewModel {
         insightEnabled: enabled,
         version: current.version,
       ),
+      NotificationKind.dailyLog => NotificationPreferencesPatch(
+        dailyLogEnabled: enabled,
+        version: current.version,
+      ),
       NotificationKind.security => null,
     };
     if (patch == null) return false;
@@ -173,6 +180,23 @@ class DefaultNotificationViewModel extends NotificationViewModel {
           quietHoursEnabled: enabled,
           quietStart: quietStart,
           quietEnd: quietEnd,
+          version: current.version,
+        ),
+      ),
+    );
+    if (value == null) return false;
+    preferences = value;
+    return true;
+  }
+
+  @override
+  Future<bool> setDailyLogTime(String hm) async {
+    final current = preferences;
+    if (current == null) return false;
+    final value = await _guard(
+      () => _cases.putPreferences(
+        NotificationPreferencesPatch(
+          dailyLogTime: hm,
           version: current.version,
         ),
       ),

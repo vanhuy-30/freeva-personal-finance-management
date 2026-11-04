@@ -4563,7 +4563,7 @@ abstract class S {
   /// No description provided for @notifyRecord.
   ///
   /// In en, this message translates to:
-  /// **'Record reminder'**
+  /// **'Log reminder'**
   String get notifyRecord;
 
   /// No description provided for @notifyRecordSub.
@@ -4571,6 +4571,54 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Every day'**
   String get notifyRecordSub;
+
+  /// No description provided for @notifyRecordAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Every day at {time}'**
+  String notifyRecordAt(String time);
+
+  /// No description provided for @notifyTimeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a reminder time'**
+  String get notifyTimeTitle;
+
+  /// No description provided for @notifyTimeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'No reminder on days you already logged.'**
+  String get notifyTimeHint;
+
+  /// No description provided for @notifyTimePick.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick {time}'**
+  String notifyTimePick(String time);
+
+  /// No description provided for @notifyTimeHour.
+  ///
+  /// In en, this message translates to:
+  /// **'Hour'**
+  String get notifyTimeHour;
+
+  /// No description provided for @notifyTimeMinute.
+  ///
+  /// In en, this message translates to:
+  /// **'Minute'**
+  String get notifyTimeMinute;
+
+  /// No description provided for @notifyInboxDailyLogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Log today'**
+  String get notifyInboxDailyLogTitle;
+
+  /// No description provided for @notifyInboxDailyLogBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t logged anything today. Add it before you forget.'**
+  String get notifyInboxDailyLogBody;
 
   /// No description provided for @notifyDigest.
   ///
@@ -4596,6 +4644,18 @@ abstract class S {
   /// **'At 80% and 100% used'**
   String get notifyBudgetSub;
 
+  /// No description provided for @notifyBudgetAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert at {levels}'**
+  String notifyBudgetAt(String levels);
+
+  /// No description provided for @notifyBudgetLevels.
+  ///
+  /// In en, this message translates to:
+  /// **'80% and 100%'**
+  String get notifyBudgetLevels;
+
   /// No description provided for @notifyCard.
   ///
   /// In en, this message translates to:
@@ -4605,7 +4665,7 @@ abstract class S {
   /// No description provided for @notifyCardSub.
   ///
   /// In en, this message translates to:
-  /// **'Due soon, high balance, and near the limit'**
+  /// **'Due soon, near the limit'**
   String get notifyCardSub;
 
   /// No description provided for @notifySession.
@@ -4617,19 +4677,19 @@ abstract class S {
   /// No description provided for @notifyRecurring.
   ///
   /// In en, this message translates to:
-  /// **'Recurring due soon'**
+  /// **'Recurring and bills'**
   String get notifyRecurring;
 
   /// No description provided for @notifyRecurringSub.
   ///
   /// In en, this message translates to:
-  /// **'One day before the next run'**
+  /// **'Before the due date and when overdue'**
   String get notifyRecurringSub;
 
   /// No description provided for @notifyGoal.
   ///
   /// In en, this message translates to:
-  /// **'Goal contribution reminder'**
+  /// **'Goal contributions'**
   String get notifyGoal;
 
   /// No description provided for @notifyGoalSub.
@@ -4647,7 +4707,7 @@ abstract class S {
   /// No description provided for @notifyDebtSub.
   ///
   /// In en, this message translates to:
-  /// **'Before the due date'**
+  /// **'3 days before the due date'**
   String get notifyDebtSub;
 
   /// No description provided for @notifyMonthReview.
@@ -4659,7 +4719,7 @@ abstract class S {
   /// No description provided for @notifyMonthReviewSub.
   ///
   /// In en, this message translates to:
-  /// **'When a month summary is ready'**
+  /// **'At the start of each month'**
   String get notifyMonthReviewSub;
 
   /// No description provided for @notifyInsight.

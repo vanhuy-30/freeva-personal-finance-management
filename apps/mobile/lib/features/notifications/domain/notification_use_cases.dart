@@ -26,6 +26,10 @@ class DefaultNotificationUseCases implements NotificationUseCases {
   final NotificationRepository _repository;
 
   AuthFailure? _validateQuiet(NotificationPreferencesPatch patch) {
+    final daily = patch.dailyLogTime;
+    if (daily != null && !isValidHm(daily)) {
+      return const AuthFailure(AuthError.invalidInput);
+    }
     final start = patch.quietStart;
     final end = patch.quietEnd;
     if (start != null && !isValidHm(start)) {

@@ -19,6 +19,8 @@ String notificationKindTitle(S s, NotificationKind kind) {
       return s.notifyInsight;
     case NotificationKind.security:
       return s.notifySession;
+    case NotificationKind.dailyLog:
+      return s.notifyRecord;
   }
 }
 
@@ -40,6 +42,8 @@ String notificationKindSubtitle(S s, NotificationKind kind) {
       return s.notifyInsightSub;
     case NotificationKind.security:
       return s.notifySessionSubAlways;
+    case NotificationKind.dailyLog:
+      return s.notifyRecordSub;
   }
 }
 
@@ -56,6 +60,8 @@ String inboxTitle(S s, InboxNotification item) {
       return s.notifyInboxCardHighDebtTitle;
     case 'card_near_limit':
       return s.notifyInboxCardNearLimitTitle;
+    case 'daily_log':
+      return s.notifyInboxDailyLogTitle;
     default:
       return notificationKindTitle(s, item.kind);
   }
@@ -79,6 +85,8 @@ String inboxBody(S s, InboxNotification item) {
     case 'card_near_limit_body':
       final threshold = item.params['threshold'];
       return s.notifyInboxCardNearLimitBody('$threshold');
+    case 'daily_log_body':
+      return s.notifyInboxDailyLogBody;
     default:
       return s.notificationsEmptyBody;
   }

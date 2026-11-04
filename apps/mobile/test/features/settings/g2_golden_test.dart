@@ -92,7 +92,42 @@ void main() {
   testWidgets('faq', skip: !Platform.isMacOS, (t) async {
     await shot(t, const FaqPage(), 'faq');
   });
+  // Board N5 MeNotify3 / N6 NotifyTime are 390×920.
+  const notifySize = Size(390, 920);
+  Future<void> openTime(WidgetTester t) async {
+    await t.tap(find.text('20:00'));
+    await t.pumpAndSettle();
+  }
+
   testWidgets('notifications', skip: !Platform.isMacOS, (t) async {
-    await shot(t, const NotificationSettingsPage(), 'notify');
+    await shot(t, const NotificationSettingsPage(), 'notify', size: notifySize);
+  });
+  testWidgets('notifications dark', skip: !Platform.isMacOS, (t) async {
+    await shot(
+      t,
+      const NotificationSettingsPage(),
+      'notify_dark',
+      dark: true,
+      size: notifySize,
+    );
+  });
+  testWidgets('daily log time', skip: !Platform.isMacOS, (t) async {
+    await shot(
+      t,
+      const NotificationSettingsPage(),
+      'notify_time',
+      size: notifySize,
+      then: () => openTime(t),
+    );
+  });
+  testWidgets('daily log time dark', skip: !Platform.isMacOS, (t) async {
+    await shot(
+      t,
+      const NotificationSettingsPage(),
+      'notify_time_dark',
+      dark: true,
+      size: notifySize,
+      then: () => openTime(t),
+    );
   });
 }

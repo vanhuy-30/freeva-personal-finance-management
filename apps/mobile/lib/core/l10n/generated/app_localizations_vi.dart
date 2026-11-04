@@ -2488,6 +2488,35 @@ class SVi extends S {
   String get notifyRecordSub => 'Mỗi ngày';
 
   @override
+  String notifyRecordAt(String time) {
+    return 'Mỗi ngày lúc $time';
+  }
+
+  @override
+  String get notifyTimeTitle => 'Chọn giờ nhắc';
+
+  @override
+  String get notifyTimeHint => 'Hôm nào đã ghi thì không nhắc.';
+
+  @override
+  String notifyTimePick(String time) {
+    return 'Chọn $time';
+  }
+
+  @override
+  String get notifyTimeHour => 'Giờ';
+
+  @override
+  String get notifyTimeMinute => 'Phút';
+
+  @override
+  String get notifyInboxDailyLogTitle => 'Ghi chi hôm nay';
+
+  @override
+  String get notifyInboxDailyLogBody =>
+      'Hôm nay bạn chưa ghi giao dịch nào. Ghi nhanh trước khi quên nhé.';
+
+  @override
   String get notifyDigest => 'Tổng kết chi tiêu';
 
   @override
@@ -2500,22 +2529,30 @@ class SVi extends S {
   String get notifyBudgetSub => 'Khi dùng 80% và 100%';
 
   @override
+  String notifyBudgetAt(String levels) {
+    return 'Khi dùng $levels';
+  }
+
+  @override
+  String get notifyBudgetLevels => '80% và 100%';
+
+  @override
   String get notifyCard => 'Thẻ tín dụng';
 
   @override
-  String get notifyCardSub => 'Sắp đến hạn, dư nợ cao và sắp vượt hạn mức';
+  String get notifyCardSub => 'Sắp đến hạn, sắp chạm hạn mức';
 
   @override
   String get notifySession => 'Máy mới đăng nhập';
 
   @override
-  String get notifyRecurring => 'Định kỳ sắp chạy';
+  String get notifyRecurring => 'Định kỳ và hóa đơn';
 
   @override
-  String get notifyRecurringSub => 'Một ngày trước lần chạy';
+  String get notifyRecurringSub => 'Trước hạn và khi quá hạn';
 
   @override
-  String get notifyGoal => 'Nhắc đóng góp mục tiêu';
+  String get notifyGoal => 'Góp vào mục tiêu';
 
   @override
   String get notifyGoalSub => 'Khi đến hạn đóng góp';
@@ -2524,13 +2561,13 @@ class SVi extends S {
   String get notifyDebt => 'Nợ đến hạn';
 
   @override
-  String get notifyDebtSub => 'Trước ngày đến hạn';
+  String get notifyDebtSub => 'Trước hạn 3 ngày';
 
   @override
   String get notifyMonthReview => 'Soát tháng';
 
   @override
-  String get notifyMonthReviewSub => 'Khi có bản tóm tắt tháng';
+  String get notifyMonthReviewSub => 'Đầu mỗi tháng';
 
   @override
   String get notifyInsight => 'Insight mới';

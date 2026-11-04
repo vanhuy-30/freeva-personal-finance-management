@@ -1514,23 +1514,54 @@
   "faqSend": "Send feedback to Freeva",
   "notifyReminders": "Reminders",
   "notifyAlerts": "Alerts",
-  "notifyRecord": "Record reminder",
+  "notifyRecord": "Log reminder",
   "notifyRecordSub": "Every day",
+  "notifyRecordAt": "Every day at {time}",
+  "@notifyRecordAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "notifyTimeTitle": "Pick a reminder time",
+  "notifyTimeHint": "No reminder on days you already logged.",
+  "notifyTimePick": "Pick {time}",
+  "@notifyTimePick": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "notifyTimeHour": "Hour",
+  "notifyTimeMinute": "Minute",
+  "notifyInboxDailyLogTitle": "Log today",
+  "notifyInboxDailyLogBody": "You haven't logged anything today. Add it before you forget.",
   "notifyDigest": "Spending summary",
   "notifyDigestSub": "Every week or month",
   "notifyBudget": "Budget running out",
   "notifyBudgetSub": "At 80% and 100% used",
+  "notifyBudgetAt": "Alert at {levels}",
+  "@notifyBudgetAt": {
+    "placeholders": {
+      "levels": {
+        "type": "String"
+      }
+    }
+  },
+  "notifyBudgetLevels": "80% and 100%",
   "notifyCard": "Credit cards",
-  "notifyCardSub": "Due soon, high balance, and near the limit",
+  "notifyCardSub": "Due soon, near the limit",
   "notifySession": "New device signed in",
-  "notifyRecurring": "Recurring due soon",
-  "notifyRecurringSub": "One day before the next run",
-  "notifyGoal": "Goal contribution reminder",
+  "notifyRecurring": "Recurring and bills",
+  "notifyRecurringSub": "Before the due date and when overdue",
+  "notifyGoal": "Goal contributions",
   "notifyGoalSub": "When a contribution is due",
   "notifyDebt": "Debt due",
-  "notifyDebtSub": "Before the due date",
+  "notifyDebtSub": "3 days before the due date",
   "notifyMonthReview": "Month review",
-  "notifyMonthReviewSub": "When a month summary is ready",
+  "notifyMonthReviewSub": "At the start of each month",
   "notifyInsight": "New insight",
   "notifyInsightSub": "When a new tip is ready",
   "notifyQuietTitle": "Quiet hours",

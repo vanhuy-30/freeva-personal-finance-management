@@ -9,6 +9,7 @@ enum NotificationKind {
   monthReview,
   insight,
   security,
+  dailyLog,
 }
 
 NotificationKind? notificationKindFromApi(String value) {
@@ -29,6 +30,8 @@ NotificationKind? notificationKindFromApi(String value) {
       return NotificationKind.insight;
     case 'security':
       return NotificationKind.security;
+    case 'daily_log':
+      return NotificationKind.dailyLog;
     default:
       return null;
   }
@@ -52,6 +55,8 @@ String notificationKindToApi(NotificationKind kind) {
       return 'insight';
     case NotificationKind.security:
       return 'security';
+    case NotificationKind.dailyLog:
+      return 'daily_log';
   }
 }
 
@@ -72,6 +77,7 @@ class NotificationKindToggle {
 class NotificationPreferences {
   const NotificationPreferences({
     required this.kinds,
+    required this.dailyLogTime,
     required this.quietHoursEnabled,
     required this.quietStart,
     required this.quietEnd,
@@ -80,6 +86,9 @@ class NotificationPreferences {
   });
 
   final List<NotificationKindToggle> kinds;
+
+  /// Daily log reminder time, `HH:mm` in the profile timezone.
+  final String dailyLogTime;
   final bool quietHoursEnabled;
   final String quietStart;
   final String quietEnd;
@@ -103,6 +112,8 @@ class NotificationPreferencesPatch {
     this.recurringEnabled,
     this.monthReviewEnabled,
     this.insightEnabled,
+    this.dailyLogEnabled,
+    this.dailyLogTime,
     this.quietHoursEnabled,
     this.quietStart,
     this.quietEnd,
@@ -116,6 +127,8 @@ class NotificationPreferencesPatch {
   final bool? recurringEnabled;
   final bool? monthReviewEnabled;
   final bool? insightEnabled;
+  final bool? dailyLogEnabled;
+  final String? dailyLogTime;
   final bool? quietHoursEnabled;
   final String? quietStart;
   final String? quietEnd;
@@ -147,6 +160,21 @@ class InboxNotification {
 final _hm = RegExp(r'^([01]\d|2[0-3]):([0-5]\d)$');
 
 bool isValidHm(String value) => _hm.hasMatch(value);
+
+/// Minute step of the daily reminder wheel.
+const dailyLogMinuteStep = 15;
+
+/// [value] (`HH:mm`) snapped to the nearest [dailyLogMinuteStep], as
+/// (hour, minute). Falls back to 20:00 (server default) when unreadable.
+(int, int) snapDailyLogTime(String value) {
+  final minutes = minutesOfDay(value) ?? 20 * 60;
+  final snapped =
+      ((minutes / dailyLogMinuteStep).round() * dailyLogMinuteStep) % (24 * 60);
+  return (snapped ~/ 60, snapped % 60);
+}
+
+String formatHm(int hour, int minute) =>
+    '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
 
 int? minutesOfDay(String value) {
   final match = _hm.firstMatch(value);
