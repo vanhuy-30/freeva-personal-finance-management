@@ -105,7 +105,7 @@ void main() {
       auth,
       analytics,
       sync,
-      FxRateUseCases(MemoryFxRates()),
+      FxRateUseCases(MemoryFxRates(), FxWallets()),
     );
     await model.load();
   });
@@ -227,7 +227,7 @@ void main() {
         auth,
         analytics,
         sync,
-        FxRateUseCases(MemoryFxRates()),
+        FxRateUseCases(MemoryFxRates(), FxWallets()),
       );
       final loading = model.load();
       await Future<void>.delayed(Duration.zero);

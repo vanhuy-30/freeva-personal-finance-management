@@ -262,14 +262,16 @@ extension GetItInjectableX on _i174.GetIt {
             ));
     gh.lazySingleton<_i471.CalendarUseCases>(
         () => _i471.DefaultCalendarUseCases(gh<_i791.CalendarRepository>()));
-    gh.factory<_i1002.FxRateUseCases>(
-        () => _i1002.FxRateUseCases(gh<_i406.FxRateRepository>()));
     gh.lazySingleton<_i911.PushRegistrar>(() => _i360.FcmPushRegistrar(
           gh<_i911.PushTokenRepository>(),
           gh<_i54.SessionAlertNotifier>(),
         ));
     gh.lazySingleton<_i840.GoalUseCases>(
         () => _i840.DefaultGoalUseCases(gh<_i625.GoalRepository>()));
+    gh.factory<_i1002.FxRateUseCases>(() => _i1002.FxRateUseCases(
+          gh<_i406.FxRateRepository>(),
+          gh<_i107.WalletRepository>(),
+        ));
     gh.lazySingleton<_i245.BudgetUseCases>(
         () => _i245.DefaultBudgetUseCases(gh<_i1073.BudgetRepository>()));
     gh.lazySingleton<_i990.AuthViewModel>(

@@ -5,6 +5,7 @@ import '../../auth/domain/auth_repository.dart';
 import '../../budgets/domain/budget.dart';
 import '../../budgets/domain/budget_use_cases.dart';
 import '../../categories/domain/category_repository.dart';
+import '../../../core/money/currency_usage.dart';
 import '../../fx_rates/domain/fx_rate_repository.dart';
 import '../../reports/domain/report.dart';
 import '../../reports/domain/report_repository.dart';
@@ -93,6 +94,11 @@ class DefaultOverviewUseCases implements OverviewUseCases {
           monthBefore: older?.$1,
           previousBudget: older?.$2,
           budget: budget,
+          multiCurrency: usesMultipleCurrencies([
+            for (final w in wallets) w.draft.currency,
+            for (final row in worth.items) row.currency,
+            for (final row in month.totals) row.currency,
+          ]),
           wallets: [
             for (final w in wallets)
               if (!w.archived) w,

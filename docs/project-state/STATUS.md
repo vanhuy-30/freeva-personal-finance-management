@@ -1,7 +1,7 @@
 # STATUS
 
 - **Phase hiện tại:** 3 — Phase 0 **closed** 2026-09-21; Phase 1 **closed** 2026-10-21 (gate sổ cái); Phase 2 **closed** 2026-10-30. Chưa phải product v1 — còn mục tiêu và 12 ticket gộp/bổ sung `P3-001`…`012` (Phase 3), tài sản/đầu tư và tài sản ròng (Phase 4), `Gate: v1`. AI (gợi ý danh mục, insight) ra sau v1 từ 2026-11-02. Đối chiếu spec: [spec-alignment.md](../product/spec-alignment.md).
-- **Cập nhật:** 2026-11-03
+- **Cập nhật:** 2026-11-04
 - **Việc bổ sung Phase 2:** `BE-P2-010` khóa kind lúc ghi; `INF-P2-001` Postgres staging miễn phí (DB Render free đã hết hạn); `MOB-P2-011` xuất/xóa tài khoản trên app; `QA-P2-001` rà hàng đợi offline; `BE-P2-012` câu trả lời đầu gắn tài khoản; `BE-P2-013` quy đổi để hiển thị; `BE-P2-014` mật khẩu tối thiểu 8 + kiểm tra email trên app. Chi tiết: [tasks/phase-02.md](../../tasks/phase-02.md).
 - **CI:** `INF-P0-002` done; cả ba job xanh trên `main`, [run 33521325189](https://github.com/vanhuy-30/freeva-personal-finance-management/actions/runs/33521325189).
 - **Staging:** API [Render](https://freeva-api-staging.onrender.com) và admin [Vercel](https://freeva-personal-finance-management.vercel.app) đã xanh ngày 2026-09-21. Postgres free trên Render đã hết hạn; `INF-P2-001` hoãn (2026-10-30), develop dùng Postgres local, staging API chưa có DB sống tới khi làm lại. Prod hoster TBD tới Store (region VN).
@@ -28,6 +28,7 @@
 - **Onboarding ba câu:** `BE-P3-012` done 2026-11-03 (BE): `monthlyIncomeMinor` trên hồ sơ (`PUT /profile/monthly-income`), `PATCH /profile/onboarding` chỉ còn `goals` + thu nhập; bỏ thói quen, nhịp xem lại, ngân sách nhập tay (migration gộp goals cũ). `MOB-P3-012` chưa làm — màn onboarding hiện tại sẽ nhận 400. Thu nhập có trong export, xóa cùng tài khoản.
 - **Mục tiêu (mobile):** `MOB-P3-E01` done 2026-11-04: `/me/goals` đủ 5 màn theo nhóm I, khối Mục tiêu trên Tổng quan (chọn "Tiết kiệm"), `GET /goals/{id}/entries`, `Profile.monthlyIncomeMinor`. Analyze và test pass; chưa native build/E2E staging. [Chi tiết](../architecture/mobile-goals.md).
 - **Ngưỡng ngân sách (mobile):** `MOB-P3-003` done 2026-11-04: mặc định `80, 100`, sheet chip "Báo khi đã dùng" (tối đa 4 mốc), ngân sách cũ giữ mốc. Analyze và 609 test pass; chưa native build/E2E staging.
+- **Ẩn quy đổi một loại tiền:** `MOB-P3-004` done 2026-11-04: Tổng quan, chi tiết ví và giao dịch chỉ hiện tổng quy đổi, "Xem tổng theo" và dòng ≈ khi user dùng từ hai loại tiền; tỷ giá đã nhập giữ nguyên. Analyze và 615 test pass; chưa native build/E2E staging.
 - **Dự báo số dư:** `BE-P3-E04` done 2026-11-03 (BE): `GET /forecast` theo quy tắc (ví + định kỳ/hóa đơn), nêu giả định, sửa số dư gốc và bỏ khoản; không FX, không dự đoán chi ngoài định kỳ. `MOB-P3-E04` chưa làm. [Chi tiết](../architecture/forecast.md).
 - **Xuất CSV:** `BE-P3-010` done 2026-11-03 (BE): `GET /transactions/export.csv`, UTF-8 BOM + RFC 4180, chặn công thức, số tiền thập phân kèm cột tiền tệ, tối đa 50 000 dòng, audit `user.transactions_export`. Không migration. `MOB-P3-010` chưa làm. [Chi tiết](../architecture/transactions-csv-export.md).
 - **Trả góp thẻ:** `BE-P3-009` done 2026-11-03 (BE): `/card-installments`, lịch trả góp trên khoản chi của ví thẻ (không ghi tiền, khoản mua vẫn tính một lần), `due` cho "số phải trả kỳ này", đóng lịch khi trả trước/hủy. `MOB-P3-009` chưa làm. [Chi tiết](../architecture/card-installments.md).

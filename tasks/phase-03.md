@@ -60,11 +60,12 @@
 - Note: BE-P3-003 xong 2026-11-02: `DEFAULT_ALERT_THRESHOLDS` = `80, 100`, ngân sách đã lưu giữ ngưỡng cũ (mặc định chỉ áp ở code, không migration), OpenAPI/docs cập nhật. MOB-P3-003 xong 2026-11-04: `defaultAlertThresholds` = `80, 100` (onboarding theo hằng số); ô "Ngưỡng cảnh báo" mở sheet "Báo khi đã dùng" theo board N4: chip 70/80/90/100% bật/tắt có dấu tích, tối đa 4 mốc, ít nhất 1, hint "Mặc định 80% và 100%.", Lưu; ngân sách đã lưu giữ mốc cũ (mốc ngoài bốn chip vẫn hiện). Ô hiện đúng mốc user đã chọn, không đổi backend. Test hàm bật/tắt, widget và golden sáng/tối (font test rộng hơn Inter nên chip 100% xuống dòng trong golden). Tồn đọng: chưa chạy trên thiết bị thật/staging.
 
 ### MOB-P3-004 — Ẩn quy đổi khi chỉ dùng một loại tiền
-- Status: todo
+- Status: done — 2026-11-04
 - Module: 2, 14
 - Gate: v1
 - Depends: MOB-P2-013
 - DoD: mục tỷ giá, tiền tệ hiển thị và dòng số quy đổi chỉ hiện khi user có ví, giao dịch hoặc khoản đầu tư ở từ hai loại tiền trở lên. Dữ liệu tỷ giá đã nhập không bị xóa.
+- Note: MOB-P3-004 xong 2026-11-04: "đa tiền tệ" = mã tiền của mọi ví (kể cả ví ẩn) cộng tiền trong `net-worth` và thu/chi tháng (`usesMultipleCurrencies`, `OverviewData.multiCurrency`). Một loại tiền thì Tổng quan bỏ tổng quy đổi, dòng "chưa có tỷ giá" và "Xem tổng theo …"; chi tiết ví và giao dịch không hiện dòng "≈" (`FxRateUseCases`, lỗi tải ví thì cũng ẩn). Không đổi backend, không xóa `UserFxRate`/`displayCurrencyCode`; thêm loại tiền thứ hai thì hiện lại. Không đổi giao diện: trạng thái một loại tiền đúng như golden cũ. Test đơn vị, 615 test pass. Tồn đọng: khoản đầu tư (Phase 4) chưa tính vào "loại tiền đang dùng"; giao dịch của ví đã xóa hẳn không tính; chưa chạy trên thiết bị thật/staging.
 
 ## Chức năng bổ sung (thêm 2026-11-02)
 

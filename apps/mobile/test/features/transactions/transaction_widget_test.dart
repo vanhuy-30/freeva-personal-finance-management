@@ -79,7 +79,7 @@ void main() {
       auth,
       analytics,
       sync,
-      FxRateUseCases(MemoryFxRates()),
+      FxRateUseCases(MemoryFxRates(), FxWallets()),
     );
     await model.load();
   });
