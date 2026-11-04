@@ -1385,6 +1385,24 @@
    "page": "p3",
    "title": "M · 1b. Sửa điều chỉnh",
    "is_interactive": true
+  },
+  "Inbox3.dc.html": {
+   "x": 2760,
+   "y": 5640,
+   "w": 390,
+   "h": 1000,
+   "page": "p3",
+   "title": "N · 7. Hộp thư thông báo",
+   "is_interactive": true
+  },
+  "Inbox3Empty.dc.html": {
+   "x": 3220,
+   "y": 5640,
+   "w": 390,
+   "h": 844,
+   "page": "p3",
+   "title": "N · 8. Hộp thư · chưa có",
+   "is_interactive": true
   }
  },
  "order": [
@@ -1541,7 +1559,9 @@
   "GoalEmpty.dc.html",
   "DebtEmpty.dc.html",
   "DailyLogAsk.dc.html",
-  "WAdjustEdit.dc.html"
+  "WAdjustEdit.dc.html",
+  "Inbox3.dc.html",
+  "Inbox3Empty.dc.html"
  ],
  "notes": {
   "tf": {
@@ -1733,7 +1753,7 @@
    "y": 5360,
    "text": "N · Dự báo, soát tháng, ngân sách, nhắc",
    "kind": "title1",
-   "maxW": 2690,
+   "maxW": 3610,
    "page": "p3"
   },
   "t3_5": {

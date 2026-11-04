@@ -69,6 +69,7 @@ Tám nhóm A–H và bảy nhóm Phase 3 đã chốt. Còn:
 
 - **Popup xoá tài khoản** (nhóm G): đã làm bằng hộp xác nhận chung ở `MOB-P2-011`; chưa vẽ trên board. Xuất dữ liệu đã vẽ ở nhóm O.
 - **Khoản bạn đi mượn** (nhóm K): chi tiết và sheet trả giống khoản cho mượn, chỉ đổi chữ; chưa vẽ riêng.
+- **Hộp thư thông báo** vẽ lại 2026-11-04 (N.7, N.8): thay bản đang chạy; chưa code.
 
 ## Cách làm đã thống nhất với product owner
 
