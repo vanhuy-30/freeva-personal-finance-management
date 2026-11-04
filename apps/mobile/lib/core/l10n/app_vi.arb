@@ -645,6 +645,9 @@
     }
   },
   "budgetThresholdsTitle": "Ngưỡng cảnh báo",
+  "budgetThresholdsSheetTitle": "Báo khi đã dùng",
+  "budgetThresholdsSheetSub": "Chọn tối đa 4 mốc.",
+  "budgetThresholdsDefaultHint": "Mặc định 80% và 100%.",
   "budgetScopeDefault": "Mọi tháng",
   "budgetScopeMonth": "Tháng này",
   "budgetScopeMonthHint": "Đang dùng hạn mức mặc định. Lưu sẽ tạo chỉnh riêng cho tháng này.",

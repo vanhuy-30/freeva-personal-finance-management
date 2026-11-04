@@ -2106,6 +2106,15 @@ class SEn extends S {
   String get budgetThresholdsTitle => 'Alert thresholds';
 
   @override
+  String get budgetThresholdsSheetTitle => 'Alert me when used';
+
+  @override
+  String get budgetThresholdsSheetSub => 'Pick up to 4 levels.';
+
+  @override
+  String get budgetThresholdsDefaultHint => 'Default is 80% and 100%.';
+
+  @override
   String get budgetScopeDefault => 'Every month';
 
   @override

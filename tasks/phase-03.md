@@ -52,12 +52,12 @@
 - Note: MOB-P3-002 xong 2026-11-04: thẻ `NewMonthReviewCard` thêm vạch ngăn và hai dòng theo board N: "{Danh mục} tăng nhiều nhất +số" (danh mục cha chi tăng nhiều nhất so với tháng trước nữa) và "Vượt ngân sách n% · đã chi / hạn mức" (ngân sách tháng trước, cùng loại tiền, làm tròn xuống bằng BigInt, tối thiểu 1%). Bỏ dòng khi thiếu dữ liệu hoặc call phụ lỗi, không làm hỏng Tổng quan. Không đổi backend. Lệch DoD: số tăng lấy từ `GET /reports/cashflow` (`byCategory`, cùng số với month-review) thay vì `month-review`, vì month-review chỉ trả top 3 danh mục nên không so được danh mục ngoài top 3. Golden sáng/tối. Tồn đọng: chưa chạy trên thiết bị thật/staging.
 
 ### BE-P3-003 / MOB-P3-003 — Ngưỡng ngân sách mặc định 80 và 100
-- Status: doing — BE xong 2026-11-02, MOB còn
+- Status: done — BE xong 2026-11-02, MOB xong 2026-11-04
 - Module: 7, 17
 - Gate: v1
 - Depends: BE-P2-E02
 - DoD: ngưỡng cảnh báo mặc định đổi từ `70, 80, 90, 100` thành `80, 100`; user vẫn thêm được tới 4 ngưỡng. Ngân sách đã lưu giữ nguyên ngưỡng cũ. Màu trạng thái (healthy / warning / critical / over) không đổi.
-- Note: BE-P3-003 xong 2026-11-02: `DEFAULT_ALERT_THRESHOLDS` = `80, 100`, ngân sách đã lưu giữ ngưỡng cũ (mặc định chỉ áp ở code, không migration), OpenAPI/docs cập nhật. MOB-P3-003 (`defaultAlertThresholds` và gợi ý ngưỡng trên màn ngân sách) chưa làm.
+- Note: BE-P3-003 xong 2026-11-02: `DEFAULT_ALERT_THRESHOLDS` = `80, 100`, ngân sách đã lưu giữ ngưỡng cũ (mặc định chỉ áp ở code, không migration), OpenAPI/docs cập nhật. MOB-P3-003 xong 2026-11-04: `defaultAlertThresholds` = `80, 100` (onboarding theo hằng số); ô "Ngưỡng cảnh báo" mở sheet "Báo khi đã dùng" theo board N4: chip 70/80/90/100% bật/tắt có dấu tích, tối đa 4 mốc, ít nhất 1, hint "Mặc định 80% và 100%.", Lưu; ngân sách đã lưu giữ mốc cũ (mốc ngoài bốn chip vẫn hiện). Ô hiện đúng mốc user đã chọn, không đổi backend. Test hàm bật/tắt, widget và golden sáng/tối (font test rộng hơn Inter nên chip 100% xuống dòng trong golden). Tồn đọng: chưa chạy trên thiết bị thật/staging.
 
 ### MOB-P3-004 — Ẩn quy đổi khi chỉ dùng một loại tiền
 - Status: todo

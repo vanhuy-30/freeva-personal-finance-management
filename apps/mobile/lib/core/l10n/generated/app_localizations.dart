@@ -3786,6 +3786,24 @@ abstract class S {
   /// **'Alert thresholds'**
   String get budgetThresholdsTitle;
 
+  /// No description provided for @budgetThresholdsSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert me when used'**
+  String get budgetThresholdsSheetTitle;
+
+  /// No description provided for @budgetThresholdsSheetSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick up to 4 levels.'**
+  String get budgetThresholdsSheetSub;
+
+  /// No description provided for @budgetThresholdsDefaultHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Default is 80% and 100%.'**
+  String get budgetThresholdsDefaultHint;
+
   /// No description provided for @budgetScopeDefault.
   ///
   /// In en, this message translates to:

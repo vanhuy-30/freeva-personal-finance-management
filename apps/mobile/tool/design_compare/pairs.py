@@ -18,6 +18,7 @@ M = {
 
  'I': [('GoalEmpty','goals/goals_empty'),('GoalList','goals/goals_list'),('GoalAdd','goals/goals_add_dated'),('GoalDetail','goals/goals_detail'),('GoalMove','goals/goals_move_in'),('BHomeGoal','goals/goals_home_block')],
  'L': [('RecList','recurring/rec_list'),('RecEdit','recurring/rec_add_remind'),('RecEditAuto','recurring/rec_edit_auto'),('BillPaid','recurring/rec_paid_sheet')],
+ 'N': [('BudgetAlert','budgets/n4_thresholds')],
  'H': [('SyncBanner','sync/h1_list'),('SyncCenter','sync/h1_center'),('SyncRunning','sync/h1_sending'),('SyncDone','sync/h1_done'),('SyncConflict','sync/h2_compare'),('SyncDuplicate','sync/h2_duplicate'),('SyncDiscard','sync/h1_discard'),('SyncUpdate','sync/h1_update')],
 }
 os.makedirs(f'{S}/pairs', exist_ok=True)
