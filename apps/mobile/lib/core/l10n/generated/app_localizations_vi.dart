@@ -723,6 +723,16 @@ class SVi extends S {
   }
 
   @override
+  String homeReviewTopIncrease(String category) {
+    return '$category tăng nhiều nhất';
+  }
+
+  @override
+  String homeReviewOverBudget(int percent) {
+    return 'Vượt ngân sách $percent%';
+  }
+
+  @override
   String get homeCreditTitle => 'Thẻ tín dụng';
 
   @override

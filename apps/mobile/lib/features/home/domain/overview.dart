@@ -17,6 +17,8 @@ class OverviewData {
     required this.categories,
     required this.loadedAt,
     this.previousMonth,
+    this.monthBefore,
+    this.previousBudget,
     this.budget,
   });
 
@@ -25,6 +27,13 @@ class OverviewData {
 
   /// Only loaded when the current month has no income or expense yet.
   final CashflowReport? previousMonth;
+
+  /// The month before [previousMonth]; loaded with it, for the "biggest
+  /// increase" line of the review card. Null when it failed.
+  final CashflowReport? monthBefore;
+
+  /// Budget of [previousMonth]; null when unset or failed.
+  final BudgetSummary? previousBudget;
 
   /// Monthly budget for the current fiscal month; null when unset or failed.
   final BudgetSummary? budget;
@@ -88,6 +97,38 @@ class MonthFlow {
   final BigInt expense;
 
   bool get isEmpty => income == BigInt.zero && expense == BigInt.zero;
+}
+
+/// Parent category whose spending grew most against the month before.
+class CategoryIncrease {
+  const CategoryIncrease({required this.name, required this.deltaMinor});
+
+  final String name;
+  final BigInt deltaMinor;
+}
+
+/// Previous month's budget when spending went past its limit.
+class BudgetOverrun {
+  const BudgetOverrun({
+    required this.percent,
+    required this.spentMinor,
+    required this.limitMinor,
+  });
+
+  /// Whole percent over the limit, at least 1.
+  final int percent;
+  final BigInt spentMinor;
+  final BigInt limitMinor;
+}
+
+/// The two optional lines under the new-month review card (MOB-P3-002).
+class MonthInsight {
+  const MonthInsight({this.topIncrease, this.overBudget});
+
+  final CategoryIncrease? topIncrease;
+  final BudgetOverrun? overBudget;
+
+  bool get isEmpty => topIncrease == null && overBudget == null;
 }
 
 /// One slice of "Chi tháng": a parent category, or "Khác" when [name] is null.

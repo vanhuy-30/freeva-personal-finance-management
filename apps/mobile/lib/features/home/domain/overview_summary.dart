@@ -1,3 +1,4 @@
+import '../../budgets/domain/budget.dart';
 import '../../categories/domain/finance_category.dart';
 import '../../reports/domain/report.dart';
 import '../../wallets/domain/wallet.dart';
@@ -106,15 +107,8 @@ List<CashflowTotal> otherCurrencySpending(CashflowReport report, String main) =>
         if (row.currency != main && row.expenseMinor != BigInt.zero) row,
     ];
 
-/// Expense rolled up to parent categories: top [top] by amount, the rest as
-/// one "Khác" slice. Percentages are whole numbers that add up to 100.
-SpendingBreakdown spendingBreakdown(
-  CashflowReport report,
-  String currency,
-  List<FinanceCategory> categories, {
-  int top = 3,
-}) {
-  final namesById = {for (final c in categories) c.id: c.name};
+/// Expense per parent category (or the category itself when it is a root).
+Map<String?, BigInt> _expenseByParent(CashflowReport report, String currency) {
   final byParent = <String?, BigInt>{};
   for (final row in report.byCategory) {
     if (row.currency != currency || row.expenseMinor == BigInt.zero) continue;
@@ -125,6 +119,62 @@ SpendingBreakdown spendingBreakdown(
       ifAbsent: () => row.expenseMinor.abs(),
     );
   }
+  return byParent;
+}
+
+/// Lines under the new-month review card: the parent category that grew most
+/// from [before] to [previous], and whether [budget] (previous month) went
+/// over. Each line is null when its data is missing; nothing is guessed.
+MonthInsight monthInsight({
+  required CashflowReport previous,
+  required String currency,
+  required List<FinanceCategory> categories,
+  CashflowReport? before,
+  BudgetSummary? budget,
+}) {
+  CategoryIncrease? increase;
+  if (before != null) {
+    final names = {for (final c in categories) c.id: c.name};
+    final now = _expenseByParent(previous, currency);
+    final then = _expenseByParent(before, currency);
+    BigInt best = BigInt.zero;
+    for (final e in now.entries) {
+      final name = e.key == null ? null : names[e.key];
+      if (name == null) continue;
+      final delta = e.value - (then[e.key] ?? BigInt.zero);
+      if (delta > best) {
+        best = delta;
+        increase = CategoryIncrease(name: name, deltaMinor: delta);
+      }
+    }
+  }
+  BudgetOverrun? overrun;
+  if (budget != null &&
+      budget.currencyCode == currency &&
+      budget.limitMinor > BigInt.zero &&
+      budget.spentMinor > budget.limitMinor) {
+    final over =
+        ((budget.spentMinor - budget.limitMinor) * BigInt.from(100)) ~/
+        budget.limitMinor;
+    overrun = BudgetOverrun(
+      percent: over.toInt() < 1 ? 1 : over.toInt(),
+      spentMinor: budget.spentMinor,
+      limitMinor: budget.limitMinor,
+    );
+  }
+  return MonthInsight(topIncrease: increase, overBudget: overrun);
+}
+
+/// Expense rolled up to parent categories: top [top] by amount, the rest as
+/// one "Khác" slice. Percentages are whole numbers that add up to 100.
+SpendingBreakdown spendingBreakdown(
+  CashflowReport report,
+  String currency,
+  List<FinanceCategory> categories, {
+  int top = 3,
+}) {
+  final namesById = {for (final c in categories) c.id: c.name};
+  final byParent = _expenseByParent(report, currency);
   // Unknown or uncategorised spending falls into "Khác".
   String? nameOf(String? id) => id == null ? null : namesById[id];
   final total = byParent.values.fold(BigInt.zero, (a, b) => a + b);

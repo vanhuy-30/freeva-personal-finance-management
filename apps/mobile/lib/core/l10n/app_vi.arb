@@ -233,6 +233,8 @@
   "homeOtherCurrencySpend": "Ví {currency}: chi {amount} {currency} tháng này",
   "homeReviewMonth": "Xem lại tháng {month}",
   "homeReviewLine": "Chi {expense} · Thu {income}",
+  "homeReviewTopIncrease": "{category} tăng nhiều nhất",
+  "homeReviewOverBudget": "Vượt ngân sách {percent}%",
   "homeCreditTitle": "Thẻ tín dụng",
   "homeCreditDue": "Đến hạn {date}",
   "homeRecent": "Gần đây",

@@ -83,11 +83,15 @@ class DefaultOverviewUseCases implements OverviewUseCases {
         (_) => null,
         (current) => current.budget,
       );
+      final previous = await _previousIfEmpty(month);
+      final older = previous == null ? null : await _olderThan(previous);
       return right(
         OverviewData(
           netWorth: worth,
           month: month,
-          previousMonth: await _previousIfEmpty(month),
+          previousMonth: previous,
+          monthBefore: older?.$1,
+          previousBudget: older?.$2,
           budget: budget,
           wallets: [
             for (final w in wallets)
@@ -128,6 +132,22 @@ class DefaultOverviewUseCases implements OverviewUseCases {
       ReportPeriodQuery.month(on: _date(before)),
     );
     return result.fold((_) => null, (report) => report);
+  }
+
+  /// The month before [previous] and [previous]'s budget, for the review
+  /// card's two extra lines. Best effort: each is null when it fails.
+  Future<(CashflowReport?, BudgetSummary?)> _olderThan(
+    CashflowReport previous,
+  ) async {
+    final before = DateTime.parse(previous.period.from)
+        .subtract(const Duration(days: 1));
+    final reportF = _reports.cashflow(
+      ReportPeriodQuery.month(on: _date(before)),
+    );
+    final budgetF = _budgets.current(on: previous.period.from);
+    final report = (await reportF).fold((_) => null, (r) => r);
+    final budget = (await budgetF).fold((_) => null, (b) => b.budget);
+    return (report, budget);
   }
 }
 

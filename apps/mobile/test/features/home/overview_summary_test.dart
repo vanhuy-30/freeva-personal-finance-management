@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mobile/features/budgets/domain/budget.dart';
 import 'package:mobile/features/home/domain/overview.dart';
 import 'package:mobile/features/home/domain/overview_summary.dart';
 import 'package:mobile/features/reports/domain/report.dart';
@@ -42,6 +43,67 @@ NetWorthConverted netIn(
 );
 
 void main() {
+  group('monthInsight', () {
+    final prev = month(rows: [spend('food', 3541600), spend('home', 2236800)]);
+    final before = month(
+      rows: [spend('food', 2341600), spend('home', 2336800)],
+    );
+    MonthInsight run({
+      CashflowReport? older,
+      BudgetSummary? budget,
+      String currency = 'VND',
+    }) => monthInsight(
+      previous: prev,
+      before: older,
+      budget: budget,
+      currency: currency,
+      categories: categories,
+    );
+
+    test('names the parent that grew most and by how much', () {
+      final i = run(older: before);
+      expect(i.topIncrease?.name, 'Ăn uống');
+      expect(i.topIncrease?.deltaMinor, b(1200000));
+      expect(i.overBudget, isNull);
+    });
+
+    test('a child counts toward its parent', () {
+      final i = monthInsight(
+        previous: month(rows: [spend('pho', 3541600, parent: 'food')]),
+        before: month(rows: [spend('food', 2341600)]),
+        currency: 'VND',
+        categories: categories,
+      );
+      expect(i.topIncrease?.name, 'Ăn uống');
+      expect(i.topIncrease?.deltaMinor, b(1200000));
+    });
+
+    test('no line without an older month or when nothing grew', () {
+      expect(run().topIncrease, isNull);
+      final flat = month(
+        rows: [spend('food', 4000000), spend('home', 3000000)],
+      );
+      expect(run(older: flat).topIncrease, isNull);
+    });
+
+    test('over budget shows whole percent, spent and limit', () {
+      final i = run(budget: budgetOf(15000000, 15600000));
+      expect(i.overBudget?.percent, 4);
+      expect(i.overBudget?.spentMinor, b(15600000));
+      expect(i.overBudget?.limitMinor, b(15000000));
+    });
+
+    test('no overrun at or under the limit, or in another currency', () {
+      expect(run(budget: budgetOf(15000000, 15000000)).overBudget, isNull);
+      expect(run(budget: budgetOf(15000000, 100)).overBudget, isNull);
+      expect(
+        run(budget: budgetOf(15000000, 16000000, currency: 'USD')).overBudget,
+        isNull,
+      );
+      expect(run().isEmpty, isTrue);
+    });
+  });
+
   group('balanceSummary', () {
     test('profile currency leads, others become pills, no conversion', () {
       final data = overview(

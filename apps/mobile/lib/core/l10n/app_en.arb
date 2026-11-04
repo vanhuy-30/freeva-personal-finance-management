@@ -347,6 +347,22 @@
       }
     }
   },
+  "homeReviewTopIncrease": "{category} rose the most",
+  "@homeReviewTopIncrease": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "homeReviewOverBudget": "Over budget by {percent}%",
+  "@homeReviewOverBudget": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
   "homeCreditTitle": "Credit cards",
   "homeCreditDue": "Due {date}",
   "@homeCreditDue": {

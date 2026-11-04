@@ -728,6 +728,16 @@ class SEn extends S {
   }
 
   @override
+  String homeReviewTopIncrease(String category) {
+    return '$category rose the most';
+  }
+
+  @override
+  String homeReviewOverBudget(int percent) {
+    return 'Over budget by $percent%';
+  }
+
+  @override
   String get homeCreditTitle => 'Credit cards';
 
   @override

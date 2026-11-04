@@ -77,6 +77,13 @@ class OverviewBlocks extends StatelessWidget {
             on: previous.period.from,
             flow: monthFlow(previous, main),
             minorDigits: digits(main),
+            insight: monthInsight(
+              previous: previous,
+              before: data.monthBefore,
+              budget: data.previousBudget,
+              currency: main,
+              categories: data.categories,
+            ),
           ),
           gap,
         ],

@@ -4,6 +4,7 @@ Nhật ký repo/process — không phải App Store release notes.
 
 ## 2026-11-04
 
+- `MOB-P3-002`: thẻ soát tháng trên Tổng quan thêm hai dòng: danh mục chi tăng nhiều nhất so với tháng trước nữa và ngân sách tháng trước có vượt không (số lấy từ `reports/cashflow` và `budgets/current`, không AI, thiếu dữ liệu thì bỏ dòng). Không đổi backend. Golden sáng/tối.
 - `MOB-P3-001`: màn "Định kỳ và hóa đơn" trên app — một màn cho khoản ghi tự động và hóa đơn hỏi trước khi ghi, "Đã trả" (`POST /recurring-transactions/{id}/confirm`), thêm/sửa theo board nhóm L. Bỏ màn Hóa đơn và `/me/bills` (API đã trả 410), bỏ dòng Hóa đơn ở Cá nhân. Không đổi backend. Golden sáng/tối + 1.3×. [Thiết kế](../architecture/mobile-recurring-bills.md).
 - `MOB-P3-E01`: màn Mục tiêu trên app (danh sách, trống, tạo/sửa, chi tiết, góp/rút), khối Mục tiêu trên Tổng quan, ô Mục tiêu ở Cá nhân đếm thật. Thêm `GET /api/v1/goals/{id}/entries` (lịch sử; không migration) và `monthlyIncomeMinor` trong `Profile` mobile. Golden sáng/tối. [Thiết kế](../architecture/mobile-goals.md).
 

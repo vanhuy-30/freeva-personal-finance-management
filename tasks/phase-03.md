@@ -44,11 +44,12 @@
 - Note: BE-P3-001 xong 2026-11-02: `RecurringRule.mode` = `auto` | `remind`; hóa đơn là rule `remind` (một lần = `repeat: false`), `POST /recurring-transactions/{id}/confirm` trỏ hoặc tạo một expense mỗi hạn, retry/xác nhận hai lần không nhân đôi (test PostgreSQL), quá hạn tính khi đọc và không tự ghi, nhắc `bill_due` / `bill_overdue`, lịch đọc từ rule, `/bills` trả 410, migration `Bill` → rule giữ id/clientId và liên kết giao dịch đã trả. Kiến trúc: [bills.md](../docs/architecture/bills.md). Tồn đọng: chưa có hoàn tác xác nhận; bảng `Bill` chưa xóa. MOB-P3-001 xong 2026-11-04: màn "Định kỳ và hóa đơn" (`/me/recurring`) thay hai màn, bỏ `features/bills` và dòng Hóa đơn ở Cá nhân; "Đã trả" gọi `POST …/confirm` (số thật, ví, ngày, hoặc gắn khoản chi có sẵn); "Cần trả" và số hóa đơn cộng từ dữ liệu API. [Mobile](../docs/architecture/mobile-recurring-bills.md). Tồn đọng mobile: không đổi được loại (Chi/Thu/Chuyển) và cách ghi của rule đã tạo (API chưa cho); Thu/Chuyển chỉ có "Ghi tự động" vì API chỉ cho hóa đơn là khoản chi; Lịch vẫn đọc `bills` từ `/calendar`; chưa có số khoản ở dòng Định kỳ trong Cá nhân.
 
 ### MOB-P3-002 — Bổ sung thẻ soát tháng trên Tổng quan
-- Status: todo
+- Status: done — 2026-11-04
 - Module: 14
 - Gate: v1
 - Depends: BE-P2-E08
 - DoD: thẻ `NewMonthReviewCard` đã có (thu, chi tháng trước, chỉ hiện đầu tháng) thêm hai dòng: danh mục chi tăng nhiều nhất so với tháng trước nữa và ngân sách tháng trước có vượt không. Số lấy từ `GET /reports/month-review` và ngân sách, không AI, bỏ dòng khi thiếu dữ liệu. Đây là "insight" của v1.
+- Note: MOB-P3-002 xong 2026-11-04: thẻ `NewMonthReviewCard` thêm vạch ngăn và hai dòng theo board N: "{Danh mục} tăng nhiều nhất +số" (danh mục cha chi tăng nhiều nhất so với tháng trước nữa) và "Vượt ngân sách n% · đã chi / hạn mức" (ngân sách tháng trước, cùng loại tiền, làm tròn xuống bằng BigInt, tối thiểu 1%). Bỏ dòng khi thiếu dữ liệu hoặc call phụ lỗi, không làm hỏng Tổng quan. Không đổi backend. Lệch DoD: số tăng lấy từ `GET /reports/cashflow` (`byCategory`, cùng số với month-review) thay vì `month-review`, vì month-review chỉ trả top 3 danh mục nên không so được danh mục ngoài top 3. Golden sáng/tối. Tồn đọng: chưa chạy trên thiết bị thật/staging.
 
 ### BE-P3-003 / MOB-P3-003 — Ngưỡng ngân sách mặc định 80 và 100
 - Status: doing — BE xong 2026-11-02, MOB còn
