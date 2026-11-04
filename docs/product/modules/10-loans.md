@@ -12,4 +12,4 @@ Vay / cho vay. Gốc, lãi, kỳ hạn. Công thức lãi có bộ test chuẩn.
 ## Quyết định BE-P3-E02 (2026-11-02)
 
 - Lãi tính trên dư nợ giảm dần, số nguyên, làm tròn half-up; lịch trả kiểu kỳ cố định hoặc theo số tiền user nhập. Chi tiết: [loans.md](../../architecture/loans.md).
-- Mỗi lần trả = hai giao dịch expense (phần gốc, phần lãi), tính vào báo cáo chi tiêu. Tách gốc khỏi chi tiêu là việc sau.
+- Mỗi lần trả: phần gốc là giao dịch `debt` (giảm nợ, không tính chi tiêu), phần lãi là một khoản chi (danh mục "Lãi vay").

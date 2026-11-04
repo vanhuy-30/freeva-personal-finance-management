@@ -24,8 +24,10 @@ abstract class PushRegistrar {
 }
 
 /// Screen a tapped notification opens, or null to just open the app.
-/// `daily_log` goes straight to recording an expense (BE-P3-006).
+/// `daily_log` goes straight to recording an expense (BE-P3-006); `debt`
+/// opens Vay và nợ.
 String? routeForOpenedKind(String kind) => switch (kind) {
   'daily_log' => '/record?type=expense',
+  'debt' => '/me/debts',
   _ => null,
 };

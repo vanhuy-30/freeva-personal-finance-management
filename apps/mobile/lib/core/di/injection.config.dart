@@ -60,6 +60,11 @@ import 'package:mobile/features/categories/domain/category_use_cases.dart'
     as _i221;
 import 'package:mobile/features/categories/presentation/viewmodels/category_view_model.dart'
     as _i961;
+import 'package:mobile/features/debts/data/debt_repository_impl.dart' as _i464;
+import 'package:mobile/features/debts/domain/debt_repository.dart' as _i249;
+import 'package:mobile/features/debts/domain/debt_use_cases.dart' as _i468;
+import 'package:mobile/features/debts/presentation/viewmodels/debt_view_model.dart'
+    as _i79;
 import 'package:mobile/features/feedback/data/feedback_repository_impl.dart'
     as _i216;
 import 'package:mobile/features/feedback/domain/feedback.dart' as _i173;
@@ -77,6 +82,11 @@ import 'package:mobile/features/goals/presentation/viewmodels/goal_view_model.da
 import 'package:mobile/features/home/domain/overview_use_cases.dart' as _i970;
 import 'package:mobile/features/home/presentation/viewmodels/home_view_model.dart'
     as _i722;
+import 'package:mobile/features/loans/data/loan_repository_impl.dart' as _i288;
+import 'package:mobile/features/loans/domain/loan_repository.dart' as _i63;
+import 'package:mobile/features/loans/domain/loan_use_cases.dart' as _i572;
+import 'package:mobile/features/loans/presentation/viewmodels/loan_view_model.dart'
+    as _i857;
 import 'package:mobile/features/notifications/data/fcm_push_registrar.dart'
     as _i360;
 import 'package:mobile/features/notifications/data/notification_repository_impl.dart'
@@ -201,6 +211,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => authDataModule.authorizedApi(gh<_i173.AuthRepository>()));
     gh.lazySingleton<_i519.SettingsUseCases>(
         () => _i519.DefaultSettingsUseCases(gh<_i1056.SettingsRepository>()));
+    gh.lazySingleton<_i63.LoanRepository>(
+        () => _i288.LoanRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i561.CategoryRepository>(
         () => _i613.CategoryRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i882.SyncRepository>(() => _i430.SyncRepositoryImpl(
@@ -240,6 +252,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i258.GoalRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i57.TagRepository>(
         () => _i729.TagRepositoryImpl(gh<_i443.AuthorizedApi>()));
+    gh.lazySingleton<_i249.DebtRepository>(
+        () => _i464.DebtRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i338.NotificationUseCases>(() =>
         _i338.DefaultNotificationUseCases(gh<_i199.NotificationRepository>()));
     gh.factory<_i253.AuthUseCases>(
@@ -266,6 +280,8 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i911.PushTokenRepository>(),
           gh<_i54.SessionAlertNotifier>(),
         ));
+    gh.lazySingleton<_i572.LoanUseCases>(
+        () => _i572.DefaultLoanUseCases(gh<_i63.LoanRepository>()));
     gh.lazySingleton<_i840.GoalUseCases>(
         () => _i840.DefaultGoalUseCases(gh<_i625.GoalRepository>()));
     gh.factory<_i1002.FxRateUseCases>(() => _i1002.FxRateUseCases(
@@ -299,6 +315,8 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i471.CalendarUseCases>(),
           gh<_i990.AuthViewModel>(),
         ));
+    gh.lazySingleton<_i468.DebtUseCases>(
+        () => _i468.DefaultDebtUseCases(gh<_i249.DebtRepository>()));
     gh.lazySingleton<_i146.ReportUseCases>(() => _i146.DefaultReportUseCases(
           gh<_i61.ReportRepository>(),
           gh<_i107.WalletRepository>(),
@@ -353,6 +371,12 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i421.SettingsViewModel>(),
           gh<_i488.SyncViewModel>(),
         ));
+    gh.lazySingleton<_i79.DebtViewModel>(() => _i79.DebtViewModel(
+          gh<_i468.DebtUseCases>(),
+          gh<_i251.WalletViewModel>(),
+          gh<_i887.ProfileViewModel>(),
+          gh<_i990.AuthViewModel>(),
+        ));
     gh.lazySingleton<_i332.TransactionViewModel>(
         () => _i332.DefaultTransactionViewModel(
               gh<_i292.TransactionUseCases>(),
@@ -399,6 +423,12 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i332.TransactionViewModel>(),
           deleted: deleted,
           accountId: accountId,
+        ));
+    gh.lazySingleton<_i857.LoanViewModel>(() => _i857.LoanViewModel(
+          gh<_i572.LoanUseCases>(),
+          gh<_i251.WalletViewModel>(),
+          gh<_i887.ProfileViewModel>(),
+          gh<_i990.AuthViewModel>(),
         ));
     return this;
   }

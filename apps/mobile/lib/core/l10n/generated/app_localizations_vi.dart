@@ -3965,4 +3965,441 @@ class SVi extends S {
 
   @override
   String get walletReconcileFailed => 'Chưa khớp được số dư. Thử lại nhé.';
+
+  @override
+  String get meDebts => 'Vay và nợ';
+
+  @override
+  String meDebtsCount(int count) {
+    return '$count khoản';
+  }
+
+  @override
+  String get transactionDebt => 'Vay mượn';
+
+  @override
+  String get txKindDebt => 'vay mượn';
+
+  @override
+  String get txDebtTitle => 'Vay và nợ';
+
+  @override
+  String get txDebtReadOnly =>
+      'Khoản này thuộc Vay và nợ, sửa ở đó không được.';
+
+  @override
+  String get debtsTabPeople => 'Người quen';
+
+  @override
+  String get debtsTabLoans => 'Khoản vay';
+
+  @override
+  String get debtsAdd => 'Ghi khoản mượn';
+
+  @override
+  String get debtsEmptyTitle => 'Chưa ai nợ ai';
+
+  @override
+  String get debtsEmptyBody =>
+      'Cho bạn bè mượn hay mượn người thân, ghi lại để khỏi quên.';
+
+  @override
+  String get debtsLoadError => 'Chưa tải được khoản mượn';
+
+  @override
+  String get debtsOwedToYou => 'Người khác nợ bạn';
+
+  @override
+  String get debtsYouOwe => 'Bạn đang nợ';
+
+  @override
+  String get debtsGroupOwedToYou => 'Ai nợ bạn';
+
+  @override
+  String get debtsGroupYouOwe => 'Bạn nợ ai';
+
+  @override
+  String get debtsGroupSettled => 'Đã xong';
+
+  @override
+  String debtsSettledLink(int count) {
+    return 'Đã xong ($count)';
+  }
+
+  @override
+  String debtLentOn(String date) {
+    return 'Cho mượn $date';
+  }
+
+  @override
+  String debtBorrowedOn(String date) {
+    return 'Mượn $date';
+  }
+
+  @override
+  String debtDueOn(String date) {
+    return 'hạn $date';
+  }
+
+  @override
+  String get debtNoDue => 'không hạn';
+
+  @override
+  String get debtNoDueValue => 'Không hạn';
+
+  @override
+  String get debtLend => 'Cho mượn';
+
+  @override
+  String get debtBorrow => 'Đi mượn';
+
+  @override
+  String get debtHistoryBorrowed => 'Mượn';
+
+  @override
+  String get debtAmount => 'Số tiền';
+
+  @override
+  String get debtBorrower => 'Người mượn';
+
+  @override
+  String get debtLender => 'Người cho mượn';
+
+  @override
+  String get debtFromWallet => 'Lấy từ ví';
+
+  @override
+  String get debtFromWalletShort => 'Từ ví';
+
+  @override
+  String get debtToWallet => 'Vào ví';
+
+  @override
+  String debtWalletLeft(String wallet, String amount) {
+    return '$wallet · còn $amount';
+  }
+
+  @override
+  String get debtDate => 'Ngày';
+
+  @override
+  String get debtDueDate => 'Hạn trả';
+
+  @override
+  String get debtPickDate => 'Chọn ngày';
+
+  @override
+  String get debtClearDue => 'Bỏ hạn';
+
+  @override
+  String get debtDueBeforeDate => 'Hạn trả phải sau ngày mượn.';
+
+  @override
+  String get debtNote => 'Ghi chú';
+
+  @override
+  String get debtNoteHint => 'Thêm ghi chú';
+
+  @override
+  String get debtNotCounted => 'Không tính vào thu chi.';
+
+  @override
+  String get debtSave => 'Lưu';
+
+  @override
+  String get debtEditTitle => 'Sửa khoản mượn';
+
+  @override
+  String debtTheyOwe(String name) {
+    return '$name còn nợ bạn';
+  }
+
+  @override
+  String debtYouOweName(String name) {
+    return 'Bạn còn nợ $name';
+  }
+
+  @override
+  String debtOfPrincipal(String amount) {
+    return '/ $amount';
+  }
+
+  @override
+  String debtReceived(String amount) {
+    return 'Đã thu $amount';
+  }
+
+  @override
+  String debtPaid(String amount) {
+    return 'Đã trả $amount';
+  }
+
+  @override
+  String get debtLentDate => 'Ngày cho mượn';
+
+  @override
+  String get debtBorrowedDate => 'Ngày mượn';
+
+  @override
+  String get debtHistory => 'Lịch sử';
+
+  @override
+  String debtTheyPaid(String name) {
+    return '$name trả';
+  }
+
+  @override
+  String get debtYouPaid => 'Bạn trả';
+
+  @override
+  String debtInto(String date, String wallet) {
+    return '$date · vào $wallet';
+  }
+
+  @override
+  String debtOutOf(String date, String wallet) {
+    return '$date · từ $wallet';
+  }
+
+  @override
+  String get debtRecordReceived => 'Ghi tiền nhận lại';
+
+  @override
+  String get debtRecordPaid => 'Ghi tiền đã trả';
+
+  @override
+  String debtPayTheyTitle(String name) {
+    return '$name trả bạn';
+  }
+
+  @override
+  String debtPayYouTitle(String name) {
+    return 'Bạn trả $name';
+  }
+
+  @override
+  String get debtHalf => 'Một nửa';
+
+  @override
+  String debtAll(String amount) {
+    return 'Tất cả $amount';
+  }
+
+  @override
+  String get debtSettleHintLent => 'Thu đủ thì khoản này chuyển sang Đã xong.';
+
+  @override
+  String get debtSettleHintBorrowed =>
+      'Trả đủ thì khoản này chuyển sang Đã xong.';
+
+  @override
+  String get debtTooMuch => 'Số này nhiều hơn số còn nợ.';
+
+  @override
+  String get loansAdd => 'Thêm khoản vay';
+
+  @override
+  String get loansLoadError => 'Chưa tải được khoản vay';
+
+  @override
+  String get loansEmptyTitle => 'Chưa có khoản vay';
+
+  @override
+  String get loansEmptyBody =>
+      'Vay mua nhà, mua xe hay vay tiêu dùng, ghi lại để theo dõi lịch trả.';
+
+  @override
+  String get loansOwed => 'Còn nợ';
+
+  @override
+  String get loansPaidPrincipal => 'Đã trả gốc';
+
+  @override
+  String get loansDueThisMonth => 'Tháng này cần trả';
+
+  @override
+  String get loanPaidOff => 'Đã trả xong';
+
+  @override
+  String loanRateYear(String rate) {
+    return '$rate%/năm';
+  }
+
+  @override
+  String loanNextOn(String date) {
+    return 'kỳ tới $date';
+  }
+
+  @override
+  String get loanEdit => 'Sửa khoản vay';
+
+  @override
+  String get loanEditShort => 'Sửa';
+
+  @override
+  String loanPaidPercent(String percent) {
+    return 'Đã trả $percent% gốc';
+  }
+
+  @override
+  String loanDoneBy(String month) {
+    return 'xong vào $month';
+  }
+
+  @override
+  String get loanNextPeriod => 'Kỳ tới';
+
+  @override
+  String loanNextOnTitle(String date) {
+    return 'Kỳ tới · $date';
+  }
+
+  @override
+  String loanSplit(String principal, String interest) {
+    return 'Gốc $principal · lãi $interest';
+  }
+
+  @override
+  String loanInterestOnly(String amount) {
+    return 'Lãi kỳ này $amount';
+  }
+
+  @override
+  String get loanRecordPayment => 'Ghi lần trả';
+
+  @override
+  String get loanHow => 'Cách tính';
+
+  @override
+  String loanHowText(String rate, String frequency) {
+    return 'Lãi $rate%/năm trên số còn nợ, trả $frequency. Lãi tính trước, phần còn lại trừ vào gốc.';
+  }
+
+  @override
+  String get loanSchedule => 'Lịch trả';
+
+  @override
+  String get loanFullSchedule => 'Xem cả lịch';
+
+  @override
+  String get loanNextTag => 'Kỳ tới';
+
+  @override
+  String loanPeriod(int index) {
+    return 'Kỳ $index';
+  }
+
+  @override
+  String get loanKindMortgage => 'Vay mua nhà';
+
+  @override
+  String get loanKindPersonal => 'Vay tiêu dùng';
+
+  @override
+  String get loanKindOther => 'Khác';
+
+  @override
+  String get loanFreqWeekly => 'Hằng tuần';
+
+  @override
+  String get loanFreqMonthly => 'Hằng tháng';
+
+  @override
+  String get loanFreqQuarterly => 'Hằng quý';
+
+  @override
+  String get loanFreqYearly => 'Hằng năm';
+
+  @override
+  String get loanName => 'Tên';
+
+  @override
+  String get loanAmountGroup => 'Số tiền';
+
+  @override
+  String get loanPrincipal => 'Số vay ban đầu';
+
+  @override
+  String get loanRate => 'Lãi suất';
+
+  @override
+  String get loanRateUnit => '%/năm';
+
+  @override
+  String get loanInstallment => 'Trả mỗi kỳ';
+
+  @override
+  String get loanFrequency => 'Kỳ trả';
+
+  @override
+  String get loanNextDue => 'Kỳ tới';
+
+  @override
+  String get loanStart => 'Bắt đầu';
+
+  @override
+  String get loanEnd => 'Kết thúc';
+
+  @override
+  String get loanPayFrom => 'Trả từ ví';
+
+  @override
+  String get loanInstallmentHint =>
+      'Để trống \"Trả mỗi kỳ\", Freeva tự tính theo ngày kết thúc.';
+
+  @override
+  String get loanSave => 'Lưu khoản vay';
+
+  @override
+  String get loanOwedTooMuch => 'Số còn nợ không lớn hơn số vay ban đầu.';
+
+  @override
+  String loanPayTitle(String date) {
+    return 'Trả kỳ $date';
+  }
+
+  @override
+  String get loanPrincipalPart => 'Tiền gốc';
+
+  @override
+  String get loanInterestPart => 'Tiền lãi';
+
+  @override
+  String loanWalletLeft(String amount) {
+    return 'còn $amount';
+  }
+
+  @override
+  String get loanPrincipalHint => 'Chỉ tiền gốc làm giảm số còn nợ.';
+
+  @override
+  String get loanTooMuch => 'Tiền gốc nhiều hơn số còn nợ.';
+
+  @override
+  String get notifyInboxDebtDueTitle => 'Sắp đến hạn trả nợ';
+
+  @override
+  String get notifyInboxDebtDueLentTitle => 'Sắp đến hạn thu nợ';
+
+  @override
+  String get notifyInboxDebtOverdueTitle => 'Khoản đi mượn quá hạn';
+
+  @override
+  String get notifyInboxDebtOverdueLentTitle => 'Khoản cho mượn quá hạn';
+
+  @override
+  String notifyInboxDebtDueBody(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Đến hạn trong $days ngày.',
+      zero: 'Đến hạn hôm nay.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String notifyInboxDebtOverdueBody(int days) {
+    return 'Đã quá hạn $days ngày.';
+  }
 }

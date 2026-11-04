@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../../infrastructure/prisma/prisma.service';
@@ -9,6 +9,7 @@ import type { TransactionInput } from '../../transactions/domain/transaction';
 import { createTransactionInTx } from '../../transactions/infrastructure/create-transaction-in-tx';
 import {
   addPeriod,
+  LOAN_INTEREST_CATEGORY,
   LoanError,
   splitPayment,
   validateDates,
@@ -101,6 +102,22 @@ export class PrismaLoanRepository implements LoanRepository {
         throw error;
       }
     }
+  }
+
+  /** The user's active "Lãi vay" expense category; created once as a system category when missing. */
+  private async interestCategory(tx: Prisma.TransactionClient, userId: string): Promise<string> {
+    const seed = LOAN_INTEREST_CATEGORY;
+    const found = await tx.category.findFirst({
+      where: { userId, name: seed.name, archivedAt: null, kind: { in: ['expense', 'both'] } },
+      orderBy: [{ isSystem: 'desc' }, { createdAt: 'asc' }],
+      select: { id: true },
+    });
+    if (found) return found.id;
+    const created = await tx.category.create({
+      data: { userId, clientId: randomUUID(), name: seed.name, kind: 'expense', iconToken: seed.iconToken, isSystem: true },
+      select: { id: true },
+    });
+    return created.id;
   }
 
   async context(userId: string): Promise<LoanContext> {
@@ -258,28 +275,29 @@ export class PrismaLoanRepository implements LoanRepository {
       const accountId = input.accountId ?? row.accountId;
       if (accountId === null) throw new LoanError('VALIDATION_ERROR');
       await this.requireAccount(tx, userId, accountId, row.currencyCode.trim());
-      const parts = [
-        { part: 'principal' as const, amount: split.principalMinor, categoryId: input.principalCategoryId },
-        { part: 'interest' as const, amount: split.interestMinor, categoryId: input.interestCategoryId },
-      ];
+      // Principal lowers the debt: a one-leg `debt` row (not spending). Interest is the cost: an expense.
       const ids: Record<'principal' | 'interest', string | null> = { principal: null, interest: null };
-      for (const { part, amount, categoryId } of parts) {
+      const parts = [
+        { part: 'principal' as const, amount: split.principalMinor },
+        { part: 'interest' as const, amount: split.interestMinor },
+      ];
+      for (const { part, amount } of parts) {
         if (amount === 0n) continue;
-        if (categoryId === null) throw new LoanError('VALIDATION_ERROR');
         const legId = legClientId(input.clientId, part);
-        const expense: TransactionInput = {
-          type: 'expense',
+        const principal = part === 'principal';
+        const leg: TransactionInput = {
+          type: principal ? 'debt' : 'expense',
           occurredOn: toDate(input.paidOn),
           occurredTime: null,
           legs: [{ clientId: legId, accountId, currencyCode: row.currencyCode.trim(), amountMinor: -amount }],
-          categoryId,
+          categoryId: principal ? null : input.interestCategoryId ?? await this.interestCategory(tx, userId),
           notes: null,
           merchant: null,
           tagIds: [],
           fx: null,
         };
         try {
-          await createTransactionInTx(tx, userId, expense);
+          await createTransactionInTx(tx, userId, leg);
         } catch (error) {
           if (error instanceof TransactionError) {
             throw new LoanError(error.code === 'TRANSACTION_CONFLICT' ? 'LOAN_CONFLICT' : 'VALIDATION_ERROR');

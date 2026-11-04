@@ -7195,7 +7195,7 @@ components:
           items:
             type: object
             additionalProperties: false
-            required: [currencyCode, loanCount, principalMinor, paidMinor, outstandingMinor, expectedInterestMinor]
+            required: [currencyCode, loanCount, principalMinor, paidMinor, outstandingMinor, expectedInterestMinor, dueThisMonthMinor]
             properties:
               currencyCode: {type: string, pattern: '^[A-Z]{3}$'}
               loanCount: {type: integer}
@@ -7203,6 +7203,10 @@ components:
               paidMinor: {$ref: '#/components/schemas/ReportMoney'}
               outstandingMinor: {$ref: '#/components/schemas/ReportMoney'}
               expectedInterestMinor: {$ref: '#/components/schemas/ReportMoney'}
+              dueThisMonthMinor:
+                allOf:
+                - $ref: '#/components/schemas/ReportMoney'
+                description: Sum of the schedule payments whose due date falls in the current month (profile time zone).
     LoanSchedule:
       type: object
       additionalProperties: false
@@ -7227,9 +7231,13 @@ components:
           items:
             type: object
             additionalProperties: false
-            required: [index, interestMinor, principalMinor, paymentMinor, outstandingAfterMinor]
+            required: [index, dueDate, interestMinor, principalMinor, paymentMinor, outstandingAfterMinor]
             properties:
               index: {type: integer, minimum: 1}
+              dueDate:
+                type: [string, 'null']
+                format: date
+                description: Row 1 is the loan's nextDueDate, each later row one period after (month ends clamp). Null without a next due date.
               interestMinor: {$ref: '#/components/schemas/ReportMoney'}
               principalMinor: {$ref: '#/components/schemas/ReportMoney'}
               paymentMinor: {$ref: '#/components/schemas/ReportMoney'}
@@ -7302,8 +7310,15 @@ components:
           description: Wallet the payment leaves (same currency as the loan). Defaults to the loan's linked wallet.
         principalMinor: {type: [string, 'null'], pattern: '^(0|[1-9][0-9]*)$'}
         interestMinor: {type: [string, 'null'], pattern: '^(0|[1-9][0-9]*)$'}
-        principalCategoryId: {type: [string, 'null'], format: uuid}
-        interestCategoryId: {type: [string, 'null'], format: uuid}
+        principalCategoryId:
+          type: [string, 'null']
+          format: uuid
+          deprecated: true
+          description: Ignored. The principal part is a one-leg `debt` transaction without a category (not spending).
+        interestCategoryId:
+          type: [string, 'null']
+          format: uuid
+          description: Expense category of the interest part. Omitted = the user's "Lãi vay" category (created once as a system category).
         paidOn: {type: string, format: date}
     AdjustLoanRequest:
       type: object

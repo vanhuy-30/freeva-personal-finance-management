@@ -14,6 +14,10 @@ class SheetAmountField extends StatelessWidget {
     required this.locale,
     required this.symbol,
     required this.onChanged,
+    this.fontSize = 40,
+    this.lineHeight = 44,
+    this.caretHeight = 28,
+    this.autofocus = true,
     super.key,
   });
 
@@ -23,11 +27,18 @@ class SheetAmountField extends StatelessWidget {
   final String symbol;
   final VoidCallback onChanged;
 
+  /// 40/44 in a sheet; 48/52 with a 34 caret on a form page (DebtAdd).
+  final double fontSize;
+  final double lineHeight;
+  final double caretHeight;
+  final bool autofocus;
+
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
     final style = FreevaTypography.moneyDisplay.copyWith(
-      height: 44 / 40,
+      fontSize: fontSize,
+      height: lineHeight / fontSize,
       letterSpacing: -1.4,
       color: c.textPrimary,
       fontFeatures: const [FontFeature.tabularFigures()],
@@ -38,15 +49,15 @@ class SheetAmountField extends StatelessWidget {
       children: [
         IntrinsicWidth(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(minWidth: 28, maxWidth: 260),
+            constraints: BoxConstraints(minWidth: 28, maxWidth: fontSize * 6.5),
             child: TextField(
               controller: controller,
-              autofocus: true,
+              autofocus: autofocus,
               textAlign: TextAlign.end,
               style: style,
               cursorColor: c.actionPrimary,
               cursorWidth: 2,
-              cursorHeight: 28,
+              cursorHeight: caretHeight,
               keyboardType: TextInputType.numberWithOptions(
                 decimal: digits > 0,
               ),

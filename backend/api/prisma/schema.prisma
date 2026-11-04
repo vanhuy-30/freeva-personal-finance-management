@@ -804,7 +804,7 @@ model LoanPayment {
   clientId                     String   @db.Uuid
   principalMinor               BigInt
   interestMinor                BigInt
-  /// Leg clientIds of the expense transactions behind this payment (null when that part is zero).
+  /// Leg clientIds behind this payment: principal = one-leg `debt` row, interest = expense (null when that part is zero).
   principalTransactionClientId String?  @db.Uuid
   interestTransactionClientId  String?  @db.Uuid
   paidOn                       DateTime @db.Date

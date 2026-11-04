@@ -4030,4 +4030,455 @@ class SEn extends S {
 
   @override
   String get walletReconcileFailed => 'Couldn\'t match the balance. Try again.';
+
+  @override
+  String get meDebts => 'Loans and debts';
+
+  @override
+  String meDebtsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items',
+      one: '1 item',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get transactionDebt => 'Lending';
+
+  @override
+  String get txKindDebt => 'lending';
+
+  @override
+  String get txDebtTitle => 'Loans and debts';
+
+  @override
+  String get txDebtReadOnly =>
+      'This belongs to Loans and debts and can’t be edited.';
+
+  @override
+  String get debtsTabPeople => 'People';
+
+  @override
+  String get debtsTabLoans => 'Loans';
+
+  @override
+  String get debtsAdd => 'Record a debt';
+
+  @override
+  String get debtsEmptyTitle => 'Nobody owes anybody';
+
+  @override
+  String get debtsEmptyBody =>
+      'Lent to a friend or borrowed from family? Note it so you don’t forget.';
+
+  @override
+  String get debtsLoadError => 'Couldn’t load debts';
+
+  @override
+  String get debtsOwedToYou => 'Others owe you';
+
+  @override
+  String get debtsYouOwe => 'You owe';
+
+  @override
+  String get debtsGroupOwedToYou => 'Who owes you';
+
+  @override
+  String get debtsGroupYouOwe => 'Whom you owe';
+
+  @override
+  String get debtsGroupSettled => 'Settled';
+
+  @override
+  String debtsSettledLink(int count) {
+    return 'Settled ($count)';
+  }
+
+  @override
+  String debtLentOn(String date) {
+    return 'Lent $date';
+  }
+
+  @override
+  String debtBorrowedOn(String date) {
+    return 'Borrowed $date';
+  }
+
+  @override
+  String debtDueOn(String date) {
+    return 'due $date';
+  }
+
+  @override
+  String get debtNoDue => 'no due date';
+
+  @override
+  String get debtNoDueValue => 'None';
+
+  @override
+  String get debtLend => 'Lend';
+
+  @override
+  String get debtBorrow => 'Borrow';
+
+  @override
+  String get debtHistoryBorrowed => 'Borrowed';
+
+  @override
+  String get debtAmount => 'Amount';
+
+  @override
+  String get debtBorrower => 'Borrower';
+
+  @override
+  String get debtLender => 'Lender';
+
+  @override
+  String get debtFromWallet => 'From wallet';
+
+  @override
+  String get debtFromWalletShort => 'From wallet';
+
+  @override
+  String get debtToWallet => 'To wallet';
+
+  @override
+  String debtWalletLeft(String wallet, String amount) {
+    return '$wallet · $amount left';
+  }
+
+  @override
+  String get debtDate => 'Date';
+
+  @override
+  String get debtDueDate => 'Due date';
+
+  @override
+  String get debtPickDate => 'Pick a date';
+
+  @override
+  String get debtClearDue => 'Clear due date';
+
+  @override
+  String get debtDueBeforeDate => 'The due date must be after the date.';
+
+  @override
+  String get debtNote => 'Note';
+
+  @override
+  String get debtNoteHint => 'Add a note';
+
+  @override
+  String get debtNotCounted => 'Not counted as income or spending.';
+
+  @override
+  String get debtSave => 'Save';
+
+  @override
+  String get debtEditTitle => 'Edit debt';
+
+  @override
+  String debtTheyOwe(String name) {
+    return '$name still owes you';
+  }
+
+  @override
+  String debtYouOweName(String name) {
+    return 'You still owe $name';
+  }
+
+  @override
+  String debtOfPrincipal(String amount) {
+    return '/ $amount';
+  }
+
+  @override
+  String debtReceived(String amount) {
+    return 'Received $amount';
+  }
+
+  @override
+  String debtPaid(String amount) {
+    return 'Paid $amount';
+  }
+
+  @override
+  String get debtLentDate => 'Lent on';
+
+  @override
+  String get debtBorrowedDate => 'Borrowed on';
+
+  @override
+  String get debtHistory => 'History';
+
+  @override
+  String debtTheyPaid(String name) {
+    return '$name paid';
+  }
+
+  @override
+  String get debtYouPaid => 'You paid';
+
+  @override
+  String debtInto(String date, String wallet) {
+    return '$date · into $wallet';
+  }
+
+  @override
+  String debtOutOf(String date, String wallet) {
+    return '$date · from $wallet';
+  }
+
+  @override
+  String get debtRecordReceived => 'Record money back';
+
+  @override
+  String get debtRecordPaid => 'Record a payment';
+
+  @override
+  String debtPayTheyTitle(String name) {
+    return '$name pays you';
+  }
+
+  @override
+  String debtPayYouTitle(String name) {
+    return 'You pay $name';
+  }
+
+  @override
+  String get debtHalf => 'Half';
+
+  @override
+  String debtAll(String amount) {
+    return 'All $amount';
+  }
+
+  @override
+  String get debtSettleHintLent => 'Once it’s all back, this moves to Settled.';
+
+  @override
+  String get debtSettleHintBorrowed =>
+      'Once it’s all paid, this moves to Settled.';
+
+  @override
+  String get debtTooMuch => 'That’s more than what’s owed.';
+
+  @override
+  String get loansAdd => 'Add a loan';
+
+  @override
+  String get loansLoadError => 'Couldn’t load loans';
+
+  @override
+  String get loansEmptyTitle => 'No loans yet';
+
+  @override
+  String get loansEmptyBody =>
+      'Home, car or personal loan? Add it to follow the repayments.';
+
+  @override
+  String get loansOwed => 'Still owed';
+
+  @override
+  String get loansPaidPrincipal => 'Principal paid';
+
+  @override
+  String get loansDueThisMonth => 'Due this month';
+
+  @override
+  String get loanPaidOff => 'Paid off';
+
+  @override
+  String loanRateYear(String rate) {
+    return '$rate%/yr';
+  }
+
+  @override
+  String loanNextOn(String date) {
+    return 'next $date';
+  }
+
+  @override
+  String get loanEdit => 'Edit loan';
+
+  @override
+  String get loanEditShort => 'Edit';
+
+  @override
+  String loanPaidPercent(String percent) {
+    return '$percent% of principal paid';
+  }
+
+  @override
+  String loanDoneBy(String month) {
+    return 'done by $month';
+  }
+
+  @override
+  String get loanNextPeriod => 'Next payment';
+
+  @override
+  String loanNextOnTitle(String date) {
+    return 'Next · $date';
+  }
+
+  @override
+  String loanSplit(String principal, String interest) {
+    return 'Principal $principal · interest $interest';
+  }
+
+  @override
+  String loanInterestOnly(String amount) {
+    return 'Interest this period $amount';
+  }
+
+  @override
+  String get loanRecordPayment => 'Record a payment';
+
+  @override
+  String get loanHow => 'How it works';
+
+  @override
+  String loanHowText(String rate, String frequency) {
+    return '$rate% a year on what is still owed, paid $frequency. Interest comes first, the rest lowers the principal.';
+  }
+
+  @override
+  String get loanSchedule => 'Repayments';
+
+  @override
+  String get loanFullSchedule => 'See all';
+
+  @override
+  String get loanNextTag => 'Next';
+
+  @override
+  String loanPeriod(int index) {
+    return 'Payment $index';
+  }
+
+  @override
+  String get loanKindMortgage => 'Home loan';
+
+  @override
+  String get loanKindPersonal => 'Personal loan';
+
+  @override
+  String get loanKindOther => 'Other';
+
+  @override
+  String get loanFreqWeekly => 'Weekly';
+
+  @override
+  String get loanFreqMonthly => 'Monthly';
+
+  @override
+  String get loanFreqQuarterly => 'Quarterly';
+
+  @override
+  String get loanFreqYearly => 'Yearly';
+
+  @override
+  String get loanName => 'Name';
+
+  @override
+  String get loanAmountGroup => 'Amounts';
+
+  @override
+  String get loanPrincipal => 'Amount borrowed';
+
+  @override
+  String get loanRate => 'Interest rate';
+
+  @override
+  String get loanRateUnit => '%/yr';
+
+  @override
+  String get loanInstallment => 'Each payment';
+
+  @override
+  String get loanFrequency => 'Paid';
+
+  @override
+  String get loanNextDue => 'Next payment';
+
+  @override
+  String get loanStart => 'Start';
+
+  @override
+  String get loanEnd => 'End';
+
+  @override
+  String get loanPayFrom => 'Pay from';
+
+  @override
+  String get loanInstallmentHint =>
+      'Leave \"Each payment\" empty and Freeva works it out from the end date.';
+
+  @override
+  String get loanSave => 'Save loan';
+
+  @override
+  String get loanOwedTooMuch =>
+      'What’s owed can’t be more than the amount borrowed.';
+
+  @override
+  String loanPayTitle(String date) {
+    return 'Payment due $date';
+  }
+
+  @override
+  String get loanPrincipalPart => 'Principal';
+
+  @override
+  String get loanInterestPart => 'Interest';
+
+  @override
+  String loanWalletLeft(String amount) {
+    return '$amount left';
+  }
+
+  @override
+  String get loanPrincipalHint => 'Only the principal lowers what is owed.';
+
+  @override
+  String get loanTooMuch => 'The principal is more than what is owed.';
+
+  @override
+  String get notifyInboxDebtDueTitle => 'A debt is due soon';
+
+  @override
+  String get notifyInboxDebtDueLentTitle => 'Money owed to you is due';
+
+  @override
+  String get notifyInboxDebtOverdueTitle => 'A debt is overdue';
+
+  @override
+  String get notifyInboxDebtOverdueLentTitle => 'Money owed to you is overdue';
+
+  @override
+  String notifyInboxDebtDueBody(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Due in $days days.',
+      one: 'Due in 1 day.',
+      zero: 'Due today.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String notifyInboxDebtOverdueBody(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days overdue.',
+      one: '1 day overdue.',
+    );
+    return '$_temp0';
+  }
 }

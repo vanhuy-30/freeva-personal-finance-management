@@ -29,6 +29,12 @@ import '../../features/recurring/presentation/pages/recurring_editor_page.dart';
 import '../../features/goals/presentation/pages/goal_detail_page.dart';
 import '../../features/goals/presentation/pages/goal_editor_page.dart';
 import '../../features/goals/presentation/pages/goals_page.dart';
+import '../../features/debts/presentation/pages/debt_detail_page.dart';
+import '../../features/debts/presentation/pages/debt_editor_page.dart';
+import '../../features/debts/presentation/pages/debts_page.dart';
+import '../../features/loans/presentation/pages/loan_detail_page.dart';
+import '../../features/loans/presentation/pages/loan_editor_page.dart';
+import '../../features/loans/presentation/pages/loan_schedule_page.dart';
 import '../../features/calendar/presentation/pages/calendar_page.dart';
 import '../../features/settings/presentation/pages/change_pin_page.dart';
 import '../../features/settings/presentation/pages/pin_setup_page.dart';
@@ -325,6 +331,58 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
                 path: 'edit',
                 builder: (context, state) => AuthGate(
                   child: GoalEditorPage(goalId: state.pathParameters['id']),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+      GoRoute(
+        path: '/me/debts',
+        builder: (context, state) => AuthGate(
+          child: DebtsPage(loans: state.uri.queryParameters['tab'] == 'loans'),
+        ),
+        routes: [
+          GoRoute(
+            path: 'new',
+            builder: (context, state) =>
+                const AuthGate(child: DebtEditorPage()),
+          ),
+          GoRoute(
+            path: 'loans/new',
+            builder: (context, state) =>
+                const AuthGate(child: LoanEditorPage()),
+          ),
+          GoRoute(
+            path: 'loans/:id',
+            builder: (context, state) => AuthGate(
+              child: LoanDetailPage(loanId: state.pathParameters['id']!),
+            ),
+            routes: [
+              GoRoute(
+                path: 'edit',
+                builder: (context, state) => AuthGate(
+                  child: LoanEditorPage(loanId: state.pathParameters['id']),
+                ),
+              ),
+              GoRoute(
+                path: 'schedule',
+                builder: (context, state) => AuthGate(
+                  child: LoanSchedulePage(loanId: state.pathParameters['id']!),
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: ':id',
+            builder: (context, state) => AuthGate(
+              child: DebtDetailPage(debtId: state.pathParameters['id']!),
+            ),
+            routes: [
+              GoRoute(
+                path: 'edit',
+                builder: (context, state) => AuthGate(
+                  child: DebtEditorPage(debtId: state.pathParameters['id']),
                 ),
               ),
             ],

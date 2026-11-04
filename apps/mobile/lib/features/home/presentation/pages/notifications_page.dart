@@ -30,11 +30,15 @@ class _NotificationsPageState extends State<NotificationsPage> {
     });
   }
 
-  /// Marks it read; the daily log reminder also opens "Ghi chi".
+  /// Marks it read; the daily log reminder also opens "Ghi chi", a debt
+  /// reminder opens that debt.
   void _open(InboxNotification item) {
     if (!item.isRead) _model.markRead(item.id);
     if (item.kind == NotificationKind.dailyLog) {
       context.push('/record?type=expense');
+    } else if (item.kind == NotificationKind.debt) {
+      final id = item.params['debtId'];
+      context.push(id is String ? '/me/debts/$id' : '/me/debts');
     }
   }
 

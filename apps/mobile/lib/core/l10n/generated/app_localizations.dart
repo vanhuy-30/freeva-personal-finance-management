@@ -7145,6 +7145,738 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Couldn\'t match the balance. Try again.'**
   String get walletReconcileFailed;
+
+  /// No description provided for @meDebts.
+  ///
+  /// In en, this message translates to:
+  /// **'Loans and debts'**
+  String get meDebts;
+
+  /// No description provided for @meDebtsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 item} other{{count} items}}'**
+  String meDebtsCount(int count);
+
+  /// No description provided for @transactionDebt.
+  ///
+  /// In en, this message translates to:
+  /// **'Lending'**
+  String get transactionDebt;
+
+  /// No description provided for @txKindDebt.
+  ///
+  /// In en, this message translates to:
+  /// **'lending'**
+  String get txKindDebt;
+
+  /// No description provided for @txDebtTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Loans and debts'**
+  String get txDebtTitle;
+
+  /// No description provided for @txDebtReadOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'This belongs to Loans and debts and can’t be edited.'**
+  String get txDebtReadOnly;
+
+  /// No description provided for @debtsTabPeople.
+  ///
+  /// In en, this message translates to:
+  /// **'People'**
+  String get debtsTabPeople;
+
+  /// No description provided for @debtsTabLoans.
+  ///
+  /// In en, this message translates to:
+  /// **'Loans'**
+  String get debtsTabLoans;
+
+  /// No description provided for @debtsAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Record a debt'**
+  String get debtsAdd;
+
+  /// No description provided for @debtsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody owes anybody'**
+  String get debtsEmptyTitle;
+
+  /// No description provided for @debtsEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Lent to a friend or borrowed from family? Note it so you don’t forget.'**
+  String get debtsEmptyBody;
+
+  /// No description provided for @debtsLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t load debts'**
+  String get debtsLoadError;
+
+  /// No description provided for @debtsOwedToYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Others owe you'**
+  String get debtsOwedToYou;
+
+  /// No description provided for @debtsYouOwe.
+  ///
+  /// In en, this message translates to:
+  /// **'You owe'**
+  String get debtsYouOwe;
+
+  /// No description provided for @debtsGroupOwedToYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Who owes you'**
+  String get debtsGroupOwedToYou;
+
+  /// No description provided for @debtsGroupYouOwe.
+  ///
+  /// In en, this message translates to:
+  /// **'Whom you owe'**
+  String get debtsGroupYouOwe;
+
+  /// No description provided for @debtsGroupSettled.
+  ///
+  /// In en, this message translates to:
+  /// **'Settled'**
+  String get debtsGroupSettled;
+
+  /// No description provided for @debtsSettledLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Settled ({count})'**
+  String debtsSettledLink(int count);
+
+  /// No description provided for @debtLentOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Lent {date}'**
+  String debtLentOn(String date);
+
+  /// No description provided for @debtBorrowedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Borrowed {date}'**
+  String debtBorrowedOn(String date);
+
+  /// No description provided for @debtDueOn.
+  ///
+  /// In en, this message translates to:
+  /// **'due {date}'**
+  String debtDueOn(String date);
+
+  /// No description provided for @debtNoDue.
+  ///
+  /// In en, this message translates to:
+  /// **'no due date'**
+  String get debtNoDue;
+
+  /// No description provided for @debtNoDueValue.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get debtNoDueValue;
+
+  /// No description provided for @debtLend.
+  ///
+  /// In en, this message translates to:
+  /// **'Lend'**
+  String get debtLend;
+
+  /// No description provided for @debtBorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Borrow'**
+  String get debtBorrow;
+
+  /// No description provided for @debtHistoryBorrowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Borrowed'**
+  String get debtHistoryBorrowed;
+
+  /// No description provided for @debtAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get debtAmount;
+
+  /// No description provided for @debtBorrower.
+  ///
+  /// In en, this message translates to:
+  /// **'Borrower'**
+  String get debtBorrower;
+
+  /// No description provided for @debtLender.
+  ///
+  /// In en, this message translates to:
+  /// **'Lender'**
+  String get debtLender;
+
+  /// No description provided for @debtFromWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'From wallet'**
+  String get debtFromWallet;
+
+  /// No description provided for @debtFromWalletShort.
+  ///
+  /// In en, this message translates to:
+  /// **'From wallet'**
+  String get debtFromWalletShort;
+
+  /// No description provided for @debtToWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'To wallet'**
+  String get debtToWallet;
+
+  /// No description provided for @debtWalletLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{wallet} · {amount} left'**
+  String debtWalletLeft(String wallet, String amount);
+
+  /// No description provided for @debtDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get debtDate;
+
+  /// No description provided for @debtDueDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Due date'**
+  String get debtDueDate;
+
+  /// No description provided for @debtPickDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a date'**
+  String get debtPickDate;
+
+  /// No description provided for @debtClearDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear due date'**
+  String get debtClearDue;
+
+  /// No description provided for @debtDueBeforeDate.
+  ///
+  /// In en, this message translates to:
+  /// **'The due date must be after the date.'**
+  String get debtDueBeforeDate;
+
+  /// No description provided for @debtNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get debtNote;
+
+  /// No description provided for @debtNoteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a note'**
+  String get debtNoteHint;
+
+  /// No description provided for @debtNotCounted.
+  ///
+  /// In en, this message translates to:
+  /// **'Not counted as income or spending.'**
+  String get debtNotCounted;
+
+  /// No description provided for @debtSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get debtSave;
+
+  /// No description provided for @debtEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit debt'**
+  String get debtEditTitle;
+
+  /// No description provided for @debtTheyOwe.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} still owes you'**
+  String debtTheyOwe(String name);
+
+  /// No description provided for @debtYouOweName.
+  ///
+  /// In en, this message translates to:
+  /// **'You still owe {name}'**
+  String debtYouOweName(String name);
+
+  /// No description provided for @debtOfPrincipal.
+  ///
+  /// In en, this message translates to:
+  /// **'/ {amount}'**
+  String debtOfPrincipal(String amount);
+
+  /// No description provided for @debtReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Received {amount}'**
+  String debtReceived(String amount);
+
+  /// No description provided for @debtPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid {amount}'**
+  String debtPaid(String amount);
+
+  /// No description provided for @debtLentDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Lent on'**
+  String get debtLentDate;
+
+  /// No description provided for @debtBorrowedDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Borrowed on'**
+  String get debtBorrowedDate;
+
+  /// No description provided for @debtHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get debtHistory;
+
+  /// No description provided for @debtTheyPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} paid'**
+  String debtTheyPaid(String name);
+
+  /// No description provided for @debtYouPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'You paid'**
+  String get debtYouPaid;
+
+  /// No description provided for @debtInto.
+  ///
+  /// In en, this message translates to:
+  /// **'{date} · into {wallet}'**
+  String debtInto(String date, String wallet);
+
+  /// No description provided for @debtOutOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{date} · from {wallet}'**
+  String debtOutOf(String date, String wallet);
+
+  /// No description provided for @debtRecordReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Record money back'**
+  String get debtRecordReceived;
+
+  /// No description provided for @debtRecordPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Record a payment'**
+  String get debtRecordPaid;
+
+  /// No description provided for @debtPayTheyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} pays you'**
+  String debtPayTheyTitle(String name);
+
+  /// No description provided for @debtPayYouTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You pay {name}'**
+  String debtPayYouTitle(String name);
+
+  /// No description provided for @debtHalf.
+  ///
+  /// In en, this message translates to:
+  /// **'Half'**
+  String get debtHalf;
+
+  /// No description provided for @debtAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All {amount}'**
+  String debtAll(String amount);
+
+  /// No description provided for @debtSettleHintLent.
+  ///
+  /// In en, this message translates to:
+  /// **'Once it’s all back, this moves to Settled.'**
+  String get debtSettleHintLent;
+
+  /// No description provided for @debtSettleHintBorrowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Once it’s all paid, this moves to Settled.'**
+  String get debtSettleHintBorrowed;
+
+  /// No description provided for @debtTooMuch.
+  ///
+  /// In en, this message translates to:
+  /// **'That’s more than what’s owed.'**
+  String get debtTooMuch;
+
+  /// No description provided for @loansAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a loan'**
+  String get loansAdd;
+
+  /// No description provided for @loansLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t load loans'**
+  String get loansLoadError;
+
+  /// No description provided for @loansEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No loans yet'**
+  String get loansEmptyTitle;
+
+  /// No description provided for @loansEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Home, car or personal loan? Add it to follow the repayments.'**
+  String get loansEmptyBody;
+
+  /// No description provided for @loansOwed.
+  ///
+  /// In en, this message translates to:
+  /// **'Still owed'**
+  String get loansOwed;
+
+  /// No description provided for @loansPaidPrincipal.
+  ///
+  /// In en, this message translates to:
+  /// **'Principal paid'**
+  String get loansPaidPrincipal;
+
+  /// No description provided for @loansDueThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Due this month'**
+  String get loansDueThisMonth;
+
+  /// No description provided for @loanPaidOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid off'**
+  String get loanPaidOff;
+
+  /// No description provided for @loanRateYear.
+  ///
+  /// In en, this message translates to:
+  /// **'{rate}%/yr'**
+  String loanRateYear(String rate);
+
+  /// No description provided for @loanNextOn.
+  ///
+  /// In en, this message translates to:
+  /// **'next {date}'**
+  String loanNextOn(String date);
+
+  /// No description provided for @loanEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit loan'**
+  String get loanEdit;
+
+  /// No description provided for @loanEditShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get loanEditShort;
+
+  /// No description provided for @loanPaidPercent.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% of principal paid'**
+  String loanPaidPercent(String percent);
+
+  /// No description provided for @loanDoneBy.
+  ///
+  /// In en, this message translates to:
+  /// **'done by {month}'**
+  String loanDoneBy(String month);
+
+  /// No description provided for @loanNextPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Next payment'**
+  String get loanNextPeriod;
+
+  /// No description provided for @loanNextOnTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Next · {date}'**
+  String loanNextOnTitle(String date);
+
+  /// No description provided for @loanSplit.
+  ///
+  /// In en, this message translates to:
+  /// **'Principal {principal} · interest {interest}'**
+  String loanSplit(String principal, String interest);
+
+  /// No description provided for @loanInterestOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Interest this period {amount}'**
+  String loanInterestOnly(String amount);
+
+  /// No description provided for @loanRecordPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Record a payment'**
+  String get loanRecordPayment;
+
+  /// No description provided for @loanHow.
+  ///
+  /// In en, this message translates to:
+  /// **'How it works'**
+  String get loanHow;
+
+  /// No description provided for @loanHowText.
+  ///
+  /// In en, this message translates to:
+  /// **'{rate}% a year on what is still owed, paid {frequency}. Interest comes first, the rest lowers the principal.'**
+  String loanHowText(String rate, String frequency);
+
+  /// No description provided for @loanSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Repayments'**
+  String get loanSchedule;
+
+  /// No description provided for @loanFullSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'See all'**
+  String get loanFullSchedule;
+
+  /// No description provided for @loanNextTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get loanNextTag;
+
+  /// No description provided for @loanPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment {index}'**
+  String loanPeriod(int index);
+
+  /// No description provided for @loanKindMortgage.
+  ///
+  /// In en, this message translates to:
+  /// **'Home loan'**
+  String get loanKindMortgage;
+
+  /// No description provided for @loanKindPersonal.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal loan'**
+  String get loanKindPersonal;
+
+  /// No description provided for @loanKindOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get loanKindOther;
+
+  /// No description provided for @loanFreqWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get loanFreqWeekly;
+
+  /// No description provided for @loanFreqMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get loanFreqMonthly;
+
+  /// No description provided for @loanFreqQuarterly.
+  ///
+  /// In en, this message translates to:
+  /// **'Quarterly'**
+  String get loanFreqQuarterly;
+
+  /// No description provided for @loanFreqYearly.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly'**
+  String get loanFreqYearly;
+
+  /// No description provided for @loanName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get loanName;
+
+  /// No description provided for @loanAmountGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Amounts'**
+  String get loanAmountGroup;
+
+  /// No description provided for @loanPrincipal.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount borrowed'**
+  String get loanPrincipal;
+
+  /// No description provided for @loanRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Interest rate'**
+  String get loanRate;
+
+  /// No description provided for @loanRateUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'%/yr'**
+  String get loanRateUnit;
+
+  /// No description provided for @loanInstallment.
+  ///
+  /// In en, this message translates to:
+  /// **'Each payment'**
+  String get loanInstallment;
+
+  /// No description provided for @loanFrequency.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get loanFrequency;
+
+  /// No description provided for @loanNextDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Next payment'**
+  String get loanNextDue;
+
+  /// No description provided for @loanStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get loanStart;
+
+  /// No description provided for @loanEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'End'**
+  String get loanEnd;
+
+  /// No description provided for @loanPayFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay from'**
+  String get loanPayFrom;
+
+  /// No description provided for @loanInstallmentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave \"Each payment\" empty and Freeva works it out from the end date.'**
+  String get loanInstallmentHint;
+
+  /// No description provided for @loanSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save loan'**
+  String get loanSave;
+
+  /// No description provided for @loanOwedTooMuch.
+  ///
+  /// In en, this message translates to:
+  /// **'What’s owed can’t be more than the amount borrowed.'**
+  String get loanOwedTooMuch;
+
+  /// No description provided for @loanPayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment due {date}'**
+  String loanPayTitle(String date);
+
+  /// No description provided for @loanPrincipalPart.
+  ///
+  /// In en, this message translates to:
+  /// **'Principal'**
+  String get loanPrincipalPart;
+
+  /// No description provided for @loanInterestPart.
+  ///
+  /// In en, this message translates to:
+  /// **'Interest'**
+  String get loanInterestPart;
+
+  /// No description provided for @loanWalletLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} left'**
+  String loanWalletLeft(String amount);
+
+  /// No description provided for @loanPrincipalHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Only the principal lowers what is owed.'**
+  String get loanPrincipalHint;
+
+  /// No description provided for @loanTooMuch.
+  ///
+  /// In en, this message translates to:
+  /// **'The principal is more than what is owed.'**
+  String get loanTooMuch;
+
+  /// No description provided for @notifyInboxDebtDueTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A debt is due soon'**
+  String get notifyInboxDebtDueTitle;
+
+  /// No description provided for @notifyInboxDebtDueLentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Money owed to you is due'**
+  String get notifyInboxDebtDueLentTitle;
+
+  /// No description provided for @notifyInboxDebtOverdueTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A debt is overdue'**
+  String get notifyInboxDebtOverdueTitle;
+
+  /// No description provided for @notifyInboxDebtOverdueLentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Money owed to you is overdue'**
+  String get notifyInboxDebtOverdueLentTitle;
+
+  /// No description provided for @notifyInboxDebtDueBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =0{Due today.} =1{Due in 1 day.} other{Due in {days} days.}}'**
+  String notifyInboxDebtDueBody(int days);
+
+  /// No description provided for @notifyInboxDebtOverdueBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{1 day overdue.} other{{days} days overdue.}}'**
+  String notifyInboxDebtOverdueBody(int days);
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

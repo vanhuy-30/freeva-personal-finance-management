@@ -1,6 +1,6 @@
 # Vay và công nợ — BE-P3-E02 / MOB-P3-E02
 
-Contract: [OpenAPI](../../packages/api-contracts/openapi.yaml) `/api/v1/loans`. Module: [10-loans](../product/modules/10-loans.md). Phần mobile (`MOB-P3-E02`) làm riêng. Cho mượn / đi mượn người quen không lãi là `BE-P3-007`.
+Contract: [OpenAPI](../../packages/api-contracts/openapi.yaml) `/api/v1/loans`. Module: [10-loans](../product/modules/10-loans.md). Phần mobile: [mobile-debts-loans.md](mobile-debts-loans.md). Cho mượn / đi mượn người quen không lãi là `BE-P3-007`.
 
 ## Mô hình
 
@@ -13,13 +13,13 @@ Không có việc nào tự chạy. Chỉ khi user gọi:
 
 | Thao tác | Giao dịch | Audit |
 |---|---|---|
-| `POST /loans/{id}/payments` | expense phần gốc + expense phần lãi (mỗi phần > 0), cùng commit với dư nợ | không |
+| `POST /loans/{id}/payments` | phần gốc: một giao dịch `debt` một chân (không danh mục); phần lãi: một expense (mỗi phần > 0), cùng commit với dư nợ | không |
 | `adjust` (sửa số đã có) | không | `loan.adjust` |
 | tạo khoản vay | không | `loan.create` |
 
-Mỗi expense cần danh mục (`principalCategoryId`, `interestCategoryId`) khi phần đó > 0. Chỉ phần gốc làm giảm dư nợ; trả quá dư nợ → `LOAN_OVERPAYMENT` (422). Retry cùng `clientId` trả kết quả cũ; khác nội dung → 409. Id chân giao dịch sinh cố định từ `clientId`. Sau khi trả, `nextDueDate` lùi một kỳ (cuối tháng thì cắt về ngày cuối); trả hết thì `null`.
+Phần gốc là `debt` (như cho mượn / đi mượn, [personal-debts.md](personal-debts.md)): không vào thu/chi, ngân sách, tỷ lệ tiết kiệm, nhưng có trong số dư ví, lịch sử, export, sổ cái; `PATCH`/xoá qua `/transactions` bị chặn (400) để dư nợ không lệch. `principalCategoryId` không còn dùng (vẫn nhận cho app cũ). Phần lãi là chi phí: expense theo `interestCategoryId`, không gửi thì dùng danh mục chi "Lãi vay" đang hoạt động của user, chưa có thì tạo một lần làm danh mục hệ thống (`LOAN_INTEREST_CATEGORY`). Chỉ phần gốc làm giảm dư nợ; trả quá dư nợ → `LOAN_OVERPAYMENT` (422). Retry cùng `clientId` trả kết quả cũ; khác nội dung → 409. Id chân giao dịch sinh cố định từ `clientId`. Sau khi trả, `nextDueDate` lùi một kỳ (cuối tháng thì cắt về ngày cuối); trả hết thì `null`.
 
-**Tồn đọng:** báo cáo và ngân sách đếm mọi expense, nên phần gốc trả nợ hiện tính vào chi tiêu. Tách gốc khỏi báo cáo là việc sau.
+Migration `20261104100000_loan_principal_debt` (chỉ đổi dữ liệu) chuyển các chân gốc đã ghi là expense trước đó sang `debt`, bỏ danh mục, tăng `version` để thiết bị tải lại; bỏ qua dòng đã có hoàn tiền hoặc kế hoạch trả góp thẻ.
 
 ## Công thức
 
@@ -31,6 +31,8 @@ Số nguyên (`bigint`), không `double`.
 - `splitPayment`: mặc định lãi của kỳ trước, phần còn lại là gốc.
 - `status`: `paid_off` (dư nợ 0) · `overdue` (quá `nextDueDate`) · `active`.
 - `percentBps = (principal - outstanding) * 10000 / principal`, làm tròn xuống.
+- Ngày từng kỳ (`schedule.items[].dueDate`): kỳ 1 = `nextDueDate`, mỗi kỳ sau lùi một kỳ bằng cùng hàm với lúc trả (`addPeriod`, cắt cuối tháng); không có `nextDueDate` thì `null`.
+- `summary.items[].dueThisMonthMinor`: tổng số tiền các kỳ có `dueDate` trong tháng hiện tại theo múi giờ hồ sơ; kỳ quá hạn của tháng trước không tính. Khoản vay không có số trả mỗi kỳ không có lịch nên không góp vào.
 
 ## API
 

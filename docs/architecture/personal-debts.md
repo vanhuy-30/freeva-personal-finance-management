@@ -1,6 +1,6 @@
 # Cho mượn và đi mượn — BE-P3-007 / MOB-P3-007
 
-Contract: [OpenAPI](../../packages/api-contracts/openapi.yaml) `/api/v1/personal-debts`. Module: [10-loans](../product/modules/10-loans.md). Không lãi suất; vay có lãi, lịch trả và gốc/lãi là [loans.md](loans.md) (`BE-P3-E02`). Phần mobile (`MOB-P3-007`) làm riêng.
+Contract: [OpenAPI](../../packages/api-contracts/openapi.yaml) `/api/v1/personal-debts`. Module: [10-loans](../product/modules/10-loans.md). Không lãi suất; vay có lãi, lịch trả và gốc/lãi là [loans.md](loans.md) (`BE-P3-E02`). Phần mobile: [mobile-debts-loans.md](mobile-debts-loans.md).
 
 ## Mô hình
 
@@ -39,4 +39,4 @@ Bearer session, `Cache-Control: no-store`, tiền là string integer. `GET/POST 
 ## Tồn đọng
 
 - Chưa có cách xóa một khoản ghi nhầm khi đã có tiền chuyển (cần hoàn tác chân giao dịch).
-- App mobile hiện chưa biết loại `debt` (và `adjustment`): màn lịch sử ví cần xử lý trước khi `MOB-P3-007` / `MOB-P3-005` ra.
+- App biết loại `debt` từ `MOB-P3-007` ([mobile-debts-loans.md](mobile-debts-loans.md)); chân `debt` chỉ đọc trên app.

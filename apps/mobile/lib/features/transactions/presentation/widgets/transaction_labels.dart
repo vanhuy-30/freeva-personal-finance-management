@@ -7,6 +7,7 @@ String transactionTypeLabel(S s, TransactionType type) => switch (type) {
   TransactionType.income => s.transactionIncome,
   TransactionType.transfer => s.transactionTransfer,
   TransactionType.adjustment => s.transactionAdjustment,
+  TransactionType.debt => s.transactionDebt,
 };
 
 String transactionError(S s, AuthFailure error) => switch (error.code) {
