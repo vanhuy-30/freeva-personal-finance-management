@@ -62,6 +62,7 @@ class TransactionNaming {
   IconData icon(TransactionType? type, String? categoryId) => switch (type) {
     TransactionType.transfer => categoryIcon('transfer'),
     TransactionType.adjustment => LucideIcons.scale,
+    TransactionType.debt => LucideIcons.handshake,
     _ => categoryIcon(_categories[categoryId]?.iconToken),
   };
 
@@ -70,14 +71,18 @@ class TransactionNaming {
     TransactionType.income => s.txKindIncome,
     TransactionType.transfer => s.txKindTransfer,
     TransactionType.adjustment => s.txKindAdjustment,
+    TransactionType.debt => s.txKindDebt,
   };
 
   TransactionLabel label(TransactionBundle row) {
     final first = row.legs.first;
     final notes = _clean(row.notes);
     final merchant = _clean(row.merchant);
-    final adjustment = row.type == TransactionType.adjustment;
-    final category = adjustment
+    final debt = row.type == TransactionType.debt;
+    final adjustment = row.type == TransactionType.adjustment || debt;
+    final category = debt
+        ? s.txDebtTitle
+        : adjustment
         ? s.txAdjustTitle
         : row.type == TransactionType.transfer
         ? s.txTransferTitle

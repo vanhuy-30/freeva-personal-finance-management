@@ -19,6 +19,7 @@ class MoneySetupGroup extends StatelessWidget {
     this.walletCount,
     this.tagCount,
     this.goalCount,
+    this.debtCount,
     this.budget,
     super.key,
   });
@@ -33,6 +34,9 @@ class MoneySetupGroup extends StatelessWidget {
 
   /// Goals being saved for; null while unknown.
   final int? goalCount;
+
+  /// Open debts and loans; null while unknown.
+  final int? debtCount;
 
   /// Monthly budget draft in VND; null when none was typed.
   final int? budget;
@@ -156,6 +160,16 @@ class MoneySetupGroup extends StatelessWidget {
               ? null
               : s.meGoalsCount(goalCount!),
           onTap: () => context.push('/me/goals'),
+        ),
+        SettingsRow(
+          tint: (c.tintGreen, c.tintGreenFg),
+          minHeight: rowHeight,
+          icon: LucideIcons.handHelping,
+          title: s.meDebts,
+          value: debtCount == null || debtCount == 0
+              ? null
+              : s.meDebtsCount(debtCount!),
+          onTap: () => context.push('/me/debts'),
         ),
       ],
     );

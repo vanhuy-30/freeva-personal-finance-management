@@ -548,6 +548,7 @@ class DefaultTransactionViewModel extends TransactionViewModel {
             TransactionType.transfer => TransactionAnalyticsType.transfer,
             // Never created by the composer; only reconcile writes it.
             TransactionType.adjustment => TransactionAnalyticsType.expense,
+            TransactionType.debt => TransactionAnalyticsType.expense,
           }),
         );
       }

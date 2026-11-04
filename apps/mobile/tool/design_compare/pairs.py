@@ -17,6 +17,7 @@ M = {
  'G': [('MeHome','settings/g1_me'),('MeProfile','settings/g1_profile'),('MeTheme','settings/g1_theme'),('MeSecurity','settings/g1_security'),('MeSessions','settings/g1_sessions'),('MeLogout','settings/g1_logout'),('MeTags','settings/g2_tags'),('MeFeedback','settings/g2_feedback'),('MeFeedbackSent','settings/g2_thanks'),('MeFaq','settings/g2_faq')],
 
  'I': [('GoalEmpty','goals/goals_empty'),('GoalList','goals/goals_list'),('GoalAdd','goals/goals_add_dated'),('GoalDetail','goals/goals_detail'),('GoalMove','goals/goals_move_in'),('BHomeGoal','goals/goals_home_block')],
+ 'K': [('DebtEmpty','debts/debts_empty'),('DebtList','debts/debts_list'),('DebtAdd','debts/debts_add'),('DebtDetail','debts/debts_detail'),('DebtPay','debts/debts_pay'),('LoanList','debts/debts_loans'),('LoanDetail','debts/debts_loan_detail'),('LoanAdd','debts/debts_loan_add'),('LoanPay','debts/debts_loan_pay')],
  'L': [('RecList','recurring/rec_list'),('RecEdit','recurring/rec_add_remind'),('RecEditAuto','recurring/rec_edit_auto'),('BillPaid','recurring/rec_paid_sheet')],
  'N': [('BudgetAlert','budgets/n4_thresholds'),('MeNotify3','settings/g2_notify'),('NotifyTime','settings/g2_notify_time')],
  'H': [('SyncBanner','sync/h1_list'),('SyncCenter','sync/h1_center'),('SyncRunning','sync/h1_sending'),('SyncDone','sync/h1_done'),('SyncConflict','sync/h2_compare'),('SyncDuplicate','sync/h2_duplicate'),('SyncDiscard','sync/h1_discard'),('SyncUpdate','sync/h1_update')],

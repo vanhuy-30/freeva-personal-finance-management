@@ -93,35 +93,43 @@ class TransactionDetailBody extends StatelessWidget {
           today: model.today(),
         ),
         const SizedBox(height: FreevaSpace.s5),
-        Row(
-          children: [
-            DeleteCircleButton(
-              label: s.txDetailDelete,
-              onPressed: () => close(DetailAction.delete),
-            ),
-            // An adjustment cannot be copied: only "Khớp số dư" writes one.
-            if (bundle.type != TransactionType.adjustment) ...[
+        // The API refuses edits on a debt leg: it would break the remaining.
+        if (bundle.type == TransactionType.debt)
+          Text(
+            s.txDebtReadOnly,
+            textAlign: TextAlign.center,
+            style: FreevaTypography.bodyS.copyWith(color: c.textSecondary),
+          )
+        else
+          Row(
+            children: [
+              DeleteCircleButton(
+                label: s.txDetailDelete,
+                onPressed: () => close(DetailAction.delete),
+              ),
+              // An adjustment cannot be copied: only "Khớp số dư" writes one.
+              if (bundle.type != TransactionType.adjustment) ...[
+                const SizedBox(width: FreevaSpace.s2),
+                Expanded(
+                  child: _ActionButton(
+                    label: s.txDetailCopy,
+                    icon: LucideIcons.copy,
+                    variant: FreevaButtonVariant.secondary,
+                    onPressed: () => close(DetailAction.copy),
+                  ),
+                ),
+              ],
               const SizedBox(width: FreevaSpace.s2),
               Expanded(
                 child: _ActionButton(
-                  label: s.txDetailCopy,
-                  icon: LucideIcons.copy,
-                  variant: FreevaButtonVariant.secondary,
-                  onPressed: () => close(DetailAction.copy),
+                  label: s.txDetailEdit,
+                  icon: LucideIcons.penLine,
+                  variant: FreevaButtonVariant.ink,
+                  onPressed: () => close(DetailAction.edit),
                 ),
               ),
             ],
-            const SizedBox(width: FreevaSpace.s2),
-            Expanded(
-              child: _ActionButton(
-                label: s.txDetailEdit,
-                icon: LucideIcons.penLine,
-                variant: FreevaButtonVariant.ink,
-                onPressed: () => close(DetailAction.edit),
-              ),
-            ),
-          ],
-        ),
+          ),
       ],
     );
   }

@@ -62,6 +62,14 @@ String inboxTitle(S s, InboxNotification item) {
       return s.notifyInboxCardNearLimitTitle;
     case 'daily_log':
       return s.notifyInboxDailyLogTitle;
+    case 'debt_due':
+      return item.params['direction'] == 'lent'
+          ? s.notifyInboxDebtDueLentTitle
+          : s.notifyInboxDebtDueTitle;
+    case 'debt_overdue':
+      return item.params['direction'] == 'lent'
+          ? s.notifyInboxDebtOverdueLentTitle
+          : s.notifyInboxDebtOverdueTitle;
     default:
       return notificationKindTitle(s, item.kind);
   }
@@ -87,6 +95,14 @@ String inboxBody(S s, InboxNotification item) {
       return s.notifyInboxCardNearLimitBody('$threshold');
     case 'daily_log_body':
       return s.notifyInboxDailyLogBody;
+    case 'debt_due_body':
+      final days = item.params['days'];
+      final count = days is int ? days : int.tryParse('$days') ?? 0;
+      return s.notifyInboxDebtDueBody(count);
+    case 'debt_overdue_body':
+      final days = item.params['days'];
+      final count = days is int ? days : int.tryParse('$days') ?? 0;
+      return s.notifyInboxDebtOverdueBody(count);
     default:
       return s.notificationsEmptyBody;
   }

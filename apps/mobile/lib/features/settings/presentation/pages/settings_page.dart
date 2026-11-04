@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../goals/presentation/viewmodels/goal_view_model.dart';
+import '../../../debts/presentation/viewmodels/debt_view_model.dart';
+import '../../../loans/presentation/viewmodels/loan_view_model.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/theme_context.dart';
@@ -39,6 +41,12 @@ class _SettingsPageState extends State<SettingsPage> {
   final GoalViewModel? goals = getIt.isRegistered<GoalViewModel>()
       ? getIt<GoalViewModel>()
       : null;
+  final DebtViewModel? debts = getIt.isRegistered<DebtViewModel>()
+      ? getIt<DebtViewModel>()
+      : null;
+  final LoanViewModel? loans = getIt.isRegistered<LoanViewModel>()
+      ? getIt<LoanViewModel>()
+      : null;
   int? tagCount;
 
   @override
@@ -52,6 +60,8 @@ class _SettingsPageState extends State<SettingsPage> {
       settings.load();
       if (wallets case final w? when w.wallets.isEmpty) w.load();
       goals?.load();
+      debts?.load();
+      loans?.load();
     });
     _loadTags();
   }
@@ -61,6 +71,13 @@ class _SettingsPageState extends State<SettingsPage> {
     final result = await getIt<TagUseCases>().list();
     if (!mounted) return;
     result.fold((_) {}, (tags) => setState(() => tagCount = tags.length));
+  }
+
+  /// Open debts plus loans still being paid, once both are known.
+  int? get _debtCount {
+    final d = debts, l = loans;
+    if (d == null || l == null || !d.loaded || !l.loaded) return null;
+    return d.openCount + l.openCount;
   }
 
   int? get _walletCount {
@@ -90,6 +107,8 @@ class _SettingsPageState extends State<SettingsPage> {
       settings,
       profile,
       if (goals != null) goals!,
+      if (debts != null) debts!,
+      if (loans != null) loans!,
       if (wallets != null) wallets!,
     ]),
     builder: (context, _) {
@@ -121,6 +140,7 @@ class _SettingsPageState extends State<SettingsPage> {
               goalCount: goals != null && goals!.loaded
                   ? goals!.active.length
                   : null,
+              debtCount: _debtCount,
               budget: settings.budgetDraftMinor,
             ),
             AppSettingsGroup(settings: settings, profile: profile),

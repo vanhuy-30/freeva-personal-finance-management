@@ -1,6 +1,6 @@
 # Vay và công nợ — BE-P3-E02 / MOB-P3-E02
 
-Contract: [OpenAPI](../../packages/api-contracts/openapi.yaml) `/api/v1/loans`. Module: [10-loans](../product/modules/10-loans.md). Phần mobile (`MOB-P3-E02`) làm riêng. Cho mượn / đi mượn người quen không lãi là `BE-P3-007`.
+Contract: [OpenAPI](../../packages/api-contracts/openapi.yaml) `/api/v1/loans`. Module: [10-loans](../product/modules/10-loans.md). Phần mobile: [mobile-debts-loans.md](mobile-debts-loans.md). Cho mượn / đi mượn người quen không lãi là `BE-P3-007`.
 
 ## Mô hình
 

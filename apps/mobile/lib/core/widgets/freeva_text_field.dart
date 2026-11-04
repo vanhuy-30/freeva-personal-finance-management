@@ -28,6 +28,7 @@ class FreevaTextField extends StatefulWidget {
     this.obscureText = false,
     this.leadingIcon,
     this.leadingTint,
+    this.trailingIcon,
     this.maxLength,
     this.showCounter = false,
     super.key,
@@ -58,6 +59,10 @@ class FreevaTextField extends StatefulWidget {
   /// Fill and glyph colours of the [leadingIcon] tile when it is not the
   /// neutral one (a category's tones).
   final (Color, Color)? leadingTint;
+
+  /// 16 secondary glyph at the end, saying the value can be changed
+  /// (LoanPay's pencil).
+  final IconData? trailingIcon;
 
   /// Hard limit on the number of characters.
   final int? maxLength;
@@ -230,6 +235,16 @@ class _FreevaTextFieldState extends State<FreevaTextField> {
                 const SizedBox(width: 10),
               ],
               Expanded(child: body),
+              if (widget.trailingIcon != null) ...[
+                const SizedBox(width: FreevaSpace.s2),
+                ExcludeSemantics(
+                  child: Icon(
+                    widget.trailingIcon,
+                    size: FreevaSize.iconChip,
+                    color: c.textSecondary,
+                  ),
+                ),
+              ],
             ],
           ),
         ),

@@ -11,12 +11,13 @@
 - Note: BE-P3-E01 xong 2026-11-02: `/api/v1/goals` (CRUD, presets, `contribute` / `withdraw` / `adjust`), transfer cân hai chân khi chọn ví nguồn, audit `goal.adjust`, công thức 8.000.000 có test, OpenAPI, export/xoá tài khoản. Kiến trúc: [goals.md](../docs/architecture/goals.md). MOB-P3-E01 xong 2026-11-04: `/me/goals` (danh sách, trống, tạo/sửa, chi tiết, sheet góp/rút), khối Mục tiêu trên Tổng quan khi chọn "Tiết kiệm", ô Mục tiêu ở Cá nhân đếm mục tiêu thật; thêm `GET /goals/{id}/entries` cho lịch sử; `Profile.monthlyIncomeMinor` cho "% thu nhập". Golden sáng/tối. [Mobile](../docs/architecture/mobile-goals.md). Tồn đọng: lịch sử chưa có tên ví; chưa chạy trên thiết bị thật/staging.
 
 ### BE-P3-E02 / MOB-P3-E02 — Vay và công nợ (module 10)
-- Status: doing — BE xong 2026-11-02, MOB còn
+- Status: done — BE xong 2026-11-02, MOB xong 2026-11-04
 - Module: 10
 - Gate: post-v1
 - Depends: BE-P1-005
 - DoD: loại thẻ, vay cá nhân, vay mua nhà, khác (cho mượn / đi mượn người quen bản nhẹ ở `BE-P3-007`). Có gốc, dư nợ, lãi suất, số tiền mỗi kỳ, tần suất, ngày đến hạn, ngày bắt đầu, ngày kết thúc. Màn hình tổng nợ, đã trả, còn lại. Mỗi lần trả là một giao dịch. Bộ test lãi dùng số cố định, không `double`. Không biến app thành sản phẩm cho vay.
 - Note: BE-P3-E02 xong 2026-11-02: `/api/v1/loans` (CRUD, summary, schedule, payments, adjust), lãi dư nợ giảm dần bằng bigint có test (100tr, 12%/năm → lãi kỳ 1 = 1tr), mỗi lần trả tạo hai expense gốc/lãi, audit `loan.create` / `loan.adjust`, OpenAPI, export/xoá tài khoản. Kiến trúc: [loans.md](../docs/architecture/loans.md). Tồn đọng: phần gốc đang tính vào báo cáo chi tiêu (chưa tách); MOB-P3-E02 (màn tổng nợ) chưa làm.
+- Note: MOB-P3-E02 xong 2026-11-04 (cùng nhánh `MOB-P3-007`): tab Khoản vay trên màn "Vay và nợ" (thẻ Còn nợ, Đã trả gốc, Tháng này cần trả), thêm/sửa (chip Vay mua nhà · Vay tiêu dùng · Khác, `card` không chọn; để trống "Trả mỗi kỳ" thì tính theo ngày kết thúc bằng công thức của API), chi tiết (kỳ tới, cách tính, 3 kỳ + "Xem cả lịch"), sheet ghi lần trả tách gốc/lãi. Backend thêm: không gửi danh mục thì dùng "Trả nợ" / "Lãi vay" (tạo một lần làm danh mục hệ thống), `schedule.items[].dueDate`, `summary.items[].dueThisMonthMinor`. [Mobile](../docs/architecture/mobile-debts-loans.md). Tồn đọng: phần gốc vẫn tính vào chi tiêu (ở trên); ghi lần trả luôn ngày hôm nay; chưa có lưu trữ khoản vay và lịch sử các lần trả trên app; chưa chạy trên thiết bị thật/staging.
 
 ### BE-P3-E03 / MOB-P3-E03 — Tiền gửi có kỳ hạn (module 11)
 - Status: wont — gộp vào `BE-P4-E01` (2026-11-02)
@@ -88,12 +89,13 @@
 - Note: MOB-P3-006 xong 2026-11-04: màn Thông báo theo board N5 `MeNotify3`: dòng "Nhắc ghi chi" (công tắc `dailyLogEnabled`, "Mỗi ngày lúc HH:mm" với giờ từ `dailyLogTime` là liên kết), popup N6 "Chọn giờ nhắc" (bánh xe giờ, phút bước 15, chỉ lưu giờ); chữ các dòng theo board, bỏ Insight, "Nợ đến hạn" thành công tắc thật, "80% và 100%" mở Ngân sách. Bấm push `kind = daily_log` (cả khi mở app từ push, chờ mở khóa) hoặc dòng hộp thư mở `/record?type=expense`. Sửa lỗi: app không biết kind `daily_log` nên trước đây màn Thông báo và hộp thư báo lỗi; kind lạ giờ bị bỏ qua. Không đổi backend. Golden sáng/tối, so với board. Tồn đọng: sheet mời bật nhắc sau giao dịch đầu (A3 màn 5) để `MOB-P3-012`; "Tổng kết tuần/tháng" chờ `month_review`; mức chữ "80% và 100%" chưa theo ngưỡng từng ngân sách; chưa thử push thật trên thiết bị/staging.
 
 ### BE-P3-007 / MOB-P3-007 — Cho mượn và đi mượn
-- Status: doing — BE xong 2026-11-02, MOB còn
+- Status: done — BE xong 2026-11-02, MOB xong 2026-11-04
 - Module: 10
 - Gate: v1
 - Depends: BE-P1-004, BE-P1-005
 - DoD: ghi khoản cho mượn (tiền ra khỏi ví thành khoản phải thu) hoặc đi mượn (tiền vào ví thành khoản phải trả) với tên người, số tiền, ngày, hạn tùy chọn, ghi chú. Trả hoặc thu một phần nhiều lần, tất toán. Không phải thu/chi, không tính ngân sách. Phải thu cộng tài sản, phải trả cộng nợ trên Tổng quan và tài sản ròng. Danh sách "Ai nợ mình / Mình nợ ai" kèm tổng. Nhắc khi tới hạn qua loại `debt`. Không lãi suất (vay có lãi là `BE-P3-E02`).
 - Note: BE-P3-007 xong 2026-11-02: `/api/v1/personal-debts` (CRUD, `summary` ai nợ mình / mình nợ ai, `payments` trả một phần nhiều lần, tất toán), tiền di chuyển bằng giao dịch `debt` một chân (ngoài thu/chi, ngân sách, tỷ lệ tiết kiệm; có trong số dư ví, export, sổ cái), phải thu vào tài sản, phải trả vào nợ của `/reports/net-worth`, nhắc `debt_due` / `debt_overdue` qua loại `debt`, audit `personal_debt.create`, OpenAPI, export/xoá tài khoản. Kiến trúc: [personal-debts.md](../docs/architecture/personal-debts.md). Tồn đọng: chưa xóa được khoản ghi nhầm đã có tiền chuyển; lưu trữ chỉ khi đã tất toán; app chưa biết loại giao dịch `debt` / `adjustment`; MOB-P3-007 chưa làm.
+- Note: MOB-P3-007 xong 2026-11-04: màn "Vay và nợ" tab Người quen theo board K (`DebtEmpty`, `DebtList`, `DebtAdd`, `DebtDetail`, `DebtPay`): hai ô tổng từ `summary.totals`, nhóm Ai nợ bạn / Bạn nợ ai, tag hạn ≤ 14 ngày hoặc quá hạn, "Đã xong (n)"; ghi khoản mượn (`clientId` giữ khi thử lại), sửa người/hạn/ghi chú, chi tiết + lịch sử, sheet ghi tiền nhận lại/đã trả ("Một nửa", "Tất cả", không vượt số còn lại). Dòng "Vay và nợ" ở Cá nhân; hộp thư `debt_due` / `debt_overdue` có chữ và mở khoản đó, push `debt` mở màn. App biết loại giao dịch `debt` (trước đây làm hỏng danh sách giao dịch): dòng "Khoản mượn", chỉ đọc. [Mobile](../docs/architecture/mobile-debts-loans.md). Tồn đọng: chưa lưu trữ khoản đã tất toán trên app; app vẫn chưa biết loại `refund` (BE-P3-008) nên danh sách giao dịch sẽ lỗi nếu có hoàn tiền, làm ở `MOB-P3-008`; chưa chạy trên thiết bị thật/staging.
 
 ### BE-P3-008 / MOB-P3-008 — Hoàn tiền gắn khoản chi gốc
 - Status: doing — BE xong 2026-11-03, MOB còn

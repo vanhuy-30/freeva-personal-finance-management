@@ -57,5 +57,6 @@ mixin ComposerActions<T extends StatefulWidget> on State<T> {
           TransactionType.transfer => s.txSaveTransfer,
           // Only reconcile writes one; the composer never offers it.
           TransactionType.adjustment => s.txSaveChanges,
+          TransactionType.debt => s.txSaveChanges,
         };
 }
