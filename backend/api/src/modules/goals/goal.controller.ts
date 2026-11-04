@@ -36,6 +36,11 @@ export class GoalController {
     return this.goals.find(req.session.userId, id);
   }
 
+  @Get(':id/entries') @Header('Cache-Control', 'no-store')
+  history(@Req() req: AuthRequest, @Param('id', ParseUUIDPipe) id: string) {
+    return this.goals.history(req.session.userId, id);
+  }
+
   @Patch(':id') @Header('Cache-Control', 'no-store')
   update(@Req() req: AuthRequest, @Param('id', ParseUUIDPipe) id: string, @Body() body: UpdateGoalDto) {
     return this.goals.update(req.session.userId, id, body);

@@ -45,6 +45,9 @@ abstract class HomeViewModel extends ChangeNotifier {
   /// "Chi tháng".
   bool get debtGoal => false;
 
+  /// Whether the user picked "Tiết kiệm": the goals block shows under the balance.
+  bool get saveGoal => false;
+
   /// Today, for the greeting date.
   DateTime get today;
 
@@ -100,6 +103,8 @@ class DefaultHomeViewModel extends HomeViewModel {
 
   @override
   bool get debtGoal => _profile.saved?.goals.contains('debt') ?? false;
+  @override
+  bool get saveGoal => _profile.saved?.goals.contains('save') ?? false;
   @override
   String get currency => _profile.saved?.currency ?? 'VND';
   @override

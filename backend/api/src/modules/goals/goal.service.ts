@@ -64,6 +64,20 @@ export class GoalService {
     return response(goal, context);
   }
 
+  async history(userId: string, id: string) {
+    const items = await this.repository.history(userId, id);
+    return {
+      items: items.map(item => ({
+        id: item.id,
+        kind: item.kind,
+        amountMinor: item.amountMinor === null ? null : text(item.amountMinor),
+        transfer: item.transfer,
+        occurredOn: item.occurredOn,
+        createdAt: item.createdAt.toISOString(),
+      })),
+    };
+  }
+
   async create(userId: string, dto: CreateGoalDto) {
     const preset = presetOf(dto.kind);
     const result = await this.repository.create(userId, {

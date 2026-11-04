@@ -3555,4 +3555,282 @@ class SEn extends S {
   String convertedRateLine(String from, String rate, String to, String time) {
     return '1 $from = $rate $to · rate you entered at $time';
   }
+
+  @override
+  String get goalsAdd => 'Add goal';
+
+  @override
+  String get goalsEmptyTitle => 'No goals yet';
+
+  @override
+  String get goalsEmptyBody =>
+      'Set a goal and Freeva works out how much to save each month.';
+
+  @override
+  String get goalsCreate => 'Create goal';
+
+  @override
+  String get goalsSaved => 'Saved so far';
+
+  @override
+  String get goalsCountLabel => 'Goals';
+
+  @override
+  String get goalsNeededMonth => 'Needed this month';
+
+  @override
+  String get goalsOverdue => 'Overdue';
+
+  @override
+  String get goalsReached => 'Reached';
+
+  @override
+  String get goalsArchivedLink => 'Archived goals';
+
+  @override
+  String get goalsLoadError => 'Couldn’t load goals';
+
+  @override
+  String get goalsNew => 'New goal';
+
+  @override
+  String get goalsEdit => 'Edit goal';
+
+  @override
+  String get goalsFor => 'Saving for';
+
+  @override
+  String get goalKindEmergency => 'Emergency fund';
+
+  @override
+  String get goalKindHome => 'Buy a home';
+
+  @override
+  String get goalKindCar => 'Buy a car';
+
+  @override
+  String get goalKindTravel => 'Travel';
+
+  @override
+  String get goalKindEducation => 'Education';
+
+  @override
+  String get goalKindWedding => 'Wedding';
+
+  @override
+  String get goalKindRetirement => 'Retirement';
+
+  @override
+  String get goalKindCustom => 'Other';
+
+  @override
+  String get goalName => 'Goal name';
+
+  @override
+  String get goalNameMissing => 'Give the goal a name.';
+
+  @override
+  String get goalTarget => 'Target';
+
+  @override
+  String get goalTargetMissing => 'Enter the target amount.';
+
+  @override
+  String get goalCurrent => 'Saved';
+
+  @override
+  String get goalDate => 'Target date';
+
+  @override
+  String get goalDateNone => 'Not set';
+
+  @override
+  String get goalDateClear => 'Clear date';
+
+  @override
+  String get goalWallet => 'Kept in';
+
+  @override
+  String get goalWalletMissing => 'Pick the wallet that holds the money.';
+
+  @override
+  String goalWalletValue(String name, String amount) {
+    return '$name · $amount left';
+  }
+
+  @override
+  String goalNeedLine(String amount) {
+    return 'Save $amount a month.';
+  }
+
+  @override
+  String goalNeedLineShare(String amount, String percent) {
+    return 'Save $amount a month, about $percent% of your income.';
+  }
+
+  @override
+  String get goalHave => 'Saved';
+
+  @override
+  String goalOf(String amount) {
+    return '/ $amount';
+  }
+
+  @override
+  String goalProgressLine(String percent, String amount) {
+    return '$percent% · $amount to go';
+  }
+
+  @override
+  String goalProgressDone(String percent) {
+    return '$percent% · reached';
+  }
+
+  @override
+  String get goalNeedPerMonth => 'Needed a month';
+
+  @override
+  String get goalLeft => 'Left';
+
+  @override
+  String goalMonths(int count) {
+    return '$count months';
+  }
+
+  @override
+  String goalLineActive(int months, String amount) {
+    return '$months months left · save $amount a month';
+  }
+
+  @override
+  String get goalLineNoDate => 'No target date';
+
+  @override
+  String goalLineOverdue(String date, String amount) {
+    return 'Due $date has passed · $amount to go';
+  }
+
+  @override
+  String goalLineReached(String date) {
+    return 'Reached on $date';
+  }
+
+  @override
+  String get goalContribute => 'Add money';
+
+  @override
+  String get goalWithdraw => 'Withdraw';
+
+  @override
+  String get goalHistory => 'History';
+
+  @override
+  String get goalHistoryContribute => 'Added';
+
+  @override
+  String get goalHistoryContributeTransfer => 'Added from another wallet';
+
+  @override
+  String get goalHistoryWithdraw => 'Withdrawn';
+
+  @override
+  String get goalHistoryWithdrawTransfer => 'Withdrawn to another wallet';
+
+  @override
+  String get goalHistoryAdjust => 'Saved amount corrected';
+
+  @override
+  String goalHistoryStays(String date) {
+    return '$date · money was already in the wallet';
+  }
+
+  @override
+  String get goalHistoryEmpty => 'Nothing added yet';
+
+  @override
+  String get goalMoveIn => 'Add';
+
+  @override
+  String get goalMoveOut => 'Withdraw';
+
+  @override
+  String goalMoveTitleIn(String name) {
+    return 'Add to $name';
+  }
+
+  @override
+  String goalMoveTitleOut(String name) {
+    return 'Withdraw from $name';
+  }
+
+  @override
+  String get goalMoveAmount => 'Amount';
+
+  @override
+  String get goalMoveFrom => 'Take from';
+
+  @override
+  String get goalMoveTo => 'Send to';
+
+  @override
+  String goalMoveStaysIn(String wallet) {
+    return 'Already in $wallet';
+  }
+
+  @override
+  String goalMoveStaysOut(String wallet) {
+    return 'Leave in $wallet';
+  }
+
+  @override
+  String get goalMoveOnlyRecord => 'Just record it, no money moves';
+
+  @override
+  String goalMoveWalletLeft(String amount) {
+    return '$amount left';
+  }
+
+  @override
+  String get goalMoveHint => 'Recorded as a wallet transfer, not as spending.';
+
+  @override
+  String goalMoveConfirmIn(String amount) {
+    return 'Add $amount';
+  }
+
+  @override
+  String goalMoveConfirmOut(String amount) {
+    return 'Withdraw $amount';
+  }
+
+  @override
+  String get goalMoveTooMuch => 'More than the goal holds.';
+
+  @override
+  String get goalArchive => 'Archive goal';
+
+  @override
+  String get goalArchiveBody =>
+      'The goal is put away; the money stays in your wallet.';
+
+  @override
+  String get goalSaveFailed => 'Couldn’t save. Try again.';
+
+  @override
+  String get goalConflict =>
+      'This goal changed elsewhere. Reopen it to see the latest.';
+
+  @override
+  String get goalsHomeTitle => 'Goals';
+
+  @override
+  String get goalsSeeAll => 'See all';
+
+  @override
+  String goalPercent(String percent) {
+    return '$percent%';
+  }
+
+  @override
+  String get goalSaveAction => 'Save';
 }

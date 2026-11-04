@@ -1434,6 +1434,39 @@ paths:
           $ref: '#/components/responses/GoalUnauthorized'
         '503':
           $ref: '#/components/responses/GoalUnavailable'
+  /api/v1/goals/{id}/entries:
+    get:
+      operationId: listGoalEntries
+      summary: History of a goal (contributions, withdrawals, corrected numbers), newest first, up to 200
+      tags:
+      - Goals
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: History
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoalEntryList'
+        '404':
+          $ref: '#/components/responses/GoalNotFound'
+        '401':
+          $ref: '#/components/responses/GoalUnauthorized'
+        '503':
+          $ref: '#/components/responses/GoalUnavailable'
   /api/v1/goals/{id}/contribute:
     post:
       operationId: contributeGoal
@@ -6876,6 +6909,25 @@ components:
           format: uuid
           description: Other wallet (same currency as the goal). Omit when the money already sits in the linked wallet.
         occurredOn: {type: string, format: date}
+    GoalEntry:
+      type: object
+      additionalProperties: false
+      required: [id, kind, amountMinor, transfer, occurredOn, createdAt]
+      properties:
+        id: {type: string, format: uuid}
+        kind: {type: string, enum: [contribute, withdraw, adjust]}
+        amountMinor: {type: [string, 'null'], pattern: '^[1-9][0-9]*$', description: Null for adjust (only the number was corrected).}
+        transfer: {type: boolean, description: True when money moved between wallets.}
+        occurredOn: {type: string, format: date}
+        createdAt: {type: string, format: date-time}
+    GoalEntryList:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: {$ref: '#/components/schemas/GoalEntry'}
     AdjustGoalRequest:
       type: object
       additionalProperties: false

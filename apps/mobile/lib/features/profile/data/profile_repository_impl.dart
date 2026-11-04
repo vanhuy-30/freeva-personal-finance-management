@@ -28,6 +28,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
       cadence: _text(json['reviewCadence']),
       budgetMinor: _minor(json['onboardingBudgetMinor']),
       displayCurrency: _code(json['displayCurrencyCode']),
+      monthlyIncomeMinor: _minor(json['monthlyIncomeMinor']),
     );
     if (!['vi', 'en'].contains(value.locale) ||
         !RegExp(r'^[A-Z]{3}$').hasMatch(value.currency) ||

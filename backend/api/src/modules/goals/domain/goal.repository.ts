@@ -40,7 +40,19 @@ export type GoalContext = {
   monthlyIncomeMinor: Record<string, bigint>;
 };
 
+/** One line of a goal's history. `adjust` is a corrected number only: no amount, no money moved. */
+export type GoalHistoryItem = {
+  id: string;
+  kind: 'contribute' | 'withdraw' | 'adjust';
+  amountMinor: bigint | null;
+  /** True when the entry moved money between wallets (a balanced transfer). */
+  transfer: boolean;
+  occurredOn: string;
+  createdAt: Date;
+};
+
 export interface GoalRepository {
+  history(userId: string, id: string): Promise<GoalHistoryItem[]>;
   context(userId: string): Promise<GoalContext>;
   list(userId: string, includeArchived: boolean): Promise<GoalRecord[]>;
   find(userId: string, id: string): Promise<GoalRecord>;

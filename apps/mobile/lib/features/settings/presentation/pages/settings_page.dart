@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/core/theme/lucide_icons.g.dart';
 
+import '../../../goals/presentation/viewmodels/goal_view_model.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/theme_context.dart';
@@ -35,6 +36,9 @@ class _SettingsPageState extends State<SettingsPage> {
   final WalletViewModel? wallets = getIt.isRegistered<WalletViewModel>()
       ? getIt<WalletViewModel>()
       : null;
+  final GoalViewModel? goals = getIt.isRegistered<GoalViewModel>()
+      ? getIt<GoalViewModel>()
+      : null;
   int? tagCount;
 
   @override
@@ -47,6 +51,7 @@ class _SettingsPageState extends State<SettingsPage> {
       // Fresh copy: first run saves the budget draft through another writer.
       settings.load();
       if (wallets case final w? when w.wallets.isEmpty) w.load();
+      goals?.load();
     });
     _loadTags();
   }
@@ -84,6 +89,7 @@ class _SettingsPageState extends State<SettingsPage> {
     listenable: Listenable.merge([
       settings,
       profile,
+      if (goals != null) goals!,
       if (wallets != null) wallets!,
     ]),
     builder: (context, _) {
@@ -112,6 +118,9 @@ class _SettingsPageState extends State<SettingsPage> {
               profile: profile,
               walletCount: _walletCount,
               tagCount: tagCount,
+              goalCount: goals != null && goals!.loaded
+                  ? goals!.active.length
+                  : null,
               budget: settings.budgetDraftMinor,
             ),
             AppSettingsGroup(settings: settings, profile: profile),

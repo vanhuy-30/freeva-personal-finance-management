@@ -20,6 +20,7 @@ import {
 import type {
   GoalContext,
   GoalCreateInput,
+  GoalHistoryItem,
   GoalMoveInput,
   GoalPatch,
   GoalRepository,
@@ -126,6 +127,37 @@ export class PrismaGoalRepository implements GoalRepository {
     const row = await this.prisma.goal.findFirst({ where: { id, userId } });
     if (!row) throw new GoalError('GOAL_NOT_FOUND');
     return map(row);
+  }
+
+  async history(userId: string, id: string): Promise<GoalHistoryItem[]> {
+    await this.find(userId, id);
+    const [entries, adjusts] = await Promise.all([
+      this.prisma.goalEntry.findMany({ where: { goalId: id, userId }, orderBy: { createdAt: 'desc' }, take: 200 }),
+      this.prisma.auditEvent.findMany({
+        where: { targetType: 'goal', targetId: id, action: 'goal.adjust', actorId: userId, outcome: 'success' },
+        orderBy: { occurredAt: 'desc' },
+        take: 200,
+      }),
+    ]);
+    const items: GoalHistoryItem[] = [
+      ...entries.map(row => ({
+        id: row.id,
+        kind: row.kind,
+        amountMinor: row.amountMinor,
+        transfer: row.transactionClientId !== null,
+        occurredOn: dayOf(row.occurredOn),
+        createdAt: row.createdAt,
+      })),
+      ...adjusts.map(row => ({
+        id: row.id,
+        kind: 'adjust' as const,
+        amountMinor: null,
+        transfer: false,
+        occurredOn: dayOf(row.occurredAt),
+        createdAt: row.occurredAt,
+      })),
+    ];
+    return items.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()).slice(0, 200);
   }
 
   create(userId: string, input: GoalCreateInput) {

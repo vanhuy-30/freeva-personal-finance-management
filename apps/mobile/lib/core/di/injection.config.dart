@@ -74,6 +74,11 @@ import 'package:mobile/features/fx_rates/domain/fx_rate_repository.dart'
     as _i406;
 import 'package:mobile/features/fx_rates/domain/fx_rate_use_cases.dart'
     as _i1002;
+import 'package:mobile/features/goals/data/goal_repository_impl.dart' as _i258;
+import 'package:mobile/features/goals/domain/goal_repository.dart' as _i625;
+import 'package:mobile/features/goals/domain/goal_use_cases.dart' as _i840;
+import 'package:mobile/features/goals/presentation/viewmodels/goal_view_model.dart'
+    as _i814;
 import 'package:mobile/features/home/domain/overview_use_cases.dart' as _i970;
 import 'package:mobile/features/home/presentation/viewmodels/home_view_model.dart'
     as _i722;
@@ -240,6 +245,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i931.ReportRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i173.FeedbackRepository>(
         () => _i216.FeedbackRepositoryImpl(gh<_i443.AuthorizedApi>()));
+    gh.lazySingleton<_i625.GoalRepository>(
+        () => _i258.GoalRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i57.TagRepository>(
         () => _i729.TagRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i338.NotificationUseCases>(() =>
@@ -270,6 +277,8 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i911.PushTokenRepository>(),
           gh<_i54.SessionAlertNotifier>(),
         ));
+    gh.lazySingleton<_i840.GoalUseCases>(
+        () => _i840.DefaultGoalUseCases(gh<_i625.GoalRepository>()));
     gh.lazySingleton<_i245.BudgetUseCases>(
         () => _i245.DefaultBudgetUseCases(gh<_i1073.BudgetRepository>()));
     gh.lazySingleton<_i990.AuthViewModel>(
@@ -333,6 +342,12 @@ extension GetItInjectableX on _i174.GetIt {
               gh<_i990.AuthViewModel>(),
               gh<_i410.AccountExportUseCase>(),
             ));
+    gh.lazySingleton<_i814.GoalViewModel>(() => _i814.GoalViewModel(
+          gh<_i840.GoalUseCases>(),
+          gh<_i251.WalletViewModel>(),
+          gh<_i887.ProfileViewModel>(),
+          gh<_i990.AuthViewModel>(),
+        ));
     gh.lazySingleton<_i1044.ReportViewModel>(
         () => _i1044.DefaultReportViewModel(
               gh<_i146.ReportUseCases>(),

@@ -27,6 +27,9 @@ import '../../features/budgets/presentation/pages/budget_page.dart';
 import '../../features/recurring/presentation/pages/recurring_page.dart';
 import '../../features/recurring/presentation/pages/recurring_editor_page.dart';
 import '../../features/bills/presentation/pages/bills_page.dart';
+import '../../features/goals/presentation/pages/goal_detail_page.dart';
+import '../../features/goals/presentation/pages/goal_editor_page.dart';
+import '../../features/goals/presentation/pages/goals_page.dart';
 import '../../features/bills/presentation/pages/bill_editor_page.dart';
 import '../../features/calendar/presentation/pages/calendar_page.dart';
 import '../../features/settings/presentation/pages/change_pin_page.dart';
@@ -316,6 +319,34 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
             builder: (context, state) => AuthGate(
               child: BillEditorPage(billId: state.pathParameters['id']),
             ),
+          ),
+        ],
+      ),
+      GoRoute(
+        path: '/me/goals',
+        builder: (context, state) => const AuthGate(child: GoalsPage()),
+        routes: [
+          GoRoute(
+            path: 'new',
+            builder: (context, state) => AuthGate(
+              child: GoalEditorPage(
+                initialKind: state.uri.queryParameters['kind'],
+              ),
+            ),
+          ),
+          GoRoute(
+            path: ':id',
+            builder: (context, state) => AuthGate(
+              child: GoalDetailPage(goalId: state.pathParameters['id']!),
+            ),
+            routes: [
+              GoRoute(
+                path: 'edit',
+                builder: (context, state) => AuthGate(
+                  child: GoalEditorPage(goalId: state.pathParameters['id']),
+                ),
+              ),
+            ],
           ),
         ],
       ),

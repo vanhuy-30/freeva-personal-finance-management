@@ -131,15 +131,6 @@ void main() {
       expect(g.settings.balancesHidden, isTrue);
     });
 
-    testWidgets('settings without a screen yet say "Sắp có"', (tester) async {
-      tall(tester);
-      await tester.pumpWidget(g.app(const SettingsPage()));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Mục tiêu'));
-      await tester.pump();
-      expect(find.text('Sắp có'), findsOneWidget);
-    });
-
     testWidgets('log out asks first and keeps the session on Huỷ', (
       tester,
     ) async {

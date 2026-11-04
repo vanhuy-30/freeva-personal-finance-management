@@ -2,6 +2,10 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-11-04
+
+- `MOB-P3-E01`: màn Mục tiêu trên app (danh sách, trống, tạo/sửa, chi tiết, góp/rút), khối Mục tiêu trên Tổng quan, ô Mục tiêu ở Cá nhân đếm thật. Thêm `GET /api/v1/goals/{id}/entries` (lịch sử; không migration) và `monthlyIncomeMinor` trong `Profile` mobile. Golden sáng/tối. [Thiết kế](../architecture/mobile-goals.md).
+
 ## 2026-11-03
 
 - `BE-P3-012`: onboarding ba câu — `User.monthlyIncomeMinor`, `PATCH /api/v1/profile/onboarding` chỉ nhận `goals` (`track|save|budget`) và `monthlyIncomeMinor`, `PUT /api/v1/profile/monthly-income` đặt/sửa/xóa; migration bỏ `trackingHabit`, `reviewCadence`, `onboardingBudgetMinor` và gộp goals cũ. Export cập nhật. `MOB-P3-012` chưa làm nên màn onboarding hiện tại nhận 400 tới khi làm.

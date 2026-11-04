@@ -9,6 +9,8 @@ import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_banner.dart';
 import '../../../auth/presentation/widgets/session_alert_banner.dart';
+import '../../../goals/presentation/viewmodels/goal_view_model.dart';
+import '../../../goals/presentation/widgets/goals_home_block.dart';
 import '../viewmodels/home_view_model.dart';
 import '../../domain/first_run_checklist.dart';
 import '../widgets/balance_section.dart';
@@ -52,6 +54,7 @@ class _HomePageState extends State<HomePage> {
     final path = _router?.routerDelegate.currentConfiguration.uri.path;
     if (path == '/home' && _lastPath != null && _lastPath != '/home') {
       model.load();
+      if (model.saveGoal) getIt<GoalViewModel>().load();
     }
     _lastPath = path;
   }
@@ -119,6 +122,7 @@ class _HomePageState extends State<HomePage> {
                   gap,
                   const RecentEmptyHint(),
                 ] else ...[
+                  if (model.saveGoal) const GoalsHomeBlock(),
                   const QuickActions(),
                   gap,
                   if (data != null)

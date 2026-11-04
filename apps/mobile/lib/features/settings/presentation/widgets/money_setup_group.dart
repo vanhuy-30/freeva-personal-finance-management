@@ -5,7 +5,6 @@ import 'package:mobile/core/theme/lucide_icons.g.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/money/money_text.dart';
 import '../../../../core/theme/theme_context.dart';
-import '../../../../core/widgets/freeva_toast.dart';
 import '../../../../core/widgets/settings_group.dart';
 import '../../../../core/widgets/settings_row.dart';
 import '../../../profile/presentation/viewmodels/profile_view_model.dart';
@@ -13,12 +12,13 @@ import 'choice_sheet.dart';
 import 'profile_actions.dart';
 
 /// THIẾT LẬP TÀI CHÍNH: how you manage money, each row with its own tint.
-/// Goals still say "Sắp có"; budget opens the monthly budget screen.
+/// Goals and budget open their own screens.
 class MoneySetupGroup extends StatelessWidget {
   const MoneySetupGroup({
     required this.profile,
     this.walletCount,
     this.tagCount,
+    this.goalCount,
     this.budget,
     super.key,
   });
@@ -31,6 +31,9 @@ class MoneySetupGroup extends StatelessWidget {
   /// Tags; null while unknown.
   final int? tagCount;
 
+  /// Goals being saved for; null while unknown.
+  final int? goalCount;
+
   /// Monthly budget draft in VND; null when none was typed.
   final int? budget;
 
@@ -39,8 +42,6 @@ class MoneySetupGroup extends StatelessWidget {
     final s = S.of(context);
     final c = context.colors;
     final saved = profile.saved;
-    final goals = saved?.goals.length ?? 0;
-    void soon() => showFreevaToast(context, message: s.meSoon);
     const rowHeight = 54.0;
     return SettingsGroup(
       title: s.meGroupFinance,
@@ -158,8 +159,10 @@ class MoneySetupGroup extends StatelessWidget {
           minHeight: rowHeight,
           icon: LucideIcons.target,
           title: s.meGoals,
-          value: goals == 0 ? null : s.meGoalsCount(goals),
-          onTap: soon,
+          value: goalCount == null || goalCount == 0
+              ? null
+              : s.meGoalsCount(goalCount!),
+          onTap: () => context.push('/me/goals'),
         ),
       ],
     );
