@@ -15,6 +15,8 @@ M = {
  'E': [('CatList','categories/e1_list'),('CatAdd','categories/e2_add'),('CatParent','categories/e2_parent_sheet'),('CatIcons','categories/e2_icon_sheet'),('CatEdit','categories/e2_edit'),('CatDelete','categories/e2_delete'),('CatHidden','categories/e1_hidden')],
  'F': [('RepMonth','reports/f1_month'),('RepWallets','reports/f1_wallets'),('RepCategory','reports/f2_category'),('RepRange','reports/f2_range'),('RepEmpty','reports/f1_empty')],
  'G': [('MeHome','settings/g1_me'),('MeProfile','settings/g1_profile'),('MeTheme','settings/g1_theme'),('MeSecurity','settings/g1_security'),('MeSessions','settings/g1_sessions'),('MeLogout','settings/g1_logout'),('MeTags','settings/g2_tags'),('MeFeedback','settings/g2_feedback'),('MeFeedbackSent','settings/g2_thanks'),('MeFaq','settings/g2_faq'),('MeNotify','settings/g2_notify')],
+
+ 'I': [('GoalEmpty','goals/goals_empty'),('GoalList','goals/goals_list'),('GoalAdd','goals/goals_add_dated'),('GoalDetail','goals/goals_detail'),('GoalMove','goals/goals_move_in'),('BHomeGoal','goals/goals_home_block')],
  'H': [('SyncBanner','sync/h1_list'),('SyncCenter','sync/h1_center'),('SyncRunning','sync/h1_sending'),('SyncDone','sync/h1_done'),('SyncConflict','sync/h2_compare'),('SyncDuplicate','sync/h2_duplicate'),('SyncDiscard','sync/h1_discard'),('SyncUpdate','sync/h1_update')],
 }
 os.makedirs(f'{S}/pairs', exist_ok=True)

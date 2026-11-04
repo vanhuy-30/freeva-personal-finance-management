@@ -11,6 +11,7 @@ class Profile {
     this.cadence,
     this.budgetMinor,
     this.displayCurrency,
+    this.monthlyIncomeMinor,
   });
 
   /// Greeting name; null until the user sets one (Hồ sơ).
@@ -31,6 +32,10 @@ class Profile {
   /// Currency the Overview converts into, saved on the account. Null means
   /// [currency]. Not part of the PUT body; see `saveDisplayCurrency`.
   final String? displayCurrency;
+
+  /// Monthly income the user stated, in minor units of [currency]; null when
+  /// not given. Only used to show a goal's monthly saving as a share of it.
+  final BigInt? monthlyIncomeMinor;
   final String locale;
   final String currency;
   final String timezone;
@@ -58,6 +63,7 @@ class Profile {
     cadence: cadence,
     budgetMinor: budgetMinor,
     displayCurrency: displayCurrency,
+    monthlyIncomeMinor: monthlyIncomeMinor,
   );
 
   /// Currency the Overview shows totals in: the saved choice, else [currency].
@@ -75,6 +81,7 @@ class Profile {
     cadence: cadence,
     budgetMinor: budgetMinor,
     displayCurrency: code,
+    monthlyIncomeMinor: monthlyIncomeMinor,
   );
 
   bool samePreferences(Profile other) =>

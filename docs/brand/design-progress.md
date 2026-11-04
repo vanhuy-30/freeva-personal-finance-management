@@ -21,11 +21,11 @@
 | **G** Cá nhân và cài đặt | **Chốt** 2026-10-21 | [patterns/G-profile-settings.md](patterns/G-profile-settings.md) |
 | **H** Đồng bộ | **Chốt** 2026-10-22 | [patterns/H-sync.md](patterns/H-sync.md) |
 
-### Phase 3 (trang canvas **07 · Phase 3**, chốt 2026-11-03, chưa code)
+### Phase 3 (trang canvas **07 · Phase 3**, chốt 2026-11-03; I đã code 2026-11-04)
 
 | Phần | Trạng thái | Tài liệu |
 |---|---|---|
-| **I** Mục tiêu | **Chốt** 2026-11-03 | [patterns/I-goals.md](patterns/I-goals.md) |
+| **I** Mục tiêu | **Chốt** 2026-11-03, **đã code** (`MOB-P3-E01`) | [patterns/I-goals.md](patterns/I-goals.md) |
 | **K** Vay và nợ | **Chốt** 2026-11-03 | [patterns/K-loans-debts.md](patterns/K-loans-debts.md) |
 | **L** Định kỳ và hóa đơn | **Chốt** 2026-11-03 | [patterns/L-recurring-bills.md](patterns/L-recurring-bills.md) |
 | **M** Ví, hoàn tiền, trả góp | **Chốt** 2026-11-03 | [patterns/M-wallet-refund-installment.md](patterns/M-wallet-refund-installment.md) |
@@ -50,6 +50,7 @@ Thứ tự đã chốt: nền tảng → B → C → D → E → F → G → A �
 | G Cá nhân/Cài đặt | Xong (G1 + G2) | G1: Cá nhân (thẻ hồ sơ, 3 nhóm, đăng xuất có hỏi), Hồ sơ (tên hiển thị), Giao diện, Bảo mật (đổi PIN, đổi mật khẩu `POST /auth/change-password`), Phiên đăng nhập. Chọn tiền tệ/tháng/ngôn ngữ/múi giờ lưu ngay. Bỏ dòng "Định dạng ngày" (owner 2026-10-23). Ngân sách, Mục tiêu, Thông báo, Nhãn, đổi email: toast "Sắp có". G2: Nhãn (tìm, tạo, đổi tên, xoá, số giao dịch; chạm mở giao dịch đã lọc), Góp ý gửi thật (`POST /feedback`, chưa có ảnh) + màn cảm ơn, FAQ có tìm kiếm, Thông báo (chỉ "Máy mới đăng nhập" chạy, còn lại "Sắp có") |
 | A Onboarding/tài khoản | Xong (A1 + A2a + A2b) | A1: Đăng nhập một màn, Tạo tài khoản (danh sách điều kiện, đồng ý điều khoản, `termsAccepted` + migration), Xác nhận email (nút "Xong"), Quên mật khẩu, Mật khẩu mới (chờ deep link), Đặt PIN → Nhập lại → Face ID đều "Để sau" được, màn Mở khoá mới. PIN không còn bắt buộc: không PIN thì app không khoá, Bảo mật có "Đặt mã PIN". Google/Apple: nút báo "Sắp có". A2a: Welcome (một lần), Tạo tài khoản Freeva (Google/Apple "Sắp có", email), Mục tiêu (tối đa 2), Thói quen, Ngân sách tháng (tạo ngân sách thật qua `BE-P2-E02`, không được thì giữ số trên máy); câu trả lời lưu ở backend (`PATCH /profile/onboarding`); bỏ màn giới thiệu cũ trong app. A2b: Thiết lập tài chính (mỗi loại một ví, form thêm ví của nhóm D, chạy được khi chưa mở khoá), checklist "Bắt đầu nào" trên Tổng quan (tự tính từ dữ liệu thật; hết khi đã có ví và khoản đầu tiên, dòng PIN chỉ hiện khi chưa có PIN), "Chào {tên}" trên màn Mở khoá (tên lưu cùng phiên trên máy). Mục tiêu chỉ đổi thứ tự khối ở "Quản lý khoản nợ"; 5 mục tiêu còn lại chưa có khối thiết kế. `DS-P2-004` done 2026-10-29. Chưa làm: xác nhận lại email trong Cá nhân, deep link, Google/Apple thật |
 | H Đồng bộ | Xong (H1 + H2) | H1: banner trên Giao dịch (vàng khi cần xem, trung tính khi chỉ chờ gửi), chip "Cần xem lại" / icon đồng hồ trên dòng, màn Đồng bộ (`/sync`: thẻ trạng thái chưa có mạng / chưa gửi được / đang gửi / đã đồng bộ hết / cần cập nhật, mục cần xem với lý do và Thử lại · Bỏ, mục chờ gửi với ×, giờ lần cuối), popup "Bỏ thay đổi này?". Tiến độ không có số từng mục (một lô một lần gọi); nút "Cập nhật" và "Sửa" để sau. H2: màn Chọn bản giữ lại (so hai bản, chọn sẵn bản đã lưu; giữ bản máy này = gửi lại với `version` mới của server), sheet "Có thể bạn đã ghi rồi" (hiện ở màn gốc của tab, Giữ cả hai / Xoá bản vừa ghi có Hoàn tác). Chưa làm: nút "Cập nhật", nút "Sửa" |
+| I Mục tiêu (Phase 3) | Xong | `MOB-P3-E01`: danh sách và trạng thái trống, tạo/sửa (thẻ "Cần góp" tính trên máy), chi tiết + lịch sử (`GET /goals/{id}/entries`), sheet góp/rút, khối Mục tiêu trên Tổng quan, ô Mục tiêu ở Cá nhân. Golden sáng/tối + 1.3×, đối chiếu board bằng `design_compare` nhóm `I`. Khác board: lịch sử chưa có tên ví, dòng sửa số không có số mới |
 
 ### Rà soát độ khớp UI (`DS-P2-006`, 2026-10-26)
 

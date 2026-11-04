@@ -198,6 +198,24 @@ describe('BE-P3-E01 goals HTTP + PostgreSQL', () => {
     expect((await request('GET', '/goals/presets')).body.items).toHaveLength(8);
   });
 
+  it('lists history newest first: contribute, withdraw and corrected number', async () => {
+    const account = await wallet();
+    const goal = await createGoal(account.id);
+    const day = '2026-11-03';
+    await request('POST', `/goals/${goal.id}/contribute`, { clientId: randomUUID(), amountMinor: '5000', occurredOn: day });
+    await request('POST', `/goals/${goal.id}/withdraw`, { clientId: randomUUID(), amountMinor: '2000', occurredOn: day });
+    const fresh = (await request('GET', `/goals/${goal.id}`)).body;
+    expect((await request('POST', `/goals/${goal.id}/adjust`, { currentMinor: '9000', version: fresh.version })).status).toBe(200);
+    const res = await request('GET', `/goals/${goal.id}/entries`);
+    expect(res.status).toBe(200);
+    expect(res.body.items.map((item: { kind: string }) => item.kind).sort()).toEqual(['adjust', 'contribute', 'withdraw']);
+    const adjust = res.body.items.find((item: { kind: string }) => item.kind === 'adjust');
+    expect(adjust).toMatchObject({ amountMinor: null, transfer: false });
+    expect(res.body.items.find((item: { kind: string }) => item.kind === 'contribute')).toMatchObject({ amountMinor: '5000', transfer: false });
+    const other = await user();
+    expect((await request('GET', `/goals/${goal.id}/entries`, undefined, other.bearer)).status).toBe(404);
+  });
+
   it('does not expose another user goal', async () => {
     const account = await wallet();
     const goal = await createGoal(account.id);

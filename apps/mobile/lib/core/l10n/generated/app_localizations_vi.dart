@@ -3515,4 +3515,282 @@ class SVi extends S {
   String convertedRateLine(String from, String rate, String to, String time) {
     return '1 $from = $rate $to · tỷ giá bạn nhập lúc $time';
   }
+
+  @override
+  String get goalsAdd => 'Thêm mục tiêu';
+
+  @override
+  String get goalsEmptyTitle => 'Chưa có mục tiêu';
+
+  @override
+  String get goalsEmptyBody =>
+      'Đặt một mục tiêu, Freeva tính giúp mỗi tháng cần để dành bao nhiêu.';
+
+  @override
+  String get goalsCreate => 'Tạo mục tiêu';
+
+  @override
+  String get goalsSaved => 'Đã để dành';
+
+  @override
+  String get goalsCountLabel => 'Mục tiêu';
+
+  @override
+  String get goalsNeededMonth => 'Tháng này cần góp';
+
+  @override
+  String get goalsOverdue => 'Quá hạn';
+
+  @override
+  String get goalsReached => 'Đã đủ';
+
+  @override
+  String get goalsArchivedLink => 'Mục tiêu đã lưu trữ';
+
+  @override
+  String get goalsLoadError => 'Không tải được mục tiêu';
+
+  @override
+  String get goalsNew => 'Mục tiêu mới';
+
+  @override
+  String get goalsEdit => 'Sửa mục tiêu';
+
+  @override
+  String get goalsFor => 'Để dành cho';
+
+  @override
+  String get goalKindEmergency => 'Quỹ khẩn cấp';
+
+  @override
+  String get goalKindHome => 'Mua nhà';
+
+  @override
+  String get goalKindCar => 'Mua xe';
+
+  @override
+  String get goalKindTravel => 'Du lịch';
+
+  @override
+  String get goalKindEducation => 'Học tập';
+
+  @override
+  String get goalKindWedding => 'Đám cưới';
+
+  @override
+  String get goalKindRetirement => 'Nghỉ hưu';
+
+  @override
+  String get goalKindCustom => 'Khác';
+
+  @override
+  String get goalName => 'Tên mục tiêu';
+
+  @override
+  String get goalNameMissing => 'Đặt tên cho mục tiêu nhé.';
+
+  @override
+  String get goalTarget => 'Số cần có';
+
+  @override
+  String get goalTargetMissing => 'Nhập số cần có.';
+
+  @override
+  String get goalCurrent => 'Đã có';
+
+  @override
+  String get goalDate => 'Ngày đạt';
+
+  @override
+  String get goalDateNone => 'Chưa đặt';
+
+  @override
+  String get goalDateClear => 'Bỏ ngày';
+
+  @override
+  String get goalWallet => 'Giữ ở ví';
+
+  @override
+  String get goalWalletMissing => 'Chọn ví giữ tiền.';
+
+  @override
+  String goalWalletValue(String name, String amount) {
+    return '$name · còn $amount';
+  }
+
+  @override
+  String goalNeedLine(String amount) {
+    return 'Cần góp $amount mỗi tháng.';
+  }
+
+  @override
+  String goalNeedLineShare(String amount, String percent) {
+    return 'Cần góp $amount mỗi tháng, khoảng $percent% thu nhập.';
+  }
+
+  @override
+  String get goalHave => 'Đã có';
+
+  @override
+  String goalOf(String amount) {
+    return '/ $amount';
+  }
+
+  @override
+  String goalProgressLine(String percent, String amount) {
+    return '$percent% · còn thiếu $amount';
+  }
+
+  @override
+  String goalProgressDone(String percent) {
+    return '$percent% · đã đủ';
+  }
+
+  @override
+  String get goalNeedPerMonth => 'Cần mỗi tháng';
+
+  @override
+  String get goalLeft => 'Còn';
+
+  @override
+  String goalMonths(int count) {
+    return '$count tháng';
+  }
+
+  @override
+  String goalLineActive(int months, String amount) {
+    return 'Còn $months tháng · cần $amount mỗi tháng';
+  }
+
+  @override
+  String get goalLineNoDate => 'Chưa đặt ngày đạt';
+
+  @override
+  String goalLineOverdue(String date, String amount) {
+    return 'Hạn $date đã qua · còn thiếu $amount';
+  }
+
+  @override
+  String goalLineReached(String date) {
+    return 'Đã đủ từ $date';
+  }
+
+  @override
+  String get goalContribute => 'Góp thêm';
+
+  @override
+  String get goalWithdraw => 'Rút ra';
+
+  @override
+  String get goalHistory => 'Lịch sử';
+
+  @override
+  String get goalHistoryContribute => 'Góp thêm';
+
+  @override
+  String get goalHistoryContributeTransfer => 'Góp từ ví khác';
+
+  @override
+  String get goalHistoryWithdraw => 'Rút ra';
+
+  @override
+  String get goalHistoryWithdrawTransfer => 'Rút về ví khác';
+
+  @override
+  String get goalHistoryAdjust => 'Sửa số đã có';
+
+  @override
+  String goalHistoryStays(String date) {
+    return '$date · tiền đã ở sẵn trong ví';
+  }
+
+  @override
+  String get goalHistoryEmpty => 'Chưa có lần góp nào';
+
+  @override
+  String get goalMoveIn => 'Góp vào';
+
+  @override
+  String get goalMoveOut => 'Rút ra';
+
+  @override
+  String goalMoveTitleIn(String name) {
+    return 'Góp vào $name';
+  }
+
+  @override
+  String goalMoveTitleOut(String name) {
+    return 'Rút khỏi $name';
+  }
+
+  @override
+  String get goalMoveAmount => 'Số tiền';
+
+  @override
+  String get goalMoveFrom => 'Lấy từ';
+
+  @override
+  String get goalMoveTo => 'Rút về';
+
+  @override
+  String goalMoveStaysIn(String wallet) {
+    return 'Đã nằm trong $wallet';
+  }
+
+  @override
+  String goalMoveStaysOut(String wallet) {
+    return 'Giữ nguyên trong $wallet';
+  }
+
+  @override
+  String get goalMoveOnlyRecord => 'Chỉ ghi nhận, không chuyển tiền';
+
+  @override
+  String goalMoveWalletLeft(String amount) {
+    return 'Còn $amount';
+  }
+
+  @override
+  String get goalMoveHint => 'Ghi thành chuyển ví, không tính là chi tiêu.';
+
+  @override
+  String goalMoveConfirmIn(String amount) {
+    return 'Góp $amount';
+  }
+
+  @override
+  String goalMoveConfirmOut(String amount) {
+    return 'Rút $amount';
+  }
+
+  @override
+  String get goalMoveTooMuch => 'Vượt số đã có của mục tiêu.';
+
+  @override
+  String get goalArchive => 'Lưu trữ mục tiêu';
+
+  @override
+  String get goalArchiveBody =>
+      'Mục tiêu được cất đi, số đã có vẫn nằm trong ví.';
+
+  @override
+  String get goalSaveFailed => 'Chưa lưu được. Thử lại nhé.';
+
+  @override
+  String get goalConflict =>
+      'Mục tiêu vừa đổi ở nơi khác. Mở lại để xem số mới.';
+
+  @override
+  String get goalsHomeTitle => 'Mục tiêu';
+
+  @override
+  String get goalsSeeAll => 'Xem tất cả';
+
+  @override
+  String goalPercent(String percent) {
+    return '$percent%';
+  }
+
+  @override
+  String get goalSaveAction => 'Lưu';
 }

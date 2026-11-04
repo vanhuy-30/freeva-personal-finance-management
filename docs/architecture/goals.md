@@ -34,4 +34,4 @@ Số nguyên (`bigint`), không `double`.
 
 ## API
 
-Bearer session, `Cache-Control: no-store`, tiền là string integer. `GET/POST /goals`, `GET/PATCH/DELETE /goals/{id}` (DELETE = lưu trữ, cần `version`), `GET /goals/presets`, `POST /goals/{id}/{contribute|withdraw|adjust}`. Có trong `GET /account/export` (`goals`, `goalEntries`) và xoá theo user. Không log số tiền.
+Bearer session, `Cache-Control: no-store`, tiền là string integer. `GET/POST /goals`, `GET/PATCH/DELETE /goals/{id}` (DELETE = lưu trữ, cần `version`), `GET /goals/presets`, `GET /goals/{id}/entries` (lịch sử góp, rút và sửa số, mới nhất trước, tối đa 200; `adjust` không có số tiền vì audit không lưu), `POST /goals/{id}/{contribute|withdraw|adjust}`. Có trong `GET /account/export` (`goals`, `goalEntries`) và xoá theo user. Không log số tiền.
