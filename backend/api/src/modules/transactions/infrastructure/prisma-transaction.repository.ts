@@ -230,7 +230,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
   }
   async installmentPlanIds(userId: string, expenseIds: string[]): Promise<Map<string, string>> {
     if (!expenseIds.length) return new Map();
-    const rows = await this.prisma.cardInstallmentPlan.findMany({ where: { userId, transactionId: { in: expenseIds } }, select: { id: true, transactionId: true } });
+    const rows = await this.prisma.cardInstallmentPlan.findMany({ where: { userId, transactionId: { in: expenseIds }, status: 'active' }, select: { id: true, transactionId: true } });
     return new Map(rows.map(row => [row.transactionId, row.id]));
   }
   /** Sum of active refunds of one expense, optionally leaving one refund out (its own edit). */

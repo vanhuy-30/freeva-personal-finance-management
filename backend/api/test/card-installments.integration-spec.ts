@@ -245,9 +245,16 @@ describe('BE-P3-009 card installments HTTP + PostgreSQL', () => {
     const byId = new Map((list.body.items as { id: string; installmentPlanId: string | null }[]).map(item => [item.id, item.installmentPlanId]));
     expect(byId.get(bought.id)).toBe(created.body.id);
     expect(byId.get(other.id)).toBeNull();
-    // A closed plan still occupies the purchase, so the link stays.
+    // Closed: the expense is free again, and a new plan replaces the closed one.
     await call('POST', `/v1/card-installments/${created.body.id}/close`, { version: created.body.version });
-    expect((await call('GET', `/v1/transactions/${bought.id}`)).body.legs[0].installmentPlanId).toBe(created.body.id);
+    expect((await call('GET', `/v1/transactions/${bought.id}`)).body.legs[0].installmentPlanId).toBeNull();
+    expect((await call('POST', '/v1/card-installments/preview', { transactionId: bought.id, installmentCount: 3, firstDueOn: '2026-11-25' })).status).toBe(200);
+    const again = await plan(bought.id, { installmentCount: 3, firstDueOn: '2026-11-25' });
+    expect(again.status).toBe(201);
+    expect(again.body.id).not.toBe(created.body.id);
+    expect((await call('GET', `/v1/card-installments/${created.body.id}`)).status).toBe(404);
+    expect((await call('GET', `/v1/transactions/${bought.id}`)).body.legs[0].installmentPlanId).toBe(again.body.id);
+    expect((await plan(bought.id, { installmentCount: 6, firstDueOn: '2026-11-25' })).status).toBe(409);
   });
 
   it('closes the plan when its purchase is deleted', async () => {

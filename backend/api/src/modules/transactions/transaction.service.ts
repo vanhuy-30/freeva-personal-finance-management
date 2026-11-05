@@ -15,7 +15,7 @@ function legResponse(leg: TransactionLeg) {
 }
 /**
  * BE-P3-008: `refundedMinor` on expense legs (active refunds), null on other types.
- * MOB-P3-009: `installmentPlanId` on expense legs that have a card installment plan, else null. Only GET list and GET by id.
+ * MOB-P3-009: `installmentPlanId` on expense legs with an active card installment plan, else null. Only GET list and GET by id.
  */
 function withRefunded<T extends { id: string; type: string }>(leg: T, totals: Map<string, bigint>, plans: Map<string, string>) {
   const expense = leg.type === 'expense';

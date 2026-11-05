@@ -98,7 +98,8 @@ export class PrismaCardInstallmentRepository implements CardInstallmentRepositor
       }
       // The purchase row is locked so two plans cannot be made over it together.
       await tx.$queryRaw(Prisma.sql`SELECT id FROM "Transaction" WHERE id = ${input.transactionId}::uuid AND "userId" = ${userId}::uuid FOR UPDATE`);
-      const { purchase, totalMinor, installmentMinor } = await this.checked(tx, userId, input);
+      const { purchase, totalMinor, installmentMinor, previous } = await this.checked(tx, userId, input);
+      if (previous) await tx.cardInstallmentPlan.delete({ where: { id: previous.id } });
       const row = await tx.cardInstallmentPlan.create({
         data: {
           userId,
@@ -132,11 +133,14 @@ export class PrismaCardInstallmentRepository implements CardInstallmentRepositor
     if (purchase.type !== 'expense' || purchase.deletedAt || purchase.account.type !== 'credit' || purchase.account.archivedAt) {
       throw new CardInstallmentError('PLAN_CONFLICT');
     }
-    if (await tx.cardInstallmentPlan.findUnique({ where: { transactionId: purchase.id } })) throw new CardInstallmentError('PLAN_CONFLICT');
+    // One plan per purchase: an active one blocks, a closed one is replaced on create (a wrong plan is fixed by
+    // closing it and making it again).
+    const previous = await tx.cardInstallmentPlan.findUnique({ where: { transactionId: purchase.id } });
+    if (previous?.status === 'active') throw new CardInstallmentError('PLAN_CONFLICT');
     const totalMinor = refundCap(purchase.amountMinor);
     const installmentMinor = input.installmentMinor ?? defaultInstallmentMinor(totalMinor, input.installmentCount);
     validatePlan(totalMinor, input.installmentCount, installmentMinor, dayOf(purchase.occurredOn), input.firstDueOn);
-    return { purchase, totalMinor, installmentMinor };
+    return { purchase, totalMinor, installmentMinor, previous };
   }
 
   close(userId: string, id: string, version: number) {

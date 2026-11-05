@@ -30,7 +30,7 @@ export interface TransactionRepository {
   update(userId: string, id: string, patch: TransactionPatch): Promise<TransactionBundle>;
   /** BE-P3-008: sum of active refunds per expense id; ids without refunds are absent. */
   refundedTotals(userId: string, expenseIds: string[]): Promise<Map<string, bigint>>;
-  /** MOB-P3-009: installment plan id (active or closed) per expense id; ids without a plan are absent. */
+  /** MOB-P3-009: active installment plan id per expense id; ids without a plan are absent. */
   installmentPlanIds(userId: string, expenseIds: string[]): Promise<Map<string, string>>;
   refund(userId: string, originalId: string, input: RefundInput): Promise<{ transaction: TransactionBundle; created: boolean }>;
   reconcile(userId: string, accountId: string, input: ReconcileInput): Promise<ReconcileResult>;

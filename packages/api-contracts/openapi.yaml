@@ -2034,7 +2034,7 @@ paths:
           $ref: '#/components/responses/CardInstallmentConflict'
         '503':
           $ref: '#/components/responses/CardInstallmentUnavailable'
-      description: "The purchase stays one expense on the card, counted once in reports and budgets in the month it was made; card debt and balances do not change. The plan only lists periods: payments are ordinary wallet to card transfers, and any conversion fee or interest is a separate expense. The purchase must be an active expense on a credit wallet with no plan yet. Periods are monthly from `firstDueOn` (not before the purchase day); every period but the last pays `installmentMinor` (default: even split rounded up) and the last takes the rest, so they add up to the price. 2 to 60 periods. `clientId` makes retries idempotent."
+      description: "The purchase stays one expense on the card, counted once in reports and budgets in the month it was made; card debt and balances do not change. The plan only lists periods: payments are ordinary wallet to card transfers, and any conversion fee or interest is a separate expense. The purchase must be an active expense on a credit wallet with no active plan; a closed plan on it is replaced (deleted) by the new one. Periods are monthly from `firstDueOn` (not before the purchase day); every period but the last pays `installmentMinor` (default: even split rounded up) and the last takes the rest, so they add up to the price. 2 to 60 periods. `clientId` makes retries idempotent."
   /api/v1/card-installments/due:
     get:
       operationId: getCardInstallmentsDue
@@ -8238,7 +8238,7 @@ components:
           readOnly: true
           type: [string, 'null']
           format: uuid
-          description: Card installment plan over this expense, active or closed (MOB-P3-009). Null when none and on other types. Returned only by GET list and GET by id.
+          description: Active card installment plan over this expense (MOB-P3-009). Null when none or closed, and on other types. Returned only by GET list and GET by id.
       required:
       - clientId
       - accountId
