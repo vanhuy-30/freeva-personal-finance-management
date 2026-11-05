@@ -169,6 +169,42 @@ void main() {
     );
   });
 
+  testWidgets(
+    'expense with a plan offers its schedule',
+    skip: !Platform.isMacOS,
+    (tester) async {
+      final model = StubTransactionViewModel(
+        rows: groupTransactionLegs([
+          tx(
+            'phone',
+            account: 'card',
+            amount: -24000000,
+            day: '2026-10-12',
+            time: '19:20',
+            category: 'shopping',
+            merchant: 'Điện thoại',
+            plan: 'plan-1',
+          ),
+        ]),
+      )..wallets = [...StubTransactionViewModel().wallets, card];
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        await c1App(const TransactionPage(), model: model),
+      );
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.tap(find.text('Điện thoại'));
+      await tester.pumpAndSettle();
+      expect(find.text('Xem lịch trả góp'), findsOneWidget);
+      expect(find.text('Chuyển thành trả góp'), findsNothing);
+      await expectLater(
+        find.byType(MaterialApp),
+        matchesGoldenFile('goldens/installment_tx_planned.png'),
+      );
+    },
+  );
+
   group('behaviour', () {
     testWidgets('changing the count previews again and creates that draft', (
       tester,

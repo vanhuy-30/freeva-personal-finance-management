@@ -30,6 +30,9 @@ enum DetailAction {
 
   /// "Chuyển thành trả góp" on a card expense without a plan (`MOB-P3-009`).
   installment,
+
+  /// "Xem lịch trả góp" on an expense with an active plan.
+  openInstallment,
 }
 
 /// "Chuyển thành trả góp" shows on a live expense on a credit wallet that
@@ -75,6 +78,11 @@ class _TransactionDetailBodyState extends State<TransactionDetailBody> {
     final loaded = model.rows.where((r) => r.id == id).firstOrNull;
     return loaded != null ? Future.value(loaded) : model.open(id);
   }
+
+  bool get _hasPlan =>
+      bundle.type == TransactionType.expense &&
+      !bundle.deleted &&
+      bundle.installmentPlanId != null;
 
   @override
   Widget build(BuildContext context) {
@@ -150,16 +158,22 @@ class _TransactionDetailBodyState extends State<TransactionDetailBody> {
             );
           },
         ),
-        if (model.canWrite &&
-            (bundle.refundable > BigInt.zero ||
-                canSplitIntoInstallments(bundle, model.wallets))) ...[
+        if (_hasPlan ||
+            (model.canWrite &&
+                (bundle.refundable > BigInt.zero ||
+                    canSplitIntoInstallments(bundle, model.wallets)))) ...[
           const SizedBox(height: FreevaSpace.s4),
           ExpenseActionCard(
-            onRefund: bundle.refundable > BigInt.zero
+            onRefund: model.canWrite && bundle.refundable > BigInt.zero
                 ? () => close(DetailAction.refund)
                 : null,
-            onInstallment: canSplitIntoInstallments(bundle, model.wallets)
+            onInstallment:
+                model.canWrite &&
+                    canSplitIntoInstallments(bundle, model.wallets)
                 ? () => close(DetailAction.installment)
+                : null,
+            onSchedule: _hasPlan
+                ? () => close(DetailAction.openInstallment)
                 : null,
           ),
         ],

@@ -2534,5 +2534,7 @@
   "creditIncludes": "Includes {installment} installments · minimum {minimum}",
   "@creditIncludes": {"placeholders": {"installment": {"type": "String"}, "minimum": {"type": "String"}}},
   "creditIncludesNoMin": "Includes {installment} installments",
-  "@creditIncludesNoMin": {"placeholders": {"installment": {"type": "String"}}}
+  "@creditIncludesNoMin": {"placeholders": {"installment": {"type": "String"}}},
+  "installmentView": "View installment schedule",
+  "installmentViewSub": "Periods and what is left to pay"
 }

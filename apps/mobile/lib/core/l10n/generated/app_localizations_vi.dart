@@ -4616,4 +4616,10 @@ class SVi extends S {
   String creditIncludesNoMin(String installment) {
     return 'Gồm $installment trả góp';
   }
+
+  @override
+  String get installmentView => 'Xem lịch trả góp';
+
+  @override
+  String get installmentViewSub => 'Các kỳ và số còn phải trả';
 }

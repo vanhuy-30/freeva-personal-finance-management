@@ -8225,6 +8225,18 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Includes {installment} installments'**
   String creditIncludesNoMin(String installment);
+
+  /// No description provided for @installmentView.
+  ///
+  /// In en, this message translates to:
+  /// **'View installment schedule'**
+  String get installmentView;
+
+  /// No description provided for @installmentViewSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Periods and what is left to pay'**
+  String get installmentViewSub;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

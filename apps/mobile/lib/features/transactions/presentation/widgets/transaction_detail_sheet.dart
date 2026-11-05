@@ -9,6 +9,7 @@ import '../viewmodels/transaction_view_model.dart';
 import '../../../../core/money/money_text.dart';
 import '../../../auth/domain/auth_repository.dart';
 import '../../../installments/presentation/pages/installment_add_page.dart';
+import '../../../installments/presentation/pages/installment_detail_page.dart';
 import '../../../installments/presentation/viewmodels/installment_view_model.dart';
 import 'adjustment_sheet.dart';
 import 'refund_delete_popup.dart';
@@ -85,6 +86,16 @@ Future<void> openTransactionDetail(
       );
       // The expense now carries its plan: read the list again so the row
       // does not offer it twice.
+      await model.load();
+    case DetailAction.openInstallment:
+      final id = bundle.installmentPlanId;
+      if (id == null) return;
+      await navigator.push(
+        MaterialPageRoute<void>(
+          builder: (_) => InstallmentDetailPage(planId: id),
+        ),
+      );
+      // Ended there: the expense can be split again.
       await model.load();
     case DetailAction.openOriginal:
       final id = bundle.refundOfId;

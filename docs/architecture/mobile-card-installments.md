@@ -4,7 +4,8 @@
 
 ## Hành vi
 
-- **Chi tiết khoản chi:** card hành động có hai hàng như board: "Ghi hoàn tiền" (khi còn hoàn được) và "Chuyển thành trả góp · Chia nhiều kỳ trên thẻ" (icon tím). Hàng trả góp hiện khi giao dịch là khoản chi chưa xoá, trên ví `credit` chưa ẩn, `installmentPlanId` null và user ghi được. Sau khi đóng trang tạo, danh sách giao dịch tải lại để hàng không hiện lần hai.
+- **Chi tiết khoản chi:** card hành động có hai hàng như board: "Ghi hoàn tiền" (khi còn hoàn được) và "Chuyển thành trả góp · Chia nhiều kỳ trên thẻ" (icon tím). Hàng trả góp hiện khi giao dịch là khoản chi chưa xoá, trên ví `credit` chưa ẩn, `installmentPlanId` null (chưa có kế hoạch hoặc kế hoạch đã kết thúc) và user ghi được. Khoản chi đang trả góp thay bằng hàng "Xem lịch trả góp · Các kỳ và số còn phải trả" mở lịch. Sau khi đóng trang tạo hoặc trang lịch, danh sách giao dịch tải lại.
+- **Sửa kế hoạch sai:** không có màn sửa; user "Kết thúc trả góp" rồi tạo lại từ khoản chi. API thay kế hoạch đã kết thúc bằng kế hoạch mới.
 - **"Trả góp" (InstAdd)**, mở toàn màn: thẻ khoản mua, chip Số kỳ 3/6/9/12/Khác (Khác mở ô nhập 2–60), "Mỗi kỳ" (sửa bằng ô nhập; xoá trống thì về chia đều), "Kỳ đầu" (mặc định ngày đến hạn của sao kê chứa khoản mua, theo ngày chốt và ngày đến hạn của thẻ; không có ngày đến hạn thì cùng ngày tháng sau). Mọi số kỳ, số mỗi kỳ và ngày các kỳ lấy từ `POST /card-installments/preview` (gọi lại mỗi lần đổi input, bỏ kết quả cũ). Hiện 3 kỳ đầu + "… thêm N kỳ, xong dd/MM/yyyy". Preview 400 → chữ đỏ "Số này chưa chia vừa N kỳ…", 409 → "Khoản này không chuyển trả góp được nữa", kỳ đầu trước ngày mua → báo ngay không gọi API; nút tắt khi có lỗi. "Tạo lịch trả góp" gửi đúng input của preview, `clientId` giữ suốt trang, xong thì thay bằng trang lịch. Chỉ online.
 - **Lịch trả góp (InstDetail)**, route `/installments/:id`: tên = nơi mua, không có thì danh mục (như dòng giao dịch). "Còn phải trả" = tổng kỳ `upcoming` của API / tổng giá, thanh tím, "Đã trả {kỳ đã qua}/{số kỳ} kỳ · {ví}". Mọi kỳ: kỳ đã qua chữ mờ có dấu tích xanh, kỳ `upcoming` đầu có "Kỳ tới". "Kết thúc trả góp" ở đáy màn → popup xác nhận → `close(version)`; kế hoạch đã đóng ẩn nút và có tag "Đã kết thúc".
 - **Chi tiết thẻ (WCredit3):** khi thẻ có kế hoạch đang chạy và có ngày đến hạn, thẻ "Phải trả kỳ này · dd/MM" thay thẻ thông tin thẻ: số = dư nợ − phần trả góp các kỳ sau hạn này (`due?from=hạn+1&to=2099-12-31`), vì dư nợ đã gồm đủ giá mua; không âm. Tag "Còn N ngày". "Gồm {trả góp kỳ này} trả góp · tối thiểu {số trả tối thiểu của thẻ}" với phần trả góp = `due?from=hạn kỳ trước+1&to=hạn này`. Nhóm "TRẢ GÓP": mỗi kế hoạch "Kỳ i/n · dd/MM · số" từ `nextDueOn`/`nextAmountMinor`/`remainingCount`, chạm mở lịch. Thẻ không có kế hoạch giữ như cũ.
@@ -17,7 +18,7 @@
 
 - Icon khoản mua và dòng TRẢ GÓP lấy theo danh mục của khoản chi (board vẽ điện thoại).
 - Màn hẹp hoặc chữ lớn: hai ô "Mỗi kỳ" / "Kỳ đầu" xếp chồng, ngày và "Kỳ tới" xuống dòng thay vì cắt số.
-- Popup xác nhận "Kết thúc trả góp?" (board chưa vẽ).
+- Popup xác nhận "Kết thúc trả góp?" và hàng "Xem lịch trả góp" (board chưa vẽ).
 
 ## Test
 

@@ -4698,4 +4698,10 @@ class SEn extends S {
   String creditIncludesNoMin(String installment) {
     return 'Includes $installment installments';
   }
+
+  @override
+  String get installmentView => 'View installment schedule';
+
+  @override
+  String get installmentViewSub => 'Periods and what is left to pay';
 }

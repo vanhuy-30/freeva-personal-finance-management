@@ -1529,5 +1529,7 @@
   "creditDueThisPeriod": "Phải trả kỳ này · {date}",
   "creditDaysLeftTag": "{count, plural, =0{Hôm nay} other{Còn {count} ngày}}",
   "creditIncludes": "Gồm {installment} trả góp · tối thiểu {minimum}",
-  "creditIncludesNoMin": "Gồm {installment} trả góp"
+  "creditIncludesNoMin": "Gồm {installment} trả góp",
+  "installmentView": "Xem lịch trả góp",
+  "installmentViewSub": "Các kỳ và số còn phải trả"
 }

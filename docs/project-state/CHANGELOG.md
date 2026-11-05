@@ -4,7 +4,7 @@ Nhật ký repo/process — không phải App Store release notes.
 
 ## 2026-11-05
 
-- `MOB-P3-009` (+ `BE-P3-009` bổ sung): trả góp thẻ trên app — hàng "Chuyển thành trả góp" trong chi tiết khoản chi trên thẻ, màn tạo lịch (số kỳ, mỗi kỳ, kỳ đầu; mọi số từ API preview), lịch trả góp và kết thúc sớm, "Phải trả kỳ này" + nhóm TRẢ GÓP trên chi tiết thẻ. API thêm `POST /card-installments/preview`, tên khoản mua trên kế hoạch, `installmentPlanId` trên khoản chi (không migration). Golden sáng/tối + 1.3×, đối chiếu board nhóm M. [Thiết kế](../architecture/mobile-card-installments.md).
+- `MOB-P3-009` (+ `BE-P3-009` bổ sung): trả góp thẻ trên app — hàng "Chuyển thành trả góp" trong chi tiết khoản chi trên thẻ, màn tạo lịch (số kỳ, mỗi kỳ, kỳ đầu; mọi số từ API preview), lịch trả góp và kết thúc sớm, "Phải trả kỳ này" + nhóm TRẢ GÓP trên chi tiết thẻ. Kết thúc rồi tạo lại để sửa kế hoạch sai; khoản chi đang trả góp có hàng "Xem lịch trả góp". API thêm `POST /card-installments/preview`, tên khoản mua trên kế hoạch, `installmentPlanId` trên khoản chi, tạo mới thay kế hoạch đã kết thúc (không migration). Golden sáng/tối + 1.3×, đối chiếu board nhóm M. [Thiết kế](../architecture/mobile-card-installments.md).
 - `MOB-P3-008` (+ `BE-P3-008` bổ sung): hoàn tiền trên app — card "Ghi hoàn tiền" trong chi tiết khoản chi, sheet ghi hoàn tiền (chip hoàn toàn bộ phần còn lại, ví cùng tiền tệ, ngày), popup xoá khoản chi có hoàn tiền (`cascade` / `keep`), dòng và chi tiết giao dịch `refund`, "đã hoàn" dưới khoản chi. API thêm `refundedMinor` trên khoản chi ở `GET /transactions` và `GET /transactions/{id}` (không migration). Golden sáng/tối + 1.3×, đối chiếu board nhóm M. [Thiết kế](../architecture/mobile-refunds.md).
 
 ## 2026-11-04

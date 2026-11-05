@@ -9,13 +9,21 @@ import '../../../../core/widgets/freeva_card.dart';
 /// Action card of the expense detail sheet (board `TxDetail3`): "Ghi hoàn
 /// tiền · Đổi trả, hoàn một phần" (green tile) and "Chuyển thành trả góp ·
 /// Chia nhiều kỳ trên thẻ" (violet tile), 56 rows with a hairline between.
-/// A null callback drops its row.
+/// An expense already split shows "Xem lịch trả góp" instead. A null
+/// callback drops its row.
 class ExpenseActionCard extends StatelessWidget {
-  const ExpenseActionCard({this.onRefund, this.onInstallment, super.key})
-    : assert(onRefund != null || onInstallment != null);
+  const ExpenseActionCard({
+    this.onRefund,
+    this.onInstallment,
+    this.onSchedule,
+    super.key,
+  }) : assert(onRefund != null || onInstallment != null || onSchedule != null);
 
   final VoidCallback? onRefund;
   final VoidCallback? onInstallment;
+
+  /// Opens the active plan of this expense.
+  final VoidCallback? onSchedule;
 
   @override
   Widget build(BuildContext context) {
@@ -23,31 +31,45 @@ class ExpenseActionCard extends StatelessWidget {
     final c = context.colors;
     final refund = onRefund;
     final installment = onInstallment;
+    final schedule = onSchedule;
+    final rows = [
+      if (refund != null)
+        _ActionRow(
+          icon: LucideIcons.rotateCcw,
+          background: c.tintGreen,
+          foreground: c.tintGreenFg,
+          title: s.refundAction,
+          subtitle: s.refundActionSub,
+          onTap: refund,
+        ),
+      if (installment != null)
+        _ActionRow(
+          icon: LucideIcons.layers,
+          background: c.tintViolet,
+          foreground: c.tintVioletFg,
+          title: s.installmentAction,
+          subtitle: s.installmentActionSub,
+          onTap: installment,
+        ),
+      if (schedule != null)
+        _ActionRow(
+          icon: LucideIcons.calendarClock,
+          background: c.tintViolet,
+          foreground: c.tintVioletFg,
+          title: s.installmentView,
+          subtitle: s.installmentViewSub,
+          onTap: schedule,
+        ),
+    ];
     return FreevaCard(
       list: true,
       padding: const EdgeInsets.symmetric(horizontal: FreevaSpace.s4),
       child: Column(
         children: [
-          if (refund != null)
-            _ActionRow(
-              icon: LucideIcons.rotateCcw,
-              background: c.tintGreen,
-              foreground: c.tintGreenFg,
-              title: s.refundAction,
-              subtitle: s.refundActionSub,
-              onTap: refund,
-            ),
-          if (refund != null && installment != null)
-            Divider(height: 1, color: c.listDivider),
-          if (installment != null)
-            _ActionRow(
-              icon: LucideIcons.layers,
-              background: c.tintViolet,
-              foreground: c.tintVioletFg,
-              title: s.installmentAction,
-              subtitle: s.installmentActionSub,
-              onTap: installment,
-            ),
+          for (final (i, row) in rows.indexed) ...[
+            if (i > 0) Divider(height: 1, color: c.listDivider),
+            row,
+          ],
         ],
       ),
     );
