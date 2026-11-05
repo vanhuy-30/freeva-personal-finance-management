@@ -1,6 +1,6 @@
 # Nhóm M — Ví, hoàn tiền, trả góp
 
-Trạng thái: **chốt thiết kế 2026-11-03**; màn 1 (khớp số dư) **đã code** (`MOB-P3-005`, lối vào là link chữ dưới số dư, canvas v145 đã vẽ link trên `WDetail`/`WCredit` và sheet sửa `WAdjustEdit`), còn lại chưa code. Task: `MOB-P3-005` (khớp số dư), `MOB-P3-008` (hoàn tiền), `MOB-P3-009` (trả góp thẻ); API xong.
+Trạng thái: **chốt thiết kế 2026-11-03**; màn 1 (khớp số dư) **đã code** (`MOB-P3-005`, lối vào là link chữ dưới số dư, canvas v145 đã vẽ link trên `WDetail`/`WCredit` và sheet sửa `WAdjustEdit`), màn 2–4 (hoàn tiền) **đã code** (`MOB-P3-008`, hàng "Chuyển thành trả góp" chờ `MOB-P3-009`), còn lại chưa code. Task: `MOB-P3-005` (khớp số dư), `MOB-P3-008` (hoàn tiền), `MOB-P3-009` (trả góp thẻ); API xong.
 Canvas: trang **07 · Phase 3**, hàng M. Spec chung: [design-system.md](../design-system.md). Nền tảng ở [D-wallets.md](D-wallets.md) và [C-transactions.md](C-transactions.md).
 
 ## Nguyên tắc riêng cho nhóm này

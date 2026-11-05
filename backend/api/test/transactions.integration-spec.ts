@@ -21,7 +21,9 @@ if (!databaseUrl || new URL(databaseUrl).pathname !== '/auth_test') {
 process.env.DATABASE_URL = databaseUrl;
 
 /** Detail adds `converted` to each leg (BE-P2-013); create, list and update responses do not. */
-const plain = (bundle: { legs: Array<{ converted?: unknown }> }) => ({ ...bundle, legs: bundle.legs.map(({ converted: _converted, ...leg }) => leg) });
+/** Read-only fields of GET by id (`converted`, `refundedMinor`) are not in write responses. */
+const plain = (bundle: { legs: Array<{ converted?: unknown; refundedMinor?: unknown }> }) =>
+  ({ ...bundle, legs: bundle.legs.map(({ converted: _converted, refundedMinor: _refunded, ...leg }) => leg) });
 
 describe('BE-P1-005 HTTP + PostgreSQL', () => {
   let app: INestApplication;

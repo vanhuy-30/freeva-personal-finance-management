@@ -42,7 +42,7 @@ Cùng tham số này có trên `PATCH` với `deleted: true`. Khôi phục kho�
 | Tỷ lệ tiết kiệm | Theo chi ròng; không vào thu nhập |
 | Ngân sách và thông báo ngưỡng | `periodSpendRows` trừ hoàn tiền của các khoản chi trong kỳ |
 | Báo cáo theo ví | Field `refundMinor` (theo ngày hoàn tiền), cộng vào `netMinor` |
-| `GET /transactions` | Có trong danh sách, lọc `type=refund`; `summary.totals[].refundMinor` tách riêng |
+| `GET /transactions` | Có trong danh sách, lọc `type=refund`; `summary.totals[].refundMinor` tách riêng; khoản chi có `refundedMinor` (tổng hoàn chưa xoá, `"0"` khi chưa có; `null` với loại khác), cũng có ở `GET /transactions/{id}` |
 | Gợi ý trùng khi sync, định kỳ | Bỏ qua refund; rule định kỳ không tạo được refund |
 | Export / xóa tài khoản | Có trong export (`type: refund`, `refundOfId`), xóa cùng tài khoản |
 
@@ -50,4 +50,6 @@ Cùng tham số này có trên `PATCH` với `deleted: true`. Khôi phục kho�
 
 Unit: [refund.spec.ts](../../backend/api/src/modules/transactions/refund.spec.ts) (trần tổng hoàn, bigint trên 2^53, validate leg, trừ ngân sách). PostgreSQL: [refund.integration-spec.ts](../../backend/api/test/refund.integration-spec.ts) (số dư, replay, vượt trần, song song, báo cáo và ngân sách theo kỳ gốc, xóa gốc `cascade`/`keep`, sửa vượt trần).
 
-**Tồn đọng:** `MOB-P3-008` (nút hoàn tiền trên khoản chi, hỏi khi xóa) chưa làm; app chưa biết loại giao dịch `refund`; hoàn tiền khác tiền tệ với khoản gốc chưa hỗ trợ; chưa deploy staging.
+Mobile: [mobile-refunds.md](mobile-refunds.md) (`MOB-P3-008`).
+
+**Tồn đọng:** hoàn tiền khác tiền tệ với khoản gốc chưa hỗ trợ; chưa deploy staging.

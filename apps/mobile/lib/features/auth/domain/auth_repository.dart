@@ -21,6 +21,12 @@ enum AuthError {
 
   /// The category's kind does not fit the transaction type (expense/income).
   categoryKind,
+
+  /// The expense still has refunds; deleting needs `refunds=cascade|keep`.
+  refundExists,
+
+  /// The refunds would add up to more than the expense.
+  refundExceeds,
   invalidEmail,
   passwordMismatch,
   credentials,

@@ -5,7 +5,12 @@ import '../../../../core/widgets/freeva_sheet.dart';
 import '../../../../core/widgets/freeva_toast.dart';
 import '../../domain/transaction.dart';
 import '../viewmodels/transaction_view_model.dart';
+import '../../../../core/money/money_text.dart';
+import '../../../auth/domain/auth_repository.dart';
 import 'adjustment_sheet.dart';
+import 'refund_delete_popup.dart';
+import 'refund_sheet.dart';
+import 'transaction_labels.dart';
 import 'transaction_editor.dart';
 import 'transaction_naming.dart';
 import 'transaction_detail_body.dart';
@@ -49,14 +54,94 @@ Future<void> openTransactionDetail(
               TransactionEditor(model: model, initial: bundle, copy: true),
         ),
       );
+    case DetailAction.refund:
+      final saved = await showRefundSheet(context, model, bundle, naming);
+      if (saved == true && context.mounted) {
+        showFreevaToast(context, message: s.refundSaved, success: true);
+      }
+    case DetailAction.openOriginal:
+      final id = bundle.refundOfId;
+      if (id == null) return;
+      final loaded = model.rows.where((r) => r.id == id).firstOrNull;
+      final original = loaded ?? await model.open(id);
+      if (original != null && context.mounted) {
+        await openTransactionDetail(context, model, original);
+      }
     case DetailAction.delete:
-      if (!await model.remove(bundle) || !context.mounted) return;
-      showFreevaToast(
-        context,
-        message: s.txDeletedToast(naming.kind(bundle.type)),
-        success: true,
-        actionLabel: s.commonUndo,
-        onAction: () => model.undoRemove(bundle),
-      );
+      await _delete(context, model, bundle, naming);
   }
+}
+
+/// Plain delete with Hoàn tác; an expense with refunds asks first what to
+/// do with them (`TxRefundDelete`) and has no undo, because restoring the
+/// expense does not bring the deleted refunds back.
+Future<void> _delete(
+  BuildContext context,
+  TransactionViewModel model,
+  TransactionBundle bundle,
+  TransactionNaming naming,
+) async {
+  final s = S.of(context);
+  if (bundle.type == TransactionType.expense && bundle.refunded > BigInt.zero) {
+    await _deleteWithRefunds(context, model, bundle, naming, bundle.refunded);
+    return;
+  }
+  if (!await model.remove(bundle)) {
+    // Refunds made elsewhere since the list loaded: ask, then retry.
+    if (model.failure?.code == AuthError.refundExists && context.mounted) {
+      await _deleteWithRefunds(context, model, bundle, naming, null);
+    }
+    return;
+  }
+  if (!context.mounted) return;
+  showFreevaToast(
+    context,
+    message: s.txDeletedToast(naming.kind(bundle.type)),
+    success: true,
+    actionLabel: s.commonUndo,
+    onAction: () => model.undoRemove(bundle),
+  );
+}
+
+Future<void> _deleteWithRefunds(
+  BuildContext context,
+  TransactionViewModel model,
+  TransactionBundle bundle,
+  TransactionNaming naming,
+  BigInt? refunded,
+) async {
+  final s = S.of(context);
+  final locale = Localizations.localeOf(context).toString();
+  final code = bundle.legs.first.currencyCode;
+  final digits =
+      model.currencies.where((x) => x.code == code).firstOrNull?.minorDigits ??
+      0;
+  // Unknown amount (stale list): read the expense again for the number
+  // and its current version.
+  var target = bundle;
+  var amount = refunded;
+  if (amount == null) {
+    final fresh = await model.open(bundle.id);
+    if (fresh == null || !context.mounted) return;
+    target = fresh;
+    amount = fresh.refunded;
+  }
+  final choice = await showRefundDeletePopup(
+    context,
+    refunded: formatMoneyText(amount, digits, locale),
+  );
+  if (choice == null || !context.mounted) return;
+  if (!await model.remove(target, refunds: choice)) {
+    final failure = model.failure;
+    if (failure != null && context.mounted) {
+      showFreevaToast(context, message: transactionError(s, failure));
+    }
+    return;
+  }
+  if (!context.mounted) return;
+  showFreevaToast(
+    context,
+    message: s.txDeletedToast(naming.kind(bundle.type)),
+    success: true,
+  );
 }

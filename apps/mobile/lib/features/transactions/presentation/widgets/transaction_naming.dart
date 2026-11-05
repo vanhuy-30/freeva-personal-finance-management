@@ -54,7 +54,7 @@ class TransactionNaming {
   String? categoryName(String? id) => _categories[id]?.name;
 
   static MoneyTone tone(TransactionType? type) => switch (type) {
-    TransactionType.income => MoneyTone.income,
+    TransactionType.income || TransactionType.refund => MoneyTone.income,
     TransactionType.transfer => MoneyTone.transfer,
     _ => MoneyTone.expense,
   };
@@ -63,6 +63,7 @@ class TransactionNaming {
     TransactionType.transfer => categoryIcon('transfer'),
     TransactionType.adjustment => LucideIcons.scale,
     TransactionType.debt => LucideIcons.handshake,
+    TransactionType.refund => LucideIcons.rotateCcw,
     _ => categoryIcon(_categories[categoryId]?.iconToken),
   };
 
@@ -72,6 +73,7 @@ class TransactionNaming {
     TransactionType.transfer => s.txKindTransfer,
     TransactionType.adjustment => s.txKindAdjustment,
     TransactionType.debt => s.txKindDebt,
+    TransactionType.refund => s.txKindRefund,
   };
 
   TransactionLabel label(TransactionBundle row) {
@@ -96,6 +98,10 @@ class TransactionNaming {
         wallet(first.accountId),
         to,
       ].where((p) => p.isNotEmpty).join(' → ');
+    } else if (row.type == TransactionType.refund) {
+      // Not income: money back on the expense's category.
+      title = s.txRefundTitle;
+      detail = _join([category, wallet(first.accountId)]);
     } else if (adjustment) {
       title = category;
       detail = _join([wallet(first.accountId), if (notes != null) '“$notes”']);

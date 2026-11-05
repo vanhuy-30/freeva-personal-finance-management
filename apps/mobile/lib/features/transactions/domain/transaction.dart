@@ -10,6 +10,19 @@ enum TransactionType {
   /// income or expense. Only `/personal-debts` and `/loans` write it; the API
   /// refuses edits.
   debt,
+
+  /// Money back for an expense (`MOB-P3-008`): one positive leg pointing at
+  /// the expense (`refundOfId`); not income. Only `POST …/refunds` writes it.
+  refund,
+}
+
+/// What happens to refunds when their expense is deleted (`MOB-P3-008`).
+enum RefundDisposition {
+  /// Delete the refunds too; the wallets lose that money.
+  cascade,
+
+  /// Turn the refunds into plain income.
+  keep,
 }
 
 class TxLeg {
@@ -30,6 +43,8 @@ class TxLeg {
     required this.version,
     required this.createdAt,
     this.occurredTime,
+    this.refundOfId,
+    this.refundedMinor,
   });
   final String id;
   final String clientId;
@@ -49,6 +64,12 @@ class TxLeg {
   final DateTime? deletedAt;
   final int version;
   final DateTime createdAt;
+
+  /// Only on `refund`: the expense it returns money for.
+  final String? refundOfId;
+
+  /// Only on `expense` from list/detail reads: active refunds so far (≥ 0).
+  final BigInt? refundedMinor;
 }
 
 class TransactionFx {
@@ -71,6 +92,31 @@ class TransactionBundle {
   String? get notes => legs.first.notes;
   String? get merchant => legs.first.merchant;
   List<String> get tagIds => legs.first.tagIds;
+  String? get refundOfId => legs.first.refundOfId;
+
+  /// Refunds already made on this expense, zero when none or unknown.
+  BigInt get refunded => legs.first.refundedMinor ?? BigInt.zero;
+
+  /// What can still be refunded: the expense amount minus refunds so far.
+  BigInt get refundable {
+    if (type != TransactionType.expense || deleted) return BigInt.zero;
+    final left = legs.first.amountMinor.abs() - refunded;
+    return left > BigInt.zero ? left : BigInt.zero;
+  }
+}
+
+/// Input of `POST /transactions/{id}/refunds`.
+class RefundCommand {
+  const RefundCommand({
+    required this.clientId,
+    required this.accountId,
+    required this.amountMinor,
+    required this.occurredOn,
+  });
+  final String clientId;
+  final String accountId;
+  final BigInt amountMinor;
+  final String occurredOn;
 }
 
 class TransactionDraft {

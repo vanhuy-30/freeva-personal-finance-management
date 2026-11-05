@@ -13,7 +13,17 @@ abstract class TransactionRepository {
     String id,
     TransactionCommand command,
   );
-  Future<Either<AuthFailure, Unit>> remove(String id, int version);
+  Future<Either<AuthFailure, Unit>> remove(
+    String id,
+    int version, {
+    RefundDisposition? refunds,
+  });
+
+  /// `MOB-P3-008`: money back for the expense [originalId].
+  Future<Either<AuthFailure, TransactionBundle>> refund(
+    String originalId,
+    RefundCommand command,
+  );
   Future<Either<AuthFailure, TransactionBundle>> restore(
     String id,
     int version,

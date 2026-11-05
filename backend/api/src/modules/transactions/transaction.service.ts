@@ -13,6 +13,10 @@ function legResponse(leg: TransactionLeg) {
     occurredTime: leg.occurredTime, deletedAt: leg.deletedAt?.toISOString() ?? null,
     createdAt: leg.createdAt.toISOString(), updatedAt: leg.updatedAt.toISOString() };
 }
+/** BE-P3-008: `refundedMinor` on expense legs (active refunds), null on other types. Only GET list and GET by id. */
+function withRefunded<T extends { id: string; type: string }>(leg: T, totals: Map<string, bigint>) {
+  return { ...leg, refundedMinor: leg.type === 'expense' ? (totals.get(leg.id) ?? 0n).toString() : null };
+}
 function response(bundle: TransactionBundle) {
   return { legs: bundle.legs.map(legResponse), fx: bundle.fx ? { ...bundle.fx, quotedAt: bundle.fx.quotedAt.toISOString() } : null };
 }
@@ -36,9 +40,11 @@ export class TransactionService {
   }
   /** Detail adds each leg in the profile currency (BE-P2-013); stored legs are untouched. */
   async find(userId: string, id: string) {
-    const bundle = response(await this.repository.find(userId, id));
+    const found = await this.repository.find(userId, id);
+    const bundle = response(found);
+    const refunded = await this.repository.refundedTotals(userId, found.legs.filter(leg => leg.type === 'expense').map(leg => leg.id));
     const convert = await this.rates.toProfileCurrency(userId);
-    return { ...bundle, legs: bundle.legs.map(leg => ({ ...leg, converted: convert(BigInt(leg.amountMinor), leg.currencyCode) })) };
+    return { ...bundle, legs: bundle.legs.map(leg => ({ ...withRefunded(leg, refunded), converted: convert(BigInt(leg.amountMinor), leg.currencyCode) })) };
   }
   async findByClientId(userId: string, clientId: string) {
     const bundle = await this.repository.findByClientId(userId, clientId);
@@ -51,8 +57,9 @@ export class TransactionService {
     if (query.from && query.to && query.from > query.to) throw new TransactionError('VALIDATION_ERROR');
     const { accountId, categoryId, tagId, ...rest } = query;
     const result = await this.repository.list(userId, { ...rest, accountIds: accountId, categoryIds: categoryId, tagIds: tagId });
+    const refunded = await this.repository.refundedTotals(userId, result.items.filter(leg => leg.type === 'expense').map(leg => leg.id));
     return {
-      items: result.items.map(legResponse), total: result.total, page: query.page, pageSize: query.pageSize,
+      items: result.items.map(leg => withRefunded(legResponse(leg), refunded)), total: result.total, page: query.page, pageSize: query.pageSize,
       summary: {
         count: result.summary.count,
         totals: result.summary.totals.map(row => ({

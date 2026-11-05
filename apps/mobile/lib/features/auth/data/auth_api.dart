@@ -103,7 +103,11 @@ class HttpAuthApi implements AuthApi {
           _errorCode(response.body) == 'CATEGORY_KIND_MISMATCH'
               ? AuthError.categoryKind
               : AuthError.invalidToken,
-        409 => AuthError.conflict,
+        409 => switch (_errorCode(response.body)) {
+          'REFUND_EXISTS' => AuthError.refundExists,
+          'REFUND_EXCEEDS_ORIGINAL' => AuthError.refundExceeds,
+          _ => AuthError.conflict,
+        },
         _ => AuthError.unavailable,
       }, retryAfter: int.tryParse(response.headers['retry-after'] ?? ''));
     } on AuthFailure {

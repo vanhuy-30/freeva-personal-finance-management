@@ -43,6 +43,7 @@ String authFailureText(S s, AuthFailure failure) => switch (failure.code) {
   AuthError.conflict => s.profileConflict,
   AuthError.invalidInput => s.authInvalidInput,
   AuthError.categoryKind => s.transactionCategoryKind,
+  AuthError.refundExists || AuthError.refundExceeds => s.profileConflict,
   AuthError.invalidEmail => s.authInvalidEmail,
   AuthError.passwordMismatch => s.authPasswordMismatch,
   AuthError.credentials => s.authInvalidCredentials,

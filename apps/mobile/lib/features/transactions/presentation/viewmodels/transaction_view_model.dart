@@ -98,7 +98,20 @@ abstract class TransactionViewModel extends ChangeNotifier {
   Future<TransactionBundle?> open(String id);
   Future<Tag?> createTag(String name, {required String clientId});
   Future<bool> save(TransactionDraft draft, {TransactionBundle? existing});
-  Future<bool> remove(TransactionBundle bundle);
+
+  /// Deletes [bundle]. An expense with refunds needs [refunds]; that delete
+  /// is online only (the offline queue cannot carry the choice).
+  Future<bool> remove(TransactionBundle bundle, {RefundDisposition? refunds});
+
+  /// `MOB-P3-008`: records money back for the expense [original] into
+  /// [accountId]. Online only. [clientId] stays the same for one sheet.
+  Future<bool> refund(
+    TransactionBundle original, {
+    required String clientId,
+    required String accountId,
+    required BigInt amountMinor,
+    required String occurredOn,
+  });
 
   /// Edits an adjustment's signed amount. Online only: no offline queue.
   Future<bool> adjust(TransactionBundle bundle, BigInt signedMinor);
@@ -549,6 +562,7 @@ class DefaultTransactionViewModel extends TransactionViewModel {
             // Never created by the composer; only reconcile writes it.
             TransactionType.adjustment => TransactionAnalyticsType.expense,
             TransactionType.debt => TransactionAnalyticsType.expense,
+            TransactionType.refund => TransactionAnalyticsType.expense,
           }),
         );
       }
@@ -652,15 +666,19 @@ class DefaultTransactionViewModel extends TransactionViewModel {
   }
 
   @override
-  Future<bool> remove(TransactionBundle bundle) async {
+  Future<bool> remove(
+    TransactionBundle bundle, {
+    RefundDisposition? refunds,
+  }) async {
     if (!canWrite || bundle.deleted) return false;
     final epoch = ++_epoch;
     _writing = true;
     failure = null;
     notifyListeners();
-    final result = await _cases.remove(bundle);
+    final result = await _cases.remove(bundle, refunds: refunds);
     if (epoch != _epoch) return false;
-    if (_offline(result)) {
+    final hasRefunds = refunds != null || bundle.refunded > BigInt.zero;
+    if (_offline(result) && !hasRefunds) {
       return _queue(
         epoch,
         () => _sync.enqueue(mutationFromBundle(bundle, SyncAction.delete)),
@@ -674,6 +692,32 @@ class DefaultTransactionViewModel extends TransactionViewModel {
       clientId: bundle.legs.first.clientId,
       serverId: bundle.id,
     );
+  }
+
+  @override
+  Future<bool> refund(
+    TransactionBundle original, {
+    required String clientId,
+    required String accountId,
+    required BigInt amountMinor,
+    required String occurredOn,
+  }) async {
+    if (!canWrite || original.deleted) return false;
+    final epoch = ++_epoch;
+    _writing = true;
+    failure = null;
+    notifyListeners();
+    final result = await _cases.refund(
+      original,
+      RefundCommand(
+        clientId: clientId,
+        accountId: accountId,
+        amountMinor: amountMinor,
+        occurredOn: occurredOn,
+      ),
+    );
+    if (epoch != _epoch) return false;
+    return _afterWrite(epoch, result, () {}, serverId: original.id);
   }
 
   @override
