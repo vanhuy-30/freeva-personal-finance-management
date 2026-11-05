@@ -7877,6 +7877,150 @@ abstract class S {
   /// In en, this message translates to:
   /// **'{days, plural, =1{1 day overdue.} other{{days} days overdue.}}'**
   String notifyInboxDebtOverdueBody(int days);
+
+  /// No description provided for @transactionRefund.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund'**
+  String get transactionRefund;
+
+  /// No description provided for @txKindRefund.
+  ///
+  /// In en, this message translates to:
+  /// **'refund'**
+  String get txKindRefund;
+
+  /// No description provided for @txRefundTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund'**
+  String get txRefundTitle;
+
+  /// No description provided for @txRefundedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} refunded'**
+  String txRefundedNote(String amount);
+
+  /// No description provided for @txDetailRefunded.
+  ///
+  /// In en, this message translates to:
+  /// **'Refunded'**
+  String get txDetailRefunded;
+
+  /// No description provided for @txDetailRefundOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund for'**
+  String get txDetailRefundOf;
+
+  /// No description provided for @refundAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Record a refund'**
+  String get refundAction;
+
+  /// No description provided for @refundActionSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Return or partial refund'**
+  String get refundActionSub;
+
+  /// No description provided for @refundTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund {name}'**
+  String refundTitle(String name);
+
+  /// No description provided for @refundSpent.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent {amount} · {date}'**
+  String refundSpent(String amount, String date);
+
+  /// No description provided for @refundAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund amount'**
+  String get refundAmount;
+
+  /// No description provided for @refundAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund all {amount}'**
+  String refundAll(String amount);
+
+  /// No description provided for @refundToWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'To wallet'**
+  String get refundToWallet;
+
+  /// No description provided for @refundDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get refundDate;
+
+  /// No description provided for @refundHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Comes off {category} spending for month {month}, not counted as income.'**
+  String refundHint(String category, int month);
+
+  /// No description provided for @refundTooMuch.
+  ///
+  /// In en, this message translates to:
+  /// **'More than what is left of this expense.'**
+  String get refundTooMuch;
+
+  /// No description provided for @refundSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Record refund'**
+  String get refundSave;
+
+  /// No description provided for @refundSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund recorded'**
+  String get refundSaved;
+
+  /// No description provided for @refundDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this expense?'**
+  String get refundDeleteTitle;
+
+  /// No description provided for @refundDeleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'It has {amount} refunded.'**
+  String refundDeleteBody(String amount);
+
+  /// No description provided for @refundDeleteCascade.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete the refunds too'**
+  String get refundDeleteCascade;
+
+  /// No description provided for @refundDeleteCascadeSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallets go down by {amount}'**
+  String refundDeleteCascadeSub(String amount);
+
+  /// No description provided for @refundDeleteKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep the refunds'**
+  String get refundDeleteKeep;
+
+  /// No description provided for @refundDeleteKeepSub.
+  ///
+  /// In en, this message translates to:
+  /// **'They become income'**
+  String get refundDeleteKeepSub;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

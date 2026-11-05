@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
+import '../../../../core/money/money_text.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_card.dart';
@@ -16,6 +17,9 @@ class TransactionDetailCard extends StatelessWidget {
     required this.label,
     required this.naming,
     required this.today,
+    this.digits = 0,
+    this.refundOf,
+    this.onOpenOriginal,
     super.key,
   });
 
@@ -23,6 +27,14 @@ class TransactionDetailCard extends StatelessWidget {
   final TransactionLabel label;
   final TransactionNaming naming;
   final String? today;
+
+  /// Minor digits of the transaction currency, for "Đã hoàn".
+  final int digits;
+
+  /// Refund only: name of the expense it belongs to ("Hoàn cho"), once
+  /// known; tapping the row calls [onOpenOriginal].
+  final String? refundOf;
+  final VoidCallback? onOpenOriginal;
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +90,39 @@ class TransactionDetailCard extends StatelessWidget {
           value(naming.wallet(bundle.legs.first.accountId)),
         ),
       ],
+      if (refundOf case final name?)
+        Semantics(
+          button: onOpenOriginal != null,
+          child: InkWell(
+            onTap: onOpenOriginal,
+            child: row(
+              s.txDetailRefundOf,
+              Text(
+                name,
+                textAlign: TextAlign.end,
+                style: FreevaTypography.body.copyWith(
+                  fontWeight: FontWeight.w500,
+                  height: 22 / 15,
+                  color: c.actionPrimary,
+                ),
+              ),
+            ),
+          ),
+        ),
+      if (bundle.type == TransactionType.expense &&
+          bundle.refunded > BigInt.zero)
+        row(
+          s.txDetailRefunded,
+          Text(
+            '+${formatMoneyText(bundle.refunded, digits, locale)}',
+            textAlign: TextAlign.end,
+            style: FreevaTypography.body.copyWith(
+              fontWeight: FontWeight.w500,
+              height: 22 / 15,
+              color: c.moneyIncome,
+            ),
+          ),
+        ),
       row(
         s.txDetailDate,
         value(

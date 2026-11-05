@@ -4402,4 +4402,90 @@ class SVi extends S {
   String notifyInboxDebtOverdueBody(int days) {
     return 'Đã quá hạn $days ngày.';
   }
+
+  @override
+  String get transactionRefund => 'Hoàn tiền';
+
+  @override
+  String get txKindRefund => 'hoàn tiền';
+
+  @override
+  String get txRefundTitle => 'Hoàn tiền';
+
+  @override
+  String txRefundedNote(String amount) {
+    return 'đã hoàn $amount';
+  }
+
+  @override
+  String get txDetailRefunded => 'Đã hoàn';
+
+  @override
+  String get txDetailRefundOf => 'Hoàn cho';
+
+  @override
+  String get refundAction => 'Ghi hoàn tiền';
+
+  @override
+  String get refundActionSub => 'Đổi trả, hoàn một phần';
+
+  @override
+  String refundTitle(String name) {
+    return 'Hoàn tiền $name';
+  }
+
+  @override
+  String refundSpent(String amount, String date) {
+    return 'Đã chi $amount · $date';
+  }
+
+  @override
+  String get refundAmount => 'Số tiền hoàn';
+
+  @override
+  String refundAll(String amount) {
+    return 'Hoàn toàn bộ $amount';
+  }
+
+  @override
+  String get refundToWallet => 'Vào ví';
+
+  @override
+  String get refundDate => 'Ngày';
+
+  @override
+  String refundHint(String category, int month) {
+    return 'Trừ vào chi $category tháng $month, không tính là thu.';
+  }
+
+  @override
+  String get refundTooMuch => 'Số hoàn lớn hơn số còn lại của khoản chi.';
+
+  @override
+  String get refundSave => 'Ghi hoàn tiền';
+
+  @override
+  String get refundSaved => 'Đã ghi hoàn tiền';
+
+  @override
+  String get refundDeleteTitle => 'Xoá khoản chi này?';
+
+  @override
+  String refundDeleteBody(String amount) {
+    return 'Khoản này đã được hoàn $amount.';
+  }
+
+  @override
+  String get refundDeleteCascade => 'Xoá cả hoàn tiền';
+
+  @override
+  String refundDeleteCascadeSub(String amount) {
+    return 'Ví bớt đi $amount';
+  }
+
+  @override
+  String get refundDeleteKeep => 'Giữ hoàn tiền';
+
+  @override
+  String get refundDeleteKeepSub => 'Chuyển thành một khoản thu';
 }

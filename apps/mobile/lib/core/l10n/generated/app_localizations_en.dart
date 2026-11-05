@@ -4481,4 +4481,90 @@ class SEn extends S {
     );
     return '$_temp0';
   }
+
+  @override
+  String get transactionRefund => 'Refund';
+
+  @override
+  String get txKindRefund => 'refund';
+
+  @override
+  String get txRefundTitle => 'Refund';
+
+  @override
+  String txRefundedNote(String amount) {
+    return '$amount refunded';
+  }
+
+  @override
+  String get txDetailRefunded => 'Refunded';
+
+  @override
+  String get txDetailRefundOf => 'Refund for';
+
+  @override
+  String get refundAction => 'Record a refund';
+
+  @override
+  String get refundActionSub => 'Return or partial refund';
+
+  @override
+  String refundTitle(String name) {
+    return 'Refund $name';
+  }
+
+  @override
+  String refundSpent(String amount, String date) {
+    return 'Spent $amount · $date';
+  }
+
+  @override
+  String get refundAmount => 'Refund amount';
+
+  @override
+  String refundAll(String amount) {
+    return 'Refund all $amount';
+  }
+
+  @override
+  String get refundToWallet => 'To wallet';
+
+  @override
+  String get refundDate => 'Date';
+
+  @override
+  String refundHint(String category, int month) {
+    return 'Comes off $category spending for month $month, not counted as income.';
+  }
+
+  @override
+  String get refundTooMuch => 'More than what is left of this expense.';
+
+  @override
+  String get refundSave => 'Record refund';
+
+  @override
+  String get refundSaved => 'Refund recorded';
+
+  @override
+  String get refundDeleteTitle => 'Delete this expense?';
+
+  @override
+  String refundDeleteBody(String amount) {
+    return 'It has $amount refunded.';
+  }
+
+  @override
+  String get refundDeleteCascade => 'Delete the refunds too';
+
+  @override
+  String refundDeleteCascadeSub(String amount) {
+    return 'Wallets go down by $amount';
+  }
+
+  @override
+  String get refundDeleteKeep => 'Keep the refunds';
+
+  @override
+  String get refundDeleteKeepSub => 'They become income';
 }

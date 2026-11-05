@@ -2,6 +2,10 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-11-05
+
+- `MOB-P3-008` (+ `BE-P3-008` bổ sung): hoàn tiền trên app — card "Ghi hoàn tiền" trong chi tiết khoản chi, sheet ghi hoàn tiền (chip hoàn toàn bộ phần còn lại, ví cùng tiền tệ, ngày), popup xoá khoản chi có hoàn tiền (`cascade` / `keep`), dòng và chi tiết giao dịch `refund`, "đã hoàn" dưới khoản chi. API thêm `refundedMinor` trên khoản chi ở `GET /transactions` và `GET /transactions/{id}` (không migration). Golden sáng/tối + 1.3×, đối chiếu board nhóm M. [Thiết kế](../architecture/mobile-refunds.md).
+
 ## 2026-11-04
 
 - `MOB-P3-002`: thẻ soát tháng trên Tổng quan thêm hai dòng: danh mục chi tăng nhiều nhất so với tháng trước nữa và ngân sách tháng trước có vượt không (số lấy từ `reports/cashflow` và `budgets/current`, không AI, thiếu dữ liệu thì bỏ dòng). Không đổi backend. Golden sáng/tối.

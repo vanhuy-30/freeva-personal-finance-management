@@ -12,12 +12,23 @@ import '../../../../core/widgets/money_display.dart';
 import '../../domain/transaction.dart';
 import '../viewmodels/transaction_view_model.dart';
 import 'delete_circle_button.dart';
+import 'refund_action_card.dart';
 import 'transaction_detail_card.dart';
 import 'transaction_naming.dart';
 
-enum DetailAction { edit, copy, delete }
+enum DetailAction {
+  edit,
+  copy,
+  delete,
 
-class TransactionDetailBody extends StatelessWidget {
+  /// "Ghi hoàn tiền" on an expense (`MOB-P3-008`).
+  refund,
+
+  /// "Hoàn cho …" on a refund: opens the expense it belongs to.
+  openOriginal,
+}
+
+class TransactionDetailBody extends StatefulWidget {
   const TransactionDetailBody({
     required this.model,
     required this.bundle,
@@ -28,6 +39,26 @@ class TransactionDetailBody extends StatelessWidget {
   final TransactionViewModel model;
   final TransactionBundle bundle;
   final TransactionNaming naming;
+
+  @override
+  State<TransactionDetailBody> createState() => _TransactionDetailBodyState();
+}
+
+class _TransactionDetailBodyState extends State<TransactionDetailBody> {
+  TransactionViewModel get model => widget.model;
+  TransactionBundle get bundle => widget.bundle;
+  TransactionNaming get naming => widget.naming;
+
+  /// The expense a refund belongs to, for "Hoàn cho …": from the loaded
+  /// list when it is there, else read once from the API.
+  late final Future<TransactionBundle?>? original = _original();
+
+  Future<TransactionBundle?>? _original() {
+    final id = bundle.refundOfId;
+    if (bundle.type != TransactionType.refund || id == null) return null;
+    final loaded = model.rows.where((r) => r.id == id).firstOrNull;
+    return loaded != null ? Future.value(loaded) : model.open(id);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,12 +117,27 @@ class TransactionDetailBody extends StatelessWidget {
           ),
         ),
         const SizedBox(height: FreevaSpace.s5),
-        TransactionDetailCard(
-          bundle: bundle,
-          label: label,
-          naming: naming,
-          today: model.today(),
+        FutureBuilder<TransactionBundle?>(
+          future: original,
+          builder: (context, snapshot) {
+            final from = snapshot.data;
+            return TransactionDetailCard(
+              bundle: bundle,
+              label: label,
+              naming: naming,
+              today: model.today(),
+              digits: digits,
+              refundOf: from == null ? null : naming.label(from).title,
+              onOpenOriginal: from == null
+                  ? null
+                  : () => close(DetailAction.openOriginal),
+            );
+          },
         ),
+        if (bundle.refundable > BigInt.zero && model.canWrite) ...[
+          const SizedBox(height: FreevaSpace.s4),
+          RefundActionCard(onTap: () => close(DetailAction.refund)),
+        ],
         const SizedBox(height: FreevaSpace.s5),
         // The API refuses edits on a debt leg: it would break the remaining.
         if (bundle.type == TransactionType.debt)
@@ -99,6 +145,16 @@ class TransactionDetailBody extends StatelessWidget {
             s.txDebtReadOnly,
             textAlign: TextAlign.center,
             style: FreevaTypography.bodyS.copyWith(color: c.textSecondary),
+          )
+        // A refund only deletes (owner, MOB-P3-008): one wide red-outline
+        // button instead of a lone circle.
+        else if (bundle.type == TransactionType.refund)
+          _ActionButton(
+            label: s.txDetailDelete,
+            icon: LucideIcons.trash,
+            variant: FreevaButtonVariant.secondary,
+            danger: true,
+            onPressed: () => close(DetailAction.delete),
           )
         else
           Row(
@@ -143,12 +199,16 @@ class _ActionButton extends StatelessWidget {
     required this.icon,
     required this.variant,
     required this.onPressed,
+    this.danger = false,
   });
 
   final String label;
   final IconData icon;
   final FreevaButtonVariant variant;
   final VoidCallback onPressed;
+
+  /// Red text and outline (delete).
+  final bool danger;
 
   @override
   Widget build(BuildContext context) => PressScale(
@@ -159,6 +219,14 @@ class _ActionButton extends StatelessWidget {
             padding: const WidgetStatePropertyAll(
               EdgeInsets.symmetric(horizontal: FreevaSpace.s2),
             ),
+            foregroundColor: danger
+                ? WidgetStatePropertyAll(context.colors.statusDanger)
+                : null,
+            side: danger
+                ? WidgetStatePropertyAll(
+                    BorderSide(color: context.colors.borderDanger),
+                  )
+                : null,
           ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,

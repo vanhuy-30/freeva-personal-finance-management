@@ -31,6 +31,8 @@ TxLeg tx(
   String? group,
   List<String> tags = const [],
   bool deleted = false,
+  String? refundOf,
+  int? refunded,
 }) => TxLeg(
   id: id,
   clientId: 'c-$id',
@@ -48,6 +50,8 @@ TxLeg tx(
   deletedAt: deleted ? DateTime.utc(2026, 10, 21) : null,
   version: 1,
   createdAt: DateTime.utc(2026, 10, 21),
+  refundOfId: refundOf,
+  refundedMinor: refunded == null ? null : b(refunded),
 );
 
 /// Rows like the C1 artboards.
@@ -372,11 +376,36 @@ class StubTransactionViewModel extends ChangeNotifier
   Future<int?> countFor(TransactionFilter value) async => countValue;
   @override
   Future<int?> deletedCount() async => 4;
+  final removedWith = <RefundDisposition?>[];
   @override
-  Future<bool> remove(TransactionBundle bundle) async {
+  Future<bool> remove(
+    TransactionBundle bundle, {
+    RefundDisposition? refunds,
+  }) async {
     removed.add(bundle);
+    removedWith.add(refunds);
     return true;
   }
+
+  final refunds = <(String, String, BigInt, String)>[];
+  @override
+  Future<bool> refund(
+    TransactionBundle original, {
+    required String clientId,
+    required String accountId,
+    required BigInt amountMinor,
+    required String occurredOn,
+  }) async {
+    refunds.add((original.id, accountId, amountMinor, occurredOn));
+    return true;
+  }
+
+  @override
+  bool get canWrite => true;
+
+  @override
+  Future<TransactionBundle?> open(String id) async =>
+      rows.where((r) => r.id == id).firstOrNull;
 
   final adjusted = <(String, BigInt)>[];
   @override

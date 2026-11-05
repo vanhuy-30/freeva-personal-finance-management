@@ -20,7 +20,17 @@ abstract class TransactionUseCases {
     List<Tag> tags, {
     TransactionBundle? existing,
   });
-  Future<Either<AuthFailure, Unit>> remove(TransactionBundle bundle);
+  Future<Either<AuthFailure, Unit>> remove(
+    TransactionBundle bundle, {
+    RefundDisposition? refunds,
+  });
+
+  /// `MOB-P3-008`: money back for the expense [original], at most what is
+  /// still [TransactionBundle.refundable].
+  Future<Either<AuthFailure, TransactionBundle>> refund(
+    TransactionBundle original,
+    RefundCommand command,
+  );
 
   /// Changes the signed amount of an `adjustment`; nothing else on it moves.
   Future<Either<AuthFailure, TransactionBundle>> adjust(
@@ -130,11 +140,31 @@ class DefaultTransactionUseCases implements TransactionUseCases {
   }
 
   @override
-  Future<Either<AuthFailure, Unit>> remove(TransactionBundle bundle) {
+  Future<Either<AuthFailure, Unit>> remove(
+    TransactionBundle bundle, {
+    RefundDisposition? refunds,
+  }) {
     if (bundle.version < 1 || bundle.version > 2147483646) {
       return Future.value(left(const AuthFailure(AuthError.conflict)));
     }
-    return _repository.remove(bundle.id, bundle.version);
+    return _repository.remove(bundle.id, bundle.version, refunds: refunds);
+  }
+
+  @override
+  Future<Either<AuthFailure, TransactionBundle>> refund(
+    TransactionBundle original,
+    RefundCommand command,
+  ) {
+    if (original.type != TransactionType.expense || original.deleted) {
+      return Future.value(left(const AuthFailure(AuthError.conflict)));
+    }
+    if (command.amountMinor <= BigInt.zero) {
+      return Future.value(left(const AuthFailure(AuthError.invalidInput)));
+    }
+    if (command.amountMinor > original.refundable) {
+      return Future.value(left(const AuthFailure(AuthError.refundExceeds)));
+    }
+    return _repository.refund(original.id, command);
   }
 
   @override
