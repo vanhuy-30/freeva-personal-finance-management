@@ -9,10 +9,11 @@ import '../../../../core/widgets/converted_note.dart';
 import '../../../../core/widgets/freeva_button_style.dart';
 import '../../../../core/widgets/press_scale.dart';
 import '../../../../core/widgets/money_display.dart';
+import '../../../wallets/domain/wallet.dart';
 import '../../domain/transaction.dart';
 import '../viewmodels/transaction_view_model.dart';
 import 'delete_circle_button.dart';
-import 'refund_action_card.dart';
+import 'expense_action_card.dart';
 import 'transaction_detail_card.dart';
 import 'transaction_naming.dart';
 
@@ -26,6 +27,21 @@ enum DetailAction {
 
   /// "Hoàn cho …" on a refund: opens the expense it belongs to.
   openOriginal,
+
+  /// "Chuyển thành trả góp" on a card expense without a plan (`MOB-P3-009`).
+  installment,
+}
+
+/// "Chuyển thành trả góp" shows on a live expense on a credit wallet that
+/// has no plan yet (the API allows one plan per purchase).
+bool canSplitIntoInstallments(TransactionBundle bundle, List<Wallet> wallets) {
+  if (bundle.type != TransactionType.expense || bundle.deleted) return false;
+  if (bundle.installmentPlanId != null) return false;
+  final id = bundle.legs.first.accountId;
+  final wallet = wallets.where((w) => w.id == id).firstOrNull;
+  return wallet != null &&
+      !wallet.archived &&
+      wallet.draft.type == WalletType.credit;
 }
 
 class TransactionDetailBody extends StatefulWidget {
@@ -134,9 +150,18 @@ class _TransactionDetailBodyState extends State<TransactionDetailBody> {
             );
           },
         ),
-        if (bundle.refundable > BigInt.zero && model.canWrite) ...[
+        if (model.canWrite &&
+            (bundle.refundable > BigInt.zero ||
+                canSplitIntoInstallments(bundle, model.wallets))) ...[
           const SizedBox(height: FreevaSpace.s4),
-          RefundActionCard(onTap: () => close(DetailAction.refund)),
+          ExpenseActionCard(
+            onRefund: bundle.refundable > BigInt.zero
+                ? () => close(DetailAction.refund)
+                : null,
+            onInstallment: canSplitIntoInstallments(bundle, model.wallets)
+                ? () => close(DetailAction.installment)
+                : null,
+          ),
         ],
         const SizedBox(height: FreevaSpace.s5),
         // The API refuses edits on a debt leg: it would break the remaining.

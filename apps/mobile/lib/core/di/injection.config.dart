@@ -82,6 +82,14 @@ import 'package:mobile/features/goals/presentation/viewmodels/goal_view_model.da
 import 'package:mobile/features/home/domain/overview_use_cases.dart' as _i970;
 import 'package:mobile/features/home/presentation/viewmodels/home_view_model.dart'
     as _i722;
+import 'package:mobile/features/installments/data/card_installment_repository_impl.dart'
+    as _i922;
+import 'package:mobile/features/installments/domain/card_installment_repository.dart'
+    as _i182;
+import 'package:mobile/features/installments/domain/card_installment_use_cases.dart'
+    as _i238;
+import 'package:mobile/features/installments/presentation/viewmodels/installment_view_model.dart'
+    as _i987;
 import 'package:mobile/features/loans/data/loan_repository_impl.dart' as _i288;
 import 'package:mobile/features/loans/domain/loan_repository.dart' as _i63;
 import 'package:mobile/features/loans/domain/loan_use_cases.dart' as _i572;
@@ -236,10 +244,15 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i1036.BudgetRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i911.PushTokenRepository>(
         () => _i460.PushTokenRepositoryImpl(gh<_i443.AuthorizedApi>()));
+    gh.lazySingleton<_i182.CardInstallmentRepository>(
+        () => _i922.CardInstallmentRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.factory<_i410.AccountExportUseCase>(() => _i410.AccountExportUseCase(
           gh<_i173.AuthRepository>(),
           gh<_i1007.AccountFileSharer>(),
         ));
+    gh.lazySingleton<_i238.CardInstallmentUseCases>(() =>
+        _i238.DefaultCardInstallmentUseCases(
+            gh<_i182.CardInstallmentRepository>()));
     gh.lazySingleton<_i107.WalletRepository>(
         () => _i128.WalletRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i4.ProfileRepository>(
@@ -400,6 +413,12 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i1002.FxRateUseCases>(),
           walletId: walletId,
         ));
+    gh.lazySingleton<_i987.InstallmentViewModel>(
+        () => _i987.InstallmentViewModel(
+              gh<_i238.CardInstallmentUseCases>(),
+              gh<_i251.WalletViewModel>(),
+              gh<_i990.AuthViewModel>(),
+            ));
     gh.lazySingleton<_i72.RecurringViewModel>(() => _i72.RecurringViewModel(
           gh<_i629.RecurringUseCases>(),
           gh<_i990.AuthViewModel>(),

@@ -10,6 +10,7 @@ import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/freeva_icon_button.dart';
 import '../../../../core/widgets/freeva_toast.dart';
 import '../../../../core/widgets/freeva_top_bar.dart';
+import '../../../installments/presentation/viewmodels/installment_view_model.dart';
 import '../../../settings/presentation/widgets/balances_hidden_builder.dart';
 import '../../../transactions/presentation/viewmodels/transaction_view_model.dart';
 import '../../domain/wallet.dart';
@@ -35,6 +36,13 @@ class _WalletDetailPageState extends State<WalletDetailPage> {
   late final WalletDetailViewModel detail = getIt<WalletDetailViewModel>(
     param1: widget.walletId,
   );
+  late final InstallmentViewModel installments = getIt<InstallmentViewModel>();
+
+  /// Plans and "Phải trả kỳ này" of a credit card (`MOB-P3-009`).
+  Future<void> _loadCard() async {
+    final wallet = model.byId(widget.walletId);
+    if (wallet != null) await installments.loadCard(wallet);
+  }
 
   @override
   void initState() {
@@ -42,7 +50,7 @@ class _WalletDetailPageState extends State<WalletDetailPage> {
     Future.microtask(() async {
       if (model.wallets.isEmpty) await model.load();
       if (!main.composerReady) await main.load();
-      await detail.reload();
+      await Future.wait([detail.reload(), _loadCard()]);
     });
   }
 
@@ -55,6 +63,7 @@ class _WalletDetailPageState extends State<WalletDetailPage> {
   /// Balances and history both change after a record, edit or delete.
   Future<void> _refresh() async {
     await Future.wait([model.load(), detail.reload()]);
+    await _loadCard();
   }
 
   Future<void> _record(WalletRecordAction action) async {
@@ -106,7 +115,7 @@ class _WalletDetailPageState extends State<WalletDetailPage> {
   Widget build(BuildContext context) {
     final s = S.of(context);
     return ListenableBuilder(
-      listenable: Listenable.merge([model, main, detail]),
+      listenable: Listenable.merge([model, main, detail, installments]),
       builder: (context, _) {
         final wallet = model.byId(widget.walletId);
         void back() => context.popOrGo('/wallets');
@@ -143,6 +152,12 @@ class _WalletDetailPageState extends State<WalletDetailPage> {
               onRecord: _record,
               onReconcile: () => _reconcile(wallet),
               onRefresh: _refresh,
+              periodDue: credit ? installments.periodDueOf(wallet) : null,
+              plans: credit ? installments.plansOf(wallet.id) : const [],
+              onOpenPlan: (plan) async {
+                await context.push('/installments/${plan.id}');
+                if (mounted) await _refresh();
+              },
             ),
           ),
         );

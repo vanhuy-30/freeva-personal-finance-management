@@ -8021,6 +8021,210 @@ abstract class S {
   /// In en, this message translates to:
   /// **'They become income'**
   String get refundDeleteKeepSub;
+
+  /// No description provided for @installmentAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn into installments'**
+  String get installmentAction;
+
+  /// No description provided for @installmentActionSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Split over card periods'**
+  String get installmentActionSub;
+
+  /// No description provided for @installmentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Installments'**
+  String get installmentTitle;
+
+  /// No description provided for @installmentCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Periods'**
+  String get installmentCount;
+
+  /// No description provided for @installmentOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get installmentOther;
+
+  /// No description provided for @installmentOtherTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of periods'**
+  String get installmentOtherTitle;
+
+  /// No description provided for @installmentOtherLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'From 2 to 60'**
+  String get installmentOtherLabel;
+
+  /// No description provided for @installmentEach.
+  ///
+  /// In en, this message translates to:
+  /// **'Each period'**
+  String get installmentEach;
+
+  /// No description provided for @installmentEditEach.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount each period'**
+  String get installmentEditEach;
+
+  /// No description provided for @installmentFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'First period'**
+  String get installmentFirst;
+
+  /// No description provided for @installmentMore.
+  ///
+  /// In en, this message translates to:
+  /// **'… {count} more, done {date}'**
+  String installmentMore(int count, String date);
+
+  /// No description provided for @installmentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The purchase still counts once, in month {month}. Each period adds to the card\'s amount due.'**
+  String installmentHint(int month);
+
+  /// No description provided for @installmentCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create schedule'**
+  String get installmentCreate;
+
+  /// No description provided for @installmentCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule created'**
+  String get installmentCreated;
+
+  /// No description provided for @installmentEachInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'This amount can\'t make {count} periods add up to the price.'**
+  String installmentEachInvalid(int count);
+
+  /// No description provided for @installmentFirstTooEarly.
+  ///
+  /// In en, this message translates to:
+  /// **'The first period can\'t be before the purchase.'**
+  String get installmentFirstTooEarly;
+
+  /// No description provided for @installmentPreviewError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t show the schedule. Check your connection.'**
+  String get installmentPreviewError;
+
+  /// No description provided for @installmentConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'This purchase can\'t be split anymore.'**
+  String get installmentConflict;
+
+  /// No description provided for @installmentLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Left to pay'**
+  String get installmentLeft;
+
+  /// No description provided for @installmentPaidOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{past}/{count} periods paid · {wallet}'**
+  String installmentPaidOf(int past, int count, String wallet);
+
+  /// No description provided for @installmentEachAdds.
+  ///
+  /// In en, this message translates to:
+  /// **'Each period adds to the card\'s amount due.'**
+  String get installmentEachAdds;
+
+  /// No description provided for @installmentClose.
+  ///
+  /// In en, this message translates to:
+  /// **'End installments'**
+  String get installmentClose;
+
+  /// No description provided for @installmentCloseSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Use when paid off early'**
+  String get installmentCloseSub;
+
+  /// No description provided for @installmentCloseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'End installments?'**
+  String get installmentCloseTitle;
+
+  /// No description provided for @installmentCloseBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining periods stop adding to the card\'s amount due. The purchase stays as it is.'**
+  String get installmentCloseBody;
+
+  /// No description provided for @installmentCloseConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'End'**
+  String get installmentCloseConfirm;
+
+  /// No description provided for @installmentClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Installments ended'**
+  String get installmentClosed;
+
+  /// No description provided for @installmentClosedTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Ended'**
+  String get installmentClosedTag;
+
+  /// No description provided for @installmentLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load the schedule'**
+  String get installmentLoadError;
+
+  /// No description provided for @installmentRowSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Period {index}/{count} · {date} · {amount}'**
+  String installmentRowSub(int index, int count, String date, String amount);
+
+  /// No description provided for @creditDueThisPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Due this period · {date}'**
+  String creditDueThisPeriod(String date);
+
+  /// No description provided for @creditDaysLeftTag.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Today} =1{1 day left} other{{count} days left}}'**
+  String creditDaysLeftTag(int count);
+
+  /// No description provided for @creditIncludes.
+  ///
+  /// In en, this message translates to:
+  /// **'Includes {installment} installments · minimum {minimum}'**
+  String creditIncludes(String installment, String minimum);
+
+  /// No description provided for @creditIncludesNoMin.
+  ///
+  /// In en, this message translates to:
+  /// **'Includes {installment} installments'**
+  String creditIncludesNoMin(String installment);
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

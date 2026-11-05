@@ -7,6 +7,7 @@ import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/auth/domain/auth_use_cases.dart';
 import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dart';
 import 'package:mobile/features/categories/domain/finance_category.dart';
+import 'package:mobile/features/installments/presentation/viewmodels/installment_view_model.dart';
 import 'package:mobile/features/transactions/domain/transaction.dart';
 import 'package:mobile/features/transactions/presentation/viewmodels/transaction_results_view_model.dart';
 import 'package:mobile/features/transactions/presentation/viewmodels/transaction_view_model.dart';
@@ -16,8 +17,10 @@ import 'package:mobile/features/wallets/domain/wallet_flow.dart';
 import 'package:mobile/features/wallets/presentation/viewmodels/wallet_detail_view_model.dart';
 import 'package:mobile/features/wallets/presentation/viewmodels/wallet_view_model.dart';
 
+
 import '../auth/fakes.dart';
 import '../home/fixtures.dart' show b, wallet;
+import '../installments/installment_stub.dart';
 import '../transactions/c1_stub.dart';
 
 import 'package:mobile/core/money/display_converted.dart';
@@ -190,22 +193,30 @@ Future<Widget> d1App(
   Widget page, {
   StubWalletViewModel? model,
   StubWalletDetail? detail,
+  FakeInstallmentUseCases? installments,
   bool dark = false,
   double scale = 1,
 }) async {
   await getIt.reset();
-  getIt.registerSingleton<AuthViewModel>(
-    DefaultAuthViewModel(
-        DefaultAuthUseCases(
-          AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
-        ),
-      )
-      ..stage = AuthStage.unlocked
-      ..hasPin = true
-      ..ready = true,
-  );
+  final auth =
+      DefaultAuthViewModel(
+          DefaultAuthUseCases(
+            AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+          ),
+        )
+        ..stage = AuthStage.unlocked
+        ..hasPin = true
+        ..ready = true;
+  getIt.registerSingleton<AuthViewModel>(auth);
   final wallets = model ?? StubWalletViewModel();
   getIt.registerSingleton<WalletViewModel>(wallets);
+  getIt.registerSingleton<InstallmentViewModel>(
+    InstallmentViewModel(
+      installments ?? FakeInstallmentUseCases(),
+      wallets,
+      auth,
+    ),
+  );
   getIt.registerSingleton<TransactionViewModel>(
     StubTransactionViewModel()
       ..wallets = wallets.wallets

@@ -32,6 +32,7 @@ import '../../features/goals/presentation/pages/goals_page.dart';
 import '../../features/debts/presentation/pages/debt_detail_page.dart';
 import '../../features/debts/presentation/pages/debt_editor_page.dart';
 import '../../features/debts/presentation/pages/debts_page.dart';
+import '../../features/installments/presentation/pages/installment_detail_page.dart';
 import '../../features/loans/presentation/pages/loan_detail_page.dart';
 import '../../features/loans/presentation/pages/loan_editor_page.dart';
 import '../../features/loans/presentation/pages/loan_schedule_page.dart';
@@ -243,6 +244,12 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
             ),
           ),
         ],
+      ),
+      GoRoute(
+        path: '/installments/:id',
+        builder: (context, state) => AuthGate(
+          child: InstallmentDetailPage(planId: state.pathParameters['id']!),
+        ),
       ),
       GoRoute(
         path: '/categories',

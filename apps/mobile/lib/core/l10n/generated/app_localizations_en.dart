@@ -4567,4 +4567,135 @@ class SEn extends S {
 
   @override
   String get refundDeleteKeepSub => 'They become income';
+
+  @override
+  String get installmentAction => 'Turn into installments';
+
+  @override
+  String get installmentActionSub => 'Split over card periods';
+
+  @override
+  String get installmentTitle => 'Installments';
+
+  @override
+  String get installmentCount => 'Periods';
+
+  @override
+  String get installmentOther => 'Other';
+
+  @override
+  String get installmentOtherTitle => 'Number of periods';
+
+  @override
+  String get installmentOtherLabel => 'From 2 to 60';
+
+  @override
+  String get installmentEach => 'Each period';
+
+  @override
+  String get installmentEditEach => 'Amount each period';
+
+  @override
+  String get installmentFirst => 'First period';
+
+  @override
+  String installmentMore(int count, String date) {
+    return '… $count more, done $date';
+  }
+
+  @override
+  String installmentHint(int month) {
+    return 'The purchase still counts once, in month $month. Each period adds to the card\'s amount due.';
+  }
+
+  @override
+  String get installmentCreate => 'Create schedule';
+
+  @override
+  String get installmentCreated => 'Schedule created';
+
+  @override
+  String installmentEachInvalid(int count) {
+    return 'This amount can\'t make $count periods add up to the price.';
+  }
+
+  @override
+  String get installmentFirstTooEarly =>
+      'The first period can\'t be before the purchase.';
+
+  @override
+  String get installmentPreviewError =>
+      'Couldn\'t show the schedule. Check your connection.';
+
+  @override
+  String get installmentConflict => 'This purchase can\'t be split anymore.';
+
+  @override
+  String get installmentLeft => 'Left to pay';
+
+  @override
+  String installmentPaidOf(int past, int count, String wallet) {
+    return '$past/$count periods paid · $wallet';
+  }
+
+  @override
+  String get installmentEachAdds =>
+      'Each period adds to the card\'s amount due.';
+
+  @override
+  String get installmentClose => 'End installments';
+
+  @override
+  String get installmentCloseSub => 'Use when paid off early';
+
+  @override
+  String get installmentCloseTitle => 'End installments?';
+
+  @override
+  String get installmentCloseBody =>
+      'Remaining periods stop adding to the card\'s amount due. The purchase stays as it is.';
+
+  @override
+  String get installmentCloseConfirm => 'End';
+
+  @override
+  String get installmentClosed => 'Installments ended';
+
+  @override
+  String get installmentClosedTag => 'Ended';
+
+  @override
+  String get installmentLoadError => 'Couldn\'t load the schedule';
+
+  @override
+  String installmentRowSub(int index, int count, String date, String amount) {
+    return 'Period $index/$count · $date · $amount';
+  }
+
+  @override
+  String creditDueThisPeriod(String date) {
+    return 'Due this period · $date';
+  }
+
+  @override
+  String creditDaysLeftTag(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days left',
+      one: '1 day left',
+      zero: 'Today',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String creditIncludes(String installment, String minimum) {
+    return 'Includes $installment installments · minimum $minimum';
+  }
+
+  @override
+  String creditIncludesNoMin(String installment) {
+    return 'Includes $installment installments';
+  }
 }

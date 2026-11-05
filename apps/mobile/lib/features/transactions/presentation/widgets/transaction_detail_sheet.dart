@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/widgets/freeva_sheet.dart';
 import '../../../../core/widgets/freeva_toast.dart';
@@ -7,6 +8,8 @@ import '../../domain/transaction.dart';
 import '../viewmodels/transaction_view_model.dart';
 import '../../../../core/money/money_text.dart';
 import '../../../auth/domain/auth_repository.dart';
+import '../../../installments/presentation/pages/installment_add_page.dart';
+import '../../../installments/presentation/viewmodels/installment_view_model.dart';
 import 'adjustment_sheet.dart';
 import 'refund_delete_popup.dart';
 import 'refund_sheet.dart';
@@ -59,6 +62,30 @@ Future<void> openTransactionDetail(
       if (saved == true && context.mounted) {
         showFreevaToast(context, message: s.refundSaved, success: true);
       }
+    case DetailAction.installment:
+      final label = naming.label(bundle);
+      final installments = getIt<InstallmentViewModel>();
+      await navigator.push(
+        MaterialPageRoute<void>(
+          fullscreenDialog: true,
+          builder: (_) => InstallmentAddPage(
+            model: installments,
+            purchase: InstallmentPurchase(
+              transactionId: bundle.id,
+              accountId: bundle.legs.first.accountId,
+              title: label.title,
+              icon: label.icon,
+              walletName: naming.wallet(bundle.legs.first.accountId),
+              occurredOn: bundle.occurredOn,
+              amountMinor: label.minor,
+              currency: label.currency,
+            ),
+          ),
+        ),
+      );
+      // The expense now carries its plan: read the list again so the row
+      // does not offer it twice.
+      await model.load();
     case DetailAction.openOriginal:
       final id = bundle.refundOfId;
       if (id == null) return;
