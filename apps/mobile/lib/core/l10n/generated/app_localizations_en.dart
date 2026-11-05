@@ -4753,4 +4753,75 @@ class SEn extends S {
 
   @override
   String get installmentViewSub => 'Periods and what is left to pay';
+
+  @override
+  String get dataExportTitle => 'Export data';
+
+  @override
+  String get dataExportTable => 'Transactions table';
+
+  @override
+  String get dataExportTableHint => 'CSV, opens in Excel';
+
+  @override
+  String get dataExportFull => 'Full copy';
+
+  @override
+  String get dataExportFullHint => 'JSON, for safekeeping';
+
+  @override
+  String get dataExportFullNote =>
+      'Everything in your account, not filtered. Meant for safekeeping, not for reading.';
+
+  @override
+  String get dataExportPeriodThisMonth => 'This month';
+
+  @override
+  String get dataExportPeriod3Months => '3 months';
+
+  @override
+  String get dataExportPeriodThisYear => 'This year';
+
+  @override
+  String get dataExportPeriodAll => 'All';
+
+  @override
+  String get dataExportPeriodCustom => 'Custom';
+
+  @override
+  String get dataExportWallets => 'Wallets';
+
+  @override
+  String get dataExportAllWallets => 'All wallets';
+
+  @override
+  String dataExportSummaryRange(String from, String to, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count transactions',
+      one: '1 transaction',
+      zero: 'No transactions',
+    );
+    return '$from – $to · $_temp0';
+  }
+
+  @override
+  String dataExportSummaryAll(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count transactions',
+      one: '1 transaction',
+      zero: 'No transactions',
+    );
+    return 'All · $_temp0';
+  }
+
+  @override
+  String get dataExportTooMany =>
+      'More than 50,000 transactions. Pick a shorter range or fewer wallets.';
+
+  @override
+  String get dataExportButton => 'Export file';
 }

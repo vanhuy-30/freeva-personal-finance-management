@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:injectable/injectable.dart';
@@ -9,13 +10,21 @@ import '../domain/account_file_sharer.dart';
 @LazySingleton(as: AccountFileSharer)
 class ShareAccountFileSharer implements AccountFileSharer {
   @override
-  Future<bool> share(String fileName, String content) async {
+  Future<bool> share(String fileName, String content) =>
+      shareBytes(fileName, utf8.encode(content), 'application/json');
+
+  @override
+  Future<bool> shareBytes(
+    String fileName,
+    List<int> bytes,
+    String mimeType,
+  ) async {
     final dir = await getTemporaryDirectory();
     final file = File('${dir.path}/$fileName');
-    await file.writeAsString(content, flush: true);
+    await file.writeAsBytes(bytes, flush: true);
     try {
       final result = await SharePlus.instance.share(
-        ShareParams(files: [XFile(file.path, mimeType: 'application/json')]),
+        ShareParams(files: [XFile(file.path, mimeType: mimeType)]),
       );
       return result.status != ShareResultStatus.dismissed;
     } finally {

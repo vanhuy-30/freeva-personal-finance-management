@@ -8321,6 +8321,108 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Periods and what is left to pay'**
   String get installmentViewSub;
+
+  /// No description provided for @dataExportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Export data'**
+  String get dataExportTitle;
+
+  /// No description provided for @dataExportTable.
+  ///
+  /// In en, this message translates to:
+  /// **'Transactions table'**
+  String get dataExportTable;
+
+  /// No description provided for @dataExportTableHint.
+  ///
+  /// In en, this message translates to:
+  /// **'CSV, opens in Excel'**
+  String get dataExportTableHint;
+
+  /// No description provided for @dataExportFull.
+  ///
+  /// In en, this message translates to:
+  /// **'Full copy'**
+  String get dataExportFull;
+
+  /// No description provided for @dataExportFullHint.
+  ///
+  /// In en, this message translates to:
+  /// **'JSON, for safekeeping'**
+  String get dataExportFullHint;
+
+  /// No description provided for @dataExportFullNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything in your account, not filtered. Meant for safekeeping, not for reading.'**
+  String get dataExportFullNote;
+
+  /// No description provided for @dataExportPeriodThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get dataExportPeriodThisMonth;
+
+  /// No description provided for @dataExportPeriod3Months.
+  ///
+  /// In en, this message translates to:
+  /// **'3 months'**
+  String get dataExportPeriod3Months;
+
+  /// No description provided for @dataExportPeriodThisYear.
+  ///
+  /// In en, this message translates to:
+  /// **'This year'**
+  String get dataExportPeriodThisYear;
+
+  /// No description provided for @dataExportPeriodAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get dataExportPeriodAll;
+
+  /// No description provided for @dataExportPeriodCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get dataExportPeriodCustom;
+
+  /// No description provided for @dataExportWallets.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallets'**
+  String get dataExportWallets;
+
+  /// No description provided for @dataExportAllWallets.
+  ///
+  /// In en, this message translates to:
+  /// **'All wallets'**
+  String get dataExportAllWallets;
+
+  /// No description provided for @dataExportSummaryRange.
+  ///
+  /// In en, this message translates to:
+  /// **'{from} – {to} · {count, plural, =0{No transactions} =1{1 transaction} other{{count} transactions}}'**
+  String dataExportSummaryRange(String from, String to, int count);
+
+  /// No description provided for @dataExportSummaryAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All · {count, plural, =0{No transactions} =1{1 transaction} other{{count} transactions}}'**
+  String dataExportSummaryAll(int count);
+
+  /// No description provided for @dataExportTooMany.
+  ///
+  /// In en, this message translates to:
+  /// **'More than 50,000 transactions. Pick a shorter range or fewer wallets.'**
+  String get dataExportTooMany;
+
+  /// No description provided for @dataExportButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Export file'**
+  String get dataExportButton;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

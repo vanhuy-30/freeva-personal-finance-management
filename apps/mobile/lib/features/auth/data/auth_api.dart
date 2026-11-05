@@ -21,6 +21,9 @@ abstract class AuthApi {
 
   /// Same as [request] but returns the 2xx body exactly as received.
   Future<String> requestText(String method, String path, {String? token});
+
+  /// Same as [requestText] but the raw bytes, so a UTF-8 BOM survives.
+  Future<List<int>> requestBytes(String method, String path, {String? token});
 }
 
 @LazySingleton(as: AuthApi)
@@ -42,21 +45,31 @@ class HttpAuthApi implements AuthApi {
     String? token,
     Map<String, String>? headers,
   }) async {
-    final text = await _send(
+    final text = (await _send(
       method,
       path,
       body: body,
       token: token,
       headers: headers,
-    );
+    )).body;
     return text.isEmpty ? {} : jsonDecode(text) as Map<String, dynamic>;
   }
 
   @override
-  Future<String> requestText(String method, String path, {String? token}) =>
-      _send(method, path, token: token);
+  Future<String> requestText(
+    String method,
+    String path, {
+    String? token,
+  }) async => (await _send(method, path, token: token)).body;
 
-  Future<String> _send(
+  @override
+  Future<List<int>> requestBytes(
+    String method,
+    String path, {
+    String? token,
+  }) async => (await _send(method, path, token: token)).bodyBytes;
+
+  Future<http.Response> _send(
     String method,
     String path, {
     Map<String, dynamic>? body,
@@ -91,7 +104,7 @@ class HttpAuthApi implements AuthApi {
       final ms = DateTime.now().difference(started).inMilliseconds;
       if (response.statusCode >= 200 && response.statusCode < 300) {
         _logger?.http('← $method $path ${response.statusCode} ${ms}ms');
-        return response.body;
+        return response;
       }
       _logger?.http('← $method $path ${response.statusCode} ${ms}ms');
       throw AuthFailure(switch (response.statusCode) {

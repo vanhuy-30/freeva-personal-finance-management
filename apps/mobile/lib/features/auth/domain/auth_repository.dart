@@ -103,6 +103,10 @@ abstract class AuthRepository {
   /// The account export JSON exactly as the API returned it.
   Future<Either<AuthFailure, String>> exportAccount();
 
+  /// `MOB-P3-010`: the CSV body of `GET transactions/export.csv?[query]`,
+  /// as received (UTF-8 BOM included).
+  Future<Either<AuthFailure, List<int>>> exportTransactionsCsv(String query);
+
   /// Deletes the account on the server, then drops the session and PIN here.
   /// Nothing local is touched unless the server confirmed.
   Future<Either<AuthFailure, Unit>> deleteAccount();

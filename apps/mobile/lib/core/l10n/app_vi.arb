@@ -1545,5 +1545,22 @@
   "creditIncludes": "Gồm {installment} trả góp · tối thiểu {minimum}",
   "creditIncludesNoMin": "Gồm {installment} trả góp",
   "installmentView": "Xem lịch trả góp",
-  "installmentViewSub": "Các kỳ và số còn phải trả"
+  "installmentViewSub": "Các kỳ và số còn phải trả",
+  "dataExportTitle": "Xuất dữ liệu",
+  "dataExportTable": "Bảng giao dịch",
+  "dataExportTableHint": "CSV, mở bằng Excel",
+  "dataExportFull": "Bản sao đầy đủ",
+  "dataExportFullHint": "JSON, để cất giữ",
+  "dataExportFullNote": "Gồm toàn bộ dữ liệu tài khoản, không lọc. Dùng để lưu giữ, không phải để đọc.",
+  "dataExportPeriodThisMonth": "Tháng này",
+  "dataExportPeriod3Months": "3 tháng",
+  "dataExportPeriodThisYear": "Năm nay",
+  "dataExportPeriodAll": "Tất cả",
+  "dataExportPeriodCustom": "Tuỳ chọn",
+  "dataExportWallets": "Ví",
+  "dataExportAllWallets": "Tất cả ví",
+  "dataExportSummaryRange": "{from} – {to} · {count, plural, =0{Không có giao dịch} other{{count} giao dịch}}",
+  "dataExportSummaryAll": "Tất cả · {count, plural, =0{Không có giao dịch} other{{count} giao dịch}}",
+  "dataExportTooMany": "Quá 50.000 giao dịch. Chọn khoảng ngắn hơn hoặc ít ví hơn.",
+  "dataExportButton": "Xuất file"
 }
