@@ -215,6 +215,22 @@ describe('BE-P3-008 refunds HTTP + PostgreSQL', () => {
     expect(await prisma.transaction.count({ where: { userId: owner, type: 'refund', deletedAt: null } })).toBe(0);
   });
 
+  it('reports refundedMinor on the expense in list and detail, null on other types', async () => {
+    const account = await wallet(); const cat = await category();
+    const original = await expense(account.id, cat.id, 890000n, '2026-10-12');
+    const plain = await expense(account.id, cat.id, 50000n, '2026-10-13');
+    const created = (await refund(original.id, account.id, '300000')).body.legs[0] as { id: string; version: number };
+    await refund(original.id, account.id, '100000');
+    const detail = await call('GET', `/v1/transactions/${original.id}`);
+    expect(detail.body.legs[0].refundedMinor).toBe('400000');
+    const list = (await call('GET', '/v1/transactions?pageSize=50')).body.items as { id: string; type: string; refundedMinor: string | null }[];
+    expect(list.find(item => item.id === original.id)?.refundedMinor).toBe('400000');
+    expect(list.find(item => item.id === plain.id)?.refundedMinor).toBe('0');
+    expect(list.filter(item => item.type === 'refund').every(item => item.refundedMinor === null)).toBe(true);
+    expect((await call('DELETE', `/v1/transactions/${created.id}?version=${created.version}`)).status).toBe(204);
+    expect((await call('GET', `/v1/transactions/${original.id}`)).body.legs[0].refundedMinor).toBe('100000');
+  });
+
   it('turns refunds into plain income when the original is deleted with refunds=keep', async () => {
     const account = await wallet(); const cat = await category();
     const original = await expense(account.id, cat.id, 400000n, '2026-10-05');

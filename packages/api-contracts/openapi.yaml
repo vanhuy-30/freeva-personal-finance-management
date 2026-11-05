@@ -8154,6 +8154,12 @@ components:
           description: Amount in the profile default currency. Returned only by GET by id; absent from create, list and update.
           allOf:
             - $ref: '#/components/schemas/DisplayConverted'
+        refundedMinor:
+          readOnly: true
+          type: [string, 'null']
+          pattern: ^[0-9]+$
+          maxLength: 20
+          description: Sum of active refunds of this expense in its currency, "0" when none (BE-P3-008). Null on other types. Returned only by GET list and GET by id.
       required:
       - clientId
       - accountId

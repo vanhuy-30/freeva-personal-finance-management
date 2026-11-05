@@ -28,6 +28,8 @@ export interface TransactionRepository {
   /** BE-P3-010: active legs for the CSV export plus an audit row; throws VALIDATION_ERROR above the row cap. */
   listForCsv(userId: string, query: TransactionQuery, maxRows: number): Promise<CsvTransactionRow[]>;
   update(userId: string, id: string, patch: TransactionPatch): Promise<TransactionBundle>;
+  /** BE-P3-008: sum of active refunds per expense id; ids without refunds are absent. */
+  refundedTotals(userId: string, expenseIds: string[]): Promise<Map<string, bigint>>;
   refund(userId: string, originalId: string, input: RefundInput): Promise<{ transaction: TransactionBundle; created: boolean }>;
   reconcile(userId: string, accountId: string, input: ReconcileInput): Promise<ReconcileResult>;
 }
