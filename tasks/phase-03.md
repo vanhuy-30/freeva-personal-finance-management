@@ -27,12 +27,13 @@
 - DoD: một khoản gửi gắn một ví, lãi có công thức và test, không cộng trùng số dư ví. Spec v1 không yêu cầu module này. Được đóng wont nếu beta không cần, và ghi quyết định vào module 11.
 
 ### BE-P3-E04 / MOB-P3-E04 — Dự báo số dư theo quy tắc
-- Status: doing — BE xong 2026-11-03, MOB còn
+- Status: done — BE xong 2026-11-03, MOB xong 2026-11-05
 - Module: 14, 15
 - Gate: post-v1
 - Depends: BE-P2-E01
 - DoD: dự báo số dư từ số hiện tại cộng các định kỳ đã biết. Màn hình nêu giả định và cho sửa input. Khác forecast AI ở `BE-P5-E06`: không gọi model.
-- Note: BE-P3-E04 xong 2026-11-03: `GET /api/v1/forecast` (`months`, `currencyCode`, `startingBalanceMinor`, `excludeRuleIds`), số dư từ ví không phải thẻ + định kỳ/hóa đơn thu chi, trả `assumptions`, có test số cố định, OpenAPI. Không quy đổi FX, không dự đoán chi tiêu ngoài định kỳ. Kiến trúc: [forecast.md](../docs/architecture/forecast.md). MOB-P3-E04 (màn hình giả định, sửa input) chưa làm.
+- Note: BE-P3-E04 xong 2026-11-03: `GET /api/v1/forecast` (`months`, `currencyCode`, `startingBalanceMinor`, `excludeRuleIds`), số dư từ ví không phải thẻ + định kỳ/hóa đơn thu chi, trả `assumptions`, có test số cố định, OpenAPI. Không quy đổi FX, không dự đoán chi tiêu ngoài định kỳ. Kiến trúc: [forecast.md](../docs/architecture/forecast.md). MOB-P3-E04 xong 2026-11-05 (xem Note dưới).
+- Note: MOB-P3-E04 xong 2026-11-05: màn Dự báo số dư (`/reports/forecast`, boards `RepMonth3` + `Forecast`) mở từ dòng "Dự báo số dư" dưới "Xem bản soát tháng" trên Báo cáo tháng. Công tắc 3/6/12 tháng, thẻ "Cuối tháng M còn khoảng" + chênh so với hôm nay, cột số dư từng tháng, thẻ Cách tính (số dư gốc từ ví, **Sửa** gửi `startingBalanceMinor`), "Chỉ gồm định kỳ và hóa đơn", danh sách khoản có công tắc (tắt gửi `excludeRuleIds`). Tên khoản và icon lấy từ định kỳ và danh mục đã có. Không đổi backend. Golden sáng/tối + 1.3× + 12 tháng + sheet, đối chiếu board nhóm N. [Mobile](../docs/architecture/mobile-forecast.md). Tồn đọng: chưa chạy trên thiết bị thật/staging; dự báo chưa trừ chi tiêu trung bình (đã chốt ở thiết kế).
 
 ## Gộp chức năng chồng chéo (thêm 2026-11-02)
 

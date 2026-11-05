@@ -13,6 +13,6 @@ Từ hôm nay (timezone hồ sơ) đến hết tháng thứ `months` (1–12, m�
 
 ## Giả định (`assumptions`)
 
-`balanceSource` (`wallets` | `user`), `includesCreditWallets=false`, `includesOneOffSpending=false`, `includedRuleIds`, `excludedRuleIds`, `otherCurrencyRuleIds` (rule khác loại tiền, không quy đổi FX). Mobile dùng để hiện giả định và cho sửa input.
+`balanceSource` (`wallets` | `user`), `includesCreditWallets=false`, `includesOneOffSpending=false`, `includedRuleIds`, `excludedRuleIds`, `otherCurrencyRuleIds` (rule khác loại tiền, không quy đổi FX). Mobile dùng để hiện giả định và cho sửa input: [mobile-forecast.md](mobile-forecast.md).
 
 Bearer session, `Cache-Control: no-store`. Không log số tiền, tên hóa đơn.

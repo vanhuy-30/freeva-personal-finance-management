@@ -5022,4 +5022,104 @@ class SVi extends S {
   String meCalendarMonth(int month) {
     return 'Tháng $month';
   }
+
+  @override
+  String get forecastTitle => 'Dự báo số dư';
+
+  @override
+  String forecastRange(int count) {
+    return '$count tháng';
+  }
+
+  @override
+  String get forecastRangeSemantics => 'Khoảng dự báo';
+
+  @override
+  String forecastEndOfMonth(int month) {
+    return 'Cuối tháng $month còn khoảng';
+  }
+
+  @override
+  String forecastChange(String amount) {
+    return '$amount so với hôm nay';
+  }
+
+  @override
+  String get forecastToday => 'Hôm nay';
+
+  @override
+  String get forecastHowTitle => 'Cách tính';
+
+  @override
+  String get forecastStartsFrom => 'Bắt đầu từ số dư';
+
+  @override
+  String forecastStartsFromWallets(String amount, int count) {
+    return '$amount · $count ví';
+  }
+
+  @override
+  String forecastStartsFromYou(String amount) {
+    return '$amount · bạn nhập';
+  }
+
+  @override
+  String get forecastEdit => 'Sửa';
+
+  @override
+  String get forecastScope =>
+      'Chỉ gồm định kỳ và hóa đơn, chưa gồm chi tiêu hằng ngày.';
+
+  @override
+  String forecastOtherCurrency(int count) {
+    return '$count khoản khác loại tiền chưa được tính.';
+  }
+
+  @override
+  String get forecastRulesHeader => 'Khoản được tính';
+
+  @override
+  String forecastRuleToggle(String name) {
+    return 'Tính $name';
+  }
+
+  @override
+  String forecastEstimated(String schedule) {
+    return '$schedule · số ước tính';
+  }
+
+  @override
+  String forecastOneOff(String date) {
+    return 'Một lần, $date';
+  }
+
+  @override
+  String get forecastNoRules =>
+      'Chưa có khoản định kỳ hay hóa đơn nào, nên số dư giữ nguyên.';
+
+  @override
+  String forecastChartSemantics(String items) {
+    return 'Số dư dự báo cuối từng tháng: $items';
+  }
+
+  @override
+  String get forecastBalanceTitle => 'Số dư bắt đầu';
+
+  @override
+  String get forecastBalanceHint =>
+      'Dự báo sẽ cộng các khoản định kỳ vào số này.';
+
+  @override
+  String get forecastBalanceApply => 'Dùng số này';
+
+  @override
+  String get forecastBalanceReset => 'Dùng tổng số dư các ví';
+
+  @override
+  String get forecastBalanceInvalid => 'Nhập một số hợp lệ.';
+
+  @override
+  String forecastDayEstimated(int day) {
+    return 'Ngày $day · số ước tính';
+  }
 }

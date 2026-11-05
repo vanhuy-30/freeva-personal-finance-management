@@ -29,7 +29,7 @@
 | **K** Vay và nợ | **Chốt** 2026-11-03, **đã code** (`MOB-P3-007`, `MOB-P3-E02`) | [patterns/K-loans-debts.md](patterns/K-loans-debts.md) |
 | **L** Định kỳ và hóa đơn | **Chốt** 2026-11-03, **đã code** (`MOB-P3-001`) | [patterns/L-recurring-bills.md](patterns/L-recurring-bills.md) |
 | **M** Ví, hoàn tiền, trả góp | **Chốt** 2026-11-03; màn 1 (khớp số dư) **đã code** (`MOB-P3-005`), màn 2–4 (hoàn tiền) **đã code** (`MOB-P3-008`), màn 5–7 (trả góp) **đã code** (`MOB-P3-009`) | [patterns/M-wallet-refund-installment.md](patterns/M-wallet-refund-installment.md) |
-| **N** Dự báo, soát tháng, ngân sách, nhắc | **Chốt** 2026-11-03; màn 3 (soát tháng) **đã code** (`MOB-P3-002`), màn 4 (ngưỡng ngân sách) **đã code** (`MOB-P3-003`), màn 5–6 (Thông báo, chọn giờ nhắc) **đã code** (`MOB-P3-006`) | [patterns/N-forecast-alerts.md](patterns/N-forecast-alerts.md) |
+| **N** Dự báo, soát tháng, ngân sách, nhắc | **Chốt** 2026-11-03; màn 1–2 (dự báo số dư) **đã code** (`MOB-P3-E04`), màn 3 (soát tháng) **đã code** (`MOB-P3-002`), màn 4 (ngưỡng ngân sách) **đã code** (`MOB-P3-003`), màn 5–6 (Thông báo, chọn giờ nhắc) **đã code** (`MOB-P3-006`) | [patterns/N-forecast-alerts.md](patterns/N-forecast-alerts.md) |
 | **O** Cá nhân và dữ liệu | **Chốt** 2026-11-03; màn 3 (Xuất dữ liệu) **đã code** (`MOB-P3-010`), màn 1–2 (lưới Cá nhân, Thu nhập và kỳ tính) và 4–8 (Nhập giao dịch) **đã code** (`MOB-P3-010`, `MOB-P3-011`) | [patterns/O-profile-data.md](patterns/O-profile-data.md) |
 | **A3** Onboarding ba câu | **Chốt** 2026-11-03 | [patterns/A3-onboarding-three-questions.md](patterns/A3-onboarding-three-questions.md) |
 
