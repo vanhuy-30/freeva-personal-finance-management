@@ -23,4 +23,11 @@ abstract class GoalRepository {
   Future<Either<AuthFailure, Goal>> adjust(Goal goal, BigInt currentMinor);
   Future<Either<AuthFailure, List<GoalEntry>>> entries(String id);
   Future<Either<AuthFailure, List<GoalPreset>>> presets();
+
+  /// Monthly saving a goal would need; nothing is stored.
+  Future<Either<AuthFailure, GoalPreview>> preview({
+    required String currency,
+    required BigInt targetMinor,
+    required String targetDate,
+  });
 }

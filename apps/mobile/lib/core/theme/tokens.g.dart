@@ -55,6 +55,7 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
     required this.data2,
     required this.data3,
     required this.data4,
+    required this.dataSaving,
     required this.dataMuted,
     required this.tintBlue,
     required this.tintBlueFg,
@@ -157,6 +158,7 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
   final Color data2;
   final Color data3;
   final Color data4;
+  final Color dataSaving;
   final Color dataMuted;
   final Color tintBlue;
   final Color tintBlueFg;
@@ -259,6 +261,7 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
     data2: Color(0xFF8860D0),
     data3: Color(0xFF5AB9EA),
     data4: Color(0xFFC1C8E4),
+    dataSaving: Color(0xFF2F9E76),
     dataMuted: Color(0xFFDDE6FB),
     tintBlue: Color(0xFFEEF2FD),
     tintBlueFg: Color(0xFF3F67D1),
@@ -362,6 +365,7 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
     data2: Color(0xFF9E7ED9),
     data3: Color(0xFF73C4ED),
     data4: Color(0xFFA9B0C7),
+    dataSaving: Color(0xFF7FD8B4),
     dataMuted: Color(0xFF2C3252),
     tintBlue: Color(0xFF232842),
     tintBlueFg: Color(0xFF99B2F2),
@@ -466,6 +470,7 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
     Color? data2,
     Color? data3,
     Color? data4,
+    Color? dataSaving,
     Color? dataMuted,
     Color? tintBlue,
     Color? tintBlueFg,
@@ -568,6 +573,7 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
       data2: data2 ?? this.data2,
       data3: data3 ?? this.data3,
       data4: data4 ?? this.data4,
+      dataSaving: dataSaving ?? this.dataSaving,
       dataMuted: dataMuted ?? this.dataMuted,
       tintBlue: tintBlue ?? this.tintBlue,
       tintBlueFg: tintBlueFg ?? this.tintBlueFg,
@@ -675,6 +681,7 @@ class FreevaColors extends ThemeExtension<FreevaColors> {
       data2: Color.lerp(data2, other.data2, t)!,
       data3: Color.lerp(data3, other.data3, t)!,
       data4: Color.lerp(data4, other.data4, t)!,
+      dataSaving: Color.lerp(dataSaving, other.dataSaving, t)!,
       dataMuted: Color.lerp(dataMuted, other.dataMuted, t)!,
       tintBlue: Color.lerp(tintBlue, other.tintBlue, t)!,
       tintBlueFg: Color.lerp(tintBlueFg, other.tintBlueFg, t)!,

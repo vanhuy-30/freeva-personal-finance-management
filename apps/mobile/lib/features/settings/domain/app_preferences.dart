@@ -24,6 +24,8 @@ class AppPreferences {
     this.notificationsOptInTracked = false,
     this.welcomeSeen = false,
     this.budgetDraftMinor,
+    this.pendingGoal,
+    this.dailyLogAsked = false,
   });
 
   final AppThemePreference theme;
@@ -40,6 +42,12 @@ class AppPreferences {
   /// account currency. Kept on the device until the budget module
   /// (`BE-P2-E02`) can take it; null when skipped.
   final int? budgetDraftMinor;
+
+  /// First-run saving goal waiting for a wallet (`PendingGoal.toJson`).
+  final Map<String, String>? pendingGoal;
+
+  /// The Overview already offered the daily log reminder once.
+  final bool dailyLogAsked;
   static const _keep = Object();
 
   AppPreferences copyWith({
@@ -51,6 +59,8 @@ class AppPreferences {
     bool? notificationsOptInTracked,
     bool? welcomeSeen,
     Object? budgetDraftMinor = _keep,
+    Object? pendingGoal = _keep,
+    bool? dailyLogAsked,
   }) => AppPreferences(
     theme: theme ?? this.theme,
     onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
@@ -63,5 +73,9 @@ class AppPreferences {
     budgetDraftMinor: identical(budgetDraftMinor, _keep)
         ? this.budgetDraftMinor
         : budgetDraftMinor as int?,
+    pendingGoal: identical(pendingGoal, _keep)
+        ? this.pendingGoal
+        : pendingGoal as Map<String, String>?,
+    dailyLogAsked: dailyLogAsked ?? this.dailyLogAsked,
   );
 }

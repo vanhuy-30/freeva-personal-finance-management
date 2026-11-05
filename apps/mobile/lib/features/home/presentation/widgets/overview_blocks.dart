@@ -56,11 +56,9 @@ class OverviewBlocks extends StatelessWidget {
     final credit = cards.isEmpty
         ? null
         : CreditCardsBlock(cards: cards, today: today, digitsOf: digits);
-    final debtFirst = credit != null && model.debtGoal;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (debtFirst) ...[credit, gap],
         SpendingBlock(
           breakdown: spendingBreakdown(data.month, main, data.categories),
           currency: main,
@@ -87,7 +85,7 @@ class OverviewBlocks extends StatelessWidget {
           ),
           gap,
         ],
-        if (credit != null && !debtFirst) ...[credit, gap],
+        if (credit != null) ...[credit, gap],
         RecentTransactions(
           rows: rows,
           digitsOf: digits,

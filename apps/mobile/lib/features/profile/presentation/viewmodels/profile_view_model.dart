@@ -27,6 +27,9 @@ abstract class ProfileViewModel extends ChangeNotifier {
   /// Returns false when the server refused or the session changed.
   Future<bool> saveDisplayCurrency(String? code);
 
+  /// Sets or (null) clears the stated monthly income. False on failure.
+  Future<bool> saveMonthlyIncome(BigInt? minor);
+
   /// True while an export is being fetched or handed to the OS.
   bool get exporting;
   Future<bool> exportData();
@@ -178,6 +181,28 @@ class DefaultProfileViewModel extends ProfileViewModel {
       (_) {
         saved = current.withDisplayCurrency(code);
         draft = draft?.withDisplayCurrency(code);
+        notifyListeners();
+        return true;
+      },
+    );
+  }
+
+  @override
+  Future<bool> saveMonthlyIncome(BigInt? minor) async {
+    final current = saved;
+    if (current == null || _stage != AuthStage.unlocked) return false;
+    final epoch = _epoch;
+    final result = await _useCases.saveMonthlyIncome(minor);
+    if (epoch != _epoch) return false;
+    return result.fold(
+      (e) {
+        unawaited(_fail(e));
+        notifyListeners();
+        return false;
+      },
+      (_) {
+        saved = current.withMonthlyIncome(minor);
+        draft = draft?.withMonthlyIncome(minor);
         notifyListeners();
         return true;
       },

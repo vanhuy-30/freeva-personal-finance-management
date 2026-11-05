@@ -41,9 +41,9 @@ abstract class HomeViewModel extends ChangeNotifier {
   /// Whether this device has a PIN (the checklist asks for one if not).
   bool get hasPin;
 
-  /// Whether the user's goal is "Quản lý khoản nợ": credit cards go above
-  /// "Chi tháng".
-  bool get debtGoal => false;
+  /// Whether the user picked "Quản lý chi tiêu": the daily log reminder is
+  /// offered after the first transaction.
+  bool get trackGoal => false;
 
   /// Whether the user picked "Tiết kiệm": the goals block shows under the balance.
   bool get saveGoal => false;
@@ -102,7 +102,7 @@ class DefaultHomeViewModel extends HomeViewModel {
   String? get displayName => _profile.saved?.displayName;
 
   @override
-  bool get debtGoal => _profile.saved?.goals.contains('debt') ?? false;
+  bool get trackGoal => _profile.saved?.goals.contains('track') ?? false;
   @override
   bool get saveGoal => _profile.saved?.goals.contains('save') ?? false;
   @override

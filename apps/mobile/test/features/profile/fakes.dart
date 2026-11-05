@@ -42,6 +42,15 @@ class MemoryProfiles implements ProfileRepository {
     return right(unit);
   }
 
+  final List<BigInt?> incomes = [];
+  @override
+  Future<Either<AuthFailure, Unit>> saveMonthlyIncome(BigInt? minor) async {
+    if (failure != null) return left(failure!);
+    incomes.add(minor);
+    value = value.withMonthlyIncome(minor);
+    return right(unit);
+  }
+
   @override
   Future<Either<AuthFailure, Unit>> saveOnboarding(
     OnboardingAnswers answers,

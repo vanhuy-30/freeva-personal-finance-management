@@ -109,6 +109,10 @@ import 'package:mobile/features/notifications/domain/push_registrar.dart'
     as _i911;
 import 'package:mobile/features/notifications/presentation/viewmodels/notification_view_model.dart'
     as _i921;
+import 'package:mobile/features/onboarding/domain/pending_goal_use_cases.dart'
+    as _i861;
+import 'package:mobile/features/onboarding/presentation/viewmodels/first_run_nudges_view_model.dart'
+    as _i779;
 import 'package:mobile/features/profile/data/profile_repository_impl.dart'
     as _i72;
 import 'package:mobile/features/profile/data/share_account_file_sharer.dart'
@@ -341,6 +345,12 @@ extension GetItInjectableX on _i174.GetIt {
               gh<_i990.AuthViewModel>(),
               gh<_i444.CategoryExpansionRepository>(),
             ));
+    gh.factory<_i861.PendingGoalUseCases>(() => _i861.PendingGoalUseCases(
+          gh<_i519.SettingsUseCases>(),
+          gh<_i840.GoalUseCases>(),
+          gh<_i336.WalletUseCases>(),
+          gh<_i253.AuthUseCases>(),
+        ));
     gh.lazySingleton<_i488.SyncViewModel>(() => _i488.DefaultSyncViewModel(
           gh<_i665.SyncUseCases>(),
           gh<_i990.AuthViewModel>(),
@@ -402,6 +412,11 @@ extension GetItInjectableX on _i174.GetIt {
               gh<_i1020.AnalyticsService>(),
               gh<_i488.SyncViewModel>(),
               gh<_i1002.FxRateUseCases>(),
+            ));
+    gh.lazySingleton<_i779.FirstRunNudgesViewModel>(
+        () => _i779.FirstRunNudgesViewModel(
+              gh<_i861.PendingGoalUseCases>(),
+              gh<_i519.SettingsUseCases>(),
             ));
     gh.factoryParam<_i599.WalletDetailViewModel, String, dynamic>((
       walletId,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/di/injection.dart';
@@ -14,7 +13,6 @@ import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_button.dart';
 import '../../../../core/widgets/freeva_dialog.dart';
 import '../../../../core/widgets/freeva_picker_field.dart';
-import '../../../../core/widgets/freeva_sheet.dart';
 import '../../../../core/widgets/freeva_text_field.dart';
 import '../../../../core/widgets/freeva_toast.dart';
 import '../../../../core/widgets/freeva_top_bar.dart';
@@ -26,6 +24,7 @@ import '../../../wallets/presentation/widgets/wallet_type_icon.dart';
 import '../../domain/goal.dart';
 import '../../domain/goal_math.dart';
 import '../viewmodels/goal_view_model.dart';
+import '../widgets/goal_date_sheet.dart';
 import '../widgets/goal_kind_chip.dart';
 import '../widgets/goal_look.dart';
 import '../widgets/goal_need_card.dart';
@@ -111,30 +110,11 @@ class _GoalEditorPageState extends State<GoalEditorPage> {
   });
 
   Future<void> _pickDate(S s) async {
-    final today = DateTime.parse(model.today);
-    final picked = await showFreevaSheet<String>(
-      context: context,
-      title: s.goalDate,
-      builder: (context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          CalendarDatePicker(
-            initialDate: targetDate == null
-                ? today.add(const Duration(days: 30))
-                : DateTime.parse(targetDate!),
-            firstDate: today,
-            lastDate: DateTime(today.year + 60, 12, 31),
-            onDateChanged: (d) =>
-                Navigator.of(context).pop(DateFormat('yyyy-MM-dd').format(d)),
-          ),
-          if (targetDate != null)
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(''),
-              child: Text(s.goalDateClear),
-            ),
-        ],
-      ),
+    final picked = await showGoalDateSheet(
+      context,
+      firstDate: DateTime.parse(model.today),
+      current: targetDate,
+      clearable: true,
     );
     if (picked == null) return;
     setState(() => targetDate = picked.isEmpty ? null : picked);

@@ -12,6 +12,9 @@ abstract class ProfileRepository {
   /// Saves the Overview display currency; null goes back to the default.
   Future<Either<AuthFailure, Unit>> saveDisplayCurrency(String? code);
 
+  /// Sets, changes or (null) clears the stated monthly income.
+  Future<Either<AuthFailure, Unit>> saveMonthlyIncome(BigInt? minor);
+
   /// Stores first-run answers; only the parts that are set.
   Future<Either<AuthFailure, Unit>> saveOnboarding(OnboardingAnswers answers);
 }

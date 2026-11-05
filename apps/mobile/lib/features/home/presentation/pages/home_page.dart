@@ -11,8 +11,12 @@ import '../../../../core/widgets/freeva_banner.dart';
 import '../../../auth/presentation/widgets/session_alert_banner.dart';
 import '../../../goals/presentation/viewmodels/goal_view_model.dart';
 import '../../../goals/presentation/widgets/goals_home_block.dart';
+import '../../../notifications/presentation/viewmodels/notification_view_model.dart';
+import '../../../onboarding/presentation/viewmodels/first_run_nudges_view_model.dart';
+import '../../../onboarding/presentation/widgets/daily_log_ask_sheet.dart';
 import '../viewmodels/home_view_model.dart';
 import '../../domain/first_run_checklist.dart';
+import '../../domain/overview.dart';
 import '../widgets/balance_section.dart';
 import '../widgets/first_run_card.dart';
 import '../widgets/overview_blocks.dart';
@@ -34,10 +38,50 @@ class _HomePageState extends State<HomePage> {
   GoRouter? _router;
   String? _lastPath;
 
+  /// Not registered in some widget tests.
+  final FirstRunNudgesViewModel? _nudges =
+      getIt.isRegistered<FirstRunNudgesViewModel>()
+      ? getIt<FirstRunNudgesViewModel>()
+      : null;
+  OverviewData? _checked;
+  bool _sheetOpen = false;
+
   @override
   void initState() {
     super.initState();
+    model.addListener(_modelChanged);
+    _nudges?.addListener(_nudgesChanged);
     if (model.data == null) Future.microtask(model.load);
+  }
+
+  /// After each fresh load: create the waiting saving goal, maybe offer the
+  /// daily log reminder.
+  Future<void> _modelChanged() async {
+    final data = model.data;
+    final nudges = _nudges;
+    if (nudges == null || data == null || identical(data, _checked)) return;
+    _checked = data;
+    final created = await nudges.check(
+      trackGoal: model.trackGoal,
+      hasTransactions: data.recent.isNotEmpty,
+    );
+    if (created && model.saveGoal) getIt<GoalViewModel>().load();
+  }
+
+  void _nudgesChanged() {
+    final nudges = _nudges;
+    if (nudges == null || !nudges.askDailyLog || _sheetOpen || !mounted) {
+      return;
+    }
+    // Only over Tổng quan itself, not a screen pushed on top of it.
+    if (_lastPath != null && _lastPath != '/home') return;
+    _sheetOpen = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      await showDailyLogAskSheet(context, getIt<NotificationViewModel>());
+      _sheetOpen = false;
+      await nudges.dailyLogAnswered();
+    });
   }
 
   @override
@@ -61,6 +105,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
+    model.removeListener(_modelChanged);
+    _nudges?.removeListener(_nudgesChanged);
     _router?.routerDelegate.removeListener(_routeChanged);
     super.dispose();
   }

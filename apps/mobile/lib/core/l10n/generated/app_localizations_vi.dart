@@ -2886,67 +2886,115 @@ class SVi extends S {
   }
 
   @override
-  String get onbGoalsTitle => 'Bạn muốn cải thiện điều gì?';
+  String get onbGoalsTitle => 'Freeva giúp bạn việc gì?';
 
   @override
   String get onbGoalsSub => 'Chọn tối đa 2.';
 
   @override
-  String get onbGoalTrack => 'Theo dõi chi tiêu';
+  String get onbGoalTrack => 'Quản lý chi tiêu';
 
   @override
-  String get onbGoalSave => 'Tiết kiệm nhiều hơn';
+  String get onbGoalTrackSub => 'Biết tiền đi đâu mỗi tháng';
 
   @override
-  String get onbGoalBudget => 'Chi đúng ngân sách';
+  String get onbGoalSave => 'Tiết kiệm';
 
   @override
-  String get onbGoalDebt => 'Quản lý khoản nợ';
+  String get onbGoalSaveSub => 'Để dành cho một việc cụ thể';
 
   @override
-  String get onbGoalEmergency => 'Lập quỹ dự phòng';
+  String get onbGoalBudget => 'Quản lý ngân sách';
 
   @override
-  String get onbGoalUnderstand => 'Hiểu rõ tài chính';
+  String get onbGoalBudgetSub => 'Đặt mức chi và bám theo';
 
   @override
-  String get onbHabitTitle => 'Bạn đang quản lý tiền thế nào?';
+  String get onbIncomeTitle => 'Thu nhập mỗi tháng khoảng bao nhiêu?';
 
   @override
-  String get onbHabitManual => 'Ghi chép bằng tay';
+  String get onbIncomeSub => 'Để gợi ý ngân sách vừa sức.';
 
   @override
-  String get onbHabitSpreadsheet => 'Dùng Excel hoặc Sheets';
+  String get onbIncomeHint => 'Nhập số gần đúng, sửa lại được trong Cá nhân.';
 
   @override
-  String get onbHabitApp => 'Dùng một app khác';
+  String get onbIncomeAmount => 'Thu nhập mỗi tháng';
 
   @override
-  String get onbHabitNone => 'Chưa theo dõi gì cả';
+  String onbIncomeChip(String amount) {
+    return '$amount triệu';
+  }
 
   @override
-  String get onbCadenceTitle => 'Bao lâu bạn xem lại chi tiêu?';
+  String get onbSavingTitle => 'Bạn để dành cho việc gì?';
 
   @override
-  String get onbCadenceDaily => 'Mỗi ngày';
+  String get onbSavingTarget => 'Cần có';
 
   @override
-  String get onbCadenceWeekly => 'Mỗi tuần';
+  String get onbSavingDate => 'Đến khi';
 
   @override
-  String get onbCadenceMonthly => 'Mỗi tháng';
+  String get onbSavingNeed => 'Mỗi tháng cần để dành';
 
   @override
-  String get onbCadenceRarely => 'Hầu như không';
+  String onbSavingShare(String percent) {
+    return '$percent% thu nhập';
+  }
 
   @override
-  String get onbBudgetTitle => 'Mỗi tháng bạn định chi bao nhiêu?';
+  String get onbSuggestTitle => 'Mỗi tháng nên chi khoảng';
 
   @override
-  String get onbBudgetAmount => 'Ngân sách mỗi tháng';
+  String get onbSuggestIncome => 'Thu nhập';
 
   @override
-  String get onbBudgetLater => 'Thiết lập sau';
+  String onbSuggestSaveFor(String goal) {
+    return 'Để dành cho $goal';
+  }
+
+  @override
+  String get onbSuggestSaveDefault => 'Để dành 20% thu nhập';
+
+  @override
+  String get onbSuggestSpend => 'Chi tiêu';
+
+  @override
+  String get onbSuggestNoGoal => 'Chưa có mục tiêu nên tạm để dành 20%.';
+
+  @override
+  String get onbSuggestHint => 'Sửa được bất cứ lúc nào trong Ngân sách tháng.';
+
+  @override
+  String get onbSuggestUse => 'Dùng mức này';
+
+  @override
+  String get dailyLogAskTitle => 'Nhắc ghi chi mỗi tối?';
+
+  @override
+  String get dailyLogAskBody => 'Hôm nào đã ghi thì không nhắc.';
+
+  @override
+  String get dailyLogAskTime => 'Giờ nhắc';
+
+  @override
+  String get dailyLogAskOn => 'Bật nhắc';
+
+  @override
+  String get meIncome => 'Thu nhập hàng tháng';
+
+  @override
+  String get meIncomeNone => 'Chưa đặt';
+
+  @override
+  String get meIncomeClear => 'Xoá thu nhập';
+
+  @override
+  String get meIncomeSave => 'Lưu';
+
+  @override
+  String get meIncomeFailed => 'Chưa lưu được, thử lại sau.';
 
   @override
   String get setupWalletsTitle => 'Tiền của bạn ở đâu?';

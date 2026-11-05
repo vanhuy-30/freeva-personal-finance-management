@@ -12,6 +12,7 @@ class GoalKindChip extends StatelessWidget {
     required this.label,
     required this.onTap,
     this.selected = false,
+    this.tileSize = 28,
     super.key,
   });
 
@@ -19,6 +20,10 @@ class GoalKindChip extends StatelessWidget {
   final String label;
   final bool selected;
   final VoidCallback onTap;
+
+  /// Icon tile: 28 in the goal editor, 24 (board ObSaving, 14 side padding)
+  /// on the first-run question.
+  final double tileSize;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +39,9 @@ class GoalKindChip extends StatelessWidget {
         onTap: onTap,
         child: Container(
           height: 44,
-          padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 12, 0),
+          padding: tileSize <= 24
+              ? const EdgeInsets.symmetric(horizontal: 14)
+              : const EdgeInsetsDirectional.fromSTEB(8, 0, 12, 0),
           decoration: BoxDecoration(
             color: c.bgSurface,
             borderRadius: BorderRadius.circular(FreevaRadius.full),
@@ -46,14 +53,19 @@ class GoalKindChip extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              GoalIconTile(kind: kind, size: 28),
+              GoalIconTile(kind: kind, size: tileSize),
               const SizedBox(width: 6),
-              Text(
-                label,
-                maxLines: 1,
-                style: FreevaTypography.bodyM.copyWith(
-                  fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-                  color: c.textPrimary,
+              // Flexible: a long label at large text on a narrow screen
+              // shortens instead of pushing past the chip.
+              Flexible(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: FreevaTypography.bodyM.copyWith(
+                    fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                    color: c.textPrimary,
+                  ),
                 ),
               ),
             ],
