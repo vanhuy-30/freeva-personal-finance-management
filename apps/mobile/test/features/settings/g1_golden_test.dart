@@ -7,6 +7,7 @@ import 'package:mobile/features/goals/presentation/viewmodels/goal_view_model.da
 import 'package:mobile/features/profile/presentation/pages/profile_page.dart';
 import 'package:mobile/features/settings/presentation/pages/security_page.dart';
 import 'package:mobile/features/settings/presentation/pages/sessions_page.dart';
+import 'package:mobile/features/settings/presentation/pages/money_settings_page.dart';
 import 'package:mobile/features/settings/presentation/pages/settings_page.dart';
 import 'package:mobile/features/tags/domain/tag_use_cases.dart';
 import 'package:mobile/features/wallets/presentation/viewmodels/wallet_view_model.dart';
@@ -94,6 +95,14 @@ void main() {
         await t.pump(const Duration(milliseconds: 400));
         await t.pump(const Duration(milliseconds: 400));
       },
+    );
+  });
+  testWidgets('money settings', skip: !Platform.isMacOS, (t) async {
+    await shot(
+      t,
+      (_) => const MoneySettingsPage(),
+      'money',
+      size: const Size(390, 844),
     );
   });
   testWidgets('profile', skip: !Platform.isMacOS, (t) async {

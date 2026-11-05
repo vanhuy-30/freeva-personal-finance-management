@@ -1,6 +1,6 @@
 # Nhập CSV từ app khác — BE-P3-011 / MOB-P3-011
 
-Contract: [OpenAPI](../../packages/api-contracts/openapi.yaml) `POST /api/v1/transactions/import/preview`, `POST /api/v1/transactions/import`, `GET /api/v1/transactions/import/{id}`, `POST /api/v1/transactions/import/{id}/undo`. Phần mobile (`MOB-P3-011`) làm riêng.
+Contract: [OpenAPI](../../packages/api-contracts/openapi.yaml) `POST /api/v1/transactions/import/preview`, `POST /api/v1/transactions/import`, `GET /api/v1/transactions/import/{id}`, `POST /api/v1/transactions/import/{id}/undo`. Phần mobile: [mobile-transaction-import.md](mobile-transaction-import.md).
 
 ## Chức năng
 
@@ -46,4 +46,4 @@ Xóa mềm mọi giao dịch của lô còn nguyên. Giao dịch đã sửa sau 
 
 `modules/transaction-import/`: `domain/csv-parse.ts`, `domain/import-format.ts`, `domain/transaction-import.ts` (thuần), repository Prisma, service, controller. Test: `domain/transaction-import.spec.ts`, `test/transactions-import.integration-spec.ts`.
 
-**Tồn đọng:** `MOB-P3-011` chưa làm; chưa nhập Excel (`.xlsx`); header Money Lover/MISA chưa kiểm với file thật; chưa nhập nhãn; chuyển khoản khác tiền tệ chưa ghép; tối đa 2 000 dòng mỗi lần (file lớn phải chia nhỏ).
+**Tồn đọng:** chưa nhập Excel (`.xlsx`); header Money Lover/MISA chưa kiểm với file thật; chưa nhập nhãn; chuyển khoản khác tiền tệ chưa ghép; tối đa 2 000 dòng mỗi lần (file lớn phải chia nhỏ).

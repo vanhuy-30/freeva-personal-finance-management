@@ -3432,12 +3432,6 @@ abstract class S {
   /// **'You'**
   String get meTitle;
 
-  /// No description provided for @meGroupFinance.
-  ///
-  /// In en, this message translates to:
-  /// **'Money setup'**
-  String get meGroupFinance;
-
   /// No description provided for @meGroupApp.
   ///
   /// In en, this message translates to:
@@ -8423,6 +8417,486 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Export file'**
   String get dataExportButton;
+
+  /// No description provided for @meImportData.
+  ///
+  /// In en, this message translates to:
+  /// **'Import from another app'**
+  String get meImportData;
+
+  /// No description provided for @importTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Import transactions'**
+  String get importTitle;
+
+  /// No description provided for @importSourceHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Data source'**
+  String get importSourceHeading;
+
+  /// No description provided for @importSourceMoneyLover.
+  ///
+  /// In en, this message translates to:
+  /// **'Money Lover'**
+  String get importSourceMoneyLover;
+
+  /// No description provided for @importSourceMoneyLoverHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Export a CSV file in the Money Lover app'**
+  String get importSourceMoneyLoverHint;
+
+  /// No description provided for @importSourceMisa.
+  ///
+  /// In en, this message translates to:
+  /// **'MISA Sổ thu chi'**
+  String get importSourceMisa;
+
+  /// No description provided for @importSourceMisaHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Export a CSV file in the MISA app'**
+  String get importSourceMisaHint;
+
+  /// No description provided for @importSourceFreeva.
+  ///
+  /// In en, this message translates to:
+  /// **'Freeva'**
+  String get importSourceFreeva;
+
+  /// No description provided for @importSourceFreevaHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A file you exported from Freeva'**
+  String get importSourceFreevaHint;
+
+  /// No description provided for @importSourceOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Somewhere else'**
+  String get importSourceOther;
+
+  /// No description provided for @importSourceOtherHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You pick the date and amount columns'**
+  String get importSourceOtherHint;
+
+  /// No description provided for @importSourceNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to 2,000 rows at a time. Transactions you already have are skipped.'**
+  String get importSourceNote;
+
+  /// No description provided for @importPickFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose CSV file'**
+  String get importPickFile;
+
+  /// No description provided for @importProblemUnreadable.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t read this file. Choose a CSV file.'**
+  String get importProblemUnreadable;
+
+  /// No description provided for @importProblemEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'This file has no rows yet.'**
+  String get importProblemEmpty;
+
+  /// No description provided for @importProblemTooMany.
+  ///
+  /// In en, this message translates to:
+  /// **'This file has more than 2,000 rows. Split it and import in parts.'**
+  String get importProblemTooMany;
+
+  /// No description provided for @importProblemTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'This file is too large. Split it and import in parts.'**
+  String get importProblemTooLarge;
+
+  /// No description provided for @importError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t import'**
+  String get importError;
+
+  /// No description provided for @importColumnsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose columns'**
+  String get importColumnsTitle;
+
+  /// No description provided for @importFileRows.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} rows'**
+  String importFileRows(int count);
+
+  /// No description provided for @importColumnsHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'COLUMNS IN THE FILE'**
+  String get importColumnsHeader;
+
+  /// No description provided for @importFieldDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get importFieldDate;
+
+  /// No description provided for @importFieldAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get importFieldAmount;
+
+  /// No description provided for @importFieldType.
+  ///
+  /// In en, this message translates to:
+  /// **'Income or expense'**
+  String get importFieldType;
+
+  /// No description provided for @importFieldCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get importFieldCategory;
+
+  /// No description provided for @importFieldWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet'**
+  String get importFieldWallet;
+
+  /// No description provided for @importFieldNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get importFieldNotes;
+
+  /// No description provided for @importColumnNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t use'**
+  String get importColumnNone;
+
+  /// No description provided for @importDateFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Date style'**
+  String get importDateFormat;
+
+  /// No description provided for @importNumberFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Number style'**
+  String get importNumberFormat;
+
+  /// No description provided for @importFirstRow.
+  ///
+  /// In en, this message translates to:
+  /// **'First readable row'**
+  String get importFirstRow;
+
+  /// No description provided for @importNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get importNext;
+
+  /// No description provided for @importMapTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Match wallets and categories'**
+  String get importMapTitle;
+
+  /// No description provided for @importMapRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} item left to match.} other{{count} items left to match.}}'**
+  String importMapRemaining(int count);
+
+  /// No description provided for @importMapWallets.
+  ///
+  /// In en, this message translates to:
+  /// **'WALLETS IN THE FILE'**
+  String get importMapWallets;
+
+  /// No description provided for @importMapCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'CATEGORIES IN THE FILE'**
+  String get importMapCategories;
+
+  /// No description provided for @importMapAllRows.
+  ///
+  /// In en, this message translates to:
+  /// **'Every row in the file'**
+  String get importMapAllRows;
+
+  /// No description provided for @importMapChoose.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose'**
+  String get importMapChoose;
+
+  /// No description provided for @importMapPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview'**
+  String get importMapPreview;
+
+  /// No description provided for @importPickWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a wallet'**
+  String get importPickWallet;
+
+  /// No description provided for @importPickCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a category'**
+  String get importPickCategory;
+
+  /// No description provided for @importPreviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview'**
+  String get importPreviewTitle;
+
+  /// No description provided for @importReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready'**
+  String get importReady;
+
+  /// No description provided for @importDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'Duplicates'**
+  String get importDuplicate;
+
+  /// No description provided for @importInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Errors'**
+  String get importInvalid;
+
+  /// No description provided for @importFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get importFilterAll;
+
+  /// No description provided for @importNoRows.
+  ///
+  /// In en, this message translates to:
+  /// **'No rows'**
+  String get importNoRows;
+
+  /// No description provided for @importDuplicatesToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Import duplicates anyway'**
+  String get importDuplicatesToggle;
+
+  /// No description provided for @importDuplicatesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You usually don\'t need this'**
+  String get importDuplicatesHint;
+
+  /// No description provided for @importCommit.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Import {count} transaction} other{Import {count} transactions}}'**
+  String importCommit(int count);
+
+  /// No description provided for @importTagDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'Duplicate'**
+  String get importTagDuplicate;
+
+  /// No description provided for @importTagDate.
+  ///
+  /// In en, this message translates to:
+  /// **'No date'**
+  String get importTagDate;
+
+  /// No description provided for @importTagAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Bad amount'**
+  String get importTagAmount;
+
+  /// No description provided for @importTagType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type not supported'**
+  String get importTagType;
+
+  /// No description provided for @importTagWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'No wallet'**
+  String get importTagWallet;
+
+  /// No description provided for @importTagCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'No category'**
+  String get importTagCategory;
+
+  /// No description provided for @importTagCategoryKind.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong category type'**
+  String get importTagCategoryKind;
+
+  /// No description provided for @importTagCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency differs'**
+  String get importTagCurrency;
+
+  /// No description provided for @importTagTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing other side'**
+  String get importTagTransfer;
+
+  /// No description provided for @importTagSameWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Same wallet'**
+  String get importTagSameWallet;
+
+  /// No description provided for @importTagOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t read'**
+  String get importTagOther;
+
+  /// No description provided for @importDoneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Imported {count} transaction} other{Imported {count} transactions}}'**
+  String importDoneTitle(int count);
+
+  /// No description provided for @importDoneSkipBoth.
+  ///
+  /// In en, this message translates to:
+  /// **'Skipped {duplicates} duplicates and {invalid} bad rows.'**
+  String importDoneSkipBoth(int duplicates, int invalid);
+
+  /// No description provided for @importDoneSkipDuplicates.
+  ///
+  /// In en, this message translates to:
+  /// **'Skipped {count} duplicates.'**
+  String importDoneSkipDuplicates(int count);
+
+  /// No description provided for @importDoneSkipInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Skipped {count} bad rows.'**
+  String importDoneSkipInvalid(int count);
+
+  /// No description provided for @importDoneView.
+  ///
+  /// In en, this message translates to:
+  /// **'View transactions'**
+  String get importDoneView;
+
+  /// No description provided for @importUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo this import'**
+  String get importUndo;
+
+  /// No description provided for @importDoneKept.
+  ///
+  /// In en, this message translates to:
+  /// **'Transactions you edited after importing are kept.'**
+  String get importDoneKept;
+
+  /// No description provided for @importUndone.
+  ///
+  /// In en, this message translates to:
+  /// **'Undid {count} transactions'**
+  String importUndone(int count);
+
+  /// No description provided for @importUndoError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t undo'**
+  String get importUndoError;
+
+  /// No description provided for @meGroupManage.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage money'**
+  String get meGroupManage;
+
+  /// No description provided for @meGroupSetup.
+  ///
+  /// In en, this message translates to:
+  /// **'Setup'**
+  String get meGroupSetup;
+
+  /// No description provided for @meGroupData.
+  ///
+  /// In en, this message translates to:
+  /// **'Data'**
+  String get meGroupData;
+
+  /// No description provided for @meBudgetShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget'**
+  String get meBudgetShort;
+
+  /// No description provided for @meCalendarShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get meCalendarShort;
+
+  /// No description provided for @meMoneyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Income and period'**
+  String get meMoneyTitle;
+
+  /// No description provided for @meMoneyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid mid-month? Set your payday so budgets and reports use the right period.'**
+  String get meMoneyHint;
+
+  /// No description provided for @meWalletsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} wallet} other{{count} wallets}}'**
+  String meWalletsCount(int count);
+
+  /// No description provided for @meRecurringCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} item} other{{count} items}}'**
+  String meRecurringCount(int count);
+
+  /// No description provided for @meCalendarMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Month {month}'**
+  String meCalendarMonth(int month);
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

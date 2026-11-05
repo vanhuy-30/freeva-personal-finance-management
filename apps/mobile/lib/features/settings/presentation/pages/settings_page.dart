@@ -5,6 +5,7 @@ import 'package:mobile/core/theme/lucide_icons.g.dart';
 import '../../../goals/presentation/viewmodels/goal_view_model.dart';
 import '../../../debts/presentation/viewmodels/debt_view_model.dart';
 import '../../../loans/presentation/viewmodels/loan_view_model.dart';
+import '../../../recurring/presentation/viewmodels/recurring_view_model.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/theme_context.dart';
@@ -20,11 +21,14 @@ import '../../domain/app_preferences.dart';
 import '../viewmodels/settings_view_model.dart';
 import '../widgets/app_settings_group.dart';
 import '../widgets/danger_text_button.dart';
+import '../widgets/data_settings_group.dart';
 import '../widgets/help_settings_group.dart';
+import '../widgets/manage_grid.dart';
 import '../widgets/money_setup_group.dart';
 import '../widgets/profile_card.dart';
 
-/// Cá nhân: the tab root. Profile card, three groups, log out and version.
+/// Cá nhân: the tab root. Profile card, the money grid, four groups, log out
+/// and version.
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
@@ -47,6 +51,9 @@ class _SettingsPageState extends State<SettingsPage> {
   final LoanViewModel? loans = getIt.isRegistered<LoanViewModel>()
       ? getIt<LoanViewModel>()
       : null;
+  final RecurringViewModel? recurring = getIt.isRegistered<RecurringViewModel>()
+      ? getIt<RecurringViewModel>()
+      : null;
   int? tagCount;
 
   @override
@@ -62,6 +69,7 @@ class _SettingsPageState extends State<SettingsPage> {
       goals?.load();
       debts?.load();
       loans?.load();
+      recurring?.load();
     });
     _loadTags();
   }
@@ -109,6 +117,7 @@ class _SettingsPageState extends State<SettingsPage> {
       if (goals != null) goals!,
       if (debts != null) debts!,
       if (loans != null) loans!,
+      if (recurring != null) recurring!,
       if (wallets != null) wallets!,
     ]),
     builder: (context, _) {
@@ -133,17 +142,21 @@ class _SettingsPageState extends State<SettingsPage> {
               name: profile.saved?.displayName,
               email: settings.email,
             ),
-            MoneySetupGroup(
-              profile: profile,
+            ManageGrid(
               walletCount: _walletCount,
-              tagCount: tagCount,
+              budget: settings.budgetDraftMinor,
               goalCount: goals != null && goals!.loaded
                   ? goals!.active.length
                   : null,
               debtCount: _debtCount,
-              budget: settings.budgetDraftMinor,
+              recurringCount: recurring != null && recurring!.loaded
+                  ? recurring!.rules.length
+                  : null,
+              month: DateTime.now().month,
             ),
+            MoneySetupGroup(profile: profile, tagCount: tagCount),
             AppSettingsGroup(settings: settings, profile: profile),
+            const DataSettingsGroup(),
             const HelpSettingsGroup(),
             const SizedBox(height: FreevaSpace.s4),
             DangerTextButton(
