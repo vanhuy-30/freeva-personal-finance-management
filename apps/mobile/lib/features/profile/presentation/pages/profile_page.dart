@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/di/injection.dart';
@@ -63,13 +64,6 @@ class _ProfilePageState extends State<ProfilePage> {
     if (!ok || !mounted) return;
     showFreevaToast(context, message: s.meSaved);
     context.popOrGo('/me');
-  }
-
-  Future<void> _export() async {
-    final s = S.of(context);
-    await profile.exportData();
-    if (!mounted || profile.failure == null) return;
-    showFreevaToast(context, message: s.meExportError);
   }
 
   Future<void> _delete() async {
@@ -145,7 +139,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         title: s.meExportData,
                         subtitle: s.meExportHint,
                         chevron: false,
-                        onTap: profile.exporting ? null : _export,
+                        onTap: () => context.push('/me/export'),
                       ),
                     ],
                   ),

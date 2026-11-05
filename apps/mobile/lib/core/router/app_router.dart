@@ -9,6 +9,7 @@ import '../../features/categories/presentation/pages/hidden_categories_page.dart
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/home/presentation/pages/notifications_page.dart';
 import '../../features/transactions/domain/transaction.dart';
+import '../../features/profile/presentation/pages/data_export_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/reports/domain/category_detail.dart';
 import '../../features/reports/presentation/pages/month_review_page.dart';
@@ -265,6 +266,10 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
       GoRoute(
         path: '/profile',
         builder: (context, state) => const AuthGate(child: ProfilePage()),
+      ),
+      GoRoute(
+        path: '/me/export',
+        builder: (context, state) => const AuthGate(child: DataExportPage()),
       ),
       GoRoute(
         path: '/me/security',

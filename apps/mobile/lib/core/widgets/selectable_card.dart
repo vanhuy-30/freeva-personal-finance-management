@@ -15,6 +15,7 @@ class SelectableCard extends StatelessWidget {
     required this.selected,
     required this.onTap,
     this.icon,
+    this.subtitle,
     this.enabled = true,
     this.disabledOpacity,
     this.iconBoxSize,
@@ -42,6 +43,7 @@ class SelectableCard extends StatelessWidget {
     this.iconColor,
     super.key,
   }) : tile = true,
+       subtitle = null,
        iconBoxSize = 38,
        iconBoxRadius = FreevaRadius.sm,
        iconSize = FreevaSize.iconInline,
@@ -50,6 +52,9 @@ class SelectableCard extends StatelessWidget {
        minHeight = 120;
 
   final String label;
+
+  /// One muted line under [label] (row cards only).
+  final String? subtitle;
   final IconData? icon;
   final bool selected;
   final bool enabled;
@@ -148,7 +153,22 @@ class SelectableCard extends StatelessWidget {
               iconWidget,
               const SizedBox(width: FreevaSpace.s3),
             ],
-            Expanded(child: labelText),
+            Expanded(
+              child: subtitle == null
+                  ? labelText
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        labelText,
+                        Text(
+                          subtitle!,
+                          style: FreevaTypography.bodyS.copyWith(
+                            color: c.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+            ),
             if (radio)
               AnimatedContainer(
                 duration: FreevaMotion.fast,

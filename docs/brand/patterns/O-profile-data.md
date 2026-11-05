@@ -1,6 +1,6 @@
 # Nhóm O — Cá nhân và dữ liệu
 
-Trạng thái: **chốt thiết kế 2026-11-03**, chưa code. Task: `MOB-P3-010` (xuất CSV), `MOB-P3-011` (nhập CSV); API xong. Màn Cá nhân thay bản ở [G-profile-settings.md](G-profile-settings.md).
+Trạng thái: **chốt thiết kế 2026-11-03**; màn 3 (Xuất dữ liệu) **đã code** (`MOB-P3-010`), còn lại chưa code. Task: `MOB-P3-010` (xuất CSV), `MOB-P3-011` (nhập CSV); API xong. Màn Cá nhân thay bản ở [G-profile-settings.md](G-profile-settings.md).
 Canvas: trang **07 · Phase 3**, hàng O. Spec chung: [design-system.md](../design-system.md).
 
 ## Nguyên tắc riêng cho nhóm này

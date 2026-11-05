@@ -109,6 +109,21 @@ class FakeSharer implements AccountFileSharer {
     this.content = content;
     return result;
   }
+
+  List<int>? bytes;
+  String? mime;
+  @override
+  Future<bool> shareBytes(
+    String fileName,
+    List<int> bytes,
+    String mimeType,
+  ) async {
+    if (fail) throw StateError('share');
+    name = fileName;
+    this.bytes = bytes;
+    mime = mimeType;
+    return result;
+  }
 }
 
 AccountExportUseCase exportCase(AuthRepository auth, [FakeSharer? sharer]) =>

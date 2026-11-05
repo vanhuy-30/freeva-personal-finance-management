@@ -15,9 +15,7 @@ class AccountExportUseCase {
   Future<Either<AuthFailure, bool>> call(DateTime now) async {
     final body = await _auth.exportAccount();
     return body.fold((e) => Future.value(left(e)), (text) async {
-      final d = now.toUtc();
-      String two(int n) => n.toString().padLeft(2, '0');
-      final name = 'freeva-export-${d.year}${two(d.month)}${two(d.day)}.json';
+      final name = exportFileName('freeva-export', 'json', now);
       try {
         return right(await _sharer.share(name, text));
       } catch (_) {

@@ -123,6 +123,10 @@ import 'package:mobile/features/profile/domain/account_file_sharer.dart'
     as _i1007;
 import 'package:mobile/features/profile/domain/profile_repository.dart' as _i4;
 import 'package:mobile/features/profile/domain/profile_use_cases.dart' as _i281;
+import 'package:mobile/features/profile/domain/transactions_csv_export_use_case.dart'
+    as _i421;
+import 'package:mobile/features/profile/presentation/viewmodels/data_export_view_model.dart'
+    as _i1008;
 import 'package:mobile/features/profile/presentation/viewmodels/profile_view_model.dart'
     as _i887;
 import 'package:mobile/features/recurring/data/recurring_repository_impl.dart'
@@ -254,6 +258,11 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i173.AuthRepository>(),
           gh<_i1007.AccountFileSharer>(),
         ));
+    gh.factory<_i421.TransactionsCsvExportUseCase>(
+        () => _i421.TransactionsCsvExportUseCase(
+              gh<_i173.AuthRepository>(),
+              gh<_i1007.AccountFileSharer>(),
+            ));
     gh.lazySingleton<_i238.CardInstallmentUseCases>(() =>
         _i238.DefaultCardInstallmentUseCases(
             gh<_i182.CardInstallmentRepository>()));
@@ -464,6 +473,15 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i887.ProfileViewModel>(),
           gh<_i990.AuthViewModel>(),
         ));
+    gh.factory<_i1008.DefaultDataExportViewModel>(
+        () => _i1008.DefaultDataExportViewModel(
+              gh<_i281.ProfileUseCases>(),
+              gh<_i336.WalletUseCases>(),
+              gh<_i292.TransactionUseCases>(),
+              gh<_i421.TransactionsCsvExportUseCase>(),
+              gh<_i887.ProfileViewModel>(),
+              gh<_i990.AuthViewModel>(),
+            ));
     return this;
   }
 }

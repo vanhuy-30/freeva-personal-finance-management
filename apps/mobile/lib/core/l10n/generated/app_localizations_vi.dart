@@ -4670,4 +4670,73 @@ class SVi extends S {
 
   @override
   String get installmentViewSub => 'Các kỳ và số còn phải trả';
+
+  @override
+  String get dataExportTitle => 'Xuất dữ liệu';
+
+  @override
+  String get dataExportTable => 'Bảng giao dịch';
+
+  @override
+  String get dataExportTableHint => 'CSV, mở bằng Excel';
+
+  @override
+  String get dataExportFull => 'Bản sao đầy đủ';
+
+  @override
+  String get dataExportFullHint => 'JSON, để cất giữ';
+
+  @override
+  String get dataExportFullNote =>
+      'Gồm toàn bộ dữ liệu tài khoản, không lọc. Dùng để lưu giữ, không phải để đọc.';
+
+  @override
+  String get dataExportPeriodThisMonth => 'Tháng này';
+
+  @override
+  String get dataExportPeriod3Months => '3 tháng';
+
+  @override
+  String get dataExportPeriodThisYear => 'Năm nay';
+
+  @override
+  String get dataExportPeriodAll => 'Tất cả';
+
+  @override
+  String get dataExportPeriodCustom => 'Tuỳ chọn';
+
+  @override
+  String get dataExportWallets => 'Ví';
+
+  @override
+  String get dataExportAllWallets => 'Tất cả ví';
+
+  @override
+  String dataExportSummaryRange(String from, String to, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count giao dịch',
+      zero: 'Không có giao dịch',
+    );
+    return '$from – $to · $_temp0';
+  }
+
+  @override
+  String dataExportSummaryAll(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count giao dịch',
+      zero: 'Không có giao dịch',
+    );
+    return 'Tất cả · $_temp0';
+  }
+
+  @override
+  String get dataExportTooMany =>
+      'Quá 50.000 giao dịch. Chọn khoảng ngắn hơn hoặc ít ví hơn.';
+
+  @override
+  String get dataExportButton => 'Xuất file';
 }
