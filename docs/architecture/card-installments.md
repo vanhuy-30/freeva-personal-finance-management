@@ -26,15 +26,18 @@ Bearer session, `Cache-Control: no-store`, tiền là string integer.
 | Endpoint | Việc |
 |---|---|
 | `POST /card-installments` | Tạo từ `transactionId`; 201, hoặc 200 khi replay cùng `clientId`. Khoản gốc phải là `expense` chưa xóa trên ví `credit` và chưa có kế hoạch (không thì 409); id lạ hoặc của người khác 400 |
-| `GET /card-installments` | Lọc `accountId`, `status`; mỗi dòng có `remainingCount`, `nextDueOn`, `nextAmountMinor` |
+| `POST /card-installments/preview` | Cùng input và kiểm tra như tạo (trừ `clientId`), không ghi; trả `installmentMinor`, `lastDueOn`, `periods` để app hiện lịch trước khi tạo bằng đúng số của server |
+| `GET /card-installments` | Lọc `accountId`, `status`; mỗi dòng có `remainingCount`, `nextDueOn`, `nextAmountMinor`, và `purchaseOn` / `purchaseMerchant` / `purchaseNote` / `purchaseCategoryId` để app đặt tên kế hoạch |
 | `GET /card-installments/{id}` | Kèm `periods` (`past` / `upcoming` / `closed`) |
 | `GET /card-installments/due?from&to&accountId` | Tổng phần trả góp đến hạn trong khoảng, theo thẻ (chỉ kế hoạch `active`) |
 | `POST /card-installments/{id}/close` | Đóng lịch, cần `version`; đóng lần hai → 409 |
 
-Xóa khoản chi gốc tự đóng kế hoạch đang chạy. Kế hoạch đã đóng vẫn giữ chỗ trên khoản chi đó (mỗi khoản chỉ một kế hoạch, tạo lại cần xóa dữ liệu). Có trong `GET /account/export` (`cardInstallmentPlans`) và xóa cùng tài khoản. Không log số tiền.
+`GET /transactions` và `GET /transactions/{id}` trả `installmentPlanId` trên khoản chi (kế hoạch đang chạy, null nếu chưa có hoặc đã đóng) để app biết khi nào hiện "Chuyển thành trả góp" (MOB-P3-009).
+
+Xóa khoản chi gốc tự đóng kế hoạch đang chạy. Mỗi khoản chi chỉ một kế hoạch: đang chạy thì tạo mới bị 409; đã đóng thì tạo mới thay (xóa) kế hoạch cũ, để user sửa kế hoạch sai bằng cách kết thúc rồi tạo lại. Có trong `GET /account/export` (`cardInstallmentPlans`) và xóa cùng tài khoản. Không log số tiền.
 
 ## Test
 
 Unit: [card-installment.spec.ts](../../backend/api/src/modules/card-installments/domain/card-installment.spec.ts) (tổng các kỳ = giá mua, kỳ cuối nhận dư, cuối tháng, kỳ còn lại, tổng đến hạn). PostgreSQL: [card-installments.integration-spec.ts](../../backend/api/test/card-installments.integration-spec.ts) (báo cáo và số dư không đổi khi tạo, replay/xung đột, ví và loại không hợp lệ, `due`, đóng lịch rồi trả bằng transfer làm dư nợ giảm đúng, xóa khoản gốc).
 
-**Tồn đọng:** `MOB-P3-009` (đổi khoản chi thành trả góp, lịch, cộng vào số phải trả) chưa làm; chưa có nhắc đến hạn kỳ trả góp; chưa tạo lại kế hoạch sau khi đã đóng; khoản chi đã có hoàn tiền dùng số tiền gốc; chưa deploy staging.
+**Tồn đọng:** khoản chi đã có hoàn tiền dùng số tiền gốc; chưa deploy staging.

@@ -17,6 +17,7 @@ class PickerField extends StatelessWidget {
     this.compact = false,
     this.chevronSize,
     this.chevron = true,
+    this.trailing,
     super.key,
   });
 
@@ -40,6 +41,9 @@ class PickerField extends StatelessWidget {
   /// false drops the chevron (the L boards: the field opens a choice but
   /// does not draw the arrow).
   final bool chevron;
+
+  /// Drawn at the end instead of the chevron (InstAdd "Mỗi kỳ": pencil).
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +107,9 @@ class PickerField extends StatelessWidget {
                       ],
                     ),
                   ),
-                  if (chevron)
+                  if (trailing != null)
+                    trailing!
+                  else if (chevron)
                     Icon(
                       LucideIcons.chevronDown,
                       size:

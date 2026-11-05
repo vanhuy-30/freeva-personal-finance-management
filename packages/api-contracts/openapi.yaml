@@ -2034,7 +2034,7 @@ paths:
           $ref: '#/components/responses/CardInstallmentConflict'
         '503':
           $ref: '#/components/responses/CardInstallmentUnavailable'
-      description: "The purchase stays one expense on the card, counted once in reports and budgets in the month it was made; card debt and balances do not change. The plan only lists periods: payments are ordinary wallet to card transfers, and any conversion fee or interest is a separate expense. The purchase must be an active expense on a credit wallet with no plan yet. Periods are monthly from `firstDueOn` (not before the purchase day); every period but the last pays `installmentMinor` (default: even split rounded up) and the last takes the rest, so they add up to the price. 2 to 60 periods. `clientId` makes retries idempotent."
+      description: "The purchase stays one expense on the card, counted once in reports and budgets in the month it was made; card debt and balances do not change. The plan only lists periods: payments are ordinary wallet to card transfers, and any conversion fee or interest is a separate expense. The purchase must be an active expense on a credit wallet with no active plan; a closed plan on it is replaced (deleted) by the new one. Periods are monthly from `firstDueOn` (not before the purchase day); every period but the last pays `installmentMinor` (default: even split rounded up) and the last takes the rest, so they add up to the price. 2 to 60 periods. `clientId` makes retries idempotent."
   /api/v1/card-installments/due:
     get:
       operationId: getCardInstallmentsDue
@@ -2086,6 +2086,43 @@ paths:
         '503':
           $ref: '#/components/responses/CardInstallmentUnavailable'
       description: "Sum of active-plan periods whose due date is within [from, to], per card wallet. The client adds it to the card amount due for the statement period. Closed plans add nothing."
+  /api/v1/card-installments/preview:
+    post:
+      operationId: previewCardInstallment
+      summary: Schedule a plan would have, without creating it
+      tags:
+      - CardInstallments
+      security:
+      - UserBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PreviewCardInstallmentRequest'
+      responses:
+        '200':
+          description: Preview
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardInstallmentPreview'
+        '400':
+          $ref: '#/components/responses/CardInstallmentValidationError'
+        '401':
+          $ref: '#/components/responses/CardInstallmentUnauthorized'
+        '404':
+          $ref: '#/components/responses/CardInstallmentNotFound'
+        '409':
+          $ref: '#/components/responses/CardInstallmentConflict'
+        '503':
+          $ref: '#/components/responses/CardInstallmentUnavailable'
+      description: "Same input and checks as create, minus `clientId`; nothing is written. The app shows these periods before the user confirms, so its numbers are the server's. 400 when the per-period amount cannot make the count add up to the price or the first day is before the purchase; 409 when the purchase cannot get a plan."
   /api/v1/card-installments/{id}:
     get:
       operationId: getCardInstallment
@@ -6942,7 +6979,8 @@ components:
       type: object
       additionalProperties: false
       required: [id, clientId, transactionId, accountId, currencyCode, totalMinor, installmentMinor, installmentCount,
-        firstDueOn, status, remainingCount, nextDueOn, nextAmountMinor, closedAt, version, createdAt, updatedAt]
+        firstDueOn, status, remainingCount, nextDueOn, nextAmountMinor, closedAt, version, createdAt, updatedAt,
+        purchaseOn, purchaseMerchant, purchaseNote, purchaseCategoryId]
       properties:
         id: {type: string, format: uuid}
         clientId: {type: string, format: uuid}
@@ -6961,6 +6999,10 @@ components:
         version: {type: integer}
         createdAt: {type: string, format: date-time}
         updatedAt: {type: string, format: date-time}
+        purchaseOn: {type: [string, 'null'], format: date, description: Day of the purchase expense (MOB-P3-009).}
+        purchaseMerchant: {type: [string, 'null'], description: Merchant of the purchase; the app names the plan like the expense (merchant, else category).}
+        purchaseNote: {type: [string, 'null'], description: Notes of the purchase.}
+        purchaseCategoryId: {type: [string, 'null'], format: uuid}
         periods:
           type: array
           description: Only on create, detail and close.
@@ -7009,6 +7051,38 @@ components:
         installmentCount: {type: integer, minimum: 2, maximum: 60}
         installmentMinor: {type: [string, 'null'], pattern: '^[1-9][0-9]*$', description: Per period; omit for an even split rounded up. The last period takes what is left.}
         firstDueOn: {type: string, format: date, description: On or after the purchase day.}
+    PreviewCardInstallmentRequest:
+      type: object
+      additionalProperties: false
+      required: [transactionId, installmentCount, firstDueOn]
+      properties:
+        transactionId: {type: string, format: uuid}
+        installmentCount: {type: integer, minimum: 2, maximum: 60}
+        installmentMinor: {type: [string, 'null'], pattern: '^[1-9][0-9]*$', description: Per period; omit for an even split rounded up.}
+        firstDueOn: {type: string, format: date}
+    CardInstallmentPreview:
+      type: object
+      additionalProperties: false
+      required: [transactionId, accountId, currencyCode, totalMinor, installmentMinor, installmentCount, firstDueOn, lastDueOn, periods]
+      properties:
+        transactionId: {type: string, format: uuid}
+        accountId: {type: string, format: uuid}
+        currencyCode: {type: string, pattern: '^[A-Z]{3}$'}
+        totalMinor: {$ref: '#/components/schemas/ReportMoney'}
+        installmentMinor: {$ref: '#/components/schemas/ReportMoney'}
+        installmentCount: {type: integer, minimum: 2, maximum: 60}
+        firstDueOn: {type: string, format: date}
+        lastDueOn: {type: string, format: date}
+        periods:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [index, dueOn, amountMinor]
+            properties:
+              index: {type: integer, minimum: 1}
+              dueOn: {type: string, format: date}
+              amountMinor: {$ref: '#/components/schemas/ReportMoney'}
     CloseCardInstallmentRequest:
       type: object
       additionalProperties: false
@@ -8160,6 +8234,11 @@ components:
           pattern: ^[0-9]+$
           maxLength: 20
           description: Sum of active refunds of this expense in its currency, "0" when none (BE-P3-008). Null on other types. Returned only by GET list and GET by id.
+        installmentPlanId:
+          readOnly: true
+          type: [string, 'null']
+          format: uuid
+          description: Active card installment plan over this expense (MOB-P3-009). Null when none or closed, and on other types. Returned only by GET list and GET by id.
       required:
       - clientId
       - accountId

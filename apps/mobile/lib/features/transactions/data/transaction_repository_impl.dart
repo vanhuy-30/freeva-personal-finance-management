@@ -38,6 +38,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
     refundedMinor: json['refundedMinor'] == null
         ? null
         : BigInt.parse(json['refundedMinor'] as String),
+    installmentPlanId: json['installmentPlanId'] as String?,
     deletedAt: json['deletedAt'] == null
         ? null
         : DateTime.parse(json['deletedAt'] as String),

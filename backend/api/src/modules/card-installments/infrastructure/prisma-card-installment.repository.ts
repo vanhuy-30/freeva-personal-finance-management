@@ -8,10 +8,11 @@ import {
   CardInstallmentError, defaultInstallmentMinor, validatePlan, type CardInstallmentRecord,
 } from '../domain/card-installment';
 import type {
-  CardInstallmentCreateInput, CardInstallmentFilter, CardInstallmentRepository,
+  CardInstallmentCreateInput, CardInstallmentFilter, CardInstallmentPreview, CardInstallmentPreviewInput, CardInstallmentRepository,
 } from '../domain/card-installment.repository';
 
-type Row = Prisma.CardInstallmentPlanGetPayload<Record<string, never>>;
+const withPurchase = { transaction: { select: { occurredOn: true, merchant: true, notes: true, categoryId: true } } } as const;
+type Row = Prisma.CardInstallmentPlanGetPayload<{ include: typeof withPurchase }>;
 
 const dayOf = (value: Date) => value.toISOString().slice(0, 10);
 const toDate = (value: string) => new Date(`${value}T00:00:00.000Z`);
@@ -32,6 +33,7 @@ function map(row: Row): CardInstallmentRecord {
     version: row.version,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
+    purchase: { occurredOn: dayOf(row.transaction.occurredOn), merchant: row.transaction.merchant, notes: row.transaction.notes, categoryId: row.transaction.categoryId },
   };
 }
 
@@ -73,19 +75,20 @@ export class PrismaCardInstallmentRepository implements CardInstallmentRepositor
     const rows = await this.prisma.cardInstallmentPlan.findMany({
       where: { userId, ...(filter.accountId ? { accountId: filter.accountId } : {}), ...(filter.status ? { status: filter.status } : {}) },
       orderBy: [{ firstDueOn: 'asc' }, { createdAt: 'asc' }, { id: 'asc' }],
+      include: withPurchase,
     });
     return rows.map(map);
   }
 
   async find(userId: string, id: string): Promise<CardInstallmentRecord> {
-    const row = await this.prisma.cardInstallmentPlan.findFirst({ where: { id, userId } });
+    const row = await this.prisma.cardInstallmentPlan.findFirst({ where: { id, userId }, include: withPurchase });
     if (!row) throw new CardInstallmentError('PLAN_NOT_FOUND');
     return map(row);
   }
 
   create(userId: string, input: CardInstallmentCreateInput) {
     return this.write(userId, async tx => {
-      const existing = await tx.cardInstallmentPlan.findUnique({ where: { userId_clientId: { userId, clientId: input.clientId } } });
+      const existing = await tx.cardInstallmentPlan.findUnique({ where: { userId_clientId: { userId, clientId: input.clientId } }, include: withPurchase });
       if (existing) {
         const same = existing.transactionId === input.transactionId && existing.installmentCount === input.installmentCount &&
           dayOf(existing.firstDueOn) === input.firstDueOn &&
@@ -95,15 +98,8 @@ export class PrismaCardInstallmentRepository implements CardInstallmentRepositor
       }
       // The purchase row is locked so two plans cannot be made over it together.
       await tx.$queryRaw(Prisma.sql`SELECT id FROM "Transaction" WHERE id = ${input.transactionId}::uuid AND "userId" = ${userId}::uuid FOR UPDATE`);
-      const purchase = await tx.transaction.findFirst({ where: { id: input.transactionId, userId }, include: { account: true } });
-      if (!purchase) throw new CardInstallmentError('VALIDATION_ERROR');
-      if (purchase.type !== 'expense' || purchase.deletedAt || purchase.account.type !== 'credit' || purchase.account.archivedAt) {
-        throw new CardInstallmentError('PLAN_CONFLICT');
-      }
-      if (await tx.cardInstallmentPlan.findUnique({ where: { transactionId: purchase.id } })) throw new CardInstallmentError('PLAN_CONFLICT');
-      const totalMinor = refundCap(purchase.amountMinor);
-      const installmentMinor = input.installmentMinor ?? defaultInstallmentMinor(totalMinor, input.installmentCount);
-      validatePlan(totalMinor, input.installmentCount, installmentMinor, dayOf(purchase.occurredOn), input.firstDueOn);
+      const { purchase, totalMinor, installmentMinor, previous } = await this.checked(tx, userId, input);
+      if (previous) await tx.cardInstallmentPlan.delete({ where: { id: previous.id } });
       const row = await tx.cardInstallmentPlan.create({
         data: {
           userId,
@@ -116,9 +112,35 @@ export class PrismaCardInstallmentRepository implements CardInstallmentRepositor
           installmentCount: input.installmentCount,
           firstDueOn: toDate(input.firstDueOn),
         },
+        include: withPurchase,
       });
       return { plan: map(row), created: true };
     });
+  }
+
+  async preview(userId: string, input: CardInstallmentPreviewInput): Promise<CardInstallmentPreview> {
+    const { purchase, totalMinor, installmentMinor } = await this.checked(this.prisma, userId, input);
+    return {
+      transactionId: purchase.id, accountId: purchase.accountId, currencyCode: purchase.currencyCode.trim(),
+      totalMinor, installmentMinor, installmentCount: input.installmentCount, firstDueOn: input.firstDueOn,
+    };
+  }
+
+  /** The purchase must be an active expense on a live credit wallet with no plan; the plan must add up to its price. */
+  private async checked(tx: Prisma.TransactionClient, userId: string, input: CardInstallmentPreviewInput) {
+    const purchase = await tx.transaction.findFirst({ where: { id: input.transactionId, userId }, include: { account: true } });
+    if (!purchase) throw new CardInstallmentError('VALIDATION_ERROR');
+    if (purchase.type !== 'expense' || purchase.deletedAt || purchase.account.type !== 'credit' || purchase.account.archivedAt) {
+      throw new CardInstallmentError('PLAN_CONFLICT');
+    }
+    // One plan per purchase: an active one blocks, a closed one is replaced on create (a wrong plan is fixed by
+    // closing it and making it again).
+    const previous = await tx.cardInstallmentPlan.findUnique({ where: { transactionId: purchase.id } });
+    if (previous?.status === 'active') throw new CardInstallmentError('PLAN_CONFLICT');
+    const totalMinor = refundCap(purchase.amountMinor);
+    const installmentMinor = input.installmentMinor ?? defaultInstallmentMinor(totalMinor, input.installmentCount);
+    validatePlan(totalMinor, input.installmentCount, installmentMinor, dayOf(purchase.occurredOn), input.firstDueOn);
+    return { purchase, totalMinor, installmentMinor, previous };
   }
 
   close(userId: string, id: string, version: number) {
@@ -130,6 +152,7 @@ export class PrismaCardInstallmentRepository implements CardInstallmentRepositor
       return map(await tx.cardInstallmentPlan.update({
         where: { id },
         data: { status: 'closed', closedAt: new Date(), version: { increment: 1 } },
+        include: withPurchase,
       }));
     });
   }

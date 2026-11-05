@@ -33,6 +33,7 @@ TxLeg tx(
   bool deleted = false,
   String? refundOf,
   int? refunded,
+  String? plan,
 }) => TxLeg(
   id: id,
   clientId: 'c-$id',
@@ -52,6 +53,7 @@ TxLeg tx(
   createdAt: DateTime.utc(2026, 10, 21),
   refundOfId: refundOf,
   refundedMinor: refunded == null ? null : b(refunded),
+  installmentPlanId: plan,
 );
 
 /// Rows like the C1 artboards.

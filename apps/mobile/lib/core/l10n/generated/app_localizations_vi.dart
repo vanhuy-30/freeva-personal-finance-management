@@ -4488,4 +4488,138 @@ class SVi extends S {
 
   @override
   String get refundDeleteKeepSub => 'Chuyển thành một khoản thu';
+
+  @override
+  String get installmentAction => 'Chuyển thành trả góp';
+
+  @override
+  String get installmentActionSub => 'Chia nhiều kỳ trên thẻ';
+
+  @override
+  String get installmentTitle => 'Trả góp';
+
+  @override
+  String get installmentCount => 'Số kỳ';
+
+  @override
+  String get installmentOther => 'Khác';
+
+  @override
+  String get installmentOtherTitle => 'Số kỳ';
+
+  @override
+  String get installmentOtherLabel => 'Từ 2 đến 60';
+
+  @override
+  String get installmentEach => 'Mỗi kỳ';
+
+  @override
+  String get installmentEditEach => 'Số trả mỗi kỳ';
+
+  @override
+  String get installmentFirst => 'Kỳ đầu';
+
+  @override
+  String installmentMore(int count, String date) {
+    return '… thêm $count kỳ, xong $date';
+  }
+
+  @override
+  String installmentHint(int month) {
+    return 'Khoản mua vẫn tính một lần vào tháng $month. Mỗi kỳ cộng vào số phải trả của thẻ.';
+  }
+
+  @override
+  String get installmentCreate => 'Tạo lịch trả góp';
+
+  @override
+  String get installmentCreated => 'Đã tạo lịch trả góp';
+
+  @override
+  String installmentEachInvalid(int count) {
+    return 'Số này chưa chia vừa $count kỳ đúng bằng giá mua.';
+  }
+
+  @override
+  String get installmentFirstTooEarly => 'Kỳ đầu không được trước ngày mua.';
+
+  @override
+  String get installmentPreviewError =>
+      'Chưa xem được lịch. Kiểm tra kết nối nhé.';
+
+  @override
+  String get installmentConflict => 'Khoản này không chuyển trả góp được nữa.';
+
+  @override
+  String get installmentLeft => 'Còn phải trả';
+
+  @override
+  String installmentPaidOf(int past, int count, String wallet) {
+    return 'Đã trả $past/$count kỳ · $wallet';
+  }
+
+  @override
+  String get installmentEachAdds => 'Mỗi kỳ cộng vào số phải trả của thẻ.';
+
+  @override
+  String get installmentClose => 'Kết thúc trả góp';
+
+  @override
+  String get installmentCloseSub => 'Dùng khi đã trả hết sớm';
+
+  @override
+  String get installmentCloseTitle => 'Kết thúc trả góp?';
+
+  @override
+  String get installmentCloseBody =>
+      'Các kỳ còn lại không cộng vào số phải trả của thẻ nữa. Khoản mua giữ nguyên.';
+
+  @override
+  String get installmentCloseConfirm => 'Kết thúc';
+
+  @override
+  String get installmentClosed => 'Đã kết thúc trả góp';
+
+  @override
+  String get installmentClosedTag => 'Đã kết thúc';
+
+  @override
+  String get installmentLoadError => 'Chưa tải được lịch trả góp';
+
+  @override
+  String installmentRowSub(int index, int count, String date, String amount) {
+    return 'Kỳ $index/$count · $date · $amount';
+  }
+
+  @override
+  String creditDueThisPeriod(String date) {
+    return 'Phải trả kỳ này · $date';
+  }
+
+  @override
+  String creditDaysLeftTag(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Còn $count ngày',
+      zero: 'Hôm nay',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String creditIncludes(String installment, String minimum) {
+    return 'Gồm $installment trả góp · tối thiểu $minimum';
+  }
+
+  @override
+  String creditIncludesNoMin(String installment) {
+    return 'Gồm $installment trả góp';
+  }
+
+  @override
+  String get installmentView => 'Xem lịch trả góp';
+
+  @override
+  String get installmentViewSub => 'Các kỳ và số còn phải trả';
 }

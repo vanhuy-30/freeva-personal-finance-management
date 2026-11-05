@@ -45,6 +45,7 @@ class TxLeg {
     this.occurredTime,
     this.refundOfId,
     this.refundedMinor,
+    this.installmentPlanId,
   });
   final String id;
   final String clientId;
@@ -70,6 +71,10 @@ class TxLeg {
 
   /// Only on `expense` from list/detail reads: active refunds so far (≥ 0).
   final BigInt? refundedMinor;
+
+  /// Only on `expense` from list/detail reads: its card installment plan
+  /// (active or closed), null when none (`MOB-P3-009`).
+  final String? installmentPlanId;
 }
 
 class TransactionFx {
@@ -96,6 +101,9 @@ class TransactionBundle {
 
   /// Refunds already made on this expense, zero when none or unknown.
   BigInt get refunded => legs.first.refundedMinor ?? BigInt.zero;
+
+  /// Card installment plan over this expense, if any.
+  String? get installmentPlanId => legs.first.installmentPlanId;
 
   /// What can still be refunded: the expense amount minus refunds so far.
   BigInt get refundable {

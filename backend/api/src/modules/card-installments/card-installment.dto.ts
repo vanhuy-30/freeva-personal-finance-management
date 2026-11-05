@@ -18,6 +18,14 @@ export class CreateCardInstallmentDto {
   @IsString() @day firstDueOn!: string;
 }
 
+/** Same fields as create without clientId: nothing is written. */
+export class PreviewCardInstallmentDto {
+  @Transform(lower) @IsUUID() transactionId!: string;
+  @Type(() => Number) @IsInt() @Min(MIN_INSTALLMENTS) @Max(MAX_INSTALLMENTS) installmentCount!: number;
+  @ValidateIf(nullable) @IsString() @positiveMinor installmentMinor?: string | null;
+  @IsString() @day firstDueOn!: string;
+}
+
 export class CloseCardInstallmentDto {
   @Type(() => Number) @IsInt() @Min(1) @Max(2147483646) version!: number;
 }

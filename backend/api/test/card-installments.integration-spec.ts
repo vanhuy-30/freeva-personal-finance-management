@@ -205,6 +205,58 @@ describe('BE-P3-009 card installments HTTP + PostgreSQL', () => {
     expect(own.deletedAt).toBeNull();
   });
 
+  it('previews the schedule a create would make without writing, with the same checks', async () => {
+    const wallet = await card(); const cat = await category(); const wallet2 = await cash();
+    const bought = await purchase(wallet.id, cat.id, 10_000_000n);
+    const preview = (extra: object = {}, bearer = token) =>
+      call('POST', '/v1/card-installments/preview', { transactionId: bought.id, installmentCount: 3, firstDueOn: '2026-11-25', ...extra }, bearer);
+    const even = await preview();
+    expect(even.status).toBe(200);
+    expect(even.body).toMatchObject({ transactionId: bought.id, accountId: wallet.id, currencyCode: 'VND', totalMinor: '10000000',
+      installmentMinor: '3333334', installmentCount: 3, firstDueOn: '2026-11-25', lastDueOn: '2027-01-25' });
+    expect(even.body.periods.map((p: { amountMinor: string }) => p.amountMinor)).toEqual(['3333334', '3333334', '3333332']);
+    expect((await preview({ installmentMinor: '4000000' })).body.periods.map((p: { amountMinor: string }) => p.amountMinor))
+      .toEqual(['4000000', '4000000', '2000000']);
+    expect((await preview({ installmentMinor: '1000000' })).status).toBe(400);
+    expect((await preview({ firstDueOn: '2026-10-31' })).status).toBe(400);
+    expect((await preview({}, otherToken)).status).toBe(400);
+    expect(await prisma.cardInstallmentPlan.count({ where: { userId: owner } })).toBe(0);
+    const onCash = await purchase(wallet2.id, cat.id, 1_000_000n);
+    expect((await call('POST', '/v1/card-installments/preview', { transactionId: onCash.id, installmentCount: 3, firstDueOn: '2026-11-25' })).status).toBe(409);
+    const created = await plan(bought.id, { installmentCount: 3, firstDueOn: '2026-11-25' });
+    expect(created.body.periods.map((p: { amountMinor: string }) => p.amountMinor)).toEqual(['3333334', '3333334', '3333332']);
+    expect((await preview()).status).toBe(409);
+  });
+
+  it('names the purchase on the plan and links the plan from the expense', async () => {
+    const wallet = await card(); const cat = await category();
+    const clientId = randomUUID();
+    const res = await call('POST', '/v1/transactions', { type: 'expense', occurredOn: '2026-10-12', categoryId: cat.id, merchant: 'Điện thoại', notes: 'trả góp 0%',
+      legs: [{ clientId, accountId: wallet.id, currencyCode: 'VND', amountMinor: '-24000000' }] }, token, clientId);
+    const bought = res.body.legs[0] as { id: string };
+    const other = await purchase(wallet.id, cat.id, 500_000n);
+    const created = await plan(bought.id, { installmentCount: 6, firstDueOn: '2026-11-25' });
+    expect(created.body).toMatchObject({ purchaseOn: '2026-10-12', purchaseMerchant: 'Điện thoại', purchaseNote: 'trả góp 0%', purchaseCategoryId: cat.id });
+    const listed = await call('GET', `/v1/card-installments?accountId=${wallet.id}`);
+    expect(listed.body.items[0]).toMatchObject({ purchaseOn: '2026-10-12', purchaseMerchant: 'Điện thoại', purchaseNote: 'trả góp 0%', purchaseCategoryId: cat.id });
+    const detail = await call('GET', `/v1/transactions/${bought.id}`);
+    expect(detail.body.legs[0].installmentPlanId).toBe(created.body.id);
+    const list = await call('GET', `/v1/transactions?accountId=${wallet.id}`);
+    const byId = new Map((list.body.items as { id: string; installmentPlanId: string | null }[]).map(item => [item.id, item.installmentPlanId]));
+    expect(byId.get(bought.id)).toBe(created.body.id);
+    expect(byId.get(other.id)).toBeNull();
+    // Closed: the expense is free again, and a new plan replaces the closed one.
+    await call('POST', `/v1/card-installments/${created.body.id}/close`, { version: created.body.version });
+    expect((await call('GET', `/v1/transactions/${bought.id}`)).body.legs[0].installmentPlanId).toBeNull();
+    expect((await call('POST', '/v1/card-installments/preview', { transactionId: bought.id, installmentCount: 3, firstDueOn: '2026-11-25' })).status).toBe(200);
+    const again = await plan(bought.id, { installmentCount: 3, firstDueOn: '2026-11-25' });
+    expect(again.status).toBe(201);
+    expect(again.body.id).not.toBe(created.body.id);
+    expect((await call('GET', `/v1/card-installments/${created.body.id}`)).status).toBe(404);
+    expect((await call('GET', `/v1/transactions/${bought.id}`)).body.legs[0].installmentPlanId).toBe(again.body.id);
+    expect((await plan(bought.id, { installmentCount: 6, firstDueOn: '2026-11-25' })).status).toBe(409);
+  });
+
   it('closes the plan when its purchase is deleted', async () => {
     const wallet = await card(); const cat = await category();
     const bought = await purchase(wallet.id, cat.id, 3_000_000n);

@@ -13,9 +13,13 @@ function legResponse(leg: TransactionLeg) {
     occurredTime: leg.occurredTime, deletedAt: leg.deletedAt?.toISOString() ?? null,
     createdAt: leg.createdAt.toISOString(), updatedAt: leg.updatedAt.toISOString() };
 }
-/** BE-P3-008: `refundedMinor` on expense legs (active refunds), null on other types. Only GET list and GET by id. */
-function withRefunded<T extends { id: string; type: string }>(leg: T, totals: Map<string, bigint>) {
-  return { ...leg, refundedMinor: leg.type === 'expense' ? (totals.get(leg.id) ?? 0n).toString() : null };
+/**
+ * BE-P3-008: `refundedMinor` on expense legs (active refunds), null on other types.
+ * MOB-P3-009: `installmentPlanId` on expense legs with an active card installment plan, else null. Only GET list and GET by id.
+ */
+function withRefunded<T extends { id: string; type: string }>(leg: T, totals: Map<string, bigint>, plans: Map<string, string>) {
+  const expense = leg.type === 'expense';
+  return { ...leg, refundedMinor: expense ? (totals.get(leg.id) ?? 0n).toString() : null, installmentPlanId: expense ? (plans.get(leg.id) ?? null) : null };
 }
 function response(bundle: TransactionBundle) {
   return { legs: bundle.legs.map(legResponse), fx: bundle.fx ? { ...bundle.fx, quotedAt: bundle.fx.quotedAt.toISOString() } : null };
@@ -42,9 +46,10 @@ export class TransactionService {
   async find(userId: string, id: string) {
     const found = await this.repository.find(userId, id);
     const bundle = response(found);
-    const refunded = await this.repository.refundedTotals(userId, found.legs.filter(leg => leg.type === 'expense').map(leg => leg.id));
+    const expenses = found.legs.filter(leg => leg.type === 'expense').map(leg => leg.id);
+    const [refunded, plans] = await Promise.all([this.repository.refundedTotals(userId, expenses), this.repository.installmentPlanIds(userId, expenses)]);
     const convert = await this.rates.toProfileCurrency(userId);
-    return { ...bundle, legs: bundle.legs.map(leg => ({ ...withRefunded(leg, refunded), converted: convert(BigInt(leg.amountMinor), leg.currencyCode) })) };
+    return { ...bundle, legs: bundle.legs.map(leg => ({ ...withRefunded(leg, refunded, plans), converted: convert(BigInt(leg.amountMinor), leg.currencyCode) })) };
   }
   async findByClientId(userId: string, clientId: string) {
     const bundle = await this.repository.findByClientId(userId, clientId);
@@ -57,9 +62,10 @@ export class TransactionService {
     if (query.from && query.to && query.from > query.to) throw new TransactionError('VALIDATION_ERROR');
     const { accountId, categoryId, tagId, ...rest } = query;
     const result = await this.repository.list(userId, { ...rest, accountIds: accountId, categoryIds: categoryId, tagIds: tagId });
-    const refunded = await this.repository.refundedTotals(userId, result.items.filter(leg => leg.type === 'expense').map(leg => leg.id));
+    const expenses = result.items.filter(leg => leg.type === 'expense').map(leg => leg.id);
+    const [refunded, plans] = await Promise.all([this.repository.refundedTotals(userId, expenses), this.repository.installmentPlanIds(userId, expenses)]);
     return {
-      items: result.items.map(leg => withRefunded(legResponse(leg), refunded)), total: result.total, page: query.page, pageSize: query.pageSize,
+      items: result.items.map(leg => withRefunded(legResponse(leg), refunded, plans)), total: result.total, page: query.page, pageSize: query.pageSize,
       summary: {
         count: result.summary.count,
         totals: result.summary.totals.map(row => ({

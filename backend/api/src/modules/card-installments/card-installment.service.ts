@@ -6,7 +6,9 @@ import {
 import {
   CARD_INSTALLMENT_REPOSITORY, type CardInstallmentRepository,
 } from './domain/card-installment.repository';
-import type { CardInstallmentDueDto, CreateCardInstallmentDto, ListCardInstallmentsDto } from './card-installment.dto';
+import type {
+  CardInstallmentDueDto, CreateCardInstallmentDto, ListCardInstallmentsDto, PreviewCardInstallmentDto,
+} from './card-installment.dto';
 
 const text = (value: bigint) => value.toString();
 
@@ -30,6 +32,10 @@ function summary(plan: CardInstallmentRecord, today: string) {
     version: plan.version,
     createdAt: plan.createdAt.toISOString(),
     updatedAt: plan.updatedAt.toISOString(),
+    purchaseOn: plan.purchase?.occurredOn ?? null,
+    purchaseMerchant: plan.purchase?.merchant ?? null,
+    purchaseNote: plan.purchase?.notes ?? null,
+    purchaseCategoryId: plan.purchase?.categoryId ?? null,
   };
 }
 
@@ -69,6 +75,28 @@ export class CardInstallmentService {
       firstDueOn: dto.firstDueOn,
     });
     return { plan: detail(result.plan, await this.repository.today(userId)), created: result.created };
+  }
+
+  /** The schedule a create with the same input would make; nothing is written. */
+  async preview(userId: string, dto: PreviewCardInstallmentDto) {
+    const plan = await this.repository.preview(userId, {
+      transactionId: dto.transactionId,
+      installmentCount: dto.installmentCount,
+      installmentMinor: dto.installmentMinor ? minor(dto.installmentMinor) : null,
+      firstDueOn: dto.firstDueOn,
+    });
+    const periods = buildSchedule(plan);
+    return {
+      transactionId: plan.transactionId,
+      accountId: plan.accountId,
+      currencyCode: plan.currencyCode,
+      totalMinor: text(plan.totalMinor),
+      installmentMinor: text(plan.installmentMinor),
+      installmentCount: plan.installmentCount,
+      firstDueOn: plan.firstDueOn,
+      lastDueOn: periods[periods.length - 1].dueOn,
+      periods: periods.map(period => ({ index: period.index, dueOn: period.dueOn, amountMinor: text(period.amountMinor) })),
+    };
   }
 
   async close(userId: string, id: string, version: number) {
