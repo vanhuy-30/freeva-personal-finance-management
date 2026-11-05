@@ -4,6 +4,7 @@ Nhật ký repo/process — không phải App Store release notes.
 
 ## 2026-11-05
 
+- **Phase 3 closed**: backlog 16/17 done, `BE-P3-E03` wont (gộp vào `BE-P4-E01`); gồm mục tiêu, vay và nợ, dự báo số dư, ticket `P3-001`…`012` (`Gate: v1`). Mở Phase 4.
 - Dọn backlog: xóa bảng `Bill` cũ (migration `drop_bill_table`), module `/bills` 410 và trường `bills` trong export tài khoản; xóa các tồn đọng bị chặn vì chưa có tài khoản store/server deploy, đã lỗi thời hoặc không cần; căn lại 6 foreign key tùy chọn về `ON DELETE SET NULL` đúng schema (migration `align_optional_fk_actions`); 23 suite integration PostgreSQL chạy xanh trên Postgres local.
 - `MOB-P3-E04`: dự báo số dư trên app — dòng "Dự báo số dư" ở Báo cáo tháng mở màn công tắc 3/6/12 tháng, thẻ số dư cuối kỳ và chênh so với hôm nay, cột số dư từng tháng, thẻ Cách tính (sửa số dư gốc), danh sách khoản định kỳ/hóa đơn có công tắc bật/tắt. Không đổi backend. Golden sáng/tối, đối chiếu board nhóm N. [Thiết kế](../architecture/mobile-forecast.md).
 - `MOB-P3-011`: nhập CSV từ app khác trên app — dòng "Nhập từ app khác" ở Hồ sơ mở màn Nhập giao dịch: chọn nguồn (Money Lover, MISA, Freeva, Nơi khác), chọn file CSV, chọn cột cho file Nơi khác, ghép ví và danh mục chưa khớp, xem trước Sẵn sàng/Trùng/Lỗi, nhập một lô và hoàn tác cả lô. Thêm dependency `file_picker`. Không đổi backend. [Thiết kế](../architecture/mobile-transaction-import.md).
