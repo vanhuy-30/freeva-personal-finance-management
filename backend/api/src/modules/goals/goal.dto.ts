@@ -72,3 +72,11 @@ export class AdjustGoalDto {
   @IsString() @nonNegativeMinor currentMinor!: string;
   @applyAll(version) version!: number;
 }
+
+export class PreviewGoalDto {
+  @Transform(({ value }) => (typeof value === 'string' ? value.toUpperCase() : value))
+  @IsString() @Matches(/^[A-Z]{3}(?![\s\S])/) currencyCode!: string;
+  @IsString() @positiveMinor targetMinor!: string;
+  @ValidateIf(optional) @IsString() @nonNegativeMinor currentMinor?: string;
+  @IsString() @day targetDate!: string;
+}

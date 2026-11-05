@@ -131,3 +131,27 @@ export function incomeShareBps(requiredMinor: bigint | null, monthlyIncomeMinor:
   if (requiredMinor === null || monthlyIncomeMinor === null || monthlyIncomeMinor <= 0n) return null;
   return Number((requiredMinor * 10000n) / monthlyIncomeMinor);
 }
+
+export type GoalPreviewInput = {
+  currencyCode: string;
+  targetMinor: bigint;
+  currentMinor: bigint;
+  targetDate: string;
+};
+
+/** Income the user typed on the profile, in its default currency; null when not given. */
+export type DeclaredIncome = { currencyCode: string; monthlyIncomeMinor: bigint | null };
+
+/**
+ * Numbers for a goal that does not exist yet (first-run question 3). The income share is taken
+ * against the income the user declared, since a new account has no income history to average.
+ */
+export function goalPreview(today: string, input: GoalPreviewInput, income: DeclaredIncome) {
+  const months = monthsLeft(today, input.targetDate);
+  const required = requiredPerMonth(input.targetMinor, input.currentMinor, months);
+  const share = incomeShareBps(
+    required,
+    income.currencyCode === input.currencyCode ? income.monthlyIncomeMinor : null,
+  );
+  return { monthsLeft: months, requiredPerMonthMinor: required, incomeShareBps: share };
+}

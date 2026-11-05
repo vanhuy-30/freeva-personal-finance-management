@@ -5,7 +5,7 @@ import {
 import type { Response } from 'express';
 import { AuthGuard, type AuthRequest } from '../auth/auth.guard';
 import { GoalExceptionFilter } from './goal-exception.filter';
-import { AdjustGoalDto, ArchiveGoalDto, CreateGoalDto, ListGoalsDto, MoveGoalDto, UpdateGoalDto } from './goal.dto';
+import { AdjustGoalDto, ArchiveGoalDto, CreateGoalDto, ListGoalsDto, MoveGoalDto, PreviewGoalDto, UpdateGoalDto } from './goal.dto';
 import { GoalService } from './goal.service';
 
 @Controller('v1/goals')
@@ -17,6 +17,11 @@ export class GoalController {
   @Get('presets') @Header('Cache-Control', 'no-store')
   presets() {
     return this.goals.presets();
+  }
+
+  @Post('preview') @HttpCode(200) @Header('Cache-Control', 'no-store')
+  preview(@Req() req: AuthRequest, @Body() body: PreviewGoalDto) {
+    return this.goals.preview(req.session.userId, body);
   }
 
   @Get() @Header('Cache-Control', 'no-store')
