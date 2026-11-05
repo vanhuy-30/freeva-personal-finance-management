@@ -12,7 +12,6 @@ import { httpRequestSerializer } from '../src/core/logging/http-request.serializ
 import { pinoRedactOptions } from '../src/core/logging/pino-redact';
 import { RecurringModule } from '../src/modules/recurring/recurring.module';
 import { RECURRING_REPOSITORY, type RecurringRepository } from '../src/modules/recurring/domain/recurring.repository';
-import { BillModule } from '../src/modules/bills/bill.module';
 import { SyncModule } from '../src/modules/sync/sync.module';
 import { TransactionModule } from '../src/modules/transactions/transaction.module';
 import { occurrenceClientId } from '../src/modules/recurring/domain/occurrence-id';
@@ -41,7 +40,7 @@ describe('BE-P2-E01 recurring HTTP + PostgreSQL', () => {
           SMTP_HOST: 'localhost', SMTP_PORT: '1025', MAIL_FROM: 'noreply@example.test',
         })] }),
         LoggerModule.forRoot({ pinoHttp: [{ serializers: { req: httpRequestSerializer }, redact: pinoRedactOptions }, stream] }),
-        PrismaModule, FinancialAccountModule, TransactionModule, SyncModule, RecurringModule, BillModule,
+        PrismaModule, FinancialAccountModule, TransactionModule, SyncModule, RecurringModule,
       ],
     }).compile();
     app = module.createNestApplication();
@@ -387,14 +386,6 @@ describe('BE-P2-E01 recurring HTTP + PostgreSQL', () => {
         version: auto.body.version, occurredOn: '2026-01-10',
       });
       expect(notRemind.status).toBe(400);
-    });
-
-    it('answers 410 on every old /bills route', async () => {
-      for (const [method, path] of [['GET', '/bills'], ['POST', '/bills'], ['GET', `/bills/${randomUUID()}`], ['POST', `/bills/${randomUUID()}/pay`]]) {
-        const res = await request(method, path, method === 'POST' ? {} : undefined);
-        expect(res.status).toBe(410);
-        expect(res.body.error.code).toBe('BILL_GONE');
-      }
     });
   });
 });

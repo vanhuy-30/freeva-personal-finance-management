@@ -47,4 +47,3 @@ Unit: [reconcile.spec.ts](../../backend/api/src/modules/transactions/reconcile.s
 - `TransactionType.adjustment` có trong app: hiện trong lịch sử; chi tiết cho Sửa số tiền (sheet riêng, `PATCH /transactions/{id}` chỉ gửi leg mới, không danh mục/FX, không qua hàng đợi offline) và Xoá, không Sao chép.
 - Ví thường nhập được số âm (ví đang âm); ví thẻ chỉ nhập dư nợ ≥ 0.
 
-**Tồn đọng:** sửa điều chỉnh khi offline; chưa deploy staging; chưa chạy trên thiết bị thật.

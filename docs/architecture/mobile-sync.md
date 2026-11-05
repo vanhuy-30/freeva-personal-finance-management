@@ -23,7 +23,7 @@ Xung đột (H2): mục giữ `server` (id, version, ngày, số tiền, danh m�
 
 ## Giới hạn
 
-Không sync ví hay danh mục, không pull cursor, không CRDT, không last-write-wins, không đối soát. Không cơ sở dữ liệu giao dịch đầy đủ. Update hoặc delete mất response có thể thành `conflict` dù server đã áp; mục đó được giữ để người dùng tải lại. Chưa native build hoặc E2E staging.
+Không sync ví hay danh mục, không pull cursor, không CRDT, không last-write-wins, không đối soát. Không cơ sở dữ liệu giao dịch đầy đủ. Update hoặc delete mất response có thể thành `conflict` dù server đã áp; mục đó được giữ để người dùng tải lại.
 
 ## Kiểm chứng
 

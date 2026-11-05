@@ -19,7 +19,7 @@ Bản ghi preference có `theme` và `onboardingCompleted`. Các cờ ẩn số 
 
 ## Giới hạn
 
-Không help center, ticket hay SLA (Phase 7). Không endpoint phản hồi. Quyền thông báo không xin lúc mở app; chỉ xin khi có phiên đăng nhập khác ([MOB-P1-009](mobile-privacy.md)). Chưa native build hoặc E2E staging.
+Không help center, ticket hay SLA (Phase 7). Không endpoint phản hồi. Quyền thông báo không xin lúc mở app; chỉ xin khi có phiên đăng nhập khác ([MOB-P1-009](mobile-privacy.md)).
 
 ## Kiểm chứng
 

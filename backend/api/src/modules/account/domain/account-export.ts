@@ -26,7 +26,6 @@ export interface AccountExport {
   fxQuotes: AccountExportQuote[];
   fxRates: AccountExportFxRate[];
   recurringRules: AccountExportRecurringRule[];
-  bills: AccountExportBill[];
   budget: AccountExportBudget | null;
   budgetMonths: AccountExportBudgetMonth[];
   goals: AccountExportGoal[];
@@ -156,18 +155,6 @@ export interface AccountExportRecurringRule extends Omit<SyncRow, 'createdAt' | 
   endDate: string | null;
   nextExecutionDate: string;
   active: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface AccountExportBill extends Omit<SyncRow, 'createdAt' | 'updatedAt'> {
-  name: string;
-  dueOn: string;
-  amountMinor: string;
-  amountKind: 'fixed' | 'estimated';
-  currencyCode: string;
-  recurringRuleId: string | null;
-  paidTransactionId: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -386,13 +373,6 @@ export interface ExportSource {
     startDate: Date;
     endDate: Date | null;
     nextExecutionDate: Date;
-    createdAt: Date;
-    updatedAt: Date;
-  }>;
-  bills: Array<Omit<AccountExportBill, 'amountMinor' | 'dueOn' | 'createdAt' | 'updatedAt' | 'currencyCode'> & {
-    currencyCode: string;
-    amountMinor: bigint;
-    dueOn: Date;
     createdAt: Date;
     updatedAt: Date;
   }>;
@@ -632,12 +612,6 @@ export function toAccountExport(source: ExportSource): AccountExport {
       counterCurrencyCode: row.counterCurrencyCode ? code(row.counterCurrencyCode) : null,
       fxRate: row.fxRate, startDate: day(row.startDate), endDate: row.endDate ? day(row.endDate) : null,
       nextExecutionDate: day(row.nextExecutionDate), active: row.active, version: row.version, ...stamps(row),
-    })),
-    bills: source.bills.map(row => ({
-      id: row.id, clientId: row.clientId, name: row.name, dueOn: day(row.dueOn),
-      amountMinor: row.amountMinor.toString(), amountKind: row.amountKind, currencyCode: code(row.currencyCode),
-      recurringRuleId: row.recurringRuleId, paidTransactionId: row.paidTransactionId,
-      version: row.version, ...stamps(row),
     })),
     budget: source.budget === null ? null : {
       id: source.budget.id,

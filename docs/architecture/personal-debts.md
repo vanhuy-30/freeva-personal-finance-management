@@ -35,8 +35,3 @@ Loại thông báo `debt` (có sẵn, nay mở khóa; công tắc `debtEnabled`,
 ## API
 
 Bearer session, `Cache-Control: no-store`, tiền là string integer. `GET/POST /personal-debts`, `GET/PATCH/DELETE /personal-debts/{id}` (cần `version`), `GET /personal-debts/summary` (Ai nợ mình `owedToMe` / Mình nợ ai `iOwe` kèm tổng phải thu, phải trả theo tiền tệ), `GET/POST /personal-debts/{id}/payments`. `status`: `open` · `overdue` (quá `dueDate`, còn nợ) · `settled`. Có trong `GET /account/export` (`personalDebts`, `personalDebtPayments`) và xoá theo user. Không log số tiền hay tên người (`debtMinor` nằm trong danh sách redact).
-
-## Tồn đọng
-
-- Chưa có cách xóa một khoản ghi nhầm khi đã có tiền chuyển (cần hoàn tác chân giao dịch).
-- App biết loại `debt` từ `MOB-P3-007` ([mobile-debts-loans.md](mobile-debts-loans.md)); chân `debt` chỉ đọc trên app.

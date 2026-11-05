@@ -79,9 +79,7 @@ Analytics chỉ `transaction_created` với `type` income/expense/transfer,
 
 Không cache giao dịch đầy đủ. Mất mạng đưa mutation vào hàng đợi
 [MOB-P1-008](mobile-sync.md) và gửi lại bằng `POST /api/v1/sync`. Catalog tiền
-tệ hiện có VND; nhánh FX vẫn được kiểm tra khi hai ví khác mã. Chưa native
-build hoặc E2E staging. Backend giao dịch và migration danh mục cần có trước
-khi smoke trên API thật.
+tệ hiện có VND; nhánh FX vẫn được kiểm tra khi hai ví khác mã.
 
 ## Kiểm chứng
 

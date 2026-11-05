@@ -4,7 +4,7 @@ Một màn **Định kỳ và hóa đơn** (`/me/recurring`, qua AuthGate, khôn
 
 ## Hành vi
 
-- Vào từ Cá nhân → "Định kỳ". Dòng "Hóa đơn" và route `/me/bills` đã bỏ (API `/bills` trả 410).
+- Vào từ Cá nhân → "Định kỳ". Dòng "Hóa đơn" và route `/me/bills` đã bỏ (API `/bills` đã bỏ).
 - Danh sách: thẻ "Cần trả X · N hóa đơn chưa trả · xem trên lịch" (mở `/me/calendar`) cộng từ các rule `remind` đang bật cùng loại tiền (ưu tiên tiền tệ hồ sơ; hóa đơn ước tính tính theo số ước tính). Nhóm **CẦN TRẢ** (rule `remind`, hạn gần nhất trước; rule tạm dừng xuống cuối, không có nút) và **GHI TỰ ĐỘNG** (rule `auto`, "Ngày 5 hằng tháng", số có dấu). Tag: "Quá hạn" lấy từ `overdue` của API; "Hôm nay" / "Còn N ngày" khi hạn trong 7 ngày; "Tạm dừng".
 - "Đã trả" mở sheet: số thật (điền sẵn số của rule), ví trả (mặc định ví của rule, cùng loại tiền), ngày trả (mặc định hôm nay). Gọi `POST /recurring-transactions/{id}/confirm` với `occurredOn` = `nextExecutionDate`; chỉ gửi `amountMinor` khi khác số của rule và `paidOn` khi khác hôm nay. "Đã ghi khoản chi này rồi? Chọn khoản đó" chọn trong 30 khoản chi gần nhất và gửi `transactionId` (không tạo giao dịch mới). Bấm lại hoặc thử lại cùng hạn trả kết quả cũ (`replayed`), không ghi hai lần.
 - Thêm/sửa: Chi · Thu · Chuyển; nhóm radio "Ghi tự động" / "Hỏi trước khi ghi" (mặc định hỏi trước); tên, số tiền, công tắc "Số tiền mỗi kỳ có thể khác" (`amountKind`), Lặp lại (Một lần chỉ cho hóa đơn, còn lại Hằng ngày/tuần/tháng/năm), Hạn đầu tiên / Lần tới, chip Nhắc trước 0/1/3/7 (mặc định 3), ví, danh mục. Sửa có "Tạm dừng" (`active`) và "Xoá định kỳ" (có hộp xác nhận).

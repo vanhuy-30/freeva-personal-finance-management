@@ -60,7 +60,6 @@ export class PrismaAccountRepository implements AccountRepository {
     const fxQuotes = await tx.fxQuote.findMany({ where: { userId }, orderBy: order });
     const fxRates = await tx.userFxRate.findMany({ where: { userId }, orderBy: [{ fromCode: 'asc' }, { toCode: 'asc' }] });
     const recurringRules = await tx.recurringRule.findMany({ where: { userId }, orderBy: order });
-    const bills = await tx.bill.findMany({ where: { userId }, orderBy: order });
     const budget = await tx.budget.findUnique({
       where: { userId },
       include: { categories: { orderBy: [{ categoryId: 'asc' as const }] } },
@@ -106,7 +105,6 @@ export class PrismaAccountRepository implements AccountRepository {
         counterCurrencyCode: row.counterCurrencyCode,
         fxRate: row.fxRate ? rateText(row.fxRate) : null,
       })),
-      bills,
       budget: budget === null ? null : {
         id: budget.id,
         currencyCode: budget.currencyCode,
@@ -183,7 +181,6 @@ export class PrismaAccountRepository implements AccountRepository {
     await tx.pushToken.deleteMany({ where: { userId } });
     await tx.inAppNotification.deleteMany({ where: { userId } });
     await tx.notificationPreference.deleteMany({ where: { userId } });
-    await tx.bill.deleteMany({ where: { userId } });
     await tx.cardInstallmentPlan.deleteMany({ where: { userId } });
     await tx.importBatch.deleteMany({ where: { userId } });
     await tx.personalDebtPayment.deleteMany({ where: { userId } });

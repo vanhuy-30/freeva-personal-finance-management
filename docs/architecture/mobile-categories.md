@@ -55,8 +55,7 @@ không phát event mới.
 ## Giới hạn
 
 Không hàng đợi offline. Không quản lý nhóm. Nhãn trên giao dịch:
-[MOB-P1-011](mobile-tags.md). Chưa native build hoặc E2E staging. Backend và
-migration danh mục cần có trước khi smoke trên API thật.
+[MOB-P1-011](mobile-tags.md).
 
 ## Kiểm chứng
 

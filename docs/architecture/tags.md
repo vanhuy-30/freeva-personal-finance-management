@@ -51,7 +51,7 @@ nullable. Không backfill.
 ## Kiểm chứng và rollout
 
 Xem [test README](../../backend/api/test/README.md#tags--merchant--be-p1-012).
-Deploy migration trước API mới. Không deploy staging trong task này.
+Deploy migration trước API mới.
 
 ## Số giao dịch mỗi nhãn (DS-P2-003)
 

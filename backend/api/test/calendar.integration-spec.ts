@@ -10,7 +10,6 @@ import { FinancialAccountModule } from '../src/modules/financial-accounts/financ
 import { AuthMailWorker } from '../src/modules/auth/infrastructure/auth-mail.worker';
 import { httpRequestSerializer } from '../src/core/logging/http-request.serializer';
 import { pinoRedactOptions } from '../src/core/logging/pino-redact';
-import { BillModule } from '../src/modules/bills/bill.module';
 import { CalendarModule } from '../src/modules/calendar/calendar.module';
 import { RecurringModule } from '../src/modules/recurring/recurring.module';
 import { TransactionModule } from '../src/modules/transactions/transaction.module';
@@ -39,7 +38,7 @@ describe('BE-P2-E04 calendar HTTP + PostgreSQL', () => {
           SMTP_HOST: 'localhost', SMTP_PORT: '1025', MAIL_FROM: 'noreply@example.test',
         })] }),
         LoggerModule.forRoot({ pinoHttp: [{ serializers: { req: httpRequestSerializer }, redact: pinoRedactOptions }, stream] }),
-        PrismaModule, FinancialAccountModule, TransactionModule, RecurringModule, BillModule, CalendarModule,
+        PrismaModule, FinancialAccountModule, TransactionModule, RecurringModule, CalendarModule,
       ],
     }).compile();
     app = module.createNestApplication();
@@ -77,7 +76,6 @@ describe('BE-P2-E04 calendar HTTP + PostgreSQL', () => {
 
   afterAll(async () => {
     if (prisma) {
-      await prisma.bill.deleteMany({ where: { userId: { in: fixtureUsers } } });
       await prisma.recurringOccurrence.deleteMany({ where: { rule: { userId: { in: fixtureUsers } } } });
       await prisma.transactionTag.deleteMany({ where: { transaction: { userId: { in: fixtureUsers } } } });
       await prisma.transaction.deleteMany({ where: { userId: { in: fixtureUsers } } });

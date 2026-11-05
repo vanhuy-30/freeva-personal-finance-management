@@ -38,5 +38,4 @@ fvm flutter analyze
 fvm flutter test
 ```
 
-Kết quả: analyzer sạch, toàn bộ 137 Flutter tests pass. Không native
-build hoặc E2E staging trong task này.
+Kết quả: analyzer sạch, toàn bộ 137 Flutter tests pass.

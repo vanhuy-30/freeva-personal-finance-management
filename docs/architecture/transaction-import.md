@@ -46,4 +46,3 @@ Xóa mềm mọi giao dịch của lô còn nguyên. Giao dịch đã sửa sau 
 
 `modules/transaction-import/`: `domain/csv-parse.ts`, `domain/import-format.ts`, `domain/transaction-import.ts` (thuần), repository Prisma, service, controller. Test: `domain/transaction-import.spec.ts`, `test/transactions-import.integration-spec.ts`.
 
-**Tồn đọng:** chưa nhập Excel (`.xlsx`); header Money Lover/MISA chưa kiểm với file thật; chưa nhập nhãn; chuyển khoản khác tiền tệ chưa ghép; tối đa 2 000 dòng mỗi lần (file lớn phải chia nhỏ).

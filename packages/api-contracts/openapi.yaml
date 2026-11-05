@@ -1094,30 +1094,6 @@ paths:
           $ref: '#/components/responses/BudgetConflict'
         '503':
           $ref: '#/components/responses/BudgetUnavailable'
-  /api/v1/bills:
-    get:
-      operationId: billsGone
-      summary: Removed — bills are remind-mode recurring rules
-      deprecated: true
-      tags:
-      - Bills
-      security:
-      - UserBearer: []
-      responses:
-        '410':
-          description: Gone. Every method on /api/v1/bills and /api/v1/bills/{path} answers 410 with error.code BILL_GONE.
-          headers:
-            Cache-Control:
-              schema:
-                type: string
-                const: no-store
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BillGoneError'
-      description: BE-P3-001 merged bills into /api/v1/recurring-transactions with mode=remind. Create with
-        mode=remind and a name (repeat=false for a one-off), then POST /recurring-transactions/{id}/confirm
-        to mark a due day paid.
   /api/v1/calendar:
     get:
       operationId: getCalendarMonth
@@ -7764,23 +7740,6 @@ components:
           minimum: 1
           maximum: 2147483646
           description: Required when updating an existing row; omit when creating.
-    BillGoneError:
-      type: object
-      additionalProperties: false
-      required: [error]
-      properties:
-        error:
-          type: object
-          required: [code, message, details]
-          properties:
-            code:
-              type: string
-              const: BILL_GONE
-            message:
-              type: string
-            details:
-              type: array
-              items: {}
     ConfirmRecurringRequest:
       type: object
       additionalProperties: false
@@ -10134,7 +10093,6 @@ components:
       - fxQuotes
       - fxRates
       - recurringRules
-      - bills
       - budget
       - budgetMonths
       - goals
@@ -10189,10 +10147,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AccountExportRecurringRule'
-        bills:
-          type: array
-          items:
-            $ref: '#/components/schemas/AccountExportBill'
         budget:
           oneOf:
           - type: 'null'
@@ -10611,46 +10565,6 @@ components:
           format: date
         active:
           type: boolean
-        version:
-          type: integer
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
-    AccountExportBill:
-      type: object
-      additionalProperties: false
-      required: [id, clientId, name, dueOn, amountMinor, amountKind, currencyCode, recurringRuleId, paidTransactionId, version, createdAt, updatedAt]
-      properties:
-        id:
-          type: string
-          format: uuid
-        clientId:
-          type: string
-          format: uuid
-        name:
-          type: string
-          maxLength: 80
-        dueOn:
-          type: string
-          format: date
-        amountMinor:
-          type: string
-          pattern: ^[1-9][0-9]*$
-        amountKind:
-          type: string
-          enum: [fixed, estimated]
-        currencyCode:
-          type: string
-          pattern: ^[A-Z]{3}$
-        recurringRuleId:
-          type: [string, 'null']
-          format: uuid
-        paidTransactionId:
-          type: [string, 'null']
-          format: uuid
         version:
           type: integer
         createdAt:

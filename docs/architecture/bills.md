@@ -24,6 +24,6 @@ Loại `recurring`: `bill_due` (từ `remindDaysBefore` ngày trước hạn) v�
 
 ## Chuyển từ `Bill`
 
-Migration `20261102200000_recurring_remind_mode`: mỗi `Bill` thành rule `remind` một lần với **cùng `id` và `clientId`**, số tiền đổi dấu; hóa đơn đã trả giữ liên kết giao dịch qua một occurrence. Hóa đơn chưa trả gắn rule `auto` bị bỏ (rule đó đã tự ghi). Bảng `Bill` còn nguyên để quay lui, sẽ xóa ở bản sau.
+Migration `20261102200000_recurring_remind_mode`: mỗi `Bill` thành rule `remind` một lần với **cùng `id` và `clientId`**, số tiền đổi dấu; hóa đơn đã trả giữ liên kết giao dịch qua một occurrence. Hóa đơn chưa trả gắn rule `auto` bị bỏ (rule đó đã tự ghi). Bảng `Bill` đã xóa (migration `20261105100000_drop_bill_table`).
 
-`/api/v1/bills` (mọi method, mọi đường dẫn con) trả **410** `BILL_GONE`. Lịch ([calendar.md](calendar.md)) chỉ đọc lại dữ liệu rule. Export có hóa đơn trong `recurringRules` (`mode: remind`); `bills` là bảng cũ.
+Route `/api/v1/bills` đã bỏ. Lịch ([calendar.md](calendar.md)) chỉ đọc lại dữ liệu rule. Export có hóa đơn trong `recurringRules` (`mode: remind`).
