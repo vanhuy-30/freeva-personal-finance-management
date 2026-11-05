@@ -161,6 +161,18 @@ import 'package:mobile/features/sync/presentation/viewmodels/sync_view_model.dar
 import 'package:mobile/features/tags/data/tag_repository_impl.dart' as _i729;
 import 'package:mobile/features/tags/domain/tag_repository.dart' as _i57;
 import 'package:mobile/features/tags/domain/tag_use_cases.dart' as _i112;
+import 'package:mobile/features/transaction_import/data/import_repository_impl.dart'
+    as _i538;
+import 'package:mobile/features/transaction_import/data/platform_import_file_picker.dart'
+    as _i539;
+import 'package:mobile/features/transaction_import/domain/import_file_picker.dart'
+    as _i761;
+import 'package:mobile/features/transaction_import/domain/import_repository.dart'
+    as _i377;
+import 'package:mobile/features/transaction_import/domain/import_use_cases.dart'
+    as _i272;
+import 'package:mobile/features/transaction_import/presentation/viewmodels/import_view_model.dart'
+    as _i587;
 import 'package:mobile/features/transactions/data/transaction_repository_impl.dart'
     as _i1020;
 import 'package:mobile/features/transactions/domain/transaction_repository.dart'
@@ -194,6 +206,8 @@ extension GetItInjectableX on _i174.GetIt {
     final authDataModule = _$AuthDataModule();
     final authPresentationModule = _$AuthPresentationModule();
     gh.lazySingleton<_i467.AppConfig>(() => _i467.AppConfig());
+    gh.lazySingleton<_i761.ImportFilePicker>(
+        () => _i539.PlatformImportFilePicker());
     gh.lazySingleton<_i1060.PreferenceVault>(
         () => _i1060.SecurePreferenceVault());
     gh.lazySingleton<_i938.SyncQueueVault>(() => _i938.SecureSyncQueueVault());
@@ -231,6 +245,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i288.LoanRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i561.CategoryRepository>(
         () => _i613.CategoryRepositoryImpl(gh<_i443.AuthorizedApi>()));
+    gh.lazySingleton<_i377.ImportRepository>(
+        () => _i538.ImportRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i882.SyncRepository>(() => _i430.SyncRepositoryImpl(
           gh<_i443.AuthorizedApi>(),
           gh<_i938.SyncQueueVault>(),
@@ -254,15 +270,15 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i460.PushTokenRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i182.CardInstallmentRepository>(
         () => _i922.CardInstallmentRepositoryImpl(gh<_i443.AuthorizedApi>()));
-    gh.factory<_i410.AccountExportUseCase>(() => _i410.AccountExportUseCase(
-          gh<_i173.AuthRepository>(),
-          gh<_i1007.AccountFileSharer>(),
-        ));
     gh.factory<_i421.TransactionsCsvExportUseCase>(
         () => _i421.TransactionsCsvExportUseCase(
               gh<_i173.AuthRepository>(),
               gh<_i1007.AccountFileSharer>(),
             ));
+    gh.factory<_i410.AccountExportUseCase>(() => _i410.AccountExportUseCase(
+          gh<_i173.AuthRepository>(),
+          gh<_i1007.AccountFileSharer>(),
+        ));
     gh.lazySingleton<_i238.CardInstallmentUseCases>(() =>
         _i238.DefaultCardInstallmentUseCases(
             gh<_i182.CardInstallmentRepository>()));
@@ -306,6 +322,8 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i911.PushTokenRepository>(),
           gh<_i54.SessionAlertNotifier>(),
         ));
+    gh.lazySingleton<_i272.ImportUseCases>(
+        () => _i272.DefaultImportUseCases(gh<_i377.ImportRepository>()));
     gh.lazySingleton<_i572.LoanUseCases>(
         () => _i572.DefaultLoanUseCases(gh<_i63.LoanRepository>()));
     gh.lazySingleton<_i840.GoalUseCases>(
@@ -354,6 +372,13 @@ extension GetItInjectableX on _i174.GetIt {
               gh<_i990.AuthViewModel>(),
               gh<_i444.CategoryExpansionRepository>(),
             ));
+    gh.factory<_i587.DefaultImportViewModel>(() => _i587.DefaultImportViewModel(
+          gh<_i272.ImportUseCases>(),
+          gh<_i336.WalletUseCases>(),
+          gh<_i221.CategoryUseCases>(),
+          gh<_i761.ImportFilePicker>(),
+          gh<_i990.AuthViewModel>(),
+        ));
     gh.factory<_i861.PendingGoalUseCases>(() => _i861.PendingGoalUseCases(
           gh<_i519.SettingsUseCases>(),
           gh<_i840.GoalUseCases>(),

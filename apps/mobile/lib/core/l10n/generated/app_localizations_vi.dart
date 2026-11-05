@@ -1884,9 +1884,6 @@ class SVi extends S {
   String get meTitle => 'Cá nhân';
 
   @override
-  String get meGroupFinance => 'Thiết lập tài chính';
-
-  @override
   String get meGroupApp => 'Ứng dụng';
 
   @override
@@ -4739,4 +4736,290 @@ class SVi extends S {
 
   @override
   String get dataExportButton => 'Xuất file';
+
+  @override
+  String get meImportData => 'Nhập từ app khác';
+
+  @override
+  String get importTitle => 'Nhập giao dịch';
+
+  @override
+  String get importSourceHeading => 'Nguồn dữ liệu';
+
+  @override
+  String get importSourceMoneyLover => 'Money Lover';
+
+  @override
+  String get importSourceMoneyLoverHint =>
+      'Xuất file CSV trong app Money Lover';
+
+  @override
+  String get importSourceMisa => 'Sổ thu chi MISA';
+
+  @override
+  String get importSourceMisaHint => 'Xuất file CSV trong app MISA';
+
+  @override
+  String get importSourceFreeva => 'Freeva';
+
+  @override
+  String get importSourceFreevaHint => 'File bạn đã xuất từ Freeva';
+
+  @override
+  String get importSourceOther => 'Nơi khác';
+
+  @override
+  String get importSourceOtherHint => 'Bạn chọn cột ngày, số tiền';
+
+  @override
+  String get importSourceNote =>
+      'Tối đa 2.000 dòng mỗi lần. Giao dịch đã có sẽ được bỏ qua.';
+
+  @override
+  String get importPickFile => 'Chọn file CSV';
+
+  @override
+  String get importProblemUnreadable =>
+      'Không đọc được file này. Hãy chọn file CSV.';
+
+  @override
+  String get importProblemEmpty => 'File này chưa có dòng nào.';
+
+  @override
+  String get importProblemTooMany =>
+      'File có hơn 2.000 dòng. Hãy chia nhỏ rồi nhập từng phần.';
+
+  @override
+  String get importProblemTooLarge =>
+      'File quá lớn. Hãy chia nhỏ rồi nhập từng phần.';
+
+  @override
+  String get importError => 'Chưa nhập được';
+
+  @override
+  String get importColumnsTitle => 'Chọn cột';
+
+  @override
+  String importFileRows(int count) {
+    return '$count dòng';
+  }
+
+  @override
+  String get importColumnsHeader => 'CỘT TRONG FILE';
+
+  @override
+  String get importFieldDate => 'Ngày';
+
+  @override
+  String get importFieldAmount => 'Số tiền';
+
+  @override
+  String get importFieldType => 'Thu hay chi';
+
+  @override
+  String get importFieldCategory => 'Danh mục';
+
+  @override
+  String get importFieldWallet => 'Ví';
+
+  @override
+  String get importFieldNotes => 'Ghi chú';
+
+  @override
+  String get importColumnNone => 'Không dùng';
+
+  @override
+  String get importDateFormat => 'Kiểu ngày';
+
+  @override
+  String get importNumberFormat => 'Kiểu số';
+
+  @override
+  String get importFirstRow => 'Dòng đầu đọc được';
+
+  @override
+  String get importNext => 'Tiếp';
+
+  @override
+  String get importMapTitle => 'Ghép ví và danh mục';
+
+  @override
+  String importMapRemaining(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Còn $count mục chưa ghép.',
+      one: 'Còn $count mục chưa ghép.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get importMapWallets => 'VÍ TRONG FILE';
+
+  @override
+  String get importMapCategories => 'DANH MỤC TRONG FILE';
+
+  @override
+  String get importMapAllRows => 'Mọi dòng trong file';
+
+  @override
+  String get importMapChoose => 'Chọn';
+
+  @override
+  String get importMapPreview => 'Xem trước';
+
+  @override
+  String get importPickWallet => 'Chọn ví';
+
+  @override
+  String get importPickCategory => 'Chọn danh mục';
+
+  @override
+  String get importPreviewTitle => 'Xem trước';
+
+  @override
+  String get importReady => 'Sẵn sàng';
+
+  @override
+  String get importDuplicate => 'Trùng';
+
+  @override
+  String get importInvalid => 'Lỗi';
+
+  @override
+  String get importFilterAll => 'Tất cả';
+
+  @override
+  String get importNoRows => 'Không có dòng nào';
+
+  @override
+  String get importDuplicatesToggle => 'Vẫn nhập khoản trùng';
+
+  @override
+  String get importDuplicatesHint => 'Thường bạn không cần bật';
+
+  @override
+  String importCommit(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Nhập $count giao dịch',
+      one: 'Nhập $count giao dịch',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get importTagDuplicate => 'Trùng';
+
+  @override
+  String get importTagDate => 'Thiếu ngày';
+
+  @override
+  String get importTagAmount => 'Sai số tiền';
+
+  @override
+  String get importTagType => 'Loại chưa hỗ trợ';
+
+  @override
+  String get importTagWallet => 'Chưa chọn ví';
+
+  @override
+  String get importTagCategory => 'Chưa chọn danh mục';
+
+  @override
+  String get importTagCategoryKind => 'Sai loại danh mục';
+
+  @override
+  String get importTagCurrency => 'Lệch tiền tệ';
+
+  @override
+  String get importTagTransfer => 'Thiếu dòng đối ứng';
+
+  @override
+  String get importTagSameWallet => 'Cùng một ví';
+
+  @override
+  String get importTagOther => 'Không đọc được';
+
+  @override
+  String importDoneTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Đã nhập $count giao dịch',
+      one: 'Đã nhập $count giao dịch',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String importDoneSkipBoth(int duplicates, int invalid) {
+    return 'Bỏ qua $duplicates khoản trùng và $invalid dòng lỗi.';
+  }
+
+  @override
+  String importDoneSkipDuplicates(int count) {
+    return 'Bỏ qua $count khoản trùng.';
+  }
+
+  @override
+  String importDoneSkipInvalid(int count) {
+    return 'Bỏ qua $count dòng lỗi.';
+  }
+
+  @override
+  String get importDoneView => 'Xem giao dịch';
+
+  @override
+  String get importUndo => 'Hoàn tác lần nhập';
+
+  @override
+  String get importDoneKept => 'Khoản bạn đã sửa sau khi nhập sẽ được giữ lại.';
+
+  @override
+  String importUndone(int count) {
+    return 'Đã hoàn tác $count giao dịch';
+  }
+
+  @override
+  String get importUndoError => 'Chưa hoàn tác được';
+
+  @override
+  String get meGroupManage => 'Quản lý tiền';
+
+  @override
+  String get meGroupSetup => 'Thiết lập';
+
+  @override
+  String get meGroupData => 'Dữ liệu';
+
+  @override
+  String get meBudgetShort => 'Ngân sách';
+
+  @override
+  String get meCalendarShort => 'Lịch';
+
+  @override
+  String get meMoneyTitle => 'Thu nhập và kỳ tính';
+
+  @override
+  String get meMoneyHint =>
+      'Lương về giữa tháng? Đặt theo ngày lương để ngân sách và báo cáo tính đúng kỳ.';
+
+  @override
+  String meWalletsCount(int count) {
+    return '$count ví';
+  }
+
+  @override
+  String meRecurringCount(int count) {
+    return '$count khoản';
+  }
+
+  @override
+  String meCalendarMonth(int month) {
+    return 'Tháng $month';
+  }
 }

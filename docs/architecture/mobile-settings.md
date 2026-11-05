@@ -50,3 +50,7 @@ Thiết kế: [G-profile-settings.md](../brand/patterns/G-profile-settings.md).
 - **Góp ý** (`/help/feedback`): loại (Lỗi/Ý tưởng/Lời khen), chủ đề, nội dung (đếm ký tự), "Trả lời tôi qua email", gửi `POST /feedback` ([feedback.md](feedback.md)); xong hiện màn cảm ơn. Thay cho luồng sao chép Phase 1. Chưa có ảnh chụp màn hình. Lỗi mạng/quá giới hạn báo bằng toast, nội dung vẫn còn.
 - **FAQ**: ô tìm, một câu mở một lúc, thẻ "Gửi góp ý cho Freeva".
 - **Thông báo** (`/me/notifications`): ngân sách, định kỳ và thẻ qua API (`BE-P2-E05`, `BE-P2-E07`); "Máy mới đăng nhập" vẫn trên máy (`sessionAlertsEnabled`); giờ yên theo timezone hồ sơ; mục tiêu/soát tháng hiện "Sắp có"; nợ là công tắc thật, insight đã bỏ; nhắc ghi chi có chọn giờ (`MOB-P3-006`, xem [notifications.md](notifications.md)). Push FCM (`BE-P2-015`): quyền xin khi bật một loại.
+
+## Cá nhân theo board `MeHome3` (Phase 3)
+
+Thẻ hồ sơ, rồi **QUẢN LÝ TIỀN** (`ManageGrid`: lưới 3 cột, 6 ô Ví của tôi · Ngân sách · Mục tiêu · Vay và nợ · Định kỳ · Lịch, mỗi ô một dòng số ngắn, 2 cột khi hẹp ở chữ lớn), **THIẾT LẬP** (Danh mục, Nhãn, Thu nhập và kỳ tính), **ỨNG DỤNG**, **DỮ LIỆU** (Nhập từ app khác, Xuất dữ liệu), **HỖ TRỢ**. Thu nhập hàng tháng, Tiền tệ mặc định và Tháng tính từ chuyển sang màn `/me/money` (`MoneySettingsPage`, board `MeMoney`), vẫn lưu ngay khi chọn. Hồ sơ vẫn giữ dòng Xuất dữ liệu như board `MeProfile`.

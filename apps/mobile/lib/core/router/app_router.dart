@@ -10,6 +10,8 @@ import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/home/presentation/pages/notifications_page.dart';
 import '../../features/transactions/domain/transaction.dart';
 import '../../features/profile/presentation/pages/data_export_page.dart';
+import '../../features/settings/presentation/pages/money_settings_page.dart';
+import '../../features/transaction_import/presentation/pages/import_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/reports/domain/category_detail.dart';
 import '../../features/reports/presentation/pages/month_review_page.dart';
@@ -270,6 +272,14 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
       GoRoute(
         path: '/me/export',
         builder: (context, state) => const AuthGate(child: DataExportPage()),
+      ),
+      GoRoute(
+        path: '/me/money',
+        builder: (context, state) => const AuthGate(child: MoneySettingsPage()),
+      ),
+      GoRoute(
+        path: '/me/import',
+        builder: (context, state) => const AuthGate(child: ImportPage()),
       ),
       GoRoute(
         path: '/me/security',

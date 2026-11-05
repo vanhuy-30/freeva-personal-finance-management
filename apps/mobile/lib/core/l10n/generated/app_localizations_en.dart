@@ -1921,9 +1921,6 @@ class SEn extends S {
   String get meTitle => 'You';
 
   @override
-  String get meGroupFinance => 'Money setup';
-
-  @override
   String get meGroupApp => 'App';
 
   @override
@@ -4824,4 +4821,303 @@ class SEn extends S {
 
   @override
   String get dataExportButton => 'Export file';
+
+  @override
+  String get meImportData => 'Import from another app';
+
+  @override
+  String get importTitle => 'Import transactions';
+
+  @override
+  String get importSourceHeading => 'Data source';
+
+  @override
+  String get importSourceMoneyLover => 'Money Lover';
+
+  @override
+  String get importSourceMoneyLoverHint =>
+      'Export a CSV file in the Money Lover app';
+
+  @override
+  String get importSourceMisa => 'MISA Sổ thu chi';
+
+  @override
+  String get importSourceMisaHint => 'Export a CSV file in the MISA app';
+
+  @override
+  String get importSourceFreeva => 'Freeva';
+
+  @override
+  String get importSourceFreevaHint => 'A file you exported from Freeva';
+
+  @override
+  String get importSourceOther => 'Somewhere else';
+
+  @override
+  String get importSourceOtherHint => 'You pick the date and amount columns';
+
+  @override
+  String get importSourceNote =>
+      'Up to 2,000 rows at a time. Transactions you already have are skipped.';
+
+  @override
+  String get importPickFile => 'Choose CSV file';
+
+  @override
+  String get importProblemUnreadable =>
+      'Can\'t read this file. Choose a CSV file.';
+
+  @override
+  String get importProblemEmpty => 'This file has no rows yet.';
+
+  @override
+  String get importProblemTooMany =>
+      'This file has more than 2,000 rows. Split it and import in parts.';
+
+  @override
+  String get importProblemTooLarge =>
+      'This file is too large. Split it and import in parts.';
+
+  @override
+  String get importError => 'Couldn\'t import';
+
+  @override
+  String get importColumnsTitle => 'Choose columns';
+
+  @override
+  String importFileRows(int count) {
+    return '$count rows';
+  }
+
+  @override
+  String get importColumnsHeader => 'COLUMNS IN THE FILE';
+
+  @override
+  String get importFieldDate => 'Date';
+
+  @override
+  String get importFieldAmount => 'Amount';
+
+  @override
+  String get importFieldType => 'Income or expense';
+
+  @override
+  String get importFieldCategory => 'Category';
+
+  @override
+  String get importFieldWallet => 'Wallet';
+
+  @override
+  String get importFieldNotes => 'Note';
+
+  @override
+  String get importColumnNone => 'Don\'t use';
+
+  @override
+  String get importDateFormat => 'Date style';
+
+  @override
+  String get importNumberFormat => 'Number style';
+
+  @override
+  String get importFirstRow => 'First readable row';
+
+  @override
+  String get importNext => 'Next';
+
+  @override
+  String get importMapTitle => 'Match wallets and categories';
+
+  @override
+  String importMapRemaining(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items left to match.',
+      one: '$count item left to match.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get importMapWallets => 'WALLETS IN THE FILE';
+
+  @override
+  String get importMapCategories => 'CATEGORIES IN THE FILE';
+
+  @override
+  String get importMapAllRows => 'Every row in the file';
+
+  @override
+  String get importMapChoose => 'Choose';
+
+  @override
+  String get importMapPreview => 'Preview';
+
+  @override
+  String get importPickWallet => 'Choose a wallet';
+
+  @override
+  String get importPickCategory => 'Choose a category';
+
+  @override
+  String get importPreviewTitle => 'Preview';
+
+  @override
+  String get importReady => 'Ready';
+
+  @override
+  String get importDuplicate => 'Duplicates';
+
+  @override
+  String get importInvalid => 'Errors';
+
+  @override
+  String get importFilterAll => 'All';
+
+  @override
+  String get importNoRows => 'No rows';
+
+  @override
+  String get importDuplicatesToggle => 'Import duplicates anyway';
+
+  @override
+  String get importDuplicatesHint => 'You usually don\'t need this';
+
+  @override
+  String importCommit(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Import $count transactions',
+      one: 'Import $count transaction',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get importTagDuplicate => 'Duplicate';
+
+  @override
+  String get importTagDate => 'No date';
+
+  @override
+  String get importTagAmount => 'Bad amount';
+
+  @override
+  String get importTagType => 'Type not supported';
+
+  @override
+  String get importTagWallet => 'No wallet';
+
+  @override
+  String get importTagCategory => 'No category';
+
+  @override
+  String get importTagCategoryKind => 'Wrong category type';
+
+  @override
+  String get importTagCurrency => 'Currency differs';
+
+  @override
+  String get importTagTransfer => 'Missing other side';
+
+  @override
+  String get importTagSameWallet => 'Same wallet';
+
+  @override
+  String get importTagOther => 'Can\'t read';
+
+  @override
+  String importDoneTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Imported $count transactions',
+      one: 'Imported $count transaction',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String importDoneSkipBoth(int duplicates, int invalid) {
+    return 'Skipped $duplicates duplicates and $invalid bad rows.';
+  }
+
+  @override
+  String importDoneSkipDuplicates(int count) {
+    return 'Skipped $count duplicates.';
+  }
+
+  @override
+  String importDoneSkipInvalid(int count) {
+    return 'Skipped $count bad rows.';
+  }
+
+  @override
+  String get importDoneView => 'View transactions';
+
+  @override
+  String get importUndo => 'Undo this import';
+
+  @override
+  String get importDoneKept =>
+      'Transactions you edited after importing are kept.';
+
+  @override
+  String importUndone(int count) {
+    return 'Undid $count transactions';
+  }
+
+  @override
+  String get importUndoError => 'Couldn\'t undo';
+
+  @override
+  String get meGroupManage => 'Manage money';
+
+  @override
+  String get meGroupSetup => 'Setup';
+
+  @override
+  String get meGroupData => 'Data';
+
+  @override
+  String get meBudgetShort => 'Budget';
+
+  @override
+  String get meCalendarShort => 'Calendar';
+
+  @override
+  String get meMoneyTitle => 'Income and period';
+
+  @override
+  String get meMoneyHint =>
+      'Paid mid-month? Set your payday so budgets and reports use the right period.';
+
+  @override
+  String meWalletsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count wallets',
+      one: '$count wallet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String meRecurringCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items',
+      one: '$count item',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String meCalendarMonth(int month) {
+    return 'Month $month';
+  }
 }
