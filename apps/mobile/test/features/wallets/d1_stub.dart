@@ -17,7 +17,6 @@ import 'package:mobile/features/wallets/domain/wallet_flow.dart';
 import 'package:mobile/features/wallets/presentation/viewmodels/wallet_detail_view_model.dart';
 import 'package:mobile/features/wallets/presentation/viewmodels/wallet_view_model.dart';
 
-
 import '../auth/fakes.dart';
 import '../home/fixtures.dart' show b, wallet;
 import '../installments/installment_stub.dart';
