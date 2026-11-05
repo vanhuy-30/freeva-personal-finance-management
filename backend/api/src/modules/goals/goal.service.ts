@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { minor } from '../transactions/domain/transaction';
 import {
+  goalPreview,
   goalStatus,
   incomeShareBps,
   monthsLeft,
@@ -12,7 +13,7 @@ import {
   type GoalRecord,
 } from './domain/goal';
 import { GOAL_REPOSITORY, type GoalContext, type GoalRepository } from './domain/goal.repository';
-import type { AdjustGoalDto, CreateGoalDto, MoveGoalDto, UpdateGoalDto } from './goal.dto';
+import type { AdjustGoalDto, CreateGoalDto, MoveGoalDto, PreviewGoalDto, UpdateGoalDto } from './goal.dto';
 
 const text = (value: bigint) => value.toString();
 
@@ -52,6 +53,22 @@ export class GoalService {
 
   presets() {
     return { items: GOAL_PRESETS.map(({ kind, icon, colorToken }) => ({ kind, icon, colorToken })) };
+  }
+
+  /** Monthly saving a goal would need; nothing is stored. */
+  async preview(userId: string, dto: PreviewGoalDto) {
+    const { today, income } = await this.repository.previewContext(userId);
+    const result = goalPreview(today, {
+      currencyCode: dto.currencyCode,
+      targetMinor: minor(dto.targetMinor),
+      currentMinor: dto.currentMinor === undefined ? 0n : minor(dto.currentMinor),
+      targetDate: dto.targetDate,
+    }, income);
+    return {
+      monthsLeft: result.monthsLeft,
+      requiredPerMonthMinor: result.requiredPerMonthMinor === null ? null : text(result.requiredPerMonthMinor),
+      ...(result.incomeShareBps === null ? {} : { incomeShareBps: result.incomeShareBps }),
+    };
   }
 
   async list(userId: string, includeArchived = false) {

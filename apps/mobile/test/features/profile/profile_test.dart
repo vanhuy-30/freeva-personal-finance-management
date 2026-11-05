@@ -104,26 +104,35 @@ void main() {
     },
   );
   test(
-    'budget goes out as a string and the profile reads the saved answers',
+    'income goes out as a string, can be set or cleared, and is read back',
     () async {
       final api = Transport();
       final repo = ProfileRepositoryImpl(api);
       final cases = ProfileUseCases(repo);
       expect(
         (await cases.saveOnboarding(
-          OnboardingAnswers(budgetMinor: BigInt.from(15000000)),
+          OnboardingAnswers(monthlyIncomeMinor: BigInt.from(25000000)),
         )).isRight(),
         true,
       );
-      expect(api.body, {'budgetMinor': '15000000'});
+      expect(api.body, {'monthlyIncomeMinor': '25000000'});
       api.method = null;
       expect(
         (await cases.saveOnboarding(
-          OnboardingAnswers(budgetMinor: BigInt.zero),
+          OnboardingAnswers(monthlyIncomeMinor: BigInt.zero),
         )).isLeft(),
         true,
       );
       expect(api.method, isNull);
+      expect(
+        (await cases.saveMonthlyIncome(BigInt.from(30000000))).isRight(),
+        true,
+      );
+      expect(api.method, 'PUT');
+      expect(api.path, 'profile/monthly-income');
+      expect(api.body, {'monthlyIncomeMinor': '30000000'});
+      expect((await cases.saveMonthlyIncome(null)).isRight(), true);
+      expect(api.body, {'monthlyIncomeMinor': null});
       api.response = {
         'locale': 'vi',
         'defaultCurrencyCode': 'VND',
@@ -131,22 +140,13 @@ void main() {
         'fiscalMonthStartDay': 1,
         'version': 1,
         'goals': ['save'],
-        'trackingHabit': 'app',
-        'reviewCadence': 'weekly',
-        'onboardingBudgetMinor': '15000000',
+        'monthlyIncomeMinor': '25000000',
       };
       final loaded = (await repo.load()).getOrElse(() => throw StateError('x'));
-      expect(loaded.habit, 'app');
-      expect(loaded.cadence, 'weekly');
-      expect(loaded.budgetMinor, BigInt.from(15000000));
-      api.response = {
-        ...api.response,
-        'onboardingBudgetMinor': 'abc',
-        'trackingHabit': null,
-      };
+      expect(loaded.monthlyIncomeMinor, BigInt.from(25000000));
+      api.response = {...api.response, 'monthlyIncomeMinor': 'abc'};
       final bad = (await repo.load()).getOrElse(() => throw StateError('x'));
-      expect(bad.budgetMinor, isNull);
-      expect(bad.habit, isNull);
+      expect(bad.monthlyIncomeMinor, isNull);
     },
   );
   test(
@@ -158,7 +158,7 @@ void main() {
       expect(
         (await cases.saveOnboarding(
           const OnboardingAnswers(
-            goals: [OnboardingGoal.save, OnboardingGoal.debt],
+            goals: [OnboardingGoal.save, OnboardingGoal.budget],
           ),
         )).isRight(),
         true,
@@ -166,7 +166,7 @@ void main() {
       expect(api.method, 'PATCH');
       expect(api.path, 'profile/onboarding');
       expect(api.body, {
-        'goals': ['save', 'debt'],
+        'goals': ['save', 'budget'],
       });
       api.method = null;
       expect(
@@ -179,7 +179,7 @@ void main() {
           const OnboardingAnswers(
             goals: [
               OnboardingGoal.save,
-              OnboardingGoal.debt,
+              OnboardingGoal.budget,
               OnboardingGoal.track,
             ],
           ),

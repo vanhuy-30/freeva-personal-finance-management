@@ -236,6 +236,24 @@ class FakeGoalUseCases implements GoalUseCases {
   @override
   Future<Either<AuthFailure, List<GoalPreset>>> presets() async =>
       _ok(const []);
+
+  /// What [preview] answers; the default is the A3 board example.
+  GoalPreview previewResult = GoalPreview(
+    monthsLeft: 10,
+    requiredPerMonthMinor: BigInt.from(6000000),
+    incomeShareBps: 2400,
+  );
+  final previews = <(String, BigInt, String)>[];
+
+  @override
+  Future<Either<AuthFailure, GoalPreview>> preview({
+    required String currency,
+    required BigInt targetMinor,
+    required String targetDate,
+  }) async {
+    previews.add((currency, targetMinor, targetDate));
+    return _ok(previewResult);
+  }
 }
 
 class GoalHarness {

@@ -66,7 +66,6 @@ StubHomeViewModel homeState(String name) => switch (name) {
     ),
   ),
   'debt' => StubHomeViewModel(
-    debtGoal: true,
     data: overview(
       net: [worth('VND', 41850000)],
       wallets: [

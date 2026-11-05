@@ -24,9 +24,6 @@ class ProfileRepositoryImpl implements ProfileRepository {
           for (final goal in goals)
             if (goal is String) goal,
       ],
-      habit: _text(json['trackingHabit']),
-      cadence: _text(json['reviewCadence']),
-      budgetMinor: _minor(json['onboardingBudgetMinor']),
       displayCurrency: _code(json['displayCurrencyCode']),
       monthlyIncomeMinor: _minor(json['monthlyIncomeMinor']),
     );
@@ -81,6 +78,14 @@ class ProfileRepositoryImpl implements ProfileRepository {
         body: {'currencyCode': code},
       );
   @override
+  Future<Either<AuthFailure, Unit>> saveMonthlyIncome(BigInt? minor) =>
+      _request(
+        'PUT',
+        'profile/monthly-income',
+        (_) => unit,
+        body: {'monthlyIncomeMinor': minor?.toString()},
+      );
+  @override
   Future<Either<AuthFailure, Unit>> saveOnboarding(OnboardingAnswers answers) =>
       _request(
         'PATCH',
@@ -111,9 +116,6 @@ String? _name(Object? value) {
 
 String? _code(Object? value) =>
     value is String && RegExp(r'^[A-Z]{3}$').hasMatch(value) ? value : null;
-
-String? _text(Object? value) =>
-    value is String && value.isNotEmpty ? value : null;
 
 BigInt? _minor(Object? value) {
   final minor = value is String ? BigInt.tryParse(value) : null;

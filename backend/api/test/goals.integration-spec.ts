@@ -216,6 +216,17 @@ describe('BE-P3-E01 goals HTTP + PostgreSQL', () => {
     expect((await request('GET', `/goals/${goal.id}/entries`, undefined, other.bearer)).status).toBe(404);
   });
 
+  it('previews the monthly saving against the declared income without storing a goal', async () => {
+    await prisma.user.update({ where: { id: owner }, data: { monthlyIncomeMinor: 25_000_000n } });
+    const res = await request('POST', '/goals/preview', { currencyCode: 'VND', targetMinor: '60000000', targetDate: futureDay(10) });
+    expect(res.status).toBe(200);
+    expect(res.body.monthsLeft).toBeGreaterThanOrEqual(10);
+    expect(BigInt(res.body.requiredPerMonthMinor) * BigInt(res.body.monthsLeft)).toBeGreaterThanOrEqual(60_000_000n);
+    expect(res.body.incomeShareBps).toBe(Number(BigInt(res.body.requiredPerMonthMinor) * 10000n / 25_000_000n));
+    expect(await prisma.goal.count({ where: { userId: owner } })).toBe(0);
+    expect((await request('POST', '/goals/preview', { currencyCode: 'VND', targetMinor: '0', targetDate: futureDay(1) })).status).toBe(400);
+  });
+
   it('does not expose another user goal', async () => {
     const account = await wallet();
     const goal = await createGoal(account.id);

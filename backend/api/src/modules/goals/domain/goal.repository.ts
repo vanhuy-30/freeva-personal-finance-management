@@ -1,4 +1,4 @@
-import type { GoalKind, GoalRecord } from './goal';
+import type { DeclaredIncome, GoalKind, GoalRecord } from './goal';
 
 export const GOAL_REPOSITORY = Symbol('GOAL_REPOSITORY');
 
@@ -54,6 +54,8 @@ export type GoalHistoryItem = {
 export interface GoalRepository {
   history(userId: string, id: string): Promise<GoalHistoryItem[]>;
   context(userId: string): Promise<GoalContext>;
+  /** Today in the user's timezone plus the monthly income typed on the profile. */
+  previewContext(userId: string): Promise<{ today: string; income: DeclaredIncome }>;
   list(userId: string, includeArchived: boolean): Promise<GoalRecord[]>;
   find(userId: string, id: string): Promise<GoalRecord>;
   create(userId: string, input: GoalCreateInput): Promise<{ goal: GoalRecord; created: boolean }>;

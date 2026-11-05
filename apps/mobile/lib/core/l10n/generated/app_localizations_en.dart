@@ -2924,7 +2924,7 @@ class SEn extends S {
   }
 
   @override
-  String get onbGoalsTitle => 'What would you like to improve?';
+  String get onbGoalsTitle => 'What can Freeva help you with?';
 
   @override
   String get onbGoalsSub => 'Pick up to 2.';
@@ -2933,58 +2933,107 @@ class SEn extends S {
   String get onbGoalTrack => 'Track spending';
 
   @override
-  String get onbGoalSave => 'Save more';
+  String get onbGoalTrackSub => 'Know where the money goes each month';
 
   @override
-  String get onbGoalBudget => 'Stay on budget';
+  String get onbGoalSave => 'Save';
 
   @override
-  String get onbGoalDebt => 'Manage debt';
+  String get onbGoalSaveSub => 'Put money aside for something';
 
   @override
-  String get onbGoalEmergency => 'Build an emergency fund';
+  String get onbGoalBudget => 'Manage a budget';
 
   @override
-  String get onbGoalUnderstand => 'Understand my finances';
+  String get onbGoalBudgetSub => 'Set a spending limit and stick to it';
 
   @override
-  String get onbHabitTitle => 'How do you manage money now?';
+  String get onbIncomeTitle => 'About how much do you earn a month?';
 
   @override
-  String get onbHabitManual => 'Notes by hand';
+  String get onbIncomeSub => 'So the suggested budget fits.';
 
   @override
-  String get onbHabitSpreadsheet => 'Excel or Sheets';
+  String get onbIncomeHint =>
+      'A rough number is fine. You can change it in Me.';
 
   @override
-  String get onbHabitApp => 'Another app';
+  String get onbIncomeAmount => 'Monthly income';
 
   @override
-  String get onbHabitNone => 'Not tracking yet';
+  String onbIncomeChip(String amount) {
+    return '$amount million';
+  }
 
   @override
-  String get onbCadenceTitle => 'How often do you review spending?';
+  String get onbSavingTitle => 'What are you saving for?';
 
   @override
-  String get onbCadenceDaily => 'Every day';
+  String get onbSavingTarget => 'Amount';
 
   @override
-  String get onbCadenceWeekly => 'Every week';
+  String get onbSavingDate => 'By';
 
   @override
-  String get onbCadenceMonthly => 'Every month';
+  String get onbSavingNeed => 'Save each month';
 
   @override
-  String get onbCadenceRarely => 'Hardly ever';
+  String onbSavingShare(String percent) {
+    return '$percent% of income';
+  }
 
   @override
-  String get onbBudgetTitle => 'How much do you plan to spend each month?';
+  String get onbSuggestTitle => 'Each month, spend about';
 
   @override
-  String get onbBudgetAmount => 'Monthly budget';
+  String get onbSuggestIncome => 'Income';
 
   @override
-  String get onbBudgetLater => 'Set up later';
+  String onbSuggestSaveFor(String goal) {
+    return 'Saving for $goal';
+  }
+
+  @override
+  String get onbSuggestSaveDefault => 'Save 20% of income';
+
+  @override
+  String get onbSuggestSpend => 'Spending';
+
+  @override
+  String get onbSuggestNoGoal => 'No goal yet, so 20% goes to savings for now.';
+
+  @override
+  String get onbSuggestHint => 'You can change it any time in Monthly budget.';
+
+  @override
+  String get onbSuggestUse => 'Use this amount';
+
+  @override
+  String get dailyLogAskTitle => 'Remind you to log spending each evening?';
+
+  @override
+  String get dailyLogAskBody => 'No reminder on days you already logged.';
+
+  @override
+  String get dailyLogAskTime => 'Reminder time';
+
+  @override
+  String get dailyLogAskOn => 'Turn on';
+
+  @override
+  String get meIncome => 'Monthly income';
+
+  @override
+  String get meIncomeNone => 'Not set';
+
+  @override
+  String get meIncomeClear => 'Remove income';
+
+  @override
+  String get meIncomeSave => 'Save';
+
+  @override
+  String get meIncomeFailed => 'Could not save. Try again later.';
 
   @override
   String get setupWalletsTitle => 'Where is your money?';

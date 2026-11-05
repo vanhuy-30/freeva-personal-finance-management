@@ -1243,6 +1243,39 @@ paths:
           $ref: '#/components/responses/GoalUnauthorized'
         '503':
           $ref: '#/components/responses/GoalUnavailable'
+  /api/v1/goals/preview:
+    post:
+      operationId: previewGoal
+      summary: Monthly saving a goal would need, without creating it (BE-P3-012, first-run question 3)
+      tags:
+      - Goals
+      security:
+      - UserBearer: []
+      description: Same formulas as Goal. `incomeShareBps` is against the monthly income on the profile (not the 90-day average), only when `currencyCode` is the profile default currency. Nothing is stored.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GoalPreviewRequest'
+      responses:
+        '200':
+          description: Preview
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoalPreview'
+        '400':
+          $ref: '#/components/responses/GoalValidationError'
+        '401':
+          $ref: '#/components/responses/GoalUnauthorized'
+        '503':
+          $ref: '#/components/responses/GoalUnavailable'
   /api/v1/goals:
     get:
       operationId: listGoals
@@ -6906,6 +6939,31 @@ components:
               kind: {$ref: '#/components/schemas/GoalKind'}
               icon: {type: string}
               colorToken: {type: string}
+    GoalPreviewRequest:
+      type: object
+      additionalProperties: false
+      required: [currencyCode, targetMinor, targetDate]
+      properties:
+        currencyCode: {type: string, pattern: '^[A-Z]{3}$'}
+        targetMinor: {type: string, pattern: '^[1-9][0-9]*$'}
+        currentMinor: {type: string, pattern: '^(0|[1-9][0-9]*)$'}
+        targetDate: {type: string, format: date}
+    GoalPreview:
+      type: object
+      additionalProperties: false
+      required: [monthsLeft, requiredPerMonthMinor]
+      properties:
+        monthsLeft:
+          type: integer
+          description: Whole calendar months to `targetDate`, a started month counts as one; 0 when the date has passed.
+        requiredPerMonthMinor:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ReportMoney'
+          description: ceil((target - current) / monthsLeft). Null when the date has passed.
+        incomeShareBps:
+          type: integer
+          description: requiredPerMonthMinor over the profile monthly income (2400 = 24.00%). Omitted without income or in another currency.
     CreateGoalRequest:
       type: object
       additionalProperties: false

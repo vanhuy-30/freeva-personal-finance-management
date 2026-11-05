@@ -9,6 +9,7 @@ import '../../../../core/widgets/settings_group.dart';
 import '../../../../core/widgets/settings_row.dart';
 import '../../../profile/presentation/viewmodels/profile_view_model.dart';
 import 'choice_sheet.dart';
+import 'income_sheet.dart';
 import 'profile_actions.dart';
 
 /// THIẾT LẬP TÀI CHÍNH: how you manage money, each row with its own tint.
@@ -86,6 +87,20 @@ class MoneySetupGroup extends StatelessWidget {
           icon: LucideIcons.calendarDays,
           title: s.meCalendar,
           onTap: () => context.push('/me/calendar'),
+        ),
+        SettingsRow(
+          tint: (c.tintGreen, c.tintGreenFg),
+          minHeight: rowHeight,
+          icon: LucideIcons.arrowDownToLine,
+          title: s.meIncome,
+          value: saved?.monthlyIncomeMinor == null
+              ? s.meIncomeNone
+              : formatMoneyText(
+                  saved!.monthlyIncomeMinor!,
+                  saved.currency == 'VND' ? 0 : 2,
+                  s.localeName,
+                ),
+          onTap: saved == null ? null : () => showIncomeSheet(context, profile),
         ),
         SettingsRow(
           tint: (c.tintGreen, c.tintGreenFg),

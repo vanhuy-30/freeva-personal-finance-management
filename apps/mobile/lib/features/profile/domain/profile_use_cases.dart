@@ -18,12 +18,19 @@ class ProfileUseCases {
         (answers.goals?.toSet().length ?? 0) != (answers.goals?.length ?? 0)) {
       return Future.value(left(const AuthFailure(AuthError.invalidInput)));
     }
-    final budget = answers.budgetMinor;
-    if (budget != null && budget <= BigInt.zero) {
+    final income = answers.monthlyIncomeMinor;
+    if (income != null && income <= BigInt.zero) {
       return Future.value(left(const AuthFailure(AuthError.invalidInput)));
     }
     if (answers.isEmpty) return Future.value(right(unit));
     return _repository.saveOnboarding(answers);
+  }
+
+  Future<Either<AuthFailure, Unit>> saveMonthlyIncome(BigInt? minor) {
+    if (minor != null && minor <= BigInt.zero) {
+      return Future.value(left(const AuthFailure(AuthError.invalidInput)));
+    }
+    return _repository.saveMonthlyIncome(minor);
   }
 
   Future<Either<AuthFailure, Unit>> saveDisplayCurrency(

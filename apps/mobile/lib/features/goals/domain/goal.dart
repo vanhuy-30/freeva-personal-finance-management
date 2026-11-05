@@ -140,6 +140,22 @@ class GoalEntry {
   final String occurredOn;
 }
 
+/// Numbers the server returns for a goal that is not created yet.
+class GoalPreview {
+  const GoalPreview({
+    required this.monthsLeft,
+    this.requiredPerMonthMinor,
+    this.incomeShareBps,
+  });
+  final int monthsLeft;
+
+  /// Null when the date has passed.
+  final BigInt? requiredPerMonthMinor;
+
+  /// Share of the stated monthly income (2400 = 24%); null without income.
+  final int? incomeShareBps;
+}
+
 class GoalPreset {
   const GoalPreset({
     required this.kind,

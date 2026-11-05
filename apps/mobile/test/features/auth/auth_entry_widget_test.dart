@@ -137,10 +137,12 @@ void main() {
         await tester.tap(done);
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull, reason: '$locale goals');
-        // Goals → habits → budget → wallets → PIN, each left with its skip.
-        final skips = locale == 'vi'
-            ? ['Để sau', 'Để sau', 'Thiết lập sau', 'Bỏ qua']
-            : ['Later', 'Later', 'Set up later', 'Skip'];
+        // Goals (skip) → income (25 million, continue) → saving (skip) →
+        // budget suggestion (skip) → wallets → PIN.
+        final vi = locale == 'vi';
+        final skips = vi
+            ? ['Để sau', '25 triệu', 'Tiếp tục', 'Để sau', 'Để sau', 'Bỏ qua']
+            : ['Later', '25 million', 'Continue', 'Later', 'Later', 'Skip'];
         for (final (i, label) in skips.indexed) {
           final skip = find.text(label);
           await tester.ensureVisible(skip);

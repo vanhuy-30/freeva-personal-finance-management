@@ -47,7 +47,8 @@ String goalKindLabel(S s, String kind) => switch (kind) {
 };
 
 /// Rounded icon tile of a goal: 40 radius 12 in lists, 44 radius 14 on the
-/// detail card, 32 radius 10 in the Overview block, 28 radius 9 in chips.
+/// detail card, 32 radius 10 in the Overview block, 28 radius 9 in chips,
+/// 24 radius 8 in the first-run chips.
 class GoalIconTile extends StatelessWidget {
   const GoalIconTile({required this.kind, this.size = 40, super.key});
 
@@ -61,13 +62,15 @@ class GoalIconTile extends StatelessWidget {
       >= 44 => 14.0,
       >= 40 => 12.0,
       >= 32 => 10.0,
-      _ => 9.0,
+      >= 28 => 9.0,
+      _ => 8.0,
     };
     final glyph = switch (size) {
       >= 44 => 20.0,
       >= 40 => 19.0,
       >= 32 => 16.0,
-      _ => 15.0,
+      >= 28 => 15.0,
+      _ => 14.0,
     };
     return ExcludeSemantics(
       child: Container(

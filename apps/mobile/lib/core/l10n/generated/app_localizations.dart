@@ -5289,7 +5289,7 @@ abstract class S {
   /// No description provided for @onbGoalsTitle.
   ///
   /// In en, this message translates to:
-  /// **'What would you like to improve?'**
+  /// **'What can Freeva help you with?'**
   String get onbGoalsTitle;
 
   /// No description provided for @onbGoalsSub.
@@ -5304,113 +5304,197 @@ abstract class S {
   /// **'Track spending'**
   String get onbGoalTrack;
 
+  /// No description provided for @onbGoalTrackSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Know where the money goes each month'**
+  String get onbGoalTrackSub;
+
   /// No description provided for @onbGoalSave.
   ///
   /// In en, this message translates to:
-  /// **'Save more'**
+  /// **'Save'**
   String get onbGoalSave;
+
+  /// No description provided for @onbGoalSaveSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Put money aside for something'**
+  String get onbGoalSaveSub;
 
   /// No description provided for @onbGoalBudget.
   ///
   /// In en, this message translates to:
-  /// **'Stay on budget'**
+  /// **'Manage a budget'**
   String get onbGoalBudget;
 
-  /// No description provided for @onbGoalDebt.
+  /// No description provided for @onbGoalBudgetSub.
   ///
   /// In en, this message translates to:
-  /// **'Manage debt'**
-  String get onbGoalDebt;
+  /// **'Set a spending limit and stick to it'**
+  String get onbGoalBudgetSub;
 
-  /// No description provided for @onbGoalEmergency.
+  /// No description provided for @onbIncomeTitle.
   ///
   /// In en, this message translates to:
-  /// **'Build an emergency fund'**
-  String get onbGoalEmergency;
+  /// **'About how much do you earn a month?'**
+  String get onbIncomeTitle;
 
-  /// No description provided for @onbGoalUnderstand.
+  /// No description provided for @onbIncomeSub.
   ///
   /// In en, this message translates to:
-  /// **'Understand my finances'**
-  String get onbGoalUnderstand;
+  /// **'So the suggested budget fits.'**
+  String get onbIncomeSub;
 
-  /// No description provided for @onbHabitTitle.
+  /// No description provided for @onbIncomeHint.
   ///
   /// In en, this message translates to:
-  /// **'How do you manage money now?'**
-  String get onbHabitTitle;
+  /// **'A rough number is fine. You can change it in Me.'**
+  String get onbIncomeHint;
 
-  /// No description provided for @onbHabitManual.
+  /// No description provided for @onbIncomeAmount.
   ///
   /// In en, this message translates to:
-  /// **'Notes by hand'**
-  String get onbHabitManual;
+  /// **'Monthly income'**
+  String get onbIncomeAmount;
 
-  /// No description provided for @onbHabitSpreadsheet.
+  /// No description provided for @onbIncomeChip.
   ///
   /// In en, this message translates to:
-  /// **'Excel or Sheets'**
-  String get onbHabitSpreadsheet;
+  /// **'{amount} million'**
+  String onbIncomeChip(String amount);
 
-  /// No description provided for @onbHabitApp.
+  /// No description provided for @onbSavingTitle.
   ///
   /// In en, this message translates to:
-  /// **'Another app'**
-  String get onbHabitApp;
+  /// **'What are you saving for?'**
+  String get onbSavingTitle;
 
-  /// No description provided for @onbHabitNone.
+  /// No description provided for @onbSavingTarget.
   ///
   /// In en, this message translates to:
-  /// **'Not tracking yet'**
-  String get onbHabitNone;
+  /// **'Amount'**
+  String get onbSavingTarget;
 
-  /// No description provided for @onbCadenceTitle.
+  /// No description provided for @onbSavingDate.
   ///
   /// In en, this message translates to:
-  /// **'How often do you review spending?'**
-  String get onbCadenceTitle;
+  /// **'By'**
+  String get onbSavingDate;
 
-  /// No description provided for @onbCadenceDaily.
+  /// No description provided for @onbSavingNeed.
   ///
   /// In en, this message translates to:
-  /// **'Every day'**
-  String get onbCadenceDaily;
+  /// **'Save each month'**
+  String get onbSavingNeed;
 
-  /// No description provided for @onbCadenceWeekly.
+  /// No description provided for @onbSavingShare.
   ///
   /// In en, this message translates to:
-  /// **'Every week'**
-  String get onbCadenceWeekly;
+  /// **'{percent}% of income'**
+  String onbSavingShare(String percent);
 
-  /// No description provided for @onbCadenceMonthly.
+  /// No description provided for @onbSuggestTitle.
   ///
   /// In en, this message translates to:
-  /// **'Every month'**
-  String get onbCadenceMonthly;
+  /// **'Each month, spend about'**
+  String get onbSuggestTitle;
 
-  /// No description provided for @onbCadenceRarely.
+  /// No description provided for @onbSuggestIncome.
   ///
   /// In en, this message translates to:
-  /// **'Hardly ever'**
-  String get onbCadenceRarely;
+  /// **'Income'**
+  String get onbSuggestIncome;
 
-  /// No description provided for @onbBudgetTitle.
+  /// No description provided for @onbSuggestSaveFor.
   ///
   /// In en, this message translates to:
-  /// **'How much do you plan to spend each month?'**
-  String get onbBudgetTitle;
+  /// **'Saving for {goal}'**
+  String onbSuggestSaveFor(String goal);
 
-  /// No description provided for @onbBudgetAmount.
+  /// No description provided for @onbSuggestSaveDefault.
   ///
   /// In en, this message translates to:
-  /// **'Monthly budget'**
-  String get onbBudgetAmount;
+  /// **'Save 20% of income'**
+  String get onbSuggestSaveDefault;
 
-  /// No description provided for @onbBudgetLater.
+  /// No description provided for @onbSuggestSpend.
   ///
   /// In en, this message translates to:
-  /// **'Set up later'**
-  String get onbBudgetLater;
+  /// **'Spending'**
+  String get onbSuggestSpend;
+
+  /// No description provided for @onbSuggestNoGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'No goal yet, so 20% goes to savings for now.'**
+  String get onbSuggestNoGoal;
+
+  /// No description provided for @onbSuggestHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You can change it any time in Monthly budget.'**
+  String get onbSuggestHint;
+
+  /// No description provided for @onbSuggestUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Use this amount'**
+  String get onbSuggestUse;
+
+  /// No description provided for @dailyLogAskTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind you to log spending each evening?'**
+  String get dailyLogAskTitle;
+
+  /// No description provided for @dailyLogAskBody.
+  ///
+  /// In en, this message translates to:
+  /// **'No reminder on days you already logged.'**
+  String get dailyLogAskBody;
+
+  /// No description provided for @dailyLogAskTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder time'**
+  String get dailyLogAskTime;
+
+  /// No description provided for @dailyLogAskOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on'**
+  String get dailyLogAskOn;
+
+  /// No description provided for @meIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly income'**
+  String get meIncome;
+
+  /// No description provided for @meIncomeNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get meIncomeNone;
+
+  /// No description provided for @meIncomeClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove income'**
+  String get meIncomeClear;
+
+  /// No description provided for @meIncomeSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get meIncomeSave;
+
+  /// No description provided for @meIncomeFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save. Try again later.'**
+  String get meIncomeFailed;
 
   /// No description provided for @setupWalletsTitle.
   ///

@@ -25,6 +25,11 @@ abstract class GoalUseCases {
   Future<Either<AuthFailure, Goal>> adjust(Goal goal, BigInt currentMinor);
   Future<Either<AuthFailure, List<GoalEntry>>> entries(String id);
   Future<Either<AuthFailure, List<GoalPreset>>> presets();
+  Future<Either<AuthFailure, GoalPreview>> preview({
+    required String currency,
+    required BigInt targetMinor,
+    required String targetDate,
+  });
 }
 
 @LazySingleton(as: GoalUseCases)
@@ -130,4 +135,20 @@ class DefaultGoalUseCases implements GoalUseCases {
   @override
   Future<Either<AuthFailure, List<GoalPreset>>> presets() =>
       _repository.presets();
+
+  @override
+  Future<Either<AuthFailure, GoalPreview>> preview({
+    required String currency,
+    required BigInt targetMinor,
+    required String targetDate,
+  }) {
+    if (targetMinor <= BigInt.zero || !_day.hasMatch(targetDate)) {
+      return Future.value(left(_invalid));
+    }
+    return _repository.preview(
+      currency: currency,
+      targetMinor: targetMinor,
+      targetDate: targetDate,
+    );
+  }
 }

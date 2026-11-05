@@ -7,9 +7,6 @@ class Profile {
     required this.version,
     this.displayName,
     this.goals = const [],
-    this.habit,
-    this.cadence,
-    this.budgetMinor,
     this.displayCurrency,
     this.monthlyIncomeMinor,
   });
@@ -21,20 +18,13 @@ class Profile {
   /// server does not send them.
   final List<String> goals;
 
-  /// Other first-run answers; null until answered.
-  final String? habit;
-  final String? cadence;
-
-  /// First monthly budget in minor units of the currency at that time. Kept
-  /// as typed when the profile currency changes; null until typed.
-  final BigInt? budgetMinor;
-
   /// Currency the Overview converts into, saved on the account. Null means
   /// [currency]. Not part of the PUT body; see `saveDisplayCurrency`.
   final String? displayCurrency;
 
   /// Monthly income the user stated, in minor units of [currency]; null when
-  /// not given. Only used to show a goal's monthly saving as a share of it.
+  /// not given. Used for the first budget suggestion and to show a goal's
+  /// monthly saving as a share of it.
   final BigInt? monthlyIncomeMinor;
   final String locale;
   final String currency;
@@ -59,9 +49,6 @@ class Profile {
         ? this.displayName
         : displayName as String?,
     goals: goals,
-    habit: habit,
-    cadence: cadence,
-    budgetMinor: budgetMinor,
     displayCurrency: displayCurrency,
     monthlyIncomeMinor: monthlyIncomeMinor,
   );
@@ -77,11 +64,20 @@ class Profile {
     version: version,
     displayName: displayName,
     goals: goals,
-    habit: habit,
-    cadence: cadence,
-    budgetMinor: budgetMinor,
     displayCurrency: code,
     monthlyIncomeMinor: monthlyIncomeMinor,
+  );
+
+  Profile withMonthlyIncome(BigInt? minor) => Profile(
+    locale: locale,
+    currency: currency,
+    timezone: timezone,
+    fiscalDay: fiscalDay,
+    version: version,
+    displayName: displayName,
+    goals: goals,
+    displayCurrency: displayCurrency,
+    monthlyIncomeMinor: minor,
   );
 
   bool samePreferences(Profile other) =>

@@ -186,6 +186,26 @@ class GoalRepositoryImpl implements GoalRepository {
   );
 
   @override
+  Future<Either<AuthFailure, GoalPreview>> preview({
+    required String currency,
+    required BigInt targetMinor,
+    required String targetDate,
+  }) => _request(
+    'POST',
+    'goals/preview',
+    (json) => GoalPreview(
+      monthsLeft: json['monthsLeft'] as int,
+      requiredPerMonthMinor: _money(json['requiredPerMonthMinor']),
+      incomeShareBps: json['incomeShareBps'] as int?,
+    ),
+    body: {
+      'currencyCode': currency,
+      'targetMinor': targetMinor.toString(),
+      'targetDate': targetDate,
+    },
+  );
+
+  @override
   Future<Either<AuthFailure, List<GoalPreset>>> presets() => _request(
     'GET',
     'goals/presets',

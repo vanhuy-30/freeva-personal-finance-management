@@ -14,6 +14,7 @@ import {
   validateMonthly,
   validateName,
   validateTarget,
+  type DeclaredIncome,
   type GoalKind,
   type GoalRecord,
 } from '../domain/goal';
@@ -98,6 +99,18 @@ export class PrismaGoalRepository implements GoalRepository {
         throw error;
       }
     }
+  }
+
+  async previewContext(userId: string): Promise<{ today: string; income: DeclaredIncome }> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { timezone: true, defaultCurrencyCode: true, monthlyIncomeMinor: true },
+    });
+    if (!user) throw new GoalError('VALIDATION_ERROR');
+    return {
+      today: todayInTimeZone(user.timezone, new Date()),
+      income: { currencyCode: user.defaultCurrencyCode.trim(), monthlyIncomeMinor: user.monthlyIncomeMinor },
+    };
   }
 
   async context(userId: string): Promise<GoalContext> {

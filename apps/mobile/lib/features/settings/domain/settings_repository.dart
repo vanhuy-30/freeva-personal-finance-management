@@ -18,6 +18,8 @@ const _preferenceKeys = {
   'notificationsOptInTracked',
   'welcomeSeen',
   'budgetDraftMinor',
+  'pendingGoal',
+  'dailyLogAsked',
 };
 
 AppPreferences decodePreferences(String raw) {
@@ -48,7 +50,18 @@ AppPreferences decodePreferences(String raw) {
     ),
     welcomeSeen: _preferenceFlag(json, 'welcomeSeen', false),
     budgetDraftMinor: _preferenceNumber(json, 'budgetDraftMinor'),
+    pendingGoal: _preferenceStrings(json, 'pendingGoal'),
+    dailyLogAsked: _preferenceFlag(json, 'dailyLogAsked', false),
   );
+}
+
+Map<String, String>? _preferenceStrings(Map<String, dynamic> json, String key) {
+  final value = json[key];
+  if (value == null) return null;
+  if (value is! Map || value.values.any((v) => v is! String)) {
+    throw const FormatException('preferences');
+  }
+  return {for (final e in value.entries) '${e.key}': e.value as String};
 }
 
 int? _preferenceNumber(Map<String, dynamic> json, String key) {
@@ -75,4 +88,6 @@ String encodePreferences(AppPreferences value) => jsonEncode({
   'welcomeSeen': value.welcomeSeen,
   if (value.budgetDraftMinor != null)
     'budgetDraftMinor': value.budgetDraftMinor,
+  if (value.pendingGoal != null) 'pendingGoal': value.pendingGoal,
+  if (value.dailyLogAsked) 'dailyLogAsked': true,
 });
