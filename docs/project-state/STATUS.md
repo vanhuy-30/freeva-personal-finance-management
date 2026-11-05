@@ -1,6 +1,6 @@
 # STATUS
 
-- **Phase hiện tại:** 3 — Phase 0 **closed** 2026-09-21; Phase 1 **closed** 2026-10-21 (gate sổ cái); Phase 2 **closed** 2026-10-30. Chưa phải product v1 — còn mục tiêu và 12 ticket gộp/bổ sung `P3-001`…`012` (Phase 3), tài sản/đầu tư và tài sản ròng (Phase 4), `Gate: v1`. AI (gợi ý danh mục, insight) ra sau v1 từ 2026-11-02. Đối chiếu spec: [spec-alignment.md](../product/spec-alignment.md).
+- **Phase hiện tại:** 4 — Phase 0 **closed** 2026-09-21; Phase 1 **closed** 2026-10-21 (gate sổ cái); Phase 2 **closed** 2026-10-30; Phase 3 **closed** 2026-11-05. Chưa phải product v1 — còn tài sản/đầu tư và tài sản ròng (Phase 4), `Gate: v1`. AI (gợi ý danh mục, insight) ra sau v1 từ 2026-11-02. Đối chiếu spec: [spec-alignment.md](../product/spec-alignment.md).
 - **Cập nhật:** 2026-11-05
 - **Việc bổ sung Phase 2:** `BE-P2-010` khóa kind lúc ghi; `MOB-P2-011` xuất/xóa tài khoản trên app; `QA-P2-001` rà hàng đợi offline; `BE-P2-012` câu trả lời đầu gắn tài khoản; `BE-P2-013` quy đổi để hiển thị; `BE-P2-014` mật khẩu tối thiểu 8 + kiểm tra email trên app. Chi tiết: [tasks/phase-02.md](../../tasks/phase-02.md).
 - **CI:** `INF-P0-002` done; cả ba job xanh trên `main`, [run 33521325189](https://github.com/vanhuy-30/freeva-personal-finance-management/actions/runs/33521325189).
@@ -118,6 +118,24 @@ Theo [điều kiện hoàn thành Phase 2](../product/phases/phase-02.md):
 | Hóa đơn đã trả truy vết được giao dịch | Done (`BE-P2-E03` / `MOB-P2-E03`) |
 
 Đóng theo option **B** (giống Phase 0, 1): backlog xong trên `develop` → mở Phase 3.
+
+## Backlog Phase 3
+
+- **16/17 done**, `BE-P3-E03` wont (gộp vào `BE-P4-E01`). Chi tiết: [tasks/phase-03.md](../../tasks/phase-03.md).
+
+## Phase 3 gate — đã đóng (2026-11-05)
+
+Theo [điều kiện hoàn thành Phase 3](../product/phases/phase-03.md):
+
+| Mục | Trạng thái |
+|---|---|
+| Backlog task P3 | Done 16/17; `BE-P3-E03` wont |
+| Lãi, dư nợ, dự báo có bộ test ví dụ chuẩn | Done (`BE-P3-E02` 100tr · 12% → lãi kỳ 1 = 1tr; `BE-P3-E01` 120tr − 40tr / 10 tháng = 8tr; `BE-P3-E04` số cố định) |
+| Tiền ở mục tiêu/vay có giao dịch đối ứng hoặc audit | Done (`goal.adjust`, `loan.adjust`, transfer hai chân) |
+| User thấy giả định và sửa được input | Done (`BE-P3-E04` / `MOB-P3-E04`) |
+| Mục tiêu `Gate: v1` | Done (`BE-P3-E01` / `MOB-P3-E01`) |
+
+Đóng theo option **B** (giống Phase 0, 1, 2): backlog xong trên `develop` → mở Phase 4.
 
 ## Ghi chú
 

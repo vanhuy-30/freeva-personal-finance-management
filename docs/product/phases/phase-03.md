@@ -2,6 +2,8 @@
 
 Module 9, 10, 11; mở rộng 14, 15, 17.
 
+**Closed** 2026-11-05 (16/17; `BE-P3-E03` wont, gộp vào Phase 4). [STATUS](../../project-state/STATUS.md).
+
 ## Điều kiện hoàn thành
 
 - Lãi, dư nợ, dự báo có bộ test ví dụ chuẩn.

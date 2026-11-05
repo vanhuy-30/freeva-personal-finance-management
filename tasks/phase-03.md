@@ -1,5 +1,7 @@
 # Phase 3 — epic
 
+**Closed** 2026-11-05 — 16/17 done; `BE-P3-E03` wont (gộp vào `BE-P4-E01`). Biên bản: [STATUS](../docs/project-state/STATUS.md).
+
 [phase-03.md](../docs/product/phases/phase-03.md). Phase 2 đã đóng 2026-10-30; băm ticket khi làm epic. `Gate: v1`: mục tiêu (`BE-P3-E01`) và các ticket `P3-001`…`P3-011` thêm 2026-11-02 (gộp chức năng chồng chéo, bổ sung chức năng còn thiếu).
 
 ### BE-P3-E01 / MOB-P3-E01 — Mục tiêu (module 9)
