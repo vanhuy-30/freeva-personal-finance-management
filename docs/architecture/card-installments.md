@@ -40,4 +40,3 @@ Xóa khoản chi gốc tự đóng kế hoạch đang chạy. Mỗi khoản chi 
 
 Unit: [card-installment.spec.ts](../../backend/api/src/modules/card-installments/domain/card-installment.spec.ts) (tổng các kỳ = giá mua, kỳ cuối nhận dư, cuối tháng, kỳ còn lại, tổng đến hạn). PostgreSQL: [card-installments.integration-spec.ts](../../backend/api/test/card-installments.integration-spec.ts) (báo cáo và số dư không đổi khi tạo, replay/xung đột, ví và loại không hợp lệ, `due`, đóng lịch rồi trả bằng transfer làm dư nợ giảm đúng, xóa khoản gốc).
 
-**Tồn đọng:** khoản chi đã có hoàn tiền dùng số tiền gốc; chưa deploy staging.

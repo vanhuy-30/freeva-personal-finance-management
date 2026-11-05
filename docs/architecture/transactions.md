@@ -69,4 +69,4 @@ Giao dịch `adjustment` (một leg, không danh mục) chỉ được tạo b�
 
 Giao dịch `refund` (hoàn tiền một khoản chi, `refundOfId`) chỉ tạo qua `POST /transactions/{id}/refunds` và được trừ khỏi chi của khoản gốc: [refunds.md](refunds.md) (`BE-P3-008`). Filter `type` nhận `refund`, `summary.totals[].refundMinor` tách riêng; xóa khoản chi còn hoàn tiền cần `refunds=cascade|keep`.
 
-Sync queue giao dịch: [sync.md](sync.md) (`BE-P1-009`). Chưa triển khai receipt hoặc batch edit. Không deploy staging trong task này. Lệnh kiểm tra và coverage: [test README](../../backend/api/test/README.md#transactions--be-p1-005).
+Sync queue giao dịch: [sync.md](sync.md) (`BE-P1-009`). Chưa triển khai receipt hoặc batch edit. Lệnh kiểm tra và coverage: [test README](../../backend/api/test/README.md#transactions--be-p1-005).

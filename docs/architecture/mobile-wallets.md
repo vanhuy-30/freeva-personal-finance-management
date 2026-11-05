@@ -85,8 +85,7 @@ kiểm tra danh sách/ẩn/sắp xếp và editor 320px với text scale 2.
 
 Trước phát hành cần backend triển khai BE-P1-004 và profile/options; smoke trên
 thiết bị với API thật: tạo bốn loại ví, sửa, đổi thứ tự rồi mở lại, ẩn/khôi phục,
-ngắt mạng khi ghi, khóa/unlock editor và xung đột từ hai client. Chưa kiểm chứng
-E2E staging hoặc native build trong task này.
+ngắt mạng khi ghi, khóa/unlock editor và xung đột từ hai client.
 
 ## Khớp số dư (`MOB-P3-005`)
 

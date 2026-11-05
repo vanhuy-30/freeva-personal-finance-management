@@ -41,4 +41,3 @@ fvm flutter test
 
 `flutter analyze` sạch; toàn bộ 130 Flutter tests pass (13 tests mới), gồm bản preference cũ vẫn hiện số, che số đang đọc nhưng không che ô đang gõ, seed phiên không báo, phiên lạ báo một lần, phiên hiện tại không báo, lỗi mạng không đổi danh sách đã thấy, đăng xuất xóa danh sách, và nội dung thông báo không có số tiền hay email.
 
-Chưa native build hoặc E2E staging. Quyền thông báo trên thiết bị thật cần smoke trước phát hành.

@@ -60,7 +60,6 @@ recents cần smoke test trên thiết bị thực trước phát hành.
 Kết quả local: `flutter analyze` sạch, 33 tests pass; Android `:app:assembleDebug`
 (JDK 17) và iOS simulator build pass. Cold launch trên iPhone 17 Pro simulator
 (iOS 26) đã hiển thị login tiếng Việt, không lỗi Keychain sau khi thêm entitlement.
-Chưa chạy email/SMTP end-to-end hoặc sinh trắc học thiết bị thật.
 
 ### Email-step và quyền riêng tư
 

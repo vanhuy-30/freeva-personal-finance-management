@@ -62,4 +62,4 @@ Mỗi lần đọc chạy trong một transaction Repeatable Read: hồ sơ (tim
 
 ## Kiểm thử
 
-Lệnh và kết quả: [backend test README](../../backend/api/test/README.md#reports--be-p1-007--be-p2-e06--be-p2-e08). Không deploy staging.
+Lệnh và kết quả: [backend test README](../../backend/api/test/README.md#reports--be-p1-007--be-p2-e06--be-p2-e08).

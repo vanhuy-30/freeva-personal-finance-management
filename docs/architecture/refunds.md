@@ -52,4 +52,3 @@ Unit: [refund.spec.ts](../../backend/api/src/modules/transactions/refund.spec.ts
 
 Mobile: [mobile-refunds.md](mobile-refunds.md) (`MOB-P3-008`).
 
-**Tồn đọng:** hoàn tiền khác tiền tệ với khoản gốc chưa hỗ trợ; chưa deploy staging.

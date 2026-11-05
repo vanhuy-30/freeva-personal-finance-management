@@ -12,7 +12,6 @@ import { TransactionImportModule } from './modules/transaction-import/transactio
 import { CardInstallmentModule } from './modules/card-installments/card-installment.module';
 import { LoanModule } from './modules/loans/loan.module';
 import { PersonalDebtModule } from './modules/personal-debts/personal-debt.module';
-import { BillModule } from './modules/bills/bill.module';
 import { CalendarModule } from './modules/calendar/calendar.module';
 import { ForecastModule } from './modules/forecast/forecast.module';
 import { NotificationModule } from './modules/notifications/notification.module';
@@ -56,7 +55,6 @@ import { HealthModule } from './modules/health/health.module';
     LoanModule,
     CardInstallmentModule,
     PersonalDebtModule,
-    BillModule,
     CalendarModule,
     ForecastModule,
     NotificationModule,

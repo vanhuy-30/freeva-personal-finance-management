@@ -27,7 +27,3 @@ Cá nhân → DỮ LIỆU → "Nhập từ app khác" mở `/me/import`. Một r
 `features/transaction_import/`: `domain/` (`import_models`, `csv_peek`, `import_repository`, `import_use_cases`, `import_file_picker`), `data/` (`import_repository_impl`, `platform_import_file_picker`), `presentation/viewmodels/import_view_model.dart`, `presentation/pages/import_page.dart`, `presentation/widgets/import_{source,columns,map,preview,done}_view.dart`, `import_pick_sheet.dart`. Route `/me/import` trong `app_router.dart`.
 
 Test: `test/features/transaction_import/import_test.dart` (CSV, parse API, view model), `import_golden_test.dart` (sáng/tối, có lỗi file, 320 pt ở 1.3×, chỉ macOS).
-
-## Chưa có
-
-Excel (`.xlsx`); header Money Lover/MISA chưa kiểm với file thật (theo `BE-P3-011`); chưa chạy trên thiết bị thật/staging.

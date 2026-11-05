@@ -104,7 +104,6 @@ model Currency {
   recurringCounterRules RecurringRule[]       @relation("RecurringCounterCurrency")
   budgets               Budget[]
   budgetMonths          BudgetMonth[]
-  bills                 Bill[]
   goals                 Goal[]
   loans                 Loan[]
   personalDebts         PersonalDebt[]
@@ -151,7 +150,6 @@ model User {
   recurringRules         RecurringRule[]
   budget                 Budget?
   budgetMonths           BudgetMonth[]
-  bills                  Bill[]
   notificationPreference NotificationPreference?
   notifications          InAppNotification[]
   pushTokens             PushToken[]
@@ -313,7 +311,6 @@ model Transaction {
   refundOf        Transaction?         @relation("TransactionRefund", fields: [refundOfId], references: [id], onDelete: NoAction)
   refunds         Transaction[]        @relation("TransactionRefund")
   tags            TransactionTag[]
-  paidBill        Bill?
   installmentPlan CardInstallmentPlan?
   importBatch     ImportBatch?         @relation(fields: [importBatchId], references: [id], onDelete: SetNull)
 
@@ -427,41 +424,15 @@ model RecurringRule {
   counterCurrency Currency?             @relation("RecurringCounterCurrency", fields: [counterCurrencyCode], references: [code])
   occurrences     RecurringOccurrence[]
   transactions    Transaction[]
-  bills           Bill[]
 
   @@unique([userId, clientId])
   @@index([userId, active, nextExecutionDate])
 }
 
-/// Payment obligation (BE-P2-E03). Does not post ledger rows; overdue is derived on read.
+/// How a recurring rule's amount is known: fixed, or estimated and confirmed when paid.
 enum BillAmountKind {
   fixed
   estimated
-}
-
-model Bill {
-  id                String         @id @default(uuid()) @db.Uuid
-  userId            String         @db.Uuid
-  clientId          String         @db.Uuid
-  name              String         @db.VarChar(80)
-  dueOn             DateTime       @db.Date
-  amountMinor       BigInt
-  amountKind        BillAmountKind
-  currencyCode      String         @db.Char(3)
-  recurringRuleId   String?        @db.Uuid
-  paidTransactionId String?        @unique @db.Uuid
-  version           Int            @default(1)
-  createdAt         DateTime       @default(now()) @db.Timestamptz
-  updatedAt         DateTime       @updatedAt @db.Timestamptz
-
-  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  currency        Currency       @relation(fields: [currencyCode], references: [code])
-  recurringRule   RecurringRule? @relation(fields: [recurringRuleId], references: [id], onDelete: SetNull)
-  paidTransaction Transaction?   @relation(fields: [paidTransactionId], references: [id], onDelete: SetNull)
-
-  @@unique([userId, clientId])
-  @@index([userId, dueOn])
-  @@index([recurringRuleId])
 }
 
 model RecurringOccurrence {
