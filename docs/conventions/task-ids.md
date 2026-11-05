@@ -15,7 +15,7 @@ Format: `{PREFIX}-P{phase}-{nnn}` — `BE-P0-001`, `MOB-P1-014`.
 | SHD | Shared packages / OpenAPI |
 | PRD | Product / research / legal |
 
-Status: `todo` | `doing` | `blocked` | `done`.
+Status: `todo` | `doing` | `blocked` | `done` | `wont` (không làm, ghi lý do).
 
 PR và commit body phải chứa ID. Issue GitHub chọn prefix + phase + module.
 

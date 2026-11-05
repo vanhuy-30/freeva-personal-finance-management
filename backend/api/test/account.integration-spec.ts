@@ -157,16 +157,19 @@ describe('BE-P1-010 HTTP + PostgreSQL', () => {
     const body = result.body as {
       schemaVersion: number;
       userId: string;
-      profile: { email: string };
+      profile: { email: string; onboardingGoals: string[]; monthlyIncomeMinor: string | null; displayCurrencyCode: string | null };
       oauthProviders: string[];
       financialAccounts: Array<{ id: string; initialBalanceMinor: string; name: string }>;
       transactions: Array<{ id: string; amountMinor: string; deletedAt: string | null; notes: string | null; tagIds: string[] }>;
       fxQuotes: Array<{ rate: string }>;
+      fxRates: unknown[];
       categories: Array<{ parentId: string | null }>;
     };
     expect(body.schemaVersion).toBe(1);
     expect(body.userId).toBe(owner);
     expect(body.profile.email).toBe(ownerEmail);
+    expect(body.profile).toMatchObject({ onboardingGoals: [], monthlyIncomeMinor: null, displayCurrencyCode: null });
+    expect(body.fxRates).toEqual([]);
     expect(body.oauthProviders).toEqual(['google']);
     expect(body.financialAccounts.map(row => row.id)).toEqual([account.id]);
     expect(body.financialAccounts[0].initialBalanceMinor).toBe(amount.toString());
@@ -196,9 +199,14 @@ describe('BE-P1-010 HTTP + PostgreSQL', () => {
     await prisma.authMailJob.create({
       data: { userId: owner, purpose: 'verify_email', encryptedToken: 'cipher', expiresAt: new Date(Date.now() + 60_000) },
     });
+    const session = await prisma.authSession.findUniqueOrThrow({ where: { tokenHash: hash } });
+    await prisma.pushToken.create({
+      data: { userId: owner, sessionId: session.id, token: `fcm-${randomUUID()}-${randomUUID()}`, platform: 'android' },
+    });
     const result = await request('DELETE', '');
     expect(result.status).toBe(204);
     expect(result.body).toBeUndefined();
+    expect(await prisma.pushToken.count({ where: { userId: owner } })).toBe(0);
     expect(await prisma.user.findUnique({ where: { id: owner } })).toBeNull();
     expect(await prisma.financialAccount.count({ where: { userId: owner } })).toBe(0);
     expect(await prisma.transaction.count({ where: { userId: owner } })).toBe(0);

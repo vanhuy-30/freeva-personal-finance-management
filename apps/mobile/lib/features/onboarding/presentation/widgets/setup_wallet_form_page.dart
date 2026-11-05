@@ -36,12 +36,13 @@ class _SetupWalletFormPageState extends State<SetupWalletFormPage> {
   final name = TextEditingController();
   final amount = TextEditingController();
   final limit = TextEditingController();
+  final minimum = TextEditingController();
   var _tried = false;
 
   @override
   void dispose() {
     form.dispose();
-    for (final c in [name, amount, limit]) {
+    for (final c in [name, amount, limit, minimum]) {
       c.dispose();
     }
     super.dispose();
@@ -52,6 +53,7 @@ class _SetupWalletFormPageState extends State<SetupWalletFormPage> {
       name: name.text,
       amount: amount.text,
       limit: limit.text,
+      minimum: minimum.text,
       locale: Localizations.localeOf(context).toString(),
     );
     if (draft == null) return;
@@ -87,6 +89,7 @@ class _SetupWalletFormPageState extends State<SetupWalletFormPage> {
                 name: name,
                 amount: amount,
                 limit: limit,
+                minimum: minimum,
                 showTypes: false,
               ),
             ],

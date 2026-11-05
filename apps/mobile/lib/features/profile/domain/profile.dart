@@ -7,6 +7,8 @@ class Profile {
     required this.version,
     this.displayName,
     this.goals = const [],
+    this.displayCurrency,
+    this.monthlyIncomeMinor,
   });
 
   /// Greeting name; null until the user sets one (Hồ sơ).
@@ -15,6 +17,15 @@ class Profile {
   /// Goals picked at first run (at most 2); empty when skipped or when the
   /// server does not send them.
   final List<String> goals;
+
+  /// Currency the Overview converts into, saved on the account. Null means
+  /// [currency]. Not part of the PUT body; see `saveDisplayCurrency`.
+  final String? displayCurrency;
+
+  /// Monthly income the user stated, in minor units of [currency]; null when
+  /// not given. Used for the first budget suggestion and to show a goal's
+  /// monthly saving as a share of it.
+  final BigInt? monthlyIncomeMinor;
   final String locale;
   final String currency;
   final String timezone;
@@ -38,7 +49,37 @@ class Profile {
         ? this.displayName
         : displayName as String?,
     goals: goals,
+    displayCurrency: displayCurrency,
+    monthlyIncomeMinor: monthlyIncomeMinor,
   );
+
+  /// Currency the Overview shows totals in: the saved choice, else [currency].
+  String get overviewCurrency => displayCurrency ?? currency;
+
+  Profile withDisplayCurrency(String? code) => Profile(
+    locale: locale,
+    currency: currency,
+    timezone: timezone,
+    fiscalDay: fiscalDay,
+    version: version,
+    displayName: displayName,
+    goals: goals,
+    displayCurrency: code,
+    monthlyIncomeMinor: monthlyIncomeMinor,
+  );
+
+  Profile withMonthlyIncome(BigInt? minor) => Profile(
+    locale: locale,
+    currency: currency,
+    timezone: timezone,
+    fiscalDay: fiscalDay,
+    version: version,
+    displayName: displayName,
+    goals: goals,
+    displayCurrency: displayCurrency,
+    monthlyIncomeMinor: minor,
+  );
+
   bool samePreferences(Profile other) =>
       locale == other.locale &&
       currency == other.currency &&

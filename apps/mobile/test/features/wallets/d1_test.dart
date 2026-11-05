@@ -21,6 +21,12 @@ import '../transactions/c1_stub.dart';
 import 'd1_stub.dart';
 import 'wallet_test.dart' show WalletTransport;
 
+import 'package:mobile/features/fx_rates/domain/fx_rate_use_cases.dart';
+
+import '../fx_rates/fakes.dart';
+
+import 'package:mobile/core/money/display_converted.dart';
+
 /// Records list queries and answers with one summary row.
 class _Cases implements TransactionUseCases {
   final queries = <TransactionQuery>[];
@@ -112,6 +118,43 @@ void main() {
   });
 
   group('detail view model', () {
+    test(
+      'loads the balance in the profile currency, and tolerates failure',
+      () async {
+        final rates = MemoryFxRates()
+          ..wallet['usd'] = DisplayConverted(
+            currency: 'VND',
+            minor: BigInt.from(308500),
+            rate: '25000.00000000',
+            quotedAt: DateTime.utc(2026, 10, 30, 2),
+          );
+        final converted = DefaultWalletDetailViewModel(
+          _Cases(),
+          StubTransactionViewModel(),
+          FxRateUseCases(rates, FxWallets()),
+          walletId: 'usd',
+        );
+        addTearDown(converted.dispose);
+        expect(converted.converted, isNull);
+        await converted.reload();
+        expect(converted.converted!.minor, BigInt.from(308500));
+        expect(converted.converted!.rate, '25000.00000000');
+
+        final other = DefaultWalletDetailViewModel(
+          _Cases(),
+          StubTransactionViewModel(),
+          FxRateUseCases(
+            rates..failure = const AuthFailure(AuthError.network),
+            FxWallets(),
+          ),
+          walletId: 'usd',
+        );
+        addTearDown(other.dispose);
+        await other.reload();
+        expect(other.converted, isNull);
+      },
+    );
+
     test('month flow asks this month for this wallet only', () async {
       final cases = _Cases()
         ..summary = TransactionSummary(
@@ -128,6 +171,7 @@ void main() {
       final detail = DefaultWalletDetailViewModel(
         cases,
         StubTransactionViewModel(),
+        FxRateUseCases(MemoryFxRates(), FxWallets()),
         walletId: 'vcb',
       );
       addTearDown(detail.dispose);
@@ -146,6 +190,7 @@ void main() {
       final detail = DefaultWalletDetailViewModel(
         cases,
         StubTransactionViewModel(),
+        FxRateUseCases(MemoryFxRates(), FxWallets()),
         walletId: 'vcb',
       );
       addTearDown(detail.dispose);

@@ -767,6 +767,58 @@ paths:
         required: false
         schema:
           type: boolean
+      - in: query
+        name: mode
+        required: false
+        schema:
+          type: string
+          enum: [auto, remind]
+  /api/v1/recurring-transactions/{id}/confirm:
+    post:
+      operationId: confirmRecurringTransaction
+      summary: Mark a remind rule's due day paid
+      tags:
+      - RecurringTransactions
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfirmRecurringRequest'
+      responses:
+        '200':
+          description: Confirmed (replayed=true when this due day was already confirmed)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfirmRecurringResult'
+        '400':
+          $ref: '#/components/responses/RecurringValidationError'
+        '401':
+          $ref: '#/components/responses/RecurringUnauthorized'
+        '404':
+          $ref: '#/components/responses/RecurringNotFound'
+        '409':
+          $ref: '#/components/responses/RecurringConflict'
+        '503':
+          $ref: '#/components/responses/RecurringUnavailable'
+      description: Only mode=remind. Posts one expense (or links transactionId) once per due day, then moves
+        nextExecutionDate; a one-off bill becomes inactive. Retries and a second confirm of the same
+        occurredOn return the first result and never post twice. Nothing is ever posted without this call.
   /api/v1/recurring-transactions/run:
     post:
       operationId: runRecurringTransactions
@@ -994,7 +1046,7 @@ paths:
         `applyTo=month` requires `on` and upserts an override for that fiscal month only.
         Updating requires the current version of that row. Creating must omit version.
         Category lines replace the whole set. Categories must be expense or both and not
-        archived. Alert thresholds default to 70, 80, 90, 100 when omitted.
+        archived. Alert thresholds default to 80, 100 when omitted.
     delete:
       operationId: deleteCurrentBudget
       summary: Remove the default template or a month override
@@ -1042,6 +1094,1725 @@ paths:
           $ref: '#/components/responses/BudgetConflict'
         '503':
           $ref: '#/components/responses/BudgetUnavailable'
+  /api/v1/calendar:
+    get:
+      operationId: getCalendarMonth
+      summary: Month view of posted transactions, projected recurring runs, and bill due dates
+      tags:
+      - Calendar
+      security:
+      - UserBearer: []
+      parameters:
+      - in: query
+        name: month
+        required: true
+        schema:
+          type: string
+          pattern: ^\d{4}-\d{2}$
+        description: Civil calendar month YYYY-MM in the profile timezone (not fiscal month).
+      responses:
+        '200':
+          description: Days that have at least one item, ordered by date
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalendarMonth'
+        '400':
+          $ref: '#/components/responses/CalendarValidationError'
+        '401':
+          $ref: '#/components/responses/CalendarUnauthorized'
+        '503':
+          $ref: '#/components/responses/CalendarUnavailable'
+      description: >
+        Posted non-deleted legs (`occurredOn` in month); transfer pairs appear once.
+        Active recurring rules project from `nextExecutionDate` with month/year day clamp.
+        Bills with `dueOn` in the month include paid ones; `overdue` is derived on read from
+        profile timezone. Amounts are integer minor-unit strings.
+  /api/v1/forecast:
+    get:
+      operationId: getBalanceForecast
+      summary: Rule-based month-by-month balance forecast from known recurring flows
+      tags:
+      - Forecast
+      security:
+      - UserBearer: []
+      parameters:
+      - in: query
+        name: months
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 12
+          default: 3
+        description: Calendar months ahead, counting the current month.
+      - in: query
+        name: currencyCode
+        schema:
+          type: string
+          pattern: ^[A-Z]{3}$
+        description: Defaults to the profile default currency. No FX conversion; other currencies are listed in assumptions.
+      - in: query
+        name: startingBalanceMinor
+        schema:
+          type: string
+          pattern: ^-?\d{1,18}$
+        description: Overrides the wallet-derived starting balance.
+      - in: query
+        name: excludeRuleIds
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+            format: uuid
+        description: Recurring rules or bills to leave out (comma separated).
+      responses:
+        '200':
+          description: Forecast and the assumptions behind it
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalanceForecast'
+        '400':
+          $ref: '#/components/responses/ForecastValidationError'
+        '401':
+          $ref: '#/components/responses/ForecastUnauthorized'
+        '503':
+          $ref: '#/components/responses/ForecastUnavailable'
+      description: >
+        Starting balance is the sum of non-archived, non-credit wallets in the currency (or the override).
+        Adds active income/expense recurring rules and bills from today to the end of the last month.
+        Transfers are skipped; one-off spending is not predicted. No model is called.
+        Amounts are integer minor-unit strings; expense is negative.
+  /api/v1/goals/presets:
+    get:
+      operationId: listGoalPresets
+      summary: Ready-made goal groups with catalog icon and colour tokens
+      tags:
+      - Goals
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Presets
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoalPresetList'
+        '401':
+          $ref: '#/components/responses/GoalUnauthorized'
+        '503':
+          $ref: '#/components/responses/GoalUnavailable'
+  /api/v1/goals/preview:
+    post:
+      operationId: previewGoal
+      summary: Monthly saving a goal would need, without creating it (BE-P3-012, first-run question 3)
+      tags:
+      - Goals
+      security:
+      - UserBearer: []
+      description: Same formulas as Goal. `incomeShareBps` is against the monthly income on the profile (not the 90-day average), only when `currencyCode` is the profile default currency. Nothing is stored.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GoalPreviewRequest'
+      responses:
+        '200':
+          description: Preview
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoalPreview'
+        '400':
+          $ref: '#/components/responses/GoalValidationError'
+        '401':
+          $ref: '#/components/responses/GoalUnauthorized'
+        '503':
+          $ref: '#/components/responses/GoalUnavailable'
+  /api/v1/goals:
+    get:
+      operationId: listGoals
+      summary: Savings goals with progress and the monthly saving needed
+      tags:
+      - Goals
+      security:
+      - UserBearer: []
+      parameters:
+      - in: query
+        name: includeArchived
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Goals oldest first
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoalList'
+        '400':
+          $ref: '#/components/responses/GoalValidationError'
+        '401':
+          $ref: '#/components/responses/GoalUnauthorized'
+        '503':
+          $ref: '#/components/responses/GoalUnavailable'
+    post:
+      operationId: createGoal
+      summary: Create a savings goal linked to a wallet
+      tags:
+      - Goals
+      security:
+      - UserBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGoalRequest'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+        '200':
+          description: Replay of the same clientId
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+        '400':
+          $ref: '#/components/responses/GoalValidationError'
+        '409':
+          $ref: '#/components/responses/GoalConflict'
+        '401':
+          $ref: '#/components/responses/GoalUnauthorized'
+        '503':
+          $ref: '#/components/responses/GoalUnavailable'
+      description: "The goal currency is the currency of the linked wallet (not archived, owned by the user). `kind` picks a preset icon and colour unless `icon` / `colorToken` are sent; both must be catalog tokens, never hex. A non-zero `currentMinor` writes one audit line."
+  /api/v1/goals/{id}:
+    get:
+      operationId: getGoal
+      summary: One savings goal
+      tags:
+      - Goals
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Goal
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+        '404':
+          $ref: '#/components/responses/GoalNotFound'
+        '401':
+          $ref: '#/components/responses/GoalUnauthorized'
+        '503':
+          $ref: '#/components/responses/GoalUnavailable'
+    patch:
+      operationId: updateGoal
+      summary: Edit name, target, date, monthly contribution, icon or colour
+      tags:
+      - Goals
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateGoalRequest'
+      responses:
+        '200':
+          description: Updated
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+        '400':
+          $ref: '#/components/responses/GoalValidationError'
+        '404':
+          $ref: '#/components/responses/GoalNotFound'
+        '409':
+          $ref: '#/components/responses/GoalConflict'
+        '401':
+          $ref: '#/components/responses/GoalUnauthorized'
+        '503':
+          $ref: '#/components/responses/GoalUnavailable'
+      description: "The linked wallet and currency cannot change. Does not change `currentMinor`; use contribute, withdraw or adjust."
+    delete:
+      operationId: archiveGoal
+      summary: Archive a goal (kept for export)
+      tags:
+      - Goals
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: version
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+      responses:
+        '204':
+          description: Archived
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+        '400':
+          $ref: '#/components/responses/GoalValidationError'
+        '404':
+          $ref: '#/components/responses/GoalNotFound'
+        '409':
+          $ref: '#/components/responses/GoalConflict'
+        '401':
+          $ref: '#/components/responses/GoalUnauthorized'
+        '503':
+          $ref: '#/components/responses/GoalUnavailable'
+  /api/v1/goals/{id}/entries:
+    get:
+      operationId: listGoalEntries
+      summary: History of a goal (contributions, withdrawals, corrected numbers), newest first, up to 200
+      tags:
+      - Goals
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: History
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoalEntryList'
+        '404':
+          $ref: '#/components/responses/GoalNotFound'
+        '401':
+          $ref: '#/components/responses/GoalUnauthorized'
+        '503':
+          $ref: '#/components/responses/GoalUnavailable'
+  /api/v1/goals/{id}/contribute:
+    post:
+      operationId: contributeGoal
+      summary: Add money to a goal
+      tags:
+      - Goals
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MoveGoalRequest'
+      responses:
+        '201':
+          description: Recorded
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+        '200':
+          description: Replay of a recorded clientId
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+        '400':
+          $ref: '#/components/responses/GoalValidationError'
+        '404':
+          $ref: '#/components/responses/GoalNotFound'
+        '409':
+          $ref: '#/components/responses/GoalConflict'
+        '422':
+          $ref: '#/components/responses/GoalInsufficientBalance'
+        '401':
+          $ref: '#/components/responses/GoalUnauthorized'
+        '503':
+          $ref: '#/components/responses/GoalUnavailable'
+      description: "With `accountId` (another wallet of the same currency) one balanced transfer source → linked wallet is written in the same commit as the goal ledger. Without it the money is already in the linked wallet, only the goal ledger moves. Never runs on its own. `clientId` makes retries idempotent."
+  /api/v1/goals/{id}/withdraw:
+    post:
+      operationId: withdrawGoal
+      summary: Take money out of a goal
+      tags:
+      - Goals
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MoveGoalRequest'
+      responses:
+        '201':
+          description: Recorded
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+        '200':
+          description: Replay of a recorded clientId
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+        '400':
+          $ref: '#/components/responses/GoalValidationError'
+        '404':
+          $ref: '#/components/responses/GoalNotFound'
+        '409':
+          $ref: '#/components/responses/GoalConflict'
+        '422':
+          $ref: '#/components/responses/GoalInsufficientBalance'
+        '401':
+          $ref: '#/components/responses/GoalUnauthorized'
+        '503':
+          $ref: '#/components/responses/GoalUnavailable'
+      description: "Mirror of contribute: with `accountId` one balanced transfer linked wallet → that wallet. Cannot exceed `currentMinor`."
+  /api/v1/goals/{id}/adjust:
+    post:
+      operationId: adjustGoal
+      summary: Correct the saved amount without moving money
+      tags:
+      - Goals
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdjustGoalRequest'
+      responses:
+        '200':
+          description: Adjusted
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+        '400':
+          $ref: '#/components/responses/GoalValidationError'
+        '404':
+          $ref: '#/components/responses/GoalNotFound'
+        '409':
+          $ref: '#/components/responses/GoalConflict'
+        '401':
+          $ref: '#/components/responses/GoalUnauthorized'
+        '503':
+          $ref: '#/components/responses/GoalUnavailable'
+      description: "Writes one audit event (`goal.adjust`) and no transaction. `version` must match."
+  /api/v1/personal-debts:
+    get:
+      operationId: listPersonalDebts
+      summary: Lend / borrow debts, oldest first
+      tags:
+      - PersonalDebts
+      security:
+      - UserBearer: []
+      parameters:
+      - in: query
+        name: includeArchived
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Debts
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonalDebtList'
+        '400':
+          $ref: '#/components/responses/PersonalDebtValidationError'
+        '401':
+          $ref: '#/components/responses/PersonalDebtUnauthorized'
+        '404':
+          $ref: '#/components/responses/PersonalDebtNotFound'
+        '409':
+          $ref: '#/components/responses/PersonalDebtConflict'
+        '503':
+          $ref: '#/components/responses/PersonalDebtUnavailable'
+    post:
+      operationId: createPersonalDebt
+      summary: Record money lent to or borrowed from someone
+      tags:
+      - PersonalDebts
+      security:
+      - UserBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePersonalDebtRequest'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonalDebt'
+        '200':
+          description: Replay of a recorded clientId
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonalDebt'
+        '400':
+          $ref: '#/components/responses/PersonalDebtValidationError'
+        '401':
+          $ref: '#/components/responses/PersonalDebtUnauthorized'
+        '404':
+          $ref: '#/components/responses/PersonalDebtNotFound'
+        '409':
+          $ref: '#/components/responses/PersonalDebtConflict'
+        '503':
+          $ref: '#/components/responses/PersonalDebtUnavailable'
+      description: "Books one `debt` transaction on the wallet in the same commit: lent takes the amount out, borrowed brings it in. The debt currency is the wallet currency. Not income or expense, never counted in budgets or savings rate. No interest (a loan with interest is /loans). `clientId` makes retries idempotent."
+  /api/v1/personal-debts/summary:
+    get:
+      operationId: getPersonalDebtSummary
+      summary: Who owes me and whom I owe, with totals
+      tags:
+      - PersonalDebts
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Open debts split by direction and totals per currency
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonalDebtSummary'
+        '401':
+          $ref: '#/components/responses/PersonalDebtUnauthorized'
+        '503':
+          $ref: '#/components/responses/PersonalDebtUnavailable'
+  /api/v1/personal-debts/{id}:
+    get:
+      operationId: getPersonalDebt
+      summary: One debt
+      tags:
+      - PersonalDebts
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: The debt
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonalDebt'
+        '400':
+          $ref: '#/components/responses/PersonalDebtValidationError'
+        '401':
+          $ref: '#/components/responses/PersonalDebtUnauthorized'
+        '404':
+          $ref: '#/components/responses/PersonalDebtNotFound'
+        '409':
+          $ref: '#/components/responses/PersonalDebtConflict'
+        '503':
+          $ref: '#/components/responses/PersonalDebtUnavailable'
+    patch:
+      operationId: updatePersonalDebt
+      summary: Edit the person, due date or note
+      tags:
+      - PersonalDebts
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePersonalDebtRequest'
+      responses:
+        '200':
+          description: Updated
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonalDebt'
+        '400':
+          $ref: '#/components/responses/PersonalDebtValidationError'
+        '401':
+          $ref: '#/components/responses/PersonalDebtUnauthorized'
+        '404':
+          $ref: '#/components/responses/PersonalDebtNotFound'
+        '409':
+          $ref: '#/components/responses/PersonalDebtConflict'
+        '503':
+          $ref: '#/components/responses/PersonalDebtUnavailable'
+      description: "Amounts never change here; money moves only through payments. Needs the current `version`."
+    delete:
+      operationId: archivePersonalDebt
+      summary: Archive a settled debt
+      tags:
+      - PersonalDebts
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: version
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+      responses:
+        '204':
+          description: Archived
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+        '400':
+          $ref: '#/components/responses/PersonalDebtValidationError'
+        '401':
+          $ref: '#/components/responses/PersonalDebtUnauthorized'
+        '404':
+          $ref: '#/components/responses/PersonalDebtNotFound'
+        '409':
+          $ref: '#/components/responses/PersonalDebtConflict'
+        '503':
+          $ref: '#/components/responses/PersonalDebtUnavailable'
+      description: "Only a settled debt can be archived; an open one answers DEBT_CONFLICT."
+  /api/v1/personal-debts/{id}/payments:
+    get:
+      operationId: listPersonalDebtPayments
+      summary: Payments of a debt, newest first
+      tags:
+      - PersonalDebts
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Payments
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonalDebtPaymentList'
+        '400':
+          $ref: '#/components/responses/PersonalDebtValidationError'
+        '401':
+          $ref: '#/components/responses/PersonalDebtUnauthorized'
+        '404':
+          $ref: '#/components/responses/PersonalDebtNotFound'
+        '409':
+          $ref: '#/components/responses/PersonalDebtConflict'
+        '503':
+          $ref: '#/components/responses/PersonalDebtUnavailable'
+    post:
+      operationId: payPersonalDebt
+      summary: Collect or repay all or part of a debt
+      tags:
+      - PersonalDebts
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PayPersonalDebtRequest'
+      responses:
+        '201':
+          description: Recorded
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonalDebt'
+        '200':
+          description: Replay of a recorded clientId
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonalDebt'
+        '400':
+          $ref: '#/components/responses/PersonalDebtValidationError'
+        '401':
+          $ref: '#/components/responses/PersonalDebtUnauthorized'
+        '404':
+          $ref: '#/components/responses/PersonalDebtNotFound'
+        '409':
+          $ref: '#/components/responses/PersonalDebtConflict'
+        '503':
+          $ref: '#/components/responses/PersonalDebtUnavailable'
+        '422':
+          $ref: '#/components/responses/PersonalDebtOverpayment'
+      description: "One `debt` transaction in the same commit as the new outstanding amount: collecting a loan you made brings money in, repaying a debt you owe sends it out. Paying the whole outstanding amount settles it. More than is left is DEBT_OVERPAYMENT. The wallet must have the debt currency; it defaults to the wallet of the debt."
+  /api/v1/card-installments:
+    get:
+      operationId: listCardInstallments
+      summary: Installment plans over credit-card purchases
+      tags:
+      - CardInstallments
+      security:
+      - UserBearer: []
+      parameters:
+      - in: query
+        name: accountId
+        required: false
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: status
+        required: false
+        schema:
+          type: string
+          enum: [active, closed]
+      responses:
+        '200':
+          description: Plans
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardInstallmentList'
+        '400':
+          $ref: '#/components/responses/CardInstallmentValidationError'
+        '401':
+          $ref: '#/components/responses/CardInstallmentUnauthorized'
+        '404':
+          $ref: '#/components/responses/CardInstallmentNotFound'
+        '409':
+          $ref: '#/components/responses/CardInstallmentConflict'
+        '503':
+          $ref: '#/components/responses/CardInstallmentUnavailable'
+      description: "Schedule-only plans, oldest first. Each item shows what is left and the next period; the full schedule is on the detail."
+    post:
+      operationId: createCardInstallment
+      summary: Turn a credit-card purchase into an installment schedule
+      tags:
+      - CardInstallments
+      security:
+      - UserBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCardInstallmentRequest'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardInstallment'
+        '200':
+          description: Replay of a recorded clientId
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardInstallment'
+        '400':
+          $ref: '#/components/responses/CardInstallmentValidationError'
+        '401':
+          $ref: '#/components/responses/CardInstallmentUnauthorized'
+        '404':
+          $ref: '#/components/responses/CardInstallmentNotFound'
+        '409':
+          $ref: '#/components/responses/CardInstallmentConflict'
+        '503':
+          $ref: '#/components/responses/CardInstallmentUnavailable'
+      description: "The purchase stays one expense on the card, counted once in reports and budgets in the month it was made; card debt and balances do not change. The plan only lists periods: payments are ordinary wallet to card transfers, and any conversion fee or interest is a separate expense. The purchase must be an active expense on a credit wallet with no active plan; a closed plan on it is replaced (deleted) by the new one. Periods are monthly from `firstDueOn` (not before the purchase day); every period but the last pays `installmentMinor` (default: even split rounded up) and the last takes the rest, so they add up to the price. 2 to 60 periods. `clientId` makes retries idempotent."
+  /api/v1/card-installments/due:
+    get:
+      operationId: getCardInstallmentsDue
+      summary: Instalments falling due in a range, per card
+      tags:
+      - CardInstallments
+      security:
+      - UserBearer: []
+      parameters:
+      - in: query
+        name: from
+        required: true
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: to
+        required: true
+        description: On or after from.
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: accountId
+        required: false
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Due per card
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardInstallmentDue'
+        '400':
+          $ref: '#/components/responses/CardInstallmentValidationError'
+        '401':
+          $ref: '#/components/responses/CardInstallmentUnauthorized'
+        '404':
+          $ref: '#/components/responses/CardInstallmentNotFound'
+        '409':
+          $ref: '#/components/responses/CardInstallmentConflict'
+        '503':
+          $ref: '#/components/responses/CardInstallmentUnavailable'
+      description: "Sum of active-plan periods whose due date is within [from, to], per card wallet. The client adds it to the card amount due for the statement period. Closed plans add nothing."
+  /api/v1/card-installments/preview:
+    post:
+      operationId: previewCardInstallment
+      summary: Schedule a plan would have, without creating it
+      tags:
+      - CardInstallments
+      security:
+      - UserBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PreviewCardInstallmentRequest'
+      responses:
+        '200':
+          description: Preview
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardInstallmentPreview'
+        '400':
+          $ref: '#/components/responses/CardInstallmentValidationError'
+        '401':
+          $ref: '#/components/responses/CardInstallmentUnauthorized'
+        '404':
+          $ref: '#/components/responses/CardInstallmentNotFound'
+        '409':
+          $ref: '#/components/responses/CardInstallmentConflict'
+        '503':
+          $ref: '#/components/responses/CardInstallmentUnavailable'
+      description: "Same input and checks as create, minus `clientId`; nothing is written. The app shows these periods before the user confirms, so its numbers are the server's. 400 when the per-period amount cannot make the count add up to the price or the first day is before the purchase; 409 when the purchase cannot get a plan."
+  /api/v1/card-installments/{id}:
+    get:
+      operationId: getCardInstallment
+      summary: One plan with its periods
+      tags:
+      - CardInstallments
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Plan
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardInstallment'
+        '400':
+          $ref: '#/components/responses/CardInstallmentValidationError'
+        '401':
+          $ref: '#/components/responses/CardInstallmentUnauthorized'
+        '404':
+          $ref: '#/components/responses/CardInstallmentNotFound'
+        '409':
+          $ref: '#/components/responses/CardInstallmentConflict'
+        '503':
+          $ref: '#/components/responses/CardInstallmentUnavailable'
+      description: "Periods carry `past`, `upcoming` or `closed`."
+  /api/v1/card-installments/{id}/close:
+    post:
+      operationId: closeCardInstallment
+      summary: Close the schedule (prepaid or cancelled)
+      tags:
+      - CardInstallments
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CloseCardInstallmentRequest'
+      responses:
+        '200':
+          description: Closed
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardInstallment'
+        '400':
+          $ref: '#/components/responses/CardInstallmentValidationError'
+        '401':
+          $ref: '#/components/responses/CardInstallmentUnauthorized'
+        '404':
+          $ref: '#/components/responses/CardInstallmentNotFound'
+        '409':
+          $ref: '#/components/responses/CardInstallmentConflict'
+        '503':
+          $ref: '#/components/responses/CardInstallmentUnavailable'
+      description: "Stops the schedule. The purchase expense is unchanged and nothing is booked. Needs the current `version`; closing a closed plan is a conflict. Deleting the purchase closes its plan too."
+  /api/v1/loans:
+    get:
+      operationId: listLoans
+      summary: Loans with paid, outstanding and expected interest
+      tags:
+      - Loans
+      security:
+      - UserBearer: []
+      parameters:
+      - in: query
+        name: includeArchived
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Loans oldest first
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoanList'
+        '400':
+          $ref: '#/components/responses/LoanValidationError'
+        '401':
+          $ref: '#/components/responses/LoanUnauthorized'
+        '503':
+          $ref: '#/components/responses/LoanUnavailable'
+    post:
+      operationId: createLoan
+      summary: Record a loan or debt
+      tags:
+      - Loans
+      security:
+      - UserBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateLoanRequest'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Loan'
+        '200':
+          description: Replay of the same clientId
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Loan'
+        '400':
+          $ref: '#/components/responses/LoanValidationError'
+        '409':
+          $ref: '#/components/responses/LoanConflict'
+        '401':
+          $ref: '#/components/responses/LoanUnauthorized'
+        '503':
+          $ref: '#/components/responses/LoanUnavailable'
+      description: "`outstandingMinor` defaults to `principalMinor`. `interestRateBps` is the annual rate (1200 = 12.00%). The optional wallet must share the loan currency. Every create writes one audit line. Interest is computed on the declining balance, in integers, rounded half up."
+  /api/v1/loans/summary:
+    get:
+      operationId: getLoanSummary
+      summary: Total borrowed, paid and still owed per currency
+      tags:
+      - Loans
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Totals over active loans
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoanSummary'
+        '401':
+          $ref: '#/components/responses/LoanUnauthorized'
+        '503':
+          $ref: '#/components/responses/LoanUnavailable'
+  /api/v1/loans/{id}:
+    get:
+      operationId: getLoan
+      summary: One loan
+      tags:
+      - Loans
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: The loan
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Loan'
+        '404':
+          $ref: '#/components/responses/LoanNotFound'
+        '401':
+          $ref: '#/components/responses/LoanUnauthorized'
+        '503':
+          $ref: '#/components/responses/LoanUnavailable'
+    patch:
+      operationId: updateLoan
+      summary: Edit loan terms (needs the current version)
+      tags:
+      - Loans
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateLoanRequest'
+      responses:
+        '200':
+          description: Updated
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Loan'
+        '400':
+          $ref: '#/components/responses/LoanValidationError'
+        '404':
+          $ref: '#/components/responses/LoanNotFound'
+        '409':
+          $ref: '#/components/responses/LoanConflict'
+        '401':
+          $ref: '#/components/responses/LoanUnauthorized'
+        '503':
+          $ref: '#/components/responses/LoanUnavailable'
+    delete:
+      operationId: archiveLoan
+      summary: Archive a loan
+      tags:
+      - Loans
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: version
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+      responses:
+        '204':
+          description: Archived
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+        '400':
+          $ref: '#/components/responses/LoanValidationError'
+        '404':
+          $ref: '#/components/responses/LoanNotFound'
+        '409':
+          $ref: '#/components/responses/LoanConflict'
+        '401':
+          $ref: '#/components/responses/LoanUnauthorized'
+        '503':
+          $ref: '#/components/responses/LoanUnavailable'
+  /api/v1/loans/{id}/schedule:
+    get:
+      operationId: getLoanSchedule
+      summary: Repayment plan with the assumptions behind it
+      tags:
+      - Loans
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Rows of interest, principal and balance
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoanSchedule'
+        '404':
+          $ref: '#/components/responses/LoanNotFound'
+        '401':
+          $ref: '#/components/responses/LoanUnauthorized'
+        '503':
+          $ref: '#/components/responses/LoanUnavailable'
+      description: "Plan for the current outstanding balance at the stored rate and installment. `items` is empty and `expectedInterestMinor` null when there is no installment, or it never covers the interest of a period."
+  /api/v1/loans/{id}/payments:
+    get:
+      operationId: listLoanPayments
+      summary: Payments of a loan, newest first
+      tags:
+      - Loans
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Payments
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoanPaymentList'
+        '404':
+          $ref: '#/components/responses/LoanNotFound'
+        '401':
+          $ref: '#/components/responses/LoanUnauthorized'
+        '503':
+          $ref: '#/components/responses/LoanUnavailable'
+    post:
+      operationId: payLoan
+      summary: Record a payment
+      tags:
+      - Loans
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PayLoanRequest'
+      responses:
+        '201':
+          description: Recorded
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Loan'
+        '200':
+          description: Replay of a recorded clientId
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Loan'
+        '400':
+          $ref: '#/components/responses/LoanValidationError'
+        '404':
+          $ref: '#/components/responses/LoanNotFound'
+        '409':
+          $ref: '#/components/responses/LoanConflict'
+        '422':
+          $ref: '#/components/responses/LoanOverpayment'
+        '401':
+          $ref: '#/components/responses/LoanUnauthorized'
+        '503':
+          $ref: '#/components/responses/LoanUnavailable'
+      description: "One expense transaction for the principal part and one for the interest part, in the same commit as the loan balance. Each needs a category when its part is above zero. Without `principalMinor` / `interestMinor` the interest of the period is taken first and the rest is principal. Only the principal part lowers the balance; paying more than is owed is LOAN_OVERPAYMENT. Principal expenses count in spending reports. `clientId` makes retries idempotent."
+  /api/v1/loans/{id}/adjust:
+    post:
+      operationId: adjustLoan
+      summary: Correct the outstanding amount without moving money
+      tags:
+      - Loans
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdjustLoanRequest'
+      responses:
+        '200':
+          description: Adjusted
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Loan'
+        '400':
+          $ref: '#/components/responses/LoanValidationError'
+        '404':
+          $ref: '#/components/responses/LoanNotFound'
+        '409':
+          $ref: '#/components/responses/LoanConflict'
+        '401':
+          $ref: '#/components/responses/LoanUnauthorized'
+        '503':
+          $ref: '#/components/responses/LoanUnavailable'
+      description: "Writes one audit line `loan.adjust`."
+  /api/v1/notification-preferences:
+    get:
+      operationId: getNotificationPreferences
+      summary: Get per-kind toggles and quiet hours
+      tags:
+      - Notifications
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Preferences with availability flags
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationPreferences'
+        '401':
+          $ref: '#/components/responses/NotificationUnauthorized'
+        '503':
+          $ref: '#/components/responses/NotificationUnavailable'
+    put:
+      operationId: putNotificationPreferences
+      summary: Update per-kind toggles and quiet hours
+      tags:
+      - Notifications
+      security:
+      - UserBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutNotificationPreferencesRequest'
+      responses:
+        '200':
+          description: Updated preferences
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationPreferences'
+        '400':
+          $ref: '#/components/responses/NotificationValidationError'
+        '401':
+          $ref: '#/components/responses/NotificationUnauthorized'
+        '409':
+          $ref: '#/components/responses/NotificationConflict'
+        '422':
+          $ref: '#/components/responses/NotificationSourceUnavailable'
+        '503':
+          $ref: '#/components/responses/NotificationUnavailable'
+      description: >
+        Enabling a kind whose source module is not shipped returns 422
+        NOTIFICATION_SOURCE_UNAVAILABLE. Security alerts stay device-local.
+  /api/v1/notifications:
+    get:
+      operationId: listNotifications
+      summary: List in-app inbox notifications
+      tags:
+      - Notifications
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Newest first, up to 100
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationList'
+        '401':
+          $ref: '#/components/responses/NotificationUnauthorized'
+        '503':
+          $ref: '#/components/responses/NotificationUnavailable'
+      description: Rows contain titleKey/bodyKey and params without balances or amounts.
+  /api/v1/notifications/evaluate:
+    post:
+      operationId: evaluateNotifications
+      summary: Evaluate due budget and recurring alerts for the session user
+      tags:
+      - Notifications
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Created count (idempotent)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationEvaluateResult'
+        '401':
+          $ref: '#/components/responses/NotificationUnauthorized'
+        '503':
+          $ref: '#/components/responses/NotificationUnavailable'
+      description: >
+        Respects quiet hours in the profile timezone. Mobile calls on resume;
+        network errors may be ignored. Does not create rows for unavailable kinds.
+  /api/v1/push-tokens:
+    put:
+      operationId: putPushToken
+      summary: Register the FCM device token of the current session
+      tags:
+      - Notifications
+      security:
+      - UserBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutPushTokenRequest'
+      responses:
+        '204':
+          description: Token bound to this session (replaces a previous one)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+        '400':
+          description: VALIDATION_ERROR
+        '401':
+          $ref: '#/components/responses/NotificationUnauthorized'
+      description: >
+        One token per login session. Deleted with the session (logout, password
+        change or reset, expiry) and with the account. Push is sent only for
+        inbox rows created outside quiet hours; text carries no balances.
+    delete:
+      operationId: deletePushToken
+      summary: Remove the FCM device token of the current session
+      tags:
+      - Notifications
+      security:
+      - UserBearer: []
+      responses:
+        '204':
+          description: Token removed (idempotent)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+        '401':
+          $ref: '#/components/responses/NotificationUnauthorized'
+  /api/v1/notifications/read-all:
+    post:
+      operationId: markAllNotificationsRead
+      summary: Mark every unread inbox row as read
+      tags:
+      - Notifications
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Number of rows updated
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationReadAllResult'
+        '401':
+          $ref: '#/components/responses/NotificationUnauthorized'
+        '503':
+          $ref: '#/components/responses/NotificationUnavailable'
+  /api/v1/notifications/{id}/read:
+    post:
+      operationId: markNotificationRead
+      summary: Mark one inbox row as read
+      tags:
+      - Notifications
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Updated row
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationItem'
+        '401':
+          $ref: '#/components/responses/NotificationUnauthorized'
+        '404':
+          $ref: '#/components/responses/NotificationNotFound'
+        '503':
+          $ref: '#/components/responses/NotificationUnavailable'
   /api/v1/transactions:
     post:
       operationId: createTransaction
@@ -1076,7 +2847,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TransactionBundle'
         '400':
-          description: VALIDATION_ERROR
+          description: 'VALIDATION_ERROR, or CATEGORY_KIND_MISMATCH when the category kind does not fit the type (expense takes expense|both, income takes income|both). Nothing is written.'
           headers:
             Cache-Control:
               schema:
@@ -1314,6 +3085,9 @@ paths:
           - income
           - expense
           - transfer
+          - adjustment
+          - debt
+          - refund
       - in: query
         name: from
         schema:
@@ -1338,6 +3112,294 @@ paths:
             decimal separator whose fraction is not 3 digits (12.50) scaled by the leg
             currency minor digits with no rounding. Combined with from/to and the other
             filters. Blank text does not filter.
+  /api/v1/transactions/export.csv:
+    get:
+      operationId: exportTransactionsCsv
+      tags:
+      - Transactions
+      summary: Export filtered transactions as CSV (BE-P3-010)
+      description: >
+        UTF-8 with BOM so Excel reads Vietnamese, RFC 4180 quoting, CRLF line ends, oldest first, non-deleted
+        legs only. Columns: date, time, type, amount, currency, wallet, category, merchant, notes, tags,
+        transaction_id. amount is a signed plain decimal (minor units shifted by the currency minor digits, no
+        locale grouping) and currency is its own column. Text cells starting with = + - @ are prefixed with a
+        single quote. Tags are joined with a semicolon. A transfer is two rows (one per leg). Not a backup: use
+        the JSON account export for that. Above 50000 rows the request fails with 400; narrow the date range.
+        Writes audit user.transactions_export in the same transaction. Cache-Control no-store; the body is not logged.
+      security:
+      - UserBearer: []
+      parameters:
+      - in: query
+        name: accountId
+        style: form
+        explode: true
+        schema:
+          type: array
+          maxItems: 20
+          uniqueItems: true
+          items:
+            type: string
+            format: uuid
+      - in: query
+        name: categoryId
+        style: form
+        explode: true
+        schema:
+          type: array
+          maxItems: 50
+          uniqueItems: true
+          items:
+            type: string
+            format: uuid
+      - in: query
+        name: tagId
+        style: form
+        explode: true
+        schema:
+          type: array
+          maxItems: 20
+          uniqueItems: true
+          items:
+            type: string
+            format: uuid
+      - in: query
+        name: type
+        schema:
+          type: string
+          enum:
+          - income
+          - expense
+          - transfer
+          - adjustment
+          - debt
+          - refund
+      - in: query
+        name: currency
+        schema:
+          type: string
+          pattern: ^[A-Z]{3}$
+      - in: query
+        name: from
+        schema:
+          type: string
+          format: date
+          pattern: ^\d{4}-\d{2}-\d{2}$
+      - in: query
+        name: to
+        schema:
+          type: string
+          format: date
+          pattern: ^\d{4}-\d{2}-\d{2}$
+      - in: query
+        name: search
+        schema:
+          type: string
+          maxLength: 200
+          description: Same matching as the list search.
+      responses:
+        '200':
+          description: CSV file (Cache-Control no-store, Content-Disposition attachment)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+            Content-Disposition:
+              schema:
+                type: string
+                example: attachment; filename="freeva-transactions-20261103.csv"
+          content:
+            text/csv:
+              schema:
+                type: string
+        '400':
+          description: VALIDATION_ERROR (bad filter, from after to, or more than 50000 rows)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing, expired or revoked session
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/transactions/import/preview:
+    post:
+      operationId: previewTransactionImport
+      tags:
+      - Transactions
+      summary: Preview a CSV import without writing (BE-P3-011)
+      description: >
+        Stateless: the client sends the file text and mapping, the server parses, resolves wallets and categories
+        by name (ignoring case and accents), parses amounts to exact minor units, pairs opposite-signed transfer
+        rows (same day, time, size and currency) into one transfer, and flags rows that already exist (same wallet,
+        day, signed amount, type and merchant/notes, or a transaction_id that already exists). Nothing is written,
+        and wallets or categories are never created: unmatched names come back under unmapped so the client can
+        send walletMap / categoryMap. Types are limited to income, expense and transfer. At most 2000 data rows;
+        the route accepts a 2 MB JSON body. Presets: freeva (the BE-P3-010 export, auto-detected), money_lover,
+        misa (header names are best-effort aliases; override any column with mapping) and custom.
+        Cache-Control no-store; file content is never logged.
+      security:
+      - UserBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionImportRequest'
+      responses:
+        '200':
+          description: Per-row plan
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionImportPreview'
+        '400':
+          $ref: '#/components/responses/TransactionImportError'
+        '401':
+          $ref: '#/components/responses/TransactionImportError'
+        '413':
+          $ref: '#/components/responses/TransactionImportError'
+  /api/v1/transactions/import:
+    post:
+      operationId: commitTransactionImport
+      tags:
+      - Transactions
+      summary: Import transactions from CSV as one undoable batch (BE-P3-011)
+      description: >
+        Same body as the preview plus batchClientId. Ready rows are written in one database transaction through
+        the normal transaction rules (balanced transfers, category kind, archived wallets), each with a clientId
+        derived from batchClientId and the row, so a retry never duplicates. Rows flagged duplicate are skipped
+        unless includeDuplicates is true; nothing is ever overwritten. Invalid rows are reported per row and do
+        not stop the rest. Repeating a batchClientId returns 200 with the stored batch and rows null. Writes audit
+        transaction_import.create (ids only).
+      security:
+      - UserBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionImportCommitRequest'
+      responses:
+        '201':
+          description: Batch created
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionImportResult'
+        '200':
+          description: batchClientId already used; stored batch, rows null
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionImportResult'
+        '400':
+          $ref: '#/components/responses/TransactionImportError'
+        '401':
+          $ref: '#/components/responses/TransactionImportError'
+        '409':
+          $ref: '#/components/responses/TransactionImportError'
+        '413':
+          $ref: '#/components/responses/TransactionImportError'
+  /api/v1/transactions/import/{id}:
+    get:
+      operationId: getTransactionImport
+      tags:
+      - Transactions
+      summary: Read an import batch (BE-P3-011)
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Batch with the count of imported transactions still active
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionImportBatch'
+        '400':
+          $ref: '#/components/responses/TransactionImportError'
+        '401':
+          $ref: '#/components/responses/TransactionImportError'
+        '404':
+          $ref: '#/components/responses/TransactionImportError'
+  /api/v1/transactions/import/{id}/undo:
+    post:
+      operationId: undoTransactionImport
+      tags:
+      - Transactions
+      summary: Undo a whole import batch (BE-P3-011)
+      description: >
+        Soft-deletes every imported transaction still untouched. A transaction edited after the import
+        (version above 1) or tied to an active refund or card installment plan is left alone and listed in skipped
+        with reason modified or linked. Safe to repeat. Writes audit transaction_import.undo.
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Undo result
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionImportUndo'
+        '400':
+          $ref: '#/components/responses/TransactionImportError'
+        '401':
+          $ref: '#/components/responses/TransactionImportError'
+        '404':
+          $ref: '#/components/responses/TransactionImportError'
   /api/v1/transactions/{id}:
     parameters:
     - in: path
@@ -1448,7 +3510,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TransactionBundle'
         '400':
-          description: VALIDATION_ERROR
+          description: 'VALIDATION_ERROR, or CATEGORY_KIND_MISMATCH when the category kind does not fit the type (expense takes expense|both, income takes income|both). Nothing is written.'
           headers:
             Cache-Control:
               schema:
@@ -1597,6 +3659,13 @@ paths:
           type: integer
           minimum: 1
           maximum: 2147483646
+      - in: query
+        name: refunds
+        required: false
+        schema:
+          type: string
+          enum: [cascade, keep]
+        description: Required when the expense still has refunds (BE-P3-008); see UpdateTransaction.refunds.
   /api/v1/sync:
     post:
       operationId: syncTransactions
@@ -1614,7 +3683,7 @@ paths:
               $ref: '#/components/schemas/SyncRequest'
       responses:
         '200':
-          description: Queue accepted. Individual operations may be applied, replayed, conflict or rejected.
+          description: Queue accepted. Individual operations may be applied, replayed, conflict or rejected (a category whose kind does not fit the type is rejected with error.code CATEGORY_KIND_MISMATCH).
           headers:
             Cache-Control:
               schema:
@@ -1716,6 +3785,13 @@ paths:
           format: date
           pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
         description: Inclusive range end. At most 3660 days after from.
+      - name: displayCurrency
+        in: query
+        required: false
+        schema:
+          type: string
+          pattern: ^[A-Z]{3}$
+        description: Also return `converted`, the totals in this currency (display only, BE-P2-013). Uses the user's own rates; a currency with no rate or a fractional result is listed in `converted.unconverted` and adds nothing. Omit for per-currency items only.
       responses:
         '200':
           description: Period totals by currency, leaf category, and account
@@ -1732,7 +3808,7 @@ paths:
           $ref: '#/components/responses/ReportUnauthorized'
         '503':
           $ref: '#/components/responses/ReportUnavailable'
-      description: Read-only. Week is Monday through Sunday. Month follows fiscalMonthStartDay in the user timezone. Year is the calendar year (01-01 to 12-31). Amounts stay in each account currency; transfers are excluded from income, expense, and net. No FX conversion.
+      description: Read-only. Week is Monday through Sunday. Month follows fiscalMonthStartDay in the user timezone. Year is the calendar year (01-01 to 12-31). Amounts stay in each account currency; transfers are excluded from income, expense, and net. Savings equals netMinor; savingsRateBps is net/income in basis points when income is positive. comparison is the adjacent previous period of the same kind (range shifts back by its inclusive length). topMerchants lists up to 10 expense merchants per currency for the requested period. No FX conversion.
   /api/v1/reports/trend:
     get:
       operationId: reportTrend
@@ -1776,6 +3852,86 @@ paths:
         '503':
           $ref: '#/components/responses/ReportUnavailable'
       description: Read-only, one call for the whole chart. Week returns 8 Monday weeks, month 6 months following fiscalMonthStartDay, year up to 5 calendar years (years before the first transaction are dropped, the current year is always kept). Amounts stay in each account currency; transfers are excluded. No FX conversion.
+  /api/v1/reports/series:
+    get:
+      operationId: reportSeries
+      summary: Report income and expense series for a time window
+      tags:
+      - Reports
+      security:
+      - UserBearer: []
+      parameters:
+      - name: window
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - 7d
+          - 30d
+          - 3m
+          - 6m
+          - 1y
+          - all
+      - name: on
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
+        description: Anchor calendar date of the last bucket. Defaults to today in the user timezone.
+      responses:
+        '200':
+          description: Oldest-first buckets ending at the period that contains the anchor
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/ReportNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeriesReport'
+        '400':
+          $ref: '#/components/responses/ReportValidationError'
+        '401':
+          $ref: '#/components/responses/ReportUnauthorized'
+        '503':
+          $ref: '#/components/responses/ReportUnavailable'
+      description: Read-only income and expense series. 7d and 30d are single calendar days. 3m, 6m, and 1y are 3, 6, and 12 fiscal months. all is each calendar year from the first income or expense through the anchor year (current year always kept; history stops at year 100). Amounts stay in each account currency; transfers are excluded. No FX conversion.
+  /api/v1/reports/month-review:
+    get:
+      operationId: reportMonthReview
+      summary: Monthly financial review for one fiscal month
+      tags:
+      - Reports
+      security:
+      - UserBearer: []
+      parameters:
+      - name: on
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
+        description: Anchor calendar date of the fiscal month. Defaults to today in the user timezone.
+      responses:
+        '200':
+          description: Income, expense, savings, savings rate, and top 3 expense categories per currency for the fiscal month
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/ReportNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonthReviewReport'
+        '400':
+          $ref: '#/components/responses/ReportValidationError'
+        '401':
+          $ref: '#/components/responses/ReportUnauthorized'
+        '503':
+          $ref: '#/components/responses/ReportUnavailable'
+      description: Read-only projection of monthly cashflow. Period follows fiscalMonthStartDay. Amounts and savingsRateBps match GET /reports/cashflow for the same month. savingsMinor equals netMinor. topCategories are leaf expense rows by |expense| descending (ties by categoryId, null last), max 3 per currency. Category names are not returned. Transfers excluded. No FX conversion here. No AI narrative.
   /api/v1/reports/net-worth:
     get:
       operationId: reportNetWorth
@@ -1784,6 +3940,14 @@ paths:
       - Reports
       security:
       - UserBearer: []
+      parameters:
+      - name: displayCurrency
+        in: query
+        required: false
+        schema:
+          type: string
+          pattern: ^[A-Z]{3}$
+        description: Also return `converted`, the totals in this currency (display only, BE-P2-013). Uses the user's own rates; a currency with no rate or a fractional result is listed in `converted.unconverted` and adds nothing. Omit for per-currency items only.
       responses:
         '200':
           description: Current signed totals per currency. Hidden (archived) wallets are excluded; a currency appears only if it has an active wallet.
@@ -1800,7 +3964,7 @@ paths:
           $ref: '#/components/responses/ReportUnauthorized'
         '503':
           $ref: '#/components/responses/ReportUnavailable'
-      description: Read-only current snapshot. Includes archived accounts. Assets are cash, bank, and ewallet balances; liabilities are credit balances. No period filter and no FX conversion.
+      description: Read-only current snapshot. Includes archived accounts. Assets are cash, bank, and ewallet balances; liabilities are credit balances. No period filter. `items` are never converted; the optional `converted` block is display only (BE-P2-013).
   /api/v1/financial-accounts:
     post:
       operationId: createFinancialAccount
@@ -1937,6 +4101,236 @@ paths:
           $ref: '#/components/responses/FinancialAccountConflict'
         '503':
           $ref: '#/components/responses/FinancialAccountUnavailable'
+  /api/v1/financial-accounts/{id}/reconcile:
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    post:
+      operationId: reconcileFinancialAccount
+      summary: Reconcile a wallet to its real balance with a one-leg adjustment
+      description: Server computes delta = target - current balance. A credit card is reconciled against debt (target = -actualBalanceMinor). Zero delta or dryRun writes nothing. The adjustment is not income or expense; it never counts in period totals, budgets or savings rate, and can be edited or deleted through the transaction endpoints. A retry with the same clientId replays the stored adjustment.
+      tags:
+      - Transactions
+      security:
+      - UserBearer: []
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Must equal body.clientId (case-insensitive).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReconcileRequest'
+      responses:
+        '201':
+          description: Adjustment created
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReconcileResult'
+        '200':
+          description: Nothing written (zero delta, dryRun) or clientId replay
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReconcileResult'
+        '400':
+          description: VALIDATION_ERROR
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: SESSION_INVALID or auth error
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: ACCOUNT_NOT_FOUND (also for another owner)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '409':
+          description: 'TRANSACTION_CONFLICT: archived wallet or clientId used by another transaction'
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: TRANSACTIONS_UNAVAILABLE
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/transactions/{id}/refunds:
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    post:
+      operationId: refundTransaction
+      summary: Refund an expense, fully or in part, into a wallet
+      description: Creates one `refund` row (positive, in the receiving wallet, same category as the expense, same currency). The refund is not income; reports and budgets net it out of the original expense's category and period, whatever date the refund has. The sum of active refunds may not exceed the expense (409 REFUND_EXCEEDS_ORIGINAL). A retry with the same clientId replays the stored refund. Edit or delete it through the transaction endpoints.
+      tags:
+      - Transactions
+      security:
+      - UserBearer: []
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Must equal body.clientId (case-insensitive).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefundRequest'
+      responses:
+        '201':
+          description: Refund created
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionBundle'
+        '200':
+          description: clientId replay
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionBundle'
+        '400':
+          description: VALIDATION_ERROR (also a wallet in another currency)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: SESSION_INVALID or auth error
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: TRANSACTION_NOT_FOUND or ACCOUNT_NOT_FOUND (also for another owner)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '409':
+          description: TRANSACTION_CONFLICT (not an active expense, archived wallet, conflicting replay) or REFUND_EXCEEDS_ORIGINAL
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: TRANSACTIONS_UNAVAILABLE
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+              description: Private financial data must not be cached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
   /api/v1/financial-accounts/{id}:
     parameters:
     - name: id
@@ -2204,10 +4598,155 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/fx-rates:
+    get:
+      operationId: listFxRates
+      summary: List the rates the user typed for display conversion
+      tags: [Profile]
+      security:
+        - UserBearer: []
+      description: Display only (BE-P2-013). These rates never change stored balances or transactions. Only the stored direction is used; the opposite direction is never derived.
+      responses:
+        '200':
+          description: Own rates (Cache-Control no-store)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FxRateList'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/fx-rates/{from}/{to}:
+    parameters:
+      - name: from
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^[A-Z]{3}$
+      - name: to
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^[A-Z]{3}$
+    put:
+      operationId: putFxRate
+      summary: Set or replace the rate for one direction
+      tags: [Profile]
+      security:
+        - UserBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutFxRate'
+      responses:
+        '200':
+          description: Saved (Cache-Control no-store)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FxRate'
+        '400':
+          description: Rate not positive or over 8 decimals, same currency twice, unknown currency, or quotedAt in the future
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    delete:
+      operationId: deleteFxRate
+      summary: Remove the rate for one direction
+      tags: [Profile]
+      security:
+        - UserBearer: []
+      responses:
+        '204':
+          description: Removed
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: No such rate (FX_RATE_NOT_FOUND)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/profile/monthly-income:
+    put:
+      operationId: saveMonthlyIncome
+      summary: Set, change or clear the monthly income
+      tags: [Profile]
+      security:
+        - UserBearer: []
+      description: Stored on the account and used to suggest budgets and savings share. `null` clears it. No version check. Never logged; included in the account export and deleted with the account.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MonthlyIncomeUpdate'
+      responses:
+        '204':
+          description: Saved (Cache-Control no-store)
+        '400':
+          description: Not a positive integer string, or an extra field
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/profile/display-currency:
+    put:
+      operationId: saveDisplayCurrency
+      summary: Choose the currency the Overview converts into
+      tags: [Profile]
+      security:
+        - UserBearer: []
+      description: Stored on the account. `null` goes back to the profile default currency. No version check.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DisplayCurrencyUpdate'
+      responses:
+        '204':
+          description: Saved (Cache-Control no-store)
+        '400':
+          description: Code not in the currency catalog, or an extra field
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
   /api/v1/profile/onboarding:
     patch:
       operationId: saveOnboardingAnswers
-      summary: Save answers from the first-run questions (goals, tracking habit, review cadence)
+      summary: Save answers from the first-run questions (goals, monthly income)
       tags: [Profile]
       security:
         - UserBearer: []
@@ -2692,7 +5231,7 @@ paths:
                   maxLength: 128
                 newPassword:
                   type: string
-                  minLength: 12
+                  minLength: 8
                   maxLength: 128
                   description: At least one letter and one digit (DS-P2-004). Must differ from the current password.
       responses:
@@ -2945,6 +5484,19 @@ components:
         type: string
         const: no-store
   responses:
+    TransactionImportError:
+      description: >
+        VALIDATION_ERROR, FILE_INVALID (no header, no date/amount column, unterminated quote), FILE_TOO_LARGE
+        (more than 2000 rows), IMPORT_NOT_FOUND, IMPORT_CONFLICT, or SESSION_INVALID
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
     CategoryValidationError:
       description: VALIDATION_ERROR
       headers:
@@ -3110,6 +5662,259 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorEnvelope'
+    GoalValidationError:
+      description: VALIDATION_ERROR
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    GoalUnauthorized:
+      description: SESSION_INVALID
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    GoalNotFound:
+      description: GOAL_NOT_FOUND
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    GoalConflict:
+      description: GOAL_CONFLICT stale version, or a clientId replayed with different content
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    GoalInsufficientBalance:
+      description: INSUFFICIENT_GOAL_BALANCE withdraw is larger than the goal holds
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    GoalUnavailable:
+      description: GOAL_UNAVAILABLE or authentication unavailable
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    LoanValidationError:
+      description: VALIDATION_ERROR
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    LoanUnauthorized:
+      description: SESSION_INVALID
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    LoanNotFound:
+      description: LOAN_NOT_FOUND
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    LoanConflict:
+      description: LOAN_CONFLICT stale version, or a clientId replayed with different content
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    LoanOverpayment:
+      description: LOAN_OVERPAYMENT the principal part is larger than the outstanding balance
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    LoanUnavailable:
+      description: LOAN_UNAVAILABLE or authentication unavailable
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    PersonalDebtValidationError:
+      description: VALIDATION_ERROR
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    PersonalDebtUnauthorized:
+      description: SESSION_INVALID
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    PersonalDebtNotFound:
+      description: DEBT_NOT_FOUND
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    PersonalDebtConflict:
+      description: DEBT_CONFLICT stale version, a clientId replayed with different content, or archiving a debt that is not settled
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    PersonalDebtOverpayment:
+      description: DEBT_OVERPAYMENT the payment is larger than the outstanding amount
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    PersonalDebtUnavailable:
+      description: PERSONAL_DEBT_UNAVAILABLE or authentication unavailable
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    CardInstallmentValidationError:
+      description: VALIDATION_ERROR
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    CardInstallmentUnauthorized:
+      description: SESSION_INVALID
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    CardInstallmentNotFound:
+      description: PLAN_NOT_FOUND
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    CardInstallmentConflict:
+      description: PLAN_CONFLICT stale or closed plan, a purchase that is not an active expense on a credit wallet or already has a plan, or a clientId replayed with different content
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    CardInstallmentUnavailable:
+      description: INSTALLMENT_UNAVAILABLE or authentication unavailable
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
     BudgetValidationError:
       description: VALIDATION_ERROR
       headers:
@@ -3156,6 +5961,193 @@ components:
             $ref: '#/components/schemas/ErrorEnvelope'
     BudgetUnavailable:
       description: BUDGET_UNAVAILABLE or authentication unavailable
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    BillValidationError:
+      description: VALIDATION_ERROR
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    BillUnauthorized:
+      description: SESSION_INVALID
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    BillNotFound:
+      description: 'BILL_NOT_FOUND: missing or owned by another user'
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    BillConflict:
+      description: 'BILL_CONFLICT: stale version, clientId replay mismatch, or transaction already linked'
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    BillUnavailable:
+      description: BILL_UNAVAILABLE or authentication unavailable
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    CalendarValidationError:
+      description: VALIDATION_ERROR
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    CalendarUnauthorized:
+      description: SESSION_INVALID
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    CalendarUnavailable:
+      description: CALENDAR_UNAVAILABLE or authentication unavailable
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    ForecastValidationError:
+      description: VALIDATION_ERROR
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    ForecastUnauthorized:
+      description: SESSION_INVALID
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    ForecastUnavailable:
+      description: FORECAST_UNAVAILABLE or authentication unavailable
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    NotificationValidationError:
+      description: VALIDATION_ERROR
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    NotificationUnauthorized:
+      description: SESSION_INVALID or missing bearer
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    NotificationNotFound:
+      description: NOTIFICATION_NOT_FOUND
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    NotificationConflict:
+      description: NOTIFICATION_CONFLICT
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    NotificationSourceUnavailable:
+      description: NOTIFICATION_SOURCE_UNAVAILABLE
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    NotificationUnavailable:
+      description: NOTIFICATION_UNAVAILABLE or authentication unavailable
       headers:
         Cache-Control:
           schema:
@@ -3251,6 +6243,175 @@ components:
         checks session storage on every authenticated request. No refresh token in this
         phase.
   schemas:
+    ImportMapping:
+      type: object
+      additionalProperties: false
+      description: Source header name for each Freeva field; overrides the preset.
+      properties:
+        date: {type: string, maxLength: 100}
+        time: {type: string, maxLength: 100}
+        type: {type: string, maxLength: 100}
+        amount: {type: string, maxLength: 100}
+        currency: {type: string, maxLength: 100}
+        wallet: {type: string, maxLength: 100}
+        category: {type: string, maxLength: 100}
+        merchant: {type: string, maxLength: 100}
+        notes: {type: string, maxLength: 100}
+        id: {type: string, maxLength: 100}
+    TransactionImportRequest:
+      type: object
+      additionalProperties: false
+      required: [text]
+      properties:
+        text:
+          type: string
+          maxLength: 1000000
+          description: CSV text, UTF-8, BOM allowed, comma or semicolon separated.
+        preset:
+          type: string
+          enum: [freeva, money_lover, misa, custom]
+          description: Omitted = detected from the header.
+        dateFormat: {type: string, enum: [iso, dmy, mdy]}
+        numberFormat:
+          type: string
+          enum: [plain, dot_thousands, comma_thousands]
+          description: plain 1234.56; dot_thousands 1.234,56; comma_thousands 1,234.56.
+        mapping:
+          $ref: '#/components/schemas/ImportMapping'
+        walletMap:
+          type: object
+          maxProperties: 500
+          description: Source wallet name to Freeva account id.
+          additionalProperties: {type: string, format: uuid}
+        categoryMap:
+          type: object
+          maxProperties: 500
+          description: Source category name to Freeva category id; null means no category (income only).
+          additionalProperties: {type: string, format: uuid, nullable: true}
+        defaultAccountId:
+          type: string
+          format: uuid
+          description: Wallet for rows without a wallet value.
+    TransactionImportCommitRequest:
+      allOf:
+      - $ref: '#/components/schemas/TransactionImportRequest'
+      - type: object
+        required: [batchClientId]
+        properties:
+          batchClientId: {type: string, format: uuid}
+          includeDuplicates: {type: boolean, default: false}
+    TransactionImportRow:
+      type: object
+      required: [rows, status, errors, type, occurredOn, occurredTime, accountId, toAccountId, currencyCode, amountMinor, categoryId, merchant, notes, duplicateOfId]
+      properties:
+        rows:
+          type: array
+          items: {type: integer, minimum: 1}
+          description: 1-based data rows of the file (two for a paired transfer).
+        status:
+          type: string
+          enum: [ready, duplicate, invalid, created, skipped_duplicate]
+          description: Preview uses ready, duplicate, invalid; commit uses created, skipped_duplicate, invalid.
+        errors:
+          type: array
+          items:
+            type: string
+            enum: [DATE_INVALID, AMOUNT_INVALID, TYPE_UNSUPPORTED, WALLET_UNMAPPED, WALLET_AMBIGUOUS, CATEGORY_UNMAPPED, CATEGORY_AMBIGUOUS, CATEGORY_KIND_MISMATCH, CURRENCY_MISMATCH, TRANSFER_UNPAIRED, TRANSFER_SAME_WALLET, TRANSACTION_CONFLICT, VALIDATION_ERROR, ACCOUNT_NOT_FOUND]
+        type: {type: string, enum: [income, expense, transfer], nullable: true}
+        occurredOn: {type: string, format: date, nullable: true}
+        occurredTime: {type: string, nullable: true}
+        accountId: {type: string, format: uuid, nullable: true, description: Source wallet for a transfer.}
+        toAccountId: {type: string, format: uuid, nullable: true}
+        currencyCode: {type: string, nullable: true}
+        amountMinor: {type: string, nullable: true, description: Absolute amount in minor units.}
+        categoryId: {type: string, format: uuid, nullable: true}
+        merchant: {type: string, nullable: true}
+        notes: {type: string, nullable: true}
+        duplicateOfId: {type: string, format: uuid, nullable: true}
+    TransactionImportPreview:
+      type: object
+      required: [preset, columns, summary, unmapped, rows]
+      properties:
+        preset: {type: string, enum: [freeva, money_lover, misa, custom]}
+        columns:
+          type: object
+          description: Freeva field to the source header it was matched to.
+          additionalProperties: {type: string}
+        summary:
+          type: object
+          required: [rowCount, ready, duplicate, invalid]
+          properties:
+            rowCount: {type: integer}
+            ready: {type: integer}
+            duplicate: {type: integer}
+            invalid: {type: integer}
+        unmapped:
+          type: object
+          required: [wallets, categories]
+          properties:
+            wallets: {type: array, items: {type: string}}
+            categories: {type: array, items: {type: string}}
+        rows:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransactionImportRow'
+    TransactionImportBatch:
+      type: object
+      required: [id, clientId, preset, rowCount, createdCount, duplicateCount, invalidCount, remainingCount, undoneAt, createdAt]
+      properties:
+        id: {type: string, format: uuid}
+        clientId: {type: string, format: uuid}
+        preset: {type: string}
+        rowCount: {type: integer}
+        createdCount: {type: integer}
+        duplicateCount: {type: integer}
+        invalidCount: {type: integer}
+        remainingCount: {type: integer, description: Imported transactions still active.}
+        undoneAt: {type: string, format: date-time, nullable: true}
+        createdAt: {type: string, format: date-time}
+    TransactionImportResult:
+      type: object
+      required: [created, batch, rows]
+      properties:
+        created: {type: boolean}
+        batch:
+          $ref: '#/components/schemas/TransactionImportBatch'
+        rows:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/TransactionImportRow'
+    TransactionImportUndo:
+      type: object
+      required: [batch, undoneCount, skipped]
+      properties:
+        batch:
+          $ref: '#/components/schemas/TransactionImportBatch'
+        undoneCount: {type: integer}
+        skipped:
+          type: array
+          items:
+            type: object
+            required: [transactionId, reason]
+            properties:
+              transactionId: {type: string, format: uuid}
+              reason: {type: string, enum: [modified, linked]}
+    PutPushTokenRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - token
+      - platform
+      properties:
+        token:
+          type: string
+          minLength: 20
+          maxLength: 4096
+        platform:
+          type: string
+          enum:
+          - ios
+          - android
     Category:
       type: object
       additionalProperties: false
@@ -3680,6 +6841,600 @@ components:
           type: integer
         total:
           type: integer
+    GoalKind:
+      type: string
+      enum: [emergency, home, car, travel, education, wedding, retirement, custom]
+    Goal:
+      type: object
+      additionalProperties: false
+      required: [id, clientId, kind, name, currencyCode, targetMinor, currentMinor, remainingMinor, percentBps,
+        targetDate, monthsLeft, requiredPerMonthMinor, monthlyContributionMinor, status, accountId, icon,
+        colorToken, archivedAt, version, createdAt, updatedAt]
+      properties:
+        id: {type: string, format: uuid}
+        clientId: {type: string, format: uuid}
+        kind: {$ref: '#/components/schemas/GoalKind'}
+        name: {type: string, maxLength: 80}
+        currencyCode: {type: string, pattern: '^[A-Z]{3}$'}
+        targetMinor: {$ref: '#/components/schemas/ReportMoney'}
+        currentMinor: {$ref: '#/components/schemas/ReportMoney'}
+        remainingMinor: {$ref: '#/components/schemas/ReportMoney'}
+        percentBps:
+          type: integer
+          description: current * 10000 / target, floored (3333 = 33.33%). Above 10000 when over-saved.
+        targetDate:
+          type: [string, 'null']
+          format: date
+        monthsLeft:
+          type: [integer, 'null']
+          description: Whole calendar months to `targetDate`, a started month counts as one. 0 when the date has passed. Null without a date.
+        requiredPerMonthMinor:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ReportMoney'
+          description: ceil((target - current) / monthsLeft). 0 when reached. Null without a future date.
+        incomeShareBps:
+          type: integer
+          description: requiredPerMonthMinor as a share of average monthly income over the last 90 days (2000 = 20.00%). Omitted when income is unknown.
+        monthlyContributionMinor:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ReportMoney'
+        status:
+          type: string
+          enum: [active, reached, overdue]
+        accountId: {type: string, format: uuid}
+        icon: {type: string}
+        colorToken: {type: [string, 'null']}
+        archivedAt:
+          type: [string, 'null']
+          format: date-time
+        version: {type: integer}
+        createdAt: {type: string, format: date-time}
+        updatedAt: {type: string, format: date-time}
+    GoalList:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: {$ref: '#/components/schemas/Goal'}
+    GoalPresetList:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [kind, icon, colorToken]
+            properties:
+              kind: {$ref: '#/components/schemas/GoalKind'}
+              icon: {type: string}
+              colorToken: {type: string}
+    GoalPreviewRequest:
+      type: object
+      additionalProperties: false
+      required: [currencyCode, targetMinor, targetDate]
+      properties:
+        currencyCode: {type: string, pattern: '^[A-Z]{3}$'}
+        targetMinor: {type: string, pattern: '^[1-9][0-9]*$'}
+        currentMinor: {type: string, pattern: '^(0|[1-9][0-9]*)$'}
+        targetDate: {type: string, format: date}
+    GoalPreview:
+      type: object
+      additionalProperties: false
+      required: [monthsLeft, requiredPerMonthMinor]
+      properties:
+        monthsLeft:
+          type: integer
+          description: Whole calendar months to `targetDate`, a started month counts as one; 0 when the date has passed.
+        requiredPerMonthMinor:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ReportMoney'
+          description: ceil((target - current) / monthsLeft). Null when the date has passed.
+        incomeShareBps:
+          type: integer
+          description: requiredPerMonthMinor over the profile monthly income (2400 = 24.00%). Omitted without income or in another currency.
+    CreateGoalRequest:
+      type: object
+      additionalProperties: false
+      required: [clientId, kind, name, targetMinor, accountId]
+      properties:
+        clientId: {type: string, format: uuid}
+        kind: {$ref: '#/components/schemas/GoalKind'}
+        name: {type: string, minLength: 1, maxLength: 80}
+        targetMinor: {type: string, pattern: '^[1-9][0-9]*$'}
+        currentMinor: {type: string, pattern: '^(0|[1-9][0-9]*)$'}
+        targetDate: {type: [string, 'null'], format: date}
+        accountId: {type: string, format: uuid}
+        monthlyContributionMinor: {type: [string, 'null'], pattern: '^(0|[1-9][0-9]*)$'}
+        icon: {type: string}
+        colorToken: {type: [string, 'null']}
+    UpdateGoalRequest:
+      type: object
+      additionalProperties: false
+      required: [version]
+      properties:
+        version: {type: integer, minimum: 1}
+        kind: {$ref: '#/components/schemas/GoalKind'}
+        name: {type: string, minLength: 1, maxLength: 80}
+        targetMinor: {type: string, pattern: '^[1-9][0-9]*$'}
+        targetDate: {type: [string, 'null'], format: date}
+        monthlyContributionMinor: {type: [string, 'null'], pattern: '^(0|[1-9][0-9]*)$'}
+        icon: {type: string}
+        colorToken: {type: [string, 'null']}
+    MoveGoalRequest:
+      type: object
+      additionalProperties: false
+      required: [clientId, amountMinor, occurredOn]
+      properties:
+        clientId: {type: string, format: uuid}
+        amountMinor: {type: string, pattern: '^[1-9][0-9]*$'}
+        accountId:
+          type: [string, 'null']
+          format: uuid
+          description: Other wallet (same currency as the goal). Omit when the money already sits in the linked wallet.
+        occurredOn: {type: string, format: date}
+    GoalEntry:
+      type: object
+      additionalProperties: false
+      required: [id, kind, amountMinor, transfer, occurredOn, createdAt]
+      properties:
+        id: {type: string, format: uuid}
+        kind: {type: string, enum: [contribute, withdraw, adjust]}
+        amountMinor: {type: [string, 'null'], pattern: '^[1-9][0-9]*$', description: Null for adjust (only the number was corrected).}
+        transfer: {type: boolean, description: True when money moved between wallets.}
+        occurredOn: {type: string, format: date}
+        createdAt: {type: string, format: date-time}
+    GoalEntryList:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: {$ref: '#/components/schemas/GoalEntry'}
+    AdjustGoalRequest:
+      type: object
+      additionalProperties: false
+      required: [currentMinor, version]
+      properties:
+        currentMinor: {type: string, pattern: '^(0|[1-9][0-9]*)$'}
+        version: {type: integer, minimum: 1}
+    PersonalDebtDirection:
+      type: string
+      enum: [lent, borrowed]
+    CardInstallment:
+      type: object
+      additionalProperties: false
+      required: [id, clientId, transactionId, accountId, currencyCode, totalMinor, installmentMinor, installmentCount,
+        firstDueOn, status, remainingCount, nextDueOn, nextAmountMinor, closedAt, version, createdAt, updatedAt,
+        purchaseOn, purchaseMerchant, purchaseNote, purchaseCategoryId]
+      properties:
+        id: {type: string, format: uuid}
+        clientId: {type: string, format: uuid}
+        transactionId: {type: string, format: uuid, description: The purchase expense.}
+        accountId: {type: string, format: uuid, description: The credit wallet.}
+        currencyCode: {type: string, pattern: '^[A-Z]{3}$'}
+        totalMinor: {$ref: '#/components/schemas/ReportMoney'}
+        installmentMinor: {$ref: '#/components/schemas/ReportMoney'}
+        installmentCount: {type: integer, minimum: 2, maximum: 60}
+        firstDueOn: {type: string, format: date}
+        status: {type: string, enum: [active, closed]}
+        remainingCount: {type: integer, description: Periods due today or later; 0 when closed.}
+        nextDueOn: {type: [string, 'null'], format: date}
+        nextAmountMinor: {oneOf: [{$ref: '#/components/schemas/ReportMoney'}, {type: 'null'}]}
+        closedAt: {type: [string, 'null'], format: date-time}
+        version: {type: integer}
+        createdAt: {type: string, format: date-time}
+        updatedAt: {type: string, format: date-time}
+        purchaseOn: {type: [string, 'null'], format: date, description: Day of the purchase expense (MOB-P3-009).}
+        purchaseMerchant: {type: [string, 'null'], description: Merchant of the purchase; the app names the plan like the expense (merchant, else category).}
+        purchaseNote: {type: [string, 'null'], description: Notes of the purchase.}
+        purchaseCategoryId: {type: [string, 'null'], format: uuid}
+        periods:
+          type: array
+          description: Only on create, detail and close.
+          items:
+            type: object
+            additionalProperties: false
+            required: [index, dueOn, amountMinor, state]
+            properties:
+              index: {type: integer, minimum: 1}
+              dueOn: {type: string, format: date}
+              amountMinor: {$ref: '#/components/schemas/ReportMoney'}
+              state: {type: string, enum: [past, upcoming, closed]}
+    CardInstallmentList:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: {$ref: '#/components/schemas/CardInstallment'}
+    CardInstallmentDue:
+      type: object
+      additionalProperties: false
+      required: [from, to, items]
+      properties:
+        from: {type: string, format: date}
+        to: {type: string, format: date}
+        items:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [accountId, currencyCode, dueMinor, planCount]
+            properties:
+              accountId: {type: string, format: uuid}
+              currencyCode: {type: string, pattern: '^[A-Z]{3}$'}
+              dueMinor: {$ref: '#/components/schemas/ReportMoney'}
+              planCount: {type: integer}
+    CreateCardInstallmentRequest:
+      type: object
+      additionalProperties: false
+      required: [clientId, transactionId, installmentCount, firstDueOn]
+      properties:
+        clientId: {type: string, format: uuid}
+        transactionId: {type: string, format: uuid}
+        installmentCount: {type: integer, minimum: 2, maximum: 60}
+        installmentMinor: {type: [string, 'null'], pattern: '^[1-9][0-9]*$', description: Per period; omit for an even split rounded up. The last period takes what is left.}
+        firstDueOn: {type: string, format: date, description: On or after the purchase day.}
+    PreviewCardInstallmentRequest:
+      type: object
+      additionalProperties: false
+      required: [transactionId, installmentCount, firstDueOn]
+      properties:
+        transactionId: {type: string, format: uuid}
+        installmentCount: {type: integer, minimum: 2, maximum: 60}
+        installmentMinor: {type: [string, 'null'], pattern: '^[1-9][0-9]*$', description: Per period; omit for an even split rounded up.}
+        firstDueOn: {type: string, format: date}
+    CardInstallmentPreview:
+      type: object
+      additionalProperties: false
+      required: [transactionId, accountId, currencyCode, totalMinor, installmentMinor, installmentCount, firstDueOn, lastDueOn, periods]
+      properties:
+        transactionId: {type: string, format: uuid}
+        accountId: {type: string, format: uuid}
+        currencyCode: {type: string, pattern: '^[A-Z]{3}$'}
+        totalMinor: {$ref: '#/components/schemas/ReportMoney'}
+        installmentMinor: {$ref: '#/components/schemas/ReportMoney'}
+        installmentCount: {type: integer, minimum: 2, maximum: 60}
+        firstDueOn: {type: string, format: date}
+        lastDueOn: {type: string, format: date}
+        periods:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [index, dueOn, amountMinor]
+            properties:
+              index: {type: integer, minimum: 1}
+              dueOn: {type: string, format: date}
+              amountMinor: {$ref: '#/components/schemas/ReportMoney'}
+    CloseCardInstallmentRequest:
+      type: object
+      additionalProperties: false
+      required: [version]
+      properties:
+        version: {type: integer, minimum: 1}
+    PersonalDebt:
+      type: object
+      additionalProperties: false
+      required: [id, clientId, direction, counterparty, currencyCode, principalMinor, outstandingMinor, paidMinor,
+        accountId, occurredOn, dueDate, note, status, archivedAt, version, createdAt, updatedAt]
+      properties:
+        id: {type: string, format: uuid}
+        clientId: {type: string, format: uuid}
+        direction: {$ref: '#/components/schemas/PersonalDebtDirection'}
+        counterparty: {type: string, maxLength: 80}
+        currencyCode: {type: string, pattern: '^[A-Z]{3}$'}
+        principalMinor: {$ref: '#/components/schemas/ReportMoney'}
+        outstandingMinor: {$ref: '#/components/schemas/ReportMoney'}
+        paidMinor: {$ref: '#/components/schemas/ReportMoney'}
+        accountId: {type: string, format: uuid}
+        occurredOn: {type: string, format: date}
+        dueDate: {type: [string, 'null'], format: date}
+        note: {type: [string, 'null'], maxLength: 500}
+        status:
+          type: string
+          enum: [open, overdue, settled]
+        archivedAt: {type: [string, 'null'], format: date-time}
+        version: {type: integer}
+        createdAt: {type: string, format: date-time}
+        updatedAt: {type: string, format: date-time}
+    PersonalDebtList:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: {$ref: '#/components/schemas/PersonalDebt'}
+    PersonalDebtSummary:
+      type: object
+      additionalProperties: false
+      required: [owedToMe, iOwe, totals]
+      properties:
+        owedToMe:
+          type: array
+          description: Open debts you lent.
+          items: {$ref: '#/components/schemas/PersonalDebt'}
+        iOwe:
+          type: array
+          description: Open debts you borrowed.
+          items: {$ref: '#/components/schemas/PersonalDebt'}
+        totals:
+          type: array
+          description: Per currency, sorted by code. Receivable adds to assets and payable to debt in net worth.
+          items:
+            type: object
+            additionalProperties: false
+            required: [currencyCode, receivableMinor, payableMinor, receivableCount, payableCount]
+            properties:
+              currencyCode: {type: string, pattern: '^[A-Z]{3}$'}
+              receivableMinor: {$ref: '#/components/schemas/ReportMoney'}
+              payableMinor: {$ref: '#/components/schemas/ReportMoney'}
+              receivableCount: {type: integer}
+              payableCount: {type: integer}
+    PersonalDebtPaymentList:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [id, clientId, accountId, amountMinor, paidOn, createdAt]
+            properties:
+              id: {type: string, format: uuid}
+              clientId: {type: string, format: uuid}
+              accountId: {type: string, format: uuid}
+              amountMinor: {$ref: '#/components/schemas/ReportMoney'}
+              paidOn: {type: string, format: date}
+              createdAt: {type: string, format: date-time}
+    CreatePersonalDebtRequest:
+      type: object
+      additionalProperties: false
+      required: [clientId, direction, counterparty, amountMinor, accountId, occurredOn]
+      properties:
+        clientId: {type: string, format: uuid}
+        direction: {$ref: '#/components/schemas/PersonalDebtDirection'}
+        counterparty: {type: string, minLength: 1, maxLength: 80}
+        amountMinor: {type: string, pattern: '^[1-9][0-9]*$'}
+        accountId: {type: string, format: uuid}
+        occurredOn: {type: string, format: date}
+        dueDate: {type: [string, 'null'], format: date, description: On or after occurredOn.}
+        note: {type: [string, 'null'], maxLength: 500}
+    UpdatePersonalDebtRequest:
+      type: object
+      additionalProperties: false
+      required: [version]
+      properties:
+        version: {type: integer, minimum: 1}
+        counterparty: {type: string, minLength: 1, maxLength: 80}
+        dueDate: {type: [string, 'null'], format: date}
+        note: {type: [string, 'null'], maxLength: 500}
+    PayPersonalDebtRequest:
+      type: object
+      additionalProperties: false
+      required: [clientId, amountMinor, paidOn]
+      properties:
+        clientId: {type: string, format: uuid}
+        amountMinor: {type: string, pattern: '^[1-9][0-9]*$'}
+        accountId: {type: [string, 'null'], format: uuid}
+        paidOn: {type: string, format: date}
+    LoanKind:
+      type: string
+      enum: [card, personal, mortgage, other]
+    LoanFrequency:
+      type: string
+      enum: [weekly, monthly, quarterly, yearly]
+    Loan:
+      type: object
+      additionalProperties: false
+      required: [id, clientId, kind, name, currencyCode, principalMinor, outstandingMinor, paidMinor, percentBps,
+        interestRateBps, installmentMinor, frequency, startDate, endDate, nextDueDate, periodInterestMinor,
+        remainingPeriods, expectedInterestMinor, status, accountId, archivedAt, version, createdAt, updatedAt]
+      properties:
+        id: {type: string, format: uuid}
+        clientId: {type: string, format: uuid}
+        kind: {$ref: '#/components/schemas/LoanKind'}
+        name: {type: string, maxLength: 80}
+        currencyCode: {type: string, pattern: '^[A-Z]{3}$'}
+        principalMinor: {$ref: '#/components/schemas/ReportMoney'}
+        outstandingMinor: {$ref: '#/components/schemas/ReportMoney'}
+        paidMinor: {$ref: '#/components/schemas/ReportMoney'}
+        percentBps:
+          type: integer
+          description: paid * 10000 / principal, floored (2500 = 25.00%).
+        interestRateBps:
+          type: integer
+          description: Annual rate in basis points (1200 = 12.00%).
+        installmentMinor:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ReportMoney'
+        frequency: {$ref: '#/components/schemas/LoanFrequency'}
+        startDate: {type: string, format: date}
+        endDate: {type: [string, 'null'], format: date}
+        nextDueDate: {type: [string, 'null'], format: date}
+        periodInterestMinor:
+          allOf:
+          - $ref: '#/components/schemas/ReportMoney'
+          description: Interest of one period on the outstanding balance, rounded half up.
+        remainingPeriods:
+          type: [integer, 'null']
+          description: Periods left at the stored installment. Null when there is no installment or it never covers the interest.
+        expectedInterestMinor:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ReportMoney'
+        status:
+          type: string
+          enum: [active, overdue, paid_off]
+        accountId: {type: [string, 'null'], format: uuid}
+        archivedAt: {type: [string, 'null'], format: date-time}
+        version: {type: integer}
+        createdAt: {type: string, format: date-time}
+        updatedAt: {type: string, format: date-time}
+    LoanList:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: {$ref: '#/components/schemas/Loan'}
+    LoanSummary:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [currencyCode, loanCount, principalMinor, paidMinor, outstandingMinor, expectedInterestMinor, dueThisMonthMinor]
+            properties:
+              currencyCode: {type: string, pattern: '^[A-Z]{3}$'}
+              loanCount: {type: integer}
+              principalMinor: {$ref: '#/components/schemas/ReportMoney'}
+              paidMinor: {$ref: '#/components/schemas/ReportMoney'}
+              outstandingMinor: {$ref: '#/components/schemas/ReportMoney'}
+              expectedInterestMinor: {$ref: '#/components/schemas/ReportMoney'}
+              dueThisMonthMinor:
+                allOf:
+                - $ref: '#/components/schemas/ReportMoney'
+                description: Sum of the schedule payments whose due date falls in the current month (profile time zone).
+    LoanSchedule:
+      type: object
+      additionalProperties: false
+      required: [loanId, currencyCode, assumption, items, expectedInterestMinor]
+      properties:
+        loanId: {type: string, format: uuid}
+        currencyCode: {type: string, pattern: '^[A-Z]{3}$'}
+        assumption:
+          type: object
+          additionalProperties: false
+          required: [outstandingMinor, interestRateBps, frequency, installmentMinor]
+          properties:
+            outstandingMinor: {$ref: '#/components/schemas/ReportMoney'}
+            interestRateBps: {type: integer}
+            frequency: {$ref: '#/components/schemas/LoanFrequency'}
+            installmentMinor:
+              oneOf:
+              - type: 'null'
+              - $ref: '#/components/schemas/ReportMoney'
+        items:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [index, dueDate, interestMinor, principalMinor, paymentMinor, outstandingAfterMinor]
+            properties:
+              index: {type: integer, minimum: 1}
+              dueDate:
+                type: [string, 'null']
+                format: date
+                description: Row 1 is the loan's nextDueDate, each later row one period after (month ends clamp). Null without a next due date.
+              interestMinor: {$ref: '#/components/schemas/ReportMoney'}
+              principalMinor: {$ref: '#/components/schemas/ReportMoney'}
+              paymentMinor: {$ref: '#/components/schemas/ReportMoney'}
+              outstandingAfterMinor: {$ref: '#/components/schemas/ReportMoney'}
+        expectedInterestMinor:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ReportMoney'
+    LoanPaymentList:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [id, clientId, principalMinor, interestMinor, totalMinor, paidOn, createdAt]
+            properties:
+              id: {type: string, format: uuid}
+              clientId: {type: string, format: uuid}
+              principalMinor: {$ref: '#/components/schemas/ReportMoney'}
+              interestMinor: {$ref: '#/components/schemas/ReportMoney'}
+              totalMinor: {$ref: '#/components/schemas/ReportMoney'}
+              paidOn: {type: string, format: date}
+              createdAt: {type: string, format: date-time}
+    CreateLoanRequest:
+      type: object
+      additionalProperties: false
+      required: [clientId, kind, name, currencyCode, principalMinor, interestRateBps, frequency, startDate]
+      properties:
+        clientId: {type: string, format: uuid}
+        kind: {$ref: '#/components/schemas/LoanKind'}
+        name: {type: string, minLength: 1, maxLength: 80}
+        currencyCode: {type: string, pattern: '^[A-Z]{3}$'}
+        principalMinor: {type: string, pattern: '^[1-9][0-9]*$'}
+        outstandingMinor: {type: string, pattern: '^(0|[1-9][0-9]*)$'}
+        interestRateBps: {type: integer, minimum: 0, maximum: 100000}
+        installmentMinor: {type: [string, 'null'], pattern: '^(0|[1-9][0-9]*)$'}
+        frequency: {$ref: '#/components/schemas/LoanFrequency'}
+        startDate: {type: string, format: date}
+        endDate: {type: [string, 'null'], format: date}
+        nextDueDate: {type: [string, 'null'], format: date}
+        accountId: {type: [string, 'null'], format: uuid}
+    UpdateLoanRequest:
+      type: object
+      additionalProperties: false
+      required: [version]
+      properties:
+        version: {type: integer, minimum: 1}
+        kind: {$ref: '#/components/schemas/LoanKind'}
+        name: {type: string, minLength: 1, maxLength: 80}
+        interestRateBps: {type: integer, minimum: 0, maximum: 100000}
+        installmentMinor: {type: [string, 'null'], pattern: '^(0|[1-9][0-9]*)$'}
+        frequency: {$ref: '#/components/schemas/LoanFrequency'}
+        endDate: {type: [string, 'null'], format: date}
+        nextDueDate: {type: [string, 'null'], format: date}
+        accountId: {type: [string, 'null'], format: uuid}
+    PayLoanRequest:
+      type: object
+      additionalProperties: false
+      required: [clientId, amountMinor, paidOn]
+      properties:
+        clientId: {type: string, format: uuid}
+        amountMinor: {type: string, pattern: '^[1-9][0-9]*$'}
+        accountId:
+          type: [string, 'null']
+          format: uuid
+          description: Wallet the payment leaves (same currency as the loan). Defaults to the loan's linked wallet.
+        principalMinor: {type: [string, 'null'], pattern: '^(0|[1-9][0-9]*)$'}
+        interestMinor: {type: [string, 'null'], pattern: '^(0|[1-9][0-9]*)$'}
+        principalCategoryId:
+          type: [string, 'null']
+          format: uuid
+          deprecated: true
+          description: Ignored. The principal part is a one-leg `debt` transaction without a category (not spending).
+        interestCategoryId:
+          type: [string, 'null']
+          format: uuid
+          description: Expense category of the interest part. Omitted = the user's "Lãi vay" category (created once as a system category).
+        paidOn: {type: string, format: date}
+    AdjustLoanRequest:
+      type: object
+      additionalProperties: false
+      required: [outstandingMinor, version]
+      properties:
+        outstandingMinor: {type: string, pattern: '^(0|[1-9][0-9]*)$'}
+        version: {type: integer, minimum: 1}
     BudgetStatus:
       type: string
       enum: [healthy, warning, critical, over]
@@ -3790,6 +7545,154 @@ components:
           - $ref: '#/components/schemas/BudgetSummary'
         period:
           $ref: '#/components/schemas/CashflowPeriod'
+    BalanceForecast:
+      type: object
+      additionalProperties: false
+      required: [timezone, currencyCode, from, to, startingBalanceMinor, months, assumptions]
+      properties:
+        timezone: {type: string}
+        currencyCode: {type: string}
+        from: {type: string, format: date}
+        to: {type: string, format: date}
+        startingBalanceMinor: {type: string}
+        months:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [month, openingMinor, incomeMinor, expenseMinor, closingMinor]
+            properties:
+              month: {type: string, pattern: '^\d{4}-\d{2}$'}
+              openingMinor: {type: string}
+              incomeMinor: {type: string}
+              expenseMinor: {type: string}
+              closingMinor: {type: string}
+        assumptions:
+          type: object
+          additionalProperties: false
+          required: [balanceSource, includesCreditWallets, includesOneOffSpending, includedRuleIds, excludedRuleIds, otherCurrencyRuleIds]
+          properties:
+            balanceSource: {type: string, enum: [wallets, user]}
+            includesCreditWallets: {type: boolean}
+            includesOneOffSpending: {type: boolean}
+            includedRuleIds: {type: array, items: {type: string, format: uuid}}
+            excludedRuleIds: {type: array, items: {type: string, format: uuid}}
+            otherCurrencyRuleIds: {type: array, items: {type: string, format: uuid}}
+    CalendarMonth:
+      type: object
+      additionalProperties: false
+      required: [month, timezone, today, days]
+      properties:
+        month:
+          type: string
+          pattern: ^\d{4}-\d{2}$
+        timezone:
+          type: string
+          minLength: 1
+          maxLength: 64
+          description: IANA timezone from the user profile.
+        today:
+          type: string
+          format: date
+          description: Calendar date for the profile timezone at request time.
+        days:
+          type: array
+          items:
+            $ref: '#/components/schemas/CalendarDay'
+    CalendarDay:
+      type: object
+      additionalProperties: false
+      required: [date, transactions, recurring, bills]
+      properties:
+        date:
+          type: string
+          format: date
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/CalendarTransactionItem'
+        recurring:
+          type: array
+          items:
+            $ref: '#/components/schemas/CalendarRecurringItem'
+        bills:
+          type: array
+          items:
+            $ref: '#/components/schemas/CalendarBillItem'
+    CalendarTransactionItem:
+      type: object
+      additionalProperties: false
+      required: [id, type, amountMinor, currencyCode, categoryName]
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Representative leg id (lowest id for a transfer pair).
+        type:
+          type: string
+          enum: [income, expense, transfer]
+        amountMinor:
+          type: string
+          pattern: ^-?[0-9]+$
+          maxLength: 20
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        categoryName:
+          type: [string, 'null']
+    CalendarRecurringItem:
+      type: object
+      additionalProperties: false
+      required: [id, type, amountMinor, currencyCode, categoryName, occurredOn]
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Recurring rule id.
+        type:
+          type: string
+          enum: [income, expense, transfer]
+        amountMinor:
+          type: string
+          pattern: ^-?[0-9]+$
+          maxLength: 20
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        categoryName:
+          type: [string, 'null']
+        occurredOn:
+          type: string
+          format: date
+    CalendarBillItem:
+      type: object
+      additionalProperties: false
+      required: [id, name, dueOn, amountMinor, amountKind, currencyCode, paid, overdue]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        dueOn:
+          type: string
+          format: date
+        amountMinor:
+          type: string
+          pattern: ^[1-9][0-9]*$
+          maxLength: 20
+        amountKind:
+          type: string
+          enum: [fixed, estimated]
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        paid:
+          type: boolean
+        overdue:
+          type: boolean
     PutBudgetRequest:
       type: object
       additionalProperties: false
@@ -3808,7 +7711,7 @@ components:
             type: integer
             minimum: 1
             maximum: 100
-          description: Strictly increasing. Defaults to 70, 80, 90, 100.
+          description: Strictly increasing. Defaults to 80, 100.
         categories:
           type: array
           maxItems: 100
@@ -3837,6 +7740,49 @@ components:
           minimum: 1
           maximum: 2147483646
           description: Required when updating an existing row; omit when creating.
+    ConfirmRecurringRequest:
+      type: object
+      additionalProperties: false
+      required: [version, occurredOn]
+      properties:
+        version:
+          type: integer
+          minimum: 1
+          maximum: 2147483646
+        occurredOn:
+          type: string
+          format: date
+          description: The due day being confirmed — the rule's nextExecutionDate, or one already confirmed (replay).
+        transactionId:
+          type: string
+          format: uuid
+          description: Link an existing expense instead of posting a new one. Not combinable with accountId or amountMinor.
+        accountId:
+          type: string
+          format: uuid
+        categoryId:
+          type: string
+          format: uuid
+        amountMinor:
+          type: string
+          pattern: ^[1-9][0-9]*$
+          description: Positive magnitude overriding the rule amount (estimated bills).
+        paidOn:
+          type: string
+          format: date
+          description: Date of the posted expense; defaults to today in the profile timezone.
+    ConfirmRecurringResult:
+      type: object
+      additionalProperties: false
+      required: [rule, transactionId, replayed]
+      properties:
+        rule:
+          $ref: '#/components/schemas/RecurringRule'
+        transactionId:
+          type: string
+          format: uuid
+        replayed:
+          type: boolean
     RecurringRule:
       type: object
       additionalProperties: false
@@ -3844,6 +7790,11 @@ components:
       - id
       - clientId
       - type
+      - mode
+      - name
+      - amountKind
+      - remindDaysBefore
+      - overdue
       - unit
       - interval
       - amountMinor
@@ -3871,6 +7822,22 @@ components:
         type:
           type: string
           enum: [income, expense, transfer]
+        mode:
+          type: string
+          enum: [auto, remind]
+        name:
+          type: [string, 'null']
+          maxLength: 80
+        amountKind:
+          type: string
+          enum: [fixed, estimated]
+        remindDaysBefore:
+          type: integer
+          minimum: 0
+          maximum: 30
+        overdue:
+          type: boolean
+          description: Remind rules only — active and the due day is before today in the profile timezone.
         unit:
           type: string
           enum: [day, week, month, year]
@@ -3884,7 +7851,7 @@ components:
           type: string
           pattern: ^[A-Z]{3}$
         accountId:
-          type: string
+          type: [string, 'null']
           format: uuid
         categoryId:
           type: [string, 'null']
@@ -3933,7 +7900,6 @@ components:
       - interval
       - amountMinor
       - currencyCode
-      - accountId
       - startDate
       - nextExecutionDate
       properties:
@@ -3943,6 +7909,22 @@ components:
         type:
           type: string
           enum: [income, expense, transfer]
+        mode:
+          type: string
+          enum: [auto, remind]
+        name:
+          type: [string, 'null']
+          maxLength: 80
+        amountKind:
+          type: string
+          enum: [fixed, estimated]
+        remindDaysBefore:
+          type: integer
+          minimum: 0
+          maximum: 30
+        repeat:
+          type: boolean
+          description: false makes a one-off bill (endDate = startDate).
         unit:
           type: string
           enum: [day, week, month, year]
@@ -3956,8 +7938,9 @@ components:
           type: string
           pattern: ^[A-Z]{3}$
         accountId:
-          type: string
+          type: [string, 'null']
           format: uuid
+          description: Required for mode=auto; optional default wallet for mode=remind.
         categoryId:
           type: [string, 'null']
           format: uuid
@@ -3996,6 +7979,16 @@ components:
           type: integer
           minimum: 1
           maximum: 2147483646
+        name:
+          type: [string, 'null']
+          maxLength: 80
+        amountKind:
+          type: string
+          enum: [fixed, estimated]
+        remindDaysBefore:
+          type: integer
+          minimum: 0
+          maximum: 30
         unit:
           type: string
           enum: [day, week, month, year]
@@ -4009,7 +8002,7 @@ components:
           type: string
           pattern: ^[A-Z]{3}$
         accountId:
-          type: string
+          type: [string, 'null']
           format: uuid
         categoryId:
           type: [string, 'null']
@@ -4125,6 +8118,13 @@ components:
           type: string
           format: date
           pattern: ^\d{4}-\d{2}-\d{2}$
+        occurredTime:
+          type:
+          - string
+          - 'null'
+          pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+          description: Optional local clock HH:mm in the profile timezone (BE-P2-E09). Does not change occurredOn or report
+            buckets. Null or omitted on create leaves time unset.
         legs:
           type: array
           minItems: 1
@@ -4180,6 +8180,13 @@ components:
           type: string
           format: date
           pattern: ^\d{4}-\d{2}-\d{2}$
+        occurredTime:
+          type:
+          - string
+          - 'null'
+          pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+          description: Optional local clock HH:mm in the profile timezone (BE-P2-E09). Omitted keeps the current value; null
+            clears it. Does not change occurredOn.
         legs:
           type: array
           minItems: 1
@@ -4225,9 +8232,30 @@ components:
           type: boolean
           description: Soft-delete or restore the entire transfer pair. Other omitted fields retain their values; type and clientIds
             are immutable.
+        refunds:
+          type: string
+          enum: [cascade, keep]
+          description: 'With `deleted: true` on an expense that has refunds (BE-P3-008). Required then, else 409 REFUND_EXISTS. `cascade` deletes the refunds too (wallets lose that money); `keep` turns them into plain income without a category (wallet balances unchanged).'
     TransactionLeg:
       type: object
       additionalProperties: false
+      properties:
+        converted:
+          readOnly: true
+          description: Amount in the profile default currency. Returned only by GET by id; absent from create, list and update.
+          allOf:
+            - $ref: '#/components/schemas/DisplayConverted'
+        refundedMinor:
+          readOnly: true
+          type: [string, 'null']
+          pattern: ^[0-9]+$
+          maxLength: 20
+          description: Sum of active refunds of this expense in its currency, "0" when none (BE-P3-008). Null on other types. Returned only by GET list and GET by id.
+        installmentPlanId:
+          readOnly: true
+          type: [string, 'null']
+          format: uuid
+          description: Active card installment plan over this expense (MOB-P3-009). Null when none or closed, and on other types. Returned only by GET list and GET by id.
       required:
       - clientId
       - accountId
@@ -4236,11 +8264,13 @@ components:
       - id
       - type
       - occurredOn
+      - occurredTime
       - categoryId
       - notes
       - merchant
       - tagIds
       - transferGroupId
+      - refundOfId
       - fxQuoteId
       - deletedAt
       - version
@@ -4271,10 +8301,20 @@ components:
           - income
           - expense
           - transfer
+          - adjustment
+          - debt
+          - refund
         occurredOn:
           type: string
           format: date
           pattern: ^\d{4}-\d{2}-\d{2}$
+        occurredTime:
+          type:
+          - string
+          - 'null'
+          pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+          description: Optional local clock HH:mm in the profile timezone. Always present; null when unset. Reports still use
+            occurredOn only.
         categoryId:
           type:
           - string
@@ -4300,6 +8340,12 @@ components:
           - string
           - 'null'
           format: uuid
+        refundOfId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          description: Only on `refund`; the expense it returns money for (BE-P3-008).
         fxQuoteId:
           type:
           - string
@@ -4320,6 +8366,78 @@ components:
         updatedAt:
           type: string
           format: date-time
+    RefundRequest:
+      type: object
+      additionalProperties: false
+      required: [clientId, accountId, amountMinor]
+      properties:
+        clientId:
+          type: string
+          format: uuid
+        accountId:
+          type: string
+          format: uuid
+          description: Wallet that receives the money. Must use the expense's currency.
+        amountMinor:
+          type: string
+          pattern: ^[0-9]+$
+          maxLength: 20
+          description: Positive; at most the expense amount minus refunds already made.
+        occurredOn:
+          type: [string, 'null']
+          format: date
+          description: Defaults to today in the profile timezone.
+        notes:
+          type: [string, 'null']
+          maxLength: 2000
+    ReconcileRequest:
+      type: object
+      additionalProperties: false
+      required: [clientId, actualBalanceMinor]
+      properties:
+        clientId:
+          type: string
+          format: uuid
+        actualBalanceMinor:
+          type: string
+          pattern: ^-?[0-9]+$
+          maxLength: 20
+          description: Real balance the user sees; for a credit wallet, the amount owed (debt).
+        occurredOn:
+          type: [string, 'null']
+          format: date
+          description: Defaults to today in the profile timezone.
+        notes:
+          type: [string, 'null']
+          maxLength: 2000
+        dryRun:
+          type: boolean
+          description: Only compute the difference.
+    ReconcileResult:
+      type: object
+      additionalProperties: false
+      required: [accountId, currencyCode, currentBalanceMinor, targetBalanceMinor, deltaMinor, transaction]
+      properties:
+        accountId:
+          type: string
+          format: uuid
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        currentBalanceMinor:
+          type: string
+          pattern: ^-?[0-9]+$
+        targetBalanceMinor:
+          type: string
+          pattern: ^-?[0-9]+$
+          description: Ledger balance to reach; a credit wallet's debt is negative.
+        deltaMinor:
+          type: string
+          pattern: ^-?[0-9]+$
+        transaction:
+          oneOf:
+          - $ref: '#/components/schemas/TransactionBundle'
+          - type: 'null'
     TransactionBundle:
       type: object
       additionalProperties: false
@@ -4555,11 +8673,11 @@ components:
           description: Transactions matching the filters; a transfer counts once.
         totals:
           type: array
-          description: Per currency, sorted by code; currencies with all four sums zero are omitted. Transfers are excluded from income and expense and summed apart per matching leg. No FX conversion.
+          description: Per currency, sorted by code; currencies with all six sums zero are omitted. Lend/borrow legs (`debt`, BE-P3-007) are summed apart and are not income or expense. Wallet reconciliation adjustments are summed apart and are not income or expense. Transfers are excluded from income and expense and summed apart per matching leg. No FX conversion.
           items:
             type: object
             additionalProperties: false
-            required: [currency, incomeMinor, expenseMinor, transferInMinor, transferOutMinor]
+            required: [currency, incomeMinor, expenseMinor, transferInMinor, transferOutMinor, adjustmentMinor, debtMinor, refundMinor]
             properties:
               currency:
                 type: string
@@ -4579,6 +8697,18 @@ components:
                 type: string
                 pattern: ^-?[0-9]+$
                 description: Sum of matching transfer legs that take money (negative or zero). With one `accountId`, the money moved out of that wallet.
+              adjustmentMinor:
+                type: string
+                pattern: ^-?[0-9]+$
+                description: Sum of matching `adjustment` rows (wallet reconciliation, BE-P3-005); signed.
+              debtMinor:
+                type: string
+                pattern: ^-?[0-9]+$
+                description: Sum of matching `debt` rows (lend / borrow money movements, BE-P3-007); signed. Not income or expense.
+              refundMinor:
+                type: string
+                pattern: ^-?[0-9]+$
+                description: Sum of matching `refund` rows (BE-P3-008); positive. Not income; reports net it out of the original expense.
     CreateFinancialAccount:
       type: object
       additionalProperties: false
@@ -4638,6 +8768,14 @@ components:
           - 'null'
           minimum: 1
           maximum: 28
+        minimumPaymentMinor:
+          type:
+          - string
+          - 'null'
+          pattern: ^-?[0-9]+(?![\s\S])
+          maxLength: 20
+          description: Nonnegative integer minor units, at most 9223372036854775807. Only
+            for credit accounts. Optional; not used to create payments.
       description: Card fields must be null or omitted for non-credit accounts. Omitted
         card fields default to null. clientId is unique per owner; identical normalized
         retries return the existing account, including archived accounts; differing fields
@@ -4698,6 +8836,14 @@ components:
           - 'null'
           minimum: 1
           maximum: 28
+        minimumPaymentMinor:
+          type:
+          - string
+          - 'null'
+          pattern: ^-?[0-9]+(?![\s\S])
+          maxLength: 20
+          description: Nonnegative integer minor units, at most 9223372036854775807. Only
+            for credit accounts. Optional; not used to create payments.
         archived:
           type: boolean
       description: Partial update. Omitted fields are preserved; null is allowed only
@@ -4719,6 +8865,7 @@ components:
       - creditLimitMinor
       - statementCloseDay
       - paymentDueDay
+      - minimumPaymentMinor
       - balanceMinor
       - version
       - archivedAt
@@ -4726,6 +8873,11 @@ components:
       - updatedAt
       - hasTransactions
       properties:
+        converted:
+          readOnly: true
+          description: Balance in the profile default currency. Returned only by GET by id; absent from create, list and update.
+          allOf:
+            - $ref: '#/components/schemas/DisplayConverted'
         hasTransactions:
           type: boolean
           description: True when the account has any transaction, deleted ones included. Type and currencyCode
@@ -4782,6 +8934,14 @@ components:
           - 'null'
           minimum: 1
           maximum: 28
+        minimumPaymentMinor:
+          type:
+          - string
+          - 'null'
+          pattern: ^-?[0-9]+(?![\s\S])
+          maxLength: 20
+          description: Nonnegative integer minor units, at most 9223372036854775807. Only
+            for credit accounts. Optional; not used to create payments.
         balanceMinor:
           type: string
           pattern: ^-?[0-9]+(?![\s\S])
@@ -4921,6 +9081,16 @@ components:
           items:
             type: string
           description: Onboarding goals saved via PATCH /profile/onboarding. Returned on GET and PUT; not accepted on PUT.
+        monthlyIncomeMinor:
+          type: [string, 'null']
+          readOnly: true
+          pattern: ^[1-9][0-9]{0,17}$
+          description: Monthly income, positive integer minor units of the default currency at that time. Null until typed. Saved via PATCH /profile/onboarding or PUT /profile/monthly-income. Changing defaultCurrencyCode does not convert it. Never logged. Not accepted on PUT /profile.
+        displayCurrencyCode:
+          type: [string, 'null']
+          readOnly: true
+          pattern: ^[A-Z]{3}$
+          description: Currency the Overview converts into. Null means defaultCurrencyCode. Saved via PUT /profile/display-currency. Not accepted on PUT /profile.
     OnboardingAnswers:
       type: object
       additionalProperties: false
@@ -4931,13 +9101,20 @@ components:
           uniqueItems: true
           items:
             type: string
-            enum: [track, save, budget, debt, emergency, understand]
-        trackingHabit:
+            enum: [track, save, budget]
+        monthlyIncomeMinor:
           type: string
-          enum: [manual, spreadsheet, app, none]
-        reviewCadence:
-          type: string
-          enum: [daily, weekly, monthly, rarely]
+          pattern: ^[1-9][0-9]{0,17}$
+          description: Monthly income, positive integer minor units of the profile default currency. Omit to keep the stored value.
+    MonthlyIncomeUpdate:
+      type: object
+      additionalProperties: false
+      required: [monthlyIncomeMinor]
+      properties:
+        monthlyIncomeMinor:
+          type: [string, 'null']
+          pattern: ^[1-9][0-9]{0,17}$
+          description: Positive integer minor units of the profile default currency; `null` clears it.
     ProfileOptions:
       type: object
       additionalProperties: false
@@ -5027,6 +9204,144 @@ components:
         createdAt:
           type: string
           format: date-time
+    FxRate:
+      type: object
+      additionalProperties: false
+      required: [fromCode, toCode, rate, quotedAt]
+      properties:
+        fromCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        toCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        rate:
+          type: string
+          description: Decimal with 8 fractional digits, 1 `fromCode` = rate `toCode`. Not money. Typed by the user, never fetched.
+        quotedAt:
+          type: string
+          format: date-time
+    FxRateList:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/FxRate'
+    PutFxRate:
+      type: object
+      additionalProperties: false
+      required: [rate]
+      properties:
+        rate:
+          type: string
+          pattern: ^[0-9]{1,10}(\.[0-9]{1,8})?$
+          description: Greater than zero.
+        quotedAt:
+          type: string
+          format: date-time
+          description: Omitted means now. Not in the future.
+    DisplayCurrencyUpdate:
+      type: object
+      additionalProperties: false
+      required: [currencyCode]
+      properties:
+        currencyCode:
+          type: [string, 'null']
+          pattern: ^[A-Z]{3}$
+          description: Must exist in the currency catalog. Null means the profile default currency.
+    UnconvertedCurrency:
+      type: object
+      additionalProperties: false
+      required: [currency, reason]
+      properties:
+        currency:
+          type: string
+          pattern: ^[A-Z]{3}$
+        reason:
+          type: string
+          enum: [MISSING_RATE, FRACTIONAL]
+          description: No rate typed for this currency, or an amount would need a fraction of a minor unit. The currency adds nothing to the converted totals.
+    NetWorthConverted:
+      type: object
+      additionalProperties: false
+      required: [currency, assetsMinor, liabilitiesMinor, netWorthMinor, unconverted]
+      description: Display-only totals in `currency`. Only currencies that convert exactly are included.
+      properties:
+        currency:
+          type: string
+          pattern: ^[A-Z]{3}$
+        assetsMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        liabilitiesMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        netWorthMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        unconverted:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnconvertedCurrency'
+    CashflowConverted:
+      type: object
+      additionalProperties: false
+      required: [currency, incomeMinor, expenseMinor, netMinor, unconverted]
+      description: Display-only totals in `currency`. Only currencies that convert exactly are included. byCategory, byAccount and comparison stay per currency.
+      properties:
+        currency:
+          type: string
+          pattern: ^[A-Z]{3}$
+        incomeMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        expenseMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        netMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        unconverted:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnconvertedCurrency'
+    DisplayConverted:
+      type: [object, 'null']
+      additionalProperties: false
+      required: [currencyCode, amountMinor, rate, quotedAt]
+      description: The amount in the profile default currency, with the rate and time used. Null for the profile currency itself, with no rate typed, or when the result would be fractional. Display only; never stored.
+      properties:
+        currencyCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        amountMinor:
+          type: string
+          pattern: ^-?[0-9]+$
+        rate:
+          type: string
+        quotedAt:
+          type: string
+          format: date-time
+    AccountExportFxRate:
+      type: object
+      additionalProperties: false
+      required: [fromCode, toCode, rate, quotedAt, createdAt, updatedAt]
+      properties:
+        fromCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        toCode:
+          type: string
+          pattern: ^[A-Z]{3}$
+        rate:
+          type: string
+          description: Decimal with 8 fractional digits. Not money.
+        quotedAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
     ErrorEnvelope:
       type: object
       required: [error]
@@ -5075,10 +9390,10 @@ components:
         email: *id001
         password: &id003
           type: string
-          minLength: 12
+          minLength: 8
           maxLength: 128
           writeOnly: true
-          description: Not trimmed or normalized. Login accepts any 12–128 characters, so passwords set before
+          description: Not trimmed or normalized. Login accepts any 8–128 characters, so passwords set before
             the letter-and-digit rule still work.
     AuthRegisterRequest:
       type: object
@@ -5091,7 +9406,7 @@ components:
         email: *id001
         password: &id004
           type: string
-          minLength: 12
+          minLength: 8
           maxLength: 128
           pattern: ^(?=[\s\S]*\p{L})(?=[\s\S]*\p{Nd})[\s\S]*$
           writeOnly: true
@@ -5195,7 +9510,11 @@ components:
       - totals
       - byCategory
       - byAccount
+      - comparison
+      - topMerchants
       properties:
+        converted:
+          $ref: '#/components/schemas/CashflowConverted'
         period:
           $ref: '#/components/schemas/CashflowPeriod'
         totals:
@@ -5210,6 +9529,13 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CashflowAccountTotal'
+        comparison:
+          $ref: '#/components/schemas/CashflowComparison'
+        topMerchants:
+          type: array
+          description: Up to 10 expense merchants per currency in the requested period, sorted by |expense| descending then merchant name.
+          items:
+            $ref: '#/components/schemas/CashflowMerchantTotal'
     TrendReport:
       type: object
       additionalProperties: false
@@ -5294,6 +9620,7 @@ components:
       - incomeMinor
       - expenseMinor
       - netMinor
+      - savingsRateBps
       properties:
         currency:
           type: string
@@ -5304,7 +9631,216 @@ components:
           $ref: '#/components/schemas/ReportMoney'
         netMinor:
           $ref: '#/components/schemas/ReportMoney'
-          description: incomeMinor + expenseMinor. Transfers are excluded.
+          description: incomeMinor + expenseMinor. Transfers are excluded. This is savings for the period.
+        savingsRateBps:
+          type:
+          - integer
+          - 'null'
+          description: netMinor * 10000 / incomeMinor when incomeMinor > 0; otherwise null. 3933 means 39.33%.
+    MonthReviewReport:
+      type: object
+      additionalProperties: false
+      required:
+      - period
+      - currencies
+      properties:
+        period:
+          type: object
+          additionalProperties: false
+          required:
+          - kind
+          - from
+          - to
+          - timezone
+          - fiscalMonthStartDay
+          properties:
+            kind:
+              type: string
+              enum:
+              - month
+            from:
+              type: string
+              format: date
+            to:
+              type: string
+              format: date
+            timezone:
+              type: string
+            fiscalMonthStartDay:
+              type: integer
+              minimum: 1
+              maximum: 28
+        currencies:
+          type: array
+          description: Currencies with income or expense in the month, sorted by code. Amounts match cashflow totals for the same period.
+          items:
+            $ref: '#/components/schemas/MonthReviewCurrency'
+    MonthReviewCurrency:
+      type: object
+      additionalProperties: false
+      required:
+      - currency
+      - incomeMinor
+      - expenseMinor
+      - savingsMinor
+      - savingsRateBps
+      - topCategories
+      properties:
+        currency:
+          type: string
+          pattern: ^[A-Z]{3}$
+        incomeMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        expenseMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        savingsMinor:
+          $ref: '#/components/schemas/ReportMoney'
+          description: Same as cashflow netMinor for the month (income + expense). Transfers excluded.
+        savingsRateBps:
+          type:
+          - integer
+          - 'null'
+          description: Same as cashflow savingsRateBps. 3933 means 39.33%. Null when income is not positive.
+        topCategories:
+          type: array
+          maxItems: 3
+          description: Up to 3 leaf expense categories by |expense| descending, then categoryId (null last).
+          items:
+            $ref: '#/components/schemas/MonthReviewCategory'
+    MonthReviewCategory:
+      type: object
+      additionalProperties: false
+      required:
+      - categoryId
+      - parentId
+      - expenseMinor
+      - transactionCount
+      properties:
+        categoryId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        parentId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        expenseMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        transactionCount:
+          type: integer
+          minimum: 1
+    CashflowComparison:
+      type: object
+      additionalProperties: false
+      required:
+      - from
+      - to
+      - totals
+      - expenseDeltaBps
+      properties:
+        from:
+          type: string
+          format: date
+        to:
+          type: string
+          format: date
+        totals:
+          type: array
+          description: Cashflow totals for the adjacent previous period.
+          items:
+            $ref: '#/components/schemas/CashflowTotal'
+        expenseDeltaBps:
+          type: array
+          description: Per-currency change in |expense| versus the previous period. Currencies present in either period are included. Null delta when previous expense is zero.
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - currency
+            - deltaBps
+            properties:
+              currency:
+                type: string
+                pattern: ^[A-Z]{3}$
+              deltaBps:
+                type:
+                - integer
+                - 'null'
+                description: (|current| - |previous|) * 10000 / |previous|. Positive means more spent.
+    CashflowMerchantTotal:
+      type: object
+      additionalProperties: false
+      required:
+      - currency
+      - merchant
+      - expenseMinor
+      - transactionCount
+      properties:
+        currency:
+          type: string
+          pattern: ^[A-Z]{3}$
+        merchant:
+          type: string
+          minLength: 1
+          maxLength: 200
+          description: Exact stored merchant string; case-sensitive grouping.
+        expenseMinor:
+          $ref: '#/components/schemas/ReportMoney'
+        transactionCount:
+          type: integer
+          minimum: 1
+    SeriesReport:
+      type: object
+      additionalProperties: false
+      required:
+      - window
+      - buckets
+      properties:
+        window:
+          type: string
+          enum:
+          - 7d
+          - 30d
+          - 3m
+          - 6m
+          - 1y
+          - all
+        buckets:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - from
+            - to
+            - totals
+            properties:
+              from:
+                type: string
+                format: date
+              to:
+                type: string
+                format: date
+              totals:
+                type: array
+                description: Currencies with activity in the bucket, sorted by code.
+                items:
+                  type: object
+                  additionalProperties: false
+                  required:
+                  - currency
+                  - incomeMinor
+                  - expenseMinor
+                  properties:
+                    currency:
+                      type: string
+                      pattern: ^[A-Z]{3}$
+                    incomeMinor:
+                      $ref: '#/components/schemas/ReportMoney'
+                    expenseMinor:
+                      $ref: '#/components/schemas/ReportMoney'
     CashflowCategoryTotal:
       type: object
       additionalProperties: false
@@ -5347,6 +9883,9 @@ components:
       - incomeMinor
       - expenseMinor
       - transferMinor
+      - adjustmentMinor
+      - debtMinor
+      - refundMinor
       - netMinor
       properties:
         accountId:
@@ -5361,15 +9900,26 @@ components:
           $ref: '#/components/schemas/ReportMoney'
         transferMinor:
           $ref: '#/components/schemas/ReportMoney'
+        adjustmentMinor:
+          $ref: '#/components/schemas/ReportMoney'
+          description: Wallet reconciliation adjustments (BE-P3-005). Not income or expense; excluded from totals and savings rate.
+        debtMinor:
+          $ref: '#/components/schemas/ReportMoney'
+          description: Lend / borrow money movements (BE-P3-007). Not income or expense; excluded from totals, budgets and savings rate.
+        refundMinor:
+          $ref: '#/components/schemas/ReportMoney'
+          description: Refunds received in this wallet in the period (BE-P3-008), by the refund's own date. Totals and byCategory net them out of the original expense instead.
         netMinor:
           $ref: '#/components/schemas/ReportMoney'
-          description: incomeMinor + expenseMinor + transferMinor for this account.
+          description: incomeMinor + expenseMinor + transferMinor + adjustmentMinor + debtMinor + refundMinor for this account.
     NetWorthReport:
       type: object
       additionalProperties: false
       required:
       - items
       properties:
+        converted:
+          $ref: '#/components/schemas/NetWorthConverted'
         items:
           type: array
           items:
@@ -5395,6 +9945,138 @@ components:
         netWorthMinor:
           $ref: '#/components/schemas/ReportMoney'
           description: assetsMinor + liabilitiesMinor.
+    NotificationKind:
+      type: string
+      enum: [budget, goal, debt, card, recurring, month_review, insight, security, daily_log]
+    NotificationKindToggle:
+      type: object
+      additionalProperties: false
+      required: [kind, enabled, available, managedLocally]
+      properties:
+        kind:
+          $ref: '#/components/schemas/NotificationKind'
+        enabled:
+          type: boolean
+        available:
+          type: boolean
+          description: False when the source module is not shipped yet.
+        managedLocally:
+          type: boolean
+          description: True for security session alerts stored on device.
+    NotificationPreferences:
+      type: object
+      additionalProperties: false
+      required: [kinds, dailyLogTime, quietHoursEnabled, quietStart, quietEnd, version, updatedAt]
+      properties:
+        kinds:
+          type: array
+          items:
+            $ref: '#/components/schemas/NotificationKindToggle'
+        dailyLogTime:
+          type: string
+          description: Daily expense-log reminder time (HH:mm, profile timezone). Used when the daily_log kind is enabled.
+          pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+        quietHoursEnabled:
+          type: boolean
+        quietStart:
+          type: string
+          pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+        quietEnd:
+          type: string
+          pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+        version:
+          type: integer
+          minimum: 1
+        updatedAt:
+          type: string
+          format: date-time
+    PutNotificationPreferencesRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        budgetEnabled:
+          type: boolean
+        goalEnabled:
+          type: boolean
+        debtEnabled:
+          type: boolean
+        cardEnabled:
+          type: boolean
+        recurringEnabled:
+          type: boolean
+        monthReviewEnabled:
+          type: boolean
+        insightEnabled:
+          type: boolean
+        dailyLogEnabled:
+          type: boolean
+          description: Remind to log expenses when nothing was logged today (default off).
+        dailyLogTime:
+          type: string
+          pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+        quietHoursEnabled:
+          type: boolean
+        quietStart:
+          type: string
+          pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+        quietEnd:
+          type: string
+          pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+        version:
+          type: integer
+          minimum: 1
+    NotificationItem:
+      type: object
+      additionalProperties: false
+      required: [id, kind, titleKey, bodyKey, params, createdAt, readAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        kind:
+          $ref: '#/components/schemas/NotificationKind'
+        titleKey:
+          type: string
+        bodyKey:
+          type: string
+        params:
+          type: object
+          additionalProperties:
+            oneOf:
+            - type: string
+            - type: number
+          description: No balances, amounts, emails, or rule names.
+        createdAt:
+          type: string
+          format: date-time
+        readAt:
+          type: [string, 'null']
+          format: date-time
+    NotificationList:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/NotificationItem'
+    NotificationEvaluateResult:
+      type: object
+      additionalProperties: false
+      required: [created]
+      properties:
+        created:
+          type: integer
+          minimum: 0
+    NotificationReadAllResult:
+      type: object
+      additionalProperties: false
+      required: [updated]
+      properties:
+        updated:
+          type: integer
+          minimum: 0
     AccountExport:
       type: object
       additionalProperties: false
@@ -5409,9 +10091,14 @@ components:
       - categories
       - tags
       - fxQuotes
+      - fxRates
       - recurringRules
       - budget
       - budgetMonths
+      - goals
+      - goalEntries
+      - notificationPreferences
+      - notifications
       - transactions
       properties:
         schemaVersion:
@@ -5452,6 +10139,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AccountExportFxQuote'
+        fxRates:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountExportFxRate'
         recurringRules:
           type: array
           items:
@@ -5464,14 +10155,154 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AccountExportBudgetMonth'
+        goals:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountExportGoal'
+        goalEntries:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountExportGoalEntry'
+        cardInstallmentPlans:
+          type: array
+          description: Installment schedules (BE-P3-009). Ids reference the purchase transaction and wallet.
+          items:
+            type: object
+            additionalProperties: true
+        notificationPreferences:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/AccountExportNotificationPreferences'
+        notifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountExportNotification'
         transactions:
           type: array
           items:
             $ref: '#/components/schemas/AccountExportTransaction'
+    AccountExportGoal:
+      type: object
+      additionalProperties: false
+      required: [id, clientId, kind, name, currencyCode, targetMinor, currentMinor, targetDate, accountId,
+        monthlyContributionMinor, icon, colorToken, archivedAt, version, createdAt, updatedAt]
+      properties:
+        id: {type: string, format: uuid}
+        clientId: {type: string, format: uuid}
+        kind: {$ref: '#/components/schemas/GoalKind'}
+        name: {type: string}
+        currencyCode: {type: string, pattern: '^[A-Z]{3}$'}
+        targetMinor: {$ref: '#/components/schemas/ReportMoney'}
+        currentMinor: {$ref: '#/components/schemas/ReportMoney'}
+        targetDate: {type: [string, 'null'], format: date}
+        accountId: {type: string, format: uuid}
+        monthlyContributionMinor:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ReportMoney'
+        icon: {type: string}
+        colorToken: {type: [string, 'null']}
+        archivedAt: {type: [string, 'null'], format: date-time}
+        version: {type: integer}
+        createdAt: {type: string, format: date-time}
+        updatedAt: {type: string, format: date-time}
+    AccountExportGoalEntry:
+      type: object
+      additionalProperties: false
+      required: [id, goalId, clientId, kind, amountMinor, transactionClientId, occurredOn, createdAt]
+      properties:
+        id: {type: string, format: uuid}
+        goalId: {type: string, format: uuid}
+        clientId: {type: string, format: uuid}
+        kind: {type: string, enum: [contribute, withdraw]}
+        amountMinor: {$ref: '#/components/schemas/ReportMoney'}
+        transactionClientId: {type: [string, 'null'], format: uuid}
+        occurredOn: {type: string, format: date}
+        createdAt: {type: string, format: date-time}
+    AccountExportNotificationPreferences:
+      type: object
+      additionalProperties: false
+      required:
+      - budgetEnabled
+      - goalEnabled
+      - debtEnabled
+      - cardEnabled
+      - recurringEnabled
+      - monthReviewEnabled
+      - insightEnabled
+      - dailyLogEnabled
+      - dailyLogTime
+      - quietHoursEnabled
+      - quietStart
+      - quietEnd
+      - version
+      - createdAt
+      - updatedAt
+      properties:
+        budgetEnabled:
+          type: boolean
+        goalEnabled:
+          type: boolean
+        debtEnabled:
+          type: boolean
+        cardEnabled:
+          type: boolean
+        recurringEnabled:
+          type: boolean
+        monthReviewEnabled:
+          type: boolean
+        insightEnabled:
+          type: boolean
+        dailyLogEnabled:
+          type: boolean
+        dailyLogTime:
+          type: string
+        quietHoursEnabled:
+          type: boolean
+        quietStart:
+          type: string
+        quietEnd:
+          type: string
+        version:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    AccountExportNotification:
+      type: object
+      additionalProperties: false
+      required: [id, kind, dedupeKey, titleKey, bodyKey, params, createdAt, readAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        kind:
+          type: string
+        dedupeKey:
+          type: string
+        titleKey:
+          type: string
+        bodyKey:
+          type: string
+        params:
+          type: object
+          additionalProperties:
+            oneOf:
+            - type: string
+            - type: number
+        createdAt:
+          type: string
+          format: date-time
+        readAt:
+          type: [string, 'null']
+          format: date-time
     AccountExportProfile:
       type: object
       additionalProperties: false
-      required: [email, displayName, locale, timezone, defaultCurrencyCode, fiscalMonthStartDay, emailVerifiedAt, categoriesInitializedAt, categoriesSupplementedAt, createdAt, updatedAt]
+      required: [email, displayName, locale, timezone, defaultCurrencyCode, fiscalMonthStartDay, onboardingGoals, monthlyIncomeMinor, displayCurrencyCode, emailVerifiedAt, categoriesInitializedAt, categoriesSupplementedAt, createdAt, updatedAt]
       properties:
         email:
           type: string
@@ -5490,6 +10321,16 @@ components:
           type: integer
           minimum: 1
           maximum: 28
+        onboardingGoals:
+          type: array
+          items:
+            type: string
+        monthlyIncomeMinor:
+          type: [string, 'null']
+          pattern: ^[1-9][0-9]{0,17}$
+        displayCurrencyCode:
+          type: [string, 'null']
+          pattern: ^[A-Z]{3}$
         emailVerifiedAt:
           type: [string, 'null']
           format: date-time
@@ -5508,7 +10349,7 @@ components:
     AccountExportFinancialAccount:
       type: object
       additionalProperties: false
-      required: [id, clientId, name, type, currencyCode, initialBalanceMinor, sortOrder, archivedAt, creditLimitMinor, statementCloseDay, paymentDueDay, version, createdAt, updatedAt]
+      required: [id, clientId, name, type, currencyCode, initialBalanceMinor, sortOrder, archivedAt, creditLimitMinor, statementCloseDay, paymentDueDay, minimumPaymentMinor, version, createdAt, updatedAt]
       properties:
         id:
           type: string
@@ -5543,6 +10384,10 @@ components:
           type: [integer, 'null']
           minimum: 1
           maximum: 28
+        minimumPaymentMinor:
+          oneOf:
+          - $ref: '#/components/schemas/ReportMoney'
+          - type: 'null'
         version:
           type: integer
         createdAt:
@@ -5655,7 +10500,7 @@ components:
     AccountExportRecurringRule:
       type: object
       additionalProperties: false
-      required: [id, clientId, type, unit, interval, amountMinor, currencyCode, accountId, categoryId, counterAccountId, counterAmountMinor, counterCurrencyCode, fxRate, startDate, endDate, nextExecutionDate, active, version, createdAt, updatedAt]
+      required: [id, clientId, type, mode, name, amountKind, remindDaysBefore, unit, interval, amountMinor, currencyCode, accountId, categoryId, counterAccountId, counterAmountMinor, counterCurrencyCode, fxRate, startDate, endDate, nextExecutionDate, active, version, createdAt, updatedAt]
       properties:
         id:
           type: string
@@ -5666,6 +10511,19 @@ components:
         type:
           type: string
           enum: [income, expense, transfer]
+        mode:
+          type: string
+          enum: [auto, remind]
+        name:
+          type: [string, 'null']
+          maxLength: 80
+        amountKind:
+          type: string
+          enum: [fixed, estimated]
+        remindDaysBefore:
+          type: integer
+          minimum: 0
+          maximum: 30
         unit:
           type: string
           enum: [day, week, month, year]
@@ -5679,7 +10537,7 @@ components:
           type: string
           pattern: ^[A-Z]{3}$
         accountId:
-          type: string
+          type: [string, 'null']
           format: uuid
         categoryId:
           type: [string, 'null']
@@ -5772,7 +10630,7 @@ components:
     AccountExportTransaction:
       type: object
       additionalProperties: false
-      required: [id, clientId, type, amountMinor, currencyCode, occurredOn, accountId, categoryId, transferGroupId, fxQuoteId, recurringRuleId, notes, merchant, deletedAt, tagIds, version, createdAt, updatedAt]
+      required: [id, clientId, type, amountMinor, currencyCode, occurredOn, occurredTime, accountId, categoryId, transferGroupId, refundOfId, fxQuoteId, recurringRuleId, notes, merchant, deletedAt, tagIds, version, createdAt, updatedAt]
       properties:
         id:
           type: string
@@ -5782,7 +10640,7 @@ components:
           format: uuid
         type:
           type: string
-          enum: [income, expense, transfer]
+          enum: [income, expense, transfer, adjustment, debt, refund]
         amountMinor:
           $ref: '#/components/schemas/ReportMoney'
         currencyCode:
@@ -5791,6 +10649,9 @@ components:
         occurredOn:
           type: string
           format: date
+        occurredTime:
+          type: [string, 'null']
+          pattern: ^([01]\d|2[0-3]):([0-5]\d)$
         accountId:
           type: string
           format: uuid
@@ -5798,6 +10659,9 @@ components:
           type: [string, 'null']
           format: uuid
         transferGroupId:
+          type: [string, 'null']
+          format: uuid
+        refundOfId:
           type: [string, 'null']
           format: uuid
         fxQuoteId:

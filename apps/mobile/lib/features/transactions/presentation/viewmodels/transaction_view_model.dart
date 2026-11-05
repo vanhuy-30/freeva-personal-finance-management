@@ -6,11 +6,13 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/analytics/analytics_event.dart';
 import '../../../../core/analytics/analytics_service.dart';
+import '../../../../core/money/display_converted.dart';
 import '../../../../core/time/calendar_date.dart';
 import '../../../auth/domain/auth_repository.dart';
 import '../../../auth/presentation/viewmodels/auth_view_model.dart';
 import '../../../categories/domain/category_use_cases.dart';
 import '../../../categories/domain/finance_category.dart';
+import '../../../fx_rates/domain/fx_rate_use_cases.dart';
 import '../../../profile/domain/profile_use_cases.dart';
 import '../../../tags/domain/tag.dart';
 import '../../../tags/domain/tag_use_cases.dart';
@@ -26,6 +28,10 @@ import '../../domain/transaction_use_cases.dart';
 import '../transaction_sync.dart';
 
 abstract class TransactionViewModel extends ChangeNotifier {
+  /// The amount shown in the detail sheet in the profile currency, with the
+  /// typed rate. Null when there is no exact conversion. Display only.
+  Future<DisplayConverted?> convertedFor(TransactionBundle bundle);
+
   List<TransactionBundle> get rows;
   List<Wallet> get wallets;
   List<WalletCurrency> get currencies;
@@ -57,6 +63,9 @@ abstract class TransactionViewModel extends ChangeNotifier {
   AuthFailure? get failure;
   String newClientId();
   String? today();
+
+  /// Local clock `HH:mm` in the profile timezone (`MOB-P2-E09`).
+  String? nowTime();
   String? preferredAccountId();
   String? preferredCategoryId();
   Future<void> load();
@@ -89,7 +98,23 @@ abstract class TransactionViewModel extends ChangeNotifier {
   Future<TransactionBundle?> open(String id);
   Future<Tag?> createTag(String name, {required String clientId});
   Future<bool> save(TransactionDraft draft, {TransactionBundle? existing});
-  Future<bool> remove(TransactionBundle bundle);
+
+  /// Deletes [bundle]. An expense with refunds needs [refunds]; that delete
+  /// is online only (the offline queue cannot carry the choice).
+  Future<bool> remove(TransactionBundle bundle, {RefundDisposition? refunds});
+
+  /// `MOB-P3-008`: records money back for the expense [original] into
+  /// [accountId]. Online only. [clientId] stays the same for one sheet.
+  Future<bool> refund(
+    TransactionBundle original, {
+    required String clientId,
+    required String accountId,
+    required BigInt amountMinor,
+    required String occurredOn,
+  });
+
+  /// Edits an adjustment's signed amount. Online only: no offline queue.
+  Future<bool> adjust(TransactionBundle bundle, BigInt signedMinor);
   Future<bool> restore(TransactionBundle bundle);
 }
 
@@ -105,6 +130,7 @@ class DefaultTransactionViewModel extends TransactionViewModel {
     this._auth,
     this._analytics,
     this._sync,
+    this._fx,
   ) {
     _stage = _auth.stage;
     _seenApplied = _sync.appliedEpoch;
@@ -113,6 +139,7 @@ class DefaultTransactionViewModel extends TransactionViewModel {
     if (_stage == AuthStage.unlocked) Future.microtask(load);
   }
 
+  final FxRateUseCases _fx;
   final TransactionUseCases _cases;
   final CategoryUseCases _categoriesUseCases;
   final TagUseCases _tagsUseCases;
@@ -252,6 +279,13 @@ class DefaultTransactionViewModel extends TransactionViewModel {
   }
 
   @override
+  String? nowTime() {
+    final zone = timeZone;
+    if (zone == null) return null;
+    return clockTime(DateTime.now(), zone);
+  }
+
+  @override
   String? preferredAccountId() =>
       defaultAccountId(wallets: wallets, recentLegs: _recentLegs);
 
@@ -368,6 +402,10 @@ class DefaultTransactionViewModel extends TransactionViewModel {
       if (replace && unfiltered) _recentLegs = value.legs;
     });
   }
+
+  @override
+  Future<DisplayConverted?> convertedFor(TransactionBundle bundle) =>
+      _fx.transactionConverted(bundle.id);
 
   @override
   Future<void> load() async {
@@ -521,6 +559,10 @@ class DefaultTransactionViewModel extends TransactionViewModel {
             TransactionType.income => TransactionAnalyticsType.income,
             TransactionType.expense => TransactionAnalyticsType.expense,
             TransactionType.transfer => TransactionAnalyticsType.transfer,
+            // Never created by the composer; only reconcile writes it.
+            TransactionType.adjustment => TransactionAnalyticsType.expense,
+            TransactionType.debt => TransactionAnalyticsType.expense,
+            TransactionType.refund => TransactionAnalyticsType.expense,
           }),
         );
       }
@@ -606,15 +648,37 @@ class DefaultTransactionViewModel extends TransactionViewModel {
   }
 
   @override
-  Future<bool> remove(TransactionBundle bundle) async {
+  Future<bool> adjust(TransactionBundle bundle, BigInt signedMinor) async {
     if (!canWrite || bundle.deleted) return false;
     final epoch = ++_epoch;
     _writing = true;
     failure = null;
     notifyListeners();
-    final result = await _cases.remove(bundle);
+    final result = await _cases.adjust(bundle, signedMinor);
     if (epoch != _epoch) return false;
-    if (_offline(result)) {
+    lastSaved = result.fold((_) => null, (b) => b);
+    return _afterWrite(
+      epoch,
+      result,
+      () => _analytics.track(AnalyticsEvent.transactionEdited),
+      serverId: bundle.id,
+    );
+  }
+
+  @override
+  Future<bool> remove(
+    TransactionBundle bundle, {
+    RefundDisposition? refunds,
+  }) async {
+    if (!canWrite || bundle.deleted) return false;
+    final epoch = ++_epoch;
+    _writing = true;
+    failure = null;
+    notifyListeners();
+    final result = await _cases.remove(bundle, refunds: refunds);
+    if (epoch != _epoch) return false;
+    final hasRefunds = refunds != null || bundle.refunded > BigInt.zero;
+    if (_offline(result) && !hasRefunds) {
       return _queue(
         epoch,
         () => _sync.enqueue(mutationFromBundle(bundle, SyncAction.delete)),
@@ -628,6 +692,32 @@ class DefaultTransactionViewModel extends TransactionViewModel {
       clientId: bundle.legs.first.clientId,
       serverId: bundle.id,
     );
+  }
+
+  @override
+  Future<bool> refund(
+    TransactionBundle original, {
+    required String clientId,
+    required String accountId,
+    required BigInt amountMinor,
+    required String occurredOn,
+  }) async {
+    if (!canWrite || original.deleted) return false;
+    final epoch = ++_epoch;
+    _writing = true;
+    failure = null;
+    notifyListeners();
+    final result = await _cases.refund(
+      original,
+      RefundCommand(
+        clientId: clientId,
+        accountId: accountId,
+        amountMinor: amountMinor,
+        occurredOn: occurredOn,
+      ),
+    );
+    if (epoch != _epoch) return false;
+    return _afterWrite(epoch, result, () {}, serverId: original.id);
   }
 
   @override

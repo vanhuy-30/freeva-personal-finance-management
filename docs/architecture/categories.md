@@ -120,5 +120,4 @@ tham chiếu cây, trạng thái parent/target không hợp lệ và thiếu rep
 Xem [test README](../../backend/api/test/README.md#categories--be-p1-006) để chạy
 unit, PostgreSQL race/fault injection và upgrade fixture. Migration additive,
 không backfill hoặc tạo danh mục lúc deploy. Triển khai migration trước API mới;
-mobile bootstrap chỉ dùng sau khi backend đã có endpoint. Không deploy staging/
-production trong task này. UI danh mục và luồng ghi nhanh thuộc task mobile.
+mobile bootstrap chỉ dùng sau khi backend đã có endpoint. UI danh mục và luồng ghi nhanh thuộc task mobile.

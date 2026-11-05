@@ -423,6 +423,24 @@ class SVi extends S {
   String get reportExpense => 'Chi';
 
   @override
+  String get monthReviewTitle => 'Soát tháng';
+
+  @override
+  String get monthReviewOpen => 'Xem bản soát tháng';
+
+  @override
+  String get monthReviewSavings => 'Tiết kiệm';
+
+  @override
+  String get monthReviewSavingsRate => 'Tỷ lệ tiết kiệm';
+
+  @override
+  String get monthReviewTopCategories => 'Danh mục hàng đầu';
+
+  @override
+  String get monthReviewNoCategories => 'Chưa có danh mục chi tháng này.';
+
+  @override
   String get reportWeek => 'Tuần';
 
   @override
@@ -536,7 +554,7 @@ class SVi extends S {
 
   @override
   String get tosBody =>
-      'Freeva để bạn ghi ví và giao dịch do bạn nhập. Bạn giữ dữ liệu tài chính của mình. Đơn vị vận hành chưa được chốt. Xuất và xóa tài khoản là việc phát hành riêng. Bản tóm tắt này không thay điều khoản đã được luật sư rà.';
+      'Freeva để bạn ghi ví và giao dịch do bạn nhập. Bạn giữ dữ liệu tài chính của mình. Đơn vị vận hành chưa được chốt. Bạn có thể xuất dữ liệu và xóa tài khoản trong Hồ sơ. Bản tóm tắt này không thay điều khoản đã được luật sư rà.';
 
   @override
   String get privacyTitle => 'Chính sách bảo mật';
@@ -705,6 +723,16 @@ class SVi extends S {
   }
 
   @override
+  String homeReviewTopIncrease(String category) {
+    return '$category tăng nhiều nhất';
+  }
+
+  @override
+  String homeReviewOverBudget(int percent) {
+    return 'Vượt ngân sách $percent%';
+  }
+
+  @override
   String get homeCreditTitle => 'Thẻ tín dụng';
 
   @override
@@ -797,6 +825,11 @@ class SVi extends S {
   @override
   String txDayHeader(String day, String date) {
     return '$day · $date';
+  }
+
+  @override
+  String txDayWithTime(String day, String time) {
+    return '$day, $time';
   }
 
   @override
@@ -1032,6 +1065,21 @@ class SVi extends S {
   String get txDateTitle => 'Chọn ngày';
 
   @override
+  String get txDateTimeTitle => 'Chọn thời gian';
+
+  @override
+  String get txTimeLabel => 'Giờ';
+
+  @override
+  String get txTimeNone => 'Không có giờ';
+
+  @override
+  String get txTimeClear => 'Bỏ giờ';
+
+  @override
+  String get txDateTimeDone => 'Xong';
+
+  @override
   String get txYesterday => 'Hôm qua';
 
   @override
@@ -1234,6 +1282,12 @@ class SVi extends S {
   String get creditLimitField => 'Hạn mức';
 
   @override
+  String get creditMinimumField => 'Số trả tối thiểu';
+
+  @override
+  String get creditMinimumTitle => 'Số trả tối thiểu';
+
+  @override
   String get creditCloseField => 'Ngày chốt';
 
   @override
@@ -1248,7 +1302,8 @@ class SVi extends S {
   String get creditPickDay => 'Chọn ngày';
 
   @override
-  String get creditOptionalHint => 'Hạn mức và ngày có thể để trống.';
+  String get creditOptionalHint =>
+      'Hạn mức, số trả tối thiểu và ngày có thể để trống.';
 
   @override
   String get walletSave => 'Lưu ví';
@@ -1829,9 +1884,6 @@ class SVi extends S {
   String get meTitle => 'Cá nhân';
 
   @override
-  String get meGroupFinance => 'Thiết lập tài chính';
-
-  @override
   String get meGroupApp => 'Ứng dụng';
 
   @override
@@ -1850,29 +1902,72 @@ class SVi extends S {
   String get meRecurring => 'Định kỳ';
 
   @override
+  String get meCalendar => 'Lịch tài chính';
+
+  @override
   String get meCurrency => 'Tiền tệ mặc định';
 
   @override
-  String get recurringTitle => 'Giao dịch định kỳ';
+  String get calendarTitle => 'Lịch tài chính';
+
+  @override
+  String get calendarLoadError => 'Không tải được lịch';
+
+  @override
+  String get calendarEmptyTitle => 'Tháng này trống';
+
+  @override
+  String get calendarEmptyBody =>
+      'Chưa có giao dịch, định kỳ hay hóa đơn trong tháng này.';
+
+  @override
+  String get calendarPrevMonth => 'Tháng trước';
+
+  @override
+  String get calendarNextMonth => 'Tháng sau';
+
+  @override
+  String get calendarSectionTransactions => 'Giao dịch';
+
+  @override
+  String get calendarSectionRecurring => 'Định kỳ';
+
+  @override
+  String get calendarSectionBills => 'Hóa đơn';
+
+  @override
+  String get calendarLegend => 'Chấm màu theo loại mục trên ngày';
+
+  @override
+  String get calendarTransfer => 'Chuyển khoản';
+
+  @override
+  String get calendarEstimated => 'Ước tính';
+
+  @override
+  String get billsStatusOpen => 'Mở';
+
+  @override
+  String get billsStatusOverdue => 'Quá hạn';
+
+  @override
+  String get billsStatusPaid => 'Đã trả';
+
+  @override
+  String get recurringTitle => 'Định kỳ và hóa đơn';
 
   @override
   String get recurringAdd => 'Thêm định kỳ';
 
   @override
-  String get recurringEdit => 'Sửa định kỳ';
-
-  @override
-  String get recurringDelete => 'Xóa';
-
-  @override
   String get recurringSave => 'Lưu';
 
   @override
-  String get recurringEmptyTitle => 'Chưa có định kỳ';
+  String get recurringEmptyTitle => 'Chưa có khoản định kỳ';
 
   @override
   String get recurringEmptyBody =>
-      'Thiết lập tiền thuê, lương hoặc chuyển khoản một lần; Freeva sẽ ghi đúng lịch.';
+      'Thêm tiền nhà, lương hay hóa đơn điện, nước để Freeva ghi hoặc nhắc đúng hạn.';
 
   @override
   String get recurringLoadError => 'Không tải được định kỳ';
@@ -1888,46 +1983,6 @@ class SVi extends S {
 
   @override
   String get recurringCategory => 'Danh mục';
-
-  @override
-  String get recurringFrequency => 'Chu kỳ';
-
-  @override
-  String get recurringInterval => 'Mỗi';
-
-  @override
-  String recurringEvery(String count) {
-    return 'Mỗi $count';
-  }
-
-  @override
-  String get recurringUnitDay => 'Ngày';
-
-  @override
-  String get recurringUnitWeek => 'Tuần';
-
-  @override
-  String get recurringUnitMonth => 'Tháng';
-
-  @override
-  String get recurringUnitYear => 'Năm';
-
-  @override
-  String get recurringStart => 'Ngày bắt đầu (YYYY-MM-DD)';
-
-  @override
-  String get recurringNextLabel => 'Lần tới (YYYY-MM-DD)';
-
-  @override
-  String get recurringEnd => 'Ngày kết thúc (tuỳ chọn)';
-
-  @override
-  String get recurringActive => 'Đang bật';
-
-  @override
-  String recurringNext(String date) {
-    return 'Tới $date';
-  }
 
   @override
   String get recurringTypeExpense => 'Chi';
@@ -2009,6 +2064,15 @@ class SVi extends S {
 
   @override
   String get budgetThresholdsTitle => 'Ngưỡng cảnh báo';
+
+  @override
+  String get budgetThresholdsSheetTitle => 'Báo khi đã dùng';
+
+  @override
+  String get budgetThresholdsSheetSub => 'Chọn tối đa 4 mốc.';
+
+  @override
+  String get budgetThresholdsDefaultHint => 'Mặc định 80% và 100%.';
 
   @override
   String get budgetScopeDefault => 'Mọi tháng';
@@ -2251,14 +2315,14 @@ class SVi extends S {
   String get mePasswordRepeat => 'Nhập lại mật khẩu mới';
 
   @override
-  String get mePasswordHint => 'Từ 12 ký tự, có cả chữ và số.';
+  String get mePasswordHint => 'Từ 8 ký tự, có cả chữ và số.';
 
   @override
   String get mePasswordWrong => 'Mật khẩu hiện tại chưa đúng.';
 
   @override
   String get mePasswordWeak =>
-      'Dùng từ 12 ký tự, có cả chữ và số, khác mật khẩu cũ.';
+      'Dùng từ 8 ký tự, có cả chữ và số, khác mật khẩu cũ.';
 
   @override
   String get mePasswordMismatch => 'Hai mật khẩu mới chưa khớp.';
@@ -2421,6 +2485,35 @@ class SVi extends S {
   String get notifyRecordSub => 'Mỗi ngày';
 
   @override
+  String notifyRecordAt(String time) {
+    return 'Mỗi ngày lúc $time';
+  }
+
+  @override
+  String get notifyTimeTitle => 'Chọn giờ nhắc';
+
+  @override
+  String get notifyTimeHint => 'Hôm nào đã ghi thì không nhắc.';
+
+  @override
+  String notifyTimePick(String time) {
+    return 'Chọn $time';
+  }
+
+  @override
+  String get notifyTimeHour => 'Giờ';
+
+  @override
+  String get notifyTimeMinute => 'Phút';
+
+  @override
+  String get notifyInboxDailyLogTitle => 'Ghi chi hôm nay';
+
+  @override
+  String get notifyInboxDailyLogBody =>
+      'Hôm nay bạn chưa ghi giao dịch nào. Ghi nhanh trước khi quên nhé.';
+
+  @override
   String get notifyDigest => 'Tổng kết chi tiêu';
 
   @override
@@ -2433,13 +2526,123 @@ class SVi extends S {
   String get notifyBudgetSub => 'Khi dùng 80% và 100%';
 
   @override
-  String get notifyCard => 'Thẻ tín dụng đến hạn';
+  String notifyBudgetAt(String levels) {
+    return 'Khi dùng $levels';
+  }
 
   @override
-  String get notifyCardSub => 'Trước 3 ngày';
+  String get notifyBudgetLevels => '80% và 100%';
+
+  @override
+  String get notifyCard => 'Thẻ tín dụng';
+
+  @override
+  String get notifyCardSub => 'Sắp đến hạn, sắp chạm hạn mức';
 
   @override
   String get notifySession => 'Máy mới đăng nhập';
+
+  @override
+  String get notifyRecurring => 'Định kỳ và hóa đơn';
+
+  @override
+  String get notifyRecurringSub => 'Trước hạn và khi quá hạn';
+
+  @override
+  String get notifyGoal => 'Góp vào mục tiêu';
+
+  @override
+  String get notifyGoalSub => 'Khi đến hạn đóng góp';
+
+  @override
+  String get notifyDebt => 'Nợ đến hạn';
+
+  @override
+  String get notifyDebtSub => 'Trước hạn 3 ngày';
+
+  @override
+  String get notifyMonthReview => 'Soát tháng';
+
+  @override
+  String get notifyMonthReviewSub => 'Đầu mỗi tháng';
+
+  @override
+  String get notifyInsight => 'Insight mới';
+
+  @override
+  String get notifyInsightSub => 'Khi có gợi ý mới';
+
+  @override
+  String get notifyQuietTitle => 'Giờ yên';
+
+  @override
+  String get notifyQuietHours => 'Bật giờ yên';
+
+  @override
+  String get notifyQuietEdit => 'Khung giờ';
+
+  @override
+  String get notifyQuietStart => 'Bắt đầu giờ yên';
+
+  @override
+  String get notifyQuietEnd => 'Hết giờ yên';
+
+  @override
+  String notifyQuietWindow(String start, String end) {
+    return '$start – $end';
+  }
+
+  @override
+  String get notifyMarkAllRead => 'Đọc hết';
+
+  @override
+  String notifyInboxBudgetTitle(String threshold) {
+    return 'Ngân sách đã chạm $threshold%';
+  }
+
+  @override
+  String notifyInboxBudgetBody(String threshold) {
+    return 'Bạn đã dùng đến $threshold% hạn mức tháng này.';
+  }
+
+  @override
+  String get notifyInboxRecurringTitle => 'Định kỳ sắp chạy';
+
+  @override
+  String notifyInboxRecurringBody(String date) {
+    return 'Một giao dịch định kỳ chạy vào $date.';
+  }
+
+  @override
+  String get notifyInboxCardDueTitle => 'Thẻ sắp đến hạn';
+
+  @override
+  String notifyInboxCardDueBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Thẻ đến hạn trong $count ngày.',
+      one: 'Thẻ đến hạn trong 1 ngày.',
+      zero: 'Thẻ đến hạn hôm nay.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get notifyInboxCardHighDebtTitle => 'Dư nợ thẻ cao';
+
+  @override
+  String notifyInboxCardHighDebtBody(String threshold) {
+    return 'Bạn đã dùng đến $threshold% hạn mức thẻ.';
+  }
+
+  @override
+  String get notifyInboxCardNearLimitTitle => 'Thẻ sắp vượt hạn mức';
+
+  @override
+  String notifyInboxCardNearLimitBody(String threshold) {
+    return 'Bạn đã dùng đến $threshold% hạn mức thẻ.';
+  }
 
   @override
   String get authOr => 'hoặc';
@@ -2526,7 +2729,7 @@ class SVi extends S {
   String get passwordStrong => 'Rất chắc chắn';
 
   @override
-  String get passwordRuleLength => 'Ít nhất 12 ký tự';
+  String get passwordRuleLength => 'Ít nhất 8 ký tự';
 
   @override
   String get passwordRuleLetterDigit => 'Có cả chữ và số';
@@ -2680,67 +2883,115 @@ class SVi extends S {
   }
 
   @override
-  String get onbGoalsTitle => 'Bạn muốn cải thiện điều gì?';
+  String get onbGoalsTitle => 'Freeva giúp bạn việc gì?';
 
   @override
   String get onbGoalsSub => 'Chọn tối đa 2.';
 
   @override
-  String get onbGoalTrack => 'Theo dõi chi tiêu';
+  String get onbGoalTrack => 'Quản lý chi tiêu';
 
   @override
-  String get onbGoalSave => 'Tiết kiệm nhiều hơn';
+  String get onbGoalTrackSub => 'Biết tiền đi đâu mỗi tháng';
 
   @override
-  String get onbGoalBudget => 'Chi đúng ngân sách';
+  String get onbGoalSave => 'Tiết kiệm';
 
   @override
-  String get onbGoalDebt => 'Quản lý khoản nợ';
+  String get onbGoalSaveSub => 'Để dành cho một việc cụ thể';
 
   @override
-  String get onbGoalEmergency => 'Lập quỹ dự phòng';
+  String get onbGoalBudget => 'Quản lý ngân sách';
 
   @override
-  String get onbGoalUnderstand => 'Hiểu rõ tài chính';
+  String get onbGoalBudgetSub => 'Đặt mức chi và bám theo';
 
   @override
-  String get onbHabitTitle => 'Bạn đang quản lý tiền thế nào?';
+  String get onbIncomeTitle => 'Thu nhập mỗi tháng khoảng bao nhiêu?';
 
   @override
-  String get onbHabitManual => 'Ghi chép bằng tay';
+  String get onbIncomeSub => 'Để gợi ý ngân sách vừa sức.';
 
   @override
-  String get onbHabitSpreadsheet => 'Dùng Excel hoặc Sheets';
+  String get onbIncomeHint => 'Nhập số gần đúng, sửa lại được trong Cá nhân.';
 
   @override
-  String get onbHabitApp => 'Dùng một app khác';
+  String get onbIncomeAmount => 'Thu nhập mỗi tháng';
 
   @override
-  String get onbHabitNone => 'Chưa theo dõi gì cả';
+  String onbIncomeChip(String amount) {
+    return '$amount triệu';
+  }
 
   @override
-  String get onbCadenceTitle => 'Bao lâu bạn xem lại chi tiêu?';
+  String get onbSavingTitle => 'Bạn để dành cho việc gì?';
 
   @override
-  String get onbCadenceDaily => 'Mỗi ngày';
+  String get onbSavingTarget => 'Cần có';
 
   @override
-  String get onbCadenceWeekly => 'Mỗi tuần';
+  String get onbSavingDate => 'Đến khi';
 
   @override
-  String get onbCadenceMonthly => 'Mỗi tháng';
+  String get onbSavingNeed => 'Mỗi tháng cần để dành';
 
   @override
-  String get onbCadenceRarely => 'Hầu như không';
+  String onbSavingShare(String percent) {
+    return '$percent% thu nhập';
+  }
 
   @override
-  String get onbBudgetTitle => 'Mỗi tháng bạn định chi bao nhiêu?';
+  String get onbSuggestTitle => 'Mỗi tháng nên chi khoảng';
 
   @override
-  String get onbBudgetAmount => 'Ngân sách mỗi tháng';
+  String get onbSuggestIncome => 'Thu nhập';
 
   @override
-  String get onbBudgetLater => 'Thiết lập sau';
+  String onbSuggestSaveFor(String goal) {
+    return 'Để dành cho $goal';
+  }
+
+  @override
+  String get onbSuggestSaveDefault => 'Để dành 20% thu nhập';
+
+  @override
+  String get onbSuggestSpend => 'Chi tiêu';
+
+  @override
+  String get onbSuggestNoGoal => 'Chưa có mục tiêu nên tạm để dành 20%.';
+
+  @override
+  String get onbSuggestHint => 'Sửa được bất cứ lúc nào trong Ngân sách tháng.';
+
+  @override
+  String get onbSuggestUse => 'Dùng mức này';
+
+  @override
+  String get dailyLogAskTitle => 'Nhắc ghi chi mỗi tối?';
+
+  @override
+  String get dailyLogAskBody => 'Hôm nào đã ghi thì không nhắc.';
+
+  @override
+  String get dailyLogAskTime => 'Giờ nhắc';
+
+  @override
+  String get dailyLogAskOn => 'Bật nhắc';
+
+  @override
+  String get meIncome => 'Thu nhập hàng tháng';
+
+  @override
+  String get meIncomeNone => 'Chưa đặt';
+
+  @override
+  String get meIncomeClear => 'Xoá thu nhập';
+
+  @override
+  String get meIncomeSave => 'Lưu';
+
+  @override
+  String get meIncomeFailed => 'Chưa lưu được, thử lại sau.';
 
   @override
   String get setupWalletsTitle => 'Tiền của bạn ở đâu?';
@@ -2879,6 +3130,13 @@ class SVi extends S {
 
   @override
   String get syncReasonInvalid => 'Dữ liệu không còn hợp lệ';
+
+  @override
+  String get syncReasonCategoryKind => 'Danh mục không hợp với loại giao dịch';
+
+  @override
+  String get transactionCategoryKind =>
+      'Danh mục này không dùng cho loại giao dịch đã chọn. Hãy chọn danh mục khác.';
 
   @override
   String get syncReasonOther => 'Chưa gửi được · Thử lại sau';
@@ -3050,6 +3308,28 @@ class SVi extends S {
   String get meDeleteAccount => 'Xoá tài khoản';
 
   @override
+  String get meExportData => 'Xuất dữ liệu';
+
+  @override
+  String get meExportHint => 'Lưu hoặc gửi một bản sao dữ liệu của bạn';
+
+  @override
+  String get meExportError => 'Chưa xuất được. Thử lại nhé.';
+
+  @override
+  String get meDeleteTitle => 'Xóa tài khoản?';
+
+  @override
+  String get meDeleteBody =>
+      'Mọi dữ liệu của bạn sẽ bị xóa ngay và không khôi phục được. Bạn có thể xuất dữ liệu trước.';
+
+  @override
+  String get meDeleteConfirm => 'Xóa vĩnh viễn';
+
+  @override
+  String get meDeleteError => 'Chưa xóa được. Dữ liệu của bạn vẫn còn nguyên.';
+
+  @override
   String get meChangeAvatar => 'Đổi ảnh đại diện';
 
   @override
@@ -3169,4 +3449,1677 @@ class SVi extends S {
 
   @override
   String get tagsViewTransactions => 'Xem giao dịch';
+
+  @override
+  String homeTotalConverted(int count, String currency) {
+    return 'Tổng quy đổi $currency · $count ví';
+  }
+
+  @override
+  String homeDisplayCurrencyAction(String currency) {
+    return 'Xem tổng theo $currency';
+  }
+
+  @override
+  String get homeDisplayCurrencyTitle => 'Xem tổng theo';
+
+  @override
+  String homeUnconvertedMissing(String currency) {
+    return '$currency: chưa có tỷ giá, chạm để nhập';
+  }
+
+  @override
+  String homeUnconvertedFractional(String currency) {
+    return '$currency: tỷ giá không đổi chẵn, chạm để sửa';
+  }
+
+  @override
+  String homeRateInputLabel(String from, String to) {
+    return '1 $from = ? $to';
+  }
+
+  @override
+  String get homeRateSaveFailed =>
+      'Chưa lưu được. Kiểm tra tỷ giá rồi thử lại.';
+
+  @override
+  String get convertedRowTitle => 'Quy đổi';
+
+  @override
+  String convertedAmount(String amount) {
+    return '≈ $amount';
+  }
+
+  @override
+  String convertedRateLine(String from, String rate, String to, String time) {
+    return '1 $from = $rate $to · tỷ giá bạn nhập lúc $time';
+  }
+
+  @override
+  String get goalsAdd => 'Thêm mục tiêu';
+
+  @override
+  String get goalsEmptyTitle => 'Chưa có mục tiêu';
+
+  @override
+  String get goalsEmptyBody =>
+      'Đặt một mục tiêu, Freeva tính giúp mỗi tháng cần để dành bao nhiêu.';
+
+  @override
+  String get goalsCreate => 'Tạo mục tiêu';
+
+  @override
+  String get goalsSaved => 'Đã để dành';
+
+  @override
+  String get goalsCountLabel => 'Mục tiêu';
+
+  @override
+  String get goalsNeededMonth => 'Tháng này cần góp';
+
+  @override
+  String get goalsOverdue => 'Quá hạn';
+
+  @override
+  String get goalsReached => 'Đã đủ';
+
+  @override
+  String get goalsArchivedLink => 'Mục tiêu đã lưu trữ';
+
+  @override
+  String get goalsLoadError => 'Không tải được mục tiêu';
+
+  @override
+  String get goalsNew => 'Mục tiêu mới';
+
+  @override
+  String get goalsEdit => 'Sửa mục tiêu';
+
+  @override
+  String get goalsFor => 'Để dành cho';
+
+  @override
+  String get goalKindEmergency => 'Quỹ khẩn cấp';
+
+  @override
+  String get goalKindHome => 'Mua nhà';
+
+  @override
+  String get goalKindCar => 'Mua xe';
+
+  @override
+  String get goalKindTravel => 'Du lịch';
+
+  @override
+  String get goalKindEducation => 'Học tập';
+
+  @override
+  String get goalKindWedding => 'Đám cưới';
+
+  @override
+  String get goalKindRetirement => 'Nghỉ hưu';
+
+  @override
+  String get goalKindCustom => 'Khác';
+
+  @override
+  String get goalName => 'Tên mục tiêu';
+
+  @override
+  String get goalNameMissing => 'Đặt tên cho mục tiêu nhé.';
+
+  @override
+  String get goalTarget => 'Số cần có';
+
+  @override
+  String get goalTargetMissing => 'Nhập số cần có.';
+
+  @override
+  String get goalCurrent => 'Đã có';
+
+  @override
+  String get goalDate => 'Ngày đạt';
+
+  @override
+  String get goalDateNone => 'Chưa đặt';
+
+  @override
+  String get goalDateClear => 'Bỏ ngày';
+
+  @override
+  String get goalWallet => 'Giữ ở ví';
+
+  @override
+  String get goalWalletMissing => 'Chọn ví giữ tiền.';
+
+  @override
+  String goalWalletValue(String name, String amount) {
+    return '$name · còn $amount';
+  }
+
+  @override
+  String goalNeedLine(String amount) {
+    return 'Cần góp $amount mỗi tháng.';
+  }
+
+  @override
+  String goalNeedLineShare(String amount, String percent) {
+    return 'Cần góp $amount mỗi tháng, khoảng $percent% thu nhập.';
+  }
+
+  @override
+  String get goalHave => 'Đã có';
+
+  @override
+  String goalOf(String amount) {
+    return '/ $amount';
+  }
+
+  @override
+  String goalProgressLine(String percent, String amount) {
+    return '$percent% · còn thiếu $amount';
+  }
+
+  @override
+  String goalProgressDone(String percent) {
+    return '$percent% · đã đủ';
+  }
+
+  @override
+  String get goalNeedPerMonth => 'Cần mỗi tháng';
+
+  @override
+  String get goalLeft => 'Còn';
+
+  @override
+  String goalMonths(int count) {
+    return '$count tháng';
+  }
+
+  @override
+  String goalLineActive(int months, String amount) {
+    return 'Còn $months tháng · cần $amount mỗi tháng';
+  }
+
+  @override
+  String get goalLineNoDate => 'Chưa đặt ngày đạt';
+
+  @override
+  String goalLineOverdue(String date, String amount) {
+    return 'Hạn $date đã qua · còn thiếu $amount';
+  }
+
+  @override
+  String goalLineReached(String date) {
+    return 'Đã đủ từ $date';
+  }
+
+  @override
+  String get goalContribute => 'Góp thêm';
+
+  @override
+  String get goalWithdraw => 'Rút ra';
+
+  @override
+  String get goalHistory => 'Lịch sử';
+
+  @override
+  String get goalHistoryContribute => 'Góp thêm';
+
+  @override
+  String get goalHistoryContributeTransfer => 'Góp từ ví khác';
+
+  @override
+  String get goalHistoryWithdraw => 'Rút ra';
+
+  @override
+  String get goalHistoryWithdrawTransfer => 'Rút về ví khác';
+
+  @override
+  String get goalHistoryAdjust => 'Sửa số đã có';
+
+  @override
+  String goalHistoryStays(String date) {
+    return '$date · tiền đã ở sẵn trong ví';
+  }
+
+  @override
+  String get goalHistoryEmpty => 'Chưa có lần góp nào';
+
+  @override
+  String get goalMoveIn => 'Góp vào';
+
+  @override
+  String get goalMoveOut => 'Rút ra';
+
+  @override
+  String goalMoveTitleIn(String name) {
+    return 'Góp vào $name';
+  }
+
+  @override
+  String goalMoveTitleOut(String name) {
+    return 'Rút khỏi $name';
+  }
+
+  @override
+  String get goalMoveAmount => 'Số tiền';
+
+  @override
+  String get goalMoveFrom => 'Lấy từ';
+
+  @override
+  String get goalMoveTo => 'Rút về';
+
+  @override
+  String goalMoveStaysIn(String wallet) {
+    return 'Đã nằm trong $wallet';
+  }
+
+  @override
+  String goalMoveStaysOut(String wallet) {
+    return 'Giữ nguyên trong $wallet';
+  }
+
+  @override
+  String get goalMoveOnlyRecord => 'Chỉ ghi nhận, không chuyển tiền';
+
+  @override
+  String goalMoveWalletLeft(String amount) {
+    return 'Còn $amount';
+  }
+
+  @override
+  String get goalMoveHint => 'Ghi thành chuyển ví, không tính là chi tiêu.';
+
+  @override
+  String goalMoveConfirmIn(String amount) {
+    return 'Góp $amount';
+  }
+
+  @override
+  String goalMoveConfirmOut(String amount) {
+    return 'Rút $amount';
+  }
+
+  @override
+  String get goalMoveTooMuch => 'Vượt số đã có của mục tiêu.';
+
+  @override
+  String get goalArchive => 'Lưu trữ mục tiêu';
+
+  @override
+  String get goalArchiveBody =>
+      'Mục tiêu được cất đi, số đã có vẫn nằm trong ví.';
+
+  @override
+  String get goalSaveFailed => 'Chưa lưu được. Thử lại nhé.';
+
+  @override
+  String get goalConflict =>
+      'Mục tiêu vừa đổi ở nơi khác. Mở lại để xem số mới.';
+
+  @override
+  String get goalsHomeTitle => 'Mục tiêu';
+
+  @override
+  String get goalsSeeAll => 'Xem tất cả';
+
+  @override
+  String goalPercent(String percent) {
+    return '$percent%';
+  }
+
+  @override
+  String get goalSaveAction => 'Lưu';
+
+  @override
+  String recDueTotal(String amount) {
+    return 'Cần trả $amount';
+  }
+
+  @override
+  String recDueCount(int count) {
+    return '$count hóa đơn chưa trả · xem trên lịch';
+  }
+
+  @override
+  String get recGroupDue => 'CẦN TRẢ';
+
+  @override
+  String get recGroupAuto => 'GHI TỰ ĐỘNG';
+
+  @override
+  String get recTagOverdue => 'Quá hạn';
+
+  @override
+  String get recTagToday => 'Hôm nay';
+
+  @override
+  String recTagDays(int days) {
+    return 'Còn $days ngày';
+  }
+
+  @override
+  String get recTagPaused => 'Tạm dừng';
+
+  @override
+  String recDueOn(String date) {
+    return 'Hạn $date';
+  }
+
+  @override
+  String get recOneOff => 'một lần';
+
+  @override
+  String recAbout(String amount) {
+    return 'khoảng $amount';
+  }
+
+  @override
+  String get recPaid => 'Đã trả';
+
+  @override
+  String recPaidA11y(String name) {
+    return 'Đã trả $name';
+  }
+
+  @override
+  String recDayOfMonth(String day) {
+    return 'Ngày $day hằng tháng';
+  }
+
+  @override
+  String get recEveryDay => 'Hằng ngày';
+
+  @override
+  String get recEveryWeek => 'Hằng tuần';
+
+  @override
+  String get recEveryMonth => 'Hằng tháng';
+
+  @override
+  String get recEveryYear => 'Hằng năm';
+
+  @override
+  String recEveryNDays(String count) {
+    return 'Mỗi $count ngày';
+  }
+
+  @override
+  String recEveryNWeeks(String count) {
+    return 'Mỗi $count tuần';
+  }
+
+  @override
+  String recEveryNMonths(String count) {
+    return 'Mỗi $count tháng';
+  }
+
+  @override
+  String recEveryNYears(String count) {
+    return 'Mỗi $count năm';
+  }
+
+  @override
+  String get recOnce => 'Một lần';
+
+  @override
+  String get recModeAuto => 'Ghi tự động';
+
+  @override
+  String get recModeAutoSub => 'Hợp với lương, tiền nhà';
+
+  @override
+  String get recModeRemind => 'Hỏi trước khi ghi';
+
+  @override
+  String get recModeRemindSub => 'Hợp với tiền điện, nước';
+
+  @override
+  String get recName => 'Tên';
+
+  @override
+  String get recVaries => 'Số tiền mỗi kỳ có thể khác';
+
+  @override
+  String get recVariesSub => 'Nhập số thật khi xác nhận';
+
+  @override
+  String get recRepeat => 'Lặp lại';
+
+  @override
+  String get recFirstDue => 'Hạn đầu tiên';
+
+  @override
+  String get recNextRun => 'Lần tới';
+
+  @override
+  String get recRemindBefore => 'Nhắc trước';
+
+  @override
+  String get recRemindSameDay => 'Đúng ngày';
+
+  @override
+  String recRemindDays(int count) {
+    return '$count ngày';
+  }
+
+  @override
+  String get recPayFrom => 'Trả từ ví';
+
+  @override
+  String get recPause => 'Tạm dừng';
+
+  @override
+  String get recPauseSub => 'Không ghi, không nhắc cho đến khi bật lại';
+
+  @override
+  String get recRemove => 'Xoá định kỳ';
+
+  @override
+  String recPaidTitle(String name) {
+    return 'Đã trả $name?';
+  }
+
+  @override
+  String get recRealAmount => 'Số tiền thật';
+
+  @override
+  String get recPaidOn => 'Ngày trả';
+
+  @override
+  String get recConfirm => 'Xác nhận đã trả';
+
+  @override
+  String get recLinkExisting => 'Đã ghi khoản chi này rồi? Chọn khoản đó';
+
+  @override
+  String get recPickExpense => 'Chọn khoản chi';
+
+  @override
+  String get recNoExpense => 'Chưa có khoản chi để gắn';
+
+  @override
+  String get recConfirmed => 'Đã ghi nhận khoản đã trả';
+
+  @override
+  String get recNeedWallet => 'Chọn ví để trả';
+
+  @override
+  String get recRemoveBody => 'Những khoản đã ghi trước đó vẫn còn.';
+
+  @override
+  String recRemindDaysShort(int count) {
+    return '$count ngày';
+  }
+
+  @override
+  String get recNeedCategory => 'Chọn danh mục';
+
+  @override
+  String get transactionAdjustment => 'Điều chỉnh';
+
+  @override
+  String get txKindAdjustment => 'điều chỉnh';
+
+  @override
+  String get txAdjustTitle => 'Điều chỉnh số dư';
+
+  @override
+  String get walletReconcileLink => 'Khớp số dư';
+
+  @override
+  String walletReconcileTitle(String name) {
+    return 'Khớp số dư $name';
+  }
+
+  @override
+  String get walletReconcileCurrent => 'Số dư trên app';
+
+  @override
+  String get walletReconcileCurrentDebt => 'Dư nợ trên app';
+
+  @override
+  String get walletReconcileField => 'Số dư thật trong app ngân hàng';
+
+  @override
+  String get walletReconcileFieldDebt => 'Dư nợ thật trong app ngân hàng';
+
+  @override
+  String get walletReconcileDiff => 'Chênh lệch';
+
+  @override
+  String get walletReconcileHint =>
+      'Phần chênh ghi thành khoản điều chỉnh, không tính vào thu chi.';
+
+  @override
+  String get walletReconcileConfirm => 'Khớp số dư';
+
+  @override
+  String get walletReconcileDone => 'Đã khớp số dư';
+
+  @override
+  String get txAdjustEditTitle => 'Sửa điều chỉnh';
+
+  @override
+  String get txAdjustAmount => 'Số tiền điều chỉnh';
+
+  @override
+  String get txAdjustHint => 'Số dương làm ví tăng, số âm làm ví giảm.';
+
+  @override
+  String get walletReconcileFailed => 'Chưa khớp được số dư. Thử lại nhé.';
+
+  @override
+  String get meDebts => 'Vay và nợ';
+
+  @override
+  String meDebtsCount(int count) {
+    return '$count khoản';
+  }
+
+  @override
+  String get transactionDebt => 'Vay mượn';
+
+  @override
+  String get txKindDebt => 'vay mượn';
+
+  @override
+  String get txDebtTitle => 'Vay và nợ';
+
+  @override
+  String get txDebtReadOnly =>
+      'Khoản này thuộc Vay và nợ, sửa ở đó không được.';
+
+  @override
+  String get debtsTabPeople => 'Người quen';
+
+  @override
+  String get debtsTabLoans => 'Khoản vay';
+
+  @override
+  String get debtsAdd => 'Ghi khoản mượn';
+
+  @override
+  String get debtsEmptyTitle => 'Chưa ai nợ ai';
+
+  @override
+  String get debtsEmptyBody =>
+      'Cho bạn bè mượn hay mượn người thân, ghi lại để khỏi quên.';
+
+  @override
+  String get debtsLoadError => 'Chưa tải được khoản mượn';
+
+  @override
+  String get debtsOwedToYou => 'Người khác nợ bạn';
+
+  @override
+  String get debtsYouOwe => 'Bạn đang nợ';
+
+  @override
+  String get debtsGroupOwedToYou => 'Ai nợ bạn';
+
+  @override
+  String get debtsGroupYouOwe => 'Bạn nợ ai';
+
+  @override
+  String get debtsGroupSettled => 'Đã xong';
+
+  @override
+  String debtsSettledLink(int count) {
+    return 'Đã xong ($count)';
+  }
+
+  @override
+  String debtLentOn(String date) {
+    return 'Cho mượn $date';
+  }
+
+  @override
+  String debtBorrowedOn(String date) {
+    return 'Mượn $date';
+  }
+
+  @override
+  String debtDueOn(String date) {
+    return 'hạn $date';
+  }
+
+  @override
+  String get debtNoDue => 'không hạn';
+
+  @override
+  String get debtNoDueValue => 'Không hạn';
+
+  @override
+  String get debtLend => 'Cho mượn';
+
+  @override
+  String get debtBorrow => 'Đi mượn';
+
+  @override
+  String get debtHistoryBorrowed => 'Mượn';
+
+  @override
+  String get debtAmount => 'Số tiền';
+
+  @override
+  String get debtBorrower => 'Người mượn';
+
+  @override
+  String get debtLender => 'Người cho mượn';
+
+  @override
+  String get debtFromWallet => 'Lấy từ ví';
+
+  @override
+  String get debtFromWalletShort => 'Từ ví';
+
+  @override
+  String get debtToWallet => 'Vào ví';
+
+  @override
+  String debtWalletLeft(String wallet, String amount) {
+    return '$wallet · còn $amount';
+  }
+
+  @override
+  String get debtDate => 'Ngày';
+
+  @override
+  String get debtDueDate => 'Hạn trả';
+
+  @override
+  String get debtPickDate => 'Chọn ngày';
+
+  @override
+  String get debtClearDue => 'Bỏ hạn';
+
+  @override
+  String get debtDueBeforeDate => 'Hạn trả phải sau ngày mượn.';
+
+  @override
+  String get debtNote => 'Ghi chú';
+
+  @override
+  String get debtNoteHint => 'Thêm ghi chú';
+
+  @override
+  String get debtNotCounted => 'Không tính vào thu chi.';
+
+  @override
+  String get debtSave => 'Lưu';
+
+  @override
+  String get debtEditTitle => 'Sửa khoản mượn';
+
+  @override
+  String debtTheyOwe(String name) {
+    return '$name còn nợ bạn';
+  }
+
+  @override
+  String debtYouOweName(String name) {
+    return 'Bạn còn nợ $name';
+  }
+
+  @override
+  String debtOfPrincipal(String amount) {
+    return '/ $amount';
+  }
+
+  @override
+  String debtReceived(String amount) {
+    return 'Đã thu $amount';
+  }
+
+  @override
+  String debtPaid(String amount) {
+    return 'Đã trả $amount';
+  }
+
+  @override
+  String get debtLentDate => 'Ngày cho mượn';
+
+  @override
+  String get debtBorrowedDate => 'Ngày mượn';
+
+  @override
+  String get debtHistory => 'Lịch sử';
+
+  @override
+  String debtTheyPaid(String name) {
+    return '$name trả';
+  }
+
+  @override
+  String get debtYouPaid => 'Bạn trả';
+
+  @override
+  String debtInto(String date, String wallet) {
+    return '$date · vào $wallet';
+  }
+
+  @override
+  String debtOutOf(String date, String wallet) {
+    return '$date · từ $wallet';
+  }
+
+  @override
+  String get debtRecordReceived => 'Ghi tiền nhận lại';
+
+  @override
+  String get debtRecordPaid => 'Ghi tiền đã trả';
+
+  @override
+  String debtPayTheyTitle(String name) {
+    return '$name trả bạn';
+  }
+
+  @override
+  String debtPayYouTitle(String name) {
+    return 'Bạn trả $name';
+  }
+
+  @override
+  String get debtHalf => 'Một nửa';
+
+  @override
+  String debtAll(String amount) {
+    return 'Tất cả $amount';
+  }
+
+  @override
+  String get debtSettleHintLent => 'Thu đủ thì khoản này chuyển sang Đã xong.';
+
+  @override
+  String get debtSettleHintBorrowed =>
+      'Trả đủ thì khoản này chuyển sang Đã xong.';
+
+  @override
+  String get debtTooMuch => 'Số này nhiều hơn số còn nợ.';
+
+  @override
+  String get loansAdd => 'Thêm khoản vay';
+
+  @override
+  String get loansLoadError => 'Chưa tải được khoản vay';
+
+  @override
+  String get loansEmptyTitle => 'Chưa có khoản vay';
+
+  @override
+  String get loansEmptyBody =>
+      'Vay mua nhà, mua xe hay vay tiêu dùng, ghi lại để theo dõi lịch trả.';
+
+  @override
+  String get loansOwed => 'Còn nợ';
+
+  @override
+  String get loansPaidPrincipal => 'Đã trả gốc';
+
+  @override
+  String get loansDueThisMonth => 'Tháng này cần trả';
+
+  @override
+  String get loanPaidOff => 'Đã trả xong';
+
+  @override
+  String loanRateYear(String rate) {
+    return '$rate%/năm';
+  }
+
+  @override
+  String loanNextOn(String date) {
+    return 'kỳ tới $date';
+  }
+
+  @override
+  String get loanEdit => 'Sửa khoản vay';
+
+  @override
+  String get loanEditShort => 'Sửa';
+
+  @override
+  String loanPaidPercent(String percent) {
+    return 'Đã trả $percent% gốc';
+  }
+
+  @override
+  String loanDoneBy(String month) {
+    return 'xong vào $month';
+  }
+
+  @override
+  String get loanNextPeriod => 'Kỳ tới';
+
+  @override
+  String loanNextOnTitle(String date) {
+    return 'Kỳ tới · $date';
+  }
+
+  @override
+  String loanSplit(String principal, String interest) {
+    return 'Gốc $principal · lãi $interest';
+  }
+
+  @override
+  String loanInterestOnly(String amount) {
+    return 'Lãi kỳ này $amount';
+  }
+
+  @override
+  String get loanRecordPayment => 'Ghi lần trả';
+
+  @override
+  String get loanHow => 'Cách tính';
+
+  @override
+  String loanHowText(String rate, String frequency) {
+    return 'Lãi $rate%/năm trên số còn nợ, trả $frequency. Lãi tính trước, phần còn lại trừ vào gốc.';
+  }
+
+  @override
+  String get loanSchedule => 'Lịch trả';
+
+  @override
+  String get loanFullSchedule => 'Xem cả lịch';
+
+  @override
+  String get loanNextTag => 'Kỳ tới';
+
+  @override
+  String loanPeriod(int index) {
+    return 'Kỳ $index';
+  }
+
+  @override
+  String get loanKindMortgage => 'Vay mua nhà';
+
+  @override
+  String get loanKindPersonal => 'Vay tiêu dùng';
+
+  @override
+  String get loanKindOther => 'Khác';
+
+  @override
+  String get loanFreqWeekly => 'Hằng tuần';
+
+  @override
+  String get loanFreqMonthly => 'Hằng tháng';
+
+  @override
+  String get loanFreqQuarterly => 'Hằng quý';
+
+  @override
+  String get loanFreqYearly => 'Hằng năm';
+
+  @override
+  String get loanName => 'Tên';
+
+  @override
+  String get loanAmountGroup => 'Số tiền';
+
+  @override
+  String get loanPrincipal => 'Số vay ban đầu';
+
+  @override
+  String get loanRate => 'Lãi suất';
+
+  @override
+  String get loanRateUnit => '%/năm';
+
+  @override
+  String get loanInstallment => 'Trả mỗi kỳ';
+
+  @override
+  String get loanFrequency => 'Kỳ trả';
+
+  @override
+  String get loanNextDue => 'Kỳ tới';
+
+  @override
+  String get loanStart => 'Bắt đầu';
+
+  @override
+  String get loanEnd => 'Kết thúc';
+
+  @override
+  String get loanPayFrom => 'Trả từ ví';
+
+  @override
+  String get loanInstallmentHint =>
+      'Để trống \"Trả mỗi kỳ\", Freeva tự tính theo ngày kết thúc.';
+
+  @override
+  String get loanSave => 'Lưu khoản vay';
+
+  @override
+  String get loanOwedTooMuch => 'Số còn nợ không lớn hơn số vay ban đầu.';
+
+  @override
+  String loanPayTitle(String date) {
+    return 'Trả kỳ $date';
+  }
+
+  @override
+  String get loanPrincipalPart => 'Tiền gốc';
+
+  @override
+  String get loanInterestPart => 'Tiền lãi';
+
+  @override
+  String loanWalletLeft(String amount) {
+    return 'còn $amount';
+  }
+
+  @override
+  String get loanPrincipalHint => 'Chỉ tiền gốc làm giảm số còn nợ.';
+
+  @override
+  String get loanTooMuch => 'Tiền gốc nhiều hơn số còn nợ.';
+
+  @override
+  String get notifyInboxDebtDueTitle => 'Sắp đến hạn trả nợ';
+
+  @override
+  String get notifyInboxDebtDueLentTitle => 'Sắp đến hạn thu nợ';
+
+  @override
+  String get notifyInboxDebtOverdueTitle => 'Khoản đi mượn quá hạn';
+
+  @override
+  String get notifyInboxDebtOverdueLentTitle => 'Khoản cho mượn quá hạn';
+
+  @override
+  String notifyInboxDebtDueBody(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Đến hạn trong $days ngày.',
+      zero: 'Đến hạn hôm nay.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String notifyInboxDebtOverdueBody(int days) {
+    return 'Đã quá hạn $days ngày.';
+  }
+
+  @override
+  String get transactionRefund => 'Hoàn tiền';
+
+  @override
+  String get txKindRefund => 'hoàn tiền';
+
+  @override
+  String get txRefundTitle => 'Hoàn tiền';
+
+  @override
+  String txRefundedNote(String amount) {
+    return 'đã hoàn $amount';
+  }
+
+  @override
+  String get txDetailRefunded => 'Đã hoàn';
+
+  @override
+  String get txDetailRefundOf => 'Hoàn cho';
+
+  @override
+  String get refundAction => 'Ghi hoàn tiền';
+
+  @override
+  String get refundActionSub => 'Đổi trả, hoàn một phần';
+
+  @override
+  String refundTitle(String name) {
+    return 'Hoàn tiền $name';
+  }
+
+  @override
+  String refundSpent(String amount, String date) {
+    return 'Đã chi $amount · $date';
+  }
+
+  @override
+  String get refundAmount => 'Số tiền hoàn';
+
+  @override
+  String refundAll(String amount) {
+    return 'Hoàn toàn bộ $amount';
+  }
+
+  @override
+  String get refundToWallet => 'Vào ví';
+
+  @override
+  String get refundDate => 'Ngày';
+
+  @override
+  String refundHint(String category, int month) {
+    return 'Trừ vào chi $category tháng $month, không tính là thu.';
+  }
+
+  @override
+  String get refundTooMuch => 'Số hoàn lớn hơn số còn lại của khoản chi.';
+
+  @override
+  String get refundSave => 'Ghi hoàn tiền';
+
+  @override
+  String get refundSaved => 'Đã ghi hoàn tiền';
+
+  @override
+  String get refundDeleteTitle => 'Xoá khoản chi này?';
+
+  @override
+  String refundDeleteBody(String amount) {
+    return 'Khoản này đã được hoàn $amount.';
+  }
+
+  @override
+  String get refundDeleteCascade => 'Xoá cả hoàn tiền';
+
+  @override
+  String refundDeleteCascadeSub(String amount) {
+    return 'Ví bớt đi $amount';
+  }
+
+  @override
+  String get refundDeleteKeep => 'Giữ hoàn tiền';
+
+  @override
+  String get refundDeleteKeepSub => 'Chuyển thành một khoản thu';
+
+  @override
+  String get installmentAction => 'Chuyển thành trả góp';
+
+  @override
+  String get installmentActionSub => 'Chia nhiều kỳ trên thẻ';
+
+  @override
+  String get installmentTitle => 'Trả góp';
+
+  @override
+  String get installmentCount => 'Số kỳ';
+
+  @override
+  String get installmentOther => 'Khác';
+
+  @override
+  String get installmentOtherTitle => 'Số kỳ';
+
+  @override
+  String get installmentOtherLabel => 'Từ 2 đến 60';
+
+  @override
+  String get installmentEach => 'Mỗi kỳ';
+
+  @override
+  String get installmentEditEach => 'Số trả mỗi kỳ';
+
+  @override
+  String get installmentFirst => 'Kỳ đầu';
+
+  @override
+  String installmentMore(int count, String date) {
+    return '… thêm $count kỳ, xong $date';
+  }
+
+  @override
+  String installmentHint(int month) {
+    return 'Khoản mua vẫn tính một lần vào tháng $month. Mỗi kỳ cộng vào số phải trả của thẻ.';
+  }
+
+  @override
+  String get installmentCreate => 'Tạo lịch trả góp';
+
+  @override
+  String get installmentCreated => 'Đã tạo lịch trả góp';
+
+  @override
+  String installmentEachInvalid(int count) {
+    return 'Số này chưa chia vừa $count kỳ đúng bằng giá mua.';
+  }
+
+  @override
+  String get installmentFirstTooEarly => 'Kỳ đầu không được trước ngày mua.';
+
+  @override
+  String get installmentPreviewError =>
+      'Chưa xem được lịch. Kiểm tra kết nối nhé.';
+
+  @override
+  String get installmentConflict => 'Khoản này không chuyển trả góp được nữa.';
+
+  @override
+  String get installmentLeft => 'Còn phải trả';
+
+  @override
+  String installmentPaidOf(int past, int count, String wallet) {
+    return 'Đã trả $past/$count kỳ · $wallet';
+  }
+
+  @override
+  String get installmentEachAdds => 'Mỗi kỳ cộng vào số phải trả của thẻ.';
+
+  @override
+  String get installmentClose => 'Kết thúc trả góp';
+
+  @override
+  String get installmentCloseSub => 'Dùng khi đã trả hết sớm';
+
+  @override
+  String get installmentCloseTitle => 'Kết thúc trả góp?';
+
+  @override
+  String get installmentCloseBody =>
+      'Các kỳ còn lại không cộng vào số phải trả của thẻ nữa. Khoản mua giữ nguyên.';
+
+  @override
+  String get installmentCloseConfirm => 'Kết thúc';
+
+  @override
+  String get installmentClosed => 'Đã kết thúc trả góp';
+
+  @override
+  String get installmentClosedTag => 'Đã kết thúc';
+
+  @override
+  String get installmentLoadError => 'Chưa tải được lịch trả góp';
+
+  @override
+  String installmentRowSub(int index, int count, String date, String amount) {
+    return 'Kỳ $index/$count · $date · $amount';
+  }
+
+  @override
+  String creditDueThisPeriod(String date) {
+    return 'Phải trả kỳ này · $date';
+  }
+
+  @override
+  String creditDaysLeftTag(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Còn $count ngày',
+      zero: 'Hôm nay',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String creditIncludes(String installment, String minimum) {
+    return 'Gồm $installment trả góp · tối thiểu $minimum';
+  }
+
+  @override
+  String creditIncludesNoMin(String installment) {
+    return 'Gồm $installment trả góp';
+  }
+
+  @override
+  String get installmentView => 'Xem lịch trả góp';
+
+  @override
+  String get installmentViewSub => 'Các kỳ và số còn phải trả';
+
+  @override
+  String get dataExportTitle => 'Xuất dữ liệu';
+
+  @override
+  String get dataExportTable => 'Bảng giao dịch';
+
+  @override
+  String get dataExportTableHint => 'CSV, mở bằng Excel';
+
+  @override
+  String get dataExportFull => 'Bản sao đầy đủ';
+
+  @override
+  String get dataExportFullHint => 'JSON, để cất giữ';
+
+  @override
+  String get dataExportFullNote =>
+      'Gồm toàn bộ dữ liệu tài khoản, không lọc. Dùng để lưu giữ, không phải để đọc.';
+
+  @override
+  String get dataExportPeriodThisMonth => 'Tháng này';
+
+  @override
+  String get dataExportPeriod3Months => '3 tháng';
+
+  @override
+  String get dataExportPeriodThisYear => 'Năm nay';
+
+  @override
+  String get dataExportPeriodAll => 'Tất cả';
+
+  @override
+  String get dataExportPeriodCustom => 'Tuỳ chọn';
+
+  @override
+  String get dataExportWallets => 'Ví';
+
+  @override
+  String get dataExportAllWallets => 'Tất cả ví';
+
+  @override
+  String dataExportSummaryRange(String from, String to, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count giao dịch',
+      zero: 'Không có giao dịch',
+    );
+    return '$from – $to · $_temp0';
+  }
+
+  @override
+  String dataExportSummaryAll(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count giao dịch',
+      zero: 'Không có giao dịch',
+    );
+    return 'Tất cả · $_temp0';
+  }
+
+  @override
+  String get dataExportTooMany =>
+      'Quá 50.000 giao dịch. Chọn khoảng ngắn hơn hoặc ít ví hơn.';
+
+  @override
+  String get dataExportButton => 'Xuất file';
+
+  @override
+  String get meImportData => 'Nhập từ app khác';
+
+  @override
+  String get importTitle => 'Nhập giao dịch';
+
+  @override
+  String get importSourceHeading => 'Nguồn dữ liệu';
+
+  @override
+  String get importSourceMoneyLover => 'Money Lover';
+
+  @override
+  String get importSourceMoneyLoverHint =>
+      'Xuất file CSV trong app Money Lover';
+
+  @override
+  String get importSourceMisa => 'Sổ thu chi MISA';
+
+  @override
+  String get importSourceMisaHint => 'Xuất file CSV trong app MISA';
+
+  @override
+  String get importSourceFreeva => 'Freeva';
+
+  @override
+  String get importSourceFreevaHint => 'File bạn đã xuất từ Freeva';
+
+  @override
+  String get importSourceOther => 'Nơi khác';
+
+  @override
+  String get importSourceOtherHint => 'Bạn chọn cột ngày, số tiền';
+
+  @override
+  String get importSourceNote =>
+      'Tối đa 2.000 dòng mỗi lần. Giao dịch đã có sẽ được bỏ qua.';
+
+  @override
+  String get importPickFile => 'Chọn file CSV';
+
+  @override
+  String get importProblemUnreadable =>
+      'Không đọc được file này. Hãy chọn file CSV.';
+
+  @override
+  String get importProblemEmpty => 'File này chưa có dòng nào.';
+
+  @override
+  String get importProblemTooMany =>
+      'File có hơn 2.000 dòng. Hãy chia nhỏ rồi nhập từng phần.';
+
+  @override
+  String get importProblemTooLarge =>
+      'File quá lớn. Hãy chia nhỏ rồi nhập từng phần.';
+
+  @override
+  String get importError => 'Chưa nhập được';
+
+  @override
+  String get importColumnsTitle => 'Chọn cột';
+
+  @override
+  String importFileRows(int count) {
+    return '$count dòng';
+  }
+
+  @override
+  String get importColumnsHeader => 'CỘT TRONG FILE';
+
+  @override
+  String get importFieldDate => 'Ngày';
+
+  @override
+  String get importFieldAmount => 'Số tiền';
+
+  @override
+  String get importFieldType => 'Thu hay chi';
+
+  @override
+  String get importFieldCategory => 'Danh mục';
+
+  @override
+  String get importFieldWallet => 'Ví';
+
+  @override
+  String get importFieldNotes => 'Ghi chú';
+
+  @override
+  String get importColumnNone => 'Không dùng';
+
+  @override
+  String get importDateFormat => 'Kiểu ngày';
+
+  @override
+  String get importNumberFormat => 'Kiểu số';
+
+  @override
+  String get importFirstRow => 'Dòng đầu đọc được';
+
+  @override
+  String get importNext => 'Tiếp';
+
+  @override
+  String get importMapTitle => 'Ghép ví và danh mục';
+
+  @override
+  String importMapRemaining(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Còn $count mục chưa ghép.',
+      one: 'Còn $count mục chưa ghép.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get importMapWallets => 'VÍ TRONG FILE';
+
+  @override
+  String get importMapCategories => 'DANH MỤC TRONG FILE';
+
+  @override
+  String get importMapAllRows => 'Mọi dòng trong file';
+
+  @override
+  String get importMapChoose => 'Chọn';
+
+  @override
+  String get importMapPreview => 'Xem trước';
+
+  @override
+  String get importPickWallet => 'Chọn ví';
+
+  @override
+  String get importPickCategory => 'Chọn danh mục';
+
+  @override
+  String get importPreviewTitle => 'Xem trước';
+
+  @override
+  String get importReady => 'Sẵn sàng';
+
+  @override
+  String get importDuplicate => 'Trùng';
+
+  @override
+  String get importInvalid => 'Lỗi';
+
+  @override
+  String get importFilterAll => 'Tất cả';
+
+  @override
+  String get importNoRows => 'Không có dòng nào';
+
+  @override
+  String get importDuplicatesToggle => 'Vẫn nhập khoản trùng';
+
+  @override
+  String get importDuplicatesHint => 'Thường bạn không cần bật';
+
+  @override
+  String importCommit(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Nhập $count giao dịch',
+      one: 'Nhập $count giao dịch',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get importTagDuplicate => 'Trùng';
+
+  @override
+  String get importTagDate => 'Thiếu ngày';
+
+  @override
+  String get importTagAmount => 'Sai số tiền';
+
+  @override
+  String get importTagType => 'Loại chưa hỗ trợ';
+
+  @override
+  String get importTagWallet => 'Chưa chọn ví';
+
+  @override
+  String get importTagCategory => 'Chưa chọn danh mục';
+
+  @override
+  String get importTagCategoryKind => 'Sai loại danh mục';
+
+  @override
+  String get importTagCurrency => 'Lệch tiền tệ';
+
+  @override
+  String get importTagTransfer => 'Thiếu dòng đối ứng';
+
+  @override
+  String get importTagSameWallet => 'Cùng một ví';
+
+  @override
+  String get importTagOther => 'Không đọc được';
+
+  @override
+  String importDoneTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Đã nhập $count giao dịch',
+      one: 'Đã nhập $count giao dịch',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String importDoneSkipBoth(int duplicates, int invalid) {
+    return 'Bỏ qua $duplicates khoản trùng và $invalid dòng lỗi.';
+  }
+
+  @override
+  String importDoneSkipDuplicates(int count) {
+    return 'Bỏ qua $count khoản trùng.';
+  }
+
+  @override
+  String importDoneSkipInvalid(int count) {
+    return 'Bỏ qua $count dòng lỗi.';
+  }
+
+  @override
+  String get importDoneView => 'Xem giao dịch';
+
+  @override
+  String get importUndo => 'Hoàn tác lần nhập';
+
+  @override
+  String get importDoneKept => 'Khoản bạn đã sửa sau khi nhập sẽ được giữ lại.';
+
+  @override
+  String importUndone(int count) {
+    return 'Đã hoàn tác $count giao dịch';
+  }
+
+  @override
+  String get importUndoError => 'Chưa hoàn tác được';
+
+  @override
+  String get meGroupManage => 'Quản lý tiền';
+
+  @override
+  String get meGroupSetup => 'Thiết lập';
+
+  @override
+  String get meGroupData => 'Dữ liệu';
+
+  @override
+  String get meBudgetShort => 'Ngân sách';
+
+  @override
+  String get meCalendarShort => 'Lịch';
+
+  @override
+  String get meMoneyTitle => 'Thu nhập và kỳ tính';
+
+  @override
+  String get meMoneyHint =>
+      'Lương về giữa tháng? Đặt theo ngày lương để ngân sách và báo cáo tính đúng kỳ.';
+
+  @override
+  String meWalletsCount(int count) {
+    return '$count ví';
+  }
+
+  @override
+  String meRecurringCount(int count) {
+    return '$count khoản';
+  }
+
+  @override
+  String meCalendarMonth(int month) {
+    return 'Tháng $month';
+  }
+
+  @override
+  String get forecastTitle => 'Dự báo số dư';
+
+  @override
+  String forecastRange(int count) {
+    return '$count tháng';
+  }
+
+  @override
+  String get forecastRangeSemantics => 'Khoảng dự báo';
+
+  @override
+  String forecastEndOfMonth(int month) {
+    return 'Cuối tháng $month còn khoảng';
+  }
+
+  @override
+  String forecastChange(String amount) {
+    return '$amount so với hôm nay';
+  }
+
+  @override
+  String get forecastToday => 'Hôm nay';
+
+  @override
+  String get forecastHowTitle => 'Cách tính';
+
+  @override
+  String get forecastStartsFrom => 'Bắt đầu từ số dư';
+
+  @override
+  String forecastStartsFromWallets(String amount, int count) {
+    return '$amount · $count ví';
+  }
+
+  @override
+  String forecastStartsFromYou(String amount) {
+    return '$amount · bạn nhập';
+  }
+
+  @override
+  String get forecastEdit => 'Sửa';
+
+  @override
+  String get forecastScope =>
+      'Chỉ gồm định kỳ và hóa đơn, chưa gồm chi tiêu hằng ngày.';
+
+  @override
+  String forecastOtherCurrency(int count) {
+    return '$count khoản khác loại tiền chưa được tính.';
+  }
+
+  @override
+  String get forecastRulesHeader => 'Khoản được tính';
+
+  @override
+  String forecastRuleToggle(String name) {
+    return 'Tính $name';
+  }
+
+  @override
+  String forecastEstimated(String schedule) {
+    return '$schedule · số ước tính';
+  }
+
+  @override
+  String forecastOneOff(String date) {
+    return 'Một lần, $date';
+  }
+
+  @override
+  String get forecastNoRules =>
+      'Chưa có khoản định kỳ hay hóa đơn nào, nên số dư giữ nguyên.';
+
+  @override
+  String forecastChartSemantics(String items) {
+    return 'Số dư dự báo cuối từng tháng: $items';
+  }
+
+  @override
+  String get forecastBalanceTitle => 'Số dư bắt đầu';
+
+  @override
+  String get forecastBalanceHint =>
+      'Dự báo sẽ cộng các khoản định kỳ vào số này.';
+
+  @override
+  String get forecastBalanceApply => 'Dùng số này';
+
+  @override
+  String get forecastBalanceReset => 'Dùng tổng số dư các ví';
+
+  @override
+  String get forecastBalanceInvalid => 'Nhập một số hợp lệ.';
+
+  @override
+  String forecastDayEstimated(int day) {
+    return 'Ngày $day · số ước tính';
+  }
 }

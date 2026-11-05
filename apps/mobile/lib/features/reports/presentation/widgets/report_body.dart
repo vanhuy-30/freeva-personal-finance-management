@@ -7,6 +7,8 @@ import '../../../../core/widgets/error_retry.dart';
 import '../../../../core/widgets/skeleton.dart';
 import '../../domain/report.dart';
 import '../viewmodels/report_view_model.dart';
+import 'forecast_link.dart';
+import 'month_review_link.dart';
 import 'report_breakdown_card.dart';
 import 'report_budget_row.dart';
 import 'report_currency_chips.dart';
@@ -88,11 +90,11 @@ class ReportBody extends StatelessWidget {
       ),
       if (period.kind == ReportPeriodKind.month) ...[
         gap,
-        ReportBudgetRow(
-          period: period,
-          currency: code,
-          minorDigits: digits,
-        ),
+        ReportBudgetRow(period: period, currency: code, minorDigits: digits),
+        gap,
+        MonthReviewLink(period: period),
+        gap,
+        const ForecastLink(),
       ],
       gap,
       ReportTrendCard(model: model, currency: code, digits: digits),

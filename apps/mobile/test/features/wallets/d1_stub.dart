@@ -7,9 +7,11 @@ import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/auth/domain/auth_use_cases.dart';
 import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dart';
 import 'package:mobile/features/categories/domain/finance_category.dart';
+import 'package:mobile/features/installments/presentation/viewmodels/installment_view_model.dart';
 import 'package:mobile/features/transactions/domain/transaction.dart';
 import 'package:mobile/features/transactions/presentation/viewmodels/transaction_results_view_model.dart';
 import 'package:mobile/features/transactions/presentation/viewmodels/transaction_view_model.dart';
+import 'package:mobile/features/wallets/domain/reconcile_result.dart';
 import 'package:mobile/features/wallets/domain/wallet.dart';
 import 'package:mobile/features/wallets/domain/wallet_flow.dart';
 import 'package:mobile/features/wallets/presentation/viewmodels/wallet_detail_view_model.dart';
@@ -17,7 +19,10 @@ import 'package:mobile/features/wallets/presentation/viewmodels/wallet_view_mode
 
 import '../auth/fakes.dart';
 import '../home/fixtures.dart' show b, wallet;
+import '../installments/installment_stub.dart';
 import '../transactions/c1_stub.dart';
+
+import 'package:mobile/core/money/display_converted.dart';
 
 /// Credit card like the D artboards: debt 11.450.000 of 20.000.000, closes
 /// on the 20th, due on the 25th.
@@ -83,6 +88,24 @@ class StubWalletViewModel extends WalletViewModel {
   Future<bool> archive(Wallet wallet) async {
     archived.add(wallet.id);
     return true;
+  }
+
+  final reconciled = <(String, BigInt)>[];
+  ReconcileResult? result;
+
+  @override
+  Future<ReconcileResult?> previewReconcile(
+    Wallet wallet,
+    BigInt actualMinor,
+  ) async => result;
+  @override
+  Future<ReconcileResult?> reconcile(
+    Wallet wallet,
+    BigInt actualMinor, {
+    required String clientId,
+  }) async {
+    reconciled.add((wallet.id, actualMinor));
+    return result;
   }
 
   @override
@@ -156,6 +179,8 @@ class StubWalletDetail extends ChangeNotifier implements WalletDetailViewModel {
   WalletFlow? flow;
   @override
   bool flowFailed = false;
+  @override
+  DisplayConverted? converted;
   int reloads = 0;
 
   @override
@@ -167,22 +192,30 @@ Future<Widget> d1App(
   Widget page, {
   StubWalletViewModel? model,
   StubWalletDetail? detail,
+  FakeInstallmentUseCases? installments,
   bool dark = false,
   double scale = 1,
 }) async {
   await getIt.reset();
-  getIt.registerSingleton<AuthViewModel>(
-    DefaultAuthViewModel(
-        DefaultAuthUseCases(
-          AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
-        ),
-      )
-      ..stage = AuthStage.unlocked
-      ..hasPin = true
-      ..ready = true,
-  );
+  final auth =
+      DefaultAuthViewModel(
+          DefaultAuthUseCases(
+            AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+          ),
+        )
+        ..stage = AuthStage.unlocked
+        ..hasPin = true
+        ..ready = true;
+  getIt.registerSingleton<AuthViewModel>(auth);
   final wallets = model ?? StubWalletViewModel();
   getIt.registerSingleton<WalletViewModel>(wallets);
+  getIt.registerSingleton<InstallmentViewModel>(
+    InstallmentViewModel(
+      installments ?? FakeInstallmentUseCases(),
+      wallets,
+      auth,
+    ),
+  );
   getIt.registerSingleton<TransactionViewModel>(
     StubTransactionViewModel()
       ..wallets = wallets.wallets

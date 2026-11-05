@@ -109,3 +109,39 @@ export function dueDates(options: {
   }
   return dates;
 }
+
+/**
+ * Future (and due) occurrences from `nextExecutionDate` that fall inside `[rangeFrom, rangeTo]`.
+ * Does not invent dates before `nextExecutionDate` (those are already posted or not yet due to run).
+ * Cap protects runaway daily rules across a wide window.
+ */
+export function occurrencesInRange(options: {
+  nextExecutionDate: string;
+  startDate: string;
+  endDate: string | null;
+  rangeFrom: string;
+  rangeTo: string;
+  unit: RecurringUnit;
+  interval: number;
+  active: boolean;
+  limit?: number;
+}): string[] {
+  const {
+    nextExecutionDate, startDate, endDate, rangeFrom, rangeTo, unit, interval, active,
+  } = options;
+  const limit = options.limit ?? 3660;
+  if (!active) return [];
+  parseCalendarParts(rangeFrom);
+  parseCalendarParts(rangeTo);
+  if (compareCalendar(rangeFrom, rangeTo) > 0) return [];
+  const preferred = anchorDay(startDate);
+  const dates: string[] = [];
+  let cursor = nextExecutionDate;
+  for (let i = 0; i < limit; i++) {
+    if (compareCalendar(cursor, rangeTo) > 0) break;
+    if (endDate !== null && compareCalendar(cursor, endDate) > 0) break;
+    if (compareCalendar(cursor, rangeFrom) >= 0) dates.push(cursor);
+    cursor = addInterval(cursor, unit, interval, preferred);
+  }
+  return dates;
+}

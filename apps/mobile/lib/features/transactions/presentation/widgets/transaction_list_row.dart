@@ -51,6 +51,18 @@ class TransactionListRow extends StatelessWidget {
     final locale = Localizations.localeOf(context).toString();
     final amount = formatMoneyText(label.minor, digits, locale);
     final currency = label.currency == 'VND' ? s.homeSpokenVnd : label.currency;
+    // Board TxDetail3: "Mua sắm · đã hoàn 300.000" (MOB-P3-008).
+    final refunded = row.type == TransactionType.expense
+        ? row.refunded
+        : BigInt.zero;
+    // Keeps only the first part ("Mua sắm" of "Mua sắm · Tiền mặt") so the
+    // note fits on one line.
+    final detail = refunded > BigInt.zero
+        ? [
+            label.detail.split(' · ').first,
+            s.txRefundedNote(formatMoneyText(refunded, digits, locale)),
+          ].where((p) => p.isNotEmpty).join(' · ')
+        : label.detail;
     final signed = switch (label.tone) {
       MoneyTone.income => s.homeSpokenIncome(amount, currency),
       MoneyTone.expense => s.homeSpokenExpense(amount, currency),
@@ -59,7 +71,7 @@ class TransactionListRow extends StatelessWidget {
     return TransactionRow(
       icon: label.icon,
       title: label.title,
-      subtitle: label.detail,
+      subtitle: detail,
       tone: label.tone,
       // Deleted rows: neutral circle, muted glyph and amount.
       muted: muted,
@@ -82,7 +94,7 @@ class TransactionListRow extends StatelessWidget {
       },
       onTap: onTap,
       semanticsLabel: [
-        s.homeSpokenRow(signed, label.title, label.detail),
+        s.homeSpokenRow(signed, label.title, detail),
         if (mark != null) SyncMarkChip.label(s, mark!),
       ].join(', '),
       amount: MoneyDisplay(

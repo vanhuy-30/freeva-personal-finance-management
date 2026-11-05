@@ -21,6 +21,20 @@
 | **G** Cá nhân và cài đặt | **Chốt** 2026-10-21 | [patterns/G-profile-settings.md](patterns/G-profile-settings.md) |
 | **H** Đồng bộ | **Chốt** 2026-10-22 | [patterns/H-sync.md](patterns/H-sync.md) |
 
+### Phase 3 (trang canvas **07 · Phase 3**, chốt 2026-11-03; I đã code 2026-11-04)
+
+| Phần | Trạng thái | Tài liệu |
+|---|---|---|
+| **I** Mục tiêu | **Chốt** 2026-11-03, **đã code** (`MOB-P3-E01`) | [patterns/I-goals.md](patterns/I-goals.md) |
+| **K** Vay và nợ | **Chốt** 2026-11-03, **đã code** (`MOB-P3-007`, `MOB-P3-E02`) | [patterns/K-loans-debts.md](patterns/K-loans-debts.md) |
+| **L** Định kỳ và hóa đơn | **Chốt** 2026-11-03, **đã code** (`MOB-P3-001`) | [patterns/L-recurring-bills.md](patterns/L-recurring-bills.md) |
+| **M** Ví, hoàn tiền, trả góp | **Chốt** 2026-11-03; màn 1 (khớp số dư) **đã code** (`MOB-P3-005`), màn 2–4 (hoàn tiền) **đã code** (`MOB-P3-008`), màn 5–7 (trả góp) **đã code** (`MOB-P3-009`) | [patterns/M-wallet-refund-installment.md](patterns/M-wallet-refund-installment.md) |
+| **N** Dự báo, soát tháng, ngân sách, nhắc | **Chốt** 2026-11-03; màn 1–2 (dự báo số dư) **đã code** (`MOB-P3-E04`), màn 3 (soát tháng) **đã code** (`MOB-P3-002`), màn 4 (ngưỡng ngân sách) **đã code** (`MOB-P3-003`), màn 5–6 (Thông báo, chọn giờ nhắc) **đã code** (`MOB-P3-006`) | [patterns/N-forecast-alerts.md](patterns/N-forecast-alerts.md) |
+| **O** Cá nhân và dữ liệu | **Chốt** 2026-11-03; màn 3 (Xuất dữ liệu) **đã code** (`MOB-P3-010`), màn 1–2 (lưới Cá nhân, Thu nhập và kỳ tính) và 4–8 (Nhập giao dịch) **đã code** (`MOB-P3-010`, `MOB-P3-011`) | [patterns/O-profile-data.md](patterns/O-profile-data.md) |
+| **A3** Onboarding ba câu | **Chốt** 2026-11-03 | [patterns/A3-onboarding-three-questions.md](patterns/A3-onboarding-three-questions.md) |
+
+Cùng đợt (2026-11-03), canvas được sửa cho khớp app đang chạy (theo golden): mật khẩu 8 ký tự (AuRegister, AuReset), chip "Xem tổng theo VND" (BMulti), dòng "Xem bản soát tháng" (RepMonth), các dòng Định kỳ / Hóa đơn / Lịch và bỏ "Định dạng ngày" (MeHome), "Xuất dữ liệu" (MeProfile), các dòng Thông báo (MeNotify), "Số trả tối thiểu" và nhãn "Loại ví" (WCredit, WAddCredit). Trang 05 có thêm hàng **P2 · Đã có trong app, chưa từng vẽ** (`Cur*.dc.html`, `RevMonth.dc.html`): Ngân sách, Lịch, Hộp thư, Soát tháng, Định kỳ và Hóa đơn bản đang chạy, vẽ lại đúng app để làm mốc.
+
 ## Tiến độ code (Flutter)
 
 Thứ tự đã chốt: nền tảng → B → C → D → E → F → G → A → H. Mỗi nhóm một nhánh + một PR vào `develop`; API nhỏ mà màn cần làm luôn trong PR đó, module lớn (ngân sách, thông báo, chế độ khách, deep link email) để trạng thái trống/ẩn.
@@ -29,13 +43,19 @@ Thứ tự đã chốt: nền tảng → B → C → D → E → F → G → A �
 |---|---|---|
 | Nền tảng (`DS-P2-002`) | Xong | Token → Dart, theme, Inter, Lucide, component trong `lib/core/widgets/`, khung 4 tab + nút +, gallery `/debug/gallery`, golden light/dark |
 | B Tổng quan | Xong | 8 trạng thái, `User.displayName`, net-worth bỏ ví đã ẩn, ẩn số dư chỉ ẩn số dư |
-| C Giao dịch | Xong | API lọc nhiều ví/danh mục/nhãn, tìm cửa hàng, `summary`; giờ giao dịch tách `BE-P2-E09` |
+| C Giao dịch | Xong | API lọc nhiều ví/danh mục/nhãn, tìm cửa hàng, `summary`; giờ giao dịch `BE-P2-E09` / `MOB-P2-E09` |
 | D Ví | Xong | D1: danh sách, sắp xếp (`PUT /financial-accounts/order`), chi tiết ví (Vào/Ra tính cả chuyển ví qua `summary.transferIn/OutMinor`), chi tiết thẻ, ví đã ẩn. D2: thêm/sửa ví và thẻ, popup ngày, cờ `hasTransactions` khoá loại/tiền tệ, ẩn có Hoàn tác |
 | E Danh mục | Xong | E1: danh sách Chi · Thu, mở/thu nhớ trên máy, danh mục đã ẩn; API bảng 20 màu, 36 icon, `kind` khi tạo, hai cấp, đổi icon mặc định một lần. E2: thêm/sửa, sheet Thuộc/Biểu tượng, ẩn có Hoàn tác, popup xoá + `GET /categories/{id}/usage` |
 | F Báo cáo | Xong (F1 + F2) | F1: kỳ Tuần/Tháng/Năm/Tuỳ chọn, thẻ tổng (so kỳ trước, trung bình/ngày, còn lại), xu hướng 8 tuần/6 tháng/các năm (`GET /reports/trend`), phân tích Chi · Thu · Ví, trạng thái trống; khối ngân sách tháng từ `BE-P2-E02` / `MOB-P2-E02`. F2: chi tiết danh mục (kể cả "Khác") với "Giao dịch lớn nhất" (`sort=amountDesc`, `currency` trên `GET /transactions`) và "Xem cả N" mở danh sách đã lọc; popup chọn khoảng ngày (chip nhanh, lịch, tối đa 3660 ngày) |
 | G Cá nhân/Cài đặt | Xong (G1 + G2) | G1: Cá nhân (thẻ hồ sơ, 3 nhóm, đăng xuất có hỏi), Hồ sơ (tên hiển thị), Giao diện, Bảo mật (đổi PIN, đổi mật khẩu `POST /auth/change-password`), Phiên đăng nhập. Chọn tiền tệ/tháng/ngôn ngữ/múi giờ lưu ngay. Bỏ dòng "Định dạng ngày" (owner 2026-10-23). Ngân sách, Mục tiêu, Thông báo, Nhãn, đổi email: toast "Sắp có". G2: Nhãn (tìm, tạo, đổi tên, xoá, số giao dịch; chạm mở giao dịch đã lọc), Góp ý gửi thật (`POST /feedback`, chưa có ảnh) + màn cảm ơn, FAQ có tìm kiếm, Thông báo (chỉ "Máy mới đăng nhập" chạy, còn lại "Sắp có") |
-| A Onboarding/tài khoản | Xong (A1 + A2a + A2b) | A1: Đăng nhập một màn, Tạo tài khoản (danh sách điều kiện, đồng ý điều khoản, `termsAccepted` + migration), Xác nhận email (nút "Xong"), Quên mật khẩu, Mật khẩu mới (chờ deep link), Đặt PIN → Nhập lại → Face ID đều "Để sau" được, màn Mở khoá mới. PIN không còn bắt buộc: không PIN thì app không khoá, Bảo mật có "Đặt mã PIN". Google/Apple: nút báo "Sắp có". A2a: Welcome (một lần), Tạo tài khoản Freeva (Google/Apple "Sắp có", email), Mục tiêu (tối đa 2), Thói quen, Ngân sách tháng (số lưu trên máy, chờ `BE-P2-E02`); câu trả lời lưu ở backend (`PATCH /profile/onboarding`); bỏ màn giới thiệu cũ trong app. A2b: Thiết lập tài chính (mỗi loại một ví, form thêm ví của nhóm D, chạy được khi chưa mở khoá), checklist "Bắt đầu nào" trên Tổng quan (tự tính từ dữ liệu thật; hết khi đã có ví và khoản đầu tiên, dòng PIN chỉ hiện khi chưa có PIN), "Chào {tên}" trên màn Mở khoá (tên lưu cùng phiên trên máy). Chưa làm: xác nhận lại email trong Cá nhân, deep link, Google/Apple thật |
+| A Onboarding/tài khoản | Xong (A1 + A2a + A2b) | A1: Đăng nhập một màn, Tạo tài khoản (danh sách điều kiện, đồng ý điều khoản, `termsAccepted` + migration), Xác nhận email (nút "Xong"), Quên mật khẩu, Mật khẩu mới (chờ deep link), Đặt PIN → Nhập lại → Face ID đều "Để sau" được, màn Mở khoá mới. PIN không còn bắt buộc: không PIN thì app không khoá, Bảo mật có "Đặt mã PIN". Google/Apple: nút báo "Sắp có". A2a: Welcome (một lần), Tạo tài khoản Freeva (Google/Apple "Sắp có", email), Mục tiêu (tối đa 2), Thói quen, Ngân sách tháng (tạo ngân sách thật qua `BE-P2-E02`, không được thì giữ số trên máy); câu trả lời lưu ở backend (`PATCH /profile/onboarding`); bỏ màn giới thiệu cũ trong app. A2b: Thiết lập tài chính (mỗi loại một ví, form thêm ví của nhóm D, chạy được khi chưa mở khoá), checklist "Bắt đầu nào" trên Tổng quan (tự tính từ dữ liệu thật; hết khi đã có ví và khoản đầu tiên, dòng PIN chỉ hiện khi chưa có PIN), "Chào {tên}" trên màn Mở khoá (tên lưu cùng phiên trên máy). Mục tiêu chỉ đổi thứ tự khối ở "Quản lý khoản nợ"; 5 mục tiêu còn lại chưa có khối thiết kế. `DS-P2-004` done 2026-10-29. Chưa làm: xác nhận lại email trong Cá nhân, deep link, Google/Apple thật |
 | H Đồng bộ | Xong (H1 + H2) | H1: banner trên Giao dịch (vàng khi cần xem, trung tính khi chỉ chờ gửi), chip "Cần xem lại" / icon đồng hồ trên dòng, màn Đồng bộ (`/sync`: thẻ trạng thái chưa có mạng / chưa gửi được / đang gửi / đã đồng bộ hết / cần cập nhật, mục cần xem với lý do và Thử lại · Bỏ, mục chờ gửi với ×, giờ lần cuối), popup "Bỏ thay đổi này?". Tiến độ không có số từng mục (một lô một lần gọi); nút "Cập nhật" và "Sửa" để sau. H2: màn Chọn bản giữ lại (so hai bản, chọn sẵn bản đã lưu; giữ bản máy này = gửi lại với `version` mới của server), sheet "Có thể bạn đã ghi rồi" (hiện ở màn gốc của tab, Giữ cả hai / Xoá bản vừa ghi có Hoàn tác). Chưa làm: nút "Cập nhật", nút "Sửa" |
+| I Mục tiêu (Phase 3) | Xong | `MOB-P3-E01`: danh sách và trạng thái trống, tạo/sửa (thẻ "Cần góp" tính trên máy), chi tiết + lịch sử (`GET /goals/{id}/entries`), sheet góp/rút, khối Mục tiêu trên Tổng quan, ô Mục tiêu ở Cá nhân. Golden sáng/tối + 1.3×, đối chiếu board bằng `design_compare` nhóm `I`. Khác board: lịch sử chưa có tên ví, dòng sửa số không có số mới |
+| K Vay và nợ (Phase 3) | Xong | `MOB-P3-007` + `MOB-P3-E02`: Người quen (trống, danh sách, ghi khoản mượn, chi tiết + lịch sử, sheet ghi tiền nhận lại/đã trả), Khoản vay (danh sách, thêm/sửa, chi tiết với kỳ tới, cách tính, lịch trả, sheet ghi lần trả), dòng Vay và nợ ở Cá nhân. Golden sáng/tối + 1.3×, đối chiếu board bằng `design_compare` nhóm `K`. Khác board: màu avatar theo tên, ghi trả khoản vay luôn hôm nay |
+| L Định kỳ và hóa đơn (Phase 3) | Xong | `MOB-P3-001`: danh sách (thẻ Cần trả, nhóm Cần trả / Ghi tự động), thêm/sửa với nhóm radio cách ghi, sheet "Đã trả" (số thật, ví, ngày, gắn khoản chi có sẵn). Golden sáng/tối + 1.3×, đối chiếu board bằng `design_compare` nhóm `L`. Khác board: Thu/Chuyển không chọn được "Hỏi trước khi ghi" (API), loại và cách ghi của khoản đã tạo chỉ đọc (API), tiêu đề sheet giữ nguyên hoa/thường của tên |
+| M Hoàn tiền (Phase 3) | Xong | `MOB-P3-008`: card "Ghi hoàn tiền" trong chi tiết khoản chi, sheet ghi hoàn tiền, popup xoá khoản chi có hoàn tiền; dòng và chi tiết giao dịch hoàn tiền. "Đã hoàn" lấy từ `refundedMinor` của API. Golden sáng/tối + 1.3×, đối chiếu board bằng `design_compare` nhóm `M`. Khác board: sheet và popup nằm trên danh sách giao dịch (board vẽ trên chi tiết thẻ có trả góp), chưa có hàng "Chuyển thành trả góp" (`MOB-P3-009`), dòng phụ khoản chi chỉ giữ phần đầu để "đã hoàn …" vừa một dòng
+| M Trả góp thẻ (Phase 3) | Xong | `MOB-P3-009`: hàng "Chuyển thành trả góp" trong chi tiết khoản chi trên thẻ, màn tạo lịch (số kỳ, mỗi kỳ, kỳ đầu, xem trước từ API), lịch trả góp và kết thúc sớm, thẻ "Phải trả kỳ này" + nhóm TRẢ GÓP trên chi tiết thẻ. Golden sáng/tối + 1.3×, đối chiếu board bằng `design_compare` nhóm `M`. Khác board: icon theo danh mục khoản chi, màn hẹp xếp chồng hai ô, popup xác nhận kết thúc (board chưa vẽ) |
+| A3 Onboarding ba câu (Phase 3) | Xong | `MOB-P3-012`: ba câu (mục tiêu sử dụng, thu nhập, mục tiêu tiết kiệm), gợi ý ngân sách có/không mục tiêu, sheet mời bật nhắc ghi chi trên Tổng quan, dòng Thu nhập ở Cá nhân. Số cần để dành từ `POST /goals/preview`. Golden sáng/tối, test 320 pt chữ 1.3×, đối chiếu board bằng `design_compare` nhóm `A`. Khác board: màn thu nhập có bàn phím số, thanh để dành dùng token `data.saving` (#2F9E76 thay #3FA57E), màn hẹp xếp chồng hai ô |
 
 ### Rà soát độ khớp UI (`DS-P2-006`, 2026-10-26)
 
@@ -49,9 +69,11 @@ Còn lệch có chủ đích hoặc chưa làm: ô thả khi kéo sắp xếp v�
 
 ## Việc thiết kế còn lại
 
-Tám nhóm A–H đã chốt. Còn:
+Tám nhóm A–H và bảy nhóm Phase 3 đã chốt. Còn:
 
-- **Popup xoá tài khoản** (nhóm G): chờ quyết định sản phẩm về thời gian chờ huỷ.
+- **Popup xoá tài khoản** (nhóm G): đã làm bằng hộp xác nhận chung ở `MOB-P2-011`; chưa vẽ trên board. Xuất dữ liệu đã vẽ ở nhóm O.
+- **Khoản bạn đi mượn** (nhóm K): chi tiết và sheet trả giống khoản cho mượn, chỉ đổi chữ; chưa vẽ riêng.
+- **Hộp thư thông báo** vẽ lại 2026-11-04 (N.7, N.8): thay bản đang chạy; chưa code.
 
 ## Cách làm đã thống nhất với product owner
 
@@ -81,10 +103,16 @@ Tám nhóm A–H đã chốt. Còn:
 - **Ẩn số dư chỉ ẩn số dư**, không ẩn thu/chi hay số tiền giao dịch.
 - **Đồng bộ chạy ngầm, không làm mất dữ liệu:** chỉ hiện khi có việc cần người dùng; luôn nói rõ thay đổi vẫn nằm trên máy.
 - **Màu giữ như spec.** Đã thử ba mức tăng màu (icon danh mục hai tông → nền nhuộm xanh → khối màu đậm đầu màn); product owner chọn giữ nguyên. Không đề xuất lại nếu chưa được hỏi.
+- **Không viết chữ kiểu "Freeva làm…, bạn…"** (2026-11-03): nghe như máy giải thích. Dùng ví dụ thực tế ("Hợp với tiền điện, nước") hoặc nói kết quả ("Giao dịch đã có sẽ được bỏ qua").
+- **Nhãn phải đúng cho mọi trường hợp dùng** (2026-11-03): ví dụ "Hỏi trước khi ghi" thay "Nhắc tôi trả" vì định kỳ có cả khoản thu.
+- **Sheet và popup nằm trên màn thật**, không trên khung trống; số liệu mẫu phải khớp giữa các màn liên quan.
+- **Không vẽ màn trùng bố cục chỉ để đổi số**; ghi biến thể bằng ghi chú cạnh board (2026-11-03).
+- **Danh sách cài đặt dài thì tách**: chỗ dùng thường xuyên thành lưới ô, cài đặt chỉnh một lần gộp vào màn con (Cá nhân, 2026-11-03).
 - Product owner gửi ảnh tham chiếu thường xuyên: chỉ dùng để thiết kế, **không lưu vào repo**. Điều rút ra từ ảnh thì ghi thành chữ vào spec hoặc file pattern.
 
 ## Ghi chú kỹ thuật cho người sửa canvas
 
 - Canvas là Artifact loại Design: file `project/canvas.json` (index, `pages`, `boards`, `order`, `notes`) và `project/*.dc.html`. Ảnh logo đã tải lên dạng asset `/_blob/…` (xem `canvas/Logo.dc.html`).
-- Trang canvas: `f` Foundations · `t` Tokens · `c` Components · `s` States · `p` Patterns · `g` Guidelines.
+- Trang canvas: `f` Foundations · `t` Tokens · `c` Components · `s` States · `p` Patterns · `p3` Phase 3 · `g` Guidelines.
+- Board Phase 3 có tiêu đề dạng "I · 1. Tên màn"; màn có sheet/popup dùng nguyên nội dung màn nền bên dưới lớp tối.
 - Màu trong artboard là hex theo token v2 (ink `#22283A`, canvas `#FCFDFF`, action `#3F67D1`, wash ở `.wash`).

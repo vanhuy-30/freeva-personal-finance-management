@@ -77,7 +77,13 @@ class G1 {
         displayName: displayName,
         goals: goals,
       );
-    g.profile = DefaultProfileViewModel(ProfileUseCases(g.profiles), g.auth);
+    g.profile = DefaultProfileViewModel(
+      ProfileUseCases(g.profiles),
+      g.auth,
+      exportCase(
+        AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+      ),
+    );
     await g.profile.load();
     g.api.sessionItems = [
       {

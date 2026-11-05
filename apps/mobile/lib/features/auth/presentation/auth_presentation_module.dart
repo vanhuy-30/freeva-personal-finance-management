@@ -1,6 +1,7 @@
 import 'package:injectable/injectable.dart';
 
 import '../../../core/analytics/analytics_service.dart';
+import '../../notifications/domain/notification_use_cases.dart';
 import '../../settings/domain/settings_use_cases.dart';
 import '../domain/auth_use_cases.dart';
 import '../domain/session_alert_notifier.dart';
@@ -14,10 +15,12 @@ abstract class AuthPresentationModule {
     SettingsUseCases settings,
     SessionAlertNotifier alerts,
     AnalyticsService analytics,
+    NotificationUseCases notifications,
   ) => DefaultAuthViewModel(
     useCases,
     settings: settings,
     alerts: alerts,
     analytics: analytics,
+    notifications: notifications,
   );
 }

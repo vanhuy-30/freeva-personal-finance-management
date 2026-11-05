@@ -40,6 +40,14 @@ import 'package:mobile/features/budgets/domain/budget_repository.dart'
 import 'package:mobile/features/budgets/domain/budget_use_cases.dart' as _i245;
 import 'package:mobile/features/budgets/presentation/viewmodels/budget_view_model.dart'
     as _i137;
+import 'package:mobile/features/calendar/data/calendar_repository_impl.dart'
+    as _i918;
+import 'package:mobile/features/calendar/domain/calendar_repository.dart'
+    as _i791;
+import 'package:mobile/features/calendar/domain/calendar_use_cases.dart'
+    as _i471;
+import 'package:mobile/features/calendar/presentation/viewmodels/calendar_view_model.dart'
+    as _i622;
 import 'package:mobile/features/categories/data/category_expansion_repository_impl.dart'
     as _i226;
 import 'package:mobile/features/categories/data/category_repository_impl.dart'
@@ -52,16 +60,79 @@ import 'package:mobile/features/categories/domain/category_use_cases.dart'
     as _i221;
 import 'package:mobile/features/categories/presentation/viewmodels/category_view_model.dart'
     as _i961;
+import 'package:mobile/features/debts/data/debt_repository_impl.dart' as _i464;
+import 'package:mobile/features/debts/domain/debt_repository.dart' as _i249;
+import 'package:mobile/features/debts/domain/debt_use_cases.dart' as _i468;
+import 'package:mobile/features/debts/presentation/viewmodels/debt_view_model.dart'
+    as _i79;
 import 'package:mobile/features/feedback/data/feedback_repository_impl.dart'
     as _i216;
 import 'package:mobile/features/feedback/domain/feedback.dart' as _i173;
+import 'package:mobile/features/forecast/data/forecast_repository_impl.dart'
+    as _i587;
+import 'package:mobile/features/forecast/domain/forecast_repository.dart'
+    as _i159;
+import 'package:mobile/features/forecast/domain/forecast_use_cases.dart'
+    as _i1004;
+import 'package:mobile/features/fx_rates/data/fx_rate_repository_impl.dart'
+    as _i435;
+import 'package:mobile/features/fx_rates/domain/fx_rate_repository.dart'
+    as _i406;
+import 'package:mobile/features/fx_rates/domain/fx_rate_use_cases.dart'
+    as _i1002;
+import 'package:mobile/features/goals/data/goal_repository_impl.dart' as _i258;
+import 'package:mobile/features/goals/domain/goal_repository.dart' as _i625;
+import 'package:mobile/features/goals/domain/goal_use_cases.dart' as _i840;
+import 'package:mobile/features/goals/presentation/viewmodels/goal_view_model.dart'
+    as _i814;
 import 'package:mobile/features/home/domain/overview_use_cases.dart' as _i970;
 import 'package:mobile/features/home/presentation/viewmodels/home_view_model.dart'
     as _i722;
+import 'package:mobile/features/installments/data/card_installment_repository_impl.dart'
+    as _i922;
+import 'package:mobile/features/installments/domain/card_installment_repository.dart'
+    as _i182;
+import 'package:mobile/features/installments/domain/card_installment_use_cases.dart'
+    as _i238;
+import 'package:mobile/features/installments/presentation/viewmodels/installment_view_model.dart'
+    as _i987;
+import 'package:mobile/features/loans/data/loan_repository_impl.dart' as _i288;
+import 'package:mobile/features/loans/domain/loan_repository.dart' as _i63;
+import 'package:mobile/features/loans/domain/loan_use_cases.dart' as _i572;
+import 'package:mobile/features/loans/presentation/viewmodels/loan_view_model.dart'
+    as _i857;
+import 'package:mobile/features/notifications/data/fcm_push_registrar.dart'
+    as _i360;
+import 'package:mobile/features/notifications/data/notification_repository_impl.dart'
+    as _i419;
+import 'package:mobile/features/notifications/data/push_token_repository_impl.dart'
+    as _i460;
+import 'package:mobile/features/notifications/domain/notification_repository.dart'
+    as _i199;
+import 'package:mobile/features/notifications/domain/notification_use_cases.dart'
+    as _i338;
+import 'package:mobile/features/notifications/domain/push_registrar.dart'
+    as _i911;
+import 'package:mobile/features/notifications/presentation/viewmodels/notification_view_model.dart'
+    as _i921;
+import 'package:mobile/features/onboarding/domain/pending_goal_use_cases.dart'
+    as _i861;
+import 'package:mobile/features/onboarding/presentation/viewmodels/first_run_nudges_view_model.dart'
+    as _i779;
 import 'package:mobile/features/profile/data/profile_repository_impl.dart'
     as _i72;
+import 'package:mobile/features/profile/data/share_account_file_sharer.dart'
+    as _i429;
+import 'package:mobile/features/profile/domain/account_export_use_case.dart'
+    as _i410;
+import 'package:mobile/features/profile/domain/account_file_sharer.dart'
+    as _i1007;
 import 'package:mobile/features/profile/domain/profile_repository.dart' as _i4;
 import 'package:mobile/features/profile/domain/profile_use_cases.dart' as _i281;
+import 'package:mobile/features/profile/domain/transactions_csv_export_use_case.dart'
+    as _i421;
+import 'package:mobile/features/profile/presentation/viewmodels/data_export_view_model.dart'
+    as _i1008;
 import 'package:mobile/features/profile/presentation/viewmodels/profile_view_model.dart'
     as _i887;
 import 'package:mobile/features/recurring/data/recurring_repository_impl.dart'
@@ -96,6 +167,18 @@ import 'package:mobile/features/sync/presentation/viewmodels/sync_view_model.dar
 import 'package:mobile/features/tags/data/tag_repository_impl.dart' as _i729;
 import 'package:mobile/features/tags/domain/tag_repository.dart' as _i57;
 import 'package:mobile/features/tags/domain/tag_use_cases.dart' as _i112;
+import 'package:mobile/features/transaction_import/data/import_repository_impl.dart'
+    as _i538;
+import 'package:mobile/features/transaction_import/data/platform_import_file_picker.dart'
+    as _i539;
+import 'package:mobile/features/transaction_import/domain/import_file_picker.dart'
+    as _i761;
+import 'package:mobile/features/transaction_import/domain/import_repository.dart'
+    as _i377;
+import 'package:mobile/features/transaction_import/domain/import_use_cases.dart'
+    as _i272;
+import 'package:mobile/features/transaction_import/presentation/viewmodels/import_view_model.dart'
+    as _i587;
 import 'package:mobile/features/transactions/data/transaction_repository_impl.dart'
     as _i1020;
 import 'package:mobile/features/transactions/domain/transaction_repository.dart'
@@ -129,6 +212,8 @@ extension GetItInjectableX on _i174.GetIt {
     final authDataModule = _$AuthDataModule();
     final authPresentationModule = _$AuthPresentationModule();
     gh.lazySingleton<_i467.AppConfig>(() => _i467.AppConfig());
+    gh.lazySingleton<_i761.ImportFilePicker>(
+        () => _i539.PlatformImportFilePicker());
     gh.lazySingleton<_i1060.PreferenceVault>(
         () => _i1060.SecurePreferenceVault());
     gh.lazySingleton<_i938.SyncQueueVault>(() => _i938.SecureSyncQueueVault());
@@ -143,6 +228,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i444.CategoryExpansionRepository>(
         () => _i226.CategoryExpansionRepositoryImpl());
     gh.lazySingleton<_i766.AppLogger>(() => _i760.AppLoggerImpl());
+    gh.lazySingleton<_i1007.AccountFileSharer>(
+        () => _i429.ShareAccountFileSharer());
     gh.lazySingleton<_i88.AuthApi>(() => _i88.HttpAuthApi(
           gh<_i467.AppConfig>(),
           gh<_i766.AppLogger>(),
@@ -160,13 +247,21 @@ extension GetItInjectableX on _i174.GetIt {
         () => authDataModule.authorizedApi(gh<_i173.AuthRepository>()));
     gh.lazySingleton<_i519.SettingsUseCases>(
         () => _i519.DefaultSettingsUseCases(gh<_i1056.SettingsRepository>()));
+    gh.lazySingleton<_i63.LoanRepository>(
+        () => _i288.LoanRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i561.CategoryRepository>(
         () => _i613.CategoryRepositoryImpl(gh<_i443.AuthorizedApi>()));
+    gh.lazySingleton<_i377.ImportRepository>(
+        () => _i538.ImportRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i882.SyncRepository>(() => _i430.SyncRepositoryImpl(
           gh<_i443.AuthorizedApi>(),
           gh<_i938.SyncQueueVault>(),
           gh<_i766.AppLogger>(),
         ));
+    gh.lazySingleton<_i199.NotificationRepository>(
+        () => _i419.NotificationRepositoryImpl(gh<_i443.AuthorizedApi>()));
+    gh.lazySingleton<_i791.CalendarRepository>(
+        () => _i918.CalendarRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i931.TransactionRepository>(
         () => _i1020.TransactionRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i821.RecurringRepository>(
@@ -177,6 +272,24 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i629.DefaultRecurringUseCases(gh<_i821.RecurringRepository>()));
     gh.lazySingleton<_i1073.BudgetRepository>(
         () => _i1036.BudgetRepositoryImpl(gh<_i443.AuthorizedApi>()));
+    gh.lazySingleton<_i911.PushTokenRepository>(
+        () => _i460.PushTokenRepositoryImpl(gh<_i443.AuthorizedApi>()));
+    gh.lazySingleton<_i182.CardInstallmentRepository>(
+        () => _i922.CardInstallmentRepositoryImpl(gh<_i443.AuthorizedApi>()));
+    gh.factory<_i421.TransactionsCsvExportUseCase>(
+        () => _i421.TransactionsCsvExportUseCase(
+              gh<_i173.AuthRepository>(),
+              gh<_i1007.AccountFileSharer>(),
+            ));
+    gh.factory<_i410.AccountExportUseCase>(() => _i410.AccountExportUseCase(
+          gh<_i173.AuthRepository>(),
+          gh<_i1007.AccountFileSharer>(),
+        ));
+    gh.lazySingleton<_i159.ForecastRepository>(
+        () => _i587.ForecastRepositoryImpl(gh<_i443.AuthorizedApi>()));
+    gh.lazySingleton<_i238.CardInstallmentUseCases>(() =>
+        _i238.DefaultCardInstallmentUseCases(
+            gh<_i182.CardInstallmentRepository>()));
     gh.lazySingleton<_i107.WalletRepository>(
         () => _i128.WalletRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i4.ProfileRepository>(
@@ -185,10 +298,18 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i931.ReportRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i173.FeedbackRepository>(
         () => _i216.FeedbackRepositoryImpl(gh<_i443.AuthorizedApi>()));
+    gh.lazySingleton<_i625.GoalRepository>(
+        () => _i258.GoalRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i57.TagRepository>(
         () => _i729.TagRepositoryImpl(gh<_i443.AuthorizedApi>()));
+    gh.lazySingleton<_i249.DebtRepository>(
+        () => _i464.DebtRepositoryImpl(gh<_i443.AuthorizedApi>()));
+    gh.lazySingleton<_i338.NotificationUseCases>(() =>
+        _i338.DefaultNotificationUseCases(gh<_i199.NotificationRepository>()));
     gh.factory<_i253.AuthUseCases>(
         () => _i253.DefaultAuthUseCases(gh<_i173.AuthRepository>()));
+    gh.lazySingleton<_i406.FxRateRepository>(
+        () => _i435.FxRateRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i665.SyncUseCases>(
         () => _i665.DefaultSyncUseCases(gh<_i882.SyncRepository>()));
     gh.lazySingleton<_i221.CategoryUseCases>(
@@ -203,24 +324,53 @@ extension GetItInjectableX on _i174.GetIt {
               gh<_i253.AuthUseCases>(),
               gh<_i1020.AnalyticsService>(),
             ));
+    gh.lazySingleton<_i471.CalendarUseCases>(
+        () => _i471.DefaultCalendarUseCases(gh<_i791.CalendarRepository>()));
+    gh.lazySingleton<_i911.PushRegistrar>(() => _i360.FcmPushRegistrar(
+          gh<_i911.PushTokenRepository>(),
+          gh<_i54.SessionAlertNotifier>(),
+        ));
+    gh.lazySingleton<_i272.ImportUseCases>(
+        () => _i272.DefaultImportUseCases(gh<_i377.ImportRepository>()));
+    gh.lazySingleton<_i572.LoanUseCases>(
+        () => _i572.DefaultLoanUseCases(gh<_i63.LoanRepository>()));
+    gh.lazySingleton<_i1004.ForecastUseCases>(
+        () => _i1004.DefaultForecastUseCases(gh<_i159.ForecastRepository>()));
+    gh.lazySingleton<_i840.GoalUseCases>(
+        () => _i840.DefaultGoalUseCases(gh<_i625.GoalRepository>()));
+    gh.factory<_i1002.FxRateUseCases>(() => _i1002.FxRateUseCases(
+          gh<_i406.FxRateRepository>(),
+          gh<_i107.WalletRepository>(),
+        ));
+    gh.lazySingleton<_i245.BudgetUseCases>(
+        () => _i245.DefaultBudgetUseCases(gh<_i1073.BudgetRepository>()));
     gh.lazySingleton<_i990.AuthViewModel>(
         () => authPresentationModule.authViewModel(
               gh<_i253.AuthUseCases>(),
               gh<_i519.SettingsUseCases>(),
               gh<_i54.SessionAlertNotifier>(),
               gh<_i1020.AnalyticsService>(),
+              gh<_i338.NotificationUseCases>(),
             ));
-    gh.lazySingleton<_i488.SyncViewModel>(() => _i488.DefaultSyncViewModel(
-          gh<_i665.SyncUseCases>(),
-          gh<_i990.AuthViewModel>(),
-          gh<_i1020.AnalyticsService>(),
-        ));
-    gh.lazySingleton<_i245.BudgetUseCases>(
-        () => _i245.DefaultBudgetUseCases(gh<_i1073.BudgetRepository>()));
     gh.lazySingleton<_i336.WalletUseCases>(
         () => _i336.DefaultWalletUseCases(gh<_i107.WalletRepository>()));
+    gh.lazySingleton<_i970.OverviewUseCases>(
+        () => _i970.DefaultOverviewUseCases(
+              gh<_i61.ReportRepository>(),
+              gh<_i107.WalletRepository>(),
+              gh<_i931.TransactionRepository>(),
+              gh<_i561.CategoryRepository>(),
+              gh<_i245.BudgetUseCases>(),
+              gh<_i406.FxRateRepository>(),
+            ));
     gh.factory<_i281.ProfileUseCases>(
         () => _i281.ProfileUseCases(gh<_i4.ProfileRepository>()));
+    gh.lazySingleton<_i622.CalendarViewModel>(() => _i622.CalendarViewModel(
+          gh<_i471.CalendarUseCases>(),
+          gh<_i990.AuthViewModel>(),
+        ));
+    gh.lazySingleton<_i468.DebtUseCases>(
+        () => _i468.DefaultDebtUseCases(gh<_i249.DebtRepository>()));
     gh.lazySingleton<_i146.ReportUseCases>(() => _i146.DefaultReportUseCases(
           gh<_i61.ReportRepository>(),
           gh<_i107.WalletRepository>(),
@@ -232,27 +382,40 @@ extension GetItInjectableX on _i174.GetIt {
               gh<_i990.AuthViewModel>(),
               gh<_i444.CategoryExpansionRepository>(),
             ));
-    gh.lazySingleton<_i970.OverviewUseCases>(
-        () => _i970.DefaultOverviewUseCases(
-              gh<_i61.ReportRepository>(),
-              gh<_i107.WalletRepository>(),
-              gh<_i931.TransactionRepository>(),
-              gh<_i561.CategoryRepository>(),
-              gh<_i245.BudgetUseCases>(),
-            ));
-    gh.lazySingleton<_i887.ProfileViewModel>(
-        () => _i887.DefaultProfileViewModel(
-              gh<_i281.ProfileUseCases>(),
-              gh<_i990.AuthViewModel>(),
-            ));
-    gh.lazySingleton<_i72.RecurringViewModel>(() => _i72.RecurringViewModel(
-          gh<_i629.RecurringUseCases>(),
+    gh.factory<_i587.DefaultImportViewModel>(() => _i587.DefaultImportViewModel(
+          gh<_i272.ImportUseCases>(),
+          gh<_i336.WalletUseCases>(),
+          gh<_i221.CategoryUseCases>(),
+          gh<_i761.ImportFilePicker>(),
           gh<_i990.AuthViewModel>(),
+        ));
+    gh.factory<_i861.PendingGoalUseCases>(() => _i861.PendingGoalUseCases(
+          gh<_i519.SettingsUseCases>(),
+          gh<_i840.GoalUseCases>(),
+          gh<_i336.WalletUseCases>(),
+          gh<_i253.AuthUseCases>(),
+        ));
+    gh.lazySingleton<_i488.SyncViewModel>(() => _i488.DefaultSyncViewModel(
+          gh<_i665.SyncUseCases>(),
+          gh<_i990.AuthViewModel>(),
+          gh<_i1020.AnalyticsService>(),
         ));
     gh.lazySingleton<_i251.WalletViewModel>(() => _i251.DefaultWalletViewModel(
           gh<_i336.WalletUseCases>(),
           gh<_i990.AuthViewModel>(),
           gh<_i887.ProfileViewModel>(),
+        ));
+    gh.lazySingleton<_i887.ProfileViewModel>(
+        () => _i887.DefaultProfileViewModel(
+              gh<_i281.ProfileUseCases>(),
+              gh<_i990.AuthViewModel>(),
+              gh<_i410.AccountExportUseCase>(),
+            ));
+    gh.lazySingleton<_i814.GoalViewModel>(() => _i814.GoalViewModel(
+          gh<_i840.GoalUseCases>(),
+          gh<_i251.WalletViewModel>(),
+          gh<_i887.ProfileViewModel>(),
+          gh<_i990.AuthViewModel>(),
         ));
     gh.lazySingleton<_i1044.ReportViewModel>(
         () => _i1044.DefaultReportViewModel(
@@ -275,6 +438,12 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i421.SettingsViewModel>(),
           gh<_i488.SyncViewModel>(),
         ));
+    gh.lazySingleton<_i79.DebtViewModel>(() => _i79.DebtViewModel(
+          gh<_i468.DebtUseCases>(),
+          gh<_i251.WalletViewModel>(),
+          gh<_i887.ProfileViewModel>(),
+          gh<_i990.AuthViewModel>(),
+        ));
     gh.lazySingleton<_i332.TransactionViewModel>(
         () => _i332.DefaultTransactionViewModel(
               gh<_i292.TransactionUseCases>(),
@@ -286,6 +455,12 @@ extension GetItInjectableX on _i174.GetIt {
               gh<_i990.AuthViewModel>(),
               gh<_i1020.AnalyticsService>(),
               gh<_i488.SyncViewModel>(),
+              gh<_i1002.FxRateUseCases>(),
+            ));
+    gh.lazySingleton<_i779.FirstRunNudgesViewModel>(
+        () => _i779.FirstRunNudgesViewModel(
+              gh<_i861.PendingGoalUseCases>(),
+              gh<_i519.SettingsUseCases>(),
             ));
     gh.factoryParam<_i599.WalletDetailViewModel, String, dynamic>((
       walletId,
@@ -294,8 +469,29 @@ extension GetItInjectableX on _i174.GetIt {
         _i599.DefaultWalletDetailViewModel(
           gh<_i292.TransactionUseCases>(),
           gh<_i332.TransactionViewModel>(),
+          gh<_i1002.FxRateUseCases>(),
           walletId: walletId,
         ));
+    gh.lazySingleton<_i987.InstallmentViewModel>(
+        () => _i987.InstallmentViewModel(
+              gh<_i238.CardInstallmentUseCases>(),
+              gh<_i251.WalletViewModel>(),
+              gh<_i990.AuthViewModel>(),
+            ));
+    gh.lazySingleton<_i72.RecurringViewModel>(() => _i72.RecurringViewModel(
+          gh<_i629.RecurringUseCases>(),
+          gh<_i990.AuthViewModel>(),
+          gh<_i251.WalletViewModel>(),
+          gh<_i887.ProfileViewModel>(),
+          gh<_i292.TransactionUseCases>(),
+        ));
+    gh.lazySingleton<_i921.NotificationViewModel>(
+        () => _i921.DefaultNotificationViewModel(
+              gh<_i338.NotificationUseCases>(),
+              gh<_i990.AuthViewModel>(),
+              gh<_i887.ProfileViewModel>(),
+              gh<_i911.PushRegistrar>(),
+            ));
     gh.factoryParam<_i1024.TransactionResultsViewModel, bool?, String?>((
       deleted,
       accountId,
@@ -306,6 +502,21 @@ extension GetItInjectableX on _i174.GetIt {
           deleted: deleted,
           accountId: accountId,
         ));
+    gh.lazySingleton<_i857.LoanViewModel>(() => _i857.LoanViewModel(
+          gh<_i572.LoanUseCases>(),
+          gh<_i251.WalletViewModel>(),
+          gh<_i887.ProfileViewModel>(),
+          gh<_i990.AuthViewModel>(),
+        ));
+    gh.factory<_i1008.DefaultDataExportViewModel>(
+        () => _i1008.DefaultDataExportViewModel(
+              gh<_i281.ProfileUseCases>(),
+              gh<_i336.WalletUseCases>(),
+              gh<_i292.TransactionUseCases>(),
+              gh<_i421.TransactionsCsvExportUseCase>(),
+              gh<_i887.ProfileViewModel>(),
+              gh<_i990.AuthViewModel>(),
+            ));
     return this;
   }
 }

@@ -55,3 +55,6 @@ services:
       # INF-P1-001: DSN write key của project Sentry staging. Không commit giá trị thật.
       - key: SENTRY_DSN
         sync: false
+      # BE-P2-015: service account Firebase (base64 JSON). Không commit giá trị thật; để trống thì push tắt.
+      - key: FCM_SERVICE_ACCOUNT_BASE64
+        sync: false

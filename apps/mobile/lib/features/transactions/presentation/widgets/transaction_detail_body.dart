@@ -4,18 +4,50 @@ import 'package:mobile/core/theme/lucide_icons.g.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
+import '../../../../core/money/display_converted.dart';
+import '../../../../core/widgets/converted_note.dart';
 import '../../../../core/widgets/freeva_button_style.dart';
 import '../../../../core/widgets/press_scale.dart';
 import '../../../../core/widgets/money_display.dart';
+import '../../../wallets/domain/wallet.dart';
 import '../../domain/transaction.dart';
 import '../viewmodels/transaction_view_model.dart';
 import 'delete_circle_button.dart';
+import 'expense_action_card.dart';
 import 'transaction_detail_card.dart';
 import 'transaction_naming.dart';
 
-enum DetailAction { edit, copy, delete }
+enum DetailAction {
+  edit,
+  copy,
+  delete,
 
-class TransactionDetailBody extends StatelessWidget {
+  /// "Ghi hoàn tiền" on an expense (`MOB-P3-008`).
+  refund,
+
+  /// "Hoàn cho …" on a refund: opens the expense it belongs to.
+  openOriginal,
+
+  /// "Chuyển thành trả góp" on a card expense without a plan (`MOB-P3-009`).
+  installment,
+
+  /// "Xem lịch trả góp" on an expense with an active plan.
+  openInstallment,
+}
+
+/// "Chuyển thành trả góp" shows on a live expense on a credit wallet that
+/// has no plan yet (the API allows one plan per purchase).
+bool canSplitIntoInstallments(TransactionBundle bundle, List<Wallet> wallets) {
+  if (bundle.type != TransactionType.expense || bundle.deleted) return false;
+  if (bundle.installmentPlanId != null) return false;
+  final id = bundle.legs.first.accountId;
+  final wallet = wallets.where((w) => w.id == id).firstOrNull;
+  return wallet != null &&
+      !wallet.archived &&
+      wallet.draft.type == WalletType.credit;
+}
+
+class TransactionDetailBody extends StatefulWidget {
   const TransactionDetailBody({
     required this.model,
     required this.bundle,
@@ -26,6 +58,31 @@ class TransactionDetailBody extends StatelessWidget {
   final TransactionViewModel model;
   final TransactionBundle bundle;
   final TransactionNaming naming;
+
+  @override
+  State<TransactionDetailBody> createState() => _TransactionDetailBodyState();
+}
+
+class _TransactionDetailBodyState extends State<TransactionDetailBody> {
+  TransactionViewModel get model => widget.model;
+  TransactionBundle get bundle => widget.bundle;
+  TransactionNaming get naming => widget.naming;
+
+  /// The expense a refund belongs to, for "Hoàn cho …": from the loaded
+  /// list when it is there, else read once from the API.
+  late final Future<TransactionBundle?>? original = _original();
+
+  Future<TransactionBundle?>? _original() {
+    final id = bundle.refundOfId;
+    if (bundle.type != TransactionType.refund || id == null) return null;
+    final loaded = model.rows.where((r) => r.id == id).firstOrNull;
+    return loaded != null ? Future.value(loaded) : model.open(id);
+  }
+
+  bool get _hasPlan =>
+      bundle.type == TransactionType.expense &&
+      !bundle.deleted &&
+      bundle.installmentPlanId != null;
 
   @override
   Widget build(BuildContext context) {
@@ -79,43 +136,95 @@ class TransactionDetailBody extends StatelessWidget {
                 tone: label.tone,
                 style: FreevaTypography.moneyL,
               ),
+              _ConvertedLine(model: model, bundle: bundle),
             ],
           ),
         ),
         const SizedBox(height: FreevaSpace.s5),
-        TransactionDetailCard(
-          bundle: bundle,
-          label: label,
-          naming: naming,
-          today: model.today(),
+        FutureBuilder<TransactionBundle?>(
+          future: original,
+          builder: (context, snapshot) {
+            final from = snapshot.data;
+            return TransactionDetailCard(
+              bundle: bundle,
+              label: label,
+              naming: naming,
+              today: model.today(),
+              digits: digits,
+              refundOf: from == null ? null : naming.label(from).title,
+              onOpenOriginal: from == null
+                  ? null
+                  : () => close(DetailAction.openOriginal),
+            );
+          },
         ),
+        if (_hasPlan ||
+            (model.canWrite &&
+                (bundle.refundable > BigInt.zero ||
+                    canSplitIntoInstallments(bundle, model.wallets)))) ...[
+          const SizedBox(height: FreevaSpace.s4),
+          ExpenseActionCard(
+            onRefund: model.canWrite && bundle.refundable > BigInt.zero
+                ? () => close(DetailAction.refund)
+                : null,
+            onInstallment:
+                model.canWrite &&
+                    canSplitIntoInstallments(bundle, model.wallets)
+                ? () => close(DetailAction.installment)
+                : null,
+            onSchedule: _hasPlan
+                ? () => close(DetailAction.openInstallment)
+                : null,
+          ),
+        ],
         const SizedBox(height: FreevaSpace.s5),
-        Row(
-          children: [
-            DeleteCircleButton(
-              label: s.txDetailDelete,
-              onPressed: () => close(DetailAction.delete),
-            ),
-            const SizedBox(width: FreevaSpace.s2),
-            Expanded(
-              child: _ActionButton(
-                label: s.txDetailCopy,
-                icon: LucideIcons.copy,
-                variant: FreevaButtonVariant.secondary,
-                onPressed: () => close(DetailAction.copy),
+        // The API refuses edits on a debt leg: it would break the remaining.
+        if (bundle.type == TransactionType.debt)
+          Text(
+            s.txDebtReadOnly,
+            textAlign: TextAlign.center,
+            style: FreevaTypography.bodyS.copyWith(color: c.textSecondary),
+          )
+        // A refund only deletes (owner, MOB-P3-008): one wide red-outline
+        // button instead of a lone circle.
+        else if (bundle.type == TransactionType.refund)
+          _ActionButton(
+            label: s.txDetailDelete,
+            icon: LucideIcons.trash,
+            variant: FreevaButtonVariant.secondary,
+            danger: true,
+            onPressed: () => close(DetailAction.delete),
+          )
+        else
+          Row(
+            children: [
+              DeleteCircleButton(
+                label: s.txDetailDelete,
+                onPressed: () => close(DetailAction.delete),
               ),
-            ),
-            const SizedBox(width: FreevaSpace.s2),
-            Expanded(
-              child: _ActionButton(
-                label: s.txDetailEdit,
-                icon: LucideIcons.penLine,
-                variant: FreevaButtonVariant.ink,
-                onPressed: () => close(DetailAction.edit),
+              // An adjustment cannot be copied: only "Khớp số dư" writes one.
+              if (bundle.type != TransactionType.adjustment) ...[
+                const SizedBox(width: FreevaSpace.s2),
+                Expanded(
+                  child: _ActionButton(
+                    label: s.txDetailCopy,
+                    icon: LucideIcons.copy,
+                    variant: FreevaButtonVariant.secondary,
+                    onPressed: () => close(DetailAction.copy),
+                  ),
+                ),
+              ],
+              const SizedBox(width: FreevaSpace.s2),
+              Expanded(
+                child: _ActionButton(
+                  label: s.txDetailEdit,
+                  icon: LucideIcons.penLine,
+                  variant: FreevaButtonVariant.ink,
+                  onPressed: () => close(DetailAction.edit),
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
       ],
     );
   }
@@ -129,12 +238,16 @@ class _ActionButton extends StatelessWidget {
     required this.icon,
     required this.variant,
     required this.onPressed,
+    this.danger = false,
   });
 
   final String label;
   final IconData icon;
   final FreevaButtonVariant variant;
   final VoidCallback onPressed;
+
+  /// Red text and outline (delete).
+  final bool danger;
 
   @override
   Widget build(BuildContext context) => PressScale(
@@ -145,6 +258,14 @@ class _ActionButton extends StatelessWidget {
             padding: const WidgetStatePropertyAll(
               EdgeInsets.symmetric(horizontal: FreevaSpace.s2),
             ),
+            foregroundColor: danger
+                ? WidgetStatePropertyAll(context.colors.statusDanger)
+                : null,
+            side: danger
+                ? WidgetStatePropertyAll(
+                    BorderSide(color: context.colors.borderDanger),
+                  )
+                : null,
           ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -157,5 +278,48 @@ class _ActionButton extends StatelessWidget {
         ],
       ),
     ),
+  );
+}
+
+/// The amount in the profile currency with the typed rate, once the server
+/// answers. Nothing is drawn while loading, when it fails, or when there is
+/// no exact conversion.
+class _ConvertedLine extends StatefulWidget {
+  const _ConvertedLine({required this.model, required this.bundle});
+
+  final TransactionViewModel model;
+  final TransactionBundle bundle;
+
+  @override
+  State<_ConvertedLine> createState() => _ConvertedLineState();
+}
+
+class _ConvertedLineState extends State<_ConvertedLine> {
+  late final Future<DisplayConverted?> converted = widget.model.convertedFor(
+    widget.bundle,
+  );
+
+  @override
+  Widget build(BuildContext context) => FutureBuilder<DisplayConverted?>(
+    future: converted,
+    builder: (context, snapshot) {
+      final value = snapshot.data;
+      if (value == null) return const SizedBox.shrink();
+      final digits =
+          widget.model.currencies
+              .where((x) => x.code == value.currency)
+              .map((x) => x.minorDigits)
+              .firstOrNull ??
+          0;
+      return Padding(
+        padding: const EdgeInsets.only(top: FreevaSpace.s2),
+        child: ConvertedNote(
+          value: value,
+          from: widget.bundle.legs.first.currencyCode,
+          minorDigits: digits,
+          textAlign: TextAlign.center,
+        ),
+      );
+    },
   );
 }

@@ -5,7 +5,8 @@ import { AuthService } from '../auth/auth.service';
 import { PROFILE_REPOSITORY, type Profile, type ProfileUpdate } from './domain/profile.repository';
 import { ProfileController } from './profile.controller';
 import { ProfileService } from './profile.service';
-const initial: Profile = { displayName: null, locale: 'vi', defaultCurrencyCode: 'VND', timezone: 'Asia/Ho_Chi_Minh', fiscalMonthStartDay: 1, version: 1, goals: [] };
+const initial: Profile = { displayName: null, locale: 'vi', defaultCurrencyCode: 'VND', timezone: 'Asia/Ho_Chi_Minh', fiscalMonthStartDay: 1, version: 1, goals: [],
+  monthlyIncomeMinor: null, displayCurrencyCode: null };
 describe('MOB-P1-002 profile HTTP contract', () => {
   let app: INestApplication; let base: string;
   const profiles = new Map<string, Profile>();
@@ -13,6 +14,14 @@ describe('MOB-P1-002 profile HTTP contract', () => {
     find: jest.fn(async (id: string) => profiles.get(id) ?? null),
     currencies: async () => [{ code: 'VND', minorDigits: 0 }, { code: 'USD', minorDigits: 2 }],
     saveOnboarding: jest.fn(async (id: string) => profiles.has(id)),
+    saveMonthlyIncome: jest.fn(async (id: string, minor: string | null) => {
+      if (!profiles.has(id)) return false;
+      profiles.set(id, { ...profiles.get(id)!, monthlyIncomeMinor: minor }); return true;
+    }),
+    saveDisplayCurrency: jest.fn(async (id: string, code: string | null) => {
+      if (!profiles.has(id)) return false;
+      profiles.set(id, { ...profiles.get(id)!, displayCurrencyCode: code }); return true;
+    }),
     update: jest.fn(async (id: string, profile: ProfileUpdate) => {
       if (profiles.get(id)?.version !== profile.version) return null;
       const stored = profiles.get(id)!;
@@ -43,10 +52,10 @@ describe('MOB-P1-002 profile HTTP contract', () => {
     expect(result.headers.get('cache-control')).toBe('no-store');
   });
   it('persists four fields for session owner and rejects stale version', async () => {
-    const { goals, ...editable } = initial;
+    const { goals, monthlyIncomeMinor, displayCurrencyCode, ...editable } = initial;
     const changes = { ...editable, locale: 'en', defaultCurrencyCode: 'USD', timezone: 'America/New_York', fiscalMonthStartDay: 28 };
-    expect((await request('PUT', changes)).body).toEqual({ ...changes, goals, version: 2 });
-    expect((await request()).body).toEqual({ ...changes, goals, version: 2 });
+    expect((await request('PUT', changes)).body).toEqual({ ...changes, goals, monthlyIncomeMinor, displayCurrencyCode, version: 2 });
+    expect((await request()).body).toEqual({ ...changes, goals, monthlyIncomeMinor, displayCurrencyCode, version: 2 });
     expect((await request('GET', undefined, 'b'.repeat(64))).body).toEqual(initial);
     expect((await request('PUT', changes)).status).toBe(409);
   });
@@ -60,7 +69,7 @@ describe('MOB-P1-002 profile HTTP contract', () => {
       expect(JSON.stringify(result.body)).not.toContain('sensitive@example.test');
   });
   it('keeps displayName when omitted, trims it, and clears it when blank', async () => {
-    const { displayName: _omit, goals: _goals, ...rest } = initial;
+    const { displayName: _omit, goals: _goals, monthlyIncomeMinor: _i, displayCurrencyCode: _d, ...rest } = initial;
     expect((await request('PUT', { ...rest, displayName: '  Minh  ' })).body.displayName).toBe('Minh');
     expect((await request('PUT', { ...rest, version: 2 })).body.displayName).toBe('Minh');
     expect((await request('PUT', { ...rest, version: 3, displayName: '   ' })).body.displayName).toBeNull();
@@ -76,12 +85,52 @@ describe('MOB-P1-002 profile HTTP contract', () => {
     const send = (body: object, token: string | null = 'a'.repeat(64)) => fetch(`${base}/api/v1/profile/onboarding`, {
       method: 'PATCH', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(body) });
     expect((await send({}, null)).status).toBe(401);
-    expect((await send({ goals: ['save', 'budget'], trackingHabit: 'app', reviewCadence: 'weekly' })).status).toBe(204);
+    expect((await send({ goals: ['save', 'budget'], monthlyIncomeMinor: '25000000' })).status).toBe(204);
+    expect((await send({ monthlyIncomeMinor: '15000000' })).status).toBe(204);
+    expect(repo.saveOnboarding).toHaveBeenLastCalledWith('owner', { monthlyIncomeMinor: '15000000' });
     expect((await send({ goals: [] })).status).toBe(204);
     expect(repo.saveOnboarding).toHaveBeenLastCalledWith('owner', { goals: [] });
     for (const bad of [{ goals: ['save', 'budget', 'debt'] }, { goals: ['save', 'save'] }, { goals: ['x'] },
-      { trackingHabit: 'other' }, { reviewCadence: 'hourly' }, { email: 'a@b.test' }]) {
+      { goals: ['debt'] }, { goals: ['emergency'] }, { trackingHabit: 'app' }, { monthlyIncomeMinor: '0' }, { monthlyIncomeMinor: '-5' }, { monthlyIncomeMinor: '1.5' }, { monthlyIncomeMinor: 5000000 },
+      { monthlyIncomeMinor: '1234567890123456789' }, { reviewCadence: 'weekly' }, { email: 'a@b.test' }]) {
       expect((await send(bad)).status).toBe(400);
     }
+  });
+  it('BE-P3-012 sets, changes and clears the monthly income, and rejects bad values', async () => {
+    const send = (body: object, token: string | null = 'a'.repeat(64)) => request('PUT', body, token, 'profile/monthly-income');
+    const put = (body: object) => fetch(`${base}/api/v1/profile/monthly-income`, { method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${'a'.repeat(64)}` }, body: JSON.stringify(body) });
+    expect((await send({ monthlyIncomeMinor: '1' }, null)).status).toBe(401);
+    expect((await put({ monthlyIncomeMinor: '20000000' })).status).toBe(204);
+    expect((await request()).body.monthlyIncomeMinor).toBe('20000000');
+    expect((await request('GET', undefined, 'b'.repeat(64))).body.monthlyIncomeMinor).toBeNull();
+    expect((await put({ monthlyIncomeMinor: null })).status).toBe(204);
+    expect((await request()).body.monthlyIncomeMinor).toBeNull();
+    for (const bad of [{ monthlyIncomeMinor: '0' }, { monthlyIncomeMinor: '-1' }, { monthlyIncomeMinor: '1.5' }, { monthlyIncomeMinor: 5 }, {}]) {
+      expect((await send(bad)).status).toBe(400);
+    }
+  });
+  it('BE-P2-013 stores the display currency, null goes back to default, and rejects unknown codes', async () => {
+    const send = (body: object, token: string | null = 'a'.repeat(64)) => request('PUT', body, token, 'profile/display-currency');
+    expect((await send({ currencyCode: 'USD' }, null)).status).toBe(401);
+    const saved = await fetch(`${base}/api/v1/profile/display-currency`, { method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${'a'.repeat(64)}` }, body: JSON.stringify({ currencyCode: 'USD' }) });
+    expect(saved.status).toBe(204);
+    expect((await request()).body.displayCurrencyCode).toBe('USD');
+    expect((await request('GET', undefined, 'b'.repeat(64))).body.displayCurrencyCode).toBeNull();
+    await fetch(`${base}/api/v1/profile/display-currency`, { method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${'a'.repeat(64)}` }, body: JSON.stringify({ currencyCode: null }) });
+    expect((await request()).body.displayCurrencyCode).toBeNull();
+    for (const bad of [{ currencyCode: 'XXX' }, { currencyCode: 'usd' }, { currencyCode: 5 }, {}, { currencyCode: 'USD', userId: 'other' }]) {
+      expect((await send(bad)).status).toBe(400);
+    }
+  });
+  it('BE-P2-012 returns saved answers on GET and keeps the budget number when the currency changes', async () => {
+    profiles.set('owner', { ...initial, goals: ['save'], monthlyIncomeMinor: '15000000' });
+    const { goals, monthlyIncomeMinor, displayCurrencyCode, ...editable } = initial;
+    const saved = await request('PUT', { ...editable, defaultCurrencyCode: 'USD' });
+    expect(saved.body).toMatchObject({ defaultCurrencyCode: 'USD', goals: ['save'], monthlyIncomeMinor: '15000000' });
+    expect((await request()).body.monthlyIncomeMinor).toBe('15000000');
+    expect((await request('GET', undefined, 'b'.repeat(64))).body.monthlyIncomeMinor).toBeNull();
   });
 });

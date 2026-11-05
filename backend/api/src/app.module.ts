@@ -7,7 +7,16 @@ import { FeedbackModule } from './modules/feedback/feedback.module';
 import { TransactionModule } from './modules/transactions/transaction.module';
 import { RecurringModule } from './modules/recurring/recurring.module';
 import { BudgetModule } from './modules/budgets/budget.module';
+import { GoalModule } from './modules/goals/goal.module';
+import { TransactionImportModule } from './modules/transaction-import/transaction-import.module';
+import { CardInstallmentModule } from './modules/card-installments/card-installment.module';
+import { LoanModule } from './modules/loans/loan.module';
+import { PersonalDebtModule } from './modules/personal-debts/personal-debt.module';
+import { CalendarModule } from './modules/calendar/calendar.module';
+import { ForecastModule } from './modules/forecast/forecast.module';
+import { NotificationModule } from './modules/notifications/notification.module';
 import { FinancialAccountModule } from './modules/financial-accounts/financial-account.module';
+import { FxRateModule } from './modules/fx-rates/fx-rate.module';
 import { ProfileModule } from './modules/profile/profile.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { Module } from '@nestjs/common';
@@ -36,10 +45,19 @@ import { HealthModule } from './modules/health/health.module';
     HealthModule,
     AuthModule,
     ProfileModule,
+    FxRateModule,
     FinancialAccountModule,
     TransactionModule,
+    TransactionImportModule,
     RecurringModule,
     BudgetModule,
+    GoalModule,
+    LoanModule,
+    CardInstallmentModule,
+    PersonalDebtModule,
+    CalendarModule,
+    ForecastModule,
+    NotificationModule,
     SyncModule,
     AccountModule,
     CategoryModule,

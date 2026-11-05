@@ -15,6 +15,7 @@ class WalletDraft {
     this.creditLimit,
     this.closeDay,
     this.dueDay,
+    this.minimumPayment,
   });
   final String name;
   final WalletType type;
@@ -23,6 +24,7 @@ class WalletDraft {
   final BigInt? creditLimit;
   final int? closeDay;
   final int? dueDay;
+  final BigInt? minimumPayment;
 }
 
 class Wallet {

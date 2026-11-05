@@ -426,6 +426,24 @@ class SEn extends S {
   String get reportExpense => 'Expense';
 
   @override
+  String get monthReviewTitle => 'Month review';
+
+  @override
+  String get monthReviewOpen => 'Open month review';
+
+  @override
+  String get monthReviewSavings => 'Savings';
+
+  @override
+  String get monthReviewSavingsRate => 'Savings rate';
+
+  @override
+  String get monthReviewTopCategories => 'Top categories';
+
+  @override
+  String get monthReviewNoCategories => 'No expense categories this month.';
+
+  @override
   String get reportWeek => 'Week';
 
   @override
@@ -541,7 +559,7 @@ class SEn extends S {
 
   @override
   String get tosBody =>
-      'Freeva lets you record wallets and transactions you enter. You keep your financial data. The service operator is not decided yet. Account export and deletion are separate release work. This summary does not replace a lawyer-reviewed agreement.';
+      'Freeva lets you record wallets and transactions you enter. You keep your financial data. The service operator is not decided yet. You can export your data and delete your account from Profile. This summary does not replace a lawyer-reviewed agreement.';
 
   @override
   String get privacyTitle => 'Privacy policy';
@@ -710,6 +728,16 @@ class SEn extends S {
   }
 
   @override
+  String homeReviewTopIncrease(String category) {
+    return '$category rose the most';
+  }
+
+  @override
+  String homeReviewOverBudget(int percent) {
+    return 'Over budget by $percent%';
+  }
+
+  @override
   String get homeCreditTitle => 'Credit cards';
 
   @override
@@ -802,6 +830,11 @@ class SEn extends S {
   @override
   String txDayHeader(String day, String date) {
     return '$day · $date';
+  }
+
+  @override
+  String txDayWithTime(String day, String time) {
+    return '$day, $time';
   }
 
   @override
@@ -1037,6 +1070,21 @@ class SEn extends S {
   String get txDateTitle => 'Choose a date';
 
   @override
+  String get txDateTimeTitle => 'Choose date and time';
+
+  @override
+  String get txTimeLabel => 'Time';
+
+  @override
+  String get txTimeNone => 'No time';
+
+  @override
+  String get txTimeClear => 'Clear time';
+
+  @override
+  String get txDateTimeDone => 'Done';
+
+  @override
   String get txYesterday => 'Yesterday';
 
   @override
@@ -1253,6 +1301,12 @@ class SEn extends S {
   String get creditLimitField => 'Limit';
 
   @override
+  String get creditMinimumField => 'Minimum payment';
+
+  @override
+  String get creditMinimumTitle => 'Minimum payment';
+
+  @override
   String get creditCloseField => 'Statement day';
 
   @override
@@ -1267,7 +1321,8 @@ class SEn extends S {
   String get creditPickDay => 'Pick a day';
 
   @override
-  String get creditOptionalHint => 'Limit and days can stay empty.';
+  String get creditOptionalHint =>
+      'Limit, minimum payment, and days can stay empty.';
 
   @override
   String get walletSave => 'Save wallet';
@@ -1866,9 +1921,6 @@ class SEn extends S {
   String get meTitle => 'You';
 
   @override
-  String get meGroupFinance => 'Money setup';
-
-  @override
   String get meGroupApp => 'App';
 
   @override
@@ -1887,29 +1939,72 @@ class SEn extends S {
   String get meRecurring => 'Recurring';
 
   @override
+  String get meCalendar => 'Money calendar';
+
+  @override
   String get meCurrency => 'Default currency';
 
   @override
-  String get recurringTitle => 'Recurring';
+  String get calendarTitle => 'Money calendar';
+
+  @override
+  String get calendarLoadError => 'Couldn’t load calendar';
+
+  @override
+  String get calendarEmptyTitle => 'Nothing this month';
+
+  @override
+  String get calendarEmptyBody =>
+      'No posted transactions, recurring runs, or bills in this month.';
+
+  @override
+  String get calendarPrevMonth => 'Previous month';
+
+  @override
+  String get calendarNextMonth => 'Next month';
+
+  @override
+  String get calendarSectionTransactions => 'Transactions';
+
+  @override
+  String get calendarSectionRecurring => 'Recurring';
+
+  @override
+  String get calendarSectionBills => 'Bills';
+
+  @override
+  String get calendarLegend => 'Dots mark item types on each day';
+
+  @override
+  String get calendarTransfer => 'Transfer';
+
+  @override
+  String get calendarEstimated => 'Estimated';
+
+  @override
+  String get billsStatusOpen => 'Open';
+
+  @override
+  String get billsStatusOverdue => 'Overdue';
+
+  @override
+  String get billsStatusPaid => 'Paid';
+
+  @override
+  String get recurringTitle => 'Recurring and bills';
 
   @override
   String get recurringAdd => 'Add recurring';
 
   @override
-  String get recurringEdit => 'Edit recurring';
-
-  @override
-  String get recurringDelete => 'Delete';
-
-  @override
   String get recurringSave => 'Save';
 
   @override
-  String get recurringEmptyTitle => 'No recurring yet';
+  String get recurringEmptyTitle => 'Nothing recurring yet';
 
   @override
   String get recurringEmptyBody =>
-      'Set rent, salary, or transfers once and Freeva posts them on schedule.';
+      'Add rent, salary, or a bill like electricity so Freeva posts or reminds you on time.';
 
   @override
   String get recurringLoadError => 'Couldn’t load recurring';
@@ -1925,46 +2020,6 @@ class SEn extends S {
 
   @override
   String get recurringCategory => 'Category';
-
-  @override
-  String get recurringFrequency => 'Frequency';
-
-  @override
-  String get recurringInterval => 'Every';
-
-  @override
-  String recurringEvery(String count) {
-    return 'Every $count';
-  }
-
-  @override
-  String get recurringUnitDay => 'Daily';
-
-  @override
-  String get recurringUnitWeek => 'Weekly';
-
-  @override
-  String get recurringUnitMonth => 'Monthly';
-
-  @override
-  String get recurringUnitYear => 'Yearly';
-
-  @override
-  String get recurringStart => 'Start date (YYYY-MM-DD)';
-
-  @override
-  String get recurringNextLabel => 'Next run (YYYY-MM-DD)';
-
-  @override
-  String get recurringEnd => 'End date (optional)';
-
-  @override
-  String get recurringActive => 'Active';
-
-  @override
-  String recurringNext(String date) {
-    return 'Next $date';
-  }
 
   @override
   String get recurringTypeExpense => 'Expense';
@@ -2046,6 +2101,15 @@ class SEn extends S {
 
   @override
   String get budgetThresholdsTitle => 'Alert thresholds';
+
+  @override
+  String get budgetThresholdsSheetTitle => 'Alert me when used';
+
+  @override
+  String get budgetThresholdsSheetSub => 'Pick up to 4 levels.';
+
+  @override
+  String get budgetThresholdsDefaultHint => 'Default is 80% and 100%.';
 
   @override
   String get budgetScopeDefault => 'Every month';
@@ -2288,14 +2352,14 @@ class SEn extends S {
 
   @override
   String get mePasswordHint =>
-      'At least 12 characters, with letters and digits.';
+      'At least 8 characters, with letters and digits.';
 
   @override
   String get mePasswordWrong => 'That isn\'t your current password.';
 
   @override
   String get mePasswordWeak =>
-      'Use at least 12 characters with letters and digits, different from the old one.';
+      'Use at least 8 characters with letters and digits, different from the old one.';
 
   @override
   String get mePasswordMismatch => 'The new passwords don\'t match.';
@@ -2453,10 +2517,39 @@ class SEn extends S {
   String get notifyAlerts => 'Alerts';
 
   @override
-  String get notifyRecord => 'Record reminder';
+  String get notifyRecord => 'Log reminder';
 
   @override
   String get notifyRecordSub => 'Every day';
+
+  @override
+  String notifyRecordAt(String time) {
+    return 'Every day at $time';
+  }
+
+  @override
+  String get notifyTimeTitle => 'Pick a reminder time';
+
+  @override
+  String get notifyTimeHint => 'No reminder on days you already logged.';
+
+  @override
+  String notifyTimePick(String time) {
+    return 'Pick $time';
+  }
+
+  @override
+  String get notifyTimeHour => 'Hour';
+
+  @override
+  String get notifyTimeMinute => 'Minute';
+
+  @override
+  String get notifyInboxDailyLogTitle => 'Log today';
+
+  @override
+  String get notifyInboxDailyLogBody =>
+      'You haven\'t logged anything today. Add it before you forget.';
 
   @override
   String get notifyDigest => 'Spending summary';
@@ -2471,13 +2564,123 @@ class SEn extends S {
   String get notifyBudgetSub => 'At 80% and 100% used';
 
   @override
-  String get notifyCard => 'Credit card due';
+  String notifyBudgetAt(String levels) {
+    return 'Alert at $levels';
+  }
 
   @override
-  String get notifyCardSub => '3 days before';
+  String get notifyBudgetLevels => '80% and 100%';
+
+  @override
+  String get notifyCard => 'Credit cards';
+
+  @override
+  String get notifyCardSub => 'Due soon, near the limit';
 
   @override
   String get notifySession => 'New device signed in';
+
+  @override
+  String get notifyRecurring => 'Recurring and bills';
+
+  @override
+  String get notifyRecurringSub => 'Before the due date and when overdue';
+
+  @override
+  String get notifyGoal => 'Goal contributions';
+
+  @override
+  String get notifyGoalSub => 'When a contribution is due';
+
+  @override
+  String get notifyDebt => 'Debt due';
+
+  @override
+  String get notifyDebtSub => '3 days before the due date';
+
+  @override
+  String get notifyMonthReview => 'Month review';
+
+  @override
+  String get notifyMonthReviewSub => 'At the start of each month';
+
+  @override
+  String get notifyInsight => 'New insight';
+
+  @override
+  String get notifyInsightSub => 'When a new tip is ready';
+
+  @override
+  String get notifyQuietTitle => 'Quiet hours';
+
+  @override
+  String get notifyQuietHours => 'Enable quiet hours';
+
+  @override
+  String get notifyQuietEdit => 'Quiet window';
+
+  @override
+  String get notifyQuietStart => 'Quiet hours start';
+
+  @override
+  String get notifyQuietEnd => 'Quiet hours end';
+
+  @override
+  String notifyQuietWindow(String start, String end) {
+    return '$start – $end';
+  }
+
+  @override
+  String get notifyMarkAllRead => 'Mark all read';
+
+  @override
+  String notifyInboxBudgetTitle(String threshold) {
+    return 'Budget reached $threshold%';
+  }
+
+  @override
+  String notifyInboxBudgetBody(String threshold) {
+    return 'You have used $threshold% of this month’s budget.';
+  }
+
+  @override
+  String get notifyInboxRecurringTitle => 'Recurring due soon';
+
+  @override
+  String notifyInboxRecurringBody(String date) {
+    return 'A recurring transaction runs on $date.';
+  }
+
+  @override
+  String get notifyInboxCardDueTitle => 'Card payment due soon';
+
+  @override
+  String notifyInboxCardDueBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'A card payment is due in $count days.',
+      one: 'A card payment is due in 1 day.',
+      zero: 'A card payment is due today.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get notifyInboxCardHighDebtTitle => 'High card balance';
+
+  @override
+  String notifyInboxCardHighDebtBody(String threshold) {
+    return 'You have used $threshold% of this card’s limit.';
+  }
+
+  @override
+  String get notifyInboxCardNearLimitTitle => 'Card near limit';
+
+  @override
+  String notifyInboxCardNearLimitBody(String threshold) {
+    return 'You have used $threshold% of this card’s limit.';
+  }
 
   @override
   String get authOr => 'or';
@@ -2563,7 +2766,7 @@ class SEn extends S {
   String get passwordStrong => 'Very strong';
 
   @override
-  String get passwordRuleLength => 'At least 12 characters';
+  String get passwordRuleLength => 'At least 8 characters';
 
   @override
   String get passwordRuleLetterDigit => 'Letters and numbers';
@@ -2718,7 +2921,7 @@ class SEn extends S {
   }
 
   @override
-  String get onbGoalsTitle => 'What would you like to improve?';
+  String get onbGoalsTitle => 'What can Freeva help you with?';
 
   @override
   String get onbGoalsSub => 'Pick up to 2.';
@@ -2727,58 +2930,107 @@ class SEn extends S {
   String get onbGoalTrack => 'Track spending';
 
   @override
-  String get onbGoalSave => 'Save more';
+  String get onbGoalTrackSub => 'Know where the money goes each month';
 
   @override
-  String get onbGoalBudget => 'Stay on budget';
+  String get onbGoalSave => 'Save';
 
   @override
-  String get onbGoalDebt => 'Manage debt';
+  String get onbGoalSaveSub => 'Put money aside for something';
 
   @override
-  String get onbGoalEmergency => 'Build an emergency fund';
+  String get onbGoalBudget => 'Manage a budget';
 
   @override
-  String get onbGoalUnderstand => 'Understand my finances';
+  String get onbGoalBudgetSub => 'Set a spending limit and stick to it';
 
   @override
-  String get onbHabitTitle => 'How do you manage money now?';
+  String get onbIncomeTitle => 'About how much do you earn a month?';
 
   @override
-  String get onbHabitManual => 'Notes by hand';
+  String get onbIncomeSub => 'So the suggested budget fits.';
 
   @override
-  String get onbHabitSpreadsheet => 'Excel or Sheets';
+  String get onbIncomeHint =>
+      'A rough number is fine. You can change it in Me.';
 
   @override
-  String get onbHabitApp => 'Another app';
+  String get onbIncomeAmount => 'Monthly income';
 
   @override
-  String get onbHabitNone => 'Not tracking yet';
+  String onbIncomeChip(String amount) {
+    return '$amount million';
+  }
 
   @override
-  String get onbCadenceTitle => 'How often do you review spending?';
+  String get onbSavingTitle => 'What are you saving for?';
 
   @override
-  String get onbCadenceDaily => 'Every day';
+  String get onbSavingTarget => 'Amount';
 
   @override
-  String get onbCadenceWeekly => 'Every week';
+  String get onbSavingDate => 'By';
 
   @override
-  String get onbCadenceMonthly => 'Every month';
+  String get onbSavingNeed => 'Save each month';
 
   @override
-  String get onbCadenceRarely => 'Hardly ever';
+  String onbSavingShare(String percent) {
+    return '$percent% of income';
+  }
 
   @override
-  String get onbBudgetTitle => 'How much do you plan to spend each month?';
+  String get onbSuggestTitle => 'Each month, spend about';
 
   @override
-  String get onbBudgetAmount => 'Monthly budget';
+  String get onbSuggestIncome => 'Income';
 
   @override
-  String get onbBudgetLater => 'Set up later';
+  String onbSuggestSaveFor(String goal) {
+    return 'Saving for $goal';
+  }
+
+  @override
+  String get onbSuggestSaveDefault => 'Save 20% of income';
+
+  @override
+  String get onbSuggestSpend => 'Spending';
+
+  @override
+  String get onbSuggestNoGoal => 'No goal yet, so 20% goes to savings for now.';
+
+  @override
+  String get onbSuggestHint => 'You can change it any time in Monthly budget.';
+
+  @override
+  String get onbSuggestUse => 'Use this amount';
+
+  @override
+  String get dailyLogAskTitle => 'Remind you to log spending each evening?';
+
+  @override
+  String get dailyLogAskBody => 'No reminder on days you already logged.';
+
+  @override
+  String get dailyLogAskTime => 'Reminder time';
+
+  @override
+  String get dailyLogAskOn => 'Turn on';
+
+  @override
+  String get meIncome => 'Monthly income';
+
+  @override
+  String get meIncomeNone => 'Not set';
+
+  @override
+  String get meIncomeClear => 'Remove income';
+
+  @override
+  String get meIncomeSave => 'Save';
+
+  @override
+  String get meIncomeFailed => 'Could not save. Try again later.';
 
   @override
   String get setupWalletsTitle => 'Where is your money?';
@@ -2918,6 +3170,14 @@ class SEn extends S {
 
   @override
   String get syncReasonInvalid => 'The details are no longer valid';
+
+  @override
+  String get syncReasonCategoryKind =>
+      'The category does not fit the transaction type';
+
+  @override
+  String get transactionCategoryKind =>
+      'This category is not used for the chosen transaction type. Pick another category.';
 
   @override
   String get syncReasonOther => 'Couldn’t send · Try again later';
@@ -3089,6 +3349,28 @@ class SEn extends S {
   String get meDeleteAccount => 'Delete account';
 
   @override
+  String get meExportData => 'Export data';
+
+  @override
+  String get meExportHint => 'Save or send a copy of your data';
+
+  @override
+  String get meExportError => 'Couldn\'t export. Try again.';
+
+  @override
+  String get meDeleteTitle => 'Delete account?';
+
+  @override
+  String get meDeleteBody =>
+      'All your data is deleted right away and can\'t be restored. You can export it first.';
+
+  @override
+  String get meDeleteConfirm => 'Delete permanently';
+
+  @override
+  String get meDeleteError => 'Couldn\'t delete. Your data is untouched.';
+
+  @override
   String get meChangeAvatar => 'Change photo';
 
   @override
@@ -3208,4 +3490,1752 @@ class SEn extends S {
 
   @override
   String get tagsViewTransactions => 'View transactions';
+
+  @override
+  String homeTotalConverted(int count, String currency) {
+    return 'Total in $currency · $count wallets';
+  }
+
+  @override
+  String homeDisplayCurrencyAction(String currency) {
+    return 'Show totals in $currency';
+  }
+
+  @override
+  String get homeDisplayCurrencyTitle => 'Show totals in';
+
+  @override
+  String homeUnconvertedMissing(String currency) {
+    return '$currency: no rate yet, tap to add';
+  }
+
+  @override
+  String homeUnconvertedFractional(String currency) {
+    return '$currency: rate doesn\'t convert evenly, tap to edit';
+  }
+
+  @override
+  String homeRateInputLabel(String from, String to) {
+    return '1 $from = ? $to';
+  }
+
+  @override
+  String get homeRateSaveFailed =>
+      'Couldn\'t save. Check the rate and try again.';
+
+  @override
+  String get convertedRowTitle => 'Converted';
+
+  @override
+  String convertedAmount(String amount) {
+    return '≈ $amount';
+  }
+
+  @override
+  String convertedRateLine(String from, String rate, String to, String time) {
+    return '1 $from = $rate $to · rate you entered at $time';
+  }
+
+  @override
+  String get goalsAdd => 'Add goal';
+
+  @override
+  String get goalsEmptyTitle => 'No goals yet';
+
+  @override
+  String get goalsEmptyBody =>
+      'Set a goal and Freeva works out how much to save each month.';
+
+  @override
+  String get goalsCreate => 'Create goal';
+
+  @override
+  String get goalsSaved => 'Saved so far';
+
+  @override
+  String get goalsCountLabel => 'Goals';
+
+  @override
+  String get goalsNeededMonth => 'Needed this month';
+
+  @override
+  String get goalsOverdue => 'Overdue';
+
+  @override
+  String get goalsReached => 'Reached';
+
+  @override
+  String get goalsArchivedLink => 'Archived goals';
+
+  @override
+  String get goalsLoadError => 'Couldn’t load goals';
+
+  @override
+  String get goalsNew => 'New goal';
+
+  @override
+  String get goalsEdit => 'Edit goal';
+
+  @override
+  String get goalsFor => 'Saving for';
+
+  @override
+  String get goalKindEmergency => 'Emergency fund';
+
+  @override
+  String get goalKindHome => 'Buy a home';
+
+  @override
+  String get goalKindCar => 'Buy a car';
+
+  @override
+  String get goalKindTravel => 'Travel';
+
+  @override
+  String get goalKindEducation => 'Education';
+
+  @override
+  String get goalKindWedding => 'Wedding';
+
+  @override
+  String get goalKindRetirement => 'Retirement';
+
+  @override
+  String get goalKindCustom => 'Other';
+
+  @override
+  String get goalName => 'Goal name';
+
+  @override
+  String get goalNameMissing => 'Give the goal a name.';
+
+  @override
+  String get goalTarget => 'Target';
+
+  @override
+  String get goalTargetMissing => 'Enter the target amount.';
+
+  @override
+  String get goalCurrent => 'Saved';
+
+  @override
+  String get goalDate => 'Target date';
+
+  @override
+  String get goalDateNone => 'Not set';
+
+  @override
+  String get goalDateClear => 'Clear date';
+
+  @override
+  String get goalWallet => 'Kept in';
+
+  @override
+  String get goalWalletMissing => 'Pick the wallet that holds the money.';
+
+  @override
+  String goalWalletValue(String name, String amount) {
+    return '$name · $amount left';
+  }
+
+  @override
+  String goalNeedLine(String amount) {
+    return 'Save $amount a month.';
+  }
+
+  @override
+  String goalNeedLineShare(String amount, String percent) {
+    return 'Save $amount a month, about $percent% of your income.';
+  }
+
+  @override
+  String get goalHave => 'Saved';
+
+  @override
+  String goalOf(String amount) {
+    return '/ $amount';
+  }
+
+  @override
+  String goalProgressLine(String percent, String amount) {
+    return '$percent% · $amount to go';
+  }
+
+  @override
+  String goalProgressDone(String percent) {
+    return '$percent% · reached';
+  }
+
+  @override
+  String get goalNeedPerMonth => 'Needed a month';
+
+  @override
+  String get goalLeft => 'Left';
+
+  @override
+  String goalMonths(int count) {
+    return '$count months';
+  }
+
+  @override
+  String goalLineActive(int months, String amount) {
+    return '$months months left · save $amount a month';
+  }
+
+  @override
+  String get goalLineNoDate => 'No target date';
+
+  @override
+  String goalLineOverdue(String date, String amount) {
+    return 'Due $date has passed · $amount to go';
+  }
+
+  @override
+  String goalLineReached(String date) {
+    return 'Reached on $date';
+  }
+
+  @override
+  String get goalContribute => 'Add money';
+
+  @override
+  String get goalWithdraw => 'Withdraw';
+
+  @override
+  String get goalHistory => 'History';
+
+  @override
+  String get goalHistoryContribute => 'Added';
+
+  @override
+  String get goalHistoryContributeTransfer => 'Added from another wallet';
+
+  @override
+  String get goalHistoryWithdraw => 'Withdrawn';
+
+  @override
+  String get goalHistoryWithdrawTransfer => 'Withdrawn to another wallet';
+
+  @override
+  String get goalHistoryAdjust => 'Saved amount corrected';
+
+  @override
+  String goalHistoryStays(String date) {
+    return '$date · money was already in the wallet';
+  }
+
+  @override
+  String get goalHistoryEmpty => 'Nothing added yet';
+
+  @override
+  String get goalMoveIn => 'Add';
+
+  @override
+  String get goalMoveOut => 'Withdraw';
+
+  @override
+  String goalMoveTitleIn(String name) {
+    return 'Add to $name';
+  }
+
+  @override
+  String goalMoveTitleOut(String name) {
+    return 'Withdraw from $name';
+  }
+
+  @override
+  String get goalMoveAmount => 'Amount';
+
+  @override
+  String get goalMoveFrom => 'Take from';
+
+  @override
+  String get goalMoveTo => 'Send to';
+
+  @override
+  String goalMoveStaysIn(String wallet) {
+    return 'Already in $wallet';
+  }
+
+  @override
+  String goalMoveStaysOut(String wallet) {
+    return 'Leave in $wallet';
+  }
+
+  @override
+  String get goalMoveOnlyRecord => 'Just record it, no money moves';
+
+  @override
+  String goalMoveWalletLeft(String amount) {
+    return '$amount left';
+  }
+
+  @override
+  String get goalMoveHint => 'Recorded as a wallet transfer, not as spending.';
+
+  @override
+  String goalMoveConfirmIn(String amount) {
+    return 'Add $amount';
+  }
+
+  @override
+  String goalMoveConfirmOut(String amount) {
+    return 'Withdraw $amount';
+  }
+
+  @override
+  String get goalMoveTooMuch => 'More than the goal holds.';
+
+  @override
+  String get goalArchive => 'Archive goal';
+
+  @override
+  String get goalArchiveBody =>
+      'The goal is put away; the money stays in your wallet.';
+
+  @override
+  String get goalSaveFailed => 'Couldn’t save. Try again.';
+
+  @override
+  String get goalConflict =>
+      'This goal changed elsewhere. Reopen it to see the latest.';
+
+  @override
+  String get goalsHomeTitle => 'Goals';
+
+  @override
+  String get goalsSeeAll => 'See all';
+
+  @override
+  String goalPercent(String percent) {
+    return '$percent%';
+  }
+
+  @override
+  String get goalSaveAction => 'Save';
+
+  @override
+  String recDueTotal(String amount) {
+    return 'To pay $amount';
+  }
+
+  @override
+  String recDueCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count bills unpaid',
+      one: '1 bill unpaid',
+    );
+    return '$_temp0 · see calendar';
+  }
+
+  @override
+  String get recGroupDue => 'TO PAY';
+
+  @override
+  String get recGroupAuto => 'AUTOMATIC';
+
+  @override
+  String get recTagOverdue => 'Overdue';
+
+  @override
+  String get recTagToday => 'Today';
+
+  @override
+  String recTagDays(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days left',
+      one: '1 day left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get recTagPaused => 'Paused';
+
+  @override
+  String recDueOn(String date) {
+    return 'Due $date';
+  }
+
+  @override
+  String get recOneOff => 'one-off';
+
+  @override
+  String recAbout(String amount) {
+    return 'about $amount';
+  }
+
+  @override
+  String get recPaid => 'Paid';
+
+  @override
+  String recPaidA11y(String name) {
+    return 'Mark $name as paid';
+  }
+
+  @override
+  String recDayOfMonth(String day) {
+    return 'Day $day every month';
+  }
+
+  @override
+  String get recEveryDay => 'Every day';
+
+  @override
+  String get recEveryWeek => 'Every week';
+
+  @override
+  String get recEveryMonth => 'Every month';
+
+  @override
+  String get recEveryYear => 'Every year';
+
+  @override
+  String recEveryNDays(String count) {
+    return 'Every $count days';
+  }
+
+  @override
+  String recEveryNWeeks(String count) {
+    return 'Every $count weeks';
+  }
+
+  @override
+  String recEveryNMonths(String count) {
+    return 'Every $count months';
+  }
+
+  @override
+  String recEveryNYears(String count) {
+    return 'Every $count years';
+  }
+
+  @override
+  String get recOnce => 'Once';
+
+  @override
+  String get recModeAuto => 'Post automatically';
+
+  @override
+  String get recModeAutoSub => 'Good for salary, rent';
+
+  @override
+  String get recModeRemind => 'Ask before posting';
+
+  @override
+  String get recModeRemindSub => 'Good for electricity, water';
+
+  @override
+  String get recName => 'Name';
+
+  @override
+  String get recVaries => 'Amount can differ each time';
+
+  @override
+  String get recVariesSub => 'Enter the real amount when you confirm';
+
+  @override
+  String get recRepeat => 'Repeat';
+
+  @override
+  String get recFirstDue => 'First due date';
+
+  @override
+  String get recNextRun => 'Next date';
+
+  @override
+  String get recRemindBefore => 'Remind me';
+
+  @override
+  String get recRemindSameDay => 'On the day';
+
+  @override
+  String recRemindDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days before',
+      one: '1 day before',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get recPayFrom => 'Pay from';
+
+  @override
+  String get recPause => 'Pause';
+
+  @override
+  String get recPauseSub =>
+      'Nothing is posted or reminded until you turn it back on';
+
+  @override
+  String get recRemove => 'Delete recurring';
+
+  @override
+  String recPaidTitle(String name) {
+    return 'Paid $name?';
+  }
+
+  @override
+  String get recRealAmount => 'Actual amount';
+
+  @override
+  String get recPaidOn => 'Paid on';
+
+  @override
+  String get recConfirm => 'Confirm paid';
+
+  @override
+  String get recLinkExisting => 'Already logged this expense? Pick it';
+
+  @override
+  String get recPickExpense => 'Pick an expense';
+
+  @override
+  String get recNoExpense => 'No expense to link yet';
+
+  @override
+  String get recConfirmed => 'Marked as paid';
+
+  @override
+  String get recNeedWallet => 'Pick a wallet to pay from';
+
+  @override
+  String get recRemoveBody => 'Entries already posted stay as they are.';
+
+  @override
+  String recRemindDaysShort(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days',
+      one: '1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get recNeedCategory => 'Pick a category';
+
+  @override
+  String get transactionAdjustment => 'Adjustment';
+
+  @override
+  String get txKindAdjustment => 'adjustment';
+
+  @override
+  String get txAdjustTitle => 'Balance adjustment';
+
+  @override
+  String get walletReconcileLink => 'Match balance';
+
+  @override
+  String walletReconcileTitle(String name) {
+    return 'Match $name balance';
+  }
+
+  @override
+  String get walletReconcileCurrent => 'Balance in app';
+
+  @override
+  String get walletReconcileCurrentDebt => 'Debt in app';
+
+  @override
+  String get walletReconcileField => 'Real balance in your bank app';
+
+  @override
+  String get walletReconcileFieldDebt => 'Real debt in your bank app';
+
+  @override
+  String get walletReconcileDiff => 'Difference';
+
+  @override
+  String get walletReconcileHint =>
+      'The difference is saved as an adjustment, not counted in income or spending.';
+
+  @override
+  String get walletReconcileConfirm => 'Match balance';
+
+  @override
+  String get walletReconcileDone => 'Balance matched';
+
+  @override
+  String get txAdjustEditTitle => 'Edit adjustment';
+
+  @override
+  String get txAdjustAmount => 'Adjustment amount';
+
+  @override
+  String get txAdjustHint => 'Positive raises the wallet, negative lowers it.';
+
+  @override
+  String get walletReconcileFailed => 'Couldn\'t match the balance. Try again.';
+
+  @override
+  String get meDebts => 'Loans and debts';
+
+  @override
+  String meDebtsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items',
+      one: '1 item',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get transactionDebt => 'Lending';
+
+  @override
+  String get txKindDebt => 'lending';
+
+  @override
+  String get txDebtTitle => 'Loans and debts';
+
+  @override
+  String get txDebtReadOnly =>
+      'This belongs to Loans and debts and can’t be edited.';
+
+  @override
+  String get debtsTabPeople => 'People';
+
+  @override
+  String get debtsTabLoans => 'Loans';
+
+  @override
+  String get debtsAdd => 'Record a debt';
+
+  @override
+  String get debtsEmptyTitle => 'Nobody owes anybody';
+
+  @override
+  String get debtsEmptyBody =>
+      'Lent to a friend or borrowed from family? Note it so you don’t forget.';
+
+  @override
+  String get debtsLoadError => 'Couldn’t load debts';
+
+  @override
+  String get debtsOwedToYou => 'Others owe you';
+
+  @override
+  String get debtsYouOwe => 'You owe';
+
+  @override
+  String get debtsGroupOwedToYou => 'Who owes you';
+
+  @override
+  String get debtsGroupYouOwe => 'Whom you owe';
+
+  @override
+  String get debtsGroupSettled => 'Settled';
+
+  @override
+  String debtsSettledLink(int count) {
+    return 'Settled ($count)';
+  }
+
+  @override
+  String debtLentOn(String date) {
+    return 'Lent $date';
+  }
+
+  @override
+  String debtBorrowedOn(String date) {
+    return 'Borrowed $date';
+  }
+
+  @override
+  String debtDueOn(String date) {
+    return 'due $date';
+  }
+
+  @override
+  String get debtNoDue => 'no due date';
+
+  @override
+  String get debtNoDueValue => 'None';
+
+  @override
+  String get debtLend => 'Lend';
+
+  @override
+  String get debtBorrow => 'Borrow';
+
+  @override
+  String get debtHistoryBorrowed => 'Borrowed';
+
+  @override
+  String get debtAmount => 'Amount';
+
+  @override
+  String get debtBorrower => 'Borrower';
+
+  @override
+  String get debtLender => 'Lender';
+
+  @override
+  String get debtFromWallet => 'From wallet';
+
+  @override
+  String get debtFromWalletShort => 'From wallet';
+
+  @override
+  String get debtToWallet => 'To wallet';
+
+  @override
+  String debtWalletLeft(String wallet, String amount) {
+    return '$wallet · $amount left';
+  }
+
+  @override
+  String get debtDate => 'Date';
+
+  @override
+  String get debtDueDate => 'Due date';
+
+  @override
+  String get debtPickDate => 'Pick a date';
+
+  @override
+  String get debtClearDue => 'Clear due date';
+
+  @override
+  String get debtDueBeforeDate => 'The due date must be after the date.';
+
+  @override
+  String get debtNote => 'Note';
+
+  @override
+  String get debtNoteHint => 'Add a note';
+
+  @override
+  String get debtNotCounted => 'Not counted as income or spending.';
+
+  @override
+  String get debtSave => 'Save';
+
+  @override
+  String get debtEditTitle => 'Edit debt';
+
+  @override
+  String debtTheyOwe(String name) {
+    return '$name still owes you';
+  }
+
+  @override
+  String debtYouOweName(String name) {
+    return 'You still owe $name';
+  }
+
+  @override
+  String debtOfPrincipal(String amount) {
+    return '/ $amount';
+  }
+
+  @override
+  String debtReceived(String amount) {
+    return 'Received $amount';
+  }
+
+  @override
+  String debtPaid(String amount) {
+    return 'Paid $amount';
+  }
+
+  @override
+  String get debtLentDate => 'Lent on';
+
+  @override
+  String get debtBorrowedDate => 'Borrowed on';
+
+  @override
+  String get debtHistory => 'History';
+
+  @override
+  String debtTheyPaid(String name) {
+    return '$name paid';
+  }
+
+  @override
+  String get debtYouPaid => 'You paid';
+
+  @override
+  String debtInto(String date, String wallet) {
+    return '$date · into $wallet';
+  }
+
+  @override
+  String debtOutOf(String date, String wallet) {
+    return '$date · from $wallet';
+  }
+
+  @override
+  String get debtRecordReceived => 'Record money back';
+
+  @override
+  String get debtRecordPaid => 'Record a payment';
+
+  @override
+  String debtPayTheyTitle(String name) {
+    return '$name pays you';
+  }
+
+  @override
+  String debtPayYouTitle(String name) {
+    return 'You pay $name';
+  }
+
+  @override
+  String get debtHalf => 'Half';
+
+  @override
+  String debtAll(String amount) {
+    return 'All $amount';
+  }
+
+  @override
+  String get debtSettleHintLent => 'Once it’s all back, this moves to Settled.';
+
+  @override
+  String get debtSettleHintBorrowed =>
+      'Once it’s all paid, this moves to Settled.';
+
+  @override
+  String get debtTooMuch => 'That’s more than what’s owed.';
+
+  @override
+  String get loansAdd => 'Add a loan';
+
+  @override
+  String get loansLoadError => 'Couldn’t load loans';
+
+  @override
+  String get loansEmptyTitle => 'No loans yet';
+
+  @override
+  String get loansEmptyBody =>
+      'Home, car or personal loan? Add it to follow the repayments.';
+
+  @override
+  String get loansOwed => 'Still owed';
+
+  @override
+  String get loansPaidPrincipal => 'Principal paid';
+
+  @override
+  String get loansDueThisMonth => 'Due this month';
+
+  @override
+  String get loanPaidOff => 'Paid off';
+
+  @override
+  String loanRateYear(String rate) {
+    return '$rate%/yr';
+  }
+
+  @override
+  String loanNextOn(String date) {
+    return 'next $date';
+  }
+
+  @override
+  String get loanEdit => 'Edit loan';
+
+  @override
+  String get loanEditShort => 'Edit';
+
+  @override
+  String loanPaidPercent(String percent) {
+    return '$percent% of principal paid';
+  }
+
+  @override
+  String loanDoneBy(String month) {
+    return 'done by $month';
+  }
+
+  @override
+  String get loanNextPeriod => 'Next payment';
+
+  @override
+  String loanNextOnTitle(String date) {
+    return 'Next · $date';
+  }
+
+  @override
+  String loanSplit(String principal, String interest) {
+    return 'Principal $principal · interest $interest';
+  }
+
+  @override
+  String loanInterestOnly(String amount) {
+    return 'Interest this period $amount';
+  }
+
+  @override
+  String get loanRecordPayment => 'Record a payment';
+
+  @override
+  String get loanHow => 'How it works';
+
+  @override
+  String loanHowText(String rate, String frequency) {
+    return '$rate% a year on what is still owed, paid $frequency. Interest comes first, the rest lowers the principal.';
+  }
+
+  @override
+  String get loanSchedule => 'Repayments';
+
+  @override
+  String get loanFullSchedule => 'See all';
+
+  @override
+  String get loanNextTag => 'Next';
+
+  @override
+  String loanPeriod(int index) {
+    return 'Payment $index';
+  }
+
+  @override
+  String get loanKindMortgage => 'Home loan';
+
+  @override
+  String get loanKindPersonal => 'Personal loan';
+
+  @override
+  String get loanKindOther => 'Other';
+
+  @override
+  String get loanFreqWeekly => 'Weekly';
+
+  @override
+  String get loanFreqMonthly => 'Monthly';
+
+  @override
+  String get loanFreqQuarterly => 'Quarterly';
+
+  @override
+  String get loanFreqYearly => 'Yearly';
+
+  @override
+  String get loanName => 'Name';
+
+  @override
+  String get loanAmountGroup => 'Amounts';
+
+  @override
+  String get loanPrincipal => 'Amount borrowed';
+
+  @override
+  String get loanRate => 'Interest rate';
+
+  @override
+  String get loanRateUnit => '%/yr';
+
+  @override
+  String get loanInstallment => 'Each payment';
+
+  @override
+  String get loanFrequency => 'Paid';
+
+  @override
+  String get loanNextDue => 'Next payment';
+
+  @override
+  String get loanStart => 'Start';
+
+  @override
+  String get loanEnd => 'End';
+
+  @override
+  String get loanPayFrom => 'Pay from';
+
+  @override
+  String get loanInstallmentHint =>
+      'Leave \"Each payment\" empty and Freeva works it out from the end date.';
+
+  @override
+  String get loanSave => 'Save loan';
+
+  @override
+  String get loanOwedTooMuch =>
+      'What’s owed can’t be more than the amount borrowed.';
+
+  @override
+  String loanPayTitle(String date) {
+    return 'Payment due $date';
+  }
+
+  @override
+  String get loanPrincipalPart => 'Principal';
+
+  @override
+  String get loanInterestPart => 'Interest';
+
+  @override
+  String loanWalletLeft(String amount) {
+    return '$amount left';
+  }
+
+  @override
+  String get loanPrincipalHint => 'Only the principal lowers what is owed.';
+
+  @override
+  String get loanTooMuch => 'The principal is more than what is owed.';
+
+  @override
+  String get notifyInboxDebtDueTitle => 'A debt is due soon';
+
+  @override
+  String get notifyInboxDebtDueLentTitle => 'Money owed to you is due';
+
+  @override
+  String get notifyInboxDebtOverdueTitle => 'A debt is overdue';
+
+  @override
+  String get notifyInboxDebtOverdueLentTitle => 'Money owed to you is overdue';
+
+  @override
+  String notifyInboxDebtDueBody(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Due in $days days.',
+      one: 'Due in 1 day.',
+      zero: 'Due today.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String notifyInboxDebtOverdueBody(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days overdue.',
+      one: '1 day overdue.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get transactionRefund => 'Refund';
+
+  @override
+  String get txKindRefund => 'refund';
+
+  @override
+  String get txRefundTitle => 'Refund';
+
+  @override
+  String txRefundedNote(String amount) {
+    return '$amount refunded';
+  }
+
+  @override
+  String get txDetailRefunded => 'Refunded';
+
+  @override
+  String get txDetailRefundOf => 'Refund for';
+
+  @override
+  String get refundAction => 'Record a refund';
+
+  @override
+  String get refundActionSub => 'Return or partial refund';
+
+  @override
+  String refundTitle(String name) {
+    return 'Refund $name';
+  }
+
+  @override
+  String refundSpent(String amount, String date) {
+    return 'Spent $amount · $date';
+  }
+
+  @override
+  String get refundAmount => 'Refund amount';
+
+  @override
+  String refundAll(String amount) {
+    return 'Refund all $amount';
+  }
+
+  @override
+  String get refundToWallet => 'To wallet';
+
+  @override
+  String get refundDate => 'Date';
+
+  @override
+  String refundHint(String category, int month) {
+    return 'Comes off $category spending for month $month, not counted as income.';
+  }
+
+  @override
+  String get refundTooMuch => 'More than what is left of this expense.';
+
+  @override
+  String get refundSave => 'Record refund';
+
+  @override
+  String get refundSaved => 'Refund recorded';
+
+  @override
+  String get refundDeleteTitle => 'Delete this expense?';
+
+  @override
+  String refundDeleteBody(String amount) {
+    return 'It has $amount refunded.';
+  }
+
+  @override
+  String get refundDeleteCascade => 'Delete the refunds too';
+
+  @override
+  String refundDeleteCascadeSub(String amount) {
+    return 'Wallets go down by $amount';
+  }
+
+  @override
+  String get refundDeleteKeep => 'Keep the refunds';
+
+  @override
+  String get refundDeleteKeepSub => 'They become income';
+
+  @override
+  String get installmentAction => 'Turn into installments';
+
+  @override
+  String get installmentActionSub => 'Split over card periods';
+
+  @override
+  String get installmentTitle => 'Installments';
+
+  @override
+  String get installmentCount => 'Periods';
+
+  @override
+  String get installmentOther => 'Other';
+
+  @override
+  String get installmentOtherTitle => 'Number of periods';
+
+  @override
+  String get installmentOtherLabel => 'From 2 to 60';
+
+  @override
+  String get installmentEach => 'Each period';
+
+  @override
+  String get installmentEditEach => 'Amount each period';
+
+  @override
+  String get installmentFirst => 'First period';
+
+  @override
+  String installmentMore(int count, String date) {
+    return '… $count more, done $date';
+  }
+
+  @override
+  String installmentHint(int month) {
+    return 'The purchase still counts once, in month $month. Each period adds to the card\'s amount due.';
+  }
+
+  @override
+  String get installmentCreate => 'Create schedule';
+
+  @override
+  String get installmentCreated => 'Schedule created';
+
+  @override
+  String installmentEachInvalid(int count) {
+    return 'This amount can\'t make $count periods add up to the price.';
+  }
+
+  @override
+  String get installmentFirstTooEarly =>
+      'The first period can\'t be before the purchase.';
+
+  @override
+  String get installmentPreviewError =>
+      'Couldn\'t show the schedule. Check your connection.';
+
+  @override
+  String get installmentConflict => 'This purchase can\'t be split anymore.';
+
+  @override
+  String get installmentLeft => 'Left to pay';
+
+  @override
+  String installmentPaidOf(int past, int count, String wallet) {
+    return '$past/$count periods paid · $wallet';
+  }
+
+  @override
+  String get installmentEachAdds =>
+      'Each period adds to the card\'s amount due.';
+
+  @override
+  String get installmentClose => 'End installments';
+
+  @override
+  String get installmentCloseSub => 'Use when paid off early';
+
+  @override
+  String get installmentCloseTitle => 'End installments?';
+
+  @override
+  String get installmentCloseBody =>
+      'Remaining periods stop adding to the card\'s amount due. The purchase stays as it is.';
+
+  @override
+  String get installmentCloseConfirm => 'End';
+
+  @override
+  String get installmentClosed => 'Installments ended';
+
+  @override
+  String get installmentClosedTag => 'Ended';
+
+  @override
+  String get installmentLoadError => 'Couldn\'t load the schedule';
+
+  @override
+  String installmentRowSub(int index, int count, String date, String amount) {
+    return 'Period $index/$count · $date · $amount';
+  }
+
+  @override
+  String creditDueThisPeriod(String date) {
+    return 'Due this period · $date';
+  }
+
+  @override
+  String creditDaysLeftTag(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days left',
+      one: '1 day left',
+      zero: 'Today',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String creditIncludes(String installment, String minimum) {
+    return 'Includes $installment installments · minimum $minimum';
+  }
+
+  @override
+  String creditIncludesNoMin(String installment) {
+    return 'Includes $installment installments';
+  }
+
+  @override
+  String get installmentView => 'View installment schedule';
+
+  @override
+  String get installmentViewSub => 'Periods and what is left to pay';
+
+  @override
+  String get dataExportTitle => 'Export data';
+
+  @override
+  String get dataExportTable => 'Transactions table';
+
+  @override
+  String get dataExportTableHint => 'CSV, opens in Excel';
+
+  @override
+  String get dataExportFull => 'Full copy';
+
+  @override
+  String get dataExportFullHint => 'JSON, for safekeeping';
+
+  @override
+  String get dataExportFullNote =>
+      'Everything in your account, not filtered. Meant for safekeeping, not for reading.';
+
+  @override
+  String get dataExportPeriodThisMonth => 'This month';
+
+  @override
+  String get dataExportPeriod3Months => '3 months';
+
+  @override
+  String get dataExportPeriodThisYear => 'This year';
+
+  @override
+  String get dataExportPeriodAll => 'All';
+
+  @override
+  String get dataExportPeriodCustom => 'Custom';
+
+  @override
+  String get dataExportWallets => 'Wallets';
+
+  @override
+  String get dataExportAllWallets => 'All wallets';
+
+  @override
+  String dataExportSummaryRange(String from, String to, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count transactions',
+      one: '1 transaction',
+      zero: 'No transactions',
+    );
+    return '$from – $to · $_temp0';
+  }
+
+  @override
+  String dataExportSummaryAll(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count transactions',
+      one: '1 transaction',
+      zero: 'No transactions',
+    );
+    return 'All · $_temp0';
+  }
+
+  @override
+  String get dataExportTooMany =>
+      'More than 50,000 transactions. Pick a shorter range or fewer wallets.';
+
+  @override
+  String get dataExportButton => 'Export file';
+
+  @override
+  String get meImportData => 'Import from another app';
+
+  @override
+  String get importTitle => 'Import transactions';
+
+  @override
+  String get importSourceHeading => 'Data source';
+
+  @override
+  String get importSourceMoneyLover => 'Money Lover';
+
+  @override
+  String get importSourceMoneyLoverHint =>
+      'Export a CSV file in the Money Lover app';
+
+  @override
+  String get importSourceMisa => 'MISA Sổ thu chi';
+
+  @override
+  String get importSourceMisaHint => 'Export a CSV file in the MISA app';
+
+  @override
+  String get importSourceFreeva => 'Freeva';
+
+  @override
+  String get importSourceFreevaHint => 'A file you exported from Freeva';
+
+  @override
+  String get importSourceOther => 'Somewhere else';
+
+  @override
+  String get importSourceOtherHint => 'You pick the date and amount columns';
+
+  @override
+  String get importSourceNote =>
+      'Up to 2,000 rows at a time. Transactions you already have are skipped.';
+
+  @override
+  String get importPickFile => 'Choose CSV file';
+
+  @override
+  String get importProblemUnreadable =>
+      'Can\'t read this file. Choose a CSV file.';
+
+  @override
+  String get importProblemEmpty => 'This file has no rows yet.';
+
+  @override
+  String get importProblemTooMany =>
+      'This file has more than 2,000 rows. Split it and import in parts.';
+
+  @override
+  String get importProblemTooLarge =>
+      'This file is too large. Split it and import in parts.';
+
+  @override
+  String get importError => 'Couldn\'t import';
+
+  @override
+  String get importColumnsTitle => 'Choose columns';
+
+  @override
+  String importFileRows(int count) {
+    return '$count rows';
+  }
+
+  @override
+  String get importColumnsHeader => 'COLUMNS IN THE FILE';
+
+  @override
+  String get importFieldDate => 'Date';
+
+  @override
+  String get importFieldAmount => 'Amount';
+
+  @override
+  String get importFieldType => 'Income or expense';
+
+  @override
+  String get importFieldCategory => 'Category';
+
+  @override
+  String get importFieldWallet => 'Wallet';
+
+  @override
+  String get importFieldNotes => 'Note';
+
+  @override
+  String get importColumnNone => 'Don\'t use';
+
+  @override
+  String get importDateFormat => 'Date style';
+
+  @override
+  String get importNumberFormat => 'Number style';
+
+  @override
+  String get importFirstRow => 'First readable row';
+
+  @override
+  String get importNext => 'Next';
+
+  @override
+  String get importMapTitle => 'Match wallets and categories';
+
+  @override
+  String importMapRemaining(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items left to match.',
+      one: '$count item left to match.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get importMapWallets => 'WALLETS IN THE FILE';
+
+  @override
+  String get importMapCategories => 'CATEGORIES IN THE FILE';
+
+  @override
+  String get importMapAllRows => 'Every row in the file';
+
+  @override
+  String get importMapChoose => 'Choose';
+
+  @override
+  String get importMapPreview => 'Preview';
+
+  @override
+  String get importPickWallet => 'Choose a wallet';
+
+  @override
+  String get importPickCategory => 'Choose a category';
+
+  @override
+  String get importPreviewTitle => 'Preview';
+
+  @override
+  String get importReady => 'Ready';
+
+  @override
+  String get importDuplicate => 'Duplicates';
+
+  @override
+  String get importInvalid => 'Errors';
+
+  @override
+  String get importFilterAll => 'All';
+
+  @override
+  String get importNoRows => 'No rows';
+
+  @override
+  String get importDuplicatesToggle => 'Import duplicates anyway';
+
+  @override
+  String get importDuplicatesHint => 'You usually don\'t need this';
+
+  @override
+  String importCommit(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Import $count transactions',
+      one: 'Import $count transaction',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get importTagDuplicate => 'Duplicate';
+
+  @override
+  String get importTagDate => 'No date';
+
+  @override
+  String get importTagAmount => 'Bad amount';
+
+  @override
+  String get importTagType => 'Type not supported';
+
+  @override
+  String get importTagWallet => 'No wallet';
+
+  @override
+  String get importTagCategory => 'No category';
+
+  @override
+  String get importTagCategoryKind => 'Wrong category type';
+
+  @override
+  String get importTagCurrency => 'Currency differs';
+
+  @override
+  String get importTagTransfer => 'Missing other side';
+
+  @override
+  String get importTagSameWallet => 'Same wallet';
+
+  @override
+  String get importTagOther => 'Can\'t read';
+
+  @override
+  String importDoneTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Imported $count transactions',
+      one: 'Imported $count transaction',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String importDoneSkipBoth(int duplicates, int invalid) {
+    return 'Skipped $duplicates duplicates and $invalid bad rows.';
+  }
+
+  @override
+  String importDoneSkipDuplicates(int count) {
+    return 'Skipped $count duplicates.';
+  }
+
+  @override
+  String importDoneSkipInvalid(int count) {
+    return 'Skipped $count bad rows.';
+  }
+
+  @override
+  String get importDoneView => 'View transactions';
+
+  @override
+  String get importUndo => 'Undo this import';
+
+  @override
+  String get importDoneKept =>
+      'Transactions you edited after importing are kept.';
+
+  @override
+  String importUndone(int count) {
+    return 'Undid $count transactions';
+  }
+
+  @override
+  String get importUndoError => 'Couldn\'t undo';
+
+  @override
+  String get meGroupManage => 'Manage money';
+
+  @override
+  String get meGroupSetup => 'Setup';
+
+  @override
+  String get meGroupData => 'Data';
+
+  @override
+  String get meBudgetShort => 'Budget';
+
+  @override
+  String get meCalendarShort => 'Calendar';
+
+  @override
+  String get meMoneyTitle => 'Income and period';
+
+  @override
+  String get meMoneyHint =>
+      'Paid mid-month? Set your payday so budgets and reports use the right period.';
+
+  @override
+  String meWalletsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count wallets',
+      one: '$count wallet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String meRecurringCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items',
+      one: '$count item',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String meCalendarMonth(int month) {
+    return 'Month $month';
+  }
+
+  @override
+  String get forecastTitle => 'Balance forecast';
+
+  @override
+  String forecastRange(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count months',
+      one: '1 month',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get forecastRangeSemantics => 'Forecast range';
+
+  @override
+  String forecastEndOfMonth(int month) {
+    return 'About this much left at the end of month $month';
+  }
+
+  @override
+  String forecastChange(String amount) {
+    return '$amount vs today';
+  }
+
+  @override
+  String get forecastToday => 'Today';
+
+  @override
+  String get forecastHowTitle => 'How it is worked out';
+
+  @override
+  String get forecastStartsFrom => 'Starting balance';
+
+  @override
+  String forecastStartsFromWallets(String amount, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count wallets',
+      one: '1 wallet',
+    );
+    return '$amount · $_temp0';
+  }
+
+  @override
+  String forecastStartsFromYou(String amount) {
+    return '$amount · set by you';
+  }
+
+  @override
+  String get forecastEdit => 'Edit';
+
+  @override
+  String get forecastScope =>
+      'Only recurring items and bills. Daily spending is not included.';
+
+  @override
+  String forecastOtherCurrency(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items in other currencies are left out.',
+      one: '1 item in another currency is left out.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get forecastRulesHeader => 'Included items';
+
+  @override
+  String forecastRuleToggle(String name) {
+    return 'Include $name';
+  }
+
+  @override
+  String forecastEstimated(String schedule) {
+    return '$schedule · estimate';
+  }
+
+  @override
+  String forecastOneOff(String date) {
+    return 'Once, $date';
+  }
+
+  @override
+  String get forecastNoRules =>
+      'No recurring items or bills yet, so the balance stays the same.';
+
+  @override
+  String forecastChartSemantics(String items) {
+    return 'Forecast balance at the end of each month: $items';
+  }
+
+  @override
+  String get forecastBalanceTitle => 'Starting balance';
+
+  @override
+  String get forecastBalanceHint =>
+      'The forecast adds your recurring items to this amount.';
+
+  @override
+  String get forecastBalanceApply => 'Use this amount';
+
+  @override
+  String get forecastBalanceReset => 'Use the total of my wallets';
+
+  @override
+  String get forecastBalanceInvalid => 'Enter a valid amount.';
+
+  @override
+  String forecastDayEstimated(int day) {
+    return 'Day $day · estimate';
+  }
 }

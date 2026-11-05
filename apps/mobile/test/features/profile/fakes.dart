@@ -2,6 +2,8 @@ import 'package:dartz/dartz.dart';
 import 'package:mobile/features/auth/data/authorized_api.dart';
 import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/onboarding/domain/onboarding_answers.dart';
+import 'package:mobile/features/profile/domain/account_export_use_case.dart';
+import 'package:mobile/features/profile/domain/account_file_sharer.dart';
 import 'package:mobile/features/profile/domain/profile.dart';
 import 'package:mobile/features/profile/domain/profile_repository.dart';
 
@@ -32,6 +34,23 @@ class MemoryProfiles implements ProfileRepository {
       timezones: ['Asia/Ho_Chi_Minh', 'America/New_York', 'UTC'],
     ),
   );
+  final List<String?> displayCurrencies = [];
+  @override
+  Future<Either<AuthFailure, Unit>> saveDisplayCurrency(String? code) async {
+    if (failure != null) return left(failure!);
+    displayCurrencies.add(code);
+    return right(unit);
+  }
+
+  final List<BigInt?> incomes = [];
+  @override
+  Future<Either<AuthFailure, Unit>> saveMonthlyIncome(BigInt? minor) async {
+    if (failure != null) return left(failure!);
+    incomes.add(minor);
+    value = value.withMonthlyIncome(minor);
+    return right(unit);
+  }
+
   @override
   Future<Either<AuthFailure, Unit>> saveOnboarding(
     OnboardingAnswers answers,
@@ -77,3 +96,35 @@ class Transport implements AuthorizedApi {
     return failure == null ? right(response) : left(failure!);
   }
 }
+
+class FakeSharer implements AccountFileSharer {
+  String? name;
+  String? content;
+  bool result = true;
+  bool fail = false;
+  @override
+  Future<bool> share(String fileName, String content) async {
+    if (fail) throw StateError('share');
+    name = fileName;
+    this.content = content;
+    return result;
+  }
+
+  List<int>? bytes;
+  String? mime;
+  @override
+  Future<bool> shareBytes(
+    String fileName,
+    List<int> bytes,
+    String mimeType,
+  ) async {
+    if (fail) throw StateError('share');
+    name = fileName;
+    this.bytes = bytes;
+    mime = mimeType;
+    return result;
+  }
+}
+
+AccountExportUseCase exportCase(AuthRepository auth, [FakeSharer? sharer]) =>
+    AccountExportUseCase(auth, sharer ?? FakeSharer());

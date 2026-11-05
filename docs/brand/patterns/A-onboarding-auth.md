@@ -5,6 +5,16 @@ Canvas: trang **05 · Patterns**, hai hàng A1 và A2
 (<https://claude.ai/artifact/SmyaVvz57doJiAM6Kn678T>, riêng tư). Spec chung:
 [design-system.md](../design-system.md).
 
+## Thay đổi chốt 2026-11-02 (chưa vẽ, `DS-P3-012`)
+
+Câu hỏi A1.3–A1.5 thay bằng ba câu, đều bỏ qua được, sau đó tới A1.6 như cũ:
+
+1. **Mục tiêu sử dụng** — Quản lý chi tiêu · Tiết kiệm · Quản lý ngân sách (tối đa 2). Sắp khối Tổng quan.
+2. **Thu nhập hàng tháng** (không bắt buộc) — cơ sở gợi ý ngân sách và tỷ lệ tiết kiệm.
+3. **Mục tiêu tiết kiệm** (không bắt buộc) — tạo mục tiêu thật, hiện số cần để dành mỗi tháng.
+
+Có thu nhập thì thêm màn gợi ý ngân sách ("Dùng mức này" / "Để sau"). Bỏ câu thói quen, nhịp xem lại và màn nhập ngân sách tay. Bảng A1 bên dưới là bản 2026-10-23, giữ tới khi canvas vẽ lại.
+
 ## Nguyên tắc riêng cho nhóm này
 
 - **Chữ ngắn:** tiêu đề tối đa khoảng 6 từ, dòng phụ tối đa một dòng hoặc bỏ hẳn.
@@ -12,7 +22,7 @@ Canvas: trang **05 · Patterns**, hai hàng A1 và A2
 - **Tạo tài khoản trước, câu hỏi sau** (2026-10-23): chưa có chế độ khách nên câu trả lời A1.3–A1.5 cần tài khoản để lưu vào hồ sơ. Người đăng nhập lại không gặp các câu này.
 - **Không hỏi tiền sớm.** Ngân sách và số dư là bước không bắt buộc, đều có "Để sau" / "Bỏ qua".
 - **Logo chỉ ở splash.** Các màn dùng minh hoạ nét vẽ tay hoặc mảnh UI thật của app.
-- Mỗi câu hỏi phải được dùng để cá nhân hoá; câu không dùng thì bỏ.
+- Mỗi câu hỏi phải được dùng để cá nhân hoá; câu không dùng thì bỏ. Thu nhập được hỏi từ 2026-11-02 vì dùng để gợi ý ngân sách; vẫn không bắt buộc.
 
 ## A1 · Onboarding
 
@@ -38,7 +48,7 @@ Bước 3–5 có thanh tiến độ `1/3 … 3/3`, nút quay lại (trừ bư�
 | # | Màn | Nội dung |
 |---|---|---|
 | 1 | Đăng nhập | Tiêu đề giữa. Ô email + ô mật khẩu (có mắt) trên cùng một màn. "Quên mật khẩu?" gạch chân ở giữa. Nút "Đăng nhập". "hoặc" → Google, Apple. "Chưa có tài khoản? Đăng ký" (→ A1.2) |
-| 2 | Tạo tài khoản bằng email | Ô email, mật khẩu, **nhập lại mật khẩu** (đều có mắt), thanh độ mạnh 3 nấc. Danh sách tự tick: "Ít nhất 12 ký tự" · "Có cả chữ và số" (bắt buộc) · "Thêm ký hiệu như ! @ # để mạnh hơn" (gợi ý) · "Hai mật khẩu khớp nhau". **Checkbox** "Tôi đồng ý với Điều khoản sử dụng và Chính sách bảo mật của Freeva." Nút "Tạo tài khoản" |
+| 2 | Tạo tài khoản bằng email | Ô email, mật khẩu, **nhập lại mật khẩu** (đều có mắt), thanh độ mạnh 3 nấc. Danh sách tự tick: "Ít nhất 8 ký tự" · "Có cả chữ và số" (bắt buộc) · "Thêm ký hiệu như ! @ # để mạnh hơn" (gợi ý) · "Hai mật khẩu khớp nhau". **Checkbox** "Tôi đồng ý với Điều khoản sử dụng và Chính sách bảo mật của Freeva." Nút "Tạo tài khoản" |
 | 3 | Xác nhận email | "Xác nhận email" · "Freeva đã gửi link xác nhận tới …". Thẻ "Email đã xác nhận giúp bạn": lấy lại mật khẩu khi quên · nhận cảnh báo khi có đăng nhập lạ · không lỡ thông báo quan trọng về tài khoản. Nút "Xong" (→ A1.3; không mở app Mail từ Freeva), "Gửi lại". **Không bắt buộc:** chữ "Chưa xác nhận vẫn dùng app bình thường. Bạn có thể xác nhận sau ở Cá nhân." Không có nút quay lại: tài khoản đã tạo, quay lại sẽ thành đăng xuất (owner 2026-10-27). |
 | 4 | Đặt mã PIN | Quay lại · "Để sau" (→ A1.7). "Đặt mã PIN" · "6 số để mở khoá Freeva trên máy này." 6 chấm + bàn phím số, nút "Tiếp tục" |
 | 5 | Nhập lại mã PIN | Quay lại · "Để sau". "Nhập lại mã PIN" · "Nhập lại 6 số vừa đặt để chắc chắn." 6 chấm, "Không khớp sẽ được nhập lại từ đầu.", nút "Xác nhận" |
@@ -50,7 +60,7 @@ Mở khoá hằng ngày: màn Mở khoá ở hàng mẫu (avatar chữ cái, "Ch
 
 **Luồng:** đăng ký email đi A1.2 → A2.2 → A2.3 → A1.3 → … → A1.6 → A2.4 → A2.5 → A2.6 → A1.7. Google/Apple đi A1.2 → A1.3. Mọi cách đăng ký đều qua PIN và Face ID sau A1.6; bỏ qua thì checklist trang chính nhắc "Khoá app bằng PIN". Đăng nhập lại vào thẳng app, không qua A1.3–A1.5.
 
-**Mật khẩu (chốt 2026-10-23):** mật khẩu mới 12–128 ký tự, có ít nhất một chữ cái và một chữ số (mọi bảng chữ); ký hiệu chỉ là gợi ý. Đăng nhập chỉ kiểm tra độ dài để mật khẩu cũ dùng tiếp. Đã làm ở backend và mobile (`DS-P2-004`).
+**Mật khẩu (chốt 2026-10-23):** mật khẩu mới 8–128 ký tự (hạ từ 12 ở `BE-P2-014`), có ít nhất một chữ cái và một chữ số (mọi bảng chữ); ký hiệu chỉ là gợi ý. Đăng nhập chỉ kiểm tra độ dài (8–128) để mật khẩu cũ dùng tiếp. Đã làm ở backend và mobile (`DS-P2-004`).
 
 ## Thành phần mới (bổ sung vào design system)
 
@@ -69,12 +79,12 @@ Mở khoá hằng ngày: màn Mở khoá ở hàng mẫu (avatar chữ cái, "Ch
 |---|---|
 | Link xác nhận email và đặt lại mật khẩu mở thẳng app | Chốt 2026-10-23: bỏ nhập mã 64 ký tự trên UI; backend gửi một link, người dùng bấm trong mail. Cần deep link / universal link (task riêng). |
 | Google, Apple trên mobile | ADR 010 đã có, mobile chưa làm. |
-| Ngân sách tháng (A1.5) | `BE-P2-E02` / `MOB-P2-E02`: UI giữ; khi có số thì `PUT /budgets/current` nếu chưa có ngân sách, không thì giữ `budgetDraftMinor`. |
+| Ngân sách tháng (A1.5) | Xong: `PUT /budgets/current` nếu chưa có ngân sách, không thì giữ `budgetDraftMinor` (`BE-P2-E02`). |
 | PIN không còn bắt buộc ngay sau đăng nhập | App hiện bắt đặt PIN; đổi thành bước gợi ý có "Để sau", luôn có màn nhập lại PIN. |
 | Ô "nhập lại mật khẩu" | Giữ (2026-10-23), như app hiện tại. |
 | Quy tắc chữ + số | Xong ở backend + mobile (`DS-P2-004`, 2026-10-23). |
 | Xác nhận email không bắt buộc | Backend đã cho đăng nhập trước khi xác nhận (ADR 009); mobile cần cho đi tiếp sau A2.3 và nơi xác nhận lại trong Cá nhân. |
 | Lưu đồng ý điều khoản | Cần ghi lại thời điểm và phiên bản điều khoản khi đăng ký email (Google/Apple: dòng chữ ở A1.2). |
-| Câu trả lời A1.3–A1.4 | Xong (A2a): `User.onboardingGoals/trackingHabit/reviewCadence`, `PATCH /api/v1/profile/onboarding`, mọi trường tuỳ chọn. Chưa dùng để sắp khối Tổng quan. Chưa có trong `GET /account/export`. |
+| Câu trả lời A1.3–A1.4 | Xong (A2a): `User.onboardingGoals/trackingHabit/reviewCadence`, `PATCH /api/v1/profile/onboarding`, mọi trường tuỳ chọn. Mục tiêu "Quản lý khoản nợ" đưa khối Thẻ tín dụng lên đầu Tổng quan; các mục tiêu khác chưa có khối (chưa thiết kế, owner chốt giữ nguyên 2026-10-29). Đọc lại qua `GET /profile` và có trong `GET /account/export` (`BE-P2-012`, 2026-10-30); số ngân sách đầu lưu thêm trên user. |
 | Chế độ khách | **Chưa làm** — cần dữ liệu cục bộ và gộp khi đăng ký; quyết định sau. |
 | Copy l10n | Toàn bộ chuỗi trên thay chuỗi `auth*`, `onboarding*` hiện có trong `app_vi.arb` / `app_en.arb`. |

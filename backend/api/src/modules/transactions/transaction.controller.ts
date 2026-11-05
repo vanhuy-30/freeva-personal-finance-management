@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Header, Headers, HttpCode, Param, Patch, Post, Query, Req, Res, UseFilters, UseGuards } from '@nestjs/common';
 import type { Response } from 'express';
 import { AuthGuard, type AuthRequest } from '../auth/auth.guard';
-import { TransactionIdDto, TransactionQueryDto, DeleteTransactionDto, CreateTransactionDto, UpdateTransactionDto } from './transaction.dto';
+import { RefundDto, TransactionCsvQueryDto, TransactionIdDto, TransactionQueryDto, DeleteTransactionDto, CreateTransactionDto, UpdateTransactionDto } from './transaction.dto';
 import { TransactionService } from './transaction.service';
 import { TransactionError } from './domain/transaction';
 import { TransactionExceptionFilter } from './transaction-exception.filter';
@@ -19,9 +19,25 @@ export class TransactionController {
     res.status(result.created ? 201 : 200);
     return result.transaction;
   }
+  /** BE-P3-008: money back for an expense; the Idempotency-Key is the refund's clientId. */
+  @Post(':id/refunds') @Header('Cache-Control', 'no-store')
+  async refund(@Req() request: AuthRequest, @Param() params: TransactionIdDto, @Body() body: RefundDto,
+    @Headers('idempotency-key') key: string | undefined, @Res({ passthrough: true }) res: Response) {
+    if (!key || key.toLowerCase() !== body.clientId) throw new TransactionError('VALIDATION_ERROR');
+    const result = await this.transactions.refund(request.session.userId, params.id, body);
+    res.status(result.created ? 201 : 200);
+    return result.transaction;
+  }
   @Get() @Header('Cache-Control', 'no-store')
   list(@Req() request: AuthRequest, @Query() query: TransactionQueryDto) {
     return this.transactions.list(request.session.userId, query);
+  }
+  /** BE-P3-010: declared before `:id` so `export.csv` is not read as an id. */
+  @Get('export.csv') @Header('Cache-Control', 'no-store') @Header('Content-Type', 'text/csv; charset=utf-8')
+  async exportCsv(@Req() request: AuthRequest, @Query() query: TransactionCsvQueryDto, @Res({ passthrough: true }) res: Response) {
+    const csv = await this.transactions.exportCsv(request.session.userId, query);
+    res.setHeader('Content-Disposition', `attachment; filename="freeva-transactions-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}.csv"`);
+    return csv;
   }
   @Get(':id') @Header('Cache-Control', 'no-store')
   find(@Req() request: AuthRequest, @Param() params: TransactionIdDto) {
@@ -33,6 +49,6 @@ export class TransactionController {
   }
   @Delete(':id') @HttpCode(204) @Header('Cache-Control', 'no-store')
   delete(@Req() request: AuthRequest, @Param() params: TransactionIdDto, @Query() query: DeleteTransactionDto) {
-    return this.transactions.delete(request.session.userId, params.id, query.version);
+    return this.transactions.delete(request.session.userId, params.id, query.version, query.refunds);
   }
 }

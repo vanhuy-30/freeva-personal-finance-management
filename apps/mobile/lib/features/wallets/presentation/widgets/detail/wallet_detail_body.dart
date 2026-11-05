@@ -5,12 +5,16 @@ import 'package:mobile/core/theme/lucide_icons.g.dart';
 import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../../core/theme/theme_context.dart';
 import '../../../../../core/theme/tokens.g.dart';
+import '../../../../installments/domain/card_installment.dart';
+import '../../../../installments/presentation/widgets/installment_plans_group.dart';
 import '../../../../transactions/presentation/viewmodels/transaction_view_model.dart';
+import '../../../../transactions/presentation/widgets/transaction_naming.dart';
 import '../../../domain/credit_card_status.dart';
 import '../../../domain/wallet.dart';
 import '../../viewmodels/wallet_detail_view_model.dart';
 import 'credit_balance_card.dart';
 import 'credit_info_card.dart';
+import 'credit_period_card.dart';
 import 'wallet_action_pill.dart';
 import 'wallet_balance_card.dart';
 import 'wallet_history.dart';
@@ -29,7 +33,11 @@ class WalletDetailBody extends StatelessWidget {
     required this.main,
     required this.detail,
     required this.onRecord,
+    required this.onReconcile,
     required this.onRefresh,
+    this.periodDue,
+    this.plans = const [],
+    this.onOpenPlan,
     super.key,
   });
 
@@ -40,7 +48,14 @@ class WalletDetailBody extends StatelessWidget {
   final TransactionViewModel main;
   final WalletDetailViewModel detail;
   final ValueChanged<WalletRecordAction> onRecord;
+  final VoidCallback onReconcile;
   final Future<void> Function() onRefresh;
+
+  /// Card with installments (`WCredit3`): "Phải trả kỳ này" replaces the
+  /// card info, and the active plans list under "TRẢ GÓP".
+  final CardPeriodDue? periodDue;
+  final List<CardInstallment> plans;
+  final ValueChanged<CardInstallment>? onOpenPlan;
 
   /// Gap between the sections on the board.
   static const double _gap = 18;
@@ -73,7 +88,19 @@ class WalletDetailBody extends StatelessWidget {
                 hidden: hidden,
               ),
               const SizedBox(height: _gap),
-              CreditInfoCard(card: card, today: today),
+              if (periodDue case final due?)
+                CreditPeriodCard(
+                  due: due,
+                  today: today,
+                  minorDigits: minorDigits,
+                  minimum: wallet.draft.minimumPayment,
+                )
+              else
+                CreditInfoCard(
+                  card: card,
+                  today: today,
+                  minorDigits: minorDigits,
+                ),
             ] else
               WalletBalanceCard(
                 wallet: wallet,
@@ -85,7 +112,31 @@ class WalletDetailBody extends StatelessWidget {
                   locale,
                 ).format(today),
                 hidden: hidden,
+                converted: detail.converted,
+                convertedDigits:
+                    main.currencies
+                        .where((x) => x.code == detail.converted?.currency)
+                        .map((x) => x.minorDigits)
+                        .firstOrNull ??
+                    0,
               ),
+            if (!wallet.archived) ...[
+              const SizedBox(height: FreevaSpace.s2),
+              Align(
+                child: TextButton.icon(
+                  onPressed: onReconcile,
+                  icon: const Icon(LucideIcons.scale, size: FreevaSize.iconSm),
+                  label: Text(s.walletReconcileLink),
+                  style: TextButton.styleFrom(
+                    foregroundColor: context.colors.actionPrimary,
+                    minimumSize: const Size(0, 44),
+                    textStyle: FreevaTypography.bodyM.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
             const SizedBox(height: _gap),
             Row(
               children: [
@@ -112,6 +163,24 @@ class WalletDetailBody extends StatelessWidget {
                 ),
               ],
             ),
+            if (credit && plans.isNotEmpty && onOpenPlan != null) ...[
+              const SizedBox(height: _gap),
+              InstallmentPlansGroup(
+                plans: plans,
+                naming: TransactionNaming(
+                  s,
+                  categories: main.categories,
+                  wallets: main.wallets,
+                ),
+                digitsOf: (code) =>
+                    main.currencies
+                        .where((x) => x.code == code)
+                        .map((x) => x.minorDigits)
+                        .firstOrNull ??
+                    0,
+                onOpen: onOpenPlan!,
+              ),
+            ],
             const SizedBox(height: _gap),
             WalletHistory(
               walletId: wallet.id,

@@ -19,6 +19,8 @@ Từ home chọn **Hồ sơ tài chính**. Hồ sơ thuộc tài khoản đang �
 
 ## Contract và quyền riêng tư
 
+**`monthlyIncomeMinor` (`BE-P3-012`):** thu nhập hàng tháng tuỳ chọn, số nguyên dương theo minor unit của tiền tệ mặc định, không quy đổi khi đổi tiền tệ. Lưu lúc onboarding qua `PATCH /api/v1/profile/onboarding` (cùng `goals`: `track`, `save`, `budget`, tối đa 2) hoặc sửa/xóa qua `PUT /api/v1/profile/monthly-income` (`null` xóa). GET trả, PUT `/profile` không nhận. Không ghi log, có trong export, xóa cùng tài khoản.
+
 **`displayName` (`DS-P2-003`):** tên tuỳ chọn (≤ 60 ký tự) chỉ dùng cho lời chào ở
 Tổng quan. GET luôn trả (null khi chưa đặt); PUT bỏ trường này thì giữ nguyên, chuỗi
 trống hoặc null thì xoá. App hiện chỉ đọc; màn sửa tên thuộc nhóm G. Không ghi log.
@@ -44,7 +46,7 @@ trong AuthGate để không để lại dialog/overlay phía trên privacy cover
 ## Triển khai và kiểm chứng
 
 Cần deploy backend có module profile **trước** bản mobile này. Không có migration
-schema mới; tận dụng `User`, `Currency`, `version` hiện có. Chưa deploy staging.
+schema mới; tận dụng `User`, `Currency`, `version` hiện có.
 
 - Flutter analyze sạch; 50 unit/widget tests pass, gồm validation, serialization số
   nguyên, save/reload/cancel, lỗi mạng/409/401, response đến muộn, đổi locale sau
@@ -52,4 +54,11 @@ schema mới; tận dụng `User`, `Currency`, `version` hiện có. Chưa deplo
 - 82 backend tests pass; HTTP tests kiểm tra auth, ownership, DTO, catalog, IANA và no-store.
 - 14 PostgreSQL integration tests pass trong database `auth_test` riêng kiểm tra lưu thật,
   reload, hai request đồng thời (200/409), tài khoản khác và token đã revoke.
-- API build pass. Chưa smoke test native device hoặc E2E staging của màn hồ sơ.
+- API build pass.
+
+## Xuất dữ liệu và xóa tài khoản — MOB-P2-011
+
+- Hồ sơ có dòng "Xuất dữ liệu": lấy `GET /account/export`, ghi file `freeva-export-YYYYMMDD.json` đúng body API (không decode lại), mở share sheet (`share_plus`), rồi xóa file tạm. Đóng share sheet không phải lỗi.
+- "Xoá tài khoản": hộp xác nhận một lần, `DELETE /account`, không mật khẩu, không cửa sổ chờ. Thành công thì xóa phiên, PIN và hàng đợi sync trên máy, về màn vào app. Lỗi mạng hoặc server từ chối thì không xóa gì local và báo chưa xóa được.
+- Không log email, ghi chú hay số tiền.
+

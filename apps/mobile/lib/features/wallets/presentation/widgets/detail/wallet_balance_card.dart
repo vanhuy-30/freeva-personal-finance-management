@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../../core/theme/theme_context.dart';
 import '../../../../../core/theme/tokens.g.dart';
+import '../../../../../core/money/display_converted.dart';
 import '../../../../../core/widgets/balance_card.dart';
+import '../../../../../core/widgets/converted_note.dart';
 import '../../../../../core/widgets/money_display.dart';
 import '../../../../../core/widgets/skeleton.dart';
 import '../../../../home/presentation/widgets/month_flow_value.dart';
@@ -22,6 +24,8 @@ class WalletBalanceCard extends StatelessWidget {
     required this.flowFailed,
     required this.monthLabel,
     required this.hidden,
+    this.converted,
+    this.convertedDigits = 0,
     super.key,
   });
 
@@ -33,6 +37,10 @@ class WalletBalanceCard extends StatelessWidget {
   final bool flowFailed;
   final String monthLabel;
   final bool hidden;
+
+  /// Balance in the profile currency; hidden with the balance.
+  final DisplayConverted? converted;
+  final int convertedDigits;
 
   @override
   Widget build(BuildContext context) {
@@ -109,6 +117,17 @@ class WalletBalanceCard extends StatelessWidget {
               hidden: hidden,
             ),
           ),
+          if (converted != null)
+            Padding(
+              padding: const EdgeInsets.only(top: FreevaSpace.s1),
+              child: ConvertedNote(
+                value: converted!,
+                from: currency,
+                minorDigits: convertedDigits,
+                hidden: hidden,
+                color: c.textOnWash,
+              ),
+            ),
           const SizedBox(height: FreevaSpace.s4),
           Row(
             children: [

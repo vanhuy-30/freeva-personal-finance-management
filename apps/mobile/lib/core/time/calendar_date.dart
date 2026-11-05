@@ -1,5 +1,7 @@
 import 'package:timezone/timezone.dart' as tz;
 
+final RegExp _clockTime = RegExp(r'^([01]\d|2[0-3]):([0-5]\d)$');
+
 /// Calendar date `YYYY-MM-DD` in an IANA zone. Returns null when the zone
 /// is unknown or timezone data has not been initialized.
 String? calendarDate(DateTime instant, String timeZone) {
@@ -9,6 +11,18 @@ String? calendarDate(DateTime instant, String timeZone) {
     final month = local.month.toString().padLeft(2, '0');
     final day = local.day.toString().padLeft(2, '0');
     return '$year-$month-$day';
+  } catch (_) {
+    return null;
+  }
+}
+
+/// Local clock `HH:mm` in an IANA zone. Null when the zone is unknown.
+String? clockTime(DateTime instant, String timeZone) {
+  try {
+    final local = tz.TZDateTime.from(instant.toUtc(), tz.getLocation(timeZone));
+    final hour = local.hour.toString().padLeft(2, '0');
+    final minute = local.minute.toString().padLeft(2, '0');
+    return '$hour:$minute';
   } catch (_) {
     return null;
   }
@@ -31,3 +45,6 @@ bool isCalendarDate(String value) {
   final day = date.day.toString().padLeft(2, '0');
   return '$year-$month-$day' == value;
 }
+
+/// True for a 24h clock `HH:mm`.
+bool isClockTime(String value) => _clockTime.hasMatch(value);

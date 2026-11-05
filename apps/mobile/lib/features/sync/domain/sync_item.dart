@@ -16,6 +16,7 @@ class SyncServerCopy {
     required this.occurredOn,
     required this.amountMinor,
     required this.currencyCode,
+    this.occurredTime,
     this.categoryId,
     this.notes,
     this.merchant,
@@ -25,6 +26,7 @@ class SyncServerCopy {
   final String id;
   final int version;
   final String occurredOn;
+  final String? occurredTime;
 
   /// Signed integer string, as the server sends it.
   final String amountMinor;
@@ -58,6 +60,9 @@ enum SyncReason {
   /// The server refused the data as it is.
   invalid,
 
+  /// Its category no longer fits the type (expense/income).
+  categoryKind,
+
   /// Not sent yet for another reason; trying again later may work.
   unavailable,
 }
@@ -84,6 +89,7 @@ class SyncMutation {
     this.version,
     this.type,
     this.occurredOn,
+    this.occurredTime,
     this.categoryId,
     this.notes,
     this.merchant,
@@ -99,6 +105,7 @@ class SyncMutation {
   final int? version;
   final TransactionType? type;
   final String? occurredOn;
+  final String? occurredTime;
   final String? categoryId;
   final String? notes;
   final String? merchant;
@@ -121,6 +128,7 @@ class SyncQueueItem {
     this.version,
     this.type,
     this.occurredOn,
+    this.occurredTime,
     this.categoryId,
     this.notes,
     this.merchant,
@@ -139,6 +147,7 @@ class SyncQueueItem {
   final SyncAction action;
   final TransactionType? type;
   final String? occurredOn;
+  final String? occurredTime;
   final String? categoryId;
   final String? notes;
   final String? merchant;
@@ -168,6 +177,7 @@ class SyncQueueItem {
     SyncAction? action,
     Object? type = _keep,
     Object? occurredOn = _keep,
+    Object? occurredTime = _keep,
     Object? categoryId = _keep,
     Object? notes = _keep,
     Object? merchant = _keep,
@@ -191,6 +201,9 @@ class SyncQueueItem {
       action: action ?? this.action,
       type: type == _keep ? this.type : type as TransactionType?,
       occurredOn: occurredOn == _keep ? this.occurredOn : occurredOn as String?,
+      occurredTime: occurredTime == _keep
+          ? this.occurredTime
+          : occurredTime as String?,
       categoryId: categoryId == _keep ? this.categoryId : categoryId as String?,
       notes: notes == _keep ? this.notes : notes as String?,
       merchant: merchant == _keep ? this.merchant : merchant as String?,

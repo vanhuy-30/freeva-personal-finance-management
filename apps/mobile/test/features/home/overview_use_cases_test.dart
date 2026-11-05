@@ -13,24 +13,44 @@ import 'package:mobile/features/transactions/domain/transaction_repository.dart'
 import 'package:mobile/features/wallets/domain/wallet.dart';
 import 'package:mobile/features/wallets/domain/wallet_repository.dart';
 
+import '../fx_rates/fakes.dart';
 import 'fixtures.dart';
 
 void main() {
   late _Reports reports;
   late _Transactions transactions;
   late DefaultOverviewUseCases cases;
+  late MemoryFxRates rates;
+  late _Budgets budgets;
 
   setUp(() {
     reports = _Reports();
+    rates = MemoryFxRates();
+    budgets = _Budgets();
     transactions = _Transactions();
     cases = DefaultOverviewUseCases(
       reports,
       _Wallets(),
       transactions,
       _Categories(),
-      _Budgets(),
+      budgets,
+      rates,
     );
   });
+
+  test(
+    'saves a typed rate with 8 decimals and sends nothing when invalid',
+    () async {
+      final saved = await cases.saveRate('USD', 'VND', ' 25000.5 ')!;
+      expect(saved.isRight(), isTrue);
+      expect(rates.saved, ['USD>VND=25000.50000000']);
+      for (final bad in ['', '0', '-1', 'abc', '1e3', '1.123456789']) {
+        expect(cases.saveRate('USD', 'VND', bad), isNull, reason: bad);
+      }
+      expect(cases.saveRate('USD', 'USD', '1'), isNull);
+      expect(rates.saved, hasLength(1));
+    },
+  );
 
   test('loads the current month only, hides archived wallets', () async {
     reports.months = [month()];
@@ -40,6 +60,20 @@ void main() {
     expect(data.previousMonth, isNull);
     expect(data.wallets.map((w) => w.id), ['vcb']);
     expect(transactions.query?.pageSize, 6);
+  });
+
+  test('multiCurrency counts archived wallets and month totals', () async {
+    reports.months = [month()];
+    final one = (await cases.load(DateTime(2026, 10, 21)))
+        .getOrElse(() => throw StateError('load'));
+    expect(one.multiCurrency, isFalse);
+
+    reports.months = [
+      month(extra: [usdSpend()]),
+    ];
+    final two = (await cases.load(DateTime(2026, 10, 21)))
+        .getOrElse(() => throw StateError('load'));
+    expect(two.multiCurrency, isTrue);
   });
 
   test('a transfer counts as one recent row', () async {
@@ -82,8 +116,26 @@ void main() {
     ];
     final data = (await cases.load(DateTime(2026, 11, 2)))
         .getOrElse(() => throw StateError('load'));
-    expect(reports.queries.last.on, '2026-10-31');
+    expect(reports.queries[1].on, '2026-10-31');
+    expect(reports.queries.last.on, '2026-09-30');
     expect(data.previousMonth, isNotNull);
+    expect(data.monthBefore, isNotNull);
+    expect(data.previousBudget?.spentMinor, b(15600000));
+    expect(budgets.asked, [null, '2026-10-01']);
+  });
+
+  test('a failing older month or budget does not fail the load', () async {
+    reports.months = [
+      month(income: 0, expense: 0, rows: const [], from: '2026-11-01'),
+      month(),
+    ];
+    reports.failAfter = 2;
+    budgets.fail = true;
+    final data = (await cases.load(DateTime(2026, 11, 2)))
+        .getOrElse(() => throw StateError('load'));
+    expect(data.previousMonth, isNotNull);
+    expect(data.monthBefore, isNull);
+    expect(data.previousBudget, isNull);
   });
 
   test('any required request failing fails the load', () async {
@@ -99,13 +151,25 @@ class _Reports implements ReportRepository {
   final queries = <ReportPeriodQuery>[];
   AuthFailure? worthFailure;
 
+  /// Calls after this many answer with a failure.
+  int? failAfter;
+
   @override
   Future<Either<AuthFailure, CashflowReport>> cashflow(
-    ReportPeriodQuery query,
-  ) async {
+    ReportPeriodQuery query, {
+    String? displayCurrency,
+  }) async {
     queries.add(query);
+    if (failAfter != null && queries.length > failAfter!) {
+      return left(const AuthFailure(AuthError.network));
+    }
     return right(months.length > 1 ? months.removeAt(0) : months.single);
   }
+
+  @override
+  Future<Either<AuthFailure, MonthReviewReport>> monthReview({
+    String? on,
+  }) async => left(const AuthFailure(AuthError.unavailable));
 
   @override
   Future<Either<AuthFailure, TrendReport>> trend(
@@ -114,8 +178,9 @@ class _Reports implements ReportRepository {
   }) async => left(const AuthFailure(AuthError.unavailable));
 
   @override
-  Future<Either<AuthFailure, NetWorthReport>> netWorth() async =>
-      worthFailure != null
+  Future<Either<AuthFailure, NetWorthReport>> netWorth({
+    String? displayCurrency,
+  }) async => worthFailure != null
       ? left(worthFailure!)
       : right(NetWorthReport(items: [worth('VND', 100)]));
 }
@@ -161,22 +226,28 @@ class _Categories implements CategoryRepository {
 }
 
 class _Budgets implements BudgetUseCases {
+  final asked = <String?>[];
+  bool fail = false;
+
   @override
   Future<Either<AuthFailure, BudgetCurrent>> current({
     String? on,
     BudgetApplyTo? applyTo,
-  }) async =>
-      right(
-        const BudgetCurrent(
-          budget: null,
-          period: BudgetPeriod(
-            from: '2026-10-01',
-            to: '2026-10-31',
-            timezone: 'Asia/Ho_Chi_Minh',
-            fiscalMonthStartDay: 1,
-          ),
-        ),
-      );
+  }) async {
+    asked.add(on);
+    if (fail) return left(const AuthFailure(AuthError.network));
+    return right(_current(on));
+  }
+
+  BudgetCurrent _current(String? on) => BudgetCurrent(
+    budget: on == null ? null : budgetOf(15000000, 15600000),
+    period: const BudgetPeriod(
+      from: '2026-10-01',
+      to: '2026-10-31',
+      timezone: 'Asia/Ho_Chi_Minh',
+      fiscalMonthStartDay: 1,
+    ),
+  );
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

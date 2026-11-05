@@ -2,18 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../core/l10n/generated/app_localizations.dart';
+import '../../../../../core/money/money_text.dart';
 import '../../../../../core/theme/theme_context.dart';
 import '../../../../../core/theme/tokens.g.dart';
 import '../../../../../core/widgets/freeva_card.dart';
 import '../../../domain/credit_card_status.dart';
 
-/// "Đến hạn thanh toán 25/10 [còn 4 ngày]" and "Ngày chốt sao kê". The chip
-/// shows only when the due date is 7 days away or less.
+/// "Đến hạn thanh toán 25/10 [còn 4 ngày]", "Ngày chốt sao kê", and minimum
+/// payment. The chip shows only when the due date is 7 days away or less.
 class CreditInfoCard extends StatelessWidget {
-  const CreditInfoCard({required this.card, required this.today, super.key});
+  const CreditInfoCard({
+    required this.card,
+    required this.today,
+    required this.minorDigits,
+    super.key,
+  });
 
   final CreditCardStatus card;
   final DateTime today;
+  final int minorDigits;
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +30,8 @@ class CreditInfoCard extends StatelessWidget {
     final due = card.nextDue;
     final days = card.daysUntilDue(today);
     final closeDay = card.wallet.draft.closeDay;
+    final minimum = card.wallet.draft.minimumPayment;
+    String money(BigInt value) => formatMoneyText(value, minorDigits, locale);
     final value = FreevaTypography.body.copyWith(
       fontSize: 14,
       fontWeight: FontWeight.w600,
@@ -83,6 +92,13 @@ class CreditInfoCard extends StatelessWidget {
           row(s.creditCloseTitle, [
             Text(
               closeDay == null ? s.creditNotSet : s.creditCloseValue(closeDay),
+              style: value,
+            ),
+          ]),
+          Divider(height: 1, color: c.listDivider),
+          row(s.creditMinimumTitle, [
+            Text(
+              minimum == null ? s.creditNotSet : money(minimum),
               style: value,
             ),
           ]),

@@ -89,6 +89,7 @@ void main() {
           account: 'vnd',
           amount: -65000,
           day: '2026-09-01',
+          time: '09:15',
           category: 'food',
           merchant: 'Phở',
         ),
@@ -97,9 +98,33 @@ void main() {
     final c = TransactionComposer(_Model(), existing: original, copy: true);
     expect(c.isNew, isTrue);
     expect(c.occurredOn, '2026-10-21');
+    expect(c.occurredTime, '12:40');
     expect(c.amount, BigInt.from(65000));
     expect(c.merchant, 'Phở');
     expect(c.clientIds.first, isNot('c-old'));
+  });
+
+  test('new composer defaults occurredTime to now; edit keeps stored time', () {
+    final fresh = TransactionComposer(_Model());
+    expect(fresh.occurredTime, '12:40');
+    final edit = TransactionComposer(
+      _Model(),
+      existing: TransactionBundle(
+        legs: [
+          tx(
+            'old',
+            account: 'vnd',
+            amount: -1000,
+            time: '09:15',
+            category: 'food',
+          ),
+        ],
+      ),
+    );
+    expect(edit.occurredTime, '09:15');
+    edit.setWhen(date: '2026-10-20', time: null);
+    expect(edit.occurredOn, '2026-10-20');
+    expect(edit.occurredTime, isNull);
   });
 
   test('dirty tracks real changes only', () {

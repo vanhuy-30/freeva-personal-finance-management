@@ -8,4 +8,6 @@ Module 12; mở rộng 3, 14. Không tự ra quyết định đầu tư.
 - Công thức giá vốn, lãi/lỗ, FX có tài liệu + test.
 - Nguồn giá và độ trễ luôn hiện.
 
+Cả ba epic là `Gate: v1` từ 2026-11-02: tài sản và đầu tư (`BE-P4-E01`), tài sản ròng theo thời gian (`BE-P4-E02`), test giá vốn (`QA-P4-E01`). Giá nhập tay ở v1.
+
 Epic: [tasks/phase-04.md](../../../tasks/phase-04.md).

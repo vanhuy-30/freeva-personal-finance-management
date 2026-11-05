@@ -47,7 +47,8 @@ export class PrismaAccountRepository implements AccountRepository {
       where: { id: userId },
       select: {
         id: true, email: true, displayName: true, locale: true, timezone: true, defaultCurrencyCode: true,
-        fiscalMonthStartDay: true, emailVerifiedAt: true, categoriesInitializedAt: true, categoriesSupplementedAt: true,
+        fiscalMonthStartDay: true, onboardingGoals: true,
+        monthlyIncomeMinor: true, displayCurrencyCode: true, emailVerifiedAt: true, categoriesInitializedAt: true, categoriesSupplementedAt: true,
         createdAt: true, updatedAt: true, oauthIdentities: { select: { provider: true } },
       },
     });
@@ -57,6 +58,7 @@ export class PrismaAccountRepository implements AccountRepository {
     const categories = await tx.category.findMany({ where: { userId }, orderBy: order });
     const tags = await tx.tag.findMany({ where: { userId }, orderBy: order });
     const fxQuotes = await tx.fxQuote.findMany({ where: { userId }, orderBy: order });
+    const fxRates = await tx.userFxRate.findMany({ where: { userId }, orderBy: [{ fromCode: 'asc' }, { toCode: 'asc' }] });
     const recurringRules = await tx.recurringRule.findMany({ where: { userId }, orderBy: order });
     const budget = await tx.budget.findUnique({
       where: { userId },
@@ -66,6 +68,19 @@ export class PrismaAccountRepository implements AccountRepository {
       where: { userId },
       orderBy: [{ periodFrom: 'asc' }, { id: 'asc' }],
       include: { categories: { orderBy: [{ categoryId: 'asc' as const }] } },
+    });
+    const goals = await tx.goal.findMany({ where: { userId }, orderBy: order });
+    const goalEntries = await tx.goalEntry.findMany({ where: { userId }, orderBy: order });
+    const loans = await tx.loan.findMany({ where: { userId }, orderBy: order });
+    const loanPayments = await tx.loanPayment.findMany({ where: { userId }, orderBy: order });
+    const personalDebts = await tx.personalDebt.findMany({ where: { userId }, orderBy: order });
+    const personalDebtPayments = await tx.personalDebtPayment.findMany({ where: { userId }, orderBy: order });
+    const cardInstallmentPlans = await tx.cardInstallmentPlan.findMany({ where: { userId }, orderBy: order });
+    const importBatches = await tx.importBatch.findMany({ where: { userId }, orderBy: order });
+    const notificationPreferences = await tx.notificationPreference.findUnique({ where: { userId } });
+    const notifications = await tx.inAppNotification.findMany({
+      where: { userId },
+      orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
     });
     const transactions = await tx.transaction.findMany({
       where: { userId }, orderBy: order, include: { tags: { select: { tagId: true } } },
@@ -83,6 +98,7 @@ export class PrismaAccountRepository implements AccountRepository {
       categories,
       tags,
       fxQuotes: fxQuotes.map(row => ({ ...row, rate: rateText(row.rate) })),
+      fxRates: fxRates.map(row => ({ ...row, rate: rateText(row.rate) })),
       recurringRules: recurringRules.map(row => ({
         ...row,
         currencyCode: row.currencyCode,
@@ -102,6 +118,14 @@ export class PrismaAccountRepository implements AccountRepository {
           limitMinor: line.limitMinor,
         })),
       },
+      goals,
+      goalEntries,
+      loans,
+      loanPayments,
+      personalDebts,
+      personalDebtPayments,
+      cardInstallmentPlans,
+      importBatches,
       budgetMonths: budgetMonths.map(row => ({
         id: row.id,
         currencyCode: row.currencyCode,
@@ -117,12 +141,54 @@ export class PrismaAccountRepository implements AccountRepository {
           limitMinor: line.limitMinor,
         })),
       })),
+      notificationPreferences: notificationPreferences === null ? null : {
+        budgetEnabled: notificationPreferences.budgetEnabled,
+        goalEnabled: notificationPreferences.goalEnabled,
+        debtEnabled: notificationPreferences.debtEnabled,
+        cardEnabled: notificationPreferences.cardEnabled,
+        recurringEnabled: notificationPreferences.recurringEnabled,
+        monthReviewEnabled: notificationPreferences.monthReviewEnabled,
+        insightEnabled: notificationPreferences.insightEnabled,
+        dailyLogEnabled: notificationPreferences.dailyLogEnabled,
+        dailyLogTime: notificationPreferences.dailyLogTime,
+        quietHoursEnabled: notificationPreferences.quietHoursEnabled,
+        quietStart: notificationPreferences.quietStart,
+        quietEnd: notificationPreferences.quietEnd,
+        version: notificationPreferences.version,
+        createdAt: notificationPreferences.createdAt,
+        updatedAt: notificationPreferences.updatedAt,
+      },
+      notifications: notifications.map(row => ({
+        id: row.id,
+        kind: row.kind,
+        dedupeKey: row.dedupeKey,
+        titleKey: row.titleKey,
+        bodyKey: row.bodyKey,
+        params: (row.params !== null && typeof row.params === 'object' && !Array.isArray(row.params)
+          ? Object.fromEntries(
+              Object.entries(row.params).filter(([, value]) => typeof value === 'string' || typeof value === 'number'),
+            )
+          : {}) as Record<string, string | number>,
+        createdAt: row.createdAt,
+        readAt: row.readAt,
+      })),
       transactions: transactions.map(row => ({ ...row, tagIds: row.tags.map(tag => tag.tagId) })),
     });
   }
 
   private async removeAccount(tx: Prisma.TransactionClient, userId: string): Promise<boolean> {
     if (!(await lockUser(tx, userId))) return false;
+    await tx.pushToken.deleteMany({ where: { userId } });
+    await tx.inAppNotification.deleteMany({ where: { userId } });
+    await tx.notificationPreference.deleteMany({ where: { userId } });
+    await tx.cardInstallmentPlan.deleteMany({ where: { userId } });
+    await tx.importBatch.deleteMany({ where: { userId } });
+    await tx.personalDebtPayment.deleteMany({ where: { userId } });
+    await tx.personalDebt.deleteMany({ where: { userId } });
+    await tx.loanPayment.deleteMany({ where: { userId } });
+    await tx.loan.deleteMany({ where: { userId } });
+    await tx.goalEntry.deleteMany({ where: { userId } });
+    await tx.goal.deleteMany({ where: { userId } });
     await tx.recurringOccurrence.deleteMany({ where: { rule: { userId } } });
     await tx.recurringRule.deleteMany({ where: { userId } });
     await tx.budgetMonth.deleteMany({ where: { userId } });
@@ -135,6 +201,7 @@ export class PrismaAccountRepository implements AccountRepository {
     await tx.tag.deleteMany({ where: { userId } });
     await tx.financialAccount.deleteMany({ where: { userId } });
     await tx.fxQuote.deleteMany({ where: { userId } });
+    await tx.userFxRate.deleteMany({ where: { userId } });
     await tx.auditEvent.create({ data: audit(userId, 'user.account_delete') });
     await tx.user.delete({ where: { id: userId } });
     return true;

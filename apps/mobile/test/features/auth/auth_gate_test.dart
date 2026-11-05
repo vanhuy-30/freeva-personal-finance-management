@@ -85,20 +85,23 @@ void main() {
       expect(find.text('protected content'), findsNothing);
       await tester.tap(find.text('Xong'));
       await tester.pumpAndSettle();
-      expect(find.text('Bạn muốn cải thiện điều gì?'), findsOneWidget);
+      expect(find.text('Freeva giúp bạn việc gì?'), findsOneWidget);
       expect(find.text('1/3'), findsOneWidget);
       await tester.tap(find.text('Để sau'));
       await tester.pumpAndSettle();
-      expect(find.text('Bạn đang quản lý tiền thế nào?'), findsOneWidget);
-      await tester.tap(find.byTooltip('Quay lại'));
+      expect(find.text('Thu nhập mỗi tháng khoảng bao nhiêu?'), findsOneWidget);
+      // System back returns to the previous question.
+      final dynamic widgetsApp = tester.state(find.byType(WidgetsApp));
+      await widgetsApp.didPopRoute();
       await tester.pumpAndSettle();
-      expect(find.text('Bạn muốn cải thiện điều gì?'), findsOneWidget);
+      expect(find.text('Freeva giúp bạn việc gì?'), findsOneWidget);
       await tester.tap(find.text('Để sau'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Để sau'));
       await tester.pumpAndSettle();
-      expect(find.text('Mỗi tháng bạn định chi bao nhiêu?'), findsOneWidget);
-      await tester.tap(find.text('Thiết lập sau'));
+      expect(find.text('Bạn để dành cho việc gì?'), findsOneWidget);
+      // No income, so no budget suggestion: straight to wallets.
+      await tester.tap(find.text('Để sau'));
       await tester.pumpAndSettle();
       expect(find.text('Tiền của bạn ở đâu?'), findsOneWidget);
       await tester.tap(find.text('Bỏ qua'));

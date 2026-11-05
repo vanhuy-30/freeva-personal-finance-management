@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mobile/features/budgets/domain/budget.dart';
 import 'package:mobile/features/home/domain/overview.dart';
 import 'package:mobile/features/home/domain/overview_summary.dart';
 import 'package:mobile/features/reports/domain/report.dart';
@@ -6,7 +7,104 @@ import 'package:mobile/features/wallets/domain/wallet.dart';
 
 import 'fixtures.dart';
 
+/// [data] as the server answers when the request names a display currency.
+OverviewData converted(
+  OverviewData data, {
+  NetWorthConverted? net,
+  CashflowConverted? flow,
+}) => OverviewData(
+  netWorth: NetWorthReport(items: data.netWorth.items, converted: net),
+  month: CashflowReport(
+    period: data.month.period,
+    totals: data.month.totals,
+    byCategory: data.month.byCategory,
+    byAccount: data.month.byAccount,
+    converted: flow,
+  ),
+  previousMonth: data.previousMonth,
+  budget: data.budget,
+  multiCurrency: data.multiCurrency,
+  wallets: data.wallets,
+  currencies: data.currencies,
+  recent: data.recent,
+  categories: data.categories,
+  loadedAt: data.loadedAt,
+);
+
+NetWorthConverted netIn(
+  String currency,
+  int net, [
+  List<UnconvertedCurrency> left = const [],
+]) => NetWorthConverted(
+  currency: currency,
+  assetsMinor: b(net),
+  liabilitiesMinor: BigInt.zero,
+  netWorthMinor: b(net),
+  unconverted: left,
+);
+
 void main() {
+  group('monthInsight', () {
+    final prev = month(rows: [spend('food', 3541600), spend('home', 2236800)]);
+    final before = month(
+      rows: [spend('food', 2341600), spend('home', 2336800)],
+    );
+    MonthInsight run({
+      CashflowReport? older,
+      BudgetSummary? budget,
+      String currency = 'VND',
+    }) => monthInsight(
+      previous: prev,
+      before: older,
+      budget: budget,
+      currency: currency,
+      categories: categories,
+    );
+
+    test('names the parent that grew most and by how much', () {
+      final i = run(older: before);
+      expect(i.topIncrease?.name, 'Ăn uống');
+      expect(i.topIncrease?.deltaMinor, b(1200000));
+      expect(i.overBudget, isNull);
+    });
+
+    test('a child counts toward its parent', () {
+      final i = monthInsight(
+        previous: month(rows: [spend('pho', 3541600, parent: 'food')]),
+        before: month(rows: [spend('food', 2341600)]),
+        currency: 'VND',
+        categories: categories,
+      );
+      expect(i.topIncrease?.name, 'Ăn uống');
+      expect(i.topIncrease?.deltaMinor, b(1200000));
+    });
+
+    test('no line without an older month or when nothing grew', () {
+      expect(run().topIncrease, isNull);
+      final flat = month(
+        rows: [spend('food', 4000000), spend('home', 3000000)],
+      );
+      expect(run(older: flat).topIncrease, isNull);
+    });
+
+    test('over budget shows whole percent, spent and limit', () {
+      final i = run(budget: budgetOf(15000000, 15600000));
+      expect(i.overBudget?.percent, 4);
+      expect(i.overBudget?.spentMinor, b(15600000));
+      expect(i.overBudget?.limitMinor, b(15000000));
+    });
+
+    test('no overrun at or under the limit, or in another currency', () {
+      expect(run(budget: budgetOf(15000000, 15000000)).overBudget, isNull);
+      expect(run(budget: budgetOf(15000000, 100)).overBudget, isNull);
+      expect(
+        run(budget: budgetOf(15000000, 16000000, currency: 'USD')).overBudget,
+        isNull,
+      );
+      expect(run().isEmpty, isTrue);
+    });
+  });
+
   group('balanceSummary', () {
     test('profile currency leads, others become pills, no conversion', () {
       final data = overview(
@@ -43,11 +141,137 @@ void main() {
     });
   });
 
+  group('balanceSummary with a display currency (BE-P2-013)', () {
+    final base = overview(
+      net: [worth('USD', 125000), worth('VND', 48250000)],
+      wallets: [
+        wallet('a', 'A'),
+        wallet('b', 'B'),
+        wallet('usd', 'USD', currency: 'USD'),
+      ],
+    );
+
+    test('main is the converted total and every currency keeps its pill', () {
+      final data = converted(
+        base,
+        net: netIn('VND', 79500000),
+        flow: CashflowConverted(
+          currency: 'VND',
+          incomeMinor: b(40000000),
+          expenseMinor: b(-12000000),
+          unconverted: const [],
+        ),
+      );
+      final summary = balanceSummary(data, 'VND');
+      expect(summary.isConverted, isTrue);
+      expect(summary.main.currency, 'VND');
+      expect(summary.main.minor, b(79500000));
+      expect(summary.main.walletCount, 3);
+      expect(summary.others.single.currency, 'USD');
+      expect(summary.others.single.minor, b(125000));
+      expect(summary.unconverted, isEmpty);
+      final flow = monthFlowFor(data, summary);
+      expect(flow.income, b(40000000));
+      expect(flow.expense, b(12000000));
+    });
+
+    test('a currency left out is listed and its wallets are not counted', () {
+      const missing = UnconvertedCurrency(
+        currency: 'USD',
+        reason: UnconvertedReason.missingRate,
+      );
+      final data = converted(
+        base,
+        net: netIn('VND', 48250000, const [missing]),
+        flow: CashflowConverted(
+          currency: 'VND',
+          incomeMinor: b(18500000),
+          expenseMinor: b(-9320000),
+          unconverted: const [missing],
+        ),
+      );
+      final summary = balanceSummary(data, 'VND');
+      expect(summary.isConverted, isTrue);
+      expect(summary.main.minor, b(48250000));
+      expect(summary.main.walletCount, 2);
+      expect(summary.unconverted.map((u) => u.currency), ['USD']);
+      expect(summary.others.single.minor, b(125000));
+    });
+
+    test('nothing converted falls back to the plain per-currency view', () {
+      const missing = UnconvertedCurrency(
+        currency: 'USD',
+        reason: UnconvertedReason.missingRate,
+      );
+      final data = converted(
+        overview(
+          net: [worth('USD', 5)],
+          wallets: [wallet('usd', 'USD', currency: 'USD')],
+        ),
+        net: netIn('VND', 0, const [missing]),
+        flow: CashflowConverted(
+          currency: 'VND',
+          incomeMinor: BigInt.zero,
+          expenseMinor: BigInt.zero,
+          unconverted: const [missing],
+        ),
+      );
+      final summary = balanceSummary(data, 'VND');
+      expect(summary.isConverted, isFalse);
+      expect(summary.main.currency, 'USD');
+      expect(summary.main.minor, b(5));
+      expect(summary.unconverted.single.currency, 'USD');
+      expect(monthFlowFor(data, summary).isEmpty, isTrue);
+    });
+
+    test('without a converted block nothing changes', () {
+      final summary = balanceSummary(base, 'VND');
+      expect(summary.isConverted, isFalse);
+      expect(summary.unconverted, isEmpty);
+    });
+  });
+
   test('monthFlow returns magnitudes and zero for a missing currency', () {
     final flow = monthFlow(month(), 'VND');
     expect(flow.income, b(18500000));
     expect(flow.expense, b(9320000));
     expect(monthFlow(month(), 'USD').isEmpty, isTrue);
+  });
+
+  group('one currency only (MOB-P3-004)', () {
+    OverviewData single() {
+      final base = overview(
+        wallets: [wallet('usd', 'USD', currency: 'USD', balance: 100)],
+        net: [worth('USD', 100)],
+      );
+      return OverviewData(
+        netWorth: NetWorthReport(
+          items: base.netWorth.items,
+          converted: netIn('VND', 2500000, const [
+            UnconvertedCurrency(
+              currency: 'USD',
+              reason: UnconvertedReason.missingRate,
+            ),
+          ]),
+        ),
+        month: base.month,
+        wallets: base.wallets,
+        currencies: base.currencies,
+        recent: base.recent,
+        categories: base.categories,
+        loadedAt: base.loadedAt,
+        multiCurrency: false,
+      );
+    }
+
+    test('ignores the converted total and the unconverted lines', () {
+      final summary = balanceSummary(single(), 'VND');
+      expect(summary.isConverted, isFalse);
+      expect(summary.unconverted, isEmpty);
+      expect(summary.others, isEmpty);
+      expect(summary.main.currency, 'USD');
+      expect(summary.main.minor, b(100));
+    });
   });
 
   group('spendingBreakdown', () {

@@ -11,6 +11,13 @@ class TransactionRepositoryImpl implements TransactionRepository {
   TransactionRepositoryImpl(this._api);
   final AuthorizedApi _api;
 
+  /// Null for a type this build does not know, so one new row from a newer
+  /// server never breaks the whole list.
+  TxLeg? _maybeLeg(Map<String, dynamic> json) {
+    final type = TransactionType.values.asNameMap()[json['type']];
+    return type == null ? null : _leg(json);
+  }
+
   TxLeg _leg(Map<String, dynamic> json) => TxLeg(
     id: json['id'] as String,
     clientId: json['clientId'] as String,
@@ -19,6 +26,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
     amountMinor: BigInt.parse(json['amountMinor'] as String),
     type: TransactionType.values.byName(json['type'] as String),
     occurredOn: json['occurredOn'] as String,
+    occurredTime: json['occurredTime'] as String?,
     categoryId: json['categoryId'] as String?,
     notes: json['notes'] as String?,
     merchant: json['merchant'] as String?,
@@ -26,6 +34,11 @@ class TransactionRepositoryImpl implements TransactionRepository {
       (json['tagIds'] as List? ?? const []).cast<String>(),
     ),
     transferGroupId: json['transferGroupId'] as String?,
+    refundOfId: json['refundOfId'] as String?,
+    refundedMinor: json['refundedMinor'] == null
+        ? null
+        : BigInt.parse(json['refundedMinor'] as String),
+    installmentPlanId: json['installmentPlanId'] as String?,
     deletedAt: json['deletedAt'] == null
         ? null
         : DateTime.parse(json['deletedAt'] as String),
@@ -60,6 +73,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
     if (!patch) 'type': command.type.name,
     if (patch) 'version': command.version,
     'occurredOn': command.occurredOn,
+    'occurredTime': command.occurredTime,
     'categoryId': command.categoryId,
     'notes': command.notes,
     'merchant': command.merchant,
@@ -124,7 +138,8 @@ class TransactionRepositoryImpl implements TransactionRepository {
         'transactions?${params.map((e) => '${e.$1}=${Uri.encodeQueryComponent(e.$2)}').join('&')}';
     return _request('GET', path, (json) {
       final legs = (json['items'] as List)
-          .map((item) => _leg(item as Map<String, dynamic>))
+          .map((item) => _maybeLeg(item as Map<String, dynamic>))
+          .whereType<TxLeg>()
           .toList();
       return TransactionListPage(
         legs: List.unmodifiable(legs),
@@ -162,8 +177,33 @@ class TransactionRepositoryImpl implements TransactionRepository {
   );
 
   @override
-  Future<Either<AuthFailure, Unit>> remove(String id, int version) =>
-      _request('DELETE', 'transactions/$id?version=$version', (_) => unit);
+  Future<Either<AuthFailure, Unit>> remove(
+    String id,
+    int version, {
+    RefundDisposition? refunds,
+  }) => _request(
+    'DELETE',
+    'transactions/$id?version=$version'
+        '${refunds == null ? '' : '&refunds=${refunds.name}'}',
+    (_) => unit,
+  );
+
+  @override
+  Future<Either<AuthFailure, TransactionBundle>> refund(
+    String originalId,
+    RefundCommand command,
+  ) => _request(
+    'POST',
+    'transactions/$originalId/refunds',
+    _bundle,
+    body: {
+      'clientId': command.clientId,
+      'accountId': command.accountId,
+      'amountMinor': command.amountMinor.toString(),
+      'occurredOn': command.occurredOn,
+    },
+    headers: {'Idempotency-Key': command.clientId},
+  );
 
   @override
   Future<Either<AuthFailure, TransactionBundle>> restore(

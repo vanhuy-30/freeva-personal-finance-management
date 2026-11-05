@@ -26,7 +26,14 @@ abstract class RecurringRepository {
     bool clearEnd = false,
     String? nextExecutionDate,
     bool? active,
+    String? name,
+    String? amountKind,
+    int? remindDaysBefore,
   });
   Future<Either<AuthFailure, Unit>> delete(RecurringRule rule);
+  Future<Either<AuthFailure, RecurringConfirmResult>> confirm(
+    RecurringRule rule,
+    RecurringConfirm confirm,
+  );
   Future<Either<AuthFailure, RecurringRunResult>> run();
 }

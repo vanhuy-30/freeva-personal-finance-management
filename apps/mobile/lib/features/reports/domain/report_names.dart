@@ -57,5 +57,50 @@ Either<AuthFailure, NamedCashflow> nameCashflow(
   );
 }
 
+Either<AuthFailure, NamedMonthReview> nameMonthReview(
+  MonthReviewReport report,
+  List<FinanceCategory> categories,
+  List<WalletCurrency> currencies,
+) {
+  final codes = [for (final row in report.currencies) row.currency];
+  if (codes.any((code) => !_known(code, currencies))) {
+    return left(const AuthFailure(AuthError.unavailable));
+  }
+  final byId = {for (final category in categories) category.id: category};
+  final named = <MonthReviewCurrency>[];
+  for (final currency in report.currencies) {
+    final rows = <MonthReviewCategory>[];
+    for (final row in currency.topCategories) {
+      if (row.categoryId == null) {
+        if (row.parentId != null) {
+          return left(const AuthFailure(AuthError.unavailable));
+        }
+        rows.add(row);
+        continue;
+      }
+      final category = byId[row.categoryId];
+      if (category == null) {
+        return left(const AuthFailure(AuthError.unavailable));
+      }
+      String? parentName;
+      if (row.parentId != null) {
+        final parent = byId[row.parentId];
+        if (parent == null) {
+          return left(const AuthFailure(AuthError.unavailable));
+        }
+        parentName = parent.name;
+      }
+      rows.add(row.withNames(category.name, parentName));
+    }
+    named.add(currency.withCategories(rows));
+  }
+  return right(
+    NamedMonthReview(
+      report: report.withCurrencies(named),
+      currencies: currencies,
+    ),
+  );
+}
+
 bool _known(String currency, List<WalletCurrency> currencies) =>
     currencies.any((item) => item.code == currency);

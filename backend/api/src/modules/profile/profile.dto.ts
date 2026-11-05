@@ -1,13 +1,11 @@
 import { Transform } from 'class-transformer';
 import {
-  ArrayMaxSize, ArrayUnique, IsArray, IsIn, IsInt, IsOptional, IsString, Matches, Max, MaxLength, Min,
+  ArrayMaxSize, ArrayUnique, IsArray, IsIn, IsInt, IsOptional, IsString, Matches, Max, MaxLength, Min, ValidateIf,
 } from 'class-validator';
 
-export const ONBOARDING_GOALS = ['track', 'save', 'budget', 'debt', 'emergency', 'understand'] as const;
-export const TRACKING_HABITS = ['manual', 'spreadsheet', 'app', 'none'] as const;
-export const REVIEW_CADENCES = ['daily', 'weekly', 'monthly', 'rarely'] as const;
+export const ONBOARDING_GOALS = ['track', 'save', 'budget'] as const;
 
-/** Answers from the first-run questions (DS-P2-004). Every field is optional: a skipped step sends nothing. */
+/** Answers from the first-run questions (BE-P3-012). Every field is optional: a skipped step sends nothing. */
 export class OnboardingAnswersDto {
   @IsOptional()
   @IsArray()
@@ -16,13 +14,27 @@ export class OnboardingAnswersDto {
   @IsIn(ONBOARDING_GOALS, { each: true })
   goals?: string[];
 
+  /** Monthly income, positive integer minor units of the default currency. */
   @IsOptional()
-  @IsIn(TRACKING_HABITS)
-  trackingHabit?: string;
+  @IsString()
+  @Matches(/^[1-9][0-9]{0,17}$/)
+  monthlyIncomeMinor?: string;
+}
 
-  @IsOptional()
-  @IsIn(REVIEW_CADENCES)
-  reviewCadence?: string;
+/** `null` clears the income. */
+export class MonthlyIncomeDto {
+  @ValidateIf((_, value) => value !== null)
+  @IsString()
+  @Matches(/^[1-9][0-9]{0,17}$/)
+  monthlyIncomeMinor!: string | null;
+}
+
+/** `null` goes back to the default currency of the profile. */
+export class DisplayCurrencyDto {
+  @ValidateIf((_, value) => value !== null)
+  @IsString()
+  @Matches(/^[A-Z]{3}$/)
+  currencyCode!: string | null;
 }
 
 export class UpdateProfileDto {

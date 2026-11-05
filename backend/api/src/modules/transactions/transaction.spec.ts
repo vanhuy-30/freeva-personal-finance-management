@@ -2,9 +2,9 @@ import 'reflect-metadata';
 import { randomUUID } from 'node:crypto';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
-import { calendarDate, convertedMinor, minor, normalizeRate, validateInput, type TransactionInput } from './domain/transaction';
+import { calendarDate, convertedMinor, minor, normalizeRate, occurredTime, validateInput, type TransactionInput } from './domain/transaction';
 import { CreateTransactionDto, UpdateTransactionDto } from './transaction.dto';
-const input = (): TransactionInput => ({ type: 'transfer', occurredOn: calendarDate('2026-09-25'), categoryId: null, notes: null, merchant: null, tagIds: [], fx: null,
+const input = (): TransactionInput => ({ type: 'transfer', occurredOn: calendarDate('2026-09-25'), occurredTime: null, categoryId: null, notes: null, merchant: null, tagIds: [], fx: null,
   legs: [{ clientId: randomUUID(), accountId: randomUUID(), currencyCode: 'VND', amountMinor: -9007199254740993n },
     { clientId: randomUUID(), accountId: randomUUID(), currencyCode: 'VND', amountMinor: 9007199254740993n }] });
 describe('BE-P1-005 transaction money and DTO rules', () => {
@@ -46,13 +46,31 @@ describe('BE-P1-005 transaction money and DTO rules', () => {
       expect(() => validateInput(value, { VND: 0 })).toThrow('VALIDATION_ERROR');
     }
   });
+  it('accepts optional occurredTime HH:mm and rejects invalid clock values', () => {
+    expect(occurredTime(undefined)).toBeNull();
+    expect(occurredTime(null)).toBeNull();
+    expect(occurredTime('12:40')).toBe('12:40');
+    expect(occurredTime('00:00')).toBe('00:00');
+    expect(occurredTime('23:59')).toBe('23:59');
+    for (const value of ['24:00', '12:60', '9:30', '12:4', '12:40:00', '12:40\n', '']) {
+      expect(() => occurredTime(value)).toThrow('VALIDATION_ERROR');
+    }
+    const withTime = input();
+    withTime.occurredTime = '12:40';
+    expect(() => validateInput(withTime, { VND: 0 })).not.toThrow();
+    withTime.occurredTime = '25:00';
+    expect(() => validateInput(withTime, { VND: 0 })).toThrow('VALIDATION_ERROR');
+  });
   it('rejects malformed nested input and unsupported patch properties', async () => {
     const value = input(); const valid = { ...value, occurredOn: '2026-09-25', legs: value.legs.map(leg => ({ ...leg, amountMinor: leg.amountMinor.toString() })) };
     expect(await validate(plainToInstance(CreateTransactionDto, valid))).toHaveLength(0);
+    expect(await validate(plainToInstance(CreateTransactionDto, { ...valid, occurredTime: '12:40' }))).toHaveLength(0);
+    expect(await validate(plainToInstance(CreateTransactionDto, { ...valid, occurredTime: null }))).toHaveLength(0);
+    expect((await validate(plainToInstance(CreateTransactionDto, { ...valid, occurredTime: '24:00' }))).length).toBeGreaterThan(0);
     for (const patch of [{ version: null }, { version: 1, legs: null }, { version: 1, deleted: null }, { version: 1, type: 'income' }, { version: 1, fx: [] }, { version: 1, tagIds: null }, { version: 1, fx: { rate: '1', quotedAt: '2026-09-25' } }]) {
       expect((await validate(plainToInstance(UpdateTransactionDto, patch), { whitelist: true, forbidNonWhitelisted: true })).length).toBeGreaterThan(0);
     }
-    expect(await validate(plainToInstance(UpdateTransactionDto, { version: 1, notes: null, merchant: null, categoryId: null, fx: null, tagIds: [] }))).toHaveLength(0);
+    expect(await validate(plainToInstance(UpdateTransactionDto, { version: 1, notes: null, merchant: null, categoryId: null, fx: null, tagIds: [], occurredTime: null }))).toHaveLength(0);
     expect((await validate(plainToInstance(CreateTransactionDto, { ...valid, merchant: '' }))).length).toBeGreaterThan(0);
     expect((await validate(plainToInstance(CreateTransactionDto, { ...valid, merchant: 'x'.repeat(201) }))).length).toBeGreaterThan(0);
   });

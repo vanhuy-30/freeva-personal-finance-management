@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/money/display_converted.dart';
+import '../../../fx_rates/domain/fx_rate_use_cases.dart';
 import '../../../transactions/domain/transaction_filter.dart';
 import '../../../transactions/domain/transaction_use_cases.dart';
 import '../../../transactions/presentation/viewmodels/transaction_results_view_model.dart';
@@ -16,6 +18,10 @@ abstract class WalletDetailViewModel extends ChangeNotifier {
   /// Null while loading or after a failure.
   WalletFlow? get flow;
   bool get flowFailed;
+
+  /// Balance in the profile currency with the typed rate; null while loading
+  /// and whenever the server has no exact conversion. Display only.
+  DisplayConverted? get converted;
   Future<void> reload();
 }
 
@@ -23,7 +29,8 @@ abstract class WalletDetailViewModel extends ChangeNotifier {
 class DefaultWalletDetailViewModel extends WalletDetailViewModel {
   DefaultWalletDetailViewModel(
     this._cases,
-    this._main, {
+    this._main,
+    this._fx, {
     @factoryParam required String walletId,
   }) : walletId = walletId,
        results = DefaultTransactionResultsViewModel(
@@ -36,6 +43,7 @@ class DefaultWalletDetailViewModel extends WalletDetailViewModel {
 
   final TransactionUseCases _cases;
   final TransactionViewModel _main;
+  final FxRateUseCases _fx;
   int _epoch = 0;
   bool _disposed = false;
 
@@ -47,10 +55,19 @@ class DefaultWalletDetailViewModel extends WalletDetailViewModel {
   WalletFlow? flow;
   @override
   bool flowFailed = false;
+  @override
+  DisplayConverted? converted;
 
   @override
   Future<void> reload() async {
-    await Future.wait([results.reload(), _loadFlow()]);
+    await Future.wait([results.reload(), _loadFlow(), _loadConverted()]);
+  }
+
+  Future<void> _loadConverted() async {
+    final value = await _fx.walletConverted(walletId);
+    if (_disposed) return;
+    converted = value;
+    _notify();
   }
 
   Future<void> _loadFlow() async {

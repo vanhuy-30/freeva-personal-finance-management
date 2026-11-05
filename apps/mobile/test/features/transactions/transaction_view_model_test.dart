@@ -30,6 +30,10 @@ import '../auth/fakes.dart';
 import '../profile/fakes.dart';
 import 'transaction_fakes.dart';
 
+import 'package:mobile/features/fx_rates/domain/fx_rate_use_cases.dart';
+
+import '../fx_rates/fakes.dart';
+
 class RecordingAnalytics implements AnalyticsService {
   final events = <Map<String, Object>>[];
   @override
@@ -101,6 +105,7 @@ void main() {
       auth,
       analytics,
       sync,
+      FxRateUseCases(MemoryFxRates(), FxWallets()),
     );
     await model.load();
   });
@@ -198,46 +203,50 @@ void main() {
     },
   );
 
-  test('composer is ready before the list finishes and save still works', () async {
-    model.dispose();
-    sync.dispose();
-    wallets.dispose();
-    api = ScriptedApi()..listPending = Completer<void>();
-    final walletCases = DefaultWalletUseCases(WalletRepositoryImpl(api));
-    wallets = DefaultWalletViewModel(walletCases, auth);
-    sync = DefaultSyncViewModel(
-      DefaultSyncUseCases(MemorySyncRepository()),
-      auth,
-      analytics,
-    );
-    model = DefaultTransactionViewModel(
-      DefaultTransactionUseCases(TransactionRepositoryImpl(api)),
-      DefaultCategoryUseCases(CategoryRepositoryImpl(api)),
-      DefaultTagUseCases(TagRepositoryImpl(api)),
-      walletCases,
-      wallets,
-      ProfileUseCases(MemoryProfiles()),
-      auth,
-      analytics,
-      sync,
-    );
-    final loading = model.load();
-    await Future<void>.delayed(Duration.zero);
-    for (var i = 0; i < 20 && !model.composerReady; i++) {
+  test(
+    'composer is ready before the list finishes and save still works',
+    () async {
+      model.dispose();
+      sync.dispose();
+      wallets.dispose();
+      api = ScriptedApi()..listPending = Completer<void>();
+      final walletCases = DefaultWalletUseCases(WalletRepositoryImpl(api));
+      wallets = DefaultWalletViewModel(walletCases, auth);
+      sync = DefaultSyncViewModel(
+        DefaultSyncUseCases(MemorySyncRepository()),
+        auth,
+        analytics,
+      );
+      model = DefaultTransactionViewModel(
+        DefaultTransactionUseCases(TransactionRepositoryImpl(api)),
+        DefaultCategoryUseCases(CategoryRepositoryImpl(api)),
+        DefaultTagUseCases(TagRepositoryImpl(api)),
+        walletCases,
+        wallets,
+        ProfileUseCases(MemoryProfiles()),
+        auth,
+        analytics,
+        sync,
+        FxRateUseCases(MemoryFxRates(), FxWallets()),
+      );
+      final loading = model.load();
       await Future<void>.delayed(Duration.zero);
-    }
-    expect(model.composerReady, isTrue);
-    expect(model.canWrite, isTrue);
-    expect(model.preferredCategoryId(), 'food');
-    expect(model.preferredAccountId(), 'cash');
-    expect(model.rows, isEmpty);
-    final saving = model.save(_draft(model.newClientId()));
-    api.listPending!.complete();
-    expect(await saving, isTrue);
-    await loading;
-    expect(model.preferredAccountId(), 'card');
-    expect(analytics.events.single['event'], 'transaction_created');
-  });
+      for (var i = 0; i < 20 && !model.composerReady; i++) {
+        await Future<void>.delayed(Duration.zero);
+      }
+      expect(model.composerReady, isTrue);
+      expect(model.canWrite, isTrue);
+      expect(model.preferredCategoryId(), 'food');
+      expect(model.preferredAccountId(), 'cash');
+      expect(model.rows, isEmpty);
+      final saving = model.save(_draft(model.newClientId()));
+      api.listPending!.complete();
+      expect(await saving, isTrue);
+      await loading;
+      expect(model.preferredAccountId(), 'card');
+      expect(analytics.events.single['event'], 'transaction_created');
+    },
+  );
 }
 
 TransactionDraft _draft(String clientId) => TransactionDraft(

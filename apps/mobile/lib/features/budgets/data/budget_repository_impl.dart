@@ -45,26 +45,25 @@ class BudgetRepositoryImpl implements BudgetRepository {
   );
 
   @override
-  Future<Either<AuthFailure, BudgetSummary>> put(BudgetDraft draft) =>
-      _request(
-        'PUT',
-        'budgets/current',
-        _summary,
-        body: {
-          'limitMinor': draft.limitMinor.toString(),
-          'alertThresholds': draft.alertThresholds,
-          'categories': [
-            for (final line in draft.categories)
-              {
-                'categoryId': line.categoryId,
-                'limitMinor': line.limitMinor.toString(),
-              },
-          ],
-          'applyTo': budgetApplyToApi(draft.applyTo),
-          if (draft.on != null) 'on': draft.on,
-          if (draft.version != null) 'version': draft.version,
-        },
-      );
+  Future<Either<AuthFailure, BudgetSummary>> put(BudgetDraft draft) => _request(
+    'PUT',
+    'budgets/current',
+    _summary,
+    body: {
+      'limitMinor': draft.limitMinor.toString(),
+      'alertThresholds': draft.alertThresholds,
+      'categories': [
+        for (final line in draft.categories)
+          {
+            'categoryId': line.categoryId,
+            'limitMinor': line.limitMinor.toString(),
+          },
+      ],
+      'applyTo': budgetApplyToApi(draft.applyTo),
+      if (draft.on != null) 'on': draft.on,
+      if (draft.version != null) 'version': draft.version,
+    },
+  );
 
   @override
   Future<Either<AuthFailure, Unit>> delete({

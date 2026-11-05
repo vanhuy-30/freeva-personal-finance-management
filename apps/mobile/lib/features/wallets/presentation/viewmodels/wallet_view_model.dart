@@ -6,6 +6,7 @@ import 'package:injectable/injectable.dart';
 import '../../../auth/domain/auth_repository.dart';
 import '../../../auth/presentation/viewmodels/auth_view_model.dart';
 import '../../../profile/presentation/viewmodels/profile_view_model.dart';
+import '../../domain/reconcile_result.dart';
 import '../../domain/wallet.dart';
 import '../../domain/wallet_use_cases.dart';
 
@@ -42,6 +43,17 @@ abstract class WalletViewModel extends ChangeNotifier {
 
   /// Saves [ordered] (every active wallet) as the new order in one request.
   Future<bool> reorder(List<Wallet> ordered);
+
+  /// Difference to the real balance (or debt on a card) without writing.
+  Future<ReconcileResult?> previewReconcile(Wallet wallet, BigInt actualMinor);
+
+  /// Writes the adjustment and reloads the wallets. [clientId] stays the same
+  /// across retries of one entry so a lost reply never doubles it.
+  Future<ReconcileResult?> reconcile(
+    Wallet wallet,
+    BigInt actualMinor, {
+    required String clientId,
+  });
 }
 
 @LazySingleton(as: WalletViewModel)
@@ -213,6 +225,41 @@ class DefaultWalletViewModel extends WalletViewModel {
     busy = false;
     notifyListeners();
     return result.isRight();
+  }
+
+  @override
+  Future<ReconcileResult?> previewReconcile(
+    Wallet wallet,
+    BigInt actualMinor,
+  ) async {
+    if (_stage != AuthStage.unlocked) return null;
+    final result = await _cases.reconcile(
+      wallet,
+      actualMinor,
+      clientId: newClientId(),
+      dryRun: true,
+    );
+    return result.fold((_) => null, (r) => r);
+  }
+
+  @override
+  Future<ReconcileResult?> reconcile(
+    Wallet wallet,
+    BigInt actualMinor, {
+    required String clientId,
+  }) async {
+    if (_stage != AuthStage.unlocked) return null;
+    failure = null;
+    final result = await _cases.reconcile(
+      wallet,
+      actualMinor,
+      clientId: clientId,
+    );
+    return result.fold((e) {
+      _fail(e);
+      notifyListeners();
+      return null;
+    }, (r) => r);
   }
 
   @override

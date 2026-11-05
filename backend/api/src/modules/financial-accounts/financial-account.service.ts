@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { FINANCIAL_ACCOUNT_REPOSITORY, type FinancialAccountRepository } from './domain/financial-account.repository';
 import { minor, validateCredit, type AccountPatch, type FinancialAccount } from './domain/financial-account';
+import { FxRateService } from '../fx-rates/fx-rate.service';
 import type { AccountQueryDto, CreateAccountDto, ReorderAccountsDto, UpdateAccountDto } from './financial-account.dto';
 
 function response(account: FinancialAccount) {
@@ -10,6 +11,7 @@ function response(account: FinancialAccount) {
     balanceMinor: account.balanceMinor.toString(), sortOrder: account.sortOrder,
     creditLimitMinor: account.creditLimitMinor?.toString() ?? null,
     statementCloseDay: account.statementCloseDay, paymentDueDay: account.paymentDueDay,
+    minimumPaymentMinor: account.minimumPaymentMinor?.toString() ?? null,
     archivedAt: account.archivedAt?.toISOString() ?? null, version: account.version,
     createdAt: account.createdAt.toISOString(), updatedAt: account.updatedAt.toISOString(),
     hasTransactions: account.hasTransactions,
@@ -17,7 +19,10 @@ function response(account: FinancialAccount) {
 }
 @Injectable()
 export class FinancialAccountService {
-  constructor(@Inject(FINANCIAL_ACCOUNT_REPOSITORY) private readonly repository: FinancialAccountRepository) {}
+  constructor(
+    @Inject(FINANCIAL_ACCOUNT_REPOSITORY) private readonly repository: FinancialAccountRepository,
+    private readonly rates: FxRateService,
+  ) {}
 
   async create(userId: string, dto: CreateAccountDto) {
     const input = {
@@ -25,21 +30,30 @@ export class FinancialAccountService {
       sortOrder: dto.sortOrder ?? 0,
       creditLimitMinor: dto.creditLimitMinor == null ? null : minor(dto.creditLimitMinor),
       statementCloseDay: dto.statementCloseDay ?? null, paymentDueDay: dto.paymentDueDay ?? null,
+      minimumPaymentMinor: dto.minimumPaymentMinor == null ? null : minor(dto.minimumPaymentMinor),
     };
     validateCredit(input);
     const result = await this.repository.create(userId, input);
     return { account: response(result.account), created: result.created };
   }
-  async find(userId: string, id: string) { return response(await this.repository.find(userId, id)); }
+  /** Detail adds the balance in the profile currency (BE-P2-013); the stored balance is untouched. */
+  async find(userId: string, id: string) {
+    const account = await this.repository.find(userId, id);
+    const convert = await this.rates.toProfileCurrency(userId);
+    return { ...response(account), converted: convert(account.balanceMinor, account.currencyCode) };
+  }
   async list(userId: string, query: AccountQueryDto) {
     const result = await this.repository.list(userId, query);
     return { items: result.items.map(response), page: query.page, pageSize: query.pageSize, total: result.total };
   }
   async update(userId: string, id: string, dto: UpdateAccountDto) {
-    const { initialBalanceMinor, creditLimitMinor, ...rest } = dto;
+    const { initialBalanceMinor, creditLimitMinor, minimumPaymentMinor, ...rest } = dto;
     const patch: AccountPatch = { ...rest };
     if (initialBalanceMinor !== undefined) patch.initialBalanceMinor = minor(initialBalanceMinor);
     if (creditLimitMinor !== undefined) patch.creditLimitMinor = creditLimitMinor === null ? null : minor(creditLimitMinor);
+    if (minimumPaymentMinor !== undefined) {
+      patch.minimumPaymentMinor = minimumPaymentMinor === null ? null : minor(minimumPaymentMinor);
+    }
     return response(await this.repository.update(userId, id, patch));
   }
   async reorder(userId: string, dto: ReorderAccountsDto) {

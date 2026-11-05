@@ -21,6 +21,7 @@ import '../../../settings/presentation/widgets/choice_sheet.dart';
 import '../../domain/budget.dart';
 import '../viewmodels/budget_view_model.dart';
 import '../widgets/budget_progress_card.dart';
+import '../widgets/threshold_sheet.dart';
 
 class BudgetPage extends StatefulWidget {
   const BudgetPage({this.on, super.key});
@@ -165,10 +166,7 @@ class _BudgetPageState extends State<BudgetPage> {
                       setSheet(() {
                         final next = '$digits$value';
                         if (next.length <= 12) {
-                          digits = next.replaceFirst(
-                            RegExp(r'^0+(?=.)'),
-                            '',
-                          );
+                          digits = next.replaceFirst(RegExp(r'^0+(?=.)'), '');
                         }
                       });
                     },
@@ -262,7 +260,9 @@ class _BudgetPageState extends State<BudgetPage> {
                   model.isOverride
                       ? s.budgetScopeMonthOverrideHint
                       : s.budgetScopeMonthHint,
-                  style: FreevaTypography.label.copyWith(color: c.textSecondary),
+                  style: FreevaTypography.label.copyWith(
+                    color: c.textSecondary,
+                  ),
                 ),
               ],
               const SizedBox(height: FreevaSpace.s4),
@@ -367,26 +367,12 @@ class _BudgetPageState extends State<BudgetPage> {
               const SizedBox(height: FreevaSpace.s4),
               FreevaCard(
                 onTap: () async {
-                  const presets = <List<int>>[
-                    [70, 80, 90, 100],
-                    [80, 100],
-                    [90, 100],
-                    [100],
-                  ];
-                  String labelOf(List<int> t) => t.join(' · ');
-                  final picked = await showChoiceSheet<String>(
+                  final picked = await showThresholdSheet(
                     context,
-                    title: s.budgetThresholdsTitle,
-                    selected: labelOf(model.draftThresholds),
-                    options: [
-                      for (final preset in presets)
-                        Choice(labelOf(preset), labelOf(preset)),
-                    ],
+                    selected: model.draftThresholds,
                   );
                   if (picked == null) return;
-                  model.setThresholds([
-                    for (final part in picked.split(' · ')) int.parse(part),
-                  ]);
+                  model.setThresholds(picked);
                 },
                 padding: const EdgeInsets.all(18),
                 child: Row(
@@ -403,9 +389,7 @@ class _BudgetPageState extends State<BudgetPage> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            model.draftThresholds
-                                .map((t) => '$t%')
-                                .join(' · '),
+                            model.draftThresholds.map((t) => '$t%').join(' · '),
                             style: FreevaTypography.titleM.copyWith(
                               color: c.textPrimary,
                             ),

@@ -236,11 +236,12 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
     expect(user.onboardingGoals).toEqual([]);
     const repository = new PrismaProfileRepository(prisma);
     expect(await repository.saveOnboarding(user.id, { goals: ['save', 'budget'] })).toBe(true);
-    expect(await repository.saveOnboarding(user.id, { trackingHabit: 'app' })).toBe(true);
+    expect(await repository.saveOnboarding(user.id, { monthlyIncomeMinor: '15000000' })).toBe(true);
     const saved = await prisma.user.findUniqueOrThrow({ where: { id: user.id } });
     expect(saved.onboardingGoals).toEqual(['save', 'budget']);
-    expect(saved.trackingHabit).toBe('app');
-    expect(saved.reviewCadence).toBeNull();
+    expect(saved.monthlyIncomeMinor).toBe(15000000n);
+    expect(await repository.saveMonthlyIncome(user.id, null)).toBe(true);
+    expect((await prisma.user.findUniqueOrThrow({ where: { id: user.id } })).monthlyIncomeMinor).toBeNull();
     expect(await repository.saveOnboarding('00000000-0000-4000-8000-000000000000', {})).toBe(false);
   });
 
@@ -371,9 +372,10 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
       create: { code: 'USD', minorDigits: 2, name: 'US Dollar' } });
     const current = await request('profile', undefined, owner.accessToken, 'GET');
     expect(current.status).toBe(200);
-    // `goals` is read only on this endpoint, so it is not sent back.
-    const { goals, ...editable } = current.body;
+    // The onboarding answers are read only on this endpoint, so they are not sent back.
+    const { goals, monthlyIncomeMinor, displayCurrencyCode, ...editable } = current.body;
     expect(goals).toEqual([]);
+    expect(monthlyIncomeMinor).toBeNull();
     const changes = { ...editable, locale: 'en', defaultCurrencyCode: 'USD',
       timezone: 'America/New_York', fiscalMonthStartDay: 28 };
     const writes = await Promise.all([
@@ -382,7 +384,7 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
     ]);
     expect(writes.map(r => r.status).sort()).toEqual([200, 409]);
     expect((await request('profile', undefined, owner.accessToken, 'GET')).body)
-      .toEqual({ ...changes, goals, version: current.body.version + 1 });
+      .toEqual({ ...changes, goals, monthlyIncomeMinor, displayCurrencyCode, version: current.body.version + 1 });
     expect((await request('profile', undefined, other.accessToken, 'GET')).body)
       .toMatchObject({ locale: 'vi', defaultCurrencyCode: 'VND', fiscalMonthStartDay: 1 });
     await request('auth/logout', undefined, owner.accessToken);

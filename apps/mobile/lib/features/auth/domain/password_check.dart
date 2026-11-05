@@ -9,7 +9,7 @@ class PasswordCheck {
   final String password;
   final String confirmation;
 
-  bool get longEnough => password.length >= 12 && password.length <= 128;
+  bool get longEnough => validPasswordLength(password);
   bool get letterAndDigit => hasLetterAndDigit(password);
   bool get hasSymbol =>
       RegExp(r'[^\p{L}\p{Nd}\s]', unicode: true).hasMatch(password);

@@ -57,9 +57,7 @@ void main() {
     expect(find.text('Ví USD: chi 35,00 USD tháng này'), findsOneWidget);
   });
 
-  testWidgets('B4 debt goal puts the credit cards above spending', (
-    tester,
-  ) async {
+  testWidgets('B4 credit cards follow spending', (tester) async {
     await pump(tester, 'debt');
     expect(find.text('Thẻ tín dụng'), findsOneWidget);
     expect(find.text('Đến hạn 25/10'), findsOneWidget);
@@ -69,18 +67,6 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('Hạn mức 20.000.000'), findsOneWidget);
-    expect(
-      tester.getTopLeft(find.text('Thẻ tín dụng')).dy,
-      lessThan(tester.getTopLeft(find.text('Chi tháng 10').last).dy),
-    );
-  });
-
-  testWidgets('without the debt goal the credit cards follow spending', (
-    tester,
-  ) async {
-    final model = homeState('debt')..debtGoal = false;
-    await tester.pumpWidget(await homeApp(model));
-    await tester.pump(const Duration(milliseconds: 300));
     expect(
       tester.getTopLeft(find.text('Thẻ tín dụng')).dy,
       greaterThan(tester.getTopLeft(find.text('Chi tháng 10').last).dy),

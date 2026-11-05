@@ -34,6 +34,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @freeva/api prisma:generate
+      - run: pnpm --filter @freeva/api lint
       - run: pnpm --filter @freeva/api test
       - run: pnpm --filter @freeva/api prisma:migrate:deploy
       - run: pnpm --filter @freeva/api test:integration
@@ -78,6 +79,8 @@ jobs:
           flutter-version: "3.47.0"
           cache: true
       - run: flutter pub get
+      # Generated files (build_runner, design-tokens, lucide) are checked by their own gates, not by the formatter.
+      - run: dart format --output=none --set-exit-if-changed $(git ls-files 'lib/*.dart' 'test/*.dart' 'tool/*.dart' | grep -vE '\.(g|config|freezed)\.dart$')
       - run: dart run build_runner build --delete-conflicting-outputs
       - run: flutter gen-l10n
       - run: flutter analyze

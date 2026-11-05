@@ -9,6 +9,7 @@ import 'package:mobile/features/settings/presentation/pages/change_password_page
 import 'package:mobile/features/settings/presentation/pages/change_pin_page.dart';
 import 'package:mobile/features/settings/presentation/pages/security_page.dart';
 import 'package:mobile/features/settings/presentation/pages/sessions_page.dart';
+import 'package:mobile/features/settings/presentation/pages/money_settings_page.dart';
 import 'package:mobile/features/settings/presentation/pages/settings_page.dart';
 
 import 'g1_harness.dart';
@@ -49,9 +50,10 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Minh'), findsOneWidget);
       expect(find.text('m•••@gmail.com'), findsOneWidget);
-      expect(find.text('THIẾT LẬP TÀI CHÍNH'), findsOneWidget);
-      expect(find.text('VND'), findsOneWidget);
-      expect(find.text('Ngày 1'), findsOneWidget);
+      expect(find.text('QUẢN LÝ TIỀN'), findsOneWidget);
+      expect(find.text('THIẾT LẬP'), findsOneWidget);
+      expect(find.text('DỮ LIỆU'), findsOneWidget);
+      expect(find.text('VND · ngày 1'), findsOneWidget);
       expect(find.text('Sáng'), findsOneWidget);
       expect(find.text('Tiếng Việt'), findsOneWidget);
       expect(find.text('GMT+7'), findsOneWidget);
@@ -66,7 +68,7 @@ void main() {
 
     testWidgets('picking a currency or a day saves at once', (tester) async {
       tall(tester);
-      await tester.pumpWidget(g.app(const SettingsPage()));
+      await tester.pumpWidget(g.app(const MoneySettingsPage()));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Tiền tệ mặc định'));
       await tester.pumpAndSettle();
@@ -85,7 +87,7 @@ void main() {
       tester,
     ) async {
       tall(tester);
-      await tester.pumpWidget(g.app(const SettingsPage()));
+      await tester.pumpWidget(g.app(const MoneySettingsPage()));
       await tester.pumpAndSettle();
       g.profiles.failure = const AuthFailure(AuthError.network);
       await tester.tap(find.text('Tiền tệ mặc định'));
@@ -104,7 +106,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('Tiếng Anh'));
       await tester.pumpAndSettle();
-      expect(find.text('Money setup'.toUpperCase()), findsOneWidget);
+      expect(find.text('Manage money'.toUpperCase()), findsOneWidget);
     });
 
     testWidgets('appearance sheet applies the theme when a card is tapped', (
@@ -129,15 +131,6 @@ void main() {
       await tester.tap(find.text('Ẩn số dư'));
       await tester.pumpAndSettle();
       expect(g.settings.balancesHidden, isTrue);
-    });
-
-    testWidgets('settings without a screen yet say "Sắp có"', (tester) async {
-      tall(tester);
-      await tester.pumpWidget(g.app(const SettingsPage()));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Mục tiêu'));
-      await tester.pump();
-      expect(find.text('Sắp có'), findsOneWidget);
     });
 
     testWidgets('log out asks first and keeps the session on Huỷ', (
@@ -251,7 +244,7 @@ void main() {
       await tester.enterText(fields.at(2), 'no digits in this one');
       await tester.tap(find.text('Lưu thay đổi'));
       await tester.pumpAndSettle();
-      expect(find.textContaining('Dùng từ 12 ký tự'), findsOneWidget);
+      expect(find.textContaining('Dùng từ 8 ký tự'), findsOneWidget);
       await tester.enterText(fields.at(1), 'brand new password 7');
       await tester.enterText(fields.at(2), 'brand new password 7');
       g.api.failure = const AuthFailure(AuthError.credentials);

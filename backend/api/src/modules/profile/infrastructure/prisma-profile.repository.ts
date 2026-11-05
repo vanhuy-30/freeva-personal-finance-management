@@ -10,12 +10,16 @@ const select = {
   fiscalMonthStartDay: true,
   version: true,
   onboardingGoals: true,
+  monthlyIncomeMinor: true,
+  displayCurrencyCode: true,
 };
 
-function toProfile(row: { onboardingGoals: string[] } & Omit<Profile, 'goals'> | null): Profile | null {
+type Row = Omit<Profile, 'goals' | 'monthlyIncomeMinor'> & { onboardingGoals: string[]; monthlyIncomeMinor: bigint | null };
+
+function toProfile(row: Row | null): Profile | null {
   if (!row) return null;
-  const { onboardingGoals, ...rest } = row;
-  return { ...rest, goals: onboardingGoals };
+  const { onboardingGoals, monthlyIncomeMinor, ...rest } = row;
+  return { ...rest, goals: onboardingGoals, monthlyIncomeMinor: monthlyIncomeMinor?.toString() ?? null };
 }
 
 @Injectable()
@@ -38,10 +42,22 @@ export class PrismaProfileRepository implements ProfileRepository {
       where: { id: userId },
       data: {
         ...(answers.goals ? { onboardingGoals: answers.goals } : {}),
-        ...(answers.trackingHabit ? { trackingHabit: answers.trackingHabit } : {}),
-        ...(answers.reviewCadence ? { reviewCadence: answers.reviewCadence } : {}),
+        ...(answers.monthlyIncomeMinor ? { monthlyIncomeMinor: BigInt(answers.monthlyIncomeMinor) } : {}),
       },
     });
+    return changed.count === 1;
+  }
+
+  async saveMonthlyIncome(userId: string, minor: string | null): Promise<boolean> {
+    const changed = await this.prisma.user.updateMany({
+      where: { id: userId },
+      data: { monthlyIncomeMinor: minor === null ? null : BigInt(minor) },
+    });
+    return changed.count === 1;
+  }
+
+  async saveDisplayCurrency(userId: string, code: string | null): Promise<boolean> {
+    const changed = await this.prisma.user.updateMany({ where: { id: userId }, data: { displayCurrencyCode: code } });
     return changed.count === 1;
   }
 

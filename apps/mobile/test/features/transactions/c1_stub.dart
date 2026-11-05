@@ -16,11 +16,14 @@ import 'package:mobile/features/sync/presentation/viewmodels/sync_view_model.dar
 import '../home/fixtures.dart' show b, wallet;
 import '../home/home_fakes.dart' show FakeSyncViewModel;
 
+import 'package:mobile/core/money/display_converted.dart';
+
 TxLeg tx(
   String id, {
   required String account,
   required int amount,
   String day = '2026-10-21',
+  String? time,
   TransactionType type = TransactionType.expense,
   String? category,
   String? merchant,
@@ -28,6 +31,9 @@ TxLeg tx(
   String? group,
   List<String> tags = const [],
   bool deleted = false,
+  String? refundOf,
+  int? refunded,
+  String? plan,
 }) => TxLeg(
   id: id,
   clientId: 'c-$id',
@@ -36,6 +42,7 @@ TxLeg tx(
   amountMinor: b(amount),
   type: type,
   occurredOn: day,
+  occurredTime: time,
   categoryId: category,
   notes: notes,
   merchant: merchant,
@@ -44,6 +51,9 @@ TxLeg tx(
   deletedAt: deleted ? DateTime.utc(2026, 10, 21) : null,
   version: 1,
   createdAt: DateTime.utc(2026, 10, 21),
+  refundOfId: refundOf,
+  refundedMinor: refunded == null ? null : b(refunded),
+  installmentPlanId: plan,
 );
 
 /// Rows like the C1 artboards.
@@ -53,6 +63,7 @@ List<TransactionBundle> canvasRows({bool deleted = false}) =>
         '1',
         account: 'cash',
         amount: -65000,
+        time: '12:40',
         category: 'food',
         merchant: 'Phở Thìn',
         tags: ['work'],
@@ -265,6 +276,12 @@ class StubTransactionViewModel extends ChangeNotifier
     this.filter = TransactionFilter.list,
   }) : rows = rows ?? canvasRows();
 
+  /// Detail sheet "Quy đổi" line; set per test, null draws nothing.
+  DisplayConverted? converted;
+  @override
+  Future<DisplayConverted?> convertedFor(TransactionBundle bundle) async =>
+      converted;
+
   @override
   List<TransactionBundle> rows;
   @override
@@ -315,6 +332,8 @@ class StubTransactionViewModel extends ChangeNotifier
   @override
   String? today() => '2026-10-21';
   @override
+  String? nowTime() => '12:40';
+  @override
   String? get timeZone => 'Asia/Ho_Chi_Minh';
 
   @override
@@ -359,9 +378,41 @@ class StubTransactionViewModel extends ChangeNotifier
   Future<int?> countFor(TransactionFilter value) async => countValue;
   @override
   Future<int?> deletedCount() async => 4;
+  final removedWith = <RefundDisposition?>[];
   @override
-  Future<bool> remove(TransactionBundle bundle) async {
+  Future<bool> remove(
+    TransactionBundle bundle, {
+    RefundDisposition? refunds,
+  }) async {
     removed.add(bundle);
+    removedWith.add(refunds);
+    return true;
+  }
+
+  final refunds = <(String, String, BigInt, String)>[];
+  @override
+  Future<bool> refund(
+    TransactionBundle original, {
+    required String clientId,
+    required String accountId,
+    required BigInt amountMinor,
+    required String occurredOn,
+  }) async {
+    refunds.add((original.id, accountId, amountMinor, occurredOn));
+    return true;
+  }
+
+  @override
+  bool get canWrite => true;
+
+  @override
+  Future<TransactionBundle?> open(String id) async =>
+      rows.where((r) => r.id == id).firstOrNull;
+
+  final adjusted = <(String, BigInt)>[];
+  @override
+  Future<bool> adjust(TransactionBundle bundle, BigInt signedMinor) async {
+    adjusted.add((bundle.id, signedMinor));
     return true;
   }
 

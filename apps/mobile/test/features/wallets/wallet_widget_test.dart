@@ -266,6 +266,7 @@ void main() {
     expect(body['creditLimitMinor'], '20000000');
     expect(body['paymentDueDay'], 25);
     expect(body['statementCloseDay'], isNull);
+    expect(body['minimumPaymentMinor'], isNull);
   });
   testWidgets('a wallet with transactions locks type and currency', (
     tester,

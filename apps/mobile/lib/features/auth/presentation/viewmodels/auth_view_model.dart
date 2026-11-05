@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../../../core/analytics/analytics_event.dart';
 import '../../../../core/analytics/analytics_service.dart';
+import '../../../notifications/domain/notification_use_cases.dart';
 import '../../../settings/domain/app_preferences.dart';
 import '../../../settings/domain/settings_use_cases.dart';
 import '../../domain/auth_repository.dart';
@@ -72,11 +73,16 @@ abstract class AuthViewModel extends ChangeNotifier {
   Future<void> unlockPin(String pin);
   Future<void> unlockBiometric(String reason);
   Future<void> loadSessions();
-  Future<void> deliverSessionNotification(String title, String body);
+  Future<void> deliverSessionNotification(
+    String title,
+    String body, {
+    String timeZone = 'Asia/Ho_Chi_Minh',
+  });
   Future<void> openSessionAlert();
   Future<void> revoke(AuthSession? session);
   Future<void> logout();
   Future<void> forgetDevice();
+  Future<void> deleteAccount();
   void lock();
   void sessionExpired();
   void clearMessage();
@@ -88,11 +94,13 @@ class DefaultAuthViewModel extends AuthViewModel {
     this.settings,
     this.alerts,
     this.analytics,
+    this.notifications,
   });
   final AuthUseCases _useCases;
   final SettingsUseCases? settings;
   final SessionAlertNotifier? alerts;
   final AnalyticsService? analytics;
+  final NotificationUseCases? notifications;
   @override
   AuthStep step = AuthStep.login;
   @override
@@ -388,7 +396,11 @@ class DefaultAuthViewModel extends AuthViewModel {
   }
 
   @override
-  Future<void> deliverSessionNotification(String title, String body) async {
+  Future<void> deliverSessionNotification(
+    String title,
+    String body, {
+    String timeZone = 'Asia/Ho_Chi_Minh',
+  }) async {
     if (_delivered || !newSessionAlert) return;
     final cases = settings;
     final notifier = alerts;
@@ -399,6 +411,8 @@ class DefaultAuthViewModel extends AuthViewModel {
     if (prefs == null || !prefs.sessionAlertsEnabled || !newSessionAlert) {
       return;
     }
+    final quiet = await notifications?.suppressLocalAlerts(timeZone) ?? false;
+    if (quiet) return;
     var access = await notifier.access();
     var current = prefs;
     var grantedNow = false;
@@ -451,6 +465,12 @@ class DefaultAuthViewModel extends AuthViewModel {
   });
   @override
   Future<void> forgetDevice() => _run(_useCases.forgetDevice, (_) {
+    stage = AuthStage.signedOut;
+    _resetFlow();
+    sessions = [];
+  });
+  @override
+  Future<void> deleteAccount() => _run(_useCases.deleteAccount, (_) {
     stage = AuthStage.signedOut;
     _resetFlow();
     sessions = [];

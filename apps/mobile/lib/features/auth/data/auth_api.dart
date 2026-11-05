@@ -18,6 +18,12 @@ abstract class AuthApi {
     String? token,
     Map<String, String>? headers,
   });
+
+  /// Same as [request] but returns the 2xx body exactly as received.
+  Future<String> requestText(String method, String path, {String? token});
+
+  /// Same as [requestText] but the raw bytes, so a UTF-8 BOM survives.
+  Future<List<int>> requestBytes(String method, String path, {String? token});
 }
 
 @LazySingleton(as: AuthApi)
@@ -33,6 +39,37 @@ class HttpAuthApi implements AuthApi {
 
   @override
   Future<Map<String, dynamic>> request(
+    String method,
+    String path, {
+    Map<String, dynamic>? body,
+    String? token,
+    Map<String, String>? headers,
+  }) async {
+    final text = (await _send(
+      method,
+      path,
+      body: body,
+      token: token,
+      headers: headers,
+    )).body;
+    return text.isEmpty ? {} : jsonDecode(text) as Map<String, dynamic>;
+  }
+
+  @override
+  Future<String> requestText(
+    String method,
+    String path, {
+    String? token,
+  }) async => (await _send(method, path, token: token)).body;
+
+  @override
+  Future<List<int>> requestBytes(
+    String method,
+    String path, {
+    String? token,
+  }) async => (await _send(method, path, token: token)).bodyBytes;
+
+  Future<http.Response> _send(
     String method,
     String path, {
     Map<String, dynamic>? body,
@@ -67,9 +104,7 @@ class HttpAuthApi implements AuthApi {
       final ms = DateTime.now().difference(started).inMilliseconds;
       if (response.statusCode >= 200 && response.statusCode < 300) {
         _logger?.http('← $method $path ${response.statusCode} ${ms}ms');
-        return response.body.isEmpty
-            ? {}
-            : jsonDecode(response.body) as Map<String, dynamic>;
+        return response;
       }
       _logger?.http('← $method $path ${response.statusCode} ${ms}ms');
       throw AuthFailure(switch (response.statusCode) {
@@ -77,8 +112,15 @@ class HttpAuthApi implements AuthApi {
         // Signed in but refused: the current password was wrong.
         403 when token != null => AuthError.credentials,
         429 => AuthError.rateLimited,
-        400 => AuthError.invalidToken,
-        409 => AuthError.conflict,
+        400 =>
+          _errorCode(response.body) == 'CATEGORY_KIND_MISMATCH'
+              ? AuthError.categoryKind
+              : AuthError.invalidToken,
+        409 => switch (_errorCode(response.body)) {
+          'REFUND_EXISTS' => AuthError.refundExists,
+          'REFUND_EXCEEDS_ORIGINAL' => AuthError.refundExceeds,
+          _ => AuthError.conflict,
+        },
         _ => AuthError.unavailable,
       }, retryAfter: int.tryParse(response.headers['retry-after'] ?? ''));
     } on AuthFailure {
@@ -88,5 +130,15 @@ class HttpAuthApi implements AuthApi {
       _logger?.error('http $method $path failed ${ms}ms', error, stackTrace);
       throw const AuthFailure(AuthError.network);
     }
+  }
+}
+
+/// The API's `error.code`, or null when the body is not the usual envelope.
+String? _errorCode(String body) {
+  try {
+    final error = (jsonDecode(body) as Map<String, dynamic>)['error'];
+    return error is Map<String, dynamic> ? error['code'] as String? : null;
+  } catch (_) {
+    return null;
   }
 }

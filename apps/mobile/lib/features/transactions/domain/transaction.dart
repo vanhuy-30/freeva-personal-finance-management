@@ -1,4 +1,29 @@
-enum TransactionType { income, expense, transfer }
+enum TransactionType {
+  income,
+  expense,
+  transfer,
+
+  /// One-leg balance fix from wallet reconcile; not income or expense.
+  adjustment,
+
+  /// One-leg money move of a debt (lend, borrow, repay, loan principal); not
+  /// income or expense. Only `/personal-debts` and `/loans` write it; the API
+  /// refuses edits.
+  debt,
+
+  /// Money back for an expense (`MOB-P3-008`): one positive leg pointing at
+  /// the expense (`refundOfId`); not income. Only `POST …/refunds` writes it.
+  refund,
+}
+
+/// What happens to refunds when their expense is deleted (`MOB-P3-008`).
+enum RefundDisposition {
+  /// Delete the refunds too; the wallets lose that money.
+  cascade,
+
+  /// Turn the refunds into plain income.
+  keep,
+}
 
 class TxLeg {
   const TxLeg({
@@ -17,6 +42,10 @@ class TxLeg {
     required this.deletedAt,
     required this.version,
     required this.createdAt,
+    this.occurredTime,
+    this.refundOfId,
+    this.refundedMinor,
+    this.installmentPlanId,
   });
   final String id;
   final String clientId;
@@ -25,6 +54,9 @@ class TxLeg {
   final BigInt amountMinor;
   final TransactionType type;
   final String occurredOn;
+
+  /// Optional local clock `HH:mm` in the profile timezone (`MOB-P2-E09`).
+  final String? occurredTime;
   final String? categoryId;
   final String? notes;
   final String? merchant;
@@ -33,6 +65,16 @@ class TxLeg {
   final DateTime? deletedAt;
   final int version;
   final DateTime createdAt;
+
+  /// Only on `refund`: the expense it returns money for.
+  final String? refundOfId;
+
+  /// Only on `expense` from list/detail reads: active refunds so far (≥ 0).
+  final BigInt? refundedMinor;
+
+  /// Only on `expense` from list/detail reads: its card installment plan
+  /// (active or closed), null when none (`MOB-P3-009`).
+  final String? installmentPlanId;
 }
 
 class TransactionFx {
@@ -50,10 +92,39 @@ class TransactionBundle {
   bool get deleted => legs.first.deletedAt != null;
   String get id => legs.first.id;
   String get occurredOn => legs.first.occurredOn;
+  String? get occurredTime => legs.first.occurredTime;
   String? get categoryId => legs.first.categoryId;
   String? get notes => legs.first.notes;
   String? get merchant => legs.first.merchant;
   List<String> get tagIds => legs.first.tagIds;
+  String? get refundOfId => legs.first.refundOfId;
+
+  /// Refunds already made on this expense, zero when none or unknown.
+  BigInt get refunded => legs.first.refundedMinor ?? BigInt.zero;
+
+  /// Card installment plan over this expense, if any.
+  String? get installmentPlanId => legs.first.installmentPlanId;
+
+  /// What can still be refunded: the expense amount minus refunds so far.
+  BigInt get refundable {
+    if (type != TransactionType.expense || deleted) return BigInt.zero;
+    final left = legs.first.amountMinor.abs() - refunded;
+    return left > BigInt.zero ? left : BigInt.zero;
+  }
+}
+
+/// Input of `POST /transactions/{id}/refunds`.
+class RefundCommand {
+  const RefundCommand({
+    required this.clientId,
+    required this.accountId,
+    required this.amountMinor,
+    required this.occurredOn,
+  });
+  final String clientId;
+  final String accountId;
+  final BigInt amountMinor;
+  final String occurredOn;
 }
 
 class TransactionDraft {
@@ -70,9 +141,11 @@ class TransactionDraft {
     this.tagIds = const [],
     this.rate,
     this.quotedAt,
+    this.occurredTime,
   });
   final TransactionType type;
   final String occurredOn;
+  final String? occurredTime;
   final String accountId;
   final String? counterAccountId;
   final BigInt magnitude;
@@ -97,9 +170,11 @@ class TransactionCommand {
     this.rate,
     this.quotedAt,
     this.version,
+    this.occurredTime,
   });
   final TransactionType type;
   final String occurredOn;
+  final String? occurredTime;
   final String? categoryId;
   final String? notes;
   final String? merchant;

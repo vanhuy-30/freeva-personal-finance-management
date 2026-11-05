@@ -9,8 +9,13 @@ import '../../features/categories/presentation/pages/hidden_categories_page.dart
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/home/presentation/pages/notifications_page.dart';
 import '../../features/transactions/domain/transaction.dart';
+import '../../features/profile/presentation/pages/data_export_page.dart';
+import '../../features/settings/presentation/pages/money_settings_page.dart';
+import '../../features/transaction_import/presentation/pages/import_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/reports/domain/category_detail.dart';
+import '../../features/forecast/presentation/pages/forecast_page.dart';
+import '../../features/reports/presentation/pages/month_review_page.dart';
 import '../../features/reports/presentation/pages/report_category_page.dart';
 import '../../features/reports/presentation/pages/report_page.dart';
 import '../../features/settings/domain/app_preferences.dart';
@@ -25,6 +30,17 @@ import '../../features/tags/presentation/pages/tag_page.dart';
 import '../../features/budgets/presentation/pages/budget_page.dart';
 import '../../features/recurring/presentation/pages/recurring_page.dart';
 import '../../features/recurring/presentation/pages/recurring_editor_page.dart';
+import '../../features/goals/presentation/pages/goal_detail_page.dart';
+import '../../features/goals/presentation/pages/goal_editor_page.dart';
+import '../../features/goals/presentation/pages/goals_page.dart';
+import '../../features/debts/presentation/pages/debt_detail_page.dart';
+import '../../features/debts/presentation/pages/debt_editor_page.dart';
+import '../../features/debts/presentation/pages/debts_page.dart';
+import '../../features/installments/presentation/pages/installment_detail_page.dart';
+import '../../features/loans/presentation/pages/loan_detail_page.dart';
+import '../../features/loans/presentation/pages/loan_editor_page.dart';
+import '../../features/loans/presentation/pages/loan_schedule_page.dart';
+import '../../features/calendar/presentation/pages/calendar_page.dart';
 import '../../features/settings/presentation/pages/change_pin_page.dart';
 import '../../features/settings/presentation/pages/pin_setup_page.dart';
 import '../../features/settings/presentation/pages/notification_settings_page.dart';
@@ -162,6 +178,16 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
           child: ReportCategoryPage(args: state.extra! as CategoryDetailArgs),
         ),
       ),
+      GoRoute(
+        path: '/reports/month-review',
+        builder: (context, state) => AuthGate(
+          child: MonthReviewPage(on: state.uri.queryParameters['on']),
+        ),
+      ),
+      GoRoute(
+        path: '/reports/forecast',
+        builder: (context, state) => const AuthGate(child: ForecastPage()),
+      ),
       GoRoute(path: '/settings', redirect: (context, state) => '/me'),
       GoRoute(
         path: '/record',
@@ -228,6 +254,12 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
         ],
       ),
       GoRoute(
+        path: '/installments/:id',
+        builder: (context, state) => AuthGate(
+          child: InstallmentDetailPage(planId: state.pathParameters['id']!),
+        ),
+      ),
+      GoRoute(
         path: '/categories',
         builder: (context, state) => const AuthGate(child: CategoryPage()),
         routes: [
@@ -241,6 +273,18 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
       GoRoute(
         path: '/profile',
         builder: (context, state) => const AuthGate(child: ProfilePage()),
+      ),
+      GoRoute(
+        path: '/me/export',
+        builder: (context, state) => const AuthGate(child: DataExportPage()),
+      ),
+      GoRoute(
+        path: '/me/money',
+        builder: (context, state) => const AuthGate(child: MoneySettingsPage()),
+      ),
+      GoRoute(
+        path: '/me/import',
+        builder: (context, state) => const AuthGate(child: ImportPage()),
       ),
       GoRoute(
         path: '/me/security',
@@ -272,9 +316,8 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
       ),
       GoRoute(
         path: '/budgets',
-        builder: (context, state) => AuthGate(
-          child: BudgetPage(on: state.uri.queryParameters['on']),
-        ),
+        builder: (context, state) =>
+            AuthGate(child: BudgetPage(on: state.uri.queryParameters['on'])),
       ),
       GoRoute(
         path: '/me/recurring',
@@ -292,6 +335,90 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
             ),
           ),
         ],
+      ),
+      GoRoute(
+        path: '/me/goals',
+        builder: (context, state) => const AuthGate(child: GoalsPage()),
+        routes: [
+          GoRoute(
+            path: 'new',
+            builder: (context, state) => AuthGate(
+              child: GoalEditorPage(
+                initialKind: state.uri.queryParameters['kind'],
+              ),
+            ),
+          ),
+          GoRoute(
+            path: ':id',
+            builder: (context, state) => AuthGate(
+              child: GoalDetailPage(goalId: state.pathParameters['id']!),
+            ),
+            routes: [
+              GoRoute(
+                path: 'edit',
+                builder: (context, state) => AuthGate(
+                  child: GoalEditorPage(goalId: state.pathParameters['id']),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+      GoRoute(
+        path: '/me/debts',
+        builder: (context, state) => AuthGate(
+          child: DebtsPage(loans: state.uri.queryParameters['tab'] == 'loans'),
+        ),
+        routes: [
+          GoRoute(
+            path: 'new',
+            builder: (context, state) =>
+                const AuthGate(child: DebtEditorPage()),
+          ),
+          GoRoute(
+            path: 'loans/new',
+            builder: (context, state) =>
+                const AuthGate(child: LoanEditorPage()),
+          ),
+          GoRoute(
+            path: 'loans/:id',
+            builder: (context, state) => AuthGate(
+              child: LoanDetailPage(loanId: state.pathParameters['id']!),
+            ),
+            routes: [
+              GoRoute(
+                path: 'edit',
+                builder: (context, state) => AuthGate(
+                  child: LoanEditorPage(loanId: state.pathParameters['id']),
+                ),
+              ),
+              GoRoute(
+                path: 'schedule',
+                builder: (context, state) => AuthGate(
+                  child: LoanSchedulePage(loanId: state.pathParameters['id']!),
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: ':id',
+            builder: (context, state) => AuthGate(
+              child: DebtDetailPage(debtId: state.pathParameters['id']!),
+            ),
+            routes: [
+              GoRoute(
+                path: 'edit',
+                builder: (context, state) => AuthGate(
+                  child: DebtEditorPage(debtId: state.pathParameters['id']),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+      GoRoute(
+        path: '/me/calendar',
+        builder: (context, state) => const AuthGate(child: CalendarPage()),
       ),
       GoRoute(
         path: '/me/sessions',

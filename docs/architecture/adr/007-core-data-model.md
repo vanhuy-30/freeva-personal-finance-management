@@ -35,6 +35,7 @@ Phase 0 cần chốt schema lõi (user, ví, giao dịch, danh mục, tiền t�
 
 - `User.timezone` IANA, mặc định `Asia/Ho_Chi_Minh`.
 - `Transaction.occurredOn` = date-only (`@db.Date`): calendar date theo TZ user, không wall-clock UTC.
+- `Transaction.occurredTime` = optional local `HH:mm` (`BE-P2-E09`); display/composer only — báo cáo và filter kỳ vẫn theo `occurredOn`.
 - `User.fiscalMonthStartDay` = 1–28 (kỳ báo cáo).
 
 ### Transfer
@@ -47,7 +48,7 @@ Phase 0 cần chốt schema lõi (user, ví, giao dịch, danh mục, tiền t�
 ### Credit
 
 - `FinancialAccount.type = credit`. Chi (âm) làm số dư derived càng âm (nợ tăng). Thanh toán = transfer từ ví khác.
-- Optional: `creditLimitMinor`, `statementCloseDay`, `paymentDueDay`.
+- Optional: `creditLimitMinor`, `statementCloseDay`, `paymentDueDay`, `minimumPaymentMinor` (`BE-P2-E07`).
 
 ### Xóa / lưu trữ
 

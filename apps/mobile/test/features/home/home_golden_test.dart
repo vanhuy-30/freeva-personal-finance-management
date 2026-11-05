@@ -20,6 +20,7 @@ void main() {
     'multi': false,
     'debt': false,
     'newMonth': false,
+    'newMonth_dark': true,
     'loading': false,
     'offline': false,
     'error': false,

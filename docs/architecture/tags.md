@@ -45,13 +45,13 @@ nullable. Không backfill.
 - Replay idempotency và fingerprint canonical gồm `merchant`.
 - Sync (`POST /api/v1/sync`) dùng lại DTO giao dịch nên merchant đi theo body.
 - Export JSON gồm `merchant` trên mỗi giao dịch.
-- Search Phase 1 không khớp merchant. Top merchant thuộc phase 2.
+- Search khớp `merchant` (`DS-P2-005` / [search.md](search.md)). Top merchant trên cashflow: `BE-P2-E06` / [reports.md](reports.md).
 - Log: path `merchant` trong Pino redact; HTTP logger không ghi body.
 
 ## Kiểm chứng và rollout
 
 Xem [test README](../../backend/api/test/README.md#tags--merchant--be-p1-012).
-Deploy migration trước API mới. Không deploy staging trong task này.
+Deploy migration trước API mới.
 
 ## Số giao dịch mỗi nhãn (DS-P2-003)
 

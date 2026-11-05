@@ -144,7 +144,7 @@ void main() {
       then: () async {
         await t.tap(find.text('Xong'));
         await t.pumpAndSettle();
-        for (final skip in ['Để sau', 'Để sau', 'Thiết lập sau', 'Bỏ qua']) {
+        for (final skip in ['Để sau', 'Để sau', 'Để sau', 'Bỏ qua']) {
           await t.tap(find.text(skip));
           await t.pumpAndSettle();
         }
@@ -158,7 +158,7 @@ void main() {
   Future<void> toPin(WidgetTester t) async {
     await t.tap(find.text('Xong'));
     await t.pumpAndSettle();
-    for (final skip in ['Để sau', 'Để sau', 'Thiết lập sau', 'Bỏ qua']) {
+    for (final skip in ['Để sau', 'Để sau', 'Để sau', 'Bỏ qua']) {
       await t.tap(find.text(skip));
       await t.pumpAndSettle();
     }
@@ -260,59 +260,112 @@ void main() {
     await t.pumpAndSettle();
   }
 
-  testWidgets('goals', skip: !Platform.isMacOS, (t) async {
+  final today = DateTime(2026, 11, 5);
+
+  testWidgets('a3 goals', skip: !Platform.isMacOS, (t) async {
     await shot(
       t,
-      'goals',
-      (m) => SetupPage(model: m),
+      'a3_goals',
+      (m) => SetupPage(model: m, today: today),
       prepare: (m) => m.stage = AuthStage.setup,
       then: () async {
         await toQuestions(t);
-        await t.tap(find.text('Theo dõi chi tiêu'));
-        await t.tap(find.text('Tiết kiệm nhiều hơn'));
+        await t.tap(find.text('Quản lý chi tiêu'));
+        await t.tap(find.text('Tiết kiệm'));
         await t.pump();
       },
     );
   });
-  testWidgets('habits', skip: !Platform.isMacOS, (t) async {
+
+  Future<void> toIncome(WidgetTester t) async {
+    await toQuestions(t);
+    await t.tap(find.text('Để sau'));
+    await t.pumpAndSettle();
+  }
+
+  testWidgets('a3 income', skip: !Platform.isMacOS, (t) async {
     await shot(
       t,
-      'habits',
-      (m) => SetupPage(model: m),
-      size: const Size(390, 900),
+      'a3_income',
+      (m) => SetupPage(model: m, today: today),
       prepare: (m) => m.stage = AuthStage.setup,
       then: () async {
-        await toQuestions(t);
-        await t.tap(find.text('Để sau'));
-        await t.pumpAndSettle();
-        await t.tap(find.text('Dùng Excel hoặc Sheets'));
-        await t.tap(find.text('Mỗi tuần'));
+        await toIncome(t);
+        await t.tap(find.text('25 triệu'));
         await t.pump();
       },
     );
   });
-  testWidgets('budget', skip: !Platform.isMacOS, (t) async {
+
+  Future<void> toSaving(WidgetTester t) async {
+    await toIncome(t);
+    await t.tap(find.text('25 triệu'));
+    await t.pump();
+    await t.tap(find.text('Tiếp tục'));
+    await t.pumpAndSettle();
+    await t.tap(find.text('Mua nhà'));
+    await t.enterText(find.byType(TextField), '60000000');
+    await t.pump();
+    await t.tap(find.text('Đến khi'));
+    await t.pumpAndSettle();
+    await t.tap(find.text('5'));
+    await t.pumpAndSettle();
+    await t.pump(const Duration(milliseconds: 400));
+  }
+
+  testWidgets('a3 saving', skip: !Platform.isMacOS, (t) async {
     await shot(
       t,
-      'budget',
-      (m) => SetupPage(model: m),
+      'a3_saving',
+      (m) => SetupPage(model: m, today: today),
       prepare: (m) => m.stage = AuthStage.setup,
       then: () async {
-        await toQuestions(t);
-        await t.tap(find.text('Để sau'));
-        await t.pumpAndSettle();
-        await t.tap(find.text('Để sau'));
-        await t.pumpAndSettle();
-        await t.tap(find.text('10tr'));
+        await toSaving(t);
+        FocusManager.instance.primaryFocus?.unfocus();
         await t.pump();
+      },
+    );
+  });
+
+  testWidgets('a3 budget suggestion', skip: !Platform.isMacOS, (t) async {
+    await shot(
+      t,
+      'a3_budget_suggest',
+      (m) => SetupPage(model: m, today: today),
+      prepare: (m) => m.stage = AuthStage.setup,
+      then: () async {
+        await toSaving(t);
+        await t.tap(find.text('Tiếp tục'));
+        await t.pumpAndSettle();
+      },
+    );
+  });
+
+  testWidgets('a3 budget suggestion without a goal', skip: !Platform.isMacOS, (
+    t,
+  ) async {
+    await shot(
+      t,
+      'a3_budget_suggest_no_goal',
+      (m) => SetupPage(model: m, today: today),
+      dark: true,
+      prepare: (m) => m.stage = AuthStage.setup,
+      then: () async {
+        await toIncome(t);
+        await t.tap(find.text('25 triệu'));
+        await t.pump();
+        await t.tap(find.text('Tiếp tục'));
+        await t.pumpAndSettle();
+        await t.tap(find.text('Để sau'));
+        await t.pumpAndSettle();
       },
     );
   });
 
   Future<void> toWallets(WidgetTester t) async {
     await toQuestions(t);
-    for (final skip in ['Để sau', 'Để sau', 'Thiết lập sau']) {
-      await t.tap(find.text(skip));
+    for (var i = 0; i < 3; i++) {
+      await t.tap(find.text('Để sau'));
       await t.pumpAndSettle();
     }
   }

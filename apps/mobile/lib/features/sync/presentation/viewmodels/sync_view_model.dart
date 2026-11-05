@@ -49,6 +49,7 @@ class DefaultSyncViewModel extends SyncViewModel {
   DefaultSyncViewModel(this._cases, this._auth, this._analytics) {
     _stage = _auth.stage;
     _auth.addListener(_authChanged);
+    _bootChecked = _auth.ready && _stage != AuthStage.signedOut;
     if (_stage == AuthStage.unlocked) Future.microtask(flush);
   }
 
@@ -56,6 +57,7 @@ class DefaultSyncViewModel extends SyncViewModel {
   final AuthViewModel _auth;
   final AnalyticsService _analytics;
   late AuthStage _stage;
+  bool _bootChecked = false;
   int _applied = 0;
 
   @override
@@ -85,6 +87,12 @@ class DefaultSyncViewModel extends SyncViewModel {
   int get appliedEpoch => _applied;
 
   void _authChanged() {
+    // A queue left on disk while signed out (app killed mid sign-out) must not
+    // be sent into the next account. Wait until auth has read the session.
+    if (!_bootChecked && _auth.ready) {
+      _bootChecked = true;
+      if (_auth.stage == AuthStage.signedOut) clear();
+    }
     if (_auth.stage == _stage) return;
     final previous = _stage;
     _stage = _auth.stage;

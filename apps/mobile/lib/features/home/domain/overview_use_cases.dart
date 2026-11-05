@@ -5,9 +5,12 @@ import '../../auth/domain/auth_repository.dart';
 import '../../budgets/domain/budget.dart';
 import '../../budgets/domain/budget_use_cases.dart';
 import '../../categories/domain/category_repository.dart';
+import '../../../core/money/currency_usage.dart';
+import '../../fx_rates/domain/fx_rate_repository.dart';
 import '../../reports/domain/report.dart';
 import '../../reports/domain/report_repository.dart';
 import '../../transactions/domain/transaction.dart';
+import '../../transactions/domain/transaction_money.dart';
 import '../../transactions/domain/transaction_repository.dart';
 import '../../wallets/domain/wallet_repository.dart';
 import 'overview.dart';
@@ -15,7 +18,19 @@ import 'overview.dart';
 abstract class OverviewUseCases {
   /// Loads balances, this month, wallets, the 3 latest transactions and
   /// categories. Adds last month only when this month is still empty.
-  Future<Either<AuthFailure, OverviewData>> load(DateTime now);
+  /// [displayCurrency] also asks the server for converted totals.
+  Future<Either<AuthFailure, OverviewData>> load(
+    DateTime now, {
+    String? displayCurrency,
+  });
+
+  /// Saves a rate the user typed (1 [from] = [rate] [to]). Null when [rate]
+  /// is not a positive decimal; nothing is sent then.
+  Future<Either<AuthFailure, Unit>>? saveRate(
+    String from,
+    String to,
+    String rate,
+  );
 }
 
 @LazySingleton(as: OverviewUseCases)
@@ -26,6 +41,7 @@ class DefaultOverviewUseCases implements OverviewUseCases {
     this._transactions,
     this._categories,
     this._budgets,
+    this._rates,
   );
 
   final ReportRepository _reports;
@@ -33,14 +49,21 @@ class DefaultOverviewUseCases implements OverviewUseCases {
   final TransactionRepository _transactions;
   final CategoryRepository _categories;
   final BudgetUseCases _budgets;
+  final FxRateRepository _rates;
 
   static const recentCount = 3;
 
   @override
-  Future<Either<AuthFailure, OverviewData>> load(DateTime now) async {
+  Future<Either<AuthFailure, OverviewData>> load(
+    DateTime now, {
+    String? displayCurrency,
+  }) async {
     // Start every request first so they run in parallel, then read in order.
-    final worthF = _reports.netWorth();
-    final monthF = _reports.cashflow(const ReportPeriodQuery.month());
+    final worthF = _reports.netWorth(displayCurrency: displayCurrency);
+    final monthF = _reports.cashflow(
+      const ReportPeriodQuery.month(),
+      displayCurrency: displayCurrency,
+    );
     final walletsF = _wallets.load();
     final currenciesF = _wallets.currencies();
     // A transfer is two legs, so ask for twice as many.
@@ -61,12 +84,21 @@ class DefaultOverviewUseCases implements OverviewUseCases {
         (_) => null,
         (current) => current.budget,
       );
+      final previous = await _previousIfEmpty(month);
+      final older = previous == null ? null : await _olderThan(previous);
       return right(
         OverviewData(
           netWorth: worth,
           month: month,
-          previousMonth: await _previousIfEmpty(month),
+          previousMonth: previous,
+          monthBefore: older?.$1,
+          previousBudget: older?.$2,
           budget: budget,
+          multiCurrency: usesMultipleCurrencies([
+            for (final w in wallets) w.draft.currency,
+            for (final row in worth.items) row.currency,
+            for (final row in month.totals) row.currency,
+          ]),
           wallets: [
             for (final w in wallets)
               if (!w.archived) w,
@@ -82,6 +114,17 @@ class DefaultOverviewUseCases implements OverviewUseCases {
     }
   }
 
+  @override
+  Future<Either<AuthFailure, Unit>>? saveRate(
+    String from,
+    String to,
+    String rate,
+  ) {
+    final normalized = normalizeRate(rate);
+    if (normalized == null || from == to) return null;
+    return _rates.put(from, to, normalized).then((r) => r.map((_) => unit));
+  }
+
   /// Last month, only while this month has no income or expense. Best
   /// effort: the review card is optional, so a failure just hides it.
   Future<CashflowReport?> _previousIfEmpty(CashflowReport month) async {
@@ -95,6 +138,22 @@ class DefaultOverviewUseCases implements OverviewUseCases {
       ReportPeriodQuery.month(on: _date(before)),
     );
     return result.fold((_) => null, (report) => report);
+  }
+
+  /// The month before [previous] and [previous]'s budget, for the review
+  /// card's two extra lines. Best effort: each is null when it fails.
+  Future<(CashflowReport?, BudgetSummary?)> _olderThan(
+    CashflowReport previous,
+  ) async {
+    final before = DateTime.parse(previous.period.from)
+        .subtract(const Duration(days: 1));
+    final reportF = _reports.cashflow(
+      ReportPeriodQuery.month(on: _date(before)),
+    );
+    final budgetF = _budgets.current(on: previous.period.from);
+    final report = (await reportF).fold((_) => null, (r) => r);
+    final budget = (await budgetF).fold((_) => null, (b) => b.budget);
+    return (report, budget);
   }
 }
 

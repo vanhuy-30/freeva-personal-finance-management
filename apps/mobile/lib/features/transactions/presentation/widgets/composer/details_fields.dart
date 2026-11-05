@@ -33,11 +33,12 @@ class DetailsFields extends StatelessWidget {
     final locale = Localizations.localeOf(context).toString();
     final date = composer.occurredOn.isEmpty
         ? ''
-        : TransactionDayHeader.label(
+        : TransactionDayHeader.when(
             s,
             composer.occurredOn,
             composer.model.today() ?? '',
             locale,
+            time: composer.occurredTime,
           );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -59,7 +60,7 @@ class DetailsFields extends StatelessWidget {
                   composer.source?.draft.name ?? s.txPickWallet,
                   pick.wallet,
                 ),
-                (s.txDetailDate, date, pick.date),
+                (s.txDetailDate, date, pick.when),
               ].indexed) ...[
                 if (i > 0) Divider(height: 1, color: c.listDivider),
                 _PickRow(label: row.$1, value: row.$2, onTap: row.$3),

@@ -24,6 +24,8 @@ class ProfileRepositoryImpl implements ProfileRepository {
           for (final goal in goals)
             if (goal is String) goal,
       ],
+      displayCurrency: _code(json['displayCurrencyCode']),
+      monthlyIncomeMinor: _minor(json['monthlyIncomeMinor']),
     );
     if (!['vi', 'en'].contains(value.locale) ||
         !RegExp(r'^[A-Z]{3}$').hasMatch(value.currency) ||
@@ -68,14 +70,29 @@ class ProfileRepositoryImpl implements ProfileRepository {
     ),
   );
   @override
-  Future<Either<AuthFailure, Unit>> saveOnboarding(
-    OnboardingAnswers answers,
-  ) => _request(
-    'PATCH',
-    'profile/onboarding',
-    (_) => unit,
-    body: answers.toJson(),
-  );
+  Future<Either<AuthFailure, Unit>> saveDisplayCurrency(String? code) =>
+      _request(
+        'PUT',
+        'profile/display-currency',
+        (_) => unit,
+        body: {'currencyCode': code},
+      );
+  @override
+  Future<Either<AuthFailure, Unit>> saveMonthlyIncome(BigInt? minor) =>
+      _request(
+        'PUT',
+        'profile/monthly-income',
+        (_) => unit,
+        body: {'monthlyIncomeMinor': minor?.toString()},
+      );
+  @override
+  Future<Either<AuthFailure, Unit>> saveOnboarding(OnboardingAnswers answers) =>
+      _request(
+        'PATCH',
+        'profile/onboarding',
+        (_) => unit,
+        body: answers.toJson(),
+      );
   @override
   Future<Either<AuthFailure, Profile>> save(Profile profile) => _request(
     'PUT',
@@ -95,4 +112,12 @@ class ProfileRepositoryImpl implements ProfileRepository {
 String? _name(Object? value) {
   final name = value is String ? value.trim() : '';
   return name.isEmpty ? null : name;
+}
+
+String? _code(Object? value) =>
+    value is String && RegExp(r'^[A-Z]{3}$').hasMatch(value) ? value : null;
+
+BigInt? _minor(Object? value) {
+  final minor = value is String ? BigInt.tryParse(value) : null;
+  return minor != null && minor > BigInt.zero ? minor : null;
 }

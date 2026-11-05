@@ -17,6 +17,9 @@ abstract class ReportUseCases {
   /// Totals of the period before [period]; the screen works without them.
   Future<Either<AuthFailure, CashflowReport>> loadPrevious(ReportPeriod period);
 
+  /// Month review for the fiscal month that holds [on] (today when null).
+  Future<Either<AuthFailure, NamedMonthReview>> loadMonthReview({String? on});
+
   Future<Either<AuthFailure, TrendReport>> loadTrend(
     ReportPeriodKind kind, {
     String? on,
@@ -60,6 +63,26 @@ class DefaultReportUseCases implements ReportUseCases {
     final query = previousPeriod(period);
     if (query == null) return left(const AuthFailure(AuthError.invalidInput));
     return _reports.cashflow(query);
+  }
+
+  @override
+  Future<Either<AuthFailure, NamedMonthReview>> loadMonthReview({
+    String? on,
+  }) async {
+    if (on != null && invalidPeriod(ReportPeriodQuery.month(on: on)) != null) {
+      return left(const AuthFailure(AuthError.invalidInput));
+    }
+    final review = await _reports.monthReview(on: on);
+    return _and(review, (report) async {
+      final categories = await _categories.manage();
+      return _and(categories, (catalog) async {
+        final currencies = await _wallets.currencies();
+        return currencies.fold(
+          left,
+          (codes) => nameMonthReview(report, catalog.items, codes),
+        );
+      });
+    });
   }
 
   @override

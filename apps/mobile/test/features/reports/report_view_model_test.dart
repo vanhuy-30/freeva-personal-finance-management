@@ -236,6 +236,11 @@ class _Cases implements ReportUseCases {
   }
 
   @override
+  Future<Either<AuthFailure, NamedMonthReview>> loadMonthReview({
+    String? on,
+  }) async => left(const AuthFailure(AuthError.unavailable));
+
+  @override
   Future<Either<AuthFailure, TrendReport>> loadTrend(
     ReportPeriodKind kind, {
     String? on,

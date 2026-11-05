@@ -19,13 +19,10 @@ void main() {
       service.track(AnalyticsEvent.onboardingStarted);
 
       expect(logger.debugMessages, hasLength(1));
-      expect(
-        _payloadFrom(logger.debugMessages.single),
-        <String, Object>{
-          'event': 'onboarding_started',
-          'schema_version': 1,
-        },
-      );
+      expect(_payloadFrom(logger.debugMessages.single), <String, Object>{
+        'event': 'onboarding_started',
+        'schema_version': 1,
+      });
     });
 
     test('logs only the approved transaction type property', () {
@@ -33,14 +30,11 @@ void main() {
         AnalyticsEvent.transactionCreated(TransactionAnalyticsType.expense),
       );
 
-      expect(
-        _payloadFrom(logger.debugMessages.single),
-        <String, Object>{
-          'event': 'transaction_created',
-          'schema_version': 1,
-          'type': 'expense',
-        },
-      );
+      expect(_payloadFrom(logger.debugMessages.single), <String, Object>{
+        'event': 'transaction_created',
+        'schema_version': 1,
+        'type': 'expense',
+      });
     });
 
     test('catalog exposes only approved names and payload keys', () {
@@ -62,26 +56,23 @@ void main() {
         AnalyticsEvent.bankConnectStarted,
       ];
 
-      expect(
-        catalog.map((AnalyticsEvent event) => event.name),
-        <String>[
-          'onboarding_started',
-          'onboarding_completed',
-          'auth_signed_up',
-          'auth_signed_in',
-          'wallet_created',
-          'transaction_created',
-          'report_viewed',
-          'transaction_edited',
-          'transaction_deleted',
-          'sync_failed',
-          'export_requested',
-          'account_deletion_requested',
-          'notifications_opt_in',
-          'ai_opt_in',
-          'bank_connect_started',
-        ],
-      );
+      expect(catalog.map((AnalyticsEvent event) => event.name), <String>[
+        'onboarding_started',
+        'onboarding_completed',
+        'auth_signed_up',
+        'auth_signed_in',
+        'wallet_created',
+        'transaction_created',
+        'report_viewed',
+        'transaction_edited',
+        'transaction_deleted',
+        'sync_failed',
+        'export_requested',
+        'account_deletion_requested',
+        'notifications_opt_in',
+        'ai_opt_in',
+        'bank_connect_started',
+      ]);
       for (final AnalyticsEvent event in catalog) {
         expect(
           event.toPayload().keys,

@@ -1,12 +1,16 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mobile/features/home/presentation/pages/notifications_page.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mobile/core/di/injection.dart';
 import 'package:mobile/core/widgets/freeva_switch.dart';
 import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/feedback/domain/feedback.dart';
 import 'package:mobile/features/feedback/presentation/pages/feedback_page.dart';
 import 'package:mobile/features/feedback/presentation/viewmodels/feedback_view_model.dart';
+import 'package:mobile/features/notifications/domain/notification_models.dart';
+import 'package:mobile/features/notifications/presentation/viewmodels/notification_view_model.dart';
 import 'package:mobile/features/settings/presentation/pages/faq_page.dart';
 import 'package:mobile/features/settings/presentation/pages/notification_settings_page.dart';
 import 'package:mobile/features/tags/domain/tag.dart';
@@ -16,6 +20,7 @@ import 'package:mobile/features/tags/presentation/viewmodels/tag_manage_view_mod
 import 'package:mobile/features/transactions/domain/transaction_filter.dart';
 import 'package:mobile/features/transactions/presentation/viewmodels/transaction_view_model.dart';
 
+import '../notifications/fake_notification_view_model.dart';
 import '../transactions/c1_stub.dart' show StubTransactionViewModel;
 import 'g1_harness.dart';
 
@@ -90,7 +95,8 @@ void main() {
     feedback = FakeFeedback();
     getIt
       ..registerSingleton<TagUseCases>(tags)
-      ..registerSingleton<FeedbackUseCases>(feedback);
+      ..registerSingleton<FeedbackUseCases>(feedback)
+      ..registerSingleton<NotificationViewModel>(FakeNotificationViewModel());
   });
   tearDown(() async {
     g.dispose();
@@ -192,15 +198,100 @@ void main() {
     expect(find.text('Không có câu hỏi khớp'), findsOneWidget);
   });
 
-  testWidgets('Thông báo: only new-device alerts has a switch', (tester) async {
+  testWidgets('Thông báo: live kinds and session switch', (tester) async {
     tall(tester);
     await tester.pumpWidget(g.app(const NotificationSettingsPage()));
     await tester.pumpAndSettle();
-    expect(find.byType(FreevaSwitch), findsOneWidget);
-    expect(find.text('Sắp có'), findsNWidgets(4));
+    // daily log, recurring, budget, debt, card, session, quiet hours
+    expect(find.byType(FreevaSwitch), findsNWidgets(7));
+    // goal, month review; insight is gone (board N5)
+    expect(find.text('Sắp có'), findsNWidgets(2));
+    expect(find.text('Insight mới'), findsNothing);
     final before = g.settings.sessionAlertsEnabled;
     await tester.tap(find.text('Máy mới đăng nhập'));
     await tester.pumpAndSettle();
     expect(g.settings.sessionAlertsEnabled, !before);
+  });
+
+  testWidgets('Thông báo: budget levels link opens Ngân sách', (tester) async {
+    tall(tester);
+    await tester.pumpWidget(
+      g.app(
+        const NotificationSettingsPage(),
+        routes: [
+          GoRoute(
+            path: '/budgets',
+            builder: (_, __) => const Scaffold(body: Text('PAGE /budgets')),
+          ),
+        ],
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('80% và 100%'));
+    await tester.pumpAndSettle();
+    expect(find.text('PAGE /budgets'), findsOneWidget);
+  });
+
+  testWidgets('Nhắc ghi chi: switch and time picker use the API time', (
+    tester,
+  ) async {
+    tall(tester);
+    final model = getIt<NotificationViewModel>() as FakeNotificationViewModel;
+    await tester.pumpWidget(g.app(const NotificationSettingsPage()));
+    await tester.pumpAndSettle();
+    expect(find.text('Mỗi ngày lúc '), findsOneWidget);
+    await tester.tap(find.text('Nhắc ghi chi'));
+    await tester.pumpAndSettle();
+    expect(
+      model.preferences!.toggle(NotificationKind.dailyLog)!.enabled,
+      isTrue,
+    );
+    await tester.tap(find.text('20:00'));
+    await tester.pumpAndSettle();
+    expect(find.text('Chọn giờ nhắc'), findsOneWidget);
+    expect(find.text('Chọn 20:00'), findsOneWidget);
+    // One row up on the minute wheel: 20:15.
+    await tester.drag(find.text('00').first, const Offset(0, -44));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Chọn 20:15'));
+    await tester.pumpAndSettle();
+    expect(model.savedDailyLogTimes, ['20:15']);
+    expect(find.text('20:15'), findsOneWidget);
+  });
+
+  testWidgets('inbox: tapping the daily log reminder opens Ghi chi', (
+    tester,
+  ) async {
+    tall(tester);
+    final model = getIt<NotificationViewModel>() as FakeNotificationViewModel
+      ..items = [
+        InboxNotification(
+          id: 'n1',
+          kind: NotificationKind.dailyLog,
+          titleKey: 'daily_log',
+          bodyKey: 'daily_log_body',
+          params: const {},
+          createdAt: DateTime.utc(2026, 11, 4, 13),
+          readAt: null,
+        ),
+      ];
+    await tester.pumpWidget(
+      g.app(
+        const NotificationsPage(),
+        routes: [
+          GoRoute(
+            path: '/record',
+            builder: (_, state) =>
+                Scaffold(body: Text('RECORD ${state.uri.query}')),
+          ),
+        ],
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Ghi chi hôm nay'), findsOneWidget);
+    await tester.tap(find.text('Ghi chi hôm nay'));
+    await tester.pumpAndSettle();
+    expect(model.readIds, ['n1']);
+    expect(find.text('RECORD type=expense'), findsOneWidget);
   });
 }

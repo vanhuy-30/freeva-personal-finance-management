@@ -8,7 +8,7 @@ import { CreateAccountDto, ReorderAccountsDto, UpdateAccountDto } from './financ
 const current: FinancialAccount = {
   id: randomUUID(), clientId: randomUUID(), name: 'Ví', type: 'cash', currencyCode: 'VND',
   initialBalanceMinor: 0n, balanceMinor: 0n, hasTransactions: false, sortOrder: 0, creditLimitMinor: null,
-  statementCloseDay: null, paymentDueDay: null, version: 1, archivedAt: null,
+  statementCloseDay: null, paymentDueDay: null, minimumPaymentMinor: null, version: 1, archivedAt: null,
   createdAt: new Date(), updatedAt: new Date(),
 };
 describe('BE-P1-004 account rules', () => {
@@ -22,7 +22,7 @@ describe('BE-P1-004 account rules', () => {
     expect(minor('-0')).toBe(0n);
     expect(sameCreate(current, {
       clientId: current.clientId, name: 'Ví', type: 'cash', currencyCode: 'VND', initialBalanceMinor: minor('00'),
-      sortOrder: 0, creditLimitMinor: null, statementCloseDay: null, paymentDueDay: null,
+      sortOrder: 0, creditLimitMinor: null, statementCloseDay: null, paymentDueDay: null, minimumPaymentMinor: null,
     })).toBe(true);
   });
   it('locks denomination and type with history but allows correction of initial balance', () => {
@@ -32,13 +32,20 @@ describe('BE-P1-004 account rules', () => {
     expect(() => updatedFields(current, { version: 2 }, false)).toThrow('ACCOUNT_CONFLICT');
   });
   it('clears old credit config and rejects contradictory config', () => {
-    const card = { ...current, type: 'credit' as const, creditLimitMinor: 1000n, statementCloseDay: 12, paymentDueDay: 20 };
+    const card = {
+      ...current, type: 'credit' as const, creditLimitMinor: 1000n, statementCloseDay: 12, paymentDueDay: 20,
+      minimumPaymentMinor: 100n,
+    };
     expect(updatedFields(card, { version: 1, type: 'bank' }, false)).toMatchObject({
-      creditLimitMinor: null, statementCloseDay: null, paymentDueDay: null,
+      creditLimitMinor: null, statementCloseDay: null, paymentDueDay: null, minimumPaymentMinor: null,
     });
     expect(() => updatedFields(card, { version: 1, type: 'bank', paymentDueDay: 5 }, false)).toThrow('VALIDATION_ERROR');
+    expect(() => updatedFields(card, { version: 1, type: 'bank', minimumPaymentMinor: 1n }, false))
+      .toThrow('VALIDATION_ERROR');
     expect(() => validateCredit({ ...card, creditLimitMinor: -1n })).toThrow('VALIDATION_ERROR');
+    expect(() => validateCredit({ ...card, minimumPaymentMinor: -1n })).toThrow('VALIDATION_ERROR');
     expect(() => validateCredit({ ...current, paymentDueDay: 1 })).toThrow('VALIDATION_ERROR');
+    expect(() => validateCredit({ ...current, minimumPaymentMinor: 1n })).toThrow('VALIDATION_ERROR');
   });
   it('trims names and rejects null in nonnullable fields or unknown input', async () => {
     const dto = plainToInstance(CreateAccountDto, { clientId: randomUUID(), name: ' Ví ', type: 'cash', currencyCode: 'VND', initialBalanceMinor: '0' });
@@ -47,7 +54,9 @@ describe('BE-P1-004 account rules', () => {
     for (const patch of [{ name: null }, { initialBalanceMinor: null }, { sortOrder: null }, { archived: null }, { name: '  ' }, { statementCloseDay: 29 }, { sortOrder: 0.5 }, { currencyCode: 'VN\n' }]) {
       expect((await validate(plainToInstance(UpdateAccountDto, { version: 1, ...patch }))).length).toBeGreaterThan(0);
     }
-    expect(await validate(plainToInstance(UpdateAccountDto, { version: 1, creditLimitMinor: null, statementCloseDay: null }))).toHaveLength(0);
+    expect(await validate(plainToInstance(UpdateAccountDto, {
+      version: 1, creditLimitMinor: null, statementCloseDay: null, minimumPaymentMinor: null,
+    }))).toHaveLength(0);
     expect((await validate(plainToInstance(UpdateAccountDto, { version: 1, userId: randomUUID() }), { whitelist: true, forbidNonWhitelisted: true })).length).toBeGreaterThan(0);
   });
   it('reorders only moved accounts and rejects stale or partial lists', () => {

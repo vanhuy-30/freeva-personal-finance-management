@@ -67,7 +67,7 @@ Nút + → Ghi chi → Tất cả danh mục (sheet)
 | API lọc | `GET /transactions` nhận `accountId`, `categoryId`, `tagId` lặp lại; tìm khớp `merchant`; trả `summary` (số giao dịch, thu/chi theo tiền tệ) cho cả kết quả lọc. |
 | Danh mục cha | Chọn cha thì app tự gồm danh mục con khi gửi bộ lọc. |
 | Khoảng tuỳ chọn | Tạm dùng bộ chọn khoảng ngày của hệ thống; sheet chọn ngày của Freeva làm cùng C2. |
-| Giờ giao dịch | Chỉ có ngày; giờ tách thành `BE-P2-E09 / MOB-P2-E09`. Chi tiết hiện "Hôm nay · 21/10". |
+| Giờ giao dịch | `BE-P2-E09` / `MOB-P2-E09`: `occurredTime` HH:mm tuỳ chọn; form C2.3 và chi tiết `"Hôm nay, 12:40"`; nhóm danh sách vẫn `"Hôm nay · 21/10"`. |
 | C2.1–C2.6 | Đã làm: segmented Chi · Thu · Chuyển, số tiền nhập bằng bàn phím Freeva (đơn vị nhỏ nhất, tối đa 13 chữ số, không phím thập phân), 3 chip danh mục hay dùng theo loại + "Tất cả", ô Ví/Ngày, nút nét đứt mở màn chi tiết (cũng là màn Sửa), sheet danh mục có tìm không dấu, sheet nhãn tạo nhanh (giới hạn 20), chuyển ví Từ/Đến có đảo chiều và thẻ tỷ giá, lưu xong toast Hoàn tác và tô dòng mới. Đóng khi đã nhập thì hỏi lại. |
 | Tỷ giá | Lưu và hiển thị theo chiều ví nguồn → ví đích ("1 VND = 0,00004 USD"), 8 chữ số thập phân, quy đổi phải ra đúng đơn vị nhỏ nhất. Cách hiển thị "1 USD = 25.380 ₫" của thiết kế cần đổi quy tắc làm tròn/lưu tỷ giá ở backend — chưa làm. |
 | Danh mục theo loại | Mobile đọc `kind` (chi/thu/cả hai) để lọc chip và sheet. |

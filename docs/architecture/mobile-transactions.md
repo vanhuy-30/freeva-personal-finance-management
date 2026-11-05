@@ -16,7 +16,9 @@ Nhãn/merchant thuộc [MOB-P1-011](mobile-tags.md).
   là dữ liệu, không tự dịch. Không tô chữ bằng `colorToken`.
 - `occurredOn` mặc định là hôm nay theo IANA timezone hồ sơ. Có thể chọn quá
   khứ hoặc tương lai trong khoảng 1900–2100. Ngày là lịch `YYYY-MM-DD`, không
-  suy từ UTC.
+  suy từ UTC. `occurredTime` (`HH:mm`, `BE-P2-E09` / `MOB-P2-E09`) mặc định giờ
+  hiện tại theo TZ hồ sơ khi ghi mới; có thể bỏ trống. Chi tiết hiện
+  `"Hôm nay, 12:40"`; nhóm danh sách vẫn theo ngày (`"Hôm nay · 21/10"`).
 - User nhập số dương. Domain lưu chi âm, thu dương. Chuyển cùng tiền tệ thì
   đích bằng `|nguồn|`. Khác tiền tệ bắt buộc rate chuỗi và `quotedAt`; đích chỉ
   được nhận khi phép đổi ra đúng minor unit, không `double` và không làm tròn.
@@ -77,9 +79,7 @@ Analytics chỉ `transaction_created` với `type` income/expense/transfer,
 
 Không cache giao dịch đầy đủ. Mất mạng đưa mutation vào hàng đợi
 [MOB-P1-008](mobile-sync.md) và gửi lại bằng `POST /api/v1/sync`. Catalog tiền
-tệ hiện có VND; nhánh FX vẫn được kiểm tra khi hai ví khác mã. Chưa native
-build hoặc E2E staging. Backend giao dịch và migration danh mục cần có trước
-khi smoke trên API thật.
+tệ hiện có VND; nhánh FX vẫn được kiểm tra khi hai ví khác mã.
 
 ## Kiểm chứng
 

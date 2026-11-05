@@ -11,9 +11,10 @@ Client Flutter dùng contract `/api/v1` và quyết định email/session ở
 - "Quên mật khẩu" gửi link; sau khi gửi, màn nói "kiểm tra email". Màn Đặt mật khẩu mới có sẵn (`AuthViewModel.startReset(token)`) nhưng chưa có đường vào cho tới khi làm deep link (task riêng).
 - **PIN không bắt buộc.** Không có PIN thì app không khóa khi vào nền (vẫn che màn hình) và phiên khôi phục thẳng vào app; có PIN thì khởi động lại luôn khóa. Người đã bỏ qua đặt PIN ở Cá nhân → Bảo mật → "Đặt mã PIN". Đăng nhập lại vào thẳng app, không qua bước PIN.
 - UI giữ logo/tokens Freeva, nền surface, input/CTA bo góc, back navigation, password visibility, loading/error, l10n vi/en. Google/Apple chưa hiện vì OAuth chưa triển khai; không đưa legal draft nội bộ thành điều khoản in-app.
-- Token trong mail vẫn là 64 ký tự hex; UI không còn ô nhập mã (chốt 2026-10-23), link mở thẳng app sẽ làm ở task riêng. Password 12–128 ký tự, không trim; đăng ký và đặt lại cần thêm ít nhất một chữ và một số (`hasLetterAndDigit`, `DS-P2-004`), đăng nhập chỉ kiểm tra độ dài. Email trim/lowercase.
+- Token trong mail vẫn là 64 ký tự hex; UI không còn ô nhập mã (chốt 2026-10-23), link mở thẳng app sẽ làm ở task riêng. Password 8–128 ký tự (`minPasswordLength`/`maxPasswordLength`, `BE-P2-014`), không trim; đăng ký và đặt lại cần thêm ít nhất một chữ và một số (`hasLetterAndDigit`, `DS-P2-004`), đăng nhập chỉ kiểm tra độ dài. Email trim/lowercase; email sai trả `invalidEmail` trước khi gọi API.
 - Login nhận opaque Bearer, hạn tuyệt đối và session ID. Khởi động lại khóa nếu có PIN; chưa có PIN thì vào thẳng app.
 - Home có list phiên, thu hồi một phiên/mọi phiên, logout và khóa ngay. Logout online phải thành công mới xóa local; lỗi mạng cho phép thử lại. `401` của request có Bearer xóa credential và yêu cầu login.
+- Xóa tài khoản (`MOB-P2-011`): `DELETE /account` phải thành công mới xóa phiên và PIN local; lỗi mạng hoặc server từ chối thì giữ nguyên. Xuất dữ liệu lấy đúng body `GET /account/export`.
 - Quên PIN xóa credential **trên thiết bị**, không giả định đã revoke server. UI nói rõ phiên server còn đến hạn hoặc được thu hồi sau khi login lại.
 
 ## Lưu trữ và giới hạn
@@ -59,7 +60,6 @@ recents cần smoke test trên thiết bị thực trước phát hành.
 Kết quả local: `flutter analyze` sạch, 33 tests pass; Android `:app:assembleDebug`
 (JDK 17) và iOS simulator build pass. Cold launch trên iPhone 17 Pro simulator
 (iOS 26) đã hiển thị login tiếng Việt, không lỗi Keychain sau khi thêm entitlement.
-Chưa chạy email/SMTP end-to-end hoặc sinh trắc học thiết bị thật.
 
 ### Email-step và quyền riêng tư
 

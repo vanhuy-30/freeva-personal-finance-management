@@ -112,7 +112,6 @@ class AppSettingsGroup extends StatelessWidget {
           icon: LucideIcons.bell,
           title: s.meNotifications,
           minHeight: rowHeight,
-          // Only "Máy mới đăng nhập" works so far.
           value: settings.sessionAlertsEnabled ? s.meNotifyOnCount(1) : null,
           onTap: () => context.push('/me/notifications'),
         ),

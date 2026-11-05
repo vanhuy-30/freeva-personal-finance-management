@@ -16,6 +16,8 @@ class PickerField extends StatelessWidget {
     this.leading,
     this.compact = false,
     this.chevronSize,
+    this.chevron = true,
+    this.trailing,
     super.key,
   });
 
@@ -35,6 +37,13 @@ class PickerField extends StatelessWidget {
   /// Chevron size; defaults to 16 next to a [leading] tile, 18 otherwise
   /// (and 18 when [compact]).
   final double? chevronSize;
+
+  /// false drops the chevron (the L boards: the field opens a choice but
+  /// does not draw the arrow).
+  final bool chevron;
+
+  /// Drawn at the end instead of the chevron (InstAdd "Mỗi kỳ": pencil).
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -98,15 +107,18 @@ class PickerField extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Icon(
-                    LucideIcons.chevronDown,
-                    size:
-                        chevronSize ??
-                        (leading != null && !compact
-                            ? FreevaSize.iconChip
-                            : FreevaSize.iconSm),
-                    color: c.textSecondary,
-                  ),
+                  if (trailing != null)
+                    trailing!
+                  else if (chevron)
+                    Icon(
+                      LucideIcons.chevronDown,
+                      size:
+                          chevronSize ??
+                          (leading != null && !compact
+                              ? FreevaSize.iconChip
+                              : FreevaSize.iconSm),
+                      color: c.textSecondary,
+                    ),
                 ],
               ),
             ),

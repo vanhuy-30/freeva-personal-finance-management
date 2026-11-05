@@ -1,6 +1,7 @@
 // MOB-P1-001: connection-only probe; sends no credentials or email.
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:mobile/core/config/app_config.dart';
 import 'package:mobile/core/network/create_http_client.dart';
 
@@ -23,7 +24,8 @@ Future<void> main(List<String> arguments) async {
       throw StateError('Local API/database is not ready');
     }
     stdout.writeln(
-        'PASS: Dart client verified HTTPS certificate and API/database health.');
+      'PASS: Dart client verified HTTPS certificate and API/database health.',
+    );
   } finally {
     client.close();
   }

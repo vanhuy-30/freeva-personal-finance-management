@@ -17,6 +17,7 @@ void main() {
       SyncReason.transactionMissing,
     );
     expect(reasonForCode('VALIDATION_ERROR'), SyncReason.invalid);
+    expect(reasonForCode('CATEGORY_KIND_MISMATCH'), SyncReason.categoryKind);
     expect(reasonForCode('TRANSACTIONS_UNAVAILABLE'), SyncReason.unavailable);
     expect(reasonForCode(null), SyncReason.unavailable);
   });

@@ -26,14 +26,14 @@ export const LETTER_AND_DIGIT = /^(?=[\s\S]*\p{L})(?=[\s\S]*\p{Nd})[\s\S]*$/u;
 
 export class CredentialsDto extends EmailDto {
   @IsString()
-  @MinLength(12)
+  @MinLength(8)
   @MaxLength(128)
   password!: string;
 }
 
 export class NewCredentialsDto extends EmailDto {
   @IsString()
-  @MinLength(12)
+  @MinLength(8)
   @MaxLength(128)
   @Matches(LETTER_AND_DIGIT)
   password!: string;
@@ -53,7 +53,7 @@ export class TokenDto {
 
 export class ResetPasswordDto extends TokenDto {
   @IsString()
-  @MinLength(12)
+  @MinLength(8)
   @MaxLength(128)
   @Matches(LETTER_AND_DIGIT)
   password!: string;
@@ -67,7 +67,7 @@ export class ChangePasswordDto {
   currentPassword!: string;
 
   @IsString()
-  @MinLength(12)
+  @MinLength(8)
   @MaxLength(128)
   @Matches(LETTER_AND_DIGIT)
   newPassword!: string;

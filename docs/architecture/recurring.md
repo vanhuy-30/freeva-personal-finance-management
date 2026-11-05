@@ -23,3 +23,8 @@ Contract: [OpenAPI](../../packages/api-contracts/openapi.yaml) `/api/v1/recurrin
 ## Worker
 
 `RecurringWorker` mỗi 60 giây gọi `runDue(null)`. Không chạy khi `NODE_ENV=test`. Mobile gọi `POST .../run` lúc vào app và lúc resume (lỗi mạng im lặng). Rule không vào hàng đợi offline sync.
+
+## Chế độ nhắc (BE-P3-001)
+
+`mode`: `auto` (như trên) hoặc `remind` (hóa đơn: nhắc và chờ xác nhận, xem [bills.md](bills.md)). `runDue` và worker **chỉ chạy rule `auto`**. `accountId` bắt buộc với `auto`, tùy chọn với `remind`. Thêm `name`, `amountKind`, `remindDaysBefore`, và `overdue` trong response. `GET ?mode=` lọc theo chế độ.
+

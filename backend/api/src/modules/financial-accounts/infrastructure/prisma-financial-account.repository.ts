@@ -10,7 +10,7 @@ import {
 const select = {
   id: true, clientId: true, name: true, type: true, currencyCode: true,
   initialBalanceMinor: true, sortOrder: true, creditLimitMinor: true,
-  statementCloseDay: true, paymentDueDay: true, archivedAt: true,
+  statementCloseDay: true, paymentDueDay: true, minimumPaymentMinor: true, archivedAt: true,
   version: true, createdAt: true, updatedAt: true,
 } satisfies Prisma.FinancialAccountSelect;
 type Row = Prisma.FinancialAccountGetPayload<{ select: typeof select }>;

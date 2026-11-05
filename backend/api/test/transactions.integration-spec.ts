@@ -20,6 +20,11 @@ if (!databaseUrl || new URL(databaseUrl).pathname !== '/auth_test') {
 }
 process.env.DATABASE_URL = databaseUrl;
 
+/** Detail adds `converted` to each leg (BE-P2-013); create, list and update responses do not. */
+/** Read-only fields of GET by id (`converted`, `refundedMinor`, `installmentPlanId`) are not in write responses. */
+const plain = (bundle: { legs: Array<{ converted?: unknown; refundedMinor?: unknown; installmentPlanId?: unknown }> }) =>
+  ({ ...bundle, legs: bundle.legs.map(({ converted: _converted, refundedMinor: _refunded, installmentPlanId: _plan, ...leg }) => leg) });
+
 describe('BE-P1-005 HTTP + PostgreSQL', () => {
   let app: INestApplication;
   let prisma: PrismaService;
@@ -108,7 +113,7 @@ describe('BE-P1-005 HTTP + PostgreSQL', () => {
     const data = await input(type); const created = await create(data); const first = created.legs[0];
     expect(created.legs).toHaveLength(type === 'transfer' ? 2 : 1);
     expect(await balance(first.accountId)).toBe(first.amountMinor);
-    expect((await request('GET', `/${first.id}`)).body).toEqual(created);
+    expect(plain((await request('GET', `/${first.id}`)).body)).toEqual(created);
     expect((await request()).body.total).toBe(created.legs.length);
     const changed = await request('PATCH', `/${created.legs.at(-1).id}`, { version: 1, occurredOn: '2024-02-29', notes: null });
     expect(changed.status).toBe(200);
@@ -203,13 +208,42 @@ describe('BE-P1-005 HTTP + PostgreSQL', () => {
     const foreign = await prisma.tag.create({ data: { userId: other, clientId: randomUUID(), name: 'Foreign' } });
     const data = await input('income');
     const created = await create({ ...data, categoryId: category.id, tagIds: [tag.id], merchant: '  WinMart  ' });
-    expect(created.legs[0]).toMatchObject({ categoryId: category.id, tagIds: [tag.id], merchant: 'WinMart' });
+    expect(created.legs[0]).toMatchObject({ categoryId: category.id, tagIds: [tag.id], merchant: 'WinMart', occurredTime: null });
     expect((await request('PATCH', `/${created.legs[0].id}`, { version: 1, tagIds: [foreign.id] })).status).toBe(400);
     const changed = await request('PATCH', `/${created.legs[0].id}`, { version: 1, categoryId: null, tagIds: [], notes: null, merchant: null });
     expect(changed.body.legs[0]).toMatchObject({ categoryId: null, tagIds: [], notes: null, merchant: null });
     expect((await request('POST', '', { ...await input(), categoryId: category.id })).status).toBe(400);
     expect((await request('POST', '', { ...await input('income'), categoryId: randomUUID() })).status).toBe(400);
     expect((await request('POST', '', { ...await input(), merchant: 'Shop' })).status).toBe(400);
+  });
+  it('BE-P2-010 rejects a category whose kind does not fit the type, without a partial write', async () => {
+    const mk = (kind: 'expense' | 'income' | 'both') => prisma.category.create({ data: { userId: owner, clientId: randomUUID(), name: `Kind ${kind}`, kind } });
+    const [expenseOnly, incomeOnly, both] = [await mk('expense'), await mk('income'), await mk('both')];
+    const spend = await input('expense');
+    const wrong = await request('POST', '', { ...spend, categoryId: incomeOnly.id });
+    expect(wrong.status).toBe(400);
+    expect(wrong.body.error.code).toBe('CATEGORY_KIND_MISMATCH');
+    expect(await prisma.transaction.count({ where: { clientId: spend.legs[0].clientId } })).toBe(0);
+    expect((await request('POST', '', { ...await input('income'), categoryId: expenseOnly.id })).status).toBe(400);
+    const created = await create({ ...spend, categoryId: expenseOnly.id });
+    const patched = await request('PATCH', `/${created.legs[0].id}`, { version: 1, categoryId: incomeOnly.id });
+    expect(patched.status).toBe(400);
+    expect(patched.body.error.code).toBe('CATEGORY_KIND_MISMATCH');
+    expect((await request('PATCH', `/${created.legs[0].id}`, { version: 1, categoryId: both.id })).status).toBe(200);
+    expect((await create({ ...await input('income'), categoryId: both.id })).legs[0].categoryId).toBe(both.id);
+  });
+  it('stores optional occurredTime HH:mm, clears it on PATCH null, and rejects invalid clocks', async () => {
+    const category = await prisma.category.create({ data: { userId: owner, clientId: randomUUID(), name: 'Food' } });
+    const data = await input('expense');
+    expect((await request('POST', '', { ...data, categoryId: category.id, occurredTime: '24:00' })).status).toBe(400);
+    const created = await create({ ...data, categoryId: category.id, occurredTime: '12:40' });
+    expect(created.legs[0]).toMatchObject({ occurredOn: '2026-09-25', occurredTime: '12:40' });
+    const replay = await request('POST', '', { ...data, categoryId: category.id, occurredTime: '12:40' });
+    expect(replay.status).toBe(200);
+    expect((await request('POST', '', { ...data, categoryId: category.id, occurredTime: '13:00' })).status).toBe(409);
+    const cleared = await request('PATCH', `/${created.legs[0].id}`, { version: 1, occurredTime: null });
+    expect(cleared.status).toBe(200);
+    expect(cleared.body.legs[0].occurredTime).toBeNull();
   });
   it('allows only one winner for concurrent updates through opposite transfer legs', async () => {
     const data = await input(); const created = await create(data);
@@ -265,7 +299,7 @@ describe('BE-P1-005 HTTP + PostgreSQL', () => {
     try {
       expect((await request('PATCH', `/${created.legs[0].id}`, { version: 1, notes: 'Must roll back' })).status).toBe(503);
       expect((await request('DELETE', `/${created.legs[0].id}?version=1`)).status).toBe(503);
-      expect((await request('GET', `/${created.legs[0].id}`)).body).toEqual(created);
+      expect(plain((await request('GET', `/${created.legs[0].id}`)).body)).toEqual(created);
       expect(await balance(data.legs[0].accountId)).toBe(data.legs[0].amountMinor);
     } finally {
       await prisma.$executeRawUnsafe('DROP TRIGGER test_fail_transfer_update ON "Transaction"');
@@ -337,14 +371,14 @@ describe('BE-P1-005 HTTP + PostgreSQL', () => {
     const list = async (query: string) => {
       const res = await request('GET', `?${query}`);
       expect(res.status).toBe(200);
-      return res.body as { total: number; items: { id: string }[]; summary: { count: number; totals: { currency: string; incomeMinor: string; expenseMinor: string; transferInMinor: string; transferOutMinor: string }[] } };
+      return res.body as { total: number; items: { id: string }[]; summary: { count: number; totals: { currency: string; incomeMinor: string; expenseMinor: string; transferInMinor: string; transferOutMinor: string; adjustmentMinor: string }[] } };
     };
     const all = await list('');
     expect(all.total).toBe(7);
     expect(all.summary.count).toBe(6);
     expect(all.summary.totals).toEqual([
-      { currency: 'USD', incomeMinor: '1250', expenseMinor: '0', transferInMinor: '0', transferOutMinor: '0' },
-      { currency: 'VND', incomeMinor: '18500000', expenseMinor: '-114000', transferInMinor: '500000', transferOutMinor: '-500000' },
+      { currency: 'USD', incomeMinor: '1250', expenseMinor: '0', transferInMinor: '0', transferOutMinor: '0', adjustmentMinor: '0', debtMinor: '0', refundMinor: '0' },
+      { currency: 'VND', incomeMinor: '18500000', expenseMinor: '-114000', transferInMinor: '500000', transferOutMinor: '-500000', adjustmentMinor: '0', debtMinor: '0', refundMinor: '0' },
     ]);
     const biggest = await list('type=expense&sort=amountDesc&pageSize=2');
     expect(biggest.items.map(item => item.id)).toEqual([pho.legs[0].id, grab.legs[0].id]);
@@ -363,13 +397,13 @@ describe('BE-P1-005 HTTP + PostgreSQL', () => {
     expect(paged.summary.count).toBe(6);
     const wallets = await list(`accountId=${cash.id}&accountId=${bank.id}&type=expense`);
     expect(new Set(wallets.items.map(item => item.id))).toEqual(new Set([pho.legs[0].id, grab.legs[0].id]));
-    expect(wallets.summary.totals).toEqual([{ currency: 'VND', incomeMinor: '0', expenseMinor: '-113000', transferInMinor: '0', transferOutMinor: '0' }]);
+    expect(wallets.summary.totals).toEqual([{ currency: 'VND', incomeMinor: '0', expenseMinor: '-113000', transferInMinor: '0', transferOutMinor: '0', adjustmentMinor: '0', debtMinor: '0', refundMinor: '0' }]);
     // One wallet: its transfer legs show as money in and out, apart from income/expense.
     expect((await list(`accountId=${bank.id}`)).summary.totals).toEqual([
-      { currency: 'VND', incomeMinor: '18500000', expenseMinor: '-48000', transferInMinor: '0', transferOutMinor: '-500000' },
+      { currency: 'VND', incomeMinor: '18500000', expenseMinor: '-48000', transferInMinor: '0', transferOutMinor: '-500000', adjustmentMinor: '0', debtMinor: '0', refundMinor: '0' },
     ]);
     expect((await list(`accountId=${cash.id}&type=transfer`)).summary.totals).toEqual([
-      { currency: 'VND', incomeMinor: '0', expenseMinor: '0', transferInMinor: '500000', transferOutMinor: '0' },
+      { currency: 'VND', incomeMinor: '0', expenseMinor: '0', transferInMinor: '500000', transferOutMinor: '0', adjustmentMinor: '0', debtMinor: '0', refundMinor: '0' },
     ]);
     expect((await list(`categoryId=${food.id}&categoryId=${bus.id}`)).summary.count).toBe(3);
     expect((await list(`tagId=${trip.id}`)).items.map(item => item.id)).toEqual([grab.legs[0].id]);

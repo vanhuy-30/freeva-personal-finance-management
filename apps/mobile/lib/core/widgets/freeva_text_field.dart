@@ -27,6 +27,8 @@ class FreevaTextField extends StatefulWidget {
     this.suffix,
     this.obscureText = false,
     this.leadingIcon,
+    this.leadingTint,
+    this.trailingIcon,
     this.maxLength,
     this.showCounter = false,
     super.key,
@@ -53,6 +55,14 @@ class FreevaTextField extends StatefulWidget {
 
   /// Glyph in a 32 subtle tile (radius 10) in front of the label and value.
   final IconData? leadingIcon;
+
+  /// Fill and glyph colours of the [leadingIcon] tile when it is not the
+  /// neutral one (a category's tones).
+  final (Color, Color)? leadingTint;
+
+  /// 16 secondary glyph at the end, saying the value can be changed
+  /// (LoanPay's pencil).
+  final IconData? trailingIcon;
 
   /// Hard limit on the number of characters.
   final int? maxLength;
@@ -212,19 +222,29 @@ class _FreevaTextFieldState extends State<FreevaTextField> {
                     width: FreevaSize.iconTile,
                     height: FreevaSize.iconTile,
                     decoration: BoxDecoration(
-                      color: c.bgSubtle,
+                      color: widget.leadingTint?.$1 ?? c.bgSubtle,
                       borderRadius: BorderRadius.circular(FreevaRadius.xs),
                     ),
                     child: Icon(
                       widget.leadingIcon,
                       size: FreevaSize.iconChip,
-                      color: c.textOnWash,
+                      color: widget.leadingTint?.$2 ?? c.textOnWash,
                     ),
                   ),
                 ),
                 const SizedBox(width: 10),
               ],
               Expanded(child: body),
+              if (widget.trailingIcon != null) ...[
+                const SizedBox(width: FreevaSpace.s2),
+                ExcludeSemantics(
+                  child: Icon(
+                    widget.trailingIcon,
+                    size: FreevaSize.iconChip,
+                    color: c.textSecondary,
+                  ),
+                ),
+              ],
             ],
           ),
         ),

@@ -21,6 +21,8 @@ const SENSITIVE_KEYS = new Set([
   'tokenhash',
   'encryptedtoken',
   'refreshtoken',
+  'fcmtoken',
+  'private_key',
   'accesstoken',
   'authorization',
   'cookie',

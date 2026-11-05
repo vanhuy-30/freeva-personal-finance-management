@@ -15,6 +15,7 @@ erDiagram
   User ||--o{ Transaction : books
   User ||--o| Budget : defaultLimits
   User ||--o{ BudgetMonth : monthOverrides
+  User ||--o{ Bill : obligations
   User ||--o{ FxQuote : quotes
   Budget ||--o{ BudgetCategory : lines
   BudgetMonth ||--o{ BudgetMonthCategory : lines
@@ -23,12 +24,16 @@ erDiagram
   Currency ||--o{ User : default
   Currency ||--o{ FinancialAccount : denom
   Currency ||--o{ Transaction : denom
+  Currency ||--o{ Bill : denom
   Currency ||--o{ FxQuote : from
   Currency ||--o{ FxQuote : to
   CategoryGroup ||--o{ Category : groups
   Category ||--o{ Category : parent
   FinancialAccount ||--o{ Transaction : posts
+  Bill }o--o| RecurringRule : optionalLink
+  Bill }o--o| Transaction : paidBy
   Category ||--o{ Transaction : classifies
+  Transaction ||--o{ Transaction : refundOf
   Transaction ||--o{ TransactionTag : tagged
   Tag ||--o{ TransactionTag : on
   FxQuote ||--o{ Transaction : rates
@@ -40,7 +45,7 @@ erDiagram
 
 - **Tiền:** integer minor units (`BigInt`). Không `float` / `double`. Signed: thu dương; chi âm; transfer nguồn âm, đích dương.
 - **Số dư:** `initialBalanceMinor` ± giao dịch chưa xóa. Không cached balance.
-- **Timezone:** `User.timezone` IANA, mặc định `Asia/Ho_Chi_Minh`. `occurredOn` = calendar date theo TZ user (`date`, không UTC wall-clock).
+- **Timezone:** `User.timezone` IANA, mặc định `Asia/Ho_Chi_Minh`. `occurredOn` = calendar date theo TZ user (`date`, không UTC wall-clock). `occurredTime` = giờ địa phương `HH:mm` tuỳ chọn trên cùng ngày; đổi timezone hồ sơ không rewrite hàng cũ.
 - **Kỳ tài chính:** `fiscalMonthStartDay` 1–28.
 - **Transfer:** hai `Transaction` `type=transfer`, cùng `transferGroupId`; cân bằng ở use case Phase 1. Acceptance contract: [transfer-balance-test-cases.md](transfer-balance-test-cases.md).
 - **Credit:** chi tăng nợ (số dư derived âm hơn); thanh toán = transfer từ ví khác.
@@ -90,6 +95,7 @@ Kiểu Prisma. Mọi bảng user-owned (trừ `User`, `Currency`, `SchemaMeta`, 
 | creditLimitMinor | BigInt? | chỉ credit |
 | statementCloseDay | Int? | 1–28 |
 | paymentDueDay | Int? | 1–28 |
+| minimumPaymentMinor | BigInt? | chỉ credit; optional, không âm (`BE-P2-E07`) |
 
 Unique `(userId, clientId)`. CRUD, số dư derived và quy tắc chỉnh sửa/lưu trữ: [BE-P1-004](financial-accounts.md).
 
@@ -121,6 +127,7 @@ Xóa danh mục: chuyển toàn bộ GD (kể cả soft-delete) trước, tăng 
 | amountMinor | BigInt | signed |
 | currencyCode | FK Currency | |
 | occurredOn | date | theo TZ user |
+| occurredTime | `VARCHAR(5)?` | giờ địa phương `HH:mm` tuỳ chọn (`BE-P2-E09`); báo cáo vẫn theo `occurredOn` |
 | accountId | FK FinancialAccount | |
 | categoryId | FK? | thường null với transfer |
 | transferGroupId | UUID? | hai leg cùng giá trị |
@@ -159,6 +166,46 @@ Quy tắc và lần chạy định kỳ (`BE-P2-E01`). Chi tiết: [recurring.md
 | active | bool | tắt thì worker bỏ qua |
 
 `RecurringOccurrence`: unique `(ruleId, occurredOn)` + `transactionClientId` (và counter nếu transfer). Unique `(userId, clientId)` trên rule.
+
+### Goal / GoalEntry
+
+Mục tiêu tiết kiệm và sổ đóng góp (`BE-P3-E01`). Chi tiết: [goals.md](goals.md). `Goal.currentMinor` lưu cứng, mọi thay đổi qua `GoalEntry` (kèm transfer cân) hoặc `AuditEvent`.
+
+### Loan / LoanPayment
+
+Khoản vay và sổ trả nợ (`BE-P3-E02`). Chi tiết: [loans.md](loans.md). `Loan.outstandingMinor` lưu cứng, mọi thay đổi qua `LoanPayment` (hai giao dịch expense gốc/lãi) hoặc `AuditEvent`.
+
+### PersonalDebt / PersonalDebtPayment
+
+Cho mượn / đi mượn không lãi (`BE-P3-007`). Chi tiết: [personal-debts.md](personal-debts.md). `PersonalDebt.outstandingMinor` lưu cứng, mọi thay đổi qua `PersonalDebtPayment`; mỗi lần tiền di chuyển là một giao dịch `debt` một chân (không phải thu/chi).
+
+### ImportBatch
+
+Một lần nhập CSV (`BE-P3-011`): preset, số dòng, đếm created/duplicate/invalid, `undoneAt`. `Transaction.importBatchId` (SetNull) trỏ về lô để hoàn tác. Chi tiết: [transaction-import.md](transaction-import.md).
+
+### CardInstallmentPlan
+
+Lịch trả góp trên một khoản chi của ví thẻ (`BE-P3-009`). Chi tiết: [card-installments.md](card-installments.md). Chỉ là lịch: không tạo giao dịch, không đổi báo cáo hay dư nợ.
+
+### Bill
+
+Nghĩa vụ thanh toán (`BE-P2-E03`). Chi tiết: [bills.md](bills.md).
+
+| Cột | Kiểu | Ghi chú |
+|---|---|---|
+| name | varchar(80) | nhãn |
+| dueOn | date | hạn theo lịch |
+| amountMinor | BigInt | dương |
+| amountKind | enum | `fixed` \| `estimated` |
+| currencyCode | FK Currency | |
+| recurringRuleId | FK? | optional; `ON DELETE SET NULL` |
+| paidTransactionId | FK? unique | đã trả; `ON DELETE SET NULL` |
+
+Unique `(userId, clientId)`. Quá hạn tính khi đọc (timezone hồ sơ). Không tự tạo giao dịch.
+
+### UserFxRate (BE-P2-013)
+
+Tỷ giá người dùng nhập để hiển thị số quy đổi; không gắn giao dịch, không vào sổ cái. Unique `(userId, fromCode, toCode)`, một dòng mỗi chiều. `rate` Decimal(18,8) > 0, `quotedAt` timestamptz, `fromCode <> toCode`. `User.displayCurrencyCode` (nullable) là tiền tệ Tổng quan quy đổi về; null là tiền tệ hồ sơ.
 
 ### FxQuote
 

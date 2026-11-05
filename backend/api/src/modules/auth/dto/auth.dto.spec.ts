@@ -25,6 +25,25 @@ describe('DS-P2-004 password rule', () => {
   });
 });
 
+describe('BE-P2-014 password length bounds 8-128', () => {
+  const at = (n: number) => 'a1'.repeat(n).slice(0, n);
+  const ok = async (dto: object) => expect(await validate(dto)).toHaveLength(0);
+  const bad = async (dto: object) => expect((await validate(dto)).length).toBeGreaterThan(0);
+
+  it.each([8, 128])('accepts %i characters everywhere', async n => {
+    await ok(plainToInstance(NewCredentialsDto, { email, password: at(n) }));
+    await ok(plainToInstance(ResetPasswordDto, { token, password: at(n) }));
+    await ok(plainToInstance(ChangePasswordDto, { currentPassword: 'old', newPassword: at(n) }));
+    await ok(plainToInstance(CredentialsDto, { email, password: at(n) }));
+  });
+  it.each([7, 129])('rejects %i characters everywhere', async n => {
+    await bad(plainToInstance(NewCredentialsDto, { email, password: at(n) }));
+    await bad(plainToInstance(ResetPasswordDto, { token, password: at(n) }));
+    await bad(plainToInstance(ChangePasswordDto, { currentPassword: 'old', newPassword: at(n) }));
+    await bad(plainToInstance(CredentialsDto, { email, password: at(n) }));
+  });
+});
+
 describe('DS-P2-004 terms consent', () => {
   const password = 'maytrangngay7';
   it('register needs the terms checkbox ticked', async () => {

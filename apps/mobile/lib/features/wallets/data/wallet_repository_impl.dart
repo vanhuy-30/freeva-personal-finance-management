@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../auth/data/authorized_api.dart';
 import '../../auth/domain/auth_repository.dart';
+import '../domain/reconcile_result.dart';
 import '../domain/wallet.dart';
 import '../domain/wallet_repository.dart';
 
@@ -23,6 +24,9 @@ class WalletRepositoryImpl implements WalletRepository {
           : BigInt.parse(j['creditLimitMinor'] as String),
       closeDay: j['statementCloseDay'] as int?,
       dueDay: j['paymentDueDay'] as int?,
+      minimumPayment: j['minimumPaymentMinor'] == null
+          ? null
+          : BigInt.parse(j['minimumPaymentMinor'] as String),
     ),
     balance: BigInt.parse(j['balanceMinor'] as String),
     version: j['version'] as int,
@@ -102,6 +106,7 @@ class WalletRepositoryImpl implements WalletRepository {
       'creditLimitMinor': d.creditLimit?.toString(),
       'statementCloseDay': d.closeDay,
       'paymentDueDay': d.dueDay,
+      'minimumPaymentMinor': d.minimumPayment?.toString(),
     },
   );
   @override
@@ -119,6 +124,39 @@ class WalletRepositoryImpl implements WalletRepository {
       if (sortOrder != null) 'sortOrder': sortOrder,
     },
   );
+
+  @override
+  Future<Either<AuthFailure, ReconcileResult>> reconcile(
+    Wallet wallet,
+    BigInt actualMinor, {
+    required String clientId,
+    bool dryRun = false,
+  }) async {
+    final result = await _api.request(
+      'POST',
+      'financial-accounts/${wallet.id}/reconcile',
+      body: {
+        'clientId': clientId,
+        'actualBalanceMinor': actualMinor.toString(),
+        if (dryRun) 'dryRun': true,
+      },
+      headers: {'Idempotency-Key': clientId},
+    );
+    return result.fold(left, (j) {
+      try {
+        return right(
+          ReconcileResult(
+            currentMinor: BigInt.parse(j['currentBalanceMinor'] as String),
+            targetMinor: BigInt.parse(j['targetBalanceMinor'] as String),
+            deltaMinor: BigInt.parse(j['deltaMinor'] as String),
+            adjusted: j['transaction'] != null,
+          ),
+        );
+      } catch (_) {
+        return left(const AuthFailure(AuthError.unavailable));
+      }
+    });
+  }
 
   @override
   Future<Either<AuthFailure, List<Wallet>>> reorder(List<Wallet> active) =>

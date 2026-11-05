@@ -12,12 +12,24 @@ import 'package:mobile/features/sync/presentation/viewmodels/sync_view_model.dar
 class FakeOverviewCases implements OverviewUseCases {
   final results = <Either<AuthFailure, OverviewData>>[];
   int calls = 0;
+  String? lastDisplayCurrency;
 
   @override
-  Future<Either<AuthFailure, OverviewData>> load(DateTime now) async {
+  Future<Either<AuthFailure, OverviewData>> load(
+    DateTime now, {
+    String? displayCurrency,
+  }) async {
     calls++;
+    lastDisplayCurrency = displayCurrency;
     return results.length > 1 ? results.removeAt(0) : results.single;
   }
+
+  @override
+  Future<Either<AuthFailure, Unit>>? saveRate(
+    String from,
+    String to,
+    String rate,
+  ) => null;
 }
 
 class FakeProfileViewModel extends ChangeNotifier implements ProfileViewModel {
@@ -30,6 +42,33 @@ class FakeProfileViewModel extends ChangeNotifier implements ProfileViewModel {
     version: 1,
     displayName: 'Minh',
   );
+
+  @override
+  ProfileOptions? options = ProfileOptions(
+    currencies: ['VND', 'USD'],
+    timezones: ['Asia/Ho_Chi_Minh'],
+  );
+  final savedDisplayCurrencies = <String?>[];
+  bool saveDisplayCurrencyResult = true;
+
+  @override
+  Future<bool> saveDisplayCurrency(String? code) async {
+    if (!saveDisplayCurrencyResult) return false;
+    savedDisplayCurrencies.add(code);
+    saved = saved?.withDisplayCurrency(code);
+    notifyListeners();
+    return true;
+  }
+
+  final savedIncomes = <BigInt?>[];
+
+  @override
+  Future<bool> saveMonthlyIncome(BigInt? minor) async {
+    savedIncomes.add(minor);
+    saved = saved?.withMonthlyIncome(minor);
+    notifyListeners();
+    return true;
+  }
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -79,7 +118,7 @@ class StubHomeViewModel extends HomeViewModel {
     this.balancesHidden = false,
     this.pending = const [],
     this.hasPin = true,
-    this.debtGoal = false,
+    this.trackGoal = false,
   });
 
   @override
@@ -91,19 +130,37 @@ class StubHomeViewModel extends HomeViewModel {
   @override
   String currency = 'VND';
   @override
+  String displayCurrency = 'VND';
+  @override
+  List<String> currencyChoices = const ['VND', 'USD'];
+  final chosen = <String?>[];
+  final rates = <String>[];
+  @override
   bool balancesHidden;
   @override
   bool hasPin;
   @override
   List<SyncQueueItem> pending;
   @override
-  bool debtGoal;
+  bool trackGoal;
   @override
   DateTime today = DateTime(2026, 10, 21, 9, 30);
   int loads = 0;
 
   @override
   Future<void> load() async => loads++;
+
+  @override
+  Future<bool> chooseDisplayCurrency(String? code) async {
+    chosen.add(code);
+    return true;
+  }
+
+  @override
+  Future<bool> saveRate(String from, String to, String rate) async {
+    rates.add('$from>$to=$rate');
+    return true;
+  }
 
   @override
   Future<void> toggleBalances() async {

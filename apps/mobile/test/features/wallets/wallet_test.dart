@@ -26,6 +26,7 @@ Map<String, dynamic> row(String id, {int order = 0, int version = 1}) => {
   'creditLimitMinor': null,
   'statementCloseDay': null,
   'paymentDueDay': null,
+  'minimumPaymentMinor': null,
   'sortOrder': order,
   'version': version,
   'archivedAt': null,
@@ -179,6 +180,13 @@ void main() {
         creditLimit: BigInt.from(-1),
       ),
       WalletDraft(
+        name: 'x',
+        type: WalletType.credit,
+        currency: 'VND',
+        initialBalance: BigInt.zero,
+        minimumPayment: BigInt.from(-1),
+      ),
+      WalletDraft(
         name: ' ',
         type: WalletType.cash,
         currency: 'VND',
@@ -219,13 +227,14 @@ void main() {
     late DefaultWalletViewModel model;
     setUp(() async {
       api = WalletTransport();
-      auth = DefaultAuthViewModel(
-        DefaultAuthUseCases(
-          AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
-        ),
-      )
-        ..stage = AuthStage.unlocked
-        ..hasPin = true;
+      auth =
+          DefaultAuthViewModel(
+              DefaultAuthUseCases(
+                AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+              ),
+            )
+            ..stage = AuthStage.unlocked
+            ..hasPin = true;
       model = DefaultWalletViewModel(
         DefaultWalletUseCases(WalletRepositoryImpl(api)),
         auth,

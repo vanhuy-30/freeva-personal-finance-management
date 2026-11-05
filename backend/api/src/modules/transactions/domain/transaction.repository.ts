@@ -1,3 +1,6 @@
+import type { RefundInput } from './refund';
+import type { CsvTransactionRow } from './csv-export';
+import type { ReconcileInput, ReconcileResult } from './reconcile';
 import type { TransactionBundle, TransactionInput, TransactionLeg, TransactionPatch, TransactionQuery, TransactionSummary } from './transaction';
 export const TRANSACTION_REPOSITORY = Symbol('TRANSACTION_REPOSITORY');
 export interface RecentMatchQuery {
@@ -22,5 +25,13 @@ export interface TransactionRepository {
   findByClientId(userId: string, clientId: string): Promise<TransactionBundle | null>;
   findRecentMatches(userId: string, query: RecentMatchQuery): Promise<RecentMatch[]>;
   list(userId: string, query: TransactionQuery): Promise<{ items: TransactionLeg[]; total: number; summary: TransactionSummary }>;
+  /** BE-P3-010: active legs for the CSV export plus an audit row; throws VALIDATION_ERROR above the row cap. */
+  listForCsv(userId: string, query: TransactionQuery, maxRows: number): Promise<CsvTransactionRow[]>;
   update(userId: string, id: string, patch: TransactionPatch): Promise<TransactionBundle>;
+  /** BE-P3-008: sum of active refunds per expense id; ids without refunds are absent. */
+  refundedTotals(userId: string, expenseIds: string[]): Promise<Map<string, bigint>>;
+  /** MOB-P3-009: active installment plan id per expense id; ids without a plan are absent. */
+  installmentPlanIds(userId: string, expenseIds: string[]): Promise<Map<string, string>>;
+  refund(userId: string, originalId: string, input: RefundInput): Promise<{ transaction: TransactionBundle; created: boolean }>;
+  reconcile(userId: string, accountId: string, input: ReconcileInput): Promise<ReconcileResult>;
 }

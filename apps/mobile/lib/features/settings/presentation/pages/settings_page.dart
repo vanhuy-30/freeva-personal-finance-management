@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/core/theme/lucide_icons.g.dart';
 
+import '../../../goals/presentation/viewmodels/goal_view_model.dart';
+import '../../../debts/presentation/viewmodels/debt_view_model.dart';
+import '../../../loans/presentation/viewmodels/loan_view_model.dart';
+import '../../../recurring/presentation/viewmodels/recurring_view_model.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/theme_context.dart';
@@ -17,11 +21,14 @@ import '../../domain/app_preferences.dart';
 import '../viewmodels/settings_view_model.dart';
 import '../widgets/app_settings_group.dart';
 import '../widgets/danger_text_button.dart';
+import '../widgets/data_settings_group.dart';
 import '../widgets/help_settings_group.dart';
+import '../widgets/manage_grid.dart';
 import '../widgets/money_setup_group.dart';
 import '../widgets/profile_card.dart';
 
-/// Cá nhân: the tab root. Profile card, three groups, log out and version.
+/// Cá nhân: the tab root. Profile card, the money grid, four groups, log out
+/// and version.
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
@@ -35,6 +42,18 @@ class _SettingsPageState extends State<SettingsPage> {
   final WalletViewModel? wallets = getIt.isRegistered<WalletViewModel>()
       ? getIt<WalletViewModel>()
       : null;
+  final GoalViewModel? goals = getIt.isRegistered<GoalViewModel>()
+      ? getIt<GoalViewModel>()
+      : null;
+  final DebtViewModel? debts = getIt.isRegistered<DebtViewModel>()
+      ? getIt<DebtViewModel>()
+      : null;
+  final LoanViewModel? loans = getIt.isRegistered<LoanViewModel>()
+      ? getIt<LoanViewModel>()
+      : null;
+  final RecurringViewModel? recurring = getIt.isRegistered<RecurringViewModel>()
+      ? getIt<RecurringViewModel>()
+      : null;
   int? tagCount;
 
   @override
@@ -47,6 +66,10 @@ class _SettingsPageState extends State<SettingsPage> {
       // Fresh copy: first run saves the budget draft through another writer.
       settings.load();
       if (wallets case final w? when w.wallets.isEmpty) w.load();
+      goals?.load();
+      debts?.load();
+      loans?.load();
+      recurring?.load();
     });
     _loadTags();
   }
@@ -56,6 +79,13 @@ class _SettingsPageState extends State<SettingsPage> {
     final result = await getIt<TagUseCases>().list();
     if (!mounted) return;
     result.fold((_) {}, (tags) => setState(() => tagCount = tags.length));
+  }
+
+  /// Open debts plus loans still being paid, once both are known.
+  int? get _debtCount {
+    final d = debts, l = loans;
+    if (d == null || l == null || !d.loaded || !l.loaded) return null;
+    return d.openCount + l.openCount;
   }
 
   int? get _walletCount {
@@ -84,6 +114,10 @@ class _SettingsPageState extends State<SettingsPage> {
     listenable: Listenable.merge([
       settings,
       profile,
+      if (goals != null) goals!,
+      if (debts != null) debts!,
+      if (loans != null) loans!,
+      if (recurring != null) recurring!,
       if (wallets != null) wallets!,
     ]),
     builder: (context, _) {
@@ -108,13 +142,21 @@ class _SettingsPageState extends State<SettingsPage> {
               name: profile.saved?.displayName,
               email: settings.email,
             ),
-            MoneySetupGroup(
-              profile: profile,
+            ManageGrid(
               walletCount: _walletCount,
-              tagCount: tagCount,
               budget: settings.budgetDraftMinor,
+              goalCount: goals != null && goals!.loaded
+                  ? goals!.active.length
+                  : null,
+              debtCount: _debtCount,
+              recurringCount: recurring != null && recurring!.loaded
+                  ? recurring!.rules.length
+                  : null,
+              month: DateTime.now().month,
             ),
+            MoneySetupGroup(profile: profile, tagCount: tagCount),
             AppSettingsGroup(settings: settings, profile: profile),
+            const DataSettingsGroup(),
             const HelpSettingsGroup(),
             const SizedBox(height: FreevaSpace.s4),
             DangerTextButton(

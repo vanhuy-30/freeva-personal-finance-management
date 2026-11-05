@@ -40,6 +40,46 @@ void main() {
     },
   );
   test(
+    'repository reads the display currency and PUTs null to clear it',
+    () async {
+      final api = Transport();
+      final repo = ProfileRepositoryImpl(api);
+      api.response = {
+        'locale': 'vi',
+        'defaultCurrencyCode': 'VND',
+        'timezone': 'UTC',
+        'fiscalMonthStartDay': 1,
+        'version': 1,
+        'displayCurrencyCode': 'USD',
+      };
+      expect(
+        (await repo.load())
+            .getOrElse(() => throw StateError(''))
+            .displayCurrency,
+        'USD',
+      );
+      api.response['displayCurrencyCode'] = null;
+      expect(
+        (await repo.load())
+            .getOrElse(() => throw StateError(''))
+            .displayCurrency,
+        isNull,
+      );
+      api.response['displayCurrencyCode'] = 'usd';
+      expect(
+        (await repo.load())
+            .getOrElse(() => throw StateError(''))
+            .displayCurrency,
+        isNull,
+      );
+      expect((await repo.saveDisplayCurrency(null)).isRight(), isTrue);
+      expect(api.body, {'currencyCode': null});
+      // The profile PUT never carries the display currency.
+      expect((await repo.save(initial)).isRight(), isTrue);
+      expect(api.body!.containsKey('displayCurrencyCode'), isFalse);
+    },
+  );
+  test(
     'repository serializes integer day/version and rejects malformed response',
     () async {
       final api = Transport();
@@ -64,6 +104,52 @@ void main() {
     },
   );
   test(
+    'income goes out as a string, can be set or cleared, and is read back',
+    () async {
+      final api = Transport();
+      final repo = ProfileRepositoryImpl(api);
+      final cases = ProfileUseCases(repo);
+      expect(
+        (await cases.saveOnboarding(
+          OnboardingAnswers(monthlyIncomeMinor: BigInt.from(25000000)),
+        )).isRight(),
+        true,
+      );
+      expect(api.body, {'monthlyIncomeMinor': '25000000'});
+      api.method = null;
+      expect(
+        (await cases.saveOnboarding(
+          OnboardingAnswers(monthlyIncomeMinor: BigInt.zero),
+        )).isLeft(),
+        true,
+      );
+      expect(api.method, isNull);
+      expect(
+        (await cases.saveMonthlyIncome(BigInt.from(30000000))).isRight(),
+        true,
+      );
+      expect(api.method, 'PUT');
+      expect(api.path, 'profile/monthly-income');
+      expect(api.body, {'monthlyIncomeMinor': '30000000'});
+      expect((await cases.saveMonthlyIncome(null)).isRight(), true);
+      expect(api.body, {'monthlyIncomeMinor': null});
+      api.response = {
+        'locale': 'vi',
+        'defaultCurrencyCode': 'VND',
+        'timezone': 'UTC',
+        'fiscalMonthStartDay': 1,
+        'version': 1,
+        'goals': ['save'],
+        'monthlyIncomeMinor': '25000000',
+      };
+      final loaded = (await repo.load()).getOrElse(() => throw StateError('x'));
+      expect(loaded.monthlyIncomeMinor, BigInt.from(25000000));
+      api.response = {...api.response, 'monthlyIncomeMinor': 'abc'};
+      final bad = (await repo.load()).getOrElse(() => throw StateError('x'));
+      expect(bad.monthlyIncomeMinor, isNull);
+    },
+  );
+  test(
     'onboarding answers go out as a PATCH with only the set parts',
     () async {
       final api = Transport();
@@ -72,7 +158,7 @@ void main() {
       expect(
         (await cases.saveOnboarding(
           const OnboardingAnswers(
-            goals: [OnboardingGoal.save, OnboardingGoal.debt],
+            goals: [OnboardingGoal.save, OnboardingGoal.budget],
           ),
         )).isRight(),
         true,
@@ -80,7 +166,7 @@ void main() {
       expect(api.method, 'PATCH');
       expect(api.path, 'profile/onboarding');
       expect(api.body, {
-        'goals': ['save', 'debt'],
+        'goals': ['save', 'budget'],
       });
       api.method = null;
       expect(
@@ -93,7 +179,7 @@ void main() {
           const OnboardingAnswers(
             goals: [
               OnboardingGoal.save,
-              OnboardingGoal.debt,
+              OnboardingGoal.budget,
               OnboardingGoal.track,
             ],
           ),
@@ -133,21 +219,51 @@ void main() {
     late MemoryProfiles repo;
     late DefaultAuthViewModel auth;
     late DefaultProfileViewModel model;
+    late FakeApi api;
+    late FakeSharer sharer;
+    late AuthRepositoryImpl authRepo;
     setUp(() async {
-      auth = DefaultAuthViewModel(
-        DefaultAuthUseCases(
-          AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
-        ),
-      );
+      api = FakeApi();
+      sharer = FakeSharer();
+      authRepo = AuthRepositoryImpl(api, MemoryVault(), FakeBiometrics());
+      await authRepo.submit(AuthAction.login, {
+        'email': 'user@example.com',
+        'password': 'password long enough',
+      });
+      auth = DefaultAuthViewModel(DefaultAuthUseCases(authRepo));
       auth.stage = AuthStage.unlocked;
       auth.hasPin = true;
       repo = MemoryProfiles();
-      model = DefaultProfileViewModel(ProfileUseCases(repo), auth);
+      model = DefaultProfileViewModel(
+        ProfileUseCases(repo),
+        auth,
+        exportCase(authRepo, sharer),
+      );
       await Future<void>.delayed(Duration.zero);
     });
     tearDown(() {
       model.dispose();
       auth.dispose();
+    });
+    test('saves the display currency apart from the profile PUT', () async {
+      await model.load();
+      expect(model.saved!.overviewCurrency, model.saved!.currency);
+      expect(await model.saveDisplayCurrency('USD'), isTrue);
+      expect(repo.displayCurrencies, ['USD']);
+      expect(model.saved!.displayCurrency, 'USD');
+      expect(model.saved!.overviewCurrency, 'USD');
+      expect(model.dirty, isFalse);
+      expect(repo.saves, 0);
+
+      expect(await model.saveDisplayCurrency('XXX'), isFalse);
+      expect(repo.displayCurrencies, ['USD']);
+
+      expect(await model.saveDisplayCurrency(null), isTrue);
+      expect(model.saved!.overviewCurrency, model.saved!.currency);
+
+      repo.failure = const AuthFailure(AuthError.network);
+      expect(await model.saveDisplayCurrency('USD'), isFalse);
+      expect(model.saved!.displayCurrency, isNull);
     });
     test(
       'the saved name is handed to the lock screen on load and on save',
@@ -248,6 +364,93 @@ void main() {
       expect(auth.stage, AuthStage.signedOut);
       expect(model.saved, null);
       expect(model.loading, false);
+    });
+  });
+
+  group('account export and delete', () {
+    late FakeApi api;
+    late MemoryVault vault;
+    late AuthRepositoryImpl authRepo;
+    late FakeSharer sharer;
+    late DefaultAuthViewModel auth;
+    late DefaultProfileViewModel model;
+    setUp(() async {
+      api = FakeApi();
+      vault = MemoryVault();
+      sharer = FakeSharer();
+      authRepo = AuthRepositoryImpl(api, vault, FakeBiometrics());
+      await authRepo.submit(AuthAction.login, {
+        'email': 'user@example.com',
+        'password': 'password long enough',
+      });
+      auth = DefaultAuthViewModel(DefaultAuthUseCases(authRepo));
+      auth.stage = AuthStage.unlocked;
+      model = DefaultProfileViewModel(
+        ProfileUseCases(MemoryProfiles()),
+        auth,
+        exportCase(authRepo, sharer),
+      );
+      await Future<void>.delayed(Duration.zero);
+    });
+    tearDown(() {
+      model.dispose();
+      auth.dispose();
+    });
+
+    test('export shares the API body unchanged', () async {
+      api.exportBody = '{"b":1,\n "a":[ 2 ]}';
+      expect(await model.exportData(), isTrue);
+      expect(api.lastPath, 'account/export');
+      expect(sharer.content, '{"b":1,\n "a":[ 2 ]}');
+      expect(sharer.name, matches(RegExp(r'^freeva-export-\d{8}\.json$')));
+      expect(model.exporting, isFalse);
+      expect(model.failure, isNull);
+    });
+
+    test('dismissed share sheet is not a failure', () async {
+      sharer.result = false;
+      expect(await model.exportData(), isFalse);
+      expect(model.failure, isNull);
+    });
+
+    test('network error on export keeps session and shares nothing', () async {
+      api.failure = const AuthFailure(AuthError.network);
+      expect(await model.exportData(), isFalse);
+      expect(model.failure?.code, AuthError.network);
+      expect(sharer.content, isNull);
+      expect(vault.value, isNotNull);
+    });
+
+    test('share failure surfaces as a failure', () async {
+      sharer.fail = true;
+      expect(await model.exportData(), isFalse);
+      expect(model.failure, isNotNull);
+      expect(model.exporting, isFalse);
+    });
+
+    test('delete clears session and goes signed out', () async {
+      await auth.deleteAccount();
+      expect(api.lastPath, 'account');
+      expect(auth.stage, AuthStage.signedOut);
+      expect(vault.value, isNull);
+    });
+
+    test(
+      'network error on delete keeps everything and stays signed in',
+      () async {
+        api.failure = const AuthFailure(AuthError.network);
+        await auth.deleteAccount();
+        expect(auth.failure?.code, AuthError.network);
+        expect(auth.stage, AuthStage.unlocked);
+        expect(vault.value, isNotNull);
+      },
+    );
+
+    test('server refusal on delete keeps everything', () async {
+      api.failure = const AuthFailure(AuthError.unavailable);
+      await auth.deleteAccount();
+      expect(auth.stage, AuthStage.unlocked);
+      expect(vault.value, isNotNull);
     });
   });
 }

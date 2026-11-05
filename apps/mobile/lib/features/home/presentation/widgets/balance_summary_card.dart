@@ -8,6 +8,7 @@ import '../../../../core/widgets/balance_card.dart';
 import '../../../../core/widgets/freeva_icon_button.dart';
 import '../../../../core/widgets/money_display.dart';
 import '../../domain/overview.dart';
+import 'convert_notes.dart';
 import 'currency_pill.dart';
 import 'month_flow_value.dart';
 
@@ -22,6 +23,8 @@ class BalanceSummaryCard extends StatelessWidget {
     required this.hidden,
     required this.onToggleHidden,
     required this.onOpenWallets,
+    this.onPickCurrency,
+    this.onFixRate,
     this.compact = false,
     super.key,
   });
@@ -34,6 +37,12 @@ class BalanceSummaryCard extends StatelessWidget {
   final VoidCallback onToggleHidden;
   final VoidCallback onOpenWallets;
 
+  /// Opens the display-currency chooser. Null hides the line.
+  final VoidCallback? onPickCurrency;
+
+  /// Opens the rate entry for a currency left out of the converted total.
+  final void Function(String currency)? onFixRate;
+
   /// First-run card: label and total only (no eye, no month tiles).
   final bool compact;
 
@@ -42,7 +51,9 @@ class BalanceSummaryCard extends StatelessWidget {
     final s = S.of(context);
     final c = context.colors;
     final main = summary.main;
-    final label = summary.others.isEmpty
+    final label = summary.isConverted
+        ? s.homeTotalConverted(main.walletCount, main.currency)
+        : summary.others.isEmpty
         ? s.homeTotalBalance(main.walletCount)
         : s.homeTotalBalanceIn(main.walletCount, main.currency);
     final labelText = Text(
@@ -112,6 +123,26 @@ class BalanceSummaryCard extends StatelessWidget {
                 minorDigits: digitsOf(other.currency),
                 hidden: hidden,
                 onTap: onOpenWallets,
+              ),
+            ),
+          for (final item in summary.unconverted)
+            if (onFixRate != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: ConvertLine(
+                  text: unconvertedText(s, item),
+                  semanticsLabel: unconvertedText(s, item),
+                  onTap: () => onFixRate!(item.currency),
+                ),
+              ),
+          if (onPickCurrency != null &&
+              (summary.others.isNotEmpty || summary.unconverted.isNotEmpty))
+            Padding(
+              padding: const EdgeInsets.only(top: 6),
+              child: ConvertLine(
+                text: s.homeDisplayCurrencyAction(main.currency),
+                semanticsLabel: s.homeDisplayCurrencyAction(main.currency),
+                onTap: onPickCurrency!,
               ),
             ),
           const SizedBox(height: FreevaSpace.s4),

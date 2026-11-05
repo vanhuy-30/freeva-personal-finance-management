@@ -3,14 +3,17 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/core/di/injection.dart';
+import 'package:mobile/features/goals/presentation/viewmodels/goal_view_model.dart';
 import 'package:mobile/features/profile/presentation/pages/profile_page.dart';
 import 'package:mobile/features/settings/presentation/pages/security_page.dart';
 import 'package:mobile/features/settings/presentation/pages/sessions_page.dart';
+import 'package:mobile/features/settings/presentation/pages/money_settings_page.dart';
 import 'package:mobile/features/settings/presentation/pages/settings_page.dart';
 import 'package:mobile/features/tags/domain/tag_use_cases.dart';
 import 'package:mobile/features/wallets/presentation/viewmodels/wallet_view_model.dart';
 
 import '../../core/widgets/widget_test_app.dart' show loadTestFonts;
+import '../goals/goal_stub.dart' show FakeGoalUseCases;
 import '../wallets/d1_stub.dart' show StubWalletViewModel;
 import 'g1_harness.dart';
 import 'g2_test.dart' show FakeTags;
@@ -36,8 +39,12 @@ void main() {
       () => G1.create(budgetDraft: 15000000, goals: const ['save', 'budget']),
     ))!;
     addTearDown(g.dispose);
+    final wallets = StubWalletViewModel();
+    final goals = GoalViewModel(FakeGoalUseCases(), wallets, g.profile, g.auth);
+    await t.runAsync(goals.load);
     getIt
-      ..registerSingleton<WalletViewModel>(StubWalletViewModel())
+      ..registerSingleton<WalletViewModel>(wallets)
+      ..registerSingleton<GoalViewModel>(goals)
       ..registerSingleton<TagUseCases>(FakeTags());
     await t.pumpWidget(g.app(page(g), dark: dark, scale: scale, ios: true));
     await t.pump(const Duration(milliseconds: 400));
@@ -88,6 +95,14 @@ void main() {
         await t.pump(const Duration(milliseconds: 400));
         await t.pump(const Duration(milliseconds: 400));
       },
+    );
+  });
+  testWidgets('money settings', skip: !Platform.isMacOS, (t) async {
+    await shot(
+      t,
+      (_) => const MoneySettingsPage(),
+      'money',
+      size: const Size(390, 844),
     );
   });
   testWidgets('profile', skip: !Platform.isMacOS, (t) async {

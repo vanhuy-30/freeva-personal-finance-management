@@ -33,8 +33,9 @@ Payload transfer cùng currency:
 - Tiền JSON là string integer trong signed int64, tối đa 20 ký tự; tính bằng bigint. Số dư derived của ví vẫn có thể vượt int64.
 - Currency từng leg phải khớp ví. Ví phải thuộc owner và đang hoạt động khi tạo/sửa/khôi phục. Cho phép xóa giao dịch của ví đã lưu trữ; không kiểm tra đủ số dư, vì ví được có số dư âm và thẻ credit biểu diễn nợ.
 - `occurredOn` là ngày lịch `YYYY-MM-DD` hợp lệ, năm 0001–9999; không chuyển ngày theo UTC. Hai leg luôn cùng ngày, type, group, quote, version và trạng thái xóa.
+- `occurredTime` tuỳ chọn (`HH:mm` 24h theo múi giờ hồ sơ, `BE-P2-E09`). Null/omit khi tạo = chưa có giờ. Không suy ra `occurredOn`, không đổi filter/báo cáo. Hai leg cùng giá trị. Replay/idempotency fingerprint gồm field này.
 - `categoryId` bắt buộc, khác null với chi theo UC-EXP-01/02; thu optional/null, transfer phải null/bỏ qua. Danh mục thuộc owner và chưa lưu trữ. `notes` optional/null, tối đa 2000 ký tự. `merchant` optional trên thu/chi (trim 1–200 hoặc null); cấm trên transfer (`BE-P1-012`). `tagIds` mặc định `[]`, tối đa 20 UUID thuộc owner; PATCH thay toàn bộ danh sách nhãn. Với transfer, notes/tags/`merchant=null` áp dụng cho cả cặp. CRUD nhãn: [tags.md](tags.md).
-- PATCH `legs` thay đầy đủ cả cặp (hoặc một leg thu/chi); giữ nguyên clientId và thứ tự. Cho phép sửa tiền/đổi ví, nhưng `type` và clientId bất biến. `fx`, `notes`, `merchant` nhận null; `categoryId` chỉ nhận null khi không phải chi; field khác không nhận null.
+- PATCH `legs` thay đầy đủ cả cặp (hoặc một leg thu/chi); giữ nguyên clientId và thứ tự. Cho phép sửa tiền/đổi ví, nhưng `type` và clientId bất biến. `fx`, `notes`, `merchant`, `occurredTime` nhận null; `categoryId` chỉ nhận null khi không phải chi; field khác không nhận null.
 - PATCH `{version,deleted:false}` khôi phục cả cặp. Giao dịch đã xóa phải khôi phục trước hoặc cùng request sửa. Xóa lặp lại với version hiện tại giữ timestamp xóa cũ, vẫn tăng version. Version input 1–2147483646; version cuối 2147483647.
 - Sao chép dùng POST với clientId mới; không có endpoint copy riêng. Mỗi leg trả `transferGroupId`/`fxQuoteId` nullable, ngày, timestamps, version và tagIds; chi tiết `{legs,fx}` trả rate và thời điểm đã lưu.
 
@@ -64,4 +65,8 @@ Page mặc định 1, pageSize 50, tối đa 100. `status=active` mặc định,
 
 `400 VALIDATION_ERROR`, `401` theo auth service, `404 TRANSACTION_NOT_FOUND`/`ACCOUNT_NOT_FOUND` cho cả ID không tồn tại và khác owner, `409 TRANSACTION_CONFLICT`, `503 TRANSACTIONS_UNAVAILABLE`. Lỗi không phản chiếu input hoặc exception Prisma. HTTP logger không ghi body/query/header, ghi chú, merchant, số tiền hoặc bearer token.
 
-Sync queue giao dịch: [sync.md](sync.md) (`BE-P1-009`). Chưa triển khai đối soát, receipt hoặc batch edit. Không deploy staging trong task này. Lệnh kiểm tra và coverage: [test README](../../backend/api/test/README.md#transactions--be-p1-005).
+Giao dịch `adjustment` (một leg, không danh mục) chỉ được tạo bởi đối soát ví: [wallet-reconciliation.md](wallet-reconciliation.md) (`BE-P3-005`). `type` của `POST` vẫn chỉ nhận income/expense/transfer; filter `type` nhận thêm `adjustment`, và `summary.totals[].adjustmentMinor` tách riêng khỏi thu/chi.
+
+Giao dịch `refund` (hoàn tiền một khoản chi, `refundOfId`) chỉ tạo qua `POST /transactions/{id}/refunds` và được trừ khỏi chi của khoản gốc: [refunds.md](refunds.md) (`BE-P3-008`). Filter `type` nhận `refund`, `summary.totals[].refundMinor` tách riêng; xóa khoản chi còn hoàn tiền cần `refunds=cascade|keep`.
+
+Sync queue giao dịch: [sync.md](sync.md) (`BE-P1-009`). Chưa triển khai receipt hoặc batch edit. Lệnh kiểm tra và coverage: [test README](../../backend/api/test/README.md#transactions--be-p1-005).

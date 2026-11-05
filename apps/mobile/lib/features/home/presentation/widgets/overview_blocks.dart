@@ -56,11 +56,9 @@ class OverviewBlocks extends StatelessWidget {
     final credit = cards.isEmpty
         ? null
         : CreditCardsBlock(cards: cards, today: today, digitsOf: digits);
-    final debtFirst = credit != null && model.debtGoal;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (debtFirst) ...[credit, gap],
         SpendingBlock(
           breakdown: spendingBreakdown(data.month, main, data.categories),
           currency: main,
@@ -74,12 +72,20 @@ class OverviewBlocks extends StatelessWidget {
         if (previous != null && !monthFlow(previous, main).isEmpty) ...[
           NewMonthReviewCard(
             monthLabel: _monthLabel(context, previous.period.from),
+            on: previous.period.from,
             flow: monthFlow(previous, main),
             minorDigits: digits(main),
+            insight: monthInsight(
+              previous: previous,
+              before: data.monthBefore,
+              budget: data.previousBudget,
+              currency: main,
+              categories: data.categories,
+            ),
           ),
           gap,
         ],
-        if (credit != null && !debtFirst) ...[credit, gap],
+        if (credit != null) ...[credit, gap],
         RecentTransactions(
           rows: rows,
           digitsOf: digits,

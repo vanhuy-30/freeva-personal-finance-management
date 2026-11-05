@@ -21,7 +21,8 @@ Home → **Ví của tôi** (`/wallets`, qua AuthGate). Dùng contract hiện c�
 
 - Danh sách ví đang dùng và bộ lọc ví đã ẩn; tên, loại, số dư và mã tiền tệ.
 - Tạo/sửa tiền mặt, ngân hàng, ví điện tử, thẻ tín dụng. Cấu hình hạn mức,
-  ngày chốt/thanh toán thẻ không bắt buộc; ngày hợp lệ 1–28.
+  số trả tối thiểu (`BE-P2-E07`), ngày chốt/thanh toán thẻ không bắt buộc;
+  ngày hợp lệ 1–28. Chi tiết thẻ hiện dư nợ, hạn mức còn và số trả tối thiểu.
 - Số dư ban đầu cho phép âm và chỉ sửa để đính chính. Backend chặn đổi loại/
   tiền tệ sau khi có giao dịch; API chưa trả cờ khóa nên UI hiển thị hướng dẫn
   và lỗi khi backend từ chối, giữ nguyên bản nháp.
@@ -42,8 +43,8 @@ Tiền ở domain là `BigInt`, HTTP là string integer. Input là đơn vị ti
 không phân cách hàng nghìn; dấu thập phân theo locale (`vi`: dấu phẩy, `en`:
 dấu chấm). `minorDigits` lấy từ currency catalog; dư chữ số thập phân bị từ chối,
 không làm tròn. Formatter tách phần nguyên/lẻ bằng chuỗi, lấy separator từ intl;
-không chuyển tiền qua `double`, kể cả balance derived vượt int64. Không cộng
-số dư khác tiền tệ hoặc tự quy đổi FX.
+không chuyển tiền qua `double`, kể cả balance derived vượt int64. Danh sách ví không cộng
+số dư khác tiền tệ. Chi tiết ví (không phải thẻ tín dụng) hiện thêm dòng "≈ số" quy về tiền tệ hồ sơ kèm tỷ giá và giờ nhập khi server trả `converted` (`MOB-P2-013`); ẩn cùng số dư.
 
 Mỗi editor tạo UUID v4 và giữ cùng `clientId` khi retry POST trong editor đó.
 PATCH gửi version đọc gần nhất; conflict yêu cầu quay lại danh sách tải lại,
@@ -84,5 +85,8 @@ kiểm tra danh sách/ẩn/sắp xếp và editor 320px với text scale 2.
 
 Trước phát hành cần backend triển khai BE-P1-004 và profile/options; smoke trên
 thiết bị với API thật: tạo bốn loại ví, sửa, đổi thứ tự rồi mở lại, ẩn/khôi phục,
-ngắt mạng khi ghi, khóa/unlock editor và xung đột từ hai client. Chưa kiểm chứng
-E2E staging hoặc native build trong task này.
+ngắt mạng khi ghi, khóa/unlock editor và xung đột từ hai client.
+
+## Khớp số dư (`MOB-P3-005`)
+
+Sheet mở từ link "Khớp số dư" trên chi tiết ví/thẻ, gọi `POST /financial-accounts/{id}/reconcile` (xem [wallet-reconciliation.md](wallet-reconciliation.md)). Số lấy từ server, không tính tay trên client; thẻ tín dụng nhập dư nợ.

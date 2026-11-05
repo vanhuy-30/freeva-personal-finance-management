@@ -19,14 +19,23 @@ function asValidation(error: unknown): never {
   throw error;
 }
 
+export const RECURRING_MODES = ['auto', 'remind'] as const;
+export type RecurringMode = (typeof RECURRING_MODES)[number];
+export const AMOUNT_KINDS = ['fixed', 'estimated'] as const;
+export type AmountKind = (typeof AMOUNT_KINDS)[number];
+
 export interface RecurringInput {
   clientId: string;
   type: TransactionType;
+  mode: RecurringMode;
+  name: string | null;
+  amountKind: AmountKind;
+  remindDaysBefore: number;
   unit: RecurringUnit;
   interval: number;
   amountMinor: bigint;
   currencyCode: string;
-  accountId: string;
+  accountId: string | null;
   categoryId: string | null;
   counterAccountId: string | null;
   counterAmountMinor: bigint | null;
@@ -45,12 +54,13 @@ export interface RecurringRule extends RecurringInput {
   updatedAt: Date;
 }
 
-export type RecurringPatch = Partial<Omit<RecurringInput, 'clientId' | 'type'>> & { version: number };
+export type RecurringPatch = Partial<Omit<RecurringInput, 'clientId' | 'type' | 'mode'>> & { version: number };
 
 export interface RecurringQuery {
   page: number;
   pageSize: number;
   active?: boolean;
+  mode?: RecurringMode;
 }
 
 export function assertRecurringVersion(actual: number, expected: number): void {
@@ -61,8 +71,26 @@ export function dayString(value: Date): string {
   return value.toISOString().slice(0, 10);
 }
 
+/** A remind rule is a bill: one expense with a name, no counter leg. */
+function validateRemind(input: RecurringInput): void {
+  const name = input.name?.trim() ?? '';
+  if (name.length < 1 || name.length > 80) throw new RecurringError('VALIDATION_ERROR');
+  if (input.type !== 'expense' || input.amountMinor >= 0n) throw new RecurringError('VALIDATION_ERROR');
+  if (input.counterAccountId !== null || input.counterAmountMinor !== null || input.counterCurrencyCode !== null || input.fxRate !== null) {
+    throw new RecurringError('VALIDATION_ERROR');
+  }
+}
+
 export function validateRecurringInput(input: RecurringInput, digits: Record<string, number>): void {
-  if (!TRANSACTION_TYPES.includes(input.type)) throw new RecurringError('VALIDATION_ERROR');
+  if (!(TRANSACTION_TYPES as readonly string[]).includes(input.type)) throw new RecurringError('VALIDATION_ERROR');
+  if (!RECURRING_MODES.includes(input.mode) || !AMOUNT_KINDS.includes(input.amountKind)) {
+    throw new RecurringError('VALIDATION_ERROR');
+  }
+  if (!Number.isInteger(input.remindDaysBefore) || input.remindDaysBefore < 0 || input.remindDaysBefore > 30) {
+    throw new RecurringError('VALIDATION_ERROR');
+  }
+  if (input.mode === 'auto' && input.accountId === null) throw new RecurringError('VALIDATION_ERROR');
+  if (input.mode === 'remind') validateRemind(input);
   if (!RECURRING_UNITS.includes(input.unit)) throw new RecurringError('VALIDATION_ERROR');
   if (!Number.isInteger(input.interval) || input.interval < 1 || input.interval > 366) {
     throw new RecurringError('VALIDATION_ERROR');
@@ -81,6 +109,7 @@ export function validateRecurringInput(input: RecurringInput, digits: Record<str
   if (input.endDate && dayString(input.endDate) < dayString(input.startDate)) {
     throw new RecurringError('VALIDATION_ERROR');
   }
+  if (input.mode === 'remind') return;
   if (input.type === 'expense') {
     if (input.categoryId === null || input.amountMinor >= 0n) throw new RecurringError('VALIDATION_ERROR');
     if (input.counterAccountId !== null || input.counterAmountMinor !== null || input.counterCurrencyCode !== null || input.fxRate !== null) {
@@ -133,4 +162,13 @@ export function parseDay(value: string): Date {
   } catch {
     throw new RecurringError('VALIDATION_ERROR');
   }
+}
+
+/** Remind rules wait for a user confirm: pending when active, overdue once the due day has passed. */
+export function remindFlags(
+  rule: Pick<RecurringRule, 'mode' | 'active' | 'nextExecutionDate'>,
+  today: string,
+): { pending: boolean; overdue: boolean } {
+  const pending = rule.mode === 'remind' && rule.active;
+  return { pending, overdue: pending && dayString(rule.nextExecutionDate) < today };
 }

@@ -19,7 +19,7 @@ Bản ghi preference có `theme` và `onboardingCompleted`. Các cờ ẩn số 
 
 ## Giới hạn
 
-Không help center, ticket hay SLA (Phase 7). Không endpoint phản hồi. Quyền thông báo không xin lúc mở app; chỉ xin khi có phiên đăng nhập khác ([MOB-P1-009](mobile-privacy.md)). Chưa native build hoặc E2E staging.
+Không help center, ticket hay SLA (Phase 7). Không endpoint phản hồi. Quyền thông báo không xin lúc mở app; chỉ xin khi có phiên đăng nhập khác ([MOB-P1-009](mobile-privacy.md)).
 
 ## Kiểm chứng
 
@@ -42,11 +42,15 @@ Thiết kế: [G-profile-settings.md](../brand/patterns/G-profile-settings.md).
 - **Hồ sơ** (`/profile`): tên hiển thị (gửi trong `PUT /profile`, để trống là xoá); email có "Đổi" nhưng chưa làm (cần xác nhận qua thư).
 - **Bảo mật** (`/me/security`): PIN luôn bật; sinh trắc là công tắc; **Đổi mã PIN** nhập PIN cũ (tính như một lần mở khoá, sai 5 lần thì xoá máy), PIN mới, nhập lại; **Đổi mật khẩu** gọi `POST /auth/change-password` (403 là sai mật khẩu hiện tại; máy này giữ phiên, máy khác bị đăng xuất).
 - **Phiên đăng nhập** (`/me/sessions`): Máy này + chip, phiên khác + Thu hồi (hỏi lại), "Đăng xuất mọi máy khác" (thu hồi từng phiên khác, không đụng phiên hiện tại).
-- Chưa có avatar ảnh, xoá tài khoản, đổi email.
+- Chưa có avatar ảnh, đổi email. Xuất dữ liệu và xoá tài khoản: [mobile-profile](mobile-profile.md).
 
 ### G2
 
 - **Nhãn** (`/me/tags`): tìm, tạo, đổi tên, xoá (hỏi lại) qua menu ⋯ mỗi dòng; số giao dịch lấy từ `GET /tags`. Chạm dòng đặt bộ lọc `tagIds` (mọi thời gian) rồi mở `/transactions`.
 - **Góp ý** (`/help/feedback`): loại (Lỗi/Ý tưởng/Lời khen), chủ đề, nội dung (đếm ký tự), "Trả lời tôi qua email", gửi `POST /feedback` ([feedback.md](feedback.md)); xong hiện màn cảm ơn. Thay cho luồng sao chép Phase 1. Chưa có ảnh chụp màn hình. Lỗi mạng/quá giới hạn báo bằng toast, nội dung vẫn còn.
 - **FAQ**: ô tìm, một câu mở một lúc, thẻ "Gửi góp ý cho Freeva".
-- **Thông báo** (`/me/notifications`): "Máy mới đăng nhập" là công tắc thật (`sessionAlertsEnabled`); nhắc ghi chi, tổng kết, ngân sách, thẻ đến hạn hiện "Sắp có" (cần thông báo đẩy `BE-P2-E05` và ngân sách `BE-P2-E02`).
+- **Thông báo** (`/me/notifications`): ngân sách, định kỳ và thẻ qua API (`BE-P2-E05`, `BE-P2-E07`); "Máy mới đăng nhập" vẫn trên máy (`sessionAlertsEnabled`); giờ yên theo timezone hồ sơ; mục tiêu/soát tháng hiện "Sắp có"; nợ là công tắc thật, insight đã bỏ; nhắc ghi chi có chọn giờ (`MOB-P3-006`, xem [notifications.md](notifications.md)). Push FCM (`BE-P2-015`): quyền xin khi bật một loại.
+
+## Cá nhân theo board `MeHome3` (Phase 3)
+
+Thẻ hồ sơ, rồi **QUẢN LÝ TIỀN** (`ManageGrid`: lưới 3 cột, 6 ô Ví của tôi · Ngân sách · Mục tiêu · Vay và nợ · Định kỳ · Lịch, mỗi ô một dòng số ngắn, 2 cột khi hẹp ở chữ lớn), **THIẾT LẬP** (Danh mục, Nhãn, Thu nhập và kỳ tính), **ỨNG DỤNG**, **DỮ LIỆU** (Nhập từ app khác, Xuất dữ liệu), **HỖ TRỢ**. Thu nhập hàng tháng, Tiền tệ mặc định và Tháng tính từ chuyển sang màn `/me/money` (`MoneySettingsPage`, board `MeMoney`), vẫn lưu ngay khi chọn. Hồ sơ vẫn giữ dòng Xuất dữ liệu như board `MeProfile`.

@@ -63,7 +63,7 @@ Không recruit vào beta Phase 1. Không mở Module 6–8 sớm để “cho P2
 
 Có mục tiêu (du lịch, quỹ khẩn cấp), khoản vay, sổ tiết kiệm; sau đó tài sản (Phase 4). Cần số liệu minh bạch, không “AI hứa hẹn”.
 
-Nhà đầu tư không phải đối tượng thiết kế MVP. Module 9–12 theo roadmap.
+Theo dõi tài sản/đầu tư tự khai (module 12) vào v1 từ 2026-11-02 cho P3. Nhà đầu tư chuyên sâu (trading, phân tích) vẫn không phải đối tượng thiết kế.
 
 ## P4 — Nhân viên vận hành (web admin)
 

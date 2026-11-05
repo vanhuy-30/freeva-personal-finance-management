@@ -5,12 +5,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/core/di/injection.dart';
 import 'package:mobile/features/feedback/domain/feedback.dart';
 import 'package:mobile/features/feedback/presentation/pages/feedback_page.dart';
+import 'package:mobile/features/notifications/presentation/viewmodels/notification_view_model.dart';
 import 'package:mobile/features/settings/presentation/pages/faq_page.dart';
 import 'package:mobile/features/settings/presentation/pages/notification_settings_page.dart';
 import 'package:mobile/features/tags/domain/tag_use_cases.dart';
 import 'package:mobile/features/tags/presentation/pages/tag_page.dart';
 
 import '../../core/widgets/widget_test_app.dart' show loadTestFonts;
+import '../notifications/fake_notification_view_model.dart';
 import 'g1_harness.dart';
 import 'g2_test.dart' show FakeFeedback, FakeTags;
 
@@ -35,7 +37,8 @@ void main() {
     addTearDown(g.dispose);
     getIt
       ..registerSingleton<TagUseCases>(FakeTags())
-      ..registerSingleton<FeedbackUseCases>(FakeFeedback());
+      ..registerSingleton<FeedbackUseCases>(FakeFeedback())
+      ..registerSingleton<NotificationViewModel>(FakeNotificationViewModel());
     await t.pumpWidget(g.app(page, dark: dark, scale: scale));
     await t.pump(const Duration(milliseconds: 400));
     await t.pump(const Duration(milliseconds: 400));
@@ -89,7 +92,42 @@ void main() {
   testWidgets('faq', skip: !Platform.isMacOS, (t) async {
     await shot(t, const FaqPage(), 'faq');
   });
+  // Board N5 MeNotify3 / N6 NotifyTime are 390×920.
+  const notifySize = Size(390, 920);
+  Future<void> openTime(WidgetTester t) async {
+    await t.tap(find.text('20:00'));
+    await t.pumpAndSettle();
+  }
+
   testWidgets('notifications', skip: !Platform.isMacOS, (t) async {
-    await shot(t, const NotificationSettingsPage(), 'notify');
+    await shot(t, const NotificationSettingsPage(), 'notify', size: notifySize);
+  });
+  testWidgets('notifications dark', skip: !Platform.isMacOS, (t) async {
+    await shot(
+      t,
+      const NotificationSettingsPage(),
+      'notify_dark',
+      dark: true,
+      size: notifySize,
+    );
+  });
+  testWidgets('daily log time', skip: !Platform.isMacOS, (t) async {
+    await shot(
+      t,
+      const NotificationSettingsPage(),
+      'notify_time',
+      size: notifySize,
+      then: () => openTime(t),
+    );
+  });
+  testWidgets('daily log time dark', skip: !Platform.isMacOS, (t) async {
+    await shot(
+      t,
+      const NotificationSettingsPage(),
+      'notify_time_dark',
+      dark: true,
+      size: notifySize,
+      then: () => openTime(t),
+    );
   });
 }

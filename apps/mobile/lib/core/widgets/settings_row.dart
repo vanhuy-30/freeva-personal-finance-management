@@ -19,6 +19,8 @@ class SettingsRow extends StatelessWidget {
     this.destructive = false,
     this.trailing,
     this.subtitle,
+    this.subtitleLink,
+    this.onSubtitleLink,
     this.accent = false,
     this.tint,
     this.minHeight = FreevaSize.row,
@@ -31,6 +33,8 @@ class SettingsRow extends StatelessWidget {
     required bool on,
     required ValueChanged<bool> onChanged,
     this.subtitle,
+    this.subtitleLink,
+    this.onSubtitleLink,
     this.accent = false,
     this.tint,
     this.minHeight = FreevaSize.row,
@@ -51,6 +55,11 @@ class SettingsRow extends StatelessWidget {
 
   /// One short line under the title.
   final String? subtitle;
+
+  /// Tappable text (`text.link`, 600) right after [subtitle], e.g. a time
+  /// that opens a picker. Needs [onSubtitleLink].
+  final String? subtitleLink;
+  final VoidCallback? onSubtitleLink;
 
   /// Coloured icon tile (money setup) instead of the grey one (app settings).
   final bool accent;
@@ -104,17 +113,9 @@ class SettingsRow extends StatelessWidget {
                         fontWeight: destructive ? FontWeight.w500 : null,
                       ),
                     ),
-                    if (subtitle != null) ...[
+                    if (subtitle != null || subtitleLink != null) ...[
                       const SizedBox(height: 2),
-                      Text(
-                        subtitle!,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: FreevaTypography.label.copyWith(
-                          fontWeight: FontWeight.w400,
-                          color: c.textSecondary,
-                        ),
-                      ),
+                      _subtitle(c),
                     ],
                   ],
                 ),
@@ -152,6 +153,45 @@ class SettingsRow extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _subtitle(FreevaColors c) {
+    final style = FreevaTypography.label.copyWith(
+      fontWeight: FontWeight.w400,
+      color: c.textSecondary,
+    );
+    final text = subtitle == null || subtitle!.isEmpty
+        ? null
+        : Text(
+            subtitle!,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: style,
+          );
+    final link = subtitleLink;
+    if (link == null) return text ?? const SizedBox.shrink();
+    return Row(
+      children: [
+        if (text != null) Flexible(child: text),
+        Semantics(
+          button: true,
+          label: link,
+          excludeSemantics: true,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: onSubtitleLink,
+            child: Text(
+              link,
+              maxLines: 1,
+              style: style.copyWith(
+                fontWeight: FontWeight.w600,
+                color: c.textLink,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -19,11 +19,11 @@ Mỗi ví trả thêm `hasTransactions` (có bất kỳ giao dịch nào, kể c
 
 List sắp xếp `sortOrder`, `createdAt`, `id` tăng dần. Timestamp ISO 8601; tiền là string integer. Currency lấy từ catalog hiện có (`GET /api/v1/profile/options`), không tự thêm mã tiền tệ từ request.
 
-Tên trim, 1–100 ký tự; `sortOrder` 0–2147483647, mặc định 0. Số tiền đầu vào có tối đa 20 ký tự và nằm trong signed int64; không nhận JSON number, số thập phân hoặc số mũ. Số dư ban đầu được âm. Các trường thẻ nullable, chỉ được có giá trị với `credit`: hạn mức không âm, ngày chốt/thanh toán 1–28. Bỏ qua trường trong PATCH nghĩa là giữ giá trị; chỉ trường thẻ nhận null.
+Tên trim, 1–100 ký tự; `sortOrder` 0–2147483647, mặc định 0. Số tiền đầu vào có tối đa 20 ký tự và nằm trong signed int64; không nhận JSON number, số thập phân hoặc số mũ. Số dư ban đầu được âm. Các trường thẻ nullable, chỉ được có giá trị với `credit`: hạn mức và số trả tối thiểu không âm (`minimumPaymentMinor`, `BE-P2-E07`), ngày chốt/thanh toán 1–28. Số trả tối thiểu chỉ ghi nhận; trả góp một khoản mua trên thẻ là lịch riêng, xem [card-installments.md](card-installments.md); không tạo giao dịch trả nợ. Dư nợ và hạn mức còn suy từ `balanceMinor` và hạn mức ở client. Bỏ qua trường trong PATCH nghĩa là giữ giá trị; chỉ trường thẻ nhận null.
 
 ## Số dư, lịch sử và ghi đồng thời
 
-- `balanceMinor = initialBalanceMinor + SUM(amountMinor)` của giao dịch cùng owner/ví có `deletedAt = null`. Bao gồm cả transfer; không cached balance, không quy đổi FX hoặc tạo giao dịch số dư ban đầu.
+- `balanceMinor = initialBalanceMinor + SUM(amountMinor)` của giao dịch cùng owner/ví có `deletedAt = null`. Bao gồm cả transfer; không cached balance, không tạo giao dịch số dư ban đầu. Số lưu không bao giờ quy đổi; `GET /financial-accounts/{id}` thêm `converted` (số dư theo tiền tệ hồ sơ, `rate`, `quotedAt`) khi có tỷ giá người dùng nhập và đổi đúng minor unit, ngược lại `null` (`BE-P2-013`).
 - `SUM(bigint)` PostgreSQL đọc qua text rồi chuyển thành JS bigint; số dư derived có thể vượt int64. Các query đọc ví, giao dịch và total dùng cùng snapshot Repeatable Read.
 - Cho sửa số dư ban đầu để đính chính; không sửa giao dịch cũ. Có bất kỳ giao dịch nào, kể cả đã soft-delete, thì khóa đổi `type` và `currencyCode`.
 - Đổi khỏi `credit` khi chưa có giao dịch sẽ xóa cấu hình thẻ trong cùng transaction. Nếu request đồng thời gửi cấu hình thẻ khác null thì trả validation error.
