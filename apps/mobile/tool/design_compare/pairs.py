@@ -20,7 +20,7 @@ M = {
  'K': [('DebtEmpty','debts/debts_empty'),('DebtList','debts/debts_list'),('DebtAdd','debts/debts_add'),('DebtDetail','debts/debts_detail'),('DebtPay','debts/debts_pay'),('LoanList','debts/debts_loans'),('LoanDetail','debts/debts_loan_detail'),('LoanAdd','debts/debts_loan_add'),('LoanPay','debts/debts_loan_pay')],
  'L': [('RecList','recurring/rec_list'),('RecEdit','recurring/rec_add_remind'),('RecEditAuto','recurring/rec_edit_auto'),('BillPaid','recurring/rec_paid_sheet')],
  'M': [('WReconcile','wallets/reconcile_sheet'),('TxDetail3','transactions/refund_detail'),('TxRefund','transactions/refund_sheet'),('TxRefundDelete','transactions/refund_delete'),('InstAdd','installments/installment_add'),('InstDetail','installments/installment_detail'),('WCredit3','installments/installment_card')],
- 'N': [('BudgetAlert','budgets/n4_thresholds'),('MeNotify3','settings/g2_notify'),('NotifyTime','settings/g2_notify_time')],
+ 'N': [('BudgetAlert','budgets/n4_thresholds'),('MeNotify3','settings/g2_notify'),('NotifyTime','settings/g2_notify_time'),('Forecast','forecast/forecast_school_off')],
  'H': [('SyncBanner','sync/h1_list'),('SyncCenter','sync/h1_center'),('SyncRunning','sync/h1_sending'),('SyncDone','sync/h1_done'),('SyncConflict','sync/h2_compare'),('SyncDuplicate','sync/h2_duplicate'),('SyncDiscard','sync/h1_discard'),('SyncUpdate','sync/h1_update')],
 }
 os.makedirs(f'{S}/pairs', exist_ok=True)

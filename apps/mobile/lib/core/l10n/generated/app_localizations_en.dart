@@ -5120,4 +5120,122 @@ class SEn extends S {
   String meCalendarMonth(int month) {
     return 'Month $month';
   }
+
+  @override
+  String get forecastTitle => 'Balance forecast';
+
+  @override
+  String forecastRange(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count months',
+      one: '1 month',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get forecastRangeSemantics => 'Forecast range';
+
+  @override
+  String forecastEndOfMonth(int month) {
+    return 'About this much left at the end of month $month';
+  }
+
+  @override
+  String forecastChange(String amount) {
+    return '$amount vs today';
+  }
+
+  @override
+  String get forecastToday => 'Today';
+
+  @override
+  String get forecastHowTitle => 'How it is worked out';
+
+  @override
+  String get forecastStartsFrom => 'Starting balance';
+
+  @override
+  String forecastStartsFromWallets(String amount, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count wallets',
+      one: '1 wallet',
+    );
+    return '$amount · $_temp0';
+  }
+
+  @override
+  String forecastStartsFromYou(String amount) {
+    return '$amount · set by you';
+  }
+
+  @override
+  String get forecastEdit => 'Edit';
+
+  @override
+  String get forecastScope =>
+      'Only recurring items and bills. Daily spending is not included.';
+
+  @override
+  String forecastOtherCurrency(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items in other currencies are left out.',
+      one: '1 item in another currency is left out.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get forecastRulesHeader => 'Included items';
+
+  @override
+  String forecastRuleToggle(String name) {
+    return 'Include $name';
+  }
+
+  @override
+  String forecastEstimated(String schedule) {
+    return '$schedule · estimate';
+  }
+
+  @override
+  String forecastOneOff(String date) {
+    return 'Once, $date';
+  }
+
+  @override
+  String get forecastNoRules =>
+      'No recurring items or bills yet, so the balance stays the same.';
+
+  @override
+  String forecastChartSemantics(String items) {
+    return 'Forecast balance at the end of each month: $items';
+  }
+
+  @override
+  String get forecastBalanceTitle => 'Starting balance';
+
+  @override
+  String get forecastBalanceHint =>
+      'The forecast adds your recurring items to this amount.';
+
+  @override
+  String get forecastBalanceApply => 'Use this amount';
+
+  @override
+  String get forecastBalanceReset => 'Use the total of my wallets';
+
+  @override
+  String get forecastBalanceInvalid => 'Enter a valid amount.';
+
+  @override
+  String forecastDayEstimated(int day) {
+    return 'Day $day · estimate';
+  }
 }
