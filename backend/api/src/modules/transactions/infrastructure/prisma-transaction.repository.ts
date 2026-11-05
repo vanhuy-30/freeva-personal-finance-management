@@ -228,6 +228,11 @@ export class PrismaTransactionRepository implements TransactionRepository {
       where: { userId, type: 'refund', deletedAt: null, refundOfId: { in: expenseIds } } });
     return new Map(rows.filter(row => row.refundOfId && row._sum.amountMinor).map(row => [row.refundOfId!, row._sum.amountMinor!]));
   }
+  async installmentPlanIds(userId: string, expenseIds: string[]): Promise<Map<string, string>> {
+    if (!expenseIds.length) return new Map();
+    const rows = await this.prisma.cardInstallmentPlan.findMany({ where: { userId, transactionId: { in: expenseIds } }, select: { id: true, transactionId: true } });
+    return new Map(rows.map(row => [row.transactionId, row.id]));
+  }
   /** Sum of active refunds of one expense, optionally leaving one refund out (its own edit). */
   private async refunded(tx: Prisma.TransactionClient, userId: string, originalId: string, exceptId?: string): Promise<bigint> {
     const [sum] = await tx.$queryRaw<{ total: string }[]>(Prisma.sql`

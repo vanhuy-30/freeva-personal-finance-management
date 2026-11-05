@@ -28,7 +28,11 @@ export type CardInstallmentRecord = {
   version: number;
   createdAt: Date;
   updatedAt: Date;
+  /** The purchase, for naming the plan on the app (MOB-P3-009). Absent only in pure domain tests. */
+  purchase?: InstallmentPurchase;
 };
+
+export type InstallmentPurchase = { occurredOn: string; merchant: string | null; notes: string | null; categoryId: string | null };
 
 export type InstallmentPeriod = { index: number; dueOn: string; amountMinor: bigint };
 

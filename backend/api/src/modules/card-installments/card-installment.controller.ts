@@ -5,7 +5,7 @@ import type { Response } from 'express';
 import { AuthGuard, type AuthRequest } from '../auth/auth.guard';
 import { CardInstallmentExceptionFilter } from './card-installment-exception.filter';
 import {
-  CardInstallmentDueDto, CloseCardInstallmentDto, CreateCardInstallmentDto, ListCardInstallmentsDto,
+  CardInstallmentDueDto, CloseCardInstallmentDto, CreateCardInstallmentDto, ListCardInstallmentsDto, PreviewCardInstallmentDto,
 } from './card-installment.dto';
 import { CardInstallmentService } from './card-installment.service';
 
@@ -30,6 +30,11 @@ export class CardInstallmentController {
     const result = await this.plans.create(req.session.userId, body);
     res.status(result.created ? 201 : 200);
     return result.plan;
+  }
+
+  @Post('preview') @HttpCode(200) @Header('Cache-Control', 'no-store')
+  preview(@Req() req: AuthRequest, @Body() body: PreviewCardInstallmentDto) {
+    return this.plans.preview(req.session.userId, body);
   }
 
   @Get(':id') @Header('Cache-Control', 'no-store')
