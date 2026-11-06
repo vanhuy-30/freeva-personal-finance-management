@@ -30,6 +30,11 @@ export class ReportController {
     return this.reports.series(request.session.userId, query);
   }
 
+  @Get('net-worth/history') @Header('Cache-Control', 'no-store')
+  netWorthHistory(@Req() request: AuthRequest, @Query() query: SeriesQueryDto) {
+    return this.reports.netWorthHistory(request.session.userId, query);
+  }
+
   @Get('net-worth') @Header('Cache-Control', 'no-store')
   netWorth(@Req() request: AuthRequest, @Query() query: NetWorthQueryDto) {
     return this.reports.netWorth(request.session.userId, query.displayCurrency);

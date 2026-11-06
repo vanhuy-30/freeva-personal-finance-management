@@ -2,7 +2,7 @@
 
 Module 14. Contract: [OpenAPI](../../packages/api-contracts/openapi.yaml). Không migration. Domain và repository interface không phụ thuộc Prisma; adapter infrastructure là nơi truy cập DB.
 
-Ngoài phạm vi: ngân sách (`BE-P2-E02`), tài sản ròng theo thời gian từng ngày, CSV, lời AI (`BE-P5-E04`). UI nằm ở [mobile-reports.md](mobile-reports.md).
+Ngoài phạm vi: ngân sách (`BE-P2-E02`), CSV, lời AI (`BE-P5-E04`). UI nằm ở [mobile-reports.md](mobile-reports.md).
 
 ## API
 
@@ -15,6 +15,7 @@ Các GET `/api/v1/reports/*` yêu cầu Bearer session, lấy owner từ session
 | `GET /trend` | Chuỗi cột chi/thu cho biểu đồ xu hướng nhóm F, một lần gọi (`DS-P2-003`) |
 | `GET /series` | Chuỗi thu/chi theo cửa sổ 7 ngày, 30 ngày, 3/6/12 tháng tài chính hoặc toàn bộ năm (`BE-P2-E06`) |
 | `GET /net-worth` | Tài sản, nợ và ròng hiện tại; không lọc kỳ |
+| `GET /net-worth/history` | Tài sản ròng cuối mỗi mốc của cửa sổ 7d/30d/3m/6m/1y/all (`BE-P4-E02`) |
 
 `period` bắt buộc trên cashflow: `week`, `month`, `year` hoặc `range`.
 
@@ -59,6 +60,15 @@ Mỗi lần đọc chạy trong một transaction Repeatable Read: hồ sơ (tim
 - `assetsMinor` = tổng số dư `cash`, `bank`, `ewallet`. Âm là thấu chi, vẫn ở tài sản
 - `liabilitiesMinor` = tổng số dư `credit`. Âm là nợ; dương là trả dư và vẫn ở nợ
 - `netWorthMinor` = assets + liabilities
+- Ngoài ví: khoản cho mượn còn mở cộng vào tài sản, khoản đi mượn còn mở vào nợ (số âm) ([personal-debts.md](personal-debts.md)); vị thế đầu tư đang giữ cộng vào tài sản theo giá trị hiện tại ([investments.md](investments.md)). Tiền đã chuyển từ ví sang đầu tư đã rời ví nên không tính trùng.
+
+**Tài sản ròng theo thời gian** (`GET /net-worth/history?window=7d|30d|3m|6m|1y|all&on=`, `BE-P4-E02`): cùng các mốc như `/series` (7d/30d từng ngày, 3m/6m/1y tháng tài chính, `all` từng năm dương lịch từ hoạt động đầu tiên của bất kỳ loại nào: giao dịch, khoản mượn, lần mua đầu tư). Mỗi điểm `{ from, to, asOf, items }` là tài sản ròng tại `asOf` = ngày cuối mốc nhưng không muộn hơn hôm nay, nên điểm mới nhất bằng `/net-worth`. Không lưu snapshot: tính lại từ sổ cái mỗi lần đọc trong một transaction Repeatable Read, nên sửa hoặc xoá giao dịch cũ đổi mọi điểm sau nó. Tại ngày `D`:
+
+- Ví đang dùng: `initialBalanceMinor` + giao dịch chưa xoá có `occurredOn ≤ D` (`credit` là nợ).
+- Cho mượn / đi mượn: gốc nếu `occurredOn ≤ D` trừ các lần trả có `paidOn ≤ D`, gồm cả khoản đã lưu trữ (tất toán sau `D` thì tại `D` vẫn còn mở).
+- Đầu tư: phát lại các lần mua/bán có `tradedOn ≤ D` bằng cùng quy tắc giá vốn bình quân, giá trị theo giá nhập mới nhất có ngày báo (theo múi giờ hồ sơ) `≤ D`; chưa có giá thì tính theo giá vốn; tiền gửi là gốc cộng lãi đơn tới `D`.
+
+Mỗi điểm tách theo tiền tệ, không quy đổi; điểm không có gì trả `items` rỗng. Khoản vay (`/loans`) và ví đã lưu trữ không tính, giống `/net-worth`.
 
 ## Kiểm thử
 

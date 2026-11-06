@@ -4339,6 +4339,52 @@ paths:
         '503':
           $ref: '#/components/responses/ReportUnavailable'
       description: Read-only projection of monthly cashflow. Period follows fiscalMonthStartDay. Amounts and savingsRateBps match GET /reports/cashflow for the same month. savingsMinor equals netMinor. topCategories are leaf expense rows by |expense| descending (ties by categoryId, null last), max 3 per currency. Category names are not returned. Transfers excluded. No FX conversion here. No AI narrative.
+  /api/v1/reports/net-worth/history:
+    get:
+      operationId: reportNetWorthHistory
+      summary: Net worth at the end of each bucket of a time window
+      tags:
+      - Reports
+      security:
+      - UserBearer: []
+      parameters:
+      - name: window
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - 7d
+          - 30d
+          - 3m
+          - 6m
+          - 1y
+          - all
+      - name: on
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
+        description: Anchor calendar date of the last bucket. Defaults to today in the user timezone.
+      responses:
+        '200':
+          description: Oldest-first points, one per bucket
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/ReportNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NetWorthHistory'
+        '400':
+          $ref: '#/components/responses/ReportValidationError'
+        '401':
+          $ref: '#/components/responses/ReportUnauthorized'
+        '503':
+          $ref: '#/components/responses/ReportUnavailable'
+      description: "Read-only. Buckets are the same as /reports/series (7d and 30d single days, 3m/6m/1y fiscal months, all = calendar years from the first activity of any kind). Each point is the net worth on `asOf`, the bucket's last day but never later than today, so the newest point equals /reports/net-worth. Computed from the ledger on every read (no stored snapshot), so editing a past transaction changes every later point. Parts match /reports/net-worth: active wallets, open lend/borrow (receivable asset, payable negative liability, archived ones included on the days they were open) and held investments (trades replayed to `asOf`, valued at the latest price quoted by then, deposits at principal plus accrued interest). Money moved from a wallet into an investment already left the wallet, so it is counted once. Amounts stay in each currency; no FX conversion."
   /api/v1/reports/net-worth:
     get:
       operationId: reportNetWorth
@@ -10550,6 +10596,28 @@ components:
         netMinor:
           $ref: '#/components/schemas/ReportMoney'
           description: incomeMinor + expenseMinor + transferMinor + adjustmentMinor + debtMinor + investmentMinor + refundMinor for this account.
+    NetWorthHistory:
+      type: object
+      additionalProperties: false
+      required: [window, points]
+      properties:
+        window:
+          type: string
+          enum: [7d, 30d, 3m, 6m, 1y, all]
+        points:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [from, to, asOf, items]
+            properties:
+              from: {type: string, format: date}
+              to: {type: string, format: date}
+              asOf: {type: string, format: date, description: 'Day the point is valued at: `to`, or today when `to` is later.'}
+              items:
+                type: array
+                description: One row per currency that has anything on `asOf`; empty when nothing was held.
+                items: {$ref: '#/components/schemas/NetWorthTotal'}
     NetWorthReport:
       type: object
       additionalProperties: false
@@ -10576,10 +10644,10 @@ components:
           pattern: ^[A-Z]{3}$
         assetsMinor:
           $ref: '#/components/schemas/ReportMoney'
-          description: Signed sum of cash, bank, and ewallet balances. Negative means overdraft.
+          description: Signed sum of cash, bank, and ewallet balances, plus money owed to you and the value of held investments. Negative wallet balance means overdraft.
         liabilitiesMinor:
           $ref: '#/components/schemas/ReportMoney'
-          description: Signed sum of credit balances. Negative means debt.
+          description: Signed sum of credit balances and money you owe people. Negative means debt.
         netWorthMinor:
           $ref: '#/components/schemas/ReportMoney'
           description: assetsMinor + liabilitiesMinor.

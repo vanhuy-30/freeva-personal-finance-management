@@ -4,6 +4,7 @@ import { REPORT_REPOSITORY, type ReportRepository } from './domain/report.reposi
 import {
   buildCashflow, buildMonthReview, buildNetWorth, buildSeries, buildTrend, convertCashflow, convertNetWorth, resolvePeriod, seriesBuckets, trendBuckets,
 } from './domain/report';
+import { buildNetWorthHistory } from './domain/net-worth-history';
 import type { CashflowQueryDto, MonthReviewQueryDto, SeriesQueryDto, TrendQueryDto } from './report.dto';
 
 @Injectable()
@@ -34,6 +35,13 @@ export class ReportService {
     return buildSeries(
       query.window,
       await this.repository.series(userId, (profile, firstOn) => seriesBuckets(query, profile, firstOn)),
+    );
+  }
+
+  async netWorthHistory(userId: string, query: SeriesQueryDto) {
+    return buildNetWorthHistory(
+      query.window,
+      await this.repository.netWorthHistory(userId, (profile, firstOn) => seriesBuckets(query, profile, firstOn)),
     );
   }
 

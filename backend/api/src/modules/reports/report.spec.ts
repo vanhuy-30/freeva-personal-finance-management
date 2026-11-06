@@ -382,6 +382,7 @@ describe('BE-P1-007 report HTTP contract', () => {
       async trend() { return { buckets: [], rows: [], firstOn: null }; },
       async series() { return { buckets: [], rows: [], firstOn: null }; },
       async netWorth() { return [{ currency: 'VND', bucket: 'asset', total: 10n }]; },
+      async netWorthHistory() { return { buckets: [], today: '2026-10-08', wallets: [], debts: [], investments: [] }; },
     };
     const service = new ReportService(repository, { book: async () => noRates } as unknown as FxRateService);
     await expect(service.cashflow('user', { period: 'month', on: '2026-10-08' })).resolves.toMatchObject({
