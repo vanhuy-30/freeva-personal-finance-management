@@ -35,6 +35,13 @@
 
 Cùng đợt (2026-11-03), canvas được sửa cho khớp app đang chạy (theo golden): mật khẩu 8 ký tự (AuRegister, AuReset), chip "Xem tổng theo VND" (BMulti), dòng "Xem bản soát tháng" (RepMonth), các dòng Định kỳ / Hóa đơn / Lịch và bỏ "Định dạng ngày" (MeHome), "Xuất dữ liệu" (MeProfile), các dòng Thông báo (MeNotify), "Số trả tối thiểu" và nhãn "Loại ví" (WCredit, WAddCredit). Trang 05 có thêm hàng **P2 · Đã có trong app, chưa từng vẽ** (`Cur*.dc.html`, `RevMonth.dc.html`): Ngân sách, Lịch, Hộp thư, Soát tháng, Định kỳ và Hóa đơn bản đang chạy, vẽ lại đúng app để làm mốc.
 
+### Phase 4 (trang canvas **08 · Phase 4**, chốt 2026-11-06)
+
+| Phần | Trạng thái | Tài liệu |
+|---|---|---|
+| **P** Đầu tư | **Chốt** 2026-11-06, chưa code (`MOB-P4-E01`, cần `BE-P4-E03`) | [patterns/P-investments.md](patterns/P-investments.md) |
+| **Q** Tài sản ròng theo thời gian | **Chốt** 2026-11-06, chưa code (`MOB-P4-E02`) | [patterns/P-investments.md](patterns/P-investments.md) |
+
 ## Tiến độ code (Flutter)
 
 Thứ tự đã chốt: nền tảng → B → C → D → E → F → G → A → H. Mỗi nhóm một nhánh + một PR vào `develop`; API nhỏ mà màn cần làm luôn trong PR đó, module lớn (ngân sách, thông báo, chế độ khách, deep link email) để trạng thái trống/ẩn.
@@ -69,7 +76,7 @@ Còn lệch có chủ đích hoặc chưa làm: ô thả khi kéo sắp xếp v�
 
 ## Việc thiết kế còn lại
 
-Tám nhóm A–H và bảy nhóm Phase 3 đã chốt. Còn:
+Tám nhóm A–H, bảy nhóm Phase 3 và nhóm P, Q của Phase 4 đã chốt. Còn:
 
 - **Popup xoá tài khoản** (nhóm G): đã làm bằng hộp xác nhận chung ở `MOB-P2-011`; chưa vẽ trên board. Xuất dữ liệu đã vẽ ở nhóm O.
 - **Khoản bạn đi mượn** (nhóm K): chi tiết và sheet trả giống khoản cho mượn, chỉ đổi chữ; chưa vẽ riêng.
@@ -113,6 +120,6 @@ Tám nhóm A–H và bảy nhóm Phase 3 đã chốt. Còn:
 ## Ghi chú kỹ thuật cho người sửa canvas
 
 - Canvas là Artifact loại Design: file `project/canvas.json` (index, `pages`, `boards`, `order`, `notes`) và `project/*.dc.html`. Ảnh logo đã tải lên dạng asset `/_blob/…` (xem `canvas/Logo.dc.html`).
-- Trang canvas: `f` Foundations · `t` Tokens · `c` Components · `s` States · `p` Patterns · `p3` Phase 3 · `g` Guidelines.
+- Trang canvas: `f` Foundations · `t` Tokens · `c` Components · `s` States · `p` Patterns · `p3` Phase 3 · `p4` Phase 4 · `g` Guidelines.
 - Board Phase 3 có tiêu đề dạng "I · 1. Tên màn"; màn có sheet/popup dùng nguyên nội dung màn nền bên dưới lớp tối.
 - Màu trong artboard là hex theo token v2 (ink `#22283A`, canvas `#FCFDFF`, action `#3F67D1`, wash ở `.wash`).
