@@ -35,6 +35,17 @@ Giao dịch `investment` **không** vào thu/chi, ngân sách, tỷ lệ tiết 
 
 **Không lời khuyên.** Không tự mua, bán, gợi ý.
 
+## Bổ sung BE-P4-E03 (2026-11-06)
+
+Theo thiết kế đã duyệt ([P-investments.md](../../brand/patterns/P-investments.md)): danh mục = `kind`, tài sản = `Investment`, lần mua = trade `buy`. Mô hình vị thế và giá vốn bình quân giữ nguyên.
+
+- **Phát lại.** Sau mọi lần thêm, sửa, xoá trade, vị thế được dựng lại từ toàn bộ trade theo thứ tự `tradedOn`, `createdAt`, `id` (cùng thứ tự với tài sản ròng theo thời gian). `quantity`, `costBasisMinor` và `realizedMinor` của từng lần bán được ghi lại. Một lần bán vượt số đang giữ tại ngày của nó → `INVESTMENT_OVERSELL`, nên trade ghi lùi ngày cũng không làm sai lãi chốt.
+- **Đã có từ trước.** Lần mua có `accountId = null`: không có chân ví, chỉ cộng số lượng và giá vốn. Tài sản ròng tăng đúng giá trị khoản đó, không trùng vì không có tiền rời ví. Lần bán luôn cần ví.
+- **Giá một đơn vị.** Trade nhận `priceMinor`; thiếu `amountMinor` thì `amount = round_half_up(quantity × price)`. Trade có ví và có `priceMinor` ghi thêm một giá `source = trade` (hôm nay: lúc ghi; ngày cũ: 12:00 UTC ngày đó), nên giá mua và giá bán thành giá hiện tại. Lần mua có sẵn không ghi giá vì đó là giá vốn cũ.
+- **Sửa, xoá lần mua.** Chỉ lần mua. Chân ví đi theo: sửa số tiền, ví, ngày; bỏ ví thì soft-delete chân; đặt lại ví thì khôi phục đúng chân đó (id sinh từ `clientId`). Xoá lần mua trả tiền về ví như chưa từng mua; xoá lần mua cuối thì xoá luôn tài sản và giá của nó. Sửa/xoá lần bán chưa hỗ trợ (`INVESTMENT_UNSUPPORTED`).
+- **Tạo kèm lần mua.** `POST /investments` nhận `initialTrade` trong cùng commit. `clientId` mới nhưng trùng `kind` + tên (không phân biệt hoa thường) + tiền tệ + đơn vị với tài sản đang hoạt động, chia được, thì lần mua vào tài sản đó.
+- **Phần trăm.** `unrealizedBps = round_half_away(unrealized × 10000 / cost)`, số nguyên; tổng chỉ tính trên vốn của khoản có giá.
+
 ## Consequences
 
 - Migration additive: `ALTER TYPE "TransactionType" ADD VALUE 'investment'` + 3 bảng; deploy migration trước API.
@@ -42,3 +53,4 @@ Giao dịch `investment` **không** vào thu/chi, ngân sách, tỷ lệ tiết 
 - Export và xóa tài khoản phải gồm bảng mới.
 - Bảng số chuẩn (vàng chỉ/lượng, crypto lẻ, mua → góp → bán một phần, lãi tiền gửi) nằm trong test domain và là nền của `QA-P4-E01`.
 - Tài sản ròng theo thời gian (`BE-P4-E02`) dựng trên cùng các số này.
+- `BE-P4-E03`: migration additive `investment_trade_edit` (`accountId`, `transactionClientId` cho phép null, thêm `note`, CHECK lần bán phải có ví).

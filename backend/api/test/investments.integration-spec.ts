@@ -223,7 +223,7 @@ describe('BE-P4-E01 investments HTTP + PostgreSQL', () => {
     // wallet 65.000.000 + position 5 x 8.000.000 = 105.000.000
     expect(JSON.stringify(worth.body)).toContain('105000000');
     const summary = await request('GET', '/investments/summary');
-    expect(summary.body.totals).toEqual([{ currencyCode: 'VND', costBasisMinor: '35000000', currentValueMinor: '40000000', unrealizedMinor: '5000000', unpricedCount: 0 }]);
+    expect(summary.body.totals).toEqual([{ currencyCode: 'VND', costBasisMinor: '35000000', currentValueMinor: '40000000', unrealizedMinor: '5000000', unrealizedBps: '1429', unpricedCount: 0 }]);
   });
 
   it('income and expense reports ignore investment legs', async () => {

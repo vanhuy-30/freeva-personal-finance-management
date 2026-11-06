@@ -1,6 +1,7 @@
 import {
-  applyBuy, applySell, depositInterest, divRoundHalfUp, formatQuantity, InvestmentError, investmentTotals, parseQuantity,
-  QUANTITY_SCALE, tradeLegMinor, valuate, valueOf, validateDepositTerms, validateTradeQuantity, type InvestmentRecord,
+  applyBuy, applySell, averageCostOf, depositInterest, divRoundHalfUp, formatQuantity, InvestmentError, investmentTotals, kindTotals, lotValuation,
+  parseQuantity, QUANTITY_SCALE, ratioBps, replayTrades, resolveAmount, tradeLegMinor, unitPriceOf, valuate, valueOf, validateDepositTerms,
+  validateTradeQuantity, type InvestmentRecord, type ReplayTrade,
 } from './investment';
 
 const q = parseQuantity;
@@ -117,7 +118,7 @@ describe('valuation', () => {
     const priced = record({ latestPrice: { priceMinor: 8_000_000n, source: 'manual', quotedAt: new Date(0) } });
     const unpriced = record({ id: 'u', costBasisMinor: 5n });
     const totals = investmentTotals([priced, unpriced].map(investment => ({ investment, valuation: valuate(investment, '2026-11-06') })));
-    expect(totals).toEqual([{ currencyCode: 'VND', costBasisMinor: 70_000_005n, currentValueMinor: 80_000_005n, unrealizedMinor: 10_000_000n, unpricedCount: 1 }]);
+    expect(totals).toEqual([{ currencyCode: 'VND', costBasisMinor: 70_000_005n, currentValueMinor: 80_000_005n, unrealizedMinor: 10_000_000n, unpricedCount: 1, unrealizedBps: 1429n }]);
   });
   it('ignores sold-out positions in totals', () => {
     const empty = record({ quantityScaled: 0n, costBasisMinor: 0n });
@@ -140,5 +141,90 @@ describe('rules', () => {
     expect(() => validateDepositTerms('gold', { interestRateBps: 100, startDate: null, maturityDate: null })).toThrow();
     expect(() => validateDepositTerms('savings_deposit', { interestRateBps: 600, startDate: '2026-01-01', maturityDate: '2026-12-31' })).not.toThrow();
     expect(() => validateDepositTerms('savings_deposit', { interestRateBps: 600, startDate: '2026-01-01', maturityDate: '2025-12-31' })).toThrow();
+  });
+});
+
+describe('BE-P4-E03 helpers', () => {
+  it('ratioBps rounds half away from zero and needs a positive base', () => {
+    expect(ratioBps(5_000_000n, 35_000_000n)).toBe(1429n);
+    expect(ratioBps(-450_000n, 9_750_000n)).toBe(-462n);
+    expect(ratioBps(0n, 10n)).toBe(0n);
+    expect(ratioBps(1n, 20_000n)).toBe(1n);
+    expect(ratioBps(-1n, 20_000n)).toBe(-1n);
+    expect(ratioBps(5n, 0n)).toBeNull();
+  });
+  it('unit price and average cost round half up', () => {
+    expect(unitPriceOf(35_000_000n, q('5'))).toBe(7_000_000n);
+    expect(averageCostOf({ quantityScaled: q('7'), costBasisMinor: 50_000_000n })).toBe(7_142_857n);
+    expect(averageCostOf({ quantityScaled: 0n, costBasisMinor: 0n })).toBeNull();
+  });
+  it('resolveAmount prefers the amount, else quantity x price', () => {
+    expect(resolveAmount(q('3'), 21_600_000n, 1n)).toBe(21_600_000n);
+    expect(resolveAmount(q('3'), null, 7_200_000n)).toBe(21_600_000n);
+    expect(resolveAmount(q('0.5'), null, 3n)).toBe(2n);
+    expect(() => resolveAmount(q('1'), null, null)).toThrow(InvestmentError);
+    expect(() => resolveAmount(q('0.00000001'), null, 1n)).toThrow(InvestmentError);
+  });
+});
+
+describe('replayTrades', () => {
+  const at = (day: string, minute = 0) => new Date(`${day}T01:${String(minute).padStart(2, '0')}:00Z`);
+  const t = (id: string, side: 'buy' | 'sell', qty: string, amount: bigint, day: string, minute = 0): ReplayTrade =>
+    ({ id, side, quantityScaled: q(qty), amountMinor: amount, tradedOn: day, createdAt: at(day, minute) });
+
+  it('applies trades in trade order, not entry order, and keeps realized per sell', () => {
+    const { position, realizedById } = replayTrades('gold', [
+      t('s1', 'sell', '6', 48_000_000n, '2026-10-14'),
+      t('b2', 'buy', '5', 37_500_000n, '2026-09-25'),
+      t('b1', 'buy', '10', 70_000_000n, '2026-09-10'),
+    ]);
+    expect(position).toEqual({ quantityScaled: q('9'), costBasisMinor: 64_500_000n });
+    expect(realizedById.get('s1')).toBe(5_000_000n);
+  });
+  it('a backdated buy changes the realized gain of a later sell', () => {
+    const before = replayTrades('gold', [t('b1', 'buy', '10', 70_000_000n, '2026-09-10'), t('s1', 'sell', '6', 48_000_000n, '2026-10-14')]);
+    expect(before.realizedById.get('s1')).toBe(6_000_000n);
+    const after = replayTrades('gold', [
+      t('b1', 'buy', '10', 70_000_000n, '2026-09-10'), t('s1', 'sell', '6', 48_000_000n, '2026-10-14', 5),
+      t('b0', 'buy', '5', 40_000_000n, '2026-09-01', 9),
+    ]);
+    expect(after.realizedById.get('s1')).toBe(48_000_000n - 44_000_000n);
+  });
+  it('removing a buy that a sell relied on is an oversell', () => {
+    expect(() => replayTrades('gold', [t('b2', 'buy', '5', 37_500_000n, '2026-09-25'), t('s1', 'sell', '6', 48_000_000n, '2026-10-14')]))
+      .toThrow(new InvestmentError('INVESTMENT_OVERSELL'));
+  });
+  it('same day uses entry time, then id', () => {
+    const { realizedById } = replayTrades('stock', [
+      t('s', 'sell', '1', 10n, '2026-01-01', 2), t('b', 'buy', '2', 10n, '2026-01-01', 1),
+    ]);
+    expect(realizedById.get('s')).toBe(5n);
+  });
+  it('indivisible kinds still allow one buy only', () => {
+    expect(() => replayTrades('real_estate', [t('a', 'buy', '1', 5n, '2026-01-01'), t('b', 'buy', '1', 5n, '2026-01-02')]))
+      .toThrow(new InvestmentError('INVESTMENT_UNSUPPORTED'));
+  });
+});
+
+describe('lotValuation and kindTotals', () => {
+  const priced = (over: Partial<InvestmentRecord>) => record({ latestPrice: { priceMinor: 8_000_000n, source: 'manual', quotedAt: new Date(0) }, ...over });
+
+  it('values one buy at the latest price, for reference', () => {
+    expect(lotValuation(priced({}), q('5'), 35_000_000n)).toEqual({ currentValueMinor: 40_000_000n, unrealizedMinor: 5_000_000n, unrealizedBps: 1429n });
+    expect(lotValuation(record({}), q('5'), 35_000_000n)).toBeNull();
+    expect(lotValuation(priced({ kind: 'savings_deposit', unit: 'deposit' }), q('1'), 5n)).toBeNull();
+  });
+  it('groups held positions per kind with shares of the currency total', () => {
+    const items = [
+      priced({ id: 'g1', quantityScaled: q('7'), costBasisMinor: 50_000_000n }),
+      priced({ id: 'g2', quantityScaled: q('2'), costBasisMinor: 12_000_000n }),
+      record({ id: 'c', kind: 'crypto', unit: 'coin', quantityScaled: q('0.5'), costBasisMinor: 38_500_000n }),
+      record({ id: 'empty', kind: 'stock', unit: 'share', quantityScaled: 0n, costBasisMinor: 0n }),
+    ].map(investment => ({ investment, valuation: valuate(investment, '2026-11-06') }));
+    const rows = kindTotals(items);
+    expect(rows.map(row => [row.kind, row.investmentCount, row.currentValueMinor, row.unrealizedBps, row.unpricedCount, row.shareBps])).toEqual([
+      ['gold', 2, 72_000_000n, 1613n, 0, 6516n],
+      ['crypto', 1, 38_500_000n, null, 1, 3484n],
+    ]);
   });
 });

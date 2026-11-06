@@ -270,9 +270,11 @@ export interface AccountExportInvestmentTrade {
   quantity: string;
   amountMinor: string;
   realizedMinor: string | null;
-  accountId: string;
-  transactionClientId: string;
+  /** Null for a buy the user already owned (no wallet leg). */
+  accountId: string | null;
+  transactionClientId: string | null;
   tradedOn: string;
+  note: string | null;
   createdAt: string;
 }
 
@@ -542,9 +544,10 @@ export interface ExportSource {
     quantity: { toFixed(digits: number): string };
     amountMinor: bigint;
     realizedMinor: bigint | null;
-    accountId: string;
-    transactionClientId: string;
+    accountId: string | null;
+    transactionClientId: string | null;
     tradedOn: Date;
+    note: string | null;
     createdAt: Date;
   }>;
   investmentPrices: Array<{
@@ -777,7 +780,8 @@ export function toAccountExport(source: ExportSource): AccountExport {
     investmentTrades: source.investmentTrades.map(row => ({
       id: row.id, investmentId: row.investmentId, clientId: row.clientId, side: row.side, quantity: row.quantity.toFixed(8),
       amountMinor: row.amountMinor.toString(), realizedMinor: row.realizedMinor === null ? null : row.realizedMinor.toString(),
-      accountId: row.accountId, transactionClientId: row.transactionClientId, tradedOn: day(row.tradedOn), createdAt: iso(row.createdAt),
+      accountId: row.accountId, transactionClientId: row.transactionClientId, tradedOn: day(row.tradedOn), note: row.note,
+      createdAt: iso(row.createdAt),
     })),
     investmentPrices: source.investmentPrices.map(row => ({
       id: row.id, investmentId: row.investmentId, clientId: row.clientId, priceMinor: row.priceMinor.toString(),

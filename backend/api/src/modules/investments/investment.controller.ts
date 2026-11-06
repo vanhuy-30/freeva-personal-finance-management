@@ -6,7 +6,8 @@ import type { Response } from 'express';
 import { AuthGuard, type AuthRequest } from '../auth/auth.guard';
 import { InvestmentExceptionFilter } from './investment-exception.filter';
 import {
-  AddInvestmentPriceDto, ArchiveInvestmentDto, CreateInvestmentDto, ListInvestmentsDto, TradeInvestmentDto, UpdateInvestmentDto,
+  AddInvestmentPriceDto, ArchiveInvestmentDto, CreateInvestmentDto, DeleteInvestmentTradeDto, ListInvestmentsDto, TradeInvestmentDto,
+  UpdateInvestmentDto, UpdateInvestmentTradeDto,
 } from './investment.dto';
 import { InvestmentService } from './investment.service';
 
@@ -18,7 +19,7 @@ export class InvestmentController {
 
   @Get() @Header('Cache-Control', 'no-store')
   list(@Req() req: AuthRequest, @Query() query: ListInvestmentsDto) {
-    return this.investments.list(req.session.userId, query.includeArchived);
+    return this.investments.list(req.session.userId, query.includeArchived, query.kind);
   }
 
   @Get('summary') @Header('Cache-Control', 'no-store')
@@ -61,6 +62,28 @@ export class InvestmentController {
     const result = await this.investments.trade(req.session.userId, id, body);
     res.status(result.created ? 201 : 200);
     return result.investment;
+  }
+
+  @Patch(':id/trades/:tradeId') @Header('Cache-Control', 'no-store')
+  updateTrade(
+    @Req() req: AuthRequest, @Param('id', ParseUUIDPipe) id: string, @Param('tradeId', ParseUUIDPipe) tradeId: string,
+    @Body() body: UpdateInvestmentTradeDto,
+  ) {
+    return this.investments.updateTrade(req.session.userId, id, tradeId, body);
+  }
+
+  /** 200 with the replayed position, or 204 when the last trade went and the position with it. */
+  @Delete(':id/trades/:tradeId') @Header('Cache-Control', 'no-store')
+  async deleteTrade(
+    @Req() req: AuthRequest, @Param('id', ParseUUIDPipe) id: string, @Param('tradeId', ParseUUIDPipe) tradeId: string,
+    @Query() query: DeleteInvestmentTradeDto, @Res({ passthrough: true }) res: Response,
+  ) {
+    const investment = await this.investments.deleteTrade(req.session.userId, id, tradeId, query.version);
+    if (investment === null) {
+      res.status(204);
+      return undefined;
+    }
+    return investment;
   }
 
   @Get(':id/prices') @Header('Cache-Control', 'no-store')

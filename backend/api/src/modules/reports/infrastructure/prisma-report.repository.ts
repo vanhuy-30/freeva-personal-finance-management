@@ -6,8 +6,8 @@ import type {
   AccountMovement, AccountRef, CategoryAggregate, MerchantAggregate, NetWorthAggregate, ReportMoneyType, ReportProfile, ResolvedPeriod, TrendBucket, TrendRow, TrendSource,
 } from '../domain/report';
 import { previousPeriod, todayInTimeZone } from '../domain/report';
-import { parseQuantity, valuate, type InvestmentRecord } from '../../investments/domain/investment';
-import type { DebtHistory, InvestmentHistory, NetWorthHistorySource, WalletBalanceRow } from '../domain/net-worth-history';
+import { parseQuantity, valuate, type InvestmentKind, type InvestmentRecord } from '../../investments/domain/investment';
+import type { DebtHistory, InvestmentHistory, InvestmentValueHistorySource, NetWorthHistorySource, WalletBalanceRow } from '../domain/net-worth-history';
 
 const moneyTypes = new Set<ReportMoneyType>(['income', 'expense', 'transfer', 'adjustment', 'debt', 'refund', 'investment']);
 
@@ -79,6 +79,18 @@ export class PrismaReportRepository implements ReportRepository {
         debts: await this.debtHistory(tx, userId),
         investments: await this.investmentHistory(tx, userId, profile.timezone),
       };
+    });
+  }
+
+  investmentValueHistory(
+    userId: string, filter: { kind?: InvestmentKind; investmentId?: string },
+    bucketsOf: (profile: ReportProfile, firstOn: string | null) => TrendBucket[],
+  ): Promise<InvestmentValueHistorySource> {
+    return this.snapshot(async tx => {
+      const profile = await this.profile(tx, userId);
+      const investments = await this.investmentHistory(tx, userId, profile.timezone, filter);
+      const first = investments.flatMap(item => item.trades.map(trade => trade.tradedOn)).sort()[0] ?? null;
+      return { buckets: bucketsOf(profile, first), today: todayInTimeZone(profile.timezone, new Date()), investments };
     });
   }
 
@@ -190,8 +202,13 @@ export class PrismaReportRepository implements ReportRepository {
     }));
   }
 
-  private async investmentHistory(tx: Prisma.TransactionClient, userId: string, timezone: string): Promise<InvestmentHistory[]> {
-    const rows = await tx.investment.findMany({ where: { userId }, include: { trades: true, prices: true } });
+  private async investmentHistory(
+    tx: Prisma.TransactionClient, userId: string, timezone: string, filter: { kind?: InvestmentKind; investmentId?: string } = {},
+  ): Promise<InvestmentHistory[]> {
+    const rows = await tx.investment.findMany({
+      where: { userId, ...(filter.kind ? { kind: filter.kind } : {}), ...(filter.investmentId ? { id: filter.investmentId } : {}) },
+      include: { trades: true, prices: true },
+    });
     return rows.map(row => ({
       kind: row.kind,
       currency: row.currencyCode.trim(),
@@ -200,7 +217,7 @@ export class PrismaReportRepository implements ReportRepository {
       startDate: row.startDate ? row.startDate.toISOString().slice(0, 10) : null,
       maturityDate: row.maturityDate ? row.maturityDate.toISOString().slice(0, 10) : null,
       trades: row.trades.map(trade => ({
-        side: trade.side, quantityScaled: parseQuantity(trade.quantity.toFixed(8)), amountMinor: trade.amountMinor,
+        id: trade.id, side: trade.side, quantityScaled: parseQuantity(trade.quantity.toFixed(8)), amountMinor: trade.amountMinor,
         tradedOn: trade.tradedOn.toISOString().slice(0, 10), createdAt: trade.createdAt,
       })),
       prices: row.prices.map(price => ({

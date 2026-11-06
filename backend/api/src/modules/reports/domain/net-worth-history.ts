@@ -1,5 +1,5 @@
 import {
-  applyBuy, applySell, valuate, type InvestmentKind, type InvestmentRecord, type InvestmentSide,
+  applyBuy, applySell, tradeOrder, valuate, type InvestmentKind, type InvestmentRecord, type InvestmentSide,
 } from '../../investments/domain/investment';
 import { buildNetWorth, type NetWorthAggregate, type SeriesWindow, type TrendBucket } from './report';
 
@@ -22,7 +22,7 @@ export type InvestmentHistory = {
   interestRateBps: number | null;
   startDate: string | null;
   maturityDate: string | null;
-  trades: { side: InvestmentSide; quantityScaled: bigint; amountMinor: bigint; tradedOn: string; createdAt: Date }[];
+  trades: { id: string; side: InvestmentSide; quantityScaled: bigint; amountMinor: bigint; tradedOn: string; createdAt: Date }[];
   /** `quotedDay` is the quote's calendar day in the profile timezone. */
   prices: { priceMinor: bigint; source: string; quotedAt: Date; quotedDay: string }[];
 };
@@ -54,7 +54,7 @@ export function investmentValueOn(history: InvestmentHistory, day: string): bigi
   let position = { quantityScaled: 0n, costBasisMinor: 0n };
   const trades = history.trades
     .filter(trade => trade.tradedOn <= day)
-    .sort((left, right) => left.tradedOn.localeCompare(right.tradedOn) || left.createdAt.getTime() - right.createdAt.getTime());
+    .sort(tradeOrder);
   for (const trade of trades) {
     position = trade.side === 'buy'
       ? applyBuy(position, trade.quantityScaled, trade.amountMinor)
@@ -98,6 +98,28 @@ export function buildNetWorthHistory(window: SeriesWindow, source: NetWorthHisto
         if (value > 0n) rows.push({ currency: investment.currency, bucket: 'asset', total: value });
       }
       return { from: bucket.from, to: bucket.to, asOf, items: buildNetWorth(rows).items };
+    }),
+  };
+}
+
+export type InvestmentValueHistorySource = { buckets: TrendBucket[]; today: string; investments: InvestmentHistory[] };
+
+/**
+ * Value of the chosen positions at the end of every bucket, oldest first, per currency (BE-P4-E03). Same replay and pricing
+ * as the investment part of the net worth history, so the two lines agree.
+ */
+export function buildInvestmentValueHistory(window: SeriesWindow, source: InvestmentValueHistorySource) {
+  return {
+    window,
+    points: source.buckets.map(bucket => {
+      const asOf = asOfDay(bucket, source.today);
+      const totals = new Map<string, bigint>();
+      for (const investment of source.investments) {
+        const value = investmentValueOn(investment, asOf);
+        if (value > 0n) totals.set(investment.currency, (totals.get(investment.currency) ?? 0n) + value);
+      }
+      const items = [...totals.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([currency, valueMinor]) => ({ currency, valueMinor: valueMinor.toString() }));
+      return { from: bucket.from, to: bucket.to, asOf, items };
     }),
   };
 }

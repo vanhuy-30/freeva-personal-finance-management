@@ -16,6 +16,7 @@ Các GET `/api/v1/reports/*` yêu cầu Bearer session, lấy owner từ session
 | `GET /series` | Chuỗi thu/chi theo cửa sổ 7 ngày, 30 ngày, 3/6/12 tháng tài chính hoặc toàn bộ năm (`BE-P2-E06`) |
 | `GET /net-worth` | Tài sản, nợ và ròng hiện tại; không lọc kỳ |
 | `GET /net-worth/history` | Tài sản ròng cuối mỗi mốc của cửa sổ 7d/30d/3m/6m/1y/all (`BE-P4-E02`) |
+| `GET /investments/history` | Giá trị đầu tư cuối mỗi mốc, lọc theo `kind` hoặc `investmentId` (`BE-P4-E03`) |
 
 `period` bắt buộc trên cashflow: `week`, `month`, `year` hoặc `range`.
 
@@ -69,6 +70,8 @@ Mỗi lần đọc chạy trong một transaction Repeatable Read: hồ sơ (tim
 - Đầu tư: phát lại các lần mua/bán có `tradedOn ≤ D` bằng cùng quy tắc giá vốn bình quân, giá trị theo giá nhập mới nhất có ngày báo (theo múi giờ hồ sơ) `≤ D`; chưa có giá thì tính theo giá vốn; tiền gửi là gốc cộng lãi đơn tới `D`.
 
 Mỗi điểm tách theo tiền tệ, không quy đổi; điểm không có gì trả `items` rỗng. Khoản vay (`/loans`) và ví đã lưu trữ không tính, giống `/net-worth`.
+
+**Giá trị đầu tư theo thời gian** (`GET /investments/history?window=&on=&kind=&investmentId=`, `BE-P4-E03`): cùng mốc, cùng cách phát lại và định giá như phần đầu tư ở trên, cho tất cả vị thế, một danh mục hoặc một tài sản. Mỗi điểm `{ from, to, asOf, items: [{ currency, valueMinor }] }`; `all` bắt đầu từ lần mua đầu tiên của các vị thế được chọn. Dùng cho đường mờ ở thẻ tổng màn Đầu tư.
 
 ## Kiểm thử
 
