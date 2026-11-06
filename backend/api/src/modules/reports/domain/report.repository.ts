@@ -1,3 +1,4 @@
+import type { NetWorthHistorySource } from './net-worth-history';
 import type {
   TrendBucket, TrendSource, CategoryAggregate, CashflowSource, MerchantAggregate, NetWorthAggregate, PreviousCashflow, ReportProfile, ResolvedPeriod,
 } from './report';
@@ -22,4 +23,5 @@ export interface ReportRepository {
   trend(userId: string, bucketsOf: (profile: ReportProfile) => TrendBucket[]): Promise<TrendSource>;
   series(userId: string, bucketsOf: (profile: ReportProfile, firstOn: string | null) => TrendBucket[]): Promise<TrendSource>;
   netWorth(userId: string): Promise<NetWorthAggregate[]>;
+  netWorthHistory(userId: string, bucketsOf: (profile: ReportProfile, firstOn: string | null) => TrendBucket[]): Promise<NetWorthHistorySource>;
 }

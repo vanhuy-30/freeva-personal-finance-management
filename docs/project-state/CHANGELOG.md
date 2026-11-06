@@ -4,6 +4,8 @@ Nhật ký repo/process — không phải App Store release notes.
 
 ## 2026-11-06
 
+- `BE-P4-E02` (backend): `GET /reports/net-worth/history` — tài sản ròng cuối mỗi mốc của cửa sổ 7 ngày, 30 ngày, 3 tháng, 6 tháng, 1 năm, toàn bộ; tính lại từ sổ cái (ví, cho mượn/đi mượn, vị thế đầu tư phát lại tới từng ngày), không trùng ví/đầu tư, điểm mới nhất bằng `/net-worth`. Không migration. 17 unit + 8 integration test mới. [Thiết kế](../architecture/reports.md).
+
 - `BE-P4-E01` (backend): tài sản và đầu tư — ADR 014 (ghi sổ), `/api/v1/investments` (vàng chỉ/lượng, cổ phiếu, chứng chỉ quỹ, tiền gửi, bất động sản, crypto), mua/bán bằng giao dịch `investment` một chân, giá vốn bình quân gia quyền, lãi/lỗ thực hiện, giá nhập tay, tiền gửi lãi đơn, giá trị vào `/reports/net-worth`, `byAccount.investmentMinor`, export/xoá tài khoản. Migration `investments` additive. Unit 29 + integration 11 test mới; 24 suite integration PostgreSQL xanh. Mobile chưa làm. [Thiết kế](../architecture/investments.md).
 
 ## 2026-11-05

@@ -11,11 +11,12 @@
 - Note: BE-P4-E01 xong 2026-11-06: ADR [014](../docs/architecture/adr/014-investment-ledger.md), `/api/v1/investments` (CRUD, `summary`, `trades` mua/bán idempotent, `prices` nhập tay), chuyển ví ↔ đầu tư bằng giao dịch `investment` một chân (ngoài thu/chi, ngân sách, tỷ lệ tiết kiệm; khoá sửa/xoá), giá vốn bình quân gia quyền, lãi/lỗ thực hiện trên từng lần bán, tiền gửi lãi đơn tới đáo hạn, giá trị vào `/reports/net-worth` không tính trùng ví, `byAccount.investmentMinor`, audit `investment.create`, OpenAPI, export/xoá tài khoản. Chưa có: gửi thêm vào tiền gửi, vị thế khác tiền tệ ví (tỷ giá), mobile. Kiến trúc: [investments.md](../docs/architecture/investments.md). `MOB-P4-E01` phải thêm `TransactionType.investment` vào app trước khi hiện chân này.
 
 ### BE-P4-E02 — Tài sản ròng theo thời gian
-- Status: todo
+- Status: done — BE xong 2026-11-06; biểu đồ trên app thuộc nhóm thiết kế sau
 - Module: 3, 14
 - Gate: v1
 - Depends: BE-P1-007, BE-P4-E01
 - DoD: snapshot theo tháng tính từ ledger. Biểu đồ 7 ngày, 30 ngày, 3 tháng, 6 tháng, 1 năm, toàn bộ. Không cộng trùng tiền trong ví và tài sản đầu tư. Test một chuỗi tháng với thu, chi, chuyển khoản và một vị thế.
+- Note: BE-P4-E02 xong 2026-11-06: `GET /api/v1/reports/net-worth/history?window=7d|30d|3m|6m|1y|all&on=`, tính lại từ sổ cái mỗi lần đọc (không bảng snapshot, không migration) tại cuối mỗi mốc của `/series`; điểm mới nhất bằng `/net-worth`; ví + cho mượn/đi mượn (gồm khoản đã tất toán sau đó) + vị thế đầu tư phát lại tới từng ngày, không tính trùng. Test: 17 unit domain + 8 integration PostgreSQL (chuỗi 6 tháng thu/chi/chuyển khoản/vàng/cho mượn: 95 → 112 → 117 → 122 triệu). App hiển thị bằng cách lấy dòng của tiền tệ mặc định trong `items` (chốt 2026-11-06: không quy đổi). Kiến trúc: [reports.md](../docs/architecture/reports.md).
 
 ### QA-P4-E01 — Test giá vốn, lãi lỗ, tỷ giá
 - Status: doing — bảng số giá vốn/lãi lỗ/tiền gửi xong 2026-11-06, còn FX
