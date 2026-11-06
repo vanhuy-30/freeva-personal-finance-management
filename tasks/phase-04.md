@@ -3,7 +3,7 @@
 [phase-04.md](../docs/product/phases/phase-04.md). Theo dõi tài sản/đầu tư và tài sản ròng theo thời gian là `Gate: v1` từ 2026-11-02 (quyết định chủ dự án).
 
 ### BE-P4-E01 / MOB-P4-E01 — Tài sản và đầu tư (module 12)
-- Status: doing — BE xong 2026-11-06, thiết kế chốt 2026-11-06, MOB todo (chờ `BE-P4-E03`)
+- Status: doing — BE xong 2026-11-06, thiết kế chốt 2026-11-06, API theo thiết kế xong 2026-11-06 (`BE-P4-E03`), MOB todo
 - Module: 12
 - Gate: v1
 - Depends: BE-P1-004, BE-P1-007
@@ -28,7 +28,7 @@
 - Note: [P-investments.md](../docs/brand/patterns/P-investments.md), canvas trang `p4` (bản 157). Owner chốt: khoản đầu tư gom danh mục → tài sản → lần mua; bán theo tài sản với giá vốn bình quân; giá bán thành giá hiện tại; "Đã có từ trước" là một lựa chọn trong danh sách ví; thẻ tổng kiểu A2.
 
 ### BE-P4-E03 — API đầu tư theo thiết kế đã chốt
-- Status: todo
+- Status: done — 2026-11-06
 - Module: 12
 - Gate: v1
 - Depends: BE-P4-E01, DS-P4-001
@@ -42,6 +42,7 @@
   - Lịch sử giá trị theo thời gian cho tổng đầu tư, danh mục và tài sản (đường mờ ở thẻ tổng), cùng mốc với `/reports/net-worth/history`.
   - Tiền gửi: tạo kèm số tiền gửi và ví (hoặc đã có từ trước) trong một lần gọi.
   - OpenAPI, unit + integration test, cập nhật ADR 014 nếu đổi quy tắc ghi sổ.
+- Note: BE-P4-E03 xong 2026-11-06: ADR 014 phần bổ sung (phát lại toàn bộ trade sau mỗi lần ghi, lần mua có sẵn không chân ví, giá của trade thành giá hiện tại, sửa/xoá lần mua kéo theo chân ví, xoá lần cuối xoá tài sản), migration additive `investment_trade_edit`, `POST /investments` có `initialTrade` và gộp trùng tên, trade nhận `priceMinor`/`accountId: null`/`note`, `PATCH/DELETE /investments/{id}/trades/{tradeId}`, `GET /investments?kind=`, `unrealizedBps`/`averageCostMinor`, `summary.byKind` có `shareBps`, `GET /reports/investments/history`. Test: 12 unit + 10 integration PostgreSQL mới; toàn bộ 26 suite integration xanh. Sửa/xoá lần bán chưa làm (thiết kế không có). Kiến trúc: [investments.md](../docs/architecture/investments.md).
 
 ### MOB-P4-E02 — Biểu đồ tài sản ròng trên app
 - Status: todo

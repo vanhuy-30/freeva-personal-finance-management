@@ -960,14 +960,16 @@ model InvestmentTrade {
   amountMinor         BigInt
   /// Sell only: proceeds minus the cost basis removed (null for buys).
   realizedMinor       BigInt?
-  accountId           String              @db.Uuid
-  transactionClientId String              @db.Uuid
+  /// Null for a buy the user already owned before using the app: no wallet leg (BE-P4-E03).
+  accountId           String?             @db.Uuid
+  transactionClientId String?             @db.Uuid
   tradedOn            DateTime            @db.Date
+  note                String?             @db.VarChar(500)
   createdAt           DateTime            @default(now()) @db.Timestamptz
 
-  investment Investment       @relation(fields: [investmentId], references: [id], onDelete: Cascade)
-  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  account    FinancialAccount @relation(fields: [accountId], references: [id])
+  investment Investment        @relation(fields: [investmentId], references: [id], onDelete: Cascade)
+  user       User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account    FinancialAccount? @relation(fields: [accountId], references: [id], onDelete: Restrict)
 
   @@unique([userId, clientId])
   @@index([investmentId, tradedOn])

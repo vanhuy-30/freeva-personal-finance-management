@@ -8,19 +8,21 @@ import { TransactionError } from '../../transactions/domain/transaction-error';
 import type { TransactionInput } from '../../transactions/domain/transaction';
 import { createTransactionInTx } from '../../transactions/infrastructure/create-transaction-in-tx';
 import {
-  applyBuy, applySell, formatQuantity, InvestmentError, isSingleItem, parseQuantity, tradeLegMinor, validateDepositTerms, validateName, validateNote,
-  validateTradeQuantity, validateUnit, type InvestmentRecord,
+  formatQuantity, InvestmentError, isSingleItem, parseQuantity, replayTrades, resolveAmount, tradeLegMinor, validateDepositTerms, validateName,
+  validateNote, validateTradeQuantity, validateUnit, type InvestmentKind, type InvestmentRecord,
 } from '../domain/investment';
 import type {
   InvestmentContext, InvestmentCreateInput, InvestmentPatch, InvestmentPriceInput, InvestmentPriceRecord, InvestmentRepository,
-  InvestmentTradeInput, InvestmentTradeRecord,
+  InvestmentTradeInput, InvestmentTradePatch, InvestmentTradeRecord,
 } from '../domain/investment.repository';
 
 type Row = Prisma.InvestmentGetPayload<{ include: { prices: true } }>;
+type Position = Prisma.InvestmentGetPayload<object>;
 
 const dayOf = (value: Date) => value.toISOString().slice(0, 10);
 const toDate = (value: string) => new Date(`${value}T00:00:00.000Z`);
 const optionalDay = (value: Date | null) => (value ? dayOf(value) : null);
+const quantityOf = (value: Prisma.Decimal) => parseQuantity(value.toFixed(8));
 const withPrice = { prices: { orderBy: [{ quotedAt: 'desc' as const }, { createdAt: 'desc' as const }], take: 1 } };
 
 function map(row: Row): InvestmentRecord {
@@ -32,7 +34,7 @@ function map(row: Row): InvestmentRecord {
     name: row.name,
     currencyCode: row.currencyCode.trim(),
     unit: row.unit,
-    quantityScaled: parseQuantity(row.quantity.toFixed(8)),
+    quantityScaled: quantityOf(row.quantity),
     costBasisMinor: row.costBasisMinor,
     interestRateBps: row.interestRateBps,
     startDate: optionalDay(row.startDate),
@@ -46,14 +48,16 @@ function map(row: Row): InvestmentRecord {
   };
 }
 
-/** Deterministic UUID v4-shaped id so a retry replays the same wallet leg. */
-function legClientId(clientId: string): string {
-  const bytes = Buffer.from(createHash('sha256').update(`investment|trade|${clientId}`).digest().subarray(0, 16));
+/** Deterministic UUID v4-shaped id so a retry replays the same wallet leg or price. */
+function derivedId(purpose: 'trade' | 'price', clientId: string): string {
+  const bytes = Buffer.from(createHash('sha256').update(`investment|${purpose}|${clientId}`).digest().subarray(0, 16));
   bytes[6] = (bytes[6]! & 0x0f) | 0x40;
   bytes[8] = (bytes[8]! & 0x3f) | 0x80;
   const hex = bytes.toString('hex');
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
+
+const legClientId = (clientId: string) => derivedId('trade', clientId);
 
 const audit = (userId: string, investmentId: string) => ({
   actorType: 'user' as const,
@@ -63,6 +67,8 @@ const audit = (userId: string, investmentId: string) => ({
   targetId: investmentId,
   outcome: 'success' as const,
 });
+
+const sameName = (left: string, right: string) => left.trim().toLowerCase() === right.trim().toLowerCase();
 
 @Injectable()
 export class PrismaInvestmentRepository implements InvestmentRepository {
@@ -98,9 +104,9 @@ export class PrismaInvestmentRepository implements InvestmentRepository {
     return { today: todayInTimeZone(user.timezone, new Date()) };
   }
 
-  async list(userId: string, includeArchived: boolean): Promise<InvestmentRecord[]> {
+  async list(userId: string, includeArchived: boolean, kind?: InvestmentKind): Promise<InvestmentRecord[]> {
     const rows = await this.prisma.investment.findMany({
-      where: { userId, ...(includeArchived ? {} : { archivedAt: null }) },
+      where: { userId, ...(includeArchived ? {} : { archivedAt: null }), ...(kind ? { kind } : {}) },
       include: withPrice,
       orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
     });
@@ -113,11 +119,16 @@ export class PrismaInvestmentRepository implements InvestmentRepository {
     return map(row);
   }
 
+  /**
+   * Creates a position, optionally with its first buy (BE-P4-E03). A new clientId whose kind, name, currency and unit match an
+   * active divisible position adds the buy to that position instead of opening a second one with the same name.
+   */
   create(userId: string, input: InvestmentCreateInput) {
     validateName(input.name);
     validateNote(input.note);
     validateUnit(input.kind, input.unit);
     validateDepositTerms(input.kind, input);
+    if (input.initialTrade) validateNote(input.initialTrade.note);
     return this.write(userId, async tx => {
       const existing = await tx.investment.findUnique({ where: { userId_clientId: { userId, clientId: input.clientId } }, include: withPrice });
       if (existing) {
@@ -128,6 +139,17 @@ export class PrismaInvestmentRepository implements InvestmentRepository {
       }
       const currency = await tx.currency.findUnique({ where: { code: input.currencyCode }, select: { code: true } });
       if (!currency) throw new InvestmentError('VALIDATION_ERROR');
+      if (input.initialTrade && !isSingleItem(input.kind)) {
+        const candidates = await tx.investment.findMany({
+          where: { userId, kind: input.kind, currencyCode: input.currencyCode, unit: input.unit, archivedAt: null },
+          orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
+        });
+        const target = candidates.find(candidate => sameName(candidate.name, input.name));
+        if (target) {
+          await this.lock(tx, userId, target.id);
+          return this.addTrade(tx, userId, target.id, { ...input.initialTrade, side: 'buy' });
+        }
+      }
       const row = await tx.investment.create({
         data: {
           userId,
@@ -146,6 +168,7 @@ export class PrismaInvestmentRepository implements InvestmentRepository {
         include: withPrice,
       });
       await tx.auditEvent.create({ data: audit(userId, row.id) });
+      if (input.initialTrade) return this.addTrade(tx, userId, row.id, { ...input.initialTrade, side: 'buy' });
       return { investment: map(row), created: true };
     });
   }
@@ -184,54 +207,66 @@ export class PrismaInvestmentRepository implements InvestmentRepository {
   }
 
   trade(userId: string, id: string, input: InvestmentTradeInput) {
-    if (input.amountMinor <= 0n || input.quantityScaled <= 0n) throw new InvestmentError('VALIDATION_ERROR');
+    validateNote(input.note);
+    return this.write(userId, async tx => {
+      await this.lock(tx, userId, id);
+      return this.addTrade(tx, userId, id, input);
+    });
+  }
+
+  /** Edits one buy and its wallet leg, then replays the position (BE-P4-E03). Sells are not editable. */
+  updateTrade(userId: string, id: string, tradeId: string, patch: InvestmentTradePatch) {
+    if (patch.note !== undefined) validateNote(patch.note);
     return this.write(userId, async tx => {
       const row = await this.lock(tx, userId, id);
-      const prior = await tx.investmentTrade.findUnique({ where: { userId_clientId: { userId, clientId: input.clientId } } });
-      if (prior) {
-        const same = prior.investmentId === id && prior.side === input.side && prior.amountMinor === input.amountMinor &&
-          parseQuantity(prior.quantity.toFixed(8)) === input.quantityScaled && prior.accountId === input.accountId;
-        if (!same) throw new InvestmentError('INVESTMENT_CONFLICT');
-        return { investment: await this.reload(tx, id), created: false };
-      }
-      const account = await tx.financialAccount.findFirst({
-        where: { id: input.accountId, userId, archivedAt: null },
-        select: { currencyCode: true, type: true },
-      });
-      if (!account || account.currencyCode.trim() !== row.currencyCode.trim()) throw new InvestmentError('VALIDATION_ERROR');
-      const held = parseQuantity(row.quantity.toFixed(8));
-      validateTradeQuantity(row.kind, input.side, input.quantityScaled, held);
-      if (isSingleItem(row.kind) && input.side === 'sell' && input.quantityScaled !== held) throw new InvestmentError('VALIDATION_ERROR');
-      const position = { quantityScaled: held, costBasisMinor: row.costBasisMinor };
-      let next = position;
-      let realizedMinor: bigint | null = null;
-      if (input.side === 'buy') next = applyBuy(position, input.quantityScaled, input.amountMinor);
-      else {
-        const sale = applySell(position, input.quantityScaled, input.amountMinor);
-        next = sale.position;
-        realizedMinor = sale.realizedMinor;
-      }
-      const legId = legClientId(input.clientId);
-      await this.book(tx, userId, legId, input.accountId, row.currencyCode.trim(), tradeLegMinor(input.side, input.amountMinor), input.tradedOn);
-      await tx.investmentTrade.create({
+      if (row.version !== patch.version) throw new InvestmentError('INVESTMENT_CONFLICT');
+      const trade = await tx.investmentTrade.findFirst({ where: { id: tradeId, investmentId: id, userId } });
+      if (!trade) throw new InvestmentError('INVESTMENT_NOT_FOUND');
+      if (trade.side !== 'buy') throw new InvestmentError('INVESTMENT_UNSUPPORTED');
+      const quantityScaled = patch.quantityScaled ?? quantityOf(trade.quantity);
+      if (isSingleItem(row.kind) && quantityScaled !== quantityOf(trade.quantity)) throw new InvestmentError('VALIDATION_ERROR');
+      const amountMinor = patch.amountMinor !== undefined || patch.priceMinor !== undefined
+        ? resolveAmount(quantityScaled, patch.amountMinor ?? null, patch.priceMinor ?? null)
+        : trade.amountMinor;
+      const accountId = patch.accountId === undefined ? trade.accountId : patch.accountId;
+      const tradedOn = patch.tradedOn ?? dayOf(trade.tradedOn);
+      if (accountId !== null) await this.walletFor(tx, userId, accountId, row.currencyCode);
+      const legId = trade.transactionClientId ?? legClientId(trade.clientId);
+      await this.moveLeg(tx, userId, legId, trade.accountId, accountId, row.currencyCode.trim(), -amountMinor, tradedOn);
+      await tx.investmentTrade.update({
+        where: { id: tradeId },
         data: {
-          investmentId: id,
-          userId,
-          clientId: input.clientId,
-          side: input.side,
-          quantity: formatQuantity(input.quantityScaled),
-          amountMinor: input.amountMinor,
-          realizedMinor,
-          accountId: input.accountId,
-          transactionClientId: legId,
-          tradedOn: toDate(input.tradedOn),
+          quantity: formatQuantity(quantityScaled),
+          amountMinor,
+          accountId,
+          transactionClientId: accountId === null ? null : legId,
+          tradedOn: toDate(tradedOn),
+          ...(patch.note === undefined ? {} : { note: patch.note }),
         },
       });
-      await tx.investment.update({
-        where: { id },
-        data: { quantity: formatQuantity(next.quantityScaled), costBasisMinor: next.costBasisMinor, version: { increment: 1 } },
-      });
-      return { investment: await this.reload(tx, id), created: true };
+      await this.rebuild(tx, row);
+      return this.reload(tx, id);
+    });
+  }
+
+  /** Removes one buy and gives its money back to the wallet; the last trade takes the position with it. */
+  deleteTrade(userId: string, id: string, tradeId: string, version: number) {
+    return this.write(userId, async tx => {
+      const row = await this.lock(tx, userId, id);
+      if (row.version !== version) throw new InvestmentError('INVESTMENT_CONFLICT');
+      const trade = await tx.investmentTrade.findFirst({ where: { id: tradeId, investmentId: id, userId } });
+      if (!trade) throw new InvestmentError('INVESTMENT_NOT_FOUND');
+      if (trade.side !== 'buy') throw new InvestmentError('INVESTMENT_UNSUPPORTED');
+      if (trade.transactionClientId) {
+        await this.moveLeg(tx, userId, trade.transactionClientId, trade.accountId, null, row.currencyCode.trim(), 0n, dayOf(trade.tradedOn));
+      }
+      await tx.investmentTrade.delete({ where: { id: tradeId } });
+      if (await tx.investmentTrade.count({ where: { investmentId: id } }) === 0) {
+        await tx.investment.delete({ where: { id } });
+        return null;
+      }
+      await this.rebuild(tx, row);
+      return this.reload(tx, id);
     });
   }
 
@@ -239,17 +274,18 @@ export class PrismaInvestmentRepository implements InvestmentRepository {
     await this.find(userId, id);
     const rows = await this.prisma.investmentTrade.findMany({
       where: { investmentId: id, userId },
-      orderBy: [{ tradedOn: 'desc' }, { createdAt: 'desc' }, { id: 'asc' }],
+      orderBy: [{ tradedOn: 'desc' }, { createdAt: 'desc' }, { id: 'desc' }],
     });
     return rows.map(row => ({
       id: row.id,
       clientId: row.clientId,
       side: row.side,
-      quantityScaled: parseQuantity(row.quantity.toFixed(8)),
+      quantityScaled: quantityOf(row.quantity),
       amountMinor: row.amountMinor,
       realizedMinor: row.realizedMinor,
       accountId: row.accountId,
       tradedOn: dayOf(row.tradedOn),
+      note: row.note,
       createdAt: row.createdAt,
     }));
   }
@@ -279,6 +315,110 @@ export class PrismaInvestmentRepository implements InvestmentRepository {
       orderBy: [{ quotedAt: 'desc' }, { createdAt: 'desc' }, { id: 'asc' }],
     });
     return rows.map(row => ({ id: row.id, clientId: row.clientId, priceMinor: row.priceMinor, source: row.source, quotedAt: row.quotedAt }));
+  }
+
+  /**
+   * Books one trade on a locked position: wallet leg (unless already owned), the trade row, the trade's unit price as the
+   * latest quote when it moved money, then a full replay. Retrying the same clientId returns the position unchanged.
+   */
+  private async addTrade(tx: Prisma.TransactionClient, userId: string, id: string, input: InvestmentTradeInput) {
+    const row = await tx.investment.findUniqueOrThrow({ where: { id } });
+    if (input.quantityScaled <= 0n) throw new InvestmentError('VALIDATION_ERROR');
+    const amountMinor = resolveAmount(input.quantityScaled, input.amountMinor, input.priceMinor);
+    const prior = await tx.investmentTrade.findUnique({ where: { userId_clientId: { userId, clientId: input.clientId } } });
+    if (prior) {
+      const same = prior.investmentId === id && prior.side === input.side && prior.amountMinor === amountMinor &&
+        quantityOf(prior.quantity) === input.quantityScaled && prior.accountId === input.accountId;
+      if (!same) throw new InvestmentError('INVESTMENT_CONFLICT');
+      return { investment: await this.reload(tx, id), created: false };
+    }
+    if (input.accountId === null && input.side !== 'buy') throw new InvestmentError('VALIDATION_ERROR');
+    if (input.accountId !== null) await this.walletFor(tx, userId, input.accountId, row.currencyCode);
+    const held = quantityOf(row.quantity);
+    validateTradeQuantity(row.kind, input.side, input.quantityScaled, held);
+    if (isSingleItem(row.kind) && input.side === 'sell' && input.quantityScaled !== held) throw new InvestmentError('VALIDATION_ERROR');
+    const legId = input.accountId === null ? null : legClientId(input.clientId);
+    if (legId !== null && input.accountId !== null) {
+      await this.book(tx, userId, legId, input.accountId, row.currencyCode.trim(), tradeLegMinor(input.side, amountMinor), input.tradedOn);
+    }
+    await tx.investmentTrade.create({
+      data: {
+        investmentId: id,
+        userId,
+        clientId: input.clientId,
+        side: input.side,
+        quantity: formatQuantity(input.quantityScaled),
+        amountMinor,
+        accountId: input.accountId,
+        transactionClientId: legId,
+        tradedOn: toDate(input.tradedOn),
+        note: input.note,
+      },
+    });
+    if (input.priceMinor !== null && input.accountId !== null && row.kind !== 'savings_deposit') {
+      await tx.investmentPrice.create({
+        data: {
+          investmentId: id, userId, clientId: derivedId('price', input.clientId), priceMinor: input.priceMinor, source: 'trade',
+          quotedAt: await this.quotedAt(tx, userId, input.tradedOn),
+        },
+      });
+    }
+    await this.rebuild(tx, row);
+    return { investment: await this.reload(tx, id), created: true };
+  }
+
+  /** Replays every trade of the position and stores the result, including the realized gain of each sell. */
+  private async rebuild(tx: Prisma.TransactionClient, row: Position) {
+    const trades = await tx.investmentTrade.findMany({ where: { investmentId: row.id } });
+    const { position, realizedById } = replayTrades(row.kind, trades.map(trade => ({
+      id: trade.id, side: trade.side, quantityScaled: quantityOf(trade.quantity), amountMinor: trade.amountMinor,
+      tradedOn: dayOf(trade.tradedOn), createdAt: trade.createdAt,
+    })));
+    for (const trade of trades) {
+      const realized = realizedById.get(trade.id) ?? null;
+      if (realized !== trade.realizedMinor) await tx.investmentTrade.update({ where: { id: trade.id }, data: { realizedMinor: realized } });
+    }
+    await tx.investment.update({
+      where: { id: row.id },
+      data: { quantity: formatQuantity(position.quantityScaled), costBasisMinor: position.costBasisMinor, version: { increment: 1 } },
+    });
+  }
+
+  /** A trade from today is quoted now; one from an earlier day at noon UTC that day, so it never outranks a later quote. */
+  private async quotedAt(tx: Prisma.TransactionClient, userId: string, tradedOn: string): Promise<Date> {
+    const user = await tx.user.findUniqueOrThrow({ where: { id: userId }, select: { timezone: true } });
+    const now = new Date();
+    return tradedOn >= todayInTimeZone(user.timezone, now) ? now : new Date(`${tradedOn}T12:00:00.000Z`);
+  }
+
+  private async walletFor(tx: Prisma.TransactionClient, userId: string, accountId: string, currencyCode: string) {
+    const account = await tx.financialAccount.findFirst({ where: { id: accountId, userId, archivedAt: null }, select: { currencyCode: true } });
+    if (!account || account.currencyCode.trim() !== currencyCode.trim()) throw new InvestmentError('VALIDATION_ERROR');
+  }
+
+  /**
+   * Points a buy's wallet leg at `toAccount` with `amountMinor` on `day`; null removes it (soft delete). A leg removed earlier
+   * is brought back rather than created twice, since its clientId is derived from the trade.
+   */
+  private async moveLeg(
+    tx: Prisma.TransactionClient, userId: string, legId: string, fromAccount: string | null, toAccount: string | null,
+    currencyCode: string, amountMinor: bigint, day: string,
+  ) {
+    const leg = await tx.transaction.findFirst({ where: { userId, clientId: legId } });
+    if (toAccount === null) {
+      if (leg && !leg.deletedAt) {
+        await tx.transaction.update({ where: { id: leg.id }, data: { deletedAt: new Date(), version: { increment: 1 } } });
+      }
+    } else if (leg) {
+      await tx.transaction.update({
+        where: { id: leg.id },
+        data: { accountId: toAccount, amountMinor, currencyCode, occurredOn: toDate(day), deletedAt: null, version: { increment: 1 } },
+      });
+    } else {
+      await this.book(tx, userId, legId, toAccount, currencyCode, amountMinor, day);
+    }
+    const touched = [fromAccount, toAccount].filter((value): value is string => value !== null);
+    if (touched.length > 0) await tx.financialAccount.updateMany({ where: { userId, id: { in: touched } }, data: { updatedAt: new Date() } });
   }
 
   private async reload(tx: Prisma.TransactionClient, id: string): Promise<InvestmentRecord> {

@@ -1,12 +1,12 @@
 import { parseQuantity } from '../../investments/domain/investment';
-import { asOfDay, buildNetWorthHistory, debtOutstandingOn, investmentValueOn, type InvestmentHistory, type NetWorthHistorySource } from './net-worth-history';
+import { asOfDay, buildInvestmentValueHistory, buildNetWorthHistory, debtOutstandingOn, investmentValueOn, type InvestmentHistory, type NetWorthHistorySource } from './net-worth-history';
 
 const q = parseQuantity;
 const gold = (over: Partial<InvestmentHistory> = {}): InvestmentHistory => ({
   kind: 'gold', currency: 'VND', unit: 'chi', interestRateBps: null, startDate: null, maturityDate: null,
   trades: [
-    { side: 'buy', quantityScaled: q('10'), amountMinor: 70_000_000n, tradedOn: '2026-09-10', createdAt: new Date('2026-09-10T01:00:00Z') },
-    { side: 'sell', quantityScaled: q('4'), amountMinor: 32_000_000n, tradedOn: '2026-11-02', createdAt: new Date('2026-11-02T01:00:00Z') },
+    { id: 't1', side: 'buy', quantityScaled: q('10'), amountMinor: 70_000_000n, tradedOn: '2026-09-10', createdAt: new Date('2026-09-10T01:00:00Z') },
+    { id: 't2', side: 'sell', quantityScaled: q('4'), amountMinor: 32_000_000n, tradedOn: '2026-11-02', createdAt: new Date('2026-11-02T01:00:00Z') },
   ],
   prices: [
     { priceMinor: 7_500_000n, source: 'manual', quotedAt: new Date('2026-09-20T05:00:00Z'), quotedDay: '2026-09-20' },
@@ -38,12 +38,12 @@ describe('investmentValueOn', () => {
   });
   it('replays a partial sell', () => expect(investmentValueOn(gold(), '2026-11-05')).toBe(48_000_000n)); // 6 x 8m
   it('is zero once everything is sold', () => {
-    const all = gold({ trades: [...gold().trades, { side: 'sell', quantityScaled: q('6'), amountMinor: 49_000_000n, tradedOn: '2026-11-04', createdAt: new Date('2026-11-04T01:00:00Z') }] });
+    const all = gold({ trades: [...gold().trades, { id: 't3', side: 'sell', quantityScaled: q('6'), amountMinor: 49_000_000n, tradedOn: '2026-11-04', createdAt: new Date('2026-11-04T01:00:00Z') }] });
     expect(investmentValueOn(all, '2026-11-05')).toBe(0n);
   });
   it('accrues deposit interest to the day', () => {
     const deposit = gold({ kind: 'savings_deposit', unit: 'deposit', interestRateBps: 1200, startDate: '2026-01-01', maturityDate: null,
-      trades: [{ side: 'buy', quantityScaled: q('1'), amountMinor: 100_000_000n, tradedOn: '2026-01-01', createdAt: new Date('2026-01-01T01:00:00Z') }], prices: [] });
+      trades: [{ id: 't4', side: 'buy', quantityScaled: q('1'), amountMinor: 100_000_000n, tradedOn: '2026-01-01', createdAt: new Date('2026-01-01T01:00:00Z') }], prices: [] });
     expect(investmentValueOn(deposit, '2027-01-01')).toBe(112_000_000n);
   });
 });
@@ -82,5 +82,24 @@ describe('buildNetWorthHistory', () => {
   it('keeps currencies apart and survives an empty source', () => {
     const empty = buildNetWorthHistory('7d', { buckets: [{ from: '2026-11-06', to: '2026-11-06' }], today: '2026-11-06', wallets: [], debts: [], investments: [] });
     expect(empty.points).toEqual([{ from: '2026-11-06', to: '2026-11-06', asOf: '2026-11-06', items: [] }]);
+  });
+});
+
+describe('buildInvestmentValueHistory', () => {
+  it('values the chosen positions at the end of each bucket', () => {
+    const result = buildInvestmentValueHistory('3m', {
+      buckets: [{ from: '2026-09-01', to: '2026-09-30' }, { from: '2026-10-01', to: '2026-10-31' }, { from: '2026-11-01', to: '2026-11-30' }],
+      today: '2026-11-06',
+      investments: [gold()],
+    });
+    expect(result.points.map(point => [point.asOf, point.items])).toEqual([
+      ['2026-09-30', [{ currency: 'VND', valueMinor: '75000000' }]],
+      ['2026-10-31', [{ currency: 'VND', valueMinor: '80000000' }]],
+      ['2026-11-06', [{ currency: 'VND', valueMinor: '48000000' }]],
+    ]);
+  });
+  it('leaves a bucket empty before the first trade', () => {
+    const result = buildInvestmentValueHistory('7d', { buckets: [{ from: '2026-09-01', to: '2026-09-01' }], today: '2026-11-06', investments: [gold()] });
+    expect(result.points[0]!.items).toEqual([]);
   });
 });

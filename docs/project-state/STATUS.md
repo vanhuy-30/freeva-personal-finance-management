@@ -37,6 +37,7 @@
 - **Onboarding/tài khoản (nhóm A):** `DS-P2-004` done 2026-10-29: 16 màn khớp canvas, ngân sách nối `BE-P2-E02`, mục tiêu Nợ đưa khối Thẻ tín dụng lên đầu. `BE-P2-012` done 2026-10-30. Còn tách riêng: deep link email, Google/Apple mobile, xác nhận lại email trong Cá nhân. [Chi tiết](../brand/patterns/A-onboarding-auth.md).
 - **Tài sản và đầu tư:** `BE-P4-E01` done 2026-11-06 (BE): `/investments` sáu loại, mua/bán bằng giao dịch `investment` một chân (ngoài thu/chi, ngân sách, tỷ lệ tiết kiệm), giá vốn bình quân gia quyền, lãi/lỗ thực hiện trên từng lần bán, giá nhập tay kèm ngày, tiền gửi lãi đơn, giá trị vào tài sản ròng không trùng ví. Migration additive `investments` (deploy trước API). Mobile `MOB-P4-E01` chưa làm. [ADR 014](../architecture/adr/014-investment-ledger.md). [Chi tiết](../architecture/investments.md).
 - **Tài sản ròng theo thời gian:** `BE-P4-E02` done 2026-11-06 (BE): `GET /reports/net-worth/history` cho 7d/30d/3m/6m/1y/toàn bộ, tính từ sổ cái (ví + cho mượn/đi mượn + đầu tư), điểm mới nhất bằng `/net-worth`, không migration. Chưa có biểu đồ trên app. [Chi tiết](../architecture/reports.md).
+- **API đầu tư theo thiết kế:** `BE-P4-E03` done 2026-11-06: tạo kèm lần mua, lần mua có sẵn, sửa/xoá lần mua, % lãi/lỗ, theo danh mục, giá trị theo thời gian. [Chi tiết](../architecture/investments.md).
 - **Mobile analytics:** `MOB-P0-004` done; catalog typed, debug logger local, `schema_version: 1`, không property tùy ý/PII và chưa có vendor SDK.
 - **Backup/restore:** `BE-P0-005` done; [runbook và bằng chứng local](../../infra/runbooks/backup-restore.md), PostgreSQL 16.14. Production PITR/retention/RPO/RTO chưa triển khai.
 - **Scaffold:** xong trên `main` (`153d3e7`). Health API, admin placeholder, Flutter shell, docs, compose.
@@ -127,7 +128,7 @@ Theo [điều kiện hoàn thành Phase 2](../product/phases/phase-02.md):
 
 ## Backlog Phase 4
 
-- **1/3 done**: `BE-P4-E02` done (BE); `BE-P4-E01` doing (BE xong, MOB todo, cần thiết kế màn đầu tư trước), `QA-P4-E01` doing (còn FX). Chi tiết: [tasks/phase-04.md](../../tasks/phase-04.md).
+- **3/6 done**: `BE-P4-E02`, `DS-P4-001`, `BE-P4-E03` done; `BE-P4-E01` doing (BE xong, MOB todo), `MOB-P4-E02` todo, `QA-P4-E01` doing (còn FX). Chi tiết: [tasks/phase-04.md](../../tasks/phase-04.md).
 
 ## Phase 3 gate — đã đóng (2026-11-05)
 
