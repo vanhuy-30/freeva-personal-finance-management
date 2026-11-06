@@ -14,7 +14,7 @@ export class BudgetError extends Error {
 
 export type ExpenseRow = {
   /** `refund` rows carry the original expense's category and period and reduce its spend (BE-P3-008). */
-  type: 'income' | 'expense' | 'transfer' | 'adjustment' | 'debt' | 'refund';
+  type: 'income' | 'expense' | 'transfer' | 'adjustment' | 'debt' | 'refund' | 'investment';
   amountMinor: bigint;
   currencyCode: string;
   categoryId: string | null;

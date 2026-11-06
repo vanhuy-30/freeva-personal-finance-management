@@ -75,6 +75,9 @@ export class PrismaAccountRepository implements AccountRepository {
     const loanPayments = await tx.loanPayment.findMany({ where: { userId }, orderBy: order });
     const personalDebts = await tx.personalDebt.findMany({ where: { userId }, orderBy: order });
     const personalDebtPayments = await tx.personalDebtPayment.findMany({ where: { userId }, orderBy: order });
+    const investments = await tx.investment.findMany({ where: { userId }, orderBy: order });
+    const investmentTrades = await tx.investmentTrade.findMany({ where: { userId }, orderBy: order });
+    const investmentPrices = await tx.investmentPrice.findMany({ where: { userId }, orderBy: order });
     const cardInstallmentPlans = await tx.cardInstallmentPlan.findMany({ where: { userId }, orderBy: order });
     const importBatches = await tx.importBatch.findMany({ where: { userId }, orderBy: order });
     const notificationPreferences = await tx.notificationPreference.findUnique({ where: { userId } });
@@ -124,6 +127,9 @@ export class PrismaAccountRepository implements AccountRepository {
       loanPayments,
       personalDebts,
       personalDebtPayments,
+      investments,
+      investmentTrades,
+      investmentPrices,
       cardInstallmentPlans,
       importBatches,
       budgetMonths: budgetMonths.map(row => ({
@@ -183,6 +189,9 @@ export class PrismaAccountRepository implements AccountRepository {
     await tx.notificationPreference.deleteMany({ where: { userId } });
     await tx.cardInstallmentPlan.deleteMany({ where: { userId } });
     await tx.importBatch.deleteMany({ where: { userId } });
+    await tx.investmentPrice.deleteMany({ where: { userId } });
+    await tx.investmentTrade.deleteMany({ where: { userId } });
+    await tx.investment.deleteMany({ where: { userId } });
     await tx.personalDebtPayment.deleteMany({ where: { userId } });
     await tx.personalDebt.deleteMany({ where: { userId } });
     await tx.loanPayment.deleteMany({ where: { userId } });

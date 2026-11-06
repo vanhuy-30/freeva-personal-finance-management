@@ -112,7 +112,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
       if (!query.legs.length) return [];
       return tx.transaction.findMany({
         where: {
-          userId, deletedAt: null, occurredOn: query.occurredOn, type: { notIn: ['adjustment', 'debt', 'refund'] },
+          userId, deletedAt: null, occurredOn: query.occurredOn, type: { notIn: ['adjustment', 'debt', 'refund', 'investment'] },
           createdAt: { gte: query.createdAfter, lte: query.createdBefore },
           clientId: { notIn: query.excludeClientIds },
           OR: query.legs.map(leg => ({ accountId: leg.accountId, amountMinor: leg.amountMinor })),
@@ -288,8 +288,8 @@ export class PrismaTransactionRepository implements TransactionRepository {
       await touchFinancialOwner(tx, userId);
       const current = await this.load(tx, userId, id, true);
       const first = current.legs[0];
-      // Debt legs are owned by /personal-debts (BE-P3-007): editing or deleting one would desync the outstanding amount.
-      if (first.type === 'debt') throw new TransactionError('VALIDATION_ERROR');
+      // Debt legs are owned by /personal-debts (BE-P3-007) and investment legs by /investments (BE-P4-E01): editing or deleting one would desync the position.
+      if (first.type === 'debt' || first.type === 'investment') throw new TransactionError('VALIDATION_ERROR');
       if (first.version !== patch.version || first.version >= 2147483647) throw new TransactionError('TRANSACTION_CONFLICT');
       const { version: _version, deleted, refunds: refundDisposition, ...fields } = patch;
       const input = { ...inputOf(current), ...fields };

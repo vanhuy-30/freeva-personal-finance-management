@@ -34,6 +34,9 @@ export interface AccountExport {
   loanPayments: AccountExportLoanPayment[];
   personalDebts: AccountExportPersonalDebt[];
   personalDebtPayments: AccountExportPersonalDebtPayment[];
+  investments: AccountExportInvestment[];
+  investmentTrades: AccountExportInvestmentTrade[];
+  investmentPrices: AccountExportInvestmentPrice[];
   cardInstallmentPlans: AccountExportCardInstallmentPlan[];
   importBatches: AccountExportImportBatch[];
   notificationPreferences: AccountExportNotificationPreferences | null;
@@ -136,7 +139,7 @@ export interface AccountExportFxRate {
 }
 
 export interface AccountExportRecurringRule extends Omit<SyncRow, 'createdAt' | 'updatedAt'> {
-  type: 'income' | 'expense' | 'transfer' | 'adjustment' | 'debt' | 'refund';
+  type: 'income' | 'expense' | 'transfer' | 'adjustment' | 'debt' | 'refund' | 'investment';
   mode: 'auto' | 'remind';
   name: string | null;
   amountKind: 'fixed' | 'estimated';
@@ -243,6 +246,46 @@ export interface AccountExportPersonalDebtPayment {
   createdAt: string;
 }
 
+export interface AccountExportInvestment extends Omit<SyncRow, 'createdAt' | 'updatedAt'> {
+  kind: string;
+  name: string;
+  currencyCode: string;
+  unit: string;
+  quantity: string;
+  costBasisMinor: string;
+  interestRateBps: number | null;
+  startDate: string | null;
+  maturityDate: string | null;
+  note: string | null;
+  archivedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AccountExportInvestmentTrade {
+  id: string;
+  investmentId: string;
+  clientId: string;
+  side: string;
+  quantity: string;
+  amountMinor: string;
+  realizedMinor: string | null;
+  accountId: string;
+  transactionClientId: string;
+  tradedOn: string;
+  createdAt: string;
+}
+
+export interface AccountExportInvestmentPrice {
+  id: string;
+  investmentId: string;
+  clientId: string;
+  priceMinor: string;
+  source: string;
+  quotedAt: string;
+  createdAt: string;
+}
+
 export interface AccountExportImportBatch {
   id: string;
   clientId: string;
@@ -291,7 +334,7 @@ export interface AccountExportBudgetMonth extends AccountExportBudget {
 }
 
 export interface AccountExportTransaction extends Omit<SyncRow, 'createdAt' | 'updatedAt'> {
-  type: 'income' | 'expense' | 'transfer' | 'adjustment' | 'debt' | 'refund';
+  type: 'income' | 'expense' | 'transfer' | 'adjustment' | 'debt' | 'refund' | 'investment';
   amountMinor: string;
   currencyCode: string;
   occurredOn: string;
@@ -471,6 +514,46 @@ export interface ExportSource {
     amountMinor: bigint;
     transactionClientId: string;
     paidOn: Date;
+    createdAt: Date;
+  }>;
+  investments: Array<{
+    id: string;
+    clientId: string;
+    kind: string;
+    name: string;
+    currencyCode: string;
+    unit: string;
+    quantity: { toFixed(digits: number): string };
+    costBasisMinor: bigint;
+    interestRateBps: number | null;
+    startDate: Date | null;
+    maturityDate: Date | null;
+    note: string | null;
+    archivedAt: Date | null;
+    version: number;
+    createdAt: Date;
+    updatedAt: Date;
+  }>;
+  investmentTrades: Array<{
+    id: string;
+    investmentId: string;
+    clientId: string;
+    side: string;
+    quantity: { toFixed(digits: number): string };
+    amountMinor: bigint;
+    realizedMinor: bigint | null;
+    accountId: string;
+    transactionClientId: string;
+    tradedOn: Date;
+    createdAt: Date;
+  }>;
+  investmentPrices: Array<{
+    id: string;
+    investmentId: string;
+    clientId: string;
+    priceMinor: bigint;
+    source: string;
+    quotedAt: Date;
     createdAt: Date;
   }>;
   importBatches: Array<{
@@ -682,6 +765,23 @@ export function toAccountExport(source: ExportSource): AccountExport {
       id: row.id, debtId: row.debtId, clientId: row.clientId, accountId: row.accountId,
       amountMinor: row.amountMinor.toString(), transactionClientId: row.transactionClientId,
       paidOn: day(row.paidOn), createdAt: iso(row.createdAt),
+    })),
+    investments: source.investments.map(row => ({
+      id: row.id, clientId: row.clientId, kind: row.kind, name: row.name, currencyCode: code(row.currencyCode), unit: row.unit,
+      quantity: row.quantity.toFixed(8), costBasisMinor: row.costBasisMinor.toString(),
+      interestRateBps: row.interestRateBps, startDate: row.startDate ? day(row.startDate) : null,
+      maturityDate: row.maturityDate ? day(row.maturityDate) : null, note: row.note,
+      archivedAt: row.archivedAt ? iso(row.archivedAt) : null,
+      version: row.version, ...stamps(row),
+    })),
+    investmentTrades: source.investmentTrades.map(row => ({
+      id: row.id, investmentId: row.investmentId, clientId: row.clientId, side: row.side, quantity: row.quantity.toFixed(8),
+      amountMinor: row.amountMinor.toString(), realizedMinor: row.realizedMinor === null ? null : row.realizedMinor.toString(),
+      accountId: row.accountId, transactionClientId: row.transactionClientId, tradedOn: day(row.tradedOn), createdAt: iso(row.createdAt),
+    })),
+    investmentPrices: source.investmentPrices.map(row => ({
+      id: row.id, investmentId: row.investmentId, clientId: row.clientId, priceMinor: row.priceMinor.toString(),
+      source: row.source, quotedAt: iso(row.quotedAt), createdAt: iso(row.createdAt),
     })),
     cardInstallmentPlans: source.cardInstallmentPlans.map(row => ({
       id: row.id, clientId: row.clientId, transactionId: row.transactionId, accountId: row.accountId,

@@ -1634,6 +1634,411 @@ paths:
         '503':
           $ref: '#/components/responses/GoalUnavailable'
       description: "Writes one audit event (`goal.adjust`) and no transaction. `version` must match."
+  /api/v1/investments:
+    get:
+      operationId: listInvestments
+      summary: Tracked positions, oldest first
+      tags:
+      - Investments
+      security:
+      - UserBearer: []
+      parameters:
+      - in: query
+        name: includeArchived
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Positions
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvestmentList'
+        '400':
+          $ref: '#/components/responses/InvestmentValidationError'
+        '401':
+          $ref: '#/components/responses/InvestmentUnauthorized'
+        '404':
+          $ref: '#/components/responses/InvestmentNotFound'
+        '409':
+          $ref: '#/components/responses/InvestmentConflict'
+        '503':
+          $ref: '#/components/responses/InvestmentUnavailable'
+    post:
+      operationId: createInvestment
+      summary: Start tracking a position
+      tags:
+      - Investments
+      security:
+      - UserBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateInvestmentRequest'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Investment'
+        '200':
+          description: Replay of a recorded clientId
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Investment'
+        '400':
+          $ref: '#/components/responses/InvestmentValidationError'
+        '401':
+          $ref: '#/components/responses/InvestmentUnauthorized'
+        '404':
+          $ref: '#/components/responses/InvestmentNotFound'
+        '409':
+          $ref: '#/components/responses/InvestmentConflict'
+        '503':
+          $ref: '#/components/responses/InvestmentUnavailable'
+      description: "Creates an empty position (quantity 0); money moves with POST /investments/{id}/trades. Kinds: gold (unit chi or luong), stock (share), fund (unit), savings_deposit (deposit, needs interestRateBps and startDate), real_estate (property), crypto (coin). `clientId` makes retries idempotent."
+  /api/v1/investments/summary:
+    get:
+      operationId: getInvestmentSummary
+      summary: Cost, current value and unrealized gain per currency
+      tags:
+      - Investments
+      security:
+      - UserBearer: []
+      responses:
+        '200':
+          description: Totals
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvestmentSummary'
+        '401':
+          $ref: '#/components/responses/InvestmentUnauthorized'
+        '503':
+          $ref: '#/components/responses/InvestmentUnavailable'
+      description: "Held positions only. Unpriced positions count at cost and are listed in `unpricedCount`; realized gain lives on each trade, never in income or expense."
+  /api/v1/investments/{id}:
+    get:
+      operationId: getInvestment
+      summary: One position
+      tags:
+      - Investments
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: The position
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Investment'
+        '400':
+          $ref: '#/components/responses/InvestmentValidationError'
+        '401':
+          $ref: '#/components/responses/InvestmentUnauthorized'
+        '404':
+          $ref: '#/components/responses/InvestmentNotFound'
+        '409':
+          $ref: '#/components/responses/InvestmentConflict'
+        '503':
+          $ref: '#/components/responses/InvestmentUnavailable'
+    patch:
+      operationId: updateInvestment
+      summary: Rename, change note or maturity date
+      tags:
+      - Investments
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateInvestmentRequest'
+      responses:
+        '200':
+          description: The updated position
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Investment'
+        '400':
+          $ref: '#/components/responses/InvestmentValidationError'
+        '401':
+          $ref: '#/components/responses/InvestmentUnauthorized'
+        '404':
+          $ref: '#/components/responses/InvestmentNotFound'
+        '409':
+          $ref: '#/components/responses/InvestmentConflict'
+        '503':
+          $ref: '#/components/responses/InvestmentUnavailable'
+    delete:
+      operationId: archiveInvestment
+      summary: Archive an empty position
+      tags:
+      - Investments
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: version
+        required: true
+        schema: {type: integer}
+      responses:
+        '204':
+          description: Archived
+        '400':
+          $ref: '#/components/responses/InvestmentValidationError'
+        '401':
+          $ref: '#/components/responses/InvestmentUnauthorized'
+        '404':
+          $ref: '#/components/responses/InvestmentNotFound'
+        '409':
+          $ref: '#/components/responses/InvestmentConflict'
+        '503':
+          $ref: '#/components/responses/InvestmentUnavailable'
+      description: "Only when quantity is 0, otherwise INVESTMENT_CONFLICT."
+  /api/v1/investments/{id}/trades:
+    get:
+      operationId: listInvestmentTrades
+      summary: Buys and sells, newest first
+      tags:
+      - Investments
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Trades
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvestmentTradeList'
+        '400':
+          $ref: '#/components/responses/InvestmentValidationError'
+        '401':
+          $ref: '#/components/responses/InvestmentUnauthorized'
+        '404':
+          $ref: '#/components/responses/InvestmentNotFound'
+        '409':
+          $ref: '#/components/responses/InvestmentConflict'
+        '503':
+          $ref: '#/components/responses/InvestmentUnavailable'
+    post:
+      operationId: tradeInvestment
+      summary: Buy / add to, or sell from, a position
+      tags:
+      - Investments
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TradeInvestmentRequest'
+      responses:
+        '201':
+          description: Recorded
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Investment'
+        '200':
+          description: Replay of a recorded clientId
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Investment'
+        '400':
+          $ref: '#/components/responses/InvestmentValidationError'
+        '401':
+          $ref: '#/components/responses/InvestmentUnauthorized'
+        '404':
+          $ref: '#/components/responses/InvestmentNotFound'
+        '409':
+          $ref: '#/components/responses/InvestmentConflict'
+        '422':
+          $ref: '#/components/responses/InvestmentRejected'
+        '503':
+          $ref: '#/components/responses/InvestmentUnavailable'
+      description: "Books one `investment` transaction on the wallet in the same commit: buy takes `amountMinor` out, sell brings it in. Not income or expense. Weighted-average cost: a sell removes `costBasis x sold / held` (half up) and records realized = proceeds - that cost on the trade. The wallet must use the position currency. Savings deposits and property: quantity must be 1, one buy only, sell all."
+  /api/v1/investments/{id}/prices:
+    get:
+      operationId: listInvestmentPrices
+      summary: Hand-entered prices, newest first
+      tags:
+      - Investments
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Prices
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvestmentPriceList'
+        '400':
+          $ref: '#/components/responses/InvestmentValidationError'
+        '401':
+          $ref: '#/components/responses/InvestmentUnauthorized'
+        '404':
+          $ref: '#/components/responses/InvestmentNotFound'
+        '409':
+          $ref: '#/components/responses/InvestmentConflict'
+        '503':
+          $ref: '#/components/responses/InvestmentUnavailable'
+    post:
+      operationId: addInvestmentPrice
+      summary: Enter the latest price of one unit
+      tags:
+      - Investments
+      security:
+      - UserBearer: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddInvestmentPriceRequest'
+      responses:
+        '201':
+          description: Recorded
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Investment'
+        '200':
+          description: Replay of a recorded clientId
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Investment'
+        '400':
+          $ref: '#/components/responses/InvestmentValidationError'
+        '401':
+          $ref: '#/components/responses/InvestmentUnauthorized'
+        '404':
+          $ref: '#/components/responses/InvestmentNotFound'
+        '409':
+          $ref: '#/components/responses/InvestmentConflict'
+        '422':
+          $ref: '#/components/responses/InvestmentRejected'
+        '503':
+          $ref: '#/components/responses/InvestmentUnavailable'
+      description: "v1 prices are manual (`source` is always manual) and show their `quotedAt`. Current value = quantity x latest price by quotedAt. Not allowed for savings deposits (value = principal + simple interest)."
   /api/v1/personal-debts:
     get:
       operationId: listPersonalDebts
@@ -3088,6 +3493,7 @@ paths:
           - adjustment
           - debt
           - refund
+          - investment
       - in: query
         name: from
         schema:
@@ -3173,6 +3579,7 @@ paths:
           - adjustment
           - debt
           - refund
+          - investment
       - in: query
         name: currency
         schema:
@@ -5794,6 +6201,72 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorEnvelope'
+    InvestmentValidationError:
+      description: VALIDATION_ERROR
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    InvestmentUnauthorized:
+      description: SESSION_INVALID
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    InvestmentNotFound:
+      description: INVESTMENT_NOT_FOUND
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    InvestmentConflict:
+      description: INVESTMENT_CONFLICT stale version, a clientId replayed with different content, or archiving a position that still holds quantity
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    InvestmentRejected:
+      description: INVESTMENT_OVERSELL (sell more than held) or INVESTMENT_UNSUPPORTED (a second buy on a deposit or property, or a price on a deposit)
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    InvestmentUnavailable:
+      description: INVESTMENT_UNAVAILABLE or authentication unavailable
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
     PersonalDebtValidationError:
       description: VALIDATION_ERROR
       headers:
@@ -7123,6 +7596,166 @@ components:
       required: [version]
       properties:
         version: {type: integer, minimum: 1}
+    InvestmentKind:
+      type: string
+      enum: [gold, stock, fund, savings_deposit, real_estate, crypto]
+    InvestmentQuantity:
+      type: string
+      pattern: '^\d{1,20}(\.\d{1,8})?$'
+      description: 'Decimal string with up to 8 decimals. Never a float.'
+    Investment:
+      type: object
+      additionalProperties: false
+      required: [id, clientId, kind, name, currencyCode, unit, quantity, costBasisMinor, currentValueMinor, unrealizedMinor,
+        valuationBasis, latestPrice, interestRateBps, startDate, maturityDate, note, archivedAt, version, createdAt, updatedAt]
+      properties:
+        id: {type: string, format: uuid}
+        clientId: {type: string, format: uuid}
+        kind: {$ref: '#/components/schemas/InvestmentKind'}
+        name: {type: string, maxLength: 80}
+        currencyCode: {type: string, pattern: '^[A-Z]{3}$'}
+        unit: {type: string, description: 'chi | luong (gold), share, unit, coin, deposit, property'}
+        quantity: {$ref: '#/components/schemas/InvestmentQuantity'}
+        costBasisMinor: {$ref: '#/components/schemas/ReportMoney'}
+        currentValueMinor: {$ref: '#/components/schemas/ReportMoney'}
+        unrealizedMinor:
+          oneOf:
+          - {$ref: '#/components/schemas/ReportMoney'}
+          - {type: 'null'}
+          description: 'currentValue - costBasis; null while unpriced (valuationBasis = cost).'
+        valuationBasis:
+          type: string
+          enum: [price, deposit, cost]
+          description: 'price = quantity x latest price; deposit = principal + accrued simple interest; cost = no price yet, cost stands in.'
+        latestPrice:
+          oneOf:
+          - {$ref: '#/components/schemas/InvestmentPrice'}
+          - {type: 'null'}
+        interestRateBps: {type: [integer, 'null']}
+        startDate: {type: [string, 'null'], format: date}
+        maturityDate: {type: [string, 'null'], format: date}
+        note: {type: [string, 'null'], maxLength: 500}
+        archivedAt: {type: [string, 'null'], format: date-time}
+        version: {type: integer}
+        createdAt: {type: string, format: date-time}
+        updatedAt: {type: string, format: date-time}
+    InvestmentList:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: {$ref: '#/components/schemas/Investment'}
+    InvestmentSummary:
+      type: object
+      additionalProperties: false
+      required: [totals]
+      properties:
+        totals:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [currencyCode, costBasisMinor, currentValueMinor, unrealizedMinor, unpricedCount]
+            properties:
+              currencyCode: {type: string, pattern: '^[A-Z]{3}$'}
+              costBasisMinor: {$ref: '#/components/schemas/ReportMoney'}
+              currentValueMinor: {$ref: '#/components/schemas/ReportMoney'}
+              unrealizedMinor: {$ref: '#/components/schemas/ReportMoney'}
+              unpricedCount: {type: integer}
+    InvestmentPrice:
+      type: object
+      additionalProperties: false
+      required: [priceMinor, source, quotedAt]
+      properties:
+        priceMinor: {$ref: '#/components/schemas/ReportMoney'}
+        source: {type: string, const: manual}
+        quotedAt: {type: string, format: date-time}
+    InvestmentPriceList:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [id, clientId, priceMinor, source, quotedAt]
+            properties:
+              id: {type: string, format: uuid}
+              clientId: {type: string, format: uuid}
+              priceMinor: {$ref: '#/components/schemas/ReportMoney'}
+              source: {type: string, const: manual}
+              quotedAt: {type: string, format: date-time}
+    InvestmentTradeList:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [id, clientId, side, quantity, amountMinor, realizedMinor, accountId, tradedOn, createdAt]
+            properties:
+              id: {type: string, format: uuid}
+              clientId: {type: string, format: uuid}
+              side: {type: string, enum: [buy, sell]}
+              quantity: {$ref: '#/components/schemas/InvestmentQuantity'}
+              amountMinor: {$ref: '#/components/schemas/ReportMoney'}
+              realizedMinor:
+                oneOf:
+                - {$ref: '#/components/schemas/ReportMoney'}
+                - {type: 'null'}
+                description: 'Sell only, proceeds minus the cost basis removed. Shown on the investment screen, never in income or expense.'
+              accountId: {type: string, format: uuid}
+              tradedOn: {type: string, format: date}
+              createdAt: {type: string, format: date-time}
+    CreateInvestmentRequest:
+      type: object
+      additionalProperties: false
+      required: [clientId, kind, name, currencyCode, unit]
+      properties:
+        clientId: {type: string, format: uuid}
+        kind: {$ref: '#/components/schemas/InvestmentKind'}
+        name: {type: string, minLength: 1, maxLength: 80}
+        currencyCode: {type: string, pattern: '^[A-Z]{3}$'}
+        unit: {type: string, maxLength: 16}
+        interestRateBps: {type: [integer, 'null'], minimum: 0, maximum: 100000, description: 'Savings deposit only. 600 = 6% a year, simple interest.'}
+        startDate: {type: [string, 'null'], format: date}
+        maturityDate: {type: [string, 'null'], format: date}
+        note: {type: [string, 'null'], maxLength: 500}
+    UpdateInvestmentRequest:
+      type: object
+      additionalProperties: false
+      required: [version]
+      properties:
+        version: {type: integer, minimum: 1}
+        name: {type: string, minLength: 1, maxLength: 80}
+        note: {type: [string, 'null'], maxLength: 500}
+        maturityDate: {type: [string, 'null'], format: date, description: 'Savings deposit only.'}
+    TradeInvestmentRequest:
+      type: object
+      additionalProperties: false
+      required: [clientId, side, quantity, amountMinor, accountId, tradedOn]
+      properties:
+        clientId: {type: string, format: uuid}
+        side: {type: string, enum: [buy, sell]}
+        quantity: {$ref: '#/components/schemas/InvestmentQuantity'}
+        amountMinor: {type: string, pattern: '^[1-9][0-9]{0,18}$', description: 'Money out of the wallet (buy) or into it (sell), minor units.'}
+        accountId: {type: string, format: uuid}
+        tradedOn: {type: string, format: date}
+    AddInvestmentPriceRequest:
+      type: object
+      additionalProperties: false
+      required: [clientId, priceMinor, quotedAt]
+      properties:
+        clientId: {type: string, format: uuid}
+        priceMinor: {type: string, pattern: '^(0|[1-9][0-9]{0,18})$', description: 'Price of one unit, minor units.'}
+        quotedAt: {type: string, format: date-time}
     PersonalDebt:
       type: object
       additionalProperties: false
@@ -8304,6 +8937,7 @@ components:
           - adjustment
           - debt
           - refund
+          - investment
         occurredOn:
           type: string
           format: date
@@ -9885,6 +10519,7 @@ components:
       - transferMinor
       - adjustmentMinor
       - debtMinor
+      - investmentMinor
       - refundMinor
       - netMinor
       properties:
@@ -9906,12 +10541,15 @@ components:
         debtMinor:
           $ref: '#/components/schemas/ReportMoney'
           description: Lend / borrow money movements (BE-P3-007). Not income or expense; excluded from totals, budgets and savings rate.
+        investmentMinor:
+          $ref: '#/components/schemas/ReportMoney'
+          description: Money moved between this wallet and investments (BE-P4-E01, ADR 014); negative = bought, positive = sold. Not income or expense; excluded from totals, budgets and savings rate.
         refundMinor:
           $ref: '#/components/schemas/ReportMoney'
           description: Refunds received in this wallet in the period (BE-P3-008), by the refund's own date. Totals and byCategory net them out of the original expense instead.
         netMinor:
           $ref: '#/components/schemas/ReportMoney'
-          description: incomeMinor + expenseMinor + transferMinor + adjustmentMinor + debtMinor + refundMinor for this account.
+          description: incomeMinor + expenseMinor + transferMinor + adjustmentMinor + debtMinor + investmentMinor + refundMinor for this account.
     NetWorthReport:
       type: object
       additionalProperties: false
@@ -10640,7 +11278,7 @@ components:
           format: uuid
         type:
           type: string
-          enum: [income, expense, transfer, adjustment, debt, refund]
+          enum: [income, expense, transfer, adjustment, debt, refund, investment]
         amountMinor:
           $ref: '#/components/schemas/ReportMoney'
         currencyCode:
