@@ -5,9 +5,10 @@ import type { ReportRepository } from '../domain/report.repository';
 import type {
   AccountMovement, AccountRef, CategoryAggregate, MerchantAggregate, NetWorthAggregate, ReportMoneyType, ReportProfile, ResolvedPeriod, TrendBucket, TrendRow, TrendSource,
 } from '../domain/report';
-import { previousPeriod } from '../domain/report';
+import { previousPeriod, todayInTimeZone } from '../domain/report';
+import { parseQuantity, valuate, type InvestmentRecord } from '../../investments/domain/investment';
 
-const moneyTypes = new Set<ReportMoneyType>(['income', 'expense', 'transfer', 'adjustment', 'debt', 'refund']);
+const moneyTypes = new Set<ReportMoneyType>(['income', 'expense', 'transfer', 'adjustment', 'debt', 'refund', 'investment']);
 
 @Injectable()
 export class PrismaReportRepository implements ReportRepository {
@@ -177,6 +178,9 @@ export class PrismaReportRepository implements ReportRepository {
       WHERE "userId" = ${userId}::uuid AND "archivedAt" IS NULL AND "outstandingMinor" > 0
       GROUP BY "currencyCode", direction
     `);
+    // Investments (BE-P4-E01): the wallet already lost the money moved in, so adding the position's value does not double count.
+    // Current value is priced here in SQL-free form by the caller; see investmentRows.
+    const investments = await this.investmentRows(tx, userId);
     const accountRows: NetWorthAggregate[] = rows.map(row => {
       if (row.bucket !== 'asset' && row.bucket !== 'liability') throw new Error('Invalid net worth bucket');
       return { currency: row.currency.trim(), bucket: row.bucket, total: integer(row.total) };
@@ -188,7 +192,31 @@ export class PrismaReportRepository implements ReportRepository {
         ? { currency: row.currency.trim(), bucket: 'asset' as const, total }
         : { currency: row.currency.trim(), bucket: 'liability' as const, total: -total };
     });
-    return [...accountRows, ...debtRows];
+    return [...accountRows, ...debtRows, ...investments];
+  }
+
+  /** Held positions as assets: deposits at principal + accrued interest, the rest at quantity x latest price (cost when unpriced). */
+  private async investmentRows(tx: Prisma.TransactionClient, userId: string): Promise<NetWorthAggregate[]> {
+    const user = await tx.user.findUnique({ where: { id: userId }, select: { timezone: true } });
+    const today = todayInTimeZone(user?.timezone ?? 'UTC', new Date());
+    const rows = await tx.investment.findMany({
+      where: { userId, archivedAt: null, quantity: { gt: 0 } },
+      include: { prices: { orderBy: [{ quotedAt: 'desc' }, { createdAt: 'desc' }], take: 1 } },
+    });
+    const totals = new Map<string, bigint>();
+    for (const row of rows) {
+      const price = row.prices[0];
+      const record: InvestmentRecord = {
+        id: row.id, clientId: row.clientId, kind: row.kind, name: row.name, currencyCode: row.currencyCode.trim(), unit: row.unit,
+        quantityScaled: parseQuantity(row.quantity.toFixed(8)), costBasisMinor: row.costBasisMinor, interestRateBps: row.interestRateBps,
+        startDate: row.startDate ? row.startDate.toISOString().slice(0, 10) : null,
+        maturityDate: row.maturityDate ? row.maturityDate.toISOString().slice(0, 10) : null,
+        note: row.note, archivedAt: row.archivedAt, version: row.version, createdAt: row.createdAt, updatedAt: row.updatedAt,
+        latestPrice: price ? { priceMinor: price.priceMinor, source: price.source, quotedAt: price.quotedAt } : null,
+      };
+      totals.set(record.currencyCode, (totals.get(record.currencyCode) ?? 0n) + valuate(record, today).currentValueMinor);
+    }
+    return [...totals.entries()].map(([currency, total]) => ({ currency, bucket: 'asset' as const, total }));
   }
 }
 

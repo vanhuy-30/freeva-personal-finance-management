@@ -29,6 +29,8 @@ enum TransactionType {
   debt
   /// Money back for an expense (BE-P3-008): one positive leg, netted against the original expense's category and period.
   refund
+  /// Money moved between a wallet and an investment position (BE-P4-E01): one leg, outside income/expense.
+  investment
 }
 
 enum CategoryKind {
@@ -107,6 +109,7 @@ model Currency {
   goals                 Goal[]
   loans                 Loan[]
   personalDebts         PersonalDebt[]
+  investments           Investment[]
   cardInstallmentPlans  CardInstallmentPlan[]
 }
 
@@ -158,6 +161,9 @@ model User {
   loans                  Loan[]
   loanPayments           LoanPayment[]
   personalDebts          PersonalDebt[]
+  investments            Investment[]
+  investmentTrades       InvestmentTrade[]
+  investmentPrices       InvestmentPrice[]
   personalDebtPayments   PersonalDebtPayment[]
   cardInstallmentPlans   CardInstallmentPlan[]
   importBatches          ImportBatch[]
@@ -189,6 +195,7 @@ model FinancialAccount {
   goals                Goal[]
   loans                Loan[]
   personalDebts        PersonalDebt[]
+  investmentTrades     InvestmentTrade[]
   personalDebtPayments PersonalDebtPayment[]
   cardInstallmentPlans CardInstallmentPlan[]
 
@@ -895,4 +902,91 @@ model ImportBatch {
 
   @@unique([userId, clientId])
   @@index([userId, createdAt])
+}
+
+enum InvestmentKind {
+  gold
+  stock
+  fund
+  savings_deposit
+  real_estate
+  crypto
+}
+
+enum InvestmentTradeSide {
+  buy
+  sell
+}
+
+/// A tracked position (BE-P4-E01, ADR 014). Kept apart from wallet balances; money moves through one-leg `investment` transactions.
+/// costBasisMinor is the weighted-average cost of the quantity still held.
+model Investment {
+  id              String         @id @default(uuid()) @db.Uuid
+  userId          String         @db.Uuid
+  clientId        String         @db.Uuid
+  kind            InvestmentKind
+  name            String         @db.VarChar(80)
+  currencyCode    String         @db.Char(3)
+  /// Unit of `quantity` and of prices: chi | luong (gold), share, unit, coin, deposit, property.
+  unit            String         @db.VarChar(16)
+  quantity        Decimal        @db.Decimal(28, 8)
+  costBasisMinor  BigInt
+  /// Savings deposit only: annual simple rate in bps, start and maturity dates.
+  interestRateBps Int?
+  startDate       DateTime?      @db.Date
+  maturityDate    DateTime?      @db.Date
+  note            String?        @db.VarChar(500)
+  archivedAt      DateTime?      @db.Timestamptz
+  version         Int            @default(1)
+  createdAt       DateTime       @default(now()) @db.Timestamptz
+  updatedAt       DateTime       @updatedAt @db.Timestamptz
+
+  user     User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  currency Currency          @relation(fields: [currencyCode], references: [code])
+  trades   InvestmentTrade[]
+  prices   InvestmentPrice[]
+
+  @@unique([userId, clientId])
+  @@index([userId, archivedAt])
+}
+
+model InvestmentTrade {
+  id                  String              @id @default(uuid()) @db.Uuid
+  investmentId        String              @db.Uuid
+  userId              String              @db.Uuid
+  clientId            String              @db.Uuid
+  side                InvestmentTradeSide
+  quantity            Decimal             @db.Decimal(28, 8)
+  amountMinor         BigInt
+  /// Sell only: proceeds minus the cost basis removed (null for buys).
+  realizedMinor       BigInt?
+  accountId           String              @db.Uuid
+  transactionClientId String              @db.Uuid
+  tradedOn            DateTime            @db.Date
+  createdAt           DateTime            @default(now()) @db.Timestamptz
+
+  investment Investment       @relation(fields: [investmentId], references: [id], onDelete: Cascade)
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account    FinancialAccount @relation(fields: [accountId], references: [id])
+
+  @@unique([userId, clientId])
+  @@index([investmentId, tradedOn])
+}
+
+/// Hand-entered price per one unit (v1: source is always `manual`).
+model InvestmentPrice {
+  id           String   @id @default(uuid()) @db.Uuid
+  investmentId String   @db.Uuid
+  userId       String   @db.Uuid
+  clientId     String   @db.Uuid
+  priceMinor   BigInt
+  source       String   @default("manual") @db.VarChar(16)
+  quotedAt     DateTime @db.Timestamptz
+  createdAt    DateTime @default(now()) @db.Timestamptz
+
+  investment Investment @relation(fields: [investmentId], references: [id], onDelete: Cascade)
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, clientId])
+  @@index([investmentId, quotedAt])
 }

@@ -2,6 +2,10 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-11-06
+
+- `BE-P4-E01` (backend): tài sản và đầu tư — ADR 014 (ghi sổ), `/api/v1/investments` (vàng chỉ/lượng, cổ phiếu, chứng chỉ quỹ, tiền gửi, bất động sản, crypto), mua/bán bằng giao dịch `investment` một chân, giá vốn bình quân gia quyền, lãi/lỗ thực hiện, giá nhập tay, tiền gửi lãi đơn, giá trị vào `/reports/net-worth`, `byAccount.investmentMinor`, export/xoá tài khoản. Migration `investments` additive. Unit 29 + integration 11 test mới; 24 suite integration PostgreSQL xanh. Mobile chưa làm. [Thiết kế](../architecture/investments.md).
+
 ## 2026-11-05
 
 - **Phase 3 closed**: backlog 16/17 done, `BE-P3-E03` wont (gộp vào `BE-P4-E01`); gồm mục tiêu, vay và nợ, dự báo số dư, ticket `P3-001`…`012` (`Gate: v1`). Mở Phase 4.
