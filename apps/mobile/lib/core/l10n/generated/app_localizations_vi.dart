@@ -5264,4 +5264,92 @@ class SVi extends S {
   ) {
     return '$kind, giá trị $value, vốn $cost, lãi lỗ dự kiến $gain';
   }
+
+  @override
+  String get investmentAdd => 'Thêm khoản đầu tư';
+
+  @override
+  String get investmentNewTitle => 'Khoản đầu tư mới';
+
+  @override
+  String get investmentName => 'Tên tài sản';
+
+  @override
+  String get investmentGoldByChi => 'Tính theo chỉ';
+
+  @override
+  String get investmentGoldByLuong => 'Tính theo lượng';
+
+  @override
+  String get investmentQuantity => 'Số lượng';
+
+  @override
+  String investmentUnit(String unit) {
+    String _temp0 = intl.Intl.selectLogic(unit, {
+      'chi': 'chỉ',
+      'luong': 'lượng',
+      'share': 'cổ phiếu',
+      'unit': 'chứng chỉ',
+      'coin': 'coin',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String investmentUnitPrice(String unit) {
+    String _temp0 = intl.Intl.selectLogic(unit, {
+      'chi': 'Giá mua một chỉ',
+      'luong': 'Giá mua một lượng',
+      'share': 'Giá mua một cổ phiếu',
+      'unit': 'Giá mua một chứng chỉ',
+      'coin': 'Giá mua một coin',
+      'other': 'Giá mua',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get investmentBuyDate => 'Ngày mua';
+
+  @override
+  String get investmentTotalMoney => 'Tổng tiền';
+
+  @override
+  String get investmentFromWallet => 'Lấy từ ví';
+
+  @override
+  String investmentWalletLeft(String amount) {
+    return 'Còn $amount';
+  }
+
+  @override
+  String get investmentExisting => 'Đã có từ trước';
+
+  @override
+  String get investmentExistingHint => 'Không trừ ví';
+
+  @override
+  String get investmentNote => 'Ghi chú (không bắt buộc)';
+
+  @override
+  String get investmentSave => 'Lưu khoản đầu tư';
+
+  @override
+  String get investmentPurchasePrice => 'Giá mua';
+
+  @override
+  String get investmentDepositAmount => 'Số tiền gửi';
+
+  @override
+  String get investmentRate => 'Lãi suất/năm';
+
+  @override
+  String get investmentDepositDate => 'Ngày gửi';
+
+  @override
+  String get investmentMaturity => 'Ngày đáo hạn';
+
+  @override
+  String get investmentPickDate => 'Chọn ngày';
 }

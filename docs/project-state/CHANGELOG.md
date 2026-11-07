@@ -4,6 +4,7 @@ Nhật ký repo/process — không phải App Store release notes.
 
 ## 2026-11-07
 
+- `MOB-P4-E01` PR 2/4: tạo khoản đầu tư trên app — màn `/me/investments/new` (sáu danh mục, vàng chỉ/lượng, tiền gửi lãi suất và đáo hạn, bất động sản một lô), số lượng Decimal 8 chữ số bằng `BigInt`, lấy từ ví hoặc "đã có từ trước". Nút thêm ở P.1 và P.2. [Thiết kế](../architecture/mobile-investments.md).
 - `MOB-P4-E01` PR 1/4: nền đầu tư trên app — `TransactionType.investment` (một chân, khoá sửa/xoá), màn `/me/investments` (thẻ tổng, tỷ trọng, danh mục, tag chưa có giá), ô "Đầu tư" ở lưới Cá nhân, dòng Đầu tư ở Tài sản ròng mở màn này. Chưa thêm được khoản đầu tư (PR 2). [Thiết kế](../architecture/mobile-investments.md).
 
 ## 2026-11-06

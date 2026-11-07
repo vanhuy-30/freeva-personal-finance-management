@@ -12,6 +12,21 @@ enum InvestmentKind {
 
   final String apiValue;
 
+  /// Unit a new position of this kind starts with (gold may switch to
+  /// `luong`).
+  String get defaultUnit => switch (this) {
+    gold => 'chi',
+    stock => 'share',
+    fund => 'unit',
+    savingsDeposit => 'deposit',
+    realEstate => 'property',
+    crypto => 'coin',
+  };
+
+  /// Deposits and properties are one lot: quantity is fixed at 1 and the
+  /// user types the total.
+  bool get singleLot => this == savingsDeposit || this == realEstate;
+
   static InvestmentKind parse(String value) =>
       values.firstWhere((k) => k.apiValue == value);
 }
@@ -142,4 +157,50 @@ class InvestmentValuePoint {
 
   final String asOf;
   final BigInt valueMinor;
+}
+
+/// What the editor sends to open a position with its first buy
+/// (`POST /investments` with `initialTrade`).
+class InvestmentDraft {
+  const InvestmentDraft({
+    required this.clientId,
+    required this.tradeClientId,
+    required this.kind,
+    required this.name,
+    required this.currencyCode,
+    required this.unit,
+    required this.quantity,
+    required this.tradedOn,
+    this.priceMinor,
+    this.amountMinor,
+    this.accountId,
+    this.note,
+    this.interestRateBps,
+    this.startDate,
+    this.maturityDate,
+  });
+
+  final String clientId;
+  final String tradeClientId;
+  final InvestmentKind kind;
+  final String name;
+  final String currencyCode;
+  final String unit;
+
+  /// Scaled by 10^8 (see `core/money/quantity.dart`).
+  final BigInt quantity;
+  final String tradedOn;
+
+  /// Price of one unit; the server works out the total.
+  final BigInt? priceMinor;
+
+  /// Total paid (deposit principal, property price).
+  final BigInt? amountMinor;
+
+  /// Wallet the money comes from; null = already held before ("có sẵn").
+  final String? accountId;
+  final String? note;
+  final int? interestRateBps;
+  final String? startDate;
+  final String? maturityDate;
 }

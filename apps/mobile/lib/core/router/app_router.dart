@@ -15,6 +15,8 @@ import '../../features/transaction_import/presentation/pages/import_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/reports/domain/category_detail.dart';
 import '../../features/forecast/presentation/pages/forecast_page.dart';
+import '../../features/investments/domain/investment.dart';
+import '../../features/investments/presentation/pages/investment_editor_page.dart';
 import '../../features/investments/presentation/pages/investments_page.dart';
 import '../../features/net_worth/presentation/pages/net_worth_page.dart';
 import '../../features/reports/presentation/pages/month_review_page.dart';
@@ -193,6 +195,21 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
       GoRoute(
         path: '/me/investments',
         builder: (context, state) => const AuthGate(child: InvestmentsPage()),
+        routes: [
+          GoRoute(
+            path: 'new',
+            builder: (context, state) {
+              final kind = state.uri.queryParameters['kind'];
+              return AuthGate(
+                child: InvestmentEditorPage(
+                  kind: InvestmentKind.values
+                      .where((k) => k.apiValue == kind)
+                      .firstOrNull,
+                ),
+              );
+            },
+          ),
+        ],
       ),
       GoRoute(
         path: '/me/net-worth',

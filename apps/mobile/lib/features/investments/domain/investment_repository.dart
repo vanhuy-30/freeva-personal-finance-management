@@ -12,6 +12,10 @@ abstract class InvestmentRepository {
 
   Future<Either<AuthFailure, InvestmentSummary>> summary();
 
+  /// Opens a position with its first buy; a repeated name adds the buy to
+  /// the existing position and returns that one.
+  Future<Either<AuthFailure, Investment>> create(InvestmentDraft draft);
+
   /// Per-currency value at each bucket of [window], oldest first.
   Future<Either<AuthFailure, List<InvestmentBucket>>> history(
     NetWorthWindow window,

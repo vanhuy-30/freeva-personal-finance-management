@@ -137,6 +137,22 @@ class FakeInvestmentUseCases implements InvestmentUseCases {
   Future<Either<AuthFailure, InvestmentSummary>> summary() async =>
       failure != null ? left(failure!) : right(summaryValue);
 
+  final created = <InvestmentDraft>[];
+
+  @override
+  Future<Either<AuthFailure, Investment>> create(InvestmentDraft draft) async {
+    created.add(draft);
+    if (failure != null) return left(failure!);
+    final saved = position(
+      'new',
+      draft.kind,
+      draft.name,
+      cost: (draft.amountMinor ?? BigInt.zero).toInt(),
+    );
+    items = [...items, saved];
+    return right(saved);
+  }
+
   @override
   Future<Either<AuthFailure, List<InvestmentValuePoint>>> valueLine(
     NetWorthWindow window, {
