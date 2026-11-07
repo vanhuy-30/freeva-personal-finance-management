@@ -21,7 +21,8 @@ M = {
  'L': [('RecList','recurring/rec_list'),('RecEdit','recurring/rec_add_remind'),('RecEditAuto','recurring/rec_edit_auto'),('BillPaid','recurring/rec_paid_sheet')],
  'M': [('WReconcile','wallets/reconcile_sheet'),('TxDetail3','transactions/refund_detail'),('TxRefund','transactions/refund_sheet'),('TxRefundDelete','transactions/refund_delete'),('InstAdd','installments/installment_add'),('InstDetail','installments/installment_detail'),('WCredit3','installments/installment_card')],
  'N': [('BudgetAlert','budgets/n4_thresholds'),('MeNotify3','settings/g2_notify'),('NotifyTime','settings/g2_notify_time'),('Forecast','forecast/forecast_school_off')],
-  'Q': [('QNetWorth','net_worth/net_worth_main')],
+  'P': [('PEmpty','investments/investments_empty'),('PList','investments/investments_list'),('PKind','investments/investments_kind'),('PDetail','investments/investments_trade'),('PAddGold','investments/investments_editor_gold'),('PAddDeposit','investments/investments_editor_deposit'),('PEdit','investments/investments_trade_edit'),('PDelete','investments/investments_trade_delete'),('PSell','investments/investments_sell'),('PPrice','investments/investments_price'),('PDepositDetail','investments/investments_deposit'),('PTradeOut','investments/investments_withdraw')],
+ 'Q': [('QNetWorth','net_worth/net_worth_main')],
  'H': [('SyncBanner','sync/h1_list'),('SyncCenter','sync/h1_center'),('SyncRunning','sync/h1_sending'),('SyncDone','sync/h1_done'),('SyncConflict','sync/h2_compare'),('SyncDuplicate','sync/h2_duplicate'),('SyncDiscard','sync/h1_discard'),('SyncUpdate','sync/h1_update')],
 }
 os.makedirs(f'{S}/pairs', exist_ok=True)

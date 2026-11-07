@@ -5667,4 +5667,64 @@ class SEn extends S {
 
   @override
   String get depositMaturityRow => 'Matures';
+
+  @override
+  String tradeTitle(String date) {
+    return 'Buy $date';
+  }
+
+  @override
+  String tradeCardTitle(String name) {
+    return '$name · current value';
+  }
+
+  @override
+  String tradeQuantityTimes(String quantity, String price) {
+    return '$quantity × $price';
+  }
+
+  @override
+  String get tradeCurrentPrice => 'Current price';
+
+  @override
+  String get tradeNoteRow => 'Note';
+
+  @override
+  String get tradeEdit => 'Edit';
+
+  @override
+  String get tradeDelete => 'Delete';
+
+  @override
+  String get tradeEditTitle => 'Edit buy';
+
+  @override
+  String get tradeDeleteLink => 'Delete this buy';
+
+  @override
+  String tradeDeleteTitle(String date) {
+    return 'Delete buy $date?';
+  }
+
+  @override
+  String tradeDeleteLine(String quantity, String name) {
+    return '$quantity $name';
+  }
+
+  @override
+  String tradeRefund(String wallet) {
+    return 'Back to $wallet';
+  }
+
+  @override
+  String get tradeDeleteConfirm => 'Delete buy';
+
+  @override
+  String get tradeKeep => 'Keep';
+
+  @override
+  String get tradeSave => 'Save';
+
+  @override
+  String get tradePriceRow => 'Purchase price';
 }

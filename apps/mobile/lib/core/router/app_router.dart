@@ -20,6 +20,8 @@ import '../../features/investments/presentation/pages/deposit_page.dart';
 import '../../features/investments/presentation/pages/investment_editor_page.dart';
 import '../../features/investments/presentation/pages/investment_kind_page.dart';
 import '../../features/investments/presentation/pages/investments_page.dart';
+import '../../features/investments/presentation/pages/trade_edit_page.dart';
+import '../../features/investments/presentation/pages/trade_page.dart';
 import '../../features/net_worth/presentation/pages/net_worth_page.dart';
 import '../../features/reports/presentation/pages/month_review_page.dart';
 import '../../features/reports/presentation/pages/report_category_page.dart';
@@ -233,6 +235,28 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
             path: ':id',
             builder: (context, state) =>
                 AuthGate(child: DepositPage(id: state.pathParameters['id']!)),
+            routes: [
+              GoRoute(
+                path: 'trades/:tradeId',
+                builder: (context, state) => AuthGate(
+                  child: TradePage(
+                    id: state.pathParameters['id']!,
+                    tradeId: state.pathParameters['tradeId']!,
+                  ),
+                ),
+                routes: [
+                  GoRoute(
+                    path: 'edit',
+                    builder: (context, state) => AuthGate(
+                      child: TradeEditPage(
+                        id: state.pathParameters['id']!,
+                        tradeId: state.pathParameters['tradeId']!,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
       ),

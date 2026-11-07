@@ -188,6 +188,28 @@ class InvestmentRepositoryImpl implements InvestmentRepository {
   );
 
   @override
+  Future<Either<AuthFailure, Investment>> updateTrade(
+    Investment investment,
+    String tradeId,
+    TradeEdit edit,
+  ) => _get(
+    'investments/${investment.id}/trades/$tradeId',
+    parse,
+    method: 'PATCH',
+    body: {
+      'version': investment.version,
+      'quantity': quantityToApi(edit.quantity),
+      if (edit.amountMinor != null)
+        'amountMinor': edit.amountMinor.toString()
+      else
+        'priceMinor': edit.priceMinor.toString(),
+      'accountId': edit.accountId,
+      'tradedOn': edit.tradedOn,
+      'note': edit.note?.trim().isEmpty ?? true ? null : edit.note!.trim(),
+    },
+  );
+
+  @override
   Future<Either<AuthFailure, Unit>> deleteTrade(
     Investment investment,
     String tradeId,

@@ -4,6 +4,7 @@ Nhật ký repo/process — không phải App Store release notes.
 
 ## 2026-11-07
 
+- `MOB-P4-E01` PR 5/5 (xong task): chi tiết lần mua, sửa lần mua (phát lại vị thế, chân ví theo), xoá lần mua có xác nhận và nêu tiền trả lại ví; `pairs.py` nhóm `P`. Đầu tư trên app đủ P.1–P.12. [Thiết kế](../architecture/mobile-investments.md).
 - `MOB-P4-E01` PR 4/5: tiền gửi trên app — chi tiết (giá trị hôm nay, gốc, lãi tạm tính, lãi suất, đáo hạn còn bao nhiêu ngày), rút tiền gửi, sửa khoản, xoá khoản. [Thiết kế](../architecture/mobile-investments.md).
 - `MOB-P4-E01` PR 3/5: màn danh mục đầu tư (P.3) với từng tài sản, giá, các lần mua và dòng đã bán; bán một phần hoặc hết có xem trước lãi chốt (P.9); cập nhật giá nhập tay (P.10); Mua thêm. [Thiết kế](../architecture/mobile-investments.md).
 - `MOB-P4-E01` PR 2/4: tạo khoản đầu tư trên app — màn `/me/investments/new` (sáu danh mục, vàng chỉ/lượng, tiền gửi lãi suất và đáo hạn, bất động sản một lô), số lượng Decimal 8 chữ số bằng `BigInt`, lấy từ ví hoặc "đã có từ trước". Nút thêm ở P.1 và P.2. [Thiết kế](../architecture/mobile-investments.md).

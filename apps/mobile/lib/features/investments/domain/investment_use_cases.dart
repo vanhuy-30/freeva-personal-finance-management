@@ -32,6 +32,13 @@ abstract class InvestmentUseCases {
     String tradeId,
   );
 
+  /// Refuses an unusable edit before the API.
+  Future<Either<AuthFailure, Investment>> updateTrade(
+    Investment investment,
+    String tradeId,
+    TradeEdit edit,
+  );
+
   /// Manual price of one unit (zero is allowed: it means worthless).
   Future<Either<AuthFailure, Investment>> addPrice(
     Investment investment, {
@@ -107,6 +114,25 @@ class DefaultInvestmentUseCases implements InvestmentUseCases {
       note: note?.trim().isEmpty ?? true ? null : note!.trim(),
       maturityDate: maturityDate,
     );
+  }
+
+  @override
+  Future<Either<AuthFailure, Investment>> updateTrade(
+    Investment investment,
+    String tradeId,
+    TradeEdit edit,
+  ) {
+    final lot = investment.kind.singleLot;
+    final priced = lot
+        ? (edit.amountMinor ?? BigInt.zero) > BigInt.zero
+        : (edit.priceMinor ?? BigInt.zero) > BigInt.zero;
+    if (edit.quantity <= BigInt.zero ||
+        !priced ||
+        !_day.hasMatch(edit.tradedOn) ||
+        (edit.note?.trim().length ?? 0) > 500) {
+      return Future.value(left(_invalid));
+    }
+    return _repository.updateTrade(investment, tradeId, edit);
   }
 
   @override

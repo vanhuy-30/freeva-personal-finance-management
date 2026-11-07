@@ -155,6 +155,8 @@ class _InvestmentKindPageState extends State<InvestmentKindPage> {
             onPrice: () => showInvestmentPriceSheet(context, model, a),
             onBuyMore: () => _buyMore(a),
             onSell: () => showInvestmentSellSheet(context, model, a),
+            onTrade: (t) =>
+                context.push('/me/investments/${a.id}/trades/${t.id}'),
           ),
         gap,
       ],

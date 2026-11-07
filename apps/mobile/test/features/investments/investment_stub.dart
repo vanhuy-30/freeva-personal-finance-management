@@ -226,6 +226,19 @@ class FakeInvestmentUseCases implements InvestmentUseCases {
     return right(investment);
   }
 
+  final edited = <TradeEdit>[];
+
+  @override
+  Future<Either<AuthFailure, Investment>> updateTrade(
+    Investment investment,
+    String tradeId,
+    TradeEdit edit,
+  ) async {
+    edited.add(edit);
+    if (failure != null) return left(failure!);
+    return right(investment);
+  }
+
   @override
   Future<Either<AuthFailure, Unit>> deleteTrade(
     Investment investment,
@@ -233,10 +246,15 @@ class FakeInvestmentUseCases implements InvestmentUseCases {
   ) async {
     deletedTrades.add(tradeId);
     if (failure != null) return left(failure!);
-    items = [
-      for (final i in items)
-        if (i.id != investment.id) i,
-    ];
+    final buys = (tradeMap[investment.id] ?? const <InvestmentTrade>[])
+        .where((t) => t.side == TradeSide.buy)
+        .length;
+    if (buys <= 1) {
+      items = [
+        for (final i in items)
+          if (i.id != investment.id) i,
+      ];
+    }
     return right(unit);
   }
 
@@ -362,6 +380,11 @@ InvestmentTrade _trade(
   accountId: existing || side == TradeSide.sell
       ? (existing ? null : 'vcb')
       : 'vcb',
-  currentValueMinor: null,
+  currentValueMinor: bps != null && side == TradeSide.buy
+      ? b(chi * 8000000)
+      : null,
+  unrealizedMinor: bps != null && side == TradeSide.buy
+      ? b(chi * 8000000 - chi * price)
+      : null,
   unrealizedBps: bps,
 );

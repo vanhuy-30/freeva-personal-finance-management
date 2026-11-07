@@ -9652,6 +9652,102 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Matures'**
   String get depositMaturityRow;
+
+  /// No description provided for @tradeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy {date}'**
+  String tradeTitle(String date);
+
+  /// No description provided for @tradeCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} · current value'**
+  String tradeCardTitle(String name);
+
+  /// No description provided for @tradeQuantityTimes.
+  ///
+  /// In en, this message translates to:
+  /// **'{quantity} × {price}'**
+  String tradeQuantityTimes(String quantity, String price);
+
+  /// No description provided for @tradeCurrentPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Current price'**
+  String get tradeCurrentPrice;
+
+  /// No description provided for @tradeNoteRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get tradeNoteRow;
+
+  /// No description provided for @tradeEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get tradeEdit;
+
+  /// No description provided for @tradeDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get tradeDelete;
+
+  /// No description provided for @tradeEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit buy'**
+  String get tradeEditTitle;
+
+  /// No description provided for @tradeDeleteLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this buy'**
+  String get tradeDeleteLink;
+
+  /// No description provided for @tradeDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete buy {date}?'**
+  String tradeDeleteTitle(String date);
+
+  /// No description provided for @tradeDeleteLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{quantity} {name}'**
+  String tradeDeleteLine(String quantity, String name);
+
+  /// No description provided for @tradeRefund.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to {wallet}'**
+  String tradeRefund(String wallet);
+
+  /// No description provided for @tradeDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete buy'**
+  String get tradeDeleteConfirm;
+
+  /// No description provided for @tradeKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep'**
+  String get tradeKeep;
+
+  /// No description provided for @tradeSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get tradeSave;
+
+  /// No description provided for @tradePriceRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase price'**
+  String get tradePriceRow;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

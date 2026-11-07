@@ -5545,4 +5545,64 @@ class SVi extends S {
 
   @override
   String get depositMaturityRow => 'Đáo hạn';
+
+  @override
+  String tradeTitle(String date) {
+    return 'Lần mua $date';
+  }
+
+  @override
+  String tradeCardTitle(String name) {
+    return '$name · giá trị hiện tại';
+  }
+
+  @override
+  String tradeQuantityTimes(String quantity, String price) {
+    return '$quantity × $price';
+  }
+
+  @override
+  String get tradeCurrentPrice => 'Giá hiện tại';
+
+  @override
+  String get tradeNoteRow => 'Ghi chú';
+
+  @override
+  String get tradeEdit => 'Sửa';
+
+  @override
+  String get tradeDelete => 'Xoá';
+
+  @override
+  String get tradeEditTitle => 'Sửa lần mua';
+
+  @override
+  String get tradeDeleteLink => 'Xoá lần mua này';
+
+  @override
+  String tradeDeleteTitle(String date) {
+    return 'Xoá lần mua $date?';
+  }
+
+  @override
+  String tradeDeleteLine(String quantity, String name) {
+    return '$quantity $name';
+  }
+
+  @override
+  String tradeRefund(String wallet) {
+    return 'Trả lại $wallet';
+  }
+
+  @override
+  String get tradeDeleteConfirm => 'Xoá lần mua';
+
+  @override
+  String get tradeKeep => 'Giữ lại';
+
+  @override
+  String get tradeSave => 'Lưu';
+
+  @override
+  String get tradePriceRow => 'Giá mua';
 }

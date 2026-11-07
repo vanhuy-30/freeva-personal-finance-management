@@ -25,6 +25,13 @@ abstract class InvestmentRepository {
     required String? maturityDate,
   });
 
+  /// Changes one buy; the server replays the position and the wallet leg.
+  Future<Either<AuthFailure, Investment>> updateTrade(
+    Investment investment,
+    String tradeId,
+    TradeEdit edit,
+  );
+
   /// Deletes one buy; ok also when it was the last one (the position goes).
   Future<Either<AuthFailure, Unit>> deleteTrade(
     Investment investment,
