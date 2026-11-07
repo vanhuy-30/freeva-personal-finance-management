@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
@@ -54,38 +55,54 @@ class NetWorthBreakdown extends StatelessWidget {
         ),
       ),
     );
-    Widget row(IconData icon, String title, BigInt minor, Color bg, Color fg) =>
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: FreevaSpace.s4,
-            vertical: 14,
-          ),
-          child: Row(
-            children: [
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  color: bg,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: SizedBox.square(
-                  dimension: 32,
-                  child: Icon(icon, size: 16, color: fg),
+    Widget row(
+      IconData icon,
+      String title,
+      BigInt minor,
+      Color bg,
+      Color fg, {
+      String? route,
+    }) {
+      final content = Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: FreevaSpace.s4,
+          vertical: 14,
+        ),
+        child: Row(
+          children: [
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: bg,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: SizedBox.square(
+                dimension: 32,
+                child: Icon(icon, size: 16, color: fg),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                title,
+                style: FreevaTypography.bodyM.copyWith(
+                  fontWeight: FontWeight.w500,
+                  color: c.textPrimary,
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  title,
-                  style: FreevaTypography.bodyM.copyWith(
-                    fontWeight: FontWeight.w500,
-                    color: c.textPrimary,
-                  ),
-                ),
-              ),
-              amount(minor),
+            ),
+            amount(minor),
+            if (route != null) ...[
+              const SizedBox(width: 6),
+              Icon(LucideIcons.chevronRight, size: 16, color: c.textSecondary),
             ],
-          ),
-        );
+          ],
+        ),
+      );
+      return route == null
+          ? content
+          : InkWell(onTap: () => context.push(route), child: content);
+    }
+
     final wallet = point.walletMinor;
     final invested = point.investmentMinor;
     return Column(
@@ -119,6 +136,7 @@ class NetWorthBreakdown extends StatelessWidget {
                   invested,
                   c.tintBlue,
                   c.tintBlueFg,
+                  route: '/me/investments',
                 ),
               ],
             ),

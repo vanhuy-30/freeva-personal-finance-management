@@ -64,6 +64,7 @@ class TransactionNaming {
     TransactionType.adjustment => LucideIcons.scale,
     TransactionType.debt => LucideIcons.handshake,
     TransactionType.refund => LucideIcons.rotateCcw,
+    TransactionType.investment => LucideIcons.chartLine,
     _ => categoryIcon(_categories[categoryId]?.iconToken),
   };
 
@@ -74,6 +75,7 @@ class TransactionNaming {
     TransactionType.adjustment => s.txKindAdjustment,
     TransactionType.debt => s.txKindDebt,
     TransactionType.refund => s.txKindRefund,
+    TransactionType.investment => s.txKindInvestment,
   };
 
   TransactionLabel label(TransactionBundle row) {
@@ -81,9 +83,13 @@ class TransactionNaming {
     final notes = _clean(row.notes);
     final merchant = _clean(row.merchant);
     final debt = row.type == TransactionType.debt;
-    final adjustment = row.type == TransactionType.adjustment || debt;
+    final investment = row.type == TransactionType.investment;
+    final adjustment =
+        row.type == TransactionType.adjustment || debt || investment;
     final category = debt
         ? s.txDebtTitle
+        : investment
+        ? s.txInvestmentTitle
         : adjustment
         ? s.txAdjustTitle
         : row.type == TransactionType.transfer

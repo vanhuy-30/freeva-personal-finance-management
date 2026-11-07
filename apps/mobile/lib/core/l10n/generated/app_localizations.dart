@@ -9125,6 +9125,125 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Net worth, {range}, from {from} to {to}'**
   String netWorthChartSemantics(String range, String from, String to);
+
+  /// No description provided for @transactionInvestment.
+  ///
+  /// In en, this message translates to:
+  /// **'Investment'**
+  String get transactionInvestment;
+
+  /// No description provided for @txKindInvestment.
+  ///
+  /// In en, this message translates to:
+  /// **'investment'**
+  String get txKindInvestment;
+
+  /// No description provided for @txInvestmentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Investment'**
+  String get txInvestmentTitle;
+
+  /// No description provided for @txInvestmentReadOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'This belongs to Investments and can’t be edited.'**
+  String get txInvestmentReadOnly;
+
+  /// No description provided for @meInvestments.
+  ///
+  /// In en, this message translates to:
+  /// **'Investments'**
+  String get meInvestments;
+
+  /// No description provided for @investmentOversell.
+  ///
+  /// In en, this message translates to:
+  /// **'You can’t sell more than you still hold.'**
+  String get investmentOversell;
+
+  /// No description provided for @investmentUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'This investment doesn’t allow that.'**
+  String get investmentUnsupported;
+
+  /// No description provided for @investmentsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Investments'**
+  String get investmentsTitle;
+
+  /// No description provided for @investmentsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No investments yet'**
+  String get investmentsEmptyTitle;
+
+  /// No description provided for @investmentsEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Record gold, stocks, deposits… to see your assets in one place.'**
+  String get investmentsEmptyBody;
+
+  /// No description provided for @investmentsTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total investment value'**
+  String get investmentsTotal;
+
+  /// No description provided for @investmentsCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost'**
+  String get investmentsCost;
+
+  /// No description provided for @investmentsGain.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected gain/loss'**
+  String get investmentsGain;
+
+  /// No description provided for @investmentsValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Value'**
+  String get investmentsValue;
+
+  /// No description provided for @investmentsAllocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Share by category'**
+  String get investmentsAllocation;
+
+  /// No description provided for @investmentsKinds.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get investmentsKinds;
+
+  /// No description provided for @investmentsUnpriced.
+  ///
+  /// In en, this message translates to:
+  /// **'No price yet'**
+  String get investmentsUnpriced;
+
+  /// No description provided for @investmentKind.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind, select, gold{Gold} stock{Stocks} fund{Funds} savings_deposit{Deposits} real_estate{Real estate} crypto{Crypto} other{Other}}'**
+  String investmentKind(String kind);
+
+  /// No description provided for @investmentsSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind}, value {value}, cost {cost}, expected gain or loss {gain}'**
+  String investmentsSemantics(
+    String kind,
+    String value,
+    String cost,
+    String gain,
+  );
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

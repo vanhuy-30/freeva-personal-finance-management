@@ -121,6 +121,11 @@ class HttpAuthApi implements AuthApi {
           'REFUND_EXCEEDS_ORIGINAL' => AuthError.refundExceeds,
           _ => AuthError.conflict,
         },
+        422 => switch (_errorCode(response.body)) {
+          'INVESTMENT_OVERSELL' => AuthError.investmentOversell,
+          'INVESTMENT_UNSUPPORTED' => AuthError.investmentUnsupported,
+          _ => AuthError.unavailable,
+        },
         _ => AuthError.unavailable,
       }, retryAfter: int.tryParse(response.headers['retry-after'] ?? ''));
     } on AuthFailure {

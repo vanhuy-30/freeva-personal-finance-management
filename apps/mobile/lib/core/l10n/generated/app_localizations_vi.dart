@@ -5187,4 +5187,81 @@ class SVi extends S {
   String netWorthChartSemantics(String range, String from, String to) {
     return 'Tài sản ròng $range, từ $from đến $to';
   }
+
+  @override
+  String get transactionInvestment => 'Đầu tư';
+
+  @override
+  String get txKindInvestment => 'đầu tư';
+
+  @override
+  String get txInvestmentTitle => 'Đầu tư';
+
+  @override
+  String get txInvestmentReadOnly =>
+      'Khoản này thuộc Đầu tư, sửa ở đó không được.';
+
+  @override
+  String get meInvestments => 'Đầu tư';
+
+  @override
+  String get investmentOversell => 'Số đã bán không được vượt số còn giữ.';
+
+  @override
+  String get investmentUnsupported => 'Khoản đầu tư này không cho thao tác đó.';
+
+  @override
+  String get investmentsTitle => 'Đầu tư';
+
+  @override
+  String get investmentsEmptyTitle => 'Chưa có khoản đầu tư';
+
+  @override
+  String get investmentsEmptyBody =>
+      'Ghi vàng, cổ phiếu, tiền gửi… để thấy tài sản của bạn ở một chỗ.';
+
+  @override
+  String get investmentsTotal => 'Tổng giá trị đầu tư';
+
+  @override
+  String get investmentsCost => 'Vốn';
+
+  @override
+  String get investmentsGain => 'Lãi/lỗ dự kiến';
+
+  @override
+  String get investmentsValue => 'Giá trị';
+
+  @override
+  String get investmentsAllocation => 'Tỷ trọng theo danh mục';
+
+  @override
+  String get investmentsKinds => 'Danh mục';
+
+  @override
+  String get investmentsUnpriced => 'Chưa có giá';
+
+  @override
+  String investmentKind(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'gold': 'Vàng',
+      'stock': 'Cổ phiếu',
+      'fund': 'Chứng chỉ quỹ',
+      'savings_deposit': 'Tiền gửi',
+      'real_estate': 'Bất động sản',
+      'crypto': 'Crypto',
+      'other': 'Khác',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String investmentsSemantics(
+    String kind,
+    String value,
+    String cost,
+    String gain,
+  ) {
+    return '$kind, giá trị $value, vốn $cost, lãi lỗ dự kiến $gain';
+  }
 }
