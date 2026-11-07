@@ -116,6 +116,101 @@ class InvestmentViewModel extends ChangeNotifier {
     );
   }
 
+  /// Trades per position id, loaded by the category screen.
+  final Map<String, List<InvestmentTrade>> trades = {};
+
+  /// Positions of [kind] in the shown currency, newest first.
+  List<Investment> ofKind(InvestmentKind kind) => [
+    for (final i in _all.reversed)
+      if (i.kind == kind && i.currencyCode == currency) i,
+  ];
+
+  Investment? byId(String id) => _all.where((i) => i.id == id).firstOrNull;
+
+  /// Buys of [id], oldest first.
+  List<InvestmentTrade> buysOf(String id) => [
+    for (final t in trades[id] ?? const <InvestmentTrade>[])
+      if (t.side == TradeSide.buy) t,
+  ]..sort((a, b) => a.tradedOn.compareTo(b.tradedOn));
+
+  /// What was sold out of the positions of [kind]: quantity (scaled) and
+  /// realized profit. Null when nothing was sold.
+  ({BigInt quantity, BigInt realized, String? unit})? soldOf(
+    InvestmentKind kind,
+  ) {
+    var quantity = BigInt.zero;
+    var realized = BigInt.zero;
+    var any = false;
+    final units = <String>{};
+    for (final i in ofKind(kind)) {
+      for (final t in trades[i.id] ?? const <InvestmentTrade>[]) {
+        if (t.side != TradeSide.sell) continue;
+        any = true;
+        quantity += t.quantity;
+        realized += t.realizedMinor ?? BigInt.zero;
+        units.add(i.unit);
+      }
+    }
+    if (!any) return null;
+    return (
+      quantity: quantity,
+      realized: realized,
+      unit: units.length == 1 ? units.first : null,
+    );
+  }
+
+  Future<void> loadTrades(Iterable<String> ids) async {
+    final epoch = _epoch;
+    final results = await Future.wait([
+      for (final id in ids) _cases.trades(id).then((r) => (id, r)),
+    ]);
+    if (epoch != _epoch || _disposed) return;
+    for (final (id, result) in results) {
+      result.fold((_) {}, (list) => trades[id] = list);
+    }
+    _notify();
+  }
+
+  /// Sells part or all of [investment]; true when it went through.
+  Future<bool> sell(Investment investment, SellDraft draft) async {
+    final result = await _cases.sell(investment, draft);
+    return _afterWrite(result, investment.id, walletMoved: true);
+  }
+
+  /// Records a manual price; true when it went through.
+  Future<bool> setPrice(
+    Investment investment,
+    BigInt priceMinor,
+    DateTime quotedAt, {
+    required String clientId,
+  }) async {
+    final result = await _cases.addPrice(
+      investment,
+      clientId: clientId,
+      priceMinor: priceMinor,
+      quotedAt: quotedAt,
+    );
+    return _afterWrite(result, investment.id, walletMoved: false);
+  }
+
+  Future<bool> _afterWrite(
+    Either<AuthFailure, Investment> result,
+    String id, {
+    required bool walletMoved,
+  }) async {
+    if (_disposed) return false;
+    final ok = result.isRight();
+    result.fold((e) => failure = e, (_) => failure = null);
+    if (!ok) {
+      _notify();
+      return false;
+    }
+    if (walletMoved) unawaited(_wallets.load());
+    await load();
+    await loadTrades([id]);
+    return true;
+  }
+
   /// Whether the faint value line has the two points it needs.
   bool get hasLine => line.length >= 2;
 
@@ -155,6 +250,7 @@ class InvestmentViewModel extends ChangeNotifier {
     _stage = _auth.stage;
     _epoch++;
     _all = const [];
+    trades.clear();
     _summary = const InvestmentSummary();
     line = const [];
     loaded = false;

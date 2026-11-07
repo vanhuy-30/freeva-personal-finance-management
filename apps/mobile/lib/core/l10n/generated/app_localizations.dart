@@ -9376,6 +9376,168 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Pick a date'**
   String get investmentPickDate;
+
+  /// No description provided for @investmentHolding.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind} held'**
+  String investmentHolding(String kind);
+
+  /// No description provided for @investmentTradesHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Buys'**
+  String get investmentTradesHeader;
+
+  /// No description provided for @investmentBuyMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy more'**
+  String get investmentBuyMore;
+
+  /// No description provided for @investmentSell.
+  ///
+  /// In en, this message translates to:
+  /// **'Sell'**
+  String get investmentSell;
+
+  /// No description provided for @investmentUpdatePrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Update price'**
+  String get investmentUpdatePrice;
+
+  /// No description provided for @investmentPerUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'{price}/{unit}'**
+  String investmentPerUnit(String price, String unit);
+
+  /// No description provided for @investmentTradePrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price {price}/{unit}'**
+  String investmentTradePrice(String price, String unit);
+
+  /// No description provided for @investmentTradeCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost {price}/{unit}'**
+  String investmentTradeCost(String price, String unit);
+
+  /// No description provided for @investmentExistingBox.
+  ///
+  /// In en, this message translates to:
+  /// **'held'**
+  String get investmentExistingBox;
+
+  /// No description provided for @investmentSold.
+  ///
+  /// In en, this message translates to:
+  /// **'Sold'**
+  String get investmentSold;
+
+  /// No description provided for @investmentSoldLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{quantity} · realized {gain}'**
+  String investmentSoldLine(String quantity, String gain);
+
+  /// No description provided for @investmentSoldGain.
+  ///
+  /// In en, this message translates to:
+  /// **'Realized {gain}'**
+  String investmentSoldGain(String gain);
+
+  /// No description provided for @investmentSellTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sell {name}'**
+  String investmentSellTitle(String name);
+
+  /// No description provided for @investmentHeld.
+  ///
+  /// In en, this message translates to:
+  /// **'Holding {quantity}'**
+  String investmentHeld(String quantity);
+
+  /// No description provided for @investmentReceive.
+  ///
+  /// In en, this message translates to:
+  /// **'You receive'**
+  String get investmentReceive;
+
+  /// No description provided for @investmentSellQty.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity to sell'**
+  String get investmentSellQty;
+
+  /// No description provided for @investmentSellPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'{unit, select, chi{Sell price per chỉ} luong{Sell price per lượng} share{Sell price per share} unit{Sell price per unit} coin{Sell price per coin} other{Sell price}}'**
+  String investmentSellPrice(String unit);
+
+  /// No description provided for @investmentSellAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Sell all {quantity}'**
+  String investmentSellAll(String quantity);
+
+  /// No description provided for @investmentSellDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Sell date'**
+  String get investmentSellDate;
+
+  /// No description provided for @investmentToWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Into wallet'**
+  String get investmentToWallet;
+
+  /// No description provided for @investmentRealized.
+  ///
+  /// In en, this message translates to:
+  /// **'Realized {gain}'**
+  String investmentRealized(String gain);
+
+  /// No description provided for @investmentSellButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Sell {quantity} · {amount}'**
+  String investmentSellButton(String quantity, String amount);
+
+  /// No description provided for @investmentPriceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Price of {name}'**
+  String investmentPriceTitle(String name);
+
+  /// No description provided for @investmentPriceOne.
+  ///
+  /// In en, this message translates to:
+  /// **'{unit, select, chi{Price per chỉ} luong{Price per lượng} share{Price per share} unit{Price per unit} coin{Price per coin} other{Price}}'**
+  String investmentPriceOne(String unit);
+
+  /// No description provided for @investmentPricePrev.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous {price} · {date}'**
+  String investmentPricePrev(String price, String date);
+
+  /// No description provided for @investmentQuoteDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Quote date'**
+  String get investmentQuoteDate;
+
+  /// No description provided for @investmentSavePrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Save price'**
+  String get investmentSavePrice;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../core/money/quantity.dart';
 import '../../auth/domain/auth_repository.dart';
 import '../../net_worth/domain/net_worth_history.dart';
 import 'investment.dart';
@@ -10,6 +11,22 @@ abstract class InvestmentUseCases {
   Future<Either<AuthFailure, List<Investment>>> list();
 
   Future<Either<AuthFailure, InvestmentSummary>> summary();
+
+  Future<Either<AuthFailure, List<InvestmentTrade>>> trades(String id);
+
+  /// Sells [draft.quantity] of [investment]; refuses more than is held.
+  Future<Either<AuthFailure, Investment>> sell(
+    Investment investment,
+    SellDraft draft,
+  );
+
+  /// Manual price of one unit (zero is allowed: it means worthless).
+  Future<Either<AuthFailure, Investment>> addPrice(
+    Investment investment, {
+    required String clientId,
+    required BigInt priceMinor,
+    required DateTime quotedAt,
+  });
 
   /// Refuses an unusable draft before the API.
   Future<Either<AuthFailure, Investment>> create(InvestmentDraft draft);
@@ -31,6 +48,45 @@ class DefaultInvestmentUseCases implements InvestmentUseCases {
   static final _currency = RegExp(r'^[A-Z]{3}$');
   static final _day = RegExp(r'^\d{4}-\d{2}-\d{2}$');
   static const _invalid = AuthFailure(AuthError.invalidInput);
+
+  @override
+  Future<Either<AuthFailure, List<InvestmentTrade>>> trades(String id) =>
+      _repository.trades(id);
+
+  @override
+  Future<Either<AuthFailure, Investment>> sell(
+    Investment investment,
+    SellDraft draft,
+  ) {
+    final held = parseQuantityApi(investment.quantity);
+    if (held == null ||
+        draft.quantity <= BigInt.zero ||
+        draft.quantity > held ||
+        draft.priceMinor <= BigInt.zero ||
+        !_day.hasMatch(draft.tradedOn)) {
+      return Future.value(left(_invalid));
+    }
+    return _repository.sell(investment.id, draft);
+  }
+
+  @override
+  Future<Either<AuthFailure, Investment>> addPrice(
+    Investment investment, {
+    required String clientId,
+    required BigInt priceMinor,
+    required DateTime quotedAt,
+  }) {
+    if (priceMinor.isNegative ||
+        investment.kind == InvestmentKind.savingsDeposit) {
+      return Future.value(left(_invalid));
+    }
+    return _repository.addPrice(
+      investment.id,
+      clientId: clientId,
+      priceMinor: priceMinor,
+      quotedAt: quotedAt,
+    );
+  }
 
   @override
   Future<Either<AuthFailure, Investment>> create(InvestmentDraft draft) {

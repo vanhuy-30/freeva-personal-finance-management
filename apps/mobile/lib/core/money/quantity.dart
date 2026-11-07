@@ -41,3 +41,16 @@ String quantityToApi(BigInt scaled) {
 /// 3 × 7.200.000 = 21.600.000. Non-negative inputs.
 BigInt quantityTotalMinor(BigInt scaledQuantity, BigInt priceMinor) =>
     (scaledQuantity * priceMinor + _scale ~/ BigInt.two) ~/ _scale;
+
+/// Scaled quantity from API text ("0.12345678", always a dot); null when the
+/// text is not a decimal with up to 8 digits.
+BigInt? parseQuantityApi(String text) =>
+    parseMoneyText(text, quantityDigits, 'en');
+
+/// Cost removed from a position by selling [sold] of [held]: the
+/// proportional share of [costBasisMinor], rounded half up; selling
+/// everything takes all of it (the API's rule, so previews match).
+BigInt soldCostMinor(BigInt costBasisMinor, BigInt held, BigInt sold) {
+  if (sold >= held) return costBasisMinor;
+  return (costBasisMinor * sold * BigInt.two + held) ~/ (held * BigInt.two);
+}

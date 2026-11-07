@@ -157,7 +157,10 @@ void main() {
       expect(h.model.loaded, isTrue);
       expect(h.model.total!.currentValueMinor, b(800813699));
       expect(h.model.kinds.first.kind, InvestmentKind.realEstate);
-      expect(h.model.names(InvestmentKind.gold), ['Vàng SJC']);
+      expect(h.model.names(InvestmentKind.gold), [
+        'Vàng nhẫn 9999',
+        'Vàng SJC',
+      ]);
       expect(h.model.hasLine, isTrue);
       expect(h.model.digits, 0);
     });

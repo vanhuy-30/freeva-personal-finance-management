@@ -55,6 +55,23 @@ class InvestmentRepositoryImpl implements InvestmentRepository {
     );
   }
 
+  static InvestmentTrade parseTrade(Map<String, dynamic> json) =>
+      InvestmentTrade(
+        id: json['id'] as String,
+        clientId: json['clientId'] as String,
+        side: TradeSide.values.byName(json['side'] as String),
+        quantity: parseQuantityApi(json['quantity'] as String)!,
+        amountMinor: _money(json['amountMinor']),
+        unitPriceMinor: _money(json['unitPriceMinor']),
+        tradedOn: json['tradedOn'] as String,
+        realizedMinor: _moneyOrNull(json['realizedMinor']),
+        accountId: json['accountId'] as String?,
+        note: json['note'] as String?,
+        currentValueMinor: _moneyOrNull(json['currentValueMinor']),
+        unrealizedMinor: _moneyOrNull(json['unrealizedMinor']),
+        unrealizedBps: _bps(json['unrealizedBps']),
+      );
+
   static InvestmentTotal _total(Map<String, dynamic> json) => InvestmentTotal(
     currencyCode: json['currencyCode'] as String,
     costBasisMinor: _money(json['costBasisMinor']),
@@ -123,6 +140,47 @@ class InvestmentRepositoryImpl implements InvestmentRepository {
   @override
   Future<Either<AuthFailure, InvestmentSummary>> summary() =>
       _get('investments/summary', parseSummary);
+
+  @override
+  Future<Either<AuthFailure, List<InvestmentTrade>>> trades(String id) => _get(
+    'investments/$id/trades',
+    (json) => List.unmodifiable(
+      (json['items'] as List).map((e) => parseTrade(e as Map<String, dynamic>)),
+    ),
+  );
+
+  @override
+  Future<Either<AuthFailure, Investment>> sell(String id, SellDraft draft) =>
+      _get(
+        'investments/$id/trades',
+        parse,
+        method: 'POST',
+        body: {
+          'clientId': draft.clientId,
+          'side': 'sell',
+          'quantity': quantityToApi(draft.quantity),
+          'priceMinor': draft.priceMinor.toString(),
+          'accountId': draft.accountId,
+          'tradedOn': draft.tradedOn,
+        },
+      );
+
+  @override
+  Future<Either<AuthFailure, Investment>> addPrice(
+    String id, {
+    required String clientId,
+    required BigInt priceMinor,
+    required DateTime quotedAt,
+  }) => _get(
+    'investments/$id/prices',
+    parse,
+    method: 'POST',
+    body: {
+      'clientId': clientId,
+      'priceMinor': priceMinor.toString(),
+      'quotedAt': quotedAt.toUtc().toIso8601String(),
+    },
+  );
 
   @override
   Future<Either<AuthFailure, Investment>> create(InvestmentDraft draft) => _get(
