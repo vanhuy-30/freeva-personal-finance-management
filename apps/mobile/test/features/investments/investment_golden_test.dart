@@ -8,6 +8,8 @@ import 'package:mobile/features/investments/presentation/pages/deposit_page.dart
 import 'package:mobile/features/investments/presentation/pages/investment_editor_page.dart';
 import 'package:mobile/features/investments/presentation/pages/investment_kind_page.dart';
 import 'package:mobile/features/investments/presentation/pages/investments_page.dart';
+import 'package:mobile/features/investments/presentation/pages/trade_edit_page.dart';
+import 'package:mobile/features/investments/presentation/pages/trade_page.dart';
 
 import '../../core/widgets/widget_test_app.dart' show loadTestFonts;
 import 'investment_stub.dart';
@@ -186,5 +188,64 @@ void main() {
     'withdraw sheet',
     skip: !Platform.isMacOS,
     (t) => depositShot(t, 'withdraw', tap: 'Rút tiền gửi'),
+  );
+
+  Future<void> tradeShot(
+    WidgetTester t,
+    String name,
+    Widget page, {
+    String? tap,
+    bool dark = false,
+  }) async {
+    t.view.physicalSize = const Size(390, 900);
+    t.view.devicePixelRatio = 1;
+    addTearDown(t.view.reset);
+    final h = (await t.runAsync(() => investmentApp(page, dark: dark)))!;
+    await t.pumpWidget(h.app);
+    h.router.push('/page');
+    await t.pumpAndSettle();
+    if (tap != null) {
+      await t.tap(find.text(tap).first);
+      await t.pumpAndSettle();
+    }
+    await expectLater(
+      find.byType(MaterialApp),
+      matchesGoldenFile('goldens/investments_$name.png'),
+    );
+  }
+
+  testWidgets(
+    'trade',
+    skip: !Platform.isMacOS,
+    (t) => tradeShot(t, 'trade', const TradePage(id: 'g1', tradeId: 'b1')),
+  );
+  testWidgets(
+    'trade dark',
+    skip: !Platform.isMacOS,
+    (t) => tradeShot(
+      t,
+      'trade_dark',
+      const TradePage(id: 'g1', tradeId: 'b1'),
+      dark: true,
+    ),
+  );
+  testWidgets(
+    'trade edit',
+    skip: !Platform.isMacOS,
+    (t) => tradeShot(
+      t,
+      'trade_edit',
+      const TradeEditPage(id: 'g1', tradeId: 'b1'),
+    ),
+  );
+  testWidgets(
+    'trade delete',
+    skip: !Platform.isMacOS,
+    (t) => tradeShot(
+      t,
+      'trade_delete',
+      const TradePage(id: 'g1', tradeId: 'b1'),
+      tap: 'Xoá',
+    ),
   );
 }

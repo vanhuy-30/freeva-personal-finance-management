@@ -272,3 +272,28 @@ class SellDraft {
   final String accountId;
   final String tradedOn;
 }
+
+/// New values for a buy ("Sửa lần mua"); the wallet may become null
+/// ("đã có từ trước", which removes the wallet leg).
+class TradeEdit {
+  const TradeEdit({
+    required this.quantity,
+    required this.accountId,
+    required this.tradedOn,
+    this.priceMinor,
+    this.amountMinor,
+    this.note,
+  });
+
+  /// Scaled by 10^8.
+  final BigInt quantity;
+  final String? accountId;
+  final String tradedOn;
+
+  /// Price of one unit; the server recomputes the total.
+  final BigInt? priceMinor;
+
+  /// Total, for one-lot kinds (property).
+  final BigInt? amountMinor;
+  final String? note;
+}

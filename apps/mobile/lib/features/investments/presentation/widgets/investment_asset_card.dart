@@ -23,6 +23,7 @@ class InvestmentAssetCard extends StatelessWidget {
     required this.onPrice,
     required this.onBuyMore,
     required this.onSell,
+    required this.onTrade,
     super.key,
   });
 
@@ -33,6 +34,9 @@ class InvestmentAssetCard extends StatelessWidget {
   final VoidCallback onPrice;
   final VoidCallback onBuyMore;
   final VoidCallback onSell;
+
+  /// Opens the detail of one buy.
+  final ValueChanged<InvestmentTrade> onTrade;
 
   @override
   Widget build(BuildContext context) {
@@ -121,7 +125,13 @@ class InvestmentAssetCard extends StatelessWidget {
               ),
             ),
             for (final t in buys)
-              _TradeRow(trade: t, unit: unit, digits: digits, hidden: hidden),
+              _TradeRow(
+                trade: t,
+                unit: unit,
+                digits: digits,
+                hidden: hidden,
+                onTap: () => onTrade(t),
+              ),
           ],
           const SizedBox(height: 12),
           Row(
@@ -297,8 +307,10 @@ class _TradeRow extends StatelessWidget {
     required this.unit,
     required this.digits,
     required this.hidden,
+    required this.onTap,
   });
 
+  final VoidCallback onTap;
   final InvestmentTrade trade;
   final String unit;
   final int digits;
@@ -318,95 +330,98 @@ class _TradeRow extends StatelessWidget {
     final price = money(trade.unitPriceMinor);
     final unitName = s.investmentUnit(unit);
     final bps = trade.unrealizedBps;
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: c.borderDivider)),
-      ),
-      child: Row(
-        children: [
-          DecoratedBox(
-            decoration: BoxDecoration(
-              color: existing ? c.statusWarningBg : c.bgSubtle,
-              borderRadius: BorderRadius.circular(10),
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          border: Border(top: BorderSide(color: c.borderDivider)),
+        ),
+        child: Row(
+          children: [
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: existing ? c.statusWarningBg : c.bgSubtle,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: SizedBox(
+                width: 48,
+                height: 48,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      top,
+                      style: FreevaTypography.label.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: existing ? c.statusWarning : c.textPrimary,
+                      ),
+                    ),
+                    Text(
+                      bottom,
+                      maxLines: 1,
+                      style: FreevaTypography.label.copyWith(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w400,
+                        color: existing ? c.statusWarning : c.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-            child: SizedBox(
-              width: 48,
-              height: 48,
+            const SizedBox(width: 12),
+            Expanded(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    top,
-                    style: FreevaTypography.label.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: existing ? c.statusWarning : c.textPrimary,
+                    investmentQuantityText(s, trade.quantity, unit, locale),
+                    style: FreevaTypography.bodyM.copyWith(
+                      fontWeight: FontWeight.w500,
+                      color: c.textPrimary,
+                      fontFeatures: const [FontFeature.tabularFigures()],
                     ),
                   ),
                   Text(
-                    bottom,
+                    existing
+                        ? s.investmentTradeCost(price, unitName)
+                        : s.investmentTradePrice(price, unitName),
                     maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: FreevaTypography.label.copyWith(
-                      fontSize: 10,
                       fontWeight: FontWeight.w400,
-                      color: existing ? c.statusWarning : c.textSecondary,
+                      color: c.textSecondary,
+                      fontFeatures: const [FontFeature.tabularFigures()],
                     ),
                   ),
                 ],
               ),
             ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  investmentQuantityText(s, trade.quantity, unit, locale),
-                  style: FreevaTypography.bodyM.copyWith(
-                    fontWeight: FontWeight.w500,
+                  money(trade.amountMinor),
+                  style: FreevaTypography.bodyS.copyWith(
+                    fontWeight: FontWeight.w600,
                     color: c.textPrimary,
                     fontFeatures: const [FontFeature.tabularFigures()],
                   ),
                 ),
-                Text(
-                  existing
-                      ? s.investmentTradeCost(price, unitName)
-                      : s.investmentTradePrice(price, unitName),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: FreevaTypography.label.copyWith(
-                    fontWeight: FontWeight.w400,
-                    color: c.textSecondary,
-                    fontFeatures: const [FontFeature.tabularFigures()],
+                if (bps != null && !hidden)
+                  Text(
+                    investmentPill(bps, locale),
+                    style: FreevaTypography.label.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: bps < 0 ? c.moneyExpense : c.moneyIncome,
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                    ),
                   ),
-                ),
               ],
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                money(trade.amountMinor),
-                style: FreevaTypography.bodyS.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: c.textPrimary,
-                  fontFeatures: const [FontFeature.tabularFigures()],
-                ),
-              ),
-              if (bps != null && !hidden)
-                Text(
-                  investmentPill(bps, locale),
-                  style: FreevaTypography.label.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: bps < 0 ? c.moneyExpense : c.moneyIncome,
-                    fontFeatures: const [FontFeature.tabularFigures()],
-                  ),
-                ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

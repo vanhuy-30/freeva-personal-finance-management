@@ -1,6 +1,6 @@
 # Đầu tư trên app (MOB-P4-E01)
 
-Task lớn, chia 5 PR nối tiếp (PR 3 hẹp lại, tiền gửi tách ra). Tài liệu này theo dõi phần đã có.
+Task lớn, chia 5 PR nối tiếp (PR 3 hẹp lại, tiền gửi tách ra). Cả 5 PR xong 2026-11-07. Đối chiếu board ↔ golden: `tool/design_compare` nhóm `P` (và `Q`).
 
 | PR | Nội dung | Trạng thái |
 |---|---|---|
@@ -8,7 +8,7 @@ Task lớn, chia 5 PR nối tiếp (PR 3 hẹp lại, tiền gửi tách ra). T�
 | 2 | Tạo khoản đầu tư (P.5, P.6), số lượng thập phân | xong |
 | 3 | Danh mục và tài sản (P.3), bán (P.9), cập nhật giá (P.10), mua thêm | xong |
 | 4 | Tiền gửi: chi tiết (P.11), rút (P.12), sửa, xoá | xong |
-| 5 | Chi tiết, sửa, xoá lần mua (P.4, P.7, P.8), `pairs.py` nhóm `P` | chưa |
+| 5 | Chi tiết, sửa, xoá lần mua (P.4, P.7, P.8), `pairs.py` nhóm `P` | xong |
 
 ## PR 1
 
@@ -43,7 +43,14 @@ Task lớn, chia 5 PR nối tiếp (PR 3 hẹp lại, tiền gửi tách ra). T�
 - Xoá khoản: xác nhận rồi xoá lần mua duy nhất (`DELETE …/trades/{id}?version=`); server trả 204 khi đó là lần cuối nên khoản biến mất, tiền gốc về ví. Tải lại ví và danh sách.
 - Chạm thẻ Tiền gửi ở P.2: một khoản thì mở thẳng chi tiết, nhiều khoản thì mở màn danh mục (mỗi khoản một dòng mở chi tiết, không có giá, Mua thêm, Bán).
 
-## Chưa có sau PR 4
+## PR 5 — chi tiết, sửa, xoá lần mua
 
-- Chạm một lần mua chưa mở chi tiết; sửa/xoá lần mua của cổ phiếu, vàng... chưa có (PR 5).
-- Footer "Đã bán hết" ở P.2 (tài sản đã bán hết, số lượng 0) chưa có; chưa có màn xem lại các lần bán.
+- Chạm một lần mua ở màn danh mục mở `/me/investments/:id/trades/:tradeId` (P.4): giá trị hiện tại của lần mua (số lượng × giá hiện tại), %, Vốn, Lãi/lỗ; các dòng Ngày mua, Số lượng, Giá mua, Lấy từ ví (hoặc "Đã có từ trước"), Giá hiện tại (chạm mở "Cập nhật giá"), Ghi chú. Nút Sửa và Xoá.
+- Sửa (P.7, `…/edit`): số lượng, giá một đơn vị, ngày, "Tổng tiền" tự tính, ví (đổi được sang "Đã có từ trước", bỏ chân ví), ghi chú; bất động sản chỉ có ô giá mua. Gửi `PATCH /investments/{id}/trades/{tradeId}` kèm `version`; server phát lại vị thế nên giá vốn và lãi các lần bán sau tự tính lại.
+- Xoá (P.8, sheet): "Xoá lần mua 10/09?", dòng "Trả lại <ví> +35.000.000" (không có khi "đã có từ trước"), Xoá lần mua · Giữ lại. `DELETE …/trades/{id}?version=`: xoá lần cuối thì tài sản mất theo (204), nên về danh sách thay vì danh mục.
+- Số đã bán vượt số còn lại (422) hiện thông báo riêng, không đổi gì.
+
+## Chưa có
+
+- Footer "Đã bán hết" ở P.2 (tài sản đã bán hết, số lượng 0) và xem lại/sửa/xoá từng lần bán (thiết kế không có sửa lần bán; API cũng không cho).
+- Tiền gửi: thêm tiền gửi vào khoản đang có (API không hỗ trợ).

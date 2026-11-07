@@ -215,6 +215,42 @@ class InvestmentViewModel extends ChangeNotifier {
     return _afterWrite(result, investment.id, walletMoved: false);
   }
 
+  InvestmentTrade? tradeById(String id, String tradeId) =>
+      (trades[id] ?? const <InvestmentTrade>[])
+          .where((t) => t.id == tradeId)
+          .firstOrNull;
+
+  /// Changes one buy; true when it went through.
+  Future<bool> updateTrade(
+    Investment investment,
+    String tradeId,
+    TradeEdit edit,
+  ) async {
+    final result = await _cases.updateTrade(investment, tradeId, edit);
+    return _afterWrite(result, investment.id, walletMoved: true);
+  }
+
+  /// Deletes one buy and refreshes; true when it went through. The position
+  /// disappears with its last trade ([byId] is then null).
+  Future<bool> deleteBuy(Investment investment, String tradeId) async {
+    final result = await _cases.deleteTrade(investment, tradeId);
+    if (_disposed) return false;
+    final ok = result.isRight();
+    result.fold((e) => failure = e, (_) => failure = null);
+    if (!ok) {
+      _notify();
+      return false;
+    }
+    unawaited(_wallets.load());
+    await load();
+    if (byId(investment.id) == null) {
+      trades.remove(investment.id);
+    } else {
+      await loadTrades([investment.id]);
+    }
+    return true;
+  }
+
   /// Deletes a deposit by removing its only buy; the wallet gets the money
   /// back. True when it went through (the deposit is then gone).
   Future<bool> deleteDeposit(Investment deposit) async {
