@@ -2,10 +2,14 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 
+import 'dart:async';
+
 import '../../../auth/domain/auth_repository.dart';
 import '../../../auth/presentation/viewmodels/auth_view_model.dart';
 import '../../../net_worth/domain/net_worth_history.dart';
 import '../../../profile/presentation/viewmodels/profile_view_model.dart';
+import '../../../sync/domain/sync_queue.dart';
+import '../../../wallets/domain/wallet.dart';
 import '../../../wallets/presentation/viewmodels/wallet_view_model.dart';
 import '../../domain/investment.dart';
 import '../../domain/investment_use_cases.dart';
@@ -68,6 +72,49 @@ class InvestmentViewModel extends ChangeNotifier {
     for (final i in _all.reversed)
       if (i.kind == kind && i.currencyCode == currency) i.name,
   ];
+
+  /// Makes sure the wallet list is there before the editor shows it.
+  Future<void> loadWallets() async {
+    if (_wallets.wallets.isEmpty) await _wallets.load();
+  }
+
+  /// Wallets a buy can take money from.
+  List<Wallet> get wallets => _wallets.active;
+
+  int digitsOf(String code) =>
+      _wallets.currencies
+          .where((item) => item.code == code)
+          .firstOrNull
+          ?.minorDigits ??
+      (code == 'VND' ? 0 : 2);
+
+  String get today => _wallets.today.toIso8601String().substring(0, 10);
+
+  /// Profile currency, for a position that is not tied to a wallet.
+  String get profileCurrency => _profile.saved?.overviewCurrency ?? 'VND';
+
+  String newClientId() => newSyncOpId();
+
+  /// Opens a position with its first buy. A buy from a wallet moves wallet
+  /// money, so wallets are reloaded; the list reloads either way. Null on
+  /// failure with [failure] set.
+  Future<Investment?> create(InvestmentDraft draft) async {
+    final result = await _cases.create(draft);
+    if (_disposed) return null;
+    return result.fold(
+      (error) {
+        failure = error;
+        _notify();
+        return null;
+      },
+      (saved) {
+        failure = null;
+        if (draft.accountId != null) unawaited(_wallets.load());
+        unawaited(load());
+        return saved;
+      },
+    );
+  }
 
   /// Whether the faint value line has the two points it needs.
   bool get hasLine => line.length >= 2;

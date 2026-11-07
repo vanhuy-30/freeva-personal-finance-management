@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../core/money/quantity.dart';
 import '../../auth/data/authorized_api.dart';
 import '../../auth/domain/auth_repository.dart';
 import '../../net_worth/domain/net_worth_history.dart';
@@ -97,9 +98,11 @@ class InvestmentRepositoryImpl implements InvestmentRepository {
 
   Future<Either<AuthFailure, T>> _get<T>(
     String path,
-    T Function(Map<String, dynamic>) parse,
-  ) async {
-    final result = await _api.request('GET', path);
+    T Function(Map<String, dynamic>) parse, {
+    String method = 'GET',
+    Map<String, dynamic>? body,
+  }) async {
+    final result = await _api.request(method, path, body: body);
     return result.fold(left, (json) {
       try {
         return right(parse(json));
@@ -120,6 +123,36 @@ class InvestmentRepositoryImpl implements InvestmentRepository {
   @override
   Future<Either<AuthFailure, InvestmentSummary>> summary() =>
       _get('investments/summary', parseSummary);
+
+  @override
+  Future<Either<AuthFailure, Investment>> create(InvestmentDraft draft) => _get(
+    'investments',
+    parse,
+    method: 'POST',
+    body: {
+      'clientId': draft.clientId,
+      'kind': draft.kind.apiValue,
+      'name': draft.name.trim(),
+      'currencyCode': draft.currencyCode,
+      'unit': draft.unit,
+      if (draft.interestRateBps != null)
+        'interestRateBps': draft.interestRateBps,
+      if (draft.startDate != null) 'startDate': draft.startDate,
+      if (draft.maturityDate != null) 'maturityDate': draft.maturityDate,
+      if (draft.note != null && draft.note!.trim().isNotEmpty)
+        'note': draft.note!.trim(),
+      'initialTrade': {
+        'clientId': draft.tradeClientId,
+        'quantity': quantityToApi(draft.quantity),
+        if (draft.amountMinor != null)
+          'amountMinor': draft.amountMinor.toString()
+        else
+          'priceMinor': draft.priceMinor.toString(),
+        'accountId': draft.accountId,
+        'tradedOn': draft.tradedOn,
+      },
+    },
+  );
 
   @override
   Future<Either<AuthFailure, List<InvestmentBucket>>> history(

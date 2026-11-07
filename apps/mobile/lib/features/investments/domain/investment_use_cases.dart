@@ -11,6 +11,9 @@ abstract class InvestmentUseCases {
 
   Future<Either<AuthFailure, InvestmentSummary>> summary();
 
+  /// Refuses an unusable draft before the API.
+  Future<Either<AuthFailure, Investment>> create(InvestmentDraft draft);
+
   /// Value line of [currency] over [window]; buckets without that currency
   /// count as zero.
   Future<Either<AuthFailure, List<InvestmentValuePoint>>> valueLine(
@@ -26,6 +29,38 @@ class DefaultInvestmentUseCases implements InvestmentUseCases {
   final InvestmentRepository _repository;
 
   static final _currency = RegExp(r'^[A-Z]{3}$');
+  static final _day = RegExp(r'^\d{4}-\d{2}-\d{2}$');
+  static const _invalid = AuthFailure(AuthError.invalidInput);
+
+  @override
+  Future<Either<AuthFailure, Investment>> create(InvestmentDraft draft) {
+    final name = draft.name.trim();
+    final deposit = draft.kind == InvestmentKind.savingsDeposit;
+    bool positive(BigInt? v) => v != null && v > BigInt.zero;
+    final priced = draft.kind.singleLot
+        ? positive(draft.amountMinor)
+        : positive(draft.priceMinor) || positive(draft.amountMinor);
+    final depositOk =
+        !deposit ||
+        (draft.interestRateBps != null &&
+            draft.interestRateBps! >= 0 &&
+            draft.startDate != null &&
+            _day.hasMatch(draft.startDate!) &&
+            draft.maturityDate != null &&
+            _day.hasMatch(draft.maturityDate!) &&
+            draft.maturityDate!.compareTo(draft.startDate!) > 0);
+    if (name.isEmpty ||
+        name.length > 80 ||
+        !_currency.hasMatch(draft.currencyCode) ||
+        draft.quantity <= BigInt.zero ||
+        !priced ||
+        !depositOk ||
+        !_day.hasMatch(draft.tradedOn) ||
+        (draft.note?.trim().length ?? 0) > 500) {
+      return Future.value(left(_invalid));
+    }
+    return _repository.create(draft);
+  }
 
   @override
   Future<Either<AuthFailure, List<Investment>>> list() => _repository.list();

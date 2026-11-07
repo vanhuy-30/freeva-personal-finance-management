@@ -5380,4 +5380,92 @@ class SEn extends S {
   ) {
     return '$kind, value $value, cost $cost, expected gain or loss $gain';
   }
+
+  @override
+  String get investmentAdd => 'Add investment';
+
+  @override
+  String get investmentNewTitle => 'New investment';
+
+  @override
+  String get investmentName => 'Asset name';
+
+  @override
+  String get investmentGoldByChi => 'Count by chỉ';
+
+  @override
+  String get investmentGoldByLuong => 'Count by lượng';
+
+  @override
+  String get investmentQuantity => 'Quantity';
+
+  @override
+  String investmentUnit(String unit) {
+    String _temp0 = intl.Intl.selectLogic(unit, {
+      'chi': 'chỉ',
+      'luong': 'lượng',
+      'share': 'shares',
+      'unit': 'units',
+      'coin': 'coins',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String investmentUnitPrice(String unit) {
+    String _temp0 = intl.Intl.selectLogic(unit, {
+      'chi': 'Price per chỉ',
+      'luong': 'Price per lượng',
+      'share': 'Price per share',
+      'unit': 'Price per unit',
+      'coin': 'Price per coin',
+      'other': 'Price',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get investmentBuyDate => 'Buy date';
+
+  @override
+  String get investmentTotalMoney => 'Total';
+
+  @override
+  String get investmentFromWallet => 'Take from wallet';
+
+  @override
+  String investmentWalletLeft(String amount) {
+    return '$amount left';
+  }
+
+  @override
+  String get investmentExisting => 'Already held';
+
+  @override
+  String get investmentExistingHint => 'Doesn’t take from a wallet';
+
+  @override
+  String get investmentNote => 'Note (optional)';
+
+  @override
+  String get investmentSave => 'Save investment';
+
+  @override
+  String get investmentPurchasePrice => 'Purchase price';
+
+  @override
+  String get investmentDepositAmount => 'Deposit amount';
+
+  @override
+  String get investmentRate => 'Interest rate/year';
+
+  @override
+  String get investmentDepositDate => 'Deposit date';
+
+  @override
+  String get investmentMaturity => 'Maturity date';
+
+  @override
+  String get investmentPickDate => 'Pick a date';
 }

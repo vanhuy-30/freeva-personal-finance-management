@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/di/injection.dart';
@@ -7,12 +8,17 @@ import '../../../../core/router/nav_back.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/error_retry.dart';
+import '../../../../core/widgets/freeva_button.dart';
+import '../../../../core/widgets/freeva_chip.dart';
+import '../../../../core/widgets/freeva_icon_button.dart';
 import '../../../../core/widgets/freeva_top_bar.dart';
 import '../../../../core/widgets/settings_group.dart';
 import '../../../../core/widgets/skeleton.dart';
 import '../../../reports/presentation/widgets/report_labels.dart';
 import '../../../settings/presentation/widgets/balances_hidden_builder.dart';
+import '../../domain/investment.dart';
 import '../viewmodels/investment_view_model.dart';
+import '../widgets/investment_labels.dart';
 import '../widgets/investment_kind_card.dart';
 import '../widgets/investment_share_card.dart';
 import '../widgets/investment_summary_card.dart';
@@ -47,6 +53,13 @@ class _InvestmentsPageState extends State<InvestmentsPage> {
           appBar: FreevaTopBar(
             title: s.investmentsTitle,
             onLeading: () => context.popOrGo('/me'),
+            action: model.loaded && !model.isEmpty
+                ? FreevaIconButton(
+                    icon: LucideIcons.plus,
+                    label: s.investmentAdd,
+                    onPressed: () => context.push('/me/investments/new'),
+                  )
+                : null,
           ),
           body: RefreshIndicator(
             onRefresh: model.load,
@@ -116,6 +129,33 @@ class _InvestmentsPageState extends State<InvestmentsPage> {
           s.investmentsEmptyBody,
           textAlign: TextAlign.center,
           style: FreevaTypography.bodyM.copyWith(color: c.textSecondary),
+        ),
+        const SizedBox(height: 22),
+        Wrap(
+          alignment: WrapAlignment.center,
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (final k in const [
+              InvestmentKind.gold,
+              InvestmentKind.savingsDeposit,
+              InvestmentKind.stock,
+            ])
+              FreevaChip(
+                label: investmentKindName(s, k),
+                selected: false,
+                icon: investmentKindIcon(k),
+                onTap: () =>
+                    context.push('/me/investments/new?kind=${k.apiValue}'),
+              ),
+          ],
+        ),
+        const SizedBox(height: 28),
+        FreevaButton(
+          label: s.investmentAdd,
+          size: FreevaButtonSize.l,
+          expand: true,
+          onPressed: () => context.push('/me/investments/new'),
         ),
       ];
     }
