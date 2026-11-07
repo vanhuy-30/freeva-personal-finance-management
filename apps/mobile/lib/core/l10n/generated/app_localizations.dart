@@ -9047,6 +9047,84 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Day {day} · estimate'**
   String forecastDayEstimated(int day);
+
+  /// No description provided for @meNetWorth.
+  ///
+  /// In en, this message translates to:
+  /// **'Net worth'**
+  String get meNetWorth;
+
+  /// No description provided for @netWorthTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Net worth'**
+  String get netWorthTitle;
+
+  /// No description provided for @netWorthToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today · {date}'**
+  String netWorthToday(String date);
+
+  /// No description provided for @netWorthDate.
+  ///
+  /// In en, this message translates to:
+  /// **'{date}'**
+  String netWorthDate(String date);
+
+  /// No description provided for @netWorthChange.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} {window, select, week{in 7 days} month{in 30 days} quarter{in 3 months} half{in 6 months} year{in 1 year} other{overall}}'**
+  String netWorthChange(String amount, String window);
+
+  /// No description provided for @netWorthRange.
+  ///
+  /// In en, this message translates to:
+  /// **'{window, select, week{7 days} month{30 days} quarter{3 months} half{6 months} year{1 year} other{All}}'**
+  String netWorthRange(String window);
+
+  /// No description provided for @netWorthRangeSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Chart range'**
+  String get netWorthRangeSemantics;
+
+  /// No description provided for @netWorthAssets.
+  ///
+  /// In en, this message translates to:
+  /// **'Assets'**
+  String get netWorthAssets;
+
+  /// No description provided for @netWorthDebts.
+  ///
+  /// In en, this message translates to:
+  /// **'Debts'**
+  String get netWorthDebts;
+
+  /// No description provided for @netWorthInAssets.
+  ///
+  /// In en, this message translates to:
+  /// **'In assets'**
+  String get netWorthInAssets;
+
+  /// No description provided for @netWorthWallets.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallets'**
+  String get netWorthWallets;
+
+  /// No description provided for @netWorthInvestments.
+  ///
+  /// In en, this message translates to:
+  /// **'Investments'**
+  String get netWorthInvestments;
+
+  /// No description provided for @netWorthChartSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Net worth, {range}, from {from} to {to}'**
+  String netWorthChartSemantics(String range, String from, String to);
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

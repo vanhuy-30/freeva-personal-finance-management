@@ -15,6 +15,7 @@ import '../../features/transaction_import/presentation/pages/import_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/reports/domain/category_detail.dart';
 import '../../features/forecast/presentation/pages/forecast_page.dart';
+import '../../features/net_worth/presentation/pages/net_worth_page.dart';
 import '../../features/reports/presentation/pages/month_review_page.dart';
 import '../../features/reports/presentation/pages/report_category_page.dart';
 import '../../features/reports/presentation/pages/report_page.dart';
@@ -187,6 +188,10 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
       GoRoute(
         path: '/reports/forecast',
         builder: (context, state) => const AuthGate(child: ForecastPage()),
+      ),
+      GoRoute(
+        path: '/me/net-worth',
+        builder: (context, state) => const AuthGate(child: NetWorthPage()),
       ),
       GoRoute(path: '/settings', redirect: (context, state) => '/me'),
       GoRoute(

@@ -4,6 +4,8 @@ Nhật ký repo/process — không phải App Store release notes.
 
 ## 2026-11-06
 
+- `MOB-P4-E02`: biểu đồ tài sản ròng trên app — màn `/me/net-worth` (số hôm nay, thay đổi theo khoảng, đường, chip 7 ngày → Tất cả, chạm điểm xem ngày và số, Tài sản · Nợ, Ví · Đầu tư), ô "Tài sản ròng" ở lưới Cá nhân. Không đổi backend. Golden sáng/tối, đối chiếu board nhóm Q. [Thiết kế](../architecture/mobile-net-worth.md).
+
 - `BE-P4-E03` (backend): API đầu tư theo thiết kế P — tạo tài sản kèm lần mua đầu (gộp khi trùng tên), lần mua "đã có từ trước" không trừ ví, giá một đơn vị trên trade (giá mua/bán thành giá hiện tại), sửa/xoá từng lần mua kéo theo chân ví và phát lại vị thế, `%` lãi/lỗ, tổng hợp và tỷ trọng theo danh mục, `GET /reports/investments/history`. Migration additive `investment_trade_edit`. 12 unit + 10 integration test mới. [Thiết kế](../architecture/investments.md).
 
 - `BE-P4-E02` (backend): `GET /reports/net-worth/history` — tài sản ròng cuối mỗi mốc của cửa sổ 7 ngày, 30 ngày, 3 tháng, 6 tháng, 1 năm, toàn bộ; tính lại từ sổ cái (ví, cho mượn/đi mượn, vị thế đầu tư phát lại tới từng ngày), không trùng ví/đầu tư, điểm mới nhất bằng `/net-worth`. Không migration. 17 unit + 8 integration test mới. [Thiết kế](../architecture/reports.md).
