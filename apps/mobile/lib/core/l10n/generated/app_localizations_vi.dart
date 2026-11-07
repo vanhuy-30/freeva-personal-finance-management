@@ -5352,4 +5352,131 @@ class SVi extends S {
 
   @override
   String get investmentPickDate => 'Chọn ngày';
+
+  @override
+  String investmentHolding(String kind) {
+    return '$kind đang giữ';
+  }
+
+  @override
+  String get investmentTradesHeader => 'Các lần mua';
+
+  @override
+  String get investmentBuyMore => 'Mua thêm';
+
+  @override
+  String get investmentSell => 'Bán';
+
+  @override
+  String get investmentUpdatePrice => 'Cập nhật giá';
+
+  @override
+  String investmentPerUnit(String price, String unit) {
+    return '$price/$unit';
+  }
+
+  @override
+  String investmentTradePrice(String price, String unit) {
+    return 'Giá $price/$unit';
+  }
+
+  @override
+  String investmentTradeCost(String price, String unit) {
+    return 'Giá vốn $price/$unit';
+  }
+
+  @override
+  String get investmentExistingBox => 'có sẵn';
+
+  @override
+  String get investmentSold => 'Đã bán';
+
+  @override
+  String investmentSoldLine(String quantity, String gain) {
+    return '$quantity · chốt lãi $gain';
+  }
+
+  @override
+  String investmentSoldGain(String gain) {
+    return 'Chốt lãi $gain';
+  }
+
+  @override
+  String investmentSellTitle(String name) {
+    return 'Bán $name';
+  }
+
+  @override
+  String investmentHeld(String quantity) {
+    return 'Đang giữ $quantity';
+  }
+
+  @override
+  String get investmentReceive => 'Tiền nhận';
+
+  @override
+  String get investmentSellQty => 'Số lượng bán';
+
+  @override
+  String investmentSellPrice(String unit) {
+    String _temp0 = intl.Intl.selectLogic(unit, {
+      'chi': 'Giá bán một chỉ',
+      'luong': 'Giá bán một lượng',
+      'share': 'Giá bán một cổ phiếu',
+      'unit': 'Giá bán một chứng chỉ',
+      'coin': 'Giá bán một coin',
+      'other': 'Giá bán',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String investmentSellAll(String quantity) {
+    return 'Bán hết $quantity';
+  }
+
+  @override
+  String get investmentSellDate => 'Ngày bán';
+
+  @override
+  String get investmentToWallet => 'Tiền về ví';
+
+  @override
+  String investmentRealized(String gain) {
+    return 'Lãi chốt $gain';
+  }
+
+  @override
+  String investmentSellButton(String quantity, String amount) {
+    return 'Bán $quantity · $amount';
+  }
+
+  @override
+  String investmentPriceTitle(String name) {
+    return 'Giá $name';
+  }
+
+  @override
+  String investmentPriceOne(String unit) {
+    String _temp0 = intl.Intl.selectLogic(unit, {
+      'chi': 'Giá một chỉ',
+      'luong': 'Giá một lượng',
+      'share': 'Giá một cổ phiếu',
+      'unit': 'Giá một chứng chỉ',
+      'coin': 'Giá một coin',
+      'other': 'Giá',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String investmentPricePrev(String price, String date) {
+    return 'Giá trước $price · $date';
+  }
+
+  @override
+  String get investmentQuoteDate => 'Ngày báo giá';
+
+  @override
+  String get investmentSavePrice => 'Lưu giá';
 }

@@ -12,6 +12,19 @@ abstract class InvestmentRepository {
 
   Future<Either<AuthFailure, InvestmentSummary>> summary();
 
+  Future<Either<AuthFailure, List<InvestmentTrade>>> trades(String id);
+
+  /// Sells part or all of a position; returns it after the sale.
+  Future<Either<AuthFailure, Investment>> sell(String id, SellDraft draft);
+
+  /// Records a manual price; returns the position.
+  Future<Either<AuthFailure, Investment>> addPrice(
+    String id, {
+    required String clientId,
+    required BigInt priceMinor,
+    required DateTime quotedAt,
+  });
+
   /// Opens a position with its first buy; a repeated name adds the buy to
   /// the existing position and returns that one.
   Future<Either<AuthFailure, Investment>> create(InvestmentDraft draft);

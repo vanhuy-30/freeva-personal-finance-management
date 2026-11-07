@@ -176,6 +176,11 @@ class _InvestmentsPageState extends State<InvestmentsPage> {
           names: model.names(row.kind!),
           digits: model.digits,
           hidden: hidden,
+          // A deposit opens its own screen (next PR).
+          onTap: row.kind == InvestmentKind.savingsDeposit
+              ? null
+              : () =>
+                    context.push('/me/investments/kind/${row.kind!.apiValue}'),
         ),
         const SizedBox(height: 12),
       ],

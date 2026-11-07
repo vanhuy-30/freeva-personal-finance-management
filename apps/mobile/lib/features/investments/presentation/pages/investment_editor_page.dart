@@ -32,10 +32,15 @@ import '../widgets/investment_wallet_list.dart';
 /// first buy, and say where the money came from. A name that already exists
 /// adds the buy to that asset (the server merges).
 class InvestmentEditorPage extends StatefulWidget {
-  const InvestmentEditorPage({this.kind, super.key});
+  const InvestmentEditorPage({this.kind, this.name, this.unit, super.key});
 
   /// Category to start on (`?kind=` from the empty state chips).
   final InvestmentKind? kind;
+
+  /// Name and unit of an asset to add a buy to ("Mua thêm"): the server
+  /// merges a buy under the same name into that asset.
+  final String? name;
+  final String? unit;
 
   @override
   State<InvestmentEditorPage> createState() => _InvestmentEditorPageState();
@@ -49,7 +54,7 @@ class _InvestmentEditorPageState extends State<InvestmentEditorPage> {
   final rate = TextEditingController();
   final note = TextEditingController();
   late InvestmentKind kind = widget.kind ?? InvestmentKind.gold;
-  late String unit = kind.defaultUnit;
+  late String unit = widget.unit ?? kind.defaultUnit;
   late String tradedOn = model.today;
   String? maturityOn;
   String? walletId;
@@ -69,6 +74,7 @@ class _InvestmentEditorPageState extends State<InvestmentEditorPage> {
   Future<void> _bootstrap() async {
     await model.loadWallets();
     if (!mounted) return;
+    name.text = widget.name ?? '';
     setState(() {
       walletId = model.wallets.firstOrNull?.id;
       ready = true;

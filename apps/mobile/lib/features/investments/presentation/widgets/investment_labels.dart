@@ -4,6 +4,7 @@ import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/money/money_text.dart';
+import '../../../../core/money/quantity.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../domain/investment.dart';
 
@@ -60,3 +61,14 @@ String investmentSigned(BigInt minor, int digits, String locale) {
   final sign = minor.isNegative ? '−' : (minor == BigInt.zero ? '' : '+');
   return '$sign${formatMoneyText(minor.abs(), digits, locale)}';
 }
+
+/// "7 chỉ" or "0,5 coin": quantity text with its unit.
+String investmentQuantityText(S s, BigInt scaled, String unit, String locale) {
+  final unitName = s.investmentUnit(unit);
+  final number = formatQuantity(scaled, locale);
+  return unitName.isEmpty ? number : '$number $unitName';
+}
+
+/// "10/09" and "2026" for the date box of a trade.
+(String, String) investmentDateBox(String day) =>
+    ('${day.substring(8, 10)}/${day.substring(5, 7)}', day.substring(0, 4));

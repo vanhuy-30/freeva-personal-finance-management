@@ -5468,4 +5468,131 @@ class SEn extends S {
 
   @override
   String get investmentPickDate => 'Pick a date';
+
+  @override
+  String investmentHolding(String kind) {
+    return '$kind held';
+  }
+
+  @override
+  String get investmentTradesHeader => 'Buys';
+
+  @override
+  String get investmentBuyMore => 'Buy more';
+
+  @override
+  String get investmentSell => 'Sell';
+
+  @override
+  String get investmentUpdatePrice => 'Update price';
+
+  @override
+  String investmentPerUnit(String price, String unit) {
+    return '$price/$unit';
+  }
+
+  @override
+  String investmentTradePrice(String price, String unit) {
+    return 'Price $price/$unit';
+  }
+
+  @override
+  String investmentTradeCost(String price, String unit) {
+    return 'Cost $price/$unit';
+  }
+
+  @override
+  String get investmentExistingBox => 'held';
+
+  @override
+  String get investmentSold => 'Sold';
+
+  @override
+  String investmentSoldLine(String quantity, String gain) {
+    return '$quantity · realized $gain';
+  }
+
+  @override
+  String investmentSoldGain(String gain) {
+    return 'Realized $gain';
+  }
+
+  @override
+  String investmentSellTitle(String name) {
+    return 'Sell $name';
+  }
+
+  @override
+  String investmentHeld(String quantity) {
+    return 'Holding $quantity';
+  }
+
+  @override
+  String get investmentReceive => 'You receive';
+
+  @override
+  String get investmentSellQty => 'Quantity to sell';
+
+  @override
+  String investmentSellPrice(String unit) {
+    String _temp0 = intl.Intl.selectLogic(unit, {
+      'chi': 'Sell price per chỉ',
+      'luong': 'Sell price per lượng',
+      'share': 'Sell price per share',
+      'unit': 'Sell price per unit',
+      'coin': 'Sell price per coin',
+      'other': 'Sell price',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String investmentSellAll(String quantity) {
+    return 'Sell all $quantity';
+  }
+
+  @override
+  String get investmentSellDate => 'Sell date';
+
+  @override
+  String get investmentToWallet => 'Into wallet';
+
+  @override
+  String investmentRealized(String gain) {
+    return 'Realized $gain';
+  }
+
+  @override
+  String investmentSellButton(String quantity, String amount) {
+    return 'Sell $quantity · $amount';
+  }
+
+  @override
+  String investmentPriceTitle(String name) {
+    return 'Price of $name';
+  }
+
+  @override
+  String investmentPriceOne(String unit) {
+    String _temp0 = intl.Intl.selectLogic(unit, {
+      'chi': 'Price per chỉ',
+      'luong': 'Price per lượng',
+      'share': 'Price per share',
+      'unit': 'Price per unit',
+      'coin': 'Price per coin',
+      'other': 'Price',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String investmentPricePrev(String price, String date) {
+    return 'Previous $price · $date';
+  }
+
+  @override
+  String get investmentQuoteDate => 'Quote date';
+
+  @override
+  String get investmentSavePrice => 'Save price';
 }

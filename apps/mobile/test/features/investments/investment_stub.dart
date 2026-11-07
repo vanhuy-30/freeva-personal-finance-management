@@ -30,6 +30,8 @@ Investment position(
   int? value,
   int? bps,
   String unit = 'unit',
+  String quantity = '1',
+  int? price,
 }) => Investment(
   id: id,
   clientId: id,
@@ -37,13 +39,15 @@ Investment position(
   name: name,
   currencyCode: 'VND',
   unit: unit,
-  quantity: '1',
+  quantity: quantity,
   costBasisMinor: b(cost),
   currentValueMinor: b(value ?? cost),
   valuation: bps == null ? InvestmentValuation.cost : InvestmentValuation.price,
   version: 1,
   unrealizedMinor: bps == null ? null : b((value ?? cost) - cost),
   unrealizedBps: bps,
+  latestPriceMinor: price == null ? null : b(price),
+  latestPriceAt: price == null ? null : DateTime(2026, 11, 5, 9),
 );
 
 InvestmentTotal total({
@@ -90,9 +94,23 @@ class FakeInvestmentUseCases implements InvestmentUseCases {
       'g1',
       InvestmentKind.gold,
       'Vàng SJC',
-      cost: 40000000,
-      value: 48000000,
-      bps: 2000,
+      cost: 50000000,
+      value: 56000000,
+      bps: 1200,
+      unit: 'chi',
+      quantity: '7',
+      price: 8000000,
+    ),
+    position(
+      'g2',
+      InvestmentKind.gold,
+      'Vàng nhẫn 9999',
+      cost: 12000000,
+      value: 16000000,
+      bps: 3333,
+      unit: 'chi',
+      quantity: '2',
+      price: 8000000,
     ),
     position('s1', InvestmentKind.stock, 'VNM', cost: 9000000),
   ];
@@ -115,10 +133,11 @@ class FakeInvestmentUseCases implements InvestmentUseCases {
       ),
       total(
         kind: InvestmentKind.gold,
-        cost: 40000000,
-        value: 48000000,
-        bps: 2000,
+        cost: 62000000,
+        value: 72000000,
+        bps: 1613,
         share: 600,
+        count: 2,
       ),
       total(kind: InvestmentKind.stock, cost: 9000000, value: 9000000),
     ],
@@ -138,6 +157,60 @@ class FakeInvestmentUseCases implements InvestmentUseCases {
       failure != null ? left(failure!) : right(summaryValue);
 
   final created = <InvestmentDraft>[];
+  final sold = <SellDraft>[];
+  final priced = <BigInt>[];
+  Map<String, List<InvestmentTrade>> tradeMap = {
+    'g1': [
+      _trade('b1', TradeSide.buy, 5, 7000000, '2026-09-10', 1429),
+      _trade('b2', TradeSide.buy, 2, 7500000, '2026-09-25', 667),
+      _trade(
+        's1',
+        TradeSide.sell,
+        6,
+        8000000,
+        '2026-10-20',
+        null,
+        realized: 5000000,
+      ),
+    ],
+    'g2': [
+      _trade(
+        'b3',
+        TradeSide.buy,
+        2,
+        6000000,
+        '2026-08-01',
+        3333,
+        existing: true,
+      ),
+    ],
+  };
+
+  @override
+  Future<Either<AuthFailure, List<InvestmentTrade>>> trades(String id) async =>
+      right(tradeMap[id] ?? const []);
+
+  @override
+  Future<Either<AuthFailure, Investment>> sell(
+    Investment investment,
+    SellDraft draft,
+  ) async {
+    sold.add(draft);
+    if (failure != null) return left(failure!);
+    return right(investment);
+  }
+
+  @override
+  Future<Either<AuthFailure, Investment>> addPrice(
+    Investment investment, {
+    required String clientId,
+    required BigInt priceMinor,
+    required DateTime quotedAt,
+  }) async {
+    priced.add(priceMinor);
+    if (failure != null) return left(failure!);
+    return right(investment);
+  }
 
   @override
   Future<Either<AuthFailure, Investment>> create(InvestmentDraft draft) async {
@@ -227,3 +300,28 @@ investmentApp(
   );
   return (cases: fake, model: model, app: app, router: router);
 }
+
+InvestmentTrade _trade(
+  String id,
+  TradeSide side,
+  int chi,
+  int price,
+  String day,
+  int? bps, {
+  int? realized,
+  bool existing = false,
+}) => InvestmentTrade(
+  id: id,
+  clientId: id,
+  side: side,
+  quantity: BigInt.from(chi) * BigInt.from(100000000),
+  amountMinor: b(chi * price),
+  unitPriceMinor: b(price),
+  tradedOn: day,
+  realizedMinor: realized == null ? null : b(realized),
+  accountId: existing || side == TradeSide.sell
+      ? (existing ? null : 'vcb')
+      : 'vcb',
+  currentValueMinor: null,
+  unrealizedBps: bps,
+);

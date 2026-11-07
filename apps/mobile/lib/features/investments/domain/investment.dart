@@ -204,3 +204,67 @@ class InvestmentDraft {
   final String? startDate;
   final String? maturityDate;
 }
+
+enum TradeSide { buy, sell }
+
+/// One buy or sell of a position (a "lần mua" or "lần bán").
+class InvestmentTrade {
+  const InvestmentTrade({
+    required this.id,
+    required this.clientId,
+    required this.side,
+    required this.quantity,
+    required this.amountMinor,
+    required this.unitPriceMinor,
+    required this.tradedOn,
+    this.realizedMinor,
+    this.accountId,
+    this.note,
+    this.currentValueMinor,
+    this.unrealizedMinor,
+    this.unrealizedBps,
+  });
+
+  final String id;
+  final String clientId;
+  final TradeSide side;
+
+  /// Scaled by 10^8.
+  final BigInt quantity;
+  final BigInt amountMinor;
+  final BigInt unitPriceMinor;
+  final String tradedOn;
+
+  /// Sell only: proceeds minus the cost removed.
+  final BigInt? realizedMinor;
+
+  /// Null on a buy the user already held ("có sẵn").
+  final String? accountId;
+  final String? note;
+  final BigInt? currentValueMinor;
+  final BigInt? unrealizedMinor;
+  final int? unrealizedBps;
+
+  bool get existing => side == TradeSide.buy && accountId == null;
+}
+
+/// A sale of part or all of a position.
+class SellDraft {
+  const SellDraft({
+    required this.clientId,
+    required this.quantity,
+    required this.priceMinor,
+    required this.accountId,
+    required this.tradedOn,
+  });
+
+  final String clientId;
+
+  /// Scaled by 10^8.
+  final BigInt quantity;
+
+  /// Price of one unit; it becomes the position's latest price.
+  final BigInt priceMinor;
+  final String accountId;
+  final String tradedOn;
+}

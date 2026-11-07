@@ -16,9 +16,11 @@ class InvestmentKindCard extends StatelessWidget {
     required this.names,
     required this.digits,
     required this.hidden,
+    this.onTap,
     super.key,
   });
 
+  final VoidCallback? onTap;
   final InvestmentTotal row;
   final List<String> names;
   final int digits;
@@ -47,6 +49,7 @@ class InvestmentKindCard extends StatelessWidget {
         : c.moneyIncome;
     final name = investmentKindName(s, kind);
     return FreevaCard(
+      onTap: onTap,
       padding: const EdgeInsets.all(16),
       semanticsLabel: s.investmentsSemantics(
         name,

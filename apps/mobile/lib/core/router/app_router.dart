@@ -17,6 +17,7 @@ import '../../features/reports/domain/category_detail.dart';
 import '../../features/forecast/presentation/pages/forecast_page.dart';
 import '../../features/investments/domain/investment.dart';
 import '../../features/investments/presentation/pages/investment_editor_page.dart';
+import '../../features/investments/presentation/pages/investment_kind_page.dart';
 import '../../features/investments/presentation/pages/investments_page.dart';
 import '../../features/net_worth/presentation/pages/net_worth_page.dart';
 import '../../features/reports/presentation/pages/month_review_page.dart';
@@ -199,15 +200,33 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
           GoRoute(
             path: 'new',
             builder: (context, state) {
-              final kind = state.uri.queryParameters['kind'];
+              final q = state.uri.queryParameters;
               return AuthGate(
                 child: InvestmentEditorPage(
                   kind: InvestmentKind.values
-                      .where((k) => k.apiValue == kind)
+                      .where((k) => k.apiValue == q['kind'])
                       .firstOrNull,
+                  name: q['name'],
+                  unit: q['unit'],
                 ),
               );
             },
+          ),
+          GoRoute(
+            path: 'kind/:kind',
+            redirect: (context, state) =>
+                InvestmentKind.values.any(
+                  (k) => k.apiValue == state.pathParameters['kind'],
+                )
+                ? null
+                : '/me/investments',
+            builder: (context, state) => AuthGate(
+              child: InvestmentKindPage(
+                kind: InvestmentKind.values.firstWhere(
+                  (k) => k.apiValue == state.pathParameters['kind'],
+                ),
+              ),
+            ),
           ),
         ],
       ),

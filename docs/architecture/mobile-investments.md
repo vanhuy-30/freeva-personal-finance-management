@@ -1,13 +1,14 @@
 # Đầu tư trên app (MOB-P4-E01)
 
-Task lớn, chia 4 PR nối tiếp. Tài liệu này theo dõi phần đã có.
+Task lớn, chia 5 PR nối tiếp (PR 3 hẹp lại, tiền gửi tách ra). Tài liệu này theo dõi phần đã có.
 
 | PR | Nội dung | Trạng thái |
 |---|---|---|
 | 1 | Nền và đọc: giao dịch `investment`, danh sách P.1 + P.2, ô lưới, link từ Tài sản ròng | xong |
 | 2 | Tạo khoản đầu tư (P.5, P.6), số lượng thập phân | xong |
-| 3 | Danh mục và tài sản (P.3), bán (P.9), cập nhật giá (P.10), mua thêm, tiền gửi (P.11, P.12) | chưa |
-| 4 | Chi tiết, sửa, xoá lần mua (P.4, P.7, P.8), `pairs.py` nhóm `P` | chưa |
+| 3 | Danh mục và tài sản (P.3), bán (P.9), cập nhật giá (P.10), mua thêm | xong |
+| 4 | Tiền gửi: chi tiết (P.11), rút (P.12) | chưa |
+| 5 | Chi tiết, sửa, xoá lần mua (P.4, P.7, P.8), `pairs.py` nhóm `P` | chưa |
 
 ## PR 1
 
@@ -26,6 +27,16 @@ Task lớn, chia 4 PR nối tiếp. Tài liệu này theo dõi phần đã có.
 - `core/money/quantity.dart`: số lượng là `BigInt` nhân 10^8 (crypto tới 8 chữ số), tổng = làm tròn half up, không dùng double. Lãi suất gõ `5,8` thành 580 bps.
 - Ví nguồn quyết định tiền tệ của khoản; "đã có từ trước" dùng tiền tệ hồ sơ. Mua từ ví tải lại ví.
 
-## Chưa có sau PR 2
+## PR 3 — danh mục, bán, cập nhật giá
 
-- Chạm thẻ danh mục chưa mở P.3; footer "Đã bán hết" chưa có.
+- Màn `/me/investments/kind/:kind` (P.3), mở khi chạm thẻ danh mục ở P.2 (trừ Tiền gửi): thẻ tổng danh mục (giá trị, %, số lượng khi cùng một đơn vị, Vốn, Lãi/lỗ), mỗi tài sản một thẻ với pill giá (`8.000.000/chỉ · 05/11` hoặc "Chưa có giá" + "Cập nhật giá"), Giá trị · Vốn · Lãi/lỗ, "Các lần mua" (ô ngày, "có sẵn" màu vàng cho lần mua không trừ ví, "Giá vốn" thay "Giá"), nút Mua thêm · Bán, và dòng "Đã bán" cộng từ các lần bán (`GET /investments/{id}/trades`).
+- Bán (P.9, sheet): số lượng, giá bán một đơn vị điền sẵn bằng giá hiện tại, "Bán hết", ngày, ví nhận (không có "đã có từ trước"). Xem trước "Lãi chốt" = tiền nhận − giá vốn phần bán (`soldCostMinor`: theo tỷ lệ, half up, bán hết thì lấy hết giá vốn, giống API). Gửi `POST /investments/{id}/trades` (`side: sell`); số bán vượt số giữ bị chặn trước khi gọi, 422 hiện thông báo riêng.
+- Cập nhật giá (P.10, sheet): giá một đơn vị (được là 0), ngày báo giá (hôm nay lấy giờ hiện tại, ngày khác lấy 12:00 để không rơi vào tương lai), hiện "Giá trước". Gửi `POST /investments/{id}/prices`. Không áp dụng cho tiền gửi.
+- Mua thêm: mở form tạo (P.5) với danh mục, tên và đơn vị điền sẵn; server gộp lần mua cùng tên vào tài sản đó nên không cần API mới. Bất động sản (một lô) không có Mua thêm.
+- Sau mỗi lần ghi: tải lại danh sách, tổng, lần mua của tài sản đó và (khi bán) ví.
+
+## Chưa có sau PR 3
+
+- Chạm thẻ Tiền gửi ở P.2 chưa mở gì (PR 4).
+- Chạm một lần mua chưa mở chi tiết; sửa/xoá lần mua chưa có (PR 5).
+- Footer "Đã bán hết" ở P.2 (tài sản đã bán hết, số lượng 0) chưa có; chưa có màn xem lại các lần bán.

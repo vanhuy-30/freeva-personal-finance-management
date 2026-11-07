@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/core/di/injection.dart';
 import 'package:mobile/features/investments/domain/investment.dart';
 import 'package:mobile/features/investments/presentation/pages/investment_editor_page.dart';
+import 'package:mobile/features/investments/presentation/pages/investment_kind_page.dart';
 import 'package:mobile/features/investments/presentation/pages/investments_page.dart';
 
 import '../../core/widgets/widget_test_app.dart' show loadTestFonts;
@@ -99,4 +100,49 @@ void main() {
       matchesGoldenFile('goldens/investments_editor_deposit.png'),
     );
   });
+
+  Future<void> kindShot(
+    WidgetTester t,
+    String name, {
+    String? tap,
+    bool dark = false,
+  }) async {
+    t.view.physicalSize = const Size(390, 1900);
+    t.view.devicePixelRatio = 1;
+    addTearDown(t.view.reset);
+    final h = (await t.runAsync(
+      () => investmentApp(
+        const InvestmentKindPage(kind: InvestmentKind.gold),
+        dark: dark,
+      ),
+    ))!;
+    await t.pumpWidget(h.app);
+    h.router.push('/page');
+    await t.pumpAndSettle();
+    if (tap != null) {
+      await t.tap(find.text(tap).first);
+      await t.pumpAndSettle();
+    }
+    await expectLater(
+      find.byType(MaterialApp),
+      matchesGoldenFile('goldens/investments_$name.png'),
+    );
+  }
+
+  testWidgets('kind', skip: !Platform.isMacOS, (t) => kindShot(t, 'kind'));
+  testWidgets(
+    'kind dark',
+    skip: !Platform.isMacOS,
+    (t) => kindShot(t, 'kind_dark', dark: true),
+  );
+  testWidgets(
+    'sell sheet',
+    skip: !Platform.isMacOS,
+    (t) => kindShot(t, 'sell', tap: 'Bán'),
+  );
+  testWidgets(
+    'price sheet',
+    skip: !Platform.isMacOS,
+    (t) => kindShot(t, 'price', tap: 'Cập nhật giá'),
+  );
 }
