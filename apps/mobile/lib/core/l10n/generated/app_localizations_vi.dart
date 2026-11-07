@@ -5479,4 +5479,70 @@ class SVi extends S {
 
   @override
   String get investmentSavePrice => 'Lưu giá';
+
+  @override
+  String get depositValueToday => 'Giá trị hôm nay';
+
+  @override
+  String get depositPrincipal => 'Gốc';
+
+  @override
+  String get depositInterest => 'Lãi tạm tính';
+
+  @override
+  String get depositRateLabel => 'Lãi suất';
+
+  @override
+  String depositRatePerYear(String rate) {
+    return '$rate/năm';
+  }
+
+  @override
+  String depositMaturityLeft(String date, int days) {
+    return '$date · còn $days ngày';
+  }
+
+  @override
+  String depositMatured(String date) {
+    return '$date · đã đáo hạn';
+  }
+
+  @override
+  String get depositWithdraw => 'Rút tiền gửi';
+
+  @override
+  String get depositEdit => 'Sửa khoản';
+
+  @override
+  String get depositDelete => 'Xoá khoản';
+
+  @override
+  String get depositReceive => 'Tiền nhận về';
+
+  @override
+  String get depositWithdrawDate => 'Ngày rút';
+
+  @override
+  String get depositToWallet => 'Về ví';
+
+  @override
+  String depositWithdrawButton(String amount) {
+    return 'Rút $amount';
+  }
+
+  @override
+  String get depositDeleteTitle => 'Xoá khoản này?';
+
+  @override
+  String get depositDeleteBody =>
+      'Khoản tiền gửi sẽ bị xoá và tiền gốc trả lại ví đã lấy.';
+
+  @override
+  String get depositEditTitle => 'Sửa khoản gửi';
+
+  @override
+  String get depositEditSave => 'Lưu';
+
+  @override
+  String get depositMaturityRow => 'Đáo hạn';
 }

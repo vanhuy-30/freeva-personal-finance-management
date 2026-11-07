@@ -9538,6 +9538,120 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Save price'**
   String get investmentSavePrice;
+
+  /// No description provided for @depositValueToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Value today'**
+  String get depositValueToday;
+
+  /// No description provided for @depositPrincipal.
+  ///
+  /// In en, this message translates to:
+  /// **'Principal'**
+  String get depositPrincipal;
+
+  /// No description provided for @depositInterest.
+  ///
+  /// In en, this message translates to:
+  /// **'Interest so far'**
+  String get depositInterest;
+
+  /// No description provided for @depositRateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Interest rate'**
+  String get depositRateLabel;
+
+  /// No description provided for @depositRatePerYear.
+  ///
+  /// In en, this message translates to:
+  /// **'{rate}/year'**
+  String depositRatePerYear(String rate);
+
+  /// No description provided for @depositMaturityLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{date} · {days, plural, =1{1 day left} other{{days} days left}}'**
+  String depositMaturityLeft(String date, int days);
+
+  /// No description provided for @depositMatured.
+  ///
+  /// In en, this message translates to:
+  /// **'{date} · matured'**
+  String depositMatured(String date);
+
+  /// No description provided for @depositWithdraw.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw deposit'**
+  String get depositWithdraw;
+
+  /// No description provided for @depositEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get depositEdit;
+
+  /// No description provided for @depositDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get depositDelete;
+
+  /// No description provided for @depositReceive.
+  ///
+  /// In en, this message translates to:
+  /// **'You receive'**
+  String get depositReceive;
+
+  /// No description provided for @depositWithdrawDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw date'**
+  String get depositWithdrawDate;
+
+  /// No description provided for @depositToWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Into wallet'**
+  String get depositToWallet;
+
+  /// No description provided for @depositWithdrawButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw {amount}'**
+  String depositWithdrawButton(String amount);
+
+  /// No description provided for @depositDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this deposit?'**
+  String get depositDeleteTitle;
+
+  /// No description provided for @depositDeleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The deposit is removed and the principal goes back to the wallet it came from.'**
+  String get depositDeleteBody;
+
+  /// No description provided for @depositEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit deposit'**
+  String get depositEditTitle;
+
+  /// No description provided for @depositEditSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get depositEditSave;
+
+  /// No description provided for @depositMaturityRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Matures'**
+  String get depositMaturityRow;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

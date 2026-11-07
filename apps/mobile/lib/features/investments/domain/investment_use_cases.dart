@@ -20,6 +20,18 @@ abstract class InvestmentUseCases {
     SellDraft draft,
   );
 
+  Future<Either<AuthFailure, Investment>> update(
+    Investment investment, {
+    required String name,
+    required String? note,
+    required String? maturityDate,
+  });
+
+  Future<Either<AuthFailure, Unit>> deleteTrade(
+    Investment investment,
+    String tradeId,
+  );
+
   /// Manual price of one unit (zero is allowed: it means worthless).
   Future<Either<AuthFailure, Investment>> addPrice(
     Investment investment, {
@@ -62,12 +74,46 @@ class DefaultInvestmentUseCases implements InvestmentUseCases {
     if (held == null ||
         draft.quantity <= BigInt.zero ||
         draft.quantity > held ||
-        draft.priceMinor <= BigInt.zero ||
+        !(draft.amountMinor != null
+            ? draft.amountMinor! > BigInt.zero
+            : (draft.priceMinor ?? BigInt.zero) > BigInt.zero) ||
         !_day.hasMatch(draft.tradedOn)) {
       return Future.value(left(_invalid));
     }
     return _repository.sell(investment.id, draft);
   }
+
+  @override
+  Future<Either<AuthFailure, Investment>> update(
+    Investment investment, {
+    required String name,
+    required String? note,
+    required String? maturityDate,
+  }) {
+    final text = name.trim();
+    final day = RegExp(r'^\d{4}-\d{2}-\d{2}$');
+    if (text.isEmpty ||
+        text.length > 80 ||
+        (note?.trim().length ?? 0) > 500 ||
+        (maturityDate != null &&
+            (investment.kind != InvestmentKind.savingsDeposit ||
+                !day.hasMatch(maturityDate) ||
+                maturityDate.compareTo(investment.startDate ?? '') <= 0))) {
+      return Future.value(left(_invalid));
+    }
+    return _repository.update(
+      investment,
+      name: text,
+      note: note?.trim().isEmpty ?? true ? null : note!.trim(),
+      maturityDate: maturityDate,
+    );
+  }
+
+  @override
+  Future<Either<AuthFailure, Unit>> deleteTrade(
+    Investment investment,
+    String tradeId,
+  ) => _repository.deleteTrade(investment, tradeId);
 
   @override
   Future<Either<AuthFailure, Investment>> addPrice(

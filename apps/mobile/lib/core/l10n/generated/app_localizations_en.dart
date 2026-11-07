@@ -5595,4 +5595,76 @@ class SEn extends S {
 
   @override
   String get investmentSavePrice => 'Save price';
+
+  @override
+  String get depositValueToday => 'Value today';
+
+  @override
+  String get depositPrincipal => 'Principal';
+
+  @override
+  String get depositInterest => 'Interest so far';
+
+  @override
+  String get depositRateLabel => 'Interest rate';
+
+  @override
+  String depositRatePerYear(String rate) {
+    return '$rate/year';
+  }
+
+  @override
+  String depositMaturityLeft(String date, int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days left',
+      one: '1 day left',
+    );
+    return '$date · $_temp0';
+  }
+
+  @override
+  String depositMatured(String date) {
+    return '$date · matured';
+  }
+
+  @override
+  String get depositWithdraw => 'Withdraw deposit';
+
+  @override
+  String get depositEdit => 'Edit';
+
+  @override
+  String get depositDelete => 'Delete';
+
+  @override
+  String get depositReceive => 'You receive';
+
+  @override
+  String get depositWithdrawDate => 'Withdraw date';
+
+  @override
+  String get depositToWallet => 'Into wallet';
+
+  @override
+  String depositWithdrawButton(String amount) {
+    return 'Withdraw $amount';
+  }
+
+  @override
+  String get depositDeleteTitle => 'Delete this deposit?';
+
+  @override
+  String get depositDeleteBody =>
+      'The deposit is removed and the principal goes back to the wallet it came from.';
+
+  @override
+  String get depositEditTitle => 'Edit deposit';
+
+  @override
+  String get depositEditSave => 'Save';
+
+  @override
+  String get depositMaturityRow => 'Matures';
 }

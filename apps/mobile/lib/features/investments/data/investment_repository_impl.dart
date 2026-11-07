@@ -159,11 +159,48 @@ class InvestmentRepositoryImpl implements InvestmentRepository {
           'clientId': draft.clientId,
           'side': 'sell',
           'quantity': quantityToApi(draft.quantity),
-          'priceMinor': draft.priceMinor.toString(),
+          if (draft.amountMinor != null)
+            'amountMinor': draft.amountMinor.toString()
+          else
+            'priceMinor': draft.priceMinor.toString(),
           'accountId': draft.accountId,
           'tradedOn': draft.tradedOn,
         },
       );
+
+  @override
+  Future<Either<AuthFailure, Investment>> update(
+    Investment investment, {
+    required String name,
+    required String? note,
+    required String? maturityDate,
+  }) => _get(
+    'investments/${investment.id}',
+    parse,
+    method: 'PATCH',
+    body: {
+      'version': investment.version,
+      'name': name,
+      'note': note,
+      if (investment.kind == InvestmentKind.savingsDeposit)
+        'maturityDate': maturityDate,
+    },
+  );
+
+  @override
+  Future<Either<AuthFailure, Unit>> deleteTrade(
+    Investment investment,
+    String tradeId,
+  ) async {
+    final result = await _api.request(
+      'DELETE',
+      Uri(
+        path: 'investments/${investment.id}/trades/$tradeId',
+        queryParameters: {'version': '${investment.version}'},
+      ).toString(),
+    );
+    return result.fold(left, (_) => right(unit));
+  }
 
   @override
   Future<Either<AuthFailure, Investment>> addPrice(

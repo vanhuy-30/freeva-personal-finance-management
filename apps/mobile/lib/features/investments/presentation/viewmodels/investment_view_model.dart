@@ -4,6 +4,7 @@ import 'package:injectable/injectable.dart';
 
 import 'dart:async';
 
+import '../../../../core/money/quantity.dart';
 import '../../../auth/domain/auth_repository.dart';
 import '../../../auth/presentation/viewmodels/auth_view_model.dart';
 import '../../../net_worth/domain/net_worth_history.dart';
@@ -175,6 +176,63 @@ class InvestmentViewModel extends ChangeNotifier {
   Future<bool> sell(Investment investment, SellDraft draft) async {
     final result = await _cases.sell(investment, draft);
     return _afterWrite(result, investment.id, walletMoved: true);
+  }
+
+  /// Takes the whole deposit back as [amountMinor] into [accountId].
+  Future<bool> withdraw(
+    Investment deposit, {
+    required BigInt amountMinor,
+    required String accountId,
+    required String tradedOn,
+    required String clientId,
+  }) async {
+    final result = await _cases.sell(
+      deposit,
+      SellDraft(
+        clientId: clientId,
+        quantity: quantityOne,
+        amountMinor: amountMinor,
+        accountId: accountId,
+        tradedOn: tradedOn,
+      ),
+    );
+    return _afterWrite(result, deposit.id, walletMoved: true);
+  }
+
+  /// Renames or re-dates a position; true when it went through.
+  Future<bool> update(
+    Investment investment, {
+    required String name,
+    required String? note,
+    required String? maturityDate,
+  }) async {
+    final result = await _cases.update(
+      investment,
+      name: name,
+      note: note,
+      maturityDate: maturityDate,
+    );
+    return _afterWrite(result, investment.id, walletMoved: false);
+  }
+
+  /// Deletes a deposit by removing its only buy; the wallet gets the money
+  /// back. True when it went through (the deposit is then gone).
+  Future<bool> deleteDeposit(Investment deposit) async {
+    if (trades[deposit.id] == null) await loadTrades([deposit.id]);
+    final buy = buysOf(deposit.id).firstOrNull;
+    if (buy == null || _disposed) return false;
+    final result = await _cases.deleteTrade(deposit, buy.id);
+    if (_disposed) return false;
+    final ok = result.isRight();
+    result.fold((e) => failure = e, (_) => failure = null);
+    if (!ok) {
+      _notify();
+      return false;
+    }
+    trades.remove(deposit.id);
+    unawaited(_wallets.load());
+    await load();
+    return true;
   }
 
   /// Records a manual price; true when it went through.

@@ -72,3 +72,30 @@ String investmentQuantityText(S s, BigInt scaled, String unit, String locale) {
 /// "10/09" and "2026" for the date box of a trade.
 (String, String) investmentDateBox(String day) =>
     ('${day.substring(8, 10)}/${day.substring(5, 7)}', day.substring(0, 4));
+
+/// Interest rate from basis points without float: 650 → "6,5", 575 →
+/// "5,75", 600 → "6".
+String depositRateText(int bps, String locale) {
+  final sep = NumberFormat.decimalPattern(locale).symbols.DECIMAL_SEP;
+  final frac = (bps.abs() % 100)
+      .toString()
+      .padLeft(2, '0')
+      .replaceFirst(RegExp(r'0+$'), '');
+  return '${bps ~/ 100}${frac.isEmpty ? '' : '$sep$frac'}';
+}
+
+/// Whole days from [today] to [day] (`YYYY-MM-DD`); negative once past.
+int daysUntil(String day, String today) =>
+    DateTime.utc(
+          int.parse(day.substring(0, 4)),
+          int.parse(day.substring(5, 7)),
+          int.parse(day.substring(8, 10)),
+        )
+        .difference(
+          DateTime.utc(
+            int.parse(today.substring(0, 4)),
+            int.parse(today.substring(5, 7)),
+            int.parse(today.substring(8, 10)),
+          ),
+        )
+        .inDays;

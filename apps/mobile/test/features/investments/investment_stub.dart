@@ -32,6 +32,9 @@ Investment position(
   String unit = 'unit',
   String quantity = '1',
   int? price,
+  int? rate,
+  String? start,
+  String? maturity,
 }) => Investment(
   id: id,
   clientId: id,
@@ -48,6 +51,9 @@ Investment position(
   unrealizedBps: bps,
   latestPriceMinor: price == null ? null : b(price),
   latestPriceAt: price == null ? null : DateTime(2026, 11, 5, 9),
+  interestRateBps: rate,
+  startDate: start,
+  maturityDate: maturity,
 );
 
 InvestmentTotal total({
@@ -89,6 +95,10 @@ class FakeInvestmentUseCases implements InvestmentUseCases {
       cost: 100000000,
       value: 102813699,
       bps: 281,
+      unit: 'deposit',
+      rate: 650,
+      start: '2026-06-01',
+      maturity: '2027-06-01',
     ),
     position(
       'g1',
@@ -173,6 +183,7 @@ class FakeInvestmentUseCases implements InvestmentUseCases {
         realized: 5000000,
       ),
     ],
+    'dep': [_trade('d1', TradeSide.buy, 1, 100000000, '2026-06-01', 281)],
     'g2': [
       _trade(
         'b3',
@@ -198,6 +209,35 @@ class FakeInvestmentUseCases implements InvestmentUseCases {
     sold.add(draft);
     if (failure != null) return left(failure!);
     return right(investment);
+  }
+
+  final updated = <({String name, String? note, String? maturity})>[];
+  final deletedTrades = <String>[];
+
+  @override
+  Future<Either<AuthFailure, Investment>> update(
+    Investment investment, {
+    required String name,
+    required String? note,
+    required String? maturityDate,
+  }) async {
+    updated.add((name: name, note: note, maturity: maturityDate));
+    if (failure != null) return left(failure!);
+    return right(investment);
+  }
+
+  @override
+  Future<Either<AuthFailure, Unit>> deleteTrade(
+    Investment investment,
+    String tradeId,
+  ) async {
+    deletedTrades.add(tradeId);
+    if (failure != null) return left(failure!);
+    items = [
+      for (final i in items)
+        if (i.id != investment.id) i,
+    ];
+    return right(unit);
   }
 
   @override

@@ -253,9 +253,10 @@ class SellDraft {
   const SellDraft({
     required this.clientId,
     required this.quantity,
-    required this.priceMinor,
     required this.accountId,
     required this.tradedOn,
+    this.priceMinor,
+    this.amountMinor,
   });
 
   final String clientId;
@@ -264,7 +265,10 @@ class SellDraft {
   final BigInt quantity;
 
   /// Price of one unit; it becomes the position's latest price.
-  final BigInt priceMinor;
+  final BigInt? priceMinor;
+
+  /// Total money back instead of a unit price (deposit withdrawal).
+  final BigInt? amountMinor;
   final String accountId;
   final String tradedOn;
 }

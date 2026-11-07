@@ -17,6 +17,20 @@ abstract class InvestmentRepository {
   /// Sells part or all of a position; returns it after the sale.
   Future<Either<AuthFailure, Investment>> sell(String id, SellDraft draft);
 
+  /// Renames, changes the note or (deposits) the maturity date.
+  Future<Either<AuthFailure, Investment>> update(
+    Investment investment, {
+    required String name,
+    required String? note,
+    required String? maturityDate,
+  });
+
+  /// Deletes one buy; ok also when it was the last one (the position goes).
+  Future<Either<AuthFailure, Unit>> deleteTrade(
+    Investment investment,
+    String tradeId,
+  );
+
   /// Records a manual price; returns the position.
   Future<Either<AuthFailure, Investment>> addPrice(
     String id, {
