@@ -27,7 +27,7 @@ class ManageCell {
   final String? value;
 }
 
-/// QUẢN LÝ TIỀN (board `MeHome3`): six tiles in three columns that open the
+/// QUẢN LÝ TIỀN (board `MeHome3`): tiles in three columns that open the
 /// money screens. Each shows a short count or amount under its name.
 class ManageGrid extends StatelessWidget {
   const ManageGrid({
@@ -106,6 +106,12 @@ class ManageGrid extends StatelessWidget {
         tint: (c.tintBlue, c.tintBlueFg),
         route: '/me/calendar',
         value: month == null ? null : s.meCalendarMonth(month!),
+      ),
+      ManageCell(
+        icon: LucideIcons.chartLine,
+        title: s.meNetWorth,
+        tint: (c.tintGreen, c.tintGreenFg),
+        route: '/me/net-worth',
       ),
     ];
     return Column(

@@ -40,7 +40,7 @@ Cùng đợt (2026-11-03), canvas được sửa cho khớp app đang chạy (th
 | Phần | Trạng thái | Tài liệu |
 |---|---|---|
 | **P** Đầu tư | **Chốt** 2026-11-06, chưa code (`MOB-P4-E01`, cần `BE-P4-E03`) | [patterns/P-investments.md](patterns/P-investments.md) |
-| **Q** Tài sản ròng theo thời gian | **Chốt** 2026-11-06, chưa code (`MOB-P4-E02`) | [patterns/P-investments.md](patterns/P-investments.md) |
+| **Q** Tài sản ròng theo thời gian | **Chốt** 2026-11-06, đã code Q.1 (`MOB-P4-E02`) | [patterns/P-investments.md](patterns/P-investments.md) |
 
 ## Tiến độ code (Flutter)
 

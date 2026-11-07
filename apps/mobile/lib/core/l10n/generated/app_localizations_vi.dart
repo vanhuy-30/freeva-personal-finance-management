@@ -5122,4 +5122,69 @@ class SVi extends S {
   String forecastDayEstimated(int day) {
     return 'Ngày $day · số ước tính';
   }
+
+  @override
+  String get meNetWorth => 'Tài sản ròng';
+
+  @override
+  String get netWorthTitle => 'Tài sản ròng';
+
+  @override
+  String netWorthToday(String date) {
+    return 'Hôm nay · $date';
+  }
+
+  @override
+  String netWorthDate(String date) {
+    return '$date';
+  }
+
+  @override
+  String netWorthChange(String amount, String window) {
+    String _temp0 = intl.Intl.selectLogic(window, {
+      'week': 'trong 7 ngày',
+      'month': 'trong 30 ngày',
+      'quarter': 'trong 3 tháng',
+      'half': 'trong 6 tháng',
+      'year': 'trong 1 năm',
+      'other': 'từ trước tới nay',
+    });
+    return '$amount $_temp0';
+  }
+
+  @override
+  String netWorthRange(String window) {
+    String _temp0 = intl.Intl.selectLogic(window, {
+      'week': '7 ngày',
+      'month': '30 ngày',
+      'quarter': '3 tháng',
+      'half': '6 tháng',
+      'year': '1 năm',
+      'other': 'Tất cả',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get netWorthRangeSemantics => 'Khoảng thời gian';
+
+  @override
+  String get netWorthAssets => 'Tài sản';
+
+  @override
+  String get netWorthDebts => 'Nợ';
+
+  @override
+  String get netWorthInAssets => 'Trong tài sản';
+
+  @override
+  String get netWorthWallets => 'Ví';
+
+  @override
+  String get netWorthInvestments => 'Đầu tư';
+
+  @override
+  String netWorthChartSemantics(String range, String from, String to) {
+    return 'Tài sản ròng $range, từ $from đến $to';
+  }
 }

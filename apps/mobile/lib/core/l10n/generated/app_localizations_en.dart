@@ -5238,4 +5238,69 @@ class SEn extends S {
   String forecastDayEstimated(int day) {
     return 'Day $day · estimate';
   }
+
+  @override
+  String get meNetWorth => 'Net worth';
+
+  @override
+  String get netWorthTitle => 'Net worth';
+
+  @override
+  String netWorthToday(String date) {
+    return 'Today · $date';
+  }
+
+  @override
+  String netWorthDate(String date) {
+    return '$date';
+  }
+
+  @override
+  String netWorthChange(String amount, String window) {
+    String _temp0 = intl.Intl.selectLogic(window, {
+      'week': 'in 7 days',
+      'month': 'in 30 days',
+      'quarter': 'in 3 months',
+      'half': 'in 6 months',
+      'year': 'in 1 year',
+      'other': 'overall',
+    });
+    return '$amount $_temp0';
+  }
+
+  @override
+  String netWorthRange(String window) {
+    String _temp0 = intl.Intl.selectLogic(window, {
+      'week': '7 days',
+      'month': '30 days',
+      'quarter': '3 months',
+      'half': '6 months',
+      'year': '1 year',
+      'other': 'All',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get netWorthRangeSemantics => 'Chart range';
+
+  @override
+  String get netWorthAssets => 'Assets';
+
+  @override
+  String get netWorthDebts => 'Debts';
+
+  @override
+  String get netWorthInAssets => 'In assets';
+
+  @override
+  String get netWorthWallets => 'Wallets';
+
+  @override
+  String get netWorthInvestments => 'Investments';
+
+  @override
+  String netWorthChartSemantics(String range, String from, String to) {
+    return 'Net worth, $range, from $from to $to';
+  }
 }

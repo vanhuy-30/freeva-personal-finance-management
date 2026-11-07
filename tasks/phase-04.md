@@ -45,7 +45,7 @@
 - Note: BE-P4-E03 xong 2026-11-06: ADR 014 phần bổ sung (phát lại toàn bộ trade sau mỗi lần ghi, lần mua có sẵn không chân ví, giá của trade thành giá hiện tại, sửa/xoá lần mua kéo theo chân ví, xoá lần cuối xoá tài sản), migration additive `investment_trade_edit`, `POST /investments` có `initialTrade` và gộp trùng tên, trade nhận `priceMinor`/`accountId: null`/`note`, `PATCH/DELETE /investments/{id}/trades/{tradeId}`, `GET /investments?kind=`, `unrealizedBps`/`averageCostMinor`, `summary.byKind` có `shareBps`, `GET /reports/investments/history`. Test: 12 unit + 10 integration PostgreSQL mới; toàn bộ 26 suite integration xanh. Sửa/xoá lần bán chưa làm (thiết kế không có). Kiến trúc: [investments.md](../docs/architecture/investments.md).
 
 ### MOB-P4-E02 — Biểu đồ tài sản ròng trên app
-- Status: todo
+- Status: done — 2026-11-06
 - Module: 3, 14
 - Gate: v1
 - Depends: BE-P4-E02, DS-P4-001
