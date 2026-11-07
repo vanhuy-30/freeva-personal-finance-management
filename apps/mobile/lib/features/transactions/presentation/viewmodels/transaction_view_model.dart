@@ -563,6 +563,7 @@ class DefaultTransactionViewModel extends TransactionViewModel {
             TransactionType.adjustment => TransactionAnalyticsType.expense,
             TransactionType.debt => TransactionAnalyticsType.expense,
             TransactionType.refund => TransactionAnalyticsType.expense,
+            TransactionType.investment => TransactionAnalyticsType.expense,
           }),
         );
       }

@@ -108,6 +108,12 @@ class ManageGrid extends StatelessWidget {
         value: month == null ? null : s.meCalendarMonth(month!),
       ),
       ManageCell(
+        icon: LucideIcons.trendingUp,
+        title: s.meInvestments,
+        tint: (c.tintBlue, c.tintBlueFg),
+        route: '/me/investments',
+      ),
+      ManageCell(
         icon: LucideIcons.chartLine,
         title: s.meNetWorth,
         tint: (c.tintGreen, c.tintGreenFg),

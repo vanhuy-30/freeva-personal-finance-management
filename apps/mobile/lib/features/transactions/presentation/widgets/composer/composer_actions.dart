@@ -59,5 +59,6 @@ mixin ComposerActions<T extends StatefulWidget> on State<T> {
           TransactionType.adjustment => s.txSaveChanges,
           TransactionType.debt => s.txSaveChanges,
           TransactionType.refund => s.txSaveChanges,
+          TransactionType.investment => s.txSaveChanges,
         };
 }

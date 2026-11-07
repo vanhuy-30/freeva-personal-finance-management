@@ -5303,4 +5303,81 @@ class SEn extends S {
   String netWorthChartSemantics(String range, String from, String to) {
     return 'Net worth, $range, from $from to $to';
   }
+
+  @override
+  String get transactionInvestment => 'Investment';
+
+  @override
+  String get txKindInvestment => 'investment';
+
+  @override
+  String get txInvestmentTitle => 'Investment';
+
+  @override
+  String get txInvestmentReadOnly =>
+      'This belongs to Investments and can’t be edited.';
+
+  @override
+  String get meInvestments => 'Investments';
+
+  @override
+  String get investmentOversell => 'You can’t sell more than you still hold.';
+
+  @override
+  String get investmentUnsupported => 'This investment doesn’t allow that.';
+
+  @override
+  String get investmentsTitle => 'Investments';
+
+  @override
+  String get investmentsEmptyTitle => 'No investments yet';
+
+  @override
+  String get investmentsEmptyBody =>
+      'Record gold, stocks, deposits… to see your assets in one place.';
+
+  @override
+  String get investmentsTotal => 'Total investment value';
+
+  @override
+  String get investmentsCost => 'Cost';
+
+  @override
+  String get investmentsGain => 'Expected gain/loss';
+
+  @override
+  String get investmentsValue => 'Value';
+
+  @override
+  String get investmentsAllocation => 'Share by category';
+
+  @override
+  String get investmentsKinds => 'Categories';
+
+  @override
+  String get investmentsUnpriced => 'No price yet';
+
+  @override
+  String investmentKind(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'gold': 'Gold',
+      'stock': 'Stocks',
+      'fund': 'Funds',
+      'savings_deposit': 'Deposits',
+      'real_estate': 'Real estate',
+      'crypto': 'Crypto',
+      'other': 'Other',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String investmentsSemantics(
+    String kind,
+    String value,
+    String cost,
+    String gain,
+  ) {
+    return '$kind, value $value, cost $cost, expected gain or loss $gain';
+  }
 }

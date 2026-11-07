@@ -2,6 +2,10 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-11-07
+
+- `MOB-P4-E01` PR 1/4: nền đầu tư trên app — `TransactionType.investment` (một chân, khoá sửa/xoá), màn `/me/investments` (thẻ tổng, tỷ trọng, danh mục, tag chưa có giá), ô "Đầu tư" ở lưới Cá nhân, dòng Đầu tư ở Tài sản ròng mở màn này. Chưa thêm được khoản đầu tư (PR 2). [Thiết kế](../architecture/mobile-investments.md).
+
 ## 2026-11-06
 
 - `MOB-P4-E02`: biểu đồ tài sản ròng trên app — màn `/me/net-worth` (số hôm nay, thay đổi theo khoảng, đường, chip 7 ngày → Tất cả, chạm điểm xem ngày và số, Tài sản · Nợ, Ví · Đầu tư), ô "Tài sản ròng" ở lưới Cá nhân. Không đổi backend. Golden sáng/tối, đối chiếu board nhóm Q. [Thiết kế](../architecture/mobile-net-worth.md).

@@ -14,6 +14,11 @@ enum TransactionType {
   /// Money back for an expense (`MOB-P3-008`): one positive leg pointing at
   /// the expense (`refundOfId`); not income. Only `POST …/refunds` writes it.
   refund,
+
+  /// One-leg money move between a wallet and an investment (buy takes money
+  /// out, sell or withdraw puts it back); not income or expense. Only
+  /// `/investments` writes it; the API refuses edits and deletes.
+  investment,
 }
 
 /// What happens to refunds when their expense is deleted (`MOB-P3-008`).

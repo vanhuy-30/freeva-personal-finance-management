@@ -179,9 +179,12 @@ class _TransactionDetailBodyState extends State<TransactionDetailBody> {
         ],
         const SizedBox(height: FreevaSpace.s5),
         // The API refuses edits on a debt leg: it would break the remaining.
-        if (bundle.type == TransactionType.debt)
+        if (bundle.type == TransactionType.debt ||
+            bundle.type == TransactionType.investment)
           Text(
-            s.txDebtReadOnly,
+            bundle.type == TransactionType.debt
+                ? s.txDebtReadOnly
+                : s.txInvestmentReadOnly,
             textAlign: TextAlign.center,
             style: FreevaTypography.bodyS.copyWith(color: c.textSecondary),
           )
