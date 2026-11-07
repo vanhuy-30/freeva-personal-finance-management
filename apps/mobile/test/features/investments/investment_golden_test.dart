@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/core/di/injection.dart';
 import 'package:mobile/features/investments/domain/investment.dart';
+import 'package:mobile/features/investments/presentation/pages/deposit_page.dart';
 import 'package:mobile/features/investments/presentation/pages/investment_editor_page.dart';
 import 'package:mobile/features/investments/presentation/pages/investment_kind_page.dart';
 import 'package:mobile/features/investments/presentation/pages/investments_page.dart';
@@ -144,5 +145,46 @@ void main() {
     'price sheet',
     skip: !Platform.isMacOS,
     (t) => kindShot(t, 'price', tap: 'Cập nhật giá'),
+  );
+
+  Future<void> depositShot(
+    WidgetTester t,
+    String name, {
+    String? tap,
+    bool dark = false,
+  }) async {
+    t.view.physicalSize = const Size(390, 1100);
+    t.view.devicePixelRatio = 1;
+    addTearDown(t.view.reset);
+    final h = (await t.runAsync(
+      () => investmentApp(const DepositPage(id: 'dep'), dark: dark),
+    ))!;
+    await t.pumpWidget(h.app);
+    h.router.push('/page');
+    await t.pumpAndSettle();
+    if (tap != null) {
+      await t.tap(find.text(tap).first);
+      await t.pumpAndSettle();
+    }
+    await expectLater(
+      find.byType(MaterialApp),
+      matchesGoldenFile('goldens/investments_$name.png'),
+    );
+  }
+
+  testWidgets(
+    'deposit',
+    skip: !Platform.isMacOS,
+    (t) => depositShot(t, 'deposit'),
+  );
+  testWidgets(
+    'deposit dark',
+    skip: !Platform.isMacOS,
+    (t) => depositShot(t, 'deposit_dark', dark: true),
+  );
+  testWidgets(
+    'withdraw sheet',
+    skip: !Platform.isMacOS,
+    (t) => depositShot(t, 'withdraw', tap: 'Rút tiền gửi'),
   );
 }

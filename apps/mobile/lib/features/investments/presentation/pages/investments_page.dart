@@ -42,6 +42,16 @@ class _InvestmentsPageState extends State<InvestmentsPage> {
     Future.microtask(model.load);
   }
 
+  /// A category opens its screen; a lone deposit opens its detail directly.
+  void _openKind(BuildContext context, InvestmentKind kind) {
+    final deposits = model.ofKind(kind);
+    context.push(
+      kind == InvestmentKind.savingsDeposit && deposits.length == 1
+          ? '/me/investments/${deposits.first.id}'
+          : '/me/investments/kind/${kind.apiValue}',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
@@ -176,11 +186,7 @@ class _InvestmentsPageState extends State<InvestmentsPage> {
           names: model.names(row.kind!),
           digits: model.digits,
           hidden: hidden,
-          // A deposit opens its own screen (next PR).
-          onTap: row.kind == InvestmentKind.savingsDeposit
-              ? null
-              : () =>
-                    context.push('/me/investments/kind/${row.kind!.apiValue}'),
+          onTap: () => _openKind(context, row.kind!),
         ),
         const SizedBox(height: 12),
       ],

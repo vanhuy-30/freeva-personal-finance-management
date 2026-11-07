@@ -18,6 +18,7 @@ import '../../../settings/presentation/widgets/balances_hidden_builder.dart';
 import '../../domain/investment.dart';
 import '../viewmodels/investment_view_model.dart';
 import '../widgets/investment_asset_card.dart';
+import '../widgets/investment_deposit_tile.dart';
 import '../widgets/investment_kind_header.dart';
 import '../widgets/investment_labels.dart';
 import '../widgets/investment_price_sheet.dart';
@@ -138,15 +139,23 @@ class _InvestmentKindPageState extends State<InvestmentKindPage> {
       ),
       const SizedBox(height: 14),
       for (final a in assets) ...[
-        InvestmentAssetCard(
-          investment: a,
-          buys: model.buysOf(a.id),
-          digits: model.digits,
-          hidden: hidden,
-          onPrice: () => showInvestmentPriceSheet(context, model, a),
-          onBuyMore: () => _buyMore(a),
-          onSell: () => showInvestmentSellSheet(context, model, a),
-        ),
+        if (kind == InvestmentKind.savingsDeposit)
+          InvestmentDepositTile(
+            deposit: a,
+            digits: model.digits,
+            hidden: hidden,
+            onTap: () => context.push('/me/investments/${a.id}'),
+          )
+        else
+          InvestmentAssetCard(
+            investment: a,
+            buys: model.buysOf(a.id),
+            digits: model.digits,
+            hidden: hidden,
+            onPrice: () => showInvestmentPriceSheet(context, model, a),
+            onBuyMore: () => _buyMore(a),
+            onSell: () => showInvestmentSellSheet(context, model, a),
+          ),
         gap,
       ],
       if (sold != null)

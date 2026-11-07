@@ -7,7 +7,7 @@ Task lớn, chia 5 PR nối tiếp (PR 3 hẹp lại, tiền gửi tách ra). T�
 | 1 | Nền và đọc: giao dịch `investment`, danh sách P.1 + P.2, ô lưới, link từ Tài sản ròng | xong |
 | 2 | Tạo khoản đầu tư (P.5, P.6), số lượng thập phân | xong |
 | 3 | Danh mục và tài sản (P.3), bán (P.9), cập nhật giá (P.10), mua thêm | xong |
-| 4 | Tiền gửi: chi tiết (P.11), rút (P.12) | chưa |
+| 4 | Tiền gửi: chi tiết (P.11), rút (P.12), sửa, xoá | xong |
 | 5 | Chi tiết, sửa, xoá lần mua (P.4, P.7, P.8), `pairs.py` nhóm `P` | chưa |
 
 ## PR 1
@@ -35,8 +35,15 @@ Task lớn, chia 5 PR nối tiếp (PR 3 hẹp lại, tiền gửi tách ra). T�
 - Mua thêm: mở form tạo (P.5) với danh mục, tên và đơn vị điền sẵn; server gộp lần mua cùng tên vào tài sản đó nên không cần API mới. Bất động sản (một lô) không có Mua thêm.
 - Sau mỗi lần ghi: tải lại danh sách, tổng, lần mua của tài sản đó và (khi bán) ví.
 
-## Chưa có sau PR 3
+## PR 4 — tiền gửi
 
-- Chạm thẻ Tiền gửi ở P.2 chưa mở gì (PR 4).
-- Chạm một lần mua chưa mở chi tiết; sửa/xoá lần mua chưa có (PR 5).
+- Màn `/me/investments/:id` (P.11): "Giá trị hôm nay", % lãi, Gốc và Lãi tạm tính, Lãi suất (`6,5%/năm`, đổi từ bps bằng số nguyên), Ngày gửi, Đáo hạn (`01/06/2027 · còn 223 ngày`, hoặc "đã đáo hạn"), Lấy từ ví (hoặc "Đã có từ trước").
+- Rút tiền gửi (P.12, sheet): tiền nhận về điền sẵn bằng giá trị hôm nay (sửa được), ngày rút, ví nhận. Gửi `POST /investments/{id}/trades` bán số lượng 1 với `amountMinor`; một lần rút luôn lấy cả khoản.
+- Sửa khoản (sheet): tên, ngày đáo hạn (phải sau ngày gửi), ghi chú, `PATCH /investments/{id}` kèm `version`.
+- Xoá khoản: xác nhận rồi xoá lần mua duy nhất (`DELETE …/trades/{id}?version=`); server trả 204 khi đó là lần cuối nên khoản biến mất, tiền gốc về ví. Tải lại ví và danh sách.
+- Chạm thẻ Tiền gửi ở P.2: một khoản thì mở thẳng chi tiết, nhiều khoản thì mở màn danh mục (mỗi khoản một dòng mở chi tiết, không có giá, Mua thêm, Bán).
+
+## Chưa có sau PR 4
+
+- Chạm một lần mua chưa mở chi tiết; sửa/xoá lần mua của cổ phiếu, vàng... chưa có (PR 5).
 - Footer "Đã bán hết" ở P.2 (tài sản đã bán hết, số lượng 0) chưa có; chưa có màn xem lại các lần bán.
