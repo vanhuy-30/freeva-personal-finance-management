@@ -57,4 +57,4 @@ Bearer session, `Cache-Control: no-store`, tiền và bps là string integer, s�
 
 ## Chưa làm
 
-Giá tự động; gửi thêm vào tiền gửi; sửa/xoá lần bán; vị thế khác tiền tệ ví với tỷ giá; mobile (`MOB-P4-E01`, cần thêm `TransactionType.investment` vào app trước khi hiện chân này).
+Giá tự động; gửi thêm vào tiền gửi; sửa/xoá lần bán; vị thế khác tiền tệ ví với tỷ giá (chốt 2026-11-09: v1 không hỗ trợ, khoản đầu tư luôn cùng tiền tệ với ví); mobile (`MOB-P4-E01`, cần thêm `TransactionType.investment` vào app trước khi hiện chân này).

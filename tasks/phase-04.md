@@ -57,9 +57,10 @@
 - DoD: board Q.1: số hôm nay, thay đổi từ đầu khoảng, biểu đồ, chip 7 ngày → Tất cả, Tài sản · Nợ, Ví · Đầu tư; chạm điểm hiện ngày và số; chưa đủ hai điểm thì ẩn biểu đồ. Lấy dòng tiền tệ mặc định trong `items`. Ô "Tài sản ròng" ở lưới Cá nhân.
 
 ### QA-P4-E01 — Test giá vốn, lãi lỗ, tỷ giá
-- Status: doing — bảng số giá vốn/lãi lỗ/tiền gửi xong 2026-11-06, còn FX
+- Status: done — 2026-11-09 (bảng số giá vốn/lãi lỗ/tiền gửi xong 2026-11-06; FX không hỗ trợ ở v1, chủ dự án chốt 2026-11-09)
 - Module: 12
 - Gate: v1
 - Depends: BE-P4-E01
-- DoD: bảng số giá vốn, lãi/lỗ và FX đã chốt, chạy trong test API, gồm vàng theo chỉ/lượng, crypto số lượng lẻ, lãi tiền gửi tới ngày đáo hạn, và một vòng mua → góp thêm → bán một phần. Không dùng số thực dấu phẩy động cho tiền hoặc số lượng.
+- DoD: bảng số giá vốn và lãi/lỗ đã chốt (FX: v1 không hỗ trợ vị thế khác tiền tệ ví, xem Note), chạy trong test API, gồm vàng theo chỉ/lượng, crypto số lượng lẻ, lãi tiền gửi tới ngày đáo hạn, và một vòng mua → góp thêm → bán một phần. Không dùng số thực dấu phẩy động cho tiền hoặc số lượng.
 - Note: 2026-11-06 `investment.spec.ts` (29 test domain) và `investments.integration-spec.ts` (11 test PostgreSQL) phủ vàng chỉ/lượng, crypto 0,12345678, lãi tiền gửi tới đáo hạn (100tr · 12% · 365 ngày = 12tr), mua → góp → bán một phần, làm tròn half-up. Còn thiếu: vị thế khác tiền tệ ví với FX đã chốt; chốt khi quyết định có hỗ trợ hay không.
+- Note: 2026-11-09 chốt (chủ dự án): v1 không hỗ trợ vị thế khác tiền tệ ví, nên không có tỷ giá trong đầu tư. Khoản đầu tư luôn cùng tiền tệ với ví mua/bán (API trả 400 nếu khác); khoản "đã có từ trước" dùng tiền tệ hồ sơ. Tài sản ròng và báo cáo vẫn theo từng tiền tệ, không quy đổi. Muốn hỗ trợ sau thì cần ADR mới (nguồn tỷ giá, tiền tệ ghi sổ, làm tròn) và task riêng.

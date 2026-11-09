@@ -128,7 +128,7 @@ Theo [điều kiện hoàn thành Phase 2](../product/phases/phase-02.md):
 
 ## Backlog Phase 4
 
-- **5/6 done**: `BE-P4-E01`, `BE-P4-E02`, `DS-P4-001`, `BE-P4-E03`, `MOB-P4-E02` done (kèm `MOB-P4-E01` 2026-11-07); `QA-P4-E01` doing (còn FX). Chi tiết: [tasks/phase-04.md](../../tasks/phase-04.md).
+- **6/6 done**: `BE-P4-E01`, `BE-P4-E02`, `DS-P4-001`, `BE-P4-E03`, `MOB-P4-E02`, `QA-P4-E01` (kèm `MOB-P4-E01` 2026-11-07; FX không hỗ trợ ở v1, chốt 2026-11-09). Chi tiết: [tasks/phase-04.md](../../tasks/phase-04.md).
 
 ## Phase 3 gate — đã đóng (2026-11-05)
 

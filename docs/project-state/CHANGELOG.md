@@ -2,6 +2,10 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-11-09
+
+- `QA-P4-E01` done: chủ dự án chốt v1 không hỗ trợ vị thế khác tiền tệ ví (không tỷ giá trong đầu tư). Phase 4 đủ 6/6 task. Mở lại khi cần: ADR và task riêng.
+
 ## 2026-11-07
 
 - `MOB-P4-E01` PR 5/5 (xong task): chi tiết lần mua, sửa lần mua (phát lại vị thế, chân ví theo), xoá lần mua có xác nhận và nêu tiền trả lại ví; `pairs.py` nhóm `P`. Đầu tư trên app đủ P.1–P.12. [Thiết kế](../architecture/mobile-investments.md).
