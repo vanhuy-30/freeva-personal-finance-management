@@ -2,6 +2,10 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-11-10
+
+- **Phase 4 closed**: backlog 6/6 done (tài sản và đầu tư, tài sản ròng theo thời gian, thiết kế, test giá vốn; `Gate: v1`). FX đầu tư không hỗ trợ ở v1. Mở Phase 5 (toàn bộ sau v1).
+
 ## 2026-11-09
 
 - `QA-P4-E01` done: chủ dự án chốt v1 không hỗ trợ vị thế khác tiền tệ ví (không tỷ giá trong đầu tư). Phase 4 đủ 6/6 task. Mở lại khi cần: ADR và task riêng.

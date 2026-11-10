@@ -1,5 +1,7 @@
 # Phase 4 — epic
 
+**Closed** 2026-11-10 — 6/6 done (`QA-P4-E01`: FX không hỗ trợ ở v1). Biên bản: [STATUS](../docs/project-state/STATUS.md).
+
 [phase-04.md](../docs/product/phases/phase-04.md). Theo dõi tài sản/đầu tư và tài sản ròng theo thời gian là `Gate: v1` từ 2026-11-02 (quyết định chủ dự án).
 
 ### BE-P4-E01 / MOB-P4-E01 — Tài sản và đầu tư (module 12)
