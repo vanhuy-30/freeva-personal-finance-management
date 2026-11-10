@@ -1,7 +1,7 @@
 # STATUS
 
-- **Phase hiện tại:** 4 — Phase 0 **closed** 2026-09-21; Phase 1 **closed** 2026-10-21 (gate sổ cái); Phase 2 **closed** 2026-10-30; Phase 3 **closed** 2026-11-05. Chưa phải product v1 — còn tài sản/đầu tư và tài sản ròng (Phase 4), `Gate: v1`. AI (gợi ý danh mục, insight) ra sau v1 từ 2026-11-02. Đối chiếu spec: [spec-alignment.md](../product/spec-alignment.md).
-- **Cập nhật:** 2026-11-06
+- **Phase hiện tại:** 4 — Phase 0 **closed** 2026-09-21; Phase 1 **closed** 2026-10-21 (gate sổ cái); Phase 2 **closed** 2026-10-30; Phase 3 **closed** 2026-11-05; Phase 4 **closed** 2026-11-10. Backlog `Gate: v1` đã xong trên `develop`; chưa chạy thử trọn luồng trên thiết bị với backend thật. AI (gợi ý danh mục, insight) ra sau v1 từ 2026-11-02. Đối chiếu spec: [spec-alignment.md](../product/spec-alignment.md).
+- **Cập nhật:** 2026-11-10
 - **Việc bổ sung Phase 2:** `BE-P2-010` khóa kind lúc ghi; `MOB-P2-011` xuất/xóa tài khoản trên app; `QA-P2-001` rà hàng đợi offline; `BE-P2-012` câu trả lời đầu gắn tài khoản; `BE-P2-013` quy đổi để hiển thị; `BE-P2-014` mật khẩu tối thiểu 8 + kiểm tra email trên app. Chi tiết: [tasks/phase-02.md](../../tasks/phase-02.md).
 - **CI:** `INF-P0-002` done; cả ba job xanh trên `main`, [run 33521325189](https://github.com/vanhuy-30/freeva-personal-finance-management/actions/runs/33521325189).
 - **Môi trường:** chỉ chạy local (Ghi chú cuối file). Chưa có server, domain, tài khoản App Store / Google Play.
@@ -143,6 +143,20 @@ Theo [điều kiện hoàn thành Phase 3](../product/phases/phase-03.md):
 | Mục tiêu `Gate: v1` | Done (`BE-P3-E01` / `MOB-P3-E01`) |
 
 Đóng theo option **B** (giống Phase 0, 1, 2): backlog xong trên `develop` → mở Phase 4.
+
+## Phase 4 gate — đã đóng (2026-11-10)
+
+Theo [điều kiện hoàn thành Phase 4](../product/phases/phase-04.md):
+
+| Mục | Trạng thái |
+|---|---|
+| Backlog task P4 | Done 6/6 (`BE-P4-E01`/`MOB-P4-E01`, `BE-P4-E02`, `DS-P4-001`, `BE-P4-E03`, `MOB-P4-E02`, `QA-P4-E01`) |
+| Không tính trùng ví / tài sản / đầu tư | Done (`BE-P4-E02`: chuỗi 6 tháng thu/chi/chuyển khoản/vàng/cho mượn, 95 → 112 → 117 → 122 triệu; vị thế đầu tư không cộng trùng ví) |
+| Công thức giá vốn, lãi/lỗ có tài liệu + test | Done ([ADR 014](../architecture/adr/014-investment-ledger.md), `investment.spec.ts` 29 test, `investments.integration-spec.ts` PostgreSQL; vàng chỉ/lượng, crypto 8 chữ số, lãi tiền gửi, mua → góp → bán). FX: v1 không hỗ trợ (chốt 2026-11-09) |
+| Nguồn giá và độ trễ luôn hiện | Done (giá nhập tay kèm ngày báo giá trên thẻ tài sản; khoản chưa có giá hiện "Chưa có giá") |
+| Mục `Gate: v1` | Done (tài sản và đầu tư, tài sản ròng theo thời gian, test giá vốn) |
+
+Đóng theo option **B** (giống Phase 0–3): backlog xong trên `develop` → mở Phase 5. Chưa làm: chạy thử trọn luồng đầu tư trên simulator/thiết bị với backend thật; footer "Đã bán hết" và màn xem lại từng lần bán (ngoài thiết kế đã chốt).
 
 ## Ghi chú
 
