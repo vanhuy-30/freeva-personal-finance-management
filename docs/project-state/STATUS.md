@@ -39,7 +39,7 @@
 - **Tài sản và đầu tư:** `BE-P4-E01` done 2026-11-06 (BE): `/investments` sáu loại, mua/bán bằng giao dịch `investment` một chân (ngoài thu/chi, ngân sách, tỷ lệ tiết kiệm), giá vốn bình quân gia quyền, lãi/lỗ thực hiện trên từng lần bán, giá nhập tay kèm ngày, tiền gửi lãi đơn, giá trị vào tài sản ròng không trùng ví. Migration additive `investments` (deploy trước API). Mobile `MOB-P4-E01` done 2026-11-07 (5 PR): danh sách, tạo, danh mục/bán/giá, tiền gửi, chi tiết/sửa/xoá lần mua ([mobile](../architecture/mobile-investments.md)). [ADR 014](../architecture/adr/014-investment-ledger.md). [Chi tiết](../architecture/investments.md).
 - **Tài sản ròng theo thời gian:** `BE-P4-E02` done 2026-11-06 (BE): `GET /reports/net-worth/history` cho 7d/30d/3m/6m/1y/toàn bộ, tính từ sổ cái (ví + cho mượn/đi mượn + đầu tư), điểm mới nhất bằng `/net-worth`, không migration. `MOB-P4-E02` done 2026-11-06: màn `/me/net-worth` với biểu đồ, chip khoảng, chạm điểm. [Mobile](../architecture/mobile-net-worth.md). [Chi tiết](../architecture/reports.md).
 - **API đầu tư theo thiết kế:** `BE-P4-E03` done 2026-11-06: tạo kèm lần mua, lần mua có sẵn, sửa/xoá lần mua, % lãi/lỗ, theo danh mục, giá trị theo thời gian. [Chi tiết](../architecture/investments.md).
-- **Cờ và cấu hình server:** `BE-P5-E08` done 2026-11-11 (BE): `GET /api/v1/app-config` (cờ đã tính cho user + cấu hình), API admin sửa cờ/giá trị có version và audit trước/sau, `FeatureGuard`. Registry 6 cờ + 34 khóa mặc định bằng giá trị hiện tại; app chưa đọc (`MOB-P5-E08`, `BE-P5-001`). Migration additive `app_config`. [Chi tiết](../architecture/app-config.md).
+- **Cờ và cấu hình server:** `BE-P5-E08` done 2026-11-11 (BE): `GET /api/v1/app-config` (cờ đã tính cho user + cấu hình), API admin sửa cờ/giá trị có version và audit trước/sau, `FeatureGuard`. Registry 6 cờ + 34 khóa mặc định bằng giá trị hiện tại; app chưa đọc (`MOB-P5-E08`, `BE-P5-001`). Migration additive `app_config`. Web admin `WA-P5-001` done: trang `/config` sửa cờ và giá trị có bước xác nhận. [Chi tiết](../architecture/app-config.md).
 - **Mobile analytics:** `MOB-P0-004` done; catalog typed, debug logger local, `schema_version: 1`, không property tùy ý/PII và chưa có vendor SDK.
 - **Backup/restore:** `BE-P0-005` done; [runbook và bằng chứng local](../../infra/runbooks/backup-restore.md), PostgreSQL 16.14. Production PITR/retention/RPO/RTO chưa triển khai.
 - **Scaffold:** xong trên `main` (`153d3e7`). Health API, admin placeholder, Flutter shell, docs, compose.
@@ -134,7 +134,7 @@ Theo [điều kiện hoàn thành Phase 2](../product/phases/phase-02.md):
 
 ## Backlog Phase 5
 
-- **1/10 done** (`BE-P5-E08`), 3 wont (`BE-P5-E01` bỏ; `E02`, `E05` sang Phase 8). Chi tiết: [tasks/phase-05.md](../../tasks/phase-05.md).
+- **2/10 done** (`BE-P5-E08`, `WA-P5-001`), 3 wont (`BE-P5-E01` bỏ; `E02`, `E05` sang Phase 8). Chi tiết: [tasks/phase-05.md](../../tasks/phase-05.md).
 
 ## Phase 3 gate — đã đóng (2026-11-05)
 
