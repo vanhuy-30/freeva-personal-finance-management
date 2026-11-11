@@ -2,11 +2,11 @@ import { TransactionError } from './transaction-error';
 import { evaluateTransfer } from './transfer-balance';
 export { TransactionError } from './transaction-error';
 export { normalizeRate, convertedMinor } from './transaction-money';
-/** Types a client may create directly. `adjustment` is only written by wallet reconciliation (BE-P3-005), `debt` by lend/borrow (BE-P3-007), `refund` by POST /transactions/{id}/refunds (BE-P3-008). */
+/** Types a client may create directly. `adjustment` is only written by wallet reconciliation (BE-P3-005), `debt` by lend/borrow (BE-P3-007), `investment` by POST /investments/{id}/trades (BE-P4-E01), `refund` by POST /transactions/{id}/refunds (BE-P3-008). */
 export const TRANSACTION_TYPES = ['income', 'expense', 'transfer'] as const;
 export type CreatableTransactionType = typeof TRANSACTION_TYPES[number];
 /** Every stored type, for filters and responses. */
-export const STORED_TRANSACTION_TYPES = [...TRANSACTION_TYPES, 'adjustment', 'debt', 'refund'] as const;
+export const STORED_TRANSACTION_TYPES = [...TRANSACTION_TYPES, 'adjustment', 'debt', 'refund', 'investment'] as const;
 export type TransactionType = typeof STORED_TRANSACTION_TYPES[number];
 export interface LegInput {
   clientId: string;
@@ -87,7 +87,7 @@ export function occurredTime(value: string | null | undefined): string | null {
 }
 /** Expense takes `expense|both`, income takes `income|both`; transfers carry no category. */
 export function categoryKindFits(type: TransactionType, kind: 'expense' | 'income' | 'both'): boolean {
-  return type !== 'transfer' && type !== 'adjustment' && type !== 'debt' && type !== 'refund' && (kind === 'both' || kind === type);
+  return type !== 'transfer' && type !== 'adjustment' && type !== 'debt' && type !== 'investment' && type !== 'refund' && (kind === 'both' || kind === type);
 }
 export function validateInput(input: TransactionInput, digits: Record<string, number>): void {
   const { legs, type, fx } = input;
@@ -102,7 +102,7 @@ export function validateInput(input: TransactionInput, digits: Record<string, nu
     if (fx || input.categoryId === null || input.merchant !== null || source.amountMinor <= 0n) throw new TransactionError('VALIDATION_ERROR');
     return;
   }
-  if (type === 'adjustment' || type === 'debt') {
+  if (type === 'adjustment' || type === 'debt' || type === 'investment') {
     if (fx || input.categoryId !== null || input.merchant !== null || source.amountMinor === 0n) throw new TransactionError('VALIDATION_ERROR');
     return;
   }

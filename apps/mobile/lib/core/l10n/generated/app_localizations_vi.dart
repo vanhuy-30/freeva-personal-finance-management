@@ -5122,4 +5122,487 @@ class SVi extends S {
   String forecastDayEstimated(int day) {
     return 'Ngày $day · số ước tính';
   }
+
+  @override
+  String get meNetWorth => 'Tài sản ròng';
+
+  @override
+  String get netWorthTitle => 'Tài sản ròng';
+
+  @override
+  String netWorthToday(String date) {
+    return 'Hôm nay · $date';
+  }
+
+  @override
+  String netWorthDate(String date) {
+    return '$date';
+  }
+
+  @override
+  String netWorthChange(String amount, String window) {
+    String _temp0 = intl.Intl.selectLogic(window, {
+      'week': 'trong 7 ngày',
+      'month': 'trong 30 ngày',
+      'quarter': 'trong 3 tháng',
+      'half': 'trong 6 tháng',
+      'year': 'trong 1 năm',
+      'other': 'từ trước tới nay',
+    });
+    return '$amount $_temp0';
+  }
+
+  @override
+  String netWorthRange(String window) {
+    String _temp0 = intl.Intl.selectLogic(window, {
+      'week': '7 ngày',
+      'month': '30 ngày',
+      'quarter': '3 tháng',
+      'half': '6 tháng',
+      'year': '1 năm',
+      'other': 'Tất cả',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get netWorthRangeSemantics => 'Khoảng thời gian';
+
+  @override
+  String get netWorthAssets => 'Tài sản';
+
+  @override
+  String get netWorthDebts => 'Nợ';
+
+  @override
+  String get netWorthInAssets => 'Trong tài sản';
+
+  @override
+  String get netWorthWallets => 'Ví';
+
+  @override
+  String get netWorthInvestments => 'Đầu tư';
+
+  @override
+  String netWorthChartSemantics(String range, String from, String to) {
+    return 'Tài sản ròng $range, từ $from đến $to';
+  }
+
+  @override
+  String get transactionInvestment => 'Đầu tư';
+
+  @override
+  String get txKindInvestment => 'đầu tư';
+
+  @override
+  String get txInvestmentTitle => 'Đầu tư';
+
+  @override
+  String get txInvestmentReadOnly =>
+      'Khoản này thuộc Đầu tư, sửa ở đó không được.';
+
+  @override
+  String get meInvestments => 'Đầu tư';
+
+  @override
+  String get investmentOversell => 'Số đã bán không được vượt số còn giữ.';
+
+  @override
+  String get investmentUnsupported => 'Khoản đầu tư này không cho thao tác đó.';
+
+  @override
+  String get investmentsTitle => 'Đầu tư';
+
+  @override
+  String get investmentsEmptyTitle => 'Chưa có khoản đầu tư';
+
+  @override
+  String get investmentsEmptyBody =>
+      'Ghi vàng, cổ phiếu, tiền gửi… để thấy tài sản của bạn ở một chỗ.';
+
+  @override
+  String get investmentsTotal => 'Tổng giá trị đầu tư';
+
+  @override
+  String get investmentsCost => 'Vốn';
+
+  @override
+  String get investmentsGain => 'Lãi/lỗ dự kiến';
+
+  @override
+  String get investmentsValue => 'Giá trị';
+
+  @override
+  String get investmentsAllocation => 'Tỷ trọng theo danh mục';
+
+  @override
+  String get investmentsKinds => 'Danh mục';
+
+  @override
+  String get investmentsUnpriced => 'Chưa có giá';
+
+  @override
+  String investmentKind(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'gold': 'Vàng',
+      'stock': 'Cổ phiếu',
+      'fund': 'Chứng chỉ quỹ',
+      'savings_deposit': 'Tiền gửi',
+      'real_estate': 'Bất động sản',
+      'crypto': 'Crypto',
+      'other': 'Khác',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String investmentsSemantics(
+    String kind,
+    String value,
+    String cost,
+    String gain,
+  ) {
+    return '$kind, giá trị $value, vốn $cost, lãi lỗ dự kiến $gain';
+  }
+
+  @override
+  String get investmentAdd => 'Thêm khoản đầu tư';
+
+  @override
+  String get investmentNewTitle => 'Khoản đầu tư mới';
+
+  @override
+  String get investmentName => 'Tên tài sản';
+
+  @override
+  String get investmentGoldByChi => 'Tính theo chỉ';
+
+  @override
+  String get investmentGoldByLuong => 'Tính theo lượng';
+
+  @override
+  String get investmentQuantity => 'Số lượng';
+
+  @override
+  String investmentUnit(String unit) {
+    String _temp0 = intl.Intl.selectLogic(unit, {
+      'chi': 'chỉ',
+      'luong': 'lượng',
+      'share': 'cổ phiếu',
+      'unit': 'chứng chỉ',
+      'coin': 'coin',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String investmentUnitPrice(String unit) {
+    String _temp0 = intl.Intl.selectLogic(unit, {
+      'chi': 'Giá mua một chỉ',
+      'luong': 'Giá mua một lượng',
+      'share': 'Giá mua một cổ phiếu',
+      'unit': 'Giá mua một chứng chỉ',
+      'coin': 'Giá mua một coin',
+      'other': 'Giá mua',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get investmentBuyDate => 'Ngày mua';
+
+  @override
+  String get investmentTotalMoney => 'Tổng tiền';
+
+  @override
+  String get investmentFromWallet => 'Lấy từ ví';
+
+  @override
+  String investmentWalletLeft(String amount) {
+    return 'Còn $amount';
+  }
+
+  @override
+  String get investmentExisting => 'Đã có từ trước';
+
+  @override
+  String get investmentExistingHint => 'Không trừ ví';
+
+  @override
+  String get investmentNote => 'Ghi chú (không bắt buộc)';
+
+  @override
+  String get investmentSave => 'Lưu khoản đầu tư';
+
+  @override
+  String get investmentPurchasePrice => 'Giá mua';
+
+  @override
+  String get investmentDepositAmount => 'Số tiền gửi';
+
+  @override
+  String get investmentRate => 'Lãi suất/năm';
+
+  @override
+  String get investmentDepositDate => 'Ngày gửi';
+
+  @override
+  String get investmentMaturity => 'Ngày đáo hạn';
+
+  @override
+  String get investmentPickDate => 'Chọn ngày';
+
+  @override
+  String investmentHolding(String kind) {
+    return '$kind đang giữ';
+  }
+
+  @override
+  String get investmentTradesHeader => 'Các lần mua';
+
+  @override
+  String get investmentBuyMore => 'Mua thêm';
+
+  @override
+  String get investmentSell => 'Bán';
+
+  @override
+  String get investmentUpdatePrice => 'Cập nhật giá';
+
+  @override
+  String investmentPerUnit(String price, String unit) {
+    return '$price/$unit';
+  }
+
+  @override
+  String investmentTradePrice(String price, String unit) {
+    return 'Giá $price/$unit';
+  }
+
+  @override
+  String investmentTradeCost(String price, String unit) {
+    return 'Giá vốn $price/$unit';
+  }
+
+  @override
+  String get investmentExistingBox => 'có sẵn';
+
+  @override
+  String get investmentSold => 'Đã bán';
+
+  @override
+  String investmentSoldLine(String quantity, String gain) {
+    return '$quantity · chốt lãi $gain';
+  }
+
+  @override
+  String investmentSoldGain(String gain) {
+    return 'Chốt lãi $gain';
+  }
+
+  @override
+  String investmentSellTitle(String name) {
+    return 'Bán $name';
+  }
+
+  @override
+  String investmentHeld(String quantity) {
+    return 'Đang giữ $quantity';
+  }
+
+  @override
+  String get investmentReceive => 'Tiền nhận';
+
+  @override
+  String get investmentSellQty => 'Số lượng bán';
+
+  @override
+  String investmentSellPrice(String unit) {
+    String _temp0 = intl.Intl.selectLogic(unit, {
+      'chi': 'Giá bán một chỉ',
+      'luong': 'Giá bán một lượng',
+      'share': 'Giá bán một cổ phiếu',
+      'unit': 'Giá bán một chứng chỉ',
+      'coin': 'Giá bán một coin',
+      'other': 'Giá bán',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String investmentSellAll(String quantity) {
+    return 'Bán hết $quantity';
+  }
+
+  @override
+  String get investmentSellDate => 'Ngày bán';
+
+  @override
+  String get investmentToWallet => 'Tiền về ví';
+
+  @override
+  String investmentRealized(String gain) {
+    return 'Lãi chốt $gain';
+  }
+
+  @override
+  String investmentSellButton(String quantity, String amount) {
+    return 'Bán $quantity · $amount';
+  }
+
+  @override
+  String investmentPriceTitle(String name) {
+    return 'Giá $name';
+  }
+
+  @override
+  String investmentPriceOne(String unit) {
+    String _temp0 = intl.Intl.selectLogic(unit, {
+      'chi': 'Giá một chỉ',
+      'luong': 'Giá một lượng',
+      'share': 'Giá một cổ phiếu',
+      'unit': 'Giá một chứng chỉ',
+      'coin': 'Giá một coin',
+      'other': 'Giá',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String investmentPricePrev(String price, String date) {
+    return 'Giá trước $price · $date';
+  }
+
+  @override
+  String get investmentQuoteDate => 'Ngày báo giá';
+
+  @override
+  String get investmentSavePrice => 'Lưu giá';
+
+  @override
+  String get depositValueToday => 'Giá trị hôm nay';
+
+  @override
+  String get depositPrincipal => 'Gốc';
+
+  @override
+  String get depositInterest => 'Lãi tạm tính';
+
+  @override
+  String get depositRateLabel => 'Lãi suất';
+
+  @override
+  String depositRatePerYear(String rate) {
+    return '$rate/năm';
+  }
+
+  @override
+  String depositMaturityLeft(String date, int days) {
+    return '$date · còn $days ngày';
+  }
+
+  @override
+  String depositMatured(String date) {
+    return '$date · đã đáo hạn';
+  }
+
+  @override
+  String get depositWithdraw => 'Rút tiền gửi';
+
+  @override
+  String get depositEdit => 'Sửa khoản';
+
+  @override
+  String get depositDelete => 'Xoá khoản';
+
+  @override
+  String get depositReceive => 'Tiền nhận về';
+
+  @override
+  String get depositWithdrawDate => 'Ngày rút';
+
+  @override
+  String get depositToWallet => 'Về ví';
+
+  @override
+  String depositWithdrawButton(String amount) {
+    return 'Rút $amount';
+  }
+
+  @override
+  String get depositDeleteTitle => 'Xoá khoản này?';
+
+  @override
+  String get depositDeleteBody =>
+      'Khoản tiền gửi sẽ bị xoá và tiền gốc trả lại ví đã lấy.';
+
+  @override
+  String get depositEditTitle => 'Sửa khoản gửi';
+
+  @override
+  String get depositEditSave => 'Lưu';
+
+  @override
+  String get depositMaturityRow => 'Đáo hạn';
+
+  @override
+  String tradeTitle(String date) {
+    return 'Lần mua $date';
+  }
+
+  @override
+  String tradeCardTitle(String name) {
+    return '$name · giá trị hiện tại';
+  }
+
+  @override
+  String tradeQuantityTimes(String quantity, String price) {
+    return '$quantity × $price';
+  }
+
+  @override
+  String get tradeCurrentPrice => 'Giá hiện tại';
+
+  @override
+  String get tradeNoteRow => 'Ghi chú';
+
+  @override
+  String get tradeEdit => 'Sửa';
+
+  @override
+  String get tradeDelete => 'Xoá';
+
+  @override
+  String get tradeEditTitle => 'Sửa lần mua';
+
+  @override
+  String get tradeDeleteLink => 'Xoá lần mua này';
+
+  @override
+  String tradeDeleteTitle(String date) {
+    return 'Xoá lần mua $date?';
+  }
+
+  @override
+  String tradeDeleteLine(String quantity, String name) {
+    return '$quantity $name';
+  }
+
+  @override
+  String tradeRefund(String wallet) {
+    return 'Trả lại $wallet';
+  }
+
+  @override
+  String get tradeDeleteConfirm => 'Xoá lần mua';
+
+  @override
+  String get tradeKeep => 'Giữ lại';
+
+  @override
+  String get tradeSave => 'Lưu';
+
+  @override
+  String get tradePriceRow => 'Giá mua';
 }

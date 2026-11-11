@@ -1,7 +1,7 @@
 # STATUS
 
-- **Phase hiện tại:** 4 — Phase 0 **closed** 2026-09-21; Phase 1 **closed** 2026-10-21 (gate sổ cái); Phase 2 **closed** 2026-10-30; Phase 3 **closed** 2026-11-05. Chưa phải product v1 — còn tài sản/đầu tư và tài sản ròng (Phase 4), `Gate: v1`. AI (gợi ý danh mục, insight) ra sau v1 từ 2026-11-02. Đối chiếu spec: [spec-alignment.md](../product/spec-alignment.md).
-- **Cập nhật:** 2026-11-05
+- **Phase hiện tại:** 4 — Phase 0 **closed** 2026-09-21; Phase 1 **closed** 2026-10-21 (gate sổ cái); Phase 2 **closed** 2026-10-30; Phase 3 **closed** 2026-11-05; Phase 4 **closed** 2026-11-10. Backlog `Gate: v1` đã xong trên `develop`; chưa chạy thử trọn luồng trên thiết bị với backend thật. AI (gợi ý danh mục, insight) ra sau v1 từ 2026-11-02. Đối chiếu spec: [spec-alignment.md](../product/spec-alignment.md).
+- **Cập nhật:** 2026-11-10
 - **Việc bổ sung Phase 2:** `BE-P2-010` khóa kind lúc ghi; `MOB-P2-011` xuất/xóa tài khoản trên app; `QA-P2-001` rà hàng đợi offline; `BE-P2-012` câu trả lời đầu gắn tài khoản; `BE-P2-013` quy đổi để hiển thị; `BE-P2-014` mật khẩu tối thiểu 8 + kiểm tra email trên app. Chi tiết: [tasks/phase-02.md](../../tasks/phase-02.md).
 - **CI:** `INF-P0-002` done; cả ba job xanh trên `main`, [run 33521325189](https://github.com/vanhuy-30/freeva-personal-finance-management/actions/runs/33521325189).
 - **Môi trường:** chỉ chạy local (Ghi chú cuối file). Chưa có server, domain, tài khoản App Store / Google Play.
@@ -35,6 +35,9 @@
 - **Hoàn tiền:** `BE-P3-008` done 2026-11-03 (BE): `POST /transactions/{id}/refunds`, giao dịch `refund` một leg trừ vào chi và ngân sách của kỳ khoản gốc (không phải thu nhập), tổng hoàn ≤ khoản gốc, xóa gốc cần chọn `cascade`/`keep`. `MOB-P3-008` done 2026-11-05: ghi hoàn tiền từ chi tiết khoản chi, "đã hoàn" lấy từ `refundedMinor` của API, popup xoá hỏi xử lý hoàn tiền. [Mobile](../architecture/mobile-refunds.md). [Chi tiết](../architecture/refunds.md).
 - **Đối soát ví:** `BE-P3-005` done 2026-11-02 (BE): `POST /financial-accounts/{id}/reconcile`, giao dịch `adjustment` một leg ngoài thu/chi và ngân sách, thẻ theo dư nợ. `MOB-P3-005` done 2026-11-04. [Chi tiết](../architecture/wallet-reconciliation.md).
 - **Onboarding/tài khoản (nhóm A):** `DS-P2-004` done 2026-10-29: 16 màn khớp canvas, ngân sách nối `BE-P2-E02`, mục tiêu Nợ đưa khối Thẻ tín dụng lên đầu. `BE-P2-012` done 2026-10-30. Còn tách riêng: deep link email, Google/Apple mobile, xác nhận lại email trong Cá nhân. [Chi tiết](../brand/patterns/A-onboarding-auth.md).
+- **Tài sản và đầu tư:** `BE-P4-E01` done 2026-11-06 (BE): `/investments` sáu loại, mua/bán bằng giao dịch `investment` một chân (ngoài thu/chi, ngân sách, tỷ lệ tiết kiệm), giá vốn bình quân gia quyền, lãi/lỗ thực hiện trên từng lần bán, giá nhập tay kèm ngày, tiền gửi lãi đơn, giá trị vào tài sản ròng không trùng ví. Migration additive `investments` (deploy trước API). Mobile `MOB-P4-E01` done 2026-11-07 (5 PR): danh sách, tạo, danh mục/bán/giá, tiền gửi, chi tiết/sửa/xoá lần mua ([mobile](../architecture/mobile-investments.md)). [ADR 014](../architecture/adr/014-investment-ledger.md). [Chi tiết](../architecture/investments.md).
+- **Tài sản ròng theo thời gian:** `BE-P4-E02` done 2026-11-06 (BE): `GET /reports/net-worth/history` cho 7d/30d/3m/6m/1y/toàn bộ, tính từ sổ cái (ví + cho mượn/đi mượn + đầu tư), điểm mới nhất bằng `/net-worth`, không migration. `MOB-P4-E02` done 2026-11-06: màn `/me/net-worth` với biểu đồ, chip khoảng, chạm điểm. [Mobile](../architecture/mobile-net-worth.md). [Chi tiết](../architecture/reports.md).
+- **API đầu tư theo thiết kế:** `BE-P4-E03` done 2026-11-06: tạo kèm lần mua, lần mua có sẵn, sửa/xoá lần mua, % lãi/lỗ, theo danh mục, giá trị theo thời gian. [Chi tiết](../architecture/investments.md).
 - **Mobile analytics:** `MOB-P0-004` done; catalog typed, debug logger local, `schema_version: 1`, không property tùy ý/PII và chưa có vendor SDK.
 - **Backup/restore:** `BE-P0-005` done; [runbook và bằng chứng local](../../infra/runbooks/backup-restore.md), PostgreSQL 16.14. Production PITR/retention/RPO/RTO chưa triển khai.
 - **Scaffold:** xong trên `main` (`153d3e7`). Health API, admin placeholder, Flutter shell, docs, compose.
@@ -123,6 +126,10 @@ Theo [điều kiện hoàn thành Phase 2](../product/phases/phase-02.md):
 
 - **16/17 done**, `BE-P3-E03` wont (gộp vào `BE-P4-E01`). Chi tiết: [tasks/phase-03.md](../../tasks/phase-03.md).
 
+## Backlog Phase 4
+
+- **6/6 done**: `BE-P4-E01`, `BE-P4-E02`, `DS-P4-001`, `BE-P4-E03`, `MOB-P4-E02`, `QA-P4-E01` (kèm `MOB-P4-E01` 2026-11-07; FX không hỗ trợ ở v1, chốt 2026-11-09). Chi tiết: [tasks/phase-04.md](../../tasks/phase-04.md).
+
 ## Phase 3 gate — đã đóng (2026-11-05)
 
 Theo [điều kiện hoàn thành Phase 3](../product/phases/phase-03.md):
@@ -136,6 +143,20 @@ Theo [điều kiện hoàn thành Phase 3](../product/phases/phase-03.md):
 | Mục tiêu `Gate: v1` | Done (`BE-P3-E01` / `MOB-P3-E01`) |
 
 Đóng theo option **B** (giống Phase 0, 1, 2): backlog xong trên `develop` → mở Phase 4.
+
+## Phase 4 gate — đã đóng (2026-11-10)
+
+Theo [điều kiện hoàn thành Phase 4](../product/phases/phase-04.md):
+
+| Mục | Trạng thái |
+|---|---|
+| Backlog task P4 | Done 6/6 (`BE-P4-E01`/`MOB-P4-E01`, `BE-P4-E02`, `DS-P4-001`, `BE-P4-E03`, `MOB-P4-E02`, `QA-P4-E01`) |
+| Không tính trùng ví / tài sản / đầu tư | Done (`BE-P4-E02`: chuỗi 6 tháng thu/chi/chuyển khoản/vàng/cho mượn, 95 → 112 → 117 → 122 triệu; vị thế đầu tư không cộng trùng ví) |
+| Công thức giá vốn, lãi/lỗ có tài liệu + test | Done ([ADR 014](../architecture/adr/014-investment-ledger.md), `investment.spec.ts` 29 test, `investments.integration-spec.ts` PostgreSQL; vàng chỉ/lượng, crypto 8 chữ số, lãi tiền gửi, mua → góp → bán). FX: v1 không hỗ trợ (chốt 2026-11-09) |
+| Nguồn giá và độ trễ luôn hiện | Done (giá nhập tay kèm ngày báo giá trên thẻ tài sản; khoản chưa có giá hiện "Chưa có giá") |
+| Mục `Gate: v1` | Done (tài sản và đầu tư, tài sản ròng theo thời gian, test giá vốn) |
+
+Đóng theo option **B** (giống Phase 0–3): backlog xong trên `develop` → mở Phase 5. Chưa làm: chạy thử trọn luồng đầu tư trên simulator/thiết bị với backend thật; footer "Đã bán hết" và màn xem lại từng lần bán (ngoài thiết kế đã chốt).
 
 ## Ghi chú
 

@@ -83,7 +83,8 @@ class TransactionDetailCard extends StatelessWidget {
           row(s.txDetailTo, value(naming.wallet(bundle.legs.last.accountId))),
       ] else ...[
         if (bundle.type != TransactionType.adjustment &&
-            bundle.type != TransactionType.debt)
+            bundle.type != TransactionType.debt &&
+            bundle.type != TransactionType.investment)
           row(s.txDetailCategory, value(label.category)),
         row(
           s.txDetailWallet,

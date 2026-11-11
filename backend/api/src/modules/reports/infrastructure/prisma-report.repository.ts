@@ -5,9 +5,11 @@ import type { ReportRepository } from '../domain/report.repository';
 import type {
   AccountMovement, AccountRef, CategoryAggregate, MerchantAggregate, NetWorthAggregate, ReportMoneyType, ReportProfile, ResolvedPeriod, TrendBucket, TrendRow, TrendSource,
 } from '../domain/report';
-import { previousPeriod } from '../domain/report';
+import { previousPeriod, todayInTimeZone } from '../domain/report';
+import { parseQuantity, valuate, type InvestmentKind, type InvestmentRecord } from '../../investments/domain/investment';
+import type { DebtHistory, InvestmentHistory, InvestmentValueHistorySource, NetWorthHistorySource, WalletBalanceRow } from '../domain/net-worth-history';
 
-const moneyTypes = new Set<ReportMoneyType>(['income', 'expense', 'transfer', 'adjustment', 'debt', 'refund']);
+const moneyTypes = new Set<ReportMoneyType>(['income', 'expense', 'transfer', 'adjustment', 'debt', 'refund', 'investment']);
 
 @Injectable()
 export class PrismaReportRepository implements ReportRepository {
@@ -63,6 +65,33 @@ export class PrismaReportRepository implements ReportRepository {
 
   netWorth(userId: string) {
     return this.snapshot(tx => this.netWorthRows(tx, userId));
+  }
+
+  netWorthHistory(userId: string, bucketsOf: (profile: ReportProfile, firstOn: string | null) => TrendBucket[]): Promise<NetWorthHistorySource> {
+    return this.snapshot(async tx => {
+      const profile = await this.profile(tx, userId);
+      const today = todayInTimeZone(profile.timezone, new Date());
+      const buckets = bucketsOf(profile, await this.firstActivityOn(tx, userId));
+      return {
+        buckets,
+        today,
+        wallets: await this.walletHistory(tx, userId, buckets.map(bucket => (bucket.to < today ? bucket.to : today))),
+        debts: await this.debtHistory(tx, userId),
+        investments: await this.investmentHistory(tx, userId, profile.timezone),
+      };
+    });
+  }
+
+  investmentValueHistory(
+    userId: string, filter: { kind?: InvestmentKind; investmentId?: string },
+    bucketsOf: (profile: ReportProfile, firstOn: string | null) => TrendBucket[],
+  ): Promise<InvestmentValueHistorySource> {
+    return this.snapshot(async tx => {
+      const profile = await this.profile(tx, userId);
+      const investments = await this.investmentHistory(tx, userId, profile.timezone, filter);
+      const first = investments.flatMap(item => item.trades.map(trade => trade.tradedOn)).sort()[0] ?? null;
+      return { buckets: bucketsOf(profile, first), today: todayInTimeZone(profile.timezone, new Date()), investments };
+    });
   }
 
   private async snapshot<T>(operation: (tx: Prisma.TransactionClient) => Promise<T>): Promise<T> {
@@ -126,6 +155,77 @@ export class PrismaReportRepository implements ReportRepository {
     return rows.map(row => ({ index: row.index, currency: row.currency.trim(), type: flowType(row.type), total: integer(row.total) }));
   }
 
+  /** Earliest day anything moved: any transaction, a lend/borrow or an investment trade. */
+  private async firstActivityOn(tx: Prisma.TransactionClient, userId: string): Promise<string | null> {
+    const rows = await tx.$queryRaw<{ first: string | null }[]>(Prisma.sql`
+      SELECT LEAST(
+        (SELECT MIN("occurredOn") FROM "Transaction" WHERE "userId" = ${userId}::uuid AND "deletedAt" IS NULL),
+        (SELECT MIN("occurredOn") FROM "PersonalDebt" WHERE "userId" = ${userId}::uuid),
+        (SELECT MIN("tradedOn") FROM "InvestmentTrade" WHERE "userId" = ${userId}::uuid)
+      )::text AS first
+    `);
+    return rows[0]?.first ?? null;
+  }
+
+  /** Active wallet balances at the end of each given day, same rule as `netWorthRows` (credit wallets are liabilities). */
+  private async walletHistory(tx: Prisma.TransactionClient, userId: string, asOf: string[]): Promise<WalletBalanceRow[]> {
+    if (asOf.length === 0) return [];
+    const days = Prisma.join(asOf.map((day, index) => Prisma.sql`(${index}::int, ${day}::date)`));
+    const rows = await tx.$queryRaw<{ index: number; currency: string; bucket: string; total: string }[]>(Prisma.sql`
+      SELECT b.idx AS index, a."currencyCode" AS currency,
+        CASE WHEN a.type::text = 'credit' THEN 'liability' ELSE 'asset' END AS bucket,
+        SUM(a."initialBalanceMinor" + COALESCE(mv.total, 0))::text AS total
+      FROM (VALUES ${days}) AS b(idx, as_of)
+      CROSS JOIN "FinancialAccount" a
+      LEFT JOIN LATERAL (
+        SELECT SUM(t."amountMinor") AS total FROM "Transaction" t
+        WHERE t."accountId" = a.id AND t."userId" = a."userId" AND t."deletedAt" IS NULL AND t."occurredOn" <= b.as_of
+      ) mv ON true
+      WHERE a."userId" = ${userId}::uuid AND a."archivedAt" IS NULL
+      GROUP BY b.idx, a."currencyCode", CASE WHEN a.type::text = 'credit' THEN 'liability' ELSE 'asset' END
+    `);
+    return rows.map(row => {
+      if (row.bucket !== 'asset' && row.bucket !== 'liability') throw new Error('Invalid net worth bucket');
+      return { index: row.index, currency: row.currency.trim(), bucket: row.bucket, total: integer(row.total) };
+    });
+  }
+
+  /** Every lend/borrow, archived ones too: a debt settled later was still open on earlier days. */
+  private async debtHistory(tx: Prisma.TransactionClient, userId: string): Promise<DebtHistory[]> {
+    const rows = await tx.personalDebt.findMany({ where: { userId }, include: { payments: { select: { paidOn: true, amountMinor: true } } } });
+    return rows.map(row => ({
+      currency: row.currencyCode.trim(),
+      direction: row.direction,
+      principalMinor: row.principalMinor,
+      occurredOn: row.occurredOn.toISOString().slice(0, 10),
+      payments: row.payments.map(payment => ({ paidOn: payment.paidOn.toISOString().slice(0, 10), amountMinor: payment.amountMinor })),
+    }));
+  }
+
+  private async investmentHistory(
+    tx: Prisma.TransactionClient, userId: string, timezone: string, filter: { kind?: InvestmentKind; investmentId?: string } = {},
+  ): Promise<InvestmentHistory[]> {
+    const rows = await tx.investment.findMany({
+      where: { userId, ...(filter.kind ? { kind: filter.kind } : {}), ...(filter.investmentId ? { id: filter.investmentId } : {}) },
+      include: { trades: true, prices: true },
+    });
+    return rows.map(row => ({
+      kind: row.kind,
+      currency: row.currencyCode.trim(),
+      unit: row.unit,
+      interestRateBps: row.interestRateBps,
+      startDate: row.startDate ? row.startDate.toISOString().slice(0, 10) : null,
+      maturityDate: row.maturityDate ? row.maturityDate.toISOString().slice(0, 10) : null,
+      trades: row.trades.map(trade => ({
+        id: trade.id, side: trade.side, quantityScaled: parseQuantity(trade.quantity.toFixed(8)), amountMinor: trade.amountMinor,
+        tradedOn: trade.tradedOn.toISOString().slice(0, 10), createdAt: trade.createdAt,
+      })),
+      prices: row.prices.map(price => ({
+        priceMinor: price.priceMinor, source: price.source, quotedAt: price.quotedAt, quotedDay: todayInTimeZone(timezone, price.quotedAt),
+      })),
+    }));
+  }
+
   private async firstOn(tx: Prisma.TransactionClient, userId: string): Promise<string | null> {
     const rows = await tx.$queryRaw<{ first: string | null }[]>(Prisma.sql`
       SELECT MIN("occurredOn")::text AS first FROM "Transaction"
@@ -177,6 +277,9 @@ export class PrismaReportRepository implements ReportRepository {
       WHERE "userId" = ${userId}::uuid AND "archivedAt" IS NULL AND "outstandingMinor" > 0
       GROUP BY "currencyCode", direction
     `);
+    // Investments (BE-P4-E01): the wallet already lost the money moved in, so adding the position's value does not double count.
+    // Current value is priced here in SQL-free form by the caller; see investmentRows.
+    const investments = await this.investmentRows(tx, userId);
     const accountRows: NetWorthAggregate[] = rows.map(row => {
       if (row.bucket !== 'asset' && row.bucket !== 'liability') throw new Error('Invalid net worth bucket');
       return { currency: row.currency.trim(), bucket: row.bucket, total: integer(row.total) };
@@ -188,7 +291,31 @@ export class PrismaReportRepository implements ReportRepository {
         ? { currency: row.currency.trim(), bucket: 'asset' as const, total }
         : { currency: row.currency.trim(), bucket: 'liability' as const, total: -total };
     });
-    return [...accountRows, ...debtRows];
+    return [...accountRows, ...debtRows, ...investments];
+  }
+
+  /** Held positions as assets: deposits at principal + accrued interest, the rest at quantity x latest price (cost when unpriced). */
+  private async investmentRows(tx: Prisma.TransactionClient, userId: string): Promise<NetWorthAggregate[]> {
+    const user = await tx.user.findUnique({ where: { id: userId }, select: { timezone: true } });
+    const today = todayInTimeZone(user?.timezone ?? 'UTC', new Date());
+    const rows = await tx.investment.findMany({
+      where: { userId, archivedAt: null, quantity: { gt: 0 } },
+      include: { prices: { orderBy: [{ quotedAt: 'desc' }, { createdAt: 'desc' }], take: 1 } },
+    });
+    const totals = new Map<string, bigint>();
+    for (const row of rows) {
+      const price = row.prices[0];
+      const record: InvestmentRecord = {
+        id: row.id, clientId: row.clientId, kind: row.kind, name: row.name, currencyCode: row.currencyCode.trim(), unit: row.unit,
+        quantityScaled: parseQuantity(row.quantity.toFixed(8)), costBasisMinor: row.costBasisMinor, interestRateBps: row.interestRateBps,
+        startDate: row.startDate ? row.startDate.toISOString().slice(0, 10) : null,
+        maturityDate: row.maturityDate ? row.maturityDate.toISOString().slice(0, 10) : null,
+        note: row.note, archivedAt: row.archivedAt, version: row.version, createdAt: row.createdAt, updatedAt: row.updatedAt,
+        latestPrice: price ? { priceMinor: price.priceMinor, source: price.source, quotedAt: price.quotedAt } : null,
+      };
+      totals.set(record.currencyCode, (totals.get(record.currencyCode) ?? 0n) + valuate(record, today).currentValueMinor);
+    }
+    return [...totals.entries()].map(([currency, total]) => ({ currency, bucket: 'asset' as const, total }));
   }
 }
 

@@ -27,6 +27,13 @@ enum AuthError {
 
   /// The refunds would add up to more than the expense.
   refundExceeds,
+
+  /// A sale or edit would leave less than what was already sold.
+  investmentOversell,
+
+  /// The investment kind does not allow this (second buy on a deposit, a
+  /// price on a deposit, editing a sale).
+  investmentUnsupported,
   invalidEmail,
   passwordMismatch,
   credentials,

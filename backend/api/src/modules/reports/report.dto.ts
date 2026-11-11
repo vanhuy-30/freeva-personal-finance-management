@@ -1,4 +1,6 @@
-import { IsIn, IsOptional, IsString, Matches, ValidateIf } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsIn, IsOptional, IsString, IsUUID, Matches, ValidateIf } from 'class-validator';
+import { INVESTMENT_KINDS, type InvestmentKind } from '../investments/domain/investment';
 import { REPORT_PERIODS, SERIES_WINDOWS, TREND_PERIODS, type ReportPeriodKind, type SeriesWindow, type TrendPeriodKind } from './domain/report';
 
 const optional = (_: unknown, value: unknown) => value !== undefined;
@@ -24,6 +26,12 @@ export class TrendQueryDto {
 export class SeriesQueryDto {
   @IsIn(SERIES_WINDOWS) window!: SeriesWindow;
   @ValidateIf(optional) @IsString() @Matches(/^\d{4}-\d{2}-\d{2}(?![\s\S])/) on?: string;
+}
+
+/** Value of held investments over time (BE-P4-E03); narrow to one kind or one position. */
+export class InvestmentHistoryQueryDto extends SeriesQueryDto {
+  @IsOptional() @IsIn([...INVESTMENT_KINDS]) kind?: InvestmentKind;
+  @IsOptional() @Transform(({ value }: { value: unknown }) => (typeof value === 'string' ? value.toLowerCase() : value)) @IsUUID() investmentId?: string;
 }
 
 /** IsOptional (not ValidateIf) so whitelist/forbidNonWhitelisted see the property. */

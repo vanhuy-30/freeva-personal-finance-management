@@ -2,6 +2,32 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-11-10
+
+- **Phase 4 closed**: backlog 6/6 done (tài sản và đầu tư, tài sản ròng theo thời gian, thiết kế, test giá vốn; `Gate: v1`). FX đầu tư không hỗ trợ ở v1. Mở Phase 5 (toàn bộ sau v1).
+
+## 2026-11-09
+
+- `QA-P4-E01` done: chủ dự án chốt v1 không hỗ trợ vị thế khác tiền tệ ví (không tỷ giá trong đầu tư). Phase 4 đủ 6/6 task. Mở lại khi cần: ADR và task riêng.
+
+## 2026-11-07
+
+- `MOB-P4-E01` PR 5/5 (xong task): chi tiết lần mua, sửa lần mua (phát lại vị thế, chân ví theo), xoá lần mua có xác nhận và nêu tiền trả lại ví; `pairs.py` nhóm `P`. Đầu tư trên app đủ P.1–P.12. [Thiết kế](../architecture/mobile-investments.md).
+- `MOB-P4-E01` PR 4/5: tiền gửi trên app — chi tiết (giá trị hôm nay, gốc, lãi tạm tính, lãi suất, đáo hạn còn bao nhiêu ngày), rút tiền gửi, sửa khoản, xoá khoản. [Thiết kế](../architecture/mobile-investments.md).
+- `MOB-P4-E01` PR 3/5: màn danh mục đầu tư (P.3) với từng tài sản, giá, các lần mua và dòng đã bán; bán một phần hoặc hết có xem trước lãi chốt (P.9); cập nhật giá nhập tay (P.10); Mua thêm. [Thiết kế](../architecture/mobile-investments.md).
+- `MOB-P4-E01` PR 2/4: tạo khoản đầu tư trên app — màn `/me/investments/new` (sáu danh mục, vàng chỉ/lượng, tiền gửi lãi suất và đáo hạn, bất động sản một lô), số lượng Decimal 8 chữ số bằng `BigInt`, lấy từ ví hoặc "đã có từ trước". Nút thêm ở P.1 và P.2. [Thiết kế](../architecture/mobile-investments.md).
+- `MOB-P4-E01` PR 1/4: nền đầu tư trên app — `TransactionType.investment` (một chân, khoá sửa/xoá), màn `/me/investments` (thẻ tổng, tỷ trọng, danh mục, tag chưa có giá), ô "Đầu tư" ở lưới Cá nhân, dòng Đầu tư ở Tài sản ròng mở màn này. Chưa thêm được khoản đầu tư (PR 2). [Thiết kế](../architecture/mobile-investments.md).
+
+## 2026-11-06
+
+- `MOB-P4-E02`: biểu đồ tài sản ròng trên app — màn `/me/net-worth` (số hôm nay, thay đổi theo khoảng, đường, chip 7 ngày → Tất cả, chạm điểm xem ngày và số, Tài sản · Nợ, Ví · Đầu tư), ô "Tài sản ròng" ở lưới Cá nhân. Không đổi backend. Golden sáng/tối, đối chiếu board nhóm Q. [Thiết kế](../architecture/mobile-net-worth.md).
+
+- `BE-P4-E03` (backend): API đầu tư theo thiết kế P — tạo tài sản kèm lần mua đầu (gộp khi trùng tên), lần mua "đã có từ trước" không trừ ví, giá một đơn vị trên trade (giá mua/bán thành giá hiện tại), sửa/xoá từng lần mua kéo theo chân ví và phát lại vị thế, `%` lãi/lỗ, tổng hợp và tỷ trọng theo danh mục, `GET /reports/investments/history`. Migration additive `investment_trade_edit`. 12 unit + 10 integration test mới. [Thiết kế](../architecture/investments.md).
+
+- `BE-P4-E02` (backend): `GET /reports/net-worth/history` — tài sản ròng cuối mỗi mốc của cửa sổ 7 ngày, 30 ngày, 3 tháng, 6 tháng, 1 năm, toàn bộ; tính lại từ sổ cái (ví, cho mượn/đi mượn, vị thế đầu tư phát lại tới từng ngày), không trùng ví/đầu tư, điểm mới nhất bằng `/net-worth`. Không migration. 17 unit + 8 integration test mới. [Thiết kế](../architecture/reports.md).
+
+- `BE-P4-E01` (backend): tài sản và đầu tư — ADR 014 (ghi sổ), `/api/v1/investments` (vàng chỉ/lượng, cổ phiếu, chứng chỉ quỹ, tiền gửi, bất động sản, crypto), mua/bán bằng giao dịch `investment` một chân, giá vốn bình quân gia quyền, lãi/lỗ thực hiện, giá nhập tay, tiền gửi lãi đơn, giá trị vào `/reports/net-worth`, `byAccount.investmentMinor`, export/xoá tài khoản. Migration `investments` additive. Unit 29 + integration 11 test mới; 24 suite integration PostgreSQL xanh. Mobile chưa làm. [Thiết kế](../architecture/investments.md).
+
 ## 2026-11-05
 
 - **Phase 3 closed**: backlog 16/17 done, `BE-P3-E03` wont (gộp vào `BE-P4-E01`); gồm mục tiêu, vay và nợ, dự báo số dư, ticket `P3-001`…`012` (`Gate: v1`). Mở Phase 4.

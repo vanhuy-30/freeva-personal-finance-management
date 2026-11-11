@@ -9047,6 +9047,707 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Day {day} · estimate'**
   String forecastDayEstimated(int day);
+
+  /// No description provided for @meNetWorth.
+  ///
+  /// In en, this message translates to:
+  /// **'Net worth'**
+  String get meNetWorth;
+
+  /// No description provided for @netWorthTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Net worth'**
+  String get netWorthTitle;
+
+  /// No description provided for @netWorthToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today · {date}'**
+  String netWorthToday(String date);
+
+  /// No description provided for @netWorthDate.
+  ///
+  /// In en, this message translates to:
+  /// **'{date}'**
+  String netWorthDate(String date);
+
+  /// No description provided for @netWorthChange.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} {window, select, week{in 7 days} month{in 30 days} quarter{in 3 months} half{in 6 months} year{in 1 year} other{overall}}'**
+  String netWorthChange(String amount, String window);
+
+  /// No description provided for @netWorthRange.
+  ///
+  /// In en, this message translates to:
+  /// **'{window, select, week{7 days} month{30 days} quarter{3 months} half{6 months} year{1 year} other{All}}'**
+  String netWorthRange(String window);
+
+  /// No description provided for @netWorthRangeSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Chart range'**
+  String get netWorthRangeSemantics;
+
+  /// No description provided for @netWorthAssets.
+  ///
+  /// In en, this message translates to:
+  /// **'Assets'**
+  String get netWorthAssets;
+
+  /// No description provided for @netWorthDebts.
+  ///
+  /// In en, this message translates to:
+  /// **'Debts'**
+  String get netWorthDebts;
+
+  /// No description provided for @netWorthInAssets.
+  ///
+  /// In en, this message translates to:
+  /// **'In assets'**
+  String get netWorthInAssets;
+
+  /// No description provided for @netWorthWallets.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallets'**
+  String get netWorthWallets;
+
+  /// No description provided for @netWorthInvestments.
+  ///
+  /// In en, this message translates to:
+  /// **'Investments'**
+  String get netWorthInvestments;
+
+  /// No description provided for @netWorthChartSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Net worth, {range}, from {from} to {to}'**
+  String netWorthChartSemantics(String range, String from, String to);
+
+  /// No description provided for @transactionInvestment.
+  ///
+  /// In en, this message translates to:
+  /// **'Investment'**
+  String get transactionInvestment;
+
+  /// No description provided for @txKindInvestment.
+  ///
+  /// In en, this message translates to:
+  /// **'investment'**
+  String get txKindInvestment;
+
+  /// No description provided for @txInvestmentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Investment'**
+  String get txInvestmentTitle;
+
+  /// No description provided for @txInvestmentReadOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'This belongs to Investments and can’t be edited.'**
+  String get txInvestmentReadOnly;
+
+  /// No description provided for @meInvestments.
+  ///
+  /// In en, this message translates to:
+  /// **'Investments'**
+  String get meInvestments;
+
+  /// No description provided for @investmentOversell.
+  ///
+  /// In en, this message translates to:
+  /// **'You can’t sell more than you still hold.'**
+  String get investmentOversell;
+
+  /// No description provided for @investmentUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'This investment doesn’t allow that.'**
+  String get investmentUnsupported;
+
+  /// No description provided for @investmentsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Investments'**
+  String get investmentsTitle;
+
+  /// No description provided for @investmentsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No investments yet'**
+  String get investmentsEmptyTitle;
+
+  /// No description provided for @investmentsEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Record gold, stocks, deposits… to see your assets in one place.'**
+  String get investmentsEmptyBody;
+
+  /// No description provided for @investmentsTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total investment value'**
+  String get investmentsTotal;
+
+  /// No description provided for @investmentsCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost'**
+  String get investmentsCost;
+
+  /// No description provided for @investmentsGain.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected gain/loss'**
+  String get investmentsGain;
+
+  /// No description provided for @investmentsValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Value'**
+  String get investmentsValue;
+
+  /// No description provided for @investmentsAllocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Share by category'**
+  String get investmentsAllocation;
+
+  /// No description provided for @investmentsKinds.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get investmentsKinds;
+
+  /// No description provided for @investmentsUnpriced.
+  ///
+  /// In en, this message translates to:
+  /// **'No price yet'**
+  String get investmentsUnpriced;
+
+  /// No description provided for @investmentKind.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind, select, gold{Gold} stock{Stocks} fund{Funds} savings_deposit{Deposits} real_estate{Real estate} crypto{Crypto} other{Other}}'**
+  String investmentKind(String kind);
+
+  /// No description provided for @investmentsSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind}, value {value}, cost {cost}, expected gain or loss {gain}'**
+  String investmentsSemantics(
+    String kind,
+    String value,
+    String cost,
+    String gain,
+  );
+
+  /// No description provided for @investmentAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add investment'**
+  String get investmentAdd;
+
+  /// No description provided for @investmentNewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New investment'**
+  String get investmentNewTitle;
+
+  /// No description provided for @investmentName.
+  ///
+  /// In en, this message translates to:
+  /// **'Asset name'**
+  String get investmentName;
+
+  /// No description provided for @investmentGoldByChi.
+  ///
+  /// In en, this message translates to:
+  /// **'Count by chỉ'**
+  String get investmentGoldByChi;
+
+  /// No description provided for @investmentGoldByLuong.
+  ///
+  /// In en, this message translates to:
+  /// **'Count by lượng'**
+  String get investmentGoldByLuong;
+
+  /// No description provided for @investmentQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get investmentQuantity;
+
+  /// No description provided for @investmentUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'{unit, select, chi{chỉ} luong{lượng} share{shares} unit{units} coin{coins} other{}}'**
+  String investmentUnit(String unit);
+
+  /// No description provided for @investmentUnitPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'{unit, select, chi{Price per chỉ} luong{Price per lượng} share{Price per share} unit{Price per unit} coin{Price per coin} other{Price}}'**
+  String investmentUnitPrice(String unit);
+
+  /// No description provided for @investmentBuyDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy date'**
+  String get investmentBuyDate;
+
+  /// No description provided for @investmentTotalMoney.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get investmentTotalMoney;
+
+  /// No description provided for @investmentFromWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Take from wallet'**
+  String get investmentFromWallet;
+
+  /// No description provided for @investmentWalletLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} left'**
+  String investmentWalletLeft(String amount);
+
+  /// No description provided for @investmentExisting.
+  ///
+  /// In en, this message translates to:
+  /// **'Already held'**
+  String get investmentExisting;
+
+  /// No description provided for @investmentExistingHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Doesn’t take from a wallet'**
+  String get investmentExistingHint;
+
+  /// No description provided for @investmentNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note (optional)'**
+  String get investmentNote;
+
+  /// No description provided for @investmentSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save investment'**
+  String get investmentSave;
+
+  /// No description provided for @investmentPurchasePrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase price'**
+  String get investmentPurchasePrice;
+
+  /// No description provided for @investmentDepositAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Deposit amount'**
+  String get investmentDepositAmount;
+
+  /// No description provided for @investmentRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Interest rate/year'**
+  String get investmentRate;
+
+  /// No description provided for @investmentDepositDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Deposit date'**
+  String get investmentDepositDate;
+
+  /// No description provided for @investmentMaturity.
+  ///
+  /// In en, this message translates to:
+  /// **'Maturity date'**
+  String get investmentMaturity;
+
+  /// No description provided for @investmentPickDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a date'**
+  String get investmentPickDate;
+
+  /// No description provided for @investmentHolding.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind} held'**
+  String investmentHolding(String kind);
+
+  /// No description provided for @investmentTradesHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Buys'**
+  String get investmentTradesHeader;
+
+  /// No description provided for @investmentBuyMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy more'**
+  String get investmentBuyMore;
+
+  /// No description provided for @investmentSell.
+  ///
+  /// In en, this message translates to:
+  /// **'Sell'**
+  String get investmentSell;
+
+  /// No description provided for @investmentUpdatePrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Update price'**
+  String get investmentUpdatePrice;
+
+  /// No description provided for @investmentPerUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'{price}/{unit}'**
+  String investmentPerUnit(String price, String unit);
+
+  /// No description provided for @investmentTradePrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price {price}/{unit}'**
+  String investmentTradePrice(String price, String unit);
+
+  /// No description provided for @investmentTradeCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost {price}/{unit}'**
+  String investmentTradeCost(String price, String unit);
+
+  /// No description provided for @investmentExistingBox.
+  ///
+  /// In en, this message translates to:
+  /// **'held'**
+  String get investmentExistingBox;
+
+  /// No description provided for @investmentSold.
+  ///
+  /// In en, this message translates to:
+  /// **'Sold'**
+  String get investmentSold;
+
+  /// No description provided for @investmentSoldLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{quantity} · realized {gain}'**
+  String investmentSoldLine(String quantity, String gain);
+
+  /// No description provided for @investmentSoldGain.
+  ///
+  /// In en, this message translates to:
+  /// **'Realized {gain}'**
+  String investmentSoldGain(String gain);
+
+  /// No description provided for @investmentSellTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sell {name}'**
+  String investmentSellTitle(String name);
+
+  /// No description provided for @investmentHeld.
+  ///
+  /// In en, this message translates to:
+  /// **'Holding {quantity}'**
+  String investmentHeld(String quantity);
+
+  /// No description provided for @investmentReceive.
+  ///
+  /// In en, this message translates to:
+  /// **'You receive'**
+  String get investmentReceive;
+
+  /// No description provided for @investmentSellQty.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity to sell'**
+  String get investmentSellQty;
+
+  /// No description provided for @investmentSellPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'{unit, select, chi{Sell price per chỉ} luong{Sell price per lượng} share{Sell price per share} unit{Sell price per unit} coin{Sell price per coin} other{Sell price}}'**
+  String investmentSellPrice(String unit);
+
+  /// No description provided for @investmentSellAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Sell all {quantity}'**
+  String investmentSellAll(String quantity);
+
+  /// No description provided for @investmentSellDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Sell date'**
+  String get investmentSellDate;
+
+  /// No description provided for @investmentToWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Into wallet'**
+  String get investmentToWallet;
+
+  /// No description provided for @investmentRealized.
+  ///
+  /// In en, this message translates to:
+  /// **'Realized {gain}'**
+  String investmentRealized(String gain);
+
+  /// No description provided for @investmentSellButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Sell {quantity} · {amount}'**
+  String investmentSellButton(String quantity, String amount);
+
+  /// No description provided for @investmentPriceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Price of {name}'**
+  String investmentPriceTitle(String name);
+
+  /// No description provided for @investmentPriceOne.
+  ///
+  /// In en, this message translates to:
+  /// **'{unit, select, chi{Price per chỉ} luong{Price per lượng} share{Price per share} unit{Price per unit} coin{Price per coin} other{Price}}'**
+  String investmentPriceOne(String unit);
+
+  /// No description provided for @investmentPricePrev.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous {price} · {date}'**
+  String investmentPricePrev(String price, String date);
+
+  /// No description provided for @investmentQuoteDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Quote date'**
+  String get investmentQuoteDate;
+
+  /// No description provided for @investmentSavePrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Save price'**
+  String get investmentSavePrice;
+
+  /// No description provided for @depositValueToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Value today'**
+  String get depositValueToday;
+
+  /// No description provided for @depositPrincipal.
+  ///
+  /// In en, this message translates to:
+  /// **'Principal'**
+  String get depositPrincipal;
+
+  /// No description provided for @depositInterest.
+  ///
+  /// In en, this message translates to:
+  /// **'Interest so far'**
+  String get depositInterest;
+
+  /// No description provided for @depositRateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Interest rate'**
+  String get depositRateLabel;
+
+  /// No description provided for @depositRatePerYear.
+  ///
+  /// In en, this message translates to:
+  /// **'{rate}/year'**
+  String depositRatePerYear(String rate);
+
+  /// No description provided for @depositMaturityLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{date} · {days, plural, =1{1 day left} other{{days} days left}}'**
+  String depositMaturityLeft(String date, int days);
+
+  /// No description provided for @depositMatured.
+  ///
+  /// In en, this message translates to:
+  /// **'{date} · matured'**
+  String depositMatured(String date);
+
+  /// No description provided for @depositWithdraw.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw deposit'**
+  String get depositWithdraw;
+
+  /// No description provided for @depositEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get depositEdit;
+
+  /// No description provided for @depositDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get depositDelete;
+
+  /// No description provided for @depositReceive.
+  ///
+  /// In en, this message translates to:
+  /// **'You receive'**
+  String get depositReceive;
+
+  /// No description provided for @depositWithdrawDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw date'**
+  String get depositWithdrawDate;
+
+  /// No description provided for @depositToWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Into wallet'**
+  String get depositToWallet;
+
+  /// No description provided for @depositWithdrawButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw {amount}'**
+  String depositWithdrawButton(String amount);
+
+  /// No description provided for @depositDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this deposit?'**
+  String get depositDeleteTitle;
+
+  /// No description provided for @depositDeleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The deposit is removed and the principal goes back to the wallet it came from.'**
+  String get depositDeleteBody;
+
+  /// No description provided for @depositEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit deposit'**
+  String get depositEditTitle;
+
+  /// No description provided for @depositEditSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get depositEditSave;
+
+  /// No description provided for @depositMaturityRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Matures'**
+  String get depositMaturityRow;
+
+  /// No description provided for @tradeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy {date}'**
+  String tradeTitle(String date);
+
+  /// No description provided for @tradeCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} · current value'**
+  String tradeCardTitle(String name);
+
+  /// No description provided for @tradeQuantityTimes.
+  ///
+  /// In en, this message translates to:
+  /// **'{quantity} × {price}'**
+  String tradeQuantityTimes(String quantity, String price);
+
+  /// No description provided for @tradeCurrentPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Current price'**
+  String get tradeCurrentPrice;
+
+  /// No description provided for @tradeNoteRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get tradeNoteRow;
+
+  /// No description provided for @tradeEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get tradeEdit;
+
+  /// No description provided for @tradeDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get tradeDelete;
+
+  /// No description provided for @tradeEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit buy'**
+  String get tradeEditTitle;
+
+  /// No description provided for @tradeDeleteLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this buy'**
+  String get tradeDeleteLink;
+
+  /// No description provided for @tradeDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete buy {date}?'**
+  String tradeDeleteTitle(String date);
+
+  /// No description provided for @tradeDeleteLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{quantity} {name}'**
+  String tradeDeleteLine(String quantity, String name);
+
+  /// No description provided for @tradeRefund.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to {wallet}'**
+  String tradeRefund(String wallet);
+
+  /// No description provided for @tradeDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete buy'**
+  String get tradeDeleteConfirm;
+
+  /// No description provided for @tradeKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep'**
+  String get tradeKeep;
+
+  /// No description provided for @tradeSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get tradeSave;
+
+  /// No description provided for @tradePriceRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase price'**
+  String get tradePriceRow;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

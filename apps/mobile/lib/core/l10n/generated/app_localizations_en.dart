@@ -5238,4 +5238,493 @@ class SEn extends S {
   String forecastDayEstimated(int day) {
     return 'Day $day · estimate';
   }
+
+  @override
+  String get meNetWorth => 'Net worth';
+
+  @override
+  String get netWorthTitle => 'Net worth';
+
+  @override
+  String netWorthToday(String date) {
+    return 'Today · $date';
+  }
+
+  @override
+  String netWorthDate(String date) {
+    return '$date';
+  }
+
+  @override
+  String netWorthChange(String amount, String window) {
+    String _temp0 = intl.Intl.selectLogic(window, {
+      'week': 'in 7 days',
+      'month': 'in 30 days',
+      'quarter': 'in 3 months',
+      'half': 'in 6 months',
+      'year': 'in 1 year',
+      'other': 'overall',
+    });
+    return '$amount $_temp0';
+  }
+
+  @override
+  String netWorthRange(String window) {
+    String _temp0 = intl.Intl.selectLogic(window, {
+      'week': '7 days',
+      'month': '30 days',
+      'quarter': '3 months',
+      'half': '6 months',
+      'year': '1 year',
+      'other': 'All',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get netWorthRangeSemantics => 'Chart range';
+
+  @override
+  String get netWorthAssets => 'Assets';
+
+  @override
+  String get netWorthDebts => 'Debts';
+
+  @override
+  String get netWorthInAssets => 'In assets';
+
+  @override
+  String get netWorthWallets => 'Wallets';
+
+  @override
+  String get netWorthInvestments => 'Investments';
+
+  @override
+  String netWorthChartSemantics(String range, String from, String to) {
+    return 'Net worth, $range, from $from to $to';
+  }
+
+  @override
+  String get transactionInvestment => 'Investment';
+
+  @override
+  String get txKindInvestment => 'investment';
+
+  @override
+  String get txInvestmentTitle => 'Investment';
+
+  @override
+  String get txInvestmentReadOnly =>
+      'This belongs to Investments and can’t be edited.';
+
+  @override
+  String get meInvestments => 'Investments';
+
+  @override
+  String get investmentOversell => 'You can’t sell more than you still hold.';
+
+  @override
+  String get investmentUnsupported => 'This investment doesn’t allow that.';
+
+  @override
+  String get investmentsTitle => 'Investments';
+
+  @override
+  String get investmentsEmptyTitle => 'No investments yet';
+
+  @override
+  String get investmentsEmptyBody =>
+      'Record gold, stocks, deposits… to see your assets in one place.';
+
+  @override
+  String get investmentsTotal => 'Total investment value';
+
+  @override
+  String get investmentsCost => 'Cost';
+
+  @override
+  String get investmentsGain => 'Expected gain/loss';
+
+  @override
+  String get investmentsValue => 'Value';
+
+  @override
+  String get investmentsAllocation => 'Share by category';
+
+  @override
+  String get investmentsKinds => 'Categories';
+
+  @override
+  String get investmentsUnpriced => 'No price yet';
+
+  @override
+  String investmentKind(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'gold': 'Gold',
+      'stock': 'Stocks',
+      'fund': 'Funds',
+      'savings_deposit': 'Deposits',
+      'real_estate': 'Real estate',
+      'crypto': 'Crypto',
+      'other': 'Other',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String investmentsSemantics(
+    String kind,
+    String value,
+    String cost,
+    String gain,
+  ) {
+    return '$kind, value $value, cost $cost, expected gain or loss $gain';
+  }
+
+  @override
+  String get investmentAdd => 'Add investment';
+
+  @override
+  String get investmentNewTitle => 'New investment';
+
+  @override
+  String get investmentName => 'Asset name';
+
+  @override
+  String get investmentGoldByChi => 'Count by chỉ';
+
+  @override
+  String get investmentGoldByLuong => 'Count by lượng';
+
+  @override
+  String get investmentQuantity => 'Quantity';
+
+  @override
+  String investmentUnit(String unit) {
+    String _temp0 = intl.Intl.selectLogic(unit, {
+      'chi': 'chỉ',
+      'luong': 'lượng',
+      'share': 'shares',
+      'unit': 'units',
+      'coin': 'coins',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String investmentUnitPrice(String unit) {
+    String _temp0 = intl.Intl.selectLogic(unit, {
+      'chi': 'Price per chỉ',
+      'luong': 'Price per lượng',
+      'share': 'Price per share',
+      'unit': 'Price per unit',
+      'coin': 'Price per coin',
+      'other': 'Price',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get investmentBuyDate => 'Buy date';
+
+  @override
+  String get investmentTotalMoney => 'Total';
+
+  @override
+  String get investmentFromWallet => 'Take from wallet';
+
+  @override
+  String investmentWalletLeft(String amount) {
+    return '$amount left';
+  }
+
+  @override
+  String get investmentExisting => 'Already held';
+
+  @override
+  String get investmentExistingHint => 'Doesn’t take from a wallet';
+
+  @override
+  String get investmentNote => 'Note (optional)';
+
+  @override
+  String get investmentSave => 'Save investment';
+
+  @override
+  String get investmentPurchasePrice => 'Purchase price';
+
+  @override
+  String get investmentDepositAmount => 'Deposit amount';
+
+  @override
+  String get investmentRate => 'Interest rate/year';
+
+  @override
+  String get investmentDepositDate => 'Deposit date';
+
+  @override
+  String get investmentMaturity => 'Maturity date';
+
+  @override
+  String get investmentPickDate => 'Pick a date';
+
+  @override
+  String investmentHolding(String kind) {
+    return '$kind held';
+  }
+
+  @override
+  String get investmentTradesHeader => 'Buys';
+
+  @override
+  String get investmentBuyMore => 'Buy more';
+
+  @override
+  String get investmentSell => 'Sell';
+
+  @override
+  String get investmentUpdatePrice => 'Update price';
+
+  @override
+  String investmentPerUnit(String price, String unit) {
+    return '$price/$unit';
+  }
+
+  @override
+  String investmentTradePrice(String price, String unit) {
+    return 'Price $price/$unit';
+  }
+
+  @override
+  String investmentTradeCost(String price, String unit) {
+    return 'Cost $price/$unit';
+  }
+
+  @override
+  String get investmentExistingBox => 'held';
+
+  @override
+  String get investmentSold => 'Sold';
+
+  @override
+  String investmentSoldLine(String quantity, String gain) {
+    return '$quantity · realized $gain';
+  }
+
+  @override
+  String investmentSoldGain(String gain) {
+    return 'Realized $gain';
+  }
+
+  @override
+  String investmentSellTitle(String name) {
+    return 'Sell $name';
+  }
+
+  @override
+  String investmentHeld(String quantity) {
+    return 'Holding $quantity';
+  }
+
+  @override
+  String get investmentReceive => 'You receive';
+
+  @override
+  String get investmentSellQty => 'Quantity to sell';
+
+  @override
+  String investmentSellPrice(String unit) {
+    String _temp0 = intl.Intl.selectLogic(unit, {
+      'chi': 'Sell price per chỉ',
+      'luong': 'Sell price per lượng',
+      'share': 'Sell price per share',
+      'unit': 'Sell price per unit',
+      'coin': 'Sell price per coin',
+      'other': 'Sell price',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String investmentSellAll(String quantity) {
+    return 'Sell all $quantity';
+  }
+
+  @override
+  String get investmentSellDate => 'Sell date';
+
+  @override
+  String get investmentToWallet => 'Into wallet';
+
+  @override
+  String investmentRealized(String gain) {
+    return 'Realized $gain';
+  }
+
+  @override
+  String investmentSellButton(String quantity, String amount) {
+    return 'Sell $quantity · $amount';
+  }
+
+  @override
+  String investmentPriceTitle(String name) {
+    return 'Price of $name';
+  }
+
+  @override
+  String investmentPriceOne(String unit) {
+    String _temp0 = intl.Intl.selectLogic(unit, {
+      'chi': 'Price per chỉ',
+      'luong': 'Price per lượng',
+      'share': 'Price per share',
+      'unit': 'Price per unit',
+      'coin': 'Price per coin',
+      'other': 'Price',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String investmentPricePrev(String price, String date) {
+    return 'Previous $price · $date';
+  }
+
+  @override
+  String get investmentQuoteDate => 'Quote date';
+
+  @override
+  String get investmentSavePrice => 'Save price';
+
+  @override
+  String get depositValueToday => 'Value today';
+
+  @override
+  String get depositPrincipal => 'Principal';
+
+  @override
+  String get depositInterest => 'Interest so far';
+
+  @override
+  String get depositRateLabel => 'Interest rate';
+
+  @override
+  String depositRatePerYear(String rate) {
+    return '$rate/year';
+  }
+
+  @override
+  String depositMaturityLeft(String date, int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days left',
+      one: '1 day left',
+    );
+    return '$date · $_temp0';
+  }
+
+  @override
+  String depositMatured(String date) {
+    return '$date · matured';
+  }
+
+  @override
+  String get depositWithdraw => 'Withdraw deposit';
+
+  @override
+  String get depositEdit => 'Edit';
+
+  @override
+  String get depositDelete => 'Delete';
+
+  @override
+  String get depositReceive => 'You receive';
+
+  @override
+  String get depositWithdrawDate => 'Withdraw date';
+
+  @override
+  String get depositToWallet => 'Into wallet';
+
+  @override
+  String depositWithdrawButton(String amount) {
+    return 'Withdraw $amount';
+  }
+
+  @override
+  String get depositDeleteTitle => 'Delete this deposit?';
+
+  @override
+  String get depositDeleteBody =>
+      'The deposit is removed and the principal goes back to the wallet it came from.';
+
+  @override
+  String get depositEditTitle => 'Edit deposit';
+
+  @override
+  String get depositEditSave => 'Save';
+
+  @override
+  String get depositMaturityRow => 'Matures';
+
+  @override
+  String tradeTitle(String date) {
+    return 'Buy $date';
+  }
+
+  @override
+  String tradeCardTitle(String name) {
+    return '$name · current value';
+  }
+
+  @override
+  String tradeQuantityTimes(String quantity, String price) {
+    return '$quantity × $price';
+  }
+
+  @override
+  String get tradeCurrentPrice => 'Current price';
+
+  @override
+  String get tradeNoteRow => 'Note';
+
+  @override
+  String get tradeEdit => 'Edit';
+
+  @override
+  String get tradeDelete => 'Delete';
+
+  @override
+  String get tradeEditTitle => 'Edit buy';
+
+  @override
+  String get tradeDeleteLink => 'Delete this buy';
+
+  @override
+  String tradeDeleteTitle(String date) {
+    return 'Delete buy $date?';
+  }
+
+  @override
+  String tradeDeleteLine(String quantity, String name) {
+    return '$quantity $name';
+  }
+
+  @override
+  String tradeRefund(String wallet) {
+    return 'Back to $wallet';
+  }
+
+  @override
+  String get tradeDeleteConfirm => 'Delete buy';
+
+  @override
+  String get tradeKeep => 'Keep';
+
+  @override
+  String get tradeSave => 'Save';
+
+  @override
+  String get tradePriceRow => 'Purchase price';
 }
