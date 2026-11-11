@@ -18,6 +18,7 @@ import '../goals/goal_stub.dart';
 import '../profile/fakes.dart';
 import '../settings/fakes.dart';
 import 'fakes.dart';
+import '../../support/server_config_fixture.dart';
 
 /// Wallet API stand-in: saves what it is given, can be made to fail.
 class MemoryWalletRepository implements WalletRepository {
@@ -101,15 +102,26 @@ Future<SetupDeps> registerSetupDeps() async {
   deps.settings = DefaultSettingsViewModel(
     cases,
     DefaultAuthUseCases(
-      AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+      AuthRepositoryImpl(
+        FakeApi(),
+        MemoryVault(),
+        FakeBiometrics(),
+        testServerConfigModel(),
+      ),
+      testServerConfigModel(),
     ),
     deps.analytics,
   );
   await deps.settings.load();
-  final walletCases = DefaultWalletUseCases(deps.wallets);
+  final walletCases = DefaultWalletUseCases(
+    deps.wallets,
+    testServerConfigModel(),
+  );
   final auth = EmailAuth();
   getIt
-    ..registerSingleton<ProfileUseCases>(ProfileUseCases(deps.profiles))
+    ..registerSingleton<ProfileUseCases>(
+      ProfileUseCases(deps.profiles, testServerConfigModel()),
+    )
     ..registerSingleton<WalletUseCases>(walletCases)
     ..registerSingleton<GoalUseCases>(deps.goals)
     ..registerSingleton<PendingGoalUseCases>(

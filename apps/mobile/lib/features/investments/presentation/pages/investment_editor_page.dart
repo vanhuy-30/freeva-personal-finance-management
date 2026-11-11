@@ -27,6 +27,7 @@ import '../../domain/investment.dart';
 import '../viewmodels/investment_view_model.dart';
 import '../widgets/investment_labels.dart';
 import '../widgets/investment_wallet_list.dart';
+import '../../../server_config/domain/app_limits.dart';
 
 /// Khoản đầu tư mới (boards P.5 and P.6): pick a category, describe the
 /// first buy, and say where the money came from. A name that already exists
@@ -308,7 +309,8 @@ class _InvestmentEditorPageState extends State<InvestmentEditorPage> {
       FreevaTextField(
         label: s.investmentName,
         controller: name,
-        maxLength: 80,
+        maxLength:
+            getIt<AppLimitsSource>().requireLimits.investmentNameMaxLength,
         textInputAction: TextInputAction.next,
         onChanged: (_) => setState(() {}),
       ),
@@ -380,7 +382,7 @@ class _InvestmentEditorPageState extends State<InvestmentEditorPage> {
       FreevaTextField(
         label: s.investmentNote,
         controller: note,
-        maxLength: 500,
+        maxLength: getIt<AppLimitsSource>().requireLimits.noteMaxLength,
         leadingIcon: LucideIcons.textAlignStart,
       ),
     ];

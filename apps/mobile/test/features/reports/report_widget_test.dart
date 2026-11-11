@@ -67,7 +67,13 @@ void main() {
     auth =
         DefaultAuthViewModel(
             DefaultAuthUseCases(
-              AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+              AuthRepositoryImpl(
+                FakeApi(),
+                MemoryVault(),
+                FakeBiometrics(),
+                testServerConfigModel(),
+              ),
+              testServerConfigModel(),
             ),
           )
           ..stage = AuthStage.unlocked
@@ -221,7 +227,13 @@ void main() {
     final settings = DefaultSettingsViewModel(
       DefaultSettingsUseCases(SettingsRepositoryImpl(MemoryPreferences())),
       DefaultAuthUseCases(
-        AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+        AuthRepositoryImpl(
+          FakeApi(),
+          MemoryVault(),
+          FakeBiometrics(),
+          testServerConfigModel(),
+        ),
+        testServerConfigModel(),
       ),
       RecordingAnalytics(),
     );

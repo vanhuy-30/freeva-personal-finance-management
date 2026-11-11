@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/features/categories/presentation/widgets/category_names.dart';
 
 import '../../support/server_config_fixture.dart';
 
@@ -123,7 +124,7 @@ class StubCategoryViewModel extends ChangeNotifier
   @override
   List<FinanceCategory> categories;
   @override
-  CategoryOptions options = const CategoryOptions(
+  CategoryOptions options = CategoryOptions(
     colorTokens: [
       'color.brand.primary',
       'color.category.blueDeep',
@@ -146,7 +147,8 @@ class StubCategoryViewModel extends ChangeNotifier
       'color.category.plum',
       'color.category.gray',
     ],
-    iconTokens: ['food'],
+    // The server catalog (`CATEGORY_PICKER_ICONS`): every board icon.
+    iconTokens: [for (final group in categoryIconGroups) ...group],
   );
   @override
   bool busy = false;
@@ -207,7 +209,13 @@ Future<Widget> e1App(
   getIt.registerSingleton<AuthViewModel>(
     DefaultAuthViewModel(
         DefaultAuthUseCases(
-          AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+          AuthRepositoryImpl(
+            FakeApi(),
+            MemoryVault(),
+            FakeBiometrics(),
+            testServerConfigModel(),
+          ),
+          testServerConfigModel(),
         ),
       )
       ..stage = AuthStage.unlocked

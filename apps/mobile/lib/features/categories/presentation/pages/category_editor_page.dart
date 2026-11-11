@@ -180,6 +180,7 @@ class _CategoryEditorPageState extends State<CategoryEditorPage> {
                   form: form,
                   name: name,
                   colors: model.options.colorTokens,
+                  icons: model.options.iconTokens,
                   actions: category == null
                       ? null
                       : CategoryEditActions(

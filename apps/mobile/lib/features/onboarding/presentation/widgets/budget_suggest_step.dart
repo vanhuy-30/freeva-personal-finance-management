@@ -19,6 +19,7 @@ class BudgetSuggestStep extends StatelessWidget {
     required this.goalName,
     required this.onUse,
     required this.onSkip,
+    required this.savingsSharePercent,
     super.key,
   });
 
@@ -30,6 +31,9 @@ class BudgetSuggestStep extends StatelessWidget {
   final String? goalName;
   final VoidCallback onUse;
   final VoidCallback onSkip;
+
+  /// Server `onboarding.savingsSharePercent`, for the no-goal line.
+  final int savingsSharePercent;
 
   @override
   Widget build(BuildContext context) {
@@ -176,7 +180,9 @@ class BudgetSuggestStep extends StatelessWidget {
                               line(
                                 fromGoal
                                     ? s.onbSuggestSaveFor(goalName!)
-                                    : s.onbSuggestSaveDefault,
+                                    : s.onbSuggestSaveDefault(
+                                        savingsSharePercent,
+                                      ),
                                 '−${money(suggestion.saving)}',
                                 dot: c.dataSaving,
                               ),
@@ -202,7 +208,7 @@ class BudgetSuggestStep extends StatelessWidget {
                           child: Text(
                             fromGoal
                                 ? s.onbSuggestHint
-                                : '${s.onbSuggestNoGoal} ${s.onbSuggestHint}',
+                                : '${s.onbSuggestNoGoal(savingsSharePercent)} ${s.onbSuggestHint}',
                             style: FreevaTypography.bodyS.copyWith(
                               height: 18 / 13,
                               color: c.textSecondary,

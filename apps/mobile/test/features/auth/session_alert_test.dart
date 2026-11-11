@@ -59,7 +59,15 @@ void main() {
       SettingsRepositoryImpl(MemoryPreferences()),
     );
     final model = DefaultAuthViewModel(
-      DefaultAuthUseCases(AuthRepositoryImpl(api, vault, FakeBiometrics())),
+      DefaultAuthUseCases(
+        AuthRepositoryImpl(
+          api,
+          vault,
+          FakeBiometrics(),
+          testServerConfigModel(),
+        ),
+        testServerConfigModel(),
+      ),
       settings: settings,
       alerts: alerts,
       analytics: analytics,
@@ -124,7 +132,13 @@ void main() {
     );
     final model = DefaultAuthViewModel(
       DefaultAuthUseCases(
-        AuthRepositoryImpl(api, MemoryVault(), FakeBiometrics()),
+        AuthRepositoryImpl(
+          api,
+          MemoryVault(),
+          FakeBiometrics(),
+          testServerConfigModel(),
+        ),
+        testServerConfigModel(),
       ),
       settings: settings,
       alerts: alerts,
@@ -161,7 +175,15 @@ void main() {
       SettingsRepositoryImpl(MemoryPreferences()),
     );
     final model = DefaultAuthViewModel(
-      DefaultAuthUseCases(AuthRepositoryImpl(api, vault, FakeBiometrics())),
+      DefaultAuthUseCases(
+        AuthRepositoryImpl(
+          api,
+          vault,
+          FakeBiometrics(),
+          testServerConfigModel(),
+        ),
+        testServerConfigModel(),
+      ),
       settings: settings,
       alerts: RecordingSessionAlerts(),
       analytics: RecordingAnalytics(),
@@ -185,7 +207,13 @@ void main() {
     registerTestServerConfig();
     final model = DefaultAuthViewModel(
       DefaultAuthUseCases(
-        AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+        AuthRepositoryImpl(
+          FakeApi(),
+          MemoryVault(),
+          FakeBiometrics(),
+          testServerConfigModel(),
+        ),
+        testServerConfigModel(),
       ),
     );
     model.newSessionAlert = true;

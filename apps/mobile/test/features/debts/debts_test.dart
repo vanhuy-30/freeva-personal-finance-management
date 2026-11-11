@@ -13,6 +13,7 @@ import 'package:mobile/features/transactions/domain/transaction.dart';
 
 import '../home/fixtures.dart' show b;
 import 'debt_stub.dart';
+import '../../support/server_config_fixture.dart';
 
 /// Records requests and answers with canned JSON per path.
 class _Api implements AuthorizedApi {
@@ -181,7 +182,10 @@ void main() {
 
   group('use cases', () {
     test('a repayment above what is owed is refused before the API', () async {
-      final cases = DefaultDebtUseCases(DebtRepositoryImpl(_Api({})));
+      final cases = DefaultDebtUseCases(
+        DebtRepositoryImpl(_Api({})),
+        testServerConfigModel(),
+      );
       final result = await cases.repay(
         debt(),
         DebtRepay(
@@ -195,7 +199,10 @@ void main() {
     });
 
     test('a due date before the lending day is refused', () async {
-      final cases = DefaultDebtUseCases(DebtRepositoryImpl(_Api({})));
+      final cases = DefaultDebtUseCases(
+        DebtRepositoryImpl(_Api({})),
+        testServerConfigModel(),
+      );
       final result = await cases.create(
         DebtDraft(
           clientId: 'c',
@@ -211,7 +218,10 @@ void main() {
     });
 
     test('loan principal above what is owed is refused', () async {
-      final cases = DefaultLoanUseCases(LoanRepositoryImpl(_Api({})));
+      final cases = DefaultLoanUseCases(
+        LoanRepositoryImpl(_Api({})),
+        testServerConfigModel(),
+      );
       final result = await cases.pay(
         loan(outstanding: 1000),
         LoanPayment(

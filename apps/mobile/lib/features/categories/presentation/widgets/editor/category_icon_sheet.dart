@@ -16,6 +16,7 @@ Future<String?> showCategoryIconSheet(
   BuildContext context, {
   required String? selected,
   required String? colorToken,
+  required List<String> available,
 }) => showModalBottomSheet<String>(
   context: context,
   isScrollControlled: true,
@@ -23,14 +24,25 @@ Future<String?> showCategoryIconSheet(
   // The sheet paints its own surface, handle and shadow.
   backgroundColor: Colors.transparent,
   elevation: 0,
-  builder: (_) => _IconSheet(selected: selected, colorToken: colorToken),
+  builder: (_) => _IconSheet(
+    selected: selected,
+    colorToken: colorToken,
+    available: available,
+  ),
 );
 
 class _IconSheet extends StatefulWidget {
-  const _IconSheet({required this.selected, required this.colorToken});
+  const _IconSheet({
+    required this.selected,
+    required this.colorToken,
+    required this.available,
+  });
 
   final String? selected;
   final String? colorToken;
+
+  /// Server `iconTokens`: only these are offered.
+  final List<String> available;
 
   @override
   State<_IconSheet> createState() => _IconSheetState();
@@ -50,9 +62,24 @@ class _IconSheetState extends State<_IconSheet> {
         folded.isEmpty ||
         foldVietnamese(categoryIconLabel(s, token)).contains(folded);
     final titles = categoryIconGroupTitles(s);
+    // Board groups, limited to tokens the server accepts; a token the server
+    // adds later joins the last group.
+    final available = widget.available;
+    final grouped = {for (final group in categoryIconGroups) ...group};
+    final extra = [
+      for (final token in available)
+        if (!grouped.contains(token)) token,
+    ];
     final groups = [
       for (final (i, group) in categoryIconGroups.indexed)
-        (titles[i], group.where(matches).toList()),
+        (
+          titles[i],
+          [
+            for (final token in group)
+              if (available.contains(token)) token,
+            if (i == categoryIconGroups.length - 1) ...extra,
+          ].where(matches).toList(),
+        ),
     ].where((g) => g.$2.isNotEmpty).toList();
     const radius = BorderRadius.vertical(
       top: Radius.circular(FreevaRadius.sheet),

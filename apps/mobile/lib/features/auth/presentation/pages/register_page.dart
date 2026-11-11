@@ -12,6 +12,8 @@ import '../../domain/password_check.dart';
 import '../viewmodels/auth_view_model.dart';
 import '../widgets/auth_message.dart';
 import '../widgets/auth_scaffold.dart';
+import '../../../server_config/domain/app_limits.dart';
+import '../../../../core/di/injection.dart';
 
 /// Tạo tài khoản bằng email: password with a live checklist, repeat, and
 /// the Terms checkbox.
@@ -30,7 +32,11 @@ class _RegisterPageState extends State<RegisterPage> {
   final _repeat = TextEditingController();
   var _agreed = false;
 
-  PasswordCheck get _check => PasswordCheck(_password.text, _repeat.text);
+  PasswordCheck get _check => PasswordCheck(
+    _password.text,
+    _repeat.text,
+    getIt<AppLimitsSource>().requireLimits,
+  );
 
   @override
   void dispose() {

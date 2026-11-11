@@ -54,9 +54,12 @@ void main() {
       ),
     );
 
-    testWidgets('signed out never waits for config', (tester) async {
+    testWidgets('signed out also runs on (public) config', (tester) async {
       final model = ServerConfigViewModel.withClock(_Repo());
       await tester.pumpWidget(app(AuthStage.signedOut, model));
+      expect(find.text('signed-in app'), findsNothing);
+      model.debugSetConfig(testServerConfig());
+      await tester.pump();
       expect(find.text('signed-in app'), findsOneWidget);
     });
 
@@ -96,6 +99,9 @@ class _Auth extends ChangeNotifier implements AuthViewModel {
 }
 
 class _Repo implements ServerConfigRepository {
+  @override
+  Future<Either<AuthFailure, ServerConfig>> fetchPublic() => fetch();
+
   Either<AuthFailure, ServerConfig> next = left(
     const AuthFailure(AuthError.network),
   );

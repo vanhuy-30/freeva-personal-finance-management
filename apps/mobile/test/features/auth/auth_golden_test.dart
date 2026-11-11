@@ -47,7 +47,13 @@ void main() {
     });
     final model = DefaultAuthViewModel(
       DefaultAuthUseCases(
-        AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+        AuthRepositoryImpl(
+          FakeApi(),
+          MemoryVault(),
+          FakeBiometrics(),
+          testServerConfigModel(),
+        ),
+        testServerConfigModel(),
       ),
     );
     addTearDown(model.dispose);

@@ -17,7 +17,6 @@ import '../../../auth/presentation/widgets/session_alert_banner.dart';
 import '../../../profile/presentation/viewmodels/profile_view_model.dart';
 import '../../../tags/domain/tag_use_cases.dart';
 import '../../../wallets/presentation/viewmodels/wallet_view_model.dart';
-import '../../domain/app_preferences.dart';
 import '../viewmodels/settings_view_model.dart';
 import '../widgets/app_settings_group.dart';
 import '../widgets/danger_text_button.dart';
@@ -26,6 +25,7 @@ import '../widgets/help_settings_group.dart';
 import '../widgets/manage_grid.dart';
 import '../widgets/money_setup_group.dart';
 import '../widgets/profile_card.dart';
+import '../../../../core/app_version/app_version.dart';
 
 /// Cá nhân: the tab root. Profile card, the money grid, four groups, log out
 /// and version.
@@ -166,7 +166,7 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             const SizedBox(height: 6),
             Text(
-              s.settingsVersion(appVersionDisplay),
+              s.settingsVersion(getIt<AppVersion>().display),
               textAlign: TextAlign.center,
               style: FreevaTypography.label.copyWith(
                 fontWeight: FontWeight.w400,

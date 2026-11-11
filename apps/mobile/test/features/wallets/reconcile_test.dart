@@ -26,6 +26,7 @@ import 'package:mobile/features/transactions/presentation/widgets/adjustment_she
 
 import '../transactions/c1_stub.dart' show StubTransactionViewModel, c1App, tx;
 import 'd1_stub.dart';
+import '../../support/server_config_fixture.dart';
 
 class _Api implements AuthorizedApi {
   final calls =
@@ -135,7 +136,10 @@ void main() {
   });
 
   group('adjustment edit', () {
-    final cases = DefaultTransactionUseCases(TransactionRepositoryImpl(_Api()));
+    final cases = DefaultTransactionUseCases(
+      TransactionRepositoryImpl(_Api()),
+      testServerConfigModel(),
+    );
     TransactionBundle row({int amount = 212000, int version = 1}) =>
         groupTransactionLegs([
           tx(
@@ -157,8 +161,10 @@ void main() {
       () async {
         final api = _Api()..answer = {'legs': [], 'fx': null};
         final repo = TransactionRepositoryImpl(api);
-        await DefaultTransactionUseCases(repo)
-            .adjust(row(), BigInt.from(-1500));
+        await DefaultTransactionUseCases(
+          repo,
+          testServerConfigModel(),
+        ).adjust(row(), BigInt.from(-1500));
         final call = api.calls.single;
         expect(call.method, 'PATCH');
         expect(call.body!['categoryId'], isNull);
@@ -197,7 +203,10 @@ void main() {
   });
 
   group('use case', () {
-    final cases = DefaultWalletUseCases(WalletRepositoryImpl(_Api()));
+    final cases = DefaultWalletUseCases(
+      WalletRepositoryImpl(_Api()),
+      testServerConfigModel(),
+    );
     test('a card debt cannot be negative', () async {
       final card = wallet('card', 'Thẻ', type: WalletType.credit);
       final r = await cases.reconcile(card, BigInt.from(-1), clientId: 'c');
@@ -211,8 +220,10 @@ void main() {
           'deltaMinor': '-5',
           'transaction': null,
         };
-      final r = await DefaultWalletUseCases(WalletRepositoryImpl(api))
-          .reconcile(wallet('a', 'A'), BigInt.from(-5), clientId: 'c');
+      final r = await DefaultWalletUseCases(
+        WalletRepositoryImpl(api),
+        testServerConfigModel(),
+      ).reconcile(wallet('a', 'A'), BigInt.from(-5), clientId: 'c');
       expect(r.isRight(), isTrue);
       expect(api.calls.single.body!['actualBalanceMinor'], '-5');
     });

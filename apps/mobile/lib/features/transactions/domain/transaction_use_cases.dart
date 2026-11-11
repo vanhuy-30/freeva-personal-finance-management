@@ -8,6 +8,7 @@ import '../../wallets/domain/wallet.dart';
 import 'transaction.dart';
 import 'transaction_repository.dart';
 import 'transaction_rules.dart';
+import '../../server_config/domain/app_limits.dart';
 
 abstract class TransactionUseCases {
   Future<Either<AuthFailure, TransactionListPage>> list(TransactionQuery query);
@@ -45,7 +46,10 @@ abstract class TransactionUseCases {
 
 @LazySingleton(as: TransactionUseCases)
 class DefaultTransactionUseCases implements TransactionUseCases {
-  DefaultTransactionUseCases(this._repository);
+  DefaultTransactionUseCases(this._repository, this._limits);
+
+  /// Server limits (MOB-P5-001).
+  final AppLimitsSource _limits;
   final TransactionRepository _repository;
 
   @override
@@ -91,6 +95,7 @@ class DefaultTransactionUseCases implements TransactionUseCases {
       currencies,
       categories,
       tags,
+      limits: _limits.requireLimits,
       existing: existing,
     );
     return command.fold(

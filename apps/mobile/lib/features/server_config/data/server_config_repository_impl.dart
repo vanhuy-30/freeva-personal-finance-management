@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../auth/data/auth_api.dart';
 import '../../auth/data/authorized_api.dart';
 import '../../auth/domain/auth_repository.dart';
 import '../domain/server_config.dart';
@@ -11,9 +12,10 @@ import 'server_config_vault.dart';
 
 @LazySingleton(as: ServerConfigRepository)
 class ServerConfigRepositoryImpl implements ServerConfigRepository {
-  ServerConfigRepositoryImpl(this._api, this._vault);
+  ServerConfigRepositoryImpl(this._api, this._vault, this._publicApi);
 
   final AuthorizedApi _api;
+  final AuthApi _publicApi;
   final ServerConfigVault _vault;
 
   @override
@@ -26,6 +28,20 @@ class ServerConfigRepositoryImpl implements ServerConfigRepository {
         return left(const AuthFailure(AuthError.unavailable));
       }
     });
+  }
+
+  @override
+  Future<Either<AuthFailure, ServerConfig>> fetchPublic() async {
+    try {
+      final json = await _publicApi.request('GET', 'app-config/public');
+      return right(ServerConfig.fromJson({...json, 'flags': const {}}));
+    } on AuthFailure catch (failure) {
+      return left(failure);
+    } on FormatException {
+      return left(const AuthFailure(AuthError.unavailable));
+    } catch (_) {
+      return left(const AuthFailure(AuthError.network));
+    }
   }
 
   @override

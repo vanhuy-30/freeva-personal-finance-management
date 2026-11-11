@@ -28,6 +28,7 @@ import '../widgets/goal_date_sheet.dart';
 import '../widgets/goal_kind_chip.dart';
 import '../widgets/goal_look.dart';
 import '../widgets/goal_need_card.dart';
+import '../../../server_config/domain/app_limits.dart';
 
 /// Mục tiêu mới / Sửa mục tiêu. A new goal opens the detail after saving; an
 /// edit changes name, kind, target and date, and a changed "Đã có" is a
@@ -293,7 +294,9 @@ class _GoalEditorPageState extends State<GoalEditorPage> {
                               label: s.goalName,
                               controller: name,
                               error: nameError,
-                              maxLength: 80,
+                              maxLength: getIt<AppLimitsSource>()
+                                  .requireLimits
+                                  .goalNameMaxLength,
                               textInputAction: TextInputAction.next,
                               onChanged: (_) => nameTouched = true,
                             ),

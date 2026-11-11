@@ -26,7 +26,13 @@ import 'f2_stub.dart';
 DefaultAuthViewModel _auth() =>
     DefaultAuthViewModel(
         DefaultAuthUseCases(
-          AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+          AuthRepositoryImpl(
+            FakeApi(),
+            MemoryVault(),
+            FakeBiometrics(),
+            testServerConfigModel(),
+          ),
+          testServerConfigModel(),
         ),
       )
       ..stage = AuthStage.unlocked

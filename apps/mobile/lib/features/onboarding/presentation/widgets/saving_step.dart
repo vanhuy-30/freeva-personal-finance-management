@@ -78,7 +78,7 @@ class _SavingStepState extends State<SavingStep> {
               spacing: FreevaSpace.s2,
               runSpacing: FreevaSpace.s2,
               children: [
-                for (final kind in OnboardingViewModel.savingKinds)
+                for (final kind in model.savingKinds)
                   GoalKindChip(
                     kind: kind,
                     label: goalKindLabel(s, kind),

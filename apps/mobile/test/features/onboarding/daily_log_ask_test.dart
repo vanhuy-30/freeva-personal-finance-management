@@ -27,7 +27,10 @@ void main() {
         PendingGoalUseCases(
           settings,
           FakeGoalUseCases(goals: []),
-          DefaultWalletUseCases(MemoryWalletRepository()),
+          DefaultWalletUseCases(
+            MemoryWalletRepository(),
+            testServerConfigModel(),
+          ),
           EmailAuth(),
         ),
         settings,

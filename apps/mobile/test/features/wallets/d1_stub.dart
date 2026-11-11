@@ -204,7 +204,13 @@ Future<Widget> d1App(
   final auth =
       DefaultAuthViewModel(
           DefaultAuthUseCases(
-            AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+            AuthRepositoryImpl(
+              FakeApi(),
+              MemoryVault(),
+              FakeBiometrics(),
+              testServerConfigModel(),
+            ),
+            testServerConfigModel(),
           ),
         )
         ..stage = AuthStage.unlocked

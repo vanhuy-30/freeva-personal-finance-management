@@ -13,6 +13,7 @@ import 'package:mobile/features/settings/presentation/viewmodels/settings_view_m
 
 import '../auth/fakes.dart';
 import 'fakes.dart';
+import '../../support/server_config_fixture.dart';
 
 void main() {
   late MemoryPreferences preferences;
@@ -27,10 +28,15 @@ void main() {
     vault = MemoryVault();
     biometrics = FakeBiometrics();
     analytics = RecordingAnalytics();
-    auth = AuthRepositoryImpl(FakeApi(), vault, biometrics);
+    auth = AuthRepositoryImpl(
+      FakeApi(),
+      vault,
+      biometrics,
+      testServerConfigModel(),
+    );
     model = DefaultSettingsViewModel(
       DefaultSettingsUseCases(SettingsRepositoryImpl(preferences)),
-      DefaultAuthUseCases(auth),
+      DefaultAuthUseCases(auth, testServerConfigModel()),
       analytics,
     );
   });

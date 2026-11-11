@@ -18,6 +18,8 @@ import '../../../transactions/presentation/widgets/composer/date_picker_sheet.da
 import '../../domain/investment.dart';
 import '../viewmodels/investment_view_model.dart';
 import 'investment_wallet_list.dart';
+import '../../../server_config/domain/app_limits.dart';
+import '../../../../core/di/injection.dart';
 
 /// "Rút tiền gửi" (board P.12): the money that comes back (starts at
 /// principal plus interest, editable), the day and the wallet. A withdrawal
@@ -275,7 +277,8 @@ class _EditSheetState extends State<_EditSheet> {
           FreevaTextField(
             label: s.investmentName,
             controller: name,
-            maxLength: 80,
+            maxLength:
+                getIt<AppLimitsSource>().requireLimits.investmentNameMaxLength,
             onChanged: (_) => setState(() {}),
           ),
           const SizedBox(height: 14),
@@ -297,7 +300,7 @@ class _EditSheetState extends State<_EditSheet> {
           FreevaTextField(
             label: s.investmentNote,
             controller: note,
-            maxLength: 500,
+            maxLength: getIt<AppLimitsSource>().requireLimits.noteMaxLength,
           ),
           const SizedBox(height: 20),
           FreevaButton(

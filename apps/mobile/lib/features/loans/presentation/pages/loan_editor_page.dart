@@ -27,6 +27,7 @@ import '../../domain/loan.dart';
 import '../viewmodels/loan_view_model.dart';
 import '../widgets/loan_kind_chip.dart';
 import '../widgets/loan_labels.dart';
+import '../../../server_config/domain/app_limits.dart';
 
 /// Thêm / Sửa khoản vay (LoanAdd). An empty "Trả mỗi kỳ" is worked out from
 /// the end date (fixed payment, same formula as the API).
@@ -332,7 +333,7 @@ class _LoanEditorPageState extends State<LoanEditorPage> {
       FreevaTextField(
         label: s.loanName,
         controller: name,
-        maxLength: 80,
+        maxLength: getIt<AppLimitsSource>().requireLimits.loanNameMaxLength,
         textInputAction: TextInputAction.next,
         onChanged: (_) => setState(() => _nameTouched = true),
       ),

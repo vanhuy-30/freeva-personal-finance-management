@@ -7,6 +7,7 @@ import 'package:mobile/features/auth/domain/auth_use_cases.dart';
 import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dart';
 
 import 'fakes.dart';
+import '../../support/server_config_fixture.dart';
 
 void main() {
   late FakeApi api;
@@ -15,7 +16,13 @@ void main() {
     api = FakeApi();
     model = DefaultAuthViewModel(
       DefaultAuthUseCases(
-        AuthRepositoryImpl(api, MemoryVault(), FakeBiometrics()),
+        AuthRepositoryImpl(
+          api,
+          MemoryVault(),
+          FakeBiometrics(),
+          testServerConfigModel(),
+        ),
+        testServerConfigModel(),
       ),
     );
   });

@@ -174,8 +174,12 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                 children: [
                   dailyLog(),
                   kindToggle(LucideIcons.repeat, NotificationKind.recurring),
-                  soon(LucideIcons.target, NotificationKind.goal),
-                  soon(LucideIcons.chartPie, NotificationKind.monthReview),
+                  // "Sắp có" until the server reports the kind available.
+                  kindToggle(LucideIcons.target, NotificationKind.goal),
+                  kindToggle(
+                    LucideIcons.chartPie,
+                    NotificationKind.monthReview,
+                  ),
                 ],
               ),
               SettingsGroup(

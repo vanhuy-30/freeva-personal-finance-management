@@ -21,6 +21,7 @@ import '../../../settings/presentation/widgets/avatar_letter.dart';
 import '../../../settings/presentation/widgets/danger_text_button.dart';
 import '../../../settings/presentation/widgets/profile_actions.dart';
 import '../viewmodels/profile_view_model.dart';
+import '../../../server_config/domain/app_limits.dart';
 
 /// Hồ sơ: information about you. Name is editable; the email changes later
 /// (it needs a confirmation by mail).
@@ -123,7 +124,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         label: s.meProfileName,
                         controller: name,
                         leadingIcon: LucideIcons.user,
-                        maxLength: 50,
+                        maxLength: getIt<AppLimitsSource>()
+                            .requireLimits
+                            .displayNameMaxLength,
                         textInputAction: TextInputAction.done,
                         onSubmitted: (_) {
                           if (_changed) _save();

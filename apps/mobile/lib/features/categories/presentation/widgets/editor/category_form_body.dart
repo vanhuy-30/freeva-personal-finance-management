@@ -17,6 +17,8 @@ import 'category_choice_sheet.dart';
 import 'category_color_grid.dart';
 import 'category_icon_cell.dart';
 import 'category_icon_sheet.dart';
+import '../../../../server_config/domain/app_limits.dart';
+import '../../../../../core/di/injection.dart';
 
 /// Fields of Thêm / Sửa danh mục: preview + name, main or sub + "Thuộc",
 /// colour grid, icons (quick grid when adding, a field when editing).
@@ -25,6 +27,7 @@ class CategoryFormBody extends StatelessWidget {
     required this.form,
     required this.name,
     required this.colors,
+    required this.icons,
     this.actions,
     super.key,
   });
@@ -34,6 +37,9 @@ class CategoryFormBody extends StatelessWidget {
 
   /// Palette from `/categories/options`.
   final List<String> colors;
+
+  /// Icons the server accepts (`/categories/options` `iconTokens`, MOB-P5-001).
+  final List<String> icons;
 
   /// "Ẩn · Xoá" when editing.
   final Widget? actions;
@@ -63,7 +69,11 @@ class CategoryFormBody extends StatelessWidget {
     final nameField = FreevaTextField(
       label: s.categoryName,
       controller: name,
-      inputFormatters: [LengthLimitingTextInputFormatter(100)],
+      inputFormatters: [
+        LengthLimitingTextInputFormatter(
+          getIt<AppLimitsSource>().requireLimits.categoryNameMaxLength,
+        ),
+      ],
       error: form.errors.contains(CategoryFormError.name)
           ? s.categoryNameMissing
           : null,
@@ -145,7 +155,7 @@ class CategoryFormBody extends StatelessWidget {
         SizedBox(height: space - 5),
         if (form.isNew) ...[
           label(s.categoryIcon),
-          _QuickIcons(form: form),
+          _QuickIcons(form: form, icons: icons),
         ] else
           PickerField(
             label: s.categoryIcon,
@@ -156,7 +166,7 @@ class CategoryFormBody extends StatelessWidget {
               colorToken: form.colorToken,
               size: 32,
             ),
-            onTap: () => _pickIcon(context, form),
+            onTap: () => _pickIcon(context, form, icons),
           ),
         if (actions != null) ...[
           SizedBox(height: space + FreevaSpace.s1),
@@ -167,11 +177,16 @@ class CategoryFormBody extends StatelessWidget {
   }
 }
 
-Future<void> _pickIcon(BuildContext context, CategoryForm form) async {
+Future<void> _pickIcon(
+  BuildContext context,
+  CategoryForm form,
+  List<String> icons,
+) async {
   final token = await showCategoryIconSheet(
     context,
     selected: form.iconToken,
     colorToken: form.colorToken,
+    available: icons,
   );
   if (token != null) form.setIcon(token);
 }
@@ -179,18 +194,24 @@ Future<void> _pickIcon(BuildContext context, CategoryForm form) async {
 /// 11 common icons and "…" for the rest. A chosen icon that is not among
 /// them takes the first place, so the choice is always visible.
 class _QuickIcons extends StatelessWidget {
-  const _QuickIcons({required this.form});
+  const _QuickIcons({required this.form, required this.icons});
 
   final CategoryForm form;
+  final List<String> icons;
 
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
     final c = context.colors;
     final picked = form.iconToken;
-    final tokens = picked == null || categoryQuickIcons.contains(picked)
-        ? categoryQuickIcons
-        : [picked, ...categoryQuickIcons.take(categoryQuickIcons.length - 1)];
+    // Board quick picks the server still accepts.
+    final quick = [
+      for (final token in categoryQuickIcons)
+        if (icons.contains(token)) token,
+    ];
+    final tokens = picked == null || quick.contains(picked)
+        ? quick
+        : [picked, ...quick.take(quick.length - 1)];
     return IconGridRows(
       cells: [
         for (final token in tokens)
@@ -205,11 +226,11 @@ class _QuickIcons extends StatelessWidget {
           container: true,
           button: true,
           label: s.categoryMoreIcons,
-          onTap: () => _pickIcon(context, form),
+          onTap: () => _pickIcon(context, form, icons),
           excludeSemantics: true,
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: () => _pickIcon(context, form),
+            onTap: () => _pickIcon(context, form, icons),
             child: Container(
               height: FreevaSize.touch,
               decoration: BoxDecoration(

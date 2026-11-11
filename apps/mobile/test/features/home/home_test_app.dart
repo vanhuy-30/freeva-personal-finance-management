@@ -32,7 +32,13 @@ Future<Widget> homeApp(
   getIt.registerSingleton<AuthViewModel>(
     DefaultAuthViewModel(
         DefaultAuthUseCases(
-          AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+          AuthRepositoryImpl(
+            FakeApi(),
+            MemoryVault(),
+            FakeBiometrics(),
+            testServerConfigModel(),
+          ),
+          testServerConfigModel(),
         ),
       )
       ..stage = AuthStage.unlocked

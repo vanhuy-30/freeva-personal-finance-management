@@ -18,9 +18,13 @@ import '../../domain/server_config_repository.dart';
 @lazySingleton
 class ServerConfigViewModel extends ChangeNotifier
     implements FeatureFlagService, AppLimitsSource {
-  ServerConfigViewModel(ServerConfigRepository repository, AppConfig appConfig)
-    : this.withClock(
+  ServerConfigViewModel(
+    ServerConfigRepository repository,
+    AppConfig appConfig,
+    AppLimitsStore store,
+  ) : this.withClock(
         repository,
+        store: store,
         devOverlay: devOverlayFor(
           appConfig,
           const String.fromEnvironment('FEATURE_FLAGS_ON'),
@@ -30,9 +34,13 @@ class ServerConfigViewModel extends ChangeNotifier
   @visibleForTesting
   ServerConfigViewModel.withClock(
     this._repository, {
+    AppLimitsStore? store,
     this._devOverlay = const {},
     this._now = DateTime.now,
-  });
+  }) : _store = store ?? AppLimitsStore();
+
+  /// Where [limits] are published for data/domain code.
+  final AppLimitsStore _store;
 
   static const refreshEvery = Duration(hours: 1);
 
@@ -67,10 +75,13 @@ class ServerConfigViewModel extends ChangeNotifier
   @override
   AppLimits get requireLimits => limits!;
 
+  void _publish() => _store.update(limits);
+
   /// Tests: use [config] as if it had loaded.
   @visibleForTesting
   void debugSetConfig(ServerConfig config) {
     _config = config;
+    _publish();
     notifyListeners();
   }
 
@@ -101,42 +112,74 @@ class ServerConfigViewModel extends ChangeNotifier
     final cached = await _repository.readCached();
     if (cached != null && _config == null) {
       _config = cached;
+      _publish();
       notifyListeners();
     }
   }
 
-  Future<void> refresh({bool force = false}) async {
+  /// Whether [config] came from the signed-in endpoint (has this user's flags).
+  bool _configSignedIn = false;
+
+  /// [signedIn] picks `/app-config` (flags + config) or the public config
+  /// (before sign-in). Switching between the two always fetches.
+  Future<void> refresh({bool force = false, bool signedIn = true}) async {
     if (_loading) return;
     final last = _lastFetch;
-    if (!force && last != null && _now().difference(last) < refreshEvery) {
+    final sameMode = _config != null && _configSignedIn == signedIn;
+    if (!force &&
+        sameMode &&
+        last != null &&
+        _now().difference(last) < refreshEvery) {
       return;
     }
     final generation = _generation;
     _loading = true;
+    _publish();
     notifyListeners();
-    final result = await _repository.fetch();
-    // Signed out while the request was in flight: drop the answer.
+    final result = signedIn
+        ? await _repository.fetch()
+        : await _repository.fetchPublic();
+    // Signed in or out while the request was in flight: drop the answer.
     if (generation != _generation) return;
     _loading = false;
     await result.fold((_) async => _failed = true, (fresh) async {
       _failed = false;
       _lastFetch = _now();
-      if (_config?.version != fresh.version || _config == null) {
+      if (_config == null ||
+          _config!.version != fresh.version ||
+          _configSignedIn != signedIn) {
         _config = fresh;
+        _configSignedIn = signedIn;
         await _repository.writeCached(fresh);
       }
     });
+    _publish();
     notifyListeners();
   }
 
-  /// Flags are evaluated per user, so sign-out forgets them.
+  /// Flags are per user, so sign-out forgets them; config numbers stay so
+  /// the sign-in screens keep their rules.
   Future<void> clear() async {
     _generation += 1;
-    _config = null;
+    final config = _config;
+    _config = config == null
+        ? null
+        : ServerConfig(
+            version: config.version,
+            flags: const {},
+            values: config.values,
+          );
+    _configSignedIn = false;
     _lastFetch = null;
     _loading = false;
     _failed = false;
+    _publish();
     notifyListeners();
-    await _repository.clearCached();
+    final kept = _config;
+    if (kept == null) {
+      await _repository.clearCached();
+    } else {
+      await _repository.writeCached(kept);
+    }
   }
 }

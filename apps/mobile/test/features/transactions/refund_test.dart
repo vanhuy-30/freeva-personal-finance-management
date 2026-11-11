@@ -8,6 +8,7 @@ import 'package:mobile/features/transactions/domain/transaction_use_cases.dart';
 
 import '../home/fixtures.dart' show b;
 import 'c1_stub.dart' show tx;
+import '../../support/server_config_fixture.dart';
 
 /// MOB-P3-008: refund parsing, request shapes and the cap.
 void main() {
@@ -17,7 +18,7 @@ void main() {
   setUp(() {
     api = _Api();
     repository = TransactionRepositoryImpl(api);
-    cases = DefaultTransactionUseCases(repository);
+    cases = DefaultTransactionUseCases(repository, testServerConfigModel());
   });
 
   test(

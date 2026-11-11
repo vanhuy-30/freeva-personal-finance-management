@@ -35,7 +35,13 @@ void main() {
     auth =
         DefaultAuthViewModel(
             DefaultAuthUseCases(
-              AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+              AuthRepositoryImpl(
+                FakeApi(),
+                MemoryVault(),
+                FakeBiometrics(),
+                testServerConfigModel(),
+              ),
+              testServerConfigModel(),
             ),
           )
           ..ready = true
@@ -45,16 +51,27 @@ void main() {
     settings = DefaultSettingsViewModel(
       DefaultSettingsUseCases(SettingsRepositoryImpl(MemoryPreferences())),
       DefaultAuthUseCases(
-        AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+        AuthRepositoryImpl(
+          FakeApi(),
+          MemoryVault(),
+          FakeBiometrics(),
+          testServerConfigModel(),
+        ),
+        testServerConfigModel(),
       ),
       analytics,
     );
     await settings.load();
     profile = DefaultProfileViewModel(
-      ProfileUseCases(MemoryProfiles()),
+      ProfileUseCases(MemoryProfiles(), testServerConfigModel()),
       auth,
       exportCase(
-        AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+        AuthRepositoryImpl(
+          FakeApi(),
+          MemoryVault(),
+          FakeBiometrics(),
+          testServerConfigModel(),
+        ),
       ),
     );
     await profile.load();

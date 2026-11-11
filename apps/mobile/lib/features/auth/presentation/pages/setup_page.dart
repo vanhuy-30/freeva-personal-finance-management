@@ -167,6 +167,7 @@ class _SetupPageState extends State<SetupPage> {
           _go(SetupStep.wallets);
         },
         onSkip: () => _go(SetupStep.wallets),
+        savingsSharePercent: _answers.savingsSharePercent,
       ),
       SetupStep.wallets => SetupWalletsStep(model: _wallets, onDone: _toPin),
       SetupStep.pin => PinSetupFlow(

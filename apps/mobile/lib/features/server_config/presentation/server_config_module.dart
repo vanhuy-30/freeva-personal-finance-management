@@ -12,5 +12,5 @@ abstract class ServerConfigModule {
 
   /// Product numbers for use cases (MOB-P5-001).
   @lazySingleton
-  AppLimitsSource appLimits(ServerConfigViewModel model) => model;
+  AppLimitsSource appLimits(AppLimitsStore store) => store;
 }

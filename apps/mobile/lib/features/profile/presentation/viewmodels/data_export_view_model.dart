@@ -13,6 +13,7 @@ import '../../domain/export_period.dart';
 import '../../domain/profile_use_cases.dart';
 import '../../domain/transactions_csv_export_use_case.dart';
 import 'profile_view_model.dart';
+import '../../../server_config/domain/app_limits.dart';
 
 /// Which file the user is exporting (board `DataExport`).
 enum ExportKind { table, fullCopy }
@@ -35,7 +36,7 @@ abstract class DataExportViewModel extends ChangeNotifier {
   bool get exporting;
   AuthFailure? get failure;
 
-  /// Above [csvExportMaxRows]: the user has to narrow the range.
+  /// Above server `export.csvMaxRows`: the user has to narrow the range.
   bool get tooMany;
   bool get canExport;
 
@@ -57,7 +58,11 @@ class DefaultDataExportViewModel extends DataExportViewModel {
     this._csv,
     this._profile,
     this._auth,
+    this._limits,
   );
+
+  /// Server limits (MOB-P5-001).
+  final AppLimitsSource _limits;
   final ProfileUseCases _profileUseCases;
   final WalletUseCases _wallets;
   final TransactionUseCases _transactions;
@@ -94,7 +99,8 @@ class DefaultDataExportViewModel extends DataExportViewModel {
   DateRange? get range => exportRange(period, _today, _fiscalDay, custom);
 
   @override
-  bool get tooMany => count != null && count! > csvExportMaxRows;
+  bool get tooMany =>
+      count != null && count! > _limits.requireLimits.exportCsvMaxRows;
 
   @override
   bool get canExport {

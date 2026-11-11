@@ -11,6 +11,10 @@ import 'package:mobile/core/config/app_config.dart';
 import 'package:mobile/core/widgets/brand_symbol.dart';
 import 'package:mobile/main.dart';
 
+import 'support/server_config_fixture.dart';
+
+import 'package:mobile/features/server_config/domain/server_config_repository.dart';
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -25,6 +29,11 @@ void main() {
         environment: 'dev',
         apiBaseUrl: 'https://api.example.test',
       ),
+    );
+    // No network in tests: the config download answers from memory.
+    await getIt.unregister<ServerConfigRepository>();
+    getIt.registerSingleton<ServerConfigRepository>(
+      TestServerConfigRepository(),
     );
     await getIt.unregister<DeviceBiometrics>();
     getIt.registerSingleton<DeviceBiometrics>(FakeBiometrics());

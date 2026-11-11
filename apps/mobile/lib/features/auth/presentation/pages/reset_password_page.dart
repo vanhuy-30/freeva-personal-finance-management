@@ -12,6 +12,8 @@ import '../../domain/password_check.dart';
 import '../viewmodels/auth_view_model.dart';
 import '../widgets/auth_message.dart';
 import '../widgets/auth_scaffold.dart';
+import '../../../server_config/domain/app_limits.dart';
+import '../../../../core/di/injection.dart';
 
 /// Đặt mật khẩu mới: opened from the link in the reset email
 /// ([AuthViewModel.startReset]). Same rules and checklist as sign-up.
@@ -28,7 +30,11 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   final _password = TextEditingController();
   final _repeat = TextEditingController();
 
-  PasswordCheck get _check => PasswordCheck(_password.text, _repeat.text);
+  PasswordCheck get _check => PasswordCheck(
+    _password.text,
+    _repeat.text,
+    getIt<AppLimitsSource>().requireLimits,
+  );
 
   @override
   void dispose() {

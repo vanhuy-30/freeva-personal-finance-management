@@ -12,6 +12,7 @@ import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:mobile/core/analytics/analytics_service.dart' as _i1020;
 import 'package:mobile/core/analytics/debug_analytics_service.dart' as _i862;
+import 'package:mobile/core/app_version/app_version.dart' as _i321;
 import 'package:mobile/core/config/app_config.dart' as _i467;
 import 'package:mobile/core/feature_flags/feature_flag_service.dart' as _i1017;
 import 'package:mobile/core/logging/app_logger.dart' as _i766;
@@ -232,10 +233,12 @@ extension GetItInjectableX on _i174.GetIt {
       environment,
       environmentFilter,
     );
+    final serverConfigModule = _$ServerConfigModule();
     final authDataModule = _$AuthDataModule();
     final authPresentationModule = _$AuthPresentationModule();
-    final serverConfigModule = _$ServerConfigModule();
     gh.lazySingleton<_i467.AppConfig>(() => _i467.AppConfig());
+    gh.lazySingleton<_i855.AppLimitsStore>(() => _i855.AppLimitsStore());
+    gh.lazySingleton<_i321.AppVersion>(() => _i321.AppVersion());
     gh.lazySingleton<_i761.ImportFilePicker>(
         () => _i539.PlatformImportFilePicker());
     gh.lazySingleton<_i1060.PreferenceVault>(
@@ -254,19 +257,22 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i766.AppLogger>(() => _i760.AppLoggerImpl());
     gh.lazySingleton<_i1007.AccountFileSharer>(
         () => _i429.ShareAccountFileSharer());
+    gh.lazySingleton<_i855.AppLimitsSource>(
+        () => serverConfigModule.appLimits(gh<_i855.AppLimitsStore>()));
     gh.lazySingleton<_i88.AuthApi>(() => _i88.HttpAuthApi(
           gh<_i467.AppConfig>(),
           gh<_i766.AppLogger>(),
+        ));
+    gh.lazySingleton<_i173.AuthRepository>(() => _i274.AuthRepositoryImpl(
+          gh<_i88.AuthApi>(),
+          gh<_i810.AuthVault>(),
+          gh<_i810.DeviceBiometrics>(),
+          gh<_i855.AppLimitsSource>(),
         ));
     gh.lazySingleton<_i1056.SettingsRepository>(
         () => _i1018.SettingsRepositoryImpl(gh<_i1060.PreferenceVault>()));
     gh.lazySingleton<_i1020.AnalyticsService>(
         () => _i862.DebugAnalyticsService(gh<_i766.AppLogger>()));
-    gh.lazySingleton<_i173.AuthRepository>(() => _i274.AuthRepositoryImpl(
-          gh<_i88.AuthApi>(),
-          gh<_i810.AuthVault>(),
-          gh<_i810.DeviceBiometrics>(),
-        ));
     gh.lazySingleton<_i443.AuthorizedApi>(
         () => authDataModule.authorizedApi(gh<_i173.AuthRepository>()));
     gh.lazySingleton<_i519.SettingsUseCases>(
@@ -275,6 +281,10 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i288.LoanRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i561.CategoryRepository>(
         () => _i613.CategoryRepositoryImpl(gh<_i443.AuthorizedApi>()));
+    gh.factory<_i253.AuthUseCases>(() => _i253.DefaultAuthUseCases(
+          gh<_i173.AuthRepository>(),
+          gh<_i855.AppLimitsSource>(),
+        ));
     gh.lazySingleton<_i80.InvestmentRepository>(
         () => _i728.InvestmentRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i377.ImportRepository>(
@@ -292,8 +302,6 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i1020.TransactionRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i821.RecurringRepository>(
         () => _i279.RecurringRepositoryImpl(gh<_i443.AuthorizedApi>()));
-    gh.lazySingleton<_i292.TransactionUseCases>(() =>
-        _i292.DefaultTransactionUseCases(gh<_i931.TransactionRepository>()));
     gh.lazySingleton<_i1073.BudgetRepository>(
         () => _i1036.BudgetRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i911.PushTokenRepository>(
@@ -309,13 +317,12 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i173.AuthRepository>(),
           gh<_i1007.AccountFileSharer>(),
         ));
-    gh.lazySingleton<_i766.ServerConfigRepository>(
-        () => _i758.ServerConfigRepositoryImpl(
-              gh<_i443.AuthorizedApi>(),
-              gh<_i497.ServerConfigVault>(),
-            ));
     gh.lazySingleton<_i159.ForecastRepository>(
         () => _i587.ForecastRepositoryImpl(gh<_i443.AuthorizedApi>()));
+    gh.lazySingleton<_i572.LoanUseCases>(() => _i572.DefaultLoanUseCases(
+          gh<_i63.LoanRepository>(),
+          gh<_i855.AppLimitsSource>(),
+        ));
     gh.lazySingleton<_i980.NetWorthRepository>(
         () => _i920.NetWorthRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i107.WalletRepository>(
@@ -332,88 +339,21 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i729.TagRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i249.DebtRepository>(
         () => _i464.DebtRepositoryImpl(gh<_i443.AuthorizedApi>()));
-    gh.lazySingleton<_i338.NotificationUseCases>(() =>
-        _i338.DefaultNotificationUseCases(gh<_i199.NotificationRepository>()));
-    gh.factory<_i253.AuthUseCases>(
-        () => _i253.DefaultAuthUseCases(gh<_i173.AuthRepository>()));
-    gh.lazySingleton<_i406.FxRateRepository>(
-        () => _i435.FxRateRepositoryImpl(gh<_i443.AuthorizedApi>()));
-    gh.lazySingleton<_i665.SyncUseCases>(
-        () => _i665.DefaultSyncUseCases(gh<_i882.SyncRepository>()));
-    gh.lazySingleton<_i221.CategoryUseCases>(
-        () => _i221.DefaultCategoryUseCases(gh<_i561.CategoryRepository>()));
-    gh.lazySingleton<_i112.TagUseCases>(
-        () => _i112.DefaultTagUseCases(gh<_i57.TagRepository>()));
-    gh.lazySingleton<_i173.FeedbackUseCases>(
-        () => _i173.DefaultFeedbackUseCases(gh<_i173.FeedbackRepository>()));
-    gh.lazySingleton<_i315.ServerConfigViewModel>(
-        () => _i315.ServerConfigViewModel(
-              gh<_i766.ServerConfigRepository>(),
-              gh<_i467.AppConfig>(),
-            ));
-    gh.lazySingleton<_i421.SettingsViewModel>(
-        () => _i421.DefaultSettingsViewModel(
-              gh<_i519.SettingsUseCases>(),
-              gh<_i253.AuthUseCases>(),
-              gh<_i1020.AnalyticsService>(),
-            ));
-    gh.lazySingleton<_i471.CalendarUseCases>(
-        () => _i471.DefaultCalendarUseCases(gh<_i791.CalendarRepository>()));
-    gh.lazySingleton<_i911.PushRegistrar>(() => _i360.FcmPushRegistrar(
-          gh<_i911.PushTokenRepository>(),
-          gh<_i54.SessionAlertNotifier>(),
-        ));
-    gh.lazySingleton<_i272.ImportUseCases>(
-        () => _i272.DefaultImportUseCases(gh<_i377.ImportRepository>()));
-    gh.lazySingleton<_i572.LoanUseCases>(
-        () => _i572.DefaultLoanUseCases(gh<_i63.LoanRepository>()));
-    gh.lazySingleton<_i999.InvestmentUseCases>(
-        () => _i999.DefaultInvestmentUseCases(gh<_i80.InvestmentRepository>()));
-    gh.lazySingleton<_i840.GoalUseCases>(
-        () => _i840.DefaultGoalUseCases(gh<_i625.GoalRepository>()));
-    gh.factory<_i1002.FxRateUseCases>(() => _i1002.FxRateUseCases(
-          gh<_i406.FxRateRepository>(),
-          gh<_i107.WalletRepository>(),
-        ));
-    gh.lazySingleton<_i379.NetWorthUseCases>(
-        () => _i379.DefaultNetWorthUseCases(gh<_i980.NetWorthRepository>()));
-    gh.lazySingleton<_i990.AuthViewModel>(
-        () => authPresentationModule.authViewModel(
-              gh<_i253.AuthUseCases>(),
-              gh<_i519.SettingsUseCases>(),
-              gh<_i54.SessionAlertNotifier>(),
-              gh<_i1020.AnalyticsService>(),
-              gh<_i338.NotificationUseCases>(),
-            ));
-    gh.lazySingleton<_i336.WalletUseCases>(
-        () => _i336.DefaultWalletUseCases(gh<_i107.WalletRepository>()));
-    gh.lazySingleton<_i1017.FeatureFlagService>(() =>
-        serverConfigModule.featureFlags(gh<_i315.ServerConfigViewModel>()));
-    gh.lazySingleton<_i855.AppLimitsSource>(
-        () => serverConfigModule.appLimits(gh<_i315.ServerConfigViewModel>()));
-    gh.factory<_i281.ProfileUseCases>(
-        () => _i281.ProfileUseCases(gh<_i4.ProfileRepository>()));
-    gh.lazySingleton<_i622.CalendarViewModel>(() => _i622.CalendarViewModel(
-          gh<_i471.CalendarUseCases>(),
-          gh<_i990.AuthViewModel>(),
-        ));
-    gh.lazySingleton<_i468.DebtUseCases>(
-        () => _i468.DefaultDebtUseCases(gh<_i249.DebtRepository>()));
-    gh.lazySingleton<_i146.ReportUseCases>(() => _i146.DefaultReportUseCases(
-          gh<_i61.ReportRepository>(),
-          gh<_i107.WalletRepository>(),
-          gh<_i561.CategoryRepository>(),
-        ));
-    gh.lazySingleton<_i961.CategoryViewModel>(
-        () => _i961.DefaultCategoryViewModel(
-              gh<_i221.CategoryUseCases>(),
-              gh<_i990.AuthViewModel>(),
-              gh<_i444.CategoryExpansionRepository>(),
-            ));
     gh.lazySingleton<_i245.BudgetUseCases>(() => _i245.DefaultBudgetUseCases(
           gh<_i1073.BudgetRepository>(),
           gh<_i855.AppLimitsSource>(),
         ));
+    gh.lazySingleton<_i292.TransactionUseCases>(
+        () => _i292.DefaultTransactionUseCases(
+              gh<_i931.TransactionRepository>(),
+              gh<_i855.AppLimitsSource>(),
+            ));
+    gh.lazySingleton<_i338.NotificationUseCases>(() =>
+        _i338.DefaultNotificationUseCases(gh<_i199.NotificationRepository>()));
+    gh.lazySingleton<_i406.FxRateRepository>(
+        () => _i435.FxRateRepositoryImpl(gh<_i443.AuthorizedApi>()));
+    gh.lazySingleton<_i665.SyncUseCases>(
+        () => _i665.DefaultSyncUseCases(gh<_i882.SyncRepository>()));
     gh.lazySingleton<_i970.OverviewUseCases>(
         () => _i970.DefaultOverviewUseCases(
               gh<_i61.ReportRepository>(),
@@ -429,24 +369,114 @@ extension GetItInjectableX on _i174.GetIt {
               gh<_i821.RecurringRepository>(),
               gh<_i855.AppLimitsSource>(),
             ));
-    gh.factory<_i587.DefaultImportViewModel>(() => _i587.DefaultImportViewModel(
-          gh<_i272.ImportUseCases>(),
-          gh<_i336.WalletUseCases>(),
-          gh<_i221.CategoryUseCases>(),
-          gh<_i761.ImportFilePicker>(),
+    gh.lazySingleton<_i766.ServerConfigRepository>(
+        () => _i758.ServerConfigRepositoryImpl(
+              gh<_i443.AuthorizedApi>(),
+              gh<_i497.ServerConfigVault>(),
+              gh<_i88.AuthApi>(),
+            ));
+    gh.lazySingleton<_i468.DebtUseCases>(() => _i468.DefaultDebtUseCases(
+          gh<_i249.DebtRepository>(),
+          gh<_i855.AppLimitsSource>(),
+        ));
+    gh.lazySingleton<_i421.SettingsViewModel>(
+        () => _i421.DefaultSettingsViewModel(
+              gh<_i519.SettingsUseCases>(),
+              gh<_i253.AuthUseCases>(),
+              gh<_i1020.AnalyticsService>(),
+            ));
+    gh.lazySingleton<_i471.CalendarUseCases>(
+        () => _i471.DefaultCalendarUseCases(gh<_i791.CalendarRepository>()));
+    gh.lazySingleton<_i238.CardInstallmentUseCases>(
+        () => _i238.DefaultCardInstallmentUseCases(
+              gh<_i182.CardInstallmentRepository>(),
+              gh<_i855.AppLimitsSource>(),
+            ));
+    gh.lazySingleton<_i315.ServerConfigViewModel>(
+        () => _i315.ServerConfigViewModel(
+              gh<_i766.ServerConfigRepository>(),
+              gh<_i467.AppConfig>(),
+              gh<_i855.AppLimitsStore>(),
+            ));
+    gh.lazySingleton<_i911.PushRegistrar>(() => _i360.FcmPushRegistrar(
+          gh<_i911.PushTokenRepository>(),
+          gh<_i54.SessionAlertNotifier>(),
+        ));
+    gh.lazySingleton<_i999.InvestmentUseCases>(
+        () => _i999.DefaultInvestmentUseCases(
+              gh<_i80.InvestmentRepository>(),
+              gh<_i855.AppLimitsSource>(),
+            ));
+    gh.lazySingleton<_i272.ImportUseCases>(
+        () => _i272.DefaultImportUseCases(gh<_i377.ImportRepository>()));
+    gh.factory<_i1002.FxRateUseCases>(() => _i1002.FxRateUseCases(
+          gh<_i406.FxRateRepository>(),
+          gh<_i107.WalletRepository>(),
+        ));
+    gh.lazySingleton<_i379.NetWorthUseCases>(
+        () => _i379.DefaultNetWorthUseCases(gh<_i980.NetWorthRepository>()));
+    gh.lazySingleton<_i112.TagUseCases>(() => _i112.DefaultTagUseCases(
+          gh<_i57.TagRepository>(),
+          gh<_i855.AppLimitsSource>(),
+        ));
+    gh.lazySingleton<_i1004.ForecastUseCases>(
+        () => _i1004.DefaultForecastUseCases(
+              gh<_i159.ForecastRepository>(),
+              gh<_i855.AppLimitsSource>(),
+            ));
+    gh.lazySingleton<_i221.CategoryUseCases>(
+        () => _i221.DefaultCategoryUseCases(
+              gh<_i561.CategoryRepository>(),
+              gh<_i855.AppLimitsSource>(),
+            ));
+    gh.lazySingleton<_i990.AuthViewModel>(
+        () => authPresentationModule.authViewModel(
+              gh<_i253.AuthUseCases>(),
+              gh<_i519.SettingsUseCases>(),
+              gh<_i54.SessionAlertNotifier>(),
+              gh<_i1020.AnalyticsService>(),
+              gh<_i338.NotificationUseCases>(),
+            ));
+    gh.lazySingleton<_i1017.FeatureFlagService>(() =>
+        serverConfigModule.featureFlags(gh<_i315.ServerConfigViewModel>()));
+    gh.lazySingleton<_i336.WalletUseCases>(() => _i336.DefaultWalletUseCases(
+          gh<_i107.WalletRepository>(),
+          gh<_i855.AppLimitsSource>(),
+        ));
+    gh.lazySingleton<_i622.CalendarViewModel>(() => _i622.CalendarViewModel(
+          gh<_i471.CalendarUseCases>(),
           gh<_i990.AuthViewModel>(),
         ));
+    gh.lazySingleton<_i840.GoalUseCases>(() => _i840.DefaultGoalUseCases(
+          gh<_i625.GoalRepository>(),
+          gh<_i855.AppLimitsSource>(),
+        ));
+    gh.lazySingleton<_i173.FeedbackUseCases>(
+        () => _i173.DefaultFeedbackUseCases(
+              gh<_i173.FeedbackRepository>(),
+              gh<_i855.AppLimitsSource>(),
+            ));
+    gh.lazySingleton<_i146.ReportUseCases>(() => _i146.DefaultReportUseCases(
+          gh<_i61.ReportRepository>(),
+          gh<_i107.WalletRepository>(),
+          gh<_i561.CategoryRepository>(),
+        ));
+    gh.factory<_i281.ProfileUseCases>(() => _i281.ProfileUseCases(
+          gh<_i4.ProfileRepository>(),
+          gh<_i855.AppLimitsSource>(),
+        ));
+    gh.lazySingleton<_i961.CategoryViewModel>(
+        () => _i961.DefaultCategoryViewModel(
+              gh<_i221.CategoryUseCases>(),
+              gh<_i990.AuthViewModel>(),
+              gh<_i444.CategoryExpansionRepository>(),
+            ));
     gh.factory<_i861.PendingGoalUseCases>(() => _i861.PendingGoalUseCases(
           gh<_i519.SettingsUseCases>(),
           gh<_i840.GoalUseCases>(),
           gh<_i336.WalletUseCases>(),
           gh<_i253.AuthUseCases>(),
         ));
-    gh.lazySingleton<_i238.CardInstallmentUseCases>(
-        () => _i238.DefaultCardInstallmentUseCases(
-              gh<_i182.CardInstallmentRepository>(),
-              gh<_i855.AppLimitsSource>(),
-            ));
     gh.lazySingleton<_i488.SyncViewModel>(() => _i488.DefaultSyncViewModel(
           gh<_i665.SyncUseCases>(),
           gh<_i990.AuthViewModel>(),
@@ -457,11 +487,14 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i990.AuthViewModel>(),
           gh<_i887.ProfileViewModel>(),
         ));
-    gh.lazySingleton<_i1004.ForecastUseCases>(
-        () => _i1004.DefaultForecastUseCases(
-              gh<_i159.ForecastRepository>(),
-              gh<_i855.AppLimitsSource>(),
-            ));
+    gh.factory<_i587.DefaultImportViewModel>(() => _i587.DefaultImportViewModel(
+          gh<_i272.ImportUseCases>(),
+          gh<_i336.WalletUseCases>(),
+          gh<_i221.CategoryUseCases>(),
+          gh<_i761.ImportFilePicker>(),
+          gh<_i990.AuthViewModel>(),
+          gh<_i855.AppLimitsSource>(),
+        ));
     gh.lazySingleton<_i887.ProfileViewModel>(
         () => _i887.DefaultProfileViewModel(
               gh<_i281.ProfileUseCases>(),
@@ -494,23 +527,20 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i887.ProfileViewModel>(),
           gh<_i990.AuthViewModel>(),
         ));
-    gh.lazySingleton<_i332.TransactionViewModel>(
-        () => _i332.DefaultTransactionViewModel(
-              gh<_i292.TransactionUseCases>(),
-              gh<_i221.CategoryUseCases>(),
-              gh<_i112.TagUseCases>(),
-              gh<_i336.WalletUseCases>(),
-              gh<_i251.WalletViewModel>(),
-              gh<_i281.ProfileUseCases>(),
-              gh<_i990.AuthViewModel>(),
-              gh<_i1020.AnalyticsService>(),
-              gh<_i488.SyncViewModel>(),
-              gh<_i1002.FxRateUseCases>(),
-            ));
     gh.lazySingleton<_i779.FirstRunNudgesViewModel>(
         () => _i779.FirstRunNudgesViewModel(
               gh<_i861.PendingGoalUseCases>(),
               gh<_i519.SettingsUseCases>(),
+            ));
+    gh.factory<_i1008.DefaultDataExportViewModel>(
+        () => _i1008.DefaultDataExportViewModel(
+              gh<_i281.ProfileUseCases>(),
+              gh<_i336.WalletUseCases>(),
+              gh<_i292.TransactionUseCases>(),
+              gh<_i421.TransactionsCsvExportUseCase>(),
+              gh<_i887.ProfileViewModel>(),
+              gh<_i990.AuthViewModel>(),
+              gh<_i855.AppLimitsSource>(),
             ));
     gh.lazySingleton<_i137.BudgetViewModel>(() => _i137.DefaultBudgetViewModel(
           gh<_i245.BudgetUseCases>(),
@@ -519,16 +549,6 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i1056.SettingsRepository>(),
           gh<_i990.AuthViewModel>(),
           gh<_i855.AppLimitsSource>(),
-        ));
-    gh.factoryParam<_i599.WalletDetailViewModel, String, dynamic>((
-      walletId,
-      _,
-    ) =>
-        _i599.DefaultWalletDetailViewModel(
-          gh<_i292.TransactionUseCases>(),
-          gh<_i332.TransactionViewModel>(),
-          gh<_i1002.FxRateUseCases>(),
-          walletId: walletId,
         ));
     gh.lazySingleton<_i987.InstallmentViewModel>(
         () => _i987.InstallmentViewModel(
@@ -557,6 +577,36 @@ extension GetItInjectableX on _i174.GetIt {
               gh<_i887.ProfileViewModel>(),
               gh<_i911.PushRegistrar>(),
             ));
+    gh.lazySingleton<_i332.TransactionViewModel>(
+        () => _i332.DefaultTransactionViewModel(
+              gh<_i292.TransactionUseCases>(),
+              gh<_i221.CategoryUseCases>(),
+              gh<_i112.TagUseCases>(),
+              gh<_i336.WalletUseCases>(),
+              gh<_i251.WalletViewModel>(),
+              gh<_i281.ProfileUseCases>(),
+              gh<_i990.AuthViewModel>(),
+              gh<_i1020.AnalyticsService>(),
+              gh<_i488.SyncViewModel>(),
+              gh<_i1002.FxRateUseCases>(),
+              gh<_i855.AppLimitsSource>(),
+            ));
+    gh.lazySingleton<_i857.LoanViewModel>(() => _i857.LoanViewModel(
+          gh<_i572.LoanUseCases>(),
+          gh<_i251.WalletViewModel>(),
+          gh<_i887.ProfileViewModel>(),
+          gh<_i990.AuthViewModel>(),
+        ));
+    gh.factoryParam<_i599.WalletDetailViewModel, String, dynamic>((
+      walletId,
+      _,
+    ) =>
+        _i599.DefaultWalletDetailViewModel(
+          gh<_i292.TransactionUseCases>(),
+          gh<_i332.TransactionViewModel>(),
+          gh<_i1002.FxRateUseCases>(),
+          walletId: walletId,
+        ));
     gh.factoryParam<_i1024.TransactionResultsViewModel, bool?, String?>((
       deleted,
       accountId,
@@ -567,27 +617,12 @@ extension GetItInjectableX on _i174.GetIt {
           deleted: deleted,
           accountId: accountId,
         ));
-    gh.lazySingleton<_i857.LoanViewModel>(() => _i857.LoanViewModel(
-          gh<_i572.LoanUseCases>(),
-          gh<_i251.WalletViewModel>(),
-          gh<_i887.ProfileViewModel>(),
-          gh<_i990.AuthViewModel>(),
-        ));
-    gh.factory<_i1008.DefaultDataExportViewModel>(
-        () => _i1008.DefaultDataExportViewModel(
-              gh<_i281.ProfileUseCases>(),
-              gh<_i336.WalletUseCases>(),
-              gh<_i292.TransactionUseCases>(),
-              gh<_i421.TransactionsCsvExportUseCase>(),
-              gh<_i887.ProfileViewModel>(),
-              gh<_i990.AuthViewModel>(),
-            ));
     return this;
   }
 }
 
+class _$ServerConfigModule extends _i641.ServerConfigModule {}
+
 class _$AuthDataModule extends _i901.AuthDataModule {}
 
 class _$AuthPresentationModule extends _i282.AuthPresentationModule {}
-
-class _$ServerConfigModule extends _i641.ServerConfigModule {}

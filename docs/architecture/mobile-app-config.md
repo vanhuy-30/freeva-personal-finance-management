@@ -24,6 +24,14 @@ App lấy cờ tính năng và các số cấu hình từ `GET /api/v1/app-confi
 
 Đã chuyển (PR 1): mốc ngân sách cho chọn/mặc định/tối đa/lớn nhất; dự báo lựa chọn/mặc định/lớn nhất; trả góp lựa chọn/mặc định/nhỏ nhất/lớn nhất; nhắc trước lựa chọn/mặc định/lớn nhất; mức dùng thẻ cao/nguy hiểm; "sắp đến hạn" thẻ và cho mượn; khoảng mặc định tài sản ròng/biểu đồ đầu tư; số dòng top báo cáo; số giao dịch gần đây trên Home; ngày mục tiêu mặc định/xa nhất; bước phút và giờ nhắc mặc định. Chữ có số dựng từ cấu hình (`budgetThresholdsSheetSub`, `budgetThresholdsDefaultHint`, `installmentOtherLabel`). Màn Thông báo: dòng ngân sách nói "Khi chạm mốc bạn chọn" vì server báo đúng các mốc user chọn (BE-P5-001).
 
+## Trước khi đăng nhập và lúc khóa (MOB-P5-001 PR 2)
+
+- Chưa đăng nhập: app tải `GET /api/v1/app-config/public` (chỉ số, không cờ) ngay khi mở, nên màn đăng ký/đặt lại mật khẩu dùng quy tắc từ server. Boundary áp dụng cho mọi trạng thái: chưa có bản nào thì chờ, tải lỗi thì Thử lại.
+- Đăng nhập: chuyển sang `/app-config` (cờ của user). Đăng xuất: giữ số, bỏ cờ, tải lại bản công khai. Màn PIN (khóa): dùng bản đã lưu; máy chưa có bản nào thì tải bản công khai.
+- `AppLimitsStore` (không phụ thuộc gì) giữ `AppLimits` hiện tại; model cấu hình ghi vào, repository/use case đọc qua `AppLimitsSource`. Tách ra để `AuthRepository` (đường tải cấu hình đi qua nó) đọc số lần sai PIN mà không tạo vòng DI.
+
+Đã chuyển (PR 2): mật khẩu tối thiểu/tối đa/"rất mạnh" (đăng nhập chỉ kiểm tra mức trần), email tối đa, số lần sai PIN, tên hiển thị (60, sửa lệch 50), tên/ghi chú ví, danh mục, nhãn, mục tiêu, khoản vay, định kỳ, đầu tư, cho mượn, giao dịch, nơi chi, góp ý; số nhãn tối đa; ngày đầu kỳ tối đa; onboarding (số mục tiêu, gợi ý thu nhập, phần tiết kiệm, loại mục tiêu); nhập/xuất CSV. Chữ có số dựng từ cấu hình. Màn Thông báo: dòng mục tiêu/soát tháng theo `available` của server. Icon danh mục: chỉ hiện icon server chấp nhận (`iconTokens`); nhóm và icon chọn nhanh vẫn theo board. Phiên bản app đọc bằng `package_info_plus` (`AppVersion`). Còn cứng có chủ đích: ô tìm kiếm 200 ký tự (API chưa có khóa), độ dài PIN 6, màu/icon mục tiêu (token thiết kế).
+
 ## Dùng trong code
 
 - Cờ: `getIt<FeatureFlagService>().isEnabled(FeatureFlags.insights)` (bản cài đặt là `ServerConfigViewModel`). `LocalFeatureFlagService` luôn tắt đã bỏ.

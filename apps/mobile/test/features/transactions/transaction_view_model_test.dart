@@ -33,6 +33,7 @@ import 'transaction_fakes.dart';
 import 'package:mobile/features/fx_rates/domain/fx_rate_use_cases.dart';
 
 import '../fx_rates/fakes.dart';
+import '../../support/server_config_fixture.dart';
 
 class RecordingAnalytics implements AnalyticsService {
   final events = <Map<String, Object>>[];
@@ -82,13 +83,22 @@ void main() {
     auth =
         DefaultAuthViewModel(
             DefaultAuthUseCases(
-              AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+              AuthRepositoryImpl(
+                FakeApi(),
+                MemoryVault(),
+                FakeBiometrics(),
+                testServerConfigModel(),
+              ),
+              testServerConfigModel(),
             ),
           )
           ..stage = AuthStage.unlocked
           ..hasPin = true
           ..ready = true;
-    final walletCases = DefaultWalletUseCases(WalletRepositoryImpl(api));
+    final walletCases = DefaultWalletUseCases(
+      WalletRepositoryImpl(api),
+      testServerConfigModel(),
+    );
     wallets = DefaultWalletViewModel(walletCases, auth);
     sync = DefaultSyncViewModel(
       DefaultSyncUseCases(MemorySyncRepository()),
@@ -96,16 +106,23 @@ void main() {
       analytics,
     );
     model = DefaultTransactionViewModel(
-      DefaultTransactionUseCases(TransactionRepositoryImpl(api)),
-      DefaultCategoryUseCases(CategoryRepositoryImpl(api)),
-      DefaultTagUseCases(TagRepositoryImpl(api)),
+      DefaultTransactionUseCases(
+        TransactionRepositoryImpl(api),
+        testServerConfigModel(),
+      ),
+      DefaultCategoryUseCases(
+        CategoryRepositoryImpl(api),
+        testServerConfigModel(),
+      ),
+      DefaultTagUseCases(TagRepositoryImpl(api), testServerConfigModel()),
       walletCases,
       wallets,
-      ProfileUseCases(MemoryProfiles()),
+      ProfileUseCases(MemoryProfiles(), testServerConfigModel()),
       auth,
       analytics,
       sync,
       FxRateUseCases(MemoryFxRates(), FxWallets()),
+      testServerConfigModel(),
     );
     await model.load();
   });
@@ -210,7 +227,10 @@ void main() {
       sync.dispose();
       wallets.dispose();
       api = ScriptedApi()..listPending = Completer<void>();
-      final walletCases = DefaultWalletUseCases(WalletRepositoryImpl(api));
+      final walletCases = DefaultWalletUseCases(
+        WalletRepositoryImpl(api),
+        testServerConfigModel(),
+      );
       wallets = DefaultWalletViewModel(walletCases, auth);
       sync = DefaultSyncViewModel(
         DefaultSyncUseCases(MemorySyncRepository()),
@@ -218,16 +238,23 @@ void main() {
         analytics,
       );
       model = DefaultTransactionViewModel(
-        DefaultTransactionUseCases(TransactionRepositoryImpl(api)),
-        DefaultCategoryUseCases(CategoryRepositoryImpl(api)),
-        DefaultTagUseCases(TagRepositoryImpl(api)),
+        DefaultTransactionUseCases(
+          TransactionRepositoryImpl(api),
+          testServerConfigModel(),
+        ),
+        DefaultCategoryUseCases(
+          CategoryRepositoryImpl(api),
+          testServerConfigModel(),
+        ),
+        DefaultTagUseCases(TagRepositoryImpl(api), testServerConfigModel()),
         walletCases,
         wallets,
-        ProfileUseCases(MemoryProfiles()),
+        ProfileUseCases(MemoryProfiles(), testServerConfigModel()),
         auth,
         analytics,
         sync,
         FxRateUseCases(MemoryFxRates(), FxWallets()),
+        testServerConfigModel(),
       );
       final loading = model.load();
       await Future<void>.delayed(Duration.zero);

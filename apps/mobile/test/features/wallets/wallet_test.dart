@@ -14,6 +14,7 @@ import 'package:mobile/features/wallets/presentation/viewmodels/wallet_view_mode
 import 'package:mobile/core/money/money_text.dart';
 
 import '../auth/fakes.dart';
+import '../../support/server_config_fixture.dart';
 
 Map<String, dynamic> row(String id, {int order = 0, int version = 1}) => {
   'id': id,
@@ -149,7 +150,10 @@ void main() {
   );
   test('use case rejects overflow, invalid days, currency and card fields before writing', () async {
     final api = WalletTransport();
-    final cases = DefaultWalletUseCases(WalletRepositoryImpl(api));
+    final cases = DefaultWalletUseCases(
+      WalletRepositoryImpl(api),
+      testServerConfigModel(),
+    );
     final currencies = [const WalletCurrency('VND', 0)];
     for (final draft in [
       WalletDraft(
@@ -230,13 +234,22 @@ void main() {
       auth =
           DefaultAuthViewModel(
               DefaultAuthUseCases(
-                AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+                AuthRepositoryImpl(
+                  FakeApi(),
+                  MemoryVault(),
+                  FakeBiometrics(),
+                  testServerConfigModel(),
+                ),
+                testServerConfigModel(),
               ),
             )
             ..stage = AuthStage.unlocked
             ..hasPin = true;
       model = DefaultWalletViewModel(
-        DefaultWalletUseCases(WalletRepositoryImpl(api)),
+        DefaultWalletUseCases(
+          WalletRepositoryImpl(api),
+          testServerConfigModel(),
+        ),
         auth,
       );
       await model.load();

@@ -15,6 +15,8 @@ import 'currency_sheet.dart';
 import 'locked_field.dart';
 import '../../../../../core/widgets/freeva_picker_field.dart';
 import 'wallet_type_grid.dart';
+import '../../../../server_config/domain/app_limits.dart';
+import '../../../../../core/di/injection.dart';
 
 /// Fields of the add / edit form. A wallet with transactions shows type and
 /// currency as one locked box instead of the type cards and currency field.
@@ -74,7 +76,11 @@ class WalletFormBody extends StatelessWidget {
         FreevaTextField(
           label: form.credit ? s.cardName : s.walletName,
           controller: name,
-          inputFormatters: [_maxLength],
+          inputFormatters: [
+            LengthLimitingTextInputFormatter(
+              getIt<AppLimitsSource>().requireLimits.walletNameMaxLength,
+            ),
+          ],
           textInputAction: TextInputAction.next,
           error: form.errors.contains(WalletFormError.name)
               ? s.walletNameMissing
@@ -162,6 +168,4 @@ class WalletFormBody extends StatelessWidget {
       ],
     );
   }
-
-  static final _maxLength = LengthLimitingTextInputFormatter(100);
 }

@@ -123,7 +123,8 @@ MonthReviewCategory _monthCategory(Map<String, dynamic> json) =>
 
 ReportPeriod _period(Map<String, dynamic> json) {
   final start = json['fiscalMonthStartDay'] as int;
-  if (start < 1 || start > 28) throw const FormatException();
+  // The server owns the upper bound (`limit.periodStartDayMax`).
+  if (start < 1) throw const FormatException();
   final timezone = json['timezone'] as String;
   if (timezone.isEmpty) throw const FormatException();
   return ReportPeriod(

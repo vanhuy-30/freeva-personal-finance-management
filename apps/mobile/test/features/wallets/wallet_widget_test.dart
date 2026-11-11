@@ -38,7 +38,13 @@ void main() {
     auth =
         DefaultAuthViewModel(
             DefaultAuthUseCases(
-              AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+              AuthRepositoryImpl(
+                FakeApi(),
+                MemoryVault(),
+                FakeBiometrics(),
+                testServerConfigModel(),
+              ),
+              testServerConfigModel(),
             ),
           )
           ..stage = AuthStage.unlocked
@@ -46,7 +52,7 @@ void main() {
           ..ready = true;
     getIt.registerSingleton<AuthViewModel>(auth);
     model = DefaultWalletViewModel(
-      DefaultWalletUseCases(WalletRepositoryImpl(api)),
+      DefaultWalletUseCases(WalletRepositoryImpl(api), testServerConfigModel()),
       auth,
     );
     await model.load();
@@ -189,7 +195,13 @@ void main() {
     final settings = DefaultSettingsViewModel(
       DefaultSettingsUseCases(SettingsRepositoryImpl(MemoryPreferences())),
       DefaultAuthUseCases(
-        AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+        AuthRepositoryImpl(
+          FakeApi(),
+          MemoryVault(),
+          FakeBiometrics(),
+          testServerConfigModel(),
+        ),
+        testServerConfigModel(),
       ),
       RecordingAnalytics(),
     );
