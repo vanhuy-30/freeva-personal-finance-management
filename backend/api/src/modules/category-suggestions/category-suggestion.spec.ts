@@ -5,20 +5,12 @@ import type { AppConfigService } from '../app-config/app-config.service';
 import { AutoSuggestPolicy } from './auto-suggest.policy';
 import { CategorySuggestionController } from './category-suggestion.controller';
 import { MappingIdDto } from './category-suggestion.dto';
-import { merchantKey, type CategorySuggestionRepository } from './domain/category-suggestion';
+import { merchantKey } from './domain/category-suggestion';
+import { repo } from './testing';
 
 const uuid = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 const request = { session: { userId: 'u1' } } as never;
 
-function repo(overrides: Partial<CategorySuggestionRepository> = {}): CategorySuggestionRepository {
-  return {
-    autoSuggestEnabled: jest.fn().mockResolvedValue(true),
-    listMappings: jest.fn().mockResolvedValue([]),
-    deleteMapping: jest.fn().mockResolvedValue(true),
-    deleteAllMappings: jest.fn().mockResolvedValue(0),
-    ...overrides,
-  };
-}
 const flags = (on: boolean) => ({ isEnabled: jest.fn().mockResolvedValue(on) }) as unknown as AppConfigService;
 
 describe('PRD-P5-E01 auto-suggest switch and learned merchants', () => {

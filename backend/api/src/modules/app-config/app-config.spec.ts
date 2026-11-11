@@ -47,6 +47,18 @@ describe('BE-P5-E08 config values', () => {
     expect(parseConfigValue(time, '23:59')).toBe('23:59');
   });
 
+  it('BE-P5-E03 pair lists keep "text: value", reject unknown values and duplicates ignoring accents', () => {
+    const pairs: ConfigDefinition = { type: 'pair_list', default: [], values: ['food', 'transport'], minItems: 0, maxItems: 3, maxTextLength: 10, description: '' };
+    expect(parseConfigValue(pairs, [' Grab :transport', 'Phở Thìn: food'])).toEqual(['Grab: transport', 'Phở Thìn: food']);
+    expect(parseConfigValue(pairs, ['a:b:food'])).toEqual(['a:b: food']);
+    invalid(() => parseConfigValue(pairs, ['Grab transport']));
+    invalid(() => parseConfigValue(pairs, ['Grab: bus']));
+    invalid(() => parseConfigValue(pairs, ['Pho: food', 'phở: food']));
+    invalid(() => parseConfigValue(pairs, ['Very long merchant: food']));
+    invalid(() => parseConfigValue(pairs, ['a: food', 'b: food', 'c: food', 'd: food']));
+    invalid(() => parseConfigValue(pairs, 'Grab: transport'));
+  });
+
   it('rejects wrong types and out-of-range values', () => {
     invalid(() => parseConfigValue(integer, 5));
     invalid(() => parseConfigValue(integer, 0));

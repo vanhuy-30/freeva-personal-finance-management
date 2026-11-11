@@ -13,6 +13,8 @@ import {
 import { MAX_RANGE_DAYS, SERIES_WINDOWS } from '../../reports/domain/report';
 import { IMPORT_MAX_ROWS } from '../../transaction-import/domain/transaction-import';
 import { CSV_EXPORT_MAX_ROWS } from '../../transactions/domain/csv-export';
+import { CATEGORY_ICONS } from '../../categories/domain/category';
+import { DEFAULT_COMMON_MERCHANTS } from '../../category-suggestions/domain/suggest';
 import type { ConfigDefinition, ConfigValue, FlagDefinition } from './app-config';
 
 /**
@@ -163,6 +165,18 @@ export const CONFIG_DEFINITIONS = {
     type: 'integer', default: IMPORT_MAX_ROWS, min: 1, max: IMPORT_MAX_ROWS,
     description: 'Số dòng tối đa một lần nhập CSV.',
   },
+  'categorySuggest.minConfidencePercent': {
+    type: 'integer', default: 60, min: 50, max: 100,
+    description: 'Gợi ý danh mục theo lịch sử chỉ hiện khi danh mục dùng nhiều nhất chiếm ít nhất bấy nhiêu % các lần trước (BE-P5-E03).',
+  },
+  'categorySuggest.historySize': {
+    type: 'integer', default: 50, min: 5, max: 200,
+    description: 'Số giao dịch gần nhất cùng cửa hàng (hoặc cùng ghi chú) được xét khi gợi ý danh mục.',
+  },
+  'categorySuggest.commonMerchants': {
+    type: 'pair_list', default: DEFAULT_COMMON_MERCHANTS, values: CATEGORY_ICONS, minItems: 0, maxItems: 500, maxTextLength: 60,
+    description: 'Cửa hàng chung và icon danh mục gợi ý, mỗi mục "Tên: icon" (vd. "Grab: transport"). Dùng khi user chưa có lịch sử ở cửa hàng đó.',
+  },
   'export.csvMaxRows': {
     type: 'integer', default: CSV_EXPORT_MAX_ROWS, min: 1, max: CSV_EXPORT_MAX_ROWS,
     description: 'Số dòng tối đa một lần xuất CSV.',
@@ -204,7 +218,7 @@ type Widen<D> = D extends { type: 'integer' }
   ? number
   : D extends { type: 'integer_list' }
     ? readonly number[]
-    : D extends { type: 'money_minor_list' | 'enum_list' }
+    : D extends { type: 'money_minor_list' | 'enum_list' | 'pair_list' }
       ? readonly string[]
       : string;
 

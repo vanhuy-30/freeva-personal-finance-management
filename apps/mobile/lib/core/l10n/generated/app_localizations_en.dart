@@ -5808,4 +5808,23 @@ class SEn extends S {
   String autoSuggestSeeAll(int count) {
     return 'See all $count';
   }
+
+  @override
+  String txSuggestTitle(String category) {
+    return 'File under $category?';
+  }
+
+  @override
+  String txSuggestHistory(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Same as $count times before here',
+      one: 'Same as last time here',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get txSuggestUse => 'Use';
 }

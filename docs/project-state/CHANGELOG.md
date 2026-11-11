@@ -4,6 +4,7 @@ Nhật ký repo/process — không phải App Store release notes.
 
 ## 2026-11-11
 
+- `BE-P5-E03` / `MOB-P5-E03` PR 1/2: gợi ý danh mục khi ghi chi/thu ("Xếp vào Cà phê? · Như 8 lần trước ở đây", nút Dùng) từ cửa hàng đã nhớ, lịch sử của user hoặc danh sách cửa hàng chung (sửa trên web admin); server đếm tỷ lệ chấp nhận/sửa không kèm user id. Migration additive `category_suggest_stats`. Còn phần nhập CSV. [Thiết kế](../architecture/category-suggestions.md).
 - `PRD-P5-E01` / `MOB-P5-002` done: công tắc Gợi ý tự động (tắt gợi ý danh mục, điều đáng chú ý, dự báo chi) và danh sách cửa hàng đã nhớ xem/xóa được trong Cá nhân → Ứng dụng; `AutoSuggestPolicy` cho các task gợi ý sau; xuất dữ liệu và xóa tài khoản có dữ liệu mới. Migration additive `auto_suggest`. [Thiết kế](../architecture/auto-suggest.md).
 - `DS-P5-001` done: thiết kế Phase 5 trên trang canvas **09 · Phase 5** — gợi ý danh mục khi ghi chi và nhập CSV, thẻ đáng chú ý trên Tổng quan, màn Phân tích, dự báo chi cuối tháng, ngày dự kiến đạt mục tiêu, cài đặt Gợi ý tự động. Chủ dự án bỏ what-if (`BE-P5-E07` wont) và nút "Không đúng". [Pattern](../brand/patterns/R-suggestions-insights.md).
 - `MOB-P5-001` PR 3/3 (xong task): chữ số lẻ, ký hiệu và tiền tệ mặc định lấy từ danh mục tiền tệ của server; backend `/profile/options` thêm `isDefault`. `BE-P5-001` / `MOB-P5-001` done.

@@ -2884,5 +2884,10 @@
   "autoSuggestDelete": "Delete",
   "autoSuggestError": "Could not save. Please try again.",
   "autoSuggestSeeAll": "See all {count}",
-  "@autoSuggestSeeAll": {"placeholders": {"count": {"type": "int"}}}
+  "@autoSuggestSeeAll": {"placeholders": {"count": {"type": "int"}}},
+  "txSuggestTitle": "File under {category}?",
+  "@txSuggestTitle": {"placeholders": {"category": {"type": "String"}}},
+  "txSuggestHistory": "{count, plural, =1{Same as last time here} other{Same as {count} times before here}}",
+  "@txSuggestHistory": {"placeholders": {"count": {"type": "int"}}},
+  "txSuggestUse": "Use"
 }

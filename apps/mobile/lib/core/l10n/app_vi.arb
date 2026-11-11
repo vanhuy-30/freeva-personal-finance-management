@@ -1855,5 +1855,8 @@
   "autoSuggestClearBody": "{count} cửa hàng đã nhớ sẽ bị xoá. Giao dịch vẫn giữ nguyên.",
   "autoSuggestDelete": "Xoá",
   "autoSuggestError": "Chưa lưu được. Thử lại nhé.",
-  "autoSuggestSeeAll": "Xem cả {count}"
+  "autoSuggestSeeAll": "Xem cả {count}",
+  "txSuggestTitle": "Xếp vào {category}?",
+  "txSuggestHistory": "{count, plural, other{Như {count} lần trước ở đây}}",
+  "txSuggestUse": "Dùng"
 }

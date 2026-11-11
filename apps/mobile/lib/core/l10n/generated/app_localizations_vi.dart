@@ -5686,4 +5686,22 @@ class SVi extends S {
   String autoSuggestSeeAll(int count) {
     return 'Xem cả $count';
   }
+
+  @override
+  String txSuggestTitle(String category) {
+    return 'Xếp vào $category?';
+  }
+
+  @override
+  String txSuggestHistory(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Như $count lần trước ở đây',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get txSuggestUse => 'Dùng';
 }

@@ -54,6 +54,7 @@ Mốc ngân sách: server báo ở **mọi mốc user đã chọn** (bỏ sàn 8
 | `money_minor_list` | chuỗi minor units dương (như API tiền), tăng dần, có `currencyCode` |
 | `enum` / `enum_list` | thuộc `values`; danh sách không trùng, giữ thứ tự staff đặt |
 | `time` | `HH:mm` |
+| `pair_list` | danh sách chuỗi `"Tên: giá trị"`, giá trị sau dấu `:` cuối thuộc `values`, tên ≤ `maxTextLength`, không trùng (bỏ dấu, hoa thường); web admin nhập mỗi dòng một cặp (`BE-P5-E03`) |
 
 ## Cờ
 
