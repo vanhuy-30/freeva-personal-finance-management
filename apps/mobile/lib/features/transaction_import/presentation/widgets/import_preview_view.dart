@@ -10,6 +10,7 @@ import '../../../../core/widgets/freeva_chip.dart';
 import '../../../../core/widgets/freeva_switch.dart';
 import '../../domain/import_models.dart';
 import '../viewmodels/import_view_model.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 /// Board `ImportPreview`: what would be written, row by row.
 class ImportPreviewView extends StatelessWidget {
@@ -267,7 +268,9 @@ class _PreviewRow extends StatelessWidget {
     ].join(' · ');
     String? amount;
     if (row.amountMinor != null) {
-      final digits = model.digitsOf(row.currencyCode ?? 'VND');
+      final digits = model.digitsOf(
+        row.currencyCode ?? CurrencyCatalog.current.defaultCode,
+      );
       final text = formatMoneyText(row.amountMinor!, digits, locale);
       amount = switch (row.type) {
         'expense' => '−$text',

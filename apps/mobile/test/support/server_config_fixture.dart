@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:mobile/core/money/currency_catalog.dart';
 import 'package:mobile/core/feature_flags/feature_flag_service.dart';
 import 'package:mobile/features/server_config/domain/app_limits.dart';
 import 'package:mobile/features/server_config/domain/server_config.dart';
@@ -82,11 +83,18 @@ Map<String, Object> testConfigValues([
   ...overrides,
 };
 
+/// Currencies as `GET /profile/options` lists them (VND seed + one with decimals).
+const testCurrencies = [
+  CurrencyInfo(code: 'VND', minorDigits: 0, symbol: '₫', isDefault: true),
+  CurrencyInfo(code: 'USD', minorDigits: 2),
+];
+
 ServerConfig testServerConfig([Map<String, Object> overrides = const {}]) =>
     ServerConfig(
       version: 1,
       flags: const {},
       values: testConfigValues(overrides),
+      currencies: testCurrencies,
     );
 
 AppLimits testLimits([Map<String, Object> overrides = const {}]) =>

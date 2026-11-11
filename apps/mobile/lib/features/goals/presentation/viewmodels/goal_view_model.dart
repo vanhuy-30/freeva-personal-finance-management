@@ -11,6 +11,7 @@ import '../../../wallets/domain/wallet.dart';
 import '../../../wallets/presentation/viewmodels/wallet_view_model.dart';
 import '../../domain/goal.dart';
 import '../../domain/goal_use_cases.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 @LazySingleton()
 class GoalViewModel extends ChangeNotifier {
@@ -48,7 +49,8 @@ class GoalViewModel extends ChangeNotifier {
   /// Currency of the totals: the profile currency when a goal uses it, else
   /// the first goal's.
   String get totalCurrency {
-    final main = _profile.saved?.currency ?? 'VND';
+    final main =
+        _profile.saved?.currency ?? CurrencyCatalog.current.defaultCode;
     final goals = active;
     if (goals.isEmpty || goals.any((goal) => goal.currencyCode == main)) {
       return main;
@@ -91,7 +93,7 @@ class GoalViewModel extends ChangeNotifier {
           .where((item) => item.code == currency)
           .firstOrNull
           ?.minorDigits ??
-      (currency == 'VND' ? 0 : 2);
+      CurrencyCatalog.current.digits(currency);
 
   String get today => _wallets.today.toIso8601String().substring(0, 10);
 

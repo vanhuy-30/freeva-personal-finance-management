@@ -17,6 +17,7 @@ import '../../../wallets/domain/wallet.dart';
 import '../../../wallets/presentation/widgets/wallet_type_icon.dart';
 import '../../domain/goal.dart';
 import '../viewmodels/goal_view_model.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 /// Góp vào / Rút ra over the goal detail. Returns true when something was
 /// recorded. Taking money from another wallet is a wallet transfer; "Đã nằm
@@ -122,7 +123,7 @@ class _MoveSheetState extends State<_MoveSheet> {
     final value = _value(locale);
     final tooMuch = out && value != null && value > goal.currentMinor;
     final ready = value != null && value > BigInt.zero && !tooMuch;
-    final symbol = goal.currencyCode == 'VND' ? '₫' : goal.currencyCode;
+    final symbol = CurrencyCatalog.current.symbol(goal.currencyCode);
     final confirm = value == null || value == BigInt.zero
         ? (out ? s.goalMoveOut : s.goalMoveIn)
         : (out ? s.goalMoveConfirmOut : s.goalMoveConfirmIn)(

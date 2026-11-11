@@ -20,15 +20,27 @@ class ServerConfigRepositoryImpl implements ServerConfigRepository {
 
   @override
   Future<Either<AuthFailure, ServerConfig>> fetch() async {
-    final result = await _api.request('GET', 'app-config');
-    return result.fold(left, (json) {
-      try {
-        return right(ServerConfig.fromJson(json));
-      } on FormatException {
-        return left(const AuthFailure(AuthError.unavailable));
-      }
-    });
+    final config = await _api.request('GET', 'app-config');
+    final json = config.fold((_) => null, (value) => value);
+    if (json == null) return config.fold(left, (_) => left(_unavailable));
+    // Currencies come with the signed-in config so screens never guess digits
+    // or symbols (MOB-P5-001).
+    final options = await _api.request('GET', 'profile/options');
+    final currencies = options.fold(
+      (_) => null,
+      (value) => value['currencies'],
+    );
+    if (currencies == null) {
+      return options.fold(left, (_) => left(_unavailable));
+    }
+    try {
+      return right(ServerConfig.fromJson({...json, 'currencies': currencies}));
+    } on Object {
+      return left(_unavailable);
+    }
   }
+
+  static const _unavailable = AuthFailure(AuthError.unavailable);
 
   @override
   Future<Either<AuthFailure, ServerConfig>> fetchPublic() async {

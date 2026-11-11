@@ -65,16 +65,40 @@ void main() {
   });
 
   group('MOB-P5-E08 repository', () {
-    test('fetches app-config and maps a bad body to unavailable', () async {
-      final api = _Api()..json = _body();
-      final repo = ServerConfigRepositoryImpl(api, _Vault(), _PublicApi());
-      final ok = await repo.fetch();
-      expect(api.paths, ['app-config']);
-      expect(ok.getOrElse(() => throw StateError('left')).version, 3);
-      api.json = {'nope': true};
-      final bad = await repo.fetch();
-      expect(bad.fold((f) => f.code, (_) => null), AuthError.unavailable);
-    });
+    test(
+      'fetches app-config with the currency catalog; a bad body is unavailable',
+      () async {
+        final api = _Api()
+          ..json = _body()
+          ..byPath['profile/options'] = {
+            'currencies': [
+              {
+                'code': 'VND',
+                'minorDigits': 0,
+                'symbol': '₫',
+                'isDefault': true,
+              },
+              {
+                'code': 'USD',
+                'minorDigits': 2,
+                'symbol': null,
+                'isDefault': false,
+              },
+            ],
+          };
+        final repo = ServerConfigRepositoryImpl(api, _Vault(), _PublicApi());
+        final ok = await repo.fetch();
+        expect(api.paths, ['app-config', 'profile/options']);
+        final config = ok.getOrElse(() => throw StateError('left'));
+        expect(config.version, 3);
+        expect(config.currencies.map((c) => c.code), ['VND', 'USD']);
+        expect(config.currencies.first.symbol, '₫');
+        expect(config.currencies.first.isDefault, isTrue);
+        api.json = {'nope': true};
+        final bad = await repo.fetch();
+        expect(bad.fold((f) => f.code, (_) => null), AuthError.unavailable);
+      },
+    );
 
     test('caches on the device and treats a broken copy as none', () async {
       final vault = _Vault();
@@ -238,6 +262,7 @@ void main() {
 
 class _Api implements AuthorizedApi {
   Map<String, dynamic> json = {};
+  final byPath = <String, Map<String, dynamic>>{};
   final paths = <String>[];
 
   @override
@@ -248,7 +273,7 @@ class _Api implements AuthorizedApi {
     Map<String, String>? headers,
   }) async {
     paths.add(path);
-    return right(json);
+    return right(byPath[path] ?? json);
   }
 }
 

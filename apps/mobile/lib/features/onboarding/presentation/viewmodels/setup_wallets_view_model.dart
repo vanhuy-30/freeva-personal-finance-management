@@ -4,6 +4,7 @@ import '../../../auth/domain/auth_repository.dart';
 import '../../../sync/domain/sync_queue.dart';
 import '../../../wallets/domain/wallet.dart';
 import '../../../wallets/domain/wallet_use_cases.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 /// "Thiết lập tài chính": the wallets added during first-run setup, one per
 /// type. Talks to the wallet use cases directly because the main wallet list
@@ -13,8 +14,9 @@ class SetupWalletsViewModel extends ChangeNotifier {
 
   final WalletUseCases _cases;
 
-  /// Account currency for new wallets until the profile can be read here.
-  static const mainCurrency = 'VND';
+  /// Account currency for new wallets until the profile can be read here:
+  /// the currency new accounts start in (server catalog).
+  static String get mainCurrency => CurrencyCatalog.current.defaultCode;
 
   List<WalletCurrency> currencies = const [];
   final Map<WalletType, Wallet> added = {};

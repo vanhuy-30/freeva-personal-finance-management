@@ -12,6 +12,7 @@ import '../../../wallets/domain/wallet.dart';
 import '../../../wallets/presentation/viewmodels/wallet_view_model.dart';
 import '../../domain/debt_use_cases.dart';
 import '../../domain/personal_debt.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 /// Người quen tab of "Vay và nợ": who owes you, whom you owe, and what is
 /// settled. Totals come from `GET /personal-debts/summary`.
@@ -62,7 +63,8 @@ class DebtViewModel extends ChangeNotifier {
   /// Currency of the two totals: the profile currency when a debt uses it,
   /// else the first currency with debts.
   String get totalCurrency {
-    final main = _profile.saved?.currency ?? 'VND';
+    final main =
+        _profile.saved?.currency ?? CurrencyCatalog.current.defaultCode;
     if (_totals.isEmpty || _totals.any((t) => t.currencyCode == main)) {
       return main;
     }
@@ -91,7 +93,7 @@ class DebtViewModel extends ChangeNotifier {
           .where((item) => item.code == currency)
           .firstOrNull
           ?.minorDigits ??
-      (currency == 'VND' ? 0 : 2);
+      CurrencyCatalog.current.digits(currency);
 
   String get today => _wallets.today.toIso8601String().substring(0, 10);
 

@@ -10313,8 +10313,11 @@ components:
           items:
             type: object
             additionalProperties: false
-            required: [code, minorDigits, symbol]
+            required: [code, minorDigits, symbol, isDefault]
             properties:
+              isDefault:
+                type: boolean
+                description: The currency new accounts start in; the app uses it until the profile loads (BE-P5-001).
               code:
                 type: string
                 pattern: '^[A-Z]{3}$'

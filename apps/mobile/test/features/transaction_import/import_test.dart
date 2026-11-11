@@ -354,7 +354,8 @@ void main() {
       await model.load();
       expect(model.digitsOf('VND'), 0);
       expect(model.digitsOf('USD'), 2);
-      expect(model.digitsOf('JPY'), 2);
+      // A code the server does not list shows without decimals (MOB-P5-001).
+      expect(model.digitsOf('JPY'), 0);
     });
   });
 }

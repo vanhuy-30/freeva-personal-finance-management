@@ -232,7 +232,7 @@ describe('BE-P5-E08 app config HTTP + PostgreSQL', () => {
   it('BE-P5-001 profile options carry the currency symbol', async () => {
     const { bearer } = await user();
     const options = await call('GET', '/v1/profile/options', bearer);
-    expect(options.body.currencies).toContainEqual({ code: 'VND', minorDigits: 0, symbol: '₫' });
+    expect(options.body.currencies).toContainEqual({ code: 'VND', minorDigits: 0, symbol: '₫', isDefault: true });
   });
 
   it('BE-P5-001 public config needs no session and has no flags', async () => {

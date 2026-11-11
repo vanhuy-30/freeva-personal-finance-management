@@ -10,6 +10,7 @@ import '../../../../core/widgets/freeva_sheet.dart';
 import '../../../../core/widgets/freeva_toast.dart';
 import '../../../../core/widgets/sheet_amount_field.dart';
 import '../../../profile/presentation/viewmodels/profile_view_model.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 /// Edits the stated monthly income (Cá nhân): "Lưu" sets it, "Xoá thu nhập"
 /// clears it. Saved through `PUT /profile/monthly-income`.
@@ -35,8 +36,9 @@ class _IncomeBodyState extends State<_IncomeBody> {
   late final TextEditingController _amount;
   bool _saving = false;
 
-  String get _currency => widget.profile.saved?.currency ?? 'VND';
-  int get _digits => _currency == 'VND' ? 0 : 2;
+  String get _currency =>
+      widget.profile.saved?.currency ?? CurrencyCatalog.current.defaultCode;
+  int get _digits => CurrencyCatalog.current.digits(_currency);
 
   @override
   void initState() {
@@ -80,7 +82,7 @@ class _IncomeBodyState extends State<_IncomeBody> {
           controller: _amount,
           digits: _digits,
           locale: locale,
-          symbol: _currency == 'VND' ? '₫' : _currency,
+          symbol: CurrencyCatalog.current.symbol(_currency),
           onChanged: () => setState(() {}),
         ),
         const SizedBox(height: FreevaSpace.s5),

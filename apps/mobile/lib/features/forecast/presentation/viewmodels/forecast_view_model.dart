@@ -11,6 +11,7 @@ import '../../../wallets/presentation/viewmodels/wallet_view_model.dart';
 import '../../domain/balance_forecast.dart';
 import '../../domain/forecast_use_cases.dart';
 import '../../../server_config/domain/app_limits.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 /// Loads the rule-based forecast and applies the user's edits (range, which
 /// rules count, the start balance). Created per page, not a singleton.
@@ -50,7 +51,8 @@ class ForecastViewModel extends ChangeNotifier {
   bool busy = false;
   AuthFailure? failure;
 
-  String get currency => _profile.saved?.currency ?? 'VND';
+  String get currency =>
+      _profile.saved?.currency ?? CurrencyCatalog.current.defaultCode;
 
   int get digits => digitsFor(currency);
 
@@ -59,7 +61,7 @@ class ForecastViewModel extends ChangeNotifier {
           .where((item) => item.code == code)
           .firstOrNull
           ?.minorDigits ??
-      (code == 'VND' ? 0 : 2);
+      CurrencyCatalog.current.digits(code);
 
   /// Wallets the start balance adds up: not archived, not a credit card, same
   /// currency. Matches the API.

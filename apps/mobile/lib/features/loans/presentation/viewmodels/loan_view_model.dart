@@ -12,6 +12,7 @@ import '../../../wallets/domain/wallet.dart';
 import '../../../wallets/presentation/viewmodels/wallet_view_model.dart';
 import '../../domain/loan.dart';
 import '../../domain/loan_use_cases.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 /// Khoản vay tab of "Vay và nợ": loans with their totals and plans.
 @LazySingleton()
@@ -50,7 +51,8 @@ class LoanViewModel extends ChangeNotifier {
   List<LoanScheduleRow>? scheduleOf(String id) => _schedules[id];
 
   String get totalCurrency {
-    final main = _profile.saved?.currency ?? 'VND';
+    final main =
+        _profile.saved?.currency ?? CurrencyCatalog.current.defaultCode;
     if (_totals.isEmpty || _totals.any((t) => t.currencyCode == main)) {
       return main;
     }
@@ -70,14 +72,15 @@ class LoanViewModel extends ChangeNotifier {
       if (w.draft.currency == currency) w,
   ];
 
-  String get profileCurrency => _profile.saved?.currency ?? 'VND';
+  String get profileCurrency =>
+      _profile.saved?.currency ?? CurrencyCatalog.current.defaultCode;
 
   int digitsOf(String currency) =>
       _wallets.currencies
           .where((item) => item.code == currency)
           .firstOrNull
           ?.minorDigits ??
-      (currency == 'VND' ? 0 : 2);
+      CurrencyCatalog.current.digits(currency);
 
   String get today => _wallets.today.toIso8601String().substring(0, 10);
 

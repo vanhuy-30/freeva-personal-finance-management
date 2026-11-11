@@ -7,6 +7,7 @@ import '../../../../core/widgets/error_retry.dart';
 import '../../../auth/presentation/viewmodels/auth_view_model.dart';
 import '../viewmodels/server_config_view_model.dart';
 import 'server_config_listener.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 /// MOB-P5-001: the app runs only with server config (public config before
 /// sign-in), so screens read [ServerConfigViewModel.requireLimits] instead of
@@ -66,8 +67,11 @@ class _ServerConfigBoundaryState extends State<ServerConfigBoundary> {
   @override
   Widget build(BuildContext context) {
     final config = _config;
-    if (config.limits != null) return widget.child;
-    if (!config.missing && (config.loading || config.config == null)) {
+    // Signed in, screens also need the currency catalog (MOB-P5-001).
+    final needsCurrencies =
+        hasSession(_auth.stage) && CurrencyCatalog.current.isEmpty;
+    if (config.limits != null && !needsCurrencies) return widget.child;
+    if (config.loading || !config.failed) {
       return const Material(child: Center(child: CircularProgressIndicator()));
     }
     final s = S.of(context);

@@ -6,6 +6,7 @@ import '../../../../../core/theme/theme_context.dart';
 import '../../../../../core/theme/tokens.g.dart';
 import '../../../../../core/widgets/freeva_sheet.dart';
 import '../../../../wallets/domain/wallet.dart';
+import '../../../../../core/money/currency_catalog.dart';
 
 /// Wallet picker: name and balance (masked when balances are hidden); the
 /// chosen one shows a check. Picking closes the sheet.
@@ -68,7 +69,7 @@ Future<String?> showWalletPicker(
                       Text(
                         hideBalances
                             ? '••••••'
-                            : '${formatMoneyText(w.balance, digitsOf(w.draft.currency), locale)} ${w.draft.currency == 'VND' ? '' : w.draft.currency}'
+                            : '${formatMoneyText(w.balance, digitsOf(w.draft.currency), locale)} ${w.draft.currency == CurrencyCatalog.current.defaultCode ? '' : w.draft.currency}'
                                   .trim(),
                         style: FreevaTypography.bodyS.copyWith(
                           color: c.textSecondary,

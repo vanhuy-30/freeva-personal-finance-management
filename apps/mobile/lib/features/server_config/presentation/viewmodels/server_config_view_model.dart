@@ -6,6 +6,7 @@ import '../../../../core/feature_flags/feature_flag_service.dart';
 import '../../domain/app_limits.dart';
 import '../../domain/server_config.dart';
 import '../../domain/server_config_repository.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 /// MOB-P5-E08: holds the latest server flags and config for the signed-in user.
 ///
@@ -75,7 +76,15 @@ class ServerConfigViewModel extends ChangeNotifier
   @override
   AppLimits get requireLimits => limits!;
 
-  void _publish() => _store.update(limits);
+  void _publish() {
+    _store.update(limits);
+    // Currencies do not depend on the user: keep the last catalog when the
+    // public config (no currencies) replaces the signed-in one.
+    final currencies = _config?.currencies ?? const [];
+    if (currencies.isNotEmpty) {
+      CurrencyCatalog.current = CurrencyCatalog(currencies);
+    }
+  }
 
   /// Tests: use [config] as if it had loaded.
   @visibleForTesting
@@ -86,6 +95,9 @@ class ServerConfigViewModel extends ChangeNotifier
   }
 
   bool get loading => _loading;
+
+  /// The last download failed (a copy may still be in use).
+  bool get failed => _failed;
 
   /// No config to use: never loaded and the last fetch failed.
   bool get missing => _config == null && _failed;

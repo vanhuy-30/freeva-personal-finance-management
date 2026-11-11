@@ -4,6 +4,7 @@ Nhật ký repo/process — không phải App Store release notes.
 
 ## 2026-11-11
 
+- `MOB-P5-001` PR 3/3 (xong task): chữ số lẻ, ký hiệu và tiền tệ mặc định lấy từ danh mục tiền tệ của server; backend `/profile/options` thêm `isDefault`. `BE-P5-001` / `MOB-P5-001` done.
 - `MOB-P5-001` PR 2/3: app tải cấu hình công khai trước đăng nhập; quy tắc mật khẩu, số lần sai PIN, độ dài tên/ghi chú, nhãn, ngày đầu kỳ, onboarding, nhập/xuất CSV, góp ý lấy từ server; tên hiển thị tối đa 60; dòng thông báo mục tiêu/soát tháng theo server; phiên bản app đọc từ gói cài đặt.
 - `BE-P5-001` bổ sung: `GET /api/v1/app-config/public` — số cấu hình không cần đăng nhập (không cờ, không dữ liệu user) cho màn đăng ký/đặt lại mật khẩu.
 - `MOB-P5-001` PR 1/3: app chỉ chạy phần đã đăng nhập khi có cấu hình server (lỗi thì một màn Thử lại); mốc ngân sách, dự báo, trả góp, nhắc trước, mức dùng thẻ, sắp đến hạn, khoảng biểu đồ, top báo cáo, giao dịch gần đây, ngày mục tiêu, bước phút, giờ nhắc lấy từ cấu hình. Màn Thông báo: "Khi chạm mốc bạn chọn".

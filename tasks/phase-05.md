@@ -43,7 +43,7 @@ Thứ tự: `BE-P5-E08` → `WA-P5-001` → `MOB-P5-E08` → `BE-P5-001` / `MOB-
 - Note: xong 2026-11-11: feature `server_config` — đọc bản trên máy lúc boot, tải khi mở khóa và khi quay lại app (tối đa mỗi giờ), thay bản lưu khi `version` đổi, xóa khi đăng xuất. `ServerConfigViewModel` là `FeatureFlagService` (bỏ `LocalFeatureFlagService`). `ServerConfigGate` hiện "Chưa tải được cài đặt" + Thử lại khi chưa có bản nào. Overlay `FEATURE_FLAGS_ON` chỉ ở bản dev debug. Màn hiện có chưa đọc khóa: `MOB-P5-001`. [Kiến trúc](../docs/architecture/mobile-app-config.md).
 
 ### BE-P5-001 / MOB-P5-001 — Chuyển số và cấu hình đang hardcode lên server
-- Status: doing — BE xong 2026-11-11; MOB PR 1/3 và 2/3 xong 2026-11-11; còn tiền tệ
+- Status: done — 2026-11-11 (BE + 3 PR MOB)
 - Module: 26 và các module có giá trị bị rà ra
 - Gate: post-v1
 - Depends: BE-P5-E08, MOB-P5-E08
@@ -75,6 +75,7 @@ Thứ tự: `BE-P5-E08` → `WA-P5-001` → `MOB-P5-E08` → `BE-P5-001` / `MOB-
 - Note: BE xong 2026-11-11: `AppConfigReader` (cache 30 giây) dùng ở ngân sách, dự báo, định kỳ, thông báo, nhập/xuất CSV, nhãn, hồ sơ, mật khẩu; 24 khóa chỉ đọc `limit.*` (test so với DTO); kiểm tra chéo khi lưu; bỏ sàn 80% thông báo ngân sách; giờ nhắc mặc định 21:00; `Currency.symbol`. Web admin hiện khóa chỉ đọc là "Cố định". [Kiến trúc](../docs/architecture/app-config.md).
 - Note: MOB PR 1/3 xong 2026-11-11: `ServerConfigBoundary` (app có phiên chỉ chạy khi có cấu hình, lỗi thì Thử lại), `AppLimits` / `AppLimitsSource`; ngân sách, dự báo, trả góp, định kỳ, thẻ, cho mượn, tài sản ròng, đầu tư, báo cáo, Home, mục tiêu, giờ nhắc đọc từ cấu hình; copy màn Thông báo đổi thành "Khi chạm mốc bạn chọn". [Mobile](../docs/architecture/mobile-app-config.md).
 - Note: MOB PR 2/3 xong 2026-11-11: cấu hình công khai trước đăng nhập (`/app-config/public`, backend #135), `AppLimitsStore` cắt vòng DI với auth; mật khẩu/email/PIN, độ dài tên và ghi chú, nhãn, ngày đầu kỳ, onboarding, nhập/xuất CSV, góp ý đọc từ cấu hình; dòng thông báo theo `available`; icon danh mục theo `iconTokens`; phiên bản app từ `package_info_plus`. Màu/icon mục tiêu và nhóm icon danh mục giữ theo board (token thiết kế).
+- Note: MOB PR 3/3 xong 2026-11-11: danh mục tiền tệ server (`CurrencyCatalog`, tải cùng cấu hình khi đăng nhập) thay `VND ? 0 : 2`, `₫` và `?? 'VND'`; backend `isDefault` trong `/profile/options` từ `NEW_USER_CURRENCY_CODE`. [Mobile](../docs/architecture/mobile-app-config.md).
 
 ### DS-P5-001 — Thiết kế màn Phase 5
 - Status: todo

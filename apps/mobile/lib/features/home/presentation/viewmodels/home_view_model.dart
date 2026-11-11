@@ -9,6 +9,7 @@ import '../../../sync/domain/sync_item.dart';
 import '../../../sync/presentation/viewmodels/sync_view_model.dart';
 import '../../domain/overview.dart';
 import '../../domain/overview_use_cases.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 enum HomeStatus {
   /// First load, nothing to show yet: skeletons.
@@ -106,9 +107,11 @@ class DefaultHomeViewModel extends HomeViewModel {
   @override
   bool get saveGoal => _profile.saved?.goals.contains('save') ?? false;
   @override
-  String get currency => _profile.saved?.currency ?? 'VND';
+  String get currency =>
+      _profile.saved?.currency ?? CurrencyCatalog.current.defaultCode;
   @override
-  String get displayCurrency => _profile.saved?.overviewCurrency ?? 'VND';
+  String get displayCurrency =>
+      _profile.saved?.overviewCurrency ?? CurrencyCatalog.current.defaultCode;
   @override
   List<String> get currencyChoices => _profile.options?.currencies ?? const [];
   @override

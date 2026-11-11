@@ -16,6 +16,7 @@ import '../../domain/credit_card_status.dart';
 import '../../domain/reconcile_result.dart';
 import '../../domain/wallet.dart';
 import '../viewmodels/wallet_view_model.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 /// "Khớp số dư" over the wallet detail (M, màn 1). The user types the real
 /// balance (the real debt on a card); the server computes the difference and
@@ -125,7 +126,7 @@ class _ReconcileSheetState extends State<ReconcileSheet> {
     final c = context.colors;
     final locale = Localizations.localeOf(context).toString();
     final value = _value(locale);
-    final symbol = wallet.draft.currency == 'VND' ? '₫' : wallet.draft.currency;
+    final symbol = CurrencyCatalog.current.symbol(wallet.draft.currency);
     final answer = value != null && _previewFor == value ? preview : null;
     // The difference as the user reads it: against the typed number (debt on
     // a card). The colour follows the ledger: up is green, down is red.

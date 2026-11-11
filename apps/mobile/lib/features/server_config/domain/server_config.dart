@@ -1,3 +1,5 @@
+import '../../../core/money/currency_catalog.dart';
+
 /// MOB-P5-E08: feature flags and product config served by `GET /api/v1/app-config`
 /// (BE-P5-E08). The server is the source of truth; typed getters return null when a key
 /// is missing or has another type, so a caller never guesses a number.
@@ -6,12 +8,17 @@ class ServerConfig {
     required this.version,
     required this.flags,
     required this.values,
+    this.currencies = const [],
   });
 
   /// Goes up on every staff edit; a new number means the cached copy is stale.
   final int version;
   final Map<String, bool> flags;
   final Map<String, Object> values;
+
+  /// Currency catalog (`/profile/options`), loaded with the signed-in config;
+  /// empty for the public config.
+  final List<CurrencyInfo> currencies;
 
   bool flag(String key) => flags[key] ?? false;
 
@@ -66,6 +73,10 @@ class ServerConfig {
             entry.key as String: entry.value as bool,
       }),
       values: Map.unmodifiable(values),
+      currencies: List.unmodifiable([
+        for (final raw in (json['currencies'] as List? ?? const []))
+          if (raw is Map) CurrencyInfo.fromJson(Map<String, dynamic>.from(raw)),
+      ]),
     );
   }
 
@@ -73,6 +84,7 @@ class ServerConfig {
     'version': version,
     'flags': flags,
     'config': values,
+    'currencies': [for (final c in currencies) c.toJson()],
   };
 
   /// int, String, list of ints or list of strings; anything else is dropped.

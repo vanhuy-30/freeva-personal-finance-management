@@ -9,6 +9,7 @@ import '../../../profile/presentation/viewmodels/profile_view_model.dart';
 import '../../domain/reconcile_result.dart';
 import '../../domain/wallet.dart';
 import '../../domain/wallet_use_cases.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 abstract class WalletViewModel extends ChangeNotifier {
   List<Wallet> get wallets;
@@ -85,7 +86,8 @@ class DefaultWalletViewModel extends WalletViewModel {
   @override
   AuthFailure? failure;
   @override
-  String get mainCurrency => _profile?.saved?.currency ?? 'VND';
+  String get mainCurrency =>
+      _profile?.saved?.currency ?? CurrencyCatalog.current.defaultCode;
   @override
   DateTime get today => _clock();
   void _authChanged() {

@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mobile/core/money/currency_catalog.dart';
 import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dart';
 import 'package:mobile/features/server_config/domain/app_limits.dart';
@@ -72,6 +73,26 @@ void main() {
       model.debugSetConfig(testServerConfig());
       await tester.pump();
       expect(find.text('signed-in app'), findsOneWidget);
+    });
+
+    testWidgets('signed in it also waits for the currency catalog', (
+      tester,
+    ) async {
+      final saved = CurrencyCatalog.current;
+      addTearDown(() => CurrencyCatalog.current = saved);
+      CurrencyCatalog.current = const CurrencyCatalog([]);
+      final model = ServerConfigViewModel.withClock(_Repo());
+      // The public config (before sign-in) has numbers but no currencies.
+      model.debugSetConfig(
+        ServerConfig(version: 1, flags: const {}, values: testConfigValues()),
+      );
+      await tester.pumpWidget(app(AuthStage.unlocked, model));
+      expect(find.text('signed-in app'), findsNothing);
+      model.debugSetConfig(testServerConfig());
+      await tester.pump();
+      await tester.pump();
+      expect(find.text('signed-in app'), findsOneWidget);
+      expect(CurrencyCatalog.current.symbol('VND'), '₫');
     });
 
     testWidgets('a failed first load offers try again', (tester) async {

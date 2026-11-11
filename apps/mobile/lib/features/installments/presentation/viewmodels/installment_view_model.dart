@@ -10,6 +10,7 @@ import '../../../wallets/domain/wallet.dart';
 import '../../../wallets/presentation/viewmodels/wallet_view_model.dart';
 import '../../domain/card_installment.dart';
 import '../../domain/card_installment_use_cases.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 /// Installments due on one card: this period, and everything after it.
 class _CardDue {
@@ -55,7 +56,7 @@ class InstallmentViewModel extends ChangeNotifier {
           .where((item) => item.code == currency)
           .firstOrNull
           ?.minorDigits ??
-      (currency == 'VND' ? 0 : 2);
+      CurrencyCatalog.current.digits(currency);
 
   /// "Phải trả kỳ này" of [wallet] once its plans are loaded; null without
   /// active plans or without a due day.

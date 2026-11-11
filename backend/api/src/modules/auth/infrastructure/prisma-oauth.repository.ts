@@ -1,3 +1,4 @@
+import { NEW_USER_CURRENCY_CODE } from '../../../core/money/currency';
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../../infrastructure/prisma/prisma.service';
@@ -69,7 +70,7 @@ export class PrismaOAuthRepository implements OAuthRepository {
               data: {
                 email: identity.email,
                 emailVerifiedAt: new Date(),
-                defaultCurrencyCode: 'VND',
+                defaultCurrencyCode: NEW_USER_CURRENCY_CODE,
                 oauthIdentities: { create: key },
               },
             });
