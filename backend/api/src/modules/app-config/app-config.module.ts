@@ -5,11 +5,12 @@ import { AdminAppConfigController } from './admin-app-config.controller';
 import { AppConfigController } from './app-config.controller';
 import { AppConfigService } from './app-config.service';
 import { FeatureGuard } from './feature.guard';
+import { PublicAppConfigController } from './public-app-config.controller';
 import { AppConfigCoreModule } from './app-config-core.module';
 
 @Module({
   imports: [AuthModule, AppConfigCoreModule],
-  controllers: [AppConfigController, AdminAppConfigController],
+  controllers: [AppConfigController, PublicAppConfigController, AdminAppConfigController],
   providers: [
     AppConfigService,
     FeatureGuard,

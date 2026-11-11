@@ -232,6 +232,14 @@ describe('BE-P5-001 reader', () => {
     expect(await reader.value('budget.defaultAlertThresholds')).toEqual([80, 100]);
   });
 
+  it('publishes values with the version and no flags', async () => {
+    const reader = new AppConfigReader(stored([{ key: 'report.topRows', value: 5 }]));
+    const published = await reader.published();
+    expect(published.version).toBe(2);
+    expect(published.config['report.topRows']).toBe(5);
+    expect(published).not.toHaveProperty('flags');
+  });
+
   it('caches for the TTL and reloads after invalidate or expiry', async () => {
     const repository = stored([]);
     const reader = new AppConfigReader(repository);
