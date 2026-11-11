@@ -27,6 +27,7 @@ import { httpRequestSerializer } from './core/logging/http-request.serializer';
 import { pinoRedactOptions } from './core/logging/pino-redact';
 import { PrismaModule } from './infrastructure/prisma/prisma.module';
 import { AdminUserLookupModule } from './modules/admin-user-lookup/admin-user-lookup.module';
+import { AppConfigModule } from './modules/app-config/app-config.module';
 import { HealthModule } from './modules/health/health.module';
 
 @Module({
@@ -67,6 +68,7 @@ import { HealthModule } from './modules/health/health.module';
     FeedbackModule,
     ReportModule,
     AdminUserLookupModule,
+    AppConfigModule,
   ],
 })
 export class AppModule {}
