@@ -373,7 +373,7 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
     const current = await request('profile', undefined, owner.accessToken, 'GET');
     expect(current.status).toBe(200);
     // The onboarding answers are read only on this endpoint, so they are not sent back.
-    const { goals, monthlyIncomeMinor, displayCurrencyCode, ...editable } = current.body;
+    const { goals, monthlyIncomeMinor, displayCurrencyCode, autoSuggestEnabled, ...editable } = current.body;
     expect(goals).toEqual([]);
     expect(monthlyIncomeMinor).toBeNull();
     const changes = { ...editable, locale: 'en', defaultCurrencyCode: 'USD',
@@ -384,7 +384,7 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
     ]);
     expect(writes.map(r => r.status).sort()).toEqual([200, 409]);
     expect((await request('profile', undefined, owner.accessToken, 'GET')).body)
-      .toEqual({ ...changes, goals, monthlyIncomeMinor, displayCurrencyCode, version: current.body.version + 1 });
+      .toEqual({ ...changes, goals, monthlyIncomeMinor, displayCurrencyCode, autoSuggestEnabled, version: current.body.version + 1 });
     expect((await request('profile', undefined, other.accessToken, 'GET')).body)
       .toMatchObject({ locale: 'vi', defaultCurrencyCode: 'VND', fiscalMonthStartDay: 1 });
     await request('auth/logout', undefined, owner.accessToken);

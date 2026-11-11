@@ -12,9 +12,11 @@ export interface Profile {
   monthlyIncomeMinor: string | null;
   /** Currency the Overview converts into (BE-P2-013). Null means the default currency. Set via PUT /profile/display-currency. */
   displayCurrencyCode: string | null;
+  /** PRD-P5-E01: category suggestions, insights and spending forecast for this user. Set via PUT /profile/auto-suggest. */
+  autoSuggestEnabled: boolean;
 }
 /** `displayName` undefined keeps the stored value. */
-export type ProfileUpdate = Omit<Profile, 'displayName' | 'goals' | 'monthlyIncomeMinor' | 'displayCurrencyCode'> & { displayName?: string | null };
+export type ProfileUpdate = Omit<Profile, 'displayName' | 'goals' | 'monthlyIncomeMinor' | 'displayCurrencyCode' | 'autoSuggestEnabled'> & { displayName?: string | null };
 /** Only the fields present are stored; the rest keep their value. */
 export interface OnboardingAnswers {
   goals?: string[];
@@ -30,4 +32,5 @@ export interface ProfileRepository {
   saveOnboarding(userId: string, answers: OnboardingAnswers): Promise<boolean>;
   saveMonthlyIncome(userId: string, minor: string | null): Promise<boolean>;
   saveDisplayCurrency(userId: string, code: string | null): Promise<boolean>;
+  saveAutoSuggest(userId: string, enabled: boolean): Promise<boolean>;
 }

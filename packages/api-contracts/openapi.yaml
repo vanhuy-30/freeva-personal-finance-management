@@ -5338,6 +5338,113 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/profile/auto-suggest:
+    put:
+      operationId: saveAutoSuggest
+      summary: Switch automatic suggestions on or off
+      tags: [Profile]
+      security:
+        - UserBearer: []
+      description: PRD-P5-E01. Covers category suggestions, insights and the spending forecast. Off means those APIs return nothing for this user, whatever the server flags say. Learned merchants are kept until deleted via /category-suggestions/mappings. No version check.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AutoSuggestUpdate'
+      responses:
+        '204':
+          description: Saved (Cache-Control no-store)
+        '400':
+          description: Not a boolean, or an extra field
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/category-suggestions/mappings:
+    get:
+      operationId: listCategorySuggestionMappings
+      summary: Merchants remembered for category suggestions
+      tags: [CategorySuggestions]
+      security:
+        - UserBearer: []
+      description: PRD-P5-E01. Newest first. Not behind a feature flag so the user can always see and delete what was learned. Rows are written by BE-P5-E03 when a suggestion is accepted.
+      responses:
+        '200':
+          description: All mappings of the user (Cache-Control no-store)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuggestionMappingList'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: SUGGESTIONS_UNAVAILABLE
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    delete:
+      operationId: deleteAllCategorySuggestionMappings
+      summary: Forget every remembered merchant
+      tags: [CategorySuggestions]
+      security:
+        - UserBearer: []
+      description: PRD-P5-E01 "Xoá dữ liệu đã học". Transactions are not touched. Idempotent.
+      responses:
+        '204':
+          description: Deleted (Cache-Control no-store)
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/category-suggestions/mappings/{id}:
+    delete:
+      operationId: deleteCategorySuggestionMapping
+      summary: Forget one remembered merchant
+      tags: [CategorySuggestions]
+      security:
+        - UserBearer: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Deleted (Cache-Control no-store)
+        '400':
+          description: Not a UUID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: MAPPING_NOT_FOUND (missing or another user's)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
   /api/v1/profile/onboarding:
     patch:
       operationId: saveOnboardingAnswers
@@ -10279,6 +10386,10 @@ components:
           readOnly: true
           pattern: ^[A-Z]{3}$
           description: Currency the Overview converts into. Null means defaultCurrencyCode. Saved via PUT /profile/display-currency. Not accepted on PUT /profile.
+        autoSuggestEnabled:
+          type: boolean
+          readOnly: true
+          description: PRD-P5-E01 switch for category suggestions, insights and spending forecast. Default true. Saved via PUT /profile/auto-suggest. Not accepted on PUT /profile.
     OnboardingAnswers:
       type: object
       additionalProperties: false
@@ -10294,6 +10405,54 @@ components:
           type: string
           pattern: ^[1-9][0-9]{0,17}$
           description: Monthly income, positive integer minor units of the profile default currency. Omit to keep the stored value.
+    AutoSuggestUpdate:
+      type: object
+      additionalProperties: false
+      required: [enabled]
+      properties:
+        enabled:
+          type: boolean
+    SuggestionMapping:
+      type: object
+      additionalProperties: false
+      required: [id, merchant, category, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        merchant:
+          type: string
+          maxLength: 200
+          description: Merchant as last typed. Never logged.
+        category:
+          type: object
+          additionalProperties: false
+          required: [id, name, iconToken, colorToken]
+          properties:
+            id:
+              type: string
+              format: uuid
+            name:
+              type: string
+            iconToken:
+              type: [string, 'null']
+            colorToken:
+              type: [string, 'null']
+        updatedAt:
+          type: string
+          format: date-time
+    SuggestionMappingList:
+      type: object
+      additionalProperties: false
+      required: [items, total]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/SuggestionMapping'
+        total:
+          type: integer
+          minimum: 0
     MonthlyIncomeUpdate:
       type: object
       additionalProperties: false
@@ -11576,6 +11735,28 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AccountExportGoalEntry'
+        categorySuggestionMappings:
+          type: array
+          description: Merchants remembered for category suggestions (PRD-P5-E01).
+          items:
+            type: object
+            additionalProperties: false
+            required: [id, merchant, categoryId, createdAt, updatedAt]
+            properties:
+              id:
+                type: string
+                format: uuid
+              merchant:
+                type: string
+              categoryId:
+                type: string
+                format: uuid
+              createdAt:
+                type: string
+                format: date-time
+              updatedAt:
+                type: string
+                format: date-time
         cardInstallmentPlans:
           type: array
           description: Installment schedules (BE-P3-009). Ids reference the purchase transaction and wallet.
@@ -11715,7 +11896,7 @@ components:
     AccountExportProfile:
       type: object
       additionalProperties: false
-      required: [email, displayName, locale, timezone, defaultCurrencyCode, fiscalMonthStartDay, onboardingGoals, monthlyIncomeMinor, displayCurrencyCode, emailVerifiedAt, categoriesInitializedAt, categoriesSupplementedAt, createdAt, updatedAt]
+      required: [email, displayName, locale, timezone, defaultCurrencyCode, fiscalMonthStartDay, onboardingGoals, monthlyIncomeMinor, displayCurrencyCode, emailVerifiedAt, categoriesInitializedAt, categoriesSupplementedAt, createdAt, updatedAt, autoSuggestEnabled]
       properties:
         email:
           type: string
@@ -11753,6 +11934,8 @@ components:
         categoriesSupplementedAt:
           type: [string, 'null']
           format: date-time
+        autoSuggestEnabled:
+          type: boolean
         createdAt:
           type: string
           format: date-time
