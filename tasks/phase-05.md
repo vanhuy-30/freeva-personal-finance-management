@@ -27,11 +27,12 @@ Thứ tự: `BE-P5-E08` → `WA-P5-001` → `MOB-P5-E08` → `BE-P5-001` / `MOB-
 - Note: xong 2026-11-11: module `app-config`, registry 6 cờ + 34 khóa (mặc định bằng giá trị hiện tại), `GET /api/v1/app-config`, API admin GET/PUT/DELETE có version chống ghi đè, ghi + `AppConfigChange` + `AuditEvent` trong một transaction, `FeatureGuard`/`@RequireFeature`, xóa tài khoản gỡ UUID khỏi cờ. Mỗi môi trường tự quản cờ trong DB của mình (không cột môi trường). Migration additive `app_config`. App và DTO chưa đọc các khóa: việc của `BE-P5-001` / `MOB-P5-001`. [Kiến trúc](../docs/architecture/app-config.md).
 
 ### WA-P5-001 — Màn cờ và cấu hình trên web admin
-- Status: todo
+- Status: done — 2026-11-11
 - Module: 26
 - Gate: post-v1
 - Depends: BE-P5-E08, WA-P0-002
 - DoD: staff xem và sửa cờ (môi trường, danh sách user, phần trăm) và từng khóa cấu hình, thấy mô tả, mặc định, giới hạn và lần sửa gần nhất. Hiện giá trị cũ và mới, xác nhận trước khi lưu. Lỗi kiểm tra hiện tại ô nhập. Mọi thay đổi có audit. Auth single-staff P0 vẫn phải thay trước production (đã ghi ở `WA-P0-002`).
+- Note: xong 2026-11-11: trang `/config` trên web admin (link ở header). Nhập credential staff (chỉ giữ trong trang), danh sách cờ và khóa theo nhóm với mô tả, mặc định, giới hạn, lần sửa gần nhất. Sửa → khung "Hiện tại / Sau khi lưu" → Xác nhận lưu; "Về mặc định" cũng qua xác nhận. Lỗi kiểm tra (trên trang và từ API) hiện dưới ô nhập; xung đột version báo tải lại. Đã thử trên trình duyệt với API và PostgreSQL tạm.
 
 ### MOB-P5-E08 — App đọc cờ và cấu hình từ server
 - Status: todo

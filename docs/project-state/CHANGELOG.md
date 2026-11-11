@@ -4,6 +4,7 @@ Nhật ký repo/process — không phải App Store release notes.
 
 ## 2026-11-11
 
+- `WA-P5-001` (web admin): trang Cờ và cấu hình `/config` — nhập credential staff, xem cờ và khóa theo nhóm (mô tả, mặc định, giới hạn, lần sửa cuối), sửa có bước xác nhận trước/sau, về mặc định, lỗi hiện tại ô nhập, báo khi người khác vừa sửa. Header admin thêm điều hướng.
 - `BE-P5-E08` (backend): cờ và cấu hình phía server — `GET /api/v1/app-config`, API admin sửa cờ (bật/tắt, danh sách user, phần trăm) và giá trị cấu hình có version chống ghi đè, mỗi lần sửa lưu trước/sau và audit trong một transaction, `FeatureGuard` trả `403 FEATURE_DISABLED`. 6 cờ, 34 khóa mặc định bằng giá trị app đang dùng. Migration additive `app_config`. [Thiết kế](../architecture/app-config.md).
 - Chốt phạm vi Phase 5: số và cấu hình sản phẩm lên server, sửa trên web admin (`BE-P5-E08`, `WA-P5-001`, `MOB-P5-E08`, `BE-P5-001`/`MOB-P5-001` kèm danh sách rà soát app); gợi ý danh mục, insight, dự báo chi, what-if theo quy tắc. `BE-P5-E01` (sao kê) wont. OCR, Ask Freeva sang Phase 8 mới (AI). Bỏ cờ `investment`; cờ ngân hàng Phase 6 đổi tên `bank_connect`.
 

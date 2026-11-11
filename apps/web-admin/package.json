@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start -p 3001",
     "lint": "eslint",
-    "test": "node --experimental-strip-types --test src/sentry/scrub.test.ts",
+    "test": "node --experimental-strip-types --test src/sentry/scrub.test.ts src/app/config/app_config_format.test.ts",
     "sentry:smoke": "node scripts/sentry-smoke.mjs"
   },
   "dependencies": {
