@@ -5727,4 +5727,10 @@ class SEn extends S {
 
   @override
   String get tradePriceRow => 'Purchase price';
+
+  @override
+  String get serverConfigErrorTitle => 'Settings did not load';
+
+  @override
+  String get serverConfigErrorMessage => 'Check your connection and try again.';
 }

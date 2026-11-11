@@ -1839,5 +1839,7 @@
   "tradeDeleteConfirm": "Xoá lần mua",
   "tradeKeep": "Giữ lại",
   "tradeSave": "Lưu",
-  "tradePriceRow": "Giá mua"
+  "tradePriceRow": "Giá mua",
+  "serverConfigErrorTitle": "Chưa tải được cài đặt",
+  "serverConfigErrorMessage": "Kiểm tra mạng rồi thử lại."
 }

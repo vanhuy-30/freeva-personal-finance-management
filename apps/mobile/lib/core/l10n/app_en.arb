@@ -2849,5 +2849,7 @@
   "tradeDeleteConfirm": "Delete buy",
   "tradeKeep": "Keep",
   "tradeSave": "Save",
-  "tradePriceRow": "Purchase price"
+  "tradePriceRow": "Purchase price",
+  "serverConfigErrorTitle": "Settings did not load",
+  "serverConfigErrorMessage": "Check your connection and try again."
 }

@@ -14,8 +14,6 @@ import 'package:mobile/core/analytics/analytics_service.dart' as _i1020;
 import 'package:mobile/core/analytics/debug_analytics_service.dart' as _i862;
 import 'package:mobile/core/config/app_config.dart' as _i467;
 import 'package:mobile/core/feature_flags/feature_flag_service.dart' as _i1017;
-import 'package:mobile/core/feature_flags/local_feature_flag_service.dart'
-    as _i158;
 import 'package:mobile/core/logging/app_logger.dart' as _i766;
 import 'package:mobile/core/logging/app_logger_impl.dart' as _i760;
 import 'package:mobile/features/auth/data/auth_api.dart' as _i88;
@@ -163,6 +161,16 @@ import 'package:mobile/features/reports/domain/report_repository.dart' as _i61;
 import 'package:mobile/features/reports/domain/report_use_cases.dart' as _i146;
 import 'package:mobile/features/reports/presentation/viewmodels/report_view_model.dart'
     as _i1044;
+import 'package:mobile/features/server_config/data/server_config_repository_impl.dart'
+    as _i758;
+import 'package:mobile/features/server_config/data/server_config_vault.dart'
+    as _i497;
+import 'package:mobile/features/server_config/domain/server_config_repository.dart'
+    as _i766;
+import 'package:mobile/features/server_config/presentation/server_config_module.dart'
+    as _i641;
+import 'package:mobile/features/server_config/presentation/viewmodels/server_config_view_model.dart'
+    as _i315;
 import 'package:mobile/features/settings/data/preference_vault.dart' as _i1060;
 import 'package:mobile/features/settings/data/settings_repository_impl.dart'
     as _i1018;
@@ -225,6 +233,7 @@ extension GetItInjectableX on _i174.GetIt {
     );
     final authDataModule = _$AuthDataModule();
     final authPresentationModule = _$AuthPresentationModule();
+    final serverConfigModule = _$ServerConfigModule();
     gh.lazySingleton<_i467.AppConfig>(() => _i467.AppConfig());
     gh.lazySingleton<_i761.ImportFilePicker>(
         () => _i539.PlatformImportFilePicker());
@@ -235,10 +244,10 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i810.SecureAuthVault(gh<_i467.AppConfig>()));
     gh.lazySingleton<_i54.SessionAlertNotifier>(
         () => _i165.LocalSessionAlertNotifier());
+    gh.lazySingleton<_i497.ServerConfigVault>(
+        () => _i497.SecureServerConfigVault());
     gh.lazySingleton<_i810.DeviceBiometrics>(
         () => _i810.LocalDeviceBiometrics());
-    gh.lazySingleton<_i1017.FeatureFlagService>(
-        () => const _i158.LocalFeatureFlagService());
     gh.lazySingleton<_i444.CategoryExpansionRepository>(
         () => _i226.CategoryExpansionRepositoryImpl());
     gh.lazySingleton<_i766.AppLogger>(() => _i760.AppLoggerImpl());
@@ -301,6 +310,11 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i173.AuthRepository>(),
           gh<_i1007.AccountFileSharer>(),
         ));
+    gh.lazySingleton<_i766.ServerConfigRepository>(
+        () => _i758.ServerConfigRepositoryImpl(
+              gh<_i443.AuthorizedApi>(),
+              gh<_i497.ServerConfigVault>(),
+            ));
     gh.lazySingleton<_i159.ForecastRepository>(
         () => _i587.ForecastRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i238.CardInstallmentUseCases>(() =>
@@ -336,6 +350,11 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i112.DefaultTagUseCases(gh<_i57.TagRepository>()));
     gh.lazySingleton<_i173.FeedbackUseCases>(
         () => _i173.DefaultFeedbackUseCases(gh<_i173.FeedbackRepository>()));
+    gh.lazySingleton<_i315.ServerConfigViewModel>(
+        () => _i315.ServerConfigViewModel(
+              gh<_i766.ServerConfigRepository>(),
+              gh<_i467.AppConfig>(),
+            ));
     gh.lazySingleton<_i421.SettingsViewModel>(
         () => _i421.DefaultSettingsViewModel(
               gh<_i519.SettingsUseCases>(),
@@ -385,6 +404,8 @@ extension GetItInjectableX on _i174.GetIt {
               gh<_i245.BudgetUseCases>(),
               gh<_i406.FxRateRepository>(),
             ));
+    gh.lazySingleton<_i1017.FeatureFlagService>(() =>
+        serverConfigModule.featureFlags(gh<_i315.ServerConfigViewModel>()));
     gh.factory<_i281.ProfileUseCases>(
         () => _i281.ProfileUseCases(gh<_i4.ProfileRepository>()));
     gh.lazySingleton<_i622.CalendarViewModel>(() => _i622.CalendarViewModel(
@@ -552,3 +573,5 @@ extension GetItInjectableX on _i174.GetIt {
 class _$AuthDataModule extends _i901.AuthDataModule {}
 
 class _$AuthPresentationModule extends _i282.AuthPresentationModule {}
+
+class _$ServerConfigModule extends _i641.ServerConfigModule {}

@@ -9748,6 +9748,18 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Purchase price'**
   String get tradePriceRow;
+
+  /// No description provided for @serverConfigErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings did not load'**
+  String get serverConfigErrorTitle;
+
+  /// No description provided for @serverConfigErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your connection and try again.'**
+  String get serverConfigErrorMessage;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

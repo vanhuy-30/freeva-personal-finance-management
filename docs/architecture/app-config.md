@@ -1,6 +1,6 @@
 # Cờ và cấu hình phía server — BE-P5-E08
 
-Contract: [OpenAPI](../../packages/api-contracts/openapi.yaml) `GET /api/v1/app-config`, `GET /api/admin/app-config`, `PUT /api/admin/app-config/flags/{key}`, `PUT /api/admin/app-config/values/{key}`, `DELETE /api/admin/app-config/values/{key}`. Màn web admin: `WA-P5-001`, trang `/config` (`apps/web-admin/src/app/config/`). App đọc: `MOB-P5-E08`.
+Contract: [OpenAPI](../../packages/api-contracts/openapi.yaml) `GET /api/v1/app-config`, `GET /api/admin/app-config`, `PUT /api/admin/app-config/flags/{key}`, `PUT /api/admin/app-config/values/{key}`, `DELETE /api/admin/app-config/values/{key}`. Màn web admin: `WA-P5-001`, trang `/config` (`apps/web-admin/src/app/config/`). App đọc: `MOB-P5-E08` ([mobile-app-config.md](mobile-app-config.md)).
 
 ## Chức năng
 
