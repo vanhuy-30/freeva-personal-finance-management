@@ -119,6 +119,7 @@ describe('BE-P1-010 account repository audit', () => {
   function tx() {
     return {
       $queryRaw: jest.fn().mockResolvedValue([{ id }]),
+      $executeRaw: jest.fn().mockResolvedValue(0),
       schemaMeta: { findUnique: jest.fn().mockResolvedValue({ version: 1 }) },
       user: {
         findUnique: jest.fn().mockResolvedValue({

@@ -992,3 +992,45 @@ model InvestmentPrice {
   @@unique([userId, clientId])
   @@index([investmentId, quotedAt])
 }
+
+/// BE-P5-E08: server feature flag state. Definitions (key list, meaning) live in
+/// code (`app-config-registry.ts`); a missing row means the flag is off.
+model FeatureFlag {
+  key        String   @id @db.VarChar(64)
+  enabled    Boolean  @default(false)
+  /// Users who always get the flag while it is enabled.
+  userIds    String[] @default([]) @db.Uuid
+  percentage Int      @default(0) @db.SmallInt
+  version    Int      @default(1)
+  updatedAt  DateTime @updatedAt @db.Timestamptz
+  updatedBy  String   @db.Uuid
+}
+
+/// BE-P5-E08: config value edited by staff. A missing row means the code default.
+model AppConfigValue {
+  key       String   @id @db.VarChar(64)
+  value     Json
+  version   Int      @default(1)
+  updatedAt DateTime @updatedAt @db.Timestamptz
+  updatedBy String   @db.Uuid
+}
+
+/// BE-P5-E08: before/after of every flag or config change (AuditEvent has no payload).
+model AppConfigChange {
+  id         String   @id @default(uuid()) @db.Uuid
+  kind       String   @db.VarChar(10)
+  key        String   @db.VarChar(64)
+  before     Json?
+  after      Json?
+  actorId    String   @db.Uuid
+  occurredAt DateTime @default(now()) @db.Timestamptz
+
+  @@index([key, occurredAt])
+}
+
+/// BE-P5-E08: one row (id 1); `version` goes up on every flag or config change.
+model AppConfigMeta {
+  id        Int      @id @default(1)
+  version   Int      @default(1)
+  updatedAt DateTime @updatedAt @db.Timestamptz
+}

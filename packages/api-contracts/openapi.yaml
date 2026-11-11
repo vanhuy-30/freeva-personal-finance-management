@@ -5418,6 +5418,187 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/app-config:
+    get:
+      operationId: getAppConfig
+      tags: [AppConfig]
+      summary: Feature flags and product config for the signed-in user
+      description: >-
+        BE-P5-E08. Flags are already evaluated for this user (allow-list, then a stable percentage bucket).
+        Config keys without a staff override return their code default. `version` changes on every staff edit,
+        so the app can tell when to replace its cached copy.
+      security:
+        - UserBearer: []
+      responses:
+        '200':
+          description: Flags and config
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppConfig'
+        '401':
+          $ref: '#/components/responses/AppConfigUnauthorized'
+        '503':
+          $ref: '#/components/responses/AppConfigUnavailable'
+  /api/admin/app-config:
+    get:
+      operationId: listAppConfigForStaff
+      tags: [Admin]
+      summary: Every flag and config key with its definition, current value and last change
+      security:
+        - StaffBearer: []
+      responses:
+        '200':
+          description: Every flag and config key 
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminAppConfig'
+        '401':
+          $ref: '#/components/responses/AppConfigStaffUnauthorized'
+        '503':
+          $ref: '#/components/responses/AppConfigUnavailable'
+  /api/admin/app-config/flags/{key}:
+    put:
+      operationId: updateFeatureFlag
+      tags: [Admin]
+      summary: Set a flag's switch, allow-list and rollout percentage
+      description: >-
+        `version` is the flag version the staff member saw (0 when never saved); a stale version returns 409
+        and writes nothing. The change, its before/after values and an audit event are saved in one transaction.
+      security:
+        - StaffBearer: []
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+            maxLength: 64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateFeatureFlagRequest'
+      responses:
+        '200':
+          description: Every flag and config key after the change
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminAppConfig'
+        '400':
+          $ref: '#/components/responses/AppConfigValueInvalid'
+        '401':
+          $ref: '#/components/responses/AppConfigStaffUnauthorized'
+        '404':
+          $ref: '#/components/responses/AppConfigKeyUnknown'
+        '409':
+          $ref: '#/components/responses/AppConfigConflict'
+        '503':
+          $ref: '#/components/responses/AppConfigUnavailable'
+  /api/admin/app-config/values/{key}:
+    put:
+      operationId: updateAppConfigValue
+      tags: [Admin]
+      summary: Override a config value
+      description: >-
+        The value must fit the key's definition (type, min/max, item count, allowed values).
+        `version` works as for flags. Saved atomically with its change row and audit event.
+      security:
+        - StaffBearer: []
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+            maxLength: 64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAppConfigValueRequest'
+      responses:
+        '200':
+          description: Every flag and config key after the change
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminAppConfig'
+        '400':
+          $ref: '#/components/responses/AppConfigValueInvalid'
+        '401':
+          $ref: '#/components/responses/AppConfigStaffUnauthorized'
+        '404':
+          $ref: '#/components/responses/AppConfigKeyUnknown'
+        '409':
+          $ref: '#/components/responses/AppConfigConflict'
+        '503':
+          $ref: '#/components/responses/AppConfigUnavailable'
+    delete:
+      operationId: resetAppConfigValue
+      tags: [Admin]
+      summary: Drop the override so the key uses its code default again
+      security:
+        - StaffBearer: []
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+            maxLength: 64
+        - name: version
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Every flag and config key after the change
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminAppConfig'
+        '400':
+          $ref: '#/components/responses/AppConfigValueInvalid'
+        '401':
+          $ref: '#/components/responses/AppConfigStaffUnauthorized'
+        '404':
+          $ref: '#/components/responses/AppConfigKeyUnknown'
+        '409':
+          $ref: '#/components/responses/AppConfigConflict'
+        '503':
+          $ref: '#/components/responses/AppConfigUnavailable'
   /api/admin/user-lookups:
     post:
       operationId: lookupUserAccountForStaff
@@ -6743,6 +6924,83 @@ components:
             $ref: '#/components/schemas/ErrorEnvelope'
     ForecastUnavailable:
       description: FORECAST_UNAVAILABLE or authentication unavailable
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    AppConfigUnauthorized:
+      description: INVALID_CREDENTIALS
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    AppConfigStaffUnauthorized:
+      description: STAFF_AUTH_INVALID
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    AppConfigValueInvalid:
+      description: CONFIG_VALUE_INVALID (details[0].reason says why) or VALIDATION_ERROR
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    AppConfigKeyUnknown:
+      description: CONFIG_KEY_UNKNOWN
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    AppConfigConflict:
+      description: CONFIG_CONFLICT — the key changed since the staff member loaded it
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    AppConfigUnavailable:
+      description: APP_CONFIG_UNAVAILABLE, STAFF_AUTH_NOT_CONFIGURED or authentication unavailable
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    FeatureDisabled:
+      description: FEATURE_DISABLED — the server flag for this route is off for the caller
       headers:
         Cache-Control:
           schema:
@@ -10248,6 +10506,154 @@ components:
         updatedAt:
           type: string
           format: date-time
+    AppConfigValue:
+      description: integer, list of integers, list of minor-unit strings, enum string, list of enum strings, or HH:mm.
+      oneOf:
+        - type: integer
+        - type: string
+        - type: array
+          items:
+            type: integer
+        - type: array
+          items:
+            type: string
+    AppConfig:
+      type: object
+      additionalProperties: false
+      required: [version, flags, config]
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        flags:
+          type: object
+          description: Every flag key (category_suggest, insights, forecast, google_sign_in, apple_sign_in, profile_edit).
+          additionalProperties:
+            type: boolean
+        config:
+          type: object
+          description: Every config key, e.g. `budget.defaultAlertThresholds`, `forecast.monthOptions`.
+          additionalProperties:
+            $ref: '#/components/schemas/AppConfigValue'
+    AppConfigLastChange:
+      type: [object, 'null']
+      required: [updatedAt, updatedBy]
+      properties:
+        updatedAt:
+          type: string
+          format: date-time
+        updatedBy:
+          type: string
+          format: uuid
+    AppConfigDefinition:
+      type: object
+      required: [type, default, description]
+      properties:
+        type:
+          type: string
+          enum: [integer, integer_list, money_minor_list, enum, enum_list, time]
+        default:
+          $ref: '#/components/schemas/AppConfigValue'
+        description:
+          type: string
+        min:
+          type: integer
+        max:
+          type: integer
+        minItems:
+          type: integer
+        maxItems:
+          type: integer
+        values:
+          type: array
+          items:
+            type: string
+        currencyCode:
+          type: string
+    AdminAppConfig:
+      type: object
+      required: [version, flags, config]
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        flags:
+          type: array
+          items:
+            type: object
+            required: [key, description, enabled, userIds, percentage, version, lastChange]
+            properties:
+              key:
+                type: string
+              description:
+                type: string
+              enabled:
+                type: boolean
+              userIds:
+                type: array
+                items:
+                  type: string
+                  format: uuid
+              percentage:
+                type: integer
+                minimum: 0
+                maximum: 100
+              version:
+                type: integer
+                minimum: 0
+                description: 0 when the flag was never saved.
+              lastChange:
+                $ref: '#/components/schemas/AppConfigLastChange'
+        config:
+          type: array
+          items:
+            type: object
+            required: [key, definition, value, isDefault, version, lastChange]
+            properties:
+              key:
+                type: string
+              definition:
+                $ref: '#/components/schemas/AppConfigDefinition'
+              value:
+                $ref: '#/components/schemas/AppConfigValue'
+              isDefault:
+                type: boolean
+              version:
+                type: integer
+                minimum: 0
+                description: 0 when the key uses its code default.
+              lastChange:
+                $ref: '#/components/schemas/AppConfigLastChange'
+    UpdateFeatureFlagRequest:
+      type: object
+      additionalProperties: false
+      required: [enabled, userIds, percentage, version]
+      properties:
+        enabled:
+          type: boolean
+        userIds:
+          type: array
+          maxItems: 500
+          items:
+            type: string
+            format: uuid
+        percentage:
+          type: integer
+          minimum: 0
+          maximum: 100
+        version:
+          type: integer
+          minimum: 0
+    UpdateAppConfigValueRequest:
+      type: object
+      additionalProperties: false
+      required: [value, version]
+      properties:
+        value:
+          $ref: '#/components/schemas/AppConfigValue'
+        version:
+          type: integer
+          minimum: 0
     ErrorEnvelope:
       type: object
       required: [error]

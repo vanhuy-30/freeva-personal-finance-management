@@ -14,7 +14,7 @@ Phạm vi chốt 2026-11-11 (chủ dự án):
 Thứ tự: `BE-P5-E08` → `WA-P5-001` → `MOB-P5-E08` → `BE-P5-001` / `MOB-P5-001` → `DS-P5-001` → `PRD-P5-E01` → `E03` → `E04` → `E07` → `E06`.
 
 ### BE-P5-E08 — Cờ và cấu hình phía server
-- Status: todo
+- Status: done — 2026-11-11
 - Module: 18, 26
 - Gate: post-v1
 - Depends: MOB-P0-003
@@ -24,6 +24,7 @@ Thứ tự: `BE-P5-E08` → `WA-P5-001` → `MOB-P5-E08` → `BE-P5-001` / `MOB-
   - **API:** `GET /api/v1/app-config` trả cờ đã tính cho user và cấu hình, kèm `version` để app biết có thay đổi. Backend đọc cùng nguồn khi kiểm tra quy tắc, không giữ bản sao số trong code.
   - Cờ tắt thì API tương ứng trả `403 FEATURE_DISABLED`, không chạy ngầm.
   - Mỗi lần đổi cờ hoặc cấu hình ghi audit (người sửa, giá trị trước và sau). Không chứa dữ liệu tài chính của user.
+- Note: xong 2026-11-11: module `app-config`, registry 6 cờ + 34 khóa (mặc định bằng giá trị hiện tại), `GET /api/v1/app-config`, API admin GET/PUT/DELETE có version chống ghi đè, ghi + `AppConfigChange` + `AuditEvent` trong một transaction, `FeatureGuard`/`@RequireFeature`, xóa tài khoản gỡ UUID khỏi cờ. Mỗi môi trường tự quản cờ trong DB của mình (không cột môi trường). Migration additive `app_config`. App và DTO chưa đọc các khóa: việc của `BE-P5-001` / `MOB-P5-001`. [Kiến trúc](../docs/architecture/app-config.md).
 
 ### WA-P5-001 — Màn cờ và cấu hình trên web admin
 - Status: todo

@@ -211,6 +211,8 @@ export class PrismaAccountRepository implements AccountRepository {
     await tx.financialAccount.deleteMany({ where: { userId } });
     await tx.fxQuote.deleteMany({ where: { userId } });
     await tx.userFxRate.deleteMany({ where: { userId } });
+    // BE-P5-E08: drop the user from flag allow-lists; bump version so a stale admin save conflicts.
+    await tx.$executeRaw`UPDATE "FeatureFlag" SET "userIds" = array_remove("userIds", ${userId}::uuid), "version" = "version" + 1, "updatedAt" = CURRENT_TIMESTAMP WHERE ${userId}::uuid = ANY("userIds")`;
     await tx.auditEvent.create({ data: audit(userId, 'user.account_delete') });
     await tx.user.delete({ where: { id: userId } });
     return true;
