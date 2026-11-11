@@ -143,3 +143,43 @@ describe('BE-P5-E03 DTOs', () => {
     expect((await check(plainToInstance(SuggestionFeedbackDto, { suggestedCategoryId: id, chosenCategoryId: id, source: 'ai', surface: 'entry' }))).length).toBeGreaterThan(0);
   });
 });
+
+describe('BE-P5-E03 import batch', () => {
+  const allow = (on: boolean) => ({ allows: jest.fn().mockResolvedValue(on) }) as unknown as AutoSuggestPolicy;
+  const config = appConfigReaderFor();
+
+  it('suggests many rows with one lookup per kind of data', async () => {
+    const r = repo({
+      rememberedCategoryIdsByKey: jest.fn().mockResolvedValue(new Map([['highlands', 'food']])),
+      historyByKeys: jest.fn().mockResolvedValue(new Map([['notes|expense|ăn trưa', ['food', 'food']]])),
+      categories: jest.fn().mockResolvedValue([food, coffee, transport]),
+    });
+    const result = await new CategorySuggestionService(r, allow(true), config).suggestMany('u1', [
+      { merchant: 'Highlands', type: 'expense' }, { merchant: 'Grab', type: 'expense' }, { note: 'Ăn trưa', type: 'expense' },
+      { merchant: ' ', note: null, type: 'expense' }, { merchant: 'Highlands', type: 'expense' },
+    ]);
+    expect(result.map(s => s && [s.source, s.category.id])).toEqual([['remembered', 'food'], ['common', 'transport'], ['history', 'food'], null, ['remembered', 'food']]);
+    expect(r.rememberedCategoryIdsByKey).toHaveBeenCalledTimes(1);
+    expect(r.rememberedCategoryIdsByKey).toHaveBeenCalledWith('u1', ['highlands', 'grab']);
+    expect(r.historyByKeys).toHaveBeenCalledWith('u1', ['Highlands', 'Grab'], ['Ăn trưa'], 50);
+  });
+
+  it('returns nulls without reading when off, and records import outcomes in bulk', async () => {
+    const r = repo();
+    expect(await new CategorySuggestionService(r, allow(false), config).suggestMany('u1', [{ merchant: 'Grab', type: 'expense' }])).toEqual([null]);
+    expect(r.categories).not.toHaveBeenCalled();
+    const service = new CategorySuggestionService(r, allow(true), config);
+    const now = new Date('2026-11-11T01:00:00Z');
+    await service.recordImport('u1', [
+      { merchant: 'Grab', suggestion: { categoryId: 'transport', source: 'common' }, chosenCategoryId: 'transport' },
+      { merchant: 'grab', suggestion: { categoryId: 'transport', source: 'common' }, chosenCategoryId: 'transport' },
+      { merchant: 'Highlands', suggestion: { categoryId: 'food', source: 'common' }, chosenCategoryId: 'coffee' },
+      { merchant: 'Shop A', suggestion: null, chosenCategoryId: 'food' },
+    ], now);
+    const day = new Date('2026-11-11T00:00:00Z');
+    expect(r.count).toHaveBeenCalledWith(day, 'import', 'common', 'accepted', 2);
+    expect(r.count).toHaveBeenCalledWith(day, 'import', 'common', 'corrected', 1);
+    expect(r.count).toHaveBeenCalledTimes(2);
+    expect((r.remember as jest.Mock).mock.calls).toEqual([['u1', 'grab', 'transport'], ['u1', 'Highlands', 'coffee'], ['u1', 'Shop A', 'food']]);
+  });
+});

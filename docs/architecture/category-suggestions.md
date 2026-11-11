@@ -1,6 +1,6 @@
 # Gợi ý danh mục — BE-P5-E03 / MOB-P5-E03
 
-Contract: [OpenAPI](../../packages/api-contracts/openapi.yaml) `POST /api/v1/category-suggestions/suggest`, `POST /api/v1/category-suggestions/feedback`, `GET /api/admin/category-suggestions/stats`. Màn: board R.1 (ghi chi), R.2–R.3 (nhập CSV, PR sau) — [pattern](../brand/patterns/R-suggestions-insights.md). Công tắc và danh sách đã nhớ: [auto-suggest.md](auto-suggest.md).
+Contract: [OpenAPI](../../packages/api-contracts/openapi.yaml) `POST /api/v1/category-suggestions/suggest`, `POST /api/v1/category-suggestions/feedback`, `GET /api/admin/category-suggestions/stats`. Màn: board R.1 (ghi chi), R.2–R.3 (nhập CSV) — [pattern](../brand/patterns/R-suggestions-insights.md). Công tắc và danh sách đã nhớ: [auto-suggest.md](auto-suggest.md).
 
 ## Chức năng
 
@@ -26,6 +26,13 @@ App gửi `POST /category-suggestions/feedback` sau khi lưu giao dịch mà đ�
 - có `merchant` thì nhớ cửa hàng theo danh mục user chọn, kể cả khi sửa (chốt 2026-11-11: lần sau gợi ý đúng thứ user đã chọn).
 
 Staff xem `GET /api/admin/category-suggestions/stats?from&to` (≤ 366 ngày): từng dòng, tổng và `acceptRatePercent`. Chưa có trang web admin.
+
+## Nhập CSV (PR 2)
+
+- `preview` và `commit` gợi ý cho dòng **không có danh mục trong tệp**, loại thu/chi, có cửa hàng hoặc ghi chú (`suggestMany`: số truy vấn cố định cho cả tệp, không theo từng dòng). Dòng tệp đã có danh mục giữ nguyên.
+- Mỗi dòng trả `suggestion` (hoặc null); `summary.suggested` cho chip "Gợi ý N". Không đổi gì thì `categoryId` của dòng là danh mục gợi ý, nên chi tiêu không còn bị `CATEGORY_UNMAPPED` khi đoán được.
+- User đổi trong sheet: `rowCategoryMap` (số dòng → danh mục) thắng `merchantCategoryMap` (cửa hàng, khớp bỏ dấu, hoa thường → danh mục, "Áp dụng cho N khoản ở đây") thắng gợi ý. Danh mục vẫn kiểm chủ sở hữu và loại như map cũ. Hai map dùng được cả khi gợi ý tắt.
+- `commit` lần đầu (không phải replay) gọi `recordImport`: dòng có gợi ý được đếm `accepted`/`corrected` (`surface = import`, cộng dồn theo nguồn); mỗi cửa hàng được nhớ một lần theo danh mục cuối (gợi ý hoặc user chọn). Lỗi ở bước này không làm hỏng lô đã nhập.
 
 ## Cấu hình
 

@@ -10,6 +10,8 @@ export function repo(overrides: Partial<CategorySuggestionRepository> = {}): Cat
     rememberedCategoryId: jest.fn().mockResolvedValue(null),
     historyCategoryIds: jest.fn().mockResolvedValue([]),
     categories: jest.fn().mockResolvedValue([]),
+    rememberedCategoryIdsByKey: jest.fn().mockResolvedValue(new Map()),
+    historyByKeys: jest.fn().mockResolvedValue(new Map()),
     remember: jest.fn().mockResolvedValue(undefined),
     count: jest.fn().mockResolvedValue(undefined),
     stats: jest.fn().mockResolvedValue([]),

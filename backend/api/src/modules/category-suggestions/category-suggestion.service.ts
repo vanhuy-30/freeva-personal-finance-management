@@ -11,6 +11,8 @@ import {
 import { suggestCategory, type SuggestKind, type Suggestion, type SuggestionSource } from './domain/suggest';
 
 export interface SuggestRequest { merchant?: string | null; note?: string | null; type: SuggestKind }
+/** One import row the user saved, with what was suggested for it (if anything). */
+export interface ImportOutcome { merchant: string | null; suggestion: { categoryId: string; source: SuggestionSource } | null; chosenCategoryId: string }
 export interface FeedbackRequest {
   merchant?: string | null;
   suggestedCategoryId: string;
@@ -46,6 +48,64 @@ export class CategorySuggestionService {
     return suggestCategory({
       merchant, note, kind: input.type, rememberedCategoryId: remembered, history, categories, commonMerchants, minConfidencePercent,
     });
+  }
+
+  /**
+   * BE-P5-E03 import: one suggestion per item, with a fixed number of queries for the whole file.
+   * Empty when suggestions are off for the user.
+   */
+  async suggestMany(userId: string, items: SuggestRequest[]): Promise<Array<Suggestion | null>> {
+    if (!items.length || !(await this.policy.allows('category_suggest', userId))) return items.map(() => null);
+    const clean = items.map(item => {
+      const merchant = item.merchant?.trim() || null;
+      return { merchant, note: merchant ? null : item.note?.trim() || null, type: item.type };
+    });
+    const merchants = [...new Set(clean.flatMap(item => (item.merchant ? [item.merchant] : [])))];
+    const notes = [...new Set(clean.flatMap(item => (item.note ? [item.note] : [])))];
+    const limit = await this.config.value('categorySuggest.historySize');
+    const [remembered, history, categories, commonMerchants, minConfidencePercent] = await Promise.all([
+      this.repository.rememberedCategoryIdsByKey(userId, [...new Set(merchants.map(merchantKey))]),
+      this.repository.historyByKeys(userId, merchants, notes, limit),
+      this.repository.categories(userId),
+      this.config.value('categorySuggest.commonMerchants'),
+      this.config.value('categorySuggest.minConfidencePercent'),
+    ]);
+    return clean.map(item => {
+      if (!item.merchant && !item.note) return null;
+      const key = merchantKey(item.merchant ?? item.note!);
+      return suggestCategory({
+        merchant: item.merchant, note: item.note, kind: item.type,
+        rememberedCategoryId: item.merchant ? remembered.get(key) ?? null : null,
+        history: history.get(`${item.merchant ? 'merchant' : 'notes'}|${item.type}|${key}`) ?? [],
+        categories, commonMerchants, minConfidencePercent,
+      });
+    });
+  }
+
+  /**
+   * BE-P5-E03 import commit: count every suggested row as accepted or corrected, and remember each
+   * merchant (once, last row wins) under the category the user kept — suggested or chosen in the sheet.
+   * Best effort: the caller has already written the transactions.
+   */
+  async recordImport(userId: string, rows: ImportOutcome[], now = new Date()): Promise<void> {
+    if (!rows.length || !(await this.policy.allows('category_suggest', userId))) return;
+    const tally = new Map<string, number>();
+    for (const row of rows) {
+      if (!row.suggestion) continue;
+      const outcome = row.chosenCategoryId === row.suggestion.categoryId ? 'accepted' : 'corrected';
+      const key = `${row.suggestion.source}|${outcome}`;
+      tally.set(key, (tally.get(key) ?? 0) + 1);
+    }
+    for (const [key, by] of tally) {
+      const [source, outcome] = key.split('|') as [SuggestionSource, 'accepted' | 'corrected'];
+      await this.repository.count(utcDay(now), 'import', source, outcome, by);
+    }
+    const last = new Map<string, { merchant: string; categoryId: string }>();
+    for (const row of rows) {
+      const merchant = row.merchant?.trim();
+      if (merchant) last.set(merchantKey(merchant), { merchant, categoryId: row.chosenCategoryId });
+    }
+    for (const { merchant, categoryId } of last.values()) await this.repository.remember(userId, merchant, categoryId);
   }
 
   /**

@@ -47,10 +47,18 @@ export interface CategorySuggestionRepository {
    * newest first, at most `limit`. Matching ignores case and extra spaces.
    */
   historyCategoryIds(userId: string, match: { merchant: string | null; note: string | null }, kind: SuggestKind, limit: number): Promise<string[]>;
+  /** Batch of `rememberedCategoryId` for many merchant keys: key → category id. */
+  rememberedCategoryIdsByKey(userId: string, keys: string[]): Promise<Map<string, string>>;
+  /**
+   * Batch of `historyCategoryIds` for an import: for every merchant key (and note key, for rows
+   * without a merchant), the category ids of the newest matching `kind` transactions, at most `limit` each.
+   * Keys are `merchantKey()` values; the map key is `${field}|${kind}|${key}`.
+   */
+  historyByKeys(userId: string, merchants: string[], notes: string[], limit: number): Promise<Map<string, string[]>>;
   categories(userId: string): Promise<SuggestCategory[]>;
   /** Remembers (or moves) the merchant to the category. */
   remember(userId: string, merchant: string, categoryId: string): Promise<void>;
-  /** Adds one to today's counter. */
-  count(day: Date, surface: SuggestSurface, source: SuggestionSource, outcome: SuggestOutcome): Promise<void>;
+  /** Adds `by` (default 1) to the day's counter. */
+  count(day: Date, surface: SuggestSurface, source: SuggestionSource, outcome: SuggestOutcome, by?: number): Promise<void>;
   stats(from: Date, to: Date): Promise<SuggestionStatRow[]>;
 }

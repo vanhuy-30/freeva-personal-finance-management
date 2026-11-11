@@ -34,6 +34,13 @@ export class PreviewImportDto {
   @ValidateIf(optional) @IsObject() categoryMap?: Record<string, string | null>;
   /** Used for rows without a wallet column/value. */
   @ValidateIf(optional) @Transform(lower) @IsUUID() defaultAccountId?: string;
+  /**
+   * BE-P5-E03: rows with an empty category, by merchant (matched ignoring case and accents) → category id.
+   * "Áp dụng cho N khoản ở đây" in the sheet.
+   */
+  @ValidateIf(optional) @IsObject() merchantCategoryMap?: Record<string, string>;
+  /** BE-P5-E03: one row with an empty category, by file row number → category id. Wins over the merchant map. */
+  @ValidateIf(optional) @IsObject() rowCategoryMap?: Record<string, string>;
 }
 
 export class CommitImportDto extends PreviewImportDto {

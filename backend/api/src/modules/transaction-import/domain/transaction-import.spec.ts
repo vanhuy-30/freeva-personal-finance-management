@@ -95,3 +95,17 @@ describe('plan rows', () => {
     expect(detectPreset(['date', 'time', 'type', 'amount', 'currency', 'wallet', 'category', 'merchant', 'notes', 'tags', 'transaction_id'])).toBe('freeva');
   });
 });
+
+describe('BE-P5-E03 categories for rows the file left empty', () => {
+  const csv = 'date,time,type,amount,currency,wallet,category,merchant,notes,tags,transaction_id\n2026-11-03,,expense,-45000,VND,Tiền mặt,,Highlands,,,\n2026-11-03,,expense,-62000,VND,Tiền mặt,Ăn uống,Grab,,,\n2026-11-04,,income,100000,VND,Tiền mặt,,Thưởng,,,\n';
+  it('uses the picked category only when the file category is empty, and checks kind and ownership', () => {
+    const rows = run(csv, 'freeva', [], { rowCategory: new Map([[1, 'c1'], [2, 'c1'], [3, 'c2']]) });
+    expect(rows.map(r => [r.status, r.categoryId, r.errors])).toEqual([['ready', 'c1', []], ['ready', 'c1', []], ['ready', 'c2', []]]);
+    expect(run(csv, 'freeva', [], { rowCategory: new Map([[3, 'c1']]) })[2].errors).toEqual(['CATEGORY_KIND_MISMATCH']);
+    expect(run(csv, 'freeva', [], { rowCategory: new Map([[1, 'other']]) })[0].errors).toEqual(['CATEGORY_UNMAPPED']);
+  });
+  it('keeps the old behaviour without a pick: empty expense category is unmapped, income may stay empty', () => {
+    const rows = run(csv, 'freeva');
+    expect(rows.map(r => [r.status, r.categoryId])).toEqual([['invalid', null], ['ready', 'c1'], ['ready', null]]);
+  });
+});
