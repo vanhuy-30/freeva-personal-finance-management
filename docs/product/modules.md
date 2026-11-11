@@ -16,12 +16,12 @@ Mỗi module có file riêng. Một module có thể xuất hiện ở nhiều p
 | 10 | Khoản vay và công nợ | 3 | [10-loans.md](modules/10-loans.md) |
 | 11 | Tiết kiệm và tiền gửi | 3 | [11-savings.md](modules/11-savings.md) |
 | 12 | Tài sản và đầu tư | 4 | [12-investments.md](modules/12-investments.md) |
-| 13 | Nhập liệu / kết nối ngân hàng | 5, 6 | [13-import-bank.md](modules/13-import-bank.md) |
+| 13 | Nhập liệu / kết nối ngân hàng | 3, 6, 8 | [13-import-bank.md](modules/13-import-bank.md) |
 | 14 | Báo cáo | 1–5 | [14-reports.md](modules/14-reports.md) |
 | 15 | Lịch tài chính | 2, 3 | [15-calendar.md](modules/15-calendar.md) |
 | 16 | Gia đình và chia sẻ | 6 | [16-family.md](modules/16-family.md) |
 | 17 | Thông báo | 2, 3 | [17-notifications.md](modules/17-notifications.md) |
-| 18 | AI và tự động hóa | 5 | [18-ai.md](modules/18-ai.md) |
+| 18 | AI và tự động hóa | 5, 8 | [18-ai.md](modules/18-ai.md) |
 | 19 | Tìm kiếm | 1, 2 | [19-search.md](modules/19-search.md) |
 | 20 | Đồng bộ và sao lưu | 0, 1, 6 | [20-sync.md](modules/20-sync.md) |
 | 21 | Quyền riêng tư | 0, 1 | [21-privacy.md](modules/21-privacy.md) |
@@ -29,4 +29,4 @@ Mỗi module có file riêng. Một module có thể xuất hiện ở nhiều p
 | 23 | Gói dịch vụ và thanh toán | 7 | [23-billing.md](modules/23-billing.md) |
 | 24 | Cài đặt | 1 | [24-settings.md](modules/24-settings.md) |
 | 25 | Trợ giúp | 1, 7 | [25-help.md](modules/25-help.md) |
-| 26 | Quản trị hệ thống | 0, 7 | [26-admin.md](modules/26-admin.md) |
+| 26 | Quản trị hệ thống | 0, 5, 7 | [26-admin.md](modules/26-admin.md) |

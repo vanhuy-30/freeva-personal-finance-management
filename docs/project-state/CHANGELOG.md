@@ -2,6 +2,10 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-11-11
+
+- Chốt phạm vi Phase 5: số và cấu hình sản phẩm lên server, sửa trên web admin (`BE-P5-E08`, `WA-P5-001`, `MOB-P5-E08`, `BE-P5-001`/`MOB-P5-001` kèm danh sách rà soát app); gợi ý danh mục, insight, dự báo chi, what-if theo quy tắc. `BE-P5-E01` (sao kê) wont. OCR, Ask Freeva sang Phase 8 mới (AI). Bỏ cờ `investment`; cờ ngân hàng Phase 6 đổi tên `bank_connect`.
+
 ## 2026-11-10
 
 - **Phase 4 closed**: backlog 6/6 done (tài sản và đầu tư, tài sản ròng theo thời gian, thiết kế, test giá vốn; `Gate: v1`). FX đầu tư không hỗ trợ ở v1. Mở Phase 5 (toàn bộ sau v1).
