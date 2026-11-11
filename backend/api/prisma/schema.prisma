@@ -294,6 +294,19 @@ model CategorySuggestionMapping {
   @@index([categoryId])
 }
 
+/// BE-P5-E03: daily counts of category suggestions the user kept or changed. No user id: only the rates matter.
+model CategorySuggestionStat {
+  day       DateTime @db.Date
+  /// `entry` (ghi chi) or `import` (nhập CSV).
+  surface   String   @db.VarChar(10)
+  /// `remembered`, `history` or `common`.
+  source    String   @db.VarChar(12)
+  accepted  Int      @default(0)
+  corrected Int      @default(0)
+
+  @@id([day, surface, source])
+}
+
 model Tag {
   id        String   @id @default(uuid()) @db.Uuid
   userId    String   @db.Uuid

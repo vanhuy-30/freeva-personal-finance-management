@@ -8,6 +8,7 @@ export type ConfigType =
   | "money_minor_list"
   | "enum"
   | "enum_list"
+  | "pair_list"
   | "time";
 
 export type ConfigDefinition = {
@@ -20,6 +21,8 @@ export type ConfigDefinition = {
   maxItems?: number;
   values?: string[];
   currencyCode?: string;
+  /** `pair_list` only: longest text before the colon (BE-P5-E03). */
+  maxTextLength?: number;
   /** false on fixed technical limits (`limit.*`): shown, never edited (BE-P5-001). */
   editable?: false;
 };
@@ -85,6 +88,26 @@ export function parseConfigInput(definition: ConfigDefinition, text: string): Pa
       if (new Set(values).size !== values.length) return { ok: false, message: "Mỗi giá trị chỉ ghi một lần." };
       return countError(definition, values.length) ?? { ok: true, value: values };
     }
+    case "pair_list": {
+      // One pair per line: names may contain commas ("Co.opmart, Q1"), never line breaks.
+      const values: string[] = [];
+      const seen = new Set<string>();
+      for (const line of raw.split("\n").map((part) => part.trim()).filter((part) => part.length > 0)) {
+        const at = line.lastIndexOf(":");
+        const name = at > 0 ? line.slice(0, at).trim() : "";
+        const target = at > 0 ? line.slice(at + 1).trim() : "";
+        if (!name || !target) return { ok: false, message: `"${line}" phải có dạng "Tên: icon".` };
+        if (definition.maxTextLength !== undefined && name.length > definition.maxTextLength) {
+          return { ok: false, message: `"${name}" dài quá ${definition.maxTextLength} ký tự.` };
+        }
+        if (!definition.values?.includes(target)) return { ok: false, message: `"${target}" không phải icon danh mục.` };
+        const key = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/gi, "d").toLowerCase().replace(/\s+/g, " ");
+        if (seen.has(key)) return { ok: false, message: `"${name}" ghi hai lần.` };
+        seen.add(key);
+        values.push(`${name}: ${target}`);
+      }
+      return countError(definition, values.length) ?? { ok: true, value: values };
+    }
     case "time": {
       if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(raw)) return { ok: false, message: "Nhập giờ dạng HH:mm, ví dụ 21:00." };
       return { ok: true, value: raw };
@@ -116,6 +139,7 @@ function ascendingError(values: (number | bigint)[]): ParseResult | null {
 
 /** Typed value → the text shown in the input. */
 export function toInputText(definition: ConfigDefinition, value: ConfigValue): string {
+  if (Array.isArray(value) && definition.type === "pair_list") return (value as string[]).join("\n");
   if (Array.isArray(value)) {
     return definition.type === "money_minor_list"
       ? (value as string[]).map(groupDigits).join(", ")
@@ -140,6 +164,7 @@ export function describeLimits(definition: ConfigDefinition): string {
   if (definition.type === "integer_list" || definition.type === "money_minor_list") parts.push("tăng dần, cách nhau dấu phẩy");
   if (definition.type === "enum_list") parts.push("theo thứ tự hiện, cách nhau dấu phẩy");
   if (definition.type === "enum" || definition.type === "enum_list") parts.push(`giá trị: ${definition.values?.join(", ")}`);
+  if (definition.type === "pair_list") parts.push(`mỗi dòng "Tên: icon", tên tối đa ${definition.maxTextLength ?? "?"} ký tự`);
   if (definition.type === "time") parts.push("HH:mm");
   return parts.join(" · ");
 }

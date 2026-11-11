@@ -284,6 +284,17 @@ function ConfigRow({ entry, token, apply }: { entry: AdminConfigEntry; token: st
                 </option>
               ))}
             </select>
+          ) : definition.type === "pair_list" ? (
+            <textarea
+              className="w-full rounded-lg border px-3 py-2 font-mono text-sm"
+              style={inputStyle}
+              id={inputId}
+              rows={10}
+              readOnly={fixed}
+              value={text}
+              onChange={(event) => setText(event.target.value)}
+              aria-invalid={error !== null}
+            />
           ) : (
             <input
               className="w-full rounded-lg border px-3 py-2 text-sm"

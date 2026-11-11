@@ -30,6 +30,14 @@ export type EnumDefinition = Base & { type: 'enum'; default: string; values: rea
 export type EnumListDefinition = Base & {
   type: 'enum_list'; default: readonly string[]; values: readonly string[]; minItems: number; maxItems: number;
 };
+/**
+ * `"text: value"` pairs, e.g. `"Grab: transport"` (BE-P5-E03). The text is free (1–`maxTextLength`
+ * chars, unique ignoring case and accents); the value after the last `:` is one of `values`.
+ * Stored as a list of strings so older app builds read it like any string list.
+ */
+export type PairListDefinition = Base & {
+  type: 'pair_list'; default: readonly string[]; values: readonly string[]; minItems: number; maxItems: number; maxTextLength: number;
+};
 /** Local time `HH:mm`. */
 export type TimeDefinition = Base & { type: 'time'; default: string };
 
@@ -39,6 +47,7 @@ export type ConfigDefinition =
   | MoneyMinorListDefinition
   | EnumDefinition
   | EnumListDefinition
+  | PairListDefinition
   | TimeDefinition;
 
 export type ConfigValue = number | string | readonly number[] | readonly string[];
@@ -111,6 +120,26 @@ export function parseConfigValue(definition: ConfigDefinition, value: unknown): 
       const items = value as string[];
       if (new Set(items).size !== items.length) fail('items must be unique');
       return [...items];
+    }
+    case 'pair_list': {
+      if (!Array.isArray(value)) fail('must be a list of "text: value" pairs');
+      checkCount(value.length, definition.minItems, definition.maxItems);
+      const seen = new Set<string>();
+      const clean: string[] = [];
+      for (const item of value) {
+        if (typeof item !== 'string') fail('must be a list of "text: value" pairs');
+        const at = item.lastIndexOf(':');
+        const text = at > 0 ? item.slice(0, at).trim() : '';
+        const target = at > 0 ? item.slice(at + 1).trim() : '';
+        if (!text || !target) fail(`"${item}" must look like "text: value"`);
+        if (text.length > definition.maxTextLength) fail(`text must be at most ${definition.maxTextLength} characters`);
+        if (!definition.values.includes(target)) fail(`"${target}" must be one of ${definition.values.join(', ')}`);
+        const key = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/gi, 'd').toLowerCase().replace(/\s+/g, ' ');
+        if (seen.has(key)) fail(`"${text}" is listed twice`);
+        seen.add(key);
+        clean.push(`${text}: ${target}`);
+      }
+      return clean;
     }
     case 'time': {
       if (typeof value !== 'string' || !TIME_PATTERN.test(value)) fail('must be HH:mm');

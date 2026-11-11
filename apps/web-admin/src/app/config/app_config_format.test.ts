@@ -54,6 +54,20 @@ describe("WA-P5-001 config input", () => {
   });
 });
 
+describe("BE-P5-E03 common merchant pairs", () => {
+  const pairs: ConfigDefinition = { type: "pair_list", default: [], values: ["food", "transport"], minItems: 0, maxItems: 5, maxTextLength: 20, description: "" };
+  it("reads one pair per line and shows them back the same way", () => {
+    assert.deepEqual(parseConfigInput(pairs, " Grab :transport\n\nCo.opmart, Q1: food\n"), { ok: true, value: ["Grab: transport", "Co.opmart, Q1: food"] });
+    assert.equal(toInputText(pairs, ["Grab: transport", "KFC: food"]), "Grab: transport\nKFC: food");
+    assert.match(describeLimits(pairs), /mỗi dòng "Tên: icon"/);
+  });
+  it("explains bad lines", () => {
+    assert.equal(parseConfigInput(pairs, "Grab transport").ok, false);
+    assert.equal(parseConfigInput(pairs, "Grab: bus").ok, false);
+    assert.equal(parseConfigInput(pairs, "Phở: food\npho: food").ok, false);
+  });
+});
+
 describe("WA-P5-001 flag input", () => {
   const id = "5F0C1A52-8A1E-4F4C-9B7E-3C8F2E6D1A90";
 

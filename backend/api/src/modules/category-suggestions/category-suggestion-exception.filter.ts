@@ -8,7 +8,7 @@ export class CategorySuggestionExceptionFilter implements ExceptionFilter {
     const response = host.switchToHttp().getResponse<Response>();
     response.setHeader('Cache-Control', 'no-store');
     if (exception instanceof CategorySuggestionError) {
-      response.status(404).json({ error: { code: exception.code, message: 'Suggestion request could not be completed', details: [] } });
+      response.status(exception.code === 'CATEGORY_NOT_FOUND' ? 400 : 404).json({ error: { code: exception.code, message: 'Suggestion request could not be completed', details: [] } });
       return;
     }
     if (exception instanceof HttpException) {

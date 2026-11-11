@@ -5367,6 +5367,118 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/category-suggestions/suggest:
+    post:
+      operationId: suggestCategory
+      summary: Guess a category from a merchant or note
+      tags: [CategorySuggestions]
+      security:
+        - UserBearer: []
+      description: >-
+        BE-P5-E03. Order: merchant the user remembered, the user's own history at that merchant (or with that note;
+        the top category must reach `categorySuggest.minConfidencePercent`), then `categorySuggest.commonMerchants`.
+        Merchant wins over the note. Only active categories of the requested kind. `suggestion` is null when nothing is
+        confident enough, the history disagrees with itself, the flag `category_suggest` is off, or the user switched
+        Gợi ý tự động off. Never saves anything.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SuggestCategoryRequest'
+      responses:
+        '200':
+          description: Suggestion or null (Cache-Control no-store)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuggestCategoryResponse'
+        '400':
+          description: Bad type, text too long, or an extra field
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: SUGGESTIONS_UNAVAILABLE
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/category-suggestions/feedback:
+    post:
+      operationId: sendSuggestionFeedback
+      summary: Tell the server what the user kept after a suggestion
+      tags: [CategorySuggestions]
+      security:
+        - UserBearer: []
+      description: >-
+        BE-P5-E03. Send after the transaction is saved. Same category = accepted, another = corrected; both add to the
+        daily counter (no user id) and, when `merchant` is set, remember the merchant under the chosen category.
+        Ignored (still 204) when suggestions are off for the user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SuggestionFeedback'
+      responses:
+        '204':
+          description: Recorded (Cache-Control no-store)
+        '400':
+          description: Bad body, or CATEGORY_NOT_FOUND (chosen category is not the user's)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/admin/category-suggestions/stats:
+    get:
+      operationId: getCategorySuggestionStats
+      summary: Accept and correct counts of category suggestions
+      tags: [CategorySuggestions]
+      security:
+        - StaffBearer: []
+      description: BE-P5-E03. Daily rows by surface and source plus totals and accept rate. No user data. At most 366 days.
+      parameters:
+        - name: from
+          in: query
+          required: true
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          required: true
+          schema: { type: string, format: date }
+      responses:
+        '200':
+          description: Counts (Cache-Control no-store)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuggestionStats'
+        '400':
+          description: Bad dates or range
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing or invalid staff credential
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
   /api/v1/category-suggestions/mappings:
     get:
       operationId: listCategorySuggestionMappings
@@ -10412,6 +10524,92 @@ components:
       properties:
         enabled:
           type: boolean
+    SuggestCategoryRequest:
+      type: object
+      additionalProperties: false
+      required: [type]
+      properties:
+        merchant:
+          type: [string, 'null']
+          maxLength: 200
+        note:
+          type: [string, 'null']
+          maxLength: 2000
+        type:
+          type: string
+          enum: [expense, income]
+    SuggestCategoryResponse:
+      type: object
+      additionalProperties: false
+      required: [suggestion]
+      properties:
+        suggestion:
+          oneOf:
+            - type: 'null'
+            - type: object
+              additionalProperties: false
+              required: [category, source, matchCount, confidencePercent]
+              properties:
+                category:
+                  type: object
+                  additionalProperties: false
+                  required: [id, name, iconToken, colorToken]
+                  properties:
+                    id: { type: string, format: uuid }
+                    name: { type: string }
+                    iconToken: { type: [string, 'null'] }
+                    colorToken: { type: [string, 'null'] }
+                source:
+                  type: string
+                  enum: [remembered, history, common]
+                matchCount:
+                  type: integer
+                  minimum: 0
+                  description: Past transactions at this merchant (or with this note) under the category, for "Như 8 lần trước ở đây". 0 for the common list.
+                confidencePercent:
+                  type: [integer, 'null']
+                  minimum: 0
+                  maximum: 100
+    SuggestionFeedback:
+      type: object
+      additionalProperties: false
+      required: [suggestedCategoryId, chosenCategoryId, source, surface]
+      properties:
+        merchant:
+          type: [string, 'null']
+          maxLength: 200
+        suggestedCategoryId: { type: string, format: uuid }
+        chosenCategoryId: { type: string, format: uuid }
+        source:
+          type: string
+          enum: [remembered, history, common]
+        surface:
+          type: string
+          enum: [entry, import]
+    SuggestionStats:
+      type: object
+      additionalProperties: false
+      required: [from, to, accepted, corrected, acceptRatePercent, rows]
+      properties:
+        from: { type: string, format: date }
+        to: { type: string, format: date }
+        accepted: { type: integer, minimum: 0 }
+        corrected: { type: integer, minimum: 0 }
+        acceptRatePercent:
+          type: [number, 'null']
+          description: accepted / (accepted + corrected), one decimal; null when nothing was counted.
+        rows:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [day, surface, source, accepted, corrected]
+            properties:
+              day: { type: string, format: date }
+              surface: { type: string, enum: [entry, import] }
+              source: { type: string, enum: [remembered, history, common] }
+              accepted: { type: integer, minimum: 0 }
+              corrected: { type: integer, minimum: 0 }
     SuggestionMapping:
       type: object
       additionalProperties: false
@@ -10757,7 +10955,7 @@ components:
           description: Present on fixed technical limits (`limit.*`); staff can read but not edit them.
         type:
           type: string
-          enum: [integer, integer_list, money_minor_list, enum, enum_list, time]
+          enum: [integer, integer_list, money_minor_list, enum, enum_list, pair_list, time]
         default:
           $ref: '#/components/schemas/AppConfigValue'
         description:
@@ -10776,6 +10974,9 @@ components:
             type: string
         currencyCode:
           type: string
+        maxTextLength:
+          type: integer
+          description: On `pair_list` (BE-P5-E03), the longest text before the colon.
     AdminAppConfig:
       type: object
       required: [version, flags, config]
