@@ -42,6 +42,17 @@ Cùng đợt (2026-11-03), canvas được sửa cho khớp app đang chạy (th
 | **P** Đầu tư | **Chốt** 2026-11-06, đã code P.1–P.12 (`MOB-P4-E01`) | [patterns/P-investments.md](patterns/P-investments.md) |
 | **Q** Tài sản ròng theo thời gian | **Chốt** 2026-11-06, đã code Q.1 (`MOB-P4-E02`) | [patterns/P-investments.md](patterns/P-investments.md) |
 
+### Phase 5 (trang canvas **09 · Phase 5**, chốt 2026-11-11)
+
+| Phần | Trạng thái | Tài liệu |
+|---|---|---|
+| **R** Gợi ý danh mục | **Chốt** 2026-11-11 | [patterns/R-suggestions-insights.md](patterns/R-suggestions-insights.md) |
+| **S** Đáng chú ý và dự báo chi | **Chốt** 2026-11-11 | [patterns/R-suggestions-insights.md](patterns/R-suggestions-insights.md) |
+| **T** Ngày dự kiến đạt mục tiêu | **Chốt** 2026-11-11 | [patterns/R-suggestions-insights.md](patterns/R-suggestions-insights.md) |
+| **U** Gợi ý tự động | **Chốt** 2026-11-11 | [patterns/R-suggestions-insights.md](patterns/R-suggestions-insights.md) |
+
+Chủ dự án bỏ what-if ("Thử bớt chi") và nút "Không đúng" (2026-11-11).
+
 ## Tiến độ code (Flutter)
 
 Thứ tự đã chốt: nền tảng → B → C → D → E → F → G → A → H. Mỗi nhóm một nhánh + một PR vào `develop`; API nhỏ mà màn cần làm luôn trong PR đó, module lớn (ngân sách, thông báo, chế độ khách, deep link email) để trạng thái trống/ẩn.
@@ -76,7 +87,7 @@ Còn lệch có chủ đích hoặc chưa làm: ô thả khi kéo sắp xếp v�
 
 ## Việc thiết kế còn lại
 
-Tám nhóm A–H, bảy nhóm Phase 3 và nhóm P, Q của Phase 4 đã chốt. Còn:
+Tám nhóm A–H, bảy nhóm Phase 3, nhóm P, Q của Phase 4 và nhóm R, S, T, U của Phase 5 đã chốt. Còn:
 
 - **Popup xoá tài khoản** (nhóm G): đã làm bằng hộp xác nhận chung ở `MOB-P2-011`; chưa vẽ trên board. Xuất dữ liệu đã vẽ ở nhóm O.
 - **Khoản bạn đi mượn** (nhóm K): chi tiết và sheet trả giống khoản cho mượn, chỉ đổi chữ; chưa vẽ riêng.
@@ -114,12 +125,14 @@ Tám nhóm A–H, bảy nhóm Phase 3 và nhóm P, Q của Phase 4 đã chốt. 
 - **Nhãn phải đúng cho mọi trường hợp dùng** (2026-11-03): ví dụ "Hỏi trước khi ghi" thay "Nhắc tôi trả" vì định kỳ có cả khoản thu.
 - **Sheet và popup nằm trên màn thật**, không trên khung trống; số liệu mẫu phải khớp giữa các màn liên quan.
 - **Không vẽ màn trùng bố cục chỉ để đổi số**; ghi biến thể bằng ghi chú cạnh board (2026-11-03).
+- **Insight phải trực quan** (2026-11-11): mỗi điều đáng chú ý có hình nhỏ (thanh so sánh, thanh ngân sách), không chỉ một câu.
+- **Không thêm nút "Không đúng" cho số tính từ sổ** (2026-11-11): số thật thì không cần báo sai; gợi ý danh mục sửa bằng cách chọn lại.
 - **Danh sách cài đặt dài thì tách**: chỗ dùng thường xuyên thành lưới ô, cài đặt chỉnh một lần gộp vào màn con (Cá nhân, 2026-11-03).
 - Product owner gửi ảnh tham chiếu thường xuyên: chỉ dùng để thiết kế, **không lưu vào repo**. Điều rút ra từ ảnh thì ghi thành chữ vào spec hoặc file pattern.
 
 ## Ghi chú kỹ thuật cho người sửa canvas
 
 - Canvas là Artifact loại Design: file `project/canvas.json` (index, `pages`, `boards`, `order`, `notes`) và `project/*.dc.html`. Ảnh logo đã tải lên dạng asset `/_blob/…` (xem `canvas/Logo.dc.html`).
-- Trang canvas: `f` Foundations · `t` Tokens · `c` Components · `s` States · `p` Patterns · `p3` Phase 3 · `p4` Phase 4 · `g` Guidelines.
+- Trang canvas: `f` Foundations · `t` Tokens · `c` Components · `s` States · `p` Patterns · `p3` Phase 3 · `p4` Phase 4 · `p5` Phase 5 · `g` Guidelines.
 - Board Phase 3 có tiêu đề dạng "I · 1. Tên màn"; màn có sheet/popup dùng nguyên nội dung màn nền bên dưới lớp tối.
 - Màu trong artboard là hex theo token v2 (ink `#22283A`, canvas `#FCFDFF`, action `#3F67D1`, wash ở `.wash`).

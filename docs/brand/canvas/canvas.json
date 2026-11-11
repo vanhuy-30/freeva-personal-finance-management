@@ -1473,6 +1473,87 @@
    "w": 390,
    "x": 920,
    "y": 2000
+  },
+  "SugExpense.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "page": "p5",
+   "title": "R · 1. Ghi chi · gợi ý danh mục",
+   "w": 390,
+   "x": 0,
+   "y": -20
+  },
+  "SugImport.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "page": "p5",
+   "title": "R · 2. Nhập giao dịch · lọc Gợi ý",
+   "w": 390,
+   "x": 460,
+   "y": -20
+  },
+  "SugImportPick.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "page": "p5",
+   "title": "R · 3. Đổi danh mục (sheet)",
+   "w": 390,
+   "x": 920,
+   "y": -20
+  },
+  "InsHome.dc.html": {
+   "h": 920,
+   "is_interactive": true,
+   "page": "p5",
+   "title": "S · 1. Tổng quan · điều đáng chú ý",
+   "w": 390,
+   "x": 0,
+   "y": 1380
+  },
+  "InsAnalysis.dc.html": {
+   "h": 960,
+   "is_interactive": true,
+   "page": "p5",
+   "title": "S · 2. Phân tích",
+   "w": 390,
+   "x": 460,
+   "y": 1380
+  },
+  "SpendForecast.dc.html": {
+   "h": 860,
+   "is_interactive": true,
+   "page": "p5",
+   "title": "S · 3. Dự báo chi cuối tháng",
+   "w": 390,
+   "x": 920,
+   "y": 1380
+  },
+  "GoalForecast.dc.html": {
+   "h": 950,
+   "is_interactive": true,
+   "page": "p5",
+   "title": "T · 1. Chi tiết mục tiêu · dự kiến ngày đạt",
+   "w": 390,
+   "x": 0,
+   "y": 3260
+  },
+  "AutoSuggest.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "page": "p5",
+   "title": "U · 1. Gợi ý tự động",
+   "w": 390,
+   "x": 920,
+   "y": 3260
+  },
+  "AutoSuggestClear.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "page": "p5",
+   "title": "U · 2. Xoá dữ liệu đã học (popup)",
+   "w": 390,
+   "x": 1380,
+   "y": 3260
   }
  },
  "createdOnFiles": {
@@ -1515,7 +1596,12 @@
   "tp4",
   "t4_0",
   "t4_1",
-  "t4_2"
+  "t4_2",
+  "tp5",
+  "t5_0",
+  "t5_1",
+  "t5_2",
+  "t5_3"
  ],
  "notes": {
   "na3_nogoal": {
@@ -1795,6 +1881,51 @@
    "w": 240,
    "x": 0,
    "y": 3500
+  },
+  "tp5": {
+   "kind": "title1",
+   "maxW": 2230,
+   "page": "p5",
+   "text": "09 · Phase 5 · đã duyệt 11/11",
+   "w": 240,
+   "x": 0,
+   "y": -600
+  },
+  "t5_0": {
+   "kind": "title1",
+   "maxW": 1310,
+   "page": "p5",
+   "text": "R · Gợi ý danh mục",
+   "w": 240,
+   "x": 0,
+   "y": -300
+  },
+  "t5_1": {
+   "kind": "title1",
+   "maxW": 1310,
+   "page": "p5",
+   "text": "S · Điều đáng chú ý và dự báo chi",
+   "w": 240,
+   "x": 0,
+   "y": 1100
+  },
+  "t5_2": {
+   "kind": "title1",
+   "maxW": 390,
+   "page": "p5",
+   "text": "T · Mục tiêu",
+   "w": 240,
+   "x": 0,
+   "y": 2980
+  },
+  "t5_3": {
+   "kind": "title1",
+   "maxW": 850,
+   "page": "p5",
+   "text": "U · Gợi ý tự động",
+   "w": 240,
+   "x": 920,
+   "y": 2980
   }
  },
  "order": [
@@ -1965,7 +2096,16 @@
   "PPrice.dc.html",
   "PDepositDetail.dc.html",
   "PTradeOut.dc.html",
-  "QNetWorth.dc.html"
+  "QNetWorth.dc.html",
+  "SugExpense.dc.html",
+  "SugImport.dc.html",
+  "SugImportPick.dc.html",
+  "InsHome.dc.html",
+  "InsAnalysis.dc.html",
+  "SpendForecast.dc.html",
+  "GoalForecast.dc.html",
+  "AutoSuggest.dc.html",
+  "AutoSuggestClear.dc.html"
  ],
  "pages": [
   {
@@ -1995,6 +2135,10 @@
   {
    "id": "p4",
    "name": "08 · Phase 4"
+  },
+  {
+   "id": "p5",
+   "name": "09 · Phase 5"
   },
   {
    "id": "g",
