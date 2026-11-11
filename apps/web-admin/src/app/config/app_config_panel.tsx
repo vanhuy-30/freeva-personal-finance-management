@@ -42,6 +42,7 @@ const GROUP_LABELS: Record<string, string> = {
   import: "Nhập CSV",
   export: "Xuất CSV",
   transaction: "Giao dịch",
+  limit: "Giới hạn cố định",
 };
 
 const card: CSSProperties = { background: "var(--color-neutral-surface)", borderColor: "var(--color-brand-muted)" };
@@ -231,6 +232,7 @@ function FlagRow({ flag, token, apply }: { flag: AdminFlag; token: string; apply
 
 function ConfigRow({ entry, token, apply }: { entry: AdminConfigEntry; token: string; apply: Apply }) {
   const { definition } = entry;
+  const fixed = definition.editable === false;
   const [text, setText] = useState(toInputText(definition, entry.value));
   const [error, setError] = useState<string | null>(null);
   const [confirming, setConfirming] = useState<{ kind: "save"; value: AdminConfigEntry["value"] } | { kind: "reset" } | null>(null);
@@ -264,7 +266,7 @@ function ConfigRow({ entry, token, apply }: { entry: AdminConfigEntry; token: st
         title={entry.key}
         description={definition.description}
         lastChange={entry.lastChange}
-        badge={entry.isDefault ? "Mặc định" : "Đã sửa"}
+        badge={fixed ? "Cố định" : entry.isDefault ? "Mặc định" : "Đã sửa"}
       />
       <div className="mt-4">
         <Field label="Giá trị" htmlFor={inputId} error={error ?? undefined} hint={describeLimits(definition)}>
@@ -288,6 +290,7 @@ function ConfigRow({ entry, token, apply }: { entry: AdminConfigEntry; token: st
               style={inputStyle}
               id={inputId}
               type={definition.type === "time" ? "time" : "text"}
+              readOnly={fixed}
               inputMode={definition.type === "integer" ? "numeric" : undefined}
               value={text}
               onChange={(event) => setText(event.target.value)}
@@ -299,7 +302,11 @@ function ConfigRow({ entry, token, apply }: { entry: AdminConfigEntry; token: st
           Mặc định: {describeValue(definition, definition.default)}
         </p>
       </div>
-      {confirming ? (
+      {fixed ? (
+        <p className="mt-4 text-xs" style={muted}>
+          Giới hạn kỹ thuật API đang áp dụng; app đọc để báo trước cho user. Đổi cần sửa code.
+        </p>
+      ) : confirming ? (
         <Confirm
           before={describeValue(definition, entry.value)}
           after={describeValue(definition, confirming.kind === "save" ? confirming.value : definition.default)}

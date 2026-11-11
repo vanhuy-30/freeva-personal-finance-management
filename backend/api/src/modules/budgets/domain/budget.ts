@@ -125,9 +125,16 @@ export function crossedThresholds(spent: bigint, limit: bigint, thresholds: numb
   return thresholds.filter(threshold => spent * 100n >= limit * BigInt(threshold));
 }
 
-export function normalizeAlertThresholds(value: number[] | undefined): number[] {
-  const thresholds = value === undefined ? [...DEFAULT_ALERT_THRESHOLDS] : value;
-  if (thresholds.length < 1 || thresholds.length > 4) throw new BudgetError('VALIDATION_ERROR');
+/**
+ * BE-P5-001: `defaults` and `max` come from app config (`budget.defaultAlertThresholds`,
+ * `budget.maxAlertThresholds`); the code constants are only their initial values.
+ */
+export function normalizeAlertThresholds(
+  value: number[] | undefined,
+  rules: { defaults: readonly number[]; max: number } = { defaults: DEFAULT_ALERT_THRESHOLDS, max: 4 },
+): number[] {
+  const thresholds = value === undefined ? [...rules.defaults] : value;
+  if (thresholds.length < 1 || thresholds.length > rules.max) throw new BudgetError('VALIDATION_ERROR');
   let previous = 0;
   for (const threshold of thresholds) {
     if (!Number.isInteger(threshold) || threshold < 1 || threshold > 100) throw new BudgetError('VALIDATION_ERROR');

@@ -1,3 +1,4 @@
+import { AppConfigReader } from '../app-config/app-config.reader';
 import { Inject, Injectable } from '@nestjs/common';
 import { minor } from '../transactions/domain/transaction';
 import {
@@ -58,7 +59,10 @@ function summaryResponse(record: BudgetRecord, source: Awaited<ReturnType<Budget
 
 @Injectable()
 export class BudgetService {
-  constructor(@Inject(BUDGET_REPOSITORY) private readonly repository: BudgetRepository) {}
+  constructor(
+    @Inject(BUDGET_REPOSITORY) private readonly repository: BudgetRepository,
+    private readonly config: AppConfigReader,
+  ) {}
 
   async current(userId: string, query: { on?: string; applyTo?: 'default' | 'month' } = {}) {
     const source = await this.repository.current(userId, query);
@@ -71,7 +75,10 @@ export class BudgetService {
     if (applyTo === 'month' && !dto.on) throw new BudgetError('VALIDATION_ERROR');
     const record = await this.repository.put(userId, {
       limitMinor: minor(dto.limitMinor),
-      alertThresholds: normalizeAlertThresholds(dto.alertThresholds),
+      alertThresholds: normalizeAlertThresholds(dto.alertThresholds, {
+        defaults: await this.config.value('budget.defaultAlertThresholds'),
+        max: await this.config.value('budget.maxAlertThresholds'),
+      }),
       categories: (dto.categories ?? []).map(line => ({
         categoryId: line.categoryId,
         limitMinor: minor(line.limitMinor),

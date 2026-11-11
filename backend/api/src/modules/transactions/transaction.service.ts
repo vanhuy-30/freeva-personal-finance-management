@@ -1,3 +1,4 @@
+import { AppConfigReader } from '../app-config/app-config.reader';
 import { Inject, Injectable } from '@nestjs/common';
 import { TRANSACTION_REPOSITORY, type RecentMatchQuery, type TransactionRepository } from './domain/transaction.repository';
 import { buildTransactionsCsv, CSV_EXPORT_MAX_ROWS } from './domain/csv-export';
@@ -34,8 +35,15 @@ export class TransactionService {
   constructor(
     @Inject(TRANSACTION_REPOSITORY) private readonly repository: TransactionRepository,
     private readonly rates: FxRateService,
+    private readonly config: AppConfigReader,
   ) {}
+
+  /** BE-P5-001: tag count limit from app config (`transaction.maxTags`); the DTO keeps the hard cap. */
+  private async checkTagCount(tagIds: string[] | undefined) {
+    if (tagIds && tagIds.length > (await this.config.value('transaction.maxTags'))) throw new TransactionError('VALIDATION_ERROR');
+  }
   async create(userId: string, dto: CreateTransactionDto) {
+    await this.checkTagCount(dto.tagIds);
     const result = await this.repository.create(userId, { type: dto.type, occurredOn: calendarDate(dto.occurredOn),
       occurredTime: occurredTime(dto.occurredTime), legs: legs(dto.legs),
       categoryId: dto.categoryId ?? null, notes: dto.notes ?? null, merchant: dto.merchant ?? null,
@@ -81,11 +89,12 @@ export class TransactionService {
     if (query.to) calendarDate(query.to);
     if (query.from && query.to && query.from > query.to) throw new TransactionError('VALIDATION_ERROR');
     const { accountId, categoryId, tagId, ...rest } = query;
-    const rows = await this.repository.listForCsv(userId, { ...rest, page: 1, pageSize: 1, status: 'active', accountIds: accountId, categoryIds: categoryId, tagIds: tagId }, CSV_EXPORT_MAX_ROWS);
+    const rows = await this.repository.listForCsv(userId, { ...rest, page: 1, pageSize: 1, status: 'active', accountIds: accountId, categoryIds: categoryId, tagIds: tagId }, Math.min(await this.config.value('export.csvMaxRows'), CSV_EXPORT_MAX_ROWS));
     return buildTransactionsCsv(rows);
   }
   async update(userId: string, id: string, dto: UpdateTransactionDto) {
     const { occurredOn, occurredTime: inputTime, legs: inputLegs, fx: inputFx, tagIds, ...rest } = dto;
+    await this.checkTagCount(tagIds);
     const patch: TransactionPatch = { version: dto.version };
     if (rest.categoryId !== undefined) patch.categoryId = rest.categoryId;
     if (rest.notes !== undefined) patch.notes = rest.notes;

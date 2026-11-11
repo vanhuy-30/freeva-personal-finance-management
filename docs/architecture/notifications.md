@@ -12,7 +12,7 @@ Cảnh báo bảo mật (phiên đăng nhập khác) vẫn so id phiên trên m�
 
 | kind | Nguồn | Mặc định |
 |---|---|---|
-| `budget` | Ngân sách hiện tại, ngưỡng ≥ 80 | bật |
+| `budget` | Ngân sách hiện tại, mọi mốc user chọn (BE-P5-001) | bật |
 | `recurring` | Rule active, ngày trước `nextExecutionDate` | bật |
 | `card` | Ví `credit` đang dùng (`BE-P2-E07`) | bật |
 | `security` | Máy (`sessionAlertsEnabled`) | local |
@@ -59,7 +59,7 @@ Firebase Cloud Messaging là nhà cung cấp push ([ADR 013](adr/013-fcm-push.md
 
 ## Nhắc ghi chi (BE-P3-006)
 
-Loại `daily_log`, mặc định tắt. `PUT /notification-preferences` nhận `dailyLogEnabled` và `dailyLogTime` (`HH:mm`, mặc định `20:00`, theo `User.timezone`); `GET` trả `dailyLogTime`. Khi bật, evaluate tạo một hàng sau giờ nhắc nếu hôm nay (ngày local) chưa có giao dịch thu/chi/chuyển có `occurredOn` = hôm nay và chưa xóa; giao dịch `adjustment` không tính. Dedupe `daily_log|YYYY-MM-DD`. Giờ yên chặn như các loại khác: hết giờ yên mà trong ngày vẫn chưa ghi thì tạo một lần. Params rỗng; push dùng `kind = daily_log` để mobile mở thẳng màn ghi giao dịch.
+Loại `daily_log`, mặc định tắt. `PUT /notification-preferences` nhận `dailyLogEnabled` và `dailyLogTime` (`HH:mm`, mặc định `21:00` từ cấu hình `notification.dailyLogDefaultTime` — BE-P5-001, trước đó `20:00`; theo `User.timezone`); `GET` trả `dailyLogTime`. Khi bật, evaluate tạo một hàng sau giờ nhắc nếu hôm nay (ngày local) chưa có giao dịch thu/chi/chuyển có `occurredOn` = hôm nay và chưa xóa; giao dịch `adjustment` không tính. Dedupe `daily_log|YYYY-MM-DD`. Giờ yên chặn như các loại khác: hết giờ yên mà trong ngày vẫn chưa ghi thì tạo một lần. Params rỗng; push dùng `kind = daily_log` để mobile mở thẳng màn ghi giao dịch.
 
 **Mobile (MOB-P3-006).** Dòng "Nhắc ghi chi" đầu nhóm Nhắc nhở ở `/me/notifications`: công tắc gửi `dailyLogEnabled`; "Mỗi ngày lúc HH:mm" lấy giờ từ `dailyLogTime`, chạm giờ mở popup "Chọn giờ nhắc" (bánh xe giờ và phút bước 15, giờ lẻ của server làm tròn về bước gần nhất) và chỉ gửi `dailyLogTime`, không tự bật. Bấm push (`getInitialMessage` / `onMessageOpenedApp`, `data.kind = daily_log`) hoặc dòng trong hộp thư mở `/record?type=expense`; push lúc app còn khóa chờ tới khi mở khóa. Kind lạ (server thêm sau) bị bỏ qua khi đọc cài đặt và hộp thư, không làm hỏng màn. Màn Thông báo theo board N5: bỏ Insight, "Nợ đến hạn" là công tắc thật, "80% và 100%" mở Ngân sách.
 

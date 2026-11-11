@@ -32,7 +32,7 @@ export class PrismaProfileRepository implements ProfileRepository {
 
   currencies() {
     return this.prisma.currency.findMany({
-      select: { code: true, minorDigits: true },
+      select: { code: true, minorDigits: true, symbol: true },
       orderBy: { code: 'asc' },
     });
   }

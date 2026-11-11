@@ -6,12 +6,14 @@ const STATUS: Record<AppConfigErrorCode, number> = {
   CONFIG_KEY_UNKNOWN: 404,
   CONFIG_VALUE_INVALID: 400,
   CONFIG_CONFLICT: 409,
+  CONFIG_KEY_READONLY: 400,
 };
 
 const MESSAGE: Record<AppConfigErrorCode, string> = {
   CONFIG_KEY_UNKNOWN: 'Unknown flag or config key',
   CONFIG_VALUE_INVALID: 'Value does not fit this key',
   CONFIG_CONFLICT: 'This key was changed by someone else; reload and try again',
+  CONFIG_KEY_READONLY: 'This key is a fixed limit and cannot be edited',
 };
 
 @Catch()

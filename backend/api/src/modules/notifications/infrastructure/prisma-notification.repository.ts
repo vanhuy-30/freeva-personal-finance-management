@@ -1,3 +1,4 @@
+import { AppConfigReader } from '../../app-config/app-config.reader';
 import { periodSpendRows } from '../../budgets/infrastructure/period-spend-rows';
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
@@ -94,13 +95,25 @@ function dayIso(value: Date): string {
 
 @Injectable()
 export class PrismaNotificationRepository implements NotificationRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly config: AppConfigReader,
+  ) {}
+
+  /** BE-P5-001: defaults for a user with no saved preferences come from app config. */
+  private async defaults() {
+    return defaultPreference({
+      dailyLogTime: await this.config.value('notification.dailyLogDefaultTime'),
+      quietStart: await this.config.value('notification.quietStartDefault'),
+      quietEnd: await this.config.value('notification.quietEndDefault'),
+    });
+  }
 
   async getPreferences(userId: string): Promise<NotificationPreferenceRecord> {
     const row = await this.prisma.notificationPreference.findUnique({ where: { userId } });
     if (row) return mapPrefs(row);
     const now = new Date();
-    return { ...defaultPreference(), createdAt: now, updatedAt: now };
+    return { ...(await this.defaults()), createdAt: now, updatedAt: now };
   }
 
   async putPreferences(userId: string, patch: PreferencePatch): Promise<NotificationPreferenceRecord> {
@@ -204,7 +217,7 @@ export class PrismaNotificationRepository implements NotificationRepository {
         userId,
         timezone: 'UTC',
         today: todayInTimeZone('UTC', now),
-        prefs: { ...defaultPreference(), createdAt: now, updatedAt: now },
+        prefs: { ...(await this.defaults()), createdAt: now, updatedAt: now },
         periodFrom: null,
         crossedThresholds: [],
         recurringSoon: [],

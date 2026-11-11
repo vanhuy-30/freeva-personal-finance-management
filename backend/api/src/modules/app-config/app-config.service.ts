@@ -1,26 +1,29 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { AppConfigReader } from './app-config.reader';
 import {
   AppConfigError,
+  effectiveValue,
   FLAG_OFF,
+  isEditable,
   isFlagOn,
   parseConfigValue,
   parseFlagState,
-  type ConfigDefinition,
   type ConfigValue,
   type FlagState,
 } from './domain/app-config';
 import {
   CONFIG_DEFINITIONS,
+  crossCheckConfig,
   FLAG_DEFINITIONS,
   isConfigKey,
   isFlagKey,
+  type ConfigKey,
   type FlagKey,
 } from './domain/app-config-registry';
 import {
   APP_CONFIG_REPOSITORY,
   type AppConfigRepository,
   type AppConfigSnapshot,
-  type StoredValue,
 } from './domain/app-config.repository';
 
 export type UserAppConfig = {
@@ -31,19 +34,12 @@ export type UserAppConfig = {
 
 type LastChange = { updatedAt: string; updatedBy: string } | null;
 
-/** A stored value that no longer fits its definition (definition tightened later) falls back to the default. */
-function effectiveValue(definition: ConfigDefinition, stored: StoredValue | undefined): { value: ConfigValue; valid: boolean } {
-  if (!stored) return { value: definition.default, valid: true };
-  try {
-    return { value: parseConfigValue(definition, stored.value), valid: true };
-  } catch {
-    return { value: definition.default, valid: false };
-  }
-}
-
 @Injectable()
 export class AppConfigService {
-  constructor(@Inject(APP_CONFIG_REPOSITORY) private readonly repository: AppConfigRepository) {}
+  constructor(
+    @Inject(APP_CONFIG_REPOSITORY) private readonly repository: AppConfigRepository,
+    private readonly reader: AppConfigReader,
+  ) {}
 
   async forUser(userId: string): Promise<UserAppConfig> {
     const snapshot = await this.repository.snapshot();
@@ -80,15 +76,35 @@ export class AppConfigService {
 
   async updateValue(actorId: string, key: string, input: { value: unknown; version: number }) {
     if (!isConfigKey(key)) throw new AppConfigError('CONFIG_KEY_UNKNOWN');
-    const value = parseConfigValue(CONFIG_DEFINITIONS[key], input.value);
+    const definition = CONFIG_DEFINITIONS[key];
+    if (!isEditable(definition)) throw new AppConfigError('CONFIG_KEY_READONLY');
+    const value = parseConfigValue(definition, input.value);
+    await this.checkTogether(key, value);
     await this.repository.saveValue({ key, value, expectedVersion: input.version, actorId });
+    this.reader.invalidate();
     return this.forStaff();
   }
 
   async resetValue(actorId: string, key: string, version: number) {
     if (!isConfigKey(key)) throw new AppConfigError('CONFIG_KEY_UNKNOWN');
+    const definition = CONFIG_DEFINITIONS[key];
+    if (!isEditable(definition)) throw new AppConfigError('CONFIG_KEY_READONLY');
+    await this.checkTogether(key, definition.default);
     await this.repository.resetValue({ key, expectedVersion: version, actorId });
+    this.reader.invalidate();
     return this.forStaff();
+  }
+
+  /** Cross-key rules on the values that would be live after this edit (fresh from the database). */
+  private async checkTogether(key: ConfigKey, value: ConfigValue) {
+    const snapshot = await this.repository.snapshot();
+    const rows = new Map(snapshot.values.map((row) => [row.key, row]));
+    const values = {} as Record<ConfigKey, ConfigValue>;
+    for (const [other, definition] of Object.entries(CONFIG_DEFINITIONS) as [ConfigKey, (typeof CONFIG_DEFINITIONS)[ConfigKey]][]) {
+      values[other] = other === key ? value : effectiveValue(definition, rows.get(other)).value;
+    }
+    const reason = crossCheckConfig(values);
+    if (reason) throw new AppConfigError('CONFIG_VALUE_INVALID', reason);
   }
 
   private describe(snapshot: AppConfigSnapshot) {

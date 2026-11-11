@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
 import { PrismaNotificationRepository } from '../src/modules/notifications/infrastructure/prisma-notification.repository';
+import { appConfigReaderFor } from '../src/modules/app-config/testing';
 
 const databaseUrl = process.env.AUTH_TEST_DATABASE_URL;
 if (!databaseUrl || new URL(databaseUrl).pathname !== '/auth_test') {
@@ -10,7 +11,7 @@ process.env.DATABASE_URL = databaseUrl;
 
 describe('BE-P3-006 daily log context PostgreSQL', () => {
   const prisma = new PrismaService();
-  const repository = new PrismaNotificationRepository(prisma);
+  const repository = new PrismaNotificationRepository(prisma, appConfigReaderFor());
   const users: string[] = [];
   // 2026-11-02 21:00 ICT; local day is 2026-11-02 in Asia/Ho_Chi_Minh, 2026-11-02 in UTC too.
   const now = new Date('2026-11-02T14:00:00.000Z');

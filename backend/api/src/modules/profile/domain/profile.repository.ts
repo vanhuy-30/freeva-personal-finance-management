@@ -20,7 +20,8 @@ export interface OnboardingAnswers {
   goals?: string[];
   monthlyIncomeMinor?: string;
 }
-export interface CurrencyOption { code: string; minorDigits: number; }
+/** `symbol` null means show the code (BE-P5-001). */
+export interface CurrencyOption { code: string; minorDigits: number; symbol: string | null; }
 export const PROFILE_REPOSITORY = Symbol('PROFILE_REPOSITORY');
 export interface ProfileRepository {
   find(userId: string): Promise<Profile | null>;

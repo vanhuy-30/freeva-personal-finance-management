@@ -18,6 +18,31 @@ Server giữ cờ bật/tắt tính năng và các số cấu hình sản phẩm
 
 Mỗi môi trường (local, staging, production) có DB riêng nên tự quản cờ của mình; không có cột môi trường.
 
+## Server dùng giá trị đã sửa (BE-P5-001)
+
+`AppConfigReader` (module `AppConfigCoreModule`, không phụ thuộc `AuthModule` nên module nào cũng import được) trả giá trị có kiểu của một khóa; cache trong process 30 giây, staff lưu thì xóa cache của process đó (instance khác cập nhật trong ≤ 30 giây). Decorator DTO giữ làm trần cứng, service kiểm tra thêm giá trị đã sửa:
+
+| Khóa | Nơi dùng |
+|---|---|
+| `budget.defaultAlertThresholds`, `budget.maxAlertThresholds` | `BudgetService` (`normalizeAlertThresholds`) |
+| `forecast.defaultMonths` | `ForecastService` |
+| `recurring.defaultRemindBefore` | `RecurringService` |
+| `creditCard.highUsagePercent`, `creditCard.criticalUsagePercent` | `NotificationService` (cảnh báo dùng thẻ) |
+| `notification.dailyLogDefaultTime`, `quietStartDefault`, `quietEndDefault` | `PrismaNotificationRepository` (user chưa lưu cài đặt) |
+| `import.maxRows` | `TransactionImportService` (`parseRows`, 413 `FILE_TOO_LARGE`) |
+| `export.csvMaxRows` | `TransactionService.exportCsv` |
+| `transaction.maxTags` | `TransactionService` tạo/sửa (cả `/sync`) |
+| `profile.displayNameMaxLength`, `onboarding.maxGoals` | `ProfileService` |
+| `password.minLength` | `AuthService` đăng ký, đặt lại, đổi mật khẩu (đăng nhập giữ mức DTO để mật khẩu cũ vẫn vào được) |
+
+Mốc ngân sách: server báo ở **mọi mốc user đã chọn** (bỏ sàn 80% cũ, chốt 2026-11-11).
+
+**Khóa chỉ đọc (`editable: false`, nhóm `limit.*`):** giới hạn kỹ thuật API áp dụng nguyên (độ dài tên, ghi chú, mật khẩu, email; ngày đầu kỳ 28; mốc 100; dự báo 12; trả góp 2–60; nhắc trước 30; lặp 366; lãi suất; khoảng báo cáo 3660 ngày; 1 000 000 ký tự CSV). `/app-config` trả để app báo trước cho user; staff chỉ xem, sửa trả `400 CONFIG_KEY_READONLY`. Test `registry-limits.spec.ts` so từng khóa với decorator DTO để hai bên không lệch.
+
+**Kiểm tra chéo khi lưu** (`crossCheckConfig`): số mốc mặc định ≤ số mốc tối đa; `forecast.defaultMonths` ∈ `monthOptions`; `installment.defaultTerm` ∈ `termOptions`; `recurring.defaultRemindBefore` ∈ `remindBeforeOptions`; mức dùng thẻ cao < nguy hiểm; `password.veryStrongLength` ≥ `password.minLength`. Sai → `400 CONFIG_VALUE_INVALID` kèm lý do.
+
+**Tiền tệ:** `Currency.symbol` (VND `₫`), `GET /profile/options` trả `{ code, minorDigits, symbol }`.
+
 ## Kiểu giá trị
 
 | Kiểu | Quy tắc |
@@ -52,6 +77,7 @@ Xóa tài khoản gỡ UUID của user khỏi `FeatureFlag.userIds` trong cùng 
 | Mã | HTTP |
 |---|---|
 | `CONFIG_VALUE_INVALID` (`details[0].reason`) | 400 |
+| `CONFIG_KEY_READONLY` | 400 |
 | `CONFIG_KEY_UNKNOWN` | 404 |
 | `CONFIG_CONFLICT` | 409 |
 | `FEATURE_DISABLED` | 403 |
@@ -61,7 +87,7 @@ Staff auth giữ như `WA-P0-002` (`STAFF_AUTH_*`); auth single-staff vẫn ph�
 
 ## Dữ liệu
 
-Migration `20261111120000_app_config` additive: `FeatureFlag`, `AppConfigValue`, `AppConfigChange`, `AppConfigMeta` (seed id 1). Không có dòng nào thì hành vi không đổi.
+Migration `20261111150000_config_enforce` (BE-P5-001): `Currency.symbol`, default `dailyLogTime` = `21:00` (dòng cũ giữ giờ đã lưu). Migration `20261111120000_app_config` additive: `FeatureFlag`, `AppConfigValue`, `AppConfigChange`, `AppConfigMeta` (seed id 1). Không có dòng nào thì hành vi không đổi.
 
 ## Code
 

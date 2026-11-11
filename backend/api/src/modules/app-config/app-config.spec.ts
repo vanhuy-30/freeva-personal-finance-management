@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { ForbiddenException, type ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { AppConfigReader } from './app-config.reader';
 import { AppConfigService } from './app-config.service';
 import {
   AppConfigError,
@@ -12,7 +13,7 @@ import {
   rolloutBucket,
   type ConfigDefinition,
 } from './domain/app-config';
-import { CONFIG_DEFINITIONS, FLAG_DEFINITIONS } from './domain/app-config-registry';
+import { CONFIG_DEFINITIONS, crossCheckConfig, FLAG_DEFINITIONS } from './domain/app-config-registry';
 import type { AppConfigRepository, AppConfigSnapshot } from './domain/app-config.repository';
 import { FeatureGuard, RequireFeature } from './feature.guard';
 
@@ -137,7 +138,7 @@ describe('BE-P5-E08 service', () => {
       saveValue: jest.fn(),
       resetValue: jest.fn(),
     };
-    service = new AppConfigService(repository);
+    service = new AppConfigService(repository, new AppConfigReader(repository));
   });
 
   it('returns defaults and every flag off on an empty store', async () => {
@@ -207,5 +208,100 @@ describe('BE-P5-E08 FeatureGuard', () => {
     const guard = new FeatureGuard(new Reflector(), appConfig);
     await expect(guard.canActivate(context(Routes.prototype.guarded))).resolves.toBe(true);
     expect(appConfig.isEnabled).toHaveBeenCalledWith('insights', 'u1');
+  });
+});
+
+describe('BE-P5-001 reader', () => {
+  const at = new Date();
+  const stored = (values: { key: string; value: unknown }[]): AppConfigRepository => ({
+    snapshot: jest.fn().mockResolvedValue({
+      version: 2, flags: [], values: values.map((row) => ({ ...row, version: 1, updatedAt: at, updatedBy: 's' })),
+    }),
+    saveFlag: jest.fn(),
+    saveValue: jest.fn(),
+    resetValue: jest.fn(),
+  });
+
+  it('returns staff values, defaults, and ignores a stored value on a read-only key', async () => {
+    const reader = new AppConfigReader(stored([
+      { key: 'import.maxRows', value: 500 },
+      { key: 'limit.passwordMaxLength', value: 64 },
+    ]));
+    expect(await reader.value('import.maxRows')).toBe(500);
+    expect(await reader.value('limit.passwordMaxLength')).toBe(128);
+    expect(await reader.value('budget.defaultAlertThresholds')).toEqual([80, 100]);
+  });
+
+  it('caches for the TTL and reloads after invalidate or expiry', async () => {
+    const repository = stored([]);
+    const reader = new AppConfigReader(repository);
+    let now = 1_000;
+    reader.clock = () => now;
+    await reader.value('report.topRows');
+    await reader.value('home.recentTransactions');
+    expect(repository.snapshot).toHaveBeenCalledTimes(1);
+    now += AppConfigReader.TTL_MS;
+    await reader.value('report.topRows');
+    expect(repository.snapshot).toHaveBeenCalledTimes(2);
+    reader.invalidate();
+    await reader.value('report.topRows');
+    expect(repository.snapshot).toHaveBeenCalledTimes(3);
+  });
+});
+
+describe('BE-P5-001 staff edits', () => {
+  const staff = randomUUID();
+  let repository: jest.Mocked<AppConfigRepository>;
+  let reader: AppConfigReader;
+  let service: AppConfigService;
+
+  beforeEach(() => {
+    repository = {
+      snapshot: jest.fn().mockResolvedValue({ version: 1, flags: [], values: [] }),
+      saveFlag: jest.fn(),
+      saveValue: jest.fn(),
+      resetValue: jest.fn(),
+    };
+    reader = new AppConfigReader(repository);
+    service = new AppConfigService(repository, reader);
+  });
+
+  it('refuses to edit or reset a read-only limit', async () => {
+    await expect(service.updateValue(staff, 'limit.passwordMaxLength', { value: 128, version: 0 }))
+      .rejects.toMatchObject({ code: 'CONFIG_KEY_READONLY' });
+    await expect(service.resetValue(staff, 'limit.passwordMaxLength', 1)).rejects.toMatchObject({ code: 'CONFIG_KEY_READONLY' });
+    expect(repository.saveValue).not.toHaveBeenCalled();
+  });
+
+  it('rejects a value that breaks a rule across keys', async () => {
+    await expect(service.updateValue(staff, 'installment.defaultTerm', { value: 24, version: 0 }))
+      .rejects.toMatchObject({ code: 'CONFIG_VALUE_INVALID', reason: expect.stringContaining('installment.termOptions') });
+    await expect(service.updateValue(staff, 'creditCard.highUsagePercent', { value: 95, version: 0 }))
+      .rejects.toMatchObject({ code: 'CONFIG_VALUE_INVALID' });
+    await expect(service.updateValue(staff, 'budget.maxAlertThresholds', { value: 1, version: 0 }))
+      .rejects.toMatchObject({ code: 'CONFIG_VALUE_INVALID' });
+    expect(repository.saveValue).not.toHaveBeenCalled();
+  });
+
+  it('checks the rule against values already saved', async () => {
+    repository.snapshot.mockResolvedValue({
+      version: 2, flags: [], values: [{ key: 'installment.termOptions', value: [6, 24], version: 1, updatedAt: new Date(), updatedBy: staff }],
+    });
+    await service.updateValue(staff, 'installment.defaultTerm', { value: 24, version: 0 });
+    expect(repository.saveValue).toHaveBeenCalled();
+  });
+
+  it('clears the reader cache after a save', async () => {
+    await reader.value('report.topRows');
+    await service.updateValue(staff, 'report.topRows', { value: 5, version: 0 });
+    repository.snapshot.mockResolvedValue({
+      version: 2, flags: [], values: [{ key: 'report.topRows', value: 5, version: 1, updatedAt: new Date(), updatedBy: staff }],
+    });
+    expect(await reader.value('report.topRows')).toBe(5);
+  });
+
+  it('every default set passes the cross-key rules', () => {
+    const defaults = Object.fromEntries(Object.entries(CONFIG_DEFINITIONS).map(([key, d]) => [key, d.default]));
+    expect(crossCheckConfig(defaults as Parameters<typeof crossCheckConfig>[0])).toBeNull();
   });
 });

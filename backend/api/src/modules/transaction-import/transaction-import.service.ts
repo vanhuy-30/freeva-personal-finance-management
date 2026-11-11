@@ -1,3 +1,4 @@
+import { AppConfigReader } from '../app-config/app-config.reader';
 import { Inject, Injectable } from '@nestjs/common';
 import { calendarDate, type TransactionInput } from '../transactions/domain/transaction';
 import { CsvParseError, detectDelimiter, parseCsv } from './domain/csv-parse';
@@ -42,7 +43,10 @@ const rowView = (row: PlannedRow) => ({
 
 @Injectable()
 export class TransactionImportService {
-  constructor(@Inject(TRANSACTION_IMPORT_REPOSITORY) private readonly repository: TransactionImportRepository) {}
+  constructor(
+    @Inject(TRANSACTION_IMPORT_REPOSITORY) private readonly repository: TransactionImportRepository,
+    private readonly config: AppConfigReader,
+  ) {}
 
   private async prepare(userId: string, dto: PreviewImportDto) {
     let table: string[][];
@@ -53,7 +57,7 @@ export class TransactionImportService {
     if (!table.length) throw new TransactionImportError('FILE_INVALID');
     const preset: ImportPreset = dto.preset ?? detectPreset(table[0]);
     const format = formatFor(preset, { dateFormat: dto.dateFormat, numberFormat: dto.numberFormat, mapping: dto.mapping });
-    const { rows, columns } = parseRows(table, format);
+    const { rows, columns } = parseRows(table, format, await this.config.value('import.maxRows'));
     const dates = rows.flatMap(row => (row.date ? [row.date] : [])).sort();
     const context = await this.repository.context(userId, dates.length ? { from: dates[0], to: dates[dates.length - 1] } : null);
     const selected = maps(dto);

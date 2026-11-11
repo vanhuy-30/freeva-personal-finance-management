@@ -1,3 +1,5 @@
+import { AppConfigReader } from '../app-config/app-config.reader';
+import { appConfigReaderFor } from '../app-config/testing';
 import { Test } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
@@ -12,7 +14,7 @@ describe('MOB-P1-002 profile HTTP contract', () => {
   const profiles = new Map<string, Profile>();
   const repo = {
     find: jest.fn(async (id: string) => profiles.get(id) ?? null),
-    currencies: async () => [{ code: 'VND', minorDigits: 0 }, { code: 'USD', minorDigits: 2 }],
+    currencies: async () => [{ code: 'VND', minorDigits: 0, symbol: '₫' }, { code: 'USD', minorDigits: 2, symbol: null }],
     saveOnboarding: jest.fn(async (id: string) => profiles.has(id)),
     saveMonthlyIncome: jest.fn(async (id: string, minor: string | null) => {
       if (!profiles.has(id)) return false;
@@ -32,6 +34,7 @@ describe('MOB-P1-002 profile HTTP contract', () => {
   beforeAll(async () => {
     const module = await Test.createTestingModule({ controllers: [ProfileController], providers: [ProfileService, AuthGuard,
       { provide: PROFILE_REPOSITORY, useValue: repo },
+      { provide: AppConfigReader, useValue: appConfigReaderFor() },
       { provide: AuthService, useValue: { authenticate: async (token: string) => ({ userId: token[0] === 'a' ? 'owner' : 'other' }) } },
     ] }).compile();
     app = module.createNestApplication(); app.setGlobalPrefix('api');
@@ -78,7 +81,8 @@ describe('MOB-P1-002 profile HTTP contract', () => {
   });
   it('supplies currency catalog and IANA timezones', async () => {
     const result = await request('GET', undefined, 'a'.repeat(64), 'profile/options');
-    expect(result.body.currencies).toContainEqual({ code: 'USD', minorDigits: 2 });
+    expect(result.body.currencies).toContainEqual({ code: 'USD', minorDigits: 2, symbol: null });
+    expect(result.body.currencies).toContainEqual({ code: 'VND', minorDigits: 0, symbol: '₫' });
     expect(result.body.timezones).toEqual(expect.arrayContaining(['UTC', 'Asia/Ho_Chi_Minh', 'America/New_York']));
   });
   it('DS-P2-004 stores onboarding answers, all optional, and rejects anything else', async () => {
