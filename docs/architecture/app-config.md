@@ -41,6 +41,8 @@ Mốc ngân sách: server báo ở **mọi mốc user đã chọn** (bỏ sàn 8
 
 **Kiểm tra chéo khi lưu** (`crossCheckConfig`): số mốc mặc định ≤ số mốc tối đa; `forecast.defaultMonths` ∈ `monthOptions`; `installment.defaultTerm` ∈ `termOptions`; `recurring.defaultRemindBefore` ∈ `remindBeforeOptions`; mức dùng thẻ cao < nguy hiểm; `password.veryStrongLength` ≥ `password.minLength`. Sai → `400 CONFIG_VALUE_INVALID` kèm lý do.
 
+**Không cần đăng nhập:** `GET /api/v1/app-config/public` trả `{ version, config }` (không cờ, không dữ liệu user) từ cache của reader, để màn trước khi đăng nhập (quy tắc mật khẩu…) cũng đọc số từ server (chốt 2026-11-11).
+
 **Tiền tệ:** `Currency.symbol` (VND `₫`), `GET /profile/options` trả `{ code, minorDigits, symbol }`.
 
 ## Kiểu giá trị

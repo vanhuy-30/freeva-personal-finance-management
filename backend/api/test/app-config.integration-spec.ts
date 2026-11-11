@@ -234,4 +234,17 @@ describe('BE-P5-E08 app config HTTP + PostgreSQL', () => {
     const options = await call('GET', '/v1/profile/options', bearer);
     expect(options.body.currencies).toContainEqual({ code: 'VND', minorDigits: 0, symbol: '₫' });
   });
+
+  it('BE-P5-001 public config needs no session and has no flags', async () => {
+    const response = await fetch(`${base}/api/v1/app-config/public`);
+    expect(response.status).toBe(200);
+    const body = await response.json();
+    expect(body.config['password.minLength']).toBe(8);
+    expect(body.config['limit.passwordMaxLength']).toBe(128);
+    expect(body).not.toHaveProperty('flags');
+    expect(await call('PUT', '/admin/app-config/values/password.minLength', staffToken, { value: 10, version: 0 })).toMatchObject({ status: 200 });
+    const after = await (await fetch(`${base}/api/v1/app-config/public`)).json();
+    expect(after.config['password.minLength']).toBe(10);
+    expect(after.version).toBeGreaterThan(body.version);
+  });
 });

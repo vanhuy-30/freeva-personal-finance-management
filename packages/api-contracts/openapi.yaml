@@ -5445,6 +5445,30 @@ paths:
           $ref: '#/components/responses/AppConfigUnauthorized'
         '503':
           $ref: '#/components/responses/AppConfigUnavailable'
+  /api/v1/app-config/public:
+    get:
+      operationId: getPublicAppConfig
+      tags: [AppConfig]
+      summary: Config numbers for screens before sign-in
+      description: >-
+        BE-P5-001. No session needed. Same `config` values and `version` as `GET /api/v1/app-config`,
+        without flags (they are per user) and without anything about a user. Values may be up to
+        30 seconds old (server cache).
+      security: []
+      responses:
+        '200':
+          description: Config values
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicAppConfig'
+        '503':
+          $ref: '#/components/responses/AppConfigUnavailable'
   /api/admin/app-config:
     get:
       operationId: listAppConfigForStaff
@@ -10537,6 +10561,18 @@ components:
         config:
           type: object
           description: Every config key, e.g. `budget.defaultAlertThresholds`, `forecast.monthOptions`.
+          additionalProperties:
+            $ref: '#/components/schemas/AppConfigValue'
+    PublicAppConfig:
+      type: object
+      additionalProperties: false
+      required: [version, config]
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        config:
+          type: object
           additionalProperties:
             $ref: '#/components/schemas/AppConfigValue'
     AppConfigLastChange:
