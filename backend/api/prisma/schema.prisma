@@ -136,13 +136,15 @@ model User {
   categoriesInitializedAt  DateTime? @db.Timestamptz
   categoriesSupplementedAt DateTime? @db.Timestamptz
   categoryIconsRefreshedAt DateTime? @db.Timestamptz
+  /// PRD-P5-E01: user switch for category suggestions, insights and spending forecast. Off = those APIs return nothing.
+  autoSuggestEnabled       Boolean   @default(true)
 
   oauthIdentities OAuthIdentity[]
   authTokens      AuthToken[]
   sessions        AuthSession[]
   authMailJobs    AuthMailJob[]
 
-  defaultCurrency        Currency                @relation("UserDefaultCurrency", fields: [defaultCurrencyCode], references: [code])
+  defaultCurrency        Currency                    @relation("UserDefaultCurrency", fields: [defaultCurrencyCode], references: [code])
   financialAccounts      FinancialAccount[]
   categoryGroups         CategoryGroup[]
   categories             Category[]
@@ -151,7 +153,7 @@ model User {
   transactions           Transaction[]
   fxQuotes               FxQuote[]
   fxRates                UserFxRate[]
-  displayCurrency        Currency?               @relation("UserDisplayCurrency", fields: [displayCurrencyCode], references: [code])
+  displayCurrency        Currency?                   @relation("UserDisplayCurrency", fields: [displayCurrencyCode], references: [code])
   recurringRules         RecurringRule[]
   budget                 Budget?
   budgetMonths           BudgetMonth[]
@@ -169,6 +171,7 @@ model User {
   personalDebtPayments   PersonalDebtPayment[]
   cardInstallmentPlans   CardInstallmentPlan[]
   importBatches          ImportBatch[]
+  suggestionMappings     CategorySuggestionMapping[]
 }
 
 model FinancialAccount {
@@ -239,14 +242,15 @@ model Category {
   createdAt  DateTime     @default(now()) @db.Timestamptz
   updatedAt  DateTime     @updatedAt @db.Timestamptz
 
-  user             User                  @relation(fields: [userId], references: [id])
-  group            CategoryGroup?        @relation(fields: [groupId], references: [id])
-  parent           Category?             @relation("CategoryTree", fields: [parentId], references: [id])
-  children         Category[]            @relation("CategoryTree")
-  transactions     Transaction[]
-  recurringRules   RecurringRule[]
-  budgetLines      BudgetCategory[]
-  budgetMonthLines BudgetMonthCategory[]
+  user               User                        @relation(fields: [userId], references: [id])
+  group              CategoryGroup?              @relation(fields: [groupId], references: [id])
+  parent             Category?                   @relation("CategoryTree", fields: [parentId], references: [id])
+  children           Category[]                  @relation("CategoryTree")
+  transactions       Transaction[]
+  recurringRules     RecurringRule[]
+  budgetLines        BudgetCategory[]
+  budgetMonthLines   BudgetMonthCategory[]
+  suggestionMappings CategorySuggestionMapping[]
 
   @@unique([userId, clientId])
   @@index([userId, archivedAt])
@@ -267,6 +271,27 @@ model Feedback {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
+}
+
+/// PRD-P5-E01: a merchant the user filed under a category after a suggestion (BE-P5-E03 writes it).
+/// Listed and deletable from Gợi ý tự động; exported and deleted with the account.
+model CategorySuggestionMapping {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @db.Uuid
+  /// Merchant trimmed, lower-cased, inner spaces collapsed: one row per merchant.
+  merchantKey String   @db.VarChar(200)
+  /// Merchant as last typed, for display.
+  merchant    String   @db.VarChar(200)
+  categoryId  String   @db.Uuid
+  createdAt   DateTime @default(now()) @db.Timestamptz
+  updatedAt   DateTime @updatedAt @db.Timestamptz
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, merchantKey])
+  @@index([userId, updatedAt])
+  @@index([categoryId])
 }
 
 model Tag {

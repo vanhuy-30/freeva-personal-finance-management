@@ -16,7 +16,7 @@ function source(): ExportSource {
       id, email: 'owner@example.test', locale: 'vi', timezone: 'Asia/Ho_Chi_Minh', defaultCurrencyCode: 'VND',
       displayName: null, fiscalMonthStartDay: 1,
       onboardingGoals: ['save', 'budget'], monthlyIncomeMinor: 15000000n, displayCurrencyCode: 'USD',
-      emailVerifiedAt: at, categoriesInitializedAt: null, categoriesSupplementedAt: null, createdAt: at, updatedAt: at,
+      emailVerifiedAt: at, categoriesInitializedAt: null, categoriesSupplementedAt: null, autoSuggestEnabled: false, createdAt: at, updatedAt: at,
     },
     oauthProviders: ['apple', 'google'],
     financialAccounts: [{
@@ -46,6 +46,7 @@ function source(): ExportSource {
     investmentPrices: [],
     cardInstallmentPlans: [],
     importBatches: [],
+    categorySuggestionMappings: [{ id, merchant: 'Highlands Coffee', categoryId: clientId, createdAt: at, updatedAt: at }],
     notificationPreferences: null,
     notifications: [],
     transactions: [{
@@ -67,7 +68,9 @@ describe('BE-P1-010 account export mapping', () => {
       profile: {
         email: 'owner@example.test', emailVerifiedAt: at.toISOString(), categoriesInitializedAt: null,
         onboardingGoals: ['save', 'budget'], monthlyIncomeMinor: '15000000', displayCurrencyCode: 'USD',
+        autoSuggestEnabled: false,
       },
+      categorySuggestionMappings: [{ id, merchant: 'Highlands Coffee', categoryId: clientId, createdAt: at.toISOString(), updatedAt: at.toISOString() }],
       financialAccounts: [{
         initialBalanceMinor: '9007199254740993', creditLimitMinor: null, minimumPaymentMinor: null,
       }],
@@ -150,6 +153,7 @@ describe('BE-P1-010 account repository audit', () => {
       personalDebt: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
       cardInstallmentPlan: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
       importBatch: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
+      categorySuggestionMapping: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
       personalDebtPayment: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },
       notificationPreference: { findUnique: jest.fn().mockResolvedValue(null), deleteMany: jest.fn() },
       inAppNotification: { findMany: jest.fn().mockResolvedValue([]), deleteMany: jest.fn() },

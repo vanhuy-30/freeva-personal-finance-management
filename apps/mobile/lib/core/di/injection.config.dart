@@ -32,6 +32,12 @@ import 'package:mobile/features/auth/presentation/auth_presentation_module.dart'
     as _i282;
 import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dart'
     as _i990;
+import 'package:mobile/features/auto_suggest/data/auto_suggest_repository_impl.dart'
+    as _i826;
+import 'package:mobile/features/auto_suggest/domain/auto_suggest_repository.dart'
+    as _i334;
+import 'package:mobile/features/auto_suggest/presentation/viewmodels/auto_suggest_view_model.dart'
+    as _i788;
 import 'package:mobile/features/budgets/data/budget_repository_impl.dart'
     as _i1036;
 import 'package:mobile/features/budgets/domain/budget_repository.dart'
@@ -296,6 +302,8 @@ extension GetItInjectableX on _i174.GetIt {
         ));
     gh.lazySingleton<_i199.NotificationRepository>(
         () => _i419.NotificationRepositoryImpl(gh<_i443.AuthorizedApi>()));
+    gh.lazySingleton<_i334.AutoSuggestRepository>(
+        () => _i826.AutoSuggestRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i791.CalendarRepository>(
         () => _i918.CalendarRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i931.TransactionRepository>(
@@ -513,6 +521,13 @@ extension GetItInjectableX on _i174.GetIt {
               gh<_i990.AuthViewModel>(),
               gh<_i1020.AnalyticsService>(),
               gh<_i887.ProfileViewModel>(),
+            ));
+    gh.lazySingleton<_i788.AutoSuggestViewModel>(
+        () => _i788.DefaultAutoSuggestViewModel(
+              gh<_i334.AutoSuggestRepository>(),
+              gh<_i1017.FeatureFlagService>(),
+              gh<_i887.ProfileViewModel>(),
+              gh<_i990.AuthViewModel>(),
             ));
     gh.lazySingleton<_i722.HomeViewModel>(() => _i722.DefaultHomeViewModel(
           gh<_i970.OverviewUseCases>(),

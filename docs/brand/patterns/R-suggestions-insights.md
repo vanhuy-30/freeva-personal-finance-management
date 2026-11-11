@@ -11,6 +11,7 @@ Canvas: trang **09 · Phase 5** (`p5`). Spec chung: [design-system.md](../design
 - Mỗi insight có một hình nhỏ đi kèm (thanh so sánh hoặc thanh ngân sách); không chỉ có một câu.
 - Dự báo luôn ghi đó là dự đoán, chưa phải số đã chi.
 - Không gợi ý nào tự lưu giao dịch hay tự sửa sổ.
+- Insight tính mỗi lần xem, không lưu trên server (2026-11-11): "dữ liệu đã học" chỉ là danh sách cửa hàng đã nhớ.
 
 ## Các màn
 
@@ -23,8 +24,8 @@ Canvas: trang **09 · Phase 5** (`p5`). Spec chung: [design-system.md](../design
 | S.2 | Phân tích | Quay lại · "Phân tích" · nút cài đặt (mở U.1). Thẻ dự báo chi (mở S.3): "Dự báo chi cuối tháng 11", chip rủi ro, số lớn, thanh đã chi + phần dự báo sọc + vạch ngân sách, chú thích. **ĐÁNG CHÚ Ý · 4**: mỗi insight một thẻ chạm được (icon 36, câu, mũi tên) và một hình: thanh so sánh hai dòng, hoặc thanh ngân sách. Cuối màn "Tính từ sổ của bạn, cập nhật mỗi ngày." | Bốn dạng: danh mục tăng/giảm, rủi ro vượt ngân sách, xu hướng chi, khoản lệch khỏi mức thường. Chạm mở giao dịch đã lọc, ngân sách hoặc báo cáo |
 | S.3 | Dự báo chi cuối tháng | Thẻ: "Cuối tháng 11 có thể chi khoảng", chip rủi ro, số 32, "Vượt ngân sách khoảng 1.200.000", biểu đồ cộng dồn (vùng đã chi, nét đứt dự báo, đường ngân sách, chấm "Hôm nay"). Hai ô: "Trung bình mỗi ngày", "Để không vượt, mỗi ngày dưới 480.000" (nền `status.success` nhạt). **CHI NHIỀU NHẤT THÁNG NÀY**: 3 danh mục có thanh tỷ lệ. Dòng chú thích icon info "Dự đoán theo mức chi trung bình mỗi ngày từ đầu tháng, chưa phải số đã chi." | Chưa có ngân sách: bỏ chip, đường ngân sách và ô "Để không vượt". Mới đầu tháng: "Chưa đủ dữ liệu, xem lại sau vài ngày" |
 | T.1 | Chi tiết mục tiêu · dự kiến | Như I.4; ô "Ngày đạt" đổi tên **"Hạn"**. Thẻ mới dưới lưới 2×2: "Với mức góp gần đây" / "Dự kiến đạt 02/2028", chip "Trễ 6 tháng"; dải mốc **Hôm nay → Hạn → Dự kiến** (đoạn tới hạn `blue.600`, đoạn trễ nét đứt `status.warning`); dòng "Góp trung bình 5.000.000 mỗi tháng trong 3 tháng qua. Góp 8.000.000 mỗi tháng để kịp hạn." | Kịp hạn: chip "Kịp hạn" xanh lá, không có đoạn trễ. Chưa góp lần nào: "Chưa đủ dữ liệu để dự kiến · Góp lần đầu để xem ngày đạt", không có dải mốc |
-| U.1 | Gợi ý tự động | Một thẻ công tắc "Gợi ý tự động" · "Danh mục, phân tích, dự báo". Dòng icon khiên xanh "Chỉ tính trên sổ của bạn, không gửi ra ngoài." **CỬA HÀNG ĐÃ NHỚ · 12**: dòng cửa hàng → danh mục, nút × quên từng dòng, "Xem cả 12". Nút viền đỏ "Xoá dữ liệu đã học" | Lối vào: Cá nhân → **ỨNG DỤNG** thêm dòng "Gợi ý tự động" (icon lấp lánh, phụ "Bật"/"Tắt") và nút cài đặt ở S.2. Tắt: ẩn S.1, không gợi ý danh mục, không dự báo; danh sách đã nhớ giữ tới khi xoá |
-| U.2 | Xoá dữ liệu đã học (popup, trên U.1) | Icon thùng rác đỏ, "Xoá dữ liệu đã học?", "12 cửa hàng đã nhớ và các điều đáng chú ý sẽ bị xoá. Giao dịch vẫn giữ nguyên." Huỷ · Xoá | |
+| U.1 | Gợi ý tự động | Một thẻ công tắc "Gợi ý tự động" · "Danh mục, phân tích, dự báo". Dòng icon khiên xanh "Chỉ tính trên sổ của bạn, không gửi ra ngoài." **CỬA HÀNG ĐÃ NHỚ · 12**: dòng cửa hàng → danh mục, nút × quên từng dòng, "Xem cả 12". Nút viền đỏ "Xoá dữ liệu đã học" | Lối vào: Cá nhân → **ỨNG DỤNG** thêm dòng "Gợi ý tự động" (icon lấp lánh, phụ "Bật"/"Tắt") và nút cài đặt ở S.2. Tắt: ẩn S.1, không gợi ý danh mục, không dự báo; danh sách đã nhớ giữ tới khi xoá. Chưa nhớ cửa hàng nào: ẩn nhóm CỬA HÀNG ĐÃ NHỚ và nút xoá. Dòng ở Cá nhân chỉ hiện khi ít nhất một cờ `category_suggest`, `insights`, `forecast` bật |
+| U.2 | Xoá dữ liệu đã học (popup, trên U.1) | Icon thùng rác đỏ, "Xoá dữ liệu đã học?", "12 cửa hàng đã nhớ sẽ bị xoá. Giao dịch vẫn giữ nguyên." Huỷ · Xoá | |
 
 ## Thành phần mới
 

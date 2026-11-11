@@ -5760,4 +5760,52 @@ class SEn extends S {
 
   @override
   String get commonAnd => 'and';
+
+  @override
+  String get autoSuggestTitle => 'Auto suggestions';
+
+  @override
+  String get autoSuggestOn => 'On';
+
+  @override
+  String get autoSuggestOff => 'Off';
+
+  @override
+  String get autoSuggestSubtitle => 'Categories, insights, forecasts';
+
+  @override
+  String get autoSuggestPrivacy =>
+      'Worked out from your records only, never sent elsewhere.';
+
+  @override
+  String autoSuggestMerchants(int count) {
+    return 'Remembered shops · $count';
+  }
+
+  @override
+  String autoSuggestForget(String merchant) {
+    return 'Forget $merchant';
+  }
+
+  @override
+  String get autoSuggestClear => 'Delete learned data';
+
+  @override
+  String get autoSuggestClearTitle => 'Delete learned data?';
+
+  @override
+  String autoSuggestClearBody(int count) {
+    return '$count remembered shops will be deleted. Your transactions stay as they are.';
+  }
+
+  @override
+  String get autoSuggestDelete => 'Delete';
+
+  @override
+  String get autoSuggestError => 'Could not save. Please try again.';
+
+  @override
+  String autoSuggestSeeAll(int count) {
+    return 'See all $count';
+  }
 }

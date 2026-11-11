@@ -15,6 +15,7 @@ export interface AccountExport {
     emailVerifiedAt: string | null;
     categoriesInitializedAt: string | null;
     categoriesSupplementedAt: string | null;
+    autoSuggestEnabled: boolean;
     createdAt: string;
     updatedAt: string;
   };
@@ -39,6 +40,8 @@ export interface AccountExport {
   investmentPrices: AccountExportInvestmentPrice[];
   cardInstallmentPlans: AccountExportCardInstallmentPlan[];
   importBatches: AccountExportImportBatch[];
+  /** PRD-P5-E01: merchants remembered for category suggestions. */
+  categorySuggestionMappings: AccountExportSuggestionMapping[];
   notificationPreferences: AccountExportNotificationPreferences | null;
   notifications: AccountExportNotification[];
   transactions: AccountExportTransaction[];
@@ -288,6 +291,14 @@ export interface AccountExportInvestmentPrice {
   createdAt: string;
 }
 
+export interface AccountExportSuggestionMapping {
+  id: string;
+  merchant: string;
+  categoryId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface AccountExportImportBatch {
   id: string;
   clientId: string;
@@ -373,6 +384,7 @@ export interface ExportSource {
     emailVerifiedAt: Date | null;
     categoriesInitializedAt: Date | null;
     categoriesSupplementedAt: Date | null;
+    autoSuggestEnabled: boolean;
     createdAt: Date;
     updatedAt: Date;
   };
@@ -559,6 +571,7 @@ export interface ExportSource {
     quotedAt: Date;
     createdAt: Date;
   }>;
+  categorySuggestionMappings: Array<{ id: string; merchant: string; categoryId: string; createdAt: Date; updatedAt: Date }>;
   importBatches: Array<{
     id: string;
     clientId: string;
@@ -660,6 +673,7 @@ export function toAccountExport(source: ExportSource): AccountExport {
       emailVerifiedAt: user.emailVerifiedAt ? iso(user.emailVerifiedAt) : null,
       categoriesInitializedAt: user.categoriesInitializedAt ? iso(user.categoriesInitializedAt) : null,
       categoriesSupplementedAt: user.categoriesSupplementedAt ? iso(user.categoriesSupplementedAt) : null,
+      autoSuggestEnabled: user.autoSuggestEnabled,
       ...stamps(user),
     },
     oauthProviders: [...source.oauthProviders].sort(),
@@ -798,6 +812,9 @@ export function toAccountExport(source: ExportSource): AccountExport {
       id: row.id, clientId: row.clientId, preset: row.preset, rowCount: row.rowCount, createdCount: row.createdCount,
       duplicateCount: row.duplicateCount, invalidCount: row.invalidCount,
       undoneAt: row.undoneAt ? iso(row.undoneAt) : null, createdAt: iso(row.createdAt),
+    })),
+    categorySuggestionMappings: source.categorySuggestionMappings.map(row => ({
+      id: row.id, merchant: row.merchant, categoryId: row.categoryId, ...stamps(row),
     })),
     notificationPreferences: source.notificationPreferences === null ? null : {
       budgetEnabled: source.notificationPreferences.budgetEnabled,

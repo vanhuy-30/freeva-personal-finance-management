@@ -82,6 +82,8 @@ Kiểu Prisma. Mọi bảng user-owned (trừ `User`, `Currency`, `SchemaMeta`, 
 
 `BE-P1-001`: thêm `passwordHash` nullable (Argon2id) và `emailVerifiedAt` nullable. Email trim/lowercase, CHECK normalization và unique. User legacy không tự cấp credential.
 
+`PRD-P5-E01`: `autoSuggestEnabled` (mặc định `true`) — công tắc Gợi ý tự động. Xem [auto-suggest.md](auto-suggest.md).
+
 ### FinancialAccount
 
 | Cột | Kiểu | Ghi chú |
@@ -182,6 +184,10 @@ Cho mượn / đi mượn không lãi (`BE-P3-007`). Chi tiết: [personal-debts
 ### ImportBatch
 
 Một lần nhập CSV (`BE-P3-011`): preset, số dòng, đếm created/duplicate/invalid, `undoneAt`. `Transaction.importBatchId` (SetNull) trỏ về lô để hoàn tác. Chi tiết: [transaction-import.md](transaction-import.md).
+
+### CategorySuggestionMapping
+
+Cửa hàng → danh mục user đã chấp nhận cho gợi ý danh mục (`PRD-P5-E01`, `BE-P5-E03` ghi). Unique `(userId, merchantKey)`; FK `User` và `Category` cascade. Chi tiết: [auto-suggest.md](auto-suggest.md).
 
 ### CardInstallmentPlan
 

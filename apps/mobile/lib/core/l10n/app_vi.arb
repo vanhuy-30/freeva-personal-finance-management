@@ -1842,5 +1842,18 @@
   "tradePriceRow": "Giá mua",
   "serverConfigErrorTitle": "Chưa tải được cài đặt",
   "serverConfigErrorMessage": "Kiểm tra mạng rồi thử lại.",
-  "commonAnd": "và"
+  "commonAnd": "và",
+  "autoSuggestTitle": "Gợi ý tự động",
+  "autoSuggestOn": "Bật",
+  "autoSuggestOff": "Tắt",
+  "autoSuggestSubtitle": "Danh mục, phân tích, dự báo",
+  "autoSuggestPrivacy": "Chỉ tính trên sổ của bạn, không gửi ra ngoài.",
+  "autoSuggestMerchants": "Cửa hàng đã nhớ · {count}",
+  "autoSuggestForget": "Quên {merchant}",
+  "autoSuggestClear": "Xoá dữ liệu đã học",
+  "autoSuggestClearTitle": "Xoá dữ liệu đã học?",
+  "autoSuggestClearBody": "{count} cửa hàng đã nhớ sẽ bị xoá. Giao dịch vẫn giữ nguyên.",
+  "autoSuggestDelete": "Xoá",
+  "autoSuggestError": "Chưa lưu được. Thử lại nhé.",
+  "autoSuggestSeeAll": "Xem cả {count}"
 }

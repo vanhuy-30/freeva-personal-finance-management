@@ -1,6 +1,6 @@
 import { Transform } from 'class-transformer';
 import {
-  ArrayMaxSize, ArrayUnique, IsArray, IsIn, IsInt, IsOptional, IsString, Matches, Max, MaxLength, Min, ValidateIf,
+  ArrayMaxSize, ArrayUnique, IsArray, IsBoolean, IsIn, IsInt, IsOptional, IsString, Matches, Max, MaxLength, Min, ValidateIf,
 } from 'class-validator';
 
 export const ONBOARDING_GOALS = ['track', 'save', 'budget'] as const;
@@ -35,6 +35,12 @@ export class DisplayCurrencyDto {
   @IsString()
   @Matches(/^[A-Z]{3}$/)
   currencyCode!: string | null;
+}
+
+/** PRD-P5-E01: switch for category suggestions, insights and spending forecast. */
+export class AutoSuggestDto {
+  @IsBoolean()
+  enabled!: boolean;
 }
 
 export class UpdateProfileDto {

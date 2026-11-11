@@ -3,7 +3,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard, type AuthRequest } from '../auth/auth.guard';
 import { AuthExceptionFilter } from '../auth/auth-exception.filter';
-import { DisplayCurrencyDto, MonthlyIncomeDto, OnboardingAnswersDto, UpdateProfileDto } from './profile.dto';
+import { AutoSuggestDto, DisplayCurrencyDto, MonthlyIncomeDto, OnboardingAnswersDto, UpdateProfileDto } from './profile.dto';
 import { ProfileService } from './profile.service';
 
 @Controller('v1/profile')
@@ -43,6 +43,13 @@ export class ProfileController {
   @Header('Cache-Control', 'no-store')
   async saveDisplayCurrency(@Req() request: AuthRequest, @Body() body: DisplayCurrencyDto) {
     await this.profiles.saveDisplayCurrency(request.session.userId, body.currencyCode);
+  }
+
+  @Put('auto-suggest')
+  @HttpCode(204)
+  @Header('Cache-Control', 'no-store')
+  async saveAutoSuggest(@Req() request: AuthRequest, @Body() body: AutoSuggestDto) {
+    await this.profiles.saveAutoSuggest(request.session.userId, body.enabled);
   }
 
   @Put()

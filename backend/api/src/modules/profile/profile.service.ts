@@ -64,6 +64,10 @@ export class ProfileService {
     if (!(await this.repository.saveDisplayCurrency(userId, code))) throw error(401, 'SESSION_INVALID');
   }
 
+  async saveAutoSuggest(userId: string, enabled: boolean) {
+    if (!(await this.repository.saveAutoSuggest(userId, enabled))) throw error(401, 'SESSION_INVALID');
+  }
+
   async update(userId: string, profile: ProfileUpdate) {
     // Reject offsets and unknown zones; accept IANA aliases used by existing users.
     if (!/^(UTC|[A-Za-z_]+(?:\/[A-Za-z0-9_+-]+)+)$/.test(profile.timezone)) {

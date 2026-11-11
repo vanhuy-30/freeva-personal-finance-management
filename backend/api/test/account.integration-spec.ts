@@ -152,6 +152,10 @@ describe('BE-P1-010 HTTP + PostgreSQL', () => {
 
   it('exports only the owner snapshot and does not log secrets', async () => {
     const { account, removed } = await ledger();
+    const mappedCategory = await prisma.category.findFirstOrThrow({ where: { userId: owner } });
+    await prisma.categorySuggestionMapping.create({
+      data: { userId: owner, merchantKey: 'highlands coffee', merchant: 'Highlands Coffee', categoryId: mappedCategory.id },
+    });
     const result = await request('GET', '/export');
     expect(result.status).toBe(200);
     const body = result.body as {
@@ -164,11 +168,13 @@ describe('BE-P1-010 HTTP + PostgreSQL', () => {
       fxQuotes: Array<{ rate: string }>;
       fxRates: unknown[];
       categories: Array<{ parentId: string | null }>;
+      categorySuggestionMappings: Array<{ merchant: string; categoryId: string }>;
     };
     expect(body.schemaVersion).toBe(1);
     expect(body.userId).toBe(owner);
     expect(body.profile.email).toBe(ownerEmail);
-    expect(body.profile).toMatchObject({ onboardingGoals: [], monthlyIncomeMinor: null, displayCurrencyCode: null });
+    expect(body.profile).toMatchObject({ onboardingGoals: [], monthlyIncomeMinor: null, displayCurrencyCode: null, autoSuggestEnabled: true });
+    expect(body.categorySuggestionMappings).toEqual([expect.objectContaining({ merchant: 'Highlands Coffee', categoryId: mappedCategory.id })]);
     expect(body.fxRates).toEqual([]);
     expect(body.oauthProviders).toEqual(['google']);
     expect(body.financialAccounts.map(row => row.id)).toEqual([account.id]);
@@ -200,6 +206,10 @@ describe('BE-P1-010 HTTP + PostgreSQL', () => {
       data: { userId: owner, purpose: 'verify_email', encryptedToken: 'cipher', expiresAt: new Date(Date.now() + 60_000) },
     });
     const session = await prisma.authSession.findUniqueOrThrow({ where: { tokenHash: hash } });
+    const mappedCategory = await prisma.category.findFirstOrThrow({ where: { userId: owner } });
+    await prisma.categorySuggestionMapping.create({
+      data: { userId: owner, merchantKey: 'grab', merchant: 'Grab', categoryId: mappedCategory.id },
+    });
     await prisma.pushToken.create({
       data: { userId: owner, sessionId: session.id, token: `fcm-${randomUUID()}-${randomUUID()}`, platform: 'android' },
     });
@@ -211,6 +221,7 @@ describe('BE-P1-010 HTTP + PostgreSQL', () => {
     expect(await prisma.financialAccount.count({ where: { userId: owner } })).toBe(0);
     expect(await prisma.transaction.count({ where: { userId: owner } })).toBe(0);
     expect(await prisma.category.count({ where: { userId: owner } })).toBe(0);
+    expect(await prisma.categorySuggestionMapping.count({ where: { userId: owner } })).toBe(0);
     expect(await prisma.authSession.count({ where: { tokenHash: hash } })).toBe(0);
     expect(await prisma.authToken.count({ where: { userId: owner } })).toBe(0);
     expect(await prisma.authMailJob.count({ where: { userId: owner } })).toBe(0);

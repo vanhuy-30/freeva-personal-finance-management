@@ -13,6 +13,7 @@ const select = {
   onboardingGoals: true,
   monthlyIncomeMinor: true,
   displayCurrencyCode: true,
+  autoSuggestEnabled: true,
 };
 
 type Row = Omit<Profile, 'goals' | 'monthlyIncomeMinor'> & { onboardingGoals: string[]; monthlyIncomeMinor: bigint | null };
@@ -60,6 +61,11 @@ export class PrismaProfileRepository implements ProfileRepository {
 
   async saveDisplayCurrency(userId: string, code: string | null): Promise<boolean> {
     const changed = await this.prisma.user.updateMany({ where: { id: userId }, data: { displayCurrencyCode: code } });
+    return changed.count === 1;
+  }
+
+  async saveAutoSuggest(userId: string, enabled: boolean): Promise<boolean> {
+    const changed = await this.prisma.user.updateMany({ where: { id: userId }, data: { autoSuggestEnabled: enabled } });
     return changed.count === 1;
   }
 
