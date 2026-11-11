@@ -20,7 +20,7 @@ Catalog sẽ mở rộng khi có SDK. Không gửi PII (email, số dư, số TK
 
 ## Feature flag / consent
 
-`notifications_opt_in`, `ai_opt_in` (Phase 5+), `bank_connect_started` (Phase 6).
+`notifications_opt_in`, `ai_opt_in` (Phase 8), `bank_connect_started` (Phase 6).
 
 Đặt tên snake_case, version trong payload `schema_version: 1`.
 

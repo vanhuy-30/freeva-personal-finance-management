@@ -8,8 +8,9 @@
 - Status: todo
 - Module: 13
 - Gate: post-v1
-- Depends: BE-P5-E01, BE-P5-E08, SEC-P6-E01
-- DoD: đồng bộ không ghi đè giao dịch sửa tay. Mỗi dòng có nguồn. Ngắt kết nối thì thu hồi hoặc xóa token đối tác. Cờ `bank_import` tắt thì không hiện lối kết nối. Lỗi đối tác có runbook.
+- Depends: BE-P5-E08, SEC-P6-E01
+- DoD: đồng bộ không ghi đè giao dịch sửa tay. Mỗi dòng có nguồn. Ngắt kết nối thì thu hồi hoặc xóa token đối tác. Cờ `bank_connect` tắt thì không hiện lối kết nối. Lỗi đối tác có runbook.
+- Note: 2026-11-11 bỏ phụ thuộc `BE-P5-E01` (nhập sao kê file không làm). Chống trùng dùng lại quy tắc của `BE-P3-011`.
 
 ### BE-P6-E02 / MOB-P6-E02 — Gia đình và chia sẻ (module 16)
 - Status: todo

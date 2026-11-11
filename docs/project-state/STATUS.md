@@ -1,7 +1,8 @@
 # STATUS
 
-- **Phase hiện tại:** 4 — Phase 0 **closed** 2026-09-21; Phase 1 **closed** 2026-10-21 (gate sổ cái); Phase 2 **closed** 2026-10-30; Phase 3 **closed** 2026-11-05; Phase 4 **closed** 2026-11-10. Backlog `Gate: v1` đã xong trên `develop`; chưa chạy thử trọn luồng trên thiết bị với backend thật. AI (gợi ý danh mục, insight) ra sau v1 từ 2026-11-02. Đối chiếu spec: [spec-alignment.md](../product/spec-alignment.md).
-- **Cập nhật:** 2026-11-10
+- **Phase hiện tại:** 5 (sau v1) — Phase 0 **closed** 2026-09-21; Phase 1 **closed** 2026-10-21 (gate sổ cái); Phase 2 **closed** 2026-10-30; Phase 3 **closed** 2026-11-05; Phase 4 **closed** 2026-11-10. Backlog `Gate: v1` đã xong trên `develop`; chưa chạy thử trọn luồng trên thiết bị với backend thật. AI (gợi ý danh mục, insight) ra sau v1 từ 2026-11-02. Đối chiếu spec: [spec-alignment.md](../product/spec-alignment.md).
+- **Cập nhật:** 2026-11-11
+- **Phạm vi Phase 5 (2026-11-11):** cờ và cấu hình ở server, sửa trên web admin; chuyển các số đang hardcode trong app (Phase 0–4) lên server; gợi ý danh mục, insight, dự báo chi, what-if tính bằng quy tắc. Nhập sao kê ngân hàng bỏ. OCR và Ask Freeva sang Phase 8, chờ chốt hướng AI (DECISIONS-OPEN #12–14).
 - **Việc bổ sung Phase 2:** `BE-P2-010` khóa kind lúc ghi; `MOB-P2-011` xuất/xóa tài khoản trên app; `QA-P2-001` rà hàng đợi offline; `BE-P2-012` câu trả lời đầu gắn tài khoản; `BE-P2-013` quy đổi để hiển thị; `BE-P2-014` mật khẩu tối thiểu 8 + kiểm tra email trên app. Chi tiết: [tasks/phase-02.md](../../tasks/phase-02.md).
 - **CI:** `INF-P0-002` done; cả ba job xanh trên `main`, [run 33521325189](https://github.com/vanhuy-30/freeva-personal-finance-management/actions/runs/33521325189).
 - **Môi trường:** chỉ chạy local (Ghi chú cuối file). Chưa có server, domain, tài khoản App Store / Google Play.
@@ -129,6 +130,10 @@ Theo [điều kiện hoàn thành Phase 2](../product/phases/phase-02.md):
 ## Backlog Phase 4
 
 - **6/6 done**: `BE-P4-E01`, `BE-P4-E02`, `DS-P4-001`, `BE-P4-E03`, `MOB-P4-E02`, `QA-P4-E01` (kèm `MOB-P4-E01` 2026-11-07; FX không hỗ trợ ở v1, chốt 2026-11-09). Chi tiết: [tasks/phase-04.md](../../tasks/phase-04.md).
+
+## Backlog Phase 5
+
+- **0/10 done**, 3 wont (`BE-P5-E01` bỏ; `E02`, `E05` sang Phase 8). Chi tiết: [tasks/phase-05.md](../../tasks/phase-05.md).
 
 ## Phase 3 gate — đã đóng (2026-11-05)
 

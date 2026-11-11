@@ -4,7 +4,7 @@ Contract: [OpenAPI](../../packages/api-contracts/openapi.yaml) `POST /api/v1/tra
 
 ## Chức năng
 
-User chuyển giao dịch từ app khác (Money Lover, Sổ thu chi MISA) hoặc từ file Freeva (`BE-P3-010`) sang Freeva: xem trước từng dòng, map ví và danh mục, ghi cả lô, hoàn tác cả lô. Sao kê ngân hàng PDF/Excel vẫn là `BE-P5-E01`.
+User chuyển giao dịch từ app khác (Money Lover, Sổ thu chi MISA) hoặc từ file Freeva (`BE-P3-010`) sang Freeva: xem trước từng dòng, map ví và danh mục, ghi cả lô, hoàn tác cả lô. Sao kê ngân hàng PDF/Excel: không làm (chốt 2026-11-11).
 
 ## Luồng (không lưu file tạm)
 

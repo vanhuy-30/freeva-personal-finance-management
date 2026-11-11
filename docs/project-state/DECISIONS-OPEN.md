@@ -15,3 +15,6 @@
 | 9 | Crash tooling | **Sentry** cho staging (`INF-P1-001`, ADR 011). SDK tắt khi không có DSN. DSN đặt trên Render/Vercel và `--dart-define` mobile; không commit. Event live chờ project Sentry. | Chốt vendor staging 2026-10-12; DSN vận hành còn mở |
 | 10 | Security contact | email TBD | Mở |
 | 11 | Push provider | **Firebase Cloud Messaging** (`BE-P2-015`, ADR 013). Push tắt khi thiếu `FCM_SERVICE_ACCOUNT_*`. Cần owner tạo project Firebase, tải `google-services.json` / `GoogleService-Info.plist` (gitignore), upload APNs key, đặt service account trên host. | Chốt vendor 2026-10-30; project Firebase còn mở |
+| 12 | Hướng AI | Chưa chốt AI chạy trên máy hay dịch vụ ngoài. Phần cần AI (OCR, Ask Freeva) gom về Phase 8, ADR ở `PRD-P8-E01`. | Mở (2026-11-11) |
+| 13 | Cấu hình sản phẩm | Số và cấu hình mang nghĩa sản phẩm (ngưỡng, giới hạn, danh sách, bật/tắt) nằm ở server, sửa trên web admin; app không hardcode (`BE-P5-E08`, `WA-P5-001`, `BE-P5-001`). | Chốt 2026-11-11 |
+| 14 | Nhập sao kê ngân hàng | Không làm (`BE-P5-E01` wont). Nhập CSV từ app khác giữ nguyên. | Chốt 2026-11-11 |

@@ -42,7 +42,7 @@ Sự kiện funnel (`onboarding_started`, `transaction_created`, …) — catalo
 
 ### Không thu thập (MVP)
 
-Dữ liệu sinh trắc học trên máy chủ (PIN / biometrics chỉ mở khóa app trên thiết bị). Token ngân hàng (Phase 6). Nội dung AI (Phase 5).
+Dữ liệu sinh trắc học trên máy chủ (PIN / biometrics chỉ mở khóa app trên thiết bị). Token ngân hàng (Phase 6). Nội dung AI (Phase 8).
 
 ## 3. Mục đích và cơ sở xử lý
 
@@ -131,7 +131,7 @@ Không có bên thứ ba **production**. API + Postgres + Redis + Mailhog chạy
 | Bên | Mục đích | Dữ liệu | Phase | Trạng thái |
 |---|---|---|---|---|
 | Firebase Cloud Messaging (Google) | Thông báo ngân sách, định kỳ, thẻ | Device token gắn phiên, không số dư trong payload | 2 | Có trong code (`BE-P2-015`); bật khi có service account; cần consent |
-| Nhà cung cấp AI (TBD) | Gợi ý / phân loại (module 18) | Nội dung user chọn gửi | 5 | Won't MVP; opt-in |
+| Nhà cung cấp AI (TBD) | OCR, Ask Freeva (module 18) | Nội dung user chọn gửi | 8 | Chưa chốt hướng AI; opt-in |
 | Đối tác ngân hàng (không đặt tên) | Đồng bộ sao kê / số dư | Token kết nối, GD từ đối tác | 6 | Chỉ khi có DPA — [RISKS](../project-state/RISKS.md) R6 |
 | Cửa hàng (IAP) | Thu phí Premium | Biên lai store, không chặn ghi chi/xuất/xóa | 7 | Chưa có sản phẩm IAP |
 
