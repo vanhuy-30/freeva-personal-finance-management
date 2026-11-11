@@ -1,4 +1,7 @@
 import 'package:dartz/dartz.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/features/home/presentation/pages/notifications_page.dart';
@@ -101,6 +104,7 @@ void main() {
   tearDown(() async {
     g.dispose();
     await getIt.reset();
+    registerTestServerConfig();
   });
 
   void tall(WidgetTester tester) {
@@ -227,7 +231,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.text('80% và 100%'));
+    await tester.tap(find.text('mốc bạn chọn'));
     await tester.pumpAndSettle();
     expect(find.text('PAGE /budgets'), findsOneWidget);
   });

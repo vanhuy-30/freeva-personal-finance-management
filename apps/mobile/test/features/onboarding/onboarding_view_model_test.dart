@@ -1,4 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/goals/domain/goal.dart';
 import 'package:mobile/features/onboarding/domain/onboarding_answers.dart';
@@ -45,6 +48,7 @@ void main() {
       goals,
       pending,
       null,
+      limits: testServerConfigModel(),
       today: DateTime(2026, 11, 5),
       previewDelay: Duration.zero,
     );

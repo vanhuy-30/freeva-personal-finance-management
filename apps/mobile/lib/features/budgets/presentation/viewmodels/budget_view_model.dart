@@ -9,6 +9,7 @@ import '../../../profile/presentation/viewmodels/profile_view_model.dart';
 import '../../../settings/domain/settings_repository.dart';
 import '../../domain/budget.dart';
 import '../../domain/budget_use_cases.dart';
+import '../../../server_config/domain/app_limits.dart';
 
 abstract class BudgetViewModel extends ChangeNotifier {
   bool get busy;
@@ -45,6 +46,7 @@ class DefaultBudgetViewModel extends BudgetViewModel {
     this._profile,
     this._settings,
     this._auth,
+    this._limits,
   ) {
     _stage = _auth.stage;
     _auth.addListener(_authChanged);
@@ -55,6 +57,7 @@ class DefaultBudgetViewModel extends BudgetViewModel {
   final ProfileViewModel _profile;
   final SettingsRepository _settings;
   final AuthViewModel _auth;
+  final AppLimitsSource _limits;
   late AuthStage _stage;
   int _epoch = 0;
 
@@ -75,7 +78,11 @@ class DefaultBudgetViewModel extends BudgetViewModel {
   @override
   List<BudgetCategoryDraft> draftLines = const [];
   @override
-  List<int> draftThresholds = List.of(defaultAlertThresholds);
+  late List<int> draftThresholds = _defaultThresholds();
+
+  /// Server `budget.defaultAlertThresholds` (MOB-P5-001).
+  List<int> _defaultThresholds() =>
+      List.of(_limits.requireLimits.budgetDefaultThresholds);
   @override
   BudgetApplyTo applyTo = BudgetApplyTo.defaultTemplate;
   @override
@@ -97,7 +104,7 @@ class DefaultBudgetViewModel extends BudgetViewModel {
     failure = null;
     draftLimit = BigInt.zero;
     draftLines = const [];
-    draftThresholds = List.of(defaultAlertThresholds);
+    draftThresholds = _defaultThresholds();
     applyTo = BudgetApplyTo.defaultTemplate;
     monthOn = null;
     notifyListeners();
@@ -108,7 +115,7 @@ class DefaultBudgetViewModel extends BudgetViewModel {
     if (budget == null) {
       draftLimit = BigInt.zero;
       draftLines = const [];
-      draftThresholds = List.of(defaultAlertThresholds);
+      draftThresholds = _defaultThresholds();
       return;
     }
     draftLimit = budget.limitMinor;

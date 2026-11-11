@@ -1,4 +1,7 @@
 import 'package:dartz/dartz.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/budgets/domain/budget.dart';
@@ -35,6 +38,7 @@ void main() {
       _Categories(),
       budgets,
       rates,
+      testServerConfigModel(),
     );
   });
 

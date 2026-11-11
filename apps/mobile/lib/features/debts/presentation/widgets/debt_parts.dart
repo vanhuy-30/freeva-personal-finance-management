@@ -6,6 +6,8 @@ import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_card.dart';
 import '../../../recurring/presentation/widgets/rec_tag.dart';
 import '../../../recurring/presentation/widgets/recurring_labels.dart';
+import '../../../server_config/domain/app_limits.dart';
+import '../../../../core/di/injection.dart';
 
 /// Round avatar with the first letter of a person's name on a tint picked
 /// from the name, so the same person keeps the same colour (DebtList: 40,
@@ -53,7 +55,7 @@ class NameAvatar extends StatelessWidget {
   }
 }
 
-/// "Còn N ngày" (amber) within 14 days of [due], "Quá hạn" (red) once past;
+/// "Còn N ngày" (amber) within `debt.dueSoonDays` (server config) of [due], "Quá hạn" (red) once past;
 /// null otherwise. Shared by debts and loans.
 RecTag? dueTag(BuildContext context, String today, String? due) {
   if (due == null) return null;
@@ -74,7 +76,9 @@ RecTag? dueTag(BuildContext context, String today, String? due) {
       color: c.statusWarning,
     );
   }
-  if (days > 14) return null;
+  if (days > getIt<AppLimitsSource>().requireLimits.debtDueSoonDays) {
+    return null;
+  }
   return RecTag(
     s.recTagDays(days),
     background: c.statusWarningBg,

@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import '../../support/server_config_fixture.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/core/di/injection.dart';
@@ -82,6 +84,7 @@ void main() {
 
   Future<void> register(FixedSync model) async {
     await getIt.reset();
+    registerTestServerConfig();
     getIt
       ..registerSingleton<SyncViewModel>(model)
       ..registerSingleton<TransactionViewModel>(StubTransactionViewModel());

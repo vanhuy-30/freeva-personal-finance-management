@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import '../../support/server_config_fixture.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/features/notifications/domain/notification_models.dart';
@@ -17,6 +19,7 @@ import '../notifications/fake_notification_view_model.dart';
 import '../settings/fakes.dart';
 
 void main() {
+  setUp(registerTestServerConfig);
   setUpAll(loadTestFonts);
 
   FirstRunNudgesViewModel nudges(DefaultSettingsUseCases settings) =>

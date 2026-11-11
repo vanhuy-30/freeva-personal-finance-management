@@ -11,6 +11,8 @@ import '../../domain/wallet.dart';
 import 'credit_level_color.dart';
 import 'wallet_labels.dart';
 import 'wallet_type_icon.dart';
+import '../../../server_config/domain/app_limits.dart';
+import '../../../../core/di/injection.dart';
 
 /// One wallet in "Ví của tôi": type icon, name, type, balance. A credit card
 /// adds "đến hạn dd/MM" and a 6-high limit bar.
@@ -88,7 +90,12 @@ class WalletListRow extends StatelessWidget {
                       FreevaProgressBar(
                         value: card.ratio,
                         height: 6,
-                        color: creditLevelColor(context, card.level),
+                        color: creditLevelColor(
+                          context,
+                          card.levelWith(
+                            getIt<AppLimitsSource>().requireLimits,
+                          ),
+                        ),
                       ),
                     ],
                   ],

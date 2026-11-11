@@ -1,4 +1,7 @@
 import 'package:dartz/dartz.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/core/di/injection.dart';
@@ -364,6 +367,7 @@ Future<DebtHarness> debtsApp(
   double scale = 1,
 }) async {
   await getIt.reset();
+  registerTestServerConfig();
   final auth =
       DefaultAuthViewModel(
           DefaultAuthUseCases(

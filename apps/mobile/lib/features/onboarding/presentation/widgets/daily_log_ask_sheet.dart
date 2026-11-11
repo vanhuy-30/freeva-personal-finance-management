@@ -10,9 +10,8 @@ import '../../../../core/widgets/freeva_sheet.dart';
 import '../../../notifications/domain/notification_models.dart';
 import '../../../notifications/presentation/viewmodels/notification_view_model.dart';
 import '../../../settings/presentation/widgets/daily_log_time_dialog.dart';
-
-/// Default time on the board (DailyLogAsk).
-const dailyLogAskDefaultTime = '21:00';
+import '../../../server_config/domain/app_limits.dart';
+import '../../../../core/di/injection.dart';
 
 /// "Nhắc ghi chi mỗi tối?" over Tổng quan. Returns true when the reminder
 /// was turned on.
@@ -38,7 +37,8 @@ class DailyLogAskBody extends StatefulWidget {
 }
 
 class _DailyLogAskBodyState extends State<DailyLogAskBody> {
-  String _time = dailyLogAskDefaultTime;
+  /// Server `notification.dailyLogDefaultTime` (board DailyLogAsk: 21:00).
+  String _time = getIt<AppLimitsSource>().requireLimits.dailyLogDefaultTime;
   bool _saving = false;
 
   Future<void> _pickTime() async {

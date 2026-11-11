@@ -7,6 +7,7 @@ import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../budgets/domain/budget_use_cases.dart';
 import '../../../goals/domain/goal_use_cases.dart';
 import '../../../goals/presentation/widgets/goal_look.dart';
+import '../../../server_config/domain/app_limits.dart';
 import '../../../onboarding/domain/pending_goal_use_cases.dart';
 import '../../../onboarding/presentation/viewmodels/onboarding_view_model.dart';
 import '../../../onboarding/presentation/viewmodels/setup_wallets_view_model.dart';
@@ -60,6 +61,7 @@ class _SetupPageState extends State<SetupPage> {
       getIt<GoalUseCases>(),
       _pending,
       getIt.isRegistered<BudgetUseCases>() ? getIt<BudgetUseCases>() : null,
+      limits: getIt<AppLimitsSource>(),
       today: widget.today,
     );
     unawaited(_answers.load());

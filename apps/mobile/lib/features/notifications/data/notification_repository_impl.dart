@@ -101,7 +101,7 @@ NotificationPreferences _preferences(Map<String, dynamic> json) {
         if (notificationKindFromApi('${(row as Map)['kind']}') != null)
           _toggle(Map<String, dynamic>.from(row)),
     ],
-    dailyLogTime: json['dailyLogTime'] as String? ?? '20:00',
+    dailyLogTime: json['dailyLogTime'] as String,
     quietHoursEnabled: json['quietHoursEnabled'] as bool,
     quietStart: json['quietStart'] as String,
     quietEnd: json['quietEnd'] as String,

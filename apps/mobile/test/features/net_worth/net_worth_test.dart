@@ -1,4 +1,7 @@
 import 'package:dartz/dartz.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/core/di/injection.dart';
@@ -172,11 +175,13 @@ void main() {
         getIt<AuthViewModel>(),
         getIt<ProfileViewModel>(),
         getIt(),
+        testServerConfigModel(),
       );
     });
     tearDown(() {
       model.dispose();
       getIt.reset();
+      registerTestServerConfig();
     });
 
     test('loads six months and shows the latest', () async {

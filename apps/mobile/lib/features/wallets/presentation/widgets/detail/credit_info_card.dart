@@ -7,6 +7,8 @@ import '../../../../../core/theme/theme_context.dart';
 import '../../../../../core/theme/tokens.g.dart';
 import '../../../../../core/widgets/freeva_card.dart';
 import '../../../domain/credit_card_status.dart';
+import '../../../../server_config/domain/app_limits.dart';
+import '../../../../../core/di/injection.dart';
 
 /// "Đến hạn thanh toán 25/10 [còn 4 ngày]", "Ngày chốt sao kê", and minimum
 /// payment. The chip shows only when the due date is 7 days away or less.
@@ -67,7 +69,11 @@ class CreditInfoCard extends StatelessWidget {
                   : DateFormat('dd/MM', locale).format(due),
               style: value,
             ),
-            if (days != null && card.dueWithin(today, 7)) ...[
+            if (days != null &&
+                card.dueWithin(
+                  today,
+                  getIt<AppLimitsSource>().requireLimits.creditDueSoonDays,
+                )) ...[
               const SizedBox(width: FreevaSpace.s2),
               Container(
                 height: 24,

@@ -14,18 +14,29 @@ import '../../../wallets/domain/wallet.dart';
 import '../../../wallets/presentation/viewmodels/wallet_view_model.dart';
 import '../../domain/investment.dart';
 import '../../domain/investment_use_cases.dart';
+import '../../../server_config/domain/app_limits.dart';
 
 /// Đầu tư list: totals, share by category, and the positions behind them.
 /// Totals come from `GET /investments/summary`.
 @LazySingleton()
 class InvestmentViewModel extends ChangeNotifier {
-  InvestmentViewModel(this._cases, this._profile, this._wallets, this._auth) {
+  InvestmentViewModel(
+    this._cases,
+    this._profile,
+    this._wallets,
+    this._auth,
+    this._limits,
+  ) {
     _stage = _auth.stage;
     _auth.addListener(_authChanged);
   }
 
-  /// Window of the faint value line on the summary card.
-  static const lineWindow = NetWorthWindow.half;
+  /// Window of the faint value line on the summary card (server
+  /// `investment.chartDefaultWindow`).
+  NetWorthWindow get lineWindow =>
+      NetWorthWindow.fromValue(_limits.requireLimits.investmentChartWindow);
+
+  final AppLimitsSource _limits;
 
   final InvestmentUseCases _cases;
   final ProfileViewModel _profile;

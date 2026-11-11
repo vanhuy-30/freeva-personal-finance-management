@@ -10,9 +10,15 @@ import '../../domain/report_breakdown.dart';
 /// The three largest transactions behind one category slice, and how many
 /// there are in all. Built per screen from the report already on display.
 class CategoryReportViewModel extends ChangeNotifier {
-  CategoryReportViewModel(this._transactions, this._auth, this.args);
+  CategoryReportViewModel(
+    this._transactions,
+    this._auth,
+    this.args, {
+    required this.shown,
+  });
 
-  static const shown = 3;
+  /// Rows before "Xem tất cả" (server `report.topRows`).
+  final int shown;
 
   final TransactionRepository _transactions;
   final AuthViewModel _auth;

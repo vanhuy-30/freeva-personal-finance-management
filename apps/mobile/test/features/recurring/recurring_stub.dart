@@ -1,4 +1,7 @@
 import 'package:dartz/dartz.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/core/di/injection.dart';
@@ -286,6 +289,7 @@ Future<RecurringHarness> recurringApp(
   double scale = 1,
 }) async {
   await getIt.reset();
+  registerTestServerConfig();
   final repo = AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics());
   final auth = DefaultAuthViewModel(DefaultAuthUseCases(repo))
     ..stage = AuthStage.unlocked

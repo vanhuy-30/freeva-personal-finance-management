@@ -10,6 +10,11 @@ enum NetWorthWindow {
   const NetWorthWindow(this.value);
 
   final String value;
+
+  /// Window for a server code (`netWorth.defaultWindow`…). A code this build
+  /// does not know (server newer than the app) shows everything.
+  static NetWorthWindow fromValue(String value) => NetWorthWindow.values
+      .firstWhere((window) => window.value == value, orElse: () => all);
 }
 
 /// One bucket of the history in a single currency, valued on [asOf].

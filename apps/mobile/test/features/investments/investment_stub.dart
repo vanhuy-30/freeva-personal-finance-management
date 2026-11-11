@@ -1,4 +1,7 @@
 import 'package:dartz/dartz.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/core/di/injection.dart';
@@ -314,6 +317,7 @@ investmentApp(
   FakeInvestmentUseCases? cases,
 }) async {
   await getIt.reset();
+  registerTestServerConfig();
   final repo = AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics());
   final auth = DefaultAuthViewModel(DefaultAuthUseCases(repo))
     ..stage = AuthStage.unlocked
@@ -335,7 +339,13 @@ investmentApp(
   );
   await profile.load();
   final fake = cases ?? FakeInvestmentUseCases();
-  final model = InvestmentViewModel(fake, profile, ForecastWallets(), auth);
+  final model = InvestmentViewModel(
+    fake,
+    profile,
+    ForecastWallets(),
+    auth,
+    testServerConfigModel(),
+  );
   getIt
     ..registerSingleton<AuthViewModel>(auth)
     ..registerSingleton<WalletViewModel>(ForecastWallets())

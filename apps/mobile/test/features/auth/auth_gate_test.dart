@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/core/di/injection.dart';
 import 'package:mobile/core/l10n/generated/app_localizations.dart';
@@ -16,6 +19,7 @@ void main() {
   late SetupDeps deps;
   setUp(() async {
     await getIt.reset();
+    registerTestServerConfig();
     deps = await registerSetupDeps();
     model = DefaultAuthViewModel(
       DefaultAuthUseCases(
@@ -28,6 +32,7 @@ void main() {
     deps.settings.dispose();
     model.dispose();
     await getIt.reset();
+    registerTestServerConfig();
   });
   Widget app({String locale = 'vi', double textScale = 1}) => MaterialApp(
     locale: Locale(locale),

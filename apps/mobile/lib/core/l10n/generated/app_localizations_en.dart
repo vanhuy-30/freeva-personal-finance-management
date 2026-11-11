@@ -2106,10 +2106,14 @@ class SEn extends S {
   String get budgetThresholdsSheetTitle => 'Alert me when used';
 
   @override
-  String get budgetThresholdsSheetSub => 'Pick up to 4 levels.';
+  String budgetThresholdsSheetSub(int count) {
+    return 'Pick up to $count levels.';
+  }
 
   @override
-  String get budgetThresholdsDefaultHint => 'Default is 80% and 100%.';
+  String budgetThresholdsDefaultHint(String levels) {
+    return 'Default is $levels.';
+  }
 
   @override
   String get budgetScopeDefault => 'Every month';
@@ -2561,7 +2565,7 @@ class SEn extends S {
   String get notifyBudget => 'Budget running out';
 
   @override
-  String get notifyBudgetSub => 'At 80% and 100% used';
+  String get notifyBudgetSub => 'At the levels you picked';
 
   @override
   String notifyBudgetAt(String levels) {
@@ -2569,7 +2573,7 @@ class SEn extends S {
   }
 
   @override
-  String get notifyBudgetLevels => '80% and 100%';
+  String get notifyBudgetLevels => 'the levels you picked';
 
   @override
   String get notifyCard => 'Credit cards';
@@ -4633,7 +4637,9 @@ class SEn extends S {
   String get installmentOtherTitle => 'Number of periods';
 
   @override
-  String get installmentOtherLabel => 'From 2 to 60';
+  String installmentOtherLabel(int min, int max) {
+    return 'From $min to $max';
+  }
 
   @override
   String get installmentEach => 'Each period';
@@ -5733,4 +5739,7 @@ class SEn extends S {
 
   @override
   String get serverConfigErrorMessage => 'Check your connection and try again.';
+
+  @override
+  String get commonAnd => 'and';
 }

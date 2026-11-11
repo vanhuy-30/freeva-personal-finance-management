@@ -4,6 +4,7 @@ import 'package:injectable/injectable.dart';
 import '../../auth/domain/auth_repository.dart';
 import 'balance_forecast.dart';
 import 'forecast_repository.dart';
+import '../../server_config/domain/app_limits.dart';
 
 abstract class ForecastUseCases {
   /// [months] counts the current month (1–12). Rejects other values and
@@ -18,7 +19,9 @@ abstract class ForecastUseCases {
 
 @LazySingleton(as: ForecastUseCases)
 class DefaultForecastUseCases implements ForecastUseCases {
-  DefaultForecastUseCases(this._repository);
+  DefaultForecastUseCases(this._repository, this._limits);
+
+  final AppLimitsSource _limits;
 
   final ForecastRepository _repository;
 
@@ -32,7 +35,7 @@ class DefaultForecastUseCases implements ForecastUseCases {
     Set<String> excludeRuleIds = const {},
   }) {
     if (months < 1 ||
-        months > 12 ||
+        months > _limits.requireLimits.forecastMaxMonths ||
         (currencyCode != null && !_currency.hasMatch(currencyCode))) {
       return Future.value(left(const AuthFailure(AuthError.invalidInput)));
     }

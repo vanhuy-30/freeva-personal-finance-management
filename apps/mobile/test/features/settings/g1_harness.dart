@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:go_router/go_router.dart';
 import 'package:mobile/core/di/injection.dart';
@@ -41,6 +44,7 @@ class G1 {
   }) async {
     tzdata.initializeTimeZones();
     await getIt.reset();
+    registerTestServerConfig();
     final g = G1();
     g.api = FakeApi();
     g.vault = MemoryVault();

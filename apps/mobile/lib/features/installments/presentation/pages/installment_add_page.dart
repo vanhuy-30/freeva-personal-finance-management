@@ -23,6 +23,8 @@ import '../../domain/card_installment.dart';
 import '../viewmodels/installment_view_model.dart';
 import '../widgets/installment_parts.dart';
 import 'installment_detail_page.dart';
+import '../../../server_config/domain/app_limits.dart';
+import '../../../../core/di/injection.dart';
 
 /// The purchase being split, as the expense detail shows it.
 class InstallmentPurchase {
@@ -60,8 +62,6 @@ class InstallmentAddPage extends StatefulWidget {
   final InstallmentViewModel model;
   final InstallmentPurchase purchase;
 
-  static const counts = [3, 6, 9, 12];
-
   @override
   State<InstallmentAddPage> createState() => _InstallmentAddPageState();
 }
@@ -70,7 +70,9 @@ class _InstallmentAddPageState extends State<InstallmentAddPage> {
   InstallmentViewModel get model => widget.model;
   InstallmentPurchase get purchase => widget.purchase;
 
-  int count = 6;
+  late final AppLimits limits = getIt<AppLimitsSource>().requireLimits;
+  late int count = limits.installmentDefaultTerm;
+  List<int> get counts => limits.installmentTermOptions;
   BigInt? each;
   late String firstDue = _suggestedFirst();
   InstallmentPreview? preview;
@@ -147,8 +149,11 @@ class _InstallmentAddPageState extends State<InstallmentAddPage> {
     final text = await showFreevaInputDialog(
       context: context,
       title: s.installmentOtherTitle,
-      label: s.installmentOtherLabel,
-      initial: InstallmentAddPage.counts.contains(count) ? '' : '$count',
+      label: s.installmentOtherLabel(
+        limits.installmentMinTerm,
+        limits.installmentMaxTerm,
+      ),
+      initial: counts.contains(count) ? '' : '$count',
       keyboardType: TextInputType.number,
       formatters: [
         FilteringTextInputFormatter.digitsOnly,
@@ -157,9 +162,17 @@ class _InstallmentAddPageState extends State<InstallmentAddPage> {
     );
     final value = int.tryParse(text ?? '');
     if (value == null) return;
-    if (value < InstallmentDraft.minCount ||
-        value > InstallmentDraft.maxCount) {
-      if (mounted) showFreevaToast(context, message: s.installmentOtherLabel);
+    if (value < limits.installmentMinTerm ||
+        value > limits.installmentMaxTerm) {
+      if (mounted) {
+        showFreevaToast(
+          context,
+          message: s.installmentOtherLabel(
+            limits.installmentMinTerm,
+            limits.installmentMaxTerm,
+          ),
+        );
+      }
       return;
     }
     _setCount(value);
@@ -242,7 +255,7 @@ class _InstallmentAddPageState extends State<InstallmentAddPage> {
     final shown = preview;
     final error = _error(s);
     final month = parseCalendarParts(purchase.occurredOn)?.month ?? 0;
-    final custom = !InstallmentAddPage.counts.contains(count);
+    final custom = !counts.contains(count);
     final children = <Widget>[
       _PurchaseCard(purchase: purchase, money: money),
       Column(
@@ -263,7 +276,7 @@ class _InstallmentAddPageState extends State<InstallmentAddPage> {
             spacing: 8,
             runSpacing: 8,
             children: [
-              for (final n in InstallmentAddPage.counts)
+              for (final n in counts)
                 FreevaChip(
                   label: '$n',
                   selected: n == count,

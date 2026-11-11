@@ -21,7 +21,7 @@ class RecurringRule {
     this.mode = 'auto',
     this.name,
     this.amountKind = 'fixed',
-    this.remindDaysBefore = 3,
+    required this.remindDaysBefore,
     this.overdue = false,
   });
 
@@ -135,7 +135,7 @@ class RecurringDraft {
     this.mode = 'auto',
     this.name,
     this.amountKind = 'fixed',
-    this.remindDaysBefore = 3,
+    required this.remindDaysBefore,
     this.repeat = true,
   });
 

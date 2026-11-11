@@ -1,4 +1,5 @@
 import 'wallet.dart';
+import '../../server_config/domain/app_limits.dart';
 
 enum CreditLevel { normal, high, critical }
 
@@ -41,12 +42,18 @@ class CreditCardStatus {
     return (value.toInt() / 10000).clamp(0, 1).toDouble();
   }
 
-  /// < 70% normal, 70–90% high, > 90% critical.
-  CreditLevel get level => ratio > .9
-      ? CreditLevel.critical
-      : ratio >= .7
-      ? CreditLevel.high
-      : CreditLevel.normal;
+  /// Below `creditCard.highUsagePercent` normal, from it high, above
+  /// `creditCard.criticalUsagePercent` critical (server config, MOB-P5-001).
+  CreditLevel levelWith(AppLimits limits) {
+    final percent = ratio * 100;
+    if (percent > limits.creditCriticalUsagePercent) {
+      return CreditLevel.critical;
+    }
+    if (percent >= limits.creditHighUsagePercent) {
+      return CreditLevel.high;
+    }
+    return CreditLevel.normal;
+  }
 
   /// Calendar days from [today] to the next due date; null without one.
   int? daysUntilDue(DateTime today) {

@@ -7,9 +7,11 @@ import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_button.dart';
 import '../../../../core/widgets/freeva_dialog.dart';
 import '../../../notifications/domain/notification_models.dart';
+import '../../../server_config/domain/app_limits.dart';
+import '../../../../core/di/injection.dart';
 
 /// Popup "Chọn giờ nhắc" (board N6 `NotifyTime`): hour and minute wheels,
-/// minutes in steps of [dailyLogMinuteStep]. Returns `HH:mm`, null on cancel.
+/// minutes in steps of `notification.minuteStep` (server config). Returns `HH:mm`, null on cancel.
 Future<String?> showDailyLogTimePicker(
   BuildContext context, {
   required String initial,
@@ -28,10 +30,15 @@ class DailyLogTimeDialog extends StatefulWidget {
   State<DailyLogTimeDialog> createState() => _DailyLogTimeDialogState();
 }
 
-const _minuteSlots = 60 ~/ dailyLogMinuteStep;
-
 class _DailyLogTimeDialogState extends State<DailyLogTimeDialog> {
-  late final (int, int) _start = snapDailyLogTime(widget.initial);
+  late final AppLimits _limits = getIt<AppLimitsSource>().requireLimits;
+  late final int _step = _limits.notificationMinuteStep;
+  late final int _minuteSlots = 60 ~/ _step;
+  late final (int, int) _start = snapDailyLogTime(
+    widget.initial,
+    step: _step,
+    fallback: _limits.dailyLogDefaultTime,
+  );
   late int _hour = _start.$1;
   late int _minute = _start.$2;
   // Loop wheels start far from 0 so both directions scroll freely.
@@ -39,7 +46,7 @@ class _DailyLogTimeDialogState extends State<DailyLogTimeDialog> {
     initialItem: 24 * 50 + _start.$1,
   );
   late final _minutes = FixedExtentScrollController(
-    initialItem: _minuteSlots * 50 + _start.$2 ~/ dailyLogMinuteStep,
+    initialItem: _minuteSlots * 50 + _start.$2 ~/ _step,
   );
 
   @override
@@ -145,11 +152,9 @@ class _DailyLogTimeDialogState extends State<DailyLogTimeDialog> {
                       label: s.notifyTimeMinute,
                       controller: _minutes,
                       count: _minuteSlots,
-                      selected: _minute ~/ dailyLogMinuteStep,
-                      text: (i) =>
-                          (i * dailyLogMinuteStep).toString().padLeft(2, '0'),
-                      onChanged: (i) =>
-                          setState(() => _minute = i * dailyLogMinuteStep),
+                      selected: _minute ~/ _step,
+                      text: (i) => (i * _step).toString().padLeft(2, '0'),
+                      onChanged: (i) => setState(() => _minute = i * _step),
                     ),
                   ],
                 ),

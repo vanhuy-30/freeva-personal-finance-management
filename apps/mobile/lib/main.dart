@@ -9,6 +9,7 @@ import 'features/recurring/presentation/widgets/recurring_resume_listener.dart';
 import 'features/sync/presentation/viewmodels/sync_view_model.dart';
 import 'features/sync/presentation/widgets/sync_resume_listener.dart';
 import 'features/server_config/presentation/viewmodels/server_config_view_model.dart';
+import 'features/server_config/presentation/widgets/server_config_boundary.dart';
 import 'features/server_config/presentation/widgets/server_config_listener.dart';
 
 import 'package:flutter/material.dart';
@@ -71,7 +72,7 @@ class FreevaApp extends StatelessWidget {
                   builder: (context, child) =>
                       MediaQuery.withClampedTextScaling(
                         maxScaleFactor: FreevaTypography.maxTextScale,
-                        child: child!,
+                        child: ServerConfigBoundary(child: child!),
                       ),
                   locale: Locale(profile.locale),
                   supportedLocales: S.supportedLocales,

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/core/widgets/freeva_switch.dart';
 import 'package:mobile/core/di/injection.dart';
@@ -39,6 +42,7 @@ void main() {
   tearDown(() async {
     g.dispose();
     await getIt.reset();
+    registerTestServerConfig();
   });
 
   group('Cá nhân', () {

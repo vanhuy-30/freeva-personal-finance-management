@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:mobile/core/di/injection.dart';
 import 'package:mobile/core/l10n/generated/app_localizations.dart';
 import 'package:mobile/core/theme/app_theme.dart';
@@ -200,6 +203,7 @@ Future<Widget> e1App(
   double scale = 1,
 }) async {
   await getIt.reset();
+  registerTestServerConfig();
   getIt.registerSingleton<AuthViewModel>(
     DefaultAuthViewModel(
         DefaultAuthUseCases(

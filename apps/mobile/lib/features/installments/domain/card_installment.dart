@@ -121,9 +121,6 @@ class InstallmentDraft {
   final int installmentCount;
   final BigInt? installmentMinor;
   final String firstDueOn;
-
-  static const minCount = 2;
-  static const maxCount = 60;
 }
 
 /// Installments falling due in a range on one card.

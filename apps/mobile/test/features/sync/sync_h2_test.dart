@@ -1,4 +1,7 @@
 import 'package:dartz/dartz.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -57,6 +60,7 @@ void main() {
 
   setUp(() async {
     await getIt.reset();
+    registerTestServerConfig();
     tx = StubTransactionViewModel();
     model = FixedSync([conflict()]);
     getIt
