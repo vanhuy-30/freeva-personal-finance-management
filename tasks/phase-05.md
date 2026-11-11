@@ -86,12 +86,13 @@ Thứ tự: `BE-P5-E08` → `WA-P5-001` → `MOB-P5-E08` → `BE-P5-001` / `MOB-
 - Note: xong 2026-11-11: 9 board trên trang canvas **09 · Phase 5** (nhóm R, S, T, U), [pattern](../docs/brand/patterns/R-suggestions-insights.md). Chủ dự án bỏ what-if và nút "Không đúng"; insight có hình so sánh nhỏ; chi tiết mục tiêu đổi ô "Ngày đạt" thành "Hạn" và thêm dải mốc Hôm nay → Hạn → Dự kiến.
 
 ### PRD-P5-E01 / MOB-P5-002 — Tắt gợi ý tự động và xóa dữ liệu đã học
-- Status: todo
+- Status: done — 2026-11-11
 - Module: 18, 21
 - Gate: post-v1
 - Depends: BE-P5-E08
 - DoD: các gợi ý của Phase 5 chạy trên server của Freeva, không gửi dữ liệu ra ngoài: mặc định bật, user tắt được trong Cài đặt. Tắt thì API gợi ý và insight không trả kết quả cho user đó. User xóa được mapping merchant → danh mục đã học và insight đã lưu. Xuất dữ liệu có các mục này; xóa tài khoản xóa luôn. Đồng ý dùng AI bên ngoài là việc của `PRD-P8-E02`.
 - Note: 2026-11-11 bỏ phụ thuộc `BE-P5-E03` (phụ thuộc vòng tròn); phần đồng ý AI bên ngoài chuyển sang Phase 8.
+- Note: xong 2026-11-11: `User.autoSuggestEnabled` + `PUT /profile/auto-suggest`; bảng `CategorySuggestionMapping` (E03 ghi) với `GET`/`DELETE /category-suggestions/mappings`; `AutoSuggestPolicy` (cờ bật và user chưa tắt) cho E03/E04/E06; xuất dữ liệu và xóa tài khoản có bảng mới. Insight không lưu (chốt 2026-11-11), nên "dữ liệu đã học" chỉ là cửa hàng đã nhớ. App: dòng "Gợi ý tự động" ở Cá nhân → Ứng dụng (chỉ khi một trong ba cờ bật), màn U.1 và popup U.2. [Kiến trúc](../docs/architecture/auto-suggest.md).
 
 ### BE-P5-E03 / MOB-P5-E03 — Gợi ý danh mục
 - Status: todo

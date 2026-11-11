@@ -5638,4 +5638,52 @@ class SVi extends S {
 
   @override
   String get commonAnd => 'và';
+
+  @override
+  String get autoSuggestTitle => 'Gợi ý tự động';
+
+  @override
+  String get autoSuggestOn => 'Bật';
+
+  @override
+  String get autoSuggestOff => 'Tắt';
+
+  @override
+  String get autoSuggestSubtitle => 'Danh mục, phân tích, dự báo';
+
+  @override
+  String get autoSuggestPrivacy =>
+      'Chỉ tính trên sổ của bạn, không gửi ra ngoài.';
+
+  @override
+  String autoSuggestMerchants(int count) {
+    return 'Cửa hàng đã nhớ · $count';
+  }
+
+  @override
+  String autoSuggestForget(String merchant) {
+    return 'Quên $merchant';
+  }
+
+  @override
+  String get autoSuggestClear => 'Xoá dữ liệu đã học';
+
+  @override
+  String get autoSuggestClearTitle => 'Xoá dữ liệu đã học?';
+
+  @override
+  String autoSuggestClearBody(int count) {
+    return '$count cửa hàng đã nhớ sẽ bị xoá. Giao dịch vẫn giữ nguyên.';
+  }
+
+  @override
+  String get autoSuggestDelete => 'Xoá';
+
+  @override
+  String get autoSuggestError => 'Chưa lưu được. Thử lại nhé.';
+
+  @override
+  String autoSuggestSeeAll(int count) {
+    return 'Xem cả $count';
+  }
 }

@@ -2867,5 +2867,22 @@
   "tradePriceRow": "Purchase price",
   "serverConfigErrorTitle": "Settings did not load",
   "serverConfigErrorMessage": "Check your connection and try again.",
-  "commonAnd": "and"
+  "commonAnd": "and",
+  "autoSuggestTitle": "Auto suggestions",
+  "autoSuggestOn": "On",
+  "autoSuggestOff": "Off",
+  "autoSuggestSubtitle": "Categories, insights, forecasts",
+  "autoSuggestPrivacy": "Worked out from your records only, never sent elsewhere.",
+  "autoSuggestMerchants": "Remembered shops · {count}",
+  "@autoSuggestMerchants": {"placeholders": {"count": {"type": "int"}}},
+  "autoSuggestForget": "Forget {merchant}",
+  "@autoSuggestForget": {"placeholders": {"merchant": {"type": "String"}}},
+  "autoSuggestClear": "Delete learned data",
+  "autoSuggestClearTitle": "Delete learned data?",
+  "autoSuggestClearBody": "{count} remembered shops will be deleted. Your transactions stay as they are.",
+  "@autoSuggestClearBody": {"placeholders": {"count": {"type": "int"}}},
+  "autoSuggestDelete": "Delete",
+  "autoSuggestError": "Could not save. Please try again.",
+  "autoSuggestSeeAll": "See all {count}",
+  "@autoSuggestSeeAll": {"placeholders": {"count": {"type": "int"}}}
 }

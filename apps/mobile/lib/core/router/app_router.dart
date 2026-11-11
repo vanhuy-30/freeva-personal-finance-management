@@ -52,6 +52,7 @@ import '../../features/calendar/presentation/pages/calendar_page.dart';
 import '../../features/settings/presentation/pages/change_pin_page.dart';
 import '../../features/settings/presentation/pages/pin_setup_page.dart';
 import '../../features/settings/presentation/pages/notification_settings_page.dart';
+import '../../features/auto_suggest/presentation/pages/auto_suggest_page.dart';
 import '../../features/settings/presentation/pages/security_page.dart';
 import '../../features/settings/presentation/pages/sessions_page.dart';
 import '../../features/settings/presentation/pages/settings_page.dart';
@@ -385,6 +386,10 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
         path: '/me/notifications',
         builder: (context, state) =>
             const AuthGate(child: NotificationSettingsPage()),
+      ),
+      GoRoute(
+        path: '/me/auto-suggest',
+        builder: (context, state) => const AuthGate(child: AutoSuggestPage()),
       ),
       GoRoute(
         path: '/me/tags',

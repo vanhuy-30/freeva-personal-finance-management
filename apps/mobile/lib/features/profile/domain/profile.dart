@@ -9,6 +9,7 @@ class Profile {
     this.goals = const [],
     this.displayCurrency,
     this.monthlyIncomeMinor,
+    this.autoSuggestEnabled = true,
   });
 
   /// Greeting name; null until the user sets one (Hồ sơ).
@@ -26,6 +27,10 @@ class Profile {
   /// not given. Used for the first budget suggestion and to show a goal's
   /// monthly saving as a share of it.
   final BigInt? monthlyIncomeMinor;
+
+  /// Gợi ý tự động (category suggestions, insights, forecast). Read-only here:
+  /// saved with its own call, never part of the PUT body. Default on.
+  final bool autoSuggestEnabled;
   final String locale;
   final String currency;
   final String timezone;
@@ -51,6 +56,7 @@ class Profile {
     goals: goals,
     displayCurrency: displayCurrency,
     monthlyIncomeMinor: monthlyIncomeMinor,
+    autoSuggestEnabled: autoSuggestEnabled,
   );
 
   /// Currency the Overview shows totals in: the saved choice, else [currency].
@@ -66,6 +72,7 @@ class Profile {
     goals: goals,
     displayCurrency: code,
     monthlyIncomeMinor: monthlyIncomeMinor,
+    autoSuggestEnabled: autoSuggestEnabled,
   );
 
   Profile withMonthlyIncome(BigInt? minor) => Profile(
@@ -78,6 +85,7 @@ class Profile {
     goals: goals,
     displayCurrency: displayCurrency,
     monthlyIncomeMinor: minor,
+    autoSuggestEnabled: autoSuggestEnabled,
   );
 
   bool samePreferences(Profile other) =>

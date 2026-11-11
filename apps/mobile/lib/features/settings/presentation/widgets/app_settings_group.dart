@@ -5,6 +5,7 @@ import 'package:mobile/core/theme/lucide_icons.g.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/widgets/settings_group.dart';
 import '../../../../core/widgets/settings_row.dart';
+import '../../../auto_suggest/presentation/viewmodels/auto_suggest_view_model.dart';
 import '../../../profile/presentation/viewmodels/profile_view_model.dart';
 import '../../domain/account_labels.dart';
 import '../../domain/app_preferences.dart';
@@ -19,11 +20,15 @@ class AppSettingsGroup extends StatelessWidget {
   const AppSettingsGroup({
     required this.settings,
     required this.profile,
+    this.autoSuggest,
     super.key,
   });
 
   final SettingsViewModel settings;
   final ProfileViewModel profile;
+
+  /// Gợi ý tự động row; shown only when one of its server flags is on.
+  final AutoSuggestViewModel? autoSuggest;
 
   @override
   Widget build(BuildContext context) {
@@ -115,6 +120,14 @@ class AppSettingsGroup extends StatelessWidget {
           value: settings.sessionAlertsEnabled ? s.meNotifyOnCount(1) : null,
           onTap: () => context.push('/me/notifications'),
         ),
+        if (autoSuggest case final auto? when auto.available)
+          SettingsRow(
+            icon: LucideIcons.sparkles,
+            title: s.autoSuggestTitle,
+            minHeight: rowHeight,
+            value: auto.enabled ? s.autoSuggestOn : s.autoSuggestOff,
+            onTap: () => context.push('/me/auto-suggest'),
+          ),
         SettingsRow.toggle(
           minHeight: rowHeight,
           icon: LucideIcons.eye,

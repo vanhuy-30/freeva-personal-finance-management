@@ -13,6 +13,7 @@ import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_dialog.dart';
 import '../../../../core/widgets/freeva_top_bar.dart';
 import '../../../auth/presentation/viewmodels/auth_view_model.dart';
+import '../../../auto_suggest/presentation/viewmodels/auto_suggest_view_model.dart';
 import '../../../auth/presentation/widgets/session_alert_banner.dart';
 import '../../../profile/presentation/viewmodels/profile_view_model.dart';
 import '../../../tags/domain/tag_use_cases.dart';
@@ -53,6 +54,10 @@ class _SettingsPageState extends State<SettingsPage> {
       : null;
   final RecurringViewModel? recurring = getIt.isRegistered<RecurringViewModel>()
       ? getIt<RecurringViewModel>()
+      : null;
+  final AutoSuggestViewModel? autoSuggest =
+      getIt.isRegistered<AutoSuggestViewModel>()
+      ? getIt<AutoSuggestViewModel>()
       : null;
   int? tagCount;
 
@@ -119,6 +124,7 @@ class _SettingsPageState extends State<SettingsPage> {
       if (loans != null) loans!,
       if (recurring != null) recurring!,
       if (wallets != null) wallets!,
+      if (autoSuggest != null) autoSuggest!,
     ]),
     builder: (context, _) {
       final s = S.of(context);
@@ -155,7 +161,11 @@ class _SettingsPageState extends State<SettingsPage> {
               month: DateTime.now().month,
             ),
             MoneySetupGroup(profile: profile, tagCount: tagCount),
-            AppSettingsGroup(settings: settings, profile: profile),
+            AppSettingsGroup(
+              settings: settings,
+              profile: profile,
+              autoSuggest: autoSuggest,
+            ),
             const DataSettingsGroup(),
             const HelpSettingsGroup(),
             const SizedBox(height: FreevaSpace.s4),

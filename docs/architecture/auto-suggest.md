@@ -30,3 +30,7 @@ Xuất JSON có `profile.autoSuggestEnabled` và `categorySuggestionMappings` (`
 ## Riêng tư
 
 Tên cửa hàng là dữ liệu tài chính: không log, filter của module trả `503 SUGGESTIONS_UNAVAILABLE` không kèm thông điệp DB.
+
+## App (MOB-P5-002)
+
+Feature `lib/features/auto_suggest/`. Dòng "Gợi ý tự động" (icon lấp lánh, Bật/Tắt) ở Cá nhân → Ứng dụng sau Thông báo, chỉ hiện khi ít nhất một cờ `category_suggest`, `insights`, `forecast` bật. Màn `/me/auto-suggest` (U.1): công tắc lưu ngay (đổi trên màn trước, lỗi thì trả lại + toast), danh sách 4 dòng đầu và "Xem cả N", × quên từng cửa hàng, "Xoá dữ liệu đã học" mở hộp xác nhận chung (U.2). Không có cửa hàng nào (hoặc tải lỗi) thì ẩn nhóm và nút xoá. Quên một dòng mà API báo lỗi thì tải lại danh sách: dòng đã mất coi như đã quên. `Profile.autoSuggestEnabled` mặc định `true` khi server không trả, không gửi lên `PUT /profile`. Golden U.1 sáng/tối/trống và U.2, đối chiếu board bằng `design_compare` nhóm `U`.

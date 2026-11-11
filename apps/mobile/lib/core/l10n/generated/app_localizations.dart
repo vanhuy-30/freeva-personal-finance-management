@@ -9766,6 +9766,84 @@ abstract class S {
   /// In en, this message translates to:
   /// **'and'**
   String get commonAnd;
+
+  /// No description provided for @autoSuggestTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto suggestions'**
+  String get autoSuggestTitle;
+
+  /// No description provided for @autoSuggestOn.
+  ///
+  /// In en, this message translates to:
+  /// **'On'**
+  String get autoSuggestOn;
+
+  /// No description provided for @autoSuggestOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get autoSuggestOff;
+
+  /// No description provided for @autoSuggestSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories, insights, forecasts'**
+  String get autoSuggestSubtitle;
+
+  /// No description provided for @autoSuggestPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Worked out from your records only, never sent elsewhere.'**
+  String get autoSuggestPrivacy;
+
+  /// No description provided for @autoSuggestMerchants.
+  ///
+  /// In en, this message translates to:
+  /// **'Remembered shops · {count}'**
+  String autoSuggestMerchants(int count);
+
+  /// No description provided for @autoSuggestForget.
+  ///
+  /// In en, this message translates to:
+  /// **'Forget {merchant}'**
+  String autoSuggestForget(String merchant);
+
+  /// No description provided for @autoSuggestClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete learned data'**
+  String get autoSuggestClear;
+
+  /// No description provided for @autoSuggestClearTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete learned data?'**
+  String get autoSuggestClearTitle;
+
+  /// No description provided for @autoSuggestClearBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} remembered shops will be deleted. Your transactions stay as they are.'**
+  String autoSuggestClearBody(int count);
+
+  /// No description provided for @autoSuggestDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get autoSuggestDelete;
+
+  /// No description provided for @autoSuggestError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save. Please try again.'**
+  String get autoSuggestError;
+
+  /// No description provided for @autoSuggestSeeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See all {count}'**
+  String autoSuggestSeeAll(int count);
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {
