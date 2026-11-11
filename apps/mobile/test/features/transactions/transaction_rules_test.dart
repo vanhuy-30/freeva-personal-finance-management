@@ -10,6 +10,8 @@ import 'package:mobile/features/transactions/domain/transaction_rules.dart';
 import 'package:mobile/features/wallets/domain/wallet.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 
+import '../../support/server_config_fixture.dart';
+
 void main() {
   setUpAll(tzdata.initializeTimeZones);
 
@@ -80,6 +82,7 @@ void main() {
       const [WalletCurrency('VND', 0)],
       categories,
       tags,
+      limits: testLimits(),
     );
     final command = result.getOrElse(() => throw StateError('invalid'));
     expect(command.legs.single.amountMinor, BigInt.from(-150000));
@@ -126,6 +129,7 @@ void main() {
       currencies,
       categories,
       const [],
+      limits: testLimits(),
     );
     expect(
       ok.getOrElse(() => throw StateError('invalid')).occurredTime,
@@ -145,6 +149,7 @@ void main() {
       currencies,
       categories,
       const [],
+      limits: testLimits(),
     );
     expect(bad.isLeft(), isTrue);
   });
@@ -184,6 +189,7 @@ void main() {
         currencies,
         categories,
         const [],
+        limits: testLimits(),
       );
       AuthError? code(Either<AuthFailure, TransactionCommand> r) =>
           r.fold((f) => f.code, (_) => null);
@@ -211,6 +217,7 @@ void main() {
       const [WalletCurrency('VND', 0)],
       const [FinanceCategory(id: 'food', name: 'Ăn uống', parentId: null)],
       const [],
+      limits: testLimits(),
     ).getOrElse(() => throw StateError('invalid'));
     expect(blank.merchant, isNull);
     expect(blank.tagIds, isEmpty);
@@ -221,6 +228,7 @@ void main() {
       const [WalletCurrency('VND', 0)],
       const [],
       const [],
+      limits: testLimits(),
     );
     expect(transfer.isLeft(), isTrue);
 
@@ -246,6 +254,7 @@ void main() {
             version: 1,
           ),
       ],
+      limits: testLimits(),
     );
     expect(tooMany.isLeft(), isTrue);
   });
@@ -259,6 +268,7 @@ void main() {
         const [WalletCurrency('VND', 0)],
         const [],
         const [],
+        limits: testLimits(),
       ).getOrElse(() => throw StateError('invalid'));
       expect(same.legs.map((leg) => leg.amountMinor), [
         BigInt.from(-150000),
@@ -279,6 +289,7 @@ void main() {
         const [WalletCurrency('USD', 2), WalletCurrency('VND', 0)],
         const [],
         const [],
+        limits: testLimits(),
       ).getOrElse(() => throw StateError('invalid'));
       expect(fx.legs[1].amountMinor, BigInt.from(250000));
       expect(fx.rate, '25000.00000000');
@@ -294,6 +305,7 @@ void main() {
         const [WalletCurrency('USD', 2), WalletCurrency('VND', 0)],
         const [],
         const [],
+        limits: testLimits(),
       );
       expect(fraction.isLeft(), isTrue);
     },

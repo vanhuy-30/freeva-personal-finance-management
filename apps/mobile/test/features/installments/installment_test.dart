@@ -250,7 +250,13 @@ void main() {
         StubWalletViewModel(wallets: [card]),
         DefaultAuthViewModel(
           DefaultAuthUseCases(
-            AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+            AuthRepositoryImpl(
+              FakeApi(),
+              MemoryVault(),
+              FakeBiometrics(),
+              testServerConfigModel(),
+            ),
+            testServerConfigModel(),
           ),
         )..stage = AuthStage.unlocked,
       );

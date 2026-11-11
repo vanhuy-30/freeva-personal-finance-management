@@ -4,6 +4,7 @@ import 'package:injectable/injectable.dart';
 import '../../auth/domain/auth_repository.dart';
 import 'debt_repository.dart';
 import 'personal_debt.dart';
+import '../../server_config/domain/app_limits.dart';
 
 abstract class DebtUseCases {
   Future<Either<AuthFailure, List<PersonalDebt>>> list();
@@ -24,14 +25,20 @@ abstract class DebtUseCases {
 
 @LazySingleton(as: DebtUseCases)
 class DefaultDebtUseCases implements DebtUseCases {
-  DefaultDebtUseCases(this._repository);
+  DefaultDebtUseCases(this._repository, this._limits);
+
+  /// Server limits (MOB-P5-001).
+  final AppLimitsSource _limits;
   final DebtRepository _repository;
 
   static final _day = RegExp(r'^\d{4}-\d{2}-\d{2}$');
   static const _invalid = AuthFailure(AuthError.invalidInput);
 
-  bool _name(String name) => name.trim().isNotEmpty && name.trim().length <= 80;
-  bool _note(String? note) => note == null || note.trim().length <= 500;
+  bool _name(String name) =>
+      name.trim().isNotEmpty &&
+      name.trim().length <= _limits.requireLimits.debtNameMaxLength;
+  bool _note(String? note) =>
+      note == null || note.trim().length <= _limits.requireLimits.noteMaxLength;
 
   /// The due date may not come before the day the money moved.
   bool _due(String? due, String occurredOn) =>

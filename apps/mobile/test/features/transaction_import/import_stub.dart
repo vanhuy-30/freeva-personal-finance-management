@@ -20,6 +20,7 @@ import 'package:mobile/features/wallets/domain/wallet.dart';
 import 'package:mobile/features/wallets/domain/wallet_use_cases.dart';
 
 import '../home/fixtures.dart' show wallet;
+import '../../support/server_config_fixture.dart';
 
 /// CSV the picker hands back unless a test says otherwise.
 const sampleCsv =
@@ -221,6 +222,7 @@ class ImportHarness {
         FakeImportCategories(),
         picker,
         auth,
+        testServerConfigModel(),
       ),
     );
   }
@@ -228,6 +230,7 @@ class ImportHarness {
 
 /// The page on its own router, backed by the real view model.
 Widget importApp(ImportHarness h, {bool dark = false, double scale = 1}) {
+  registerTestServerConfig();
   getIt.registerFactory<ImportViewModel>(() => h.model);
   final router = GoRouter(
     routes: [

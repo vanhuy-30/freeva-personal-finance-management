@@ -7,6 +7,8 @@ import 'package:mobile/features/server_config/presentation/viewmodels/server_con
 import 'package:dartz/dartz.dart';
 import 'package:mobile/features/auth/domain/auth_repository.dart';
 
+import 'package:mobile/core/app_version/app_version.dart';
+
 /// Server config as the API returns it with nothing edited (backend registry defaults).
 Map<String, Object> testConfigValues([
   Map<String, Object> overrides = const {},
@@ -37,6 +39,46 @@ Map<String, Object> testConfigValues([
   'goal.maxDateOffsetYears': 60,
   'notification.minuteStep': 15,
   'notification.dailyLogDefaultTime': '21:00',
+  'password.minLength': 8,
+  'limit.passwordMaxLength': 128,
+  'password.veryStrongLength': 16,
+  'security.pinMaxAttempts': 5,
+  'limit.emailMaxLength': 254,
+  'profile.displayNameMaxLength': 60,
+  'onboarding.maxGoals': 2,
+  'onboarding.incomeSuggestionsVnd': [
+    '10000000',
+    '15000000',
+    '25000000',
+    '40000000',
+  ],
+  'onboarding.savingsSharePercent': 20,
+  'onboarding.goalKinds': [
+    'emergency',
+    'home',
+    'car',
+    'travel',
+    'education',
+    'wedding',
+    'custom',
+  ],
+  'import.maxRows': 2000,
+  'limit.importMaxChars': 1000000,
+  'export.csvMaxRows': 50000,
+  'transaction.maxTags': 20,
+  'limit.feedbackMaxLength': 2000,
+  'limit.periodStartDayMax': 28,
+  'limit.walletNameMaxLength': 100,
+  'limit.categoryNameMaxLength': 100,
+  'limit.tagNameMaxLength': 100,
+  'limit.goalNameMaxLength': 80,
+  'limit.loanNameMaxLength': 80,
+  'limit.recurringNameMaxLength': 80,
+  'limit.investmentNameMaxLength': 80,
+  'limit.debtNameMaxLength': 80,
+  'limit.transactionNoteMaxLength': 2000,
+  'limit.merchantMaxLength': 200,
+  'limit.noteMaxLength': 500,
   ...overrides,
 };
 
@@ -71,6 +113,10 @@ ServerConfigViewModel registerTestServerConfig([
   if (it.isRegistered<FeatureFlagService>()) {
     it.unregister<FeatureFlagService>();
   }
+  // Shown on settings and sent with feedback; fixed so goldens stay stable.
+  if (!it.isRegistered<AppVersion>()) {
+    it.registerSingleton<AppVersion>(AppVersion.fixed('0.0.1+1'));
+  }
   it
     ..registerSingleton<ServerConfigViewModel>(model)
     ..registerSingleton<AppLimitsSource>(model)
@@ -80,8 +126,27 @@ ServerConfigViewModel registerTestServerConfig([
 
 class _NoNetwork implements ServerConfigRepository {
   @override
+  Future<Either<AuthFailure, ServerConfig>> fetchPublic() => fetch();
+
+  @override
   Future<Either<AuthFailure, ServerConfig>> fetch() async =>
       left(const AuthFailure(AuthError.network));
+  @override
+  Future<ServerConfig?> readCached() async => null;
+  @override
+  Future<void> writeCached(ServerConfig config) async {}
+  @override
+  Future<void> clearCached() async {}
+}
+
+/// Answers every config download with [testServerConfig] (no network).
+class TestServerConfigRepository implements ServerConfigRepository {
+  @override
+  Future<Either<AuthFailure, ServerConfig>> fetch() async =>
+      right(testServerConfig());
+  @override
+  Future<Either<AuthFailure, ServerConfig>> fetchPublic() async =>
+      right(testServerConfig());
   @override
   Future<ServerConfig?> readCached() async => null;
   @override

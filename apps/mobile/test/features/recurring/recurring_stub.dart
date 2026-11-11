@@ -290,11 +290,17 @@ Future<RecurringHarness> recurringApp(
 }) async {
   await getIt.reset();
   registerTestServerConfig();
-  final repo = AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics());
-  final auth = DefaultAuthViewModel(DefaultAuthUseCases(repo))
-    ..stage = AuthStage.unlocked
-    ..hasPin = true
-    ..ready = true;
+  final repo = AuthRepositoryImpl(
+    FakeApi(),
+    MemoryVault(),
+    FakeBiometrics(),
+    testServerConfigModel(),
+  );
+  final auth =
+      DefaultAuthViewModel(DefaultAuthUseCases(repo, testServerConfigModel()))
+        ..stage = AuthStage.unlocked
+        ..hasPin = true
+        ..ready = true;
   final profiles = MemoryProfiles()
     ..value = const Profile(
       locale: 'vi',
@@ -305,7 +311,7 @@ Future<RecurringHarness> recurringApp(
       displayName: 'Minh',
     );
   final profile = DefaultProfileViewModel(
-    ProfileUseCases(profiles),
+    ProfileUseCases(profiles, testServerConfigModel()),
     auth,
     exportCase(repo),
   );

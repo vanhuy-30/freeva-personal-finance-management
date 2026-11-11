@@ -41,7 +41,13 @@ void main() {
     auth =
         DefaultAuthViewModel(
             DefaultAuthUseCases(
-              AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+              AuthRepositoryImpl(
+                FakeApi(),
+                MemoryVault(),
+                FakeBiometrics(),
+                testServerConfigModel(),
+              ),
+              testServerConfigModel(),
             ),
           )
           ..stage = AuthStage.unlocked
@@ -50,7 +56,10 @@ void main() {
     getIt.registerSingleton<AuthViewModel>(auth);
     expansion = _Expansion();
     model = DefaultCategoryViewModel(
-      DefaultCategoryUseCases(CategoryRepositoryImpl(api)),
+      DefaultCategoryUseCases(
+        CategoryRepositoryImpl(api),
+        testServerConfigModel(),
+      ),
       auth,
       expansion,
     );

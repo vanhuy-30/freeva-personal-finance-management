@@ -12,13 +12,14 @@ import 'package:mobile/features/profile/presentation/viewmodels/profile_view_mod
 
 import '../auth/fakes.dart';
 import 'fakes.dart';
+import '../../support/server_config_fixture.dart';
 
 void main() {
   test(
     'use case accepts days 1 and 28, rejects invalid fields without writes',
     () async {
       final repo = MemoryProfiles();
-      final cases = ProfileUseCases(repo);
+      final cases = ProfileUseCases(repo, testServerConfigModel());
       final options = (await repo.options()).getOrElse(
         () => throw StateError('options'),
       );
@@ -94,7 +95,7 @@ void main() {
       expect((await repo.save(initial)).isRight(), true);
       expect(api.body!['fiscalMonthStartDay'], isA<int>());
       expect(api.body!['version'], 1);
-      api.response['fiscalMonthStartDay'] = 29;
+      api.response['fiscalMonthStartDay'] = 0;
       expect((await repo.load()).isLeft(), true);
       api.failure = const AuthFailure(AuthError.expired);
       expect(
@@ -108,7 +109,7 @@ void main() {
     () async {
       final api = Transport();
       final repo = ProfileRepositoryImpl(api);
-      final cases = ProfileUseCases(repo);
+      final cases = ProfileUseCases(repo, testServerConfigModel());
       expect(
         (await cases.saveOnboarding(
           OnboardingAnswers(monthlyIncomeMinor: BigInt.from(25000000)),
@@ -154,7 +155,7 @@ void main() {
     () async {
       final api = Transport();
       final repo = ProfileRepositoryImpl(api);
-      final cases = ProfileUseCases(repo);
+      final cases = ProfileUseCases(repo, testServerConfigModel());
       expect(
         (await cases.saveOnboarding(
           const OnboardingAnswers(
@@ -225,17 +226,24 @@ void main() {
     setUp(() async {
       api = FakeApi();
       sharer = FakeSharer();
-      authRepo = AuthRepositoryImpl(api, MemoryVault(), FakeBiometrics());
+      authRepo = AuthRepositoryImpl(
+        api,
+        MemoryVault(),
+        FakeBiometrics(),
+        testServerConfigModel(),
+      );
       await authRepo.submit(AuthAction.login, {
         'email': 'user@example.com',
         'password': 'password long enough',
       });
-      auth = DefaultAuthViewModel(DefaultAuthUseCases(authRepo));
+      auth = DefaultAuthViewModel(
+        DefaultAuthUseCases(authRepo, testServerConfigModel()),
+      );
       auth.stage = AuthStage.unlocked;
       auth.hasPin = true;
       repo = MemoryProfiles();
       model = DefaultProfileViewModel(
-        ProfileUseCases(repo),
+        ProfileUseCases(repo, testServerConfigModel()),
         auth,
         exportCase(authRepo, sharer),
       );
@@ -378,15 +386,22 @@ void main() {
       api = FakeApi();
       vault = MemoryVault();
       sharer = FakeSharer();
-      authRepo = AuthRepositoryImpl(api, vault, FakeBiometrics());
+      authRepo = AuthRepositoryImpl(
+        api,
+        vault,
+        FakeBiometrics(),
+        testServerConfigModel(),
+      );
       await authRepo.submit(AuthAction.login, {
         'email': 'user@example.com',
         'password': 'password long enough',
       });
-      auth = DefaultAuthViewModel(DefaultAuthUseCases(authRepo));
+      auth = DefaultAuthViewModel(
+        DefaultAuthUseCases(authRepo, testServerConfigModel()),
+      );
       auth.stage = AuthStage.unlocked;
       model = DefaultProfileViewModel(
-        ProfileUseCases(MemoryProfiles()),
+        ProfileUseCases(MemoryProfiles(), testServerConfigModel()),
         auth,
         exportCase(authRepo, sharer),
       );

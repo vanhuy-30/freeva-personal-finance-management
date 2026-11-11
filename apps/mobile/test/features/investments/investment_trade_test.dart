@@ -11,6 +11,7 @@ import 'package:mobile/features/investments/presentation/pages/investment_kind_p
 
 import '../home/fixtures.dart' show b;
 import 'investment_stub.dart';
+import '../../support/server_config_fixture.dart';
 
 class _Api implements AuthorizedApi {
   final calls = <(String, String, Map<String, dynamic>?)>[];
@@ -146,6 +147,7 @@ void main() {
   group('use case', () {
     final cases = DefaultInvestmentUseCases(
       InvestmentRepositoryImpl(_Api()..json = _position()),
+      testServerConfigModel(),
     );
     final inv = InvestmentRepositoryImpl.parse(_position());
     SellDraft sale(int q, int price) => SellDraft(

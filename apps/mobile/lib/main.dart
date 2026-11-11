@@ -24,6 +24,7 @@ import 'core/router/app_router.dart';
 import 'core/sentry/sentry_bootstrap.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/tokens.g.dart';
+import 'core/app_version/app_version.dart';
 
 Future<void> main() async {
   await runFreeva(_boot);
@@ -39,6 +40,7 @@ Future<void> _boot() async {
   logger.op('boot env=${config.environment.name} api=${config.apiBaseUrl}');
   await getIt<SettingsViewModel>().load();
   await getIt<ServerConfigViewModel>().loadCached();
+  await getIt<AppVersion>().load();
   getIt<SyncViewModel>();
   getIt<RecurringViewModel>();
   getIt<NotificationViewModel>();

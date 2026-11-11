@@ -56,8 +56,9 @@ class SEn extends S {
       'Unable to complete. Check service configuration or use your PIN if biometrics are unavailable.';
 
   @override
-  String get authWrongPin =>
-      'Incorrect PIN. After five failed attempts, sign in again.';
+  String authWrongPin(int count) {
+    return 'Incorrect PIN. After $count failed attempts, sign in again.';
+  }
 
   @override
   String get authExpired =>
@@ -298,7 +299,9 @@ class SEn extends S {
   String get transactionTagName => 'Tag name';
 
   @override
-  String get transactionTagLimit => 'Up to 20 tags';
+  String transactionTagLimit(int count) {
+    return 'Up to $count tags';
+  }
 
   @override
   String get transactionSave => 'Save';
@@ -2328,7 +2331,9 @@ class SEn extends S {
   String get mePinRepeat => 'Repeat new PIN';
 
   @override
-  String get mePinWrong => 'Wrong PIN. After 5 misses you sign in again.';
+  String mePinWrong(int count) {
+    return 'Wrong PIN. After $count misses you sign in again.';
+  }
 
   @override
   String get mePinMismatch => 'The new PINs don\'t match.';
@@ -2355,15 +2360,17 @@ class SEn extends S {
   String get mePasswordRepeat => 'Repeat new password';
 
   @override
-  String get mePasswordHint =>
-      'At least 8 characters, with letters and digits.';
+  String mePasswordHint(int count) {
+    return 'At least $count characters, with letters and digits.';
+  }
 
   @override
   String get mePasswordWrong => 'That isn\'t your current password.';
 
   @override
-  String get mePasswordWeak =>
-      'Use at least 8 characters with letters and digits, different from the old one.';
+  String mePasswordWeak(int count) {
+    return 'Use at least $count characters with letters and digits, different from the old one.';
+  }
 
   @override
   String get mePasswordMismatch => 'The new passwords don\'t match.';
@@ -2770,7 +2777,9 @@ class SEn extends S {
   String get passwordStrong => 'Very strong';
 
   @override
-  String get passwordRuleLength => 'At least 8 characters';
+  String passwordRuleLength(int count) {
+    return 'At least $count characters';
+  }
 
   @override
   String get passwordRuleLetterDigit => 'Letters and numbers';
@@ -2928,7 +2937,9 @@ class SEn extends S {
   String get onbGoalsTitle => 'What can Freeva help you with?';
 
   @override
-  String get onbGoalsSub => 'Pick up to 2.';
+  String onbGoalsSub(int count) {
+    return 'Pick up to $count.';
+  }
 
   @override
   String get onbGoalTrack => 'Track spending';
@@ -2995,13 +3006,17 @@ class SEn extends S {
   }
 
   @override
-  String get onbSuggestSaveDefault => 'Save 20% of income';
+  String onbSuggestSaveDefault(int percent) {
+    return 'Save $percent% of income';
+  }
 
   @override
   String get onbSuggestSpend => 'Spending';
 
   @override
-  String get onbSuggestNoGoal => 'No goal yet, so 20% goes to savings for now.';
+  String onbSuggestNoGoal(int percent) {
+    return 'No goal yet, so $percent% goes to savings for now.';
+  }
 
   @override
   String get onbSuggestHint => 'You can change it any time in Monthly budget.';
@@ -4822,8 +4837,9 @@ class SEn extends S {
   }
 
   @override
-  String get dataExportTooMany =>
-      'More than 50,000 transactions. Pick a shorter range or fewer wallets.';
+  String dataExportTooMany(String count) {
+    return 'More than $count transactions. Pick a shorter range or fewer wallets.';
+  }
 
   @override
   String get dataExportButton => 'Export file';
@@ -4863,8 +4879,9 @@ class SEn extends S {
   String get importSourceOtherHint => 'You pick the date and amount columns';
 
   @override
-  String get importSourceNote =>
-      'Up to 2,000 rows at a time. Transactions you already have are skipped.';
+  String importSourceNote(String count) {
+    return 'Up to $count rows at a time. Transactions you already have are skipped.';
+  }
 
   @override
   String get importPickFile => 'Choose CSV file';
@@ -4877,8 +4894,9 @@ class SEn extends S {
   String get importProblemEmpty => 'This file has no rows yet.';
 
   @override
-  String get importProblemTooMany =>
-      'This file has more than 2,000 rows. Split it and import in parts.';
+  String importProblemTooMany(String count) {
+    return 'This file has more than $count rows. Split it and import in parts.';
+  }
 
   @override
   String get importProblemTooLarge =>

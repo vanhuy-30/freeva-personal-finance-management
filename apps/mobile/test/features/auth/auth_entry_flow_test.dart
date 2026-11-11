@@ -8,6 +8,7 @@ import 'package:mobile/features/settings/domain/settings_use_cases.dart';
 
 import '../settings/fakes.dart';
 import 'fakes.dart';
+import '../../support/server_config_fixture.dart';
 
 void main() {
   late FakeApi api;
@@ -18,7 +19,15 @@ void main() {
     api = FakeApi();
     vault = MemoryVault();
     model = DefaultAuthViewModel(
-      DefaultAuthUseCases(AuthRepositoryImpl(api, vault, FakeBiometrics())),
+      DefaultAuthUseCases(
+        AuthRepositoryImpl(
+          api,
+          vault,
+          FakeBiometrics(),
+          testServerConfigModel(),
+        ),
+        testServerConfigModel(),
+      ),
     );
   });
   tearDown(() => model.dispose());
@@ -134,7 +143,15 @@ void main() {
         SettingsRepositoryImpl(MemoryPreferences()),
       );
       DefaultAuthViewModel fresh() => DefaultAuthViewModel(
-        DefaultAuthUseCases(AuthRepositoryImpl(api, vault, FakeBiometrics())),
+        DefaultAuthUseCases(
+          AuthRepositoryImpl(
+            api,
+            vault,
+            FakeBiometrics(),
+            testServerConfigModel(),
+          ),
+          testServerConfigModel(),
+        ),
         settings: cases,
       );
       final first = fresh();
@@ -157,7 +174,15 @@ void main() {
       await model.rememberName(' Minh ');
       expect(model.name, 'Minh');
       final restarted = DefaultAuthViewModel(
-        DefaultAuthUseCases(AuthRepositoryImpl(api, vault, FakeBiometrics())),
+        DefaultAuthUseCases(
+          AuthRepositoryImpl(
+            api,
+            vault,
+            FakeBiometrics(),
+            testServerConfigModel(),
+          ),
+          testServerConfigModel(),
+        ),
       );
       addTearDown(restarted.dispose);
       await restarted.initialize();

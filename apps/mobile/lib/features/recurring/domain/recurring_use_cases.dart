@@ -80,7 +80,7 @@ class DefaultRecurringUseCases implements RecurringUseCases {
       final name = draft.name?.trim() ?? '';
       if (draft.type != 'expense' ||
           name.isEmpty ||
-          name.length > 80 ||
+          name.length > _limits.requireLimits.recurringNameMaxLength ||
           draft.amountMinor >= BigInt.zero ||
           draft.counterAccountId != null) {
         return const AuthFailure(AuthError.invalidInput);

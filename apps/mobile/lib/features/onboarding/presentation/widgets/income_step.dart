@@ -99,11 +99,13 @@ class IncomeStep extends StatelessWidget {
                 spacing: FreevaSpace.s2,
                 runSpacing: FreevaSpace.s2,
                 children: [
-                  for (final value in OnboardingViewModel.incomeSuggestions)
+                  for (final value in model.incomeSuggestions)
                     FreevaChip(
-                      label: s.onbIncomeChip('${value ~/ 1000000}'),
-                      selected: model.income == BigInt.from(value),
-                      onTap: () => model.setIncome(value),
+                      label: s.onbIncomeChip(
+                        '${value ~/ BigInt.from(1000000)}',
+                      ),
+                      selected: model.income == value,
+                      onTap: () => model.setIncome(value.toInt()),
                     ),
                 ],
               ),

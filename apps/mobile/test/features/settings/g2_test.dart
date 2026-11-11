@@ -27,6 +27,8 @@ import '../notifications/fake_notification_view_model.dart';
 import '../transactions/c1_stub.dart' show StubTransactionViewModel;
 import 'g1_harness.dart';
 
+import 'package:mobile/core/app_version/app_version.dart';
+
 class FakeTags implements TagUseCases {
   final tags = [
     const Tag(
@@ -181,7 +183,12 @@ void main() {
   test(
     'a failed send keeps the form and an expired session signs out',
     () async {
-      final model = FeedbackViewModel(feedback, g.auth)..edit(message: 'hi');
+      final model = FeedbackViewModel(
+        feedback,
+        g.auth,
+        testServerConfigModel(),
+        AppVersion.fixed('0.0.1+1'),
+      )..edit(message: 'hi');
       feedback.failure = const AuthFailure(AuthError.network);
       await model.send();
       expect(model.sent, isFalse);

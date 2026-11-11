@@ -369,7 +369,7 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
         FreevaTextField(
           label: s.recName,
           controller: name,
-          maxLength: 80,
+          maxLength: limits.recurringNameMaxLength,
           leadingIcon: category == null
               ? LucideIcons.receiptText
               : categoryIcon(category.iconToken),

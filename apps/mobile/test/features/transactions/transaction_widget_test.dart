@@ -58,14 +58,23 @@ void main() {
     auth =
         DefaultAuthViewModel(
             DefaultAuthUseCases(
-              AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+              AuthRepositoryImpl(
+                FakeApi(),
+                MemoryVault(),
+                FakeBiometrics(),
+                testServerConfigModel(),
+              ),
+              testServerConfigModel(),
             ),
           )
           ..stage = AuthStage.unlocked
           ..hasPin = true
           ..ready = true;
     getIt.registerSingleton<AuthViewModel>(auth);
-    final walletCases = DefaultWalletUseCases(WalletRepositoryImpl(api));
+    final walletCases = DefaultWalletUseCases(
+      WalletRepositoryImpl(api),
+      testServerConfigModel(),
+    );
     wallets = DefaultWalletViewModel(walletCases, auth);
     final analytics = RecordingAnalytics();
     sync = DefaultSyncViewModel(
@@ -74,16 +83,23 @@ void main() {
       analytics,
     );
     model = DefaultTransactionViewModel(
-      DefaultTransactionUseCases(TransactionRepositoryImpl(api)),
-      DefaultCategoryUseCases(CategoryRepositoryImpl(api)),
-      DefaultTagUseCases(TagRepositoryImpl(api)),
+      DefaultTransactionUseCases(
+        TransactionRepositoryImpl(api),
+        testServerConfigModel(),
+      ),
+      DefaultCategoryUseCases(
+        CategoryRepositoryImpl(api),
+        testServerConfigModel(),
+      ),
+      DefaultTagUseCases(TagRepositoryImpl(api), testServerConfigModel()),
       walletCases,
       wallets,
-      ProfileUseCases(MemoryProfiles()),
+      ProfileUseCases(MemoryProfiles(), testServerConfigModel()),
       auth,
       analytics,
       sync,
       FxRateUseCases(MemoryFxRates(), FxWallets()),
+      testServerConfigModel(),
     );
     await model.load();
   });
@@ -259,7 +275,13 @@ void main() {
     final settings = DefaultSettingsViewModel(
       DefaultSettingsUseCases(SettingsRepositoryImpl(MemoryPreferences())),
       DefaultAuthUseCases(
-        AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+        AuthRepositoryImpl(
+          FakeApi(),
+          MemoryVault(),
+          FakeBiometrics(),
+          testServerConfigModel(),
+        ),
+        testServerConfigModel(),
       ),
       RecordingAnalytics(),
     );

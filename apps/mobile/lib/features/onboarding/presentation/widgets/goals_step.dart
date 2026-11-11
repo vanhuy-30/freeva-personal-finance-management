@@ -66,7 +66,7 @@ class GoalsStep extends StatelessWidget {
         children: [
           const SizedBox(height: FreevaSpace.s2),
           Text(
-            s.onbGoalsSub,
+            s.onbGoalsSub(model.maxGoals),
             style: FreevaTypography.body.copyWith(color: c.textSecondary),
           ),
           const SizedBox(height: FreevaSpace.s6),

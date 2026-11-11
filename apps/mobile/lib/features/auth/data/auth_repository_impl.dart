@@ -11,10 +11,16 @@ import '../domain/session_notice.dart';
 import 'auth_api.dart';
 import 'authorized_api.dart';
 import 'auth_platform.dart';
+import '../../server_config/domain/app_limits.dart';
 
 @LazySingleton(as: AuthRepository)
 class AuthRepositoryImpl implements AuthRepository, AuthorizedApi {
-  AuthRepositoryImpl(this._api, this._vault, this._biometrics);
+  AuthRepositoryImpl(this._api, this._vault, this._biometrics, this._limits);
+
+  /// `security.pinMaxAttempts` (server config). The app shows the PIN screen
+  /// only with config loaded (`ServerConfigBoundary`).
+  final AppLimitsSource _limits;
+  int get _maxPinAttempts => _limits.requireLimits.pinMaxAttempts;
   final AuthApi _api;
   final AuthVault _vault;
   final DeviceBiometrics _biometrics;
@@ -167,11 +173,11 @@ class AuthRepositoryImpl implements AuthRepository, AuthorizedApi {
   });
 
   /// Counts the attempt before the slow hash, so killing the app cannot reset
-  /// it; the fifth miss signs the device out.
+  /// it; the last allowed miss signs the device out.
   Future<void> _checkPin(String pin) async {
     final attempts = (_record!['attempts'] as int) + 1;
     await _save({..._record!, 'attempts': attempts});
-    if (attempts > 5) {
+    if (attempts > _maxPinAttempts) {
       await _clear();
       throw const AuthFailure(AuthError.expired);
     }
@@ -182,7 +188,7 @@ class AuthRepositoryImpl implements AuthRepository, AuthorizedApi {
       difference |= actual.codeUnitAt(i) ^ expected.codeUnitAt(i);
     }
     if (difference != 0) {
-      if (attempts >= 5) {
+      if (attempts >= _maxPinAttempts) {
         await _clear();
         throw const AuthFailure(AuthError.expired);
       }
@@ -241,7 +247,7 @@ class AuthRepositoryImpl implements AuthRepository, AuthorizedApi {
       _guard(() async {
         await _token();
         if (_record!['biometrics'] != true ||
-            (_record!['attempts'] as int) >= 5 ||
+            (_record!['attempts'] as int) >= _maxPinAttempts ||
             !await _biometrics.available() ||
             !await _biometrics.authenticate(reason)) {
           throw const AuthFailure(AuthError.unavailable);

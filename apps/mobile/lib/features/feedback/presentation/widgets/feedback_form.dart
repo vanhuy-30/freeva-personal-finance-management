@@ -9,6 +9,8 @@ import '../../../../core/widgets/freeva_switch.dart';
 import '../../../../core/widgets/freeva_text_field.dart';
 import '../../domain/feedback.dart';
 import '../viewmodels/feedback_view_model.dart';
+import '../../../server_config/domain/app_limits.dart';
+import '../../../../core/di/injection.dart';
 
 /// Kind cards, topic chips, the message box with its counter, and the
 /// "reply by email" switch. 14 between blocks.
@@ -126,7 +128,7 @@ class FeedbackForm extends StatelessWidget {
           label: label,
           controller: message,
           maxLines: 3,
-          maxLength: feedbackMaxLength,
+          maxLength: getIt<AppLimitsSource>().requireLimits.feedbackMaxLength,
           showCounter: true,
           onChanged: (value) => model.edit(message: value),
         ),

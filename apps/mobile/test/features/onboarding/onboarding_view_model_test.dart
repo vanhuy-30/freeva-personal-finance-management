@@ -39,11 +39,11 @@ void main() {
     pending = PendingGoalUseCases(
       settings,
       goals,
-      DefaultWalletUseCases(wallets),
+      DefaultWalletUseCases(wallets, testServerConfigModel()),
       auth,
     );
     model = OnboardingViewModel(
-      ProfileUseCases(profiles),
+      ProfileUseCases(profiles, testServerConfigModel()),
       settings,
       goals,
       pending,

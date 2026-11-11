@@ -5,6 +5,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/core/config/app_config.dart';
+import 'package:mobile/features/auth/data/auth_api.dart';
 import 'package:mobile/features/auth/data/authorized_api.dart';
 import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/server_config/data/server_config_repository_impl.dart';
@@ -66,7 +67,7 @@ void main() {
   group('MOB-P5-E08 repository', () {
     test('fetches app-config and maps a bad body to unavailable', () async {
       final api = _Api()..json = _body();
-      final repo = ServerConfigRepositoryImpl(api, _Vault());
+      final repo = ServerConfigRepositoryImpl(api, _Vault(), _PublicApi());
       final ok = await repo.fetch();
       expect(api.paths, ['app-config']);
       expect(ok.getOrElse(() => throw StateError('left')).version, 3);
@@ -77,7 +78,7 @@ void main() {
 
     test('caches on the device and treats a broken copy as none', () async {
       final vault = _Vault();
-      final repo = ServerConfigRepositoryImpl(_Api(), vault);
+      final repo = ServerConfigRepositoryImpl(_Api(), vault, _PublicApi());
       expect(await repo.readCached(), isNull);
       await repo.writeCached(ServerConfig.fromJson(_body(version: 9)));
       expect((await repo.readCached())!.version, 9);
@@ -265,6 +266,9 @@ class _Vault implements ServerConfigVault {
 }
 
 class _Repo implements ServerConfigRepository {
+  @override
+  Future<Either<AuthFailure, ServerConfig>> fetchPublic() => fetch();
+
   Either<AuthFailure, ServerConfig> next = left(
     const AuthFailure(AuthError.network),
   );
@@ -290,4 +294,20 @@ class _Repo implements ServerConfigRepository {
 
   @override
   Future<void> clearCached() async => cleared += 1;
+}
+
+class _PublicApi implements AuthApi {
+  Map<String, dynamic> json = {};
+
+  @override
+  Future<Map<String, dynamic>> request(
+    String method,
+    String path, {
+    Map<String, dynamic>? body,
+    String? token,
+    Map<String, String>? headers,
+  }) async => json;
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

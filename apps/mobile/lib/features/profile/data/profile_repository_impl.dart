@@ -31,7 +31,6 @@ class ProfileRepositoryImpl implements ProfileRepository {
         !RegExp(r'^[A-Z]{3}$').hasMatch(value.currency) ||
         value.timezone.isEmpty ||
         value.fiscalDay < 1 ||
-        value.fiscalDay > 28 ||
         value.version < 1) {
       throw const FormatException();
     }

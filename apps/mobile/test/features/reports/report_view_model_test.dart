@@ -15,6 +15,7 @@ import 'package:mobile/features/wallets/domain/wallet.dart';
 
 import '../auth/fakes.dart';
 import '../home/home_fakes.dart' show FakeProfileViewModel;
+import '../../support/server_config_fixture.dart';
 
 void main() {
   late _Cases cases;
@@ -28,7 +29,13 @@ void main() {
     auth =
         DefaultAuthViewModel(
             DefaultAuthUseCases(
-              AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+              AuthRepositoryImpl(
+                FakeApi(),
+                MemoryVault(),
+                FakeBiometrics(),
+                testServerConfigModel(),
+              ),
+              testServerConfigModel(),
             ),
           )
           ..stage = AuthStage.unlocked

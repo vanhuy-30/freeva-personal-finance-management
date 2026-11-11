@@ -14,6 +14,7 @@ import '../../domain/csv_peek.dart';
 import '../../domain/import_file_picker.dart';
 import '../../domain/import_models.dart';
 import '../../domain/import_use_cases.dart';
+import '../../../server_config/domain/app_limits.dart';
 
 /// Screens of the flow, in order (boards `ImportSource` … `ImportDone`).
 enum ImportStep { source, columns, map, preview, done }
@@ -99,7 +100,11 @@ class DefaultImportViewModel extends ImportViewModel {
     this._categories,
     this._picker,
     this._auth,
+    this._limits,
   );
+
+  /// Server limits (MOB-P5-001).
+  final AppLimitsSource _limits;
   final ImportUseCases _useCases;
   final WalletUseCases _wallets;
   final CategoryUseCases _categories;
@@ -272,9 +277,9 @@ class DefaultImportViewModel extends ImportViewModel {
     final read = CsvPeek.parse(text);
     if (read.isEmpty) {
       problem = ImportFileProblem.empty;
-    } else if (read.tooManyRows) {
+    } else if (read.tooManyRows(_limits.requireLimits.importMaxRows)) {
       problem = ImportFileProblem.tooManyRows;
-    } else if (text.length > importMaxChars) {
+    } else if (text.length > _limits.requireLimits.importMaxChars) {
       problem = ImportFileProblem.tooLarge;
     }
     if (problem != null) {

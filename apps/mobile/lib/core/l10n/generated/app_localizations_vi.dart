@@ -57,8 +57,9 @@ class SVi extends S {
       'Chưa thể thực hiện. Kiểm tra cấu hình dịch vụ hoặc sử dụng PIN nếu sinh trắc học không khả dụng.';
 
   @override
-  String get authWrongPin =>
-      'PIN không đúng. Sau 5 lần sai, cần đăng nhập lại.';
+  String authWrongPin(int count) {
+    return 'PIN không đúng. Sau $count lần sai, cần đăng nhập lại.';
+  }
 
   @override
   String get authExpired =>
@@ -295,7 +296,9 @@ class SVi extends S {
   String get transactionTagName => 'Tên nhãn';
 
   @override
-  String get transactionTagLimit => 'Tối đa 20 nhãn';
+  String transactionTagLimit(int count) {
+    return 'Tối đa $count nhãn';
+  }
 
   @override
   String get transactionSave => 'Lưu';
@@ -2291,8 +2294,9 @@ class SVi extends S {
   String get mePinRepeat => 'Nhập lại mã PIN mới';
 
   @override
-  String get mePinWrong =>
-      'Mã PIN chưa đúng. Sai 5 lần thì phải đăng nhập lại.';
+  String mePinWrong(int count) {
+    return 'Mã PIN chưa đúng. Sai $count lần thì phải đăng nhập lại.';
+  }
 
   @override
   String get mePinMismatch => 'Hai mã PIN mới chưa khớp.';
@@ -2319,14 +2323,17 @@ class SVi extends S {
   String get mePasswordRepeat => 'Nhập lại mật khẩu mới';
 
   @override
-  String get mePasswordHint => 'Từ 8 ký tự, có cả chữ và số.';
+  String mePasswordHint(int count) {
+    return 'Từ $count ký tự, có cả chữ và số.';
+  }
 
   @override
   String get mePasswordWrong => 'Mật khẩu hiện tại chưa đúng.';
 
   @override
-  String get mePasswordWeak =>
-      'Dùng từ 8 ký tự, có cả chữ và số, khác mật khẩu cũ.';
+  String mePasswordWeak(int count) {
+    return 'Dùng từ $count ký tự, có cả chữ và số, khác mật khẩu cũ.';
+  }
 
   @override
   String get mePasswordMismatch => 'Hai mật khẩu mới chưa khớp.';
@@ -2733,7 +2740,9 @@ class SVi extends S {
   String get passwordStrong => 'Rất chắc chắn';
 
   @override
-  String get passwordRuleLength => 'Ít nhất 8 ký tự';
+  String passwordRuleLength(int count) {
+    return 'Ít nhất $count ký tự';
+  }
 
   @override
   String get passwordRuleLetterDigit => 'Có cả chữ và số';
@@ -2890,7 +2899,9 @@ class SVi extends S {
   String get onbGoalsTitle => 'Freeva giúp bạn việc gì?';
 
   @override
-  String get onbGoalsSub => 'Chọn tối đa 2.';
+  String onbGoalsSub(int count) {
+    return 'Chọn tối đa $count.';
+  }
 
   @override
   String get onbGoalTrack => 'Quản lý chi tiêu';
@@ -2956,13 +2967,17 @@ class SVi extends S {
   }
 
   @override
-  String get onbSuggestSaveDefault => 'Để dành 20% thu nhập';
+  String onbSuggestSaveDefault(int percent) {
+    return 'Để dành $percent% thu nhập';
+  }
 
   @override
   String get onbSuggestSpend => 'Chi tiêu';
 
   @override
-  String get onbSuggestNoGoal => 'Chưa có mục tiêu nên tạm để dành 20%.';
+  String onbSuggestNoGoal(int percent) {
+    return 'Chưa có mục tiêu nên tạm để dành $percent%.';
+  }
 
   @override
   String get onbSuggestHint => 'Sửa được bất cứ lúc nào trong Ngân sách tháng.';
@@ -4737,8 +4752,9 @@ class SVi extends S {
   }
 
   @override
-  String get dataExportTooMany =>
-      'Quá 50.000 giao dịch. Chọn khoảng ngắn hơn hoặc ít ví hơn.';
+  String dataExportTooMany(String count) {
+    return 'Quá $count giao dịch. Chọn khoảng ngắn hơn hoặc ít ví hơn.';
+  }
 
   @override
   String get dataExportButton => 'Xuất file';
@@ -4778,8 +4794,9 @@ class SVi extends S {
   String get importSourceOtherHint => 'Bạn chọn cột ngày, số tiền';
 
   @override
-  String get importSourceNote =>
-      'Tối đa 2.000 dòng mỗi lần. Giao dịch đã có sẽ được bỏ qua.';
+  String importSourceNote(String count) {
+    return 'Tối đa $count dòng mỗi lần. Giao dịch đã có sẽ được bỏ qua.';
+  }
 
   @override
   String get importPickFile => 'Chọn file CSV';
@@ -4792,8 +4809,9 @@ class SVi extends S {
   String get importProblemEmpty => 'File này chưa có dòng nào.';
 
   @override
-  String get importProblemTooMany =>
-      'File có hơn 2.000 dòng. Hãy chia nhỏ rồi nhập từng phần.';
+  String importProblemTooMany(String count) {
+    return 'File có hơn $count dòng. Hãy chia nhỏ rồi nhập từng phần.';
+  }
 
   @override
   String get importProblemTooLarge =>

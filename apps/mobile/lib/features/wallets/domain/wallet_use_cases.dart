@@ -5,6 +5,7 @@ import '../../auth/domain/auth_repository.dart';
 import 'reconcile_result.dart';
 import 'wallet.dart';
 import 'wallet_repository.dart';
+import '../../server_config/domain/app_limits.dart';
 
 abstract class WalletUseCases {
   Future<Either<AuthFailure, List<Wallet>>> load();
@@ -34,7 +35,10 @@ abstract class WalletUseCases {
 
 @LazySingleton(as: WalletUseCases)
 class DefaultWalletUseCases implements WalletUseCases {
-  DefaultWalletUseCases(this._repository);
+  DefaultWalletUseCases(this._repository, this._limits);
+
+  /// Server limits (MOB-P5-001).
+  final AppLimitsSource _limits;
   final WalletRepository _repository;
   @override
   Future<Either<AuthFailure, List<Wallet>>> load() => _repository.load();
@@ -97,9 +101,11 @@ class DefaultWalletUseCases implements WalletUseCases {
   }) {
     final min = BigInt.parse('-9223372036854775808');
     final max = BigInt.parse('9223372036854775807');
-    bool day(int? value) => value == null || (value >= 1 && value <= 28);
+    bool day(int? value) =>
+        value == null ||
+        (value >= 1 && value <= _limits.requireLimits.periodStartDayMax);
     if (draft.name.trim().isEmpty ||
-        draft.name.trim().length > 100 ||
+        draft.name.trim().length > _limits.requireLimits.walletNameMaxLength ||
         !currencies.any((c) => c.code == draft.currency) ||
         draft.initialBalance < min ||
         draft.initialBalance > max ||

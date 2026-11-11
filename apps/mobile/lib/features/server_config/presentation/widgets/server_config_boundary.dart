@@ -8,10 +8,10 @@ import '../../../auth/presentation/viewmodels/auth_view_model.dart';
 import '../viewmodels/server_config_view_model.dart';
 import 'server_config_listener.dart';
 
-/// MOB-P5-001: the signed-in app (onboarding included) runs only with server
-/// config, so screens read [ServerConfigViewModel.requireLimits] instead of
-/// guessing numbers. Without a cached or fetched copy it shows one "try again"
-/// screen; sign-in screens never wait for config.
+/// MOB-P5-001: the app runs only with server config (public config before
+/// sign-in), so screens read [ServerConfigViewModel.requireLimits] instead of
+/// guessing numbers. Without a cached or fetched copy it waits, and after a
+/// failed load shows one "try again" screen.
 class ServerConfigBoundary extends StatefulWidget {
   const ServerConfigBoundary({
     required this.child,
@@ -66,7 +66,7 @@ class _ServerConfigBoundaryState extends State<ServerConfigBoundary> {
   @override
   Widget build(BuildContext context) {
     final config = _config;
-    if (!hasSession(_auth.stage) || config.limits != null) return widget.child;
+    if (config.limits != null) return widget.child;
     if (!config.missing && (config.loading || config.config == null)) {
       return const Material(child: Center(child: CircularProgressIndicator()));
     }
@@ -79,7 +79,10 @@ class _ServerConfigBoundaryState extends State<ServerConfigBoundary> {
             child: ErrorRetry(
               title: s.serverConfigErrorTitle,
               message: s.serverConfigErrorMessage,
-              onRetry: () => config.refresh(force: true),
+              onRetry: () => config.refresh(
+                force: true,
+                signedIn: hasSession(_auth.stage),
+              ),
             ),
           ),
         ),

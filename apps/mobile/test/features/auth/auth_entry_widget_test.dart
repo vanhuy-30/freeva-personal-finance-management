@@ -27,7 +27,13 @@ void main() {
     api = FakeApi();
     model = DefaultAuthViewModel(
       DefaultAuthUseCases(
-        AuthRepositoryImpl(api, MemoryVault(), FakeBiometrics()),
+        AuthRepositoryImpl(
+          api,
+          MemoryVault(),
+          FakeBiometrics(),
+          testServerConfigModel(),
+        ),
+        testServerConfigModel(),
       ),
     );
   });

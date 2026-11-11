@@ -23,7 +23,13 @@ void main() {
     deps = await registerSetupDeps();
     model = DefaultAuthViewModel(
       DefaultAuthUseCases(
-        AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+        AuthRepositoryImpl(
+          FakeApi(),
+          MemoryVault(),
+          FakeBiometrics(),
+          testServerConfigModel(),
+        ),
+        testServerConfigModel(),
       ),
     )..ready = true;
     getIt.registerSingleton<AuthViewModel>(model);

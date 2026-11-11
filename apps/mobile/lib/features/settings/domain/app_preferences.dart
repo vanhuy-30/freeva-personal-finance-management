@@ -1,8 +1,3 @@
-const String appVersionLabel = '0.0.1+1';
-
-/// Version shown to people ("Phiên bản 0.0.1"): no build number.
-final String appVersionDisplay = appVersionLabel.split('+').first;
-
 enum AppThemePreference { light, dark, system }
 
 enum LegalDocument { terms, privacy, all }

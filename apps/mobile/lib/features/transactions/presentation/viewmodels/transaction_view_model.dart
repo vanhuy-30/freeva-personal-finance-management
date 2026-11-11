@@ -26,6 +26,7 @@ import '../../domain/transaction_filter.dart';
 import '../../domain/transaction_rules.dart';
 import '../../domain/transaction_use_cases.dart';
 import '../transaction_sync.dart';
+import '../../../server_config/domain/app_limits.dart';
 
 abstract class TransactionViewModel extends ChangeNotifier {
   /// The amount shown in the detail sheet in the profile currency, with the
@@ -120,6 +121,9 @@ abstract class TransactionViewModel extends ChangeNotifier {
 
 @LazySingleton(as: TransactionViewModel)
 class DefaultTransactionViewModel extends TransactionViewModel {
+  /// Server limits (MOB-P5-001).
+  final AppLimitsSource _limits;
+
   DefaultTransactionViewModel(
     this._cases,
     this._categoriesUseCases,
@@ -131,6 +135,7 @@ class DefaultTransactionViewModel extends TransactionViewModel {
     this._analytics,
     this._sync,
     this._fx,
+    this._limits,
   ) {
     _stage = _auth.stage;
     _seenApplied = _sync.appliedEpoch;
@@ -621,6 +626,7 @@ class DefaultTransactionViewModel extends TransactionViewModel {
         currencies,
         categories,
         tags,
+        limits: _limits.requireLimits,
         existing: existing,
       );
       return prepared.fold(

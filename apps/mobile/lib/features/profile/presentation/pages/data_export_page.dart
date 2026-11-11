@@ -16,6 +16,8 @@ import '../../../transactions/presentation/widgets/filter_pick_sheet.dart';
 import '../../../transactions/presentation/widgets/filter_select_field.dart';
 import '../../domain/export_period.dart';
 import '../viewmodels/data_export_view_model.dart';
+import '../../../server_config/domain/app_limits.dart';
+import '../../../../core/money/money_text.dart';
 
 /// `MOB-P3-010` — Xuất dữ liệu (board `DataExport`): a filtered transactions
 /// CSV, or the full JSON copy.
@@ -114,7 +116,15 @@ class _DataExportPageState extends State<DataExportPage> {
     final hint = !table
         ? s.dataExportFullNote
         : model.tooMany
-        ? s.dataExportTooMany
+        ? s.dataExportTooMany(
+            formatMoneyText(
+              BigInt.from(
+                getIt<AppLimitsSource>().requireLimits.exportCsvMaxRows,
+              ),
+              0,
+              Localizations.localeOf(context).toString(),
+            ),
+          )
         : _summary(s);
     return Scaffold(
       appBar: FreevaTopBar(

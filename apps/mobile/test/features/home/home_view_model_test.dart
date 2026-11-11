@@ -15,6 +15,7 @@ import '../transactions/transaction_view_model_test.dart'
     show RecordingAnalytics;
 import 'fixtures.dart';
 import 'home_fakes.dart';
+import '../../support/server_config_fixture.dart';
 
 void main() {
   late DefaultAuthViewModel auth;
@@ -26,7 +27,13 @@ void main() {
 
   setUp(() async {
     final authCases = DefaultAuthUseCases(
-      AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+      AuthRepositoryImpl(
+        FakeApi(),
+        MemoryVault(),
+        FakeBiometrics(),
+        testServerConfigModel(),
+      ),
+      testServerConfigModel(),
     );
     auth = DefaultAuthViewModel(authCases)
       ..stage = AuthStage.unlocked

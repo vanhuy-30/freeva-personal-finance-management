@@ -184,8 +184,8 @@ abstract class S {
   /// No description provided for @authWrongPin.
   ///
   /// In en, this message translates to:
-  /// **'Incorrect PIN. After five failed attempts, sign in again.'**
-  String get authWrongPin;
+  /// **'Incorrect PIN. After {count} failed attempts, sign in again.'**
+  String authWrongPin(int count);
 
   /// No description provided for @authExpired.
   ///
@@ -640,8 +640,8 @@ abstract class S {
   /// No description provided for @transactionTagLimit.
   ///
   /// In en, this message translates to:
-  /// **'Up to 20 tags'**
-  String get transactionTagLimit;
+  /// **'Up to {count} tags'**
+  String transactionTagLimit(int count);
 
   /// No description provided for @transactionSave.
   ///
@@ -4197,8 +4197,8 @@ abstract class S {
   /// No description provided for @mePinWrong.
   ///
   /// In en, this message translates to:
-  /// **'Wrong PIN. After 5 misses you sign in again.'**
-  String get mePinWrong;
+  /// **'Wrong PIN. After {count} misses you sign in again.'**
+  String mePinWrong(int count);
 
   /// No description provided for @mePinMismatch.
   ///
@@ -4251,8 +4251,8 @@ abstract class S {
   /// No description provided for @mePasswordHint.
   ///
   /// In en, this message translates to:
-  /// **'At least 8 characters, with letters and digits.'**
-  String get mePasswordHint;
+  /// **'At least {count} characters, with letters and digits.'**
+  String mePasswordHint(int count);
 
   /// No description provided for @mePasswordWrong.
   ///
@@ -4263,8 +4263,8 @@ abstract class S {
   /// No description provided for @mePasswordWeak.
   ///
   /// In en, this message translates to:
-  /// **'Use at least 8 characters with letters and digits, different from the old one.'**
-  String get mePasswordWeak;
+  /// **'Use at least {count} characters with letters and digits, different from the old one.'**
+  String mePasswordWeak(int count);
 
   /// No description provided for @mePasswordMismatch.
   ///
@@ -4989,8 +4989,8 @@ abstract class S {
   /// No description provided for @passwordRuleLength.
   ///
   /// In en, this message translates to:
-  /// **'At least 8 characters'**
-  String get passwordRuleLength;
+  /// **'At least {count} characters'**
+  String passwordRuleLength(int count);
 
   /// No description provided for @passwordRuleLetterDigit.
   ///
@@ -5289,8 +5289,8 @@ abstract class S {
   /// No description provided for @onbGoalsSub.
   ///
   /// In en, this message translates to:
-  /// **'Pick up to 2.'**
-  String get onbGoalsSub;
+  /// **'Pick up to {count}.'**
+  String onbGoalsSub(int count);
 
   /// No description provided for @onbGoalTrack.
   ///
@@ -5409,8 +5409,8 @@ abstract class S {
   /// No description provided for @onbSuggestSaveDefault.
   ///
   /// In en, this message translates to:
-  /// **'Save 20% of income'**
-  String get onbSuggestSaveDefault;
+  /// **'Save {percent}% of income'**
+  String onbSuggestSaveDefault(int percent);
 
   /// No description provided for @onbSuggestSpend.
   ///
@@ -5421,8 +5421,8 @@ abstract class S {
   /// No description provided for @onbSuggestNoGoal.
   ///
   /// In en, this message translates to:
-  /// **'No goal yet, so 20% goes to savings for now.'**
-  String get onbSuggestNoGoal;
+  /// **'No goal yet, so {percent}% goes to savings for now.'**
+  String onbSuggestNoGoal(int percent);
 
   /// No description provided for @onbSuggestHint.
   ///
@@ -8409,8 +8409,8 @@ abstract class S {
   /// No description provided for @dataExportTooMany.
   ///
   /// In en, this message translates to:
-  /// **'More than 50,000 transactions. Pick a shorter range or fewer wallets.'**
-  String get dataExportTooMany;
+  /// **'More than {count} transactions. Pick a shorter range or fewer wallets.'**
+  String dataExportTooMany(String count);
 
   /// No description provided for @dataExportButton.
   ///
@@ -8487,8 +8487,8 @@ abstract class S {
   /// No description provided for @importSourceNote.
   ///
   /// In en, this message translates to:
-  /// **'Up to 2,000 rows at a time. Transactions you already have are skipped.'**
-  String get importSourceNote;
+  /// **'Up to {count} rows at a time. Transactions you already have are skipped.'**
+  String importSourceNote(String count);
 
   /// No description provided for @importPickFile.
   ///
@@ -8511,8 +8511,8 @@ abstract class S {
   /// No description provided for @importProblemTooMany.
   ///
   /// In en, this message translates to:
-  /// **'This file has more than 2,000 rows. Split it and import in parts.'**
-  String get importProblemTooMany;
+  /// **'This file has more than {count} rows. Split it and import in parts.'**
+  String importProblemTooMany(String count);
 
   /// No description provided for @importProblemTooLarge.
   ///

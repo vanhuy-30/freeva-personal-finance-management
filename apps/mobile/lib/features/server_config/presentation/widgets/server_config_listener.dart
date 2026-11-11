@@ -11,7 +11,7 @@ import '../viewmodels/server_config_view_model.dart';
 bool hasSession(AuthStage stage) =>
     stage == AuthStage.setup || stage == AuthStage.unlocked;
 
-/// Loads server flags and config when the app unlocks and when it resumes
+/// Loads public config before sign-in, flags and config once signed in and when it resumes
 /// (at most hourly), and forgets them on sign-out.
 class ServerConfigListener extends StatefulWidget {
   const ServerConfigListener({required this.child, super.key});
@@ -52,7 +52,7 @@ class _ServerConfigListenerState extends State<ServerConfigListener>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       if (_stage == AuthStage.signedOut) {
-        unawaited(_config.clear());
+        unawaited(_config.clear().then((_) => _refresh(force: true)));
       } else if (hasSession(_stage)) {
         // Onboarding (setup) already needs config numbers (MOB-P5-001).
         _refresh(force: previous == AuthStage.signedOut);
@@ -60,9 +60,13 @@ class _ServerConfigListenerState extends State<ServerConfigListener>
     });
   }
 
+  /// Signed in: `/app-config`. Signed out: public config for the sign-in
+  /// screens. Locked (PIN screen): the cached copy until unlock, or the public
+  /// config when the device has none.
   void _refresh({bool force = false}) {
-    if (!hasSession(_auth.stage)) return;
-    unawaited(_config.refresh(force: force));
+    final stage = _auth.stage;
+    if (stage == AuthStage.locked && _config.config != null) return;
+    unawaited(_config.refresh(force: force, signedIn: hasSession(stage)));
   }
 
   @override

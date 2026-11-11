@@ -6,6 +6,7 @@ import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/auth/domain/auth_use_cases.dart';
 
 import 'fakes.dart';
+import '../../support/server_config_fixture.dart';
 
 void main() {
   late MemoryVault vault;
@@ -16,7 +17,12 @@ void main() {
     vault = MemoryVault();
     api = FakeApi();
     biometrics = FakeBiometrics();
-    repository = AuthRepositoryImpl(api, vault, biometrics);
+    repository = AuthRepositoryImpl(
+      api,
+      vault,
+      biometrics,
+      testServerConfigModel(),
+    );
   });
   Future<void> login() async {
     expect(
@@ -42,7 +48,12 @@ void main() {
       await setup();
       expect(vault.value, isNot(contains('123456')));
       expect(jsonDecode(vault.value!)['salt'], isNotEmpty);
-      final restored = AuthRepositoryImpl(api, vault, biometrics);
+      final restored = AuthRepositoryImpl(
+        api,
+        vault,
+        biometrics,
+        testServerConfigModel(),
+      );
       expect(
         (await restored.restore()).getOrElse(() => AuthStage.signedOut),
         AuthStage.locked,
@@ -56,7 +67,12 @@ void main() {
     () async {
       await setup();
       for (var i = 0; i < 5; i++) {
-        final restarted = AuthRepositoryImpl(api, vault, biometrics);
+        final restarted = AuthRepositoryImpl(
+          api,
+          vault,
+          biometrics,
+          testServerConfigModel(),
+        );
         await restarted.restore();
         final result = await restarted.unlockPin('000000');
         expect(
@@ -71,7 +87,12 @@ void main() {
     'a session without a PIN restores into the app and has no PIN',
     () async {
       await login();
-      final restored = AuthRepositoryImpl(api, vault, biometrics);
+      final restored = AuthRepositoryImpl(
+        api,
+        vault,
+        biometrics,
+        testServerConfigModel(),
+      );
       expect(
         (await restored.restore()).getOrElse(() => AuthStage.signedOut),
         AuthStage.unlocked,
@@ -118,7 +139,7 @@ void main() {
   test(
     'use cases normalize email, preserve password and reject invalid payloads',
     () async {
-      final useCases = DefaultAuthUseCases(repository);
+      final useCases = DefaultAuthUseCases(repository, testServerConfigModel());
       await useCases.submit(AuthAction.login, {
         'email': ' User@Example.com ',
         'password': ' password with spaces ',
@@ -323,7 +344,12 @@ void main() {
           true,
         );
         expect(vault.value, isNot(contains('654321')));
-        final restarted = AuthRepositoryImpl(api, vault, biometrics);
+        final restarted = AuthRepositoryImpl(
+          api,
+          vault,
+          biometrics,
+          testServerConfigModel(),
+        );
         await restarted.restore();
         expect((await restarted.unlockPin('123456')).isLeft(), true);
         expect((await restarted.unlockPin('654321')).isRight(), true);
@@ -393,7 +419,7 @@ void main() {
     });
 
     test('use cases check the rules before asking the server', () async {
-      final cases = DefaultAuthUseCases(repository);
+      final cases = DefaultAuthUseCases(repository, testServerConfigModel());
       Future<AuthError?> pin(String a, String b, String c) async =>
           (await cases.changePin(a, b, c)).fold((e) => e.code, (_) => null);
       expect(
@@ -439,7 +465,12 @@ void main() {
       expect((await repository.savedName()).getOrElse(() => 'x'), isNull);
       await repository.rememberName('  Minh ');
       expect((await repository.savedName()).getOrElse(() => null), 'Minh');
-      final restarted = AuthRepositoryImpl(api, vault, biometrics);
+      final restarted = AuthRepositoryImpl(
+        api,
+        vault,
+        biometrics,
+        testServerConfigModel(),
+      );
       await restarted.restore();
       expect((await restarted.savedName()).getOrElse(() => null), 'Minh');
       await repository.rememberName('  ');
@@ -454,7 +485,9 @@ void main() {
     String at(int n) => 'a1' * n;
     String pw(int n) => at(n).substring(0, n);
     late DefaultAuthUseCases cases;
-    setUp(() => cases = DefaultAuthUseCases(repository));
+    setUp(
+      () => cases = DefaultAuthUseCases(repository, testServerConfigModel()),
+    );
 
     test('new passwords accept 8 and 128, reject 7 and 129', () async {
       for (final action in [AuthAction.register, AuthAction.resetPassword]) {
@@ -470,14 +503,17 @@ void main() {
         expect(await ok(129), false);
       }
     });
-    test('login keeps the same 8-128 length rule only', () async {
+    // MOB-P5-001: login checks only the cap; the API keeps its own floor so a
+    // raised minimum never locks out older passwords.
+    test('login checks only the length cap', () async {
       Future<bool> ok(String p) async => (await cases.submit(AuthAction.login, {
         'email': 'lan@example.com',
         'password': p,
       })).isRight();
       expect(await ok('abcdefgh'), true);
       expect(await ok(pw(128)), true);
-      expect(await ok(pw(7)), false);
+      expect(await ok(pw(7)), true);
+      expect(await ok(''), false);
       expect(await ok(pw(129)), false);
     });
     test('change password accepts 8 and 128, rejects 7 and 129', () async {
