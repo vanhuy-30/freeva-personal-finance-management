@@ -23,6 +23,7 @@ import '../../domain/recurring_rule.dart';
 import '../viewmodels/recurring_view_model.dart';
 import 'recurring_expense_picker.dart';
 import 'recurring_labels.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 /// "Đã trả …?" over the list. Returns true once the due day is confirmed.
 Future<bool?> showRecurringPaidSheet(
@@ -161,7 +162,7 @@ class _PaidSheetState extends State<_PaidSheet> {
     final value = _value(locale);
     final ready =
         value != null && value > BigInt.zero && walletId != null && !saving;
-    final symbol = rule.currencyCode == 'VND' ? '₫' : rule.currencyCode;
+    final symbol = CurrencyCatalog.current.symbol(rule.currencyCode);
     final title = ruleTitle(s, rule, widget.category);
     return BalancesHiddenBuilder(
       builder: (context, hidden) => Column(

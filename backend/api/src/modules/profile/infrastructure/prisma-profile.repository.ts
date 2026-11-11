@@ -1,3 +1,4 @@
+import { NEW_USER_CURRENCY_CODE } from '../../../core/money/currency';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../infrastructure/prisma/prisma.service';
 import type { OnboardingAnswers, Profile, ProfileRepository, ProfileUpdate } from '../domain/profile.repository';
@@ -30,11 +31,12 @@ export class PrismaProfileRepository implements ProfileRepository {
     return toProfile(await this.prisma.user.findUnique({ where: { id: userId }, select }));
   }
 
-  currencies() {
-    return this.prisma.currency.findMany({
+  async currencies() {
+    const rows = await this.prisma.currency.findMany({
       select: { code: true, minorDigits: true, symbol: true },
       orderBy: { code: 'asc' },
     });
+    return rows.map((row) => ({ ...row, isDefault: row.code === NEW_USER_CURRENCY_CODE }));
   }
 
   async saveOnboarding(userId: string, answers: OnboardingAnswers): Promise<boolean> {

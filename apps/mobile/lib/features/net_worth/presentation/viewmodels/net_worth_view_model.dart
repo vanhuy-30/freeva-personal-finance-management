@@ -7,6 +7,7 @@ import '../../../wallets/presentation/viewmodels/wallet_view_model.dart';
 import '../../domain/net_worth_history.dart';
 import '../../domain/net_worth_use_cases.dart';
 import '../../../server_config/domain/app_limits.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 /// Loads the net-worth history for one window and tracks the point the user
 /// touched. Created per page, not a singleton.
@@ -44,14 +45,15 @@ class NetWorthViewModel extends ChangeNotifier {
   /// Index of the touched point; null shows the latest.
   int? selected;
 
-  String get currency => _profile.saved?.overviewCurrency ?? 'VND';
+  String get currency =>
+      _profile.saved?.overviewCurrency ?? CurrencyCatalog.current.defaultCode;
 
   int get digits =>
       _wallets.currencies
           .where((item) => item.code == currency)
           .firstOrNull
           ?.minorDigits ??
-      (currency == 'VND' ? 0 : 2);
+      CurrencyCatalog.current.digits(currency);
 
   /// The point the card shows: the touched one, else the latest.
   NetWorthPoint? get shown {

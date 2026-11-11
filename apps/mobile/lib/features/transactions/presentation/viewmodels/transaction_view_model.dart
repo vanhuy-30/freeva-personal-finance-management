@@ -27,6 +27,7 @@ import '../../domain/transaction_rules.dart';
 import '../../domain/transaction_use_cases.dart';
 import '../transaction_sync.dart';
 import '../../../server_config/domain/app_limits.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 abstract class TransactionViewModel extends ChangeNotifier {
   /// The amount shown in the detail sheet in the profile currency, with the
@@ -194,7 +195,8 @@ class DefaultTransactionViewModel extends TransactionViewModel {
   @override
   int fiscalDay = 1;
   @override
-  String profileCurrency = 'VND';
+  /// Until the profile loads: the currency new accounts start in (server).
+  String profileCurrency = CurrencyCatalog.current.defaultCode;
   @override
   TransactionBundle? lastSaved;
   @override

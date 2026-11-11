@@ -16,6 +16,7 @@ import '../../../../core/widgets/freeva_top_bar.dart';
 import '../../../../core/widgets/skeleton.dart';
 import '../../domain/calendar_month.dart';
 import '../viewmodels/calendar_view_model.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({super.key});
@@ -38,7 +39,7 @@ class _CalendarPageState extends State<CalendarPage> {
     return DateTime(int.parse(parts[0]), int.parse(parts[1]), 1);
   }
 
-  int _digits(String code) => code == 'VND' ? 0 : 2;
+  int _digits(String code) => CurrencyCatalog.current.digits(code);
 
   Future<void> _openDay(String date) async {
     final day = model.month?.dayOn(date);

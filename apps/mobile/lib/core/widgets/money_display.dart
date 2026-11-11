@@ -4,6 +4,7 @@ import '../l10n/generated/app_localizations.dart';
 import '../money/money_text.dart';
 import '../theme/theme_context.dart';
 import '../theme/tokens.g.dart';
+import '../money/currency_catalog.dart';
 
 /// How an amount is signed and coloured. Expense: ink and −. Income:
 /// `money.income` and +. Transfer: muted, no sign. Red is never used here.
@@ -53,7 +54,7 @@ class MoneyDisplay extends StatelessWidget {
   final double? currencySize;
 
   static String symbolFor(String currency) =>
-      currency == 'VND' ? '₫' : currency;
+      CurrencyCatalog.current.symbol(currency);
 
   @override
   Widget build(BuildContext context) {

@@ -7,6 +7,7 @@ import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_button.dart';
 import '../../../../core/widgets/freeva_card.dart';
 import '../viewmodels/onboarding_view_model.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 /// Budget suggestion after the questions (board ObBudgetSuggest): income
 /// minus the goal's monthly saving, or minus 20% without a goal. "Dùng mức
@@ -42,7 +43,7 @@ class BudgetSuggestStep extends StatelessWidget {
     final locale = Localizations.localeOf(context).toString();
     final margin = context.screenMargin;
     String money(BigInt v) => formatMoneyText(v, digits, locale);
-    final symbol = currency == 'VND' ? '₫' : currency;
+    final symbol = CurrencyCatalog.current.symbol(currency);
     final fromGoal = suggestion.fromGoal && goalName != null;
     final bottom = (32 - MediaQuery.viewPaddingOf(context).bottom)
         .clamp(FreevaSpace.s2, 32)

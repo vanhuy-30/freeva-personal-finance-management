@@ -12,6 +12,7 @@ import '../../../../core/widgets/freeva_toast.dart';
 import '../../domain/transaction.dart';
 import '../viewmodels/transaction_view_model.dart';
 import 'transaction_labels.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 /// Changes the signed amount of a balance adjustment (from the wallet's
 /// "Khớp số dư"). Same look as that sheet: one big field, one hint, one
@@ -95,7 +96,7 @@ class _AdjustmentSheetState extends State<AdjustmentSheet> {
     final c = context.colors;
     final locale = Localizations.localeOf(context).toString();
     final value = _value(locale);
-    final symbol = leg.currencyCode == 'VND' ? '₫' : leg.currencyCode;
+    final symbol = CurrencyCatalog.current.symbol(leg.currencyCode);
     final ready =
         value != null && value != BigInt.zero && value != leg.amountMinor;
     return Column(

@@ -32,6 +32,14 @@ App lấy cờ tính năng và các số cấu hình từ `GET /api/v1/app-confi
 
 Đã chuyển (PR 2): mật khẩu tối thiểu/tối đa/"rất mạnh" (đăng nhập chỉ kiểm tra mức trần), email tối đa, số lần sai PIN, tên hiển thị (60, sửa lệch 50), tên/ghi chú ví, danh mục, nhãn, mục tiêu, khoản vay, định kỳ, đầu tư, cho mượn, giao dịch, nơi chi, góp ý; số nhãn tối đa; ngày đầu kỳ tối đa; onboarding (số mục tiêu, gợi ý thu nhập, phần tiết kiệm, loại mục tiêu); nhập/xuất CSV. Chữ có số dựng từ cấu hình. Màn Thông báo: dòng mục tiêu/soát tháng theo `available` của server. Icon danh mục: chỉ hiện icon server chấp nhận (`iconTokens`); nhóm và icon chọn nhanh vẫn theo board. Phiên bản app đọc bằng `package_info_plus` (`AppVersion`). Còn cứng có chủ đích: ô tìm kiếm 200 ký tự (API chưa có khóa), độ dài PIN 6, màu/icon mục tiêu (token thiết kế).
 
+## Tiền tệ (MOB-P5-001 PR 3)
+
+- Khi đã đăng nhập, bản cấu hình tải kèm danh mục tiền tệ từ `GET /profile/options` (`code`, `minorDigits`, `symbol`, `isDefault`), lưu cùng bản trên máy. `CurrencyCatalog.current` là danh mục dùng chung: `digits(code)`, `symbol(code)` (ký hiệu server, không có thì hiện mã), `defaultCode` (tiền tệ tài khoản mới, server đánh `isDefault`).
+- Lớp chặn khi có phiên chờ cả danh mục. Đăng xuất giữ danh mục (không phụ thuộc user).
+- Đã bỏ: quy tắc `VND ? 0 : 2`, ký hiệu `₫` viết cứng, `?? 'VND'` (thay bằng `defaultCode` khi hồ sơ chưa tải). Mã không có trong danh mục hiện không có số lẻ.
+- Còn có chủ đích: tên đọc màn hình "đồng" và tên tiền tệ (l10n), gợi ý thu nhập onboarding chỉ cho VND (khóa `onboarding.incomeSuggestionsVnd`), hình minh họa `₫` ở Welcome, gallery dev.
+- Test: `test/flutter_test_config.dart` nạp danh mục mẫu cho mọi test.
+
 ## Dùng trong code
 
 - Cờ: `getIt<FeatureFlagService>().isEnabled(FeatureFlags.insights)` (bản cài đặt là `ServerConfigViewModel`). `LocalFeatureFlagService` luôn tắt đã bỏ.

@@ -43,7 +43,7 @@ Mốc ngân sách: server báo ở **mọi mốc user đã chọn** (bỏ sàn 8
 
 **Không cần đăng nhập:** `GET /api/v1/app-config/public` trả `{ version, config }` (không cờ, không dữ liệu user) từ cache của reader, để màn trước khi đăng nhập (quy tắc mật khẩu…) cũng đọc số từ server (chốt 2026-11-11).
 
-**Tiền tệ:** `Currency.symbol` (VND `₫`), `GET /profile/options` trả `{ code, minorDigits, symbol }`.
+**Tiền tệ:** `Currency.symbol` (VND `₫`), `GET /profile/options` trả `{ code, minorDigits, symbol, isDefault }`; `isDefault` là tiền tệ tài khoản mới (`NEW_USER_CURRENCY_CODE`, dùng chung cho đăng ký email và OAuth).
 
 ## Kiểu giá trị
 

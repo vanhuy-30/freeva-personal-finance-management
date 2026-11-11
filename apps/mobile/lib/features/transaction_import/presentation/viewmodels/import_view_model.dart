@@ -15,6 +15,7 @@ import '../../domain/import_file_picker.dart';
 import '../../domain/import_models.dart';
 import '../../domain/import_use_cases.dart';
 import '../../../server_config/domain/app_limits.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 /// Screens of the flow, in order (boards `ImportSource` … `ImportDone`).
 enum ImportStep { source, columns, map, preview, done }
@@ -212,7 +213,7 @@ class DefaultImportViewModel extends ImportViewModel {
           .where((item) => item.code == currency)
           .firstOrNull
           ?.minorDigits ??
-      (currency == 'VND' ? 0 : 2);
+      CurrencyCatalog.current.digits(currency);
 
   void _notify() {
     if (!_disposed) notifyListeners();

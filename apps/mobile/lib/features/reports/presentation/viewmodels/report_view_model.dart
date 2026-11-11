@@ -10,6 +10,7 @@ import '../../domain/report.dart';
 import '../../domain/report_period.dart';
 import '../../domain/report_summary.dart';
 import '../../domain/report_use_cases.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 abstract class ReportViewModel extends ChangeNotifier {
   ReportPeriodKind get kind;
@@ -110,7 +111,7 @@ class DefaultReportViewModel extends ReportViewModel {
   String? get currency => pickCurrency(
     currencies,
     _chosenCurrency,
-    _profile.saved?.currency ?? 'VND',
+    _profile.saved?.currency ?? CurrencyCatalog.current.defaultCode,
   );
 
   @override

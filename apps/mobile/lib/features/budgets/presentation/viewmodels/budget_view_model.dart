@@ -10,6 +10,7 @@ import '../../../settings/domain/settings_repository.dart';
 import '../../domain/budget.dart';
 import '../../domain/budget_use_cases.dart';
 import '../../../server_config/domain/app_limits.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 abstract class BudgetViewModel extends ChangeNotifier {
   bool get busy;
@@ -92,7 +93,8 @@ class DefaultBudgetViewModel extends BudgetViewModel {
   bool get isOverride => summary?.isOverride ?? false;
 
   @override
-  String get currency => _profile.saved?.currency ?? 'VND';
+  String get currency =>
+      _profile.saved?.currency ?? CurrencyCatalog.current.defaultCode;
 
   void _authChanged() {
     if (_auth.stage == _stage) return;

@@ -7,6 +7,7 @@ import '../../domain/report.dart';
 import '../../domain/report_period.dart';
 import '../../domain/report_summary.dart';
 import '../../domain/report_use_cases.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 /// Loads and steps one fiscal-month review. Created per page (not a singleton).
 class MonthReviewViewModel extends ChangeNotifier {
@@ -44,7 +45,7 @@ class MonthReviewViewModel extends ChangeNotifier {
   String? get currency => pickCurrency(
     currencies,
     _chosenCurrency,
-    _profile.saved?.currency ?? 'VND',
+    _profile.saved?.currency ?? CurrencyCatalog.current.defaultCode,
   );
 
   MonthReviewCurrency? get selected {

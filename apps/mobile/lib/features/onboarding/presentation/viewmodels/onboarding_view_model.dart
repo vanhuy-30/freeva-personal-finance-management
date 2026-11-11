@@ -13,6 +13,7 @@ import '../../../settings/domain/settings_use_cases.dart';
 import '../../../sync/domain/sync_queue.dart';
 import '../../domain/onboarding_answers.dart';
 import '../../domain/pending_goal_use_cases.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 /// Monthly split the first budget suggestion shows (minor units).
 class BudgetSuggestion {
@@ -78,9 +79,10 @@ class OnboardingViewModel extends ChangeNotifier {
   int get savingsSharePercent =>
       _limits.requireLimits.onboardingSavingsSharePercent;
 
-  /// Profile currency; the first run happens in it.
-  String currency = 'VND';
-  int get digits => currency == 'VND' ? 0 : 2;
+  /// Profile currency; the first run happens in it. Until the profile loads,
+  /// the currency new accounts start in (server).
+  String currency = CurrencyCatalog.current.defaultCode;
+  int get digits => CurrencyCatalog.current.digits(currency);
 
   final List<OnboardingGoal> goals = [];
 

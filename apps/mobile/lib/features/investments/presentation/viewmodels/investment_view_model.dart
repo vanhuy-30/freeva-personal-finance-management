@@ -15,6 +15,7 @@ import '../../../wallets/presentation/viewmodels/wallet_view_model.dart';
 import '../../domain/investment.dart';
 import '../../domain/investment_use_cases.dart';
 import '../../../server_config/domain/app_limits.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 /// Đầu tư list: totals, share by category, and the positions behind them.
 /// Totals come from `GET /investments/summary`.
@@ -60,7 +61,8 @@ class InvestmentViewModel extends ChangeNotifier {
   /// The profile currency when something is held in it, else the first
   /// currency with investments. No FX.
   String get currency {
-    final main = _profile.saved?.overviewCurrency ?? 'VND';
+    final main =
+        _profile.saved?.overviewCurrency ?? CurrencyCatalog.current.defaultCode;
     final totals = _summary.totals;
     if (totals.isEmpty || totals.any((t) => t.currencyCode == main)) {
       return main;
@@ -73,7 +75,7 @@ class InvestmentViewModel extends ChangeNotifier {
           .where((item) => item.code == currency)
           .firstOrNull
           ?.minorDigits ??
-      (currency == 'VND' ? 0 : 2);
+      CurrencyCatalog.current.digits(currency);
 
   InvestmentTotal? get total => _summary.totalOf(currency);
 
@@ -98,12 +100,13 @@ class InvestmentViewModel extends ChangeNotifier {
           .where((item) => item.code == code)
           .firstOrNull
           ?.minorDigits ??
-      (code == 'VND' ? 0 : 2);
+      CurrencyCatalog.current.digits(code);
 
   String get today => _wallets.today.toIso8601String().substring(0, 10);
 
   /// Profile currency, for a position that is not tied to a wallet.
-  String get profileCurrency => _profile.saved?.overviewCurrency ?? 'VND';
+  String get profileCurrency =>
+      _profile.saved?.overviewCurrency ?? CurrencyCatalog.current.defaultCode;
 
   String newClientId() => newSyncOpId();
 
