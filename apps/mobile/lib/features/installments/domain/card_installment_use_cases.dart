@@ -4,6 +4,7 @@ import 'package:injectable/injectable.dart';
 import '../../auth/domain/auth_repository.dart';
 import 'card_installment.dart';
 import 'card_installment_repository.dart';
+import '../../server_config/domain/app_limits.dart';
 
 abstract class CardInstallmentUseCases {
   Future<Either<AuthFailure, List<CardInstallment>>> list({
@@ -28,16 +29,18 @@ abstract class CardInstallmentUseCases {
 
 @LazySingleton(as: CardInstallmentUseCases)
 class DefaultCardInstallmentUseCases implements CardInstallmentUseCases {
-  DefaultCardInstallmentUseCases(this._repository);
+  DefaultCardInstallmentUseCases(this._repository, this._limits);
   final CardInstallmentRepository _repository;
+  final AppLimitsSource _limits;
 
   static final _day = RegExp(r'^\d{4}-\d{2}-\d{2}$');
   static const _invalid = AuthFailure(AuthError.invalidInput);
 
-  /// Same bounds as the API; the API still checks that the periods add up.
-  static bool valid(InstallmentDraft draft) =>
-      draft.installmentCount >= InstallmentDraft.minCount &&
-      draft.installmentCount <= InstallmentDraft.maxCount &&
+  /// Same bounds as the API (server `limit.installmentMinTerm` / `MaxTerm`);
+  /// the API still checks that the periods add up.
+  bool valid(InstallmentDraft draft) =>
+      draft.installmentCount >= _limits.requireLimits.installmentMinTerm &&
+      draft.installmentCount <= _limits.requireLimits.installmentMaxTerm &&
       (draft.installmentMinor == null ||
           draft.installmentMinor! > BigInt.zero) &&
       _day.hasMatch(draft.firstDueOn);

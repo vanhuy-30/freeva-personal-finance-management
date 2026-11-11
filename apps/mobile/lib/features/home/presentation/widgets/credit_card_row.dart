@@ -7,6 +7,8 @@ import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/progress_bar.dart';
 import '../../domain/overview.dart';
+import '../../../server_config/domain/app_limits.dart';
+import '../../../../core/di/injection.dart';
 
 /// One credit card: name + due chip (warning within 7 days), limit bar
 /// coloured by level, "Đã dùng …" left and "Hạn mức …" right.
@@ -29,8 +31,13 @@ class CreditCardRow extends StatelessWidget {
     final locale = Localizations.localeOf(context).toString();
     String money(BigInt v) => formatMoneyText(v, digits, locale);
     final due = card.nextDue;
-    final soon = card.dueWithin(today, 7);
-    final barColor = switch (card.level) {
+    final soon = card.dueWithin(
+      today,
+      getIt<AppLimitsSource>().requireLimits.creditDueSoonDays,
+    );
+    final barColor = switch (card.levelWith(
+      getIt<AppLimitsSource>().requireLimits,
+    )) {
       CreditLevel.normal => c.data1,
       CreditLevel.high => FreevaPrimitive.amber500,
       CreditLevel.critical => FreevaPrimitive.red500,

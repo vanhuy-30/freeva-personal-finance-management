@@ -14,6 +14,7 @@ import 'new_month_review_card.dart';
 import 'recent_row_data.dart';
 import 'recent_transactions.dart';
 import 'spending_block.dart';
+import '../../../server_config/domain/app_limits.dart';
 
 /// Blocks under the quick actions once data is loaded: credit cards first
 /// for the debt goal, "Chi tháng", last-month review (new month only), credit
@@ -60,7 +61,12 @@ class OverviewBlocks extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SpendingBlock(
-          breakdown: spendingBreakdown(data.month, main, data.categories),
+          breakdown: spendingBreakdown(
+            data.month,
+            main,
+            data.categories,
+            top: getIt<AppLimitsSource>().requireLimits.reportTopRows,
+          ),
           currency: main,
           minorDigits: digits(main),
           monthLabel: _monthLabel(context, data.month.period.from),

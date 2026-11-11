@@ -2069,10 +2069,14 @@ class SVi extends S {
   String get budgetThresholdsSheetTitle => 'Báo khi đã dùng';
 
   @override
-  String get budgetThresholdsSheetSub => 'Chọn tối đa 4 mốc.';
+  String budgetThresholdsSheetSub(int count) {
+    return 'Chọn tối đa $count mốc.';
+  }
 
   @override
-  String get budgetThresholdsDefaultHint => 'Mặc định 80% và 100%.';
+  String budgetThresholdsDefaultHint(String levels) {
+    return 'Mặc định $levels.';
+  }
 
   @override
   String get budgetScopeDefault => 'Mọi tháng';
@@ -2523,15 +2527,15 @@ class SVi extends S {
   String get notifyBudget => 'Ngân sách sắp hết';
 
   @override
-  String get notifyBudgetSub => 'Khi dùng 80% và 100%';
+  String get notifyBudgetSub => 'Khi chạm mốc bạn chọn';
 
   @override
   String notifyBudgetAt(String levels) {
-    return 'Khi dùng $levels';
+    return 'Khi chạm $levels';
   }
 
   @override
-  String get notifyBudgetLevels => '80% và 100%';
+  String get notifyBudgetLevels => 'mốc bạn chọn';
 
   @override
   String get notifyCard => 'Thẻ tín dụng';
@@ -4553,7 +4557,9 @@ class SVi extends S {
   String get installmentOtherTitle => 'Số kỳ';
 
   @override
-  String get installmentOtherLabel => 'Từ 2 đến 60';
+  String installmentOtherLabel(int min, int max) {
+    return 'Từ $min đến $max';
+  }
 
   @override
   String get installmentEach => 'Mỗi kỳ';
@@ -5611,4 +5617,7 @@ class SVi extends S {
 
   @override
   String get serverConfigErrorMessage => 'Kiểm tra mạng rồi thử lại.';
+
+  @override
+  String get commonAnd => 'và';
 }

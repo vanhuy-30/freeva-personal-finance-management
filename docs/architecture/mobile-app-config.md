@@ -15,6 +15,15 @@ App lấy cờ tính năng và các số cấu hình từ `GET /api/v1/app-confi
 - **Đăng xuất:** xóa bản trên máy và trong bộ nhớ (cờ tính theo từng user). Câu trả lời đang chờ lúc đăng xuất bị bỏ.
 - **Lỗi mạng:** giữ bản đang có. Chưa từng có bản nào thì mọi cờ coi là tắt và `missing = true`.
 
+## App chỉ chạy khi có cấu hình (MOB-P5-001)
+
+- `ServerConfigBoundary` bọc nội dung app (trong `MaterialApp.router.builder`): khi đã đăng nhập (`setup` hoặc `unlocked`, onboarding cũng cần số) mà chưa có bản cấu hình nào thì hiện vòng chờ, tải lỗi thì hiện một màn "Chưa tải được cài đặt / Thử lại". Màn đăng nhập không chờ cấu hình. Vì vậy bên trong app luôn có số từ server, không có số dự phòng.
+- `AppLimits` (domain `server_config`): mọi số sản phẩm có kiểu, dựng từ `ServerConfig` một lần cho mỗi `version`; thiếu khóa nào thì `null` (boundary hiện Thử lại). Use case đọc qua interface `AppLimitsSource.requireLimits`; view đọc `getIt<AppLimitsSource>().requireLimits`; view model dựng tay nhận `AppLimitsSource` qua constructor.
+- Tải cấu hình chạy sau frame khi trạng thái đăng nhập đổi, để không đánh dấu widget bẩn giữa lúc dựng.
+- Test: `test/support/server_config_fixture.dart` (`testLimits`, `testServerConfigModel`, `registerTestServerConfig` sau `getIt.reset()`), giá trị bằng mặc định backend.
+
+Đã chuyển (PR 1): mốc ngân sách cho chọn/mặc định/tối đa/lớn nhất; dự báo lựa chọn/mặc định/lớn nhất; trả góp lựa chọn/mặc định/nhỏ nhất/lớn nhất; nhắc trước lựa chọn/mặc định/lớn nhất; mức dùng thẻ cao/nguy hiểm; "sắp đến hạn" thẻ và cho mượn; khoảng mặc định tài sản ròng/biểu đồ đầu tư; số dòng top báo cáo; số giao dịch gần đây trên Home; ngày mục tiêu mặc định/xa nhất; bước phút và giờ nhắc mặc định. Chữ có số dựng từ cấu hình (`budgetThresholdsSheetSub`, `budgetThresholdsDefaultHint`, `installmentOtherLabel`). Màn Thông báo: dòng ngân sách nói "Khi chạm mốc bạn chọn" vì server báo đúng các mốc user chọn (BE-P5-001).
+
 ## Dùng trong code
 
 - Cờ: `getIt<FeatureFlagService>().isEnabled(FeatureFlags.insights)` (bản cài đặt là `ServerConfigViewModel`). `LocalFeatureFlagService` luôn tắt đã bỏ.

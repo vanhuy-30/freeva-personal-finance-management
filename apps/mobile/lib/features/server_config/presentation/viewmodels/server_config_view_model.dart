@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/config/app_config.dart';
 import '../../../../core/feature_flags/feature_flag_service.dart';
+import '../../domain/app_limits.dart';
 import '../../domain/server_config.dart';
 import '../../domain/server_config_repository.dart';
 
@@ -16,7 +17,7 @@ import '../../domain/server_config_repository.dart';
 /// - Dev builds only: `--dart-define=FEATURE_FLAGS_ON=insights,forecast` turns flags on locally.
 @lazySingleton
 class ServerConfigViewModel extends ChangeNotifier
-    implements FeatureFlagService {
+    implements FeatureFlagService, AppLimitsSource {
   ServerConfigViewModel(ServerConfigRepository repository, AppConfig appConfig)
     : this.withClock(
         repository,
@@ -46,6 +47,33 @@ class ServerConfigViewModel extends ChangeNotifier
   int _generation = 0;
 
   ServerConfig? get config => _config;
+
+  AppLimits? _limits;
+  int? _limitsVersion;
+
+  /// Typed numbers for the current config; null with no config or a missing key.
+  AppLimits? get limits {
+    final config = _config;
+    if (config == null) return null;
+    if (_limitsVersion != config.version || _limits == null) {
+      _limits = AppLimits.from(config);
+      _limitsVersion = config.version;
+    }
+    return _limits;
+  }
+
+  /// Inside the signed-in app [ServerConfigBoundary] guarantees a config, so
+  /// this never throws there.
+  @override
+  AppLimits get requireLimits => limits!;
+
+  /// Tests: use [config] as if it had loaded.
+  @visibleForTesting
+  void debugSetConfig(ServerConfig config) {
+    _config = config;
+    notifyListeners();
+  }
+
   bool get loading => _loading;
 
   /// No config to use: never loaded and the last fetch failed.

@@ -36,19 +36,18 @@ class Breakdown {
 
   final BigInt total;
 
-  /// Top [reportBreakdownTop] by amount, then "Khác". Empty when [total] is 0.
+  /// Top `report.topRows` (server config) by amount, then "Khác". Empty when [total] is 0.
   final List<BreakdownSlice> slices;
 }
-
-const reportBreakdownTop = 3;
 
 /// Rolls leaf categories up to parents for [currency] (names come with the
 /// rows). Uncategorised income joins "Khác". Percentages add up to exactly 100.
 Breakdown reportBreakdown(
   CashflowReport report,
   String currency,
-  BreakdownKind kind,
-) {
+  BreakdownKind kind, {
+  required int top,
+}) {
   final names = <String?, String?>{};
   final amounts = <String?, BigInt>{};
   final counts = <String?, int>{};
@@ -73,7 +72,7 @@ Breakdown reportBreakdown(
   final head = [
     for (final e in ranked)
       if (names[e.key] != null) e,
-  ].take(reportBreakdownTop).toList();
+  ].take(top).toList();
   final rest = [
     for (final e in ranked)
       if (!head.contains(e)) e,

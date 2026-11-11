@@ -43,7 +43,7 @@ Thứ tự: `BE-P5-E08` → `WA-P5-001` → `MOB-P5-E08` → `BE-P5-001` / `MOB-
 - Note: xong 2026-11-11: feature `server_config` — đọc bản trên máy lúc boot, tải khi mở khóa và khi quay lại app (tối đa mỗi giờ), thay bản lưu khi `version` đổi, xóa khi đăng xuất. `ServerConfigViewModel` là `FeatureFlagService` (bỏ `LocalFeatureFlagService`). `ServerConfigGate` hiện "Chưa tải được cài đặt" + Thử lại khi chưa có bản nào. Overlay `FEATURE_FLAGS_ON` chỉ ở bản dev debug. Màn hiện có chưa đọc khóa: `MOB-P5-001`. [Kiến trúc](../docs/architecture/mobile-app-config.md).
 
 ### BE-P5-001 / MOB-P5-001 — Chuyển số và cấu hình đang hardcode lên server
-- Status: doing — BE xong 2026-11-11; MOB chia 3 PR (lựa chọn và ngưỡng; tài khoản, nhập liệu, danh mục; tiền tệ)
+- Status: doing — BE xong 2026-11-11; MOB PR 1/3 (lựa chọn và ngưỡng) xong 2026-11-11; còn tài khoản/nhập liệu/danh mục và tiền tệ
 - Module: 26 và các module có giá trị bị rà ra
 - Gate: post-v1
 - Depends: BE-P5-E08, MOB-P5-E08
@@ -73,6 +73,7 @@ Thứ tự: `BE-P5-E08` → `WA-P5-001` → `MOB-P5-E08` → `BE-P5-001` / `MOB-
   - **Không chuyển (chốt 2026-11-11):** enum nghiệp vụ mà app phải có code riêng cho từng giá trị (loại ví, loại giao dịch, đơn vị lặp), design token, khoảng cách, thời gian animation. Phiên bản app đọc từ gói cài đặt thay vì hằng `0.0.1+1`.
 - Note: chốt khi lên plan 2026-11-11: (1) cờ `google_sign_in`, `apple_sign_in`, `profile_edit` giữ "Sắp có" khi tắt, chưa viết code — chỉ có tác dụng khi tính năng thật được làm; (2) user chọn mốc ngân sách nào thì server báo mốc đó (bỏ sàn 80%), mốc mặc định admin chỉnh; (3) phiên bản app đọc bằng `package_info_plus`.
 - Note: BE xong 2026-11-11: `AppConfigReader` (cache 30 giây) dùng ở ngân sách, dự báo, định kỳ, thông báo, nhập/xuất CSV, nhãn, hồ sơ, mật khẩu; 24 khóa chỉ đọc `limit.*` (test so với DTO); kiểm tra chéo khi lưu; bỏ sàn 80% thông báo ngân sách; giờ nhắc mặc định 21:00; `Currency.symbol`. Web admin hiện khóa chỉ đọc là "Cố định". [Kiến trúc](../docs/architecture/app-config.md).
+- Note: MOB PR 1/3 xong 2026-11-11: `ServerConfigBoundary` (app có phiên chỉ chạy khi có cấu hình, lỗi thì Thử lại), `AppLimits` / `AppLimitsSource`; ngân sách, dự báo, trả góp, định kỳ, thẻ, cho mượn, tài sản ròng, đầu tư, báo cáo, Home, mục tiêu, giờ nhắc đọc từ cấu hình; copy màn Thông báo đổi thành "Khi chạm mốc bạn chọn". [Mobile](../docs/architecture/mobile-app-config.md).
 
 ### DS-P5-001 — Thiết kế màn Phase 5
 - Status: todo

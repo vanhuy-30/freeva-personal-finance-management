@@ -4,6 +4,7 @@ Nhật ký repo/process — không phải App Store release notes.
 
 ## 2026-11-11
 
+- `MOB-P5-001` PR 1/3: app chỉ chạy phần đã đăng nhập khi có cấu hình server (lỗi thì một màn Thử lại); mốc ngân sách, dự báo, trả góp, nhắc trước, mức dùng thẻ, sắp đến hạn, khoảng biểu đồ, top báo cáo, giao dịch gần đây, ngày mục tiêu, bước phút, giờ nhắc lấy từ cấu hình. Màn Thông báo: "Khi chạm mốc bạn chọn".
 - `BE-P5-001` (backend): API dùng giá trị staff sửa thay hằng số (mốc ngân sách, dự báo, định kỳ, mức dùng thẻ, giờ nhắc, nhập/xuất CSV, số nhãn, tên hiển thị, mục tiêu onboarding, mật khẩu tối thiểu); 24 khóa giới hạn chỉ đọc cho app; kiểm tra chéo khi lưu; thông báo ngân sách ở mọi mốc user chọn (bỏ sàn 80%); giờ nhắc ghi chi mặc định 21:00; ký hiệu tiền tệ trong `/profile/options`. Migration `config_enforce`. Mobile còn 3 PR.
 - `MOB-P5-E08` (mobile): app đọc cờ và cấu hình từ `GET /app-config` — bản lưu trên máy dùng ngay lúc mở app, tải lại khi mở khóa và khi quay lại app (tối đa mỗi giờ), xóa khi đăng xuất; chưa tải được thì cờ tắt và khối cần số hiện "Thử lại". Cờ dev bật qua `FEATURE_FLAGS_ON` chỉ ở bản dev. [Thiết kế](../architecture/mobile-app-config.md).
 - `WA-P5-001` (web admin): trang Cờ và cấu hình `/config` — nhập credential staff, xem cờ và khóa theo nhóm (mô tả, mặc định, giới hạn, lần sửa cuối), sửa có bước xác nhận trước/sau, về mặc định, lỗi hiện tại ô nhập, báo khi người khác vừa sửa. Header admin thêm điều hướng.

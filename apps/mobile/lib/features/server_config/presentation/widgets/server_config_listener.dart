@@ -7,6 +7,10 @@ import '../../../auth/domain/auth_repository.dart';
 import '../../../auth/presentation/viewmodels/auth_view_model.dart';
 import '../viewmodels/server_config_view_model.dart';
 
+/// Stages with a signed-in session that can call the API and need config.
+bool hasSession(AuthStage stage) =>
+    stage == AuthStage.setup || stage == AuthStage.unlocked;
+
 /// Loads server flags and config when the app unlocks and when it resumes
 /// (at most hourly), and forgets them on sign-out.
 class ServerConfigListener extends StatefulWidget {
@@ -43,17 +47,21 @@ class _ServerConfigListenerState extends State<ServerConfigListener>
     if (_auth.stage == _stage) return;
     final previous = _stage;
     _stage = _auth.stage;
-    if (_stage == AuthStage.signedOut) {
-      unawaited(_config.clear());
-    } else if (_stage == AuthStage.unlocked) {
-      _refresh(
-        force: previous == AuthStage.signedOut || previous == AuthStage.setup,
-      );
-    }
+    // Auth can change while widgets build; touch config after this frame so
+    // its listeners (ServerConfigBoundary) are not marked dirty mid-build.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      if (_stage == AuthStage.signedOut) {
+        unawaited(_config.clear());
+      } else if (hasSession(_stage)) {
+        // Onboarding (setup) already needs config numbers (MOB-P5-001).
+        _refresh(force: previous == AuthStage.signedOut);
+      }
+    });
   }
 
   void _refresh({bool force = false}) {
-    if (_auth.stage != AuthStage.unlocked) return;
+    if (!hasSession(_auth.stage)) return;
     unawaited(_config.refresh(force: force));
   }
 

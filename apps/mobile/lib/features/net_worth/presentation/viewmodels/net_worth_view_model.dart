@@ -6,16 +6,27 @@ import '../../../profile/presentation/viewmodels/profile_view_model.dart';
 import '../../../wallets/presentation/viewmodels/wallet_view_model.dart';
 import '../../domain/net_worth_history.dart';
 import '../../domain/net_worth_use_cases.dart';
+import '../../../server_config/domain/app_limits.dart';
 
 /// Loads the net-worth history for one window and tracks the point the user
 /// touched. Created per page, not a singleton.
 class NetWorthViewModel extends ChangeNotifier {
-  NetWorthViewModel(this._cases, this._auth, this._profile, this._wallets) {
+  NetWorthViewModel(
+    this._cases,
+    this._auth,
+    this._profile,
+    this._wallets,
+    this._limits,
+  ) {
     _stage = _auth.stage;
     _auth.addListener(_authChanged);
   }
 
-  static const defaultWindow = NetWorthWindow.half;
+  /// Server `netWorth.defaultWindow` (MOB-P5-001).
+  NetWorthWindow get defaultWindow =>
+      NetWorthWindow.fromValue(_limits.requireLimits.netWorthDefaultWindow);
+
+  final AppLimitsSource _limits;
 
   final NetWorthUseCases _cases;
   final AuthViewModel _auth;
@@ -25,7 +36,7 @@ class NetWorthViewModel extends ChangeNotifier {
   int _epoch = 0;
   bool _disposed = false;
 
-  NetWorthWindow window = defaultWindow;
+  late NetWorthWindow window = defaultWindow;
   NetWorthSeries? data;
   bool busy = false;
   AuthFailure? failure;

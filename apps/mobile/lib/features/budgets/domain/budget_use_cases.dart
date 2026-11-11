@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../server_config/domain/app_limits.dart';
+
 import '../../auth/domain/auth_repository.dart';
 import 'budget.dart';
 import 'budget_repository.dart';
@@ -20,9 +22,10 @@ abstract class BudgetUseCases {
 
 @LazySingleton(as: BudgetUseCases)
 class DefaultBudgetUseCases implements BudgetUseCases {
-  DefaultBudgetUseCases(this._repository);
+  DefaultBudgetUseCases(this._repository, this._limits);
 
   final BudgetRepository _repository;
+  final AppLimitsSource _limits;
 
   AuthFailure? _validate(BudgetDraft draft) {
     if (draft.limitMinor <= BigInt.zero) {
@@ -32,13 +35,16 @@ class DefaultBudgetUseCases implements BudgetUseCases {
         (draft.on == null || draft.on!.isEmpty)) {
       return const AuthFailure(AuthError.invalidInput);
     }
+    final rules = _limits.requireLimits;
     final thresholds = draft.alertThresholds;
-    if (thresholds.isEmpty || thresholds.length > 4) {
+    if (thresholds.isEmpty || thresholds.length > rules.budgetMaxThresholds) {
       return const AuthFailure(AuthError.invalidInput);
     }
     var previous = 0;
     for (final threshold in thresholds) {
-      if (threshold < 1 || threshold > 100 || threshold <= previous) {
+      if (threshold < 1 ||
+          threshold > rules.budgetThresholdMax ||
+          threshold <= previous) {
         return const AuthFailure(AuthError.invalidInput);
       }
       previous = threshold;

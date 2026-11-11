@@ -5,6 +5,7 @@ import '../../auth/domain/auth_repository.dart';
 import 'recurring_calendar.dart';
 import 'recurring_repository.dart';
 import 'recurring_rule.dart';
+import '../../server_config/domain/app_limits.dart';
 
 abstract class RecurringUseCases {
   Future<Either<AuthFailure, List<RecurringRule>>> list({bool? active});
@@ -43,8 +44,9 @@ abstract class RecurringUseCases {
 
 @LazySingleton(as: RecurringUseCases)
 class DefaultRecurringUseCases implements RecurringUseCases {
-  DefaultRecurringUseCases(this._repository);
+  DefaultRecurringUseCases(this._repository, this._limits);
   final RecurringRepository _repository;
+  final AppLimitsSource _limits;
 
   AuthFailure? _validateDraft(RecurringDraft draft) {
     if (!recurringUnits.contains(draft.unit)) {
@@ -68,7 +70,8 @@ class DefaultRecurringUseCases implements RecurringUseCases {
     if (draft.mode != 'auto' && draft.mode != 'remind') {
       return const AuthFailure(AuthError.invalidInput);
     }
-    if (draft.remindDaysBefore < 0 || draft.remindDaysBefore > 30) {
+    if (draft.remindDaysBefore < 0 ||
+        draft.remindDaysBefore > _limits.requireLimits.remindBeforeMax) {
       return const AuthFailure(AuthError.invalidInput);
     }
     if (draft.mode == 'remind') {

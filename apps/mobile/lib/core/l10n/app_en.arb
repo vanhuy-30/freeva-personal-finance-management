@@ -1306,8 +1306,10 @@
   },
   "budgetThresholdsTitle": "Alert thresholds",
   "budgetThresholdsSheetTitle": "Alert me when used",
-  "budgetThresholdsSheetSub": "Pick up to 4 levels.",
-  "budgetThresholdsDefaultHint": "Default is 80% and 100%.",
+  "budgetThresholdsSheetSub": "Pick up to {count} levels.",
+  "@budgetThresholdsSheetSub": {"placeholders": {"count": {"type": "int"}}},
+  "budgetThresholdsDefaultHint": "Default is {levels}.",
+  "@budgetThresholdsDefaultHint": {"placeholders": {"levels": {"type": "String"}}},
   "budgetScopeDefault": "Every month",
   "budgetScopeMonth": "This month",
   "budgetScopeMonthHint": "Using the default limit. Saving creates an override for this month only.",
@@ -1540,7 +1542,7 @@
   "notifyDigest": "Spending summary",
   "notifyDigestSub": "Every week or month",
   "notifyBudget": "Budget running out",
-  "notifyBudgetSub": "At 80% and 100% used",
+  "notifyBudgetSub": "At the levels you picked",
   "notifyBudgetAt": "Alert at {levels}",
   "@notifyBudgetAt": {
     "placeholders": {
@@ -1549,7 +1551,7 @@
       }
     }
   },
-  "notifyBudgetLevels": "80% and 100%",
+  "notifyBudgetLevels": "the levels you picked",
   "notifyCard": "Credit cards",
   "notifyCardSub": "Due soon, near the limit",
   "notifySession": "New device signed in",
@@ -2514,7 +2516,8 @@
   "installmentCount": "Periods",
   "installmentOther": "Other",
   "installmentOtherTitle": "Number of periods",
-  "installmentOtherLabel": "From 2 to 60",
+  "installmentOtherLabel": "From {min} to {max}",
+  "@installmentOtherLabel": {"placeholders": {"min": {"type": "int"}, "max": {"type": "int"}}},
   "installmentEach": "Each period",
   "installmentEditEach": "Amount each period",
   "installmentFirst": "First period",
@@ -2851,5 +2854,6 @@
   "tradeSave": "Save",
   "tradePriceRow": "Purchase price",
   "serverConfigErrorTitle": "Settings did not load",
-  "serverConfigErrorMessage": "Check your connection and try again."
+  "serverConfigErrorMessage": "Check your connection and try again.",
+  "commonAnd": "and"
 }

@@ -1,4 +1,7 @@
 import 'package:dartz/dartz.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/core/analytics/analytics_service.dart';
@@ -59,6 +62,7 @@ void main() {
 
   setUp(() async {
     await getIt.reset();
+    registerTestServerConfig();
     api = ReportTransport();
     auth =
         DefaultAuthViewModel(
@@ -93,6 +97,7 @@ void main() {
     reports.dispose();
     auth.dispose();
     await getIt.reset();
+    registerTestServerConfig();
   });
 
   void tall(WidgetTester tester) {

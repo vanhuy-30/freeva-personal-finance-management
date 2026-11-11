@@ -22,6 +22,7 @@ import '../widgets/net_worth_breakdown.dart';
 import '../widgets/net_worth_chart.dart';
 import '../widgets/net_worth_summary.dart';
 import '../widgets/net_worth_labels.dart';
+import '../../../server_config/domain/app_limits.dart';
 
 /// Board Q.1, opened from the "Tài sản ròng" tile in Cá nhân: net worth
 /// today, how it moved over a window, and what it is made of.
@@ -38,6 +39,7 @@ class _NetWorthPageState extends State<NetWorthPage> {
     getIt<AuthViewModel>(),
     getIt<ProfileViewModel>(),
     getIt<WalletViewModel>(),
+    getIt<AppLimitsSource>(),
   );
 
   @override

@@ -1,11 +1,12 @@
 import 'dart:io';
 
+import '../../support/server_config_fixture.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/core/l10n/generated/app_localizations.dart';
 import 'package:mobile/core/theme/app_theme.dart';
-import 'package:mobile/features/budgets/domain/budget.dart';
 import 'package:mobile/features/budgets/presentation/widgets/threshold_sheet.dart';
 
 Widget _app(List<int> initial, ValueChanged<List<int>?> onResult, bool dark) {
@@ -39,20 +40,21 @@ Future<void> _open(WidgetTester t) async {
 }
 
 void main() {
+  setUp(registerTestServerConfig);
   test('default thresholds are 80 and 100', () {
-    expect(defaultAlertThresholds, [80, 100]);
+    expect(testLimits().budgetDefaultThresholds, [80, 100]);
   });
 
   group('toggleThreshold', () {
     test('adds in order and removes', () {
-      expect(toggleThreshold([80, 100], 70), [70, 80, 100]);
-      expect(toggleThreshold([70, 80, 100], 80), [70, 100]);
+      expect(toggleThreshold([80, 100], 70, max: 4), [70, 80, 100]);
+      expect(toggleThreshold([70, 80, 100], 80, max: 4), [70, 100]);
     });
     test('ignores a fifth level', () {
-      expect(toggleThreshold([60, 70, 80, 100], 90), [60, 70, 80, 100]);
+      expect(toggleThreshold([60, 70, 80, 100], 90, max: 4), [60, 70, 80, 100]);
     });
     test('keeps at least one level', () {
-      expect(toggleThreshold([100], 100), [100]);
+      expect(toggleThreshold([100], 100, max: 4), [100]);
     });
   });
 

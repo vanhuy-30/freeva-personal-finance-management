@@ -3789,14 +3789,14 @@ abstract class S {
   /// No description provided for @budgetThresholdsSheetSub.
   ///
   /// In en, this message translates to:
-  /// **'Pick up to 4 levels.'**
-  String get budgetThresholdsSheetSub;
+  /// **'Pick up to {count} levels.'**
+  String budgetThresholdsSheetSub(int count);
 
   /// No description provided for @budgetThresholdsDefaultHint.
   ///
   /// In en, this message translates to:
-  /// **'Default is 80% and 100%.'**
-  String get budgetThresholdsDefaultHint;
+  /// **'Default is {levels}.'**
+  String budgetThresholdsDefaultHint(String levels);
 
   /// No description provided for @budgetScopeDefault.
   ///
@@ -4635,7 +4635,7 @@ abstract class S {
   /// No description provided for @notifyBudgetSub.
   ///
   /// In en, this message translates to:
-  /// **'At 80% and 100% used'**
+  /// **'At the levels you picked'**
   String get notifyBudgetSub;
 
   /// No description provided for @notifyBudgetAt.
@@ -4647,7 +4647,7 @@ abstract class S {
   /// No description provided for @notifyBudgetLevels.
   ///
   /// In en, this message translates to:
-  /// **'80% and 100%'**
+  /// **'the levels you picked'**
   String get notifyBudgetLevels;
 
   /// No description provided for @notifyCard.
@@ -8139,8 +8139,8 @@ abstract class S {
   /// No description provided for @installmentOtherLabel.
   ///
   /// In en, this message translates to:
-  /// **'From 2 to 60'**
-  String get installmentOtherLabel;
+  /// **'From {min} to {max}'**
+  String installmentOtherLabel(int min, int max);
 
   /// No description provided for @installmentEach.
   ///
@@ -9760,6 +9760,12 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Check your connection and try again.'**
   String get serverConfigErrorMessage;
+
+  /// No description provided for @commonAnd.
+  ///
+  /// In en, this message translates to:
+  /// **'and'**
+  String get commonAnd;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

@@ -1,6 +1,7 @@
 import 'package:injectable/injectable.dart';
 
 import '../../../core/feature_flags/feature_flag_service.dart';
+import '../domain/app_limits.dart';
 import 'viewmodels/server_config_view_model.dart';
 
 @module
@@ -8,4 +9,8 @@ abstract class ServerConfigModule {
   /// Flags read anywhere in the app come from the server copy (MOB-P5-E08).
   @lazySingleton
   FeatureFlagService featureFlags(ServerConfigViewModel model) => model;
+
+  /// Product numbers for use cases (MOB-P5-001).
+  @lazySingleton
+  AppLimitsSource appLimits(ServerConfigViewModel model) => model;
 }

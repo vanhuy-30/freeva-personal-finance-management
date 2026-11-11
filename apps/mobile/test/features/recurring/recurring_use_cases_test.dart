@@ -1,4 +1,7 @@
 import 'package:dartz/dartz.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/recurring/domain/recurring_repository.dart';
@@ -97,7 +100,7 @@ void main() {
     'rejects expense without category and accepts transfer balance',
     () async {
       final repo = _FakeRepo();
-      final cases = DefaultRecurringUseCases(repo);
+      final cases = DefaultRecurringUseCases(repo, testServerConfigModel());
       final bad = await cases.create(
         RecurringDraft(
           clientId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
@@ -116,6 +119,7 @@ void main() {
           endDate: null,
           nextExecutionDate: '2026-01-01',
           active: true,
+          remindDaysBefore: 3,
         ),
       );
       expect(bad.isLeft(), isTrue);
@@ -138,6 +142,7 @@ void main() {
           endDate: null,
           nextExecutionDate: '2026-01-05',
           active: true,
+          remindDaysBefore: 3,
         ),
       );
       expect(ok.isRight(), isTrue);
@@ -176,7 +181,10 @@ void main() {
   group('remind rules (bills)', () {
     test('need a name, an expense and a negative amount; wallet and category '
         'are optional', () async {
-      final cases = DefaultRecurringUseCases(_FakeRepo());
+      final cases = DefaultRecurringUseCases(
+        _FakeRepo(),
+        testServerConfigModel(),
+      );
       expect((await cases.create(bill())).isRight(), isTrue);
       expect((await cases.create(bill(name: ' '))).isLeft(), isTrue);
       expect((await cases.create(bill(type: 'income'))).isLeft(), isTrue);
@@ -187,7 +195,10 @@ void main() {
     });
 
     test('an auto rule still needs a wallet', () async {
-      final cases = DefaultRecurringUseCases(_FakeRepo());
+      final cases = DefaultRecurringUseCases(
+        _FakeRepo(),
+        testServerConfigModel(),
+      );
       final auto = RecurringDraft(
         clientId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
         type: 'income',
@@ -205,6 +216,7 @@ void main() {
         endDate: null,
         nextExecutionDate: '2026-11-05',
         active: true,
+        remindDaysBefore: 3,
       );
       expect((await cases.create(auto)).isLeft(), isTrue);
     });
@@ -232,11 +244,12 @@ void main() {
       version: 1,
       mode: mode,
       name: 'Tiền điện',
+      remindDaysBefore: 3,
     );
 
     test('passes the due day, wallet and real amount through', () async {
       final repo = _FakeRepo();
-      final cases = DefaultRecurringUseCases(repo);
+      final cases = DefaultRecurringUseCases(repo, testServerConfigModel());
       final done = await cases.confirm(
         rule(),
         RecurringConfirm(
@@ -252,7 +265,10 @@ void main() {
     test(
       'rejects an auto rule, a zero amount and a link plus amount',
       () async {
-        final cases = DefaultRecurringUseCases(_FakeRepo());
+        final cases = DefaultRecurringUseCases(
+          _FakeRepo(),
+          testServerConfigModel(),
+        );
         const day = '2026-11-05';
         expect(
           (await cases.confirm(

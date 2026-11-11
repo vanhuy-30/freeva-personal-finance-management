@@ -26,6 +26,7 @@ import '../widgets/forecast_chart.dart';
 import '../widgets/forecast_how_card.dart';
 import '../widgets/forecast_labels.dart';
 import '../widgets/forecast_rule_row.dart';
+import '../../../server_config/domain/app_limits.dart';
 
 /// Pushed from Reports: where the balance is heading, counting only the
 /// recurring items and bills the user already has.
@@ -43,6 +44,7 @@ class _ForecastPageState extends State<ForecastPage> {
     getIt<AuthViewModel>(),
     getIt<ProfileViewModel>(),
     getIt<WalletViewModel>(),
+    getIt<AppLimitsSource>(),
   );
   late final CategoryViewModel categories = getIt<CategoryViewModel>();
 
@@ -100,7 +102,7 @@ class _ForecastPageState extends State<ForecastPage> {
                 FreevaSegmented<int>(
                   expand: true,
                   segments: [
-                    for (final months in ForecastViewModel.ranges)
+                    for (final months in model.ranges)
                       FreevaSegment(months, s.forecastRange(months)),
                   ],
                   selected: model.months,

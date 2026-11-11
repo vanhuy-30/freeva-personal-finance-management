@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 
 import '../../../budgets/domain/budget.dart';
+import '../../../server_config/domain/app_limits.dart';
 import '../../../budgets/domain/budget_use_cases.dart';
 import '../../../goals/domain/goal.dart';
 import '../../../goals/domain/goal_use_cases.dart';
@@ -39,10 +40,13 @@ class OnboardingViewModel extends ChangeNotifier {
     this._goals,
     this._pending,
     this._budgets, {
+    required this._limits,
     this.today,
     this.previewDelay = const Duration(milliseconds: 300),
   });
 
+  /// Server product numbers (MOB-P5-001).
+  final AppLimitsSource _limits;
   final ProfileUseCases _profile;
   final SettingsUseCases _settings;
   final GoalUseCases _goals;
@@ -278,7 +282,9 @@ class OnboardingViewModel extends ChangeNotifier {
         final put = await budgets.put(
           BudgetDraft(
             limitMinor: amount,
-            alertThresholds: List.of(defaultAlertThresholds),
+            alertThresholds: List.of(
+              _limits.requireLimits.budgetDefaultThresholds,
+            ),
             categories: const [],
           ),
         );

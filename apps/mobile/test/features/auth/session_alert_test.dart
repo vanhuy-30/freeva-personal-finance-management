@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/core/analytics/analytics_event.dart';
 import 'package:mobile/core/di/injection.dart';
@@ -179,6 +182,7 @@ void main() {
 
   testWidgets('banner reviews sessions and hides itself', (tester) async {
     await getIt.reset();
+    registerTestServerConfig();
     final model = DefaultAuthViewModel(
       DefaultAuthUseCases(
         AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
@@ -189,6 +193,7 @@ void main() {
     addTearDown(() async {
       model.dispose();
       await getIt.reset();
+      registerTestServerConfig();
     });
     await tester.pumpWidget(
       MaterialApp(

@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import '../../support/server_config_fixture.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -88,6 +90,7 @@ void main() {
     t.view.devicePixelRatio = 1;
     addTearDown(t.view.reset);
     await getIt.reset();
+    registerTestServerConfig();
     getIt
       ..registerSingleton<SyncViewModel>(model)
       ..registerSingleton<TransactionViewModel>(

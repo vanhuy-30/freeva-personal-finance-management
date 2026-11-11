@@ -171,6 +171,7 @@ void main() {
         report(const [], rows: rows),
         'VND',
         BreakdownKind.expense,
+        top: 3,
       );
       expect(result.total, b(9700));
       expect(
@@ -189,6 +190,7 @@ void main() {
         report(const [], rows: rows),
         'VND',
         BreakdownKind.income,
+        top: 3,
       );
       expect(income.slices.single.isOther, isTrue);
       expect(income.slices.single.percent, 100);
@@ -196,6 +198,7 @@ void main() {
         report(const [], rows: rows),
         'USD',
         BreakdownKind.expense,
+        top: 3,
       );
       expect(none.slices, isEmpty);
       expect(none.total, BigInt.zero);

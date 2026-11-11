@@ -37,6 +37,7 @@ import '../widgets/rec_mode_group.dart';
 import '../widgets/rec_repeat_sheet.dart';
 import '../widgets/rec_switch_card.dart';
 import '../widgets/recurring_labels.dart';
+import '../../../server_config/domain/app_limits.dart';
 
 /// Thêm / Sửa định kỳ. A new rule picks Chi · Thu · Chuyển and how it is
 /// recorded (auto, or ask first for a bill); an existing rule keeps both
@@ -61,7 +62,8 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
   bool varies = false;
   bool active = true;
   RecRepeat repeat = (unit: 'month', interval: 1);
-  int remindBefore = 3;
+  late final AppLimits limits = getIt<AppLimitsSource>().requireLimits;
+  late int remindBefore = limits.recurringDefaultRemind;
   String next = '';
   String? accountId;
   String? counterAccountId;
@@ -451,7 +453,10 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
             spacing: FreevaSpace.s2,
             runSpacing: FreevaSpace.s2,
             children: [
-              for (final days in const [0, 1, 3, 7])
+              for (final days in {
+                ...limits.recurringRemindOptions,
+                remindBefore,
+              }.toList()..sort())
                 FreevaChip(
                   label: days == 0
                       ? s.recRemindSameDay

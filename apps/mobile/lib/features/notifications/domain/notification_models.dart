@@ -161,15 +161,16 @@ final _hm = RegExp(r'^([01]\d|2[0-3]):([0-5]\d)$');
 
 bool isValidHm(String value) => _hm.hasMatch(value);
 
-/// Minute step of the daily reminder wheel.
-const dailyLogMinuteStep = 15;
-
-/// [value] (`HH:mm`) snapped to the nearest [dailyLogMinuteStep], as
-/// (hour, minute). Falls back to 20:00 (server default) when unreadable.
-(int, int) snapDailyLogTime(String value) {
-  final minutes = minutesOfDay(value) ?? 20 * 60;
-  final snapped =
-      ((minutes / dailyLogMinuteStep).round() * dailyLogMinuteStep) % (24 * 60);
+/// [value] (`HH:mm`) snapped to the nearest [step] minutes (server
+/// `notification.minuteStep`), as (hour, minute). An unreadable value uses
+/// [fallback] (server `notification.dailyLogDefaultTime`).
+(int, int) snapDailyLogTime(
+  String value, {
+  required int step,
+  required String fallback,
+}) {
+  final minutes = minutesOfDay(value) ?? minutesOfDay(fallback) ?? 0;
+  final snapped = ((minutes / step).round() * step) % (24 * 60);
   return (snapped ~/ 60, snapped % 60);
 }
 
