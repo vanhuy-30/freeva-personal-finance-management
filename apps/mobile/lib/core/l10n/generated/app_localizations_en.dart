@@ -4982,7 +4982,7 @@ class SEn extends S {
   String get importPickWallet => 'Choose a wallet';
 
   @override
-  String get importPickCategory => 'Choose a category';
+  String get importPickCategory => 'Pick a category';
 
   @override
   String get importPreviewTitle => 'Preview';
@@ -5827,4 +5827,41 @@ class SEn extends S {
 
   @override
   String get txSuggestUse => 'Use';
+
+  @override
+  String importFilterSuggested(int count) {
+    return 'Suggested $count';
+  }
+
+  @override
+  String get importSuggestHint =>
+      'Categories guessed from the shop. Tap to change.';
+
+  @override
+  String get importPickSheetLabel => 'Change category';
+
+  @override
+  String get importPickSuggested => 'Suggested';
+
+  @override
+  String get importPickOther => 'Or pick another category';
+
+  @override
+  String importApplySame(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Apply to $count items here',
+      one: 'Apply to 1 item here',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String importApplySameHint(String merchant) {
+    return '$merchant items in this file';
+  }
+
+  @override
+  String get importPickDone => 'Done';
 }

@@ -95,7 +95,7 @@ Thứ tự: `BE-P5-E08` → `WA-P5-001` → `MOB-P5-E08` → `BE-P5-001` / `MOB-
 - Note: xong 2026-11-11: `User.autoSuggestEnabled` + `PUT /profile/auto-suggest`; bảng `CategorySuggestionMapping` (E03 ghi) với `GET`/`DELETE /category-suggestions/mappings`; `AutoSuggestPolicy` (cờ bật và user chưa tắt) cho E03/E04/E06; xuất dữ liệu và xóa tài khoản có bảng mới. Insight không lưu (chốt 2026-11-11), nên "dữ liệu đã học" chỉ là cửa hàng đã nhớ. App: dòng "Gợi ý tự động" ở Cá nhân → Ứng dụng (chỉ khi một trong ba cờ bật), màn U.1 và popup U.2. [Kiến trúc](../docs/architecture/auto-suggest.md).
 
 ### BE-P5-E03 / MOB-P5-E03 — Gợi ý danh mục
-- Status: todo
+- Status: done — 2026-11-11
 - Module: 18, 5
 - Gate: post-v1
 - Depends: BE-P1-006, BE-P1-011, BE-P5-E08, PRD-P5-E01
@@ -107,7 +107,8 @@ Thứ tự: `BE-P5-E08` → `WA-P5-001` → `MOB-P5-E08` → `BE-P5-001` / `MOB-
   - Server đếm tỷ lệ chấp nhận và tỷ lệ sửa (không phụ thuộc nhà cung cấp analytics). Không có nút "Không đúng": user chọn danh mục khác thì tính là sửa.
   - UI: [R.1–R.3](../docs/brand/patterns/R-suggestions-insights.md).
   - Cờ `category_suggest` tắt hoặc user tắt ở `PRD-P5-E01` thì API không đề xuất.
-- Note: PR 1/2 xong 2026-11-11: `POST /category-suggestions/suggest` (đã nhớ → lịch sử ≥ 60% → danh sách cửa hàng chung theo icon), `POST /category-suggestions/feedback` (đếm theo ngày không user id, nhớ cửa hàng theo danh mục user chọn kể cả khi sửa — chốt 2026-11-11), `GET /admin/category-suggestions/stats`; kiểu cấu hình `pair_list` + khóa `categorySuggest.*` sửa trên web admin; app: thẻ gợi ý ở màn ghi chi (R.1). Còn PR 2: nhập CSV (R.2, R.3). [Kiến trúc](../docs/architecture/category-suggestions.md).
+- Note: PR 1/2 xong 2026-11-11: `POST /category-suggestions/suggest` (đã nhớ → lịch sử ≥ 60% → danh sách cửa hàng chung theo icon), `POST /category-suggestions/feedback` (đếm theo ngày không user id, nhớ cửa hàng theo danh mục user chọn kể cả khi sửa — chốt 2026-11-11), `GET /admin/category-suggestions/stats`; kiểu cấu hình `pair_list` + khóa `categorySuggest.*` sửa trên web admin; app: thẻ gợi ý ở màn ghi chi (R.1). [Kiến trúc](../docs/architecture/category-suggestions.md).
+- Note: PR 2/2 xong 2026-11-11: xem trước/nhập CSV gợi ý cho dòng tệp để trống danh mục (truy vấn theo lô), `rowCategoryMap` > `merchantCategoryMap` > gợi ý, nhập lần đầu đếm chấp nhận/sửa (`surface = import`) và nhớ cửa hàng; app: chip "Gợi ý N", danh mục đoán màu xanh, sheet đổi danh mục có công tắc áp dụng cho cùng cửa hàng (R.2, R.3).
 
 ### BE-P5-E04 / MOB-P5-E04 — Insight cơ bản
 - Status: todo

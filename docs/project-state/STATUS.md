@@ -134,7 +134,7 @@ Theo [điều kiện hoàn thành Phase 2](../product/phases/phase-02.md):
 
 ## Backlog Phase 5
 
-- **6/10 done** (`BE-P5-E08`, `WA-P5-001`, `MOB-P5-E08`, `BE-P5-001`/`MOB-P5-001`, `DS-P5-001`, `PRD-P5-E01`/`MOB-P5-002`), 4 wont (`BE-P5-E01` bỏ; `E02`, `E05` sang Phase 8; `E07` what-if bỏ). Chi tiết: [tasks/phase-05.md](../../tasks/phase-05.md).
+- **7/10 done** (`BE-P5-E08`, `WA-P5-001`, `MOB-P5-E08`, `BE-P5-001`/`MOB-P5-001`, `DS-P5-001`, `PRD-P5-E01`/`MOB-P5-002`, `BE-P5-E03`/`MOB-P5-E03`), 4 wont (`BE-P5-E01` bỏ; `E02`, `E05` sang Phase 8; `E07` what-if bỏ). Chi tiết: [tasks/phase-05.md](../../tasks/phase-05.md).
 
 ## Phase 3 gate — đã đóng (2026-11-05)
 

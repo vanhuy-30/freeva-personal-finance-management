@@ -2889,5 +2889,17 @@
   "@txSuggestTitle": {"placeholders": {"category": {"type": "String"}}},
   "txSuggestHistory": "{count, plural, =1{Same as last time here} other{Same as {count} times before here}}",
   "@txSuggestHistory": {"placeholders": {"count": {"type": "int"}}},
-  "txSuggestUse": "Use"
+  "txSuggestUse": "Use",
+  "importFilterSuggested": "Suggested {count}",
+  "@importFilterSuggested": {"placeholders": {"count": {"type": "int"}}},
+  "importSuggestHint": "Categories guessed from the shop. Tap to change.",
+  "importPickSheetLabel": "Change category",
+  "importPickSuggested": "Suggested",
+  "importPickOther": "Or pick another category",
+  "importPickCategory": "Pick a category",
+  "importApplySame": "{count, plural, =1{Apply to 1 item here} other{Apply to {count} items here}}",
+  "@importApplySame": {"placeholders": {"count": {"type": "int"}}},
+  "importApplySameHint": "{merchant} items in this file",
+  "@importApplySameHint": {"placeholders": {"merchant": {"type": "String"}}},
+  "importPickDone": "Done"
 }
