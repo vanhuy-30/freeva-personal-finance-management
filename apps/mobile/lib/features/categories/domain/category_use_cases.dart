@@ -44,8 +44,7 @@ class DefaultCategoryUseCases implements CategoryUseCases {
       _repository.manage();
 
   bool _token(String? value, List<String> allowed) =>
-      value == null ||
-      (value.isNotEmpty && allowed.contains(value));
+      value == null || (value.isNotEmpty && allowed.contains(value));
 
   bool _stale(FinanceCategory category) =>
       category.version < 1 || category.version >= 2147483647;
