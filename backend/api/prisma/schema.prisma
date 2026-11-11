@@ -90,9 +90,11 @@ model AuditEvent {
 
 /// ISO 4217 catalog. No seed in BE-P0-001. Never store money as Float/Double.
 model Currency {
-  code        String @id @db.Char(3)
+  code        String  @id @db.Char(3)
   minorDigits Int
   name        String
+  /// Display symbol (BE-P5-001), e.g. ₫ for VND; null shows the code.
+  symbol      String? @db.VarChar(8)
 
   users                 User[]                @relation("UserDefaultCurrency")
   displayUsers          User[]                @relation("UserDisplayCurrency")
@@ -468,7 +470,7 @@ model NotificationPreference {
   insightEnabled     Boolean  @default(false)
   dailyLogEnabled    Boolean  @default(false)
   /// Local reminder time HH:mm in the profile timezone (BE-P3-006).
-  dailyLogTime       String   @default("20:00") @db.VarChar(5)
+  dailyLogTime       String   @default("21:00") @db.VarChar(5)
   quietHoursEnabled  Boolean  @default(false)
   quietStart         String   @default("22:00") @db.VarChar(5)
   quietEnd           String   @default("07:00") @db.VarChar(5)

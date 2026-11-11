@@ -126,11 +126,16 @@ function typeOf(text: string, amount: DecimalText | null): ImportType | 'unsuppo
 }
 
 /** Header + data rows → typed cells. Throws FILE_INVALID when no amount/date column can be found. */
-export function parseRows(table: string[][], format: ImportFormat): { rows: ParsedRow[]; columns: Partial<Record<ImportField, number>> } {
+/** `maxRows` is app config `import.maxRows` (BE-P5-001), never above IMPORT_MAX_ROWS. */
+export function parseRows(
+  table: string[][],
+  format: ImportFormat,
+  maxRows = IMPORT_MAX_ROWS,
+): { rows: ParsedRow[]; columns: Partial<Record<ImportField, number>> } {
   if (table.length < 2) throw new TransactionImportError('FILE_INVALID');
   const columns = resolveColumns(table[0], format);
   if (columns.date === undefined || columns.amount === undefined) throw new TransactionImportError('FILE_INVALID');
-  if (table.length - 1 > IMPORT_MAX_ROWS) throw new TransactionImportError('FILE_TOO_LARGE');
+  if (table.length - 1 > Math.min(maxRows, IMPORT_MAX_ROWS)) throw new TransactionImportError('FILE_TOO_LARGE');
   const cell = (line: string[], field: ImportField) => (columns[field] === undefined ? '' : cleanCell(line[columns[field]!]));
   const rows = table.slice(1).map((line, index): ParsedRow => {
     const when = parseDate(cell(line, 'date'), format.dateFormat);

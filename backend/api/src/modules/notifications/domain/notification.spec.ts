@@ -1,6 +1,5 @@
 import {
   budgetDedupeKey,
-  budgetNotifyThresholds,
   cardDueDedupeKey,
   cardUsageDedupeKey,
   cardUsageThresholds,
@@ -82,8 +81,6 @@ describe('BE-P2-E05 kinds and budget thresholds', () => {
   });
 
   it('notifies only at 80+ including over', () => {
-    expect(budgetNotifyThresholds([70, 80, 90, 100])).toEqual([80, 90, 100]);
-    expect(budgetNotifyThresholds([70])).toEqual([]);
     expect(budgetDedupeKey('2026-10-01', 80)).toBe('budget|2026-10-01|80');
   });
 
@@ -101,6 +98,9 @@ describe('BE-P2-E07 card alert helpers', () => {
     expect(cardUsageThresholds(700n, 1000n)).toEqual([70]);
     expect(cardUsageThresholds(900n, 1000n)).toEqual([70, 90]);
     expect(cardUsageThresholds(500n, null)).toEqual([]);
+    // BE-P5-001: levels from app config
+    expect(cardUsageThresholds(650n, 1000n, { high: 60, critical: 95 })).toEqual([60]);
+    expect(cardUsageThresholds(950n, 1000n, { high: 60, critical: 95 })).toEqual([60, 95]);
   });
 
   it('finds the next due date and days left', () => {
@@ -128,7 +128,8 @@ describe('BE-P3-006 daily log reminder helpers', () => {
   it('is available, off by default, and writable', () => {
     const toggles = kindToggles({ ...defaultPreference(), createdAt: new Date(), updatedAt: new Date() });
     expect(toggles.find(t => t.kind === 'daily_log')).toMatchObject({ available: true, enabled: false });
-    expect(defaultPreference().dailyLogTime).toBe('20:00');
+    expect(defaultPreference().dailyLogTime).toBe('21:00');
+    expect(defaultPreference({ dailyLogTime: '19:30', quietStart: '23:00', quietEnd: '06:00' })).toMatchObject({ dailyLogTime: '19:30', quietStart: '23:00', quietEnd: '06:00' });
     expect(() => assertKindWritable('daily_log', true)).not.toThrow();
   });
 });

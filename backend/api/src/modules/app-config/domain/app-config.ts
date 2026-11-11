@@ -5,7 +5,8 @@ import { createHash } from 'node:crypto';
 export type AppConfigErrorCode =
   | 'CONFIG_KEY_UNKNOWN'
   | 'CONFIG_VALUE_INVALID'
-  | 'CONFIG_CONFLICT';
+  | 'CONFIG_CONFLICT'
+  | 'CONFIG_KEY_READONLY';
 
 export class AppConfigError extends Error {
   constructor(readonly code: AppConfigErrorCode, readonly reason?: string) {
@@ -13,7 +14,8 @@ export class AppConfigError extends Error {
   }
 }
 
-type Base = { description: string };
+/** `editable: false` marks a technical limit the API enforces as is; staff can only read it. */
+type Base = { description: string; editable?: false };
 
 export type IntegerDefinition = Base & { type: 'integer'; default: number; min: number; max: number };
 /** Unique, ascending integers (option chips, thresholds). */
@@ -115,6 +117,20 @@ export function parseConfigValue(definition: ConfigDefinition, value: unknown): 
       return value;
     }
   }
+}
+
+/** Stored value when it still fits the definition, else the code default. Read-only keys always use the default. */
+export function effectiveValue(definition: ConfigDefinition, stored: { value: unknown } | undefined): { value: ConfigValue; valid: boolean } {
+  if (!stored || definition.editable === false) return { value: definition.default, valid: !stored };
+  try {
+    return { value: parseConfigValue(definition, stored.value), valid: true };
+  } catch {
+    return { value: definition.default, valid: false };
+  }
+}
+
+export function isEditable(definition: ConfigDefinition): boolean {
+  return definition.editable !== false;
 }
 
 /** Validates staff input for a flag. */

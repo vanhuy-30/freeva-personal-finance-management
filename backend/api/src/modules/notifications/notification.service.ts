@@ -1,12 +1,11 @@
+import { AppConfigReader } from '../app-config/app-config.reader';
 import { Inject, Injectable, Logger, Optional } from '@nestjs/common';
 import { PUSH_DISPATCHER, type PushDispatcher } from '../push/domain/push-sender';
 import {
   assertKindWritable,
   billDueDedupeKey,
   budgetDedupeKey,
-  budgetNotifyThresholds,
   CARD_DUE_WINDOW_DAYS,
-  CARD_NEAR_LIMIT_THRESHOLD,
   cardDueDedupeKey,
   cardUsageDedupeKey,
   cardUsageThresholds,
@@ -61,6 +60,7 @@ export class NotificationService {
 
   constructor(
     @Inject(NOTIFICATION_REPOSITORY) private readonly repository: NotificationRepository,
+    private readonly config: AppConfigReader,
     @Optional() @Inject(PUSH_DISPATCHER) private readonly push?: PushDispatcher,
   ) {}
 
@@ -150,7 +150,8 @@ export class NotificationService {
 
     let created = 0;
     if (context.prefs.budgetEnabled && context.periodFrom !== null) {
-      for (const threshold of budgetNotifyThresholds(context.crossedThresholds)) {
+      // BE-P5-001: every threshold the user picked is notified (no 80% floor).
+      for (const threshold of context.crossedThresholds) {
         const ok = await this.repository.createIfAbsent({
           userId,
           kind: 'budget',
@@ -226,8 +227,12 @@ export class NotificationService {
           }
         }
         if (context.periodFrom !== null) {
-          for (const threshold of cardUsageThresholds(used, card.creditLimitMinor)) {
-            const near = threshold >= CARD_NEAR_LIMIT_THRESHOLD;
+          const levels = {
+            high: await this.config.value('creditCard.highUsagePercent'),
+            critical: await this.config.value('creditCard.criticalUsagePercent'),
+          };
+          for (const threshold of cardUsageThresholds(used, card.creditLimitMinor, levels)) {
+            const near = threshold >= levels.critical;
             const ok = await this.repository.createIfAbsent({
               userId,
               kind: 'card',

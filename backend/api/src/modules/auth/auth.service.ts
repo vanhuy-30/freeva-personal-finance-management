@@ -1,3 +1,4 @@
+import { AppConfigReader } from '../app-config/app-config.reader';
 import {
   BadRequestException,
   ForbiddenException,
@@ -32,7 +33,20 @@ export class AuthService {
   constructor(
     @Inject(AUTH_REPOSITORY) private readonly repository: AuthRepository,
     private readonly crypto: AuthCrypto,
+    private readonly config: AppConfigReader,
   ) {}
+
+  /**
+   * BE-P5-001: minimum length for a new password from app config (`password.minLength`).
+   * Login keeps the DTO floor so older passwords still sign in.
+   */
+  private async checkNewPassword(password: string) {
+    if (password.length < (await this.config.value('password.minLength'))) {
+      throw new BadRequestException({
+        error: { code: 'VALIDATION_ERROR', message: 'Password is too short', details: [] },
+      });
+    }
+  }
 
   private challenge(purpose: TokenPurpose) {
     const token = this.crypto.token();
@@ -53,6 +67,7 @@ export class AuthService {
   }
 
   async register(email: string, password: string) {
+    await this.checkNewPassword(password);
     const passwordHash = await this.crypto.hashPassword(password);
     await this.repository.register(
       email,
@@ -77,6 +92,7 @@ export class AuthService {
     purpose: TokenPurpose,
     password?: string,
   ): Promise<void> {
+    if (password !== undefined) await this.checkNewPassword(password);
     const passwordHash =
       password === undefined
         ? undefined
@@ -178,6 +194,7 @@ export class AuthService {
         error: { code: 'INVALID_CREDENTIALS', message: 'Invalid credentials' },
       });
     }
+    await this.checkNewPassword(newPassword);
     if (currentPassword === newPassword) {
       throw new BadRequestException({
         error: {

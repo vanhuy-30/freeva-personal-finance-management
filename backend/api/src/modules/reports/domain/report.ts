@@ -41,7 +41,7 @@ export type PreviousCashflow = { from: string; to: string; categories: CategoryA
 export type CashflowExtras = { previous: PreviousCashflow; merchants: MerchantAggregate[] };
 export type NetWorthAggregate = { currency: string; bucket: 'asset' | 'liability'; total: bigint };
 
-const MAX_RANGE_DAYS = 3660;
+export const MAX_RANGE_DAYS = 3660;
 const TOP_MERCHANTS_PER_CURRENCY = 10;
 const SERIES_DAY_COUNTS: Record<'7d' | '30d', number> = { '7d': 7, '30d': 30 };
 const SERIES_MONTH_COUNTS: Record<'3m' | '6m' | '1y', number> = { '3m': 3, '6m': 6, '1y': 12 };

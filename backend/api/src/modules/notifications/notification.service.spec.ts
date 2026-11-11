@@ -1,3 +1,4 @@
+import { appConfigReaderFor } from '../app-config/testing';
 import { NotificationService } from './notification.service';
 import type { NotificationRepository } from './domain/notification.repository';
 import { defaultPreference, NotificationError } from './domain/notification';
@@ -43,14 +44,16 @@ describe('BE-P2-E05 notification service', () => {
         creditCards: [],
       }),
     });
-    const service = new NotificationService(repository);
-    await expect(service.evaluate('u1', now)).resolves.toEqual({ created: 3 });
-    expect(createIfAbsent).toHaveBeenCalledTimes(3);
+    const service = new NotificationService(repository, appConfigReaderFor());
+    // BE-P5-001: 70, 80 and 100 all notify (no 80% floor) plus the recurring alert.
+    await expect(service.evaluate('u1', now)).resolves.toEqual({ created: 4 });
+    expect(createIfAbsent).toHaveBeenCalledTimes(4);
     for (const call of createIfAbsent.mock.calls) {
       const params = call[0].params as Record<string, unknown>;
       expect(JSON.stringify(params)).not.toMatch(/amount|Minor|balance/i);
     }
     expect(createIfAbsent.mock.calls.map(call => call[0].dedupeKey)).toEqual([
+      'budget|2026-10-01|70',
       'budget|2026-10-01|80',
       'budget|2026-10-01|100',
       'recurring|r1|2026-10-29',
@@ -86,7 +89,7 @@ describe('BE-P2-E05 notification service', () => {
         }],
       }),
     });
-    const service = new NotificationService(repository);
+    const service = new NotificationService(repository, appConfigReaderFor());
     await expect(service.evaluate('u1', now)).resolves.toEqual({ created: 3 });
     expect(createIfAbsent.mock.calls.map(call => call[0].dedupeKey)).toEqual([
       'card|due|card-1|2026-10-15',
@@ -128,7 +131,7 @@ describe('BE-P2-E05 notification service', () => {
         }],
       }),
     });
-    const service = new NotificationService(repository);
+    const service = new NotificationService(repository, appConfigReaderFor());
     await expect(service.evaluate('u1', now)).resolves.toEqual({ created: 0 });
     expect(createIfAbsent).not.toHaveBeenCalled();
   });
@@ -162,7 +165,7 @@ describe('BE-P2-E05 notification service', () => {
         }],
       }),
     });
-    const service = new NotificationService(repository);
+    const service = new NotificationService(repository, appConfigReaderFor());
     await expect(service.evaluate('u1', quietNow)).resolves.toEqual({ created: 0 });
     expect(createIfAbsent).not.toHaveBeenCalled();
   });
@@ -175,15 +178,15 @@ describe('BE-P2-E05 notification service', () => {
         updatedAt: now,
       }),
     });
-    const service = new NotificationService(repository);
+    const service = new NotificationService(repository, appConfigReaderFor());
     await expect(service.putPreferences('u1', { goalEnabled: true })).rejects.toMatchObject({
       code: 'NOTIFICATION_SOURCE_UNAVAILABLE',
     });
     expect(repository.putPreferences).not.toHaveBeenCalled();
   });
 
-  it('does not notify below 80%', async () => {
-    const createIfAbsent = jest.fn();
+  it('BE-P5-001 notifies a 70% threshold the user picked', async () => {
+    const createIfAbsent = jest.fn().mockResolvedValue(true);
     const repository = repo({
       createIfAbsent,
       loadEvaluateContext: jest.fn().mockResolvedValue({
@@ -201,9 +204,9 @@ describe('BE-P2-E05 notification service', () => {
         creditCards: [],
       }),
     });
-    const service = new NotificationService(repository);
-    await expect(service.evaluate('u1', now)).resolves.toEqual({ created: 0 });
-    expect(createIfAbsent).not.toHaveBeenCalled();
+    const service = new NotificationService(repository, appConfigReaderFor());
+    await expect(service.evaluate('u1', now)).resolves.toEqual({ created: 1 });
+    expect(createIfAbsent).toHaveBeenCalledWith(expect.objectContaining({ dedupeKey: 'budget|2026-10-01|70' }));
   });
 
   it('surfaces NotificationError from put', async () => {
@@ -230,7 +233,7 @@ describe('BE-P2-E05 notification service', () => {
         creditCards: [],
       }),
     });
-    const service = new NotificationService(repository);
+    const service = new NotificationService(repository, appConfigReaderFor());
     await expect(service.evaluate('u1', now)).resolves.toEqual({ created: 2 });
     expect(createIfAbsent.mock.calls.map(call => [call[0].dedupeKey, call[0].titleKey])).toEqual([
       ['bill|due|b1|2026-10-30', 'bill_due'],
@@ -261,7 +264,7 @@ describe('BE-P2-E05 notification service', () => {
         creditCards: [],
       }),
     });
-    const service = new NotificationService(repository);
+    const service = new NotificationService(repository, appConfigReaderFor());
     await expect(service.evaluate('u1', now)).resolves.toEqual({ created: 2 });
     expect(createIfAbsent.mock.calls.map(call => [call[0].kind, call[0].dedupeKey, call[0].titleKey])).toEqual([
       ['debt', 'debt|due|d1|2026-10-30', 'debt_due'],
@@ -290,12 +293,12 @@ describe('BE-P2-E05 notification service', () => {
         creditCards: [],
       }),
     });
-    await expect(new NotificationService(repository).evaluate('u1', now)).resolves.toEqual({ created: 0 });
+    await expect(new NotificationService(repository, appConfigReaderFor()).evaluate('u1', now)).resolves.toEqual({ created: 0 });
     expect(createIfAbsent).not.toHaveBeenCalled();
   });
 
   describe('BE-P3-006 daily log reminder', () => {
-    const evening = new Date('2026-10-28T13:30:00.000Z'); // 20:30 ICT
+    const evening = new Date('2026-10-28T14:30:00.000Z'); // 21:30 ICT, after the 21:00 default (BE-P5-001)
     const morning = new Date('2026-10-28T03:00:00.000Z'); // 10:00 ICT
 
     function run(
@@ -328,7 +331,7 @@ describe('BE-P2-E05 notification service', () => {
           ...overrides,
         }),
       });
-      return { createIfAbsent, result: new NotificationService(repository).evaluate('u1', at) };
+      return { createIfAbsent, result: new NotificationService(repository, appConfigReaderFor()).evaluate('u1', at) };
     }
 
     it('reminds once per day after the set time when nothing was logged, with no params', async () => {
@@ -384,12 +387,12 @@ describe('BE-P2-E05 notification service', () => {
           hasTransactionToday: false,
         }),
       });
-      await expect(new NotificationService(repository).evaluate('u1', evening)).resolves.toEqual({ created: 0 });
+      await expect(new NotificationService(repository, appConfigReaderFor()).evaluate('u1', evening)).resolves.toEqual({ created: 0 });
     });
 
     it('validates the reminder time and accepts enabling', async () => {
       const putPreferences = jest.fn().mockResolvedValue({ ...defaultPreference(), createdAt: evening, updatedAt: evening });
-      const service = new NotificationService(repo({ putPreferences }));
+      const service = new NotificationService(repo({ putPreferences }), appConfigReaderFor());
       await service.putPreferences('u1', { dailyLogEnabled: true, dailyLogTime: '21:15' });
       expect(putPreferences).toHaveBeenCalledWith('u1', expect.objectContaining({ dailyLogEnabled: true, dailyLogTime: '21:15' }));
       await expect(service.putPreferences('u1', { dailyLogTime: '25:00' })).rejects.toMatchObject({ code: 'VALIDATION_ERROR' });

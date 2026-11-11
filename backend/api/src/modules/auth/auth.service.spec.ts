@@ -1,3 +1,4 @@
+import { appConfigReaderFor } from '../app-config/testing';
 import { AuthService } from './auth.service';
 import type { AuthRepository } from './domain/auth.repository';
 import type { AuthCrypto } from './infrastructure/auth-crypto';
@@ -7,6 +8,7 @@ describe('MOB-P1-001 email-first entry', () => {
   const service = new AuthService(
     { findUser } as unknown as AuthRepository,
     {} as AuthCrypto,
+    appConfigReaderFor(),
   );
   beforeEach(() => findUser.mockReset());
 

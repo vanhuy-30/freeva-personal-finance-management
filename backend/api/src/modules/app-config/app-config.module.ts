@@ -4,19 +4,17 @@ import { StaffAuthGuard } from '../staff-auth/staff-auth.guard';
 import { AdminAppConfigController } from './admin-app-config.controller';
 import { AppConfigController } from './app-config.controller';
 import { AppConfigService } from './app-config.service';
-import { APP_CONFIG_REPOSITORY } from './domain/app-config.repository';
 import { FeatureGuard } from './feature.guard';
-import { PrismaAppConfigRepository } from './infrastructure/prisma-app-config.repository';
+import { AppConfigCoreModule } from './app-config-core.module';
 
 @Module({
-  imports: [AuthModule],
+  imports: [AuthModule, AppConfigCoreModule],
   controllers: [AppConfigController, AdminAppConfigController],
   providers: [
     AppConfigService,
     FeatureGuard,
     StaffAuthGuard,
-    { provide: APP_CONFIG_REPOSITORY, useClass: PrismaAppConfigRepository },
   ],
-  exports: [AppConfigService, FeatureGuard],
+  exports: [AppConfigService, FeatureGuard, AppConfigCoreModule],
 })
 export class AppConfigModule {}

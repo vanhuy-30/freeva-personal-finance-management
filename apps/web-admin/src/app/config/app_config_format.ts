@@ -20,6 +20,8 @@ export type ConfigDefinition = {
   maxItems?: number;
   values?: string[];
   currencyCode?: string;
+  /** false on fixed technical limits (`limit.*`): shown, never edited (BE-P5-001). */
+  editable?: false;
 };
 
 export type ConfigValue = number | string | number[] | string[];
