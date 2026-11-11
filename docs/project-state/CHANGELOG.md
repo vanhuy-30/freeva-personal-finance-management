@@ -4,6 +4,7 @@ Nhật ký repo/process — không phải App Store release notes.
 
 ## 2026-11-11
 
+- `DS-P5-001` done: thiết kế Phase 5 trên trang canvas **09 · Phase 5** — gợi ý danh mục khi ghi chi và nhập CSV, thẻ đáng chú ý trên Tổng quan, màn Phân tích, dự báo chi cuối tháng, ngày dự kiến đạt mục tiêu, cài đặt Gợi ý tự động. Chủ dự án bỏ what-if (`BE-P5-E07` wont) và nút "Không đúng". [Pattern](../brand/patterns/R-suggestions-insights.md).
 - `MOB-P5-001` PR 3/3 (xong task): chữ số lẻ, ký hiệu và tiền tệ mặc định lấy từ danh mục tiền tệ của server; backend `/profile/options` thêm `isDefault`. `BE-P5-001` / `MOB-P5-001` done.
 - `MOB-P5-001` PR 2/3: app tải cấu hình công khai trước đăng nhập; quy tắc mật khẩu, số lần sai PIN, độ dài tên/ghi chú, nhãn, ngày đầu kỳ, onboarding, nhập/xuất CSV, góp ý lấy từ server; tên hiển thị tối đa 60; dòng thông báo mục tiêu/soát tháng theo server; phiên bản app đọc từ gói cài đặt.
 - `BE-P5-001` bổ sung: `GET /api/v1/app-config/public` — số cấu hình không cần đăng nhập (không cờ, không dữ liệu user) cho màn đăng ký/đặt lại mật khẩu.

@@ -11,7 +11,7 @@ Phase 0–4 **closed** (2026-09-21, 2026-10-21, 2026-10-30, 2026-11-05, 2026-11-
 | 2 | Thói quen và kiểm soát | Ngân sách, hóa đơn, nhắc — **closed** | 6, 7, 8, 15, 17; mở rộng 14, 19 |
 | 3 | Lập kế hoạch | Mục tiêu, nợ, tiết kiệm — **closed**; mục tiêu `Gate: v1` | 9, 10, 11; mở rộng 14, 15, 17 |
 | 4 | Tài sản toàn diện | Đầu tư, tài sản ròng — **closed**; `Gate: v1` | 12; mở rộng 3, 14 |
-| 5 | Cấu hình và gợi ý theo quy tắc | Cờ/cấu hình trên web admin, gợi ý danh mục, insight, dự báo chi, what-if — sau v1 | 26, 18 (không AI); mở rộng 5, 14 |
+| 5 | Cấu hình và gợi ý theo quy tắc | Cờ/cấu hình trên web admin, gợi ý danh mục, insight, dự báo chi — sau v1 | 26, 18 (không AI); mở rộng 5, 14 |
 | 6 | Ngân hàng và gia đình | Đối tác + chia sẻ | 13 (API), 16; mở rộng 20–22 |
 | 7 | Thương mại hóa | Premium, admin đầy đủ, support | 23, 26; mở rộng 25 |
 | 8 | AI | OCR, Ask Freeva — chờ chốt hướng AI | 18, 13 (OCR) |

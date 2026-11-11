@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Cài đặt · Gợi ý tự động</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"cv11" 1}
+a,button{font-family:inherit}
+.ib{width:44px;height:44px;border-radius:999px;border:1px solid #EEF0F6;background:#FFFFFF;color:#22283A;display:flex;align-items:center;justify-content:center;box-sizing:border-box;text-decoration:none;flex:0 0 44px}
+.card{background:#FFFFFF;border-radius:24px;padding:18px;box-shadow:0 1px 2px rgba(34,40,58,.04),0 8px 24px rgba(34,40,58,.05)}
+.grp{background:#FFFFFF;border-radius:20px;overflow:hidden;box-shadow:0 1px 2px rgba(34,40,58,.04),0 8px 24px rgba(34,40,58,.05)}
+.row{display:flex;align-items:center;gap:12px;min-height:54px;padding:8px 16px;font-size:15px;color:#22283A;text-decoration:none;box-sizing:border-box}
+.row+.row{border-top:1px solid #EEF0F5}
+.ri{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:0 0 32px;background:#F4F6FB;color:#3D4460}
+.ti{width:40px;height:40px;border-radius:999px;display:flex;align-items:center;justify-content:center;flex:0 0 40px;background:#F4F6FB;color:#22283A}
+.tx{display:flex;flex-direction:column;flex:1 1 0;min-width:0;gap:2px}
+.t1{font-size:15px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t2{font-size:12px;color:#5C6378;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v{font-size:14px;color:#5C6378;white-space:nowrap}
+.amt{font-size:15px;font-weight:600;white-space:nowrap}
+.gh{font-size:12px;letter-spacing:1.4px;font-weight:600;color:#5C6378;padding:0 4px}
+.k{font-size:12px;color:#5C6378}
+.h2{margin:0;font-size:15px;font-weight:600}
+.fld{border-radius:16px;border:1px solid #E4E7F0;background:#FFFFFF;padding:8px 14px;display:flex;align-items:center;gap:10px;box-sizing:border-box;min-height:60px;text-decoration:none;color:#22283A;min-width:0}
+.fl{font-size:12px;color:#5C6378}
+.fv{font-size:16px;color:#22283A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fi{width:32px;height:32px;border-radius:10px;background:#F4F6FB;color:#3D4460;display:flex;align-items:center;justify-content:center;flex:0 0 32px}
+.btn{height:56px;border-radius:999px;background:#3F67D1;color:#FFFFFF;font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;box-sizing:border-box;flex:0 0 auto}
+.btn2{height:56px;border-radius:999px;border:1px solid #E4E7F0;background:#FFFFFF;color:#22283A;font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;box-sizing:border-box}
+.sbtn{height:48px;border-radius:999px;font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;box-sizing:border-box}
+.chip{height:40px;padding:0 14px;border-radius:999px;border:1px solid #E4E7F0;background:#FFFFFF;color:#22283A;font-size:14px;font-weight:500;white-space:nowrap;display:flex;align-items:center;gap:6px;box-sizing:border-box;text-decoration:none}
+.chip.on{border:1.5px solid #22283A;font-weight:600}
+.seg{flex:1 1 0;height:36px;padding:0 12px;border:none;border-radius:999px;background:transparent;color:#5C6378;font-size:14px;font-weight:500;display:flex;align-items:center;justify-content:center;text-decoration:none;white-space:nowrap}
+.seg.on{background:#22283A;color:#FFFFFF;font-weight:600}
+.tc{height:52px;border-radius:16px;border:1px solid #E4E7F0;background:#FFFFFF;display:flex;align-items:center;gap:10px;padding:0 12px;font-size:15px;font-weight:500;color:#22283A;text-decoration:none;position:relative;box-sizing:border-box;white-space:nowrap}
+.tc.on{background:#EEF2FD;border:1.5px solid #3F67D1;font-weight:600}
+.wi{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:0 0 32px}
+.ck{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:999px;background:#3F67D1;color:#FFFFFF;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px #FCFDFF}
+.tag{height:24px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:500;display:inline-flex;align-items:center;white-space:nowrap}
+.bar{height:8px;border-radius:999px;background:#EEF0F5;overflow:hidden;display:flex}
+.bar>span{border-radius:999px}
+.sw{width:48px;height:28px;border-radius:999px;border:none;padding:3px;display:flex;flex:0 0 48px}
+.kn{width:22px;height:22px;border-radius:999px;background:#FFFFFF;box-shadow:0 1px 3px rgba(34,40,58,.25)}
+.lnk{color:#3F67D1;font-weight:600;text-decoration:none;white-space:nowrap}
+.ni{width:48px;height:48px;border-radius:999px;color:#5C6378;display:flex;align-items:center;justify-content:center}
+.mini{background:#F4F6FB;border-radius:16px;padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.rad{width:22px;height:22px;border-radius:999px;border:1.5px solid #C9CEDD;box-sizing:border-box;flex:0 0 22px;display:flex;align-items:center;justify-content:center}
+.rad.on{border:6px solid #3F67D1}
+.hint{font-size:13px;color:#5C6378;padding-left:4px;line-height:18px}
+
+.sub{font-size:12px;color:#5C6378;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qa{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12px;font-weight:500;color:#22283A;text-decoration:none}
+.qi{width:56px;height:56px;border-radius:20px;background:#FFFFFF;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 2px rgba(34,40,58,.04),0 6px 18px rgba(34,40,58,.06)}
+.eye{width:36px;height:36px;border-radius:999px;border:none;background:rgba(255,255,255,.75);color:#22283A;display:flex;align-items:center;justify-content:center;text-decoration:none}
+.wmini{background:rgba(255,255,255,.72);border-radius:16px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.wash{background:radial-gradient(120% 90% at 100% 0%, rgba(132,206,235,.50) 0%, rgba(132,206,235,0) 55%), radial-gradient(90% 80% at 0% 100%, rgba(136,96,208,.22) 0%, rgba(136,96,208,0) 60%), #ECEFFA}
+.key{height:54px;border:none;border-radius:16px;background:transparent;color:#22283A;font-size:24px;font-weight:500;display:flex;align-items:center;justify-content:center}
+.rowx{display:flex;align-items:center;gap:12px;height:52px;text-decoration:none;color:#22283A}
+.rowx+.rowx{border-top:1px solid #EEF0F5}
+.rk{width:84px;flex:0 0 84px;font-size:14px;color:#5C6378}
+.rv{flex-grow:1;font-size:15px;font-weight:500;text-align:right}
+.fx{border-radius:16px;border:1px solid #E4E7F0;background:#FFFFFF;padding:8px 14px;display:flex;flex-direction:column;gap:2px;box-sizing:border-box}
+.fx label{font-size:12px;color:#5C6378}
+.fx input,.fx textarea{border:none;outline:none;background:transparent;font-size:16px;color:#22283A;padding:0;resize:none;font-family:inherit}
+.ins{background:#FFFFFF;border-radius:20px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;box-shadow:0 1px 2px rgba(34,40,58,.04),0 8px 24px rgba(34,40,58,.05)}
+.it{font-size:15px;line-height:21px;font-weight:600}
+.is{font-size:13px;color:#5C6378}
+.ift{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:10px;border-top:1px solid #EEF0F5;font-size:14px}
+.no{color:#5C6378;font-weight:500;text-decoration:none;white-space:nowrap;font-size:14px;display:flex;align-items:center;gap:6px}
+.chipx{height:24px;padding:0 10px;border-radius:999px;font-size:12px;font-weight:600;display:inline-flex;align-items:center;white-space:nowrap}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; padding: 56px 20px 28px 20px; gap: 14px">
+  <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+    <a href="MeHome3.dc.html" class="ib" aria-label="Quay lại"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <h1 style="margin: 0; font-size: 17px; line-height: 24px; font-weight: 600; text-align: center; flex: 1 1 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Gợi ý tự động</h1>
+    <span style="width: 44px; flex: 0 0 44px"></span>
+  </div>
+  <div class="grp">
+    <div class="row" style="min-height: 64px"><span class="ri" style="width: 36px; height: 36px; flex: 0 0 36px; border-radius: 12px; background: #EEF2FD; color: #3F67D1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0L14.06 8.5a2 2 0 0 0 1.44 1.44l6.14 1.58a.5.5 0 0 1 0 .96L15.5 14.06a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0z"></path><path d="M20 3v4M22 5h-4"></path></svg></span><span class="tx"><span class="t1">Gợi ý tự động</span><span class="t2">Danh mục, phân tích, dự báo</span></span><button role="switch" aria-checked="true" aria-label="Gợi ý tự động" class="sw" style="background: #3F67D1; justify-content: flex-end"><span class="kn"></span></button></div>
+  </div>
+  <div class="hint" style="display: flex; gap: 8px; align-items: center; margin-top: -4px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#23795A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>Chỉ tính trên sổ của bạn, không gửi ra ngoài.</div>
+  <span class="gh" style="margin-top: 8px">CỬA HÀNG ĐÃ NHỚ · 12</span>
+  <div class="grp" style="margin-top: -8px">
+    <div class="row"><span class="ri" style="width: 32px; height: 32px; flex: 0 0 32px; border-radius: 10px; background: #F4F6FB; color: #3D4460"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 8h1a4 4 0 1 1 0 8h-1"></path><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4z"></path><path d="M6 2v2M10 2v2M14 2v2"></path></svg></span><span class="tx"><span class="t1">Highlands Coffee</span><span class="t2">Cà phê</span></span><button aria-label="Quên Highlands Coffee" style="width: 36px; height: 36px; border: none; border-radius: 999px; background: transparent; color: #5C6378; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div>
+    <div class="row"><span class="ri" style="width: 32px; height: 32px; flex: 0 0 32px; border-radius: 10px; background: #F4F6FB; color: #3D4460"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"></path><circle cx="7" cy="17" r="2"></circle><path d="M9 17h6"></path><circle cx="17" cy="17" r="2"></circle></svg></span><span class="tx"><span class="t1">Grab</span><span class="t2">Đi lại</span></span><button aria-label="Quên Grab" style="width: 36px; height: 36px; border: none; border-radius: 999px; background: transparent; color: #5C6378; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div>
+    <div class="row"><span class="ri" style="width: 32px; height: 32px; flex: 0 0 32px; border-radius: 10px; background: #F4F6FB; color: #3D4460"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><path d="M3 6h18M16 10a4 4 0 0 1-8 0"></path></svg></span><span class="tx"><span class="t1">Shopee</span><span class="t2">Mua sắm</span></span><button aria-label="Quên Shopee" style="width: 36px; height: 36px; border: none; border-radius: 999px; background: transparent; color: #5C6378; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div>
+    <div class="row"><span class="ri" style="width: 32px; height: 32px; flex: 0 0 32px; border-radius: 10px; background: #F4F6FB; color: #3D4460"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 3v8a3 3 0 0 0 3 3v7M7 3v6M10 3v8a3 3 0 0 1-3 3M17 21V3c-2 1-3 4-3 8h3"></path></svg></span><span class="tx"><span class="t1">Phở Thìn</span><span class="t2">Ăn uống</span></span><button aria-label="Quên Phở Thìn" style="width: 36px; height: 36px; border: none; border-radius: 999px; background: transparent; color: #5C6378; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div>
+    <a href="#" class="row" style="justify-content: center; color: #3F67D1; font-weight: 600; font-size: 14px">Xem cả 12</a>
+  </div>
+  <a href="AutoSuggestClear.dc.html" class="sbtn" style="margin-top: 8px; border: 1px solid #F0CACA; background: #FFFFFF; color: #B83434"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"></path></svg>Xoá dữ liệu đã học</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

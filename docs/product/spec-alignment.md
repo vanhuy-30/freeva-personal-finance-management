@@ -33,7 +33,7 @@ Giữ nguyên số phase và ID đã có. Không dồn ngân sách, mục tiêu,
 | Mục tiêu là chỗ theo dõi tiết kiệm | Tiền gửi có kỳ hạn là một loại tài sản trong module 12 | Module 11 gộp vào 12 (2026-11-02). |
 | Không có module hóa đơn / lịch riêng | Hóa đơn gộp vào định kỳ, lịch chỉ là màn xem (`BE-P3-001`) | Bớt ba khái niệm chồng nhau (2026-11-02). |
 | §53 import sao kê file | Không làm (2026-11-11). Có nhập CSV từ app khác (`BE-P3-011`); API ngân hàng ở Phase 6 | Chủ dự án thấy không cần. API trực tiếp vẫn là non-goal của v1. |
-| §22–27 gọi là tính năng AI | Gợi ý danh mục, insight, dự báo chi, what-if tính bằng quy tắc ở Phase 5. OCR, Ask Freeva ở Phase 8 | Chưa chốt AI chạy trên máy hay dịch vụ ngoài (2026-11-11). |
+| §22–27 gọi là tính năng AI | Gợi ý danh mục, insight, dự báo chi tính bằng quy tắc ở Phase 5 (what-if bỏ 2026-11-11). OCR, Ask Freeva ở Phase 8 | Chưa chốt AI chạy trên máy hay dịch vụ ngoài (2026-11-11). |
 | §39 chỉ nêu cờ bật/tắt | Cờ và cấu hình (ngưỡng, giới hạn, danh sách) đều ở server, sửa trên web admin; app không hardcode | Quyết định 2026-11-11 (`BE-P5-E08`, `WA-P5-001`, `BE-P5-001`). |
 
 ## Đã vá trong Phase 1 (đóng 2026-10-21)
@@ -59,7 +59,7 @@ Giữ nguyên số phase và ID đã có. Không dồn ngân sách, mục tiêu,
 | §18 thẻ: hạn mức còn, dư nợ, ngày sao kê, trả tối thiểu | API + mobile: hạn mức, ngày 1–28, số trả tối thiểu; dư nợ / hạn mức còn suy từ số dư; cảnh báo hộp thư | `BE-P2-E07` / `MOB-P2-E07` |
 | §19 lịch sử tài sản ròng | Chỉ ròng hiện tại | `BE-P4-E02` |
 | §21 soát tháng | Epic có DoD | `BE-P2-E08` |
-| §22–27 tách gợi ý danh mục, insight, OCR, chat, forecast, what-if | Phase 5 theo quy tắc; OCR, chat ở Phase 8 | `BE-P5-E03`, `E04`, `E06`, `E07`; `BE-P8-E01`, `BE-P8-E03` |
+| §22–27 tách gợi ý danh mục, insight, OCR, chat, forecast, what-if | Phase 5 theo quy tắc, what-if bỏ (`E07` wont 2026-11-11); OCR, chat ở Phase 8 | `BE-P5-E03`, `E04`, `E06`; `BE-P8-E01`, `BE-P8-E03` |
 | §28 AI không bịa số, không tự ghi | Chỉ có câu ở điều kiện phase | DoD từng epic AI |
 | §39 cờ server | Client stub luôn tắt | `BE-P5-E08`, `WA-P5-001`, `MOB-P5-E08` |
 | §37 Free / Premium | Epic subscription không liệt kê quyền | `BE-P7-E01` |

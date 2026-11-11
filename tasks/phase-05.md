@@ -8,10 +8,10 @@ Phạm vi chốt 2026-11-11 (chủ dự án):
 - OCR (`BE-P5-E02`) và Ask Freeva (`BE-P5-E05`) chuyển sang [Phase 8](phase-08.md) vì chưa chốt hướng AI.
 - Gợi ý danh mục, insight, dự báo chi, what-if tính bằng quy tắc và số liệu từ sổ; không gửi dữ liệu ra ngoài, không gọi model.
 - Số và cấu hình mang nghĩa sản phẩm (ngưỡng, giới hạn, danh sách, bật/tắt) không hardcode trong app: nằm ở server, sửa trên web admin. Áp dụng cho cả phần đã làm ở Phase 0–4 (`BE-P5-001` / `MOB-P5-001`).
-- Mỗi màn gợi ý có nút báo "Không đúng", lưu vào bảng `Feedback` có sẵn.
+- Không có nút "Không đúng" (chủ dự án 2026-11-11): insight và dự báo là số tính từ sổ; gợi ý danh mục sai thì user chọn lại, server tính là một lần sửa.
 - Màn mới có board thiết kế trước khi code (`DS-P5-001`). Chưa paywall; quyền Premium là việc của Phase 7.
 
-Thứ tự: `BE-P5-E08` → `WA-P5-001` → `MOB-P5-E08` → `BE-P5-001` / `MOB-P5-001` → `DS-P5-001` → `PRD-P5-E01` → `E03` → `E04` → `E07` → `E06`.
+Thứ tự: `BE-P5-E08` → `WA-P5-001` → `MOB-P5-E08` → `BE-P5-001` / `MOB-P5-001` → `DS-P5-001` → `PRD-P5-E01` → `E03` → `E04` → `E06`. What-if (`E07`) bỏ (2026-11-11).
 
 ### BE-P5-E08 — Cờ và cấu hình phía server
 - Status: done — 2026-11-11
@@ -78,11 +78,12 @@ Thứ tự: `BE-P5-E08` → `WA-P5-001` → `MOB-P5-E08` → `BE-P5-001` / `MOB-
 - Note: MOB PR 3/3 xong 2026-11-11: danh mục tiền tệ server (`CurrencyCatalog`, tải cùng cấu hình khi đăng nhập) thay `VND ? 0 : 2`, `₫` và `?? 'VND'`; backend `isDefault` trong `/profile/options` từ `NEW_USER_CURRENCY_CODE`. [Mobile](../docs/architecture/mobile-app-config.md).
 
 ### DS-P5-001 — Thiết kế màn Phase 5
-- Status: todo
+- Status: done — 2026-11-11
 - Module: 5, 14, 18, 24
 - Gate: post-v1
 - Depends: —
-- DoD: board cho gợi ý danh mục (màn ghi chi, nhập CSV), thẻ insight trên Home (dưới thẻ soát tháng) và màn phân tích, dự báo chi cuối tháng, ngày đạt mục tiêu, what-if trên chi tiết mục tiêu, cài đặt "Gợi ý tự động" (tắt, xóa dữ liệu đã học), nút "Không đúng". Copy ngắn, không chi tiết kỹ thuật.
+- DoD: board cho gợi ý danh mục (màn ghi chi, nhập CSV), thẻ insight trên Home (dưới thẻ soát tháng) và màn phân tích, dự báo chi cuối tháng, ngày đạt mục tiêu, cài đặt "Gợi ý tự động" (tắt, xóa dữ liệu đã học). Copy ngắn, không chi tiết kỹ thuật.
+- Note: xong 2026-11-11: 9 board trên trang canvas **09 · Phase 5** (nhóm R, S, T, U), [pattern](../docs/brand/patterns/R-suggestions-insights.md). Chủ dự án bỏ what-if và nút "Không đúng"; insight có hình so sánh nhỏ; chi tiết mục tiêu đổi ô "Ngày đạt" thành "Hạn" và thêm dải mốc Hôm nay → Hạn → Dự kiến.
 
 ### PRD-P5-E01 / MOB-P5-002 — Tắt gợi ý tự động và xóa dữ liệu đã học
 - Status: todo
@@ -102,7 +103,8 @@ Thứ tự: `BE-P5-E08` → `WA-P5-001` → `MOB-P5-E08` → `BE-P5-001` / `MOB-
   - Danh sách merchant chung (Grab, Shopee, Lazada, WinMart, Circle K, Highlands, The Coffee House…) nằm trong cấu hình, sửa được trên web admin.
   - Độ tin cậy là tỷ lệ khớp trong lịch sử; dưới ngưỡng thì không hiện. Ngưỡng là cấu hình (mặc định 60%).
   - Dùng ở màn ghi chi và màn nhập CSV. User sửa được; chấp nhận thì nhớ mapping. Không tự lưu giao dịch.
-  - Server đếm tỷ lệ chấp nhận và tỷ lệ sửa (không phụ thuộc nhà cung cấp analytics). Có nút "Không đúng".
+  - Server đếm tỷ lệ chấp nhận và tỷ lệ sửa (không phụ thuộc nhà cung cấp analytics). Không có nút "Không đúng": user chọn danh mục khác thì tính là sửa.
+  - UI: [R.1–R.3](../docs/brand/patterns/R-suggestions-insights.md).
   - Cờ `category_suggest` tắt hoặc user tắt ở `PRD-P5-E01` thì API không đề xuất.
 
 ### BE-P5-E04 / MOB-P5-E04 — Insight cơ bản
@@ -115,7 +117,9 @@ Thứ tự: `BE-P5-E08` → `WA-P5-001` → `MOB-P5-E08` → `BE-P5-001` / `MOB-
   - "Lệch khỏi mức thường": lớn hơn N lần trung bình M tháng của danh mục đó. Cần ít nhất K tháng dữ liệu mới nêu con số. N, M, K là cấu hình (mặc định 2, 3, 2).
   - Chỉ tính theo tiền tệ của hồ sơ; giao dịch loại tiền khác không đưa vào.
   - Home hiện một insight dưới thẻ soát tháng, kèm CTA xem phân tích. Chưa mở tab Insights.
-  - Không đủ dữ liệu thì câu không có số. Không bịa phần trăm. Có nút "Không đúng".
+  - Mỗi insight trả kèm số cho hình nhỏ (giá trị kỳ này và so sánh, hoặc đã dùng / ngân sách) và đích khi chạm.
+  - Không đủ dữ liệu thì câu không có số. Không bịa phần trăm.
+  - UI: [S.1, S.2](../docs/brand/patterns/R-suggestions-insights.md).
   - Cờ `insights` tắt hoặc user tắt thì ẩn thẻ.
 
 ### BE-P5-E06 / MOB-P5-E06 — Dự báo chi cuối tháng và ngày đạt mục tiêu
@@ -127,14 +131,12 @@ Thứ tự: `BE-P5-E08` → `WA-P5-001` → `MOB-P5-E08` → `BE-P5-001` / `MOB-
   - Khác `BE-P3-E04` (chỉ chiếu khoản định kỳ): dùng tốc độ chi thực tế của tháng đang chạy để dự báo chi đến cuối tháng, so với ngân sách, kèm mức rủi ro thấp / vừa / cao. Ranh giới các mức là cấu hình.
   - Ngày đạt mục tiêu theo mức góp trung bình M tháng gần nhất (M là cấu hình, mặc định 3). Chưa góp lần nào thì nói chưa đủ dữ liệu.
   - Màn hình ghi rõ đây là dự đoán, không phải số đã xảy ra, và nêu cách tính. Không có quỹ đạo tiết kiệm dài hạn.
-  - Chỉ tính theo tiền tệ của hồ sơ. Có nút "Không đúng". Cờ `forecast`.
+  - Dự báo chi trả thêm chuỗi cộng dồn theo ngày, trung bình/ngày, mức nên chi mỗi ngày để không vượt, top 3 danh mục.
+  - Chỉ tính theo tiền tệ của hồ sơ. Cờ `forecast`.
+  - UI: [S.3, T.1](../docs/brand/patterns/R-suggestions-insights.md).
 
 ### BE-P5-E07 / MOB-P5-E07 — What-if
-- Status: todo
-- Module: 18, 9
-- Gate: post-v1
-- Depends: BE-P3-E01, BE-P5-E08
-- DoD: từ chi tiết một mục tiêu, user nhập một thay đổi chi bằng form (ví dụ giảm một danh mục X đồng mỗi tháng) và thấy số tiết kiệm thêm mỗi tháng, mỗi năm, và mục tiêu đó đạt sớm hơn bao nhiêu (dùng công thức của `POST /goals/preview`). Không ghi vào sổ. Cờ `forecast`.
+- Status: wont — chủ dự án chốt 2026-11-11 chỉ đưa insight và dự báo, không làm màn "Thử bớt chi".
 
 ### BE-P5-E01 / MOB-P5-E01 — Import sao kê ngân hàng Excel, PDF
 - Status: wont — chủ dự án chốt 2026-11-11 không cần. Nhập CSV từ app khác đã có ở `BE-P3-011`.
