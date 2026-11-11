@@ -35,11 +35,12 @@ Thứ tự: `BE-P5-E08` → `WA-P5-001` → `MOB-P5-E08` → `BE-P5-001` / `MOB-
 - Note: xong 2026-11-11: trang `/config` trên web admin (link ở header). Nhập credential staff (chỉ giữ trong trang), danh sách cờ và khóa theo nhóm với mô tả, mặc định, giới hạn, lần sửa gần nhất. Sửa → khung "Hiện tại / Sau khi lưu" → Xác nhận lưu; "Về mặc định" cũng qua xác nhận. Lỗi kiểm tra (trên trang và từ API) hiện dưới ô nhập; xung đột version báo tải lại. Đã thử trên trình duyệt với API và PostgreSQL tạm.
 
 ### MOB-P5-E08 — App đọc cờ và cấu hình từ server
-- Status: todo
+- Status: done — 2026-11-11
 - Module: 18, 26
 - Gate: post-v1
 - Depends: BE-P5-E08
 - DoD: thay `LocalFeatureFlagService` bằng bản đọc `GET /app-config`. Tải khi đăng nhập và khi mở app, lưu bản gần nhất trên máy; mỗi giờ hoặc khi `version` đổi thì tải lại. Không có bản nào (chưa từng tải được) thì cờ coi là tắt và màn cần cấu hình hiện trạng thái "Không tải được, thử lại" thay vì dùng số đoán. Overlay local chỉ có ở bản dev.
+- Note: xong 2026-11-11: feature `server_config` — đọc bản trên máy lúc boot, tải khi mở khóa và khi quay lại app (tối đa mỗi giờ), thay bản lưu khi `version` đổi, xóa khi đăng xuất. `ServerConfigViewModel` là `FeatureFlagService` (bỏ `LocalFeatureFlagService`). `ServerConfigGate` hiện "Chưa tải được cài đặt" + Thử lại khi chưa có bản nào. Overlay `FEATURE_FLAGS_ON` chỉ ở bản dev debug. Màn hiện có chưa đọc khóa: `MOB-P5-001`. [Kiến trúc](../docs/architecture/mobile-app-config.md).
 
 ### BE-P5-001 / MOB-P5-001 — Chuyển số và cấu hình đang hardcode lên server
 - Status: todo

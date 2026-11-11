@@ -5605,4 +5605,10 @@ class SVi extends S {
 
   @override
   String get tradePriceRow => 'Giá mua';
+
+  @override
+  String get serverConfigErrorTitle => 'Chưa tải được cài đặt';
+
+  @override
+  String get serverConfigErrorMessage => 'Kiểm tra mạng rồi thử lại.';
 }
