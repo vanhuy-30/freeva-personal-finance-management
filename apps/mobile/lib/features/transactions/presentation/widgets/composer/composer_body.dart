@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../../core/theme/theme_context.dart';
 import '../../../../../core/theme/tokens.g.dart';
+import '../../../../category_suggest/presentation/viewmodels/category_suggest_view_model.dart';
 import '../../viewmodels/transaction_composer.dart';
 import '../transaction_labels.dart';
 import 'details_fields.dart';
@@ -17,6 +18,7 @@ class ComposerBody extends StatelessWidget {
     required this.merchant,
     required this.notes,
     required this.onMore,
+    this.suggest,
     super.key,
   });
 
@@ -25,6 +27,7 @@ class ComposerBody extends StatelessWidget {
   final TextEditingController merchant;
   final TextEditingController notes;
   final VoidCallback onMore;
+  final CategorySuggestViewModel? suggest;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +39,12 @@ class ComposerBody extends StatelessWidget {
             TransferFields(composer: composer),
             const SizedBox(height: FreevaSpace.s4),
           ],
-          DetailsFields(composer: composer, merchant: merchant, notes: notes),
+          DetailsFields(
+            composer: composer,
+            merchant: merchant,
+            notes: notes,
+            suggest: suggest,
+          ),
         ],
       );
     }

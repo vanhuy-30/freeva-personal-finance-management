@@ -65,6 +65,12 @@ import 'package:mobile/features/categories/domain/category_use_cases.dart'
     as _i221;
 import 'package:mobile/features/categories/presentation/viewmodels/category_view_model.dart'
     as _i961;
+import 'package:mobile/features/category_suggest/data/category_suggest_repository_impl.dart'
+    as _i395;
+import 'package:mobile/features/category_suggest/domain/category_suggest_repository.dart'
+    as _i353;
+import 'package:mobile/features/category_suggest/presentation/viewmodels/category_suggest_view_model.dart'
+    as _i276;
 import 'package:mobile/features/debts/data/debt_repository_impl.dart' as _i464;
 import 'package:mobile/features/debts/domain/debt_repository.dart' as _i249;
 import 'package:mobile/features/debts/domain/debt_use_cases.dart' as _i468;
@@ -337,6 +343,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i128.WalletRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i4.ProfileRepository>(
         () => _i72.ProfileRepositoryImpl(gh<_i443.AuthorizedApi>()));
+    gh.lazySingleton<_i353.CategorySuggestRepository>(
+        () => _i395.CategorySuggestRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i61.ReportRepository>(
         () => _i931.ReportRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i173.FeedbackRepository>(
@@ -478,6 +486,11 @@ extension GetItInjectableX on _i174.GetIt {
               gh<_i221.CategoryUseCases>(),
               gh<_i990.AuthViewModel>(),
               gh<_i444.CategoryExpansionRepository>(),
+            ));
+    gh.factory<_i276.CategorySuggestViewModel>(
+        () => _i276.CategorySuggestViewModel(
+              gh<_i353.CategorySuggestRepository>(),
+              gh<_i1017.FeatureFlagService>(),
             ));
     gh.factory<_i861.PendingGoalUseCases>(() => _i861.PendingGoalUseCases(
           gh<_i519.SettingsUseCases>(),

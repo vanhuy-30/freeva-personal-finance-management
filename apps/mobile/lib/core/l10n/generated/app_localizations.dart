@@ -9844,6 +9844,24 @@ abstract class S {
   /// In en, this message translates to:
   /// **'See all {count}'**
   String autoSuggestSeeAll(int count);
+
+  /// No description provided for @txSuggestTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'File under {category}?'**
+  String txSuggestTitle(String category);
+
+  /// No description provided for @txSuggestHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Same as last time here} other{Same as {count} times before here}}'**
+  String txSuggestHistory(int count);
+
+  /// No description provided for @txSuggestUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Use'**
+  String get txSuggestUse;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

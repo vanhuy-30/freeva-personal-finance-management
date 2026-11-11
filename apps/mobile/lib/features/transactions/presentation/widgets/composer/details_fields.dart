@@ -6,24 +6,31 @@ import '../../../../../core/theme/theme_context.dart';
 import '../../../../../core/theme/tokens.g.dart';
 import '../../../../../core/widgets/freeva_card.dart';
 import '../../../../../core/widgets/freeva_text_field.dart';
+import '../../../../category_suggest/presentation/viewmodels/category_suggest_view_model.dart';
+import '../../../../category_suggest/presentation/widgets/category_suggest_card.dart';
 import '../../viewmodels/transaction_composer.dart';
 import '../transaction_day_header.dart';
 import 'composer_pickers.dart';
 import 'tag_edit_chips.dart';
 
 /// C2.3 (also the edit screen): Danh mục · Ví · Thời gian, Cửa hàng,
-/// Ghi chú and tag chips with × and "+ Thêm nhãn".
+/// Ghi chú and tag chips with × and "+ Thêm nhãn". A new expense or income
+/// shows the R.1 category suggestion under Cửa hàng.
 class DetailsFields extends StatelessWidget {
   const DetailsFields({
     required this.composer,
     required this.merchant,
     required this.notes,
+    this.suggest,
     super.key,
   });
 
   final TransactionComposer composer;
   final TextEditingController merchant;
   final TextEditingController notes;
+
+  /// Null when editing, or when suggestions are not wired (tests).
+  final CategorySuggestViewModel? suggest;
 
   @override
   Widget build(BuildContext context) {
@@ -77,6 +84,8 @@ class DetailsFields extends StatelessWidget {
             onChanged: composer.setMerchant,
             textInputAction: TextInputAction.next,
           ),
+          if (suggest case final model?)
+            CategorySuggestCard(model: model, onUse: composer.pickCategory),
           const SizedBox(height: FreevaSpace.s4),
         ],
         FreevaTextField(

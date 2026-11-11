@@ -107,6 +107,7 @@ Thứ tự: `BE-P5-E08` → `WA-P5-001` → `MOB-P5-E08` → `BE-P5-001` / `MOB-
   - Server đếm tỷ lệ chấp nhận và tỷ lệ sửa (không phụ thuộc nhà cung cấp analytics). Không có nút "Không đúng": user chọn danh mục khác thì tính là sửa.
   - UI: [R.1–R.3](../docs/brand/patterns/R-suggestions-insights.md).
   - Cờ `category_suggest` tắt hoặc user tắt ở `PRD-P5-E01` thì API không đề xuất.
+- Note: PR 1/2 xong 2026-11-11: `POST /category-suggestions/suggest` (đã nhớ → lịch sử ≥ 60% → danh sách cửa hàng chung theo icon), `POST /category-suggestions/feedback` (đếm theo ngày không user id, nhớ cửa hàng theo danh mục user chọn kể cả khi sửa — chốt 2026-11-11), `GET /admin/category-suggestions/stats`; kiểu cấu hình `pair_list` + khóa `categorySuggest.*` sửa trên web admin; app: thẻ gợi ý ở màn ghi chi (R.1). Còn PR 2: nhập CSV (R.2, R.3). [Kiến trúc](../docs/architecture/category-suggestions.md).
 
 ### BE-P5-E04 / MOB-P5-E04 — Insight cơ bản
 - Status: todo

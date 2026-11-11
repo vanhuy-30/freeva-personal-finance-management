@@ -38,3 +38,7 @@ Staff xem `GET /api/admin/category-suggestions/stats?from&to` (≤ 366 ngày): t
 ## Riêng tư
 
 Cửa hàng và ghi chú không log. Bảng đếm không có user id. Cửa hàng đã nhớ xuất/xóa như [auto-suggest.md](auto-suggest.md).
+
+## App — ghi chi (MOB-P5-E03, board R.1)
+
+Feature `lib/features/category_suggest/`. Màn ghi giao dịch **mới** (kể cả "chép thành mới"; không khi sửa) tạo `CategorySuggestViewModel`: đợi 400 ms sau phím cuối, cần ≥ 2 ký tự, dùng cửa hàng, không có thì ghi chú; chỉ câu trả lời mới nhất được cập nhật thẻ. Cờ `category_suggest` tắt hoặc loại Chuyển thì không gọi API. Thẻ dưới ô Cửa hàng: icon danh mục, "Xếp vào {danh mục}?", "Như N lần trước ở đây" (ẩn khi N = 0), nút "Dùng". Ẩn khi trùng danh mục đang chọn, danh mục không dùng được, xoá chữ, lỗi hay không có mạng (không toast). Lưu xong (kể cả lưu chờ đồng bộ) thì gửi phản hồi không chờ, lỗi bỏ qua, không vào hàng đồng bộ; không thấy gợi ý thì không gửi. Golden sáng/tối, đối chiếu board bằng `design_compare` nhóm `R`. Nền thẻ dùng `blue.50` theo pattern (board vẽ `#F7F9FE`, không phải token).
