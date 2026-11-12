@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../auth/domain/auth_repository.dart';
 import 'goal.dart';
+import 'goal_forecast.dart';
 import 'goal_repository.dart';
 import '../../server_config/domain/app_limits.dart';
 
@@ -31,6 +32,9 @@ abstract class GoalUseCases {
     required BigInt targetMinor,
     required String targetDate,
   });
+
+  /// When the goal is likely reached at the recent pace; null when off.
+  Future<Either<AuthFailure, GoalForecast?>> forecast(String id);
 }
 
 @LazySingleton(as: GoalUseCases)
@@ -157,4 +161,8 @@ class DefaultGoalUseCases implements GoalUseCases {
       targetDate: targetDate,
     );
   }
+
+  @override
+  Future<Either<AuthFailure, GoalForecast?>> forecast(String id) =>
+      _repository.forecast(id);
 }

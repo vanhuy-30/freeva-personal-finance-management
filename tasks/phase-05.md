@@ -127,7 +127,7 @@ Thứ tự: `BE-P5-E08` → `WA-P5-001` → `MOB-P5-E08` → `BE-P5-001` / `MOB-
 - Note: xong 2026-11-12: `GET /insights` tính mỗi lần gọi, không lưu; thứ tự vượt ngân sách → khoản lệch → danh mục tăng/giảm → xu hướng, so với cùng kỳ tháng trước, danh mục con gộp vào gốc; khóa `insights.*` (ngân sách 80%, chênh 15%, N 2, M 3, K 2). App: thẻ "Đáng chú ý" trên Tổng quan (S.1), màn Phân tích (S.2) chưa có thẻ dự báo (thuộc E06). [Kiến trúc](../docs/architecture/insights.md).
 
 ### BE-P5-E06 / MOB-P5-E06 — Dự báo chi cuối tháng và ngày đạt mục tiêu
-- Status: todo
+- Status: done — 2026-11-12
 - Module: 18, 14
 - Gate: post-v1
 - Depends: BE-P1-007, BE-P2-E02, BE-P3-E01, BE-P5-E08
@@ -139,6 +139,7 @@ Thứ tự: `BE-P5-E08` → `WA-P5-001` → `MOB-P5-E08` → `BE-P5-001` / `MOB-
   - Chỉ tính theo tiền tệ của hồ sơ. Cờ `forecast`.
   - UI: [S.3, T.1](../docs/brand/patterns/R-suggestions-insights.md).
 
+- Note: xong 2026-11-12: `GET /spending-forecast` (đã chi ÷ ngày đã qua × ngày trong tháng, rủi ro so với ngân sách 90%/100%, mức nên chi mỗi ngày, cộng dồn, top 3 danh mục; chưa đủ 3 ngày thì `insufficient`), `GET /goals/{id}/forecast` (mức góp ròng trung bình 3 tháng đã qua trọn, không tính tháng đang chạy — chốt 2026-11-12). App: thẻ dự báo ở đầu Phân tích (S.2), màn Dự báo chi (S.3), thẻ dự kiến + dải mốc trên chi tiết mục tiêu và ô "Hạn" (T.1). [Kiến trúc](../docs/architecture/spend-forecast.md).
 ### BE-P5-E07 / MOB-P5-E07 — What-if
 - Status: wont — chủ dự án chốt 2026-11-11 chỉ đưa insight và dự báo, không làm màn "Thử bớt chi".
 

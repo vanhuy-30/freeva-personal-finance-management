@@ -16,14 +16,16 @@ import '../../../../core/widgets/freeva_top_bar.dart';
 import '../../../../core/widgets/money_display.dart';
 import '../../../../core/widgets/progress_bar.dart';
 import '../../domain/goal.dart';
+import '../viewmodels/goal_forecast_view_model.dart';
 import '../viewmodels/goal_view_model.dart';
+import '../widgets/goal_forecast_card.dart';
 import '../widgets/goal_history.dart';
 import '../widgets/goal_look.dart';
 import '../widgets/goal_mini_tile.dart';
 import '../widgets/goal_move_sheet.dart';
 
-/// One goal: how much is saved, what it needs each month, Góp thêm / Rút ra
-/// and the history.
+/// One goal: how much is saved, what it needs each month, when it is likely
+/// reached at the recent pace, Góp thêm / Rút ra and the history.
 class GoalDetailPage extends StatefulWidget {
   const GoalDetailPage({required this.goalId, super.key});
 
@@ -35,6 +37,7 @@ class GoalDetailPage extends StatefulWidget {
 
 class _GoalDetailPageState extends State<GoalDetailPage> {
   late final GoalViewModel model = getIt<GoalViewModel>();
+  late final GoalForecastViewModel _forecast = getIt<GoalForecastViewModel>();
   List<GoalEntry>? entries;
   bool _entriesFailed = false;
 
@@ -43,8 +46,15 @@ class _GoalDetailPageState extends State<GoalDetailPage> {
     super.initState();
     Future.microtask(() async {
       if (!model.loaded) await model.load();
-      await _loadEntries();
+      if (!mounted) return;
+      await Future.wait([_loadEntries(), _forecast.load(widget.goalId)]);
     });
+  }
+
+  @override
+  void dispose() {
+    _forecast.dispose();
+    super.dispose();
   }
 
   Future<void> _loadEntries() async {
@@ -60,14 +70,15 @@ class _GoalDetailPageState extends State<GoalDetailPage> {
 
   Future<void> _move(Goal goal, {required bool out}) async {
     final moved = await showGoalMoveSheet(context, model, goal, out: out);
-    if (moved == true) await _loadEntries();
+    if (moved != true || !mounted) return;
+    await Future.wait([_loadEntries(), _forecast.load(goal.id)]);
   }
 
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
     return ListenableBuilder(
-      listenable: model,
+      listenable: Listenable.merge([model, _forecast]),
       builder: (context, _) {
         final goal = model.byId(widget.goalId);
         if (goal == null) {
@@ -213,7 +224,7 @@ class _GoalDetailPageState extends State<GoalDetailPage> {
                   : s.goalMonths(goal.monthsLeft!),
             ),
             GoalMiniTile(
-              label: s.goalDate,
+              label: s.goalDue,
               value: goal.targetDate == null
                   ? dash
                   : goalMonthLabel(goal.targetDate!, locale),
@@ -224,6 +235,15 @@ class _GoalDetailPageState extends State<GoalDetailPage> {
             ),
           ],
         ),
+        if (_forecast.shown case final forecast?) ...[
+          const SizedBox(height: 14),
+          GoalForecastCard(
+            forecast: forecast,
+            goal: goal,
+            today: model.today,
+            digits: digits,
+          ),
+        ],
         if (!goal.archived) ...[
           const SizedBox(height: 14),
           Row(

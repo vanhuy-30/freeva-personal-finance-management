@@ -5988,4 +5988,184 @@ class SEn extends S {
 
   @override
   String get insightUsual => 'Usual';
+
+  @override
+  String spendForecastCardLabel(String month) {
+    return 'Month-end spending, $month';
+  }
+
+  @override
+  String get spendForecastRiskLow => 'Low risk';
+
+  @override
+  String get spendForecastRiskMedium => 'Medium risk';
+
+  @override
+  String get spendForecastRiskHigh => 'High risk';
+
+  @override
+  String spendForecastSpent(String amount) {
+    return 'Spent $amount';
+  }
+
+  @override
+  String spendForecastBudget(String amount) {
+    return 'Budget $amount';
+  }
+
+  @override
+  String spendForecastPrevious(String amount) {
+    return 'Last month $amount';
+  }
+
+  @override
+  String get spendForecastNotYet =>
+      'Not enough data yet, check back in a few days';
+
+  @override
+  String get spendForecastTitle => 'Spending forecast';
+
+  @override
+  String spendForecastHeadline(String month) {
+    return 'By the end of $month you may spend about';
+  }
+
+  @override
+  String spendForecastOver(String amount) {
+    return 'About $amount over budget';
+  }
+
+  @override
+  String get spendForecastToday => 'Today';
+
+  @override
+  String get spendForecastLegendSpent => 'Spent';
+
+  @override
+  String get spendForecastLegendForecast => 'Forecast';
+
+  @override
+  String get spendForecastDailyAverage => 'Daily average';
+
+  @override
+  String get spendForecastAllowance => 'To stay on budget, per day';
+
+  @override
+  String spendForecastAllowanceValue(String amount) {
+    return 'under $amount';
+  }
+
+  @override
+  String get spendForecastLastMonth => 'Last month';
+
+  @override
+  String get spendForecastTop => 'Most spent this month';
+
+  @override
+  String get spendForecastNote =>
+      'Estimated from your average daily spending since the start of the month, not money already spent.';
+
+  @override
+  String get spendForecastEmpty => 'Not enough data yet';
+
+  @override
+  String get spendForecastEmptyBody => 'Check back in a few days.';
+
+  @override
+  String spendForecastChart(int days, String spent, String forecast) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Spent $spent after $days days, about $forecast by month end',
+      one: 'Spent $spent after 1 day, about $forecast by month end',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String spendForecastChartBudget(
+    int days,
+    String spent,
+    String forecast,
+    String budget,
+  ) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other:
+          'Spent $spent after $days days, about $forecast by month end, budget $budget',
+      one:
+          'Spent $spent after 1 day, about $forecast by month end, budget $budget',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get goalForecastPace => 'At your recent pace';
+
+  @override
+  String goalForecastExpected(String month) {
+    return 'Expected by $month';
+  }
+
+  @override
+  String goalForecastLate(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count months late',
+      one: '1 month late',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String goalForecastEarly(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count months early',
+      one: '1 month early',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get goalForecastOnTime => 'On time';
+
+  @override
+  String get goalForecastToday => 'Today';
+
+  @override
+  String get goalForecastDue => 'Due';
+
+  @override
+  String get goalForecastWhen => 'Expected';
+
+  @override
+  String goalForecastAverage(int months, String amount) {
+    String _temp0 = intl.Intl.pluralLogic(
+      months,
+      locale: localeName,
+      other:
+          'You put in $amount a month on average over the last $months months.',
+      one: 'You put in $amount last month.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String goalForecastCatchUp(String amount) {
+    return 'Put in $amount a month to make it on time.';
+  }
+
+  @override
+  String get goalForecastNotYet => 'Not enough data to estimate yet';
+
+  @override
+  String get goalForecastNotYetBody =>
+      'Add your first contribution to see when you\'ll get there.';
+
+  @override
+  String get goalDue => 'Due date';
 }

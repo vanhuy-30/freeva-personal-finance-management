@@ -29,3 +29,10 @@ Hai con số **dự đoán**, không phải số đã xảy ra; app ghi rõ trê
 ## Code
 
 Module `spend-forecast`: domain thuần, repository Prisma, service (kỳ tài chính từ `reports/domain/report.ts`, ngân sách qua `BudgetService`), hai controller. Test: `spend-forecast.spec.ts`, `test/spend-forecast.integration-spec.ts`.
+
+## App (MOB-P5-E06)
+
+- **S.2** (`lib/features/spend_forecast/`): thẻ ở đầu màn Phân tích, trên "ĐÁNG CHÚ Ý · N", hiện cả khi danh sách điều đáng chú ý trống. Chip rủi ro, số dự báo, thanh đã chi + phần dự báo sọc + vạch ngân sách; không có ngân sách thì bên phải chú thích là "Tháng trước". Chưa đủ ngày: "Chưa đủ dữ liệu, xem lại sau vài ngày", không chạm được. Tải lại mỗi lần mở màn và khi kéo làm mới; lỗi chỉ ẩn thẻ.
+- **S.3** `/insights/spending-forecast`: số dự báo, "Vượt ngân sách khoảng…", biểu đồ cộng dồn (vẽ tay, có nhãn đọc màn hình), "Trung bình mỗi ngày" và "Để không vượt, mỗi ngày dưới…" (không có thì "Tháng trước"), 3 danh mục chi nhiều nhất, dòng "Dự đoán… chưa phải số đã chi."; chưa đủ dữ liệu thì màn trống.
+- **T.1** (`goals`): ô "Ngày đạt" trên chi tiết đổi thành "Hạn" (form tạo/sửa giữ "Ngày đạt" theo board I.3). Thẻ "Với mức góp gần đây · Dự kiến đạt MM/yyyy", chip Trễ/Sớm N tháng hoặc Kịp hạn, dải mốc Hôm nay → Hạn → Dự kiến (sớm thì Dự kiến ở giữa), dòng mức góp trung bình và, khi trễ, "Góp X mỗi tháng để kịp hạn." Tải khi mở chi tiết và sau Góp thêm / Rút ra; đã đạt, tắt hoặc lỗi thì không có thẻ.
+- Golden S.2, S.3 sáng/tối, T.1; đối chiếu board bằng `design_compare` nhóm `S`, `T`.

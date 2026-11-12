@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/core/di/injection.dart';
+import 'package:mobile/features/goals/domain/goal.dart';
+import 'package:mobile/features/goals/domain/goal_forecast.dart';
 import 'package:mobile/features/goals/presentation/pages/goal_detail_page.dart';
 import 'package:mobile/features/goals/presentation/pages/goal_editor_page.dart';
 import 'package:mobile/features/goals/presentation/pages/goals_page.dart';
@@ -26,6 +28,9 @@ void main() {
     double scale = 1,
     Size size = const Size(390, 900),
     bool empty = false,
+    GoalForecast? forecast,
+    List<GoalEntry>? entries,
+    DateTime? today,
     Future<void> Function(GoalHarness h)? then,
   }) async {
     t.view.physicalSize = size;
@@ -35,7 +40,10 @@ void main() {
       () => goalsApp(
         page,
         goals: empty ? const [] : null,
+        entries: entries,
         income: BigInt.from(25000000),
+        forecast: forecast,
+        today: today,
         dark: dark,
         scale: scale,
       ),
@@ -151,6 +159,48 @@ void main() {
       const GoalDetailPage(goalId: 'home'),
       'detail_dark',
       dark: true,
+    );
+  });
+
+  // GoalForecast (T.1): late by six months at the recent pace.
+  testWidgets('forecast', skip: !Platform.isMacOS, (t) async {
+    const b = BigInt.from;
+    await shot(
+      t,
+      const GoalDetailPage(goalId: 'home'),
+      'forecast',
+      size: const Size(390, 950),
+      today: DateTime(2026, 11, 12),
+      forecast: GoalForecastOk(
+        months: 3,
+        averageMonthlyMinor: b(5000000),
+        expectedMonth: '2028-02',
+        targetMonth: '2027-08',
+        monthsLate: 6,
+      ),
+      entries: [
+        for (final (i, day) in ['2026-10-01', '2026-09-01'].indexed)
+          GoalEntry(
+            id: 'c$i',
+            kind: GoalEntryKind.contribute,
+            amountMinor: b(5000000),
+            transfer: true,
+            occurredOn: day,
+          ),
+        GoalEntry(
+          id: 'c2',
+          kind: GoalEntryKind.contribute,
+          amountMinor: b(5000000),
+          transfer: false,
+          occurredOn: '2026-08-01',
+        ),
+        const GoalEntry(
+          id: 'a',
+          kind: GoalEntryKind.adjust,
+          transfer: false,
+          occurredOn: '2026-07-15',
+        ),
+      ],
     );
   });
 

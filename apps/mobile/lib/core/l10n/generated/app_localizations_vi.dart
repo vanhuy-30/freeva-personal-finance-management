@@ -5856,4 +5856,175 @@ class SVi extends S {
 
   @override
   String get insightUsual => 'Thường';
+
+  @override
+  String spendForecastCardLabel(String month) {
+    return 'Dự báo chi cuối tháng $month';
+  }
+
+  @override
+  String get spendForecastRiskLow => 'Rủi ro thấp';
+
+  @override
+  String get spendForecastRiskMedium => 'Rủi ro vừa';
+
+  @override
+  String get spendForecastRiskHigh => 'Rủi ro cao';
+
+  @override
+  String spendForecastSpent(String amount) {
+    return 'Đã chi $amount';
+  }
+
+  @override
+  String spendForecastBudget(String amount) {
+    return 'Ngân sách $amount';
+  }
+
+  @override
+  String spendForecastPrevious(String amount) {
+    return 'Tháng trước $amount';
+  }
+
+  @override
+  String get spendForecastNotYet => 'Chưa đủ dữ liệu, xem lại sau vài ngày';
+
+  @override
+  String get spendForecastTitle => 'Dự báo chi';
+
+  @override
+  String spendForecastHeadline(String month) {
+    return 'Cuối tháng $month có thể chi khoảng';
+  }
+
+  @override
+  String spendForecastOver(String amount) {
+    return 'Vượt ngân sách khoảng $amount';
+  }
+
+  @override
+  String get spendForecastToday => 'Hôm nay';
+
+  @override
+  String get spendForecastLegendSpent => 'Đã chi';
+
+  @override
+  String get spendForecastLegendForecast => 'Dự báo';
+
+  @override
+  String get spendForecastDailyAverage => 'Trung bình mỗi ngày';
+
+  @override
+  String get spendForecastAllowance => 'Để không vượt, mỗi ngày';
+
+  @override
+  String spendForecastAllowanceValue(String amount) {
+    return 'dưới $amount';
+  }
+
+  @override
+  String get spendForecastLastMonth => 'Tháng trước';
+
+  @override
+  String get spendForecastTop => 'Chi nhiều nhất tháng này';
+
+  @override
+  String get spendForecastNote =>
+      'Dự đoán theo mức chi trung bình mỗi ngày từ đầu tháng, chưa phải số đã chi.';
+
+  @override
+  String get spendForecastEmpty => 'Chưa đủ dữ liệu';
+
+  @override
+  String get spendForecastEmptyBody => 'Xem lại sau vài ngày.';
+
+  @override
+  String spendForecastChart(int days, String spent, String forecast) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Đã chi $spent sau $days ngày, dự báo $forecast cuối tháng',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String spendForecastChartBudget(
+    int days,
+    String spent,
+    String forecast,
+    String budget,
+  ) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other:
+          'Đã chi $spent sau $days ngày, dự báo $forecast cuối tháng, ngân sách $budget',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get goalForecastPace => 'Với mức góp gần đây';
+
+  @override
+  String goalForecastExpected(String month) {
+    return 'Dự kiến đạt $month';
+  }
+
+  @override
+  String goalForecastLate(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Trễ $count tháng',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String goalForecastEarly(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Sớm $count tháng',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get goalForecastOnTime => 'Kịp hạn';
+
+  @override
+  String get goalForecastToday => 'Hôm nay';
+
+  @override
+  String get goalForecastDue => 'Hạn';
+
+  @override
+  String get goalForecastWhen => 'Dự kiến';
+
+  @override
+  String goalForecastAverage(int months, String amount) {
+    String _temp0 = intl.Intl.pluralLogic(
+      months,
+      locale: localeName,
+      other: 'Góp trung bình $amount mỗi tháng trong $months tháng qua.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String goalForecastCatchUp(String amount) {
+    return 'Góp $amount mỗi tháng để kịp hạn.';
+  }
+
+  @override
+  String get goalForecastNotYet => 'Chưa đủ dữ liệu để dự kiến';
+
+  @override
+  String get goalForecastNotYetBody => 'Góp lần đầu để xem ngày đạt.';
+
+  @override
+  String get goalDue => 'Hạn';
 }

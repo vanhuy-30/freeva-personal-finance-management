@@ -14,12 +14,15 @@ import '../../../../core/widgets/freeva_icon_button.dart';
 import '../../../../core/widgets/freeva_top_bar.dart';
 import '../../../../core/widgets/skeleton.dart';
 import '../../../reports/presentation/widgets/report_labels.dart';
+import '../../../spend_forecast/presentation/viewmodels/spend_forecast_view_model.dart';
+import '../../../spend_forecast/presentation/widgets/spend_forecast_card.dart';
 import '../viewmodels/insights_view_model.dart';
 import '../widgets/insight_card.dart';
 import '../widgets/insight_navigation.dart';
 
-/// Phân tích (S.2): ĐÁNG CHÚ Ý · n, one card per insight, and how the
-/// figures are worked out. The forecast card (E06) goes above the section.
+/// Phân tích (S.2): the month-end forecast card (E06) when there is one,
+/// ĐÁNG CHÚ Ý · n with one card per insight, and how the figures are worked
+/// out. A forecast failure only hides its card.
 class InsightsPage extends StatefulWidget {
   const InsightsPage({super.key});
 
@@ -29,16 +32,21 @@ class InsightsPage extends StatefulWidget {
 
 class _InsightsPageState extends State<InsightsPage> {
   late final InsightsViewModel _model = getIt<InsightsViewModel>();
+  late final SpendForecastViewModel _forecast = getIt<SpendForecastViewModel>();
 
   @override
   void initState() {
     super.initState();
     if (!_model.loaded && !_model.loading) Future.microtask(_model.load);
+    // Always fresh: the figure moves with every expense.
+    if (!_forecast.loading) Future.microtask(_forecast.load);
   }
+
+  Future<void> _refresh() => Future.wait([_model.load(), _forecast.load()]);
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
-    listenable: _model,
+    listenable: Listenable.merge([_model, _forecast]),
     builder: (context, _) {
       final s = S.of(context);
       final margin = context.screenMargin;
@@ -54,16 +62,32 @@ class _InsightsPageState extends State<InsightsPage> {
           ),
         ),
         body: RefreshIndicator(
-          onRefresh: _model.load,
+          onRefresh: _refresh,
           child: ListView(
             // Board: 14 between the header row and the first block.
             padding: EdgeInsets.fromLTRB(margin, 6, margin, FreevaSpace.s8),
-            children: _body(context),
+            children: [..._forecastCard(context), ..._body(context)],
           ),
         ),
       );
     },
   );
+
+  /// The forecast card and the gap under it; nothing when off or failed.
+  List<Widget> _forecastCard(BuildContext context) {
+    final forecast = _forecast.forecast;
+    if (forecast == null) return const [];
+    return [
+      SpendForecastCard(
+        forecast: forecast,
+        period: _forecast.period,
+        digits: CurrencyCatalog.current.digits(_forecast.currencyCode),
+        onTap: () => context.push('/insights/spending-forecast'),
+      ),
+      // Board: 14 gap plus 6 above the section label.
+      const SizedBox(height: 20),
+    ];
+  }
 
   List<Widget> _body(BuildContext context) {
     final s = S.of(context);

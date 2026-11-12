@@ -10054,6 +10054,233 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Usual'**
   String get insightUsual;
+
+  /// No description provided for @spendForecastCardLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Month-end spending, {month}'**
+  String spendForecastCardLabel(String month);
+
+  /// No description provided for @spendForecastRiskLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low risk'**
+  String get spendForecastRiskLow;
+
+  /// No description provided for @spendForecastRiskMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium risk'**
+  String get spendForecastRiskMedium;
+
+  /// No description provided for @spendForecastRiskHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High risk'**
+  String get spendForecastRiskHigh;
+
+  /// No description provided for @spendForecastSpent.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent {amount}'**
+  String spendForecastSpent(String amount);
+
+  /// No description provided for @spendForecastBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget {amount}'**
+  String spendForecastBudget(String amount);
+
+  /// No description provided for @spendForecastPrevious.
+  ///
+  /// In en, this message translates to:
+  /// **'Last month {amount}'**
+  String spendForecastPrevious(String amount);
+
+  /// No description provided for @spendForecastNotYet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough data yet, check back in a few days'**
+  String get spendForecastNotYet;
+
+  /// No description provided for @spendForecastTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending forecast'**
+  String get spendForecastTitle;
+
+  /// No description provided for @spendForecastHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'By the end of {month} you may spend about'**
+  String spendForecastHeadline(String month);
+
+  /// No description provided for @spendForecastOver.
+  ///
+  /// In en, this message translates to:
+  /// **'About {amount} over budget'**
+  String spendForecastOver(String amount);
+
+  /// No description provided for @spendForecastToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get spendForecastToday;
+
+  /// No description provided for @spendForecastLegendSpent.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent'**
+  String get spendForecastLegendSpent;
+
+  /// No description provided for @spendForecastLegendForecast.
+  ///
+  /// In en, this message translates to:
+  /// **'Forecast'**
+  String get spendForecastLegendForecast;
+
+  /// No description provided for @spendForecastDailyAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily average'**
+  String get spendForecastDailyAverage;
+
+  /// No description provided for @spendForecastAllowance.
+  ///
+  /// In en, this message translates to:
+  /// **'To stay on budget, per day'**
+  String get spendForecastAllowance;
+
+  /// No description provided for @spendForecastAllowanceValue.
+  ///
+  /// In en, this message translates to:
+  /// **'under {amount}'**
+  String spendForecastAllowanceValue(String amount);
+
+  /// No description provided for @spendForecastLastMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Last month'**
+  String get spendForecastLastMonth;
+
+  /// No description provided for @spendForecastTop.
+  ///
+  /// In en, this message translates to:
+  /// **'Most spent this month'**
+  String get spendForecastTop;
+
+  /// No description provided for @spendForecastNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated from your average daily spending since the start of the month, not money already spent.'**
+  String get spendForecastNote;
+
+  /// No description provided for @spendForecastEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough data yet'**
+  String get spendForecastEmpty;
+
+  /// No description provided for @spendForecastEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Check back in a few days.'**
+  String get spendForecastEmptyBody;
+
+  /// No description provided for @spendForecastChart.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{Spent {spent} after 1 day, about {forecast} by month end} other{Spent {spent} after {days} days, about {forecast} by month end}}'**
+  String spendForecastChart(int days, String spent, String forecast);
+
+  /// No description provided for @spendForecastChartBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{Spent {spent} after 1 day, about {forecast} by month end, budget {budget}} other{Spent {spent} after {days} days, about {forecast} by month end, budget {budget}}}'**
+  String spendForecastChartBudget(
+    int days,
+    String spent,
+    String forecast,
+    String budget,
+  );
+
+  /// No description provided for @goalForecastPace.
+  ///
+  /// In en, this message translates to:
+  /// **'At your recent pace'**
+  String get goalForecastPace;
+
+  /// No description provided for @goalForecastExpected.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected by {month}'**
+  String goalForecastExpected(String month);
+
+  /// No description provided for @goalForecastLate.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 month late} other{{count} months late}}'**
+  String goalForecastLate(int count);
+
+  /// No description provided for @goalForecastEarly.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 month early} other{{count} months early}}'**
+  String goalForecastEarly(int count);
+
+  /// No description provided for @goalForecastOnTime.
+  ///
+  /// In en, this message translates to:
+  /// **'On time'**
+  String get goalForecastOnTime;
+
+  /// No description provided for @goalForecastToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get goalForecastToday;
+
+  /// No description provided for @goalForecastDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Due'**
+  String get goalForecastDue;
+
+  /// No description provided for @goalForecastWhen.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected'**
+  String get goalForecastWhen;
+
+  /// No description provided for @goalForecastAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'{months, plural, =1{You put in {amount} last month.} other{You put in {amount} a month on average over the last {months} months.}}'**
+  String goalForecastAverage(int months, String amount);
+
+  /// No description provided for @goalForecastCatchUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Put in {amount} a month to make it on time.'**
+  String goalForecastCatchUp(String amount);
+
+  /// No description provided for @goalForecastNotYet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough data to estimate yet'**
+  String get goalForecastNotYet;
+
+  /// No description provided for @goalForecastNotYetBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your first contribution to see when you\'ll get there.'**
+  String get goalForecastNotYetBody;
+
+  /// No description provided for @goalDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Due date'**
+  String get goalDue;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

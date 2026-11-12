@@ -12,8 +12,11 @@ import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/auth/domain/auth_use_cases.dart';
 import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dart';
 import 'package:mobile/features/goals/domain/goal.dart';
+import 'package:mobile/features/goals/domain/goal_forecast.dart';
 import 'package:mobile/features/goals/domain/goal_use_cases.dart';
+import 'package:mobile/features/goals/presentation/viewmodels/goal_forecast_view_model.dart';
 import 'package:mobile/features/goals/presentation/viewmodels/goal_view_model.dart';
+import 'package:mobile/features/server_config/domain/server_config.dart';
 import 'package:mobile/features/profile/domain/profile.dart';
 import 'package:mobile/features/profile/domain/profile_use_cases.dart';
 import 'package:mobile/features/profile/presentation/viewmodels/profile_view_model.dart';
@@ -21,6 +24,7 @@ import 'package:mobile/features/wallets/domain/wallet.dart';
 import 'package:mobile/features/wallets/presentation/viewmodels/wallet_view_model.dart';
 
 import '../auth/fakes.dart';
+import '../auto_suggest/auto_suggest_fakes.dart' show FakeFlags;
 import '../home/fixtures.dart' show b, wallet;
 import '../profile/fakes.dart';
 import '../wallets/d1_stub.dart' show StubWalletViewModel;
@@ -257,12 +261,28 @@ class FakeGoalUseCases implements GoalUseCases {
     previews.add((currency, targetMinor, targetDate));
     return _ok(previewResult);
   }
+
+  /// What [forecast] answers; null (no card) by default.
+  GoalForecast? forecastResult;
+  AuthFailure? forecastFailure;
+  final forecastCalls = <String>[];
+
+  @override
+  Future<Either<AuthFailure, GoalForecast?>> forecast(String id) async {
+    forecastCalls.add(id);
+    return forecastFailure == null
+        ? right(forecastResult)
+        : left(forecastFailure!);
+  }
 }
 
 class GoalHarness {
-  GoalHarness._(this.cases, this.model, this.app);
+  GoalHarness._(this.cases, this.model, this.flags, this.app);
   final FakeGoalUseCases cases;
   final GoalViewModel model;
+
+  /// `forecast` is on.
+  final FakeFlags flags;
   final Widget app;
 }
 
@@ -276,6 +296,8 @@ Future<GoalHarness> goalsApp(
   BigInt? income,
   bool dark = false,
   double scale = 1,
+  GoalForecast? forecast,
+  DateTime? today,
 }) async {
   await getIt.reset();
   registerTestServerConfig();
@@ -318,14 +340,19 @@ Future<GoalHarness> goalsApp(
     ),
   );
   await profile.load();
-  final wallets = StubWalletViewModel(wallets: goalWallets());
-  final cases = FakeGoalUseCases(goals: goals, entries: entries);
+  final wallets = StubWalletViewModel(wallets: goalWallets(), today: today);
+  final cases = FakeGoalUseCases(goals: goals, entries: entries)
+    ..forecastResult = forecast;
   final model = GoalViewModel(cases, wallets, profile, auth);
+  final flags = FakeFlags()..on = {FeatureFlags.forecast};
   getIt
     ..registerSingleton<AuthViewModel>(auth)
     ..registerSingleton<WalletViewModel>(wallets)
     ..registerSingleton<ProfileViewModel>(profile)
-    ..registerSingleton<GoalViewModel>(model);
+    ..registerSingleton<GoalViewModel>(model)
+    ..registerFactory<GoalForecastViewModel>(
+      () => GoalForecastViewModel(cases, flags, auth),
+    );
   Widget scaled(Widget child) => MediaQuery.withClampedTextScaling(
     minScaleFactor: scale,
     maxScaleFactor: scale,
@@ -351,5 +378,5 @@ Future<GoalHarness> goalsApp(
     supportedLocales: S.supportedLocales,
     routerConfig: router,
   );
-  return GoalHarness._(cases, model, app);
+  return GoalHarness._(cases, model, flags, app);
 }

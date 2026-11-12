@@ -94,6 +94,8 @@ import 'package:mobile/features/fx_rates/domain/fx_rate_use_cases.dart'
 import 'package:mobile/features/goals/data/goal_repository_impl.dart' as _i258;
 import 'package:mobile/features/goals/domain/goal_repository.dart' as _i625;
 import 'package:mobile/features/goals/domain/goal_use_cases.dart' as _i840;
+import 'package:mobile/features/goals/presentation/viewmodels/goal_forecast_view_model.dart'
+    as _i464;
 import 'package:mobile/features/goals/presentation/viewmodels/goal_view_model.dart'
     as _i814;
 import 'package:mobile/features/home/domain/overview_use_cases.dart' as _i970;
@@ -200,6 +202,12 @@ import 'package:mobile/features/settings/domain/settings_use_cases.dart'
     as _i519;
 import 'package:mobile/features/settings/presentation/viewmodels/settings_view_model.dart'
     as _i421;
+import 'package:mobile/features/spend_forecast/data/spending_forecast_repository_impl.dart'
+    as _i4;
+import 'package:mobile/features/spend_forecast/domain/spending_forecast_repository.dart'
+    as _i428;
+import 'package:mobile/features/spend_forecast/presentation/viewmodels/spend_forecast_view_model.dart'
+    as _i514;
 import 'package:mobile/features/sync/data/sync_queue_vault.dart' as _i938;
 import 'package:mobile/features/sync/data/sync_repository_impl.dart' as _i430;
 import 'package:mobile/features/sync/domain/sync_repository.dart' as _i882;
@@ -312,6 +320,8 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i938.SyncQueueVault>(),
           gh<_i766.AppLogger>(),
         ));
+    gh.lazySingleton<_i428.SpendingForecastRepository>(
+        () => _i4.SpendingForecastRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i199.NotificationRepository>(
         () => _i419.NotificationRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i334.AutoSuggestRepository>(
@@ -491,6 +501,11 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i107.WalletRepository>(),
           gh<_i561.CategoryRepository>(),
         ));
+    gh.factory<_i464.GoalForecastViewModel>(() => _i464.GoalForecastViewModel(
+          gh<_i840.GoalUseCases>(),
+          gh<_i1017.FeatureFlagService>(),
+          gh<_i990.AuthViewModel>(),
+        ));
     gh.factory<_i281.ProfileUseCases>(() => _i281.ProfileUseCases(
           gh<_i4.ProfileRepository>(),
           gh<_i855.AppLimitsSource>(),
@@ -522,6 +537,12 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i990.AuthViewModel>(),
           gh<_i887.ProfileViewModel>(),
         ));
+    gh.lazySingleton<_i514.SpendForecastViewModel>(
+        () => _i514.DefaultSpendForecastViewModel(
+              gh<_i428.SpendingForecastRepository>(),
+              gh<_i1017.FeatureFlagService>(),
+              gh<_i990.AuthViewModel>(),
+            ));
     gh.factory<_i587.DefaultImportViewModel>(() => _i587.DefaultImportViewModel(
           gh<_i272.ImportUseCases>(),
           gh<_i336.WalletUseCases>(),
