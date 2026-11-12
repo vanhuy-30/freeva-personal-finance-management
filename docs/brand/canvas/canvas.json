@@ -641,7 +641,7 @@
    "y": 13084
   },
   "MeHome3.dc.html": {
-   "h": 1640,
+   "h": 1694,
    "is_interactive": true,
    "page": "p3",
    "title": "O · 1. Cá nhân · Phase 3 (thêm ô Đầu tư, Tài sản ròng)",
@@ -1502,7 +1502,7 @@
    "y": -20
   },
   "InsHome.dc.html": {
-   "h": 920,
+   "h": 1340,
    "is_interactive": true,
    "page": "p5",
    "title": "S · 1. Tổng quan · điều đáng chú ý",
@@ -1553,6 +1553,24 @@
    "title": "U · 2. Xoá dữ liệu đã học (popup)",
    "w": 390,
    "x": 1380,
+   "y": 3260
+  },
+  "InsAnalysisEmpty.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "page": "p5",
+   "title": "S · 2b. Phân tích · trống",
+   "w": 390,
+   "x": 1380,
+   "y": 1380
+  },
+  "AutoSuggestEmpty.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "page": "p5",
+   "title": "U · 1b. Gợi ý tự động · chưa nhớ cửa hàng nào",
+   "w": 390,
+   "x": 1840,
    "y": 3260
   }
  },
@@ -1902,7 +1920,7 @@
   },
   "t5_1": {
    "kind": "title1",
-   "maxW": 1310,
+   "maxW": 1770,
    "page": "p5",
    "text": "S · Điều đáng chú ý và dự báo chi",
    "w": 240,
@@ -1920,7 +1938,7 @@
   },
   "t5_3": {
    "kind": "title1",
-   "maxW": 850,
+   "maxW": 1310,
    "page": "p5",
    "text": "U · Gợi ý tự động",
    "w": 240,
@@ -2105,7 +2123,9 @@
   "SpendForecast.dc.html",
   "GoalForecast.dc.html",
   "AutoSuggest.dc.html",
-  "AutoSuggestClear.dc.html"
+  "AutoSuggestClear.dc.html",
+  "InsAnalysisEmpty.dc.html",
+  "AutoSuggestEmpty.dc.html"
  ],
  "pages": [
   {
