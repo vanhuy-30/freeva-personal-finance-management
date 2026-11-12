@@ -2,11 +2,13 @@
 
 [phase-05.md](../docs/product/phases/phase-05.md). Không epic nào thuộc product v1.
 
+**Closed** 2026-11-12 — 9/9 done, 4 wont (`BE-P5-E01` bỏ; `E02`, `E05` sang Phase 8; `E07` what-if bỏ). Biên bản: [STATUS](../docs/project-state/STATUS.md).
+
 Phạm vi chốt 2026-11-11 (chủ dự án):
 
 - Nhập sao kê ngân hàng (`BE-P5-E01`) không làm.
 - OCR (`BE-P5-E02`) và Ask Freeva (`BE-P5-E05`) chuyển sang [Phase 8](phase-08.md) vì chưa chốt hướng AI.
-- Gợi ý danh mục, insight, dự báo chi, what-if tính bằng quy tắc và số liệu từ sổ; không gửi dữ liệu ra ngoài, không gọi model.
+- Gợi ý danh mục, insight, dự báo chi tính bằng quy tắc và số liệu từ sổ; không gửi dữ liệu ra ngoài, không gọi model (what-if bỏ 2026-11-11).
 - Số và cấu hình mang nghĩa sản phẩm (ngưỡng, giới hạn, danh sách, bật/tắt) không hardcode trong app: nằm ở server, sửa trên web admin. Áp dụng cho cả phần đã làm ở Phase 0–4 (`BE-P5-001` / `MOB-P5-001`).
 - Không có nút "Không đúng" (chủ dự án 2026-11-11): insight và dự báo là số tính từ sổ; gợi ý danh mục sai thì user chọn lại, server tính là một lần sửa.
 - Màn mới có board thiết kế trước khi code (`DS-P5-001`). Chưa paywall; quyền Premium là việc của Phase 7.

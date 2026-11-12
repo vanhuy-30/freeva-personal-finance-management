@@ -26,7 +26,7 @@ import type { ConfigDefinition, ConfigValue, FlagDefinition } from './app-config
 export const FLAG_DEFINITIONS = {
   category_suggest: { description: 'Gợi ý danh mục khi ghi chi và nhập CSV (BE-P5-E03).' },
   insights: { description: 'Thẻ insight trên Tổng quan và màn phân tích (BE-P5-E04).' },
-  forecast: { description: 'Dự báo chi cuối tháng, ngày đạt mục tiêu và what-if (BE-P5-E06, BE-P5-E07).' },
+  forecast: { description: 'Dự báo chi cuối tháng và ngày dự kiến đạt mục tiêu (BE-P5-E06).' },
   google_sign_in: { description: 'Đăng nhập bằng Google trên app (đang hiện "Sắp có").' },
   apple_sign_in: { description: 'Đăng nhập bằng Apple trên app (đang hiện "Sắp có").' },
   profile_edit: { description: 'Sửa hồ sơ ở màn Cá nhân (đang hiện "Sắp có").' },
