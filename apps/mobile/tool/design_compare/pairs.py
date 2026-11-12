@@ -25,6 +25,7 @@ M = {
  'Q': [('QNetWorth','net_worth/net_worth_main')],
  'U': [('AutoSuggest','auto_suggest/u1_auto_suggest'),('AutoSuggestClear','auto_suggest/u2_auto_suggest_clear')],
  'R': [('SugExpense','category_suggest/r1_sug_expense'),('SugImport','transaction_import/r2_sug_import'),('SugImportPick','transaction_import/r3_sug_import_pick')],
+ 'S': [('InsHome','insights/s1_ins_home'),('InsAnalysis','insights/s2_ins_analysis')],
  'H': [('SyncBanner','sync/h1_list'),('SyncCenter','sync/h1_center'),('SyncRunning','sync/h1_sending'),('SyncDone','sync/h1_done'),('SyncConflict','sync/h2_compare'),('SyncDuplicate','sync/h2_duplicate'),('SyncDiscard','sync/h1_discard'),('SyncUpdate','sync/h1_update')],
 }
 os.makedirs(f'{S}/pairs', exist_ok=True)

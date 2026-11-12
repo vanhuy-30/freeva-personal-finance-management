@@ -5864,4 +5864,128 @@ class SEn extends S {
 
   @override
   String get importPickDone => 'Done';
+
+  @override
+  String get insightsTitle => 'Insights';
+
+  @override
+  String get insightsSettings => 'Suggestion settings';
+
+  @override
+  String get insightsEyebrow => 'Worth a look';
+
+  @override
+  String insightsSection(int count) {
+    return 'Worth a look · $count';
+  }
+
+  @override
+  String insightsSeeAll(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'See all $count',
+      one: 'See insights',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get insightsFooter => 'Worked out from your records, updated daily.';
+
+  @override
+  String get insightsEmpty => 'Nothing stands out yet';
+
+  @override
+  String get insightsEmptyBody =>
+      'Record a few more days to compare with last month.';
+
+  @override
+  String insightBudgetCategory(String category, int percent) {
+    return '$category has used $percent% of its budget';
+  }
+
+  @override
+  String insightBudgetMonth(int percent) {
+    return 'This month\'s spending has used $percent% of the budget';
+  }
+
+  @override
+  String insightDaysLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days left',
+      one: '1 day left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String insightOutlier(String amount, String place, int times) {
+    return '$amount at $place is $times times your usual';
+  }
+
+  @override
+  String insightCategoryUp(String category, int percent) {
+    return '$category is up $percent% on the same days last month';
+  }
+
+  @override
+  String insightCategoryDown(String category, int percent) {
+    return '$category is down $percent% on the same days last month';
+  }
+
+  @override
+  String insightCategoryMore(String category) {
+    return '$category is higher this month than last month';
+  }
+
+  @override
+  String insightCategoryLess(String category) {
+    return '$category is lower this month than last month';
+  }
+
+  @override
+  String insightTrendUp(int days, int percent) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other:
+          'Spending in the first $days days is $percent% higher than last month',
+      one: 'Spending on day 1 is $percent% higher than last month',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String insightTrendDown(int days, int percent) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other:
+          'Spending in the first $days days is $percent% lower than last month',
+      one: 'Spending on day 1 is $percent% lower than last month',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get insightTrendMore =>
+      'Spending this month is higher than last month';
+
+  @override
+  String get insightTrendLess => 'Spending this month is lower than last month';
+
+  @override
+  String get insightThisMonth => 'This month';
+
+  @override
+  String get insightLastMonth => 'Last month';
+
+  @override
+  String get insightThisOne => 'This one';
+
+  @override
+  String get insightUsual => 'Usual';
 }

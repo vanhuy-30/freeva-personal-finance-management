@@ -111,7 +111,7 @@ Thứ tự: `BE-P5-E08` → `WA-P5-001` → `MOB-P5-E08` → `BE-P5-001` / `MOB-
 - Note: PR 2/2 xong 2026-11-11: xem trước/nhập CSV gợi ý cho dòng tệp để trống danh mục (truy vấn theo lô), `rowCategoryMap` > `merchantCategoryMap` > gợi ý, nhập lần đầu đếm chấp nhận/sửa (`surface = import`) và nhớ cửa hàng; app: chip "Gợi ý N", danh mục đoán màu xanh, sheet đổi danh mục có công tắc áp dụng cho cùng cửa hàng (R.2, R.3).
 
 ### BE-P5-E04 / MOB-P5-E04 — Insight cơ bản
-- Status: todo
+- Status: done — 2026-11-12
 - Module: 18
 - Gate: post-v1
 - Depends: BE-P1-007, BE-P2-E02, BE-P3-E01, BE-P5-E08, PRD-P5-E01
@@ -124,6 +124,7 @@ Thứ tự: `BE-P5-E08` → `WA-P5-001` → `MOB-P5-E08` → `BE-P5-001` / `MOB-
   - Không đủ dữ liệu thì câu không có số. Không bịa phần trăm.
   - UI: [S.1, S.2](../docs/brand/patterns/R-suggestions-insights.md).
   - Cờ `insights` tắt hoặc user tắt thì ẩn thẻ.
+- Note: xong 2026-11-12: `GET /insights` tính mỗi lần gọi, không lưu; thứ tự vượt ngân sách → khoản lệch → danh mục tăng/giảm → xu hướng, so với cùng kỳ tháng trước, danh mục con gộp vào gốc; khóa `insights.*` (ngân sách 80%, chênh 15%, N 2, M 3, K 2). App: thẻ "Đáng chú ý" trên Tổng quan (S.1), màn Phân tích (S.2) chưa có thẻ dự báo (thuộc E06). [Kiến trúc](../docs/architecture/insights.md).
 
 ### BE-P5-E06 / MOB-P5-E06 — Dự báo chi cuối tháng và ngày đạt mục tiêu
 - Status: todo

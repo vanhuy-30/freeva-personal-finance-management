@@ -9910,6 +9910,150 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Done'**
   String get importPickDone;
+
+  /// No description provided for @insightsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Insights'**
+  String get insightsTitle;
+
+  /// No description provided for @insightsSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggestion settings'**
+  String get insightsSettings;
+
+  /// No description provided for @insightsEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Worth a look'**
+  String get insightsEyebrow;
+
+  /// No description provided for @insightsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Worth a look · {count}'**
+  String insightsSection(int count);
+
+  /// No description provided for @insightsSeeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{See insights} other{See all {count}}}'**
+  String insightsSeeAll(int count);
+
+  /// No description provided for @insightsFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Worked out from your records, updated daily.'**
+  String get insightsFooter;
+
+  /// No description provided for @insightsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing stands out yet'**
+  String get insightsEmpty;
+
+  /// No description provided for @insightsEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Record a few more days to compare with last month.'**
+  String get insightsEmptyBody;
+
+  /// No description provided for @insightBudgetCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'{category} has used {percent}% of its budget'**
+  String insightBudgetCategory(String category, int percent);
+
+  /// No description provided for @insightBudgetMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month\'s spending has used {percent}% of the budget'**
+  String insightBudgetMonth(int percent);
+
+  /// No description provided for @insightDaysLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 day left} other{{count} days left}}'**
+  String insightDaysLeft(int count);
+
+  /// No description provided for @insightOutlier.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} at {place} is {times} times your usual'**
+  String insightOutlier(String amount, String place, int times);
+
+  /// No description provided for @insightCategoryUp.
+  ///
+  /// In en, this message translates to:
+  /// **'{category} is up {percent}% on the same days last month'**
+  String insightCategoryUp(String category, int percent);
+
+  /// No description provided for @insightCategoryDown.
+  ///
+  /// In en, this message translates to:
+  /// **'{category} is down {percent}% on the same days last month'**
+  String insightCategoryDown(String category, int percent);
+
+  /// No description provided for @insightCategoryMore.
+  ///
+  /// In en, this message translates to:
+  /// **'{category} is higher this month than last month'**
+  String insightCategoryMore(String category);
+
+  /// No description provided for @insightCategoryLess.
+  ///
+  /// In en, this message translates to:
+  /// **'{category} is lower this month than last month'**
+  String insightCategoryLess(String category);
+
+  /// No description provided for @insightTrendUp.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{Spending on day 1 is {percent}% higher than last month} other{Spending in the first {days} days is {percent}% higher than last month}}'**
+  String insightTrendUp(int days, int percent);
+
+  /// No description provided for @insightTrendDown.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{Spending on day 1 is {percent}% lower than last month} other{Spending in the first {days} days is {percent}% lower than last month}}'**
+  String insightTrendDown(int days, int percent);
+
+  /// No description provided for @insightTrendMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending this month is higher than last month'**
+  String get insightTrendMore;
+
+  /// No description provided for @insightTrendLess.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending this month is lower than last month'**
+  String get insightTrendLess;
+
+  /// No description provided for @insightThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get insightThisMonth;
+
+  /// No description provided for @insightLastMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Last month'**
+  String get insightLastMonth;
+
+  /// No description provided for @insightThisOne.
+  ///
+  /// In en, this message translates to:
+  /// **'This one'**
+  String get insightThisOne;
+
+  /// No description provided for @insightUsual.
+  ///
+  /// In en, this message translates to:
+  /// **'Usual'**
+  String get insightUsual;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

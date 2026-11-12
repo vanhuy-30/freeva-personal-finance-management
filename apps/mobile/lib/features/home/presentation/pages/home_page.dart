@@ -11,6 +11,7 @@ import '../../../../core/widgets/freeva_banner.dart';
 import '../../../auth/presentation/widgets/session_alert_banner.dart';
 import '../../../goals/presentation/viewmodels/goal_view_model.dart';
 import '../../../goals/presentation/widgets/goals_home_block.dart';
+import '../../../insights/presentation/viewmodels/insights_view_model.dart';
 import '../../../notifications/presentation/viewmodels/notification_view_model.dart';
 import '../../../onboarding/presentation/viewmodels/first_run_nudges_view_model.dart';
 import '../../../onboarding/presentation/widgets/daily_log_ask_sheet.dart';
@@ -43,15 +44,34 @@ class _HomePageState extends State<HomePage> {
       getIt.isRegistered<FirstRunNudgesViewModel>()
       ? getIt<FirstRunNudgesViewModel>()
       : null;
+
+  /// Not registered in some widget tests.
+  final InsightsViewModel? _insights = getIt.isRegistered<InsightsViewModel>()
+      ? getIt<InsightsViewModel>()
+      : null;
   OverviewData? _checked;
+  OverviewData? _insightsFor;
   bool _sheetOpen = false;
 
   @override
   void initState() {
     super.initState();
     model.addListener(_modelChanged);
+    model.addListener(_loadInsights);
     _nudges?.addListener(_nudgesChanged);
     if (model.data == null) Future.microtask(model.load);
+    Future.microtask(_loadInsights);
+  }
+
+  /// "Đáng chú ý" (S.1) follows each fresh Overview load, pull-to-refresh
+  /// included; its failure stays inside the card.
+  void _loadInsights() {
+    final data = model.data;
+    final insights = _insights;
+    if (!mounted || insights == null || data == null) return;
+    if (identical(data, _insightsFor)) return;
+    _insightsFor = data;
+    insights.load();
   }
 
   /// After each fresh load: create the waiting saving goal, maybe offer the
@@ -106,6 +126,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void dispose() {
     model.removeListener(_modelChanged);
+    model.removeListener(_loadInsights);
     _nudges?.removeListener(_nudgesChanged);
     _router?.routerDelegate.removeListener(_routeChanged);
     super.dispose();

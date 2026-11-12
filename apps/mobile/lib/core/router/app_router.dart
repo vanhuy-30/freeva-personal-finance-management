@@ -8,6 +8,7 @@ import '../../features/categories/presentation/pages/category_page.dart';
 import '../../features/categories/presentation/pages/hidden_categories_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/home/presentation/pages/notifications_page.dart';
+import '../../features/insights/presentation/pages/insights_page.dart';
 import '../../features/transactions/domain/transaction.dart';
 import '../../features/profile/presentation/pages/data_export_page.dart';
 import '../../features/settings/presentation/pages/money_settings_page.dart';
@@ -192,6 +193,10 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
         builder: (context, state) => AuthGate(
           child: MonthReviewPage(on: state.uri.queryParameters['on']),
         ),
+      ),
+      GoRoute(
+        path: '/insights',
+        builder: (context, state) => const AuthGate(child: InsightsPage()),
       ),
       GoRoute(
         path: '/reports/forecast',

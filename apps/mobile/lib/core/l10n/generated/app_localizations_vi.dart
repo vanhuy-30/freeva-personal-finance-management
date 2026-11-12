@@ -5739,4 +5739,121 @@ class SVi extends S {
 
   @override
   String get importPickDone => 'Xong';
+
+  @override
+  String get insightsTitle => 'Phân tích';
+
+  @override
+  String get insightsSettings => 'Cài đặt gợi ý';
+
+  @override
+  String get insightsEyebrow => 'Đáng chú ý';
+
+  @override
+  String insightsSection(int count) {
+    return 'Đáng chú ý · $count';
+  }
+
+  @override
+  String insightsSeeAll(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Xem cả $count',
+      one: 'Xem phân tích',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get insightsFooter => 'Tính từ sổ của bạn, cập nhật mỗi ngày.';
+
+  @override
+  String get insightsEmpty => 'Chưa có điều gì đáng chú ý';
+
+  @override
+  String get insightsEmptyBody => 'Ghi thêm vài ngày để so với tháng trước.';
+
+  @override
+  String insightBudgetCategory(String category, int percent) {
+    return '$category đã dùng $percent% ngân sách';
+  }
+
+  @override
+  String insightBudgetMonth(int percent) {
+    return 'Chi tháng này đã dùng $percent% ngân sách';
+  }
+
+  @override
+  String insightDaysLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'còn $count ngày',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String insightOutlier(String amount, String place, int times) {
+    return 'Khoản $amount ở $place cao gấp $times lần mức thường';
+  }
+
+  @override
+  String insightCategoryUp(String category, int percent) {
+    return '$category tăng $percent% so với cùng kỳ tháng trước';
+  }
+
+  @override
+  String insightCategoryDown(String category, int percent) {
+    return '$category giảm $percent% so với cùng kỳ tháng trước';
+  }
+
+  @override
+  String insightCategoryMore(String category) {
+    return '$category tháng này nhiều hơn tháng trước';
+  }
+
+  @override
+  String insightCategoryLess(String category) {
+    return '$category tháng này ít hơn tháng trước';
+  }
+
+  @override
+  String insightTrendUp(int days, int percent) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Chi $days ngày đầu tháng nhiều hơn tháng trước $percent%',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String insightTrendDown(int days, int percent) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Chi $days ngày đầu tháng ít hơn tháng trước $percent%',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get insightTrendMore => 'Chi tháng này nhiều hơn tháng trước';
+
+  @override
+  String get insightTrendLess => 'Chi tháng này ít hơn tháng trước';
+
+  @override
+  String get insightThisMonth => 'Tháng này';
+
+  @override
+  String get insightLastMonth => 'Tháng trước';
+
+  @override
+  String get insightThisOne => 'Khoản này';
+
+  @override
+  String get insightUsual => 'Thường';
 }

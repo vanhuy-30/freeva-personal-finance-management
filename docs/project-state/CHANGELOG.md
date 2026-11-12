@@ -2,6 +2,10 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-11-12
+
+- `BE-P5-E04` / `MOB-P5-E04` done: điều đáng chú ý theo quy tắc (vượt ngân sách, khoản lệch, danh mục tăng/giảm, xu hướng chi) — thẻ trên Tổng quan và màn Phân tích, mỗi điều có hình so sánh nhỏ; tính mỗi lần xem, không lưu. [Thiết kế](../architecture/insights.md).
+
 ## 2026-11-11
 
 - `BE-P5-E03` / `MOB-P5-E03` PR 2/2 (xong task): nhập CSV đoán danh mục cho dòng tệp để trống, chip "Gợi ý N", sheet đổi danh mục theo dòng hoặc cả cửa hàng; nhập xong server đếm chấp nhận/sửa và nhớ cửa hàng.

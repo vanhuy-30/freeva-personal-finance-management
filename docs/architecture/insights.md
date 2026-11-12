@@ -30,3 +30,12 @@ Chưa đủ `insights.minMonths` tháng có dữ liệu: `changePercent = null`,
 ## Code
 
 Module `insights`: domain thuần, repository Prisma (hồ sơ, sổ trong khoảng ngày), service (kỳ tài chính từ `reports/domain/report.ts`, ngân sách qua `BudgetService`), controller. Test: `insight.spec.ts`, `test/insights.integration-spec.ts`.
+
+## App (MOB-P5-E04)
+
+Feature `lib/features/insights/`: model `Insight` (sealed, bốn loại; loại lạ bị bỏ qua để bản app cũ không lỗi), `InsightsViewModel` dùng chung cho Tổng quan và Phân tích (cờ `insights` tắt thì không gọi API; lỗi chỉ ẩn thẻ). Câu dựng trong app từ mẫu l10n theo `kind`; `changePercent = null` thì câu không có số.
+
+- **S.1** trong `OverviewBlocks`: dưới thẻ "Xem lại tháng N" khi thẻ đó hiện, không thì dưới khối "Chi tháng". Nhãn "Đáng chú ý", "Xem cả N" (một mục: "Xem phân tích"), câu và hình của mục đầu. Tải lại mỗi khi Tổng quan có dữ liệu mới (lần đầu, kéo làm mới, quay lại). Chạm mở S.2.
+- **S.2** `/insights`: quay lại, "Phân tích", nút cài đặt (mở Gợi ý tự động), "ĐÁNG CHÚ Ý · N", các thẻ, "Tính từ sổ của bạn, cập nhật mỗi ngày."; kéo làm mới, khung chờ, lỗi có Thử lại, trống "Chưa có điều gì đáng chú ý". Thẻ dự báo chi ở đầu màn để `E06`.
+- Chạm: vượt ngân sách → Ngân sách tháng; khoản lệch → chi tiết giao dịch; danh mục → Giao dịch lọc theo danh mục từ đầu tháng tới hôm nay; xu hướng → Báo cáo.
+- Golden S.1 sáng/tối, S.2; đối chiếu board bằng `design_compare` nhóm `S`.
