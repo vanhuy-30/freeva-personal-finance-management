@@ -2,6 +2,8 @@
 
 Module 26 (cờ, cấu hình), 5, 14, 18 (phần không cần AI). Toàn bộ sau v1.
 
+**Closed** 2026-11-12 (9/9 task còn lại; 4 wont). [STATUS](../../project-state/STATUS.md).
+
 Phạm vi chốt 2026-11-11 (chủ dự án):
 
 - Bỏ nhập sao kê ngân hàng Excel/PDF (`BE-P5-E01`): không làm.
