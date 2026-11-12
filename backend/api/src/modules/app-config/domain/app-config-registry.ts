@@ -197,6 +197,22 @@ export const CONFIG_DEFINITIONS = {
     type: 'integer', default: 2, min: 1, max: 12,
     description: 'Cần ít nhất bấy nhiêu tháng có dữ liệu mới nêu phần trăm và khoản lệch; ít hơn thì câu không có số.',
   },
+  'spendForecast.minDays': {
+    type: 'integer', default: 3, min: 1, max: 15,
+    description: 'Số ngày đầu tháng tối thiểu trước khi dự báo chi cuối tháng (BE-P5-E06); ít hơn thì "Chưa đủ dữ liệu".',
+  },
+  'spendForecast.mediumRiskPercent': {
+    type: 'integer', default: 90, min: 50, max: 150,
+    description: 'Dự báo chi từ mức này (% ngân sách tháng) là rủi ro "Vừa".',
+  },
+  'spendForecast.highRiskPercent': {
+    type: 'integer', default: 100, min: 50, max: 200,
+    description: 'Dự báo chi vượt mức này (% ngân sách tháng) là rủi ro "Cao".',
+  },
+  'goalForecast.months': {
+    type: 'integer', default: 3, min: 1, max: 12,
+    description: 'Số tháng đã qua dùng để tính mức góp trung bình khi dự kiến ngày đạt mục tiêu.',
+  },
   'export.csvMaxRows': {
     type: 'integer', default: CSV_EXPORT_MAX_ROWS, min: 1, max: CSV_EXPORT_MAX_ROWS,
     description: 'Số dòng tối đa một lần xuất CSV.',
@@ -265,6 +281,9 @@ export function crossCheckConfig(values: Record<ConfigKey, ConfigValue>): string
   }
   if (v('creditCard.highUsagePercent') >= v('creditCard.criticalUsagePercent')) {
     return 'creditCard.highUsagePercent must be below creditCard.criticalUsagePercent';
+  }
+  if (v('spendForecast.mediumRiskPercent') >= v('spendForecast.highRiskPercent')) {
+    return 'spendForecast.mediumRiskPercent must be below spendForecast.highRiskPercent';
   }
   if (v('insights.minMonths') > v('insights.outlierMonths')) {
     return 'insights.minMonths must be at most insights.outlierMonths';
