@@ -7454,6 +7454,14 @@ components:
           type: string
           format: uuid
           description: Wallet for rows without a wallet value.
+        merchantCategoryMap:
+          type: object
+          description: BE-P5-E03. For rows whose file category is empty, merchant (matched ignoring case and accents) to category id ("Áp dụng cho N khoản ở đây"). Wins over the suggestion.
+          additionalProperties: {type: string, format: uuid}
+        rowCategoryMap:
+          type: object
+          description: BE-P5-E03. For one row whose file category is empty, data row number (string, 1-based) to category id. Wins over merchantCategoryMap and the suggestion.
+          additionalProperties: {type: string, format: uuid}
     TransactionImportCommitRequest:
       allOf:
       - $ref: '#/components/schemas/TransactionImportRequest'
@@ -7464,7 +7472,7 @@ components:
           includeDuplicates: {type: boolean, default: false}
     TransactionImportRow:
       type: object
-      required: [rows, status, errors, type, occurredOn, occurredTime, accountId, toAccountId, currencyCode, amountMinor, categoryId, merchant, notes, duplicateOfId]
+      required: [rows, status, errors, type, occurredOn, occurredTime, accountId, toAccountId, currencyCode, amountMinor, categoryId, merchant, notes, duplicateOfId, suggestion]
       properties:
         rows:
           type: array
@@ -7490,6 +7498,26 @@ components:
         merchant: {type: string, nullable: true}
         notes: {type: string, nullable: true}
         duplicateOfId: {type: string, format: uuid, nullable: true}
+        suggestion:
+          description: >-
+            BE-P5-E03. Server guess for a row whose file category is empty (income or expense, with a merchant or note), or null.
+            When nothing else is picked, `categoryId` is this category, and committing counts as accepting it. Always null when the
+            flag category_suggest is off or the user switched suggestions off.
+          oneOf:
+            - type: 'null'
+            - type: object
+              required: [category, source, matchCount]
+              properties:
+                category:
+                  type: object
+                  required: [id, name, iconToken, colorToken]
+                  properties:
+                    id: {type: string, format: uuid}
+                    name: {type: string}
+                    iconToken: {type: [string, 'null']}
+                    colorToken: {type: [string, 'null']}
+                source: {type: string, enum: [remembered, history, common]}
+                matchCount: {type: integer, minimum: 0}
     TransactionImportPreview:
       type: object
       required: [preset, columns, summary, unmapped, rows]
@@ -7501,12 +7529,13 @@ components:
           additionalProperties: {type: string}
         summary:
           type: object
-          required: [rowCount, ready, duplicate, invalid]
+          required: [rowCount, ready, duplicate, invalid, suggested]
           properties:
             rowCount: {type: integer}
             ready: {type: integer}
             duplicate: {type: integer}
             invalid: {type: integer}
+            suggested: {type: integer, description: 'BE-P5-E03: rows (not invalid) that carry a suggestion; the "Gợi ý N" chip.'}
         unmapped:
           type: object
           required: [wallets, categories]

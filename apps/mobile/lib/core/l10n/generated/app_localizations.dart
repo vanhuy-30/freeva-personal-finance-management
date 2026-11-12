@@ -8661,7 +8661,7 @@ abstract class S {
   /// No description provided for @importPickCategory.
   ///
   /// In en, this message translates to:
-  /// **'Choose a category'**
+  /// **'Pick a category'**
   String get importPickCategory;
 
   /// No description provided for @importPreviewTitle.
@@ -9862,6 +9862,54 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Use'**
   String get txSuggestUse;
+
+  /// No description provided for @importFilterSuggested.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested {count}'**
+  String importFilterSuggested(int count);
+
+  /// No description provided for @importSuggestHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories guessed from the shop. Tap to change.'**
+  String get importSuggestHint;
+
+  /// No description provided for @importPickSheetLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Change category'**
+  String get importPickSheetLabel;
+
+  /// No description provided for @importPickSuggested.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested'**
+  String get importPickSuggested;
+
+  /// No description provided for @importPickOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Or pick another category'**
+  String get importPickOther;
+
+  /// No description provided for @importApplySame.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Apply to 1 item here} other{Apply to {count} items here}}'**
+  String importApplySame(int count);
+
+  /// No description provided for @importApplySameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'{merchant} items in this file'**
+  String importApplySameHint(String merchant);
+
+  /// No description provided for @importPickDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get importPickDone;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

@@ -68,6 +68,42 @@ export class PrismaCategorySuggestionRepository implements CategorySuggestionRep
       .map(row => row.categoryId!);
   }
 
+  async rememberedCategoryIdsByKey(userId: string, keys: string[]): Promise<Map<string, string>> {
+    if (!keys.length) return new Map();
+    const rows = await this.prisma.categorySuggestionMapping.findMany({
+      where: { userId, merchantKey: { in: keys } }, select: { merchantKey: true, categoryId: true },
+    });
+    return new Map(rows.map(row => [row.merchantKey, row.categoryId]));
+  }
+
+  async historyByKeys(userId: string, merchants: string[], notes: string[], limit: number): Promise<Map<string, string[]>> {
+    const out = new Map<string, string[]>();
+    const load = async (field: 'merchant' | 'notes', texts: string[]) => {
+      if (!texts.length) return;
+      const wanted = new Set(texts.map(merchantKey));
+      // Case-insensitive `in` on the trimmed text; rows differing only in inner spaces are matched by key below.
+      const rows = await this.prisma.transaction.findMany({
+        where: {
+          userId, type: { in: ['expense', 'income'] }, deletedAt: null, categoryId: { not: null },
+          [field]: { in: texts, mode: 'insensitive' },
+        },
+        orderBy: [{ occurredOn: 'desc' }, { createdAt: 'desc' }],
+        select: { categoryId: true, type: true, merchant: true, notes: true },
+      });
+      for (const row of rows) {
+        const key = merchantKey((field === 'merchant' ? row.merchant : row.notes) ?? '');
+        if (!wanted.has(key)) continue;
+        const bucket = `${field}|${row.type}|${key}`;
+        const list = out.get(bucket) ?? [];
+        if (list.length < limit) list.push(row.categoryId!);
+        out.set(bucket, list);
+      }
+    };
+    await load('merchant', merchants);
+    await load('notes', notes);
+    return out;
+  }
+
   async categories(userId: string): Promise<SuggestCategory[]> {
     return this.prisma.category.findMany({
       where: { userId },
@@ -84,11 +120,11 @@ export class PrismaCategorySuggestionRepository implements CategorySuggestionRep
     });
   }
 
-  async count(day: Date, surface: SuggestSurface, source: SuggestionSource, outcome: SuggestOutcome): Promise<void> {
+  async count(day: Date, surface: SuggestSurface, source: SuggestionSource, outcome: SuggestOutcome, by = 1): Promise<void> {
     await this.prisma.categorySuggestionStat.upsert({
       where: { day_surface_source: { day, surface, source } },
-      create: { day, surface, source, [outcome]: 1 },
-      update: { [outcome]: { increment: 1 } },
+      create: { day, surface, source, [outcome]: by },
+      update: { [outcome]: { increment: by } },
     });
   }
 

@@ -5704,4 +5704,39 @@ class SVi extends S {
 
   @override
   String get txSuggestUse => 'Dùng';
+
+  @override
+  String importFilterSuggested(int count) {
+    return 'Gợi ý $count';
+  }
+
+  @override
+  String get importSuggestHint => 'Danh mục đoán theo cửa hàng. Chạm để đổi.';
+
+  @override
+  String get importPickSheetLabel => 'Đổi danh mục';
+
+  @override
+  String get importPickSuggested => 'Gợi ý';
+
+  @override
+  String get importPickOther => 'Hoặc chọn danh mục khác';
+
+  @override
+  String importApplySame(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Áp dụng cho $count khoản ở đây',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String importApplySameHint(String merchant) {
+    return 'Các khoản $merchant trong tệp';
+  }
+
+  @override
+  String get importPickDone => 'Xong';
 }

@@ -26,7 +26,27 @@ class ImportRepositoryImpl implements ImportRepository {
     if (request.categoryMap.isNotEmpty) 'categoryMap': request.categoryMap,
     if (request.defaultAccountId != null)
       'defaultAccountId': request.defaultAccountId,
+    if (request.rowCategoryMap.isNotEmpty)
+      'rowCategoryMap': {
+        for (final entry in request.rowCategoryMap.entries)
+          '${entry.key}': entry.value,
+      },
+    if (request.merchantCategoryMap.isNotEmpty)
+      'merchantCategoryMap': request.merchantCategoryMap,
   };
+
+  static ImportSuggestion? parseSuggestion(Object? raw) {
+    if (raw is! Map<String, dynamic>) return null;
+    final category = raw['category'] as Map<String, dynamic>;
+    return ImportSuggestion(
+      categoryId: category['id'] as String,
+      categoryName: category['name'] as String,
+      iconToken: category['iconToken'] as String?,
+      colorToken: category['colorToken'] as String?,
+      source: ImportSuggestionSource.parse(raw['source'] as String),
+      matchCount: raw['matchCount'] as int? ?? 0,
+    );
+  }
 
   static ImportRow parseRow(Map<String, dynamic> json) => ImportRow(
     rows: [for (final n in json['rows'] as List) n as int],
@@ -45,6 +65,7 @@ class ImportRepositoryImpl implements ImportRepository {
     notes: json['notes'] as String?,
     accountId: json['accountId'] as String?,
     categoryId: json['categoryId'] as String?,
+    suggestion: parseSuggestion(json['suggestion']),
   );
 
   static List<ImportRow> _rows(Object? raw) => [
@@ -69,6 +90,7 @@ class ImportRepositoryImpl implements ImportRepository {
         ready: summary['ready'] as int,
         duplicate: summary['duplicate'] as int,
         invalid: summary['invalid'] as int,
+        suggested: summary['suggested'] as int? ?? 0,
       ),
       unmappedWallets: [
         for (final n in unmapped['wallets'] as List) n as String,

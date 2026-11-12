@@ -1858,5 +1858,17 @@
   "autoSuggestSeeAll": "Xem cả {count}",
   "txSuggestTitle": "Xếp vào {category}?",
   "txSuggestHistory": "{count, plural, other{Như {count} lần trước ở đây}}",
-  "txSuggestUse": "Dùng"
+  "txSuggestUse": "Dùng",
+  "importFilterSuggested": "Gợi ý {count}",
+  "@importFilterSuggested": {"placeholders": {"count": {"type": "int"}}},
+  "importSuggestHint": "Danh mục đoán theo cửa hàng. Chạm để đổi.",
+  "importPickSheetLabel": "Đổi danh mục",
+  "importPickSuggested": "Gợi ý",
+  "importPickOther": "Hoặc chọn danh mục khác",
+  "importPickCategory": "Chọn danh mục",
+  "importApplySame": "{count, plural, other{Áp dụng cho {count} khoản ở đây}}",
+  "@importApplySame": {"placeholders": {"count": {"type": "int"}}},
+  "importApplySameHint": "Các khoản {merchant} trong tệp",
+  "@importApplySameHint": {"placeholders": {"merchant": {"type": "String"}}},
+  "importPickDone": "Xong"
 }

@@ -63,6 +63,9 @@ describe('BE-P3-011 transactions CSV import HTTP + PostgreSQL', () => {
   });
   afterAll(async () => {
     if (prisma) {
+      await prisma.featureFlag.deleteMany({ where: { key: 'category_suggest' } });
+      await prisma.categorySuggestionMapping.deleteMany({ where: { userId: { in: fixtureUsers } } });
+      await prisma.categorySuggestionStat.deleteMany({ where: { surface: 'import' } });
       await prisma.transaction.deleteMany({ where: { userId: { in: fixtureUsers } } });
       await prisma.importBatch.deleteMany({ where: { userId: { in: fixtureUsers } } });
       await prisma.category.deleteMany({ where: { userId: { in: fixtureUsers } } });
@@ -93,7 +96,7 @@ describe('BE-P3-011 transactions CSV import HTTP + PostgreSQL', () => {
     expect(preview.status).toBe(200);
     const body = await preview.json();
     expect(body.preset).toBe('freeva');
-    expect(body.summary).toEqual({ rowCount: 5, ready: 3, duplicate: 0, invalid: 1 });
+    expect(body.summary).toEqual({ rowCount: 5, ready: 3, duplicate: 0, invalid: 1, suggested: 0 });
     expect(body.unmapped.wallets).toEqual(['Ví lạ']);
     expect(await prisma.transaction.count({ where: { userId: owner } })).toBe(0);
 
@@ -147,6 +150,42 @@ describe('BE-P3-011 transactions CSV import HTTP + PostgreSQL', () => {
     expect(again.undoneCount).toBe(0);
     expect((await (await call('GET', `/v1/transactions/import/${done.batch.id}`)).json()).remainingCount).toBe(1);
     expect(await prisma.auditEvent.count({ where: { actorId: owner, action: 'transaction_import.undo' } })).toBe(2);
+  });
+
+  it('BE-P5-E03 suggests categories for empty rows, applies picks by merchant and row, and learns on commit', async () => {
+    await prisma.featureFlag.upsert({
+      where: { key: 'category_suggest' },
+      create: { key: 'category_suggest', enabled: true, userIds: [owner], percentage: 0, updatedBy: randomUUID() },
+      update: { enabled: true, userIds: [owner], percentage: 0 },
+    });
+    await wallet('Tiền mặt');
+    const coffee = await prisma.category.create({ data: { userId: owner, clientId: randomUUID(), name: 'Cà phê', kind: 'expense', iconToken: 'coffee', isSystem: true } });
+    const food = await prisma.category.create({ data: { userId: owner, clientId: randomUUID(), name: 'Ăn uống', kind: 'expense', iconToken: 'food', isSystem: true } });
+    const transport = await prisma.category.create({ data: { userId: owner, clientId: randomUUID(), name: 'Đi lại', kind: 'expense', iconToken: 'transport', isSystem: true } });
+    const text = `${header}2026-11-03,,expense,-45000,VND,Tiền mặt,,Highlands Coffee,,,\r\n2026-11-03,,expense,-62000,VND,Tiền mặt,,Grab,,,\r\n2026-11-04,,expense,-30000,VND,Tiền mặt,,Grab,,,\r\n2026-11-04,,expense,-99000,VND,Tiền mặt,Ăn uống,Highlands Coffee,,,\r\n2026-11-05,,expense,-10000,VND,Tiền mặt,,Shop lạ,,,\r\n`;
+    const preview = await (await call('POST', '/v1/transactions/import/preview', { text })).json();
+    expect(preview.summary).toMatchObject({ ready: 4, invalid: 1, suggested: 3 });
+    expect(preview.rows.map((row: { suggestion: { source: string; category: { id: string } } | null }) => row.suggestion && [row.suggestion.source, row.suggestion.category.id]))
+      .toEqual([['common', coffee.id], ['common', transport.id], ['common', transport.id], null, null]);
+    expect(preview.rows[3].categoryId).toBe(food.id);
+
+    const done = await (await call('POST', '/v1/transactions/import', {
+      text, batchClientId: randomUUID(), merchantCategoryMap: { highlands: food.id, 'highlands coffee': food.id }, rowCategoryMap: { '3': food.id, '5': food.id },
+    })).json();
+    expect(done.rows.map((row: { status: string; categoryId: string | null }) => [row.status, row.categoryId]))
+      .toEqual([['created', food.id], ['created', transport.id], ['created', food.id], ['created', food.id], ['created', food.id]]);
+    const stats = await prisma.categorySuggestionStat.findMany({ where: { surface: 'import', source: 'common' } });
+    expect(stats.reduce((sum, row) => sum + row.accepted, 0)).toBe(1);
+    expect(stats.reduce((sum, row) => sum + row.corrected, 0)).toBe(2);
+    const learned = await prisma.categorySuggestionMapping.findMany({ where: { userId: owner }, orderBy: { merchantKey: 'asc' } });
+    expect(learned.map(row => [row.merchantKey, row.categoryId])).toEqual([['grab', food.id], ['highlands coffee', food.id], ['shop lạ', food.id]]);
+
+    const again = await (await call('POST', '/v1/transactions/import/preview', { text: `${header}2026-11-06,,expense,-1000,VND,Tiền mặt,,GRAB,,,\r\n` })).json();
+    expect(again.rows[0].suggestion).toMatchObject({ source: 'remembered', category: { id: food.id } });
+    await prisma.user.update({ where: { id: owner }, data: { autoSuggestEnabled: false } });
+    const off = await (await call('POST', '/v1/transactions/import/preview', { text })).json();
+    expect(off.summary.suggested).toBe(0);
+    expect(off.rows[0].suggestion).toBeNull();
   });
 
   it('isolates users and rejects bad requests', async () => {

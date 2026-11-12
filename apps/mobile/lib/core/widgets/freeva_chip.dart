@@ -34,6 +34,7 @@ class FreevaChip extends StatelessWidget {
     this.kind = FreevaChipKind.choice,
     this.size = FreevaChipSize.regular,
     this.icon,
+    this.iconSize = FreevaSize.iconChip,
     this.trailingIcon,
     super.key,
   });
@@ -44,6 +45,9 @@ class FreevaChip extends StatelessWidget {
   final FreevaChipKind kind;
   final FreevaChipSize size;
   final IconData? icon;
+
+  /// Leading glyph size; 16 unless a board says otherwise.
+  final double iconSize;
 
   /// For example a chevron on "Tháng 10 ▾"; drawn at 14.
   final IconData? trailingIcon;
@@ -98,7 +102,7 @@ class FreevaChip extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     if (icon != null) ...[
-                      Icon(icon, size: FreevaSize.iconChip, color: fg),
+                      Icon(icon, size: iconSize, color: fg),
                       const SizedBox(width: 6),
                     ],
                     Text(label, style: style),

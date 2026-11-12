@@ -23,6 +23,7 @@ User chuyển giao dịch từ app khác (Money Lover, Sổ thu chi MISA) hoặc
 - **Trùng:** cùng ví, ngày, số tiền có dấu, loại và merchant/ghi chú chuẩn hóa với giao dịch đã có, hoặc `transaction_id` đã tồn tại. Mỗi giao dịch có sẵn chỉ khớp một dòng. Mặc định bỏ qua (`skipped_duplicate`); `includeDuplicates=true` mới ghi, và không bao giờ ghi đè.
 - **Chặn công thức:** gỡ `'` đứng trước `= + - @` mà export thêm vào.
 - **Nhãn** trong file chưa nhập (bỏ qua).
+- **Gợi ý danh mục** (`BE-P5-E03`): dòng tệp để trống danh mục được server đoán (`suggestion` trên từng dòng, `summary.suggested`); user đổi bằng `rowCategoryMap` / `merchantCategoryMap`. Chi tiết: [category-suggestions.md](category-suggestions.md).
 
 ## Preset
 
