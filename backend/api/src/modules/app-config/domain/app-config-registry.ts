@@ -177,6 +177,26 @@ export const CONFIG_DEFINITIONS = {
     type: 'pair_list', default: DEFAULT_COMMON_MERCHANTS, values: CATEGORY_ICONS, minItems: 0, maxItems: 500, maxTextLength: 60,
     description: 'Cửa hàng chung và icon danh mục gợi ý, mỗi mục "Tên: icon" (vd. "Grab: transport"). Dùng khi user chưa có lịch sử ở cửa hàng đó.',
   },
+  'insights.budgetRiskPercent': {
+    type: 'integer', default: 80, min: 50, max: 100,
+    description: 'Nêu "đã dùng X% ngân sách" khi một danh mục (hoặc cả tháng) dùng tới mức này (BE-P5-E04).',
+  },
+  'insights.minChangePercent': {
+    type: 'integer', default: 15, min: 5, max: 100,
+    description: 'Chi (tổng hoặc một danh mục) phải tăng/giảm ít nhất bấy nhiêu % so với cùng kỳ tháng trước mới nêu.',
+  },
+  'insights.outlierMultiplier': {
+    type: 'integer', default: 2, min: 2, max: 10,
+    description: 'Một khoản chi lớn hơn bấy nhiêu lần mức thường của danh mục thì nêu là khoản lệch.',
+  },
+  'insights.outlierMonths': {
+    type: 'integer', default: 3, min: 1, max: 12,
+    description: 'Số tháng trước dùng để tính mức thường (trung bình một khoản) của danh mục.',
+  },
+  'insights.minMonths': {
+    type: 'integer', default: 2, min: 1, max: 12,
+    description: 'Cần ít nhất bấy nhiêu tháng có dữ liệu mới nêu phần trăm và khoản lệch; ít hơn thì câu không có số.',
+  },
   'export.csvMaxRows': {
     type: 'integer', default: CSV_EXPORT_MAX_ROWS, min: 1, max: CSV_EXPORT_MAX_ROWS,
     description: 'Số dòng tối đa một lần xuất CSV.',
@@ -245,6 +265,9 @@ export function crossCheckConfig(values: Record<ConfigKey, ConfigValue>): string
   }
   if (v('creditCard.highUsagePercent') >= v('creditCard.criticalUsagePercent')) {
     return 'creditCard.highUsagePercent must be below creditCard.criticalUsagePercent';
+  }
+  if (v('insights.minMonths') > v('insights.outlierMonths')) {
+    return 'insights.minMonths must be at most insights.outlierMonths';
   }
   if (v('password.veryStrongLength') < v('password.minLength')) {
     return 'password.veryStrongLength must be at least password.minLength';
