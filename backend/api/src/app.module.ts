@@ -5,6 +5,7 @@ import { CategoryModule } from './modules/categories/category.module';
 import { TagModule } from './modules/tags/tag.module';
 import { FeedbackModule } from './modules/feedback/feedback.module';
 import { CategorySuggestionModule } from './modules/category-suggestions/category-suggestion.module';
+import { InsightModule } from './modules/insights/insight.module';
 import { TransactionModule } from './modules/transactions/transaction.module';
 import { RecurringModule } from './modules/recurring/recurring.module';
 import { BudgetModule } from './modules/budgets/budget.module';
@@ -49,6 +50,7 @@ import { HealthModule } from './modules/health/health.module';
     AuthModule,
     ProfileModule,
     CategorySuggestionModule,
+    InsightModule,
     FxRateModule,
     FinancialAccountModule,
     TransactionModule,

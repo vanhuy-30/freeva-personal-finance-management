@@ -15,10 +15,11 @@ import 'recent_row_data.dart';
 import 'recent_transactions.dart';
 import 'spending_block.dart';
 import '../../../server_config/domain/app_limits.dart';
+import '../../../insights/presentation/widgets/overview_insight_slot.dart';
 
 /// Blocks under the quick actions once data is loaded: credit cards first
-/// for the debt goal, "Chi tháng", last-month review (new month only), credit
-/// cards (other goals), "Gần đây".
+/// for the debt goal, "Chi tháng", last-month review (new month only), the
+/// "Đáng chú ý" card (S.1), credit cards (other goals), "Gần đây".
 class OverviewBlocks extends StatelessWidget {
   const OverviewBlocks({required this.model, required this.data, super.key});
 
@@ -89,8 +90,11 @@ class OverviewBlocks extends StatelessWidget {
               categories: data.categories,
             ),
           ),
+          // Board S.1: 14 under the review card.
+          const OverviewInsightSlot(top: 14, bottom: 0),
           gap,
-        ],
+        ] else
+          const OverviewInsightSlot(top: 0, bottom: OverviewBlocks.gap),
         if (credit != null) ...[credit, gap],
         RecentTransactions(
           rows: rows,

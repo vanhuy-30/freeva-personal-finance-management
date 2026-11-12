@@ -99,6 +99,12 @@ import 'package:mobile/features/goals/presentation/viewmodels/goal_view_model.da
 import 'package:mobile/features/home/domain/overview_use_cases.dart' as _i970;
 import 'package:mobile/features/home/presentation/viewmodels/home_view_model.dart'
     as _i722;
+import 'package:mobile/features/insights/data/insights_repository_impl.dart'
+    as _i39;
+import 'package:mobile/features/insights/domain/insights_repository.dart'
+    as _i906;
+import 'package:mobile/features/insights/presentation/viewmodels/insights_view_model.dart'
+    as _i82;
 import 'package:mobile/features/installments/data/card_installment_repository_impl.dart'
     as _i922;
 import 'package:mobile/features/installments/domain/card_installment_repository.dart'
@@ -339,6 +345,8 @@ extension GetItInjectableX on _i174.GetIt {
         ));
     gh.lazySingleton<_i980.NetWorthRepository>(
         () => _i920.NetWorthRepositoryImpl(gh<_i443.AuthorizedApi>()));
+    gh.lazySingleton<_i906.InsightsRepository>(
+        () => _i39.InsightsRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i107.WalletRepository>(
         () => _i128.WalletRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i4.ProfileRepository>(
@@ -455,6 +463,12 @@ extension GetItInjectableX on _i174.GetIt {
             ));
     gh.lazySingleton<_i1017.FeatureFlagService>(() =>
         serverConfigModule.featureFlags(gh<_i315.ServerConfigViewModel>()));
+    gh.lazySingleton<_i82.InsightsViewModel>(
+        () => _i82.DefaultInsightsViewModel(
+              gh<_i906.InsightsRepository>(),
+              gh<_i1017.FeatureFlagService>(),
+              gh<_i990.AuthViewModel>(),
+            ));
     gh.lazySingleton<_i336.WalletUseCases>(() => _i336.DefaultWalletUseCases(
           gh<_i107.WalletRepository>(),
           gh<_i855.AppLimitsSource>(),

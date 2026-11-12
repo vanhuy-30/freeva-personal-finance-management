@@ -5367,6 +5367,38 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/insights:
+    get:
+      operationId: listInsights
+      summary: What is worth noticing in the current fiscal month
+      tags: [Insights]
+      security:
+        - UserBearer: []
+      description: >-
+        BE-P5-E04. Rule-based, computed on every call from the user's own transactions and budget, never stored.
+        Profile currency only. At most one item per kind, in priority order budget_risk, outlier, category_change,
+        spend_trend; the Overview shows the first. Comparisons use the same days of last fiscal month. With fewer
+        than `insights.minMonths` months of data, `changePercent` is null and no outlier is reported. Empty when the
+        flag `insights` is off or the user switched Gợi ý tự động off.
+      responses:
+        '200':
+          description: Insights (Cache-Control no-store)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsightList'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: INSIGHTS_UNAVAILABLE
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
   /api/v1/category-suggestions/suggest:
     post:
       operationId: suggestCategory
@@ -10553,6 +10585,96 @@ components:
       properties:
         enabled:
           type: boolean
+    InsightList:
+      type: object
+      required: [currencyCode, period, items]
+      properties:
+        currencyCode: { type: [string, 'null'], description: Profile currency; every amount is in it. }
+        period:
+          oneOf:
+            - type: 'null'
+            - type: object
+              required: [from, to, today]
+              properties:
+                from: { type: string, format: date }
+                to: { type: string, format: date }
+                today: { type: string, format: date }
+        items:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/InsightBudgetRisk'
+              - $ref: '#/components/schemas/InsightOutlier'
+              - $ref: '#/components/schemas/InsightCategoryChange'
+              - $ref: '#/components/schemas/InsightSpendTrend'
+            discriminator:
+              propertyName: kind
+    InsightBudgetRisk:
+      type: object
+      required: [kind, category, spentMinor, limitMinor, percent, daysLeft]
+      properties:
+        kind: { type: string, const: budget_risk }
+        category:
+          description: Null for the whole-month budget.
+          oneOf:
+            - type: 'null'
+            - type: object
+              required: [id, name, iconToken, colorToken]
+              properties:
+                id: { type: string, format: uuid }
+                name: { type: string }
+                iconToken: { type: [string, 'null'] }
+                colorToken: { type: [string, 'null'] }
+        spentMinor: { type: string }
+        limitMinor: { type: string }
+        percent: { type: integer, description: 'Share used, rounded down; at least insights.budgetRiskPercent.' }
+        daysLeft: { type: integer, minimum: 0 }
+    InsightOutlier:
+      type: object
+      required: [kind, category, transactionId, merchant, occurredOn, amountMinor, usualMinor, times]
+      properties:
+        kind: { type: string, const: outlier }
+        category:
+          type: object
+          required: [id, name, iconToken, colorToken]
+          properties:
+            id: { type: string, format: uuid }
+            name: { type: string }
+            iconToken: { type: [string, 'null'] }
+            colorToken: { type: [string, 'null'] }
+        transactionId: { type: string, format: uuid }
+        merchant: { type: [string, 'null'] }
+        occurredOn: { type: string, format: date }
+        amountMinor: { type: string }
+        usualMinor: { type: string, description: Average expense of the category (top level) over the previous insights.outlierMonths months. }
+        times: { type: integer, minimum: 2, description: amountMinor / usualMinor rounded down. }
+    InsightCategoryChange:
+      type: object
+      required: [kind, category, currentMinor, previousMinor, changePercent, direction]
+      properties:
+        kind: { type: string, const: category_change }
+        category:
+          type: object
+          required: [id, name, iconToken, colorToken]
+          properties:
+            id: { type: string, format: uuid }
+            name: { type: string }
+            iconToken: { type: [string, 'null'] }
+            colorToken: { type: [string, 'null'] }
+        currentMinor: { type: string, description: Top-level category including its children, from the start of the month to today. }
+        previousMinor: { type: string, description: Same days of last fiscal month. }
+        changePercent: { type: [integer, 'null'], description: Null with too little history (say it without a number). }
+        direction: { type: string, enum: [up, down] }
+    InsightSpendTrend:
+      type: object
+      required: [kind, currentMinor, previousMinor, changePercent, direction, days]
+      properties:
+        kind: { type: string, const: spend_trend }
+        currentMinor: { type: string }
+        previousMinor: { type: string }
+        changePercent: { type: [integer, 'null'] }
+        direction: { type: string, enum: [up, down] }
+        days: { type: integer, minimum: 1, description: Days of the month so far. }
     SuggestCategoryRequest:
       type: object
       additionalProperties: false
