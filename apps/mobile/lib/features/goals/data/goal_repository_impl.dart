@@ -4,6 +4,7 @@ import 'package:injectable/injectable.dart';
 import '../../auth/data/authorized_api.dart';
 import '../../auth/domain/auth_repository.dart';
 import '../domain/goal.dart';
+import '../domain/goal_forecast.dart';
 import '../domain/goal_repository.dart';
 
 @LazySingleton(as: GoalRepository)
@@ -220,4 +221,28 @@ class GoalRepositoryImpl implements GoalRepository {
       }),
     ),
   );
+
+  @override
+  Future<Either<AuthFailure, GoalForecast?>> forecast(String id) =>
+      _request('GET', 'goals/$id/forecast', parseForecast);
+
+  /// `GET /goals/{id}/forecast`; null when forecasts are off.
+  static GoalForecast? parseForecast(Map<String, dynamic> json) {
+    final raw = json['forecast'] as Map<String, dynamic>?;
+    if (raw == null) return null;
+    return switch (raw['status']) {
+      'reached' => const GoalForecastReached(),
+      'insufficient' => GoalForecastInsufficient(
+        months: (raw['months'] as num?)?.toInt() ?? 0,
+      ),
+      'ok' => GoalForecastOk(
+        months: (raw['months'] as num).toInt(),
+        averageMonthlyMinor: BigInt.parse(raw['averageMonthlyMinor'] as String),
+        expectedMonth: raw['expectedMonth'] as String,
+        targetMonth: raw['targetMonth'] as String?,
+        monthsLate: (raw['monthsLate'] as num?)?.toInt(),
+      ),
+      final other => throw FormatException('status $other'),
+    };
+  }
 }

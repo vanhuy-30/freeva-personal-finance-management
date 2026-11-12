@@ -5367,6 +5367,81 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/spending-forecast:
+    get:
+      operationId: getSpendingForecast
+      summary: Spending projected to the end of the fiscal month
+      tags: [Forecast]
+      security:
+        - UserBearer: []
+      description: >-
+        BE-P5-E06. A prediction, not recorded spending. Spent so far (expenses minus refunds, profile currency) divided
+        by the days elapsed, times the days in the fiscal month. Risk against the whole-month budget in the profile
+        currency: low below spendForecast.mediumRiskPercent, medium up to spendForecast.highRiskPercent, high above;
+        null without such a budget. `status = insufficient` (no forecastMinor) before spendForecast.minDays days.
+        Different from /forecast (balance from recurring items). `forecast` is null when the flag `forecast` is off or
+        the user switched Gợi ý tự động off. Computed on every call, never stored.
+      responses:
+        '200':
+          description: Forecast (Cache-Control no-store)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpendingForecastResponse'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: FORECAST_UNAVAILABLE
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/goals/{id}/forecast:
+    get:
+      operationId: getGoalForecast
+      summary: Month a goal is expected to be reached at the recent pace
+      tags: [Forecast]
+      security:
+        - UserBearer: []
+      description: >-
+        BE-P5-E06. Average net contributions (góp − rút) over the last goalForecast.months completed calendar months
+        (the month in progress is left out); remaining / average rounded up gives the months still needed, counted
+        from this month. `insufficient` when that average is not positive. In the goal's currency. `forecast` is null
+        when forecasts are off for the user.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Forecast (Cache-Control no-store)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoalForecastResponse'
+        '400':
+          description: Not a UUID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: GOAL_NOT_FOUND (missing or another user's)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
   /api/v1/insights:
     get:
       operationId: listInsights
@@ -10585,6 +10660,81 @@ components:
       properties:
         enabled:
           type: boolean
+    SpendingForecastResponse:
+      type: object
+      required: [currencyCode, period, forecast]
+      properties:
+        currencyCode: { type: [string, 'null'] }
+        period:
+          oneOf:
+            - type: 'null'
+            - type: object
+              required: [from, to, today]
+              properties:
+                from: { type: string, format: date }
+                to: { type: string, format: date }
+                today: { type: string, format: date }
+        forecast:
+          oneOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/SpendingForecast'
+    SpendingForecast:
+      type: object
+      required: [status, daysElapsed, daysInPeriod, spentMinor, forecastMinor, dailyAverageMinor, budgetLimitMinor, risk, overBudgetMinor, dailyAllowanceMinor, previousMonthMinor, cumulative, topCategories]
+      properties:
+        status: { type: string, enum: [ok, insufficient] }
+        daysElapsed: { type: integer, minimum: 1 }
+        daysInPeriod: { type: integer, minimum: 1 }
+        spentMinor: { type: string }
+        forecastMinor: { type: [string, 'null'], description: Null while insufficient. }
+        dailyAverageMinor: { type: string }
+        budgetLimitMinor: { type: [string, 'null'] }
+        risk: { type: [string, 'null'], enum: [low, medium, high, null] }
+        overBudgetMinor: { type: [string, 'null'], description: forecast − budget when above it. }
+        dailyAllowanceMinor: { type: [string, 'null'], description: '(budget − spent) / days left; null without budget, once over it, or on the last day.' }
+        previousMonthMinor: { type: string, description: Whole previous fiscal month; the comparison when there is no budget. }
+        cumulative:
+          type: array
+          description: Spent so far, one point per elapsed day.
+          items:
+            type: object
+            required: [date, spentMinor]
+            properties:
+              date: { type: string, format: date }
+              spentMinor: { type: string }
+        topCategories:
+          type: array
+          maxItems: 3
+          items:
+            type: object
+            required: [category, spentMinor, sharePercent]
+            properties:
+              category:
+                type: object
+                required: [id, name, iconToken, colorToken]
+                properties:
+                  id: { type: string, format: uuid }
+                  name: { type: string }
+                  iconToken: { type: [string, 'null'] }
+                  colorToken: { type: [string, 'null'] }
+              spentMinor: { type: string }
+              sharePercent: { type: integer, minimum: 0, maximum: 100 }
+    GoalForecastResponse:
+      type: object
+      required: [forecast]
+      properties:
+        forecast:
+          oneOf:
+            - type: 'null'
+            - type: object
+              required: [status]
+              properties:
+                status: { type: string, enum: [ok, insufficient, reached] }
+                months: { type: integer, description: Completed months averaged (ok, insufficient). }
+                averageMonthlyMinor: { type: string, description: ok only. }
+                expectedMonth: { type: string, pattern: '^\d{4}-\d{2}$', description: ok only. }
+                targetMonth: { type: [string, 'null'], description: ok only; null without a target date. }
+                monthsLate: { type: [integer, 'null'], description: 'ok only: positive late, negative early, 0 on time; null without a target date.' }
     InsightList:
       type: object
       required: [currencyCode, period, items]

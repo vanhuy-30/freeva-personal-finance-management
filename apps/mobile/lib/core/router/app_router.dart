@@ -9,6 +9,7 @@ import '../../features/categories/presentation/pages/hidden_categories_page.dart
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/home/presentation/pages/notifications_page.dart';
 import '../../features/insights/presentation/pages/insights_page.dart';
+import '../../features/spend_forecast/presentation/pages/spend_forecast_page.dart';
 import '../../features/transactions/domain/transaction.dart';
 import '../../features/profile/presentation/pages/data_export_page.dart';
 import '../../features/settings/presentation/pages/money_settings_page.dart';
@@ -197,6 +198,10 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
       GoRoute(
         path: '/insights',
         builder: (context, state) => const AuthGate(child: InsightsPage()),
+      ),
+      GoRoute(
+        path: '/insights/spending-forecast',
+        builder: (context, state) => const AuthGate(child: SpendForecastPage()),
       ),
       GoRoute(
         path: '/reports/forecast',

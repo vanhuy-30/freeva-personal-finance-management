@@ -57,8 +57,12 @@ List<Wallet> canvasWallets() => [
 ];
 
 class StubWalletViewModel extends WalletViewModel {
-  StubWalletViewModel({List<Wallet>? wallets, this.busy = false})
-    : wallets = wallets ?? canvasWallets();
+  StubWalletViewModel({
+    List<Wallet>? wallets,
+    this.busy = false,
+    DateTime? today,
+  }) : wallets = wallets ?? canvasWallets(),
+       today = today ?? DateTime(2026, 10, 21);
 
   @override
   List<Wallet> wallets;
@@ -73,7 +77,7 @@ class StubWalletViewModel extends WalletViewModel {
   @override
   String get mainCurrency => 'VND';
   @override
-  DateTime get today => DateTime(2026, 10, 21);
+  final DateTime today;
   final reordered = <List<String>>[];
   final archived = <String>[];
 

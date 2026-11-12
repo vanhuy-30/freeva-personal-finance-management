@@ -4,6 +4,7 @@ Nhật ký repo/process — không phải App Store release notes.
 
 ## 2026-11-12
 
+- `BE-P5-E06` / `MOB-P5-E06` done: dự báo chi cuối tháng (thẻ ở đầu Phân tích, màn Dự báo chi có biểu đồ, rủi ro so với ngân sách, mức nên chi mỗi ngày) và ngày dự kiến đạt mục tiêu theo mức góp gần đây (dải mốc Hôm nay → Hạn → Dự kiến); ô "Ngày đạt" trên chi tiết mục tiêu đổi thành "Hạn". [Thiết kế](../architecture/spend-forecast.md).
 - `BE-P5-E04` / `MOB-P5-E04` done: điều đáng chú ý theo quy tắc (vượt ngân sách, khoản lệch, danh mục tăng/giảm, xu hướng chi) — thẻ trên Tổng quan và màn Phân tích, mỗi điều có hình so sánh nhỏ; tính mỗi lần xem, không lưu. [Thiết kế](../architecture/insights.md).
 
 ## 2026-11-11

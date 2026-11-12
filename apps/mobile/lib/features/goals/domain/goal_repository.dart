@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 
 import '../../auth/domain/auth_repository.dart';
 import 'goal.dart';
+import 'goal_forecast.dart';
 
 abstract class GoalRepository {
   Future<Either<AuthFailure, List<Goal>>> list({bool includeArchived = false});
@@ -30,4 +31,8 @@ abstract class GoalRepository {
     required BigInt targetMinor,
     required String targetDate,
   });
+
+  /// When the goal is likely reached at the recent pace; null when forecasts
+  /// are off for the user.
+  Future<Either<AuthFailure, GoalForecast?>> forecast(String id);
 }
