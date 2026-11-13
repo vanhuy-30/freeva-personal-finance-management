@@ -1,3 +1,4 @@
+import { AppConfigReader } from '../app-config/app-config.reader';
 import { HttpException, Inject, Injectable } from '@nestjs/common';
 import {
   PROFILE_REPOSITORY,
@@ -17,6 +18,7 @@ function error(status: number, code: string) {
 export class ProfileService {
   constructor(
     @Inject(PROFILE_REPOSITORY) private readonly repository: ProfileRepository,
+    private readonly config: AppConfigReader,
   ) {}
 
   async get(userId: string) {
@@ -42,6 +44,10 @@ export class ProfileService {
   }
 
   async saveOnboarding(userId: string, answers: OnboardingAnswers) {
+    // BE-P5-001: onboarding goal count from app config (`onboarding.maxGoals`).
+    if (answers.goals && answers.goals.length > (await this.config.value('onboarding.maxGoals'))) {
+      throw error(400, 'VALIDATION_ERROR');
+    }
     if (!(await this.repository.saveOnboarding(userId, answers))) {
       throw error(401, 'SESSION_INVALID');
     }
@@ -58,6 +64,10 @@ export class ProfileService {
     if (!(await this.repository.saveDisplayCurrency(userId, code))) throw error(401, 'SESSION_INVALID');
   }
 
+  async saveAutoSuggest(userId: string, enabled: boolean) {
+    if (!(await this.repository.saveAutoSuggest(userId, enabled))) throw error(401, 'SESSION_INVALID');
+  }
+
   async update(userId: string, profile: ProfileUpdate) {
     // Reject offsets and unknown zones; accept IANA aliases used by existing users.
     if (!/^(UTC|[A-Za-z_]+(?:\/[A-Za-z0-9_+-]+)+)$/.test(profile.timezone)) {
@@ -68,6 +78,8 @@ export class ProfileService {
     } catch {
       throw error(400, 'VALIDATION_ERROR');
     }
+    const nameMax = await this.config.value('profile.displayNameMaxLength');
+    if (profile.displayName && profile.displayName.length > nameMax) throw error(400, 'VALIDATION_ERROR');
     const currencies = await this.repository.currencies();
     if (!currencies.some(c => c.code === profile.defaultCurrencyCode)) {
       throw error(400, 'VALIDATION_ERROR');

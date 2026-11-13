@@ -136,7 +136,7 @@ Auth user: Bearer (`/api/v1` khi gắn Phase 1). Admin P0 dùng opaque Bearer se
 ## Ngoài phạm vi P0/P1
 
 - Kết nối ngân hàng / bank token (Phase 6; cần DPA + threat model RBAC).
-- AI / OCR (Phase 5).
+- AI / OCR (Phase 8). Cờ và cấu hình sửa từ web admin (Phase 5): quyền staff, audit trước/sau.
 - CRDT; sync MVP = queue + last-write-wins ([sync.md](sync.md)).
 - Pentest nội bộ bằng payload trong git ([security-review.md](../process/security-review.md)).
 - Web consumer (không phải admin).

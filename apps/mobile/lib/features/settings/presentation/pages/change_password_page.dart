@@ -10,6 +10,7 @@ import '../../../auth/domain/auth_use_cases.dart';
 import '../../../auth/presentation/viewmodels/auth_view_model.dart';
 import '../viewmodels/security_view_model.dart';
 import '../widgets/security_form.dart';
+import '../../../server_config/domain/app_limits.dart';
 
 /// Đổi mật khẩu while signed in. The server keeps this device signed in and
 /// ends every other one.
@@ -61,7 +62,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           onLeading: () => context.popOrGo('/me/security'),
         ),
         body: SecurityFormBody(
-          hint: s.mePasswordHint,
+          hint: s.mePasswordHint(
+            getIt<AppLimitsSource>().requireLimits.passwordMinLength,
+          ),
           label: s.meSave,
           busy: model.busy,
           onSubmit: _submit,

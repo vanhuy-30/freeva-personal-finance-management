@@ -1,3 +1,4 @@
+import { AppConfigReader } from '../app-config/app-config.reader';
 import { Inject, Injectable } from '@nestjs/common';
 import { minor, normalizeRate } from '../transactions/domain/transaction';
 import { RECURRING_REPOSITORY, type RecurringRepository } from './domain/recurring.repository';
@@ -37,7 +38,10 @@ function response(rule: RecurringRule, today: string) {
 
 @Injectable()
 export class RecurringService {
-  constructor(@Inject(RECURRING_REPOSITORY) private readonly repository: RecurringRepository) {}
+  constructor(
+    @Inject(RECURRING_REPOSITORY) private readonly repository: RecurringRepository,
+    private readonly config: AppConfigReader,
+  ) {}
 
   async create(userId: string, dto: CreateRecurringDto) {
     const mode = dto.mode ?? 'auto';
@@ -48,7 +52,7 @@ export class RecurringService {
       mode,
       name: dto.name == null ? null : dto.name.trim(),
       amountKind: dto.amountKind ?? 'fixed',
-      remindDaysBefore: dto.remindDaysBefore ?? 3,
+      remindDaysBefore: dto.remindDaysBefore ?? (await this.config.value('recurring.defaultRemindBefore')),
       unit: dto.unit,
       interval: dto.interval,
       amountMinor: minor(dto.amountMinor),

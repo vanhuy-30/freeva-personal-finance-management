@@ -14,18 +14,30 @@ import '../../../wallets/domain/wallet.dart';
 import '../../../wallets/presentation/viewmodels/wallet_view_model.dart';
 import '../../domain/investment.dart';
 import '../../domain/investment_use_cases.dart';
+import '../../../server_config/domain/app_limits.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 /// Đầu tư list: totals, share by category, and the positions behind them.
 /// Totals come from `GET /investments/summary`.
 @LazySingleton()
 class InvestmentViewModel extends ChangeNotifier {
-  InvestmentViewModel(this._cases, this._profile, this._wallets, this._auth) {
+  InvestmentViewModel(
+    this._cases,
+    this._profile,
+    this._wallets,
+    this._auth,
+    this._limits,
+  ) {
     _stage = _auth.stage;
     _auth.addListener(_authChanged);
   }
 
-  /// Window of the faint value line on the summary card.
-  static const lineWindow = NetWorthWindow.half;
+  /// Window of the faint value line on the summary card (server
+  /// `investment.chartDefaultWindow`).
+  NetWorthWindow get lineWindow =>
+      NetWorthWindow.fromValue(_limits.requireLimits.investmentChartWindow);
+
+  final AppLimitsSource _limits;
 
   final InvestmentUseCases _cases;
   final ProfileViewModel _profile;
@@ -49,7 +61,8 @@ class InvestmentViewModel extends ChangeNotifier {
   /// The profile currency when something is held in it, else the first
   /// currency with investments. No FX.
   String get currency {
-    final main = _profile.saved?.overviewCurrency ?? 'VND';
+    final main =
+        _profile.saved?.overviewCurrency ?? CurrencyCatalog.current.defaultCode;
     final totals = _summary.totals;
     if (totals.isEmpty || totals.any((t) => t.currencyCode == main)) {
       return main;
@@ -62,7 +75,7 @@ class InvestmentViewModel extends ChangeNotifier {
           .where((item) => item.code == currency)
           .firstOrNull
           ?.minorDigits ??
-      (currency == 'VND' ? 0 : 2);
+      CurrencyCatalog.current.digits(currency);
 
   InvestmentTotal? get total => _summary.totalOf(currency);
 
@@ -87,12 +100,13 @@ class InvestmentViewModel extends ChangeNotifier {
           .where((item) => item.code == code)
           .firstOrNull
           ?.minorDigits ??
-      (code == 'VND' ? 0 : 2);
+      CurrencyCatalog.current.digits(code);
 
   String get today => _wallets.today.toIso8601String().substring(0, 10);
 
   /// Profile currency, for a position that is not tied to a wallet.
-  String get profileCurrency => _profile.saved?.overviewCurrency ?? 'VND';
+  String get profileCurrency =>
+      _profile.saved?.overviewCurrency ?? CurrencyCatalog.current.defaultCode;
 
   String newClientId() => newSyncOpId();
 

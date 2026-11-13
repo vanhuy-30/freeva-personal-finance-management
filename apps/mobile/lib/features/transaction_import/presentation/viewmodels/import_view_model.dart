@@ -14,6 +14,9 @@ import '../../domain/csv_peek.dart';
 import '../../domain/import_file_picker.dart';
 import '../../domain/import_models.dart';
 import '../../domain/import_use_cases.dart';
+import '../../../server_config/domain/app_limits.dart';
+import '../../../../core/money/currency_catalog.dart';
+import '../../../../core/text/vietnamese_fold.dart';
 
 /// Screens of the flow, in order (boards `ImportSource` … `ImportDone`).
 enum ImportStep { source, columns, map, preview, done }
@@ -21,8 +24,44 @@ enum ImportStep { source, columns, map, preview, done }
 /// Why the picked file was not taken.
 enum ImportFileProblem { unreadable, empty, tooManyRows, tooLarge }
 
-/// Rows the preview list shows.
-enum ImportFilter { all, duplicate, invalid }
+/// Rows the preview list shows. [suggested]: rows (not invalid) with a
+/// server category guess (board R.2).
+enum ImportFilter { all, suggested, duplicate, invalid }
+
+/// `MOB-P5-E03`: what the "Đổi danh mục" sheet (board R.3) needs for one
+/// row.
+class ImportCategoryChoice {
+  const ImportCategoryChoice({
+    required this.row,
+    required this.title,
+    required this.selectedId,
+    required this.quick,
+    required this.fitting,
+    required this.frequent,
+    required this.sameMerchantCount,
+    this.walletName,
+  });
+  final ImportRow row;
+
+  /// Merchant, or the note when there is none.
+  final String title;
+  final String? walletName;
+
+  /// Category the row takes now.
+  final String? selectedId;
+
+  /// Up to three other categories for the grid (not the suggestion).
+  final List<FinanceCategory> quick;
+
+  /// Every category of the row's kind, for "Tất cả".
+  final List<FinanceCategory> fitting;
+  final List<FinanceCategory> frequent;
+
+  /// Rows of the file with the same merchant and no file category; the
+  /// "Áp dụng cho N khoản ở đây" switch shows when above one.
+  final int sameMerchantCount;
+  ImportSuggestion? get suggestion => row.suggestion;
+}
 
 /// `MOB-P3-011`: Nhập giao dịch. One instance drives all five screens; the
 /// server plans every step (`preview`), so nothing here parses money.
@@ -62,6 +101,25 @@ abstract class ImportViewModel extends ChangeNotifier {
   List<ImportRow> get shownRows;
   bool get includeDuplicates;
   int get importCount;
+
+  // Category suggestions (MOB-P5-E03).
+  int get suggestedCount;
+  Map<int, String> get rowCategoryMap;
+  Map<String, String> get merchantCategoryMap;
+
+  /// True when tapping the row opens the "Đổi danh mục" sheet: it has a
+  /// suggestion or the file left its category empty.
+  bool canPickCategory(ImportRow row);
+  ImportCategoryChoice categoryChoice(ImportRow row);
+
+  /// Sets the category of [row] (or of every row of its merchant when
+  /// [applyToMerchant]) and plans again. Picking the suggestion clears the
+  /// override.
+  Future<void> chooseCategory(
+    ImportRow row,
+    String categoryId, {
+    required bool applyToMerchant,
+  });
   ImportResult? get result;
   int digitsOf(String currency);
 
@@ -99,7 +157,11 @@ class DefaultImportViewModel extends ImportViewModel {
     this._categories,
     this._picker,
     this._auth,
+    this._limits,
   );
+
+  /// Server limits (MOB-P5-001).
+  final AppLimitsSource _limits;
   final ImportUseCases _useCases;
   final WalletUseCases _wallets;
   final CategoryUseCases _categories;
@@ -113,6 +175,10 @@ class DefaultImportViewModel extends ImportViewModel {
   List<WalletCurrency> _currencies = const [];
   final List<String> _walletSeen = [];
   final List<String> _categorySeen = [];
+  List<FinanceCategory> _recent = const [];
+
+  /// First data row of each line the file left without a category.
+  final Set<int> _blankRows = {};
 
   @override
   ImportStep step = ImportStep.source;
@@ -154,6 +220,10 @@ class DefaultImportViewModel extends ImportViewModel {
   bool includeDuplicates = false;
   @override
   ImportResult? result;
+  @override
+  Map<int, String> rowCategoryMap = {};
+  @override
+  Map<String, String> merchantCategoryMap = {};
 
   @override
   List<String> get walletNames => List.unmodifiable(_walletSeen);
@@ -183,6 +253,10 @@ class DefaultImportViewModel extends ImportViewModel {
     final rows = preview?.rows ?? const <ImportRow>[];
     return switch (filter) {
       ImportFilter.all => rows,
+      ImportFilter.suggested => [
+        for (final r in rows)
+          if (r.suggestion != null && r.status != ImportRowStatus.invalid) r,
+      ],
       ImportFilter.duplicate => [
         for (final r in rows)
           if (r.status == ImportRowStatus.duplicate) r,
@@ -202,12 +276,113 @@ class DefaultImportViewModel extends ImportViewModel {
   }
 
   @override
+  int get suggestedCount => preview?.summary.suggested ?? 0;
+
+  @override
+  bool canPickCategory(ImportRow row) =>
+      (row.type == 'income' || row.type == 'expense') &&
+      _blankRows.contains(row.rows.first) &&
+      row.errors.every((e) => e == ImportRowError.categoryUnmapped);
+
+  @override
+  ImportCategoryChoice categoryChoice(ImportRow row) {
+    final income = row.type == 'income';
+    final fitting = [
+      for (final c in categories)
+        if (c.kind.fits(income)) c,
+    ];
+    final skip = row.suggestion?.categoryId;
+    final picked = fitting.where((c) => c.id == row.categoryId).firstOrNull;
+    final quick = <FinanceCategory>[];
+    void add(FinanceCategory c) {
+      if (quick.length < 3 && c.id != skip && !quick.any((q) => q.id == c.id)) {
+        quick.add(c);
+      }
+    }
+
+    if (picked != null) add(picked);
+    final ids = fitting.map((c) => c.id).toSet();
+    final frequent = [
+      for (final c in _recent)
+        if (ids.contains(c.id)) c,
+    ];
+    frequent.forEach(add);
+    fitting.forEach(add);
+    final merchant = row.merchant?.trim() ?? '';
+    return ImportCategoryChoice(
+      row: row,
+      title: merchant.isNotEmpty ? merchant : row.notes?.trim() ?? '',
+      walletName: wallets
+          .where((w) => w.id == row.accountId)
+          .firstOrNull
+          ?.draft
+          .name,
+      selectedId: row.categoryId,
+      quick: quick,
+      fitting: fitting,
+      frequent: frequent,
+      sameMerchantCount: merchant.isEmpty ? 0 : _sameMerchant(merchant).length,
+    );
+  }
+
+  /// Same rule as the server's `normalizeText`: no accents, lower case, single spaces.
+  static String _merchantKey(String merchant) =>
+      foldVietnamese(merchant.trim().replaceAll(RegExp(r'\s+'), ' '));
+
+  /// First data rows of the blank-category lines with this merchant.
+  List<int> _sameMerchant(String merchant) {
+    final key = _merchantKey(merchant);
+    return [
+      for (final r in preview?.rows ?? const <ImportRow>[])
+        if (_blankRows.contains(r.rows.first) &&
+            _merchantKey(r.merchant ?? '') == key)
+          r.rows.first,
+    ];
+  }
+
+  @override
+  Future<void> chooseCategory(
+    ImportRow row,
+    String categoryId, {
+    required bool applyToMerchant,
+  }) async {
+    if (busy) return;
+    final merchant = row.merchant?.trim() ?? '';
+    final key = _merchantKey(merchant);
+    final suggested = row.suggestion?.categoryId;
+    final rows = {...rowCategoryMap};
+    final merchants = {...merchantCategoryMap};
+    if (applyToMerchant && merchant.isNotEmpty) {
+      merchants.removeWhere((name, _) => _merchantKey(name) == key);
+      _sameMerchant(merchant).forEach(rows.remove);
+      if (categoryId != suggested) merchants[merchant] = categoryId;
+    } else {
+      final line = row.rows.first;
+      rows.remove(line);
+      final viaMerchant = merchant.isEmpty
+          ? null
+          : merchants.entries
+                .where((e) => _merchantKey(e.key) == key)
+                .firstOrNull
+                ?.value;
+      if (categoryId != (viaMerchant ?? suggested)) rows[line] = categoryId;
+    }
+    if (mapEquals(rows, rowCategoryMap) &&
+        mapEquals(merchants, merchantCategoryMap)) {
+      return;
+    }
+    rowCategoryMap = rows;
+    merchantCategoryMap = merchants;
+    await _plan(firstLook: false);
+  }
+
+  @override
   int digitsOf(String currency) =>
       _currencies
           .where((item) => item.code == currency)
           .firstOrNull
           ?.minorDigits ??
-      (currency == 'VND' ? 0 : 2);
+      CurrencyCatalog.current.digits(currency);
 
   void _notify() {
     if (!_disposed) notifyListeners();
@@ -234,6 +409,10 @@ class DefaultImportViewModel extends ImportViewModel {
     catalog.fold(_fail, (value) {
       categories = [
         for (final c in value.all)
+          if (!c.archived) c,
+      ];
+      _recent = [
+        for (final c in value.recent)
           if (!c.archived) c,
       ];
     });
@@ -272,9 +451,9 @@ class DefaultImportViewModel extends ImportViewModel {
     final read = CsvPeek.parse(text);
     if (read.isEmpty) {
       problem = ImportFileProblem.empty;
-    } else if (read.tooManyRows) {
+    } else if (read.tooManyRows(_limits.requireLimits.importMaxRows)) {
       problem = ImportFileProblem.tooManyRows;
-    } else if (text.length > importMaxChars) {
+    } else if (text.length > _limits.requireLimits.importMaxChars) {
       problem = ImportFileProblem.tooLarge;
     }
     if (problem != null) {
@@ -303,6 +482,9 @@ class DefaultImportViewModel extends ImportViewModel {
     defaultWalletId = wallets.length == 1 ? wallets.single.id : null;
     _walletSeen.clear();
     _categorySeen.clear();
+    _blankRows.clear();
+    rowCategoryMap = {};
+    merchantCategoryMap = {};
     includeDuplicates = false;
     filter = ImportFilter.all;
   }
@@ -346,6 +528,8 @@ class DefaultImportViewModel extends ImportViewModel {
     walletMap: walletMap,
     categoryMap: categoryMap,
     defaultAccountId: defaultWalletId,
+    rowCategoryMap: rowCategoryMap,
+    merchantCategoryMap: merchantCategoryMap,
   );
 
   /// Asks the server for a plan. The first look goes to the mapping screen
@@ -362,6 +546,10 @@ class DefaultImportViewModel extends ImportViewModel {
       preview = plan;
       _remember(_walletSeen, plan.unmappedWallets);
       _remember(_categorySeen, plan.unmappedCategories);
+      _rememberBlank(plan);
+      if (filter == ImportFilter.suggested && plan.summary.suggested == 0) {
+        filter = ImportFilter.all;
+      }
       if (firstLook) {
         step = unmappedCount > 0 ? ImportStep.map : ImportStep.preview;
       } else {
@@ -369,6 +557,24 @@ class DefaultImportViewModel extends ImportViewModel {
       }
     });
     _notify();
+  }
+
+  /// Lines the file left without a category: those with a guess, and
+  /// income or expense lines with no category whose only problem is the
+  /// empty name (the server lists it as an unmapped "").
+  void _rememberBlank(ImportPreview plan) {
+    final blankUnmapped = plan.unmappedCategories.contains('');
+    for (final row in plan.rows) {
+      final kind = row.type == 'income' || row.type == 'expense';
+      final blank =
+          row.suggestion != null ||
+          (kind &&
+              row.categoryId == null &&
+              (row.errors.isEmpty ||
+                  (blankUnmapped &&
+                      row.errors.contains(ImportRowError.categoryUnmapped))));
+      if (blank) _blankRows.add(row.rows.first);
+    }
   }
 
   void _remember(List<String> seen, List<String> names) {

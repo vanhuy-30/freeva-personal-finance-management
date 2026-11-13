@@ -101,11 +101,11 @@ void main() {
   );
 
   test('wheel snaps the saved time to 15-minute steps', () {
-    expect(snapDailyLogTime('20:00'), (20, 0));
-    expect(snapDailyLogTime('20:07'), (20, 0));
-    expect(snapDailyLogTime('20:08'), (20, 15));
-    expect(snapDailyLogTime('23:53'), (0, 0));
-    expect(snapDailyLogTime('bad'), (20, 0));
+    expect(snapDailyLogTime('20:00', step: 15, fallback: '20:00'), (20, 0));
+    expect(snapDailyLogTime('20:07', step: 15, fallback: '20:00'), (20, 0));
+    expect(snapDailyLogTime('20:08', step: 15, fallback: '20:00'), (20, 15));
+    expect(snapDailyLogTime('23:53', step: 15, fallback: '20:00'), (0, 0));
+    expect(snapDailyLogTime('bad', step: 15, fallback: '20:00'), (20, 0));
     expect(formatHm(7, 5), '07:05');
   });
 

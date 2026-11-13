@@ -1,3 +1,4 @@
+import { NEW_USER_CURRENCY_CODE } from '../../../core/money/currency';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../infrastructure/prisma/prisma.service';
 import type { OnboardingAnswers, Profile, ProfileRepository, ProfileUpdate } from '../domain/profile.repository';
@@ -12,6 +13,7 @@ const select = {
   onboardingGoals: true,
   monthlyIncomeMinor: true,
   displayCurrencyCode: true,
+  autoSuggestEnabled: true,
 };
 
 type Row = Omit<Profile, 'goals' | 'monthlyIncomeMinor'> & { onboardingGoals: string[]; monthlyIncomeMinor: bigint | null };
@@ -30,11 +32,12 @@ export class PrismaProfileRepository implements ProfileRepository {
     return toProfile(await this.prisma.user.findUnique({ where: { id: userId }, select }));
   }
 
-  currencies() {
-    return this.prisma.currency.findMany({
-      select: { code: true, minorDigits: true },
+  async currencies() {
+    const rows = await this.prisma.currency.findMany({
+      select: { code: true, minorDigits: true, symbol: true },
       orderBy: { code: 'asc' },
     });
+    return rows.map((row) => ({ ...row, isDefault: row.code === NEW_USER_CURRENCY_CODE }));
   }
 
   async saveOnboarding(userId: string, answers: OnboardingAnswers): Promise<boolean> {
@@ -58,6 +61,11 @@ export class PrismaProfileRepository implements ProfileRepository {
 
   async saveDisplayCurrency(userId: string, code: string | null): Promise<boolean> {
     const changed = await this.prisma.user.updateMany({ where: { id: userId }, data: { displayCurrencyCode: code } });
+    return changed.count === 1;
+  }
+
+  async saveAutoSuggest(userId: string, enabled: boolean): Promise<boolean> {
+    const changed = await this.prisma.user.updateMany({ where: { id: userId }, data: { autoSuggestEnabled: enabled } });
     return changed.count === 1;
   }
 

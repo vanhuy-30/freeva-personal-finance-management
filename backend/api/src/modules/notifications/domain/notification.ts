@@ -27,11 +27,8 @@ export const AVAILABLE_KINDS = new Set<NotificationKind>([
 export const DEFAULT_QUIET_START = '22:00';
 export const DEFAULT_QUIET_END = '07:00';
 
-/** Daily expense-log reminder time (BE-P3-006), profile timezone. */
-export const DEFAULT_DAILY_LOG_TIME = '20:00';
-
-/** Budget alerts fire at 80% and at/over the limit (100), not at 70. */
-export const BUDGET_NOTIFY_MIN_THRESHOLD = 80;
+/** Initial default daily expense-log reminder time (BE-P3-006, board 21:00 since BE-P5-001); live value: app config `notification.dailyLogDefaultTime`. */
+export const DEFAULT_DAILY_LOG_TIME = '21:00';
 
 /** Card due alerts fire when payment is 0–3 calendar days away (profile timezone). */
 export const CARD_DUE_WINDOW_DAYS = 3;
@@ -145,7 +142,12 @@ export function isInQuietHours(prefs: QuietHours, timeZone: string, now: Date): 
   return nowM >= start || nowM < end;
 }
 
-export function defaultPreference(): Omit<NotificationPreferenceRecord, 'createdAt' | 'updatedAt' | 'version'> & {
+export type PreferenceDefaults = { dailyLogTime: string; quietStart: string; quietEnd: string };
+
+/** `times` come from app config (BE-P5-001); the constants are their initial values. */
+export function defaultPreference(
+  times: PreferenceDefaults = { dailyLogTime: DEFAULT_DAILY_LOG_TIME, quietStart: DEFAULT_QUIET_START, quietEnd: DEFAULT_QUIET_END },
+): Omit<NotificationPreferenceRecord, 'createdAt' | 'updatedAt' | 'version'> & {
   version: number;
 } {
   return {
@@ -157,10 +159,10 @@ export function defaultPreference(): Omit<NotificationPreferenceRecord, 'created
     monthReviewEnabled: false,
     insightEnabled: false,
     dailyLogEnabled: false,
-    dailyLogTime: DEFAULT_DAILY_LOG_TIME,
+    dailyLogTime: times.dailyLogTime,
     quietHoursEnabled: false,
-    quietStart: DEFAULT_QUIET_START,
-    quietEnd: DEFAULT_QUIET_END,
+    quietStart: times.quietStart,
+    quietEnd: times.quietEnd,
     version: 1,
   };
 }
@@ -204,11 +206,6 @@ export function assertKindWritable(kind: NotificationKind, enabled: boolean): vo
   if (!AVAILABLE_KINDS.has(kind) && enabled) {
     throw new NotificationError('NOTIFICATION_SOURCE_UNAVAILABLE');
   }
-}
-
-/** Thresholds to alert on: crossed values at or above 80 (includes 100 / over). */
-export function budgetNotifyThresholds(crossed: number[]): number[] {
-  return crossed.filter(threshold => threshold >= BUDGET_NOTIFY_MIN_THRESHOLD);
 }
 
 export function budgetDedupeKey(periodFrom: string, threshold: number): string {
@@ -255,14 +252,21 @@ export function creditOutstanding(balanceMinor: bigint): bigint {
  * Usage percent of the limit (truncated). Empty when there is no positive limit.
  * Returns 70 and/or 90 when crossed — same style as budgetNotifyThresholds.
  */
-export function cardUsageThresholds(used: bigint, limit: bigint | null): number[] {
+export function cardUsageThresholds(
+  used: bigint,
+  limit: bigint | null,
+  levels: CardUsageLevels = { high: CARD_HIGH_USAGE_THRESHOLD, critical: CARD_NEAR_LIMIT_THRESHOLD },
+): number[] {
   if (limit === null || limit <= 0n || used <= 0n) return [];
   const percent = Number((used * 100n) / limit);
   const crossed: number[] = [];
-  if (percent >= CARD_HIGH_USAGE_THRESHOLD) crossed.push(CARD_HIGH_USAGE_THRESHOLD);
-  if (percent >= CARD_NEAR_LIMIT_THRESHOLD) crossed.push(CARD_NEAR_LIMIT_THRESHOLD);
+  if (percent >= levels.high) crossed.push(levels.high);
+  if (percent >= levels.critical) crossed.push(levels.critical);
   return crossed;
 }
+
+/** Card usage levels (%) from app config `creditCard.highUsagePercent` / `criticalUsagePercent`. */
+export type CardUsageLevels = { high: number; critical: number };
 
 /** Next occurrence of dueDay on or after todayIso (YYYY-MM-DD); clamps to month end. */
 export function nextDueDateIso(dueDay: number | null, todayIso: string): string | null {

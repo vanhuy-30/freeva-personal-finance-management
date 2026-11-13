@@ -38,7 +38,7 @@ describe('AdminUserLookupService', () => {
     users.findByEmail.mockResolvedValue(user);
 
     await expect(
-      service.lookup(staffActorId, { email: ' member@example.com ' }),
+      service.lookup(staffActorId, { email: ' Member@Example.com ' }),
     ).resolves.toEqual(user);
     expect(users.findByEmail).toHaveBeenCalledWith('member@example.com');
     expect(auditEvents.recordStaffUserLookup).toHaveBeenCalledWith({

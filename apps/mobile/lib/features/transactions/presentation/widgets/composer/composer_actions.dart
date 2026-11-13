@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../../core/widgets/freeva_dialog.dart';
 import '../../../../../core/widgets/freeva_toast.dart';
+import '../../../../category_suggest/presentation/viewmodels/category_suggest_view_model.dart';
 import '../../../domain/transaction.dart';
 import '../../viewmodels/transaction_composer.dart';
 import '../transaction_naming.dart';
@@ -10,6 +11,9 @@ import '../transaction_naming.dart';
 /// Close (asks before dropping changes) and save (toast, undo for new).
 mixin ComposerActions<T extends StatefulWidget> on State<T> {
   TransactionComposer get composer;
+
+  /// R.1 category suggestion of this form; null when editing.
+  CategorySuggestViewModel? get suggest => null;
 
   String kind(S s) => TransactionNaming(
     s,
@@ -36,7 +40,17 @@ mixin ComposerActions<T extends StatefulWidget> on State<T> {
     final s = S.of(context);
     final label = kind(s);
     final wasNew = composer.isNew;
-    if (!await composer.save() || !mounted) return;
+    final ok = await composer.save();
+    // Stored or queued offline: tell the server what was kept. Not queued
+    // for sync, never awaited, errors ignored.
+    if (ok) {
+      suggest?.sendFeedback(
+        type: composer.type,
+        chosenCategoryId: composer.categoryId,
+        merchant: composer.merchant,
+      );
+    }
+    if (!ok || !mounted) return;
     final saved = composer.model.lastSaved;
     final model = composer.model;
     showFreevaToast(

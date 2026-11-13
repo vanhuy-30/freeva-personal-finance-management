@@ -28,6 +28,9 @@ services:
         value: staging
       - key: LOG_LEVEL
         value: info
+      # SEC-P6-002: Render's proxy is one hop. Never set more than the real hop count (client IP spoofing).
+      - key: TRUST_PROXY_HOPS
+        value: "1"
       - key: DATABASE_URL
         fromDatabase:
           name: freeva-staging-db

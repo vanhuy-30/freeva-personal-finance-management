@@ -1,6 +1,6 @@
 # Dự báo số dư theo quy tắc — BE-P3-E04
 
-Contract: [OpenAPI](../../packages/api-contracts/openapi.yaml) `GET /api/v1/forecast`. Module: [14-reports](../product/modules/14-reports.md), [15-calendar](../product/modules/15-calendar.md). Không gọi model; forecast AI là `BE-P5-E06`.
+Contract: [OpenAPI](../../packages/api-contracts/openapi.yaml) `GET /api/v1/forecast`. Module: [14-reports](../product/modules/14-reports.md), [15-calendar](../product/modules/15-calendar.md). Không gọi model. Dự báo chi cuối tháng và ngày đạt mục tiêu theo tốc độ chi thực tế là `BE-P5-E06` (cũng không gọi model).
 
 ## Cách tính
 

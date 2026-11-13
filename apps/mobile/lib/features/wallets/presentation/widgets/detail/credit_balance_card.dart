@@ -9,6 +9,8 @@ import '../../../../../core/widgets/money_display.dart';
 import '../../../../../core/widgets/progress_bar.dart';
 import '../../../domain/credit_card_status.dart';
 import '../credit_level_color.dart';
+import '../../../../server_config/domain/app_limits.dart';
+import '../../../../../core/di/injection.dart';
 
 /// Wash card of a credit card: debt, limit bar, "Còn dùng được … · Hạn mức".
 class CreditBalanceCard extends StatelessWidget {
@@ -64,9 +66,14 @@ class CreditBalanceCard extends StatelessWidget {
             // On the wash: white track, primary bar until the warning levels.
             FreevaProgressBar(
               value: card.ratio,
-              color: card.level == CreditLevel.normal
+              color:
+                  card.levelWith(getIt<AppLimitsSource>().requireLimits) ==
+                      CreditLevel.normal
                   ? c.actionPrimary
-                  : creditLevelColor(context, card.level),
+                  : creditLevelColor(
+                      context,
+                      card.levelWith(getIt<AppLimitsSource>().requireLimits),
+                    ),
               trackColor: c.bgSurface.withValues(alpha: .8),
             ),
             const SizedBox(height: 14),

@@ -1,8 +1,8 @@
+import { AppConfigReader } from '../app-config/app-config.reader';
 import { Inject, Injectable } from '@nestjs/common';
 import { occurrencesInRange } from '../recurring/domain/calendar';
 import {
   buildForecast,
-  FORECAST_DEFAULT_MONTHS,
   forecastRange,
   type ForecastEvent,
 } from './domain/forecast';
@@ -17,11 +17,14 @@ export type ForecastInput = {
 
 @Injectable()
 export class ForecastService {
-  constructor(@Inject(FORECAST_REPOSITORY) private readonly repository: ForecastRepository) {}
+  constructor(
+    @Inject(FORECAST_REPOSITORY) private readonly repository: ForecastRepository,
+    private readonly config: AppConfigReader,
+  ) {}
 
   async forecast(userId: string, input: ForecastInput, now = new Date()) {
     const source = await this.repository.load(userId, now);
-    const range = forecastRange(source.today, input.months ?? FORECAST_DEFAULT_MONTHS);
+    const range = forecastRange(source.today, input.months ?? (await this.config.value('forecast.defaultMonths')));
     const currencyCode = input.currencyCode ?? source.defaultCurrencyCode;
     const excluded = new Set(input.excludeRuleIds ?? []);
     const overridden = input.startingBalanceMinor !== undefined;

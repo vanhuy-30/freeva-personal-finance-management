@@ -26,6 +26,7 @@ import '../viewmodels/investment_view_model.dart';
 import '../widgets/investment_labels.dart';
 import '../widgets/investment_wallet_list.dart';
 import '../widgets/trade_delete_sheet.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 /// Sửa lần mua (board P.7): quantity, price, date, wallet and note of one
 /// buy. The server replays the position, so later sales' profit is
@@ -53,7 +54,8 @@ class _TradeEditPageState extends State<TradeEditPage> {
   Investment? get inv => model.byId(widget.id);
   InvestmentTrade? get trade => model.tradeById(widget.id, widget.tradeId);
   bool get lot => inv?.kind.singleLot ?? false;
-  int get digits => model.digitsOf(inv?.currencyCode ?? 'VND');
+  int get digits =>
+      model.digitsOf(inv?.currencyCode ?? CurrencyCatalog.current.defaultCode);
 
   @override
   void initState() {

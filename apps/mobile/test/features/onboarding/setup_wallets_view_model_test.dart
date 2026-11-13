@@ -5,13 +5,16 @@ import 'package:mobile/features/wallets/domain/wallet.dart';
 import 'package:mobile/features/wallets/domain/wallet_use_cases.dart';
 
 import '../auth/setup_deps.dart';
+import '../../support/server_config_fixture.dart';
 
 void main() {
   late MemoryWalletRepository api;
   late SetupWalletsViewModel model;
   setUp(() {
     api = MemoryWalletRepository();
-    model = SetupWalletsViewModel(DefaultWalletUseCases(api));
+    model = SetupWalletsViewModel(
+      DefaultWalletUseCases(api, testServerConfigModel()),
+    );
   });
   tearDown(() => model.dispose());
 

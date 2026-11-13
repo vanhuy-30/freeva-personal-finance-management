@@ -24,6 +24,7 @@ import 'composer/date_picker_sheet.dart';
 import 'composer/wallet_picker_sheet.dart';
 import 'transaction_labels.dart';
 import 'transaction_naming.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 /// "Hoàn tiền Áo khoác" over the expense (M, màn 3, `TxRefund`). True once
 /// a refund is saved. Online only.
@@ -68,7 +69,7 @@ class _RefundSheetState extends State<_RefundSheet> {
 
   int digitsOf(String code) =>
       model.currencies.where((x) => x.code == code).firstOrNull?.minorDigits ??
-      (code == 'VND' ? 0 : 2);
+      CurrencyCatalog.current.digits(code);
 
   int get digits => digitsOf(currency);
 

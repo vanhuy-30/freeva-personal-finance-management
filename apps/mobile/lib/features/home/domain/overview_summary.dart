@@ -173,7 +173,7 @@ SpendingBreakdown spendingBreakdown(
   CashflowReport report,
   String currency,
   List<FinanceCategory> categories, {
-  int top = 3,
+  required int top,
 }) {
   final namesById = {for (final c in categories) c.id: c.name};
   final byParent = _expenseByParent(report, currency);

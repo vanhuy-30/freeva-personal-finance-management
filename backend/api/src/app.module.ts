@@ -4,6 +4,9 @@ import { ReportModule } from './modules/reports/report.module';
 import { CategoryModule } from './modules/categories/category.module';
 import { TagModule } from './modules/tags/tag.module';
 import { FeedbackModule } from './modules/feedback/feedback.module';
+import { CategorySuggestionModule } from './modules/category-suggestions/category-suggestion.module';
+import { InsightModule } from './modules/insights/insight.module';
+import { SpendForecastModule } from './modules/spend-forecast/spend-forecast.module';
 import { TransactionModule } from './modules/transactions/transaction.module';
 import { RecurringModule } from './modules/recurring/recurring.module';
 import { BudgetModule } from './modules/budgets/budget.module';
@@ -27,6 +30,7 @@ import { httpRequestSerializer } from './core/logging/http-request.serializer';
 import { pinoRedactOptions } from './core/logging/pino-redact';
 import { PrismaModule } from './infrastructure/prisma/prisma.module';
 import { AdminUserLookupModule } from './modules/admin-user-lookup/admin-user-lookup.module';
+import { AppConfigModule } from './modules/app-config/app-config.module';
 import { HealthModule } from './modules/health/health.module';
 
 @Module({
@@ -46,6 +50,9 @@ import { HealthModule } from './modules/health/health.module';
     HealthModule,
     AuthModule,
     ProfileModule,
+    CategorySuggestionModule,
+    InsightModule,
+    SpendForecastModule,
     FxRateModule,
     FinancialAccountModule,
     TransactionModule,
@@ -67,6 +74,7 @@ import { HealthModule } from './modules/health/health.module';
     FeedbackModule,
     ReportModule,
     AdminUserLookupModule,
+    AppConfigModule,
   ],
 })
 export class AppModule {}

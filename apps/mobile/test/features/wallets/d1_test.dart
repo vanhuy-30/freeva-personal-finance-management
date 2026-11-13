@@ -1,4 +1,7 @@
 import 'package:dartz/dartz.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -59,7 +62,7 @@ void main() {
       expect(card.dueWithin(today, 7), isTrue);
       final over = CreditCardStatus.of(creditCard(balance: -25000000), today);
       expect(over.available, BigInt.zero);
-      expect(over.level, CreditLevel.critical);
+      expect(over.levelWith(testLimits()), CreditLevel.critical);
       expect(
         CreditCardStatus.of(creditCard(limit: null), today).available,
         isNull,

@@ -9,6 +9,7 @@ import { pinoRedactOptions } from '../src/core/logging/pino-redact';
 import { PrismaModule } from '../src/infrastructure/prisma/prisma.module';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
 import { AccountModule } from '../src/modules/account/account.module';
+import { AuthCrypto } from '../src/modules/auth/infrastructure/auth-crypto';
 import { AuthMailWorker } from '../src/modules/auth/infrastructure/auth-mail.worker';
 
 const databaseUrl = process.env.AUTH_TEST_DATABASE_URL;
@@ -78,6 +79,7 @@ describe('BE-P1-010 HTTP + PostgreSQL', () => {
   });
 
   afterAll(async () => {
+    if (prisma) await prisma.authRateLimit.deleteMany();
     if (prisma) await cleanup(fixtureUsers);
     await app?.close();
   });
@@ -96,10 +98,14 @@ describe('BE-P1-010 HTTP + PostgreSQL', () => {
     await prisma.schemaMeta.upsert({ where: { id: 1 }, create: { id: 1, version: 1 }, update: { version: 1 } });
   }
 
-  async function request(method: string, path: string, bearer = token) {
+  async function request(method: string, path: string, bearer = token, body?: unknown) {
     const res = await fetch(`${base}/api/v1/account${path}`, {
       method,
-      headers: bearer ? { Authorization: `Bearer ${bearer}` } : {},
+      headers: {
+        ...(bearer ? { Authorization: `Bearer ${bearer}` } : {}),
+        ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
+      },
+      body: body === undefined ? undefined : JSON.stringify(body),
     });
     const text = await res.text();
     expect(res.headers.get('cache-control')).toBe('no-store');
@@ -146,13 +152,17 @@ describe('BE-P1-010 HTTP + PostgreSQL', () => {
   }
 
   it('rejects a missing session', async () => {
-    expect((await request('GET', '/export', '')).status).toBe(401);
+    expect((await request('POST', '/export', '')).status).toBe(401);
     expect((await request('DELETE', '', '')).status).toBe(401);
   });
 
   it('exports only the owner snapshot and does not log secrets', async () => {
     const { account, removed } = await ledger();
-    const result = await request('GET', '/export');
+    const mappedCategory = await prisma.category.findFirstOrThrow({ where: { userId: owner } });
+    await prisma.categorySuggestionMapping.create({
+      data: { userId: owner, merchantKey: 'highlands coffee', merchant: 'Highlands Coffee', categoryId: mappedCategory.id },
+    });
+    const result = await request('POST', '/export');
     expect(result.status).toBe(200);
     const body = result.body as {
       schemaVersion: number;
@@ -164,11 +174,13 @@ describe('BE-P1-010 HTTP + PostgreSQL', () => {
       fxQuotes: Array<{ rate: string }>;
       fxRates: unknown[];
       categories: Array<{ parentId: string | null }>;
+      categorySuggestionMappings: Array<{ merchant: string; categoryId: string }>;
     };
     expect(body.schemaVersion).toBe(1);
     expect(body.userId).toBe(owner);
     expect(body.profile.email).toBe(ownerEmail);
-    expect(body.profile).toMatchObject({ onboardingGoals: [], monthlyIncomeMinor: null, displayCurrencyCode: null });
+    expect(body.profile).toMatchObject({ onboardingGoals: [], monthlyIncomeMinor: null, displayCurrencyCode: null, autoSuggestEnabled: true });
+    expect(body.categorySuggestionMappings).toEqual([expect.objectContaining({ merchant: 'Highlands Coffee', categoryId: mappedCategory.id })]);
     expect(body.fxRates).toEqual([]);
     expect(body.oauthProviders).toEqual(['google']);
     expect(body.financialAccounts.map(row => row.id)).toEqual([account.id]);
@@ -182,7 +194,7 @@ describe('BE-P1-010 HTTP + PostgreSQL', () => {
     expect(text).not.toContain('passwordHash');
     expect(text).not.toContain('secret-subject');
     expect(text).not.toContain('Vi nguoi khac');
-    const otherExport = await request('GET', '/export', otherToken);
+    const otherExport = await request('POST', '/export', otherToken);
     expect(JSON.stringify(otherExport.body)).not.toContain(wallet);
     expect(await prisma.auditEvent.count({ where: { actorId: owner, action: 'user.data_export', targetId: owner, outcome: 'success' } })).toBe(1);
     for (const secret of [token, note, wallet, amount.toString(), ownerEmail, 'secret-subject']) {
@@ -200,6 +212,10 @@ describe('BE-P1-010 HTTP + PostgreSQL', () => {
       data: { userId: owner, purpose: 'verify_email', encryptedToken: 'cipher', expiresAt: new Date(Date.now() + 60_000) },
     });
     const session = await prisma.authSession.findUniqueOrThrow({ where: { tokenHash: hash } });
+    const mappedCategory = await prisma.category.findFirstOrThrow({ where: { userId: owner } });
+    await prisma.categorySuggestionMapping.create({
+      data: { userId: owner, merchantKey: 'grab', merchant: 'Grab', categoryId: mappedCategory.id },
+    });
     await prisma.pushToken.create({
       data: { userId: owner, sessionId: session.id, token: `fcm-${randomUUID()}-${randomUUID()}`, platform: 'android' },
     });
@@ -211,6 +227,7 @@ describe('BE-P1-010 HTTP + PostgreSQL', () => {
     expect(await prisma.financialAccount.count({ where: { userId: owner } })).toBe(0);
     expect(await prisma.transaction.count({ where: { userId: owner } })).toBe(0);
     expect(await prisma.category.count({ where: { userId: owner } })).toBe(0);
+    expect(await prisma.categorySuggestionMapping.count({ where: { userId: owner } })).toBe(0);
     expect(await prisma.authSession.count({ where: { tokenHash: hash } })).toBe(0);
     expect(await prisma.authToken.count({ where: { userId: owner } })).toBe(0);
     expect(await prisma.authMailJob.count({ where: { userId: owner } })).toBe(0);
@@ -219,7 +236,7 @@ describe('BE-P1-010 HTTP + PostgreSQL', () => {
     expect(await prisma.financialAccount.count({ where: { userId: other } })).toBe(1);
     const audit = await prisma.auditEvent.findFirst({ where: { action: 'user.account_delete', targetId: owner } });
     expect(audit).toMatchObject({ actorType: 'user', actorId: owner, outcome: 'success' });
-    expect((await request('GET', '/export')).status).toBe(401);
+    expect((await request('POST', '/export')).status).toBe(401);
     expect((await request('DELETE', '')).status).toBe(401);
     for (const secret of [token, note, ownerEmail]) expect(logs).not.toContain(secret);
   });
@@ -227,7 +244,7 @@ describe('BE-P1-010 HTTP + PostgreSQL', () => {
   it('still deletes when schema meta is missing and does not export', async () => {
     await prisma.schemaMeta.delete({ where: { id: 1 } });
     try {
-      const exported = await request('GET', '/export');
+      const exported = await request('POST', '/export');
       expect(exported.status).toBe(503);
       expect(exported.body).toMatchObject({ error: { code: 'ACCOUNT_UNAVAILABLE' } });
       expect(await prisma.auditEvent.count({ where: { actorId: owner, action: 'user.data_export' } })).toBe(0);
@@ -237,5 +254,65 @@ describe('BE-P1-010 HTTP + PostgreSQL', () => {
     } finally {
       await prisma.schemaMeta.upsert({ where: { id: 1 }, create: { id: 1, version: 1 }, update: { version: 1 } });
     }
+  });
+  describe('SEC-P6-002 step-up before export and delete', () => {
+    beforeEach(() => prisma.authRateLimit.deleteMany());
+
+    async function withPassword(password: string) {
+      const passwordHash = await app.get(AuthCrypto).hashPassword(password);
+      await prisma.user.update({ where: { id: owner }, data: { passwordHash } });
+    }
+
+    async function ageSession(minutes: number) {
+      await prisma.authSession.updateMany({
+        where: { userId: owner },
+        data: { createdAt: new Date(Date.now() - minutes * 60_000) },
+      });
+    }
+
+    it('needs the right password when the account has one', async () => {
+      await withPassword('maytrangngay7');
+      // Every attempt counts toward the 5-per-15-minute limit, as with change-password.
+      for (const body of [undefined, { password: 'sai-mat-khau-1' }]) {
+        const exported = await request('POST', '/export', token, body);
+        expect(exported.status).toBe(403);
+        expect(exported.body).toMatchObject({ error: { code: 'INVALID_CREDENTIALS' } });
+      }
+      expect((await request('DELETE', '', token, { password: 'sai-mat-khau-2' })).status).toBe(403);
+      expect(await prisma.user.findUnique({ where: { id: owner } })).not.toBeNull();
+      expect(await prisma.auditEvent.count({ where: { actorId: owner, action: 'user.data_export' } })).toBe(0);
+
+      expect((await request('POST', '/export', token, { password: 'maytrangngay7' })).status).toBe(200);
+      expect((await request('DELETE', '', token, { password: 'maytrangngay7' })).status).toBe(204);
+      expect(await prisma.user.findUnique({ where: { id: owner } })).toBeNull();
+      expect(logs).not.toContain('maytrangngay7');
+    });
+
+    it('limits password guesses per user', async () => {
+      await withPassword('maytrangngay7');
+      for (let attempt = 0; attempt < 5; attempt += 1) {
+        expect((await request('DELETE', '', token, { password: `sai-${attempt}-x` })).status).toBe(403);
+      }
+      const limited = await request('DELETE', '', token, { password: 'maytrangngay7' });
+      expect(limited.status).toBe(429);
+      expect(await prisma.user.findUnique({ where: { id: owner } })).not.toBeNull();
+    });
+
+    it('lets an OAuth-only account through only on a fresh session', async () => {
+      await ageSession(11);
+      const stale = await request('DELETE', '');
+      expect(stale.status).toBe(403);
+      expect(stale.body).toMatchObject({ error: { code: 'REAUTH_REQUIRED' } });
+      expect((await request('POST', '/export')).status).toBe(403);
+      expect(await prisma.user.findUnique({ where: { id: owner } })).not.toBeNull();
+      await ageSession(5);
+      expect((await request('DELETE', '')).status).toBe(204);
+    });
+
+    it('rejects unknown body fields and the old GET export', async () => {
+      expect((await request('DELETE', '', token, { password: 'x', force: true })).status).toBe(400);
+      const old = await fetch(`${base}/api/v1/account/export`, { headers: { Authorization: `Bearer ${token}` } });
+      expect(old.status).toBe(404);
+    });
   });
 });

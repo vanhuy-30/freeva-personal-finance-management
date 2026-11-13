@@ -1,7 +1,3 @@
-/// Largest file the API accepts: 2 000 data rows and 1 000 000 characters.
-const importMaxRows = 2000;
-const importMaxChars = 1000000;
-
 /// What the app needs to know about a CSV before the server reads it: the
 /// header (to pick columns), how many data rows, and the first one as a
 /// sample. Parsing here is only for display; the server owns the real parse.
@@ -16,7 +12,9 @@ class CsvPeek {
   final List<String> firstRow;
 
   bool get isEmpty => headers.isEmpty || rowCount == 0;
-  bool get tooManyRows => rowCount > importMaxRows;
+
+  /// Above server `import.maxRows`.
+  bool tooManyRows(int maxRows) => rowCount > maxRows;
 
   /// Reads RFC 4180 text with a comma or semicolon separator. A UTF-8 BOM
   /// is ignored; blank lines are skipped.

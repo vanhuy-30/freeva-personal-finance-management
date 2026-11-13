@@ -12,6 +12,7 @@ import 'package:mobile/features/investments/presentation/widgets/investment_labe
 
 import '../home/fixtures.dart' show b;
 import 'investment_stub.dart';
+import '../../support/server_config_fixture.dart';
 
 class _Api implements AuthorizedApi {
   final calls = <(String, String, Map<String, dynamic>?)>[];
@@ -113,7 +114,10 @@ void main() {
     });
 
     test('use case refuses a maturity on or before the deposit date', () async {
-      final cases = DefaultInvestmentUseCases(InvestmentRepositoryImpl(_Api()));
+      final cases = DefaultInvestmentUseCases(
+        InvestmentRepositoryImpl(_Api()),
+        testServerConfigModel(),
+      );
       Future<bool> ok(String maturity) async => (await cases.update(
         deposit,
         name: 'VCB',

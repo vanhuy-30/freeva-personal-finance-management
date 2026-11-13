@@ -14,6 +14,7 @@ import 'package:mobile/features/categories/domain/finance_category.dart';
 import 'package:mobile/features/categories/presentation/viewmodels/category_view_model.dart';
 
 import '../auth/fakes.dart';
+import '../../support/server_config_fixture.dart';
 
 Map<String, dynamic> categoryJson(
   String id, {
@@ -216,7 +217,10 @@ void main() {
 
   test('use case blocks invalid names, tokens, cycles, children and stale versions', () async {
     final api = CategoryTransport();
-    final cases = DefaultCategoryUseCases(CategoryRepositoryImpl(api));
+    final cases = DefaultCategoryUseCases(
+      CategoryRepositoryImpl(api),
+      testServerConfigModel(),
+    );
     final managed = (await cases.manage()).getOrElse(
       () => throw StateError('x'),
     );
@@ -311,13 +315,22 @@ void main() {
       auth =
           DefaultAuthViewModel(
               DefaultAuthUseCases(
-                AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+                AuthRepositoryImpl(
+                  FakeApi(),
+                  MemoryVault(),
+                  FakeBiometrics(),
+                  testServerConfigModel(),
+                ),
+                testServerConfigModel(),
               ),
             )
             ..stage = AuthStage.unlocked
             ..hasPin = true;
       model = DefaultCategoryViewModel(
-        DefaultCategoryUseCases(CategoryRepositoryImpl(api)),
+        DefaultCategoryUseCases(
+          CategoryRepositoryImpl(api),
+          testServerConfigModel(),
+        ),
         auth,
       );
       await model.load();

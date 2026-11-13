@@ -1,4 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:mobile/features/budgets/domain/budget.dart';
 import 'package:mobile/features/home/domain/overview.dart';
 import 'package:mobile/features/home/domain/overview_summary.dart';
@@ -276,7 +279,7 @@ void main() {
 
   group('spendingBreakdown', () {
     test('top 3 parents, the rest is Khác, percentages add up to 100', () {
-      final result = spendingBreakdown(month(), 'VND', categories);
+      final result = spendingBreakdown(month(), 'VND', categories, top: 3);
       expect(result.total, b(9320000));
       expect(result.slices.map((s) => s.name), [
         'Ăn uống',
@@ -295,14 +298,14 @@ void main() {
           spend('food', 100),
         ],
       );
-      final result = spendingBreakdown(flow, 'VND', categories);
+      final result = spendingBreakdown(flow, 'VND', categories, top: 3);
       expect(result.slices.single.name, 'Ăn uống');
       expect(result.slices.single.minor, b(400));
     });
 
     test('unnamed spending stays in Khác', () {
       final flow = month(rows: [spend('ghost', 900), spend('food', 100)]);
-      final result = spendingBreakdown(flow, 'VND', categories);
+      final result = spendingBreakdown(flow, 'VND', categories, top: 3);
       expect(result.slices.map((s) => s.name), ['Ăn uống', null]);
     });
 
@@ -311,6 +314,7 @@ void main() {
         month(rows: const []),
         'VND',
         categories,
+        top: 3,
       );
       expect(result.slices, isEmpty);
       expect(result.total, BigInt.zero);
@@ -348,9 +352,9 @@ void main() {
       ], today);
       expect(cards, hasLength(3));
       expect(cards[0].used, b(6200000));
-      expect(cards[0].level, CreditLevel.normal);
-      expect(cards[1].level, CreditLevel.high);
-      expect(cards[2].level, CreditLevel.critical);
+      expect(cards[0].levelWith(testLimits()), CreditLevel.normal);
+      expect(cards[1].levelWith(testLimits()), CreditLevel.high);
+      expect(cards[2].levelWith(testLimits()), CreditLevel.critical);
     });
 
     test('next due date rolls to next month and clamps to month end', () {

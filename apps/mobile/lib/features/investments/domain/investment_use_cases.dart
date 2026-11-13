@@ -6,6 +6,7 @@ import '../../auth/domain/auth_repository.dart';
 import '../../net_worth/domain/net_worth_history.dart';
 import 'investment.dart';
 import 'investment_repository.dart';
+import '../../server_config/domain/app_limits.dart';
 
 abstract class InvestmentUseCases {
   Future<Either<AuthFailure, List<Investment>>> list();
@@ -60,7 +61,10 @@ abstract class InvestmentUseCases {
 
 @LazySingleton(as: InvestmentUseCases)
 class DefaultInvestmentUseCases implements InvestmentUseCases {
-  DefaultInvestmentUseCases(this._repository);
+  DefaultInvestmentUseCases(this._repository, this._limits);
+
+  /// Server limits (MOB-P5-001).
+  final AppLimitsSource _limits;
 
   final InvestmentRepository _repository;
 
@@ -100,8 +104,8 @@ class DefaultInvestmentUseCases implements InvestmentUseCases {
     final text = name.trim();
     final day = RegExp(r'^\d{4}-\d{2}-\d{2}$');
     if (text.isEmpty ||
-        text.length > 80 ||
-        (note?.trim().length ?? 0) > 500 ||
+        text.length > _limits.requireLimits.investmentNameMaxLength ||
+        (note?.trim().length ?? 0) > _limits.requireLimits.noteMaxLength ||
         (maturityDate != null &&
             (investment.kind != InvestmentKind.savingsDeposit ||
                 !day.hasMatch(maturityDate) ||
@@ -129,7 +133,7 @@ class DefaultInvestmentUseCases implements InvestmentUseCases {
     if (edit.quantity <= BigInt.zero ||
         !priced ||
         !_day.hasMatch(edit.tradedOn) ||
-        (edit.note?.trim().length ?? 0) > 500) {
+        (edit.note?.trim().length ?? 0) > _limits.requireLimits.noteMaxLength) {
       return Future.value(left(_invalid));
     }
     return _repository.updateTrade(investment, tradeId, edit);
@@ -178,13 +182,14 @@ class DefaultInvestmentUseCases implements InvestmentUseCases {
             _day.hasMatch(draft.maturityDate!) &&
             draft.maturityDate!.compareTo(draft.startDate!) > 0);
     if (name.isEmpty ||
-        name.length > 80 ||
+        name.length > _limits.requireLimits.investmentNameMaxLength ||
         !_currency.hasMatch(draft.currencyCode) ||
         draft.quantity <= BigInt.zero ||
         !priced ||
         !depositOk ||
         !_day.hasMatch(draft.tradedOn) ||
-        (draft.note?.trim().length ?? 0) > 500) {
+        (draft.note?.trim().length ?? 0) >
+            _limits.requireLimits.noteMaxLength) {
       return Future.value(left(_invalid));
     }
     return _repository.create(draft);

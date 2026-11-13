@@ -1,4 +1,7 @@
 import 'package:dartz/dartz.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/features/auth/data/authorized_api.dart';
@@ -83,7 +86,7 @@ void main() {
   group('use case', () {
     test('rejects months outside 1–12 and bad currency codes', () async {
       final repo = _Repo();
-      final cases = DefaultForecastUseCases(repo);
+      final cases = DefaultForecastUseCases(repo, testServerConfigModel());
       for (final months in [0, 13, -1]) {
         final r = await cases.load(months: months);
         expect(r.fold((e) => e.code, (_) => null), AuthError.invalidInput);
@@ -95,8 +98,10 @@ void main() {
 
     test('passes sorted rule ids to the repository', () async {
       final repo = _Repo();
-      await DefaultForecastUseCases(repo)
-          .load(months: 12, excludeRuleIds: {'b', 'a'});
+      await DefaultForecastUseCases(
+        repo,
+        testServerConfigModel(),
+      ).load(months: 12, excludeRuleIds: {'b', 'a'});
       expect(repo.calls.single.months, 12);
       expect(repo.calls.single.excluded, ['a', 'b']);
     });
@@ -115,11 +120,13 @@ void main() {
         getIt<AuthViewModel>(),
         getIt<ProfileViewModel>(),
         getIt(),
+        testServerConfigModel(),
       );
     });
     tearDown(() {
       model.dispose();
       getIt.reset();
+      registerTestServerConfig();
     });
 
     test('loads three months and the rules the forecast names', () async {

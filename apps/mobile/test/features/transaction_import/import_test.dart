@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import '../../support/server_config_fixture.dart';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/transaction_import/data/import_repository_impl.dart';
@@ -8,6 +10,9 @@ import 'package:mobile/features/transaction_import/domain/import_models.dart';
 import 'package:mobile/features/transaction_import/presentation/viewmodels/import_view_model.dart';
 
 import 'import_stub.dart';
+
+final importMaxRows = testLimits().importMaxRows;
+final importMaxChars = testLimits().importMaxChars;
 
 void main() {
   group('CsvPeek', () {
@@ -39,9 +44,9 @@ void main() {
 
     test('flags more rows than the API takes', () {
       final text = 'a\n${List.filled(importMaxRows + 1, '1').join('\n')}';
-      expect(CsvPeek.parse(text).tooManyRows, isTrue);
+      expect(CsvPeek.parse(text).tooManyRows(importMaxRows), isTrue);
       final ok = 'a\n${List.filled(importMaxRows, '1').join('\n')}';
-      expect(CsvPeek.parse(ok).tooManyRows, isFalse);
+      expect(CsvPeek.parse(ok).tooManyRows(importMaxRows), isFalse);
     });
   });
 
@@ -349,7 +354,8 @@ void main() {
       await model.load();
       expect(model.digitsOf('VND'), 0);
       expect(model.digitsOf('USD'), 2);
-      expect(model.digitsOf('JPY'), 2);
+      // A code the server does not list shows without decimals (MOB-P5-001).
+      expect(model.digitsOf('JPY'), 0);
     });
   });
 }

@@ -1,5 +1,7 @@
 "use server";
 
+import { apiBase } from "../lib/api_base";
+
 export type UserAccountSummary = {
   id: string;
   email: string;
@@ -36,10 +38,8 @@ export async function lookupUserAccount(
     };
   }
 
-  const apiBase =
-    process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:4000";
   try {
-    const response = await fetch(`${apiBase}/api/admin/user-lookups`, {
+    const response = await fetch(`${apiBase()}/api/admin/user-lookups`, {
       method: "POST",
       cache: "no-store",
       headers: {

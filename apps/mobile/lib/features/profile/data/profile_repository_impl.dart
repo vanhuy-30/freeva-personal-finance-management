@@ -26,12 +26,12 @@ class ProfileRepositoryImpl implements ProfileRepository {
       ],
       displayCurrency: _code(json['displayCurrencyCode']),
       monthlyIncomeMinor: _minor(json['monthlyIncomeMinor']),
+      autoSuggestEnabled: json['autoSuggestEnabled'] as bool? ?? true,
     );
     if (!['vi', 'en'].contains(value.locale) ||
         !RegExp(r'^[A-Z]{3}$').hasMatch(value.currency) ||
         value.timezone.isEmpty ||
         value.fiscalDay < 1 ||
-        value.fiscalDay > 28 ||
         value.version < 1) {
       throw const FormatException();
     }

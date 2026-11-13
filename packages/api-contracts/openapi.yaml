@@ -3620,7 +3620,8 @@ paths:
         legs only. Columns: date, time, type, amount, currency, wallet, category, merchant, notes, tags,
         transaction_id. amount is a signed plain decimal (minor units shifted by the currency minor digits, no
         locale grouping) and currency is its own column. Text cells starting with = + - @ are prefixed with a
-        single quote. Tags are joined with a semicolon. A transfer is two rows (one per leg). Not a backup: use
+        single quote. Cells containing a comma, semicolon, quote or line break are quoted, so Excel in
+        semicolon-separated locales cannot split them. Tags are joined with a semicolon. A transfer is two rows (one per leg). Not a backup: use
         the JSON account export for that. Above 50000 rows the request fails with 400; narrow the date range.
         Writes audit user.transactions_export in the same transaction. Cache-Control no-store; the body is not logged.
       security:
@@ -5338,6 +5339,332 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/profile/auto-suggest:
+    put:
+      operationId: saveAutoSuggest
+      summary: Switch automatic suggestions on or off
+      tags: [Profile]
+      security:
+        - UserBearer: []
+      description: PRD-P5-E01. Covers category suggestions, insights and the spending forecast. Off means those APIs return nothing for this user, whatever the server flags say. Learned merchants are kept until deleted via /category-suggestions/mappings. No version check.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AutoSuggestUpdate'
+      responses:
+        '204':
+          description: Saved (Cache-Control no-store)
+        '400':
+          description: Not a boolean, or an extra field
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/spending-forecast:
+    get:
+      operationId: getSpendingForecast
+      summary: Spending projected to the end of the fiscal month
+      tags: [Forecast]
+      security:
+        - UserBearer: []
+      description: >-
+        BE-P5-E06. A prediction, not recorded spending. Spent so far (expenses minus refunds, profile currency) divided
+        by the days elapsed, times the days in the fiscal month. Risk against the whole-month budget in the profile
+        currency: low below spendForecast.mediumRiskPercent, medium up to spendForecast.highRiskPercent, high above;
+        null without such a budget. `status = insufficient` (no forecastMinor) before spendForecast.minDays days.
+        Different from /forecast (balance from recurring items). `forecast` is null when the flag `forecast` is off or
+        the user switched Gợi ý tự động off. Computed on every call, never stored.
+      responses:
+        '200':
+          description: Forecast (Cache-Control no-store)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpendingForecastResponse'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: FORECAST_UNAVAILABLE
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/goals/{id}/forecast:
+    get:
+      operationId: getGoalForecast
+      summary: Month a goal is expected to be reached at the recent pace
+      tags: [Forecast]
+      security:
+        - UserBearer: []
+      description: >-
+        BE-P5-E06. Average net contributions (góp − rút) over the last goalForecast.months completed calendar months
+        (the month in progress is left out); remaining / average rounded up gives the months still needed, counted
+        from this month. `insufficient` when that average is not positive. In the goal's currency. `forecast` is null
+        when forecasts are off for the user.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Forecast (Cache-Control no-store)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoalForecastResponse'
+        '400':
+          description: Not a UUID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: GOAL_NOT_FOUND (missing or another user's)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/insights:
+    get:
+      operationId: listInsights
+      summary: What is worth noticing in the current fiscal month
+      tags: [Insights]
+      security:
+        - UserBearer: []
+      description: >-
+        BE-P5-E04. Rule-based, computed on every call from the user's own transactions and budget, never stored.
+        Profile currency only. At most one item per kind, in priority order budget_risk, outlier, category_change,
+        spend_trend; the Overview shows the first. Comparisons use the same days of last fiscal month. With fewer
+        than `insights.minMonths` months of data, `changePercent` is null and no outlier is reported. Empty when the
+        flag `insights` is off or the user switched Gợi ý tự động off.
+      responses:
+        '200':
+          description: Insights (Cache-Control no-store)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsightList'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: INSIGHTS_UNAVAILABLE
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/category-suggestions/suggest:
+    post:
+      operationId: suggestCategory
+      summary: Guess a category from a merchant or note
+      tags: [CategorySuggestions]
+      security:
+        - UserBearer: []
+      description: >-
+        BE-P5-E03. Order: merchant the user remembered, the user's own history at that merchant (or with that note;
+        the top category must reach `categorySuggest.minConfidencePercent`), then `categorySuggest.commonMerchants`.
+        Merchant wins over the note. Only active categories of the requested kind. `suggestion` is null when nothing is
+        confident enough, the history disagrees with itself, the flag `category_suggest` is off, or the user switched
+        Gợi ý tự động off. Never saves anything.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SuggestCategoryRequest'
+      responses:
+        '200':
+          description: Suggestion or null (Cache-Control no-store)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuggestCategoryResponse'
+        '400':
+          description: Bad type, text too long, or an extra field
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: SUGGESTIONS_UNAVAILABLE
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/category-suggestions/feedback:
+    post:
+      operationId: sendSuggestionFeedback
+      summary: Tell the server what the user kept after a suggestion
+      tags: [CategorySuggestions]
+      security:
+        - UserBearer: []
+      description: >-
+        BE-P5-E03. Send after the transaction is saved. Same category = accepted, another = corrected; both add to the
+        daily counter (no user id) and, when `merchant` is set, remember the merchant under the chosen category.
+        Ignored (still 204) when suggestions are off for the user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SuggestionFeedback'
+      responses:
+        '204':
+          description: Recorded (Cache-Control no-store)
+        '400':
+          description: Bad body, or CATEGORY_NOT_FOUND (chosen category is not the user's)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/admin/category-suggestions/stats:
+    get:
+      operationId: getCategorySuggestionStats
+      summary: Accept and correct counts of category suggestions
+      tags: [CategorySuggestions]
+      security:
+        - StaffBearer: []
+      description: BE-P5-E03. Daily rows by surface and source plus totals and accept rate. No user data. At most 366 days.
+      parameters:
+        - name: from
+          in: query
+          required: true
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          required: true
+          schema: { type: string, format: date }
+      responses:
+        '200':
+          description: Counts (Cache-Control no-store)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuggestionStats'
+        '400':
+          description: Bad dates or range
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing or invalid staff credential
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/category-suggestions/mappings:
+    get:
+      operationId: listCategorySuggestionMappings
+      summary: Merchants remembered for category suggestions
+      tags: [CategorySuggestions]
+      security:
+        - UserBearer: []
+      description: PRD-P5-E01. Newest first. Not behind a feature flag so the user can always see and delete what was learned. Rows are written by BE-P5-E03 when a suggestion is accepted.
+      responses:
+        '200':
+          description: All mappings of the user (Cache-Control no-store)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuggestionMappingList'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '503':
+          description: SUGGESTIONS_UNAVAILABLE
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    delete:
+      operationId: deleteAllCategorySuggestionMappings
+      summary: Forget every remembered merchant
+      tags: [CategorySuggestions]
+      security:
+        - UserBearer: []
+      description: PRD-P5-E01 "Xoá dữ liệu đã học". Transactions are not touched. Idempotent.
+      responses:
+        '204':
+          description: Deleted (Cache-Control no-store)
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/category-suggestions/mappings/{id}:
+    delete:
+      operationId: deleteCategorySuggestionMapping
+      summary: Forget one remembered merchant
+      tags: [CategorySuggestions]
+      security:
+        - UserBearer: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Deleted (Cache-Control no-store)
+        '400':
+          description: Not a UUID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: MAPPING_NOT_FOUND (missing or another user's)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
   /api/v1/profile/onboarding:
     patch:
       operationId: saveOnboardingAnswers
@@ -5418,6 +5745,211 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/app-config:
+    get:
+      operationId: getAppConfig
+      tags: [AppConfig]
+      summary: Feature flags and product config for the signed-in user
+      description: >-
+        BE-P5-E08. Flags are already evaluated for this user (allow-list, then a stable percentage bucket).
+        Config keys without a staff override return their code default. `version` changes on every staff edit,
+        so the app can tell when to replace its cached copy.
+      security:
+        - UserBearer: []
+      responses:
+        '200':
+          description: Flags and config
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppConfig'
+        '401':
+          $ref: '#/components/responses/AppConfigUnauthorized'
+        '503':
+          $ref: '#/components/responses/AppConfigUnavailable'
+  /api/v1/app-config/public:
+    get:
+      operationId: getPublicAppConfig
+      tags: [AppConfig]
+      summary: Config numbers for screens before sign-in
+      description: >-
+        BE-P5-001. No session needed. Same `config` values and `version` as `GET /api/v1/app-config`,
+        without flags (they are per user) and without anything about a user. Values may be up to
+        30 seconds old (server cache).
+      security: []
+      responses:
+        '200':
+          description: Config values
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicAppConfig'
+        '503':
+          $ref: '#/components/responses/AppConfigUnavailable'
+  /api/admin/app-config:
+    get:
+      operationId: listAppConfigForStaff
+      tags: [Admin]
+      summary: Every flag and config key with its definition, current value and last change
+      security:
+        - StaffBearer: []
+      responses:
+        '200':
+          description: Every flag and config key 
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminAppConfig'
+        '401':
+          $ref: '#/components/responses/AppConfigStaffUnauthorized'
+        '503':
+          $ref: '#/components/responses/AppConfigUnavailable'
+  /api/admin/app-config/flags/{key}:
+    put:
+      operationId: updateFeatureFlag
+      tags: [Admin]
+      summary: Set a flag's switch, allow-list and rollout percentage
+      description: >-
+        `version` is the flag version the staff member saw (0 when never saved); a stale version returns 409
+        and writes nothing. The change, its before/after values and an audit event are saved in one transaction.
+      security:
+        - StaffBearer: []
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+            maxLength: 64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateFeatureFlagRequest'
+      responses:
+        '200':
+          description: Every flag and config key after the change
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminAppConfig'
+        '400':
+          $ref: '#/components/responses/AppConfigValueInvalid'
+        '401':
+          $ref: '#/components/responses/AppConfigStaffUnauthorized'
+        '404':
+          $ref: '#/components/responses/AppConfigKeyUnknown'
+        '409':
+          $ref: '#/components/responses/AppConfigConflict'
+        '503':
+          $ref: '#/components/responses/AppConfigUnavailable'
+  /api/admin/app-config/values/{key}:
+    put:
+      operationId: updateAppConfigValue
+      tags: [Admin]
+      summary: Override a config value
+      description: >-
+        The value must fit the key's definition (type, min/max, item count, allowed values).
+        `version` works as for flags. Saved atomically with its change row and audit event.
+      security:
+        - StaffBearer: []
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+            maxLength: 64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAppConfigValueRequest'
+      responses:
+        '200':
+          description: Every flag and config key after the change
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminAppConfig'
+        '400':
+          $ref: '#/components/responses/AppConfigValueInvalid'
+        '401':
+          $ref: '#/components/responses/AppConfigStaffUnauthorized'
+        '404':
+          $ref: '#/components/responses/AppConfigKeyUnknown'
+        '409':
+          $ref: '#/components/responses/AppConfigConflict'
+        '503':
+          $ref: '#/components/responses/AppConfigUnavailable'
+    delete:
+      operationId: resetAppConfigValue
+      tags: [Admin]
+      summary: Drop the override so the key uses its code default again
+      security:
+        - StaffBearer: []
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+            maxLength: 64
+        - name: version
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Every flag and config key after the change
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminAppConfig'
+        '400':
+          $ref: '#/components/responses/AppConfigValueInvalid'
+        '401':
+          $ref: '#/components/responses/AppConfigStaffUnauthorized'
+        '404':
+          $ref: '#/components/responses/AppConfigKeyUnknown'
+        '409':
+          $ref: '#/components/responses/AppConfigConflict'
+        '503':
+          $ref: '#/components/responses/AppConfigUnavailable'
   /api/admin/user-lookups:
     post:
       operationId: lookupUserAccountForStaff
@@ -5987,13 +6519,19 @@ paths:
           format: uuid
           description: UUID v4
   /api/v1/account/export:
-    get:
+    post:
       operationId: exportAccount
       tags: [Account]
       summary: Export the signed-in user's data as JSON
-      description: Bearer session only. Includes owned profile, wallets, categories, tags, FX quotes and transactions, including soft-deleted transactions. Omits password hashes, sessions, tokens and OAuth subjects. Writes audit user.data_export in the same transaction and returns nothing if that write fails. Requires SchemaMeta. Cache-Control no-store. Does not log the body, email, notes or amounts.
+      description: Bearer session plus step-up (SEC-P6-002, POST; the old GET is removed). Includes owned profile, wallets, categories, tags, FX quotes and transactions, including soft-deleted transactions. Omits password hashes, sessions, tokens and OAuth subjects. Writes audit user.data_export in the same transaction and returns nothing if that write fails. Requires SchemaMeta. Cache-Control no-store. Does not log the body, email, notes or amounts.
       security:
       - UserBearer: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountConfirmIdentity'
       responses:
         '200':
           description: Account snapshot (Cache-Control no-store)
@@ -6008,6 +6546,39 @@ paths:
                 $ref: '#/components/schemas/AccountExport'
         '401':
           description: Missing, expired or revoked session
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '400':
+          description: Unknown or invalid body field
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Password missing or wrong (INVALID_CREDENTIALS), or an account without a password whose session is older than 10 minutes (REAUTH_REQUIRED, sign in again)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: More than 5 password attempts in 15 minutes for this user
           headers:
             Cache-Control:
               schema:
@@ -6033,9 +6604,15 @@ paths:
       operationId: deleteAccount
       tags: [Account]
       summary: Permanently delete the signed-in account
-      description: Bearer session only. Deletes owned financial data and the user row in one transaction, then cascades auth sessions, tokens, mail jobs and OAuth identities. Writes audit user.account_delete before the user row is removed. Audit rows are kept. Does not require SchemaMeta and does not apply a grace period. Cache-Control no-store. Does not log email, notes or amounts.
+      description: Bearer session plus step-up (SEC-P6-002, see AccountConfirmIdentity). Deletes owned financial data and the user row in one transaction, then cascades auth sessions, tokens, mail jobs and OAuth identities. Writes audit user.account_delete before the user row is removed. Audit rows are kept. Does not require SchemaMeta and does not apply a grace period. Cache-Control no-store. Does not log email, notes or amounts.
       security:
       - UserBearer: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountConfirmIdentity'
       responses:
         '204':
           description: Account deleted (Cache-Control no-store)
@@ -6046,6 +6623,39 @@ paths:
                 const: no-store
         '401':
           description: Missing, expired or revoked session
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '400':
+          description: Unknown or invalid body field
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Password missing or wrong (INVALID_CREDENTIALS), or an account without a password whose session is older than 10 minutes (REAUTH_REQUIRED, sign in again)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: More than 5 password attempts in 15 minutes for this user
           headers:
             Cache-Control:
               schema:
@@ -6752,6 +7362,83 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorEnvelope'
+    AppConfigUnauthorized:
+      description: INVALID_CREDENTIALS
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    AppConfigStaffUnauthorized:
+      description: STAFF_AUTH_INVALID
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    AppConfigValueInvalid:
+      description: CONFIG_VALUE_INVALID (details[0].reason says why, including cross-key rules), CONFIG_KEY_READONLY (fixed `limit.*` keys) or VALIDATION_ERROR
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    AppConfigKeyUnknown:
+      description: CONFIG_KEY_UNKNOWN
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    AppConfigConflict:
+      description: CONFIG_CONFLICT — the key changed since the staff member loaded it
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    AppConfigUnavailable:
+      description: APP_CONFIG_UNAVAILABLE, STAFF_AUTH_NOT_CONFIGURED or authentication unavailable
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    FeatureDisabled:
+      description: FEATURE_DISABLED — the server flag for this route is off for the caller
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
     NotificationValidationError:
       description: VALIDATION_ERROR
       headers:
@@ -6904,6 +7591,18 @@ components:
         checks session storage on every authenticated request. No refresh token in this
         phase.
   schemas:
+    AccountConfirmIdentity:
+      type: object
+      additionalProperties: false
+      description: >
+        Step-up before account export or delete (SEC-P6-002). An account with a password must send it; every attempt
+        counts toward 5 per 15 minutes per user. An account without a password (OAuth only) omits it and passes only
+        when its session was created within the last 10 minutes. Never logged.
+      properties:
+        password:
+          type: string
+          minLength: 1
+          maxLength: 128
     ImportMapping:
       type: object
       additionalProperties: false
@@ -6953,6 +7652,14 @@ components:
           type: string
           format: uuid
           description: Wallet for rows without a wallet value.
+        merchantCategoryMap:
+          type: object
+          description: BE-P5-E03. For rows whose file category is empty, merchant (matched ignoring case and accents) to category id ("Áp dụng cho N khoản ở đây"). Wins over the suggestion.
+          additionalProperties: {type: string, format: uuid}
+        rowCategoryMap:
+          type: object
+          description: BE-P5-E03. For one row whose file category is empty, data row number (string, 1-based) to category id. Wins over merchantCategoryMap and the suggestion.
+          additionalProperties: {type: string, format: uuid}
     TransactionImportCommitRequest:
       allOf:
       - $ref: '#/components/schemas/TransactionImportRequest'
@@ -6963,7 +7670,7 @@ components:
           includeDuplicates: {type: boolean, default: false}
     TransactionImportRow:
       type: object
-      required: [rows, status, errors, type, occurredOn, occurredTime, accountId, toAccountId, currencyCode, amountMinor, categoryId, merchant, notes, duplicateOfId]
+      required: [rows, status, errors, type, occurredOn, occurredTime, accountId, toAccountId, currencyCode, amountMinor, categoryId, merchant, notes, duplicateOfId, suggestion]
       properties:
         rows:
           type: array
@@ -6989,6 +7696,26 @@ components:
         merchant: {type: string, nullable: true}
         notes: {type: string, nullable: true}
         duplicateOfId: {type: string, format: uuid, nullable: true}
+        suggestion:
+          description: >-
+            BE-P5-E03. Server guess for a row whose file category is empty (income or expense, with a merchant or note), or null.
+            When nothing else is picked, `categoryId` is this category, and committing counts as accepting it. Always null when the
+            flag category_suggest is off or the user switched suggestions off.
+          oneOf:
+            - type: 'null'
+            - type: object
+              required: [category, source, matchCount]
+              properties:
+                category:
+                  type: object
+                  required: [id, name, iconToken, colorToken]
+                  properties:
+                    id: {type: string, format: uuid}
+                    name: {type: string}
+                    iconToken: {type: [string, 'null']}
+                    colorToken: {type: [string, 'null']}
+                source: {type: string, enum: [remembered, history, common]}
+                matchCount: {type: integer, minimum: 0}
     TransactionImportPreview:
       type: object
       required: [preset, columns, summary, unmapped, rows]
@@ -7000,12 +7727,13 @@ components:
           additionalProperties: {type: string}
         summary:
           type: object
-          required: [rowCount, ready, duplicate, invalid]
+          required: [rowCount, ready, duplicate, invalid, suggested]
           properties:
             rowCount: {type: integer}
             ready: {type: integer}
             duplicate: {type: integer}
             invalid: {type: integer}
+            suggested: {type: integer, description: 'BE-P5-E03: rows (not invalid) that carry a suggestion; the "Gợi ý N" chip.'}
         unmapped:
           type: object
           required: [wallets, categories]
@@ -9997,6 +10725,10 @@ components:
           readOnly: true
           pattern: ^[A-Z]{3}$
           description: Currency the Overview converts into. Null means defaultCurrencyCode. Saved via PUT /profile/display-currency. Not accepted on PUT /profile.
+        autoSuggestEnabled:
+          type: boolean
+          readOnly: true
+          description: PRD-P5-E01 switch for category suggestions, insights and spending forecast. Default true. Saved via PUT /profile/auto-suggest. Not accepted on PUT /profile.
     OnboardingAnswers:
       type: object
       additionalProperties: false
@@ -10012,6 +10744,305 @@ components:
           type: string
           pattern: ^[1-9][0-9]{0,17}$
           description: Monthly income, positive integer minor units of the profile default currency. Omit to keep the stored value.
+    AutoSuggestUpdate:
+      type: object
+      additionalProperties: false
+      required: [enabled]
+      properties:
+        enabled:
+          type: boolean
+    SpendingForecastResponse:
+      type: object
+      required: [currencyCode, period, forecast]
+      properties:
+        currencyCode: { type: [string, 'null'] }
+        period:
+          oneOf:
+            - type: 'null'
+            - type: object
+              required: [from, to, today]
+              properties:
+                from: { type: string, format: date }
+                to: { type: string, format: date }
+                today: { type: string, format: date }
+        forecast:
+          oneOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/SpendingForecast'
+    SpendingForecast:
+      type: object
+      required: [status, daysElapsed, daysInPeriod, spentMinor, forecastMinor, dailyAverageMinor, budgetLimitMinor, risk, overBudgetMinor, dailyAllowanceMinor, previousMonthMinor, cumulative, topCategories]
+      properties:
+        status: { type: string, enum: [ok, insufficient] }
+        daysElapsed: { type: integer, minimum: 1 }
+        daysInPeriod: { type: integer, minimum: 1 }
+        spentMinor: { type: string }
+        forecastMinor: { type: [string, 'null'], description: Null while insufficient. }
+        dailyAverageMinor: { type: string }
+        budgetLimitMinor: { type: [string, 'null'] }
+        risk: { type: [string, 'null'], enum: [low, medium, high, null] }
+        overBudgetMinor: { type: [string, 'null'], description: forecast − budget when above it. }
+        dailyAllowanceMinor: { type: [string, 'null'], description: '(budget − spent) / days left; null without budget, once over it, or on the last day.' }
+        previousMonthMinor: { type: string, description: Whole previous fiscal month; the comparison when there is no budget. }
+        cumulative:
+          type: array
+          description: Spent so far, one point per elapsed day.
+          items:
+            type: object
+            required: [date, spentMinor]
+            properties:
+              date: { type: string, format: date }
+              spentMinor: { type: string }
+        topCategories:
+          type: array
+          maxItems: 3
+          items:
+            type: object
+            required: [category, spentMinor, sharePercent]
+            properties:
+              category:
+                type: object
+                required: [id, name, iconToken, colorToken]
+                properties:
+                  id: { type: string, format: uuid }
+                  name: { type: string }
+                  iconToken: { type: [string, 'null'] }
+                  colorToken: { type: [string, 'null'] }
+              spentMinor: { type: string }
+              sharePercent: { type: integer, minimum: 0, maximum: 100 }
+    GoalForecastResponse:
+      type: object
+      required: [forecast]
+      properties:
+        forecast:
+          oneOf:
+            - type: 'null'
+            - type: object
+              required: [status]
+              properties:
+                status: { type: string, enum: [ok, insufficient, reached] }
+                months: { type: integer, description: Completed months averaged (ok, insufficient). }
+                averageMonthlyMinor: { type: string, description: ok only. }
+                expectedMonth: { type: string, pattern: '^\d{4}-\d{2}$', description: ok only. }
+                targetMonth: { type: [string, 'null'], description: ok only; null without a target date. }
+                monthsLate: { type: [integer, 'null'], description: 'ok only: positive late, negative early, 0 on time; null without a target date.' }
+    InsightList:
+      type: object
+      required: [currencyCode, period, items]
+      properties:
+        currencyCode: { type: [string, 'null'], description: Profile currency; every amount is in it. }
+        period:
+          oneOf:
+            - type: 'null'
+            - type: object
+              required: [from, to, today]
+              properties:
+                from: { type: string, format: date }
+                to: { type: string, format: date }
+                today: { type: string, format: date }
+        items:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/InsightBudgetRisk'
+              - $ref: '#/components/schemas/InsightOutlier'
+              - $ref: '#/components/schemas/InsightCategoryChange'
+              - $ref: '#/components/schemas/InsightSpendTrend'
+            discriminator:
+              propertyName: kind
+    InsightBudgetRisk:
+      type: object
+      required: [kind, category, spentMinor, limitMinor, percent, daysLeft]
+      properties:
+        kind: { type: string, const: budget_risk }
+        category:
+          description: Null for the whole-month budget.
+          oneOf:
+            - type: 'null'
+            - type: object
+              required: [id, name, iconToken, colorToken]
+              properties:
+                id: { type: string, format: uuid }
+                name: { type: string }
+                iconToken: { type: [string, 'null'] }
+                colorToken: { type: [string, 'null'] }
+        spentMinor: { type: string }
+        limitMinor: { type: string }
+        percent: { type: integer, description: 'Share used, rounded down; at least insights.budgetRiskPercent.' }
+        daysLeft: { type: integer, minimum: 0 }
+    InsightOutlier:
+      type: object
+      required: [kind, category, transactionId, merchant, occurredOn, amountMinor, usualMinor, times]
+      properties:
+        kind: { type: string, const: outlier }
+        category:
+          type: object
+          required: [id, name, iconToken, colorToken]
+          properties:
+            id: { type: string, format: uuid }
+            name: { type: string }
+            iconToken: { type: [string, 'null'] }
+            colorToken: { type: [string, 'null'] }
+        transactionId: { type: string, format: uuid }
+        merchant: { type: [string, 'null'] }
+        occurredOn: { type: string, format: date }
+        amountMinor: { type: string }
+        usualMinor: { type: string, description: Average expense of the category (top level) over the previous insights.outlierMonths months. }
+        times: { type: integer, minimum: 2, description: amountMinor / usualMinor rounded down. }
+    InsightCategoryChange:
+      type: object
+      required: [kind, category, currentMinor, previousMinor, changePercent, direction]
+      properties:
+        kind: { type: string, const: category_change }
+        category:
+          type: object
+          required: [id, name, iconToken, colorToken]
+          properties:
+            id: { type: string, format: uuid }
+            name: { type: string }
+            iconToken: { type: [string, 'null'] }
+            colorToken: { type: [string, 'null'] }
+        currentMinor: { type: string, description: Top-level category including its children, from the start of the month to today. }
+        previousMinor: { type: string, description: Same days of last fiscal month. }
+        changePercent: { type: [integer, 'null'], description: Null with too little history (say it without a number). }
+        direction: { type: string, enum: [up, down] }
+    InsightSpendTrend:
+      type: object
+      required: [kind, currentMinor, previousMinor, changePercent, direction, days]
+      properties:
+        kind: { type: string, const: spend_trend }
+        currentMinor: { type: string }
+        previousMinor: { type: string }
+        changePercent: { type: [integer, 'null'] }
+        direction: { type: string, enum: [up, down] }
+        days: { type: integer, minimum: 1, description: Days of the month so far. }
+    SuggestCategoryRequest:
+      type: object
+      additionalProperties: false
+      required: [type]
+      properties:
+        merchant:
+          type: [string, 'null']
+          maxLength: 200
+        note:
+          type: [string, 'null']
+          maxLength: 2000
+        type:
+          type: string
+          enum: [expense, income]
+    SuggestCategoryResponse:
+      type: object
+      additionalProperties: false
+      required: [suggestion]
+      properties:
+        suggestion:
+          oneOf:
+            - type: 'null'
+            - type: object
+              additionalProperties: false
+              required: [category, source, matchCount, confidencePercent]
+              properties:
+                category:
+                  type: object
+                  additionalProperties: false
+                  required: [id, name, iconToken, colorToken]
+                  properties:
+                    id: { type: string, format: uuid }
+                    name: { type: string }
+                    iconToken: { type: [string, 'null'] }
+                    colorToken: { type: [string, 'null'] }
+                source:
+                  type: string
+                  enum: [remembered, history, common]
+                matchCount:
+                  type: integer
+                  minimum: 0
+                  description: Past transactions at this merchant (or with this note) under the category, for "Như 8 lần trước ở đây". 0 for the common list.
+                confidencePercent:
+                  type: [integer, 'null']
+                  minimum: 0
+                  maximum: 100
+    SuggestionFeedback:
+      type: object
+      additionalProperties: false
+      required: [suggestedCategoryId, chosenCategoryId, source, surface]
+      properties:
+        merchant:
+          type: [string, 'null']
+          maxLength: 200
+        suggestedCategoryId: { type: string, format: uuid }
+        chosenCategoryId: { type: string, format: uuid }
+        source:
+          type: string
+          enum: [remembered, history, common]
+        surface:
+          type: string
+          enum: [entry, import]
+    SuggestionStats:
+      type: object
+      additionalProperties: false
+      required: [from, to, accepted, corrected, acceptRatePercent, rows]
+      properties:
+        from: { type: string, format: date }
+        to: { type: string, format: date }
+        accepted: { type: integer, minimum: 0 }
+        corrected: { type: integer, minimum: 0 }
+        acceptRatePercent:
+          type: [number, 'null']
+          description: accepted / (accepted + corrected), one decimal; null when nothing was counted.
+        rows:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [day, surface, source, accepted, corrected]
+            properties:
+              day: { type: string, format: date }
+              surface: { type: string, enum: [entry, import] }
+              source: { type: string, enum: [remembered, history, common] }
+              accepted: { type: integer, minimum: 0 }
+              corrected: { type: integer, minimum: 0 }
+    SuggestionMapping:
+      type: object
+      additionalProperties: false
+      required: [id, merchant, category, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        merchant:
+          type: string
+          maxLength: 200
+          description: Merchant as last typed. Never logged.
+        category:
+          type: object
+          additionalProperties: false
+          required: [id, name, iconToken, colorToken]
+          properties:
+            id:
+              type: string
+              format: uuid
+            name:
+              type: string
+            iconToken:
+              type: [string, 'null']
+            colorToken:
+              type: [string, 'null']
+        updatedAt:
+          type: string
+          format: date-time
+    SuggestionMappingList:
+      type: object
+      additionalProperties: false
+      required: [items, total]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/SuggestionMapping'
+        total:
+          type: integer
+          minimum: 0
     MonthlyIncomeUpdate:
       type: object
       additionalProperties: false
@@ -10031,14 +11062,21 @@ components:
           items:
             type: object
             additionalProperties: false
-            required: [code, minorDigits]
+            required: [code, minorDigits, symbol, isDefault]
             properties:
+              isDefault:
+                type: boolean
+                description: The currency new accounts start in; the app uses it until the profile loads (BE-P5-001).
               code:
                 type: string
                 pattern: '^[A-Z]{3}$'
               minorDigits:
                 type: integer
                 minimum: 0
+              symbol:
+                type: [string, 'null']
+                maxLength: 8
+                description: Display symbol (BE-P5-001), e.g. ₫; null means show the code.
         timezones:
           type: array
           items:
@@ -10248,6 +11286,173 @@ components:
         updatedAt:
           type: string
           format: date-time
+    AppConfigValue:
+      description: integer, list of integers, list of minor-unit strings, enum string, list of enum strings, or HH:mm.
+      oneOf:
+        - type: integer
+        - type: string
+        - type: array
+          items:
+            type: integer
+        - type: array
+          items:
+            type: string
+    AppConfig:
+      type: object
+      additionalProperties: false
+      required: [version, flags, config]
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        flags:
+          type: object
+          description: Every flag key (category_suggest, insights, forecast, google_sign_in, apple_sign_in, profile_edit).
+          additionalProperties:
+            type: boolean
+        config:
+          type: object
+          description: Every config key, e.g. `budget.defaultAlertThresholds`, `forecast.monthOptions`.
+          additionalProperties:
+            $ref: '#/components/schemas/AppConfigValue'
+    PublicAppConfig:
+      type: object
+      additionalProperties: false
+      required: [version, config]
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        config:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/AppConfigValue'
+    AppConfigLastChange:
+      type: [object, 'null']
+      required: [updatedAt, updatedBy]
+      properties:
+        updatedAt:
+          type: string
+          format: date-time
+        updatedBy:
+          type: string
+          format: uuid
+    AppConfigDefinition:
+      type: object
+      required: [type, default, description]
+      properties:
+        editable:
+          type: boolean
+          const: false
+          description: Present on fixed technical limits (`limit.*`); staff can read but not edit them.
+        type:
+          type: string
+          enum: [integer, integer_list, money_minor_list, enum, enum_list, pair_list, time]
+        default:
+          $ref: '#/components/schemas/AppConfigValue'
+        description:
+          type: string
+        min:
+          type: integer
+        max:
+          type: integer
+        minItems:
+          type: integer
+        maxItems:
+          type: integer
+        values:
+          type: array
+          items:
+            type: string
+        currencyCode:
+          type: string
+        maxTextLength:
+          type: integer
+          description: On `pair_list` (BE-P5-E03), the longest text before the colon.
+    AdminAppConfig:
+      type: object
+      required: [version, flags, config]
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        flags:
+          type: array
+          items:
+            type: object
+            required: [key, description, enabled, userIds, percentage, version, lastChange]
+            properties:
+              key:
+                type: string
+              description:
+                type: string
+              enabled:
+                type: boolean
+              userIds:
+                type: array
+                items:
+                  type: string
+                  format: uuid
+              percentage:
+                type: integer
+                minimum: 0
+                maximum: 100
+              version:
+                type: integer
+                minimum: 0
+                description: 0 when the flag was never saved.
+              lastChange:
+                $ref: '#/components/schemas/AppConfigLastChange'
+        config:
+          type: array
+          items:
+            type: object
+            required: [key, definition, value, isDefault, version, lastChange]
+            properties:
+              key:
+                type: string
+              definition:
+                $ref: '#/components/schemas/AppConfigDefinition'
+              value:
+                $ref: '#/components/schemas/AppConfigValue'
+              isDefault:
+                type: boolean
+              version:
+                type: integer
+                minimum: 0
+                description: 0 when the key uses its code default.
+              lastChange:
+                $ref: '#/components/schemas/AppConfigLastChange'
+    UpdateFeatureFlagRequest:
+      type: object
+      additionalProperties: false
+      required: [enabled, userIds, percentage, version]
+      properties:
+        enabled:
+          type: boolean
+        userIds:
+          type: array
+          maxItems: 500
+          items:
+            type: string
+            format: uuid
+        percentage:
+          type: integer
+          minimum: 0
+          maximum: 100
+        version:
+          type: integer
+          minimum: 0
+    UpdateAppConfigValueRequest:
+      type: object
+      additionalProperties: false
+      required: [value, version]
+      properties:
+        value:
+          $ref: '#/components/schemas/AppConfigValue'
+        version:
+          type: integer
+          minimum: 0
     ErrorEnvelope:
       type: object
       required: [error]
@@ -11123,6 +12328,28 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AccountExportGoalEntry'
+        categorySuggestionMappings:
+          type: array
+          description: Merchants remembered for category suggestions (PRD-P5-E01).
+          items:
+            type: object
+            additionalProperties: false
+            required: [id, merchant, categoryId, createdAt, updatedAt]
+            properties:
+              id:
+                type: string
+                format: uuid
+              merchant:
+                type: string
+              categoryId:
+                type: string
+                format: uuid
+              createdAt:
+                type: string
+                format: date-time
+              updatedAt:
+                type: string
+                format: date-time
         cardInstallmentPlans:
           type: array
           description: Installment schedules (BE-P3-009). Ids reference the purchase transaction and wallet.
@@ -11262,7 +12489,7 @@ components:
     AccountExportProfile:
       type: object
       additionalProperties: false
-      required: [email, displayName, locale, timezone, defaultCurrencyCode, fiscalMonthStartDay, onboardingGoals, monthlyIncomeMinor, displayCurrencyCode, emailVerifiedAt, categoriesInitializedAt, categoriesSupplementedAt, createdAt, updatedAt]
+      required: [email, displayName, locale, timezone, defaultCurrencyCode, fiscalMonthStartDay, onboardingGoals, monthlyIncomeMinor, displayCurrencyCode, emailVerifiedAt, categoriesInitializedAt, categoriesSupplementedAt, createdAt, updatedAt, autoSuggestEnabled]
       properties:
         email:
           type: string
@@ -11300,6 +12527,8 @@ components:
         categoriesSupplementedAt:
           type: [string, 'null']
           format: date-time
+        autoSuggestEnabled:
+          type: boolean
         createdAt:
           type: string
           format: date-time

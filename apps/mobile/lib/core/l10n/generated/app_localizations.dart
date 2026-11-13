@@ -184,8 +184,8 @@ abstract class S {
   /// No description provided for @authWrongPin.
   ///
   /// In en, this message translates to:
-  /// **'Incorrect PIN. After five failed attempts, sign in again.'**
-  String get authWrongPin;
+  /// **'Incorrect PIN. After {count} failed attempts, sign in again.'**
+  String authWrongPin(int count);
 
   /// No description provided for @authExpired.
   ///
@@ -640,8 +640,8 @@ abstract class S {
   /// No description provided for @transactionTagLimit.
   ///
   /// In en, this message translates to:
-  /// **'Up to 20 tags'**
-  String get transactionTagLimit;
+  /// **'Up to {count} tags'**
+  String transactionTagLimit(int count);
 
   /// No description provided for @transactionSave.
   ///
@@ -3789,14 +3789,14 @@ abstract class S {
   /// No description provided for @budgetThresholdsSheetSub.
   ///
   /// In en, this message translates to:
-  /// **'Pick up to 4 levels.'**
-  String get budgetThresholdsSheetSub;
+  /// **'Pick up to {count} levels.'**
+  String budgetThresholdsSheetSub(int count);
 
   /// No description provided for @budgetThresholdsDefaultHint.
   ///
   /// In en, this message translates to:
-  /// **'Default is 80% and 100%.'**
-  String get budgetThresholdsDefaultHint;
+  /// **'Default is {levels}.'**
+  String budgetThresholdsDefaultHint(String levels);
 
   /// No description provided for @budgetScopeDefault.
   ///
@@ -4197,8 +4197,8 @@ abstract class S {
   /// No description provided for @mePinWrong.
   ///
   /// In en, this message translates to:
-  /// **'Wrong PIN. After 5 misses you sign in again.'**
-  String get mePinWrong;
+  /// **'Wrong PIN. After {count} misses you sign in again.'**
+  String mePinWrong(int count);
 
   /// No description provided for @mePinMismatch.
   ///
@@ -4251,8 +4251,8 @@ abstract class S {
   /// No description provided for @mePasswordHint.
   ///
   /// In en, this message translates to:
-  /// **'At least 8 characters, with letters and digits.'**
-  String get mePasswordHint;
+  /// **'At least {count} characters, with letters and digits.'**
+  String mePasswordHint(int count);
 
   /// No description provided for @mePasswordWrong.
   ///
@@ -4263,8 +4263,8 @@ abstract class S {
   /// No description provided for @mePasswordWeak.
   ///
   /// In en, this message translates to:
-  /// **'Use at least 8 characters with letters and digits, different from the old one.'**
-  String get mePasswordWeak;
+  /// **'Use at least {count} characters with letters and digits, different from the old one.'**
+  String mePasswordWeak(int count);
 
   /// No description provided for @mePasswordMismatch.
   ///
@@ -4635,7 +4635,7 @@ abstract class S {
   /// No description provided for @notifyBudgetSub.
   ///
   /// In en, this message translates to:
-  /// **'At 80% and 100% used'**
+  /// **'At the levels you picked'**
   String get notifyBudgetSub;
 
   /// No description provided for @notifyBudgetAt.
@@ -4647,7 +4647,7 @@ abstract class S {
   /// No description provided for @notifyBudgetLevels.
   ///
   /// In en, this message translates to:
-  /// **'80% and 100%'**
+  /// **'the levels you picked'**
   String get notifyBudgetLevels;
 
   /// No description provided for @notifyCard.
@@ -4989,8 +4989,8 @@ abstract class S {
   /// No description provided for @passwordRuleLength.
   ///
   /// In en, this message translates to:
-  /// **'At least 8 characters'**
-  String get passwordRuleLength;
+  /// **'At least {count} characters'**
+  String passwordRuleLength(int count);
 
   /// No description provided for @passwordRuleLetterDigit.
   ///
@@ -5289,8 +5289,8 @@ abstract class S {
   /// No description provided for @onbGoalsSub.
   ///
   /// In en, this message translates to:
-  /// **'Pick up to 2.'**
-  String get onbGoalsSub;
+  /// **'Pick up to {count}.'**
+  String onbGoalsSub(int count);
 
   /// No description provided for @onbGoalTrack.
   ///
@@ -5409,8 +5409,8 @@ abstract class S {
   /// No description provided for @onbSuggestSaveDefault.
   ///
   /// In en, this message translates to:
-  /// **'Save 20% of income'**
-  String get onbSuggestSaveDefault;
+  /// **'Save {percent}% of income'**
+  String onbSuggestSaveDefault(int percent);
 
   /// No description provided for @onbSuggestSpend.
   ///
@@ -5421,8 +5421,8 @@ abstract class S {
   /// No description provided for @onbSuggestNoGoal.
   ///
   /// In en, this message translates to:
-  /// **'No goal yet, so 20% goes to savings for now.'**
-  String get onbSuggestNoGoal;
+  /// **'No goal yet, so {percent}% goes to savings for now.'**
+  String onbSuggestNoGoal(int percent);
 
   /// No description provided for @onbSuggestHint.
   ///
@@ -6065,6 +6065,12 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Couldn\'t delete. Your data is untouched.'**
   String get meDeleteError;
+
+  /// No description provided for @meConfirmPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your password to continue'**
+  String get meConfirmPasswordTitle;
 
   /// No description provided for @meChangeAvatar.
   ///
@@ -8139,8 +8145,8 @@ abstract class S {
   /// No description provided for @installmentOtherLabel.
   ///
   /// In en, this message translates to:
-  /// **'From 2 to 60'**
-  String get installmentOtherLabel;
+  /// **'From {min} to {max}'**
+  String installmentOtherLabel(int min, int max);
 
   /// No description provided for @installmentEach.
   ///
@@ -8409,8 +8415,8 @@ abstract class S {
   /// No description provided for @dataExportTooMany.
   ///
   /// In en, this message translates to:
-  /// **'More than 50,000 transactions. Pick a shorter range or fewer wallets.'**
-  String get dataExportTooMany;
+  /// **'More than {count} transactions. Pick a shorter range or fewer wallets.'**
+  String dataExportTooMany(String count);
 
   /// No description provided for @dataExportButton.
   ///
@@ -8487,8 +8493,8 @@ abstract class S {
   /// No description provided for @importSourceNote.
   ///
   /// In en, this message translates to:
-  /// **'Up to 2,000 rows at a time. Transactions you already have are skipped.'**
-  String get importSourceNote;
+  /// **'Up to {count} rows at a time. Transactions you already have are skipped.'**
+  String importSourceNote(String count);
 
   /// No description provided for @importPickFile.
   ///
@@ -8511,8 +8517,8 @@ abstract class S {
   /// No description provided for @importProblemTooMany.
   ///
   /// In en, this message translates to:
-  /// **'This file has more than 2,000 rows. Split it and import in parts.'**
-  String get importProblemTooMany;
+  /// **'This file has more than {count} rows. Split it and import in parts.'**
+  String importProblemTooMany(String count);
 
   /// No description provided for @importProblemTooLarge.
   ///
@@ -8661,7 +8667,7 @@ abstract class S {
   /// No description provided for @importPickCategory.
   ///
   /// In en, this message translates to:
-  /// **'Choose a category'**
+  /// **'Pick a category'**
   String get importPickCategory;
 
   /// No description provided for @importPreviewTitle.
@@ -9748,6 +9754,539 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Purchase price'**
   String get tradePriceRow;
+
+  /// No description provided for @serverConfigErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings did not load'**
+  String get serverConfigErrorTitle;
+
+  /// No description provided for @serverConfigErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your connection and try again.'**
+  String get serverConfigErrorMessage;
+
+  /// No description provided for @commonAnd.
+  ///
+  /// In en, this message translates to:
+  /// **'and'**
+  String get commonAnd;
+
+  /// No description provided for @autoSuggestTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto suggestions'**
+  String get autoSuggestTitle;
+
+  /// No description provided for @autoSuggestOn.
+  ///
+  /// In en, this message translates to:
+  /// **'On'**
+  String get autoSuggestOn;
+
+  /// No description provided for @autoSuggestOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get autoSuggestOff;
+
+  /// No description provided for @autoSuggestSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories, insights, forecasts'**
+  String get autoSuggestSubtitle;
+
+  /// No description provided for @autoSuggestPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Worked out from your records only, never sent elsewhere.'**
+  String get autoSuggestPrivacy;
+
+  /// No description provided for @autoSuggestMerchants.
+  ///
+  /// In en, this message translates to:
+  /// **'Remembered shops · {count}'**
+  String autoSuggestMerchants(int count);
+
+  /// No description provided for @autoSuggestForget.
+  ///
+  /// In en, this message translates to:
+  /// **'Forget {merchant}'**
+  String autoSuggestForget(String merchant);
+
+  /// No description provided for @autoSuggestClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete learned data'**
+  String get autoSuggestClear;
+
+  /// No description provided for @autoSuggestClearTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete learned data?'**
+  String get autoSuggestClearTitle;
+
+  /// No description provided for @autoSuggestClearBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} remembered shops will be deleted. Your transactions stay as they are.'**
+  String autoSuggestClearBody(int count);
+
+  /// No description provided for @autoSuggestDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get autoSuggestDelete;
+
+  /// No description provided for @autoSuggestError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save. Please try again.'**
+  String get autoSuggestError;
+
+  /// No description provided for @autoSuggestSeeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See all {count}'**
+  String autoSuggestSeeAll(int count);
+
+  /// No description provided for @txSuggestTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'File under {category}?'**
+  String txSuggestTitle(String category);
+
+  /// No description provided for @txSuggestHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Same as last time here} other{Same as {count} times before here}}'**
+  String txSuggestHistory(int count);
+
+  /// No description provided for @txSuggestUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Use'**
+  String get txSuggestUse;
+
+  /// No description provided for @importFilterSuggested.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested {count}'**
+  String importFilterSuggested(int count);
+
+  /// No description provided for @importSuggestHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories guessed from the shop. Tap to change.'**
+  String get importSuggestHint;
+
+  /// No description provided for @importPickSheetLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Change category'**
+  String get importPickSheetLabel;
+
+  /// No description provided for @importPickSuggested.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested'**
+  String get importPickSuggested;
+
+  /// No description provided for @importPickOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Or pick another category'**
+  String get importPickOther;
+
+  /// No description provided for @importApplySame.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Apply to 1 item here} other{Apply to {count} items here}}'**
+  String importApplySame(int count);
+
+  /// No description provided for @importApplySameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'{merchant} items in this file'**
+  String importApplySameHint(String merchant);
+
+  /// No description provided for @importPickDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get importPickDone;
+
+  /// No description provided for @insightsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Insights'**
+  String get insightsTitle;
+
+  /// No description provided for @insightsSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggestion settings'**
+  String get insightsSettings;
+
+  /// No description provided for @insightsEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Worth a look'**
+  String get insightsEyebrow;
+
+  /// No description provided for @insightsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Worth a look · {count}'**
+  String insightsSection(int count);
+
+  /// No description provided for @insightsSeeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{See insights} other{See all {count}}}'**
+  String insightsSeeAll(int count);
+
+  /// No description provided for @insightsFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Worked out from your records, updated daily.'**
+  String get insightsFooter;
+
+  /// No description provided for @insightsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing stands out yet'**
+  String get insightsEmpty;
+
+  /// No description provided for @insightsEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Record a few more days to compare with last month.'**
+  String get insightsEmptyBody;
+
+  /// No description provided for @insightBudgetCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'{category} has used {percent}% of its budget'**
+  String insightBudgetCategory(String category, int percent);
+
+  /// No description provided for @insightBudgetMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month\'s spending has used {percent}% of the budget'**
+  String insightBudgetMonth(int percent);
+
+  /// No description provided for @insightDaysLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 day left} other{{count} days left}}'**
+  String insightDaysLeft(int count);
+
+  /// No description provided for @insightOutlier.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} at {place} is {times} times your usual'**
+  String insightOutlier(String amount, String place, int times);
+
+  /// No description provided for @insightCategoryUp.
+  ///
+  /// In en, this message translates to:
+  /// **'{category} is up {percent}% on the same days last month'**
+  String insightCategoryUp(String category, int percent);
+
+  /// No description provided for @insightCategoryDown.
+  ///
+  /// In en, this message translates to:
+  /// **'{category} is down {percent}% on the same days last month'**
+  String insightCategoryDown(String category, int percent);
+
+  /// No description provided for @insightCategoryMore.
+  ///
+  /// In en, this message translates to:
+  /// **'{category} is higher this month than last month'**
+  String insightCategoryMore(String category);
+
+  /// No description provided for @insightCategoryLess.
+  ///
+  /// In en, this message translates to:
+  /// **'{category} is lower this month than last month'**
+  String insightCategoryLess(String category);
+
+  /// No description provided for @insightTrendUp.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{Spending on day 1 is {percent}% higher than last month} other{Spending in the first {days} days is {percent}% higher than last month}}'**
+  String insightTrendUp(int days, int percent);
+
+  /// No description provided for @insightTrendDown.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{Spending on day 1 is {percent}% lower than last month} other{Spending in the first {days} days is {percent}% lower than last month}}'**
+  String insightTrendDown(int days, int percent);
+
+  /// No description provided for @insightTrendMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending this month is higher than last month'**
+  String get insightTrendMore;
+
+  /// No description provided for @insightTrendLess.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending this month is lower than last month'**
+  String get insightTrendLess;
+
+  /// No description provided for @insightThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get insightThisMonth;
+
+  /// No description provided for @insightLastMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Last month'**
+  String get insightLastMonth;
+
+  /// No description provided for @insightThisOne.
+  ///
+  /// In en, this message translates to:
+  /// **'This one'**
+  String get insightThisOne;
+
+  /// No description provided for @insightUsual.
+  ///
+  /// In en, this message translates to:
+  /// **'Usual'**
+  String get insightUsual;
+
+  /// No description provided for @spendForecastCardLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Month-end spending, {month}'**
+  String spendForecastCardLabel(String month);
+
+  /// No description provided for @spendForecastRiskLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low risk'**
+  String get spendForecastRiskLow;
+
+  /// No description provided for @spendForecastRiskMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium risk'**
+  String get spendForecastRiskMedium;
+
+  /// No description provided for @spendForecastRiskHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High risk'**
+  String get spendForecastRiskHigh;
+
+  /// No description provided for @spendForecastSpent.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent {amount}'**
+  String spendForecastSpent(String amount);
+
+  /// No description provided for @spendForecastBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget {amount}'**
+  String spendForecastBudget(String amount);
+
+  /// No description provided for @spendForecastPrevious.
+  ///
+  /// In en, this message translates to:
+  /// **'Last month {amount}'**
+  String spendForecastPrevious(String amount);
+
+  /// No description provided for @spendForecastNotYet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough data yet, check back in a few days'**
+  String get spendForecastNotYet;
+
+  /// No description provided for @spendForecastTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending forecast'**
+  String get spendForecastTitle;
+
+  /// No description provided for @spendForecastHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'By the end of {month} you may spend about'**
+  String spendForecastHeadline(String month);
+
+  /// No description provided for @spendForecastOver.
+  ///
+  /// In en, this message translates to:
+  /// **'About {amount} over budget'**
+  String spendForecastOver(String amount);
+
+  /// No description provided for @spendForecastToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get spendForecastToday;
+
+  /// No description provided for @spendForecastLegendSpent.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent'**
+  String get spendForecastLegendSpent;
+
+  /// No description provided for @spendForecastLegendForecast.
+  ///
+  /// In en, this message translates to:
+  /// **'Forecast'**
+  String get spendForecastLegendForecast;
+
+  /// No description provided for @spendForecastDailyAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily average'**
+  String get spendForecastDailyAverage;
+
+  /// No description provided for @spendForecastAllowance.
+  ///
+  /// In en, this message translates to:
+  /// **'To stay on budget, per day'**
+  String get spendForecastAllowance;
+
+  /// No description provided for @spendForecastAllowanceValue.
+  ///
+  /// In en, this message translates to:
+  /// **'under {amount}'**
+  String spendForecastAllowanceValue(String amount);
+
+  /// No description provided for @spendForecastLastMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Last month'**
+  String get spendForecastLastMonth;
+
+  /// No description provided for @spendForecastTop.
+  ///
+  /// In en, this message translates to:
+  /// **'Most spent this month'**
+  String get spendForecastTop;
+
+  /// No description provided for @spendForecastNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated from your average daily spending since the start of the month, not money already spent.'**
+  String get spendForecastNote;
+
+  /// No description provided for @spendForecastEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough data yet'**
+  String get spendForecastEmpty;
+
+  /// No description provided for @spendForecastEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Check back in a few days.'**
+  String get spendForecastEmptyBody;
+
+  /// No description provided for @spendForecastChart.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{Spent {spent} after 1 day, about {forecast} by month end} other{Spent {spent} after {days} days, about {forecast} by month end}}'**
+  String spendForecastChart(int days, String spent, String forecast);
+
+  /// No description provided for @spendForecastChartBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{Spent {spent} after 1 day, about {forecast} by month end, budget {budget}} other{Spent {spent} after {days} days, about {forecast} by month end, budget {budget}}}'**
+  String spendForecastChartBudget(
+    int days,
+    String spent,
+    String forecast,
+    String budget,
+  );
+
+  /// No description provided for @goalForecastPace.
+  ///
+  /// In en, this message translates to:
+  /// **'At your recent pace'**
+  String get goalForecastPace;
+
+  /// No description provided for @goalForecastExpected.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected by {month}'**
+  String goalForecastExpected(String month);
+
+  /// No description provided for @goalForecastLate.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 month late} other{{count} months late}}'**
+  String goalForecastLate(int count);
+
+  /// No description provided for @goalForecastEarly.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 month early} other{{count} months early}}'**
+  String goalForecastEarly(int count);
+
+  /// No description provided for @goalForecastOnTime.
+  ///
+  /// In en, this message translates to:
+  /// **'On time'**
+  String get goalForecastOnTime;
+
+  /// No description provided for @goalForecastToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get goalForecastToday;
+
+  /// No description provided for @goalForecastDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Due'**
+  String get goalForecastDue;
+
+  /// No description provided for @goalForecastWhen.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected'**
+  String get goalForecastWhen;
+
+  /// No description provided for @goalForecastAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'{months, plural, =1{You put in {amount} last month.} other{You put in {amount} a month on average over the last {months} months.}}'**
+  String goalForecastAverage(int months, String amount);
+
+  /// No description provided for @goalForecastCatchUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Put in {amount} a month to make it on time.'**
+  String goalForecastCatchUp(String amount);
+
+  /// No description provided for @goalForecastNotYet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough data to estimate yet'**
+  String get goalForecastNotYet;
+
+  /// No description provided for @goalForecastNotYetBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your first contribution to see when you\'ll get there.'**
+  String get goalForecastNotYetBody;
+
+  /// No description provided for @goalDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Due date'**
+  String get goalDue;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

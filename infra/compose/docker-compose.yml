@@ -8,7 +8,8 @@ services:
       POSTGRES_DB: freeva
     ports:
       # Host 5434: máy local thường đã chạy PostgreSQL :5432
-      - "5434:5432"
+      # SEC-P6-002: chỉ localhost — mật khẩu mặc định, không mở ra mạng LAN.
+      - "127.0.0.1:5434:5432"
     volumes:
       - freeva_pg:/var/lib/postgresql/data
     healthcheck:
@@ -21,7 +22,7 @@ services:
     image: redis:7-alpine
     container_name: freeva-redis
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -32,8 +33,9 @@ services:
     image: mailhog/mailhog:v1.0.1
     container_name: freeva-mailhog
     ports:
-      - "1025:1025"
-      - "8025:8025"
+      - "127.0.0.1:1025:1025"
+      # Web UI hiển thị mọi mail local (link xác minh, reset): chỉ localhost.
+      - "127.0.0.1:8025:8025"
 
 volumes:
   freeva_pg:

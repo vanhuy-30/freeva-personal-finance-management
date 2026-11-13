@@ -7,6 +7,8 @@ import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_button.dart';
 import '../../../../core/widgets/freeva_text_field.dart';
 import '../../../auth/domain/auth_repository.dart';
+import '../../../server_config/domain/app_limits.dart';
+import '../../../../core/di/injection.dart';
 
 /// One hidden-input field of the PIN / password forms.
 class SecretField extends StatelessWidget {
@@ -98,12 +100,18 @@ class SecurityFormBody extends StatelessWidget {
 /// Message for a failed security action, written for the field it concerns.
 String securityError(S s, AuthFailure failure, {required bool pin}) =>
     switch (failure.code) {
-      AuthError.wrongPin => s.mePinWrong,
+      AuthError.wrongPin => s.mePinWrong(
+        getIt<AppLimitsSource>().requireLimits.pinMaxAttempts,
+      ),
       AuthError.credentials => s.mePasswordWrong,
       AuthError.passwordMismatch =>
         pin ? s.mePinMismatch : s.mePasswordMismatch,
-      AuthError.invalidInput ||
-      AuthError.invalidToken => pin ? s.mePinInvalid : s.mePasswordWeak,
+      AuthError.invalidInput || AuthError.invalidToken =>
+        pin
+            ? s.mePinInvalid
+            : s.mePasswordWeak(
+                getIt<AppLimitsSource>().requireLimits.passwordMinLength,
+              ),
       AuthError.rateLimited => s.meBusyRetry(
         ((failure.retryAfter ?? 900) / 60).ceil(),
       ),

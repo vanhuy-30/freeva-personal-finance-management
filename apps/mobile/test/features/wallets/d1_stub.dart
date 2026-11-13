@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:mobile/core/di/injection.dart';
 import 'package:mobile/core/l10n/generated/app_localizations.dart';
 import 'package:mobile/core/theme/app_theme.dart';
@@ -54,8 +57,12 @@ List<Wallet> canvasWallets() => [
 ];
 
 class StubWalletViewModel extends WalletViewModel {
-  StubWalletViewModel({List<Wallet>? wallets, this.busy = false})
-    : wallets = wallets ?? canvasWallets();
+  StubWalletViewModel({
+    List<Wallet>? wallets,
+    this.busy = false,
+    DateTime? today,
+  }) : wallets = wallets ?? canvasWallets(),
+       today = today ?? DateTime(2026, 10, 21);
 
   @override
   List<Wallet> wallets;
@@ -70,7 +77,7 @@ class StubWalletViewModel extends WalletViewModel {
   @override
   String get mainCurrency => 'VND';
   @override
-  DateTime get today => DateTime(2026, 10, 21);
+  final DateTime today;
   final reordered = <List<String>>[];
   final archived = <String>[];
 
@@ -197,10 +204,17 @@ Future<Widget> d1App(
   double scale = 1,
 }) async {
   await getIt.reset();
+  registerTestServerConfig();
   final auth =
       DefaultAuthViewModel(
           DefaultAuthUseCases(
-            AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+            AuthRepositoryImpl(
+              FakeApi(),
+              MemoryVault(),
+              FakeBiometrics(),
+              testServerConfigModel(),
+            ),
+            testServerConfigModel(),
           ),
         )
         ..stage = AuthStage.unlocked

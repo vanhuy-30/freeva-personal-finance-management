@@ -1,4 +1,7 @@
 import 'package:dartz/dartz.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/core/di/injection.dart';
@@ -286,11 +289,18 @@ Future<RecurringHarness> recurringApp(
   double scale = 1,
 }) async {
   await getIt.reset();
-  final repo = AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics());
-  final auth = DefaultAuthViewModel(DefaultAuthUseCases(repo))
-    ..stage = AuthStage.unlocked
-    ..hasPin = true
-    ..ready = true;
+  registerTestServerConfig();
+  final repo = AuthRepositoryImpl(
+    FakeApi(),
+    MemoryVault(),
+    FakeBiometrics(),
+    testServerConfigModel(),
+  );
+  final auth =
+      DefaultAuthViewModel(DefaultAuthUseCases(repo, testServerConfigModel()))
+        ..stage = AuthStage.unlocked
+        ..hasPin = true
+        ..ready = true;
   final profiles = MemoryProfiles()
     ..value = const Profile(
       locale: 'vi',
@@ -301,7 +311,7 @@ Future<RecurringHarness> recurringApp(
       displayName: 'Minh',
     );
   final profile = DefaultProfileViewModel(
-    ProfileUseCases(profiles),
+    ProfileUseCases(profiles, testServerConfigModel()),
     auth,
     exportCase(repo),
   );

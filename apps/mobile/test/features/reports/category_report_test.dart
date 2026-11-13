@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/core/di/injection.dart';
@@ -23,7 +26,13 @@ import 'f2_stub.dart';
 DefaultAuthViewModel _auth() =>
     DefaultAuthViewModel(
         DefaultAuthUseCases(
-          AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+          AuthRepositoryImpl(
+            FakeApi(),
+            MemoryVault(),
+            FakeBiometrics(),
+            testServerConfigModel(),
+          ),
+          testServerConfigModel(),
         ),
       )
       ..stage = AuthStage.unlocked
@@ -74,6 +83,7 @@ void main() {
               report,
               'VND',
               BreakdownKind.expense,
+              top: 3,
             ).slices.first,
           );
         }
@@ -129,6 +139,7 @@ void main() {
           report,
           'VND',
           BreakdownKind.income,
+          top: 3,
         ).slices;
         final args = CategoryDetailArgs(
           report: report,
@@ -155,7 +166,12 @@ void main() {
     test(
       'asks for the three largest of the slice in its currency and period',
       () async {
-        final model = CategoryReportViewModel(repository, auth, f2Args());
+        final model = CategoryReportViewModel(
+          repository,
+          auth,
+          f2Args(),
+          shown: 3,
+        );
         await model.load();
         final query = repository.queries.single;
         expect(query.pageSize, 3);
@@ -174,7 +190,12 @@ void main() {
       'a failure keeps the screen usable; an expired session signs out',
       () async {
         repository.failure = const AuthFailure(AuthError.network);
-        final model = CategoryReportViewModel(repository, auth, f2Args());
+        final model = CategoryReportViewModel(
+          repository,
+          auth,
+          f2Args(),
+          shown: 3,
+        );
         await model.load();
         expect(model.failure?.code, AuthError.network);
         expect(model.largest, isEmpty);
@@ -193,6 +214,7 @@ void main() {
 
     setUp(() async {
       await getIt.reset();
+      registerTestServerConfig();
       repository = FakeTransactionRepository();
       transactions = StubTransactionViewModel();
       auth = _auth();
@@ -202,6 +224,7 @@ void main() {
     tearDown(() async {
       auth.dispose();
       await getIt.reset();
+      registerTestServerConfig();
     });
 
     Widget app(CategoryDetailArgs args, {double scale = 1}) =>
@@ -286,6 +309,7 @@ void main() {
           report,
           'VND',
           BreakdownKind.income,
+          top: 3,
         ).slices.single;
         await tester.pumpWidget(
           app(

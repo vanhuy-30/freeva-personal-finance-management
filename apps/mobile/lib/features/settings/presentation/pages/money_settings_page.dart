@@ -14,6 +14,8 @@ import '../../../profile/presentation/viewmodels/profile_view_model.dart';
 import '../widgets/choice_sheet.dart';
 import '../widgets/income_sheet.dart';
 import '../widgets/profile_actions.dart';
+import '../../../server_config/domain/app_limits.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 /// Thu nhập và kỳ tính (board `MeMoney`): monthly income, default currency
 /// and the day each month starts. Every pick saves at once.
@@ -59,7 +61,12 @@ class _MoneySettingsPageState extends State<MoneySettingsPage> {
       title: s.meFiscal,
       selected: saved.fiscalDay,
       options: [
-        for (var day = 1; day <= 28; day++) Choice(day, s.meFiscalDay(day)),
+        for (
+          var day = 1;
+          day <= getIt<AppLimitsSource>().requireLimits.periodStartDayMax;
+          day++
+        )
+          Choice(day, s.meFiscalDay(day)),
       ],
     );
     if (picked == null || picked == saved.fiscalDay || !mounted) return;
@@ -98,7 +105,7 @@ class _MoneySettingsPageState extends State<MoneySettingsPage> {
                       ? s.meIncomeNone
                       : formatMoneyText(
                           saved!.monthlyIncomeMinor!,
-                          saved.currency == 'VND' ? 0 : 2,
+                          CurrencyCatalog.current.digits(saved.currency),
                           s.localeName,
                         ),
                   onTap: saved == null

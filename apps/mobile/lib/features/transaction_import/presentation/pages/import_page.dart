@@ -8,7 +8,10 @@ import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_toast.dart';
 import '../../../../core/widgets/freeva_top_bar.dart';
+import '../../../../core/money/currency_catalog.dart';
+import '../../domain/import_models.dart';
 import '../viewmodels/import_view_model.dart';
+import '../widgets/import_category_sheet.dart';
 import '../widgets/import_columns_view.dart';
 import '../widgets/import_done_view.dart';
 import '../widgets/import_map_view.dart';
@@ -63,6 +66,25 @@ class _ImportPageState extends State<ImportPage> {
   Future<void> _preview() => _run(model.showPreview);
   Future<void> _commit() => _run(model.commit);
 
+  /// Board R.3: pick a category for one row, then plan again.
+  Future<void> _pickCategory(ImportRow row) async {
+    final picked = await showImportCategorySheet(
+      context,
+      choice: model.categoryChoice(row),
+      digits: model.digitsOf(
+        row.currencyCode ?? CurrencyCatalog.current.defaultCode,
+      ),
+    );
+    if (picked == null || !mounted) return;
+    await _run(
+      () => model.chooseCategory(
+        row,
+        picked.categoryId,
+        applyToMerchant: picked.applyToMerchant,
+      ),
+    );
+  }
+
   Future<void> _undo() async {
     final s = S.of(context);
     final undone = await model.undo();
@@ -92,7 +114,11 @@ class _ImportPageState extends State<ImportPage> {
         onNext: _columnsNext,
       ),
       ImportStep.map => ImportMapView(model: model, onPreview: _preview),
-      ImportStep.preview => ImportPreviewView(model: model, onCommit: _commit),
+      ImportStep.preview => ImportPreviewView(
+        model: model,
+        onCommit: _commit,
+        onPickCategory: _pickCategory,
+      ),
       ImportStep.done => ImportDoneView(
         model: model,
         onView: () => context.go('/transactions'),

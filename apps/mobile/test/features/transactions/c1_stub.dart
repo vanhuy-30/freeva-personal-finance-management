@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:mobile/core/di/injection.dart';
 import 'package:mobile/core/l10n/generated/app_localizations.dart';
 import 'package:mobile/core/theme/app_theme.dart';
@@ -50,7 +53,8 @@ TxLeg tx(
   transferGroupId: group,
   deletedAt: deleted ? DateTime.utc(2026, 10, 21) : null,
   version: 1,
-  createdAt: DateTime.utc(2026, 10, 21),
+  // Local 07:00, not a UTC instant: goldens show the same "21/10 07:00" in every TZ.
+  createdAt: DateTime(2026, 10, 21, 7),
   refundOfId: refundOf,
   refundedMinor: refunded == null ? null : b(refunded),
   installmentPlanId: plan,
@@ -495,6 +499,7 @@ Future<Widget> c1App(
   double scale = 1,
 }) async {
   await getIt.reset();
+  registerTestServerConfig();
   getIt.registerSingleton<TransactionViewModel>(model);
   getIt.registerSingleton<SyncViewModel>(FakeSyncViewModel());
   getIt.registerFactoryParam<TransactionResultsViewModel, bool, void>(

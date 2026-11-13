@@ -104,6 +104,8 @@ class ImportRequest {
     this.walletMap = const {},
     this.categoryMap = const {},
     this.defaultAccountId,
+    this.rowCategoryMap = const {},
+    this.merchantCategoryMap = const {},
   });
   final String text;
   final ImportSource source;
@@ -119,6 +121,47 @@ class ImportRequest {
   /// File category name to Freeva category id.
   final Map<String, String> categoryMap;
   final String? defaultAccountId;
+
+  /// `MOB-P5-E03`: 1-based data row to category id, for one row the file
+  /// left without a category. Wins over [merchantCategoryMap].
+  final Map<int, String> rowCategoryMap;
+
+  /// `MOB-P5-E03`: merchant text to category id for every row of that
+  /// merchant the file left without a category ("Áp dụng cho N khoản ở
+  /// đây"). The server matches it ignoring case and accents.
+  final Map<String, String> merchantCategoryMap;
+}
+
+/// Where the server's guess came from.
+enum ImportSuggestionSource {
+  remembered,
+  history,
+  common;
+
+  static ImportSuggestionSource parse(String value) => switch (value) {
+    'remembered' => remembered,
+    'history' => history,
+    _ => common,
+  };
+}
+
+/// `MOB-P5-E03`: the server's category guess for a row the file left
+/// without a category.
+class ImportSuggestion {
+  const ImportSuggestion({
+    required this.categoryId,
+    required this.categoryName,
+    required this.source,
+    this.iconToken,
+    this.colorToken,
+    this.matchCount = 0,
+  });
+  final String categoryId;
+  final String categoryName;
+  final String? iconToken;
+  final String? colorToken;
+  final ImportSuggestionSource source;
+  final int matchCount;
 }
 
 /// One planned or written line. [rows] are the 1-based data rows of the file
@@ -136,6 +179,7 @@ class ImportRow {
     this.notes,
     this.accountId,
     this.categoryId,
+    this.suggestion,
   });
   final List<int> rows;
   final ImportRowStatus status;
@@ -152,6 +196,14 @@ class ImportRow {
   final String? notes;
   final String? accountId;
   final String? categoryId;
+
+  /// Server guess, only for rows the file left without a category.
+  final ImportSuggestion? suggestion;
+
+  /// True while the row still takes the suggested category (the user did
+  /// not pick another one).
+  bool get keepsSuggestion =>
+      suggestion != null && categoryId == suggestion!.categoryId;
 }
 
 class ImportSummary {
@@ -160,11 +212,15 @@ class ImportSummary {
     required this.ready,
     required this.duplicate,
     required this.invalid,
+    this.suggested = 0,
   });
   final int rowCount;
   final int ready;
   final int duplicate;
   final int invalid;
+
+  /// Rows (not invalid) that carry a suggestion: the "Gợi ý N" chip.
+  final int suggested;
 }
 
 class ImportPreview {

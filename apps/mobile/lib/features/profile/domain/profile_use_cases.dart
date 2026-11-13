@@ -5,10 +5,14 @@ import '../../auth/domain/auth_repository.dart';
 import '../../onboarding/domain/onboarding_answers.dart';
 import 'profile.dart';
 import 'profile_repository.dart';
+import '../../server_config/domain/app_limits.dart';
 
 @injectable
 class ProfileUseCases {
-  ProfileUseCases(this._repository);
+  ProfileUseCases(this._repository, this._limits);
+
+  /// Server limits (MOB-P5-001).
+  final AppLimitsSource _limits;
   final ProfileRepository _repository;
   Future<Either<AuthFailure, Profile>> load() => _repository.load();
   Future<Either<AuthFailure, ProfileOptions>> options() =>
@@ -51,7 +55,7 @@ class ProfileUseCases {
         !options.currencies.contains(profile.currency) ||
         !options.timezones.contains(profile.timezone) ||
         profile.fiscalDay < 1 ||
-        profile.fiscalDay > 28 ||
+        profile.fiscalDay > _limits.requireLimits.periodStartDayMax ||
         profile.version < 1) {
       return Future.value(left(const AuthFailure(AuthError.invalidInput)));
     }

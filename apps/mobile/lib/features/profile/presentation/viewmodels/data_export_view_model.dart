@@ -13,6 +13,7 @@ import '../../domain/export_period.dart';
 import '../../domain/profile_use_cases.dart';
 import '../../domain/transactions_csv_export_use_case.dart';
 import 'profile_view_model.dart';
+import '../../../server_config/domain/app_limits.dart';
 
 /// Which file the user is exporting (board `DataExport`).
 enum ExportKind { table, fullCopy }
@@ -35,7 +36,7 @@ abstract class DataExportViewModel extends ChangeNotifier {
   bool get exporting;
   AuthFailure? get failure;
 
-  /// Above [csvExportMaxRows]: the user has to narrow the range.
+  /// Above server `export.csvMaxRows`: the user has to narrow the range.
   bool get tooMany;
   bool get canExport;
 
@@ -45,7 +46,7 @@ abstract class DataExportViewModel extends ChangeNotifier {
   void selectWallets(Set<String> ids);
 
   /// True when a file was shared; false on failure or a dismissed sheet.
-  Future<bool> export();
+  Future<bool> export({String? password});
 }
 
 @injectable
@@ -57,7 +58,11 @@ class DefaultDataExportViewModel extends DataExportViewModel {
     this._csv,
     this._profile,
     this._auth,
+    this._limits,
   );
+
+  /// Server limits (MOB-P5-001).
+  final AppLimitsSource _limits;
   final ProfileUseCases _profileUseCases;
   final WalletUseCases _wallets;
   final TransactionUseCases _transactions;
@@ -94,7 +99,8 @@ class DefaultDataExportViewModel extends DataExportViewModel {
   DateRange? get range => exportRange(period, _today, _fiscalDay, custom);
 
   @override
-  bool get tooMany => count != null && count! > csvExportMaxRows;
+  bool get tooMany =>
+      count != null && count! > _limits.requireLimits.exportCsvMaxRows;
 
   @override
   bool get canExport {
@@ -184,7 +190,7 @@ class DefaultDataExportViewModel extends DataExportViewModel {
   }
 
   @override
-  Future<bool> export() async {
+  Future<bool> export({String? password}) async {
     if (!canExport) return false;
     final epoch = _epoch;
     exporting = true;
@@ -192,7 +198,7 @@ class DefaultDataExportViewModel extends DataExportViewModel {
     _notify();
     var shared = false;
     if (kind == ExportKind.fullCopy) {
-      shared = await _profile.exportData();
+      shared = await _profile.exportData(password: password);
       if (_profile.failure != null) failure = _profile.failure;
     } else {
       final result = await _csv(

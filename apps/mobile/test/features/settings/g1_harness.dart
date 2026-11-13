@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:go_router/go_router.dart';
 import 'package:mobile/core/di/injection.dart';
@@ -41,17 +44,23 @@ class G1 {
   }) async {
     tzdata.initializeTimeZones();
     await getIt.reset();
+    registerTestServerConfig();
     final g = G1();
     g.api = FakeApi();
     g.vault = MemoryVault();
     g.biometrics = FakeBiometrics();
-    g.repository = AuthRepositoryImpl(g.api, g.vault, g.biometrics);
+    g.repository = AuthRepositoryImpl(
+      g.api,
+      g.vault,
+      g.biometrics,
+      testServerConfigModel(),
+    );
     await g.repository.submit(AuthAction.login, {
       'email': email,
       'password': 'password long enough',
     });
     await g.repository.setupPin('123456', true, 'unlock');
-    final cases = DefaultAuthUseCases(g.repository);
+    final cases = DefaultAuthUseCases(g.repository, testServerConfigModel());
     g.auth = DefaultAuthViewModel(cases)
       ..ready = true
       ..stage = AuthStage.unlocked
@@ -78,10 +87,15 @@ class G1 {
         goals: goals,
       );
     g.profile = DefaultProfileViewModel(
-      ProfileUseCases(g.profiles),
+      ProfileUseCases(g.profiles, testServerConfigModel()),
       g.auth,
       exportCase(
-        AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+        AuthRepositoryImpl(
+          FakeApi(),
+          MemoryVault(),
+          FakeBiometrics(),
+          testServerConfigModel(),
+        ),
       ),
     );
     await g.profile.load();

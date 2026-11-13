@@ -21,6 +21,8 @@ import '../../../settings/presentation/widgets/avatar_letter.dart';
 import '../../../settings/presentation/widgets/danger_text_button.dart';
 import '../../../settings/presentation/widgets/profile_actions.dart';
 import '../viewmodels/profile_view_model.dart';
+import '../widgets/account_step_up.dart';
+import '../../../server_config/domain/app_limits.dart';
 
 /// Hồ sơ: information about you. Name is editable; the email changes later
 /// (it needs a confirmation by mail).
@@ -79,11 +81,19 @@ class _ProfilePageState extends State<ProfilePage> {
       confirmLabel: s.meDeleteConfirm,
       destructive: true,
     );
-    if (!ok) return;
-    await auth.deleteAccount();
+    if (!ok || !mounted) return;
+    final password = await askAccountPassword(context);
+    if (password == null || !mounted) return;
+    await auth.deleteAccount(password: password);
     // On success the stage is signedOut and AuthGate has left this page.
     if (!mounted || auth.stage == AuthStage.signedOut) return;
-    showFreevaToast(context, message: s.meDeleteError);
+    final failure = auth.failure;
+    showFreevaToast(
+      context,
+      message: failure == null
+          ? s.meDeleteError
+          : accountStepUpError(s, failure, s.meDeleteError),
+    );
   }
 
   @override
@@ -123,7 +133,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         label: s.meProfileName,
                         controller: name,
                         leadingIcon: LucideIcons.user,
-                        maxLength: 50,
+                        maxLength: getIt<AppLimitsSource>()
+                            .requireLimits
+                            .displayNameMaxLength,
                         textInputAction: TextInputAction.done,
                         onSubmitted: (_) {
                           if (_changed) _save();

@@ -1,4 +1,7 @@
 import 'package:dartz/dartz.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/features/home/presentation/pages/notifications_page.dart';
@@ -23,6 +26,8 @@ import 'package:mobile/features/transactions/presentation/viewmodels/transaction
 import '../notifications/fake_notification_view_model.dart';
 import '../transactions/c1_stub.dart' show StubTransactionViewModel;
 import 'g1_harness.dart';
+
+import 'package:mobile/core/app_version/app_version.dart';
 
 class FakeTags implements TagUseCases {
   final tags = [
@@ -101,6 +106,7 @@ void main() {
   tearDown(() async {
     g.dispose();
     await getIt.reset();
+    registerTestServerConfig();
   });
 
   void tall(WidgetTester tester) {
@@ -177,7 +183,12 @@ void main() {
   test(
     'a failed send keeps the form and an expired session signs out',
     () async {
-      final model = FeedbackViewModel(feedback, g.auth)..edit(message: 'hi');
+      final model = FeedbackViewModel(
+        feedback,
+        g.auth,
+        testServerConfigModel(),
+        AppVersion.fixed('0.0.1+1'),
+      )..edit(message: 'hi');
       feedback.failure = const AuthFailure(AuthError.network);
       await model.send();
       expect(model.sent, isFalse);
@@ -227,7 +238,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.text('80% và 100%'));
+    await tester.tap(find.text('mốc bạn chọn'));
     await tester.pumpAndSettle();
     expect(find.text('PAGE /budgets'), findsOneWidget);
   });

@@ -3,7 +3,9 @@ import 'package:injectable/injectable.dart';
 
 import '../../auth/domain/auth_repository.dart';
 import 'goal.dart';
+import 'goal_forecast.dart';
 import 'goal_repository.dart';
+import '../../server_config/domain/app_limits.dart';
 
 abstract class GoalUseCases {
   Future<Either<AuthFailure, List<Goal>>> list({bool includeArchived = false});
@@ -30,17 +32,25 @@ abstract class GoalUseCases {
     required BigInt targetMinor,
     required String targetDate,
   });
+
+  /// When the goal is likely reached at the recent pace; null when off.
+  Future<Either<AuthFailure, GoalForecast?>> forecast(String id);
 }
 
 @LazySingleton(as: GoalUseCases)
 class DefaultGoalUseCases implements GoalUseCases {
-  DefaultGoalUseCases(this._repository);
+  DefaultGoalUseCases(this._repository, this._limits);
+
+  /// Server limits (MOB-P5-001).
+  final AppLimitsSource _limits;
   final GoalRepository _repository;
 
   static final _day = RegExp(r'^\d{4}-\d{2}-\d{2}$');
   static const _invalid = AuthFailure(AuthError.invalidInput);
 
-  bool _name(String name) => name.trim().isNotEmpty && name.trim().length <= 80;
+  bool _name(String name) =>
+      name.trim().isNotEmpty &&
+      name.trim().length <= _limits.requireLimits.goalNameMaxLength;
   bool _date(String? day) => day == null || _day.hasMatch(day);
 
   @override
@@ -151,4 +161,8 @@ class DefaultGoalUseCases implements GoalUseCases {
       targetDate: targetDate,
     );
   }
+
+  @override
+  Future<Either<AuthFailure, GoalForecast?>> forecast(String id) =>
+      _repository.forecast(id);
 }

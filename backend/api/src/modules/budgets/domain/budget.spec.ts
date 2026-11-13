@@ -103,5 +103,8 @@ describe('BE-P2-E02 category lines and thresholds', () => {
     expect(normalizeAlertThresholds(undefined)).toEqual([80, 100]);
     expect(normalizeAlertThresholds([70, 80, 90, 100])).toEqual([70, 80, 90, 100]);
     expect(normalizeAlertThresholds([80, 100])).toEqual([80, 100]);
+    // BE-P5-001: staff-set default and max
+    expect(normalizeAlertThresholds(undefined, { defaults: [50, 90], max: 2 })).toEqual([50, 90]);
+    expect(() => normalizeAlertThresholds([70, 80, 90], { defaults: [80], max: 2 })).toThrow();
   });
 });

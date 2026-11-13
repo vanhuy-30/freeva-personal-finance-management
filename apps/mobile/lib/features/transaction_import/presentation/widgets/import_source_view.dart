@@ -8,6 +8,9 @@ import '../../../../core/widgets/freeva_button.dart';
 import '../../../../core/widgets/check_mark.dart';
 import '../../domain/import_models.dart';
 import '../viewmodels/import_view_model.dart';
+import '../../../server_config/domain/app_limits.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/money/money_text.dart';
 
 /// Board `ImportSource`: where the file comes from.
 class ImportSourceView extends StatelessWidget {
@@ -23,10 +26,16 @@ class ImportSourceView extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final c = context.colors;
+    // Server `import.maxRows`, grouped like other numbers ("2.000").
+    final maxRows = formatMoneyText(
+      BigInt.from(getIt<AppLimitsSource>().requireLimits.importMaxRows),
+      0,
+      Localizations.localeOf(context).toString(),
+    );
     final problem = switch (model.problem) {
       ImportFileProblem.unreadable => s.importProblemUnreadable,
       ImportFileProblem.empty => s.importProblemEmpty,
-      ImportFileProblem.tooManyRows => s.importProblemTooMany,
+      ImportFileProblem.tooManyRows => s.importProblemTooMany(maxRows),
       ImportFileProblem.tooLarge => s.importProblemTooLarge,
       null => null,
     };
@@ -96,7 +105,7 @@ class ImportSourceView extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: FreevaSpace.s1),
                 child: Text(
-                  problem ?? s.importSourceNote,
+                  problem ?? s.importSourceNote(maxRows),
                   style: FreevaTypography.bodyS.copyWith(
                     height: 18 / 13,
                     color: problem == null ? c.textSecondary : c.statusDanger,

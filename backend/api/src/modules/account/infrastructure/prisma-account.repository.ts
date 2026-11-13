@@ -48,7 +48,7 @@ export class PrismaAccountRepository implements AccountRepository {
       select: {
         id: true, email: true, displayName: true, locale: true, timezone: true, defaultCurrencyCode: true,
         fiscalMonthStartDay: true, onboardingGoals: true,
-        monthlyIncomeMinor: true, displayCurrencyCode: true, emailVerifiedAt: true, categoriesInitializedAt: true, categoriesSupplementedAt: true,
+        monthlyIncomeMinor: true, displayCurrencyCode: true, emailVerifiedAt: true, categoriesInitializedAt: true, categoriesSupplementedAt: true, autoSuggestEnabled: true,
         createdAt: true, updatedAt: true, oauthIdentities: { select: { provider: true } },
       },
     });
@@ -80,6 +80,9 @@ export class PrismaAccountRepository implements AccountRepository {
     const investmentPrices = await tx.investmentPrice.findMany({ where: { userId }, orderBy: order });
     const cardInstallmentPlans = await tx.cardInstallmentPlan.findMany({ where: { userId }, orderBy: order });
     const importBatches = await tx.importBatch.findMany({ where: { userId }, orderBy: order });
+    const categorySuggestionMappings = await tx.categorySuggestionMapping.findMany({
+      where: { userId }, orderBy: order, select: { id: true, merchant: true, categoryId: true, createdAt: true, updatedAt: true },
+    });
     const notificationPreferences = await tx.notificationPreference.findUnique({ where: { userId } });
     const notifications = await tx.inAppNotification.findMany({
       where: { userId },
@@ -132,6 +135,7 @@ export class PrismaAccountRepository implements AccountRepository {
       investmentPrices,
       cardInstallmentPlans,
       importBatches,
+      categorySuggestionMappings,
       budgetMonths: budgetMonths.map(row => ({
         id: row.id,
         currencyCode: row.currencyCode,
@@ -189,6 +193,7 @@ export class PrismaAccountRepository implements AccountRepository {
     await tx.notificationPreference.deleteMany({ where: { userId } });
     await tx.cardInstallmentPlan.deleteMany({ where: { userId } });
     await tx.importBatch.deleteMany({ where: { userId } });
+    await tx.categorySuggestionMapping.deleteMany({ where: { userId } });
     await tx.investmentPrice.deleteMany({ where: { userId } });
     await tx.investmentTrade.deleteMany({ where: { userId } });
     await tx.investment.deleteMany({ where: { userId } });
@@ -211,6 +216,8 @@ export class PrismaAccountRepository implements AccountRepository {
     await tx.financialAccount.deleteMany({ where: { userId } });
     await tx.fxQuote.deleteMany({ where: { userId } });
     await tx.userFxRate.deleteMany({ where: { userId } });
+    // BE-P5-E08: drop the user from flag allow-lists; bump version so a stale admin save conflicts.
+    await tx.$executeRaw`UPDATE "FeatureFlag" SET "userIds" = array_remove("userIds", ${userId}::uuid), "version" = "version" + 1, "updatedAt" = CURRENT_TIMESTAMP WHERE ${userId}::uuid = ANY("userIds")`;
     await tx.auditEvent.create({ data: audit(userId, 'user.account_delete') });
     await tx.user.delete({ where: { id: userId } });
     return true;

@@ -2,11 +2,13 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../../../../core/di/injection.dart';
 import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../../core/theme/theme_context.dart';
 import '../../../../../core/theme/tokens.g.dart';
 import '../../../../../core/widgets/amount_keypad.dart';
 import '../../../../../core/widgets/freeva_button.dart';
+import '../../../../category_suggest/presentation/viewmodels/category_suggest_view_model.dart';
 import '../../../domain/transaction.dart';
 import '../../viewmodels/transaction_composer.dart';
 import '../../viewmodels/transaction_view_model.dart';
@@ -57,8 +59,39 @@ class _ComposerScreenState extends State<TransactionComposerScreen>
   late final notes = TextEditingController(text: composer.notes);
   late bool details = !composer.isNew;
 
+  /// R.1: only while recording a new transaction.
+  @override
+  late final CategorySuggestViewModel? suggest =
+      composer.isNew && getIt.isRegistered<CategorySuggestViewModel>()
+      ? getIt<CategorySuggestViewModel>()
+      : null;
+
+  @override
+  void initState() {
+    super.initState();
+    if (suggest == null) return;
+    composer.addListener(_suggestQuery);
+    merchant.addListener(_suggestQuery);
+    notes.addListener(_suggestQuery);
+    _suggestQuery();
+  }
+
+  void _suggestQuery() => suggest?.update(
+    type: composer.type,
+    merchant: merchant.text,
+    note: notes.text,
+    categoryId: composer.categoryId,
+    fits: (id) => composer.fitting.any((c) => c.id == id),
+  );
+
   @override
   void dispose() {
+    if (suggest case final model?) {
+      composer.removeListener(_suggestQuery);
+      merchant.removeListener(_suggestQuery);
+      notes.removeListener(_suggestQuery);
+      model.dispose();
+    }
     composer.dispose();
     merchant.dispose();
     notes.dispose();
@@ -128,6 +161,7 @@ class _ComposerScreenState extends State<TransactionComposerScreen>
                           details: details,
                           merchant: merchant,
                           notes: notes,
+                          suggest: suggest,
                           onMore: () => setState(() => details = true),
                         ),
                         const SizedBox(height: FreevaSpace.s4),

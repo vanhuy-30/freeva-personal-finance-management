@@ -12,6 +12,7 @@ import 'package:mobile/features/net_worth/domain/net_worth_history.dart';
 
 import '../home/fixtures.dart' show b;
 import 'investment_stub.dart';
+import '../../support/server_config_fixture.dart';
 
 class _Api implements AuthorizedApi {
   Map<String, dynamic> json = {};
@@ -143,6 +144,7 @@ void main() {
     test('rejects a malformed currency', () async {
       final r = await DefaultInvestmentUseCases(
         InvestmentRepositoryImpl(_Api()),
+        testServerConfigModel(),
       ).valueLine(NetWorthWindow.half, currency: 'vnd');
       expect(r.isLeft(), isTrue);
     });

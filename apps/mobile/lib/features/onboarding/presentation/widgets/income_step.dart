@@ -8,6 +8,7 @@ import '../../../../core/widgets/amount_keypad.dart';
 import '../../../../core/widgets/freeva_chip.dart';
 import '../viewmodels/onboarding_view_model.dart';
 import 'onboarding_frame.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 /// Question 2 (board ObIncome): monthly income. A big underlined number with
 /// quick amounts; the keypad below types into it.
@@ -33,7 +34,7 @@ class IncomeStep extends StatelessWidget {
       builder: (context, _) {
         final empty = model.income == BigInt.zero;
         final amount = empty ? '0' : formatMoneyText(model.income, 0, locale);
-        final symbol = model.currency == 'VND' ? '₫' : model.currency;
+        final symbol = CurrencyCatalog.current.symbol(model.currency);
         return OnboardingFrame(
           step: 2,
           title: s.onbIncomeTitle,
@@ -93,17 +94,20 @@ class IncomeStep extends StatelessWidget {
                 ),
               ),
             ),
+            // The quick amounts are configured in VND (`onboarding.incomeSuggestionsVnd`).
             if (model.currency == 'VND') ...[
               const SizedBox(height: FreevaSpace.s4),
               Wrap(
                 spacing: FreevaSpace.s2,
                 runSpacing: FreevaSpace.s2,
                 children: [
-                  for (final value in OnboardingViewModel.incomeSuggestions)
+                  for (final value in model.incomeSuggestions)
                     FreevaChip(
-                      label: s.onbIncomeChip('${value ~/ 1000000}'),
-                      selected: model.income == BigInt.from(value),
-                      onTap: () => model.setIncome(value),
+                      label: s.onbIncomeChip(
+                        '${value ~/ BigInt.from(1000000)}',
+                      ),
+                      selected: model.income == value,
+                      onTap: () => model.setIncome(value.toInt()),
                     ),
                 ],
               ),

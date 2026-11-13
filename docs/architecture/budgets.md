@@ -41,7 +41,7 @@ So sánh bằng nhân chéo (`spent * 100` với `limit * 70` / `90`):
 | `> 90%` và `≤ 100%` | `critical` |
 | `> 100%` | `over` |
 
-`percentBps` = `spent * 10000 / limit` (7000 = 70,00%). Ngưỡng cảnh báo mặc định `80, 100`; user sửa 1–4 số 1–100 tăng nghiêm (mobile: sheet chip 70/80/90/100%, `MOB-P3-003`). API trả `crossedThresholds`. Hộp thư khi vượt ≥80% thuộc `BE-P2-E05`; push FCM `BE-P2-015`.
+`percentBps` = `spent * 10000 / limit` (7000 = 70,00%). Ngưỡng cảnh báo mặc định `80, 100` (cấu hình `budget.defaultAlertThresholds`, BE-P5-001); user sửa tối đa `budget.maxAlertThresholds` (mặc định 4) số 1–100 tăng nghiêm (mobile: sheet chip theo `budget.alertThresholdOptions`, mặc định 70/80/90/100%, `MOB-P3-003`). API trả `crossedThresholds`. Hộp thư báo ở mọi mốc user đã chọn, kể cả dưới 80% (BE-P5-001; trước đó chỉ ≥80%) thuộc `BE-P2-E05`; push FCM `BE-P2-015`.
 
 ## API
 

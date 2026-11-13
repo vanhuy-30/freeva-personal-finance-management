@@ -14,6 +14,7 @@ import '../../transactions/domain/transaction_money.dart';
 import '../../transactions/domain/transaction_repository.dart';
 import '../../wallets/domain/wallet_repository.dart';
 import 'overview.dart';
+import '../../server_config/domain/app_limits.dart';
 
 abstract class OverviewUseCases {
   /// Loads balances, this month, wallets, the 3 latest transactions and
@@ -42,7 +43,10 @@ class DefaultOverviewUseCases implements OverviewUseCases {
     this._categories,
     this._budgets,
     this._rates,
+    this._limits,
   );
+
+  final AppLimitsSource _limits;
 
   final ReportRepository _reports;
   final WalletRepository _wallets;
@@ -51,7 +55,8 @@ class DefaultOverviewUseCases implements OverviewUseCases {
   final BudgetUseCases _budgets;
   final FxRateRepository _rates;
 
-  static const recentCount = 3;
+  /// Recent transactions on Home (server `home.recentTransactions`).
+  int get recentCount => _limits.requireLimits.homeRecentTransactions;
 
   @override
   Future<Either<AuthFailure, OverviewData>> load(
@@ -68,7 +73,7 @@ class DefaultOverviewUseCases implements OverviewUseCases {
     final currenciesF = _wallets.currencies();
     // A transfer is two legs, so ask for twice as many.
     final recentF = _transactions.list(
-      const TransactionQuery(pageSize: recentCount * 2),
+      TransactionQuery(pageSize: recentCount * 2),
     );
     final categoriesF = _categories.load();
     final budgetF = _budgets.current();

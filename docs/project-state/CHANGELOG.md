@@ -2,6 +2,28 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-11-12
+
+- **Phase 5 closed**: backlog 9/9 done (cờ và cấu hình trên web admin, số hardcode lên server, gợi ý danh mục, điều đáng chú ý, dự báo chi và ngày dự kiến đạt mục tiêu theo quy tắc, công tắc Gợi ý tự động), 4 wont. Mở Phase 6 (chờ đối tác ngân hàng, DPA).
+- `BE-P5-E06` / `MOB-P5-E06` done: dự báo chi cuối tháng (thẻ ở đầu Phân tích, màn Dự báo chi có biểu đồ, rủi ro so với ngân sách, mức nên chi mỗi ngày) và ngày dự kiến đạt mục tiêu theo mức góp gần đây (dải mốc Hôm nay → Hạn → Dự kiến); ô "Ngày đạt" trên chi tiết mục tiêu đổi thành "Hạn". [Thiết kế](../architecture/spend-forecast.md).
+- `BE-P5-E04` / `MOB-P5-E04` done: điều đáng chú ý theo quy tắc (vượt ngân sách, khoản lệch, danh mục tăng/giảm, xu hướng chi) — thẻ trên Tổng quan và màn Phân tích, mỗi điều có hình so sánh nhỏ; tính mỗi lần xem, không lưu. [Thiết kế](../architecture/insights.md).
+
+## 2026-11-11
+
+- `BE-P5-E03` / `MOB-P5-E03` PR 2/2 (xong task): nhập CSV đoán danh mục cho dòng tệp để trống, chip "Gợi ý N", sheet đổi danh mục theo dòng hoặc cả cửa hàng; nhập xong server đếm chấp nhận/sửa và nhớ cửa hàng.
+- `BE-P5-E03` / `MOB-P5-E03` PR 1/2: gợi ý danh mục khi ghi chi/thu ("Xếp vào Cà phê? · Như 8 lần trước ở đây", nút Dùng) từ cửa hàng đã nhớ, lịch sử của user hoặc danh sách cửa hàng chung (sửa trên web admin); server đếm tỷ lệ chấp nhận/sửa không kèm user id. Migration additive `category_suggest_stats`. Còn phần nhập CSV. [Thiết kế](../architecture/category-suggestions.md).
+- `PRD-P5-E01` / `MOB-P5-002` done: công tắc Gợi ý tự động (tắt gợi ý danh mục, điều đáng chú ý, dự báo chi) và danh sách cửa hàng đã nhớ xem/xóa được trong Cá nhân → Ứng dụng; `AutoSuggestPolicy` cho các task gợi ý sau; xuất dữ liệu và xóa tài khoản có dữ liệu mới. Migration additive `auto_suggest`. [Thiết kế](../architecture/auto-suggest.md).
+- `DS-P5-001` done: thiết kế Phase 5 trên trang canvas **09 · Phase 5** — gợi ý danh mục khi ghi chi và nhập CSV, thẻ đáng chú ý trên Tổng quan, màn Phân tích, dự báo chi cuối tháng, ngày dự kiến đạt mục tiêu, cài đặt Gợi ý tự động. Chủ dự án bỏ what-if (`BE-P5-E07` wont) và nút "Không đúng". [Pattern](../brand/patterns/R-suggestions-insights.md).
+- `MOB-P5-001` PR 3/3 (xong task): chữ số lẻ, ký hiệu và tiền tệ mặc định lấy từ danh mục tiền tệ của server; backend `/profile/options` thêm `isDefault`. `BE-P5-001` / `MOB-P5-001` done.
+- `MOB-P5-001` PR 2/3: app tải cấu hình công khai trước đăng nhập; quy tắc mật khẩu, số lần sai PIN, độ dài tên/ghi chú, nhãn, ngày đầu kỳ, onboarding, nhập/xuất CSV, góp ý lấy từ server; tên hiển thị tối đa 60; dòng thông báo mục tiêu/soát tháng theo server; phiên bản app đọc từ gói cài đặt.
+- `BE-P5-001` bổ sung: `GET /api/v1/app-config/public` — số cấu hình không cần đăng nhập (không cờ, không dữ liệu user) cho màn đăng ký/đặt lại mật khẩu.
+- `MOB-P5-001` PR 1/3: app chỉ chạy phần đã đăng nhập khi có cấu hình server (lỗi thì một màn Thử lại); mốc ngân sách, dự báo, trả góp, nhắc trước, mức dùng thẻ, sắp đến hạn, khoảng biểu đồ, top báo cáo, giao dịch gần đây, ngày mục tiêu, bước phút, giờ nhắc lấy từ cấu hình. Màn Thông báo: "Khi chạm mốc bạn chọn".
+- `BE-P5-001` (backend): API dùng giá trị staff sửa thay hằng số (mốc ngân sách, dự báo, định kỳ, mức dùng thẻ, giờ nhắc, nhập/xuất CSV, số nhãn, tên hiển thị, mục tiêu onboarding, mật khẩu tối thiểu); 24 khóa giới hạn chỉ đọc cho app; kiểm tra chéo khi lưu; thông báo ngân sách ở mọi mốc user chọn (bỏ sàn 80%); giờ nhắc ghi chi mặc định 21:00; ký hiệu tiền tệ trong `/profile/options`. Migration `config_enforce`. Mobile còn 3 PR.
+- `MOB-P5-E08` (mobile): app đọc cờ và cấu hình từ `GET /app-config` — bản lưu trên máy dùng ngay lúc mở app, tải lại khi mở khóa và khi quay lại app (tối đa mỗi giờ), xóa khi đăng xuất; chưa tải được thì cờ tắt và khối cần số hiện "Thử lại". Cờ dev bật qua `FEATURE_FLAGS_ON` chỉ ở bản dev. [Thiết kế](../architecture/mobile-app-config.md).
+- `WA-P5-001` (web admin): trang Cờ và cấu hình `/config` — nhập credential staff, xem cờ và khóa theo nhóm (mô tả, mặc định, giới hạn, lần sửa cuối), sửa có bước xác nhận trước/sau, về mặc định, lỗi hiện tại ô nhập, báo khi người khác vừa sửa. Header admin thêm điều hướng.
+- `BE-P5-E08` (backend): cờ và cấu hình phía server — `GET /api/v1/app-config`, API admin sửa cờ (bật/tắt, danh sách user, phần trăm) và giá trị cấu hình có version chống ghi đè, mỗi lần sửa lưu trước/sau và audit trong một transaction, `FeatureGuard` trả `403 FEATURE_DISABLED`. 6 cờ, 34 khóa mặc định bằng giá trị app đang dùng. Migration additive `app_config`. [Thiết kế](../architecture/app-config.md).
+- Chốt phạm vi Phase 5: số và cấu hình sản phẩm lên server, sửa trên web admin (`BE-P5-E08`, `WA-P5-001`, `MOB-P5-E08`, `BE-P5-001`/`MOB-P5-001` kèm danh sách rà soát app); gợi ý danh mục, insight, dự báo chi, what-if theo quy tắc. `BE-P5-E01` (sao kê) wont. OCR, Ask Freeva sang Phase 8 mới (AI). Bỏ cờ `investment`; cờ ngân hàng Phase 6 đổi tên `bank_connect`.
+
 ## 2026-11-10
 
 - **Phase 4 closed**: backlog 6/6 done (tài sản và đầu tư, tài sản ròng theo thời gian, thiết kế, test giá vốn; `Gate: v1`). FX đầu tư không hỗ trợ ở v1. Mở Phase 5 (toàn bộ sau v1).

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 
 import '../../../budgets/domain/budget.dart';
+import '../../../server_config/domain/app_limits.dart';
 import '../../../budgets/domain/budget_use_cases.dart';
 import '../../../goals/domain/goal.dart';
 import '../../../goals/domain/goal_use_cases.dart';
@@ -12,6 +13,7 @@ import '../../../settings/domain/settings_use_cases.dart';
 import '../../../sync/domain/sync_queue.dart';
 import '../../domain/onboarding_answers.dart';
 import '../../domain/pending_goal_use_cases.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 /// Monthly split the first budget suggestion shows (minor units).
 class BudgetSuggestion {
@@ -25,7 +27,8 @@ class BudgetSuggestion {
   final BigInt saving;
   final BigInt spending;
 
-  /// True when [saving] is the goal's monthly need; false = 20% of income.
+  /// True when [saving] is the goal's monthly need; false = the default share
+  /// of income ([savingsSharePercent]).
   final bool fromGoal;
 }
 
@@ -39,10 +42,13 @@ class OnboardingViewModel extends ChangeNotifier {
     this._goals,
     this._pending,
     this._budgets, {
+    required this._limits,
     this.today,
     this.previewDelay = const Duration(milliseconds: 300),
   });
 
+  /// Server product numbers (MOB-P5-001).
+  final AppLimitsSource _limits;
   final ProfileUseCases _profile;
   final SettingsUseCases _settings;
   final GoalUseCases _goals;
@@ -55,26 +61,28 @@ class OnboardingViewModel extends ChangeNotifier {
   final DateTime? today;
   final Duration previewDelay;
 
-  static const maxGoals = 2;
+  /// Server `onboarding.maxGoals`.
+  int get maxGoals => _limits.requireLimits.onboardingMaxGoals;
   static const maxAmountDigits = 12;
 
-  /// Quick income amounts, in whole VND (shown only for VND).
-  static const incomeSuggestions = [10000000, 15000000, 25000000, 40000000];
+  /// Quick income amounts in VND minor units (server
+  /// `onboarding.incomeSuggestionsVnd`; shown only for VND).
+  List<BigInt> get incomeSuggestions =>
+      _limits.requireLimits.onboardingIncomeSuggestionsVnd;
 
-  /// Goal kinds offered on question 3, in board order; `custom` = "Khác".
-  static const savingKinds = [
-    'emergency',
-    'home',
-    'car',
-    'travel',
-    'education',
-    'wedding',
-    'custom',
-  ];
+  /// Goal kinds offered on question 3 in display order (server
+  /// `onboarding.goalKinds`); `custom` = "Khác".
+  List<String> get savingKinds => _limits.requireLimits.onboardingGoalKinds;
 
-  /// Profile currency; the first run happens in it.
-  String currency = 'VND';
-  int get digits => currency == 'VND' ? 0 : 2;
+  /// Share of income saved when there is no goal (server
+  /// `onboarding.savingsSharePercent`).
+  int get savingsSharePercent =>
+      _limits.requireLimits.onboardingSavingsSharePercent;
+
+  /// Profile currency; the first run happens in it. Until the profile loads,
+  /// the currency new accounts start in (server).
+  String currency = CurrencyCatalog.current.defaultCode;
+  int get digits => CurrencyCatalog.current.digits(currency);
 
   final List<OnboardingGoal> goals = [];
 
@@ -238,7 +246,8 @@ class OnboardingViewModel extends ChangeNotifier {
     );
   }
 
-  /// Skipping question 3 forgets the goal, so the suggestion saves 20%.
+  /// Skipping question 3 forgets the goal, so the suggestion saves the
+  /// default share.
   void clearSaving() {
     savingKind = null;
     _targetMinor = BigInt.zero;
@@ -254,7 +263,8 @@ class OnboardingViewModel extends ChangeNotifier {
     final total = incomeMinor;
     if (total <= BigInt.zero) return null;
     final need = savingReady ? preview?.requiredPerMonthMinor : null;
-    final saving = need ?? total * BigInt.from(20) ~/ BigInt.from(100);
+    final saving =
+        need ?? total * BigInt.from(savingsSharePercent) ~/ BigInt.from(100);
     final spending = total - saving;
     if (spending <= BigInt.zero) return null;
     return BudgetSuggestion(
@@ -278,7 +288,9 @@ class OnboardingViewModel extends ChangeNotifier {
         final put = await budgets.put(
           BudgetDraft(
             limitMinor: amount,
-            alertThresholds: List.of(defaultAlertThresholds),
+            alertThresholds: List.of(
+              _limits.requireLimits.budgetDefaultThresholds,
+            ),
             categories: const [],
           ),
         );

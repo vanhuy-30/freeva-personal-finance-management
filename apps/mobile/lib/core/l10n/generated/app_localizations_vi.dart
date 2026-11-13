@@ -57,8 +57,9 @@ class SVi extends S {
       'Chưa thể thực hiện. Kiểm tra cấu hình dịch vụ hoặc sử dụng PIN nếu sinh trắc học không khả dụng.';
 
   @override
-  String get authWrongPin =>
-      'PIN không đúng. Sau 5 lần sai, cần đăng nhập lại.';
+  String authWrongPin(int count) {
+    return 'PIN không đúng. Sau $count lần sai, cần đăng nhập lại.';
+  }
 
   @override
   String get authExpired =>
@@ -295,7 +296,9 @@ class SVi extends S {
   String get transactionTagName => 'Tên nhãn';
 
   @override
-  String get transactionTagLimit => 'Tối đa 20 nhãn';
+  String transactionTagLimit(int count) {
+    return 'Tối đa $count nhãn';
+  }
 
   @override
   String get transactionSave => 'Lưu';
@@ -2069,10 +2072,14 @@ class SVi extends S {
   String get budgetThresholdsSheetTitle => 'Báo khi đã dùng';
 
   @override
-  String get budgetThresholdsSheetSub => 'Chọn tối đa 4 mốc.';
+  String budgetThresholdsSheetSub(int count) {
+    return 'Chọn tối đa $count mốc.';
+  }
 
   @override
-  String get budgetThresholdsDefaultHint => 'Mặc định 80% và 100%.';
+  String budgetThresholdsDefaultHint(String levels) {
+    return 'Mặc định $levels.';
+  }
 
   @override
   String get budgetScopeDefault => 'Mọi tháng';
@@ -2287,8 +2294,9 @@ class SVi extends S {
   String get mePinRepeat => 'Nhập lại mã PIN mới';
 
   @override
-  String get mePinWrong =>
-      'Mã PIN chưa đúng. Sai 5 lần thì phải đăng nhập lại.';
+  String mePinWrong(int count) {
+    return 'Mã PIN chưa đúng. Sai $count lần thì phải đăng nhập lại.';
+  }
 
   @override
   String get mePinMismatch => 'Hai mã PIN mới chưa khớp.';
@@ -2315,14 +2323,17 @@ class SVi extends S {
   String get mePasswordRepeat => 'Nhập lại mật khẩu mới';
 
   @override
-  String get mePasswordHint => 'Từ 8 ký tự, có cả chữ và số.';
+  String mePasswordHint(int count) {
+    return 'Từ $count ký tự, có cả chữ và số.';
+  }
 
   @override
   String get mePasswordWrong => 'Mật khẩu hiện tại chưa đúng.';
 
   @override
-  String get mePasswordWeak =>
-      'Dùng từ 8 ký tự, có cả chữ và số, khác mật khẩu cũ.';
+  String mePasswordWeak(int count) {
+    return 'Dùng từ $count ký tự, có cả chữ và số, khác mật khẩu cũ.';
+  }
 
   @override
   String get mePasswordMismatch => 'Hai mật khẩu mới chưa khớp.';
@@ -2523,15 +2534,15 @@ class SVi extends S {
   String get notifyBudget => 'Ngân sách sắp hết';
 
   @override
-  String get notifyBudgetSub => 'Khi dùng 80% và 100%';
+  String get notifyBudgetSub => 'Khi chạm mốc bạn chọn';
 
   @override
   String notifyBudgetAt(String levels) {
-    return 'Khi dùng $levels';
+    return 'Khi chạm $levels';
   }
 
   @override
-  String get notifyBudgetLevels => '80% và 100%';
+  String get notifyBudgetLevels => 'mốc bạn chọn';
 
   @override
   String get notifyCard => 'Thẻ tín dụng';
@@ -2729,7 +2740,9 @@ class SVi extends S {
   String get passwordStrong => 'Rất chắc chắn';
 
   @override
-  String get passwordRuleLength => 'Ít nhất 8 ký tự';
+  String passwordRuleLength(int count) {
+    return 'Ít nhất $count ký tự';
+  }
 
   @override
   String get passwordRuleLetterDigit => 'Có cả chữ và số';
@@ -2886,7 +2899,9 @@ class SVi extends S {
   String get onbGoalsTitle => 'Freeva giúp bạn việc gì?';
 
   @override
-  String get onbGoalsSub => 'Chọn tối đa 2.';
+  String onbGoalsSub(int count) {
+    return 'Chọn tối đa $count.';
+  }
 
   @override
   String get onbGoalTrack => 'Quản lý chi tiêu';
@@ -2952,13 +2967,17 @@ class SVi extends S {
   }
 
   @override
-  String get onbSuggestSaveDefault => 'Để dành 20% thu nhập';
+  String onbSuggestSaveDefault(int percent) {
+    return 'Để dành $percent% thu nhập';
+  }
 
   @override
   String get onbSuggestSpend => 'Chi tiêu';
 
   @override
-  String get onbSuggestNoGoal => 'Chưa có mục tiêu nên tạm để dành 20%.';
+  String onbSuggestNoGoal(int percent) {
+    return 'Chưa có mục tiêu nên tạm để dành $percent%.';
+  }
 
   @override
   String get onbSuggestHint => 'Sửa được bất cứ lúc nào trong Ngân sách tháng.';
@@ -3328,6 +3347,9 @@ class SVi extends S {
 
   @override
   String get meDeleteError => 'Chưa xóa được. Dữ liệu của bạn vẫn còn nguyên.';
+
+  @override
+  String get meConfirmPasswordTitle => 'Nhập mật khẩu để tiếp tục';
 
   @override
   String get meChangeAvatar => 'Đổi ảnh đại diện';
@@ -4553,7 +4575,9 @@ class SVi extends S {
   String get installmentOtherTitle => 'Số kỳ';
 
   @override
-  String get installmentOtherLabel => 'Từ 2 đến 60';
+  String installmentOtherLabel(int min, int max) {
+    return 'Từ $min đến $max';
+  }
 
   @override
   String get installmentEach => 'Mỗi kỳ';
@@ -4731,8 +4755,9 @@ class SVi extends S {
   }
 
   @override
-  String get dataExportTooMany =>
-      'Quá 50.000 giao dịch. Chọn khoảng ngắn hơn hoặc ít ví hơn.';
+  String dataExportTooMany(String count) {
+    return 'Quá $count giao dịch. Chọn khoảng ngắn hơn hoặc ít ví hơn.';
+  }
 
   @override
   String get dataExportButton => 'Xuất file';
@@ -4772,8 +4797,9 @@ class SVi extends S {
   String get importSourceOtherHint => 'Bạn chọn cột ngày, số tiền';
 
   @override
-  String get importSourceNote =>
-      'Tối đa 2.000 dòng mỗi lần. Giao dịch đã có sẽ được bỏ qua.';
+  String importSourceNote(String count) {
+    return 'Tối đa $count dòng mỗi lần. Giao dịch đã có sẽ được bỏ qua.';
+  }
 
   @override
   String get importPickFile => 'Chọn file CSV';
@@ -4786,8 +4812,9 @@ class SVi extends S {
   String get importProblemEmpty => 'File này chưa có dòng nào.';
 
   @override
-  String get importProblemTooMany =>
-      'File có hơn 2.000 dòng. Hãy chia nhỏ rồi nhập từng phần.';
+  String importProblemTooMany(String count) {
+    return 'File có hơn $count dòng. Hãy chia nhỏ rồi nhập từng phần.';
+  }
 
   @override
   String get importProblemTooLarge =>
@@ -5605,4 +5632,402 @@ class SVi extends S {
 
   @override
   String get tradePriceRow => 'Giá mua';
+
+  @override
+  String get serverConfigErrorTitle => 'Chưa tải được cài đặt';
+
+  @override
+  String get serverConfigErrorMessage => 'Kiểm tra mạng rồi thử lại.';
+
+  @override
+  String get commonAnd => 'và';
+
+  @override
+  String get autoSuggestTitle => 'Gợi ý tự động';
+
+  @override
+  String get autoSuggestOn => 'Bật';
+
+  @override
+  String get autoSuggestOff => 'Tắt';
+
+  @override
+  String get autoSuggestSubtitle => 'Danh mục, phân tích, dự báo';
+
+  @override
+  String get autoSuggestPrivacy =>
+      'Chỉ tính trên sổ của bạn, không gửi ra ngoài.';
+
+  @override
+  String autoSuggestMerchants(int count) {
+    return 'Cửa hàng đã nhớ · $count';
+  }
+
+  @override
+  String autoSuggestForget(String merchant) {
+    return 'Quên $merchant';
+  }
+
+  @override
+  String get autoSuggestClear => 'Xoá dữ liệu đã học';
+
+  @override
+  String get autoSuggestClearTitle => 'Xoá dữ liệu đã học?';
+
+  @override
+  String autoSuggestClearBody(int count) {
+    return '$count cửa hàng đã nhớ sẽ bị xoá. Giao dịch vẫn giữ nguyên.';
+  }
+
+  @override
+  String get autoSuggestDelete => 'Xoá';
+
+  @override
+  String get autoSuggestError => 'Chưa lưu được. Thử lại nhé.';
+
+  @override
+  String autoSuggestSeeAll(int count) {
+    return 'Xem cả $count';
+  }
+
+  @override
+  String txSuggestTitle(String category) {
+    return 'Xếp vào $category?';
+  }
+
+  @override
+  String txSuggestHistory(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Như $count lần trước ở đây',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get txSuggestUse => 'Dùng';
+
+  @override
+  String importFilterSuggested(int count) {
+    return 'Gợi ý $count';
+  }
+
+  @override
+  String get importSuggestHint => 'Danh mục đoán theo cửa hàng. Chạm để đổi.';
+
+  @override
+  String get importPickSheetLabel => 'Đổi danh mục';
+
+  @override
+  String get importPickSuggested => 'Gợi ý';
+
+  @override
+  String get importPickOther => 'Hoặc chọn danh mục khác';
+
+  @override
+  String importApplySame(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Áp dụng cho $count khoản ở đây',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String importApplySameHint(String merchant) {
+    return 'Các khoản $merchant trong tệp';
+  }
+
+  @override
+  String get importPickDone => 'Xong';
+
+  @override
+  String get insightsTitle => 'Phân tích';
+
+  @override
+  String get insightsSettings => 'Cài đặt gợi ý';
+
+  @override
+  String get insightsEyebrow => 'Đáng chú ý';
+
+  @override
+  String insightsSection(int count) {
+    return 'Đáng chú ý · $count';
+  }
+
+  @override
+  String insightsSeeAll(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Xem cả $count',
+      one: 'Xem phân tích',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get insightsFooter => 'Tính từ sổ của bạn, cập nhật mỗi ngày.';
+
+  @override
+  String get insightsEmpty => 'Chưa có điều gì đáng chú ý';
+
+  @override
+  String get insightsEmptyBody => 'Ghi thêm vài ngày để so với tháng trước.';
+
+  @override
+  String insightBudgetCategory(String category, int percent) {
+    return '$category đã dùng $percent% ngân sách';
+  }
+
+  @override
+  String insightBudgetMonth(int percent) {
+    return 'Chi tháng này đã dùng $percent% ngân sách';
+  }
+
+  @override
+  String insightDaysLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'còn $count ngày',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String insightOutlier(String amount, String place, int times) {
+    return 'Khoản $amount ở $place cao gấp $times lần mức thường';
+  }
+
+  @override
+  String insightCategoryUp(String category, int percent) {
+    return '$category tăng $percent% so với cùng kỳ tháng trước';
+  }
+
+  @override
+  String insightCategoryDown(String category, int percent) {
+    return '$category giảm $percent% so với cùng kỳ tháng trước';
+  }
+
+  @override
+  String insightCategoryMore(String category) {
+    return '$category tháng này nhiều hơn tháng trước';
+  }
+
+  @override
+  String insightCategoryLess(String category) {
+    return '$category tháng này ít hơn tháng trước';
+  }
+
+  @override
+  String insightTrendUp(int days, int percent) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Chi $days ngày đầu tháng nhiều hơn tháng trước $percent%',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String insightTrendDown(int days, int percent) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Chi $days ngày đầu tháng ít hơn tháng trước $percent%',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get insightTrendMore => 'Chi tháng này nhiều hơn tháng trước';
+
+  @override
+  String get insightTrendLess => 'Chi tháng này ít hơn tháng trước';
+
+  @override
+  String get insightThisMonth => 'Tháng này';
+
+  @override
+  String get insightLastMonth => 'Tháng trước';
+
+  @override
+  String get insightThisOne => 'Khoản này';
+
+  @override
+  String get insightUsual => 'Thường';
+
+  @override
+  String spendForecastCardLabel(String month) {
+    return 'Dự báo chi cuối tháng $month';
+  }
+
+  @override
+  String get spendForecastRiskLow => 'Rủi ro thấp';
+
+  @override
+  String get spendForecastRiskMedium => 'Rủi ro vừa';
+
+  @override
+  String get spendForecastRiskHigh => 'Rủi ro cao';
+
+  @override
+  String spendForecastSpent(String amount) {
+    return 'Đã chi $amount';
+  }
+
+  @override
+  String spendForecastBudget(String amount) {
+    return 'Ngân sách $amount';
+  }
+
+  @override
+  String spendForecastPrevious(String amount) {
+    return 'Tháng trước $amount';
+  }
+
+  @override
+  String get spendForecastNotYet => 'Chưa đủ dữ liệu, xem lại sau vài ngày';
+
+  @override
+  String get spendForecastTitle => 'Dự báo chi';
+
+  @override
+  String spendForecastHeadline(String month) {
+    return 'Cuối tháng $month có thể chi khoảng';
+  }
+
+  @override
+  String spendForecastOver(String amount) {
+    return 'Vượt ngân sách khoảng $amount';
+  }
+
+  @override
+  String get spendForecastToday => 'Hôm nay';
+
+  @override
+  String get spendForecastLegendSpent => 'Đã chi';
+
+  @override
+  String get spendForecastLegendForecast => 'Dự báo';
+
+  @override
+  String get spendForecastDailyAverage => 'Trung bình mỗi ngày';
+
+  @override
+  String get spendForecastAllowance => 'Để không vượt, mỗi ngày';
+
+  @override
+  String spendForecastAllowanceValue(String amount) {
+    return 'dưới $amount';
+  }
+
+  @override
+  String get spendForecastLastMonth => 'Tháng trước';
+
+  @override
+  String get spendForecastTop => 'Chi nhiều nhất tháng này';
+
+  @override
+  String get spendForecastNote =>
+      'Dự đoán theo mức chi trung bình mỗi ngày từ đầu tháng, chưa phải số đã chi.';
+
+  @override
+  String get spendForecastEmpty => 'Chưa đủ dữ liệu';
+
+  @override
+  String get spendForecastEmptyBody => 'Xem lại sau vài ngày.';
+
+  @override
+  String spendForecastChart(int days, String spent, String forecast) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Đã chi $spent sau $days ngày, dự báo $forecast cuối tháng',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String spendForecastChartBudget(
+    int days,
+    String spent,
+    String forecast,
+    String budget,
+  ) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other:
+          'Đã chi $spent sau $days ngày, dự báo $forecast cuối tháng, ngân sách $budget',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get goalForecastPace => 'Với mức góp gần đây';
+
+  @override
+  String goalForecastExpected(String month) {
+    return 'Dự kiến đạt $month';
+  }
+
+  @override
+  String goalForecastLate(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Trễ $count tháng',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String goalForecastEarly(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Sớm $count tháng',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get goalForecastOnTime => 'Kịp hạn';
+
+  @override
+  String get goalForecastToday => 'Hôm nay';
+
+  @override
+  String get goalForecastDue => 'Hạn';
+
+  @override
+  String get goalForecastWhen => 'Dự kiến';
+
+  @override
+  String goalForecastAverage(int months, String amount) {
+    String _temp0 = intl.Intl.pluralLogic(
+      months,
+      locale: localeName,
+      other: 'Góp trung bình $amount mỗi tháng trong $months tháng qua.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String goalForecastCatchUp(String amount) {
+    return 'Góp $amount mỗi tháng để kịp hạn.';
+  }
+
+  @override
+  String get goalForecastNotYet => 'Chưa đủ dữ liệu để dự kiến';
+
+  @override
+  String get goalForecastNotYetBody => 'Góp lần đầu để xem ngày đạt.';
+
+  @override
+  String get goalDue => 'Hạn';
 }

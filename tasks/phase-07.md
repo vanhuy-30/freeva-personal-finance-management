@@ -15,6 +15,7 @@
 - Gate: post-v1
 - Depends: WA-P0-002, INF-P1-001
 - DoD: số user, user hoạt động, user mới, số giao dịch, số request AI, số request OCR, tỷ lệ crash. Tra cứu tài khoản theo trạng thái, khóa, xóa, gói. Màn hình mặc định không có số dư, giao dịch hay ghi chú. Mở dữ liệu tài chính để hỗ trợ là quyền riêng, có audit, tắt mặc định.
+- Note: 2026-11-11 thêm: nội dung FAQ và điều khoản/chính sách bảo mật (đang viết trong app) chuyển lên server, sửa trên web admin, dùng cơ chế cấu hình của `BE-P5-E08`.
 
 ### WA-P7-E02 / MOB-P7-E02 — Support mở rộng (module 25)
 - Status: todo

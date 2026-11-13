@@ -10,6 +10,8 @@ import '../../../wallets/domain/wallet.dart';
 import '../../../wallets/presentation/viewmodels/wallet_view_model.dart';
 import '../../domain/balance_forecast.dart';
 import '../../domain/forecast_use_cases.dart';
+import '../../../server_config/domain/app_limits.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 /// Loads the rule-based forecast and applies the user's edits (range, which
 /// rules count, the start balance). Created per page, not a singleton.
@@ -20,24 +22,27 @@ class ForecastViewModel extends ChangeNotifier {
     this._auth,
     this._profile,
     this._wallets,
+    this._limits,
   ) {
+    months = _limits.requireLimits.forecastDefaultMonths;
     _stage = _auth.stage;
     _auth.addListener(_authChanged);
   }
 
-  /// Ranges the screen offers; the API accepts 1–12.
-  static const ranges = [3, 6, 12];
+  /// Ranges the screen offers (server `forecast.monthOptions`).
+  List<int> get ranges => _limits.requireLimits.forecastMonthOptions;
 
   final ForecastUseCases _cases;
   final RecurringUseCases _rules;
   final AuthViewModel _auth;
   final ProfileViewModel _profile;
   final WalletViewModel _wallets;
+  final AppLimitsSource _limits;
   late AuthStage _stage;
   int _epoch = 0;
   bool _disposed = false;
 
-  int months = 3;
+  late int months;
   Set<String> excluded = const {};
   BigInt? startingOverride;
 
@@ -46,7 +51,8 @@ class ForecastViewModel extends ChangeNotifier {
   bool busy = false;
   AuthFailure? failure;
 
-  String get currency => _profile.saved?.currency ?? 'VND';
+  String get currency =>
+      _profile.saved?.currency ?? CurrencyCatalog.current.defaultCode;
 
   int get digits => digitsFor(currency);
 
@@ -55,7 +61,7 @@ class ForecastViewModel extends ChangeNotifier {
           .where((item) => item.code == code)
           .firstOrNull
           ?.minorDigits ??
-      (code == 'VND' ? 0 : 2);
+      CurrencyCatalog.current.digits(code);
 
   /// Wallets the start balance adds up: not archived, not a credit card, same
   /// currency. Matches the API.
@@ -168,7 +174,7 @@ class ForecastViewModel extends ChangeNotifier {
     busy = false;
     excluded = const {};
     startingOverride = null;
-    months = 3;
+    months = _limits.requireLimits.forecastDefaultMonths;
     _epoch++;
     _notify();
   }

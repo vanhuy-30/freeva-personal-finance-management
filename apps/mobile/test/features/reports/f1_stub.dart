@@ -1,4 +1,7 @@
 import 'package:dartz/dartz.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:flutter/material.dart';
 import 'package:mobile/core/analytics/analytics_event.dart';
 import 'package:mobile/core/analytics/analytics_service.dart';
@@ -194,10 +197,17 @@ class _NoAnalytics implements AnalyticsService {
 /// Registers a report model fed by [StubReportCases] (today: 21/10/2026).
 Future<Widget> f1App(Widget page, {bool dark = false, double scale = 1}) async {
   await getIt.reset();
+  registerTestServerConfig();
   final auth =
       DefaultAuthViewModel(
           DefaultAuthUseCases(
-            AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+            AuthRepositoryImpl(
+              FakeApi(),
+              MemoryVault(),
+              FakeBiometrics(),
+              testServerConfigModel(),
+            ),
+            testServerConfigModel(),
           ),
         )
         ..stage = AuthStage.unlocked

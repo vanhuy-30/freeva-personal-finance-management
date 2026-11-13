@@ -25,6 +25,11 @@ export interface ImportMaps {
   /** Source category name → Freeva category id; `null` = deliberately no category (income only). */
   categoryMap: Record<string, string | null>;
   defaultAccountId: string | null;
+  /**
+   * BE-P5-E03: category for rows whose file category is empty, by row number — what the user picked in
+   * the sheet, else the suggestion. Checked against the user's categories like any mapped category.
+   */
+  rowCategory?: Map<number, string>;
 }
 
 export interface ParsedRow {
@@ -116,7 +121,7 @@ const INCOME = new Set(['income', 'thu', 'thu nhap', 'khoan thu']);
 const EXPENSE = new Set(['expense', 'chi', 'chi tieu', 'khoan chi']);
 const TRANSFER = new Set(['transfer', 'chuyen khoan', 'chuyen tien']);
 
-function typeOf(text: string, amount: DecimalText | null): ImportType | 'unsupported' | null {
+export function typeOf(text: string, amount: DecimalText | null): ImportType | 'unsupported' | null {
   const key = normalizeText(text);
   if (!key) return amount ? (amount.negative ? 'expense' : 'income') : null;
   if (INCOME.has(key)) return 'income';
@@ -126,11 +131,16 @@ function typeOf(text: string, amount: DecimalText | null): ImportType | 'unsuppo
 }
 
 /** Header + data rows → typed cells. Throws FILE_INVALID when no amount/date column can be found. */
-export function parseRows(table: string[][], format: ImportFormat): { rows: ParsedRow[]; columns: Partial<Record<ImportField, number>> } {
+/** `maxRows` is app config `import.maxRows` (BE-P5-001), never above IMPORT_MAX_ROWS. */
+export function parseRows(
+  table: string[][],
+  format: ImportFormat,
+  maxRows = IMPORT_MAX_ROWS,
+): { rows: ParsedRow[]; columns: Partial<Record<ImportField, number>> } {
   if (table.length < 2) throw new TransactionImportError('FILE_INVALID');
   const columns = resolveColumns(table[0], format);
   if (columns.date === undefined || columns.amount === undefined) throw new TransactionImportError('FILE_INVALID');
-  if (table.length - 1 > IMPORT_MAX_ROWS) throw new TransactionImportError('FILE_TOO_LARGE');
+  if (table.length - 1 > Math.min(maxRows, IMPORT_MAX_ROWS)) throw new TransactionImportError('FILE_TOO_LARGE');
   const cell = (line: string[], field: ImportField) => (columns[field] === undefined ? '' : cleanCell(line[columns[field]!]));
   const rows = table.slice(1).map((line, index): ParsedRow => {
     const when = parseDate(cell(line, 'date'), format.dateFormat);
@@ -161,7 +171,13 @@ function resolveAccount(name: string, maps: ImportMaps, accounts: ImportAccount[
   return 'WALLET_UNMAPPED';
 }
 
-function resolveCategory(name: string, type: 'income' | 'expense', maps: ImportMaps, categories: ImportCategory[]): { id: string | null } | RowError {
+function resolveCategory(row: number, name: string, type: 'income' | 'expense', maps: ImportMaps, categories: ImportCategory[]): { id: string | null } | RowError {
+  const picked = name.trim() ? undefined : maps.rowCategory?.get(row);
+  if (picked !== undefined) {
+    const category = categories.find(item => item.id === picked);
+    if (!category) return 'CATEGORY_UNMAPPED';
+    return categoryKindFits(type, category.kind) ? { id: category.id } : 'CATEGORY_KIND_MISMATCH';
+  }
   const mapped = lookup(maps.categoryMap, name);
   if (mapped.found) {
     if (mapped.value === null) return type === 'income' ? { id: null } : 'CATEGORY_UNMAPPED';
@@ -205,7 +221,7 @@ export function planRows(parsed: ParsedRow[], maps: ImportMaps, accounts: Import
     if (row.currency && row.currency !== wallet.currencyCode) { planned.push(invalid([row.row], ['CURRENCY_MISMATCH'], { occurredOn: row.date })); continue; }
     const resolved: Resolved = { parsed: row, type: type as ImportType, account: wallet, amountMinor: amount };
     if (resolved.type === 'transfer') { transfers.push(resolved); continue; }
-    const category = resolveCategory(row.category, resolved.type, maps, categories);
+    const category = resolveCategory(row.row, row.category, resolved.type, maps, categories);
     if (typeof category === 'string') { planned.push(invalid([row.row], [category], { occurredOn: row.date })); continue; }
     const magnitude = amount < 0n ? -amount : amount;
     planned.push({

@@ -1,3 +1,4 @@
+import { AppConfigReader } from '../app-config/app-config.reader';
 import {
   BadRequestException,
   ForbiddenException,
@@ -9,6 +10,7 @@ import {
 import {
   AUTH_REPOSITORY,
   type AuthRepository,
+  type Session,
   type TokenPurpose,
 } from './domain/auth.repository';
 import { AuthCrypto } from './infrastructure/auth-crypto';
@@ -19,6 +21,9 @@ export const TERMS_VERSION = '2026-10';
 export const accepted = {
   message: 'If the account is eligible, an email will be sent.',
 };
+/** How recent an OAuth-only session must be to delete or export the account. */
+export const REAUTH_WINDOW_MS = 10 * 60_000;
+
 export const unauthorized = () =>
   new UnauthorizedException({
     error: {
@@ -32,7 +37,20 @@ export class AuthService {
   constructor(
     @Inject(AUTH_REPOSITORY) private readonly repository: AuthRepository,
     private readonly crypto: AuthCrypto,
+    private readonly config: AppConfigReader,
   ) {}
+
+  /**
+   * BE-P5-001: minimum length for a new password from app config (`password.minLength`).
+   * Login keeps the DTO floor so older passwords still sign in.
+   */
+  private async checkNewPassword(password: string) {
+    if (password.length < (await this.config.value('password.minLength'))) {
+      throw new BadRequestException({
+        error: { code: 'VALIDATION_ERROR', message: 'Password is too short', details: [] },
+      });
+    }
+  }
 
   private challenge(purpose: TokenPurpose) {
     const token = this.crypto.token();
@@ -53,6 +71,7 @@ export class AuthService {
   }
 
   async register(email: string, password: string) {
+    await this.checkNewPassword(password);
     const passwordHash = await this.crypto.hashPassword(password);
     await this.repository.register(
       email,
@@ -77,6 +96,7 @@ export class AuthService {
     purpose: TokenPurpose,
     password?: string,
   ): Promise<void> {
+    if (password !== undefined) await this.checkNewPassword(password);
     const passwordHash =
       password === undefined
         ? undefined
@@ -143,17 +163,47 @@ export class AuthService {
   }
 
   /**
-   * Signed-in password change (DS-P2-003). A wrong current password is 403
-   * (401 means "session expired" to clients); guesses are limited per user.
+   * Step-up check before deleting or exporting the whole account (SEC-P6-002),
+   * so a stolen session token alone cannot wipe or download everything.
+   * Accounts with a password must send it (403 INVALID_CREDENTIALS, limited
+   * per user). OAuth-only accounts have none: their session must be fresh
+   * (signed in within REAUTH_WINDOW_MS), else 403 REAUTH_REQUIRED.
    */
-  async changePassword(
-    userId: string,
-    sessionId: string,
-    currentPassword: string,
-    newPassword: string,
+  async confirmIdentity(
+    session: Pick<Session, 'userId' | 'createdAt'>,
+    password: string | undefined,
+    now = new Date(),
   ): Promise<void> {
+    const user = await this.repository.findUserById(session.userId);
+    if (!user) throw unauthorized();
+    if (user.passwordHash) {
+      await this.checkCurrentPassword(
+        session.userId,
+        'reauth',
+        user.passwordHash,
+        password ?? '',
+      );
+      return;
+    }
+    if (now.getTime() - session.createdAt.getTime() > REAUTH_WINDOW_MS) {
+      throw new ForbiddenException({
+        error: {
+          code: 'REAUTH_REQUIRED',
+          message: 'Sign in again to continue',
+        },
+      });
+    }
+  }
+
+  /** Rate-limited (5 per 15 min per user and operation) current-password check; returns the verified hash. */
+  private async checkCurrentPassword(
+    userId: string,
+    operation: 'change_password' | 'reauth',
+    passwordHash: string | null,
+    password: string,
+  ): Promise<string> {
     const retry = await this.repository.takeRateLimit(
-      this.crypto.rateKey(`user:change_password:${userId}`),
+      this.crypto.rateKey(`user:${operation}:${userId}`),
       5,
       900,
     );
@@ -168,16 +218,33 @@ export class AuthService {
         429,
       );
     }
-    const user = await this.repository.findUserById(userId);
-    const valid = await this.crypto.verifyPassword(
-      user?.passwordHash ?? null,
-      currentPassword,
-    );
-    if (!valid || !user?.passwordHash) {
+    const valid = await this.crypto.verifyPassword(passwordHash, password);
+    if (!valid || !passwordHash) {
       throw new ForbiddenException({
         error: { code: 'INVALID_CREDENTIALS', message: 'Invalid credentials' },
       });
     }
+    return passwordHash;
+  }
+
+  /**
+   * Signed-in password change (DS-P2-003). A wrong current password is 403
+   * (401 means "session expired" to clients); guesses are limited per user.
+   */
+  async changePassword(
+    userId: string,
+    sessionId: string,
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<void> {
+    const user = await this.repository.findUserById(userId);
+    const passwordHash = await this.checkCurrentPassword(
+      userId,
+      'change_password',
+      user?.passwordHash ?? null,
+      currentPassword,
+    );
+    await this.checkNewPassword(newPassword);
     if (currentPassword === newPassword) {
       throw new BadRequestException({
         error: {
@@ -189,7 +256,7 @@ export class AuthService {
     }
     const changed = await this.repository.changePassword(
       userId,
-      user.passwordHash,
+      passwordHash,
       await this.crypto.hashPassword(newPassword),
       sessionId,
     );

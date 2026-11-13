@@ -28,6 +28,8 @@ import '../../../wallets/presentation/widgets/wallet_type_icon.dart';
 import '../../domain/personal_debt.dart';
 import '../viewmodels/debt_view_model.dart';
 import '../widgets/debt_parts.dart';
+import '../../../server_config/domain/app_limits.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 /// Ghi khoản mượn (DebtAdd): Cho mượn · Đi mượn, amount, person, wallet,
 /// date + due date, note. Editing keeps the money fixed (the API only
@@ -94,7 +96,8 @@ class _DebtEditorPageState extends State<DebtEditorPage> {
   Wallet? get wallet =>
       model.wallets.where((w) => w.id == walletId).firstOrNull;
 
-  String get _currency => wallet?.draft.currency ?? 'VND';
+  String get _currency =>
+      wallet?.draft.currency ?? CurrencyCatalog.current.defaultCode;
 
   BigInt? _value(String locale) =>
       parseGroupedMoney(amount.text, model.digitsOf(_currency), locale);
@@ -286,7 +289,7 @@ class _DebtEditorPageState extends State<DebtEditorPage> {
       FreevaTextField(
         label: lent ? s.debtBorrower : s.debtLender,
         controller: person,
-        maxLength: 80,
+        maxLength: getIt<AppLimitsSource>().requireLimits.debtNameMaxLength,
         leadingIcon: LucideIcons.user,
         leadingTint: (c.tintBlue, c.tintBlueFg),
         textInputAction: TextInputAction.next,
@@ -328,7 +331,7 @@ class _DebtEditorPageState extends State<DebtEditorPage> {
         label: s.debtNote,
         hint: s.debtNoteHint,
         controller: note,
-        maxLength: 500,
+        maxLength: getIt<AppLimitsSource>().requireLimits.noteMaxLength,
         leadingIcon: LucideIcons.textAlignStart,
       ),
       Padding(

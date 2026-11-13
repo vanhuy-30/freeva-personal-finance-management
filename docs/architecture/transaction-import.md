@@ -4,7 +4,7 @@ Contract: [OpenAPI](../../packages/api-contracts/openapi.yaml) `POST /api/v1/tra
 
 ## Chức năng
 
-User chuyển giao dịch từ app khác (Money Lover, Sổ thu chi MISA) hoặc từ file Freeva (`BE-P3-010`) sang Freeva: xem trước từng dòng, map ví và danh mục, ghi cả lô, hoàn tác cả lô. Sao kê ngân hàng PDF/Excel vẫn là `BE-P5-E01`.
+User chuyển giao dịch từ app khác (Money Lover, Sổ thu chi MISA) hoặc từ file Freeva (`BE-P3-010`) sang Freeva: xem trước từng dòng, map ví và danh mục, ghi cả lô, hoàn tác cả lô. Sao kê ngân hàng PDF/Excel: không làm (chốt 2026-11-11).
 
 ## Luồng (không lưu file tạm)
 
@@ -23,6 +23,7 @@ User chuyển giao dịch từ app khác (Money Lover, Sổ thu chi MISA) hoặc
 - **Trùng:** cùng ví, ngày, số tiền có dấu, loại và merchant/ghi chú chuẩn hóa với giao dịch đã có, hoặc `transaction_id` đã tồn tại. Mỗi giao dịch có sẵn chỉ khớp một dòng. Mặc định bỏ qua (`skipped_duplicate`); `includeDuplicates=true` mới ghi, và không bao giờ ghi đè.
 - **Chặn công thức:** gỡ `'` đứng trước `= + - @` mà export thêm vào.
 - **Nhãn** trong file chưa nhập (bỏ qua).
+- **Gợi ý danh mục** (`BE-P5-E03`): dòng tệp để trống danh mục được server đoán (`suggestion` trên từng dòng, `summary.suggested`); user đổi bằng `rowCategoryMap` / `merchantCategoryMap`. Chi tiết: [category-suggestions.md](category-suggestions.md).
 
 ## Preset
 

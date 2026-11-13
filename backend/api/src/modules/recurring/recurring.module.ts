@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { AppConfigCoreModule } from '../app-config/app-config-core.module';
 import { AuthModule } from '../auth/auth.module';
 import { RECURRING_REPOSITORY } from './domain/recurring.repository';
 import { PrismaRecurringRepository } from './infrastructure/prisma-recurring.repository';
@@ -7,7 +8,7 @@ import { RecurringController } from './recurring.controller';
 import { RecurringService } from './recurring.service';
 
 @Module({
-  imports: [AuthModule],
+  imports: [AuthModule, AppConfigCoreModule],
   controllers: [RecurringController],
   providers: [
     RecurringService,

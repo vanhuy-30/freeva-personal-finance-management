@@ -8,6 +8,9 @@ import 'features/recurring/presentation/viewmodels/recurring_view_model.dart';
 import 'features/recurring/presentation/widgets/recurring_resume_listener.dart';
 import 'features/sync/presentation/viewmodels/sync_view_model.dart';
 import 'features/sync/presentation/widgets/sync_resume_listener.dart';
+import 'features/server_config/presentation/viewmodels/server_config_view_model.dart';
+import 'features/server_config/presentation/widgets/server_config_boundary.dart';
+import 'features/server_config/presentation/widgets/server_config_listener.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -21,6 +24,7 @@ import 'core/router/app_router.dart';
 import 'core/sentry/sentry_bootstrap.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/tokens.g.dart';
+import 'core/app_version/app_version.dart';
 
 Future<void> main() async {
   await runFreeva(_boot);
@@ -35,6 +39,8 @@ Future<void> _boot() async {
   config.validate();
   logger.op('boot env=${config.environment.name} api=${config.apiBaseUrl}');
   await getIt<SettingsViewModel>().load();
+  await getIt<ServerConfigViewModel>().loadCached();
+  await getIt<AppVersion>().load();
   getIt<SyncViewModel>();
   getIt<RecurringViewModel>();
   getIt<NotificationViewModel>();
@@ -56,26 +62,29 @@ class FreevaApp extends StatelessWidget {
         child: RecurringResumeListener(
           child: NotificationResumeListener(
             child: PushRegistrationListener(
-              child: MaterialApp.router(
-                debugShowCheckedModeBanner: false,
-                onGenerateTitle: (BuildContext context) =>
-                    S.of(context).appTitle,
-                theme: AppTheme.light,
-                darkTheme: AppTheme.dark,
-                themeMode: themeModeFor(settings.theme),
-                routerConfig: appRouter,
-                builder: (context, child) => MediaQuery.withClampedTextScaling(
-                  maxScaleFactor: FreevaTypography.maxTextScale,
-                  child: child!,
+              child: ServerConfigListener(
+                child: MaterialApp.router(
+                  debugShowCheckedModeBanner: false,
+                  onGenerateTitle: (BuildContext context) =>
+                      S.of(context).appTitle,
+                  theme: AppTheme.light,
+                  darkTheme: AppTheme.dark,
+                  themeMode: themeModeFor(settings.theme),
+                  routerConfig: appRouter,
+                  builder: (context, child) =>
+                      MediaQuery.withClampedTextScaling(
+                        maxScaleFactor: FreevaTypography.maxTextScale,
+                        child: ServerConfigBoundary(child: child!),
+                      ),
+                  locale: Locale(profile.locale),
+                  supportedLocales: S.supportedLocales,
+                  localizationsDelegates: const [
+                    S.delegate,
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                    GlobalCupertinoLocalizations.delegate,
+                  ],
                 ),
-                locale: Locale(profile.locale),
-                supportedLocales: S.supportedLocales,
-                localizationsDelegates: const [
-                  S.delegate,
-                  GlobalMaterialLocalizations.delegate,
-                  GlobalWidgetsLocalizations.delegate,
-                  GlobalCupertinoLocalizations.delegate,
-                ],
               ),
             ),
           ),

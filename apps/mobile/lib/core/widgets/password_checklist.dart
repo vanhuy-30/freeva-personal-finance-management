@@ -90,7 +90,10 @@ class PasswordChecklist extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: FreevaSpace.s2,
           children: [
-            _Rule(s.passwordRuleLength, check.longEnough),
+            _Rule(
+              s.passwordRuleLength(check.limits.passwordMinLength),
+              check.longEnough,
+            ),
             _Rule(s.passwordRuleLetterDigit, check.letterAndDigit),
             _Rule(s.passwordRuleSymbol, check.hasSymbol),
             _Rule(s.passwordRuleMatch, check.matches),

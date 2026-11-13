@@ -29,6 +29,7 @@ import '../auth/fakes.dart';
 import '../fx_rates/fakes.dart';
 import '../profile/fakes.dart';
 import 'transaction_fakes.dart';
+import '../../support/server_config_fixture.dart';
 import 'transaction_view_model_test.dart'
     show MemorySyncRepository, RecordingAnalytics;
 
@@ -43,21 +44,36 @@ void main() {
     final auth =
         DefaultAuthViewModel(
             DefaultAuthUseCases(
-              AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+              AuthRepositoryImpl(
+                FakeApi(),
+                MemoryVault(),
+                FakeBiometrics(),
+                testServerConfigModel(),
+              ),
+              testServerConfigModel(),
             ),
           )
           ..stage = AuthStage.unlocked
           ..hasPin = true
           ..ready = true;
-    final walletCases = DefaultWalletUseCases(WalletRepositoryImpl(api));
+    final walletCases = DefaultWalletUseCases(
+      WalletRepositoryImpl(api),
+      testServerConfigModel(),
+    );
     final analytics = RecordingAnalytics();
     model = DefaultTransactionViewModel(
-      DefaultTransactionUseCases(TransactionRepositoryImpl(api)),
-      DefaultCategoryUseCases(CategoryRepositoryImpl(api)),
-      DefaultTagUseCases(TagRepositoryImpl(api)),
+      DefaultTransactionUseCases(
+        TransactionRepositoryImpl(api),
+        testServerConfigModel(),
+      ),
+      DefaultCategoryUseCases(
+        CategoryRepositoryImpl(api),
+        testServerConfigModel(),
+      ),
+      DefaultTagUseCases(TagRepositoryImpl(api), testServerConfigModel()),
       walletCases,
       DefaultWalletViewModel(walletCases, auth),
-      ProfileUseCases(MemoryProfiles()),
+      ProfileUseCases(MemoryProfiles(), testServerConfigModel()),
       auth,
       analytics,
       DefaultSyncViewModel(
@@ -66,6 +82,7 @@ void main() {
         analytics,
       ),
       FxRateUseCases(MemoryFxRates(), FxWallets()),
+      testServerConfigModel(),
     );
     await model.load();
   });
@@ -126,7 +143,10 @@ void main() {
   test('search waits 300 ms after typing and ignores empty text', () {
     fakeAsync((async) {
       final results = DefaultTransactionResultsViewModel(
-        DefaultTransactionUseCases(TransactionRepositoryImpl(api)),
+        DefaultTransactionUseCases(
+          TransactionRepositoryImpl(api),
+          testServerConfigModel(),
+        ),
         model,
       );
       final before = api.calls.length;

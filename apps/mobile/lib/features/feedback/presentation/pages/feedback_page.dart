@@ -14,6 +14,8 @@ import '../../domain/feedback.dart';
 import '../viewmodels/feedback_view_model.dart';
 import '../widgets/feedback_form.dart';
 import '../widgets/feedback_thanks.dart';
+import '../../../server_config/domain/app_limits.dart';
+import '../../../../core/app_version/app_version.dart';
 
 /// Góp ý: a modal form, then a thank-you screen.
 class FeedbackPage extends StatefulWidget {
@@ -27,6 +29,8 @@ class _FeedbackPageState extends State<FeedbackPage> {
   late final FeedbackViewModel model = FeedbackViewModel(
     getIt<FeedbackUseCases>(),
     getIt<AuthViewModel>(),
+    getIt<AppLimitsSource>(),
+    getIt<AppVersion>(),
   );
   final message = TextEditingController();
 

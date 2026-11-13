@@ -6,6 +6,8 @@ import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_banner.dart';
 import '../../domain/auth_repository.dart';
 import '../viewmodels/auth_view_model.dart';
+import '../../../server_config/domain/app_limits.dart';
+import '../../../../core/di/injection.dart';
 
 /// Result of the last action on an account screen: a danger banner for a
 /// failure, a success banner for a notice. Nothing when there is neither.
@@ -54,6 +56,8 @@ String authFailureText(S s, AuthFailure failure) => switch (failure.code) {
   AuthError.network => s.authNetworkError,
   AuthError.storage => s.authStorageError,
   AuthError.unavailable => s.authUnavailable,
-  AuthError.wrongPin => s.authWrongPin,
+  AuthError.wrongPin => s.authWrongPin(
+    getIt<AppLimitsSource>().requireLimits.pinMaxAttempts,
+  ),
   AuthError.expired => s.authExpired,
 };

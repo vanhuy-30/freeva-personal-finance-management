@@ -12,8 +12,12 @@ class AccountExportUseCase {
   final AccountFileSharer _sharer;
 
   /// Right(true) when shared, Right(false) when the sheet was dismissed.
-  Future<Either<AuthFailure, bool>> call(DateTime now) async {
-    final body = await _auth.exportAccount();
+  /// The server asks for the [password] again before exporting (SEC-P6-002).
+  Future<Either<AuthFailure, bool>> call(
+    DateTime now, {
+    String? password,
+  }) async {
+    final body = await _auth.exportAccount(password: password);
     return body.fold((e) => Future.value(left(e)), (text) async {
       final name = exportFileName('freeva-export', 'json', now);
       try {

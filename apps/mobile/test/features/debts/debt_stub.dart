@@ -1,4 +1,7 @@
 import 'package:dartz/dartz.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/core/di/injection.dart';
@@ -364,10 +367,17 @@ Future<DebtHarness> debtsApp(
   double scale = 1,
 }) async {
   await getIt.reset();
+  registerTestServerConfig();
   final auth =
       DefaultAuthViewModel(
           DefaultAuthUseCases(
-            AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+            AuthRepositoryImpl(
+              FakeApi(),
+              MemoryVault(),
+              FakeBiometrics(),
+              testServerConfigModel(),
+            ),
+            testServerConfigModel(),
           ),
         )
         ..stage = AuthStage.unlocked
@@ -383,9 +393,16 @@ Future<DebtHarness> debtsApp(
       displayName: 'Minh',
     );
   final profile = DefaultProfileViewModel(
-    ProfileUseCases(profiles),
+    ProfileUseCases(profiles, testServerConfigModel()),
     auth,
-    exportCase(AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics())),
+    exportCase(
+      AuthRepositoryImpl(
+        FakeApi(),
+        MemoryVault(),
+        FakeBiometrics(),
+        testServerConfigModel(),
+      ),
+    ),
   );
   await profile.load();
   final wallets = StubWalletViewModel(wallets: debtWallets());

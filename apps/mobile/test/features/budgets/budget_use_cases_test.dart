@@ -1,4 +1,7 @@
 import 'package:dartz/dartz.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/budgets/domain/budget.dart';
@@ -11,14 +14,14 @@ void main() {
 
   setUp(() {
     repo = _Repo();
-    cases = DefaultBudgetUseCases(repo);
+    cases = DefaultBudgetUseCases(repo, testServerConfigModel());
   });
 
   test('rejects a zero overall limit before calling the API', () async {
     final result = await cases.put(
       BudgetDraft(
         limitMinor: BigInt.zero,
-        alertThresholds: defaultAlertThresholds,
+        alertThresholds: testLimits().budgetDefaultThresholds,
         categories: const [],
       ),
     );
@@ -59,7 +62,7 @@ void main() {
     final result = await cases.put(
       BudgetDraft(
         limitMinor: BigInt.from(10000000),
-        alertThresholds: defaultAlertThresholds,
+        alertThresholds: testLimits().budgetDefaultThresholds,
         categories: const [],
         applyTo: BudgetApplyTo.month,
       ),

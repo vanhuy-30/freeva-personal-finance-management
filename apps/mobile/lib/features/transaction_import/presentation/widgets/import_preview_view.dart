@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
-import '../../../../core/money/money_text.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_button.dart';
@@ -10,16 +10,22 @@ import '../../../../core/widgets/freeva_chip.dart';
 import '../../../../core/widgets/freeva_switch.dart';
 import '../../domain/import_models.dart';
 import '../viewmodels/import_view_model.dart';
+import 'import_preview_row.dart';
 
-/// Board `ImportPreview`: what would be written, row by row.
+/// Board `ImportPreview`: what would be written, row by row. With category
+/// suggestions (board R.2) a "Gợi ý N" chip filters the guessed rows.
 class ImportPreviewView extends StatelessWidget {
   const ImportPreviewView({
     required this.model,
     required this.onCommit,
+    required this.onPickCategory,
     super.key,
   });
   final ImportViewModel model;
   final VoidCallback onCommit;
+
+  /// Opens "Đổi danh mục" (board R.3) for a row.
+  final ValueChanged<ImportRow> onPickCategory;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +34,7 @@ class ImportPreviewView extends StatelessWidget {
     final summary = model.preview?.summary;
     final rows = model.shownRows;
     final count = model.importCount;
+    final suggesting = model.filter == ImportFilter.suggested;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -67,17 +74,40 @@ class ImportPreviewView extends StatelessWidget {
                   children: [
                     for (final (filter, label) in [
                       (ImportFilter.all, s.importFilterAll),
+                      if (model.suggestedCount > 0)
+                        (
+                          ImportFilter.suggested,
+                          s.importFilterSuggested(model.suggestedCount),
+                        ),
                       (ImportFilter.duplicate, s.importDuplicate),
                       (ImportFilter.invalid, s.importInvalid),
                     ])
                       FreevaChip(
                         label: label,
+                        icon: filter == ImportFilter.suggested
+                            ? LucideIcons.sparkles
+                            : null,
+                        iconSize: FreevaSize.iconXs,
                         selected: model.filter == filter,
                         onTap: () => model.selectFilter(filter),
                       ),
                   ],
                 ),
               ),
+              if (suggesting) ...[
+                const SliverToBoxAdapter(child: SizedBox(height: 14)),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: FreevaSpace.s1),
+                    child: Text(
+                      s.importSuggestHint,
+                      style: FreevaTypography.bodyS.copyWith(
+                        color: c.textSecondary,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
               const SliverToBoxAdapter(child: SizedBox(height: 14)),
               if (rows.isEmpty)
                 SliverToBoxAdapter(
@@ -104,48 +134,58 @@ class ImportPreviewView extends StatelessWidget {
                   ),
                   sliver: SliverList.builder(
                     itemCount: rows.length,
-                    itemBuilder: (context, i) =>
-                        _PreviewRow(row: rows[i], model: model, divider: i > 0),
+                    itemBuilder: (context, i) => ImportPreviewRow(
+                      row: rows[i],
+                      model: model,
+                      divider: i > 0,
+                      onTap: model.canPickCategory(rows[i])
+                          ? () => onPickCategory(rows[i])
+                          : null,
+                    ),
                   ),
                 ),
-              const SliverToBoxAdapter(child: SizedBox(height: 14)),
-              SliverToBoxAdapter(
-                child: FreevaCard(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: FreevaSpace.s4,
-                    vertical: 8,
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              s.importDuplicatesToggle,
-                              style: FreevaTypography.body.copyWith(
-                                fontWeight: FontWeight.w500,
-                                color: c.textPrimary,
+              // Board R.2 leaves the duplicates switch out of the guessed
+              // rows; it comes back with the other filters.
+              if (!suggesting) ...[
+                const SliverToBoxAdapter(child: SizedBox(height: 14)),
+                SliverToBoxAdapter(
+                  child: FreevaCard(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: FreevaSpace.s4,
+                      vertical: 8,
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                s.importDuplicatesToggle,
+                                style: FreevaTypography.body.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                  color: c.textPrimary,
+                                ),
                               ),
-                            ),
-                            Text(
-                              s.importDuplicatesHint,
-                              style: FreevaTypography.label.copyWith(
-                                color: c.textSecondary,
+                              Text(
+                                s.importDuplicatesHint,
+                                style: FreevaTypography.label.copyWith(
+                                  color: c.textSecondary,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      FreevaSwitch(
-                        value: model.includeDuplicates,
-                        onChanged: model.toggleDuplicates,
-                        label: s.importDuplicatesToggle,
-                      ),
-                    ],
+                        FreevaSwitch(
+                          value: model.includeDuplicates,
+                          onChanged: model.toggleDuplicates,
+                          label: s.importDuplicatesToggle,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
+              ],
               const SliverToBoxAdapter(child: SizedBox(height: FreevaSpace.s2)),
             ],
           ),
@@ -198,178 +238,6 @@ class _StatCard extends StatelessWidget {
               style: FreevaTypography.label.copyWith(color: c.textSecondary),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _PreviewRow extends StatelessWidget {
-  const _PreviewRow({
-    required this.row,
-    required this.model,
-    required this.divider,
-  });
-  final ImportRow row;
-  final ImportViewModel model;
-  final bool divider;
-
-  String? _tag(S s) {
-    if (row.status == ImportRowStatus.duplicate) return s.importTagDuplicate;
-    if (row.status != ImportRowStatus.invalid) return null;
-    final error = row.errors.firstOrNull ?? ImportRowError.other;
-    return switch (error) {
-      ImportRowError.dateInvalid => s.importTagDate,
-      ImportRowError.amountInvalid => s.importTagAmount,
-      ImportRowError.typeUnsupported => s.importTagType,
-      ImportRowError.walletUnmapped ||
-      ImportRowError.walletAmbiguous => s.importTagWallet,
-      ImportRowError.categoryUnmapped ||
-      ImportRowError.categoryAmbiguous => s.importTagCategory,
-      ImportRowError.categoryKindMismatch => s.importTagCategoryKind,
-      ImportRowError.currencyMismatch => s.importTagCurrency,
-      ImportRowError.transferUnpaired => s.importTagTransfer,
-      ImportRowError.transferSameWallet => s.importTagSameWallet,
-      ImportRowError.other => s.importTagOther,
-    };
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final s = S.of(context);
-    final c = context.colors;
-    final locale = Localizations.localeOf(context).toString();
-    final tag = _tag(s);
-    final duplicate = row.status == ImportRowStatus.duplicate;
-    final category = model.categories
-        .where((x) => x.id == row.categoryId)
-        .firstOrNull
-        ?.name;
-    final wallet = model.wallets
-        .where((w) => w.id == row.accountId)
-        .firstOrNull
-        ?.draft
-        .name;
-    final date = row.occurredOn == null
-        ? null
-        : '${row.occurredOn!.substring(8, 10)}/${row.occurredOn!.substring(5, 7)}';
-    final title = row.merchant?.isNotEmpty == true
-        ? row.merchant!
-        : row.notes?.isNotEmpty == true
-        ? row.notes!
-        : row.type == 'transfer'
-        ? s.transactionTransfer
-        : category ?? '';
-    final sub = [
-      if (date != null) date,
-      if (category != null) category,
-      if (wallet != null) wallet,
-    ].join(' · ');
-    String? amount;
-    if (row.amountMinor != null) {
-      final digits = model.digitsOf(row.currencyCode ?? 'VND');
-      final text = formatMoneyText(row.amountMinor!, digits, locale);
-      amount = switch (row.type) {
-        'expense' => '−$text',
-        'income' => '+$text',
-        _ => text,
-      };
-    }
-    final muted = duplicate || row.status == ImportRowStatus.invalid;
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        border: divider
-            ? Border(top: BorderSide(color: c.borderDivider))
-            : null,
-      ),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 58),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Flexible(
-                          child: Text(
-                            title,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: FreevaTypography.body.copyWith(
-                              fontWeight: FontWeight.w500,
-                              color: c.textPrimary,
-                            ),
-                          ),
-                        ),
-                        if (tag != null) ...[
-                          const SizedBox(width: 6),
-                          _Tag(label: tag, danger: !duplicate),
-                        ],
-                      ],
-                    ),
-                    if (sub.isNotEmpty)
-                      Text(
-                        sub,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: FreevaTypography.label.copyWith(
-                          color: c.textSecondary,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              if (amount != null) ...[
-                const SizedBox(width: 12),
-                Text(
-                  amount,
-                  maxLines: 1,
-                  style: FreevaTypography.body.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: muted ? c.textSecondary : c.textPrimary,
-                    fontFeatures: const [FontFeature.tabularFigures()],
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _Tag extends StatelessWidget {
-  const _Tag({required this.label, required this.danger});
-  final String label;
-  final bool danger;
-
-  @override
-  Widget build(BuildContext context) {
-    final c = context.colors;
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: danger ? c.statusDangerBg : c.statusWarningBg,
-        borderRadius: BorderRadius.circular(FreevaRadius.full),
-      ),
-      child: SizedBox(
-        height: 24,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Center(
-            child: Text(
-              label,
-              maxLines: 1,
-              style: FreevaTypography.label.copyWith(
-                fontWeight: FontWeight.w500,
-                color: danger ? c.statusDanger : c.statusWarning,
-              ),
-            ),
-          ),
         ),
       ),
     );

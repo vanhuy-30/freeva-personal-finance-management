@@ -56,8 +56,9 @@ class SEn extends S {
       'Unable to complete. Check service configuration or use your PIN if biometrics are unavailable.';
 
   @override
-  String get authWrongPin =>
-      'Incorrect PIN. After five failed attempts, sign in again.';
+  String authWrongPin(int count) {
+    return 'Incorrect PIN. After $count failed attempts, sign in again.';
+  }
 
   @override
   String get authExpired =>
@@ -298,7 +299,9 @@ class SEn extends S {
   String get transactionTagName => 'Tag name';
 
   @override
-  String get transactionTagLimit => 'Up to 20 tags';
+  String transactionTagLimit(int count) {
+    return 'Up to $count tags';
+  }
 
   @override
   String get transactionSave => 'Save';
@@ -2106,10 +2109,14 @@ class SEn extends S {
   String get budgetThresholdsSheetTitle => 'Alert me when used';
 
   @override
-  String get budgetThresholdsSheetSub => 'Pick up to 4 levels.';
+  String budgetThresholdsSheetSub(int count) {
+    return 'Pick up to $count levels.';
+  }
 
   @override
-  String get budgetThresholdsDefaultHint => 'Default is 80% and 100%.';
+  String budgetThresholdsDefaultHint(String levels) {
+    return 'Default is $levels.';
+  }
 
   @override
   String get budgetScopeDefault => 'Every month';
@@ -2324,7 +2331,9 @@ class SEn extends S {
   String get mePinRepeat => 'Repeat new PIN';
 
   @override
-  String get mePinWrong => 'Wrong PIN. After 5 misses you sign in again.';
+  String mePinWrong(int count) {
+    return 'Wrong PIN. After $count misses you sign in again.';
+  }
 
   @override
   String get mePinMismatch => 'The new PINs don\'t match.';
@@ -2351,15 +2360,17 @@ class SEn extends S {
   String get mePasswordRepeat => 'Repeat new password';
 
   @override
-  String get mePasswordHint =>
-      'At least 8 characters, with letters and digits.';
+  String mePasswordHint(int count) {
+    return 'At least $count characters, with letters and digits.';
+  }
 
   @override
   String get mePasswordWrong => 'That isn\'t your current password.';
 
   @override
-  String get mePasswordWeak =>
-      'Use at least 8 characters with letters and digits, different from the old one.';
+  String mePasswordWeak(int count) {
+    return 'Use at least $count characters with letters and digits, different from the old one.';
+  }
 
   @override
   String get mePasswordMismatch => 'The new passwords don\'t match.';
@@ -2561,7 +2572,7 @@ class SEn extends S {
   String get notifyBudget => 'Budget running out';
 
   @override
-  String get notifyBudgetSub => 'At 80% and 100% used';
+  String get notifyBudgetSub => 'At the levels you picked';
 
   @override
   String notifyBudgetAt(String levels) {
@@ -2569,7 +2580,7 @@ class SEn extends S {
   }
 
   @override
-  String get notifyBudgetLevels => '80% and 100%';
+  String get notifyBudgetLevels => 'the levels you picked';
 
   @override
   String get notifyCard => 'Credit cards';
@@ -2766,7 +2777,9 @@ class SEn extends S {
   String get passwordStrong => 'Very strong';
 
   @override
-  String get passwordRuleLength => 'At least 8 characters';
+  String passwordRuleLength(int count) {
+    return 'At least $count characters';
+  }
 
   @override
   String get passwordRuleLetterDigit => 'Letters and numbers';
@@ -2924,7 +2937,9 @@ class SEn extends S {
   String get onbGoalsTitle => 'What can Freeva help you with?';
 
   @override
-  String get onbGoalsSub => 'Pick up to 2.';
+  String onbGoalsSub(int count) {
+    return 'Pick up to $count.';
+  }
 
   @override
   String get onbGoalTrack => 'Track spending';
@@ -2991,13 +3006,17 @@ class SEn extends S {
   }
 
   @override
-  String get onbSuggestSaveDefault => 'Save 20% of income';
+  String onbSuggestSaveDefault(int percent) {
+    return 'Save $percent% of income';
+  }
 
   @override
   String get onbSuggestSpend => 'Spending';
 
   @override
-  String get onbSuggestNoGoal => 'No goal yet, so 20% goes to savings for now.';
+  String onbSuggestNoGoal(int percent) {
+    return 'No goal yet, so $percent% goes to savings for now.';
+  }
 
   @override
   String get onbSuggestHint => 'You can change it any time in Monthly budget.';
@@ -3369,6 +3388,9 @@ class SEn extends S {
 
   @override
   String get meDeleteError => 'Couldn\'t delete. Your data is untouched.';
+
+  @override
+  String get meConfirmPasswordTitle => 'Enter your password to continue';
 
   @override
   String get meChangeAvatar => 'Change photo';
@@ -4633,7 +4655,9 @@ class SEn extends S {
   String get installmentOtherTitle => 'Number of periods';
 
   @override
-  String get installmentOtherLabel => 'From 2 to 60';
+  String installmentOtherLabel(int min, int max) {
+    return 'From $min to $max';
+  }
 
   @override
   String get installmentEach => 'Each period';
@@ -4816,8 +4840,9 @@ class SEn extends S {
   }
 
   @override
-  String get dataExportTooMany =>
-      'More than 50,000 transactions. Pick a shorter range or fewer wallets.';
+  String dataExportTooMany(String count) {
+    return 'More than $count transactions. Pick a shorter range or fewer wallets.';
+  }
 
   @override
   String get dataExportButton => 'Export file';
@@ -4857,8 +4882,9 @@ class SEn extends S {
   String get importSourceOtherHint => 'You pick the date and amount columns';
 
   @override
-  String get importSourceNote =>
-      'Up to 2,000 rows at a time. Transactions you already have are skipped.';
+  String importSourceNote(String count) {
+    return 'Up to $count rows at a time. Transactions you already have are skipped.';
+  }
 
   @override
   String get importPickFile => 'Choose CSV file';
@@ -4871,8 +4897,9 @@ class SEn extends S {
   String get importProblemEmpty => 'This file has no rows yet.';
 
   @override
-  String get importProblemTooMany =>
-      'This file has more than 2,000 rows. Split it and import in parts.';
+  String importProblemTooMany(String count) {
+    return 'This file has more than $count rows. Split it and import in parts.';
+  }
 
   @override
   String get importProblemTooLarge =>
@@ -4958,7 +4985,7 @@ class SEn extends S {
   String get importPickWallet => 'Choose a wallet';
 
   @override
-  String get importPickCategory => 'Choose a category';
+  String get importPickCategory => 'Pick a category';
 
   @override
   String get importPreviewTitle => 'Preview';
@@ -5727,4 +5754,421 @@ class SEn extends S {
 
   @override
   String get tradePriceRow => 'Purchase price';
+
+  @override
+  String get serverConfigErrorTitle => 'Settings did not load';
+
+  @override
+  String get serverConfigErrorMessage => 'Check your connection and try again.';
+
+  @override
+  String get commonAnd => 'and';
+
+  @override
+  String get autoSuggestTitle => 'Auto suggestions';
+
+  @override
+  String get autoSuggestOn => 'On';
+
+  @override
+  String get autoSuggestOff => 'Off';
+
+  @override
+  String get autoSuggestSubtitle => 'Categories, insights, forecasts';
+
+  @override
+  String get autoSuggestPrivacy =>
+      'Worked out from your records only, never sent elsewhere.';
+
+  @override
+  String autoSuggestMerchants(int count) {
+    return 'Remembered shops · $count';
+  }
+
+  @override
+  String autoSuggestForget(String merchant) {
+    return 'Forget $merchant';
+  }
+
+  @override
+  String get autoSuggestClear => 'Delete learned data';
+
+  @override
+  String get autoSuggestClearTitle => 'Delete learned data?';
+
+  @override
+  String autoSuggestClearBody(int count) {
+    return '$count remembered shops will be deleted. Your transactions stay as they are.';
+  }
+
+  @override
+  String get autoSuggestDelete => 'Delete';
+
+  @override
+  String get autoSuggestError => 'Could not save. Please try again.';
+
+  @override
+  String autoSuggestSeeAll(int count) {
+    return 'See all $count';
+  }
+
+  @override
+  String txSuggestTitle(String category) {
+    return 'File under $category?';
+  }
+
+  @override
+  String txSuggestHistory(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Same as $count times before here',
+      one: 'Same as last time here',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get txSuggestUse => 'Use';
+
+  @override
+  String importFilterSuggested(int count) {
+    return 'Suggested $count';
+  }
+
+  @override
+  String get importSuggestHint =>
+      'Categories guessed from the shop. Tap to change.';
+
+  @override
+  String get importPickSheetLabel => 'Change category';
+
+  @override
+  String get importPickSuggested => 'Suggested';
+
+  @override
+  String get importPickOther => 'Or pick another category';
+
+  @override
+  String importApplySame(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Apply to $count items here',
+      one: 'Apply to 1 item here',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String importApplySameHint(String merchant) {
+    return '$merchant items in this file';
+  }
+
+  @override
+  String get importPickDone => 'Done';
+
+  @override
+  String get insightsTitle => 'Insights';
+
+  @override
+  String get insightsSettings => 'Suggestion settings';
+
+  @override
+  String get insightsEyebrow => 'Worth a look';
+
+  @override
+  String insightsSection(int count) {
+    return 'Worth a look · $count';
+  }
+
+  @override
+  String insightsSeeAll(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'See all $count',
+      one: 'See insights',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get insightsFooter => 'Worked out from your records, updated daily.';
+
+  @override
+  String get insightsEmpty => 'Nothing stands out yet';
+
+  @override
+  String get insightsEmptyBody =>
+      'Record a few more days to compare with last month.';
+
+  @override
+  String insightBudgetCategory(String category, int percent) {
+    return '$category has used $percent% of its budget';
+  }
+
+  @override
+  String insightBudgetMonth(int percent) {
+    return 'This month\'s spending has used $percent% of the budget';
+  }
+
+  @override
+  String insightDaysLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days left',
+      one: '1 day left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String insightOutlier(String amount, String place, int times) {
+    return '$amount at $place is $times times your usual';
+  }
+
+  @override
+  String insightCategoryUp(String category, int percent) {
+    return '$category is up $percent% on the same days last month';
+  }
+
+  @override
+  String insightCategoryDown(String category, int percent) {
+    return '$category is down $percent% on the same days last month';
+  }
+
+  @override
+  String insightCategoryMore(String category) {
+    return '$category is higher this month than last month';
+  }
+
+  @override
+  String insightCategoryLess(String category) {
+    return '$category is lower this month than last month';
+  }
+
+  @override
+  String insightTrendUp(int days, int percent) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other:
+          'Spending in the first $days days is $percent% higher than last month',
+      one: 'Spending on day 1 is $percent% higher than last month',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String insightTrendDown(int days, int percent) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other:
+          'Spending in the first $days days is $percent% lower than last month',
+      one: 'Spending on day 1 is $percent% lower than last month',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get insightTrendMore =>
+      'Spending this month is higher than last month';
+
+  @override
+  String get insightTrendLess => 'Spending this month is lower than last month';
+
+  @override
+  String get insightThisMonth => 'This month';
+
+  @override
+  String get insightLastMonth => 'Last month';
+
+  @override
+  String get insightThisOne => 'This one';
+
+  @override
+  String get insightUsual => 'Usual';
+
+  @override
+  String spendForecastCardLabel(String month) {
+    return 'Month-end spending, $month';
+  }
+
+  @override
+  String get spendForecastRiskLow => 'Low risk';
+
+  @override
+  String get spendForecastRiskMedium => 'Medium risk';
+
+  @override
+  String get spendForecastRiskHigh => 'High risk';
+
+  @override
+  String spendForecastSpent(String amount) {
+    return 'Spent $amount';
+  }
+
+  @override
+  String spendForecastBudget(String amount) {
+    return 'Budget $amount';
+  }
+
+  @override
+  String spendForecastPrevious(String amount) {
+    return 'Last month $amount';
+  }
+
+  @override
+  String get spendForecastNotYet =>
+      'Not enough data yet, check back in a few days';
+
+  @override
+  String get spendForecastTitle => 'Spending forecast';
+
+  @override
+  String spendForecastHeadline(String month) {
+    return 'By the end of $month you may spend about';
+  }
+
+  @override
+  String spendForecastOver(String amount) {
+    return 'About $amount over budget';
+  }
+
+  @override
+  String get spendForecastToday => 'Today';
+
+  @override
+  String get spendForecastLegendSpent => 'Spent';
+
+  @override
+  String get spendForecastLegendForecast => 'Forecast';
+
+  @override
+  String get spendForecastDailyAverage => 'Daily average';
+
+  @override
+  String get spendForecastAllowance => 'To stay on budget, per day';
+
+  @override
+  String spendForecastAllowanceValue(String amount) {
+    return 'under $amount';
+  }
+
+  @override
+  String get spendForecastLastMonth => 'Last month';
+
+  @override
+  String get spendForecastTop => 'Most spent this month';
+
+  @override
+  String get spendForecastNote =>
+      'Estimated from your average daily spending since the start of the month, not money already spent.';
+
+  @override
+  String get spendForecastEmpty => 'Not enough data yet';
+
+  @override
+  String get spendForecastEmptyBody => 'Check back in a few days.';
+
+  @override
+  String spendForecastChart(int days, String spent, String forecast) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Spent $spent after $days days, about $forecast by month end',
+      one: 'Spent $spent after 1 day, about $forecast by month end',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String spendForecastChartBudget(
+    int days,
+    String spent,
+    String forecast,
+    String budget,
+  ) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other:
+          'Spent $spent after $days days, about $forecast by month end, budget $budget',
+      one:
+          'Spent $spent after 1 day, about $forecast by month end, budget $budget',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get goalForecastPace => 'At your recent pace';
+
+  @override
+  String goalForecastExpected(String month) {
+    return 'Expected by $month';
+  }
+
+  @override
+  String goalForecastLate(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count months late',
+      one: '1 month late',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String goalForecastEarly(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count months early',
+      one: '1 month early',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get goalForecastOnTime => 'On time';
+
+  @override
+  String get goalForecastToday => 'Today';
+
+  @override
+  String get goalForecastDue => 'Due';
+
+  @override
+  String get goalForecastWhen => 'Expected';
+
+  @override
+  String goalForecastAverage(int months, String amount) {
+    String _temp0 = intl.Intl.pluralLogic(
+      months,
+      locale: localeName,
+      other:
+          'You put in $amount a month on average over the last $months months.',
+      one: 'You put in $amount last month.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String goalForecastCatchUp(String amount) {
+    return 'Put in $amount a month to make it on time.';
+  }
+
+  @override
+  String get goalForecastNotYet => 'Not enough data to estimate yet';
+
+  @override
+  String get goalForecastNotYetBody =>
+      'Add your first contribution to see when you\'ll get there.';
+
+  @override
+  String get goalDue => 'Due date';
 }

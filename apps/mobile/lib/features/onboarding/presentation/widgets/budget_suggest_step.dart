@@ -7,6 +7,7 @@ import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_button.dart';
 import '../../../../core/widgets/freeva_card.dart';
 import '../viewmodels/onboarding_view_model.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 /// Budget suggestion after the questions (board ObBudgetSuggest): income
 /// minus the goal's monthly saving, or minus 20% without a goal. "Dùng mức
@@ -19,6 +20,7 @@ class BudgetSuggestStep extends StatelessWidget {
     required this.goalName,
     required this.onUse,
     required this.onSkip,
+    required this.savingsSharePercent,
     super.key,
   });
 
@@ -31,6 +33,9 @@ class BudgetSuggestStep extends StatelessWidget {
   final VoidCallback onUse;
   final VoidCallback onSkip;
 
+  /// Server `onboarding.savingsSharePercent`, for the no-goal line.
+  final int savingsSharePercent;
+
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
@@ -38,7 +43,7 @@ class BudgetSuggestStep extends StatelessWidget {
     final locale = Localizations.localeOf(context).toString();
     final margin = context.screenMargin;
     String money(BigInt v) => formatMoneyText(v, digits, locale);
-    final symbol = currency == 'VND' ? '₫' : currency;
+    final symbol = CurrencyCatalog.current.symbol(currency);
     final fromGoal = suggestion.fromGoal && goalName != null;
     final bottom = (32 - MediaQuery.viewPaddingOf(context).bottom)
         .clamp(FreevaSpace.s2, 32)
@@ -176,7 +181,9 @@ class BudgetSuggestStep extends StatelessWidget {
                               line(
                                 fromGoal
                                     ? s.onbSuggestSaveFor(goalName!)
-                                    : s.onbSuggestSaveDefault,
+                                    : s.onbSuggestSaveDefault(
+                                        savingsSharePercent,
+                                      ),
                                 '−${money(suggestion.saving)}',
                                 dot: c.dataSaving,
                               ),
@@ -202,7 +209,7 @@ class BudgetSuggestStep extends StatelessWidget {
                           child: Text(
                             fromGoal
                                 ? s.onbSuggestHint
-                                : '${s.onbSuggestNoGoal} ${s.onbSuggestHint}',
+                                : '${s.onbSuggestNoGoal(savingsSharePercent)} ${s.onbSuggestHint}',
                             style: FreevaTypography.bodyS.copyWith(
                               height: 18 / 13,
                               color: c.textSecondary,

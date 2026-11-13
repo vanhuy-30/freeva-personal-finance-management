@@ -13,6 +13,7 @@ import 'package:mobile/features/transactions/domain/transaction.dart';
 
 import '../auth/fakes.dart';
 import '../transactions/transaction_view_model_test.dart';
+import '../../support/server_config_fixture.dart';
 
 // QA-P2-001: contract audit of docs/architecture/mobile-sync.md.
 void main() {
@@ -66,7 +67,13 @@ void main() {
     () async {
       final auth = DefaultAuthViewModel(
         DefaultAuthUseCases(
-          AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+          AuthRepositoryImpl(
+            FakeApi(),
+            MemoryVault(),
+            FakeBiometrics(),
+            testServerConfigModel(),
+          ),
+          testServerConfigModel(),
         ),
       )..stage = AuthStage.signedOut;
       final repository = _Repository([_item('left', SyncAction.create)]);
@@ -92,7 +99,13 @@ void main() {
   test('queue is kept when auth restores a session', () async {
     final auth = DefaultAuthViewModel(
       DefaultAuthUseCases(
-        AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+        AuthRepositoryImpl(
+          FakeApi(),
+          MemoryVault(),
+          FakeBiometrics(),
+          testServerConfigModel(),
+        ),
+        testServerConfigModel(),
       ),
     )..stage = AuthStage.signedOut;
     final repository = _Repository([_item('keep', SyncAction.create)]);

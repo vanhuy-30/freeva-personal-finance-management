@@ -1,4 +1,7 @@
 import 'package:mobile/core/di/injection.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:mobile/features/wallets/presentation/pages/wallet_editor_page.dart';
 import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:flutter/material.dart';
@@ -30,11 +33,18 @@ void main() {
   late DefaultWalletViewModel model;
   setUp(() async {
     await getIt.reset();
+    registerTestServerConfig();
     api = WalletTransport();
     auth =
         DefaultAuthViewModel(
             DefaultAuthUseCases(
-              AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+              AuthRepositoryImpl(
+                FakeApi(),
+                MemoryVault(),
+                FakeBiometrics(),
+                testServerConfigModel(),
+              ),
+              testServerConfigModel(),
             ),
           )
           ..stage = AuthStage.unlocked
@@ -42,7 +52,7 @@ void main() {
           ..ready = true;
     getIt.registerSingleton<AuthViewModel>(auth);
     model = DefaultWalletViewModel(
-      DefaultWalletUseCases(WalletRepositoryImpl(api)),
+      DefaultWalletUseCases(WalletRepositoryImpl(api), testServerConfigModel()),
       auth,
     );
     await model.load();
@@ -51,6 +61,7 @@ void main() {
     model.dispose();
     auth.dispose();
     await getIt.reset();
+    registerTestServerConfig();
   });
   Widget app(Widget child, {String locale = 'vi', double scale = 1}) =>
       MaterialApp(
@@ -184,7 +195,13 @@ void main() {
     final settings = DefaultSettingsViewModel(
       DefaultSettingsUseCases(SettingsRepositoryImpl(MemoryPreferences())),
       DefaultAuthUseCases(
-        AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+        AuthRepositoryImpl(
+          FakeApi(),
+          MemoryVault(),
+          FakeBiometrics(),
+          testServerConfigModel(),
+        ),
+        testServerConfigModel(),
       ),
       RecordingAnalytics(),
     );

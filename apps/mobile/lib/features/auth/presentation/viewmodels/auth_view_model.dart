@@ -82,7 +82,9 @@ abstract class AuthViewModel extends ChangeNotifier {
   Future<void> revoke(AuthSession? session);
   Future<void> logout();
   Future<void> forgetDevice();
-  Future<void> deleteAccount();
+
+  /// Deletes the account after the server re-checks [password] (SEC-P6-002).
+  Future<void> deleteAccount({String? password});
   void lock();
   void sessionExpired();
   void clearMessage();
@@ -470,11 +472,12 @@ class DefaultAuthViewModel extends AuthViewModel {
     sessions = [];
   });
   @override
-  Future<void> deleteAccount() => _run(_useCases.deleteAccount, (_) {
-    stage = AuthStage.signedOut;
-    _resetFlow();
-    sessions = [];
-  });
+  Future<void> deleteAccount({String? password}) =>
+      _run(() => _useCases.deleteAccount(password: password), (_) {
+        stage = AuthStage.signedOut;
+        _resetFlow();
+        sessions = [];
+      });
   @override
   void sessionExpired() {
     _epoch++;

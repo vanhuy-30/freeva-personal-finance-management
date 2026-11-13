@@ -12,13 +12,14 @@ import 'package:mobile/features/profile/presentation/viewmodels/profile_view_mod
 
 import '../auth/fakes.dart';
 import 'fakes.dart';
+import '../../support/server_config_fixture.dart';
 
 void main() {
   test(
     'use case accepts days 1 and 28, rejects invalid fields without writes',
     () async {
       final repo = MemoryProfiles();
-      final cases = ProfileUseCases(repo);
+      final cases = ProfileUseCases(repo, testServerConfigModel());
       final options = (await repo.options()).getOrElse(
         () => throw StateError('options'),
       );
@@ -94,7 +95,7 @@ void main() {
       expect((await repo.save(initial)).isRight(), true);
       expect(api.body!['fiscalMonthStartDay'], isA<int>());
       expect(api.body!['version'], 1);
-      api.response['fiscalMonthStartDay'] = 29;
+      api.response['fiscalMonthStartDay'] = 0;
       expect((await repo.load()).isLeft(), true);
       api.failure = const AuthFailure(AuthError.expired);
       expect(
@@ -108,7 +109,7 @@ void main() {
     () async {
       final api = Transport();
       final repo = ProfileRepositoryImpl(api);
-      final cases = ProfileUseCases(repo);
+      final cases = ProfileUseCases(repo, testServerConfigModel());
       expect(
         (await cases.saveOnboarding(
           OnboardingAnswers(monthlyIncomeMinor: BigInt.from(25000000)),
@@ -154,7 +155,7 @@ void main() {
     () async {
       final api = Transport();
       final repo = ProfileRepositoryImpl(api);
-      final cases = ProfileUseCases(repo);
+      final cases = ProfileUseCases(repo, testServerConfigModel());
       expect(
         (await cases.saveOnboarding(
           const OnboardingAnswers(
@@ -225,17 +226,24 @@ void main() {
     setUp(() async {
       api = FakeApi();
       sharer = FakeSharer();
-      authRepo = AuthRepositoryImpl(api, MemoryVault(), FakeBiometrics());
+      authRepo = AuthRepositoryImpl(
+        api,
+        MemoryVault(),
+        FakeBiometrics(),
+        testServerConfigModel(),
+      );
       await authRepo.submit(AuthAction.login, {
         'email': 'user@example.com',
         'password': 'password long enough',
       });
-      auth = DefaultAuthViewModel(DefaultAuthUseCases(authRepo));
+      auth = DefaultAuthViewModel(
+        DefaultAuthUseCases(authRepo, testServerConfigModel()),
+      );
       auth.stage = AuthStage.unlocked;
       auth.hasPin = true;
       repo = MemoryProfiles();
       model = DefaultProfileViewModel(
-        ProfileUseCases(repo),
+        ProfileUseCases(repo, testServerConfigModel()),
         auth,
         exportCase(authRepo, sharer),
       );
@@ -378,15 +386,22 @@ void main() {
       api = FakeApi();
       vault = MemoryVault();
       sharer = FakeSharer();
-      authRepo = AuthRepositoryImpl(api, vault, FakeBiometrics());
+      authRepo = AuthRepositoryImpl(
+        api,
+        vault,
+        FakeBiometrics(),
+        testServerConfigModel(),
+      );
       await authRepo.submit(AuthAction.login, {
         'email': 'user@example.com',
         'password': 'password long enough',
       });
-      auth = DefaultAuthViewModel(DefaultAuthUseCases(authRepo));
+      auth = DefaultAuthViewModel(
+        DefaultAuthUseCases(authRepo, testServerConfigModel()),
+      );
       auth.stage = AuthStage.unlocked;
       model = DefaultProfileViewModel(
-        ProfileUseCases(MemoryProfiles()),
+        ProfileUseCases(MemoryProfiles(), testServerConfigModel()),
         auth,
         exportCase(authRepo, sharer),
       );
@@ -399,8 +414,10 @@ void main() {
 
     test('export shares the API body unchanged', () async {
       api.exportBody = '{"b":1,\n "a":[ 2 ]}';
-      expect(await model.exportData(), isTrue);
+      expect(await model.exportData(password: 'mk-bi-mat-7'), isTrue);
       expect(api.lastPath, 'account/export');
+      expect(api.lastMethod, 'POST');
+      expect(api.lastBody, {'password': 'mk-bi-mat-7'});
       expect(sharer.content, '{"b":1,\n "a":[ 2 ]}');
       expect(sharer.name, matches(RegExp(r'^freeva-export-\d{8}\.json$')));
       expect(model.exporting, isFalse);
@@ -429,8 +446,9 @@ void main() {
     });
 
     test('delete clears session and goes signed out', () async {
-      await auth.deleteAccount();
+      await auth.deleteAccount(password: 'mk-bi-mat-7');
       expect(api.lastPath, 'account');
+      expect(api.lastBody, {'password': 'mk-bi-mat-7'});
       expect(auth.stage, AuthStage.signedOut);
       expect(vault.value, isNull);
     });
@@ -441,6 +459,17 @@ void main() {
         api.failure = const AuthFailure(AuthError.network);
         await auth.deleteAccount();
         expect(auth.failure?.code, AuthError.network);
+        expect(auth.stage, AuthStage.unlocked);
+        expect(vault.value, isNotNull);
+      },
+    );
+
+    test(
+      'wrong password on delete keeps everything and stays signed in',
+      () async {
+        api.failure = const AuthFailure(AuthError.credentials);
+        await auth.deleteAccount(password: 'sai');
+        expect(auth.failure?.code, AuthError.credentials);
         expect(auth.stage, AuthStage.unlocked);
         expect(vault.value, isNotNull);
       },

@@ -1,3 +1,4 @@
+import { appConfigReaderFor } from '../app-config/testing';
 import 'reflect-metadata';
 import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
@@ -17,7 +18,7 @@ function service(rules: ForecastRule[], balance = 10_000_000n) {
     balanceByCurrency: new Map([['VND', balance]]), rules,
   };
   const repository: ForecastRepository = { load: async () => source };
-  return new ForecastService(repository);
+  return new ForecastService(repository, appConfigReaderFor());
 }
 
 describe('BE-P3-E04 forecast domain', () => {

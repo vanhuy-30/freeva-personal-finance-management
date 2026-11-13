@@ -8,6 +8,8 @@ import '../../features/categories/presentation/pages/category_page.dart';
 import '../../features/categories/presentation/pages/hidden_categories_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/home/presentation/pages/notifications_page.dart';
+import '../../features/insights/presentation/pages/insights_page.dart';
+import '../../features/spend_forecast/presentation/pages/spend_forecast_page.dart';
 import '../../features/transactions/domain/transaction.dart';
 import '../../features/profile/presentation/pages/data_export_page.dart';
 import '../../features/settings/presentation/pages/money_settings_page.dart';
@@ -52,6 +54,7 @@ import '../../features/calendar/presentation/pages/calendar_page.dart';
 import '../../features/settings/presentation/pages/change_pin_page.dart';
 import '../../features/settings/presentation/pages/pin_setup_page.dart';
 import '../../features/settings/presentation/pages/notification_settings_page.dart';
+import '../../features/auto_suggest/presentation/pages/auto_suggest_page.dart';
 import '../../features/settings/presentation/pages/security_page.dart';
 import '../../features/settings/presentation/pages/sessions_page.dart';
 import '../../features/settings/presentation/pages/settings_page.dart';
@@ -191,6 +194,14 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
         builder: (context, state) => AuthGate(
           child: MonthReviewPage(on: state.uri.queryParameters['on']),
         ),
+      ),
+      GoRoute(
+        path: '/insights',
+        builder: (context, state) => const AuthGate(child: InsightsPage()),
+      ),
+      GoRoute(
+        path: '/insights/spending-forecast',
+        builder: (context, state) => const AuthGate(child: SpendForecastPage()),
       ),
       GoRoute(
         path: '/reports/forecast',
@@ -385,6 +396,10 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
         path: '/me/notifications',
         builder: (context, state) =>
             const AuthGate(child: NotificationSettingsPage()),
+      ),
+      GoRoute(
+        path: '/me/auto-suggest',
+        builder: (context, state) => const AuthGate(child: AutoSuggestPage()),
       ),
       GoRoute(
         path: '/me/tags',

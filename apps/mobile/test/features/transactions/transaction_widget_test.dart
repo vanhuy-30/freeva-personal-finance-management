@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/core/di/injection.dart';
 import 'package:mobile/core/l10n/generated/app_localizations.dart';
@@ -50,18 +53,28 @@ void main() {
 
   setUp(() async {
     await getIt.reset();
+    registerTestServerConfig();
     api = ScriptedApi();
     auth =
         DefaultAuthViewModel(
             DefaultAuthUseCases(
-              AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+              AuthRepositoryImpl(
+                FakeApi(),
+                MemoryVault(),
+                FakeBiometrics(),
+                testServerConfigModel(),
+              ),
+              testServerConfigModel(),
             ),
           )
           ..stage = AuthStage.unlocked
           ..hasPin = true
           ..ready = true;
     getIt.registerSingleton<AuthViewModel>(auth);
-    final walletCases = DefaultWalletUseCases(WalletRepositoryImpl(api));
+    final walletCases = DefaultWalletUseCases(
+      WalletRepositoryImpl(api),
+      testServerConfigModel(),
+    );
     wallets = DefaultWalletViewModel(walletCases, auth);
     final analytics = RecordingAnalytics();
     sync = DefaultSyncViewModel(
@@ -70,16 +83,23 @@ void main() {
       analytics,
     );
     model = DefaultTransactionViewModel(
-      DefaultTransactionUseCases(TransactionRepositoryImpl(api)),
-      DefaultCategoryUseCases(CategoryRepositoryImpl(api)),
-      DefaultTagUseCases(TagRepositoryImpl(api)),
+      DefaultTransactionUseCases(
+        TransactionRepositoryImpl(api),
+        testServerConfigModel(),
+      ),
+      DefaultCategoryUseCases(
+        CategoryRepositoryImpl(api),
+        testServerConfigModel(),
+      ),
+      DefaultTagUseCases(TagRepositoryImpl(api), testServerConfigModel()),
       walletCases,
       wallets,
-      ProfileUseCases(MemoryProfiles()),
+      ProfileUseCases(MemoryProfiles(), testServerConfigModel()),
       auth,
       analytics,
       sync,
       FxRateUseCases(MemoryFxRates(), FxWallets()),
+      testServerConfigModel(),
     );
     await model.load();
   });
@@ -90,6 +110,7 @@ void main() {
     wallets.dispose();
     auth.dispose();
     await getIt.reset();
+    registerTestServerConfig();
   });
 
   Widget app(Widget child, {double scale = 1}) => MaterialApp(
@@ -254,7 +275,13 @@ void main() {
     final settings = DefaultSettingsViewModel(
       DefaultSettingsUseCases(SettingsRepositoryImpl(MemoryPreferences())),
       DefaultAuthUseCases(
-        AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+        AuthRepositoryImpl(
+          FakeApi(),
+          MemoryVault(),
+          FakeBiometrics(),
+          testServerConfigModel(),
+        ),
+        testServerConfigModel(),
       ),
       RecordingAnalytics(),
     );

@@ -4,6 +4,8 @@ Next.js App Router, port **3001**. Theme từ `@freeva/design-tokens`.
 
 Local: `cp .env.example .env.local` rồi `pnpm --filter @freeva/web-admin dev`.
 
+Trang `/config` (`WA-P5-001`): cờ và cấu hình phía server (`BE-P5-E08`), cần credential staff như tra cứu tài khoản.
+
 Staging: Vercel — [docs/infrastructure/staging.md](../../docs/infrastructure/staging.md), `vercel.json`.
 
 Brand asset (`WA-P1-001`): `src/app/icon.png` là bản sao nguyên vẹn của

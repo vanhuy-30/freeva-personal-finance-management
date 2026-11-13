@@ -11,6 +11,8 @@ import '../../../../../core/widgets/tag_chip.dart';
 import '../../viewmodels/transaction_view_model.dart';
 import '../search_box.dart';
 import 'tag_create_row.dart';
+import '../../../../server_config/domain/app_limits.dart';
+import '../../../../../core/di/injection.dart';
 
 /// "Nhãn" (C2.4): find or create, checkbox list, "Đã chọn". At 20 tags the
 /// remaining rows lock and "Tối đa 20 nhãn" shows under the field.
@@ -33,7 +35,9 @@ class _Body extends StatefulWidget {
 }
 
 class _BodyState extends State<_Body> {
-  static const limit = 20;
+  /// Server `transaction.maxTags`.
+  late final int limit =
+      getIt<AppLimitsSource>().requireLimits.transactionMaxTags;
   late final List<String> chosen = List.of(widget.initial);
   String query = '';
   bool creating = false;
@@ -182,7 +186,7 @@ class _BodyState extends State<_Body> {
           Padding(
             padding: const EdgeInsets.only(top: 6, left: 4),
             child: Text(
-              s.transactionTagLimit,
+              s.transactionTagLimit(limit),
               style: FreevaTypography.label.copyWith(color: c.textSecondary),
             ),
           ),

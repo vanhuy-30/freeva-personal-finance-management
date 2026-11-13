@@ -13,11 +13,11 @@ import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_dialog.dart';
 import '../../../../core/widgets/freeva_top_bar.dart';
 import '../../../auth/presentation/viewmodels/auth_view_model.dart';
+import '../../../auto_suggest/presentation/viewmodels/auto_suggest_view_model.dart';
 import '../../../auth/presentation/widgets/session_alert_banner.dart';
 import '../../../profile/presentation/viewmodels/profile_view_model.dart';
 import '../../../tags/domain/tag_use_cases.dart';
 import '../../../wallets/presentation/viewmodels/wallet_view_model.dart';
-import '../../domain/app_preferences.dart';
 import '../viewmodels/settings_view_model.dart';
 import '../widgets/app_settings_group.dart';
 import '../widgets/danger_text_button.dart';
@@ -26,6 +26,7 @@ import '../widgets/help_settings_group.dart';
 import '../widgets/manage_grid.dart';
 import '../widgets/money_setup_group.dart';
 import '../widgets/profile_card.dart';
+import '../../../../core/app_version/app_version.dart';
 
 /// Cá nhân: the tab root. Profile card, the money grid, four groups, log out
 /// and version.
@@ -53,6 +54,10 @@ class _SettingsPageState extends State<SettingsPage> {
       : null;
   final RecurringViewModel? recurring = getIt.isRegistered<RecurringViewModel>()
       ? getIt<RecurringViewModel>()
+      : null;
+  final AutoSuggestViewModel? autoSuggest =
+      getIt.isRegistered<AutoSuggestViewModel>()
+      ? getIt<AutoSuggestViewModel>()
       : null;
   int? tagCount;
 
@@ -119,6 +124,7 @@ class _SettingsPageState extends State<SettingsPage> {
       if (loans != null) loans!,
       if (recurring != null) recurring!,
       if (wallets != null) wallets!,
+      if (autoSuggest != null) autoSuggest!,
     ]),
     builder: (context, _) {
       final s = S.of(context);
@@ -155,7 +161,11 @@ class _SettingsPageState extends State<SettingsPage> {
               month: DateTime.now().month,
             ),
             MoneySetupGroup(profile: profile, tagCount: tagCount),
-            AppSettingsGroup(settings: settings, profile: profile),
+            AppSettingsGroup(
+              settings: settings,
+              profile: profile,
+              autoSuggest: autoSuggest,
+            ),
             const DataSettingsGroup(),
             const HelpSettingsGroup(),
             const SizedBox(height: FreevaSpace.s4),
@@ -166,7 +176,7 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             const SizedBox(height: 6),
             Text(
-              s.settingsVersion(appVersionDisplay),
+              s.settingsVersion(getIt<AppVersion>().display),
               textAlign: TextAlign.center,
               style: FreevaTypography.label.copyWith(
                 fontWeight: FontWeight.w400,

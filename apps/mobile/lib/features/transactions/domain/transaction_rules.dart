@@ -7,6 +7,7 @@ import '../../tags/domain/tag.dart';
 import '../../wallets/domain/wallet.dart';
 import 'transaction.dart';
 import 'transaction_money.dart';
+import '../../server_config/domain/app_limits.dart';
 
 final RegExp _uuid = RegExp(
   r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
@@ -40,6 +41,7 @@ Either<AuthFailure, TransactionCommand> prepareTransaction(
   List<WalletCurrency> currencies,
   List<FinanceCategory> categories,
   List<Tag> tags, {
+  required AppLimits limits,
   TransactionBundle? existing,
 }) {
   if (!isCalendarDate(draft.occurredOn) || draft.magnitude <= BigInt.zero) {
@@ -51,15 +53,16 @@ Either<AuthFailure, TransactionCommand> prepareTransaction(
   }
   final notes = draft.notes?.trim();
   final storedNotes = notes == null || notes.isEmpty ? null : notes;
-  if (storedNotes != null && storedNotes.length > 2000) {
+  if (storedNotes != null &&
+      storedNotes.length > limits.transactionNoteMaxLength) {
     return left(const AuthFailure(AuthError.invalidInput));
   }
-  final merchantResult = _merchant(draft);
+  final merchantResult = _merchant(draft, limits.merchantMaxLength);
   if (merchantResult.isLeft()) {
     return left(const AuthFailure(AuthError.invalidInput));
   }
   final storedMerchant = merchantResult.getOrElse(() => null);
-  final tagIds = _tagIds(draft.tagIds, tags);
+  final tagIds = _tagIds(draft.tagIds, tags, limits.transactionMaxTags);
   if (tagIds == null) {
     return left(const AuthFailure(AuthError.invalidInput));
   }
@@ -199,7 +202,7 @@ Either<AuthFailure, TransactionCommand> prepareTransaction(
   );
 }
 
-Either<AuthFailure, String?> _merchant(TransactionDraft draft) {
+Either<AuthFailure, String?> _merchant(TransactionDraft draft, int maxLength) {
   if (draft.type == TransactionType.transfer) {
     final raw = draft.merchant?.trim();
     if (raw != null && raw.isNotEmpty) {
@@ -209,13 +212,13 @@ Either<AuthFailure, String?> _merchant(TransactionDraft draft) {
   }
   final trimmed = draft.merchant?.trim();
   if (trimmed == null || trimmed.isEmpty) return right(null);
-  if (trimmed.length > 200) {
+  if (trimmed.length > maxLength) {
     return left(const AuthFailure(AuthError.invalidInput));
   }
   return right(trimmed);
 }
 
-List<String>? _tagIds(List<String> raw, List<Tag> tags) {
+List<String>? _tagIds(List<String> raw, List<Tag> tags, int maxTags) {
   final unique = <String>[];
   final seen = <String>{};
   final known = tags.map((tag) => tag.id).toSet();
@@ -223,7 +226,7 @@ List<String>? _tagIds(List<String> raw, List<Tag> tags) {
     if (!known.contains(id) || !seen.add(id)) return null;
     unique.add(id);
   }
-  if (unique.length > 20) return null;
+  if (unique.length > maxTags) return null;
   return List.unmodifiable(unique);
 }
 

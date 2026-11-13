@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/core/analytics/analytics_event.dart';
 import 'package:mobile/core/di/injection.dart';
@@ -56,7 +59,15 @@ void main() {
       SettingsRepositoryImpl(MemoryPreferences()),
     );
     final model = DefaultAuthViewModel(
-      DefaultAuthUseCases(AuthRepositoryImpl(api, vault, FakeBiometrics())),
+      DefaultAuthUseCases(
+        AuthRepositoryImpl(
+          api,
+          vault,
+          FakeBiometrics(),
+          testServerConfigModel(),
+        ),
+        testServerConfigModel(),
+      ),
       settings: settings,
       alerts: alerts,
       analytics: analytics,
@@ -121,7 +132,13 @@ void main() {
     );
     final model = DefaultAuthViewModel(
       DefaultAuthUseCases(
-        AuthRepositoryImpl(api, MemoryVault(), FakeBiometrics()),
+        AuthRepositoryImpl(
+          api,
+          MemoryVault(),
+          FakeBiometrics(),
+          testServerConfigModel(),
+        ),
+        testServerConfigModel(),
       ),
       settings: settings,
       alerts: alerts,
@@ -158,7 +175,15 @@ void main() {
       SettingsRepositoryImpl(MemoryPreferences()),
     );
     final model = DefaultAuthViewModel(
-      DefaultAuthUseCases(AuthRepositoryImpl(api, vault, FakeBiometrics())),
+      DefaultAuthUseCases(
+        AuthRepositoryImpl(
+          api,
+          vault,
+          FakeBiometrics(),
+          testServerConfigModel(),
+        ),
+        testServerConfigModel(),
+      ),
       settings: settings,
       alerts: RecordingSessionAlerts(),
       analytics: RecordingAnalytics(),
@@ -179,9 +204,16 @@ void main() {
 
   testWidgets('banner reviews sessions and hides itself', (tester) async {
     await getIt.reset();
+    registerTestServerConfig();
     final model = DefaultAuthViewModel(
       DefaultAuthUseCases(
-        AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+        AuthRepositoryImpl(
+          FakeApi(),
+          MemoryVault(),
+          FakeBiometrics(),
+          testServerConfigModel(),
+        ),
+        testServerConfigModel(),
       ),
     );
     model.newSessionAlert = true;
@@ -189,6 +221,7 @@ void main() {
     addTearDown(() async {
       model.dispose();
       await getIt.reset();
+      registerTestServerConfig();
     });
     await tester.pumpWidget(
       MaterialApp(

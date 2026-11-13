@@ -5,6 +5,7 @@ import '../../auth/domain/auth_repository.dart';
 import 'category_repository.dart';
 import 'category_rules.dart';
 import 'finance_category.dart';
+import '../../server_config/domain/app_limits.dart';
 
 abstract class CategoryUseCases {
   Future<Either<AuthFailure, CategoryCatalog>> load();
@@ -31,7 +32,10 @@ abstract class CategoryUseCases {
 
 @LazySingleton(as: CategoryUseCases)
 class DefaultCategoryUseCases implements CategoryUseCases {
-  DefaultCategoryUseCases(this._repository);
+  DefaultCategoryUseCases(this._repository, this._limits);
+
+  /// Server limits (MOB-P5-001).
+  final AppLimitsSource _limits;
   final CategoryRepository _repository;
   @override
   Future<Either<AuthFailure, CategoryCatalog>> load() => _repository.load();
@@ -40,8 +44,7 @@ class DefaultCategoryUseCases implements CategoryUseCases {
       _repository.manage();
 
   bool _token(String? value, List<String> allowed) =>
-      value == null ||
-      (value.isNotEmpty && value.length <= 100 && allowed.contains(value));
+      value == null || (value.isNotEmpty && allowed.contains(value));
 
   bool _stale(FinanceCategory category) =>
       category.version < 1 || category.version >= 2147483647;
@@ -56,7 +59,7 @@ class DefaultCategoryUseCases implements CategoryUseCases {
   }) {
     final name = draft.name.trim();
     if (name.isEmpty ||
-        name.length > 100 ||
+        name.length > _limits.requireLimits.categoryNameMaxLength ||
         categoryParentInvalid(draft.parentId, category?.id, categories) ||
         (draft.parentId != category?.parentId &&
             categoryBreaksTwoLevels(draft.parentId, category, categories)) ||

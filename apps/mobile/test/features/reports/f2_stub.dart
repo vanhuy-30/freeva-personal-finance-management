@@ -14,7 +14,7 @@ import 'f1_stub.dart';
 CategoryDetailArgs f2Args({int index = 0, BreakdownKind? kind}) {
   final report = october();
   final type = kind ?? BreakdownKind.expense;
-  final slices = reportBreakdown(report, 'VND', type).slices;
+  final slices = reportBreakdown(report, 'VND', type, top: 3).slices;
   return CategoryDetailArgs(
     report: report,
     currency: 'VND',

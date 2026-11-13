@@ -13,6 +13,8 @@ import '../../domain/report_breakdown.dart';
 import 'breakdown_rows.dart';
 import 'donut_chart.dart';
 import 'report_wallet_rows.dart';
+import '../../../server_config/domain/app_limits.dart';
+import '../../../../core/di/injection.dart';
 
 enum _View { expense, income, wallets }
 
@@ -80,6 +82,7 @@ class _ReportBreakdownCardState extends State<ReportBreakdownCard> {
                 view == _View.expense
                     ? BreakdownKind.expense
                     : BreakdownKind.income,
+                top: getIt<AppLimitsSource>().requireLimits.reportTopRows,
               ),
               currency: widget.currency,
               digits: widget.digits,

@@ -2,13 +2,19 @@ import 'package:flutter/foundation.dart';
 
 import '../../../auth/domain/auth_repository.dart';
 import '../../../auth/presentation/viewmodels/auth_view_model.dart';
-import '../../../settings/domain/app_preferences.dart';
 import '../../domain/feedback.dart';
+import '../../../server_config/domain/app_limits.dart';
+import '../../../../core/app_version/app_version.dart';
 
 /// The Góp ý form: what the user picked and typed, and sending it. The text
 /// is never logged or tracked.
 class FeedbackViewModel extends ChangeNotifier {
-  FeedbackViewModel(this._cases, this._auth);
+  FeedbackViewModel(this._cases, this._auth, this._limits, this._version);
+
+  final AppVersion _version;
+
+  /// Server limits (MOB-P5-001).
+  final AppLimitsSource _limits;
 
   final FeedbackUseCases _cases;
   final AuthViewModel _auth;
@@ -23,7 +29,7 @@ class FeedbackViewModel extends ChangeNotifier {
   bool get canSend =>
       !sending &&
       message.trim().isNotEmpty &&
-      message.length <= feedbackMaxLength;
+      message.length <= _limits.requireLimits.feedbackMaxLength;
 
   void edit({
     FeedbackKind? kind,
@@ -51,7 +57,7 @@ class FeedbackViewModel extends ChangeNotifier {
         message: message,
         allowReply: allowReply,
       ),
-      appVersionLabel,
+      _version.label,
     );
     sending = false;
     result.fold((error) {

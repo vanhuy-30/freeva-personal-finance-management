@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import '../../support/server_config_fixture.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -36,14 +38,22 @@ void main() {
     t.view.devicePixelRatio = 1;
     addTearDown(t.view.reset);
     await getIt.reset();
+    registerTestServerConfig();
     final deps = await registerSetupDeps();
     addTearDown(() async {
       deps.settings.dispose();
       await getIt.reset();
+      registerTestServerConfig();
     });
     final model = DefaultAuthViewModel(
       DefaultAuthUseCases(
-        AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+        AuthRepositoryImpl(
+          FakeApi(),
+          MemoryVault(),
+          FakeBiometrics(),
+          testServerConfigModel(),
+        ),
+        testServerConfigModel(),
       ),
     );
     addTearDown(model.dispose);

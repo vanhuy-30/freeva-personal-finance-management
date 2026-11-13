@@ -1,4 +1,7 @@
 import 'package:dartz/dartz.dart';
+
+import '../../support/server_config_fixture.dart';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/features/auth/data/authorized_api.dart';
 import 'package:mobile/features/auth/data/auth_repository_impl.dart';
@@ -106,7 +109,10 @@ void main() {
   test(
     'use cases refuse counts outside 2–60 without calling the API',
     () async {
-      final cases = DefaultCardInstallmentUseCases(repository);
+      final cases = DefaultCardInstallmentUseCases(
+        repository,
+        testServerConfigModel(),
+      );
       for (final n in [1, 61]) {
         final result = await cases.preview(
           InstallmentDraft(
@@ -244,7 +250,13 @@ void main() {
         StubWalletViewModel(wallets: [card]),
         DefaultAuthViewModel(
           DefaultAuthUseCases(
-            AuthRepositoryImpl(FakeApi(), MemoryVault(), FakeBiometrics()),
+            AuthRepositoryImpl(
+              FakeApi(),
+              MemoryVault(),
+              FakeBiometrics(),
+              testServerConfigModel(),
+            ),
+            testServerConfigModel(),
           ),
         )..stage = AuthStage.unlocked,
       );

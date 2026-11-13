@@ -20,6 +20,7 @@ import '../widgets/category_bars.dart';
 import '../widgets/category_header.dart';
 import '../widgets/largest_transactions.dart';
 import '../widgets/report_period_labels.dart';
+import '../../../server_config/domain/app_limits.dart';
 
 /// One slice of the breakdown in the period: total, share, the child
 /// categories and the largest transactions. A pushed screen (no bottom nav).
@@ -37,6 +38,7 @@ class _ReportCategoryPageState extends State<ReportCategoryPage> {
     getIt<TransactionRepository>(),
     getIt<AuthViewModel>(),
     widget.args,
+    shown: getIt<AppLimitsSource>().requireLimits.reportTopRows,
   );
   late final TransactionViewModel transactions = getIt<TransactionViewModel>();
 

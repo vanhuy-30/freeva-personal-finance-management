@@ -12,6 +12,7 @@ import '../../../wallets/domain/wallet.dart';
 import '../../../wallets/presentation/viewmodels/wallet_view_model.dart';
 import '../../domain/recurring_rule.dart';
 import '../../domain/recurring_use_cases.dart';
+import '../../../../core/money/currency_catalog.dart';
 
 @LazySingleton()
 class RecurringViewModel extends ChangeNotifier {
@@ -62,7 +63,8 @@ class RecurringViewModel extends ChangeNotifier {
   /// Currency of the "Cần trả" total: the profile currency when a bill uses
   /// it, else the first bill's.
   String get totalCurrency {
-    final main = _profile.saved?.currency ?? 'VND';
+    final main =
+        _profile.saved?.currency ?? CurrencyCatalog.current.defaultCode;
     final pending = _pending;
     if (pending.isEmpty || pending.any((rule) => rule.currencyCode == main)) {
       return main;
@@ -83,7 +85,7 @@ class RecurringViewModel extends ChangeNotifier {
           .where((item) => item.code == currency)
           .firstOrNull
           ?.minorDigits ??
-      (currency == 'VND' ? 0 : 2);
+      CurrencyCatalog.current.digits(currency);
 
   /// Wallets a bill can be paid from or a rule posts to.
   List<Wallet> get wallets => _wallets.active;

@@ -19,6 +19,7 @@ import 'package:mobile/features/wallets/domain/wallet_use_cases.dart';
 import '../auth/fakes.dart';
 import '../home/fixtures.dart' show wallet;
 import 'fakes.dart';
+import '../../support/server_config_fixture.dart';
 
 class FakeExportWallets implements WalletUseCases {
   List<Wallet> wallets = [
@@ -51,12 +52,14 @@ class FakeExportTransactions implements TransactionUseCases {
 
 class FakeExportProfile implements ProfileViewModel {
   int exports = 0;
+  String? password;
   bool shared = true;
   @override
   AuthFailure? failure;
   @override
-  Future<bool> exportData() async {
+  Future<bool> exportData({String? password}) async {
     exports++;
+    this.password = password;
     return shared;
   }
 
@@ -91,7 +94,12 @@ class ExportHarness {
   static Future<ExportHarness> create() async {
     final api = FakeApi();
     final sharer = FakeSharer();
-    final repo = AuthRepositoryImpl(api, MemoryVault(), FakeBiometrics());
+    final repo = AuthRepositoryImpl(
+      api,
+      MemoryVault(),
+      FakeBiometrics(),
+      testServerConfigModel(),
+    );
     await repo.submit(AuthAction.login, {
       'email': 'user@example.com',
       'password': 'password long enough',
@@ -100,12 +108,13 @@ class ExportHarness {
     final profile = FakeExportProfile();
     final auth = FakeExportAuth();
     final model = DefaultDataExportViewModel(
-      ProfileUseCases(MemoryProfiles()),
+      ProfileUseCases(MemoryProfiles(), testServerConfigModel()),
       FakeExportWallets(),
       transactions,
       TransactionsCsvExportUseCase(repo, sharer),
       profile,
       auth,
+      testServerConfigModel(),
     );
     return ExportHarness._(model, api, sharer, transactions, profile, auth);
   }
@@ -117,6 +126,7 @@ Future<(ExportHarness, Widget)> exportApp(
   bool dark = false,
   double scale = 1,
 }) async {
+  registerTestServerConfig();
   final h = await ExportHarness.create();
   getIt.registerFactory<DataExportViewModel>(() => h.model);
   final router = GoRouter(

@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 
 import 'auth_repository.dart';
 import 'session_notice.dart';
+import '../../server_config/domain/app_limits.dart';
 
 abstract class AuthUseCases {
   Future<Either<AuthFailure, AuthStage>> restore();
@@ -45,13 +46,16 @@ abstract class AuthUseCases {
   Future<Either<AuthFailure, Unit>> revoke(String? id);
   Future<Either<AuthFailure, Unit>> logout();
   Future<Either<AuthFailure, Unit>> forgetDevice();
-  Future<Either<AuthFailure, Unit>> deleteAccount();
+  Future<Either<AuthFailure, Unit>> deleteAccount({String? password});
 }
 
 @Injectable(as: AuthUseCases)
 class DefaultAuthUseCases implements AuthUseCases {
-  DefaultAuthUseCases(this._repository);
+  DefaultAuthUseCases(this._repository, this._limits);
   final AuthRepository _repository;
+
+  /// Password and email rules from server config (MOB-P5-001).
+  final AppLimitsSource _limits;
 
   @override
   Future<Either<AuthFailure, AuthStage>> restore() => _repository.restore();
@@ -83,12 +87,21 @@ class DefaultAuthUseCases implements AuthUseCases {
     final newPassword =
         action == AuthAction.register || action == AuthAction.resetPassword;
     // A bad email is told apart so the screen can say so before any call.
+    final rules = _limits.requireLimits;
     if (email != null &&
-        (email.length > 254 ||
+        (email.length > rules.emailMaxLength ||
             !RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$').hasMatch(email))) {
       return Future.value(left(const AuthFailure(AuthError.invalidEmail)));
     }
-    if ((password != null && !validPasswordLength(password)) ||
+    // Login checks only the cap: a raised minimum must not lock out older
+    // passwords (the API keeps its own floor for login).
+    final passwordOk =
+        password == null ||
+        (newPassword
+            ? validPasswordLength(password, rules)
+            : password.isNotEmpty &&
+                  password.length <= rules.passwordMaxLength);
+    if (!passwordOk ||
         (newPassword && password != null && !hasLetterAndDigit(password)) ||
         (token != null && !RegExp(r'^[a-f0-9]{64}$').hasMatch(token))) {
       return Future.value(left(const AuthFailure(AuthError.invalidInput)));
@@ -145,9 +158,10 @@ class DefaultAuthUseCases implements AuthUseCases {
     if (next != confirmation) {
       return Future.value(left(const AuthFailure(AuthError.passwordMismatch)));
     }
+    final rules = _limits.requireLimits;
     if (current.isEmpty ||
-        current.length > 128 ||
-        !validPasswordLength(next) ||
+        current.length > rules.passwordMaxLength ||
+        !validPasswordLength(next, rules) ||
         !hasLetterAndDigit(next) ||
         next == current) {
       return Future.value(left(const AuthFailure(AuthError.invalidInput)));
@@ -198,16 +212,14 @@ class DefaultAuthUseCases implements AuthUseCases {
   Future<Either<AuthFailure, Unit>> forgetDevice() =>
       _repository.forgetDevice();
   @override
-  Future<Either<AuthFailure, Unit>> deleteAccount() =>
-      _repository.deleteAccount();
+  Future<Either<AuthFailure, Unit>> deleteAccount({String? password}) =>
+      _repository.deleteAccount(password: password);
 }
 
-const minPasswordLength = 8;
-const maxPasswordLength = 128;
-
-bool validPasswordLength(String password) =>
-    password.length >= minPasswordLength &&
-    password.length <= maxPasswordLength;
+/// New-password length: server `password.minLength` to `limit.passwordMaxLength`.
+bool validPasswordLength(String password, AppLimits limits) =>
+    password.length >= limits.passwordMinLength &&
+    password.length <= limits.passwordMaxLength;
 
 /// At least one letter and one digit, in any script (Vietnamese included).
 bool hasLetterAndDigit(String password) =>
