@@ -20,7 +20,7 @@ export class AuthRateLimitGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<Request>();
     const response = context.switchToHttp().getResponse<Response>();
     const operation = context.getHandler().name;
-    // Express trust proxy defaults to false: never accept arbitrary forwarded IPs.
+    // request.ip honours TRUST_PROXY_HOPS only (configure-http.ts); arbitrary forwarded IPs are never trusted.
     const retryIp = await this.repository.takeRateLimit(
       this.crypto.rateKey(`ip:${operation}:${request.ip}`),
       30,

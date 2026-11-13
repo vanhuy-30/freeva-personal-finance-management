@@ -41,7 +41,7 @@ export class AdminUserLookupService {
 
     const user = criteria.userId
       ? await this.users.findById(criteria.userId)
-      : await this.users.findByEmail(criteria.email!.trim());
+      : await this.users.findByEmail(criteria.email!.trim().toLowerCase());
 
     // Fail closed: do not return PII unless the lookup was audited.
     try {

@@ -82,9 +82,7 @@ describe('SEC-P1-001 HTTP + PostgreSQL', () => {
     expect(allowed.headers.get('access-control-allow-origin')).toBe(
       allowedOrigin,
     );
-    expect(allowed.headers.get('access-control-allow-credentials')).toBe(
-      'true',
-    );
+    expect(allowed.headers.get('access-control-allow-credentials')).toBeNull();
 
     const denied = await fetch(`${base}/api/health`, {
       headers: { Origin: 'http://evil.example' },

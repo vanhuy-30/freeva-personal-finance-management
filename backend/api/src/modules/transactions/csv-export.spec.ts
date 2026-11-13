@@ -28,6 +28,10 @@ describe('csvText', () => {
     for (const lead of ['=', '+', '-', '@']) expect(csvText(`${lead}SUM(A1)`)).toBe(`'${lead}SUM(A1)`);
     expect(csvText('=HYPERLINK("x","y")')).toBe('"\'=HYPERLINK(""x"",""y"")"');
   });
+  it('quotes `;` so semicolon-separated Excel locales cannot split out a formula cell (SEC-P6-002)', () => {
+    expect(csvText('ăn trưa;=1+1')).toBe('"ăn trưa;=1+1"');
+    expect(csvText('a;b')).toBe('"a;b"');
+  });
 });
 
 describe('buildTransactionsCsv', () => {
@@ -35,7 +39,7 @@ describe('buildTransactionsCsv', () => {
     const csv = buildTransactionsCsv([row({ notes: '=1+1', tagNames: ['a', 'b'] }), row({ amountMinor: 1050n, minorDigits: 2, currencyCode: 'USD', occurredTime: null, type: 'income' })]);
     expect(csv.startsWith(`${CSV_BOM}date,time,type,amount,currency,wallet,category,merchant,notes,tags,transaction_id\r\n`)).toBe(true);
     const lines = csv.trimEnd().split('\r\n');
-    expect(lines[1]).toBe("2026-11-03,08:30,expense,-12500000,VND,Ví chính,Ăn uống,,'=1+1,a;b,11111111-1111-4111-8111-111111111111");
+    expect(lines[1]).toBe(`2026-11-03,08:30,expense,-12500000,VND,Ví chính,Ăn uống,,'=1+1,"a;b",11111111-1111-4111-8111-111111111111`);
     expect(lines[2]).toBe('2026-11-03,,income,10.50,USD,Ví chính,Ăn uống,,,,11111111-1111-4111-8111-111111111111');
     expect(csv.endsWith('\r\n')).toBe(true);
   });
