@@ -7,13 +7,13 @@
     "build": "next build",
     "start": "next start -p 3001",
     "lint": "eslint",
-    "test": "node --experimental-strip-types --test src/sentry/scrub.test.ts src/app/config/app_config_format.test.ts",
+    "test": "node --experimental-strip-types --test src/sentry/scrub.test.ts src/app/config/app_config_format.test.ts src/lib/api_base.test.ts",
     "sentry:smoke": "node scripts/sentry-smoke.mjs"
   },
   "dependencies": {
     "@freeva/design-tokens": "workspace:*",
     "@sentry/nextjs": "^11.6.0",
-    "next": "16.3.8",
+    "next": "16.4.5",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
@@ -23,7 +23,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.3.8",
+    "eslint-config-next": "16.4.5",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

@@ -32,7 +32,7 @@ abstract class ProfileViewModel extends ChangeNotifier {
 
   /// True while an export is being fetched or handed to the OS.
   bool get exporting;
-  Future<bool> exportData();
+  Future<bool> exportData({String? password});
 }
 
 @LazySingleton(as: ProfileViewModel)
@@ -213,13 +213,13 @@ class DefaultProfileViewModel extends ProfileViewModel {
   bool exporting = false;
 
   @override
-  Future<bool> exportData() async {
+  Future<bool> exportData({String? password}) async {
     if (exporting || _stage != AuthStage.unlocked) return false;
     final epoch = _epoch;
     exporting = true;
     failure = null;
     notifyListeners();
-    final result = await _export(DateTime.now());
+    final result = await _export(DateTime.now(), password: password);
     if (epoch != _epoch) return false;
     exporting = false;
     var shared = false;

@@ -2,6 +2,7 @@ import { Transform } from 'class-transformer';
 import {
   Equals,
   IsEmail,
+  IsOptional,
   IsString,
   Matches,
   MaxLength,
@@ -71,4 +72,13 @@ export class ChangePasswordDto {
   @MaxLength(128)
   @Matches(LETTER_AND_DIGIT)
   newPassword!: string;
+}
+
+/** Step-up for account delete/export (SEC-P6-002). Omitted only by accounts without a password. */
+export class ConfirmIdentityDto {
+  @IsOptional()
+  @IsString()
+  @MinLength(1)
+  @MaxLength(128)
+  password?: string;
 }

@@ -63,7 +63,8 @@ Goal goal({
   incomeShareBps: incomeShareBps,
   archived: archived,
   version: 1,
-  updatedAt: updatedAt ?? DateTime.utc(2026, 9, 12),
+  // Local midday, not a UTC instant: goldens show 12/09 in every TZ.
+  updatedAt: updatedAt ?? DateTime(2026, 9, 12, 12),
 );
 
 /// The three goals of GoalList: on track, overdue, reached.
@@ -92,7 +93,7 @@ List<Goal> canvasGoals() => [
     current: 20000000,
     status: GoalStatus.reached,
     perMonth: 0,
-    updatedAt: DateTime.utc(2026, 9, 12),
+    updatedAt: DateTime(2026, 9, 12, 12),
   ),
 ];
 

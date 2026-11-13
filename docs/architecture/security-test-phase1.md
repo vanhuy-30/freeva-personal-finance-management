@@ -41,3 +41,40 @@ CI không thêm bước `pnpm audit` vì high còn lại sẽ làm job đỏ.
 - Cert pinning để sau (`SEC-P1` trong [secrets.md](../infrastructure/secrets.md)).
 - ToS/privacy và PDPD vẫn cần luật sư. File export trên thiết bị vẫn phụ thuộc khóa app.
 - `deepmerge-ts` 7 còn high cho đến khi có bản Prisma không kéo major này.
+
+## Đợt rà soát SEC-P6-002
+
+Ngày 2026-11-12. Mục tiêu: chạy những gì CI không chạy và vá lỗ hổng mới.
+
+### Test ngoài CI
+
+| Chạy | Kết quả |
+|---|---|
+| API unit, `--randomize`, TZ `UTC`, `Asia/Ho_Chi_Minh`, `America/Los_Angeles`, `Pacific/Kiritimati` | Pass |
+| API HTTP/PostgreSQL trên DB `auth_test` local, 2 lần, TZ khác nhau, thứ tự ngẫu nhiên | Pass |
+| `prisma migrate diff` migrations ↔ schema | Không lệch |
+| `tsc --noEmit` API (cả spec) và admin; test admin (CI chưa chạy) | Pass; CI thêm bước test admin |
+| Mobile `flutter test --test-randomize-ordering-seed random`, TZ khác VN | **Lỗi**: 4 golden phụ thuộc múi giờ (fixture là mốc UTC 00:00, app hiển thị giờ máy). Sửa fixture thành giờ local; pass ở Los Angeles, Auckland, Pago Pago, VN |
+
+### Đã vá
+
+- **Rate limit sau proxy**: `TRUST_PROXY_HOPS` (mặc định 0). Không có nó, sau proxy Render mọi người chung một bucket IP: 30 request làm khóa đăng nhập của tất cả. Đặt lớn hơn số hop thật thì client giả được IP.
+- **Xóa / xuất tài khoản**: cần mật khẩu lại (`POST /v1/account/export`, body của `DELETE /v1/account`), 5 lần/15 phút/user. Tài khoản chỉ OAuth: phiên tạo ≤ 10 phút, nếu không `REAUTH_REQUIRED` và app đăng xuất.
+- **Web admin**: CSP `frame-ancestors 'none'`, `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy: no-referrer`, HSTS. Production không còn fallback `http://localhost:4000` và không gửi staff token qua HTTP tới host ngoài.
+- **CORS**: bỏ `credentials: true` (chỉ dùng Bearer).
+- **CSV**: ô có `;` được đặt trong ngoặc kép; Excel locale vi tách cột bằng `;`.
+- **Tra cứu staff theo email**: lowercase như lúc lưu.
+- **Docker compose local**: Postgres, Redis, Mailhog chỉ bind `127.0.0.1`.
+- **CI**: `permissions: contents: read`.
+
+### Dependency
+
+`pnpm audit --prod` trước khi vá: 2 critical (Next.js RCE), 4 high, 10 moderate, 2 low. Vá trong cùng major, chọn bản phát hành ≥ 1 tuần:
+`next`/`eslint-config-next` `16.3.8` → `16.4.5`, `nodemailer` `10.0.10` → `10.3.1`, override `body-parser@^2` `2.4.0`, `multer` `2.5.0`, `qs` `6.16.2`, `fast-uri@^3` `3.1.9`.
+
+Còn lại: 1 high `deepmerge-ts` 7 (Prisma 6), 2 moderate `glob` 13 / `minimatch` 10 trong tooling build của `@sentry/nextjs` (chỉ lúc build; bản vá là major mới).
+
+### Tồn đọng
+
+Xem `SEC-P6-002` trong [phase-06.md](../../tasks/phase-06.md).
+

@@ -6066,6 +6066,12 @@ abstract class S {
   /// **'Couldn\'t delete. Your data is untouched.'**
   String get meDeleteError;
 
+  /// No description provided for @meConfirmPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your password to continue'**
+  String get meConfirmPasswordTitle;
+
   /// No description provided for @meChangeAvatar.
   ///
   /// In en, this message translates to:

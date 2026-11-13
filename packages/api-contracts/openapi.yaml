@@ -3620,7 +3620,8 @@ paths:
         legs only. Columns: date, time, type, amount, currency, wallet, category, merchant, notes, tags,
         transaction_id. amount is a signed plain decimal (minor units shifted by the currency minor digits, no
         locale grouping) and currency is its own column. Text cells starting with = + - @ are prefixed with a
-        single quote. Tags are joined with a semicolon. A transfer is two rows (one per leg). Not a backup: use
+        single quote. Cells containing a comma, semicolon, quote or line break are quoted, so Excel in
+        semicolon-separated locales cannot split them. Tags are joined with a semicolon. A transfer is two rows (one per leg). Not a backup: use
         the JSON account export for that. Above 50000 rows the request fails with 400; narrow the date range.
         Writes audit user.transactions_export in the same transaction. Cache-Control no-store; the body is not logged.
       security:
@@ -6518,13 +6519,19 @@ paths:
           format: uuid
           description: UUID v4
   /api/v1/account/export:
-    get:
+    post:
       operationId: exportAccount
       tags: [Account]
       summary: Export the signed-in user's data as JSON
-      description: Bearer session only. Includes owned profile, wallets, categories, tags, FX quotes and transactions, including soft-deleted transactions. Omits password hashes, sessions, tokens and OAuth subjects. Writes audit user.data_export in the same transaction and returns nothing if that write fails. Requires SchemaMeta. Cache-Control no-store. Does not log the body, email, notes or amounts.
+      description: Bearer session plus step-up (SEC-P6-002, POST; the old GET is removed). Includes owned profile, wallets, categories, tags, FX quotes and transactions, including soft-deleted transactions. Omits password hashes, sessions, tokens and OAuth subjects. Writes audit user.data_export in the same transaction and returns nothing if that write fails. Requires SchemaMeta. Cache-Control no-store. Does not log the body, email, notes or amounts.
       security:
       - UserBearer: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountConfirmIdentity'
       responses:
         '200':
           description: Account snapshot (Cache-Control no-store)
@@ -6539,6 +6546,39 @@ paths:
                 $ref: '#/components/schemas/AccountExport'
         '401':
           description: Missing, expired or revoked session
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '400':
+          description: Unknown or invalid body field
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Password missing or wrong (INVALID_CREDENTIALS), or an account without a password whose session is older than 10 minutes (REAUTH_REQUIRED, sign in again)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: More than 5 password attempts in 15 minutes for this user
           headers:
             Cache-Control:
               schema:
@@ -6564,9 +6604,15 @@ paths:
       operationId: deleteAccount
       tags: [Account]
       summary: Permanently delete the signed-in account
-      description: Bearer session only. Deletes owned financial data and the user row in one transaction, then cascades auth sessions, tokens, mail jobs and OAuth identities. Writes audit user.account_delete before the user row is removed. Audit rows are kept. Does not require SchemaMeta and does not apply a grace period. Cache-Control no-store. Does not log email, notes or amounts.
+      description: Bearer session plus step-up (SEC-P6-002, see AccountConfirmIdentity). Deletes owned financial data and the user row in one transaction, then cascades auth sessions, tokens, mail jobs and OAuth identities. Writes audit user.account_delete before the user row is removed. Audit rows are kept. Does not require SchemaMeta and does not apply a grace period. Cache-Control no-store. Does not log email, notes or amounts.
       security:
       - UserBearer: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountConfirmIdentity'
       responses:
         '204':
           description: Account deleted (Cache-Control no-store)
@@ -6577,6 +6623,39 @@ paths:
                 const: no-store
         '401':
           description: Missing, expired or revoked session
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '400':
+          description: Unknown or invalid body field
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Password missing or wrong (INVALID_CREDENTIALS), or an account without a password whose session is older than 10 minutes (REAUTH_REQUIRED, sign in again)
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: More than 5 password attempts in 15 minutes for this user
           headers:
             Cache-Control:
               schema:
@@ -7512,6 +7591,18 @@ components:
         checks session storage on every authenticated request. No refresh token in this
         phase.
   schemas:
+    AccountConfirmIdentity:
+      type: object
+      additionalProperties: false
+      description: >
+        Step-up before account export or delete (SEC-P6-002). An account with a password must send it; every attempt
+        counts toward 5 per 15 minutes per user. An account without a password (OAuth only) omits it and passes only
+        when its session was created within the last 10 minutes. Never logged.
+      properties:
+        password:
+          type: string
+          minLength: 1
+          maxLength: 128
     ImportMapping:
       type: object
       additionalProperties: false

@@ -64,6 +64,7 @@ Staff token cho form lookup: nhập tay trên UI khi gọi API; không nhúng v�
 | `CORS_ORIGINS` | Render | Origin Vercel |
 | `STAFF_AUTH_TOKEN` / `STAFF_ACTOR_ID` | Render | Secrets |
 | `NODE_ENV` | Render | `staging` |
+| `TRUST_PROXY_HOPS` | Render | `SEC-P6-002`. Số proxy trước API (Blueprint đặt `1`). Rate limit auth theo IP client thay vì IP proxy. Đặt lớn hơn số hop thật thì client giả được IP; kiểm tra lại khi đổi hạ tầng |
 | `NEXT_PUBLIC_API_BASE_URL` | Vercel | Public URL API |
 | `SENTRY_DSN` | Render và Vercel (server) | `INF-P1-001`. Không commit. Trống = không gửi crash |
 | `NEXT_PUBLIC_SENTRY_DSN` | Vercel | Chỉ crash trình duyệt admin. Write key, vẫn không commit |

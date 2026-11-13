@@ -1,3 +1,4 @@
+import { apiBase } from "../lib/api_base";
 import { AdminHeader } from "./admin_header";
 import { UserLookupForm } from "./user_lookup_form";
 
@@ -11,9 +12,8 @@ type HealthResponse = {
 };
 
 async function fetchHealth(): Promise<HealthResponse | null> {
-  const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:4000";
   try {
-    const response = await fetch(`${base}/api/health`, { cache: "no-store" });
+    const response = await fetch(`${apiBase()}/api/health`, { cache: "no-store" });
     if (!response.ok) {
       return null;
     }

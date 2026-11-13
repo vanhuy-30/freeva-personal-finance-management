@@ -27,11 +27,15 @@ export function formatMinorAmount(amountMinor: bigint, minorDigits: number): str
   return `${negative ? '-' : ''}${whole}${fraction}`;
 }
 
-/** RFC 4180 quoting. Text cells starting with `= + - @` (or tab/CR) get a leading `'` so Excel never runs them as formulas. */
+/**
+ * RFC 4180 quoting. Text cells starting with `= + - @` (or tab/CR) get a leading `'` so Excel never runs them as formulas.
+ * `;` is quoted too: Excel in vi-VN and other comma-decimal locales splits on `;`, which would turn the text after it
+ * into its own unescaped cell (SEC-P6-002).
+ */
 export function csvText(value: string | null): string {
   if (!value) return '';
   const safe = /^[=+\-@\t\r]/.test(value) ? `'${value}` : value;
-  return /[",\r\n]/.test(safe) ? `"${safe.replace(/"/g, '""')}"` : safe;
+  return /[",;\r\n]/.test(safe) ? `"${safe.replace(/"/g, '""')}"` : safe;
 }
 
 export function buildTransactionsCsv(rows: CsvTransactionRow[]): string {

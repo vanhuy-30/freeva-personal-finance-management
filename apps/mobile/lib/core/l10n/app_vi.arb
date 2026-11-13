@@ -1071,6 +1071,7 @@
   "meDeleteBody": "Mọi dữ liệu của bạn sẽ bị xóa ngay và không khôi phục được. Bạn có thể xuất dữ liệu trước.",
   "meDeleteConfirm": "Xóa vĩnh viễn",
   "meDeleteError": "Chưa xóa được. Dữ liệu của bạn vẫn còn nguyên.",
+  "meConfirmPasswordTitle": "Nhập mật khẩu để tiếp tục",
   "meChangeAvatar": "Đổi ảnh đại diện",
   "meSecurityValueFaceId": "PIN · Face ID",
   "meSecFaceId": "Mở bằng Face ID",

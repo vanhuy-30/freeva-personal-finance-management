@@ -186,6 +186,33 @@ void main() {
       expect(find.textContaining('Gồm toàn bộ'), findsOneWidget);
     });
 
+    testWidgets('SEC-P6-002: full copy asks for the password first', (t) async {
+      final h = await open(t);
+      await t.tap(find.text('Bản sao đầy đủ'));
+      await t.pump();
+      await t.tap(find.text('Xuất file'));
+      await t.pumpAndSettle();
+      expect(find.text('Nhập mật khẩu để tiếp tục'), findsOneWidget);
+      await t.enterText(find.byType(TextField), 'mk-bi-mat-7');
+      await t.tap(find.text('Xong'));
+      await t.pumpAndSettle();
+      expect(h.profile.exports, 1);
+      expect(h.profile.password, 'mk-bi-mat-7');
+    });
+
+    testWidgets('SEC-P6-002: cancelling the password exports nothing', (
+      t,
+    ) async {
+      final h = await open(t);
+      await t.tap(find.text('Bản sao đầy đủ'));
+      await t.pump();
+      await t.tap(find.text('Xuất file'));
+      await t.pumpAndSettle();
+      await t.tap(find.text('Huỷ'));
+      await t.pumpAndSettle();
+      expect(h.profile.exports, 0);
+    });
+
     testWidgets('chips wrap without overflow at 320 pt and 1.3x', (t) async {
       t.view.physicalSize = const Size(320, 700);
       t.view.devicePixelRatio = 1;

@@ -1,5 +1,6 @@
 "use server";
 
+import { apiBase } from "../../lib/api_base";
 import type { ConfigDefinition, ConfigValue, FlagInput } from "./app_config_format";
 
 // WA-P5-001: staff calls to the BE-P5-E08 admin API. The staff credential is typed on the page,
@@ -31,8 +32,6 @@ export type AdminAppConfig = { version: number; flags: AdminFlag[]; config: Admi
 export type AdminResult =
   | { status: "ok"; data: AdminAppConfig }
   | { status: "error"; code: string; message: string; reason?: string };
-
-const apiBase = () => process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:4000";
 
 async function call(token: string, method: string, path: string, body?: unknown): Promise<AdminResult> {
   if (!token.trim()) return { status: "error", code: "STAFF_AUTH_INVALID", message: "Nhập credential staff." };

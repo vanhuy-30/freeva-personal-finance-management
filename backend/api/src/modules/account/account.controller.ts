@@ -1,24 +1,33 @@
-import { Controller, Delete, Get, Header, HttpCode, Req, UseFilters, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Header, HttpCode, Post, Req, UseFilters, UseGuards } from '@nestjs/common';
 import { AuthGuard, type AuthRequest } from '../auth/auth.guard';
+import { AuthService } from '../auth/auth.service';
+import { ConfirmIdentityDto } from '../auth/dto/auth.dto';
 import { AccountExceptionFilter } from './account-exception.filter';
 import { AccountService } from './account.service';
 
+/** Whole-account export and delete. Both need the password again (or a fresh OAuth session): SEC-P6-002. */
 @Controller('v1/account')
 @UseGuards(AuthGuard)
 @UseFilters(AccountExceptionFilter)
 export class AccountController {
-  constructor(private readonly accounts: AccountService) {}
+  constructor(
+    private readonly accounts: AccountService,
+    private readonly auth: AuthService,
+  ) {}
 
-  @Get('export')
+  @Post('export')
+  @HttpCode(200)
   @Header('Cache-Control', 'no-store')
-  export(@Req() request: AuthRequest) {
+  async export(@Req() request: AuthRequest, @Body() body: ConfirmIdentityDto) {
+    await this.auth.confirmIdentity(request.session, body.password);
     return this.accounts.export(request.session.userId);
   }
 
   @Delete()
   @HttpCode(204)
   @Header('Cache-Control', 'no-store')
-  remove(@Req() request: AuthRequest) {
-    return this.accounts.remove(request.session.userId);
+  async remove(@Req() request: AuthRequest, @Body() body: ConfirmIdentityDto) {
+    await this.auth.confirmIdentity(request.session, body.password);
+    await this.accounts.remove(request.session.userId);
   }
 }

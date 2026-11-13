@@ -46,7 +46,7 @@ abstract class DataExportViewModel extends ChangeNotifier {
   void selectWallets(Set<String> ids);
 
   /// True when a file was shared; false on failure or a dismissed sheet.
-  Future<bool> export();
+  Future<bool> export({String? password});
 }
 
 @injectable
@@ -190,7 +190,7 @@ class DefaultDataExportViewModel extends DataExportViewModel {
   }
 
   @override
-  Future<bool> export() async {
+  Future<bool> export({String? password}) async {
     if (!canExport) return false;
     final epoch = _epoch;
     exporting = true;
@@ -198,7 +198,7 @@ class DefaultDataExportViewModel extends DataExportViewModel {
     _notify();
     var shared = false;
     if (kind == ExportKind.fullCopy) {
-      shared = await _profile.exportData();
+      shared = await _profile.exportData(password: password);
       if (_profile.failure != null) failure = _profile.failure;
     } else {
       final result = await _csv(
