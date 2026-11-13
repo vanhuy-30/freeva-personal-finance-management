@@ -414,8 +414,10 @@ void main() {
 
     test('export shares the API body unchanged', () async {
       api.exportBody = '{"b":1,\n "a":[ 2 ]}';
-      expect(await model.exportData(), isTrue);
+      expect(await model.exportData(password: 'mk-bi-mat-7'), isTrue);
       expect(api.lastPath, 'account/export');
+      expect(api.lastMethod, 'POST');
+      expect(api.lastBody, {'password': 'mk-bi-mat-7'});
       expect(sharer.content, '{"b":1,\n "a":[ 2 ]}');
       expect(sharer.name, matches(RegExp(r'^freeva-export-\d{8}\.json$')));
       expect(model.exporting, isFalse);
@@ -444,8 +446,9 @@ void main() {
     });
 
     test('delete clears session and goes signed out', () async {
-      await auth.deleteAccount();
+      await auth.deleteAccount(password: 'mk-bi-mat-7');
       expect(api.lastPath, 'account');
+      expect(api.lastBody, {'password': 'mk-bi-mat-7'});
       expect(auth.stage, AuthStage.signedOut);
       expect(vault.value, isNull);
     });
@@ -456,6 +459,17 @@ void main() {
         api.failure = const AuthFailure(AuthError.network);
         await auth.deleteAccount();
         expect(auth.failure?.code, AuthError.network);
+        expect(auth.stage, AuthStage.unlocked);
+        expect(vault.value, isNotNull);
+      },
+    );
+
+    test(
+      'wrong password on delete keeps everything and stays signed in',
+      () async {
+        api.failure = const AuthFailure(AuthError.credentials);
+        await auth.deleteAccount(password: 'sai');
+        expect(auth.failure?.code, AuthError.credentials);
         expect(auth.stage, AuthStage.unlocked);
         expect(vault.value, isNotNull);
       },

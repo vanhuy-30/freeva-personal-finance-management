@@ -46,7 +46,7 @@ abstract class AuthUseCases {
   Future<Either<AuthFailure, Unit>> revoke(String? id);
   Future<Either<AuthFailure, Unit>> logout();
   Future<Either<AuthFailure, Unit>> forgetDevice();
-  Future<Either<AuthFailure, Unit>> deleteAccount();
+  Future<Either<AuthFailure, Unit>> deleteAccount({String? password});
 }
 
 @Injectable(as: AuthUseCases)
@@ -212,8 +212,8 @@ class DefaultAuthUseCases implements AuthUseCases {
   Future<Either<AuthFailure, Unit>> forgetDevice() =>
       _repository.forgetDevice();
   @override
-  Future<Either<AuthFailure, Unit>> deleteAccount() =>
-      _repository.deleteAccount();
+  Future<Either<AuthFailure, Unit>> deleteAccount({String? password}) =>
+      _repository.deleteAccount(password: password);
 }
 
 /// New-password length: server `password.minLength` to `limit.passwordMaxLength`.

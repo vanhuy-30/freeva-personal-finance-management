@@ -20,7 +20,12 @@ abstract class AuthApi {
   });
 
   /// Same as [request] but returns the 2xx body exactly as received.
-  Future<String> requestText(String method, String path, {String? token});
+  Future<String> requestText(
+    String method,
+    String path, {
+    String? token,
+    Map<String, dynamic>? body,
+  });
 
   /// Same as [requestText] but the raw bytes, so a UTF-8 BOM survives.
   Future<List<int>> requestBytes(String method, String path, {String? token});
@@ -60,7 +65,8 @@ class HttpAuthApi implements AuthApi {
     String method,
     String path, {
     String? token,
-  }) async => (await _send(method, path, token: token)).body;
+    Map<String, dynamic>? body,
+  }) async => (await _send(method, path, token: token, body: body)).body;
 
   @override
   Future<List<int>> requestBytes(
@@ -109,6 +115,11 @@ class HttpAuthApi implements AuthApi {
       _logger?.http('← $method $path ${response.statusCode} ${ms}ms');
       throw AuthFailure(switch (response.statusCode) {
         401 => token == null ? AuthError.credentials : AuthError.expired,
+        // SEC-P6-002: the server wants a fresh sign-in before export/delete.
+        403
+            when token != null &&
+                _errorCode(response.body) == 'REAUTH_REQUIRED' =>
+          AuthError.expired,
         // Signed in but refused: the current password was wrong.
         403 when token != null => AuthError.credentials,
         429 => AuthError.rateLimited,

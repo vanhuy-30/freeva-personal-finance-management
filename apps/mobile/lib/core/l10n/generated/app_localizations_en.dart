@@ -3390,6 +3390,9 @@ class SEn extends S {
   String get meDeleteError => 'Couldn\'t delete. Your data is untouched.';
 
   @override
+  String get meConfirmPasswordTitle => 'Enter your password to continue';
+
+  @override
   String get meChangeAvatar => 'Change photo';
 
   @override

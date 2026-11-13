@@ -184,6 +184,37 @@ void main() {
       expect(g.profile.saved?.displayName, 'Lan');
     });
 
+    testWidgets('SEC-P6-002: delete asks for the password again', (
+      tester,
+    ) async {
+      tall(tester);
+      await tester.pumpWidget(g.app(const ProfilePage()));
+      await tester.pumpAndSettle();
+      Future<void> deleteWith(String password) async {
+        await tester.ensureVisible(find.text('Xoá tài khoản'));
+        await tester.tap(find.text('Xoá tài khoản'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Xóa vĩnh viễn'));
+        await tester.pumpAndSettle();
+        expect(find.text('Nhập mật khẩu để tiếp tục'), findsOneWidget);
+        await tester.enterText(
+          find.descendant(
+            of: find.byType(Dialog),
+            matching: find.byType(TextField),
+          ),
+          password,
+        );
+        await tester.tap(find.text('Xong'));
+        await tester.pumpAndSettle();
+      }
+
+      g.api.failure = const AuthFailure(AuthError.credentials);
+      await deleteWith('sai-mat-khau-1');
+      expect(find.text('Mật khẩu hiện tại chưa đúng.'), findsOneWidget);
+      expect(g.api.lastPath, 'account');
+      expect(g.api.lastBody, {'password': 'sai-mat-khau-1'});
+    });
+
     testWidgets('a blank name clears it; the email change says "Sắp có"', (
       tester,
     ) async {

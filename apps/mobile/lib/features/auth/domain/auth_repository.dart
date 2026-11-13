@@ -107,14 +107,16 @@ abstract class AuthRepository {
   Future<Either<AuthFailure, Unit>> logout();
   Future<Either<AuthFailure, Unit>> forgetDevice();
 
-  /// The account export JSON exactly as the API returned it.
-  Future<Either<AuthFailure, String>> exportAccount();
+  /// The account export JSON exactly as the API returned it. The server asks
+  /// for the [password] again (SEC-P6-002); a wrong one is `credentials`.
+  Future<Either<AuthFailure, String>> exportAccount({String? password});
 
   /// `MOB-P3-010`: the CSV body of `GET transactions/export.csv?[query]`,
   /// as received (UTF-8 BOM included).
   Future<Either<AuthFailure, List<int>>> exportTransactionsCsv(String query);
 
   /// Deletes the account on the server, then drops the session and PIN here.
-  /// Nothing local is touched unless the server confirmed.
-  Future<Either<AuthFailure, Unit>> deleteAccount();
+  /// Nothing local is touched unless the server confirmed. Needs the
+  /// [password] again (SEC-P6-002).
+  Future<Either<AuthFailure, Unit>> deleteAccount({String? password});
 }

@@ -2013,6 +2013,7 @@
   "meDeleteBody": "All your data is deleted right away and can't be restored. You can export it first.",
   "meDeleteConfirm": "Delete permanently",
   "meDeleteError": "Couldn't delete. Your data is untouched.",
+  "meConfirmPasswordTitle": "Enter your password to continue",
   "meChangeAvatar": "Change photo",
   "meSecurityValueFaceId": "PIN · Face ID",
   "meSecFaceId": "Unlock with Face ID",

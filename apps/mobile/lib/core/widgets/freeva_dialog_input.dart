@@ -15,6 +15,7 @@ Future<String?> showFreevaInputDialog({
   String initial = '',
   TextInputType? keyboardType,
   List<TextInputFormatter>? formatters,
+  bool obscure = false,
 }) => showDialog<String>(
   context: context,
   builder: (_) => _InputDialog(
@@ -23,6 +24,7 @@ Future<String?> showFreevaInputDialog({
     initial: initial,
     keyboardType: keyboardType,
     formatters: formatters,
+    obscure: obscure,
   ),
 );
 
@@ -33,6 +35,7 @@ class _InputDialog extends StatefulWidget {
     required this.initial,
     this.keyboardType,
     this.formatters,
+    this.obscure = false,
   });
 
   final String title;
@@ -40,6 +43,9 @@ class _InputDialog extends StatefulWidget {
   final String initial;
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? formatters;
+
+  /// Hides the text (a password); also drops tabular digits.
+  final bool obscure;
 
   @override
   State<_InputDialog> createState() => _InputDialogState();
@@ -77,7 +83,8 @@ class _InputDialogState extends State<_InputDialog> {
               controller: controller,
               keyboardType: widget.keyboardType,
               inputFormatters: widget.formatters,
-              tabular: true,
+              obscureText: widget.obscure,
+              tabular: !widget.obscure,
             ),
             const SizedBox(height: FreevaSpace.s4),
             Row(

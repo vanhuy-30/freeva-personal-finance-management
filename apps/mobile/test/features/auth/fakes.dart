@@ -60,6 +60,7 @@ class FakeApi implements AuthApi {
   AuthFailure? failure;
   List<Map<String, dynamic>>? sessionItems;
   String? lastPath;
+  String? lastMethod;
   Map<String, dynamic>? lastBody;
   int calls = 0;
   Future<void>? pending;
@@ -69,9 +70,12 @@ class FakeApi implements AuthApi {
     String method,
     String path, {
     String? token,
+    Map<String, dynamic>? body,
   }) async {
     calls++;
     lastPath = path;
+    lastMethod = method;
+    lastBody = body;
     if (pending != null) await pending;
     if (failure != null) throw failure!;
     return exportBody;

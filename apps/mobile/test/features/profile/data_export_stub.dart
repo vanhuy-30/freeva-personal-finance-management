@@ -52,12 +52,14 @@ class FakeExportTransactions implements TransactionUseCases {
 
 class FakeExportProfile implements ProfileViewModel {
   int exports = 0;
+  String? password;
   bool shared = true;
   @override
   AuthFailure? failure;
   @override
-  Future<bool> exportData() async {
+  Future<bool> exportData({String? password}) async {
     exports++;
+    this.password = password;
     return shared;
   }
 

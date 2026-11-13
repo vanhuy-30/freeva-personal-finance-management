@@ -3349,6 +3349,9 @@ class SVi extends S {
   String get meDeleteError => 'Chưa xóa được. Dữ liệu của bạn vẫn còn nguyên.';
 
   @override
+  String get meConfirmPasswordTitle => 'Nhập mật khẩu để tiếp tục';
+
+  @override
   String get meChangeAvatar => 'Đổi ảnh đại diện';
 
   @override

@@ -16,6 +16,7 @@ import '../../../transactions/presentation/widgets/filter_pick_sheet.dart';
 import '../../../transactions/presentation/widgets/filter_select_field.dart';
 import '../../domain/export_period.dart';
 import '../viewmodels/data_export_view_model.dart';
+import '../widgets/account_step_up.dart';
 import '../../../server_config/domain/app_limits.dart';
 import '../../../../core/money/money_text.dart';
 
@@ -51,9 +52,20 @@ class _DataExportPageState extends State<DataExportPage> {
 
   Future<void> _export() async {
     final s = S.of(context);
-    await model.export();
-    if (!mounted || model.failure == null) return;
-    showFreevaToast(context, message: s.meExportError);
+    String? password;
+    // The full copy is the whole account: the server asks for the password
+    // again (SEC-P6-002). The filtered table export does not.
+    if (model.kind == ExportKind.fullCopy) {
+      password = await askAccountPassword(context);
+      if (password == null || !mounted) return;
+    }
+    await model.export(password: password);
+    final failure = model.failure;
+    if (!mounted || failure == null) return;
+    showFreevaToast(
+      context,
+      message: accountStepUpError(s, failure, s.meExportError),
+    );
   }
 
   Future<void> _pickPeriod(ExportPeriod period) async {

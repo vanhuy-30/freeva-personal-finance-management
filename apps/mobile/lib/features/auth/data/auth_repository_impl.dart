@@ -370,18 +370,24 @@ class AuthRepositoryImpl implements AuthRepository, AuthorizedApi {
   });
 
   @override
-  Future<Either<AuthFailure, String>> exportAccount() => _guard(() async {
-    final token = await _token();
-    try {
-      return await _api.requestText('GET', 'account/export', token: token);
-    } on AuthFailure catch (failure) {
-      if (failure.code == AuthError.expired &&
-          _record?['accessToken'] == token) {
-        await _clear();
-      }
-      rethrow;
-    }
-  });
+  Future<Either<AuthFailure, String>> exportAccount({String? password}) =>
+      _guard(() async {
+        final token = await _token();
+        try {
+          return await _api.requestText(
+            'POST',
+            'account/export',
+            token: token,
+            body: {if (password != null) 'password': password},
+          );
+        } on AuthFailure catch (failure) {
+          if (failure.code == AuthError.expired &&
+              _record?['accessToken'] == token) {
+            await _clear();
+          }
+          rethrow;
+        }
+      });
   @override
   Future<Either<AuthFailure, List<int>>> exportTransactionsCsv(String query) =>
       _guard(() async {
@@ -401,11 +407,16 @@ class AuthRepositoryImpl implements AuthRepository, AuthorizedApi {
         }
       });
   @override
-  Future<Either<AuthFailure, Unit>> deleteAccount() => _guard(() async {
-    await _authorized('DELETE', 'account');
-    await _clear();
-    return unit;
-  });
+  Future<Either<AuthFailure, Unit>> deleteAccount({String? password}) =>
+      _guard(() async {
+        await _authorized(
+          'DELETE',
+          'account',
+          body: {if (password != null) 'password': password},
+        );
+        await _clear();
+        return unit;
+      });
 }
 
 // Keep the KDF off the UI isolate so the privacy cover remains responsive.
