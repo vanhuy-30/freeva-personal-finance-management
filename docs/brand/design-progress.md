@@ -35,6 +35,8 @@
 
 Cùng đợt (2026-11-03), canvas được sửa cho khớp app đang chạy (theo golden): mật khẩu 8 ký tự (AuRegister, AuReset), chip "Xem tổng theo VND" (BMulti), dòng "Xem bản soát tháng" (RepMonth), các dòng Định kỳ / Hóa đơn / Lịch và bỏ "Định dạng ngày" (MeHome), "Xuất dữ liệu" (MeProfile), các dòng Thông báo (MeNotify), "Số trả tối thiểu" và nhãn "Loại ví" (WCredit, WAddCredit). Trang 05 có thêm hàng **P2 · Đã có trong app, chưa từng vẽ** (`Cur*.dc.html`, `RevMonth.dc.html`): Ngân sách, Lịch, Hộp thư, Soát tháng, Định kỳ và Hóa đơn bản đang chạy, vẽ lại đúng app để làm mốc.
 
+Đợt MOB-P6-001 (2026-11-17): canvas sửa cho khớp app sau test tay. Sửa tại chỗ: TxExpense (nhãn "Danh mục" trên hàng chip), TxSearch (ô tìm "Tìm giao dịch hoặc chức năng"), DailyLogAsk và NotifyTime (copy mới), TxNoResult và RepEmpty (hình empty state mới: trang giấy nổi, đồng xu, đốm sáng, chuyển động 3 vòng rồi dừng). Hàng mới cuối trang 05, tiêu đề "MOB-P6-001": TxExpenseIncome (ghi thu: Lương/Thưởng/Quà tặng, không có Cửa hàng, ô Ngày hiện 20/11), TxTagsEmpty, TxSearchQuick và TxSearchFeature (tìm cả chức năng), CatSwipe (vuốt trái Ẩn/Xoá), MePinSetup (đặt PIN từ Cài đặt, không có "Để sau"), WListHidden (Ví khi ẩn số dư, có nút mắt). Chưa có board: Splash (nền sáng, chữ Sora), đổi mật khẩu (nút mắt), bàn phím số chỉ hiện khi nhập số.
+
 ### Phase 4 (trang canvas **08 · Phase 4**, chốt 2026-11-06)
 
 | Phần | Trạng thái | Tài liệu |
