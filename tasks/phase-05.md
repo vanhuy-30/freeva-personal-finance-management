@@ -85,7 +85,7 @@ Thứ tự: `BE-P5-E08` → `WA-P5-001` → `MOB-P5-E08` → `BE-P5-001` / `MOB-
 - Gate: post-v1
 - Depends: —
 - DoD: board cho gợi ý danh mục (màn ghi chi, nhập CSV), thẻ insight trên Home (dưới thẻ soát tháng) và màn phân tích, dự báo chi cuối tháng, ngày đạt mục tiêu, cài đặt "Gợi ý tự động" (tắt, xóa dữ liệu đã học). Copy ngắn, không chi tiết kỹ thuật.
-- Note: xong 2026-11-11: 9 board trên trang canvas **09 · Phase 5** (nhóm R, S, T, U), [pattern](../docs/brand/patterns/R-suggestions-insights.md). Chủ dự án bỏ what-if và nút "Không đúng"; insight có hình so sánh nhỏ; chi tiết mục tiêu đổi ô "Ngày đạt" thành "Hạn" và thêm dải mốc Hôm nay → Hạn → Dự kiến.
+- Note: xong 2026-11-11: 9 board trên canvas, khối R, S, T, U (nay nằm ở trang 08, 07, 11, 12 theo khu vực), [pattern](../docs/brand/patterns/R-suggestions-insights.md). Chủ dự án bỏ what-if và nút "Không đúng"; insight có hình so sánh nhỏ; chi tiết mục tiêu đổi ô "Ngày đạt" thành "Hạn" và thêm dải mốc Hôm nay → Hạn → Dự kiến.
 
 ### PRD-P5-E01 / MOB-P5-002 — Tắt gợi ý tự động và xóa dữ liệu đã học
 - Status: done — 2026-11-11

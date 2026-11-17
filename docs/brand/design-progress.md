@@ -175,6 +175,6 @@ Tám nhóm A–H, bảy nhóm Phase 3, nhóm P, Q của Phase 4 và nhóm R, S, 
 ## Ghi chú kỹ thuật cho người sửa canvas
 
 - Canvas là Artifact loại Design: file `project/canvas.json` (index, `pages`, `boards`, `order`, `notes`) và `project/*.dc.html`. Ảnh logo đã tải lên dạng asset `/_blob/…` (xem `canvas/Logo.dc.html`).
-- Trang canvas: `f` Foundations · `t` Tokens · `c` Components · `s` States · `p` Patterns · `p3` Phase 3 · `p4` Phase 4 · `p5` Phase 5 · `g` Guidelines.
+- Trang canvas (id): `f` Foundations · `t` Tokens · `c` Components · `s` States · `p` Patterns · `ob` Onboarding và tài khoản · `ov` Tổng quan, báo cáo, dự báo · `tx` Giao dịch · `wa` Ví và tài sản · `ca` Danh mục · `pl` Mục tiêu, vay nợ, định kỳ · `me` Cá nhân, dữ liệu, đồng bộ · `g` Guidelines.
 - Board Phase 3 có tiêu đề dạng "I · 1. Tên màn"; màn có sheet/popup dùng nguyên nội dung màn nền bên dưới lớp tối.
 - Màu trong artboard là hex theo token v2 (ink `#22283A`, canvas `#FCFDFF`, action `#3F67D1`, wash ở `.wash`).
