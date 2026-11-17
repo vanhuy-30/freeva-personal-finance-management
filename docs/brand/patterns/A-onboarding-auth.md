@@ -7,7 +7,7 @@ Canvas: trang **05 · Patterns**, hai hàng A1 và A2
 
 ## Thay đổi chốt 2026-11-02 (chưa vẽ, `DS-P3-012`)
 
-Câu hỏi A1.3–A1.5 thay bằng ba câu, đều bỏ qua được, sau đó tới A1.6 như cũ:
+Câu hỏi A1.3–A1.5 (Mục tiêu, Thói quen, Ngân sách) đã bị thay bằng ba câu A3 và xoá khỏi canvas (2026-11-17); các màn mới nằm ngay hàng A1, đều bỏ qua được, sau đó tới A1.6 như cũ:
 
 1. **Mục tiêu sử dụng** — Quản lý chi tiêu · Tiết kiệm · Quản lý ngân sách (tối đa 2). Sắp khối Tổng quan.
 2. **Thu nhập hàng tháng** (không bắt buộc) — cơ sở gợi ý ngân sách và tỷ lệ tiết kiệm.

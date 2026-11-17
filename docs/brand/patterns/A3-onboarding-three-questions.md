@@ -1,7 +1,7 @@
 # Nhóm A3 — Onboarding ba câu
 
 Trạng thái: **chốt thiết kế 2026-11-03**, backend xong (`BE-P3-012`), app xong 2026-11-05 (`MOB-P3-012`, [mobile](../../architecture/mobile-onboarding-three-questions.md)). Task: `DS-P3-012` / `MOB-P3-012` (cả backend `BE-P3-012`). Thay các màn Mục tiêu, Thói quen, Ngân sách tháng của [A-onboarding-auth.md](A-onboarding-auth.md); các bước tài khoản, PIN, ví giữ nguyên.
-Canvas: trang **07 · Phase 3**, hàng A3. Spec chung: [design-system.md](../design-system.md).
+Canvas: trang **05 · Patterns**, hàng A1 (A3 thay chỗ A1.3–A1.5; ba màn cũ đã xoá khỏi canvas 2026-11-17). Spec chung: [design-system.md](../design-system.md).
 
 ## Nguyên tắc riêng cho nhóm này
 
