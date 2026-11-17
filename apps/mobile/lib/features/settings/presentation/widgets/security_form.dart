@@ -33,6 +33,7 @@ class SecretField extends StatelessWidget {
     controller: controller,
     error: error,
     obscureText: true,
+    revealable: !pin,
     keyboardType: pin ? TextInputType.number : TextInputType.visiblePassword,
     inputFormatters: pin
         ? [

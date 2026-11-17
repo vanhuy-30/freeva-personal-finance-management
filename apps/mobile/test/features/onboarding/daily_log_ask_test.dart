@@ -80,18 +80,18 @@ void main() {
     return notifications;
   }
 
-  testWidgets('"Bật nhắc" saves 21:00 and turns the daily log on', (t) async {
+  testWidgets('"Bật" saves 21:00 and turns the daily log on', (t) async {
     final notifications = await open(t);
-    expect(find.text('Nhắc ghi chi mỗi tối?'), findsOneWidget);
+    expect(find.text('Nhắc ghi chi mỗi tối'), findsOneWidget);
     expect(find.text('21:00'), findsOneWidget);
-    await t.tap(find.text('Bật nhắc'));
+    await t.tap(find.text('Bật'));
     await t.pumpAndSettle();
     expect(notifications.savedDailyLogTimes, ['21:00']);
     final daily = notifications.preferences!.kinds.firstWhere(
       (k) => k.kind == NotificationKind.dailyLog,
     );
     expect(daily.enabled, isTrue);
-    expect(find.text('Nhắc ghi chi mỗi tối?'), findsNothing);
+    expect(find.text('Nhắc ghi chi mỗi tối'), findsNothing);
   });
 
   for (final dark in [false, true]) {

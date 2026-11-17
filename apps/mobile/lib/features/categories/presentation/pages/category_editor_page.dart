@@ -11,7 +11,7 @@ import '../../domain/finance_category.dart';
 import '../viewmodels/category_form.dart';
 import '../viewmodels/category_view_model.dart';
 import '../widgets/category_labels.dart';
-import '../widgets/editor/category_delete_popup.dart';
+import '../widgets/category_delete_flow.dart';
 import '../widgets/editor/category_edit_actions.dart';
 import '../widgets/editor/category_form_body.dart';
 
@@ -111,29 +111,10 @@ class _CategoryEditorPageState extends State<CategoryEditorPage> {
   }
 
   Future<void> _delete() async {
-    final category = widget.category!;
     setState(() => _tried = true);
-    final count = await model.usage(category);
-    if (count == null || !mounted) return;
-    final targets = [
-      for (final group in categoryGroups(
-        model.categories,
-        income: category.kind == CategoryKind.income,
-      )) ...[group.parent, ...group.children],
-    ].where((c) => c.id != category.id).toList();
-    final choice = await showCategoryDeletePopup(
-      context,
-      category: category,
-      transactionCount: count,
-      targets: targets,
-      initialTarget: category.parentId ?? targets.firstOrNull?.id,
-    );
-    if (choice == null) return;
-    final ok = await model.remove(
-      category,
-      replacementCategoryId: choice.replacementId,
-    );
-    if (ok) _close(CategoryEditResult.deleted);
+    if (await confirmAndDeleteCategory(context, model, widget.category!)) {
+      _close(CategoryEditResult.deleted);
+    }
   }
 
   @override

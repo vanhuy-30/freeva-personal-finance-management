@@ -39,6 +39,26 @@ class TransactionDayHeader extends StatelessWidget {
     return s.txDayHeader(name, short);
   }
 
+  /// The composer's date tile: "Hôm nay", "Hôm qua", "Ngày mai", otherwise
+  /// the date itself ("20/11", with the year when it is not this year's).
+  /// A weekday name would not say which day it is.
+  static String tile(S s, String date, String today, String locale) {
+    final day = DateTime.parse(date);
+    final now = DateTime.parse(today);
+    final gap = DateTime.utc(
+      day.year,
+      day.month,
+      day.day,
+    ).difference(DateTime.utc(now.year, now.month, now.day)).inDays;
+    if (gap == 0) return s.txToday;
+    if (gap == -1) return s.txYesterday;
+    if (gap == 1) return s.txTomorrow;
+    return DateFormat(
+      day.year == now.year ? 'dd/MM' : 'dd/MM/yyyy',
+      locale,
+    ).format(day);
+  }
+
   /// Detail / C2.3: "Hôm nay, 12:40" when [time] is set; otherwise [label].
   static String when(
     S s,

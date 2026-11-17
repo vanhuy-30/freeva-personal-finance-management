@@ -20,6 +20,7 @@ class WalletListBody extends StatelessWidget {
     required this.model,
     required this.hidden,
     required this.onAdd,
+    this.onToggleHidden,
     super.key,
   });
 
@@ -28,6 +29,9 @@ class WalletListBody extends StatelessWidget {
   /// "Ẩn số dư" is on.
   final bool hidden;
   final VoidCallback onAdd;
+
+  /// Flips "Ẩn số dư"; the eye by the total.
+  final VoidCallback? onToggleHidden;
 
   int _digits(String code) =>
       model.currencies
@@ -87,6 +91,7 @@ class WalletListBody extends StatelessWidget {
               totals: walletTotals(active, model.mainCurrency),
               digitsOf: _digits,
               hidden: hidden,
+              onToggleHidden: onToggleHidden,
               onSort: active.length < 2
                   ? null
                   : () => context.push('/wallets/sort'),

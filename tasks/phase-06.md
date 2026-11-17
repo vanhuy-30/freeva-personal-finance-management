@@ -40,3 +40,32 @@
   - Đăng nhập không bắt email đã xác minh: có thể đăng ký trước email của người khác.
   - Android release còn ký bằng debug key; iOS `aps-environment` = development.
   - `deepmerge-ts` 7 (Prisma 6), `glob`/`minimatch` trong tooling build của `@sentry/nextjs` cần major mới.
+
+### MOB-P6-001 — Cài lại app đăng nhập lại từ đầu; bottom nav sát mép dưới
+- Status: in progress
+- Module: 22, UI shell
+- Gate: v1
+- DoD: xóa app rồi cài lại thì vào Welcome và phải đăng nhập lại (iOS giữ Keychain sau khi xóa app; marker trong thư mục support của app, không có marker thì xóa toàn bộ vault). Bottom nav cách mép dưới 28 như board trên máy vuốt (inset ≤ 34); máy có thanh nút hệ thống thì nằm trên các nút, cách 8.
+- Note: bản cài đang có (chưa có marker) sẽ phải đăng nhập lại một lần sau khi cập nhật.
+- Đợt 2 (cùng task, phản hồi test tay):
+  - Bàn phím số ghi giao dịch: mở sẵn khi vào màn, hạ xuống khi chạm chỗ khác (trừ ô số tiền), chạm số tiền thì hiện lại; con trỏ chỉ hiện khi bàn phím mở.
+  - Lưu khoản chi chưa có danh mục: chặn ở app, báo "Chọn danh mục cho khoản chi." và mở luôn ô chọn danh mục; thiếu số tiền thì mở bàn phím. Sửa bất kỳ trường nào thì lỗi biến mất.
+  - Chọn nhãn: luôn có dòng "Tạo nhãn" (hỏi tên), kể cả khi chưa có nhãn nào; tạo xong thì ô tìm được xóa.
+  - Tổng quan tải lại khi quay về từ màn được `push` (ghi chi): go_router 14 bỏ route push khỏi `uri`, dùng `topLocation`.
+  - Sheet mở trên root navigator: không còn bị bottom nav đè và tràn (sheet "Nhắc ghi chi mỗi tối?").
+- Đợt 3 (phản hồi test tay):
+  - Sheet nhắc ghi chi: tiêu đề bỏ dấu `?`, bỏ câu phụ "Hôm nào đã ghi thì không nhắc.", nút "Bật nhắc" thành "Bật"; popup chọn giờ cũng bỏ câu đó. Board `DailyLogAsk`, `NotifyTime` và pattern A3, N sửa theo.
+  - Ví của tôi khi "Ẩn số dư" đang bật: có nút mắt cạnh tổng số dư để hiện lại ngay tại màn này (cùng một cài đặt với Tổng quan).
+  - Ghi thu: nhãn "Danh mục" trên hàng chip; chưa có lịch sử thì chip lấy vài danh mục đầu của loại thu (Lương, Quà tặng, Thưởng…). Ghi thu không có ô "Cửa hàng" (khoản thu đang sửa đã có cửa hàng thì vẫn hiện).
+- Đợt 4 (phản hồi test tay):
+  - Ghi chi không còn tự chọn danh mục của loại thu: danh mục mặc định lấy từ các danh mục gần đây nhưng chỉ loại hợp với chi (trước đây vừa ghi thu "Lương" thì Chi cũng chọn sẵn "Lương").
+  - Splash làm lại cho cân: biểu tượng nhỏ lại (62% bề rộng, tối đa 260), chữ FREEVA font Sora 600 (file `assets/fonts/Sora-Variable.ttf`, OFL), tiêu đề "Your financial freedom journey" (17px, ink600), nền sáng sạch (trắng sang xanh nhạt, chỉ chút tím ở góc dưới). Thêm golden `test/goldens/splash.png`.
+- Đợt 5 (phản hồi test tay):
+  - Xuất dữ liệu / Nhập từ app khác báo lỗi `GetIt ... DataExportViewModel is not registered`: hai view model chỉ đăng ký theo kiểu cài đặt, nay đăng ký theo kiểu trừu tượng; thêm test quét mọi `getIt<...ViewModel>` đều đã đăng ký.
+  - Đổi mật khẩu: 3 ô có nút mắt hiện/ẩn (ô PIN giữ nguyên, không có mắt).
+  - Đặt mã PIN từ Cài đặt: bỏ "Để sau" (onboarding vẫn giữ); đặt xong về thẳng Bảo mật bằng `go`, không còn nằm lại màn đặt PIN.
+  - Ô Ngày khi ghi thu/chi: Hôm nay / Hôm qua / Ngày mai, ngày khác hiện 20/11 (thêm năm nếu khác năm nay), không hiện "Thứ Sáu". Phần chi tiết thêm cũng theo.
+  - Chuyển ví: chọn ví luôn hiện số dư dù đang "Ẩn số dư".
+  - Danh mục: vuốt hàng sang trái ra "Ẩn" và "Xoá" (cả danh mục con); dùng đúng luật của màn sửa (còn danh mục con thì báo "Còn n danh mục con"; xoá vẫn hỏi chuyển giao dịch sang đâu). Widget dùng chung `SwipeActions`.
+  - Tìm kiếm ở Tổng quan: tìm được cả chức năng (Ví, Danh mục, Ngân sách, Xuất dữ liệu, Đổi mật khẩu…, không dấu và theo từ khoá), có "Mở nhanh" khi chưa gõ.
+  - Empty state: hình mới (trang giấy nổi, đồng xu, đốm sáng) thay chữ F, chuyển động 3 vòng rồi dừng, tắt khi giảm chuyển động; bỏ `FStrokesMark`.

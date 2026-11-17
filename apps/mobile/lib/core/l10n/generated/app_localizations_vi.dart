@@ -13,7 +13,7 @@ class SVi extends S {
   String get appTitle => 'Freeva';
 
   @override
-  String get splashTagline => 'Your money. Your freedom.';
+  String get splashTagline => 'Your financial freedom journey';
 
   @override
   String get brandWordmark => 'FREEVA';
@@ -891,7 +891,7 @@ class SVi extends S {
   String get txEmptyAction => 'Ghi khoản chi';
 
   @override
-  String get txSearchHint => 'Tìm giao dịch';
+  String get txSearchHint => 'Tìm giao dịch hoặc chức năng';
 
   @override
   String get txSearchCancel => 'Huỷ';
@@ -906,6 +906,12 @@ class SVi extends S {
 
   @override
   String get txSearchPrompt => 'Tìm theo cửa hàng, ghi chú hoặc số tiền.';
+
+  @override
+  String get searchFeaturesTitle => 'Chức năng';
+
+  @override
+  String get searchQuickTitle => 'Mở nhanh';
 
   @override
   String get txDetailCategory => 'Danh mục';
@@ -1086,6 +1092,9 @@ class SVi extends S {
   String get txYesterday => 'Hôm qua';
 
   @override
+  String get txTomorrow => 'Ngày mai';
+
+  @override
   String txSavedToast(String kind) {
     return 'Đã lưu $kind';
   }
@@ -1109,6 +1118,9 @@ class SVi extends S {
 
   @override
   String get txPickDestination => 'Chọn ví nhận tiền.';
+
+  @override
+  String get txCategoryMissing => 'Chọn danh mục cho khoản chi.';
 
   @override
   String get txRateInvalid => 'Tỷ giá chưa hợp lệ với số tiền này.';
@@ -2504,9 +2516,6 @@ class SVi extends S {
   String get notifyTimeTitle => 'Chọn giờ nhắc';
 
   @override
-  String get notifyTimeHint => 'Hôm nào đã ghi thì không nhắc.';
-
-  @override
   String notifyTimePick(String time) {
     return 'Chọn $time';
   }
@@ -2986,16 +2995,13 @@ class SVi extends S {
   String get onbSuggestUse => 'Dùng mức này';
 
   @override
-  String get dailyLogAskTitle => 'Nhắc ghi chi mỗi tối?';
-
-  @override
-  String get dailyLogAskBody => 'Hôm nào đã ghi thì không nhắc.';
+  String get dailyLogAskTitle => 'Nhắc ghi chi mỗi tối';
 
   @override
   String get dailyLogAskTime => 'Giờ nhắc';
 
   @override
-  String get dailyLogAskOn => 'Bật nhắc';
+  String get dailyLogAskOn => 'Bật';
 
   @override
   String get meIncome => 'Thu nhập hàng tháng';

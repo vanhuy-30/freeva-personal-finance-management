@@ -13,7 +13,7 @@ class SEn extends S {
   String get appTitle => 'Freeva';
 
   @override
-  String get splashTagline => 'Your money. Your freedom.';
+  String get splashTagline => 'Your financial freedom journey';
 
   @override
   String get brandWordmark => 'FREEVA';
@@ -896,7 +896,7 @@ class SEn extends S {
   String get txEmptyAction => 'Add expense';
 
   @override
-  String get txSearchHint => 'Search transactions';
+  String get txSearchHint => 'Search transactions or features';
 
   @override
   String get txSearchCancel => 'Cancel';
@@ -911,6 +911,12 @@ class SEn extends S {
 
   @override
   String get txSearchPrompt => 'Search by store, note or amount.';
+
+  @override
+  String get searchFeaturesTitle => 'Features';
+
+  @override
+  String get searchQuickTitle => 'Quick open';
 
   @override
   String get txDetailCategory => 'Category';
@@ -1091,6 +1097,9 @@ class SEn extends S {
   String get txYesterday => 'Yesterday';
 
   @override
+  String get txTomorrow => 'Tomorrow';
+
+  @override
   String txSavedToast(String kind) {
     return 'Saved $kind';
   }
@@ -1114,6 +1123,9 @@ class SEn extends S {
 
   @override
   String get txPickDestination => 'Choose the wallet that receives it.';
+
+  @override
+  String get txCategoryMissing => 'Pick a category for this expense.';
 
   @override
   String get txRateInvalid => 'This rate doesn\'t work for this amount.';
@@ -2542,9 +2554,6 @@ class SEn extends S {
   String get notifyTimeTitle => 'Pick a reminder time';
 
   @override
-  String get notifyTimeHint => 'No reminder on days you already logged.';
-
-  @override
   String notifyTimePick(String time) {
     return 'Pick $time';
   }
@@ -3025,10 +3034,7 @@ class SEn extends S {
   String get onbSuggestUse => 'Use this amount';
 
   @override
-  String get dailyLogAskTitle => 'Remind you to log spending each evening?';
-
-  @override
-  String get dailyLogAskBody => 'No reminder on days you already logged.';
+  String get dailyLogAskTitle => 'Remind you to log spending each evening';
 
   @override
   String get dailyLogAskTime => 'Reminder time';

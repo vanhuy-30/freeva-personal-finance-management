@@ -14,6 +14,7 @@ import 'features/server_config/presentation/widgets/server_config_listener.dart'
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 
 import 'core/di/injection.dart';
@@ -22,6 +23,8 @@ import 'core/l10n/generated/app_localizations.dart';
 import 'core/logging/app_logger.dart';
 import 'core/router/app_router.dart';
 import 'core/sentry/sentry_bootstrap.dart';
+import 'core/storage/fresh_install_reset.dart';
+import 'core/storage/secure_storage_factory.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/tokens.g.dart';
 import 'core/app_version/app_version.dart';
@@ -33,9 +36,29 @@ Future<void> main() async {
 Future<void> _boot() async {
   WidgetsFlutterBinding.ensureInitialized();
   tzdata.initializeTimeZones();
+  // Before any vault is read: a reinstalled app must not reuse the old
+  // session kept in the iOS Keychain (MOB-P6-001).
+  Object? resetError;
+  StackTrace? resetStack;
+  var reset = false;
+  try {
+    reset = await clearVaultsOnFreshInstall(
+      supportDir: getApplicationSupportDirectory,
+      clearVaults: () => createFreevaSecureStorage().deleteAll(),
+    );
+  } catch (error, stackTrace) {
+    // Keep booting; the marker was not written, so the next launch retries.
+    resetError = error;
+    resetStack = stackTrace;
+  }
   await configureDependencies();
   final config = getIt<AppConfig>();
   final logger = getIt<AppLogger>();
+  if (resetError != null) {
+    logger.error('fresh install reset failed', resetError, resetStack);
+  } else if (reset) {
+    logger.op('fresh install: vaults cleared');
+  }
   config.validate();
   logger.op('boot env=${config.environment.name} api=${config.apiBaseUrl}');
   await getIt<SettingsViewModel>().load();

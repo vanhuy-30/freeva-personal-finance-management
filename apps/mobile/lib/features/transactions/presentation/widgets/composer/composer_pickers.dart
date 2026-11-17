@@ -55,7 +55,8 @@ class ComposerPickers {
       ],
       selected: counter ? composer.counterAccountId : composer.accountId,
       digitsOf: composer.digitsOf,
-      hideBalances: _hide,
+      // A transfer picks between wallets by what is in them: always shown.
+      hideBalances: _hide && !composer.transfer,
     );
     if (id == null) return;
     counter ? composer.pickCounter(id) : composer.pickAccount(id);

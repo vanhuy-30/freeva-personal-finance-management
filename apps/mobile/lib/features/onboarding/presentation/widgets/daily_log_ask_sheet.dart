@@ -86,12 +86,6 @@ class _DailyLogAskBodyState extends State<DailyLogAskBody> {
             style: FreevaTypography.titleL.copyWith(color: c.textPrimary),
           ),
         ),
-        const SizedBox(height: 6),
-        Text(
-          s.dailyLogAskBody,
-          textAlign: TextAlign.center,
-          style: FreevaTypography.bodyM.copyWith(color: c.textSecondary),
-        ),
         const SizedBox(height: 18),
         PickerField(
           label: s.dailyLogAskTime,

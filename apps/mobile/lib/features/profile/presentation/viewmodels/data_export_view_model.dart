@@ -49,7 +49,7 @@ abstract class DataExportViewModel extends ChangeNotifier {
   Future<bool> export({String? password});
 }
 
-@injectable
+@Injectable(as: DataExportViewModel)
 class DefaultDataExportViewModel extends DataExportViewModel {
   DefaultDataExportViewModel(
     this._profileUseCases,

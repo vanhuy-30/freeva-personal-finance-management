@@ -15,6 +15,10 @@ Future<T?> showFreevaSheet<T>({
 }) {
   return showModalBottomSheet<T>(
     context: context,
+    // Over the whole app, bottom nav included. From a tab root the nearest
+    // navigator is the tab's, which sits under the nav and reports the nav's
+    // height as bottom padding (the sheet then overflowed).
+    useRootNavigator: true,
     isScrollControlled: scrollable,
     useSafeArea: true,
     // FreevaSheetBody paints the surface and its shadow.

@@ -7,6 +7,7 @@ import '../../../../../core/theme/theme_context.dart';
 import '../../../../../core/theme/tokens.g.dart';
 import '../../../../../core/widgets/freeva_sheet.dart';
 import '../../../../../core/widgets/freeva_card.dart';
+import '../../../../../core/widgets/freeva_dialog_input.dart';
 import '../../../../../core/widgets/tag_chip.dart';
 import '../../viewmodels/transaction_view_model.dart';
 import '../search_box.dart';
@@ -41,11 +42,18 @@ class _BodyState extends State<_Body> {
   late final List<String> chosen = List.of(widget.initial);
   String query = '';
   bool creating = false;
+  final search = TextEditingController();
 
-  Future<void> _create() async {
+  @override
+  void dispose() {
+    search.dispose();
+    super.dispose();
+  }
+
+  Future<void> _create(String name) async {
     setState(() => creating = true);
     final tag = await widget.model.createTag(
-      query,
+      name,
       clientId: widget.model.newClientId(),
     );
     if (!mounted) return;
@@ -54,8 +62,32 @@ class _BodyState extends State<_Body> {
       if (tag != null) {
         chosen.add(tag.id);
         query = '';
+        search.clear();
       }
     });
+  }
+
+  /// MOB-P6-001: "Tạo nhãn" is always there, even before any tag exists or
+  /// anything is typed; it asks for the name.
+  Future<void> _askAndCreate() async {
+    final s = S.of(context);
+    final name = await showFreevaInputDialog(
+      context: context,
+      title: s.tagsAdd,
+      label: s.tagsName,
+    );
+    final trimmed = name?.trim() ?? '';
+    if (trimmed.isEmpty || !mounted) return;
+    final existing = widget.model.tags
+        .where((t) => foldVietnamese(t.name) == foldVietnamese(trimmed))
+        .firstOrNull;
+    if (existing != null) {
+      if (!chosen.contains(existing.id)) {
+        setState(() => chosen.add(existing.id));
+      }
+      return;
+    }
+    await _create(trimmed);
   }
 
   @override
@@ -126,11 +158,17 @@ class _BodyState extends State<_Body> {
     }
 
     final rows = <Widget>[
-      if (query.isNotEmpty && !exact)
+      if (query.isEmpty)
+        TagCreateRow(
+          label: s.tagsAdd,
+          busy: creating,
+          onTap: full || creating ? null : _askAndCreate,
+        )
+      else if (!exact)
         TagCreateRow(
           label: s.txCreateTag(query),
           busy: creating,
-          onTap: full || creating ? null : _create,
+          onTap: full || creating ? null : () => _create(query),
         ),
       for (final t in matches.where((t) => !chosen.contains(t.id)))
         row(t.id, t.name),
@@ -178,6 +216,7 @@ class _BodyState extends State<_Body> {
         ),
         const SizedBox(height: FreevaSpace.s4),
         SearchBox(
+          controller: search,
           hint: s.txFindOrCreateTag,
           iconSize: FreevaSize.iconSm,
           onChanged: (v) => setState(() => query = v.trim()),

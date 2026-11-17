@@ -6,6 +6,7 @@ import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/router/nav_back.dart';
 import '../../../../core/widgets/freeva_icon_button.dart';
 import '../../../../core/widgets/freeva_top_bar.dart';
+import '../../../settings/presentation/viewmodels/settings_view_model.dart';
 import '../../../settings/presentation/widgets/balances_hidden_builder.dart';
 import '../viewmodels/wallet_view_model.dart';
 import '../widgets/wallet_list_body.dart';
@@ -60,8 +61,14 @@ class _WalletPageState extends State<WalletPage> {
           ),
         ),
         body: BalancesHiddenBuilder(
-          builder: (context, hidden) =>
-              WalletListBody(model: model, hidden: hidden, onAdd: _add),
+          builder: (context, hidden) => WalletListBody(
+            model: model,
+            hidden: hidden,
+            onAdd: _add,
+            onToggleHidden: getIt.isRegistered<SettingsViewModel>()
+                ? () => getIt<SettingsViewModel>().setBalancesHidden(!hidden)
+                : null,
+          ),
         ),
       ),
     );

@@ -2,20 +2,19 @@ import 'package:flutter/material.dart';
 
 import '../theme/theme_context.dart';
 import '../theme/tokens.g.dart';
-import 'f_strokes_mark.dart';
+import 'empty_illustration.dart';
 import 'freeva_button_style.dart';
 import 'press_scale.dart';
 
-/// Empty state: the static F illustration (or, with [animated], the drifting
-/// F-strokes tile), a short title, one line, and an optional secondary
-/// action. Gaps 20 / 8 / 20, as on TxNoResult and RepEmpty.
+/// Empty state: the floating-page illustration ([EmptyIllustration], which
+/// moves a few turns then rests), a short title, one line, and an optional
+/// secondary action. Gaps 20 / 8 / 20.
 class EmptyState extends StatelessWidget {
   const EmptyState({
     required this.title,
     this.message,
     this.actionLabel,
     this.onAction,
-    this.animated = false,
     super.key,
   });
 
@@ -23,9 +22,6 @@ class EmptyState extends StatelessWidget {
   final String? message;
   final String? actionLabel;
   final VoidCallback? onAction;
-
-  /// Uses the old 64 animated F-strokes tile instead of the illustration.
-  final bool animated;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +34,7 @@ class EmptyState extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (animated) const FStrokesMark() else const FStrokesIllustration(),
+          const EmptyIllustration(),
           const SizedBox(height: FreevaSpace.s5),
           Text(
             title,

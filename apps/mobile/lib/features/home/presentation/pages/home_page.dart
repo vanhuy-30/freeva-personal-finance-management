@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/di/injection.dart';
+import '../../../../core/router/top_location.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
@@ -115,7 +116,8 @@ class _HomePageState extends State<HomePage> {
 
   /// Coming back to Overview (after recording, editing a wallet…) refreshes.
   void _routeChanged() {
-    final path = _router?.routerDelegate.currentConfiguration.uri.path;
+    final router = _router;
+    final path = router == null ? null : topLocation(router);
     if (path == '/home' && _lastPath != null && _lastPath != '/home') {
       model.load();
       if (model.saveGoal) getIt<GoalViewModel>().load();

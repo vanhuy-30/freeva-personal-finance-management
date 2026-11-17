@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:mobile/core/theme/lucide_icons.g.dart';
+
+import '../l10n/generated/app_localizations.dart';
 import '../theme/theme_context.dart';
 import '../theme/tokens.g.dart';
 import 'field_error_hint.dart';
@@ -26,6 +29,7 @@ class FreevaTextField extends StatefulWidget {
     this.maxLines = 1,
     this.suffix,
     this.obscureText = false,
+    this.revealable = false,
     this.leadingIcon,
     this.leadingTint,
     this.trailingIcon,
@@ -53,6 +57,9 @@ class FreevaTextField extends StatefulWidget {
   /// Passwords and PINs: dots instead of characters, no suggestions.
   final bool obscureText;
 
+  /// With [obscureText]: an eye button at the end shows or hides the text.
+  final bool revealable;
+
   /// Glyph in a 32 subtle tile (radius 10) in front of the label and value.
   final IconData? leadingIcon;
 
@@ -77,6 +84,10 @@ class FreevaTextField extends StatefulWidget {
 
 class _FreevaTextFieldState extends State<FreevaTextField> {
   final _focus = FocusNode();
+  bool _revealed = false;
+
+  /// Dots on, unless the eye button revealed the text.
+  bool get _hidden => widget.obscureText && !_revealed;
 
   @override
   void initState() {
@@ -134,11 +145,11 @@ class _FreevaTextFieldState extends State<FreevaTextField> {
                 textInputAction: widget.textInputAction,
                 onChanged: widget.onChanged,
                 onSubmitted: widget.onSubmitted,
-                maxLines: widget.obscureText ? 1 : widget.maxLines,
+                maxLines: _hidden ? 1 : widget.maxLines,
                 maxLength: widget.maxLength,
-                obscureText: widget.obscureText,
-                enableSuggestions: !widget.obscureText,
-                autocorrect: !widget.obscureText,
+                obscureText: _hidden,
+                enableSuggestions: !_hidden,
+                autocorrect: !_hidden,
                 style: valueStyle,
                 // The box above draws border and fill; the theme's
                 // outlined input style must not apply here.
@@ -235,7 +246,24 @@ class _FreevaTextFieldState extends State<FreevaTextField> {
                 const SizedBox(width: 10),
               ],
               Expanded(child: body),
-              if (widget.trailingIcon != null) ...[
+              if (widget.obscureText && widget.revealable)
+                IconButton(
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints.tightFor(
+                    width: FreevaSize.touch,
+                    height: FreevaSize.touch,
+                  ),
+                  tooltip: _revealed
+                      ? S.of(context).passwordHide
+                      : S.of(context).passwordShow,
+                  onPressed: () => setState(() => _revealed = !_revealed),
+                  icon: Icon(
+                    _revealed ? LucideIcons.eyeOff : LucideIcons.eye,
+                    size: FreevaSize.iconInline,
+                    color: c.textSecondary,
+                  ),
+                )
+              else if (widget.trailingIcon != null) ...[
                 const SizedBox(width: FreevaSpace.s2),
                 ExcludeSemantics(
                   child: Icon(

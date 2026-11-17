@@ -106,7 +106,7 @@ abstract class S {
   /// Product-approved splash copy; keep unchanged across locales.
   ///
   /// In en, this message translates to:
-  /// **'Your money. Your freedom.'**
+  /// **'Your financial freedom journey'**
   String get splashTagline;
 
   /// Official brand wordmark; keep unchanged across locales.
@@ -1696,7 +1696,7 @@ abstract class S {
   /// No description provided for @txSearchHint.
   ///
   /// In en, this message translates to:
-  /// **'Search transactions'**
+  /// **'Search transactions or features'**
   String get txSearchHint;
 
   /// No description provided for @txSearchCancel.
@@ -1722,6 +1722,18 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Search by store, note or amount.'**
   String get txSearchPrompt;
+
+  /// No description provided for @searchFeaturesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Features'**
+  String get searchFeaturesTitle;
+
+  /// No description provided for @searchQuickTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick open'**
+  String get searchQuickTitle;
 
   /// No description provided for @txDetailCategory.
   ///
@@ -2059,6 +2071,12 @@ abstract class S {
   /// **'Yesterday'**
   String get txYesterday;
 
+  /// No description provided for @txTomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow'**
+  String get txTomorrow;
+
   /// No description provided for @txSavedToast.
   ///
   /// In en, this message translates to:
@@ -2100,6 +2118,12 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Choose the wallet that receives it.'**
   String get txPickDestination;
+
+  /// No description provided for @txCategoryMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a category for this expense.'**
+  String get txCategoryMissing;
 
   /// No description provided for @txRateInvalid.
   ///
@@ -4578,12 +4602,6 @@ abstract class S {
   /// **'Pick a reminder time'**
   String get notifyTimeTitle;
 
-  /// No description provided for @notifyTimeHint.
-  ///
-  /// In en, this message translates to:
-  /// **'No reminder on days you already logged.'**
-  String get notifyTimeHint;
-
   /// No description provided for @notifyTimePick.
   ///
   /// In en, this message translates to:
@@ -5439,14 +5457,8 @@ abstract class S {
   /// No description provided for @dailyLogAskTitle.
   ///
   /// In en, this message translates to:
-  /// **'Remind you to log spending each evening?'**
+  /// **'Remind you to log spending each evening'**
   String get dailyLogAskTitle;
-
-  /// No description provided for @dailyLogAskBody.
-  ///
-  /// In en, this message translates to:
-  /// **'No reminder on days you already logged.'**
-  String get dailyLogAskBody;
 
   /// No description provided for @dailyLogAskTime.
   ///

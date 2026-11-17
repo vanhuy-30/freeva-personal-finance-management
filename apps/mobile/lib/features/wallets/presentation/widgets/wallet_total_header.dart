@@ -5,6 +5,7 @@ import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/money/money_text.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
+import '../../../../core/widgets/freeva_icon_button.dart';
 import '../../../../core/widgets/money_display.dart';
 import '../../domain/wallet_totals.dart';
 
@@ -15,6 +16,7 @@ class WalletTotalHeader extends StatelessWidget {
     required this.totals,
     required this.digitsOf,
     required this.hidden,
+    this.onToggleHidden,
     this.onSort,
     super.key,
   });
@@ -23,6 +25,10 @@ class WalletTotalHeader extends StatelessWidget {
   final List<WalletTotal> totals;
   final int Function(String) digitsOf;
   final bool hidden;
+
+  /// Eye next to the total: with "Ẩn số dư" on, this screen would otherwise
+  /// show nothing and offer no way to look (MOB-P6-001). Null hides it.
+  final VoidCallback? onToggleHidden;
   final VoidCallback? onSort;
 
   @override
@@ -54,16 +60,31 @@ class WalletTotalHeader extends StatelessWidget {
               children: [
                 Text(s.walletTotal(main.count), style: secondary),
                 const SizedBox(height: 2),
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerLeft,
-                  child: MoneyDisplay(
-                    minor: main.minor,
-                    currency: main.currency,
-                    minorDigits: digitsOf(main.currency),
-                    style: FreevaTypography.moneyL,
-                    hidden: hidden,
-                  ),
+                Row(
+                  children: [
+                    Flexible(
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: MoneyDisplay(
+                          minor: main.minor,
+                          currency: main.currency,
+                          minorDigits: digitsOf(main.currency),
+                          style: FreevaTypography.moneyL,
+                          hidden: hidden,
+                        ),
+                      ),
+                    ),
+                    if (onToggleHidden != null) ...[
+                      const SizedBox(width: 4),
+                      FreevaIconButton(
+                        kind: FreevaIconButtonKind.subtle,
+                        icon: hidden ? LucideIcons.eyeOff : LucideIcons.eye,
+                        label: hidden ? s.balanceShow : s.balanceHide,
+                        onPressed: onToggleHidden,
+                      ),
+                    ],
+                  ],
                 ),
                 for (final line in others) Text(line, style: secondary),
               ],

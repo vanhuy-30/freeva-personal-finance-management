@@ -3,6 +3,7 @@ import 'package:mobile/core/di/injection.dart';
 import '../../support/server_config_fixture.dart';
 
 import 'package:mobile/features/wallets/presentation/pages/wallet_editor_page.dart';
+import 'package:mobile/features/wallets/presentation/pages/wallet_page.dart';
 import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -190,6 +191,37 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
     expect(model.hidden, isEmpty);
     expect(find.text('Đã khôi phục c'), findsOneWidget);
+  });
+  testWidgets('MOB-P6-001: with balances hidden the list has an eye that '
+      'shows them again', (tester) async {
+    final settings = DefaultSettingsViewModel(
+      DefaultSettingsUseCases(SettingsRepositoryImpl(MemoryPreferences())),
+      DefaultAuthUseCases(
+        AuthRepositoryImpl(
+          FakeApi(),
+          MemoryVault(),
+          FakeBiometrics(),
+          testServerConfigModel(),
+        ),
+        testServerConfigModel(),
+      ),
+      RecordingAnalytics(),
+    );
+    await settings.load();
+    await settings.setBalancesHidden(true);
+    getIt.registerSingleton<SettingsViewModel>(settings);
+    addTearDown(settings.dispose);
+    getIt.registerSingleton<WalletViewModel>(model);
+    await tester.pumpWidget(app(const WalletPage()));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('••••', findRichText: true), findsWidgets);
+    await tester.tap(find.bySemanticsLabel('Hiện số dư'));
+    await tester.pumpAndSettle();
+    expect(settings.balancesHidden, isFalse);
+    expect(find.textContaining('••••', findRichText: true), findsNothing);
+    await tester.tap(find.bySemanticsLabel('Ẩn số dư'));
+    await tester.pumpAndSettle();
+    expect(settings.balancesHidden, isTrue);
   });
   testWidgets('hidden balances leave the editor visible', (tester) async {
     final settings = DefaultSettingsViewModel(

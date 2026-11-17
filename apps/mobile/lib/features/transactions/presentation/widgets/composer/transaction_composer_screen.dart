@@ -14,6 +14,7 @@ import '../../viewmodels/transaction_composer.dart';
 import '../../viewmodels/transaction_view_model.dart';
 import 'amount_header.dart';
 import 'composer_body.dart';
+import 'composer_pickers.dart';
 import 'composer_actions.dart';
 import 'composer_top_bar.dart';
 
@@ -58,6 +59,53 @@ class _ComposerScreenState extends State<TransactionComposerScreen>
   late final merchant = TextEditingController(text: composer.merchant);
   late final notes = TextEditingController(text: composer.notes);
   late bool details = !composer.isNew;
+
+  /// MOB-P6-001: the amount keypad is up while typing the amount only. A new
+  /// transaction opens with it; touching the fields below lowers it so they
+  /// are all in view; tapping the amount raises it again.
+  late bool keypadOpen = composer.isNew;
+
+  void _hideKeypad() {
+    if (keypadOpen) setState(() => keypadOpen = false);
+  }
+
+  final _amountKey = GlobalKey();
+
+  /// A touch anywhere above the keypad, except on the amount, lowers it.
+  void _touched(PointerDownEvent event) {
+    final box = _amountKey.currentContext?.findRenderObject() as RenderBox?;
+    final onAmount =
+        box != null && box.size.contains(box.globalToLocal(event.position));
+    if (!onAmount) _hideKeypad();
+  }
+
+  void _showKeypad() => setState(() {
+    details = false;
+    keypadOpen = true;
+  });
+
+  /// After a refused save, open what is missing instead of only saying so.
+  @override
+  Future<void> save() async {
+    await super.save();
+    if (!mounted) return;
+    final pick = ComposerPickers(context, composer);
+    switch (composer.missing) {
+      case ComposerMissing.amount:
+        _showKeypad();
+      case ComposerMissing.category:
+        _hideKeypad();
+        await pick.category();
+      case ComposerMissing.wallet:
+        _hideKeypad();
+        await pick.wallet();
+      case ComposerMissing.destination:
+        _hideKeypad();
+        await pick.wallet(counter: true);
+      case null:
+        break;
+    }
+  }
 
   /// R.1: only while recording a new transaction.
   @override
@@ -104,7 +152,10 @@ class _ComposerScreenState extends State<TransactionComposerScreen>
     builder: (context, _) {
       final s = S.of(context);
       final margin = context.screenMargin;
-      final keypad = !details;
+      final keypad = !details && keypadOpen;
+      final motion = MediaQuery.disableAnimationsOf(context)
+          ? Duration.zero
+          : FreevaMotion.base;
       return PopScope(
         canPop: !composer.dirty,
         onPopInvokedWithResult: (didPop, _) {
@@ -126,55 +177,65 @@ class _ComposerScreenState extends State<TransactionComposerScreen>
                 children: [
                   ComposerTopBar(composer: composer, onClose: close),
                   Expanded(
-                    child: ListView(
-                      // Board gaps: keypad view 18 (+18 above the
-                      // amount), transfer 16 (+6), details 16 (+8 in the
-                      // compact amount).
-                      padding: EdgeInsets.only(
-                        top: details
-                            ? FreevaSpace.s4
-                            : composer.transfer
-                            ? 22
-                            : 36,
-                      ),
-                      children: [
-                        AmountHeader(
-                          minor: composer.amount,
-                          digits: composer.digits,
-                          currency: composer.currency,
-                          label: composer.transfer
-                              ? s.txTransferAmountLabel
-                              : s.txAmountLabel,
-                          compact: details,
-                          transfer: composer.transfer,
-                          onTap: details
-                              ? () => setState(() => details = false)
-                              : null,
-                        ),
-                        SizedBox(
-                          height: details || composer.transfer
+                    child: Listener(
+                      behavior: HitTestBehavior.translucent,
+                      onPointerDown: _touched,
+                      child: ListView(
+                        // Board gaps: keypad view 18 (+18 above the
+                        // amount), transfer 16 (+6), details 16 (+8 in the
+                        // compact amount).
+                        padding: EdgeInsets.only(
+                          top: details
                               ? FreevaSpace.s4
-                              : FreevaSpace.s5,
+                              : composer.transfer
+                              ? 22
+                              : 36,
                         ),
-                        ComposerBody(
-                          composer: composer,
-                          details: details,
-                          merchant: merchant,
-                          notes: notes,
-                          suggest: suggest,
-                          onMore: () => setState(() => details = true),
-                        ),
-                        const SizedBox(height: FreevaSpace.s4),
-                      ],
+                        children: [
+                          AmountHeader(
+                            key: _amountKey,
+                            minor: composer.amount,
+                            digits: composer.digits,
+                            currency: composer.currency,
+                            label: composer.transfer
+                                ? s.txTransferAmountLabel
+                                : s.txAmountLabel,
+                            compact: details,
+                            transfer: composer.transfer,
+                            editing: keypad,
+                            onTap: keypad ? null : _showKeypad,
+                          ),
+                          SizedBox(
+                            height: details || composer.transfer
+                                ? FreevaSpace.s4
+                                : FreevaSpace.s5,
+                          ),
+                          ComposerBody(
+                            composer: composer,
+                            details: details,
+                            merchant: merchant,
+                            notes: notes,
+                            suggest: suggest,
+                            onMore: () => setState(() => details = true),
+                          ),
+                          const SizedBox(height: FreevaSpace.s4),
+                        ],
+                      ),
                     ),
                   ),
-                  if (keypad)
-                    AmountKeypad(
-                      filled: false,
-                      keyHeight: composer.transfer ? 50 : 54,
-                      onDigits: composer.typeKeys,
-                      onDelete: composer.backspace,
-                    ),
+                  AnimatedSize(
+                    duration: motion,
+                    curve: FreevaMotion.standard,
+                    alignment: Alignment.topCenter,
+                    child: keypad
+                        ? AmountKeypad(
+                            filled: false,
+                            keyHeight: composer.transfer ? 50 : 54,
+                            onDigits: composer.typeKeys,
+                            onDelete: composer.backspace,
+                          )
+                        : const SizedBox(width: double.infinity),
+                  ),
                   ComposerError(composer: composer),
                   SizedBox(height: composer.transfer ? FreevaSpace.s4 : 18),
                   FreevaButton(

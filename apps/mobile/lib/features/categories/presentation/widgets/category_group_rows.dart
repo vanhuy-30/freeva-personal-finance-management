@@ -6,6 +6,7 @@ import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../domain/category_rules.dart';
 import '../../domain/finance_category.dart';
+import '../../../../core/widgets/swipe_actions.dart';
 import 'category_icon_tile.dart';
 
 /// A main category and, when open, its subcategories. Tapping the name or
@@ -16,6 +17,7 @@ class CategoryGroupRows extends StatelessWidget {
     required this.expanded,
     required this.onToggle,
     required this.onOpen,
+    this.actionsOf,
     super.key,
   });
 
@@ -23,6 +25,13 @@ class CategoryGroupRows extends StatelessWidget {
   final bool expanded;
   final VoidCallback onToggle;
   final ValueChanged<FinanceCategory> onOpen;
+
+  /// Quick actions behind a swipe to the left; null turns swiping off.
+  final List<SwipeAction> Function(FinanceCategory)? actionsOf;
+
+  Widget _swipe(FinanceCategory category, Widget row) => actionsOf == null
+      ? row
+      : SwipeActions(actions: actionsOf!(category), child: row);
 
   @override
   Widget build(BuildContext context) {
@@ -33,113 +42,119 @@ class CategoryGroupRows extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: Semantics(
-                container: true,
-                button: true,
-                label: [
-                  parent.name,
-                  if (count > 0) s.categoryChildCount(count),
-                ].join(', '),
-                excludeSemantics: true,
-                child: InkWell(
-                  onTap: () => onOpen(parent),
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(minHeight: 60),
-                    child: Row(
-                      children: [
-                        CategoryIconTile(
-                          iconToken: parent.iconToken,
-                          colorToken: parent.colorToken,
-                        ),
-                        const SizedBox(width: FreevaSpace.s3),
-                        Expanded(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                parent.name,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: FreevaTypography.body.copyWith(
-                                  fontWeight: FontWeight.w500,
-                                  color: c.textPrimary,
-                                ),
-                              ),
-                              if (count > 0) ...[
-                                const SizedBox(height: 2),
+        _swipe(
+          parent,
+          Row(
+            children: [
+              Expanded(
+                child: Semantics(
+                  container: true,
+                  button: true,
+                  label: [
+                    parent.name,
+                    if (count > 0) s.categoryChildCount(count),
+                  ].join(', '),
+                  excludeSemantics: true,
+                  child: InkWell(
+                    onTap: () => onOpen(parent),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(minHeight: 60),
+                      child: Row(
+                        children: [
+                          CategoryIconTile(
+                            iconToken: parent.iconToken,
+                            colorToken: parent.colorToken,
+                          ),
+                          const SizedBox(width: FreevaSpace.s3),
+                          Expanded(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
                                 Text(
-                                  s.categoryChildCount(count),
-                                  style: FreevaTypography.label.copyWith(
-                                    fontWeight: FontWeight.w400,
-                                    color: c.textSecondary,
+                                  parent.name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: FreevaTypography.body.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                    color: c.textPrimary,
                                   ),
                                 ),
+                                if (count > 0) ...[
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    s.categoryChildCount(count),
+                                    style: FreevaTypography.label.copyWith(
+                                      fontWeight: FontWeight.w400,
+                                      color: c.textSecondary,
+                                    ),
+                                  ),
+                                ],
                               ],
-                            ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            // 8 + the 44 cell's 4 inset = the board's 12 gap to the circle.
-            const SizedBox(width: FreevaSpace.s2),
-            if (count > 0)
-              _ToggleButton(
-                expanded: expanded,
-                label: s.categoryToggleSemantics(parent.name),
-                onTap: onToggle,
-              )
-            else
-              SizedBox(
-                width: FreevaSize.touch,
-                child: Icon(
-                  LucideIcons.chevronRight,
-                  size: FreevaSize.iconChip,
-                  color: c.textMuted,
+              // 8 + the 44 cell's 4 inset = the board's 12 gap to the circle.
+              const SizedBox(width: FreevaSpace.s2),
+              if (count > 0)
+                _ToggleButton(
+                  expanded: expanded,
+                  label: s.categoryToggleSemantics(parent.name),
+                  onTap: onToggle,
+                )
+              else
+                SizedBox(
+                  width: FreevaSize.touch,
+                  child: Icon(
+                    LucideIcons.chevronRight,
+                    size: FreevaSize.iconChip,
+                    color: c.textMuted,
+                  ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
         if (expanded)
           for (final child in group.children)
-            Semantics(
-              container: true,
-              button: true,
-              label: child.name,
-              excludeSemantics: true,
-              child: InkWell(
-                onTap: () => onOpen(child),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    minHeight: FreevaSize.touch,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 52),
-                    child: Row(
-                      children: [
-                        CategoryDot(
-                          colorToken: child.colorToken ?? parent.colorToken,
-                        ),
-                        const SizedBox(width: FreevaSpace.s3),
-                        Expanded(
-                          child: Text(
-                            child.name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: FreevaTypography.body.copyWith(
-                              fontSize: 14,
-                              color: c.textPrimary,
+            _swipe(
+              child,
+              Semantics(
+                container: true,
+                button: true,
+                label: child.name,
+                excludeSemantics: true,
+                child: InkWell(
+                  onTap: () => onOpen(child),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      minHeight: FreevaSize.touch,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 52),
+                      child: Row(
+                        children: [
+                          CategoryDot(
+                            colorToken: child.colorToken ?? parent.colorToken,
+                          ),
+                          const SizedBox(width: FreevaSpace.s3),
+                          Expanded(
+                            child: Text(
+                              child.name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: FreevaTypography.body.copyWith(
+                                fontSize: 14,
+                                color: c.textPrimary,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),

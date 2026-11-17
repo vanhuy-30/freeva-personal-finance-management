@@ -40,6 +40,21 @@ class QuickFields extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        // The chips alone did not say what they were for (income opened with
+        // only "Tất cả").
+        Padding(
+          padding: const EdgeInsets.only(left: FreevaSpace.s1, bottom: 8),
+          child: Semantics(
+            header: true,
+            child: Text(
+              s.txDetailCategory,
+              style: FreevaTypography.bodyS.copyWith(
+                fontWeight: FontWeight.w600,
+                color: c.textSecondary,
+              ),
+            ),
+          ),
+        ),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
@@ -92,12 +107,12 @@ class QuickFields extends StatelessWidget {
                 label: s.txDateLabel,
                 value: composer.occurredOn.isEmpty
                     ? ''
-                    : TransactionDayHeader.label(
+                    : TransactionDayHeader.tile(
                         s,
                         composer.occurredOn,
                         today,
                         locale,
-                      ).split(' · ').first,
+                      ),
                 onTap: pick.date,
               ),
             ),

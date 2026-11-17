@@ -68,6 +68,8 @@ class ComposerError extends StatelessWidget {
         ? s.txAmountMissing
         : composer.transfer && composer.destination == null
         ? s.txPickDestination
+        : composer.missing == ComposerMissing.category
+        ? s.txCategoryMissing
         : composer.cross && composer.received == null
         ? s.txRateInvalid
         : failure != null

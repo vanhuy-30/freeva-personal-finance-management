@@ -4,6 +4,7 @@ import '../../../categories/domain/finance_category.dart';
 import '../../../wallets/domain/wallet.dart';
 import '../../domain/transaction.dart';
 import '../../domain/transaction_money.dart';
+import '../../domain/transaction_rules.dart';
 import 'transaction_view_model.dart';
 
 /// State of one record/edit form. The amount is typed on Freeva's keypad as
@@ -78,6 +79,10 @@ class TransactionComposer extends ChangeNotifier {
   late List<String> clientIds;
   bool saving = false;
   bool invalid = false;
+
+  /// What blocked the last save before it reached the server; null once the
+  /// user changes anything (MOB-P6-001).
+  ComposerMissing? missing;
   bool _accountTouched = false;
   bool _categoryTouched = false;
   late String _rateSeed;
@@ -128,7 +133,9 @@ class TransactionComposer extends ChangeNotifier {
       if (!c.archived && c.kind.fits(type == TransactionType.income)) c,
   ];
 
-  /// Three quick chips: recent fitting categories, keeping the chosen one.
+  /// Three quick chips: the chosen category, recent fitting ones, then the
+  /// first top-level categories of this type, so income (no history yet)
+  /// still shows what it can be filed under (MOB-P6-001).
   List<FinanceCategory> get quick {
     final ids = fitting.map((c) => c.id).toSet();
     final picks = [
@@ -136,8 +143,17 @@ class TransactionComposer extends ChangeNotifier {
       for (final c in model.recentCategories)
         if (ids.contains(c.id) && c.id != categoryId) c,
     ];
+    for (final c in fitting) {
+      if (picks.length >= 3) break;
+      if (c.parentId == null && !picks.any((p) => p.id == c.id)) picks.add(c);
+    }
     return picks.take(3).toList();
   }
+
+  /// Whether "Cửa hàng" belongs on this form: spending only. Income has no
+  /// store; one already stored on an income being edited stays visible.
+  bool get hasMerchant =>
+      type == TransactionType.expense || (!isNew && merchant.isNotEmpty);
 
   // Keypad -----------------------------------------------------------------
 
@@ -147,12 +163,18 @@ class TransactionComposer extends ChangeNotifier {
         : '$amount$keys';
     if (next.isEmpty || next.length > maxDigits) return;
     amount = BigInt.parse(next);
-    invalid = false;
-    notifyListeners();
+    _changed();
   }
 
   void backspace() {
     amount = amount ~/ BigInt.from(10);
+    _changed();
+  }
+
+  /// Any edit clears the last save error: it may no longer apply.
+  void _changed() {
+    invalid = false;
+    missing = null;
     notifyListeners();
   }
 
@@ -166,25 +188,25 @@ class TransactionComposer extends ChangeNotifier {
       categoryId = null;
     }
     categoryId ??= transfer ? null : _defaultCategory();
-    notifyListeners();
+    _changed();
   }
 
   void pickCategory(String id) {
     categoryId = id;
     _categoryTouched = true;
-    notifyListeners();
+    _changed();
   }
 
   void pickAccount(String id) {
     accountId = id;
     _accountTouched = true;
     if (counterAccountId == id) counterAccountId = null;
-    notifyListeners();
+    _changed();
   }
 
   void pickCounter(String id) {
     counterAccountId = id;
-    notifyListeners();
+    _changed();
   }
 
   void swap() {
@@ -192,18 +214,18 @@ class TransactionComposer extends ChangeNotifier {
     accountId = counterAccountId;
     counterAccountId = from;
     _accountTouched = true;
-    notifyListeners();
+    _changed();
   }
 
   void setDate(String value) {
     occurredOn = value;
-    notifyListeners();
+    _changed();
   }
 
   void setWhen({required String date, String? time}) {
     occurredOn = date;
     occurredTime = time;
-    notifyListeners();
+    _changed();
   }
 
   void setNotes(String value) => notes = value;
@@ -211,7 +233,7 @@ class TransactionComposer extends ChangeNotifier {
 
   void setTags(List<String> ids) {
     tagIds = ids;
-    notifyListeners();
+    _changed();
   }
 
   void setRate(String value) {
@@ -220,15 +242,23 @@ class TransactionComposer extends ChangeNotifier {
       quotedAt = DateTime.now().toUtc().toIso8601String();
       _rateSeed = rate;
     }
-    notifyListeners();
+    _changed();
   }
 
   /// Saves through the list model. True when stored or queued offline.
   Future<bool> save() async {
     final from = source;
-    if (from == null ||
-        amount <= BigInt.zero ||
-        (transfer && destination == null)) {
+    missing = from == null
+        ? ComposerMissing.wallet
+        : amount <= BigInt.zero
+        ? ComposerMissing.amount
+        : transfer && destination == null
+        ? ComposerMissing.destination
+        // The API refuses an expense without a category.
+        : type == TransactionType.expense && categoryId == null
+        ? ComposerMissing.category
+        : null;
+    if (from == null || missing != null) {
       invalid = true;
       notifyListeners();
       return false;
@@ -245,7 +275,7 @@ class TransactionComposer extends ChangeNotifier {
       clientIds: transfer ? clientIds : [clientIds.first],
       categoryId: transfer ? null : categoryId,
       notes: notes,
-      merchant: transfer ? null : merchant,
+      merchant: hasMerchant ? merchant : null,
       tagIds: tagIds,
       rate: cross ? rate : null,
       quotedAt: cross ? quotedAt : null,
@@ -259,7 +289,12 @@ class TransactionComposer extends ChangeNotifier {
 
   String? _defaultCategory() {
     if (type != TransactionType.expense) return null;
-    return model.preferredCategoryId();
+    // Recent categories mix both types: an income one ("Lương") must not
+    // become the default of an expense.
+    final fits = model.recentCategories
+        .where((c) => !c.archived && c.kind.fits(false))
+        .toList();
+    return defaultCategoryId(fits);
   }
 
   void _syncDefaults() {
@@ -277,7 +312,7 @@ class TransactionComposer extends ChangeNotifier {
     if (!_categoryTouched &&
         categoryId == null &&
         type == TransactionType.expense) {
-      categoryId = model.preferredCategoryId();
+      categoryId = _defaultCategory();
       changed = categoryId != null || changed;
     }
     if (changed) {
@@ -306,3 +341,6 @@ class TransactionComposer extends ChangeNotifier {
     super.dispose();
   }
 }
+
+/// The field a save stopped on, so the screen can open it.
+enum ComposerMissing { wallet, amount, destination, category }

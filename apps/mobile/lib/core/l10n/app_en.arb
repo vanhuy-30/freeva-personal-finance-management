@@ -1,7 +1,7 @@
 {
   "@@locale": "en",
   "appTitle": "Freeva",
-  "splashTagline": "Your money. Your freedom.",
+  "splashTagline": "Your financial freedom journey",
   "brandWordmark": "FREEVA",
   "@brandWordmark": {
     "description": "Official brand wordmark; keep unchanged across locales."
@@ -501,7 +501,7 @@
   "txEmptyTitle": "No transactions yet",
   "txEmptyBody": "Your first expense takes seconds.",
   "txEmptyAction": "Add expense",
-  "txSearchHint": "Search transactions",
+  "txSearchHint": "Search transactions or features",
   "txSearchCancel": "Cancel",
   "txSearchClear": "Clear text",
   "txSearchResults": "{count} results",
@@ -513,6 +513,8 @@
     }
   },
   "txSearchPrompt": "Search by store, note or amount.",
+  "searchFeaturesTitle": "Features",
+  "searchQuickTitle": "Quick open",
   "txDetailCategory": "Category",
   "txDetailWallet": "Wallet",
   "txDetailDate": "Date",
@@ -610,6 +612,7 @@
   "txTimeClear": "Clear time",
   "txDateTimeDone": "Done",
   "txYesterday": "Yesterday",
+  "txTomorrow": "Tomorrow",
   "txSavedToast": "Saved {kind}",
   "@txSavedToast": {
     "placeholders": {
@@ -631,6 +634,7 @@
   "txDiscard": "Discard",
   "txAmountMissing": "Enter an amount first.",
   "txPickDestination": "Choose the wallet that receives it.",
+  "txCategoryMissing": "Pick a category for this expense.",
   "txRateInvalid": "This rate doesn't work for this amount.",
   "walletTotal": "Total balance · {count, plural, =1{1 wallet} other{{count} wallets}}",
   "@walletTotal": {
@@ -1531,7 +1535,6 @@
     }
   },
   "notifyTimeTitle": "Pick a reminder time",
-  "notifyTimeHint": "No reminder on days you already logged.",
   "notifyTimePick": "Pick {time}",
   "@notifyTimePick": {
     "placeholders": {
@@ -1765,8 +1768,7 @@
   "@onbSuggestNoGoal": {"placeholders": {"percent": {"type": "int"}}},
   "onbSuggestHint": "You can change it any time in Monthly budget.",
   "onbSuggestUse": "Use this amount",
-  "dailyLogAskTitle": "Remind you to log spending each evening?",
-  "dailyLogAskBody": "No reminder on days you already logged.",
+  "dailyLogAskTitle": "Remind you to log spending each evening",
   "dailyLogAskTime": "Reminder time",
   "dailyLogAskOn": "Turn on",
   "meIncome": "Monthly income",

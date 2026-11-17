@@ -55,6 +55,11 @@ flutter:
           weight: 500
         - asset: assets/fonts/Inter-SemiBold.ttf
           weight: 600
+    # Sora (SIL OFL, assets/fonts/Sora-OFL.txt): the FREEVA wordmark on the
+    # splash only. Variable font; the weight is set with FontVariation.
+    - family: Sora
+      fonts:
+        - asset: assets/fonts/Sora-Variable.ttf
     # Lucide at the canvas stroke (1.75); built by tool/lucide_stroke.
     - family: Lucide175
       fonts:
