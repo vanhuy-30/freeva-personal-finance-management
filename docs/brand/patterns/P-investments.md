@@ -1,7 +1,7 @@
 # Nhóm P — Đầu tư · Q — Tài sản ròng theo thời gian
 
 Trạng thái: **chốt thiết kế 2026-11-06**, chưa code. Task: `MOB-P4-E01` (P), `MOB-P4-E02` (Q); API thêm ở `BE-P4-E03`.
-Canvas: trang **08 · Phase 4** (`p4`). Spec chung: [design-system.md](../design-system.md).
+Canvas: trang **09 · Ví và tài sản**, khối P, Q (Tài sản ròng). Spec chung: [design-system.md](../design-system.md).
 
 ## Nguyên tắc riêng cho nhóm này
 

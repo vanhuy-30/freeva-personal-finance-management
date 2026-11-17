@@ -1,7 +1,7 @@
 # Nhóm B — Tổng quan
 
 Trạng thái: **chốt thiết kế 2026-10-21**, **đã code 2026-10-22** (`lib/features/home/`). Task: `DS-P2-003` (màn Tổng quan).
-Canvas: trang **05 · Patterns**, hàng B
+Canvas: trang **07 · Tổng quan, báo cáo, dự báo**, khối B. 
 (<https://claude.ai/artifact/SmyaVvz57doJiAM6Kn678T>, riêng tư). Spec chung:
 [design-system.md](../design-system.md). Màn lần đầu (checklist "Bắt đầu nào") ở
 [A-onboarding-auth.md](A-onboarding-auth.md) A1.7.

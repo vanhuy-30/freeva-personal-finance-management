@@ -1,7 +1,7 @@
 # Nhóm I — Mục tiêu
 
 Trạng thái: **chốt thiết kế 2026-11-03**, **đã code 2026-11-04** (`MOB-P3-E01`, [mobile-goals.md](../../architecture/mobile-goals.md)). API: `BE-P3-E01`.
-Canvas: trang **07 · Phase 3**, hàng I
+Canvas: trang **11 · Mục tiêu, vay nợ, định kỳ**, khối I. 
 (<https://claude.ai/artifact/SmyaVvz57doJiAM6Kn678T>, riêng tư). Spec chung:
 [design-system.md](../design-system.md).
 

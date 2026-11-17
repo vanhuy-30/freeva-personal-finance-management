@@ -1,7 +1,7 @@
 # Nhóm N — Dự báo, soát tháng, ngân sách, nhắc
 
 Trạng thái: **chốt thiết kế 2026-11-03**; màn 1 và 2 (`MOB-P3-E04`), màn 3 (`MOB-P3-002`), màn 4 (`MOB-P3-003`), màn 5 và 6 (`MOB-P3-006`) đã code. Task: `MOB-P3-E04` (dự báo), `MOB-P3-002` (thẻ soát tháng), `MOB-P3-003` (ngưỡng ngân sách), `MOB-P3-006` (nhắc ghi chi); API xong.
-Canvas: trang **07 · Phase 3**, hàng N (báo cáo, đầu tháng, thông báo nay là RepMonth, BNewMonth, MeNotify ở trang 05). Spec chung: [design-system.md](../design-system.md).
+Canvas: trang **07 · Tổng quan, báo cáo, dự báo**, khối N (gồm Ngân sách tháng, Lịch, Soát tháng; báo cáo, đầu tháng, thông báo là RepMonth, BNewMonth, MeNotify ở khối F, B, G). Spec chung: [design-system.md](../design-system.md).
 
 ## Nguyên tắc riêng cho nhóm này
 

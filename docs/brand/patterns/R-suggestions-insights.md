@@ -1,7 +1,7 @@
 # Nhóm R — Gợi ý danh mục · S — Đáng chú ý và dự báo chi · T — Ngày dự kiến đạt mục tiêu · U — Gợi ý tự động
 
 Trạng thái: **chốt thiết kế 2026-11-11**, chưa code. Task: `DS-P5-001` (thiết kế); code ở `BE-P5-E03` / `MOB-P5-E03` (R), `BE-P5-E04` / `MOB-P5-E04` (S.1, S.2), `BE-P5-E06` / `MOB-P5-E06` (S.3, T), `PRD-P5-E01` / `MOB-P5-002` (U).
-Canvas: trang **09 · Phase 5** (`p5`). Spec chung: [design-system.md](../design-system.md).
+Canvas: trang **08 · Giao dịch**, khối R; S ở trang 07, T ở trang 11, U ở trang 12. Spec chung: [design-system.md](../design-system.md).
 
 ## Nguyên tắc riêng cho nhóm này
 
