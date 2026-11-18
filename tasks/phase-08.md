@@ -4,6 +4,8 @@
 
 Mọi tính năng cần AI (mô hình chạy trên máy hoặc dịch vụ bên ngoài) gom về đây ngày 2026-11-11 (quyết định chủ dự án): chưa chốt hướng xây dựng AI. Phase 5 chỉ còn phần chạy bằng quy tắc và số liệu từ sổ.
 
+2026-11-18 chủ dự án chốt: cả phase là tùy chọn, hoãn, chưa làm lúc này.
+
 ### PRD-P8-E01 — Chọn hướng AI và nhà cung cấp
 - Status: todo
 - Module: 18, 21

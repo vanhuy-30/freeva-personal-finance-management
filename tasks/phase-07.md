@@ -8,6 +8,11 @@
 - Gate: post-v1
 - Depends: BE-P5-E04, BE-P5-E08
 - DoD: Free gồm ghi thu chi, ví, danh mục, ngân sách cơ bản, báo cáo cơ bản. Premium gồm insight, chat, OCR, báo cáo mở rộng, forecast, what-if, mục tiêu nâng cao và định kỳ không giới hạn. Hết hạn hoặc hạ cấp không xóa dữ liệu và không khóa xem sổ cũ. Entitlement giống nhau trên các thiết bị. Khôi phục giao dịch mua. Paywall không chặn tạo ví, ghi giao dịch, xem số dư, xuất hoặc xóa tài khoản.
+- Note: 2026-11-18 đề xuất chia gói, chưa chốt:
+  - Free: ghi thu, chi, chuyển ví; ví, danh mục, nhãn không giới hạn; gợi ý danh mục khi ghi; ngân sách tháng (tổng và theo danh mục); báo cáo tháng này và theo danh mục; lịch; tối đa 2 mục tiêu; tối đa 3 quy tắc định kỳ; vay, nợ, trả góp thẻ; nhắc ghi chi; PIN và sinh trắc; nhập CSV từ app khác; xuất và xóa dữ liệu.
+  - Premium: điều đáng chú ý; dự báo chi và ngày đạt mục tiêu; ngân sách chỉnh riêng từng tháng; báo cáo mở rộng (so sánh nhiều tháng, xu hướng, tài sản ròng theo thời gian); mục tiêu và định kỳ không giới hạn; đầu tư và tài sản ròng; sau này AI, OCR, kết nối ngân hàng, gia đình.
+  - Giới hạn chỉ chặn tạo mới; hạ cấp vẫn xem và sửa được thứ đã có.
+  - Thời điểm đề xuất: v1 ra miễn phí, chưa làm IAP; bật Premium khi có tính năng tốn chi phí (AI, kết nối ngân hàng) và đã có số liệu dùng thật.
 
 ### WA-P7-E01 / BE-P7-E02 — Admin vận hành (module 26)
 - Status: todo
@@ -23,3 +28,4 @@
 - Gate: post-v1
 - Depends: WA-P7-E01
 - DoD: hàng đợi hỗ trợ có vai trò, SLA và audit. Nhân viên không xem dữ liệu tài chính trừ khi quyền ở `WA-P7-E01` được bật cho ca đó.
+- Note: 2026-11-18 chủ dự án chốt: tùy chọn, hoãn. Chỉ cần khi có đội hỗ trợ nhiều người; hiện góp ý trong app (`POST /feedback`) và trả lời qua email là đủ.
