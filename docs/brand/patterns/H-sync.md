@@ -1,7 +1,7 @@
 # Nhóm H — Đồng bộ
 
 Trạng thái: **chốt thiết kế 2026-10-22**, code H1 xong 2026-10-23 (banner, chip, màn Đồng bộ, popup bỏ); H2 (màn 5 chọn bản, màn 6 sheet trùng) xong cùng ngày. Khác thiết kế ở H1: không có tiến độ "2/3" từng mục (một lô gửi một lần gọi, hiện "Đang gửi n thay đổi" + thanh chạy); chưa có nút "Cập nhật" (chờ lên store) và nút "Sửa" (cần form giao dịch nhận dữ liệu từ hàng đợi); lỗi do dữ liệu chỉ có "Bỏ"; lý do "Danh mục đã bị ẩn" thành "Dữ liệu không còn hợp lệ" vì server chỉ trả `VALIDATION_ERROR`. Task: `DS-P2-003`.
-Canvas: trang **05 · Patterns**, hàng H
+Canvas: trang **12 · Cá nhân, dữ liệu, đồng bộ**, khối H. 
 (<https://claude.ai/artifact/SmyaVvz57doJiAM6Kn678T>, riêng tư). Spec chung:
 [design-system.md](../design-system.md). Hành vi đồng bộ:
 [mobile-sync.md](../../architecture/mobile-sync.md).

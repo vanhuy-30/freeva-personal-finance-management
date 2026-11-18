@@ -1,7 +1,7 @@
 # Nhóm K — Vay và nợ
 
 Trạng thái: **chốt thiết kế 2026-11-03**, chưa code. Task: `MOB-P3-E02` (khoản vay) và `MOB-P3-007` (cho mượn, đi mượn); API `BE-P3-E02`, `BE-P3-007` xong.
-Canvas: trang **07 · Phase 3**, hàng K. Spec chung: [design-system.md](../design-system.md).
+Canvas: trang **11 · Mục tiêu, vay nợ, định kỳ**, khối K. Spec chung: [design-system.md](../design-system.md).
 
 ## Nguyên tắc riêng cho nhóm này
 

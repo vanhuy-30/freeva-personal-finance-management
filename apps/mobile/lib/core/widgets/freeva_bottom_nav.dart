@@ -5,6 +5,21 @@ import '../theme/tokens.g.dart';
 import 'freeva_nav_parts.dart';
 import 'nav_notch_painter.dart';
 
+/// Largest bottom inset that is only a gesture area (iPhone home indicator
+/// 34, iPad 20, Android gesture handle about 16 to 24). A system button bar
+/// (Android 3-button, 48) is taller.
+const double navGestureInsetMax = 34;
+
+/// Gap between the screen bottom and the nav bar (MOB-P6-001).
+///
+/// The board puts the bar 28 above the screen edge, inside the home indicator
+/// area: on gesture devices it stays there, like other apps, instead of adding
+/// the whole safe area on top. Above a system button bar it sits a small gap
+/// over the buttons.
+double navBottomOffset(double bottomInset) => bottomInset <= navGestureInsetMax
+    ? FreevaLayout.navOffsetBottom
+    : bottomInset + FreevaSpace.s2;
+
 class FreevaNavItem {
   const FreevaNavItem({required this.icon, required this.label});
 
@@ -55,7 +70,7 @@ class FreevaBottomNav extends StatelessWidget {
         FreevaLayout.screenMargin,
         0,
         FreevaLayout.screenMargin,
-        FreevaLayout.navOffsetBottom + MediaQuery.paddingOf(context).bottom,
+        navBottomOffset(MediaQuery.paddingOf(context).bottom),
       ),
       child: ConstrainedBox(
         constraints: const BoxConstraints(

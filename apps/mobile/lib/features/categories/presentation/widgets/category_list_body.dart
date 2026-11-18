@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/theme_context.dart';
@@ -10,6 +11,7 @@ import '../../../../core/widgets/freeva_card.dart';
 import '../../../../core/widgets/freeva_segmented.dart';
 import '../../../../core/widgets/hidden_items_link.dart';
 import '../../../../core/widgets/skeleton.dart';
+import '../../../../core/widgets/swipe_actions.dart';
 import '../../domain/category_rules.dart';
 import '../../domain/finance_category.dart';
 import '../viewmodels/category_view_model.dart';
@@ -24,6 +26,8 @@ class CategoryListBody extends StatelessWidget {
     required this.onTab,
     required this.onOpen,
     required this.onAdd,
+    this.onHide,
+    this.onDelete,
     super.key,
   });
 
@@ -32,6 +36,10 @@ class CategoryListBody extends StatelessWidget {
   final ValueChanged<bool> onTab;
   final ValueChanged<FinanceCategory> onOpen;
   final VoidCallback onAdd;
+
+  /// Swipe actions of a row; both null turns swiping off.
+  final ValueChanged<FinanceCategory>? onHide;
+  final ValueChanged<FinanceCategory>? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -99,6 +107,21 @@ class CategoryListBody extends StatelessWidget {
                       expanded: model.expanded.contains(group.parent.id),
                       onToggle: () => model.toggleExpanded(group.parent.id),
                       onOpen: onOpen,
+                      actionsOf: onHide == null || onDelete == null
+                          ? null
+                          : (category) => [
+                              SwipeAction(
+                                icon: LucideIcons.archive,
+                                label: s.categoryHideShort,
+                                onTap: () => onHide!(category),
+                              ),
+                              SwipeAction(
+                                icon: LucideIcons.trash,
+                                label: s.categoryDeleteShort,
+                                danger: true,
+                                onTap: () => onDelete!(category),
+                              ),
+                            ],
                     ),
                   ],
                 ],

@@ -38,15 +38,14 @@ class DetailsFields extends StatelessWidget {
     final c = context.colors;
     final pick = ComposerPickers(context, composer);
     final locale = Localizations.localeOf(context).toString();
-    final date = composer.occurredOn.isEmpty
+    final today = composer.model.today() ?? '';
+    final day = composer.occurredOn.isEmpty
         ? ''
-        : TransactionDayHeader.when(
-            s,
-            composer.occurredOn,
-            composer.model.today() ?? '',
-            locale,
-            time: composer.occurredTime,
-          );
+        : TransactionDayHeader.tile(s, composer.occurredOn, today, locale);
+    final time = composer.occurredTime;
+    final date = day.isEmpty || time == null || time.isEmpty
+        ? day
+        : s.txDayWithTime(day, time);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -76,7 +75,7 @@ class DetailsFields extends StatelessWidget {
           ),
         ),
         const SizedBox(height: FreevaSpace.s4),
-        if (!composer.transfer) ...[
+        if (composer.hasMerchant) ...[
           FreevaTextField(
             label: s.txMerchantLabel,
             hint: s.txMerchantHint,

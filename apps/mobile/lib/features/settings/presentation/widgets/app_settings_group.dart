@@ -5,9 +5,7 @@ import 'package:mobile/core/theme/lucide_icons.g.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/widgets/settings_group.dart';
 import '../../../../core/widgets/settings_row.dart';
-import '../../../auto_suggest/presentation/viewmodels/auto_suggest_view_model.dart';
 import '../../../profile/presentation/viewmodels/profile_view_model.dart';
-import '../../domain/account_labels.dart';
 import '../../domain/app_preferences.dart';
 import '../viewmodels/settings_view_model.dart';
 import 'choice_sheet.dart';
@@ -20,15 +18,11 @@ class AppSettingsGroup extends StatelessWidget {
   const AppSettingsGroup({
     required this.settings,
     required this.profile,
-    this.autoSuggest,
     super.key,
   });
 
   final SettingsViewModel settings;
   final ProfileViewModel profile;
-
-  /// Gợi ý tự động row; shown only when one of its server flags is on.
-  final AutoSuggestViewModel? autoSuggest;
 
   @override
   Widget build(BuildContext context) {
@@ -82,60 +76,11 @@ class AppSettingsGroup extends StatelessWidget {
                 },
         ),
         SettingsRow(
-          minHeight: rowHeight,
-          icon: LucideIcons.clock,
-          title: s.meTimezone,
-          value: saved == null
-              ? null
-              : gmtLabel(saved.timezone, DateTime.now()),
-          onTap: saved == null || profile.options == null
-              ? null
-              : () async {
-                  final picked = await showChoiceSheet<String>(
-                    context,
-                    title: s.meTimezone,
-                    selected: saved.timezone,
-                    searchHint: s.profileSearch,
-                    options: [
-                      for (final zone in profile.options!.timezones)
-                        Choice(
-                          zone,
-                          '${gmtLabel(zone, DateTime.now())} · $zone',
-                        ),
-                    ],
-                  );
-                  if (picked == null || picked == saved.timezone) return;
-                  if (!context.mounted) return;
-                  await applyProfile(
-                    context,
-                    profile,
-                    (p) => p.copyWith(timezone: picked),
-                  );
-                },
-        ),
-        SettingsRow(
           icon: LucideIcons.bell,
           title: s.meNotifications,
           minHeight: rowHeight,
           value: settings.sessionAlertsEnabled ? s.meNotifyOnCount(1) : null,
           onTap: () => context.push('/me/notifications'),
-        ),
-        if (autoSuggest case final auto? when auto.available)
-          SettingsRow(
-            icon: LucideIcons.sparkles,
-            title: s.autoSuggestTitle,
-            minHeight: rowHeight,
-            value: auto.enabled ? s.autoSuggestOn : s.autoSuggestOff,
-            onTap: () => context.push('/me/auto-suggest'),
-          ),
-        SettingsRow.toggle(
-          minHeight: rowHeight,
-          icon: LucideIcons.eye,
-          title: s.meHideBalances,
-          on: settings.balancesHidden,
-          onChanged: (value) {
-            if (!settings.loading) settings.setBalancesHidden(value);
-          },
         ),
         SettingsRow(
           minHeight: rowHeight,

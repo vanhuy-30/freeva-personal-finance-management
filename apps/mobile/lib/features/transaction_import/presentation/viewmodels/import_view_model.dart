@@ -149,7 +149,7 @@ abstract class ImportViewModel extends ChangeNotifier {
   bool back();
 }
 
-@injectable
+@Injectable(as: ImportViewModel)
 class DefaultImportViewModel extends ImportViewModel {
   DefaultImportViewModel(
     this._useCases,

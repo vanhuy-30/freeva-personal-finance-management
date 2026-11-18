@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../domain/app_feature_index.dart';
+import 'search_feature_list.dart';
+
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
@@ -34,18 +37,32 @@ class SearchResultsBody extends StatelessWidget {
     final s = S.of(context);
     final margin = context.screenMargin;
     final text = results.filter.search?.trim() ?? '';
+    final features = matchFeatures(s, text);
     return ListView(
       padding: EdgeInsets.fromLTRB(margin, 0, margin, FreevaSpace.s8),
       children: [
-        if (text.isEmpty)
+        if (text.isEmpty) ...[
           Text(
             s.txSearchPrompt,
             style: FreevaTypography.bodyS.copyWith(
               color: context.colors.textSecondary,
             ),
-          )
+          ),
+          const SizedBox(height: FreevaSpace.s5),
+          SearchFeatureList(
+            title: s.searchQuickTitle,
+            features: quickFeatures(),
+          ),
+        ] else if (features.isNotEmpty) ...[
+          SearchFeatureList(title: s.searchFeaturesTitle, features: features),
+          const SizedBox(height: FreevaSpace.s5),
+        ],
+        if (text.isEmpty)
+          const SizedBox.shrink()
         else if (!results.loading && results.rows.isEmpty)
-          EmptyState(title: s.txNoResultTitle, message: s.txNoResultBody)
+          features.isEmpty
+              ? EmptyState(title: s.txNoResultTitle, message: s.txNoResultBody)
+              : const SizedBox.shrink()
         else ...[
           TransactionSummaryLine(
             summary: results.summary,

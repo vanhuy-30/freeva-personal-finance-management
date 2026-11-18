@@ -8,13 +8,42 @@ import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_button.dart';
 import '../../../auth/domain/auth_repository.dart';
 
-/// One signed-in device: "Máy này" with a chip, or another one with "Thu hồi".
-/// The API has no device names, so the row says only which one it is.
+/// One signed-in device: its model and system, when it was last used, and
+/// "Đang dùng" for this phone or "Đăng xuất" for the others. Sessions from
+/// before the server knew devices show "Thiết bị không rõ" (or "Máy này").
 class SessionRow extends StatelessWidget {
-  const SessionRow({required this.session, required this.onRevoke, super.key});
+  const SessionRow({
+    required this.session,
+    required this.onRevoke,
+    this.now,
+    super.key,
+  });
 
   final AuthSession session;
   final VoidCallback onRevoke;
+
+  /// Clock for "3 giờ trước"; tests pass a fixed one.
+  final DateTime? now;
+
+  static String? _system(AuthSession session) {
+    final os = switch (session.platform) {
+      'ios' => 'iOS',
+      'android' => 'Android',
+      _ => null,
+    };
+    if (os == null) return null;
+    final version = session.osVersion;
+    return version == null ? os : '$os $version';
+  }
+
+  String _when(S s, String started) {
+    final used = session.lastUsedAt;
+    if (session.current || used == null) return s.meSessionSince(started);
+    final ago = (now ?? DateTime.now()).difference(used);
+    if (ago.inHours < 1) return s.meSessionActiveNow;
+    if (ago.inHours < 24) return s.meSessionActiveHours(ago.inHours);
+    return s.meSessionActiveDays(ago.inDays);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +51,12 @@ class SessionRow extends StatelessWidget {
     final c = context.colors;
     final day = DateFormat(s.reportShortDatePattern, s.localeName);
     final started = day.format(session.createdAt.toLocal());
+    final title =
+        session.deviceName ??
+        (session.current ? s.meSessionThis : s.meSessionUnknown);
+    final system = _system(session);
+    // No null-aware collection elements: build_runner's analyzer rejects them.
+    final sub = [if (system != null) system, _when(s, started)].join(' · ');
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 14),
       child: Row(
@@ -47,7 +82,9 @@ class SessionRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  session.current ? s.meSessionThis : s.meSessionOther,
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: FreevaTypography.body.copyWith(
                     fontWeight: session.current
                         ? FontWeight.w600
@@ -57,10 +94,7 @@ class SessionRow extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  s.meSessionDates(
-                    started,
-                    day.format(session.expiresAt.toLocal()),
-                  ),
+                  sub,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: FreevaTypography.label.copyWith(
@@ -90,7 +124,7 @@ class SessionRow extends StatelessWidget {
             )
           else
             Semantics(
-              label: s.meRevokeSemantics(started),
+              label: s.meRevokeSemantics(title),
               button: true,
               excludeSemantics: true,
               onTap: onRevoke,

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mobile/core/time/device_time_zone.dart';
 import 'package:mobile/features/auth/data/auth_repository_impl.dart';
 import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/auth/domain/auth_use_cases.dart';
@@ -253,6 +254,35 @@ void main() {
       model.dispose();
       auth.dispose();
     });
+    test('follows the phone time zone when the server lists it', () async {
+      DefaultProfileViewModel withZone(String? zone) => DefaultProfileViewModel(
+        ProfileUseCases(repo, testServerConfigModel()),
+        auth,
+        exportCase(authRepo, sharer),
+        deviceZone: _Zone(zone),
+      );
+      final before = repo.saves;
+      final unknown = withZone('Mars/Base');
+      await unknown.load();
+      await pumpEventQueue();
+      expect(unknown.saved!.timezone, 'Asia/Ho_Chi_Minh');
+      expect(repo.saves, before);
+      unknown.dispose();
+
+      final travel = withZone('America/New_York');
+      await travel.load();
+      await pumpEventQueue();
+      expect(travel.saved!.timezone, 'America/New_York');
+      expect(travel.draft!.timezone, 'America/New_York');
+      expect(repo.saves, before + 1);
+      travel.dispose();
+
+      final same = withZone('America/New_York');
+      await same.load();
+      await pumpEventQueue();
+      expect(repo.saves, before + 1);
+      same.dispose();
+    });
     test('saves the display currency apart from the profile PUT', () async {
       await model.load();
       expect(model.saved!.overviewCurrency, model.saved!.currency);
@@ -482,4 +512,12 @@ void main() {
       expect(vault.value, isNotNull);
     });
   });
+}
+
+class _Zone implements DeviceTimeZone {
+  _Zone(this.zone);
+  final String? zone;
+
+  @override
+  Future<String?> current() async => zone;
 }

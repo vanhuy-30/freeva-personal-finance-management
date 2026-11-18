@@ -34,30 +34,38 @@ class SplashBrandContent extends StatelessWidget {
               builder: (context, constraints) => AnimatedBrandSymbol(
                 progress: progress,
                 reduceMotion: reduceMotion,
-                size: (constraints.maxWidth * .94).clamp(0.0, 380.0),
+                size: (constraints.maxWidth * .62).clamp(0.0, 260.0),
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 28),
             Opacity(
               opacity: copy,
               child: Column(
                 children: [
+                  // Sora 600 with wide tracking: a geometric face that sits
+                  // with the symbol's curves.
                   Text(
                     s.brandWordmark,
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    style: const TextStyle(
+                      fontFamily: 'Sora',
+                      fontVariations: [FontVariation('wght', 600)],
+                      fontSize: 34,
+                      height: 1.1,
+                      letterSpacing: 8,
                       color: FreevaPrimitive.ink900,
-                      fontSize: 40,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 9,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
                   Text(
                     s.splashTagline,
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyLarge
-                        ?.copyWith(color: FreevaPrimitive.ink500, fontSize: 17),
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: FreevaPrimitive.ink600,
+                      fontSize: 17,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: .2,
+                    ),
                   ),
                 ],
               ),

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/tokens.g.dart';
 
-/// Soft overlapping brand washes, with a light center for the navy wordmark.
+/// A clean light wash: white to a pale brand blue, with only a faint violet
+/// at the bottom corner, so the wordmark and symbol carry the screen.
 class SplashBackground extends StatelessWidget {
   const SplashBackground({super.key, required this.child});
 
@@ -13,12 +14,12 @@ class SplashBackground extends StatelessWidget {
     return DecoratedBox(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
           colors: [
-            FreevaPrimitive.blue500,
-            FreevaPrimitive.cyan300,
-            FreevaPrimitive.blue500,
+            FreevaPrimitive.white,
+            FreevaPrimitive.blue50,
+            FreevaPrimitive.blue100,
           ],
         ),
       ),
@@ -26,9 +27,9 @@ class SplashBackground extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: RadialGradient(
             center: Alignment.bottomLeft,
-            radius: 1.5,
+            radius: 1.3,
             colors: [
-              FreevaPrimitive.violet500,
+              FreevaPrimitive.violet500.withAlpha((.16 * 255).round()),
               FreevaPrimitive.violet500.withAlpha(0),
             ],
           ),
@@ -36,27 +37,15 @@ class SplashBackground extends StatelessWidget {
         child: DecoratedBox(
           decoration: BoxDecoration(
             gradient: RadialGradient(
-              center: Alignment.topRight,
-              radius: 1.65,
+              center: const Alignment(0, -.1),
+              radius: .8,
               colors: [
-                FreevaPrimitive.white,
-                FreevaPrimitive.cyan300.withAlpha(0),
+                FreevaPrimitive.white.withAlpha((.9 * 255).round()),
+                FreevaPrimitive.white.withAlpha(0),
               ],
             ),
           ),
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: RadialGradient(
-                center: const Alignment(0, -.05),
-                radius: .85,
-                colors: [
-                  FreevaPrimitive.white.withAlpha((.85 * 255).round()),
-                  FreevaPrimitive.white.withAlpha(0),
-                ],
-              ),
-            ),
-            child: child,
-          ),
+          child: child,
         ),
       ),
     );

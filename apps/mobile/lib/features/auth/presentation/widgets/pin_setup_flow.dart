@@ -17,19 +17,20 @@ import '../../../onboarding/presentation/widgets/onboarding_frame.dart';
 enum _PinStep { enter, confirm, biometric }
 
 /// Đặt mã PIN → Nhập lại mã PIN → Face ID (only when the device has it).
-/// Every step can be left with "Để sau" ([onSkip]). Two PINs that differ
+/// Onboarding can leave every step with "Để sau" ([onSkip]); from Settings
+/// there is no skip (the back arrow leaves) and [onSkip] is null. Two PINs that differ
 /// start again from the first one. [onDone] runs once the PIN is stored.
 class PinSetupFlow extends StatefulWidget {
   const PinSetupFlow({
     required this.model,
-    required this.onSkip,
+    this.onSkip,
     this.onBack,
     this.onDone,
     super.key,
   });
 
   final AuthViewModel model;
-  final VoidCallback onSkip;
+  final VoidCallback? onSkip;
   final VoidCallback? onBack;
   final VoidCallback? onDone;
 
@@ -118,10 +119,13 @@ class _PinSetupFlowState extends State<PinSetupFlow> {
     final model = widget.model;
     final s = S.of(context);
     final c = context.colors;
-    final skip = OnboardingSkipLink(
-      label: s.authLaterLink,
-      onPressed: model.loading ? null : widget.onSkip,
-    );
+    final onSkip = widget.onSkip;
+    final skip = onSkip == null
+        ? null
+        : OnboardingSkipLink(
+            label: s.authLaterLink,
+            onPressed: model.loading ? null : onSkip,
+          );
     if (_step == _PinStep.biometric) {
       return _BiometricStep(
         model: model,

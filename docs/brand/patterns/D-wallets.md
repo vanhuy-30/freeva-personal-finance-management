@@ -1,7 +1,7 @@
 # Nhóm D — Ví
 
 Trạng thái: **chốt thiết kế 2026-10-21**, đã code 2026-10-23 (D1 + D2). Task: `DS-P2-003` (màn Ví).
-Canvas: trang **05 · Patterns**, hàng D
+Canvas: trang **09 · Ví và tài sản**, khối D. 
 (<https://claude.ai/artifact/SmyaVvz57doJiAM6Kn678T>, riêng tư). Spec chung:
 [design-system.md](../design-system.md).
 

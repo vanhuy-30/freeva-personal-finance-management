@@ -14,6 +14,6 @@
 - `Idempotency-Key` UUID bắt buộc cho POST tạo giao dịch, trùng `legs[0].clientId`; unique owner/clientId cho mỗi leg. [CRUD transactions](transactions.md).
 - `POST /api/v1/sync` áp hàng đợi create/update/delete giao dịch, idempotent theo `clientId`, conflict không ghi đè. [Sync](sync.md) (`BE-P1-009`).
 - `GET /api/v1/account/export` và `DELETE /api/v1/account`: snapshot JSON và xóa tài khoản ngay, audit fail closed. [Account privacy](account-privacy.md) (`BE-P1-010`).
-- Auth user: opaque Bearer 7 ngày (`/api/v1/auth`, `/api/v1/sessions`), xem [ADR 009](adr/009-email-auth-sessions.md). Admin P0: opaque Bearer credential từ env ánh xạ một `STAFF_ACTOR_ID`; chỉ role staff, không bypass khi thiếu config.
+- Auth user: opaque Bearer 7 ngày (`/api/v1/auth`, `/api/v1/sessions`), xem [ADR 009](adr/009-email-auth-sessions.md). Mỗi thiết bị một phiên: app gửi `device` khi đăng nhập, đăng nhập lại cùng `device.id` thì phiên cũ của máy đó bị xoá (BE-P6-001). Admin P0: opaque Bearer credential từ env ánh xạ một `STAFF_ACTOR_ID`; chỉ role staff, không bypass khi thiếu config.
 
 Workflow: sửa OpenAPI → PR cùng Nest DTO → client cập nhật.

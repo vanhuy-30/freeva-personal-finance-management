@@ -304,4 +304,26 @@ void main() {
     await keys(tester, ['2', '5', '000']);
     expect(find.textContaining('25.000', findRichText: true), findsOneWidget);
   });
+
+  testWidgets('MOB-P6-001: keypad lowers when a field is touched and comes '
+      'back on the amount', (tester) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(editor());
+    await tester.pumpAndSettle();
+    expect(find.bySemanticsLabel('000'), findsWidgets);
+    await keys(tester, ['2', '5']);
+    // Touch the date tile: the keypad goes down, the picker opens.
+    await tester.tap(find.text('Ngày').first);
+    await tester.pumpAndSettle();
+    await tester.tapAt(const Offset(5, 5));
+    await tester.pumpAndSettle();
+    expect(find.bySemanticsLabel('000'), findsNothing);
+    await tester.tap(find.textContaining('25', findRichText: true).first);
+    await tester.pumpAndSettle();
+    expect(find.bySemanticsLabel('000'), findsWidgets);
+    await keys(tester, ['000']);
+    expect(find.textContaining('25.000', findRichText: true), findsOneWidget);
+  });
 }

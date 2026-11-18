@@ -127,6 +127,7 @@ class _BudgetPageState extends State<BudgetPage> {
     var digits = '';
     final confirmed = await showModalBottomSheet<bool>(
       context: context,
+      useRootNavigator: true,
       isScrollControlled: true,
       backgroundColor: context.colors.bgSurface,
       shape: const RoundedRectangleBorder(

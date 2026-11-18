@@ -32,7 +32,7 @@
 - Gate: v1
 - Depends: BE-P4-E01, BE-P4-E02
 - DoD: board P (đầu tư) và Q (tài sản ròng) trên canvas, owner duyệt, pattern doc, bản sao canvas trong repo.
-- Note: [P-investments.md](../docs/brand/patterns/P-investments.md), canvas trang `p4` (bản 157). Owner chốt: khoản đầu tư gom danh mục → tài sản → lần mua; bán theo tài sản với giá vốn bình quân; giá bán thành giá hiện tại; "Đã có từ trước" là một lựa chọn trong danh sách ví; thẻ tổng kiểu A2.
+- Note: [P-investments.md](../docs/brand/patterns/P-investments.md), canvas trang **09 · Ví và tài sản**, khối P, Q (sắp lại 17/11). Owner chốt: khoản đầu tư gom danh mục → tài sản → lần mua; bán theo tài sản với giá vốn bình quân; giá bán thành giá hiện tại; "Đã có từ trước" là một lựa chọn trong danh sách ví; thẻ tổng kiểu A2.
 
 ### BE-P4-E03 — API đầu tư theo thiết kế đã chốt
 - Status: done — 2026-11-06

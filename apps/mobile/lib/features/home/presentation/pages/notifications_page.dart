@@ -60,12 +60,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 : null,
           ),
           body: items.isEmpty
-              ? Center(
-                  child: EmptyState(
-                    title: s.notificationsEmpty,
-                    message: s.notificationsEmptyBody,
-                  ),
-                )
+              ? Center(child: EmptyState(title: s.notificationsEmpty))
               : RefreshIndicator(
                   onRefresh: _model.refreshInbox,
                   child: ListView.separated(

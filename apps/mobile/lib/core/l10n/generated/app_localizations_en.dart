@@ -13,7 +13,7 @@ class SEn extends S {
   String get appTitle => 'Freeva';
 
   @override
-  String get splashTagline => 'Your money. Your freedom.';
+  String get splashTagline => 'Your financial freedom journey';
 
   @override
   String get brandWordmark => 'FREEVA';
@@ -194,9 +194,6 @@ class SEn extends S {
 
   @override
   String get profileBack => 'Back to home';
-
-  @override
-  String get profileSearch => 'Search time zones';
 
   @override
   String get walletTitle => 'My wallets';
@@ -704,7 +701,7 @@ class SEn extends S {
   String get homeQuickWallets => 'My wallets';
 
   @override
-  String get homeQuickCategories => 'Categories';
+  String get homeQuickInvestments => 'Investments';
 
   @override
   String get homeSpendOther => 'Other';
@@ -785,7 +782,7 @@ class SEn extends S {
   String get homeUncategorized => 'Uncategorized';
 
   @override
-  String get notificationsEmpty => 'No notifications yet';
+  String get notificationsEmpty => 'You have no notifications to show';
 
   @override
   String get notificationsEmptyBody => 'Reminders and alerts will show here.';
@@ -896,7 +893,7 @@ class SEn extends S {
   String get txEmptyAction => 'Add expense';
 
   @override
-  String get txSearchHint => 'Search transactions';
+  String get txSearchHint => 'Search transactions or features';
 
   @override
   String get txSearchCancel => 'Cancel';
@@ -911,6 +908,12 @@ class SEn extends S {
 
   @override
   String get txSearchPrompt => 'Search by store, note or amount.';
+
+  @override
+  String get searchFeaturesTitle => 'Features';
+
+  @override
+  String get searchQuickTitle => 'Quick open';
 
   @override
   String get txDetailCategory => 'Category';
@@ -1091,6 +1094,9 @@ class SEn extends S {
   String get txYesterday => 'Yesterday';
 
   @override
+  String get txTomorrow => 'Tomorrow';
+
+  @override
   String txSavedToast(String kind) {
     return 'Saved $kind';
   }
@@ -1114,6 +1120,9 @@ class SEn extends S {
 
   @override
   String get txPickDestination => 'Choose the wallet that receives it.';
+
+  @override
+  String get txCategoryMissing => 'Pick a category for this expense.';
 
   @override
   String get txRateInvalid => 'This rate doesn\'t work for this amount.';
@@ -1927,9 +1936,6 @@ class SEn extends S {
   String get meGroupApp => 'App';
 
   @override
-  String get meGroupHelp => 'Help';
-
-  @override
   String get meWallets => 'My wallets';
 
   @override
@@ -2189,13 +2195,7 @@ class SEn extends S {
   String get meLanguage => 'Language';
 
   @override
-  String get meTimezone => 'Time zone';
-
-  @override
   String get meNotifications => 'Notifications';
-
-  @override
-  String get meHideBalances => 'Hide balances';
 
   @override
   String get meSecurity => 'Security';
@@ -2279,41 +2279,63 @@ class SEn extends S {
   String get meSecChangePassword => 'Change password';
 
   @override
-  String get meSessionsHint => 'Don\'t recognise one? Revoke it now.';
-
-  @override
   String get meSessionThis => 'This device';
-
-  @override
-  String get meSessionOther => 'Another device';
 
   @override
   String get meSessionInUse => 'In use';
 
   @override
-  String meSessionDates(String from, String to) {
-    return 'From $from · expires $to';
+  String get meSessionUnknown => 'Unknown device';
+
+  @override
+  String meSessionSince(String date) {
+    return 'Signed in $date';
   }
 
   @override
-  String get meRevoke => 'Revoke';
+  String get meSessionActiveNow => 'Just now';
 
   @override
-  String meRevokeSemantics(String date) {
-    return 'Revoke the session from $date';
+  String meSessionActiveHours(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count hours',
+      one: '1 hour',
+    );
+    return '$_temp0 ago';
   }
 
   @override
-  String get meRevokeTitle => 'Revoke this session?';
+  String meSessionActiveDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days',
+      one: '1 day',
+    );
+    return '$_temp0 ago';
+  }
 
   @override
-  String get meRevokeBody => 'That device will be signed out.';
+  String get meRevoke => 'Sign out';
 
   @override
-  String get meRevokeOthers => 'Sign out all other devices';
+  String meRevokeSemantics(String device) {
+    return 'Sign out $device';
+  }
 
   @override
-  String get meRevokeOthersTitle => 'Sign out all other devices?';
+  String get meRevokeTitle => 'Sign out this device?';
+
+  @override
+  String get meRevokeBody => 'That device will need to sign in again.';
+
+  @override
+  String get meRevokeOthers => 'Sign out of all devices';
+
+  @override
+  String get meRevokeOthersTitle => 'Sign out of all devices?';
 
   @override
   String get meRevokeOthersBody => 'This device stays signed in.';
@@ -2540,9 +2562,6 @@ class SEn extends S {
 
   @override
   String get notifyTimeTitle => 'Pick a reminder time';
-
-  @override
-  String get notifyTimeHint => 'No reminder on days you already logged.';
 
   @override
   String notifyTimePick(String time) {
@@ -3025,10 +3044,7 @@ class SEn extends S {
   String get onbSuggestUse => 'Use this amount';
 
   @override
-  String get dailyLogAskTitle => 'Remind you to log spending each evening?';
-
-  @override
-  String get dailyLogAskBody => 'No reminder on days you already logged.';
+  String get dailyLogAskTitle => 'Remind you to log spending each evening';
 
   @override
   String get dailyLogAskTime => 'Reminder time';
@@ -3351,11 +3367,6 @@ class SEn extends S {
   @override
   String meNotifyOnCount(Object count) {
     return '$count on';
-  }
-
-  @override
-  String meGoalsCount(Object count) {
-    return '$count goals';
   }
 
   @override
@@ -4101,17 +4112,6 @@ class SEn extends S {
 
   @override
   String get meDebts => 'Loans and debts';
-
-  @override
-  String meDebtsCount(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count items',
-      one: '1 item',
-    );
-    return '$_temp0';
-  }
 
   @override
   String get transactionDebt => 'Lending';
@@ -5100,13 +5100,16 @@ class SEn extends S {
   String get importUndoError => 'Couldn\'t undo';
 
   @override
-  String get meGroupManage => 'Manage money';
+  String get meGroupAssets => 'Assets';
+
+  @override
+  String get meGroupPlans => 'Plans';
+
+  @override
+  String get meGroupDataHelp => 'Data and help';
 
   @override
   String get meGroupSetup => 'Setup';
-
-  @override
-  String get meGroupData => 'Data';
 
   @override
   String get meBudgetShort => 'Budget';
@@ -5120,33 +5123,6 @@ class SEn extends S {
   @override
   String get meMoneyHint =>
       'Paid mid-month? Set your payday so budgets and reports use the right period.';
-
-  @override
-  String meWalletsCount(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count wallets',
-      one: '$count wallet',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String meRecurringCount(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count items',
-      one: '$count item',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String meCalendarMonth(int month) {
-    return 'Month $month';
-  }
 
   @override
   String get forecastTitle => 'Balance forecast';

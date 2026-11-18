@@ -644,15 +644,23 @@ model AuthToken {
 }
 
 model AuthSession {
-  id        String     @id @default(uuid()) @db.Uuid
-  userId    String     @db.Uuid
-  tokenHash String     @unique @db.Char(64)
-  createdAt DateTime   @default(now()) @db.Timestamptz
-  expiresAt DateTime   @db.Timestamptz
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  pushToken PushToken?
+  id         String     @id @default(uuid()) @db.Uuid
+  userId     String     @db.Uuid
+  tokenHash  String     @unique @db.Char(64)
+  createdAt  DateTime   @default(now()) @db.Timestamptz
+  expiresAt  DateTime   @db.Timestamptz
+  // BE-P6-001: one session per device. Null for sessions made before it, or
+  // by a client that does not say which device it is.
+  deviceId   String?    @db.Uuid
+  deviceName String?    @db.VarChar(80)
+  platform   String?    @db.VarChar(16)
+  osVersion  String?    @db.VarChar(32)
+  lastUsedAt DateTime   @default(now()) @db.Timestamptz
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pushToken  PushToken?
 
   @@index([userId, createdAt])
+  @@index([userId, deviceId])
   @@index([expiresAt])
 }
 

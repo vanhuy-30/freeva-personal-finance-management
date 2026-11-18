@@ -16,7 +16,7 @@ Widget testApp(
   home: Scaffold(body: child),
 );
 
-/// Loads Inter and Lucide so goldens show real glyphs instead of boxes.
+/// Loads Inter, Sora and Lucide so goldens show real glyphs instead of boxes.
 Future<void> loadTestFonts() async {
   Future<void> load(String family, List<String> assets) async {
     final loader = FontLoader(family);
@@ -31,6 +31,7 @@ Future<void> loadTestFonts() async {
     'assets/fonts/Inter-Medium.ttf',
     'assets/fonts/Inter-SemiBold.ttf',
   ]);
+  await load('Sora', ['assets/fonts/Sora-Variable.ttf']);
   await load('Lucide175', ['assets/fonts/Lucide175.ttf']);
   await load('MaterialIcons', ['fonts/MaterialIcons-Regular.otf']);
 }

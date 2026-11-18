@@ -1,7 +1,7 @@
 {
   "@@locale": "en",
   "appTitle": "Freeva",
-  "splashTagline": "Your money. Your freedom.",
+  "splashTagline": "Your financial freedom journey",
   "brandWordmark": "FREEVA",
   "@brandWordmark": {
     "description": "Official brand wordmark; keep unchanged across locales."
@@ -77,7 +77,6 @@
   "profileReload": "Reload",
   "profileInvalid": "Check the language, currency, time zone and start day (1–28).",
   "profileBack": "Back to home",
-  "profileSearch": "Search time zones",
   "walletTitle": "My wallets",
   "walletAdd": "Add wallet",
   "walletEdit": "Edit wallet",
@@ -315,7 +314,7 @@
   "homeQuickIncome": "Add income",
   "homeQuickTransfer": "Move money",
   "homeQuickWallets": "My wallets",
-  "homeQuickCategories": "Categories",
+  "homeQuickInvestments": "Investments",
   "homeSpendOther": "Other",
   "homeSpendEmpty": "No spending yet.",
   "homeSpendRecord": "Add expense",
@@ -417,7 +416,7 @@
     }
   },
   "homeUncategorized": "Uncategorized",
-  "notificationsEmpty": "No notifications yet",
+  "notificationsEmpty": "You have no notifications to show",
   "notificationsEmptyBody": "Reminders and alerts will show here.",
   "homeSpokenVnd": "dong",
   "txSearchAction": "Search",
@@ -501,7 +500,7 @@
   "txEmptyTitle": "No transactions yet",
   "txEmptyBody": "Your first expense takes seconds.",
   "txEmptyAction": "Add expense",
-  "txSearchHint": "Search transactions",
+  "txSearchHint": "Search transactions or features",
   "txSearchCancel": "Cancel",
   "txSearchClear": "Clear text",
   "txSearchResults": "{count} results",
@@ -513,6 +512,8 @@
     }
   },
   "txSearchPrompt": "Search by store, note or amount.",
+  "searchFeaturesTitle": "Features",
+  "searchQuickTitle": "Quick open",
   "txDetailCategory": "Category",
   "txDetailWallet": "Wallet",
   "txDetailDate": "Date",
@@ -610,6 +611,7 @@
   "txTimeClear": "Clear time",
   "txDateTimeDone": "Done",
   "txYesterday": "Yesterday",
+  "txTomorrow": "Tomorrow",
   "txSavedToast": "Saved {kind}",
   "@txSavedToast": {
     "placeholders": {
@@ -631,6 +633,7 @@
   "txDiscard": "Discard",
   "txAmountMissing": "Enter an amount first.",
   "txPickDestination": "Choose the wallet that receives it.",
+  "txCategoryMissing": "Pick a category for this expense.",
   "txRateInvalid": "This rate doesn't work for this amount.",
   "walletTotal": "Total balance · {count, plural, =1{1 wallet} other{{count} wallets}}",
   "@walletTotal": {
@@ -1233,7 +1236,6 @@
   "reportLargestError": "Couldn't load transactions",
   "meTitle": "You",
   "meGroupApp": "App",
-  "meGroupHelp": "Help",
   "meWallets": "My wallets",
   "meCategories": "Categories",
   "meTags": "Tags",
@@ -1350,9 +1352,7 @@
   "meThemeDark": "Dark",
   "meThemeSystem": "Match device",
   "meLanguage": "Language",
-  "meTimezone": "Time zone",
   "meNotifications": "Notifications",
-  "meHideBalances": "Hide balances",
   "meSecurity": "Security",
   "meSecurityValueBiometric": "PIN · biometrics",
   "meSecurityValuePin": "PIN",
@@ -1386,34 +1386,29 @@
   "meSecLogin": "Sign-in",
   "meSecSessions": "Signed-in devices",
   "meSecChangePassword": "Change password",
-  "meSessionsHint": "Don't recognise one? Revoke it now.",
   "meSessionThis": "This device",
-  "meSessionOther": "Another device",
   "meSessionInUse": "In use",
-  "meSessionDates": "From {from} · expires {to}",
-  "@meSessionDates": {
-    "placeholders": {
-      "from": {
-        "type": "String"
-      },
-      "to": {
-        "type": "String"
-      }
-    }
-  },
-  "meRevoke": "Revoke",
-  "meRevokeSemantics": "Revoke the session from {date}",
+  "meSessionUnknown": "Unknown device",
+  "meSessionSince": "Signed in {date}",
+  "@meSessionSince": {"placeholders": {"date": {"type": "String"}}},
+  "meSessionActiveNow": "Just now",
+  "meSessionActiveHours": "{count, plural, =1{1 hour} other{{count} hours}} ago",
+  "@meSessionActiveHours": {"placeholders": {"count": {"type": "int"}}},
+  "meSessionActiveDays": "{count, plural, =1{1 day} other{{count} days}} ago",
+  "@meSessionActiveDays": {"placeholders": {"count": {"type": "int"}}},
+  "meRevoke": "Sign out",
+  "meRevokeSemantics": "Sign out {device}",
   "@meRevokeSemantics": {
     "placeholders": {
-      "date": {
+      "device": {
         "type": "String"
       }
     }
   },
-  "meRevokeTitle": "Revoke this session?",
-  "meRevokeBody": "That device will be signed out.",
-  "meRevokeOthers": "Sign out all other devices",
-  "meRevokeOthersTitle": "Sign out all other devices?",
+  "meRevokeTitle": "Sign out this device?",
+  "meRevokeBody": "That device will need to sign in again.",
+  "meRevokeOthers": "Sign out of all devices",
+  "meRevokeOthersTitle": "Sign out of all devices?",
   "meRevokeOthersBody": "This device stays signed in.",
   "meChangePinTitle": "Change PIN",
   "mePinCurrent": "Current PIN",
@@ -1531,7 +1526,6 @@
     }
   },
   "notifyTimeTitle": "Pick a reminder time",
-  "notifyTimeHint": "No reminder on days you already logged.",
   "notifyTimePick": "Pick {time}",
   "@notifyTimePick": {
     "placeholders": {
@@ -1765,8 +1759,7 @@
   "@onbSuggestNoGoal": {"placeholders": {"percent": {"type": "int"}}},
   "onbSuggestHint": "You can change it any time in Monthly budget.",
   "onbSuggestUse": "Use this amount",
-  "dailyLogAskTitle": "Remind you to log spending each evening?",
-  "dailyLogAskBody": "No reminder on days you already logged.",
+  "dailyLogAskTitle": "Remind you to log spending each evening",
   "dailyLogAskTime": "Reminder time",
   "dailyLogAskOn": "Turn on",
   "meIncome": "Monthly income",
@@ -2001,8 +1994,6 @@
   "meLegal": "Terms and privacy",
   "meNotifyOnCount": "{count} on",
   "@meNotifyOnCount": {"placeholders": {"count": {}}},
-  "meGoalsCount": "{count} goals",
-  "@meGoalsCount": {"placeholders": {"count": {}}},
   "meProfileEmailVerified": "Email · verified",
   "meProfileEmailUnverified": "Email · not verified",
   "meDeleteAccount": "Delete account",
@@ -2338,8 +2329,6 @@
   "txAdjustHint": "Positive raises the wallet, negative lowers it.",
   "walletReconcileFailed": "Couldn't match the balance. Try again.",
   "meDebts": "Loans and debts",
-  "meDebtsCount": "{count, plural, one{1 item} other{{count} items}}",
-  "@meDebtsCount": {"placeholders": {"count": {"type": "int"}}},
   "transactionDebt": "Lending",
   "txKindDebt": "lending",
   "txDebtTitle": "Loans and debts",
@@ -2666,19 +2655,14 @@
   "importUndone": "Undid {count} transactions",
   "@importUndone": {"placeholders": {"count": {"type": "int"}}},
   "importUndoError": "Couldn't undo",
-  "meGroupManage": "Manage money",
+  "meGroupAssets": "Assets",
+  "meGroupPlans": "Plans",
+  "meGroupDataHelp": "Data and help",
   "meGroupSetup": "Setup",
-  "meGroupData": "Data",
   "meBudgetShort": "Budget",
   "meCalendarShort": "Calendar",
   "meMoneyTitle": "Income and period",
   "meMoneyHint": "Paid mid-month? Set your payday so budgets and reports use the right period.",
-  "meWalletsCount": "{count, plural, one{{count} wallet} other{{count} wallets}}",
-  "@meWalletsCount": {"placeholders": {"count": {"type": "int"}}},
-  "meRecurringCount": "{count, plural, one{{count} item} other{{count} items}}",
-  "@meRecurringCount": {"placeholders": {"count": {"type": "int"}}},
-  "meCalendarMonth": "Month {month}",
-  "@meCalendarMonth": {"placeholders": {"month": {"type": "int"}}},
   "forecastTitle": "Balance forecast",
   "forecastRange": "{count, plural, =1{1 month} other{{count} months}}",
   "@forecastRange": {"placeholders": {"count": {"type": "int"}}},

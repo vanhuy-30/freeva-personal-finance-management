@@ -18,7 +18,7 @@ Sau khi xác nhận email, app hỏi ba câu, câu nào cũng "Để sau" đư�
 - **Mời bật nhắc ghi chi** (sheet trên Tổng quan, `FirstRunNudgesViewModel`):
   - **Khi hiện:** đã chọn `track`, có ít nhất một giao dịch và cờ `dailyLogAsked` chưa bật.
   - **Giờ nhắc:** mặc định 21:00, chọn lại bằng popup giờ của màn Thông báo.
-  - **"Bật nhắc":** lưu `dailyLogTime` rồi bật `dailyLog`.
+  - **"Bật":** lưu `dailyLogTime` rồi bật `dailyLog`.
   - Bấm nút nào (hoặc đóng sheet) cũng bật cờ, nên chỉ hỏi một lần.
 - **Cá nhân:** thêm dòng "Thu nhập hàng tháng" (giá trị hoặc "Chưa đặt"). Sheet sửa có "Lưu" và "Xoá thu nhập", gọi `PUT /profile/monthly-income`.
 - **Tổng quan:** bỏ mục tiêu `debt`, nên khối thẻ tín dụng luôn nằm sau "Chi tháng".
@@ -46,7 +46,7 @@ Sau khi xác nhận email, app hỏi ba câu, câu nào cũng "Để sau" đư�
 ## Test
 
 - `test/features/onboarding/onboarding_view_model_test.dart`: chỉ gửi `goals` / `monthlyIncomeMinor`; số lấy từ preview; gợi ý có và không có mục tiêu; nháp mục tiêu chờ ví, không gắn vào thẻ, bị bỏ khi đổi tài khoản.
-- `daily_log_ask_test.dart`: chỉ hỏi một lần, "Bật nhắc" lưu đúng; golden sáng/tối.
+- `daily_log_ask_test.dart`: chỉ hỏi một lần, "Bật" lưu đúng; golden sáng/tối.
 - `auth_golden_test.dart`: `a1_a3_*` (bốn màn, có bản tối khi không có mục tiêu).
 - `auth_gate_test` / `auth_entry_widget_test`: đi hết luồng, back hệ thống, 320 pt ở chữ 1.3×.
 - Đối chiếu board với golden: `apps/mobile/tool/design_compare` nhóm `A`.

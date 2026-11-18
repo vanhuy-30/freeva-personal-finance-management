@@ -7,9 +7,18 @@ import type {
   AuthRepository,
   EmailChallenge,
   MailJob,
+  SessionDevice,
   TermsConsent,
   TokenPurpose,
 } from '../domain/auth.repository';
+
+const SESSION = {
+  id: true,
+  userId: true,
+  createdAt: true,
+  expiresAt: true,
+  lastUsedAt: true,
+} as const;
 
 @Injectable()
 export class PrismaAuthRepository implements AuthRepository {
@@ -222,20 +231,30 @@ export class PrismaAuthRepository implements AuthRepository {
     passwordHash: string,
     tokenHash: string,
     expiresAt: Date,
+    device?: SessionDevice,
   ) {
     return this.prisma.$transaction(async (tx) => {
       await tx.$queryRaw`SELECT "id" FROM "User" WHERE "id" = ${userId}::uuid FOR UPDATE`;
       const user = await tx.user.findUnique({ where: { id: userId } });
       if (!user?.passwordHash || user.passwordHash !== passwordHash)
         return null;
+      // One session per device: signing in again on the same phone (or after
+      // a reinstall that kept the device id) replaces the old session.
+      if (device)
+        await tx.authSession.deleteMany({
+          where: { userId, deviceId: device.id },
+        });
       const session = await tx.authSession.create({
-        data: { userId, tokenHash, expiresAt },
-        select: {
-          id: true,
-          userId: true,
-          createdAt: true,
-          expiresAt: true,
+        data: {
+          userId,
+          tokenHash,
+          expiresAt,
+          deviceId: device?.id,
+          deviceName: device?.name,
+          platform: device?.platform,
+          osVersion: device?.osVersion,
         },
+        select: SESSION,
       });
       await tx.auditEvent.create({
         data: {
@@ -254,20 +273,27 @@ export class PrismaAuthRepository implements AuthRepository {
   findSession(tokenHash: string) {
     return this.prisma.authSession.findFirst({
       where: { tokenHash, expiresAt: { gt: new Date() } },
-      select: {
-        id: true,
-        userId: true,
-        createdAt: true,
-        expiresAt: true,
-      },
+      select: SESSION,
+    });
+  }
+
+  async touchSession(sessionId: string, at: Date): Promise<void> {
+    await this.prisma.authSession.updateMany({
+      where: { id: sessionId, lastUsedAt: { lt: at } },
+      data: { lastUsedAt: at },
     });
   }
 
   listSessions(userId: string) {
     return this.prisma.authSession.findMany({
       where: { userId, expiresAt: { gt: new Date() } },
-      orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
-      select: { id: true, userId: true, createdAt: true, expiresAt: true },
+      orderBy: [{ lastUsedAt: 'desc' }, { id: 'desc' }],
+      select: {
+        ...SESSION,
+        deviceName: true,
+        platform: true,
+        osVersion: true,
+      },
     });
   }
 

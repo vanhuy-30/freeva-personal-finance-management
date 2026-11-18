@@ -67,8 +67,10 @@ Typography: **Inter** 400/500/600, số tiền dùng chữ số tabular. Icon:
 
 ## Splash mobile — MOB-P1-010
 
-Copy splash được chốt riêng: **FREEVA** / *Your money. Your freedom.* (giữ
-nguyên ở vi/en). Tagline trên board và các asset gốc vẫn giữ nguyên.
+Copy splash được chốt riêng: **FREEVA** / *Your financial freedom journey* (giữ
+nguyên ở vi/en; MOB-P6-001 đổi từ "Your money. Your freedom."). Chữ FREEVA dùng
+font Sora 600 (OFL, chỉ cho splash), biểu tượng thu nhỏ để cân với chữ. Tagline
+trên board và các asset gốc vẫn giữ nguyên.
 Splash Flutter dài 1,8 giây trên gradient brand toàn màn hình: mảnh tím xuất
 hiện trước, mảnh cyan trượt lên nhẹ, mảnh xanh hoàn thiện F; halo nhẹ rồi
 thu nhỏ 4,5% và fade out sang home. Dùng mask theo khoảng trong suốt trên PNG

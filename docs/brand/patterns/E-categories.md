@@ -1,7 +1,7 @@
 # Nhóm E — Danh mục
 
 Trạng thái: **chốt thiết kế 2026-10-21**, đã code 2026-10-23 (E1 + E2). Task: `DS-P2-003` (màn Danh mục).
-Canvas: trang **05 · Patterns**, hàng E
+Canvas: trang **10 · Danh mục**, khối E. 
 (<https://claude.ai/artifact/SmyaVvz57doJiAM6Kn678T>, riêng tư). Spec chung:
 [design-system.md](../design-system.md).
 

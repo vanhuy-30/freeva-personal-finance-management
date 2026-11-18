@@ -13,7 +13,7 @@ class SVi extends S {
   String get appTitle => 'Freeva';
 
   @override
-  String get splashTagline => 'Your money. Your freedom.';
+  String get splashTagline => 'Your financial freedom journey';
 
   @override
   String get brandWordmark => 'FREEVA';
@@ -192,9 +192,6 @@ class SVi extends S {
 
   @override
   String get profileBack => 'Về trang chủ';
-
-  @override
-  String get profileSearch => 'Tìm múi giờ';
 
   @override
   String get walletTitle => 'Ví của tôi';
@@ -699,7 +696,7 @@ class SVi extends S {
   String get homeQuickWallets => 'Ví của tôi';
 
   @override
-  String get homeQuickCategories => 'Danh mục';
+  String get homeQuickInvestments => 'Đầu tư';
 
   @override
   String get homeSpendOther => 'Khác';
@@ -780,7 +777,7 @@ class SVi extends S {
   String get homeUncategorized => 'Chưa phân loại';
 
   @override
-  String get notificationsEmpty => 'Chưa có thông báo';
+  String get notificationsEmpty => 'Bạn chưa có thông báo nào để hiển thị';
 
   @override
   String get notificationsEmptyBody => 'Nhắc việc và cảnh báo sẽ hiện ở đây.';
@@ -891,7 +888,7 @@ class SVi extends S {
   String get txEmptyAction => 'Ghi khoản chi';
 
   @override
-  String get txSearchHint => 'Tìm giao dịch';
+  String get txSearchHint => 'Tìm giao dịch hoặc chức năng';
 
   @override
   String get txSearchCancel => 'Huỷ';
@@ -906,6 +903,12 @@ class SVi extends S {
 
   @override
   String get txSearchPrompt => 'Tìm theo cửa hàng, ghi chú hoặc số tiền.';
+
+  @override
+  String get searchFeaturesTitle => 'Chức năng';
+
+  @override
+  String get searchQuickTitle => 'Mở nhanh';
 
   @override
   String get txDetailCategory => 'Danh mục';
@@ -1086,6 +1089,9 @@ class SVi extends S {
   String get txYesterday => 'Hôm qua';
 
   @override
+  String get txTomorrow => 'Ngày mai';
+
+  @override
   String txSavedToast(String kind) {
     return 'Đã lưu $kind';
   }
@@ -1109,6 +1115,9 @@ class SVi extends S {
 
   @override
   String get txPickDestination => 'Chọn ví nhận tiền.';
+
+  @override
+  String get txCategoryMissing => 'Chọn danh mục cho khoản chi.';
 
   @override
   String get txRateInvalid => 'Tỷ giá chưa hợp lệ với số tiền này.';
@@ -1890,9 +1899,6 @@ class SVi extends S {
   String get meGroupApp => 'Ứng dụng';
 
   @override
-  String get meGroupHelp => 'Hỗ trợ';
-
-  @override
   String get meWallets => 'Ví của tôi';
 
   @override
@@ -2152,13 +2158,7 @@ class SVi extends S {
   String get meLanguage => 'Ngôn ngữ';
 
   @override
-  String get meTimezone => 'Múi giờ';
-
-  @override
   String get meNotifications => 'Thông báo';
-
-  @override
-  String get meHideBalances => 'Ẩn số dư';
 
   @override
   String get meSecurity => 'Bảo mật';
@@ -2242,41 +2242,51 @@ class SVi extends S {
   String get meSecChangePassword => 'Đổi mật khẩu';
 
   @override
-  String get meSessionsHint => 'Không nhận ra phiên nào thì thu hồi ngay.';
-
-  @override
   String get meSessionThis => 'Máy này';
-
-  @override
-  String get meSessionOther => 'Phiên khác';
 
   @override
   String get meSessionInUse => 'Đang dùng';
 
   @override
-  String meSessionDates(String from, String to) {
-    return 'Từ $from · hết hạn $to';
+  String get meSessionUnknown => 'Thiết bị không rõ';
+
+  @override
+  String meSessionSince(String date) {
+    return 'Đăng nhập $date';
   }
 
   @override
-  String get meRevoke => 'Thu hồi';
+  String get meSessionActiveNow => 'Vừa dùng';
 
   @override
-  String meRevokeSemantics(String date) {
-    return 'Thu hồi phiên đăng nhập ngày $date';
+  String meSessionActiveHours(int count) {
+    return '$count giờ trước';
   }
 
   @override
-  String get meRevokeTitle => 'Thu hồi phiên này?';
+  String meSessionActiveDays(int count) {
+    return '$count ngày trước';
+  }
 
   @override
-  String get meRevokeBody => 'Máy đó sẽ bị đăng xuất.';
+  String get meRevoke => 'Đăng xuất';
 
   @override
-  String get meRevokeOthers => 'Đăng xuất mọi máy khác';
+  String meRevokeSemantics(String device) {
+    return 'Đăng xuất $device';
+  }
 
   @override
-  String get meRevokeOthersTitle => 'Đăng xuất mọi máy khác?';
+  String get meRevokeTitle => 'Đăng xuất thiết bị này?';
+
+  @override
+  String get meRevokeBody => 'Máy đó sẽ phải đăng nhập lại.';
+
+  @override
+  String get meRevokeOthers => 'Đăng xuất khỏi mọi thiết bị';
+
+  @override
+  String get meRevokeOthersTitle => 'Đăng xuất khỏi mọi thiết bị?';
 
   @override
   String get meRevokeOthersBody => 'Máy này vẫn đăng nhập.';
@@ -2502,9 +2512,6 @@ class SVi extends S {
 
   @override
   String get notifyTimeTitle => 'Chọn giờ nhắc';
-
-  @override
-  String get notifyTimeHint => 'Hôm nào đã ghi thì không nhắc.';
 
   @override
   String notifyTimePick(String time) {
@@ -2986,16 +2993,13 @@ class SVi extends S {
   String get onbSuggestUse => 'Dùng mức này';
 
   @override
-  String get dailyLogAskTitle => 'Nhắc ghi chi mỗi tối?';
-
-  @override
-  String get dailyLogAskBody => 'Hôm nào đã ghi thì không nhắc.';
+  String get dailyLogAskTitle => 'Nhắc ghi chi mỗi tối';
 
   @override
   String get dailyLogAskTime => 'Giờ nhắc';
 
   @override
-  String get dailyLogAskOn => 'Bật nhắc';
+  String get dailyLogAskOn => 'Bật';
 
   @override
   String get meIncome => 'Thu nhập hàng tháng';
@@ -3310,11 +3314,6 @@ class SVi extends S {
   @override
   String meNotifyOnCount(Object count) {
     return '$count đang bật';
-  }
-
-  @override
-  String meGoalsCount(Object count) {
-    return '$count mục tiêu';
   }
 
   @override
@@ -4035,11 +4034,6 @@ class SVi extends S {
 
   @override
   String get meDebts => 'Vay và nợ';
-
-  @override
-  String meDebtsCount(int count) {
-    return '$count khoản';
-  }
 
   @override
   String get transactionDebt => 'Vay mượn';
@@ -5014,13 +5008,16 @@ class SVi extends S {
   String get importUndoError => 'Chưa hoàn tác được';
 
   @override
-  String get meGroupManage => 'Quản lý tiền';
+  String get meGroupAssets => 'Tài sản';
+
+  @override
+  String get meGroupPlans => 'Kế hoạch';
+
+  @override
+  String get meGroupDataHelp => 'Dữ liệu và hỗ trợ';
 
   @override
   String get meGroupSetup => 'Thiết lập';
-
-  @override
-  String get meGroupData => 'Dữ liệu';
 
   @override
   String get meBudgetShort => 'Ngân sách';
@@ -5034,21 +5031,6 @@ class SVi extends S {
   @override
   String get meMoneyHint =>
       'Lương về giữa tháng? Đặt theo ngày lương để ngân sách và báo cáo tính đúng kỳ.';
-
-  @override
-  String meWalletsCount(int count) {
-    return '$count ví';
-  }
-
-  @override
-  String meRecurringCount(int count) {
-    return '$count khoản';
-  }
-
-  @override
-  String meCalendarMonth(int month) {
-    return 'Tháng $month';
-  }
 
   @override
   String get forecastTitle => 'Dự báo số dư';

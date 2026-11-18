@@ -19,6 +19,7 @@ Future<String?> showCategoryIconSheet(
   required List<String> available,
 }) => showModalBottomSheet<String>(
   context: context,
+  useRootNavigator: true,
   isScrollControlled: true,
   useSafeArea: true,
   // The sheet paints its own surface, handle and shadow.

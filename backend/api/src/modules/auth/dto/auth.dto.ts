@@ -1,12 +1,15 @@
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   Equals,
   IsEmail,
+  IsIn,
   IsOptional,
   IsString,
+  IsUUID,
   Matches,
   MaxLength,
   MinLength,
+  ValidateNested,
 } from 'class-validator';
 
 export class EmailDto {
@@ -25,11 +28,44 @@ export class EmailDto {
  */
 export const LETTER_AND_DIGIT = /^(?=[\s\S]*\p{L})(?=[\s\S]*\p{Nd})[\s\S]*$/u;
 
+const trimmed = ({ value }: { value: unknown }) =>
+  typeof value === 'string' ? value.trim() || null : value;
+
+/**
+ * The phone signing in (BE-P6-001). [id] is made once by the app; a new sign-in
+ * with the same id ends that phone's previous session. [name] is the model
+ * ("iPhone 15 Pro"), never the name the person gave the phone.
+ */
+export class SessionDeviceDto {
+  @IsUUID()
+  id!: string;
+
+  @IsOptional()
+  @Transform(trimmed)
+  @IsString()
+  @MaxLength(80)
+  name!: string | null;
+
+  @IsIn(['ios', 'android'])
+  platform!: 'ios' | 'android';
+
+  @IsOptional()
+  @Transform(trimmed)
+  @IsString()
+  @MaxLength(32)
+  osVersion!: string | null;
+}
+
 export class CredentialsDto extends EmailDto {
   @IsString()
   @MinLength(8)
   @MaxLength(128)
   password!: string;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => SessionDeviceDto)
+  device?: SessionDeviceDto;
 }
 
 export class NewCredentialsDto extends EmailDto {

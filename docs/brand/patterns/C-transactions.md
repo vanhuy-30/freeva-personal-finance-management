@@ -1,7 +1,7 @@
 # Nhóm C — Giao dịch
 
 Trạng thái: **chốt thiết kế 2026-10-21**. **Đã code 2026-10-22** (C1 và C2). Task: `DS-P2-005`.
-Canvas: trang **05 · Patterns**, hai hàng C1 và C2
+Canvas: trang **08 · Giao dịch**, khối C1, C2. 
 (<https://claude.ai/artifact/SmyaVvz57doJiAM6Kn678T>, riêng tư). Spec chung:
 [design-system.md](../design-system.md).
 

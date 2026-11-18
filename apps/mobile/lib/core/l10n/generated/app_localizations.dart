@@ -106,7 +106,7 @@ abstract class S {
   /// Product-approved splash copy; keep unchanged across locales.
   ///
   /// In en, this message translates to:
-  /// **'Your money. Your freedom.'**
+  /// **'Your financial freedom journey'**
   String get splashTagline;
 
   /// Official brand wordmark; keep unchanged across locales.
@@ -432,12 +432,6 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Back to home'**
   String get profileBack;
-
-  /// No description provided for @profileSearch.
-  ///
-  /// In en, this message translates to:
-  /// **'Search time zones'**
-  String get profileSearch;
 
   /// No description provided for @walletTitle.
   ///
@@ -1369,11 +1363,11 @@ abstract class S {
   /// **'My wallets'**
   String get homeQuickWallets;
 
-  /// No description provided for @homeQuickCategories.
+  /// No description provided for @homeQuickInvestments.
   ///
   /// In en, this message translates to:
-  /// **'Categories'**
-  String get homeQuickCategories;
+  /// **'Investments'**
+  String get homeQuickInvestments;
 
   /// No description provided for @homeSpendOther.
   ///
@@ -1498,7 +1492,7 @@ abstract class S {
   /// No description provided for @notificationsEmpty.
   ///
   /// In en, this message translates to:
-  /// **'No notifications yet'**
+  /// **'You have no notifications to show'**
   String get notificationsEmpty;
 
   /// No description provided for @notificationsEmptyBody.
@@ -1696,7 +1690,7 @@ abstract class S {
   /// No description provided for @txSearchHint.
   ///
   /// In en, this message translates to:
-  /// **'Search transactions'**
+  /// **'Search transactions or features'**
   String get txSearchHint;
 
   /// No description provided for @txSearchCancel.
@@ -1722,6 +1716,18 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Search by store, note or amount.'**
   String get txSearchPrompt;
+
+  /// No description provided for @searchFeaturesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Features'**
+  String get searchFeaturesTitle;
+
+  /// No description provided for @searchQuickTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick open'**
+  String get searchQuickTitle;
 
   /// No description provided for @txDetailCategory.
   ///
@@ -2059,6 +2065,12 @@ abstract class S {
   /// **'Yesterday'**
   String get txYesterday;
 
+  /// No description provided for @txTomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow'**
+  String get txTomorrow;
+
   /// No description provided for @txSavedToast.
   ///
   /// In en, this message translates to:
@@ -2100,6 +2112,12 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Choose the wallet that receives it.'**
   String get txPickDestination;
+
+  /// No description provided for @txCategoryMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a category for this expense.'**
+  String get txCategoryMissing;
 
   /// No description provided for @txRateInvalid.
   ///
@@ -3438,12 +3456,6 @@ abstract class S {
   /// **'App'**
   String get meGroupApp;
 
-  /// No description provided for @meGroupHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'Help'**
-  String get meGroupHelp;
-
   /// No description provided for @meWallets.
   ///
   /// In en, this message translates to:
@@ -3924,23 +3936,11 @@ abstract class S {
   /// **'Language'**
   String get meLanguage;
 
-  /// No description provided for @meTimezone.
-  ///
-  /// In en, this message translates to:
-  /// **'Time zone'**
-  String get meTimezone;
-
   /// No description provided for @meNotifications.
   ///
   /// In en, this message translates to:
   /// **'Notifications'**
   String get meNotifications;
-
-  /// No description provided for @meHideBalances.
-  ///
-  /// In en, this message translates to:
-  /// **'Hide balances'**
-  String get meHideBalances;
 
   /// No description provided for @meSecurity.
   ///
@@ -4098,23 +4098,11 @@ abstract class S {
   /// **'Change password'**
   String get meSecChangePassword;
 
-  /// No description provided for @meSessionsHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Don\'t recognise one? Revoke it now.'**
-  String get meSessionsHint;
-
   /// No description provided for @meSessionThis.
   ///
   /// In en, this message translates to:
   /// **'This device'**
   String get meSessionThis;
-
-  /// No description provided for @meSessionOther.
-  ///
-  /// In en, this message translates to:
-  /// **'Another device'**
-  String get meSessionOther;
 
   /// No description provided for @meSessionInUse.
   ///
@@ -4122,46 +4110,70 @@ abstract class S {
   /// **'In use'**
   String get meSessionInUse;
 
-  /// No description provided for @meSessionDates.
+  /// No description provided for @meSessionUnknown.
   ///
   /// In en, this message translates to:
-  /// **'From {from} · expires {to}'**
-  String meSessionDates(String from, String to);
+  /// **'Unknown device'**
+  String get meSessionUnknown;
+
+  /// No description provided for @meSessionSince.
+  ///
+  /// In en, this message translates to:
+  /// **'Signed in {date}'**
+  String meSessionSince(String date);
+
+  /// No description provided for @meSessionActiveNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Just now'**
+  String get meSessionActiveNow;
+
+  /// No description provided for @meSessionActiveHours.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 hour} other{{count} hours}} ago'**
+  String meSessionActiveHours(int count);
+
+  /// No description provided for @meSessionActiveDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 day} other{{count} days}} ago'**
+  String meSessionActiveDays(int count);
 
   /// No description provided for @meRevoke.
   ///
   /// In en, this message translates to:
-  /// **'Revoke'**
+  /// **'Sign out'**
   String get meRevoke;
 
   /// No description provided for @meRevokeSemantics.
   ///
   /// In en, this message translates to:
-  /// **'Revoke the session from {date}'**
-  String meRevokeSemantics(String date);
+  /// **'Sign out {device}'**
+  String meRevokeSemantics(String device);
 
   /// No description provided for @meRevokeTitle.
   ///
   /// In en, this message translates to:
-  /// **'Revoke this session?'**
+  /// **'Sign out this device?'**
   String get meRevokeTitle;
 
   /// No description provided for @meRevokeBody.
   ///
   /// In en, this message translates to:
-  /// **'That device will be signed out.'**
+  /// **'That device will need to sign in again.'**
   String get meRevokeBody;
 
   /// No description provided for @meRevokeOthers.
   ///
   /// In en, this message translates to:
-  /// **'Sign out all other devices'**
+  /// **'Sign out of all devices'**
   String get meRevokeOthers;
 
   /// No description provided for @meRevokeOthersTitle.
   ///
   /// In en, this message translates to:
-  /// **'Sign out all other devices?'**
+  /// **'Sign out of all devices?'**
   String get meRevokeOthersTitle;
 
   /// No description provided for @meRevokeOthersBody.
@@ -4577,12 +4589,6 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Pick a reminder time'**
   String get notifyTimeTitle;
-
-  /// No description provided for @notifyTimeHint.
-  ///
-  /// In en, this message translates to:
-  /// **'No reminder on days you already logged.'**
-  String get notifyTimeHint;
 
   /// No description provided for @notifyTimePick.
   ///
@@ -5439,14 +5445,8 @@ abstract class S {
   /// No description provided for @dailyLogAskTitle.
   ///
   /// In en, this message translates to:
-  /// **'Remind you to log spending each evening?'**
+  /// **'Remind you to log spending each evening'**
   String get dailyLogAskTitle;
-
-  /// No description provided for @dailyLogAskBody.
-  ///
-  /// In en, this message translates to:
-  /// **'No reminder on days you already logged.'**
-  String get dailyLogAskBody;
 
   /// No description provided for @dailyLogAskTime.
   ///
@@ -5999,12 +5999,6 @@ abstract class S {
   /// In en, this message translates to:
   /// **'{count} on'**
   String meNotifyOnCount(Object count);
-
-  /// No description provided for @meGoalsCount.
-  ///
-  /// In en, this message translates to:
-  /// **'{count} goals'**
-  String meGoalsCount(Object count);
 
   /// No description provided for @meProfileEmailVerified.
   ///
@@ -7235,12 +7229,6 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Loans and debts'**
   String get meDebts;
-
-  /// No description provided for @meDebtsCount.
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, one{1 item} other{{count} items}}'**
-  String meDebtsCount(int count);
 
   /// No description provided for @transactionDebt.
   ///
@@ -8844,23 +8832,29 @@ abstract class S {
   /// **'Couldn\'t undo'**
   String get importUndoError;
 
-  /// No description provided for @meGroupManage.
+  /// No description provided for @meGroupAssets.
   ///
   /// In en, this message translates to:
-  /// **'Manage money'**
-  String get meGroupManage;
+  /// **'Assets'**
+  String get meGroupAssets;
+
+  /// No description provided for @meGroupPlans.
+  ///
+  /// In en, this message translates to:
+  /// **'Plans'**
+  String get meGroupPlans;
+
+  /// No description provided for @meGroupDataHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Data and help'**
+  String get meGroupDataHelp;
 
   /// No description provided for @meGroupSetup.
   ///
   /// In en, this message translates to:
   /// **'Setup'**
   String get meGroupSetup;
-
-  /// No description provided for @meGroupData.
-  ///
-  /// In en, this message translates to:
-  /// **'Data'**
-  String get meGroupData;
 
   /// No description provided for @meBudgetShort.
   ///
@@ -8885,24 +8879,6 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Paid mid-month? Set your payday so budgets and reports use the right period.'**
   String get meMoneyHint;
-
-  /// No description provided for @meWalletsCount.
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, one{{count} wallet} other{{count} wallets}}'**
-  String meWalletsCount(int count);
-
-  /// No description provided for @meRecurringCount.
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, one{{count} item} other{{count} items}}'**
-  String meRecurringCount(int count);
-
-  /// No description provided for @meCalendarMonth.
-  ///
-  /// In en, this message translates to:
-  /// **'Month {month}'**
-  String meCalendarMonth(int month);
 
   /// No description provided for @forecastTitle.
   ///

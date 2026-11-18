@@ -47,7 +47,7 @@ void main() {
     await tester.pump();
     expect(find.byType(BrandSymbol), findsNWidgets(3));
     expect(find.text('FREEVA'), findsOneWidget);
-    expect(find.text('Your money. Your freedom.'), findsOneWidget);
+    expect(find.text('Your financial freedom journey'), findsOneWidget);
     await tester.pump(const Duration(milliseconds: 1500));
     expect(find.textContaining('ví'), findsNothing);
     await tester.pump(const Duration(milliseconds: 300));

@@ -6,7 +6,8 @@ import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/widgets/settings_group.dart';
 import '../../../../core/widgets/settings_row.dart';
 
-/// DỮ LIỆU: bring transactions in from another app, or take a copy out.
+/// DỮ LIỆU VÀ HỖ TRỢ: bring transactions in or take a copy out, then FAQ,
+/// feedback and the legal documents.
 class DataSettingsGroup extends StatelessWidget {
   const DataSettingsGroup({super.key});
 
@@ -15,7 +16,7 @@ class DataSettingsGroup extends StatelessWidget {
     final s = S.of(context);
     const rowHeight = 54.0;
     return SettingsGroup(
-      title: s.meGroupData,
+      title: s.meGroupDataHelp,
       children: [
         SettingsRow(
           minHeight: rowHeight,
@@ -28,6 +29,24 @@ class DataSettingsGroup extends StatelessWidget {
           icon: LucideIcons.download,
           title: s.meExportData,
           onTap: () => context.push('/me/export'),
+        ),
+        SettingsRow(
+          minHeight: rowHeight,
+          icon: LucideIcons.circleQuestionMark,
+          title: s.meFaq,
+          onTap: () => context.push('/help/faq'),
+        ),
+        SettingsRow(
+          minHeight: rowHeight,
+          icon: LucideIcons.messageSquare,
+          title: s.meFeedback,
+          onTap: () => context.push('/help/feedback'),
+        ),
+        SettingsRow(
+          minHeight: rowHeight,
+          icon: LucideIcons.fileText,
+          title: s.meLegal,
+          onTap: () => context.push('/help/legal?doc=all'),
         ),
       ],
     );

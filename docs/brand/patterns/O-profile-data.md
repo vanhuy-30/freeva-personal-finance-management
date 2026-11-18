@@ -1,7 +1,7 @@
 # Nhóm O — Cá nhân và dữ liệu
 
 Trạng thái: **chốt thiết kế 2026-11-03**; màn 3 (Xuất dữ liệu) **đã code** (`MOB-P3-010`), màn 4–8 (Nhập giao dịch) **đã code** (`MOB-P3-011`), màn 1–2 (lưới Cá nhân, Thu nhập và kỳ tính) **đã code**. Task: `MOB-P3-010` (xuất CSV), `MOB-P3-011` (nhập CSV); API xong. Màn Cá nhân thay bản ở [G-profile-settings.md](G-profile-settings.md).
-Canvas: trang **07 · Phase 3**, hàng O. Spec chung: [design-system.md](../design-system.md).
+Canvas: trang **12 · Cá nhân, dữ liệu, đồng bộ**, khối O (màn Cá nhân là MeHome ở khối G). Spec chung: [design-system.md](../design-system.md).
 
 ## Nguyên tắc riêng cho nhóm này
 
@@ -13,7 +13,7 @@ Canvas: trang **07 · Phase 3**, hàng O. Spec chung: [design-system.md](../desi
 
 | # | Màn | Nội dung | Ghi chú |
 |---|---|---|---|
-| 1 | Cá nhân | Thẻ hồ sơ. **QUẢN LÝ TIỀN**: lưới 3 cột, 6 ô (Ví của tôi · 4 ví, Ngân sách · 15.000.000, Mục tiêu · 3 mục tiêu, Vay và nợ · 2 khoản, Định kỳ · 6 khoản, Lịch · Tháng 11). **THIẾT LẬP**: Danh mục, Nhãn · 12, Thu nhập và kỳ tính · "VND · ngày 1". **ỨNG DỤNG**, **DỮ LIỆU** (Nhập từ app khác, Xuất dữ liệu), **HỖ TRỢ**, Đăng xuất | Ô "Định kỳ" là tên rút gọn của "Định kỳ và hóa đơn" |
+| 1 | Cá nhân | Thay bởi nhóm mới (MOB-P6-001 đợt 6), xem [G-profile-settings.md](G-profile-settings.md) dòng 1: **TÀI SẢN** và **KẾ HOẠCH** (mỗi nhóm 4 ô, không số phụ), **THIẾT LẬP** (Danh mục, Nhãn · 12, Thu nhập và kỳ tính · "VND · ngày 1", Gợi ý tự động), **ỨNG DỤNG**, **DỮ LIỆU VÀ HỖ TRỢ**, Đăng xuất | Ô "Định kỳ" là tên rút gọn của "Định kỳ và hóa đơn" |
 | 2 | Thu nhập và kỳ tính | Ba dòng: Thu nhập hàng tháng, Tiền tệ mặc định, Tháng tính từ. "Lương về giữa tháng? Đặt theo ngày lương để ngân sách và báo cáo tính đúng kỳ." | Thu nhập sửa / xoá được (`monthlyIncomeMinor`) |
 | 3 | Xuất dữ liệu | Hai thẻ chọn: Bảng giao dịch · Bản sao đầy đủ. Chip thời gian (Tháng này, 3 tháng, Năm nay, Tất cả, Tuỳ chọn), Ví. "01/08 – 03/11 · 248 giao dịch". "Xuất file" | Bản sao đầy đủ: ẩn chip và ô ví |
 | 4 | Nhập giao dịch | Tiêu đề lớn **"Nguồn dữ liệu"**. Thẻ chọn: Money Lover, Sổ thu chi MISA, Freeva, Nơi khác. "Tối đa 2.000 dòng mỗi lần. Giao dịch đã có sẽ được bỏ qua." "Chọn file CSV" | |

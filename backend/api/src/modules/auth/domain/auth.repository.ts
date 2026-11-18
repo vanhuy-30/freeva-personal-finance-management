@@ -15,6 +15,20 @@ export interface Session {
   userId: string;
   createdAt: Date;
   expiresAt: Date;
+  lastUsedAt: Date;
+}
+/** The phone a session belongs to (BE-P6-001). One session per [id]. */
+export interface SessionDevice {
+  id: string;
+  name: string | null;
+  platform: 'ios' | 'android';
+  osVersion: string | null;
+}
+/** A session as listed on Phiên đăng nhập. Device fields are null on old sessions. */
+export interface SessionInfo extends Session {
+  deviceName: string | null;
+  platform: string | null;
+  osVersion: string | null;
 }
 /** When the person agreed, and to which version of the Terms and Privacy policy. */
 export interface TermsConsent {
@@ -51,9 +65,12 @@ export interface AuthRepository {
     passwordHash: string,
     tokenHash: string,
     expiresAt: Date,
+    device?: SessionDevice,
   ): Promise<Session | null>;
   findSession(tokenHash: string): Promise<Session | null>;
-  listSessions(userId: string): Promise<Session[]>;
+  /** Marks the session as used now (callers throttle it). */
+  touchSession(sessionId: string, at: Date): Promise<void>;
+  listSessions(userId: string): Promise<SessionInfo[]>;
   findUserById(userId: string): Promise<AuthUser | null>;
   /**
    * Swaps the hash only while it still equals [currentHash], ends every other

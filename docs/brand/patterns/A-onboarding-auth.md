@@ -1,13 +1,13 @@
 # Nhóm A — Onboarding và tài khoản
 
 Trạng thái: **chốt thiết kế 2026-10-21, sửa luồng 2026-10-23** (tạo tài khoản trước câu hỏi, xác nhận email bỏ qua được, PIN nhập lại, quy tắc mật khẩu), code A1 (tài khoản và bảo mật) và A2a (Welcome, Tạo tài khoản, ba câu hỏi) và A2b (Thiết lập tài chính, checklist trang chính, tên ở màn Mở khoá) xong 2026-10-23. Task: `DS-P2-004`.
-Canvas: trang **05 · Patterns**, hai hàng A1 và A2
+Canvas: trang **06 · Onboarding và tài khoản**, khối A1, A2. 
 (<https://claude.ai/artifact/SmyaVvz57doJiAM6Kn678T>, riêng tư). Spec chung:
 [design-system.md](../design-system.md).
 
 ## Thay đổi chốt 2026-11-02 (chưa vẽ, `DS-P3-012`)
 
-Câu hỏi A1.3–A1.5 thay bằng ba câu, đều bỏ qua được, sau đó tới A1.6 như cũ:
+Câu hỏi A1.3–A1.5 (Mục tiêu, Thói quen, Ngân sách) đã bị thay bằng ba câu A3 và xoá khỏi canvas (2026-11-17); các màn mới nằm ngay hàng A1, đều bỏ qua được, sau đó tới A1.6 như cũ:
 
 1. **Mục tiêu sử dụng** — Quản lý chi tiêu · Tiết kiệm · Quản lý ngân sách (tối đa 2). Sắp khối Tổng quan.
 2. **Thu nhập hàng tháng** (không bắt buộc) — cơ sở gợi ý ngân sách và tỷ lệ tiết kiệm.

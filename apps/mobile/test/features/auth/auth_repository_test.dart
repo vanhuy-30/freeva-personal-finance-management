@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/features/auth/data/auth_repository_impl.dart';
+import 'package:mobile/features/auth/data/device_identity.dart';
 import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/auth/domain/auth_use_cases.dart';
 
@@ -41,6 +42,74 @@ void main() {
       true,
     );
   }
+
+  group('MOB-P6-002 sessions per device', () {
+    test('login sends the device; without one the body has none', () async {
+      final device = {
+        'id': newUuidV4(),
+        'name': 'iPhone 15 Pro',
+        'platform': 'ios',
+        'osVersion': '18.1',
+      };
+      repository = AuthRepositoryImpl(
+        api,
+        vault,
+        biometrics,
+        testServerConfigModel(),
+        device: _Device(device),
+      );
+      await login();
+      expect(api.lastBody!['device'], device);
+
+      repository = AuthRepositoryImpl(
+        api,
+        MemoryVault(),
+        biometrics,
+        testServerConfigModel(),
+        device: _Device(null),
+      );
+      await login();
+      expect(api.lastBody!.containsKey('device'), isFalse);
+    });
+
+    test('reads device details and tolerates sessions without them', () async {
+      await login();
+      final used = DateTime.utc(2026, 11, 17, 9);
+      api.sessionItems = [
+        {
+          'id': 'current',
+          'createdAt': used.toIso8601String(),
+          'expiresAt': used.add(const Duration(days: 7)).toIso8601String(),
+          'current': true,
+          'lastUsedAt': used.toIso8601String(),
+          'deviceName': 'Pixel 8',
+          'platform': 'android',
+          'osVersion': '15',
+        },
+        {
+          'id': 'old',
+          'createdAt': used.toIso8601String(),
+          'expiresAt': used.add(const Duration(days: 7)).toIso8601String(),
+          'current': false,
+        },
+      ];
+      final sessions = (await repository.sessions()).getOrElse(
+        () => throw StateError('no sessions'),
+      );
+      expect(sessions.first.deviceName, 'Pixel 8');
+      expect(sessions.first.platform, 'android');
+      expect(sessions.first.osVersion, '15');
+      expect(sessions.first.lastUsedAt, used);
+      expect(sessions.last.deviceName, isNull);
+      expect(sessions.last.lastUsedAt, isNull);
+    });
+
+    test('new device ids are random version-4 UUIDs', () {
+      final ids = {for (var i = 0; i < 50; i++) newUuidV4()};
+      expect(ids, hasLength(50));
+      expect(ids.every(uuidV4.hasMatch), isTrue);
+    });
+  });
 
   test(
     'PIN hash is salted; cold start locks and PIN validates server session',
@@ -551,4 +620,12 @@ void main() {
       expect(api.calls, calls);
     });
   });
+}
+
+class _Device implements DeviceIdentity {
+  _Device(this.value);
+  final Map<String, Object?>? value;
+
+  @override
+  Future<Map<String, Object?>?> describe() async => value;
 }

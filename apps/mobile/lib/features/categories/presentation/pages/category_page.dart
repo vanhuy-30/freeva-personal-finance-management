@@ -9,6 +9,8 @@ import '../../../../core/widgets/freeva_toast.dart';
 import '../../../../core/widgets/freeva_top_bar.dart';
 import '../../domain/finance_category.dart';
 import '../viewmodels/category_view_model.dart';
+import '../../domain/category_rules.dart';
+import '../widgets/category_delete_flow.dart';
 import '../widgets/category_list_body.dart';
 import 'category_editor_page.dart';
 
@@ -52,32 +54,68 @@ class _CategoryPageState extends State<CategoryPage> {
       kind: income ? CategoryKind.income : CategoryKind.expense,
     );
     if (!mounted || category == null || result == null) return;
-    final s = S.of(context);
     switch (result) {
       case CategoryEditResult.saved:
         break;
       case CategoryEditResult.hidden:
-        // Hidden without asking; "Hoàn tác" restores it right away.
-        showFreevaToast(
-          context,
-          message: s.categoryHiddenToast(category.name),
-          actionLabel: s.commonUndo,
-          onAction: () {
-            final hidden = model.categories
-                .where((c) => c.id == category.id)
-                .firstOrNull;
-            if (hidden != null && hidden.archived) model.restore(hidden);
-          },
-          aboveNav: false,
-        );
+        _toastHidden(category);
       case CategoryEditResult.deleted:
-        showFreevaToast(
-          context,
-          message: s.categoryDeletedToast(category.name),
-          aboveNav: false,
-        );
+        _toastDeleted(category);
     }
   }
+
+  // Hidden without asking; "Hoàn tác" restores it right away.
+  void _toastHidden(FinanceCategory category) {
+    final s = S.of(context);
+    showFreevaToast(
+      context,
+      message: s.categoryHiddenToast(category.name),
+      actionLabel: s.commonUndo,
+      onAction: () {
+        final hidden = model.categories
+            .where((c) => c.id == category.id)
+            .firstOrNull;
+        if (hidden != null && hidden.archived) model.restore(hidden);
+      },
+      aboveNav: false,
+    );
+  }
+
+  void _toastDeleted(FinanceCategory category) => showFreevaToast(
+    context,
+    message: S.of(context).categoryDeletedToast(category.name),
+    aboveNav: false,
+  );
+
+  /// Swipe "Ẩn": the same rule as the editor (no visible subcategory left).
+  Future<void> _swipeHide(FinanceCategory category) async {
+    if (!_ready) return;
+    if (categoryHasActiveChild(category, model.categories)) {
+      return _blocked(category);
+    }
+    if (await model.archive(category) && mounted) _toastHidden(category);
+  }
+
+  /// Swipe "Xoá": asks where its transactions go, as the editor does.
+  Future<void> _swipeDelete(FinanceCategory category) async {
+    if (!_ready) return;
+    if (model.categories.any((c) => c.parentId == category.id)) {
+      return _blocked(category);
+    }
+    if (await confirmAndDeleteCategory(context, model, category) && mounted) {
+      _toastDeleted(category);
+    }
+  }
+
+  void _blocked(FinanceCategory category) => showFreevaToast(
+    context,
+    message: S
+        .of(context)
+        .categoryChildrenBlock(
+          model.categories.where((c) => c.parentId == category.id).length,
+        ),
+    aboveNav: false,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -102,6 +140,8 @@ class _CategoryPageState extends State<CategoryPage> {
           onTab: (value) => setState(() => income = value),
           onOpen: (category) => _open(category: category),
           onAdd: _open,
+          onHide: _swipeHide,
+          onDelete: _swipeDelete,
         ),
       ),
     );

@@ -1,7 +1,7 @@
 # Nhóm P — Đầu tư · Q — Tài sản ròng theo thời gian
 
 Trạng thái: **chốt thiết kế 2026-11-06**, chưa code. Task: `MOB-P4-E01` (P), `MOB-P4-E02` (Q); API thêm ở `BE-P4-E03`.
-Canvas: trang **08 · Phase 4** (`p4`). Spec chung: [design-system.md](../design-system.md).
+Canvas: trang **09 · Ví và tài sản**, khối P, Q (Tài sản ròng). Spec chung: [design-system.md](../design-system.md).
 
 ## Nguyên tắc riêng cho nhóm này
 
@@ -29,7 +29,7 @@ Canvas: trang **08 · Phase 4** (`p4`). Spec chung: [design-system.md](../design
 | P.12 | Rút tiền gửi (sheet) | Tiền nhận về (điền sẵn gốc + lãi, sửa được), Ngày rút, **VỀ VÍ** | Rút hết |
 | Q.1 | Tài sản ròng | Số hôm nay, thay đổi từ đầu khoảng, biểu đồ, chip 7 ngày → Tất cả, Tài sản · Nợ, **TRONG TÀI SẢN** Ví · Đầu tư | Mở từ ô "Tài sản ròng" ở Cá nhân; chạm điểm hiện ngày và số |
 
-Lưới Cá nhân (`MeHome3`) có thêm ô **Đầu tư** và **Tài sản ròng**.
+Lưới Cá nhân (`MeHome`) có thêm ô **Đầu tư** và **Tài sản ròng**.
 
 ## Phụ thuộc khi làm code
 

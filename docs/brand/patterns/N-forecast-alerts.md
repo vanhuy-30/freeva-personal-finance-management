@@ -1,7 +1,7 @@
 # Nhóm N — Dự báo, soát tháng, ngân sách, nhắc
 
 Trạng thái: **chốt thiết kế 2026-11-03**; màn 1 và 2 (`MOB-P3-E04`), màn 3 (`MOB-P3-002`), màn 4 (`MOB-P3-003`), màn 5 và 6 (`MOB-P3-006`) đã code. Task: `MOB-P3-E04` (dự báo), `MOB-P3-002` (thẻ soát tháng), `MOB-P3-003` (ngưỡng ngân sách), `MOB-P3-006` (nhắc ghi chi); API xong.
-Canvas: trang **07 · Phase 3**, hàng N. Spec chung: [design-system.md](../design-system.md).
+Canvas: trang **07 · Tổng quan, báo cáo, dự báo**, khối N (gồm Ngân sách tháng, Lịch, Soát tháng; báo cáo, đầu tháng, thông báo là RepMonth, BNewMonth, MeNotify ở khối F, B, G). Spec chung: [design-system.md](../design-system.md).
 
 ## Nguyên tắc riêng cho nhóm này
 
@@ -18,9 +18,9 @@ Canvas: trang **07 · Phase 3**, hàng N. Spec chung: [design-system.md](../desi
 | 3 | Đầu tháng · thẻ soát tháng | Thẻ "Xem lại tháng 10 · Chi … · Thu …" thêm hai dòng: danh mục tăng nhiều nhất, vượt ngân sách bao nhiêu % | |
 | 4 | Ngưỡng cảnh báo ngân sách (sheet trên Ngân sách tháng) | "Báo khi đã dùng · Chọn tối đa 4 mốc." Chip 70 / 80 / 90 / 100% có dấu tích. "Mặc định 80% và 100%." "Lưu" | `alertThresholds` 1–4 mốc |
 | 5 | Thông báo · Phase 3 | **NHẮC NHỞ**: Nhắc ghi chi "Mỗi ngày lúc 21:00" (giờ là liên kết), Định kỳ và hóa đơn, Góp vào mục tiêu (Sắp có), Soát tháng (Sắp có). **CẢNH BÁO**: Ngân sách sắp hết "Khi dùng 80% và 100%" (liên kết sang 4), Nợ đến hạn, **Thẻ tín dụng** "Sắp đến hạn, sắp chạm hạn mức" (công tắc), Máy mới đăng nhập. **GIỜ YÊN** | Bỏ Insight |
-| 6 | Chọn giờ nhắc (popup trên 5) | Icon đồng hồ, "Chọn giờ nhắc", "Hôm nào đã ghi thì không nhắc." Bánh xe giờ : phút. Huỷ · "Chọn 21:00" | `dailyLogTime` HH:mm |
+| 6 | Chọn giờ nhắc (popup trên 5) | Icon đồng hồ, "Chọn giờ nhắc". Bánh xe giờ : phút. Huỷ · "Chọn 21:00" | `dailyLogTime` HH:mm |
 | 7 | Hộp thư thông báo (thêm 2026-11-04, thay bản đang chạy) | Quay lại · "Thông báo" · nút cài đặt (mở 5). Chia ngày **HÔM NAY** ("Đọc hết" bên phải) · **HÔM QUA** · **TRƯỚC ĐÓ**, mỗi ngày một thẻ nhóm. Mỗi dòng: icon theo loại, tiêu đề có tên thật ("Tiền điện đến hạn 05/11", "Hà quá hạn trả"), giờ hoặc ngày bên phải, dòng phụ có số tiền. Chưa đọc: tiêu đề 600 + chấm primary 8; đã đọc: tiêu đề 500 `text.onWash`. Nhắc ghi chi có nút "Ghi chi", hóa đơn đến hạn có nút "Đã trả" (mở L.4). Chạm dòng mở màn liên quan | Thay CurInbox (hàng P2 trang 05). Màu icon: hóa đơn amber, thẻ teal, ngân sách và quá hạn red, nhắc ghi chi blue, đăng nhập grey |
-| 8 | Hộp thư · chưa có | Chuông 40 trong vòng 96 `tint.blue`, "Chưa có thông báo", "Nhắc hạn và cảnh báo sẽ hiện ở đây.", liên kết "Chọn thông báo muốn nhận" (mở 5) | |
+| 8 | Hộp thư · chưa có | Chuông 40 trong vòng 96 `tint.blue`, "Bạn chưa có thông báo nào để hiển thị", liên kết "Chọn thông báo muốn nhận" (mở 5) | |
 
 ## Thành phần mới
 

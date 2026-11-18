@@ -55,6 +55,18 @@ void main() {
     expect(c.amount.toString().length, TransactionComposer.maxDigits);
   });
 
+  test('expense default skips a recent income category', () {
+    final m = _Model();
+    m.recentCategories = [
+      m.categories.firstWhere((c) => c.id == 'salary'),
+      ...m.categories.where((c) => c.id != 'salary'),
+    ];
+    final c = TransactionComposer(m);
+    expect(c.type, TransactionType.expense);
+    expect(c.categoryId, 'food');
+    expect(c.quick.map((q) => q.id), isNot(contains('salary')));
+  });
+
   test('switching to income drops an expense-only category', () {
     final c = TransactionComposer(_Model());
     expect(c.categoryId, 'food');
@@ -134,5 +146,48 @@ void main() {
     expect(c.dirty, isTrue);
     c.backspace();
     expect(c.dirty, isFalse);
+  });
+
+  test('MOB-P6-001: an expense without a category stops before the API, '
+      'and picking one clears the error', () async {
+    final model = _Model();
+    final c = TransactionComposer(model)..typeKeys('25000');
+    c.categoryId = null;
+    expect(await c.save(), isFalse);
+    expect(c.invalid, isTrue);
+    expect(c.missing, ComposerMissing.category);
+    c.pickCategory('food');
+    expect(c.invalid, isFalse);
+    expect(c.missing, isNull);
+  });
+
+  test(
+    'MOB-P6-001: a missing amount is reported first; typing clears it',
+    () async {
+      final c = TransactionComposer(_Model());
+      expect(await c.save(), isFalse);
+      expect(c.missing, ComposerMissing.amount);
+      c.typeKeys('5');
+      expect(c.missing, isNull);
+      expect(c.invalid, isFalse);
+    },
+  );
+
+  test('MOB-P6-001: income with no history still offers its categories, '
+      'and has no store', () async {
+    final model = _Model()..recentCategories = const [];
+    final c = TransactionComposer(model, initialType: TransactionType.income);
+    expect(c.quick.map((x) => x.id), ['salary', 'misc']);
+    expect(c.hasMerchant, isFalse);
+    c.setMerchant('Phở Thìn');
+    c.typeKeys('5000');
+    expect(await c.save(), isTrue);
+    final sent = model.saved.single;
+    expect(sent.merchant, isNull);
+    expect(
+      TransactionComposer(_Model()).hasMerchant,
+      isTrue,
+      reason: 'an expense keeps its store',
+    );
   });
 }

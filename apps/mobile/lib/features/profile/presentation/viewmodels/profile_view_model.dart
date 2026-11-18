@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/time/device_time_zone.dart';
 import '../../../auth/domain/auth_repository.dart';
 import '../../../auth/presentation/viewmodels/auth_view_model.dart';
 import '../../domain/account_export_use_case.dart';
@@ -37,7 +38,12 @@ abstract class ProfileViewModel extends ChangeNotifier {
 
 @LazySingleton(as: ProfileViewModel)
 class DefaultProfileViewModel extends ProfileViewModel {
-  DefaultProfileViewModel(this._useCases, this._auth, this._export) {
+  DefaultProfileViewModel(
+    this._useCases,
+    this._auth,
+    this._export, {
+    @ignoreParam DeviceTimeZone? deviceZone,
+  }) : _deviceZone = deviceZone ?? const SystemTimeZone() {
     _stage = _auth.stage;
     _auth.addListener(_authChanged);
     if (_stage == AuthStage.unlocked) Future.microtask(load);
@@ -45,6 +51,7 @@ class DefaultProfileViewModel extends ProfileViewModel {
   final ProfileUseCases _useCases;
   final AuthViewModel _auth;
   final AccountExportUseCase _export;
+  final DeviceTimeZone _deviceZone;
   late AuthStage _stage;
   int _epoch = 0;
   @override
@@ -118,6 +125,32 @@ class DefaultProfileViewModel extends ProfileViewModel {
     if (epoch != _epoch) return;
     loading = false;
     notifyListeners();
+    // Not awaited: screens wait on load(), not on the OS time zone lookup.
+    if (saved != null) unawaited(_followDeviceZone(epoch));
+  }
+
+  /// The account takes the phone's time zone (travel, new phone). Silent: a
+  /// zone the server does not list, or a failed save, keeps the old one.
+  Future<void> _followDeviceZone(int epoch) async {
+    final zone = await _deviceZone.current();
+    final current = saved;
+    final choices = options;
+    if (epoch != _epoch || loading || current == null || choices == null) {
+      return;
+    }
+    if (zone == null || zone == current.timezone) return;
+    if (!choices.timezones.contains(zone)) return;
+    final result = await _useCases.save(
+      current.copyWith(timezone: zone),
+      choices,
+    );
+    if (epoch != _epoch) return;
+    result.fold((_) {}, (value) {
+      final editing = draft != null && !draft!.samePreferences(current);
+      saved = value;
+      draft = editing ? draft!.copyWith(timezone: value.timezone) : value;
+      notifyListeners();
+    });
   }
 
   @override

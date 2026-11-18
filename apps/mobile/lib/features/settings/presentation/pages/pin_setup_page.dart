@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
@@ -18,11 +19,12 @@ class PinSetupPage extends StatelessWidget {
       listenable: model,
       builder: (context, _) => PinSetupFlow(
         model: model,
-        onSkip: () => context.popOrGo('/me/security'),
         onBack: () => context.popOrGo('/me/security'),
         onDone: () {
           showFreevaToast(context, message: S.of(context).meSecPinSetDone);
-          context.popOrGo('/me/security');
+          // `go`, not `pop`: whatever is stacked above Bảo mật goes with it,
+          // so the form never shows again after the PIN is set.
+          context.go('/me/security');
         },
       ),
     );

@@ -7,6 +7,44 @@
 - Bản sao nguồn canvas trong repo: [canvas/](canvas/) (`canvas.json` + mỗi artboard một `.dc.html`). Nếu canvas và repo lệch nhau: tài liệu và token trong repo thắng.
 - Nhánh: `feat/DS-P2-001-design-system-v2`
 
+## Quy tắc canvas (đặt 2026-11-17)
+
+Canvas tổ chức **theo khu vực sản phẩm**, không theo đợt làm việc. Một màn chỉ có **một board**.
+
+**Trang**
+| Trang | Nội dung | Khối |
+|---|---|---|
+| 01–04 | Foundations, Tokens, Components, States | |
+| 05 · Patterns | Mẫu dùng chung (Data display, Search, Form, Settings, Authentication) | |
+| 06 · Onboarding và tài khoản | Đăng ký, hỏi nhanh, PIN, Face ID, quên mật khẩu | A1, A2 |
+| 07 · Tổng quan, báo cáo, dự báo | Tổng quan và trạng thái, báo cáo, ngân sách, lịch, soát tháng, hộp thư, phân tích | B, F, N, S |
+| 08 · Giao dịch | Danh sách, tìm, lọc, chi tiết, ghi chi/thu/chuyển, gợi ý danh mục | C1, C2, R |
+| 09 · Ví và tài sản | Ví, thẻ, khớp số dư, hoàn tiền, trả góp, đầu tư, tài sản ròng | D, M, P, Q |
+| 10 · Danh mục | Danh mục và danh mục con | E |
+| 11 · Mục tiêu, vay nợ, định kỳ | Mục tiêu, người quen, khoản vay, định kỳ và hóa đơn | I, K, L, T |
+| 12 · Cá nhân, dữ liệu, đồng bộ | Cá nhân, xuất/nhập, gợi ý tự động, đồng bộ | G, O, U, H |
+| 13 · Guidelines | IA, truy cập, chuyển động, giọng văn | |
+
+**Tên board** (tiêu đề trên canvas): `<Khối> · <số>. <Tên màn>` rồi tuỳ chọn ` · <trạng thái>`.
+- Trạng thái viết thường: `· trống`, `· lỗi`, `· ẩn số dư`, `· có mục tiêu`. Loại thành phần trong ngoặc: `(sheet)`, `(popup)`.
+- Số là **mã cố định**, không đánh lại khi bỏ hay gộp board (tài liệu pattern và task tham chiếu `C2.4`, `M.3`…). Chỗ trống do gộp thì chấp nhận; không dồn số.
+- Biến thể của một màn thêm hậu tố chữ: `1b`, `1c` (ví dụ `C2 · 1b. Ghi thu`). Màn mới hẳn thì lấy số kế tiếp.
+- Không đưa số đợt, ngày chốt hay chữ "Phase", "bản đang chạy", "mới" vào tên board.
+
+**Tên file**: `<Khu vực><Màn><Trạng thái>.dc.html`, không dấu, PascalCase. Tiền tố khu vực: `Ob` onboarding, `Au` đăng nhập/đăng ký, `B` Tổng quan, `Tx` giao dịch, `W` ví, `Cat` danh mục, `Rep` báo cáo, `Me` cá nhân, `Sync`, `Goal`, `Debt`, `Loan`, `Rec` định kỳ, `P` đầu tư, `Ins` phân tích, `Import`. Trạng thái là hậu tố: `Empty`, `Hidden`, `Error`. Không dùng hậu tố số để phân biệt đời (`...3`).
+
+**Khi một màn đổi**: sửa tại chỗ board hiện có (hoặc thay nội dung), không tạo bản song song và để bản cũ. Board cũ không còn dùng thì xoá luôn và nối lại mọi link trỏ tới nó. Chỉ thêm board mới khi là **trạng thái hoặc biến thể mới** của màn đó.
+
+**Vị trí**
+- Một khối = một tiêu đề lớn (`title1`) + một hoặc nhiều hàng; tiêu đề cách hàng đầu 300 px.
+- Hàng sắp theo luồng, từ trái sang phải; cách nhau 70 px; **không để ô trống** giữa hai board; tối đa 10 board một hàng, dài hơn thì xuống hàng.
+- Hàng dưới cách hàng trên 120 px (tính theo board cao nhất); khối kế tiếp bắt đầu sau hàng cuối 120 px.
+- Trang đặt tiêu đề trang tại `y = -600`, khối đầu tại `y = -300`, hàng đầu tại `y = 0`.
+- Biến thể đặt ngay sau board gốc (ví dụ `1b` sau `1`).
+- Ghi chú dán (sticky) đặt ngay dưới board nó nói; ghi chú xong việc thì xoá, nội dung đáng giữ chuyển vào tài liệu pattern.
+
+**Trước khi thêm hoặc gộp board**: kiểm lại link (`href="….dc.html"`) không trỏ vào board đã xoá, và cập nhật tài liệu pattern của khối đó.
+
 ## Trạng thái
 
 | Phần | Trạng thái | Tài liệu |
@@ -21,7 +59,7 @@
 | **G** Cá nhân và cài đặt | **Chốt** 2026-10-21 | [patterns/G-profile-settings.md](patterns/G-profile-settings.md) |
 | **H** Đồng bộ | **Chốt** 2026-10-22 | [patterns/H-sync.md](patterns/H-sync.md) |
 
-### Phase 3 (trang canvas **07 · Phase 3**, chốt 2026-11-03; I đã code 2026-11-04)
+### Phase 3 (các khối nằm theo khu vực ở trang 06–12 của canvas, chốt 2026-11-03; I đã code 2026-11-04)
 
 | Phần | Trạng thái | Tài liệu |
 |---|---|---|
@@ -35,14 +73,18 @@
 
 Cùng đợt (2026-11-03), canvas được sửa cho khớp app đang chạy (theo golden): mật khẩu 8 ký tự (AuRegister, AuReset), chip "Xem tổng theo VND" (BMulti), dòng "Xem bản soát tháng" (RepMonth), các dòng Định kỳ / Hóa đơn / Lịch và bỏ "Định dạng ngày" (MeHome), "Xuất dữ liệu" (MeProfile), các dòng Thông báo (MeNotify), "Số trả tối thiểu" và nhãn "Loại ví" (WCredit, WAddCredit). Trang 05 có thêm hàng **P2 · Đã có trong app, chưa từng vẽ** (`Cur*.dc.html`, `RevMonth.dc.html`): Ngân sách, Lịch, Hộp thư, Soát tháng, Định kỳ và Hóa đơn bản đang chạy, vẽ lại đúng app để làm mốc.
 
-### Phase 4 (trang canvas **08 · Phase 4**, chốt 2026-11-06)
+Dọn trùng (2026-11-17): onboarding A3 (ObGoals3, ObIncome, ObSaving, ObBudgetSuggest, DailyLogAsk) chuyển lên hàng A1 trang 05, thay cho ObGoals, ObNeeds, ObBudget (xoá); luồng nối lại AuVerify/ObAccount → ObGoals3 → ObIncome → ObSaving → ObBudgetSuggest → ObSetup. Quy tắc từ nay: màn đổi thì sửa tại chỗ hoặc thay bản cũ, không để hai bản song song. Sáu cặp bản cũ/bản Phase 3 đã gộp cùng ngày, bản Phase 3 thay nội dung bản cũ và giữ vị trí, tiêu đề, link của bản cũ: BNewMonth, MeHome, MeNotify, RepMonth, TxDetail, WCredit (các bản `...3` đã xoá, mọi link `...3` trỏ về tên gốc; RepMonth cao 1640 và MeHome cao 1694 nên dời tiêu đề nhóm G và hàng H xuống cho khỏi đè).
+
+Đợt MOB-P6-001 (2026-11-17): canvas sửa cho khớp app sau test tay. Sửa tại chỗ: TxExpense (nhãn "Danh mục" trên hàng chip), TxSearch (ô tìm "Tìm giao dịch hoặc chức năng"), DailyLogAsk và NotifyTime (copy mới), TxNoResult và RepEmpty (hình empty state mới: trang giấy nổi, đồng xu, đốm sáng, chuyển động 3 vòng rồi dừng). Hàng mới cuối trang 05, tiêu đề "MOB-P6-001": TxExpenseIncome (ghi thu: Lương/Thưởng/Quà tặng, không có Cửa hàng, ô Ngày hiện 20/11), TxTagsEmpty, TxSearchQuick và TxSearchFeature (tìm cả chức năng), CatSwipe (vuốt trái Ẩn/Xoá), MePinSetup (đặt PIN từ Cài đặt, không có "Để sau"), WListHidden (Ví khi ẩn số dư, có nút mắt). Chưa có board: Splash (nền sáng, chữ Sora), đổi mật khẩu (nút mắt), bàn phím số chỉ hiện khi nhập số.
+
+### Phase 4 (các khối nằm theo khu vực ở trang 06–12 của canvas, chốt 2026-11-06)
 
 | Phần | Trạng thái | Tài liệu |
 |---|---|---|
 | **P** Đầu tư | **Chốt** 2026-11-06, đã code P.1–P.12 (`MOB-P4-E01`) | [patterns/P-investments.md](patterns/P-investments.md) |
 | **Q** Tài sản ròng theo thời gian | **Chốt** 2026-11-06, đã code Q.1 (`MOB-P4-E02`) | [patterns/P-investments.md](patterns/P-investments.md) |
 
-### Phase 5 (trang canvas **09 · Phase 5**, chốt 2026-11-11)
+### Phase 5 (các khối nằm theo khu vực ở trang 06–12 của canvas, chốt 2026-11-11)
 
 | Phần | Trạng thái | Tài liệu |
 |---|---|---|
@@ -133,6 +175,6 @@ Tám nhóm A–H, bảy nhóm Phase 3, nhóm P, Q của Phase 4 và nhóm R, S, 
 ## Ghi chú kỹ thuật cho người sửa canvas
 
 - Canvas là Artifact loại Design: file `project/canvas.json` (index, `pages`, `boards`, `order`, `notes`) và `project/*.dc.html`. Ảnh logo đã tải lên dạng asset `/_blob/…` (xem `canvas/Logo.dc.html`).
-- Trang canvas: `f` Foundations · `t` Tokens · `c` Components · `s` States · `p` Patterns · `p3` Phase 3 · `p4` Phase 4 · `p5` Phase 5 · `g` Guidelines.
+- Trang canvas (id): `f` Foundations · `t` Tokens · `c` Components · `s` States · `p` Patterns · `ob` Onboarding và tài khoản · `ov` Tổng quan, báo cáo, dự báo · `tx` Giao dịch · `wa` Ví và tài sản · `ca` Danh mục · `pl` Mục tiêu, vay nợ, định kỳ · `me` Cá nhân, dữ liệu, đồng bộ · `g` Guidelines.
 - Board Phase 3 có tiêu đề dạng "I · 1. Tên màn"; màn có sheet/popup dùng nguyên nội dung màn nền bên dưới lớp tối.
 - Màu trong artboard là hex theo token v2 (ink `#22283A`, canvas `#FCFDFF`, action `#3F67D1`, wash ở `.wash`).

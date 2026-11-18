@@ -1,7 +1,7 @@
 # Nhóm A3 — Onboarding ba câu
 
 Trạng thái: **chốt thiết kế 2026-11-03**, backend xong (`BE-P3-012`), app xong 2026-11-05 (`MOB-P3-012`, [mobile](../../architecture/mobile-onboarding-three-questions.md)). Task: `DS-P3-012` / `MOB-P3-012` (cả backend `BE-P3-012`). Thay các màn Mục tiêu, Thói quen, Ngân sách tháng của [A-onboarding-auth.md](A-onboarding-auth.md); các bước tài khoản, PIN, ví giữ nguyên.
-Canvas: trang **07 · Phase 3**, hàng A3. Spec chung: [design-system.md](../design-system.md).
+Canvas: trang **06 · Onboarding và tài khoản**, khối A1 (A3 thay A1.3–A1.5; ba màn cũ đã xoá 2026-11-17). Spec chung: [design-system.md](../design-system.md).
 
 ## Nguyên tắc riêng cho nhóm này
 
@@ -17,7 +17,7 @@ Canvas: trang **07 · Phase 3**, hàng A3. Spec chung: [design-system.md](../des
 | 2 | Thu nhập | **"Thu nhập mỗi tháng khoảng bao nhiêu?"** · "Để gợi ý ngân sách vừa sức." Số lớn có gạch chân, chip 10 / 15 / 25 / 40 triệu. "Nhập số gần đúng, sửa lại được trong Cá nhân." | Lưu `monthlyIncomeMinor` |
 | 3 | Mục tiêu tiết kiệm | "Bạn để dành cho việc gì?" Chip có icon (Quỹ khẩn cấp, Mua nhà, Mua xe, Du lịch, Học tập, Đám cưới, Khác). Cần có + Đến khi. Thẻ xanh "Mỗi tháng cần để dành 6.000.000 · 24% thu nhập" | Tạo mục tiêu thật (`BE-P3-E01`) |
 | 4 | Gợi ý ngân sách | "Mỗi tháng nên chi khoảng" 19.000.000. Thanh hai màu (chi tiêu / để dành). Thu nhập, "Để dành cho Mua nhà −6.000.000", Chi tiêu. "Sửa được bất cứ lúc nào trong Ngân sách tháng." "Dùng mức này" · "Để sau" | **Chưa có mục tiêu:** dòng để dành thành "Để dành 20% thu nhập −5.000.000", nên chi 20.000.000, thêm câu "Chưa có mục tiêu nên tạm để dành 20%." (ghi chú trên canvas, không vẽ màn riêng) |
-| 5 | Mời bật nhắc ghi chi (sheet trên Tổng quan) | Sau giao dịch đầu tiên, nếu đã chọn "Quản lý chi tiêu": icon chuông, "Nhắc ghi chi mỗi tối?", "Hôm nào đã ghi thì không nhắc." Ô Giờ nhắc 21:00. "Bật nhắc" · "Để sau" | Chỉ hỏi một lần |
+| 5 | Mời bật nhắc ghi chi (sheet trên Tổng quan) | Sau giao dịch đầu tiên, nếu đã chọn "Quản lý chi tiêu": icon chuông, "Nhắc ghi chi mỗi tối". Ô Giờ nhắc 21:00. "Bật" · "Để sau" | Chỉ hỏi một lần |
 
 ## Quy tắc gợi ý ngân sách
 

@@ -52,12 +52,31 @@ class AuthFailure {
   final int? retryAfter;
 }
 
+/// One signed-in device. Device fields are null for sessions made before the
+/// server knew devices (BE-P6-001).
 class AuthSession {
-  const AuthSession(this.id, this.createdAt, this.expiresAt, this.current);
+  const AuthSession(
+    this.id,
+    this.createdAt,
+    this.expiresAt,
+    this.current, {
+    this.lastUsedAt,
+    this.deviceName,
+    this.platform,
+    this.osVersion,
+  });
   final String id;
   final DateTime createdAt;
   final DateTime expiresAt;
   final bool current;
+  final DateTime? lastUsedAt;
+
+  /// Model, e.g. "iPhone 15 Pro".
+  final String? deviceName;
+
+  /// `ios` or `android`.
+  final String? platform;
+  final String? osVersion;
 }
 
 abstract class AuthRepository {

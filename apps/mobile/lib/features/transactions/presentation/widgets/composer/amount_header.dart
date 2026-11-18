@@ -17,6 +17,7 @@ class AmountHeader extends StatelessWidget {
     required this.label,
     this.compact = false,
     this.transfer = false,
+    this.editing = true,
     this.onTap,
     super.key,
   });
@@ -29,6 +30,10 @@ class AmountHeader extends StatelessWidget {
 
   /// Transfer keypad screen: 44/50 amount, 34 caret, 22 ₫, label gap 4.
   final bool transfer;
+
+  /// The keypad is up: the caret shows. It keeps its space when hidden so the
+  /// amount does not shift.
+  final bool editing;
   final VoidCallback? onTap;
 
   @override
@@ -62,7 +67,7 @@ class AmountHeader extends StatelessWidget {
                 height: caret,
                 margin: const EdgeInsets.symmetric(horizontal: 6),
                 decoration: BoxDecoration(
-                  color: c.actionPrimary,
+                  color: editing ? c.actionPrimary : Colors.transparent,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),

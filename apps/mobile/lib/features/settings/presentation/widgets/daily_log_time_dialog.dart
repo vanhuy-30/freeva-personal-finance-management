@@ -98,12 +98,6 @@ class _DailyLogTimeDialogState extends State<DailyLogTimeDialog> {
                         ),
                       ),
                     ),
-                    Text(
-                      s.notifyTimeHint,
-                      style: FreevaTypography.bodyS.copyWith(
-                        color: c.textSecondary,
-                      ),
-                    ),
                   ],
                 ),
               ),
