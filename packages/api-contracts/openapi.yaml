@@ -11506,6 +11506,31 @@ components:
           writeOnly: true
           description: Not trimmed or normalized. Login accepts any 8–128 characters, so passwords set before
             the letter-and-digit rule still work.
+        device:
+          $ref: '#/components/schemas/AuthSessionDevice'
+    AuthSessionDevice:
+      type: object
+      additionalProperties: false
+      description: The phone signing in (BE-P6-001). A new login with the same id ends that device's
+        previous session, so each device holds one session.
+      required:
+      - id
+      - platform
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Made once by the app and kept on the device.
+        name:
+          type: [string, 'null']
+          maxLength: 80
+          description: Device model such as "iPhone 15 Pro", never the name the person gave the device.
+        platform:
+          type: string
+          enum: [ios, android]
+        osVersion:
+          type: [string, 'null']
+          maxLength: 32
     AuthRegisterRequest:
       type: object
       additionalProperties: false
@@ -11587,6 +11612,10 @@ components:
       - createdAt
       - expiresAt
       - current
+      - lastUsedAt
+      - deviceName
+      - platform
+      - osVersion
       properties:
         id:
           type: string
@@ -11599,6 +11628,20 @@ components:
           format: date-time
         current:
           type: boolean
+        lastUsedAt:
+          type: string
+          format: date-time
+          description: Last time the session was used; moves at most once an hour.
+        deviceName:
+          type: [string, 'null']
+          maxLength: 80
+          description: Device model sent at login (BE-P6-001). Null for sessions without device details.
+        platform:
+          type: [string, 'null']
+          enum: [ios, android, null]
+        osVersion:
+          type: [string, 'null']
+          maxLength: 32
     AuthSessionsResponse:
       type: object
       additionalProperties: false

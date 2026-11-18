@@ -95,6 +95,7 @@ export class PrismaOAuthRepository implements OAuthRepository {
               userId: true,
               createdAt: true,
               expiresAt: true,
+              lastUsedAt: true,
             },
           });
           await tx.auditEvent.create({

@@ -568,6 +568,80 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
     ).toBe(401);
   });
 
+  it('BE-P6-001 keeps one session per device and lists device details', async () => {
+    const email = 'owner@example.test';
+    const first = await verified(email);
+    const phone = {
+      id: '5b0f3c1e-8d7a-4c2b-9e6f-1a2b3c4d5e6f',
+      name: ' iPhone 15 Pro ',
+      platform: 'ios',
+      osVersion: '18.1',
+    };
+    const before = (
+      await request('auth/login', { email, password, device: phone })
+    ).body;
+    const again = await request('auth/login', {
+      email,
+      password,
+      device: { ...phone, osVersion: '18.2' },
+    });
+    expect(again.status).toBe(200);
+    // The same phone signing in again ends its previous session only.
+    expect(
+      (await request('sessions', undefined, before.accessToken, 'GET')).status,
+    ).toBe(401);
+    const list = await request(
+      'sessions',
+      undefined,
+      again.body.accessToken,
+      'GET',
+    );
+    expect(list.status).toBe(200);
+    expect(list.body.sessions).toHaveLength(2);
+    const mine = list.body.sessions.find(
+      (s: { current: boolean }) => s.current,
+    );
+    expect(mine).toMatchObject({
+      id: again.body.sessionId,
+      deviceName: 'iPhone 15 Pro',
+      platform: 'ios',
+      osVersion: '18.2',
+    });
+    expect(typeof mine.lastUsedAt).toBe('string');
+    const legacy = list.body.sessions.find(
+      (s: { id: string }) => s.id === first.sessionId,
+    );
+    expect(legacy).toMatchObject({
+      deviceName: null,
+      platform: null,
+      osVersion: null,
+    });
+
+    // Use moves lastUsedAt, at most once an hour.
+    const old = new Date(Date.now() - 2 * 60 * 60_000);
+    await prisma.authSession.update({
+      where: { id: first.sessionId },
+      data: { lastUsedAt: old },
+    });
+    await request('sessions', undefined, first.accessToken, 'GET');
+    const touched = await prisma.authSession.findUniqueOrThrow({
+      where: { id: first.sessionId },
+    });
+    expect(touched.lastUsedAt.getTime()).toBeGreaterThan(old.getTime());
+
+    for (const device of [
+      { ...phone, id: 'not-a-uuid' },
+      { ...phone, platform: 'web' },
+      { ...phone, name: 'x'.repeat(81) },
+      { ...phone, extra: true },
+    ]) {
+      await prisma.authRateLimit.deleteMany();
+      expect(
+        (await request('auth/login', { email, password, device })).status,
+      ).toBe(400);
+    }
+  });
+
   it('DS-P2-003 changes the password while signed in, keeps this session and ends the others', async () => {
     const email = 'owner@example.test';
     const first = await verified();

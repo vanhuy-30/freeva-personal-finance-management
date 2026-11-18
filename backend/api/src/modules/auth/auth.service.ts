@@ -11,6 +11,7 @@ import {
   AUTH_REPOSITORY,
   type AuthRepository,
   type Session,
+  type SessionDevice,
   type TokenPurpose,
 } from './domain/auth.repository';
 import { AuthCrypto } from './infrastructure/auth-crypto';
@@ -21,6 +22,9 @@ export const TERMS_VERSION = '2026-10';
 export const accepted = {
   message: 'If the account is eligible, an email will be sent.',
 };
+/** "Last used" on a session moves at most this often (one write per hour). */
+const TOUCH_EVERY_MS = 60 * 60_000;
+
 /** How recent an OAuth-only session must be to delete or export the account. */
 export const REAUTH_WINDOW_MS = 10 * 60_000;
 
@@ -117,7 +121,7 @@ export class AuthService {
     }
   }
 
-  async login(email: string, password: string) {
+  async login(email: string, password: string, device?: SessionDevice) {
     const user = await this.repository.findUser(email);
     const valid = await this.crypto.verifyPassword(
       user?.passwordHash ?? null,
@@ -130,6 +134,7 @@ export class AuthService {
       user.passwordHash,
       this.crypto.digest(accessToken),
       new Date(Date.now() + 7 * 24 * 60 * 60_000),
+      device,
     );
     if (!session) throw unauthorized();
     return {
@@ -146,16 +151,33 @@ export class AuthService {
       this.crypto.digest(token),
     );
     if (!session) throw unauthorized();
+    const now = new Date();
+    if (now.getTime() - session.lastUsedAt.getTime() >= TOUCH_EVERY_MS) {
+      // Best effort: "Hoạt động …" on Phiên đăng nhập must never fail a request.
+      await this.repository.touchSession(session.id, now).catch(() => {});
+    }
     return session;
   }
 
   async sessions(userId: string, currentId: string) {
     return {
       sessions: (await this.repository.listSessions(userId)).map(
-        ({ id, createdAt, expiresAt }) => ({
+        ({
           id,
           createdAt,
           expiresAt,
+          lastUsedAt,
+          deviceName,
+          platform,
+          osVersion,
+        }) => ({
+          id,
+          createdAt,
+          expiresAt,
+          lastUsedAt,
+          deviceName,
+          platform,
+          osVersion,
           current: id === currentId,
         }),
       ),

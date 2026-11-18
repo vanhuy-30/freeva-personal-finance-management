@@ -67,7 +67,16 @@ export class AuthController {
   @HttpCode(200)
   @Header('Cache-Control', 'no-store')
   login(@Body() body: CredentialsDto) {
-    return this.auth.login(body.email, body.password);
+    return this.auth.login(
+      body.email,
+      body.password,
+      body.device && {
+        id: body.device.id,
+        name: body.device.name ?? null,
+        platform: body.device.platform,
+        osVersion: body.device.osVersion ?? null,
+      },
+    );
   }
 
   @Post('email-verifications')
