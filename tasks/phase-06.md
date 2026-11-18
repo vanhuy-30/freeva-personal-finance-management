@@ -69,3 +69,25 @@
   - Danh mục: vuốt hàng sang trái ra "Ẩn" và "Xoá" (cả danh mục con); dùng đúng luật của màn sửa (còn danh mục con thì báo "Còn n danh mục con"; xoá vẫn hỏi chuyển giao dịch sang đâu). Widget dùng chung `SwipeActions`.
   - Tìm kiếm ở Tổng quan: tìm được cả chức năng (Ví, Danh mục, Ngân sách, Xuất dữ liệu, Đổi mật khẩu…, không dấu và theo từ khoá), có "Mở nhanh" khi chưa gõ.
   - Empty state: hình mới (trang giấy nổi, đồng xu, đốm sáng) thay chữ F, chuyển động 3 vòng rồi dừng, tắt khi giảm chuyển động; bỏ `FStrokesMark`.
+- Đợt 6 (phản hồi test tay):
+  - Thông báo chưa có: chỉ một câu "Bạn chưa có thông báo nào để hiển thị".
+  - Phiên đăng nhập: bỏ câu "Không nhận ra phiên nào thì thu hồi ngay."; nút thành "Đăng xuất khỏi mọi thiết bị" (máy này vẫn đăng nhập).
+  - Cá nhân bỏ "Múi giờ": tài khoản theo múi giờ của máy, mỗi lần tải hồ sơ app so với múi giờ máy và tự lưu nếu khác (server phải có trong danh sách). Thêm `flutter_timezone`.
+  - Cá nhân bỏ "Ẩn số dư": chỉ bật/tắt bằng nút mắt ở Tổng quan (và Ví của tôi).
+  - Danh mục: hàng đang mở vuốt sang phải thì đóng lại (trước đó vuốt phải không ăn).
+  - Nút nhanh ở Tổng quan: "Danh mục" thành "Đầu tư" (Ghi thu · Chuyển ví · Ví của tôi · Đầu tư).
+  - Cá nhân chia nhóm lại (board `MeHome`): Tài sản (Ví · Tài sản ròng · Đầu tư · Vay và nợ) và Kế hoạch (Ngân sách · Mục tiêu · Định kỳ · Lịch), mỗi nhóm một hàng 4 ô không số phụ; Gợi ý tự động sang Thiết lập; Dữ liệu và Hỗ trợ gộp một nhóm.
+
+### BE-P6-001 / MOB-P6-002 — Quản lý phiên đăng nhập theo thiết bị
+- Status: doing
+- Module: 22
+- Gate: v1
+- Depends: MOB-P6-001
+- DoD:
+  - App gửi `device` khi đăng nhập: `id` (UUID tạo một lần, giữ qua lần cài lại trên iOS), `name` (tên máy, ví dụ "iPhone 15 Pro"), `platform` (`ios`/`android`), `osVersion`. Không gửi tên máy do người dùng đặt.
+  - `AuthSession` thêm `deviceId`, `deviceName`, `platform`, `osVersion`, `lastUsedAt`. Đăng nhập lại cùng `deviceId` thì xoá phiên cũ của máy đó trong cùng giao dịch: mỗi máy chỉ còn một phiên.
+  - `lastUsedAt` cập nhật khi phiên được dùng, tối đa một lần mỗi giờ.
+  - `GET /v1/sessions` trả thêm `deviceName`, `platform`, `osVersion`, `lastUsedAt`; phiên cũ không có thông tin máy vẫn hiện.
+  - Màn Phiên đăng nhập: mỗi dòng là một thiết bị (tên máy; dòng phụ "Android 14 · 3 giờ trước" theo lần dùng gần nhất, máy này "iOS 18.1 · Đăng nhập 02/10" + chip "Đang dùng"). Không có tên máy thì "Thiết bị không rõ" + ngày đăng nhập. "Thu hồi" thành "Đăng xuất".
+  - OpenAPI, migration Prisma, test BE (unit + integration) và mobile.
+

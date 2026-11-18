@@ -18,11 +18,11 @@ Canvas: trang **12 · Cá nhân, dữ liệu, đồng bộ**, khối G.
 
 | # | Màn | Nội dung | Ghi chú |
 |---|---|---|---|
-| 1 | Cá nhân | "Cá nhân". Thẻ hồ sơ (avatar chữ cái, tên, email che). **Thiết lập tài chính:** Ví của tôi · Danh mục · Nhãn · Định kỳ (`MOB-P2-E01`) · Hóa đơn (`MOB-P2-E03`) · Tiền tệ mặc định · Ngân sách tháng · Tháng tính từ · Mục tiêu (mở A1.2). **Ứng dụng:** Giao diện · Ngôn ngữ · Múi giờ · Thông báo · Ẩn số dư (công tắc) · Bảo mật. **Hỗ trợ:** Câu hỏi thường gặp · Góp ý · Điều khoản và quyền riêng tư. "Đăng xuất" (đỏ), "Phiên bản 0.0.1" | Giá trị hiện tại ở bên phải mỗi dòng; icon màu cho Thiết lập tài chính, xám cho Ứng dụng |
+| 1 | Cá nhân | "Cá nhân". Thẻ hồ sơ (avatar chữ cái, tên, email che). **Tài sản** (4 ô một hàng, icon + tên): Ví của tôi · Tài sản ròng · Đầu tư · Vay và nợ. **Kế hoạch** (4 ô): Ngân sách · Mục tiêu · Định kỳ · Lịch. **Thiết lập:** Danh mục · Nhãn · Thu nhập và kỳ tính · Gợi ý tự động. **Ứng dụng:** Giao diện · Ngôn ngữ · Thông báo · Bảo mật (múi giờ theo máy; ẩn số dư bật/tắt ở Tổng quan). **Dữ liệu và hỗ trợ:** Nhập từ app khác · Xuất dữ liệu · Câu hỏi thường gặp · Góp ý · Điều khoản và quyền riêng tư. "Đăng xuất" (đỏ), "Phiên bản 0.0.1" | Ô Tài sản/Kế hoạch không có số phụ; máy hẹp hoặc chữ lớn thì 2 cột. Giá trị hiện tại ở bên phải mỗi dòng; icon màu cho Thiết lập, xám cho Ứng dụng |
 | 2 | Hồ sơ | Avatar 96 + nút máy ảnh. Tên hiển thị. Email (đã xác nhận) · "Đổi". Dòng "Xuất dữ liệu" (icon tải xuống, một dòng phụ; chưa có trên board, thêm ở `MOB-P2-011`). "Xoá tài khoản" (đỏ). "Lưu thay đổi" | |
 | 3 | Giao diện (sheet) | 3 thẻ chọn có ảnh thu nhỏ: Sáng · Tối · Theo máy | Đổi ngay khi chọn |
 | 4 | Bảo mật | **Mở khoá:** Khoá bằng mã PIN, Mở bằng Face ID (công tắc), Đổi mã PIN. **Đăng nhập:** Phiên đăng nhập (số), Đổi mật khẩu | Face ID khoá khi chưa có PIN, kèm lý do ngắn |
-| 5 | Phiên đăng nhập | "Không nhận ra phiên nào thì thu hồi ngay." Máy này + chip "Đang dùng"; phiên khác + nút "Thu hồi" (viền đỏ). "Đăng xuất mọi máy khác" | Dòng phụ "Từ 02/10 · hết hạn 01/11" |
+| 5 | Phiên đăng nhập | Mỗi dòng một thiết bị (`BE-P6-001`): tên máy ("iPhone 15 Pro"), máy này có chip "Đang dùng"; máy khác có nút "Đăng xuất" (viền đỏ). Phiên cũ chưa có tên máy: "Máy này" / "Thiết bị không rõ". "Đăng xuất khỏi mọi thiết bị" (máy này vẫn đăng nhập) | Dòng phụ "iOS 18.1 · Đăng nhập 02/10" (máy này) hoặc "Android 14 · 3 giờ trước" (lần dùng gần nhất) |
 | 6 | Đăng xuất (popup) | "Đăng xuất khỏi máy này?" · "Dữ liệu vẫn nằm trong tài khoản của bạn." · Huỷ / Đăng xuất (đỏ) | |
 | 7 | Nhãn | Ô tìm, danh sách nhãn + số giao dịch, nút + tạo nhãn. Chạm nhãn mở danh sách giao dịch đã lọc | |
 | 8 | Góp ý | "Bạn muốn nói gì với Freeva?" Thẻ chọn một dòng: Lỗi · Ý tưởng · Lời khen. "Về phần nào?": Ghi chi · Báo cáo · Ví · Danh mục · Giao diện · Khác. Ô nội dung (nhãn đổi theo loại, đếm ký tự). Ảnh chụp màn hình (ảnh nhỏ có nút bỏ + ô thêm). Công tắc "Trả lời tôi qua email". "Gửi góp ý" | Modal |
@@ -40,7 +40,7 @@ Canvas: trang **12 · Cá nhân, dữ liệu, đồng bộ**, khối G.
 | Ngân sách tháng | Thiết lập tài chính | Khối ngân sách ([F-reports.md](F-reports.md)), cảnh báo |
 | Mục tiêu (tối đa 2) | Thiết lập tài chính | Thứ tự khối trên Tổng quan ([B-overview.md](B-overview.md)) |
 | Tiền tệ mặc định, Tháng tính từ | Thiết lập tài chính | Ví mới; kỳ tháng của báo cáo |
-| Múi giờ, Ngôn ngữ | Ứng dụng | Hiển thị ngày giờ, chữ |
+| Ngôn ngữ | Ứng dụng | Hiển thị ngày giờ, chữ |
 
 ## Thành phần mới (bổ sung vào design system)
 
