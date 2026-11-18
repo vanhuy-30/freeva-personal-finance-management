@@ -7,7 +7,7 @@ import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/press_scale.dart';
 
-/// Four quick actions: Ghi thu · Chuyển ví · Ví của tôi · Danh mục.
+/// Four quick actions: Ghi thu · Chuyển ví · Ví của tôi · Đầu tư.
 /// Always usable, even while the overview is loading or failed.
 class QuickActions extends StatelessWidget {
   const QuickActions({super.key});
@@ -42,10 +42,10 @@ class QuickActions extends StatelessWidget {
         ),
         gap,
         _Action(
-          icon: LucideIcons.layoutGrid,
+          icon: LucideIcons.trendingUp,
           color: c.tintCyanFg,
-          label: s.homeQuickCategories,
-          onTap: () => context.push('/categories'),
+          label: s.homeQuickInvestments,
+          onTap: () => context.push('/me/investments'),
         ),
       ],
     );

@@ -19,7 +19,7 @@ import '../widgets/security_form.dart';
 import '../widgets/session_row.dart';
 
 /// Phiên đăng nhập: this device and the others, with Thu hồi per device and
-/// "Đăng xuất mọi máy khác".
+/// "Đăng xuất khỏi mọi thiết bị" (signs out every other device).
 class SessionsPage extends StatefulWidget {
   const SessionsPage({super.key});
 
@@ -108,16 +108,6 @@ class _SessionsPageState extends State<SessionsPage> {
                     FreevaSpace.s4,
                   ),
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: Text(
-                        s.meSessionsHint,
-                        style: FreevaTypography.bodyM.copyWith(
-                          color: c.textSecondary,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: FreevaSpace.s4),
                     if (sessions.isEmpty &&
                         auth.failure != null &&
                         !auth.loading)

@@ -66,4 +66,17 @@ void main() {
     expect(tester.getTopLeft(find.text('A')).dx, greaterThanOrEqualTo(0));
     expect(tester.getTopLeft(find.text('B')).dx, lessThan(0));
   });
+
+  testWidgets('a swipe back to the right closes the open row', (tester) async {
+    final log = <String>[];
+    await tester.pumpWidget(testApp(Column(children: [_row('A', log)])));
+    await tester.drag(find.text('A'), const Offset(-200, 0));
+    await tester.pumpAndSettle();
+    expect(tester.getTopLeft(find.text('A')).dx, lessThan(0));
+
+    await tester.dragFrom(const Offset(300, 30), const Offset(200, 0));
+    await tester.pumpAndSettle();
+    expect(tester.getTopLeft(find.text('A')).dx, greaterThanOrEqualTo(0));
+    expect(log, isEmpty);
+  });
 }

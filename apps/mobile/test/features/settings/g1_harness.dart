@@ -105,11 +105,27 @@ class G1 {
         'createdAt': DateTime(2026, 10, 2).toIso8601String(),
         'expiresAt': DateTime(2026, 11, 1).toIso8601String(),
         'current': true,
+        'lastUsedAt': DateTime(2026, 10, 2).toIso8601String(),
+        'deviceName': 'iPhone 15 Pro',
+        'platform': 'ios',
+        'osVersion': '18.1',
       },
       {
         'id': 'phone',
         'createdAt': DateTime(2026, 10, 18).toIso8601String(),
         'expiresAt': DateTime(2026, 11, 17).toIso8601String(),
+        'current': false,
+        'lastUsedAt': DateTime.now()
+            .subtract(const Duration(hours: 3))
+            .toIso8601String(),
+        'deviceName': 'Samsung SM-S921B',
+        'platform': 'android',
+        'osVersion': '14',
+      },
+      {
+        'id': 'old',
+        'createdAt': DateTime(2026, 10, 13).toIso8601String(),
+        'expiresAt': DateTime(2026, 10, 20).toIso8601String(),
         'current': false,
       },
     ];

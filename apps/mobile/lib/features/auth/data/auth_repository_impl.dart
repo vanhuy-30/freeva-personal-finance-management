@@ -11,11 +11,21 @@ import '../domain/session_notice.dart';
 import 'auth_api.dart';
 import 'authorized_api.dart';
 import 'auth_platform.dart';
+import 'device_identity.dart';
 import '../../server_config/domain/app_limits.dart';
 
 @LazySingleton(as: AuthRepository)
 class AuthRepositoryImpl implements AuthRepository, AuthorizedApi {
-  AuthRepositoryImpl(this._api, this._vault, this._biometrics, this._limits);
+  AuthRepositoryImpl(
+    this._api,
+    this._vault,
+    this._biometrics,
+    this._limits, {
+    @ignoreParam DeviceIdentity? device,
+  }) : _device = device ?? const PlatformDeviceIdentity();
+
+  /// Sent with a sign-in so the server keeps one session per phone.
+  final DeviceIdentity _device;
 
   /// `security.pinMaxAttempts` (server config). The app shows the PIN screen
   /// only with config loaded (`ServerConfigBoundary`).
@@ -113,6 +123,10 @@ class AuthRepositoryImpl implements AuthRepository, AuthorizedApi {
     };
     final body = <String, dynamic>{...fields};
     if (action == AuthAction.register) body['termsAccepted'] = true;
+    if (action == AuthAction.login) {
+      final device = await _device.describe();
+      if (device != null) body['device'] = device;
+    }
     final result = await _api.request('POST', 'auth/$path', body: body);
     if (action == AuthAction.login) {
       if (result['tokenType'] != 'Bearer' ||
@@ -333,6 +347,13 @@ class AuthRepositoryImpl implements AuthRepository, AuthorizedApi {
             DateTime.parse(s['createdAt'] as String),
             DateTime.parse(s['expiresAt'] as String),
             s['current'] as bool,
+            lastUsedAt: switch (s['lastUsedAt']) {
+              final String at => DateTime.parse(at),
+              _ => null,
+            },
+            deviceName: s['deviceName'] as String?,
+            platform: s['platform'] as String?,
+            osVersion: s['osVersion'] as String?,
           ),
         )
         .toList();

@@ -137,9 +137,11 @@ class _SwipeActionsState extends State<SwipeActions>
                 return Transform.translate(
                   offset: Offset((rtl ? 1 : -1) * _slide.value * _extent, 0),
                   // While open, a tap on the row closes it instead of
-                  // opening the item.
+                  // opening the item. Opaque so the row still counts as hit
+                  // while its content ignores pointers: a swipe back to the
+                  // right then reaches the drag handler and closes it.
                   child: GestureDetector(
-                    behavior: HitTestBehavior.translucent,
+                    behavior: HitTestBehavior.opaque,
                     onTap: open ? _close : null,
                     child: IgnorePointer(ignoring: open, child: child),
                   ),

@@ -54,13 +54,14 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Minh'), findsOneWidget);
       expect(find.text('m•••@gmail.com'), findsOneWidget);
-      expect(find.text('QUẢN LÝ TIỀN'), findsOneWidget);
+      expect(find.text('TÀI SẢN'), findsOneWidget);
+      expect(find.text('KẾ HOẠCH'), findsOneWidget);
       expect(find.text('THIẾT LẬP'), findsOneWidget);
-      expect(find.text('DỮ LIỆU'), findsOneWidget);
+      expect(find.text('DỮ LIỆU VÀ HỖ TRỢ'), findsOneWidget);
+      expect(find.text('Tài sản ròng'), findsOneWidget);
       expect(find.text('VND · ngày 1'), findsOneWidget);
       expect(find.text('Sáng'), findsOneWidget);
       expect(find.text('Tiếng Việt'), findsOneWidget);
-      expect(find.text('GMT+7'), findsOneWidget);
       expect(find.text('PIN · Sinh trắc'), findsOneWidget);
       expect(find.text('1 đang bật'), findsOneWidget);
       expect(find.text('Định dạng ngày'), findsNothing);
@@ -110,7 +111,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('Tiếng Anh'));
       await tester.pumpAndSettle();
-      expect(find.text('Manage money'.toUpperCase()), findsOneWidget);
+      expect(find.text('ASSETS'), findsOneWidget);
     });
 
     testWidgets('appearance sheet applies the theme when a card is tapped', (
@@ -126,15 +127,12 @@ void main() {
       expect(g.settings.theme, AppThemePreference.dark);
     });
 
-    testWidgets('hide balances is a switch that takes effect at once', (
-      tester,
-    ) async {
+    testWidgets('has no time zone or hide balances row', (tester) async {
       tall(tester);
       await tester.pumpWidget(g.app(const SettingsPage()));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Ẩn số dư'));
-      await tester.pumpAndSettle();
-      expect(g.settings.balancesHidden, isTrue);
+      expect(find.text('Múi giờ'), findsNothing);
+      expect(find.text('Ẩn số dư'), findsNothing);
     });
 
     testWidgets('log out asks first and keeps the session on Huỷ', (
@@ -309,51 +307,60 @@ void main() {
           'createdAt': DateTime(2026, 10, 18).toIso8601String(),
           'expiresAt': DateTime(2026, 11, 17).toIso8601String(),
           'current': false,
+          'lastUsedAt': DateTime.now()
+              .subtract(const Duration(days: 2, hours: 1))
+              .toIso8601String(),
+          'deviceName': 'Pixel 8',
+          'platform': 'android',
+          'osVersion': '15',
         },
       ];
     }
 
-    testWidgets('this device first with a chip, others with Thu hồi', (
+    testWidgets('one row per device: this one with a chip, others Đăng xuất', (
       tester,
     ) async {
       tall(tester);
       twoSessions();
       await tester.pumpWidget(g.app(const SessionsPage()));
       await tester.pumpAndSettle();
+      // This session predates device details: it is still "Máy này".
       expect(find.text('Máy này'), findsOneWidget);
       expect(find.text('Đang dùng'), findsOneWidget);
-      expect(find.text('Từ 02/10 · hết hạn 01/11'), findsOneWidget);
-      expect(find.text('Phiên khác'), findsOneWidget);
-      expect(find.text('Thu hồi'), findsOneWidget);
+      expect(find.text('Đăng nhập 02/10'), findsOneWidget);
+      expect(find.text('Pixel 8'), findsOneWidget);
+      expect(find.text('Android 15 · 2 ngày trước'), findsOneWidget);
+      expect(find.text('Đăng xuất'), findsOneWidget);
     });
 
-    testWidgets('Thu hồi asks first, then drops that device', (tester) async {
+    testWidgets('Đăng xuất asks first, then drops that device', (tester) async {
       tall(tester);
       twoSessions();
       await tester.pumpWidget(g.app(const SessionsPage()));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Thu hồi'));
+      await tester.tap(find.text('Đăng xuất'));
       await tester.pumpAndSettle();
-      expect(find.text('Thu hồi phiên này?'), findsOneWidget);
-      await tester.tap(find.text('Thu hồi').last);
+      expect(find.text('Đăng xuất thiết bị này?'), findsOneWidget);
+      await tester.tap(find.text('Đăng xuất').last);
       await tester.pumpAndSettle();
       expect(g.api.lastPath, 'sessions/phone');
-      expect(find.text('Phiên khác'), findsNothing);
+      expect(find.text('Pixel 8'), findsNothing);
     });
 
-    testWidgets('"Đăng xuất mọi máy khác" revokes the others and reloads', (
-      tester,
-    ) async {
-      tall(tester);
-      twoSessions();
-      await tester.pumpWidget(g.app(const SessionsPage()));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Đăng xuất mọi máy khác'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Đăng xuất mọi máy khác').last);
-      await tester.pumpAndSettle();
-      expect(g.auth.stage, AuthStage.unlocked);
-      expect(g.api.calls, greaterThan(0));
-    });
+    testWidgets(
+      '"Đăng xuất khỏi mọi thiết bị" revokes the others and reloads',
+      (tester) async {
+        tall(tester);
+        twoSessions();
+        await tester.pumpWidget(g.app(const SessionsPage()));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Đăng xuất khỏi mọi thiết bị'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Đăng xuất khỏi mọi thiết bị').last);
+        await tester.pumpAndSettle();
+        expect(g.auth.stage, AuthStage.unlocked);
+        expect(g.api.calls, greaterThan(0));
+      },
+    );
   });
 }

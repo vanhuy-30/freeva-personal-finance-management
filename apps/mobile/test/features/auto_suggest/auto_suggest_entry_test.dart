@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mobile/features/settings/presentation/widgets/app_settings_group.dart';
+import 'package:mobile/features/settings/presentation/widgets/money_setup_group.dart';
 
 import '../settings/g1_harness.dart';
 import 'auto_suggest_fakes.dart';
@@ -15,18 +15,14 @@ void main() {
     await t.pumpWidget(
       g.app(
         Scaffold(
-          body: AppSettingsGroup(
-            settings: g.settings,
-            profile: g.profile,
-            autoSuggest: model,
-          ),
+          body: MoneySetupGroup(profile: g.profile, autoSuggest: model),
         ),
       ),
     );
     await t.pump();
   }
 
-  testWidgets('Cá nhân row shows only when a flag is on', (t) async {
+  testWidgets('Thiết lập row shows only when a flag is on', (t) async {
     await pump(t, StubAutoSuggestViewModel(available: false));
     expect(find.text('Gợi ý tự động'), findsNothing);
 
