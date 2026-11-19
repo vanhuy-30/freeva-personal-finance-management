@@ -7,6 +7,9 @@ const goalKinds = [
   'education',
   'wedding',
   'retirement',
+  'children',
+  'business',
+  'health',
   'custom',
 ];
 

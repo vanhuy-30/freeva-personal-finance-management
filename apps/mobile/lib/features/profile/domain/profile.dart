@@ -1,3 +1,5 @@
+import 'declared_income.dart';
+
 class Profile {
   const Profile({
     required this.locale,
@@ -8,14 +10,14 @@ class Profile {
     this.displayName,
     this.goals = const [],
     this.displayCurrency,
-    this.monthlyIncomeMinor,
+    this.declaredIncome,
     this.autoSuggestEnabled = true,
   });
 
   /// Greeting name; null until the user sets one (Hồ sơ).
   final String? displayName;
 
-  /// Goals picked at first run (at most 2); empty when skipped or when the
+  /// Goals picked at first run; empty when skipped or when the
   /// server does not send them.
   final List<String> goals;
 
@@ -23,10 +25,9 @@ class Profile {
   /// [currency]. Not part of the PUT body; see `saveDisplayCurrency`.
   final String? displayCurrency;
 
-  /// Monthly income the user stated, in minor units of [currency]; null when
-  /// not given. Used for the first budget suggestion and to show a goal's
-  /// monthly saving as a share of it.
-  final BigInt? monthlyIncomeMinor;
+  /// Income band the user stated, in [currency]; null when not shared. Its
+  /// midpoint feeds the budget suggestion and a goal's share of income.
+  final DeclaredIncome? declaredIncome;
 
   /// Gợi ý tự động (category suggestions, insights, forecast). Read-only here:
   /// saved with its own call, never part of the PUT body. Default on.
@@ -55,7 +56,7 @@ class Profile {
         : displayName as String?,
     goals: goals,
     displayCurrency: displayCurrency,
-    monthlyIncomeMinor: monthlyIncomeMinor,
+    declaredIncome: declaredIncome,
     autoSuggestEnabled: autoSuggestEnabled,
   );
 
@@ -71,11 +72,11 @@ class Profile {
     displayName: displayName,
     goals: goals,
     displayCurrency: code,
-    monthlyIncomeMinor: monthlyIncomeMinor,
+    declaredIncome: declaredIncome,
     autoSuggestEnabled: autoSuggestEnabled,
   );
 
-  Profile withMonthlyIncome(BigInt? minor) => Profile(
+  Profile withDeclaredIncome(DeclaredIncome? income) => Profile(
     locale: locale,
     currency: currency,
     timezone: timezone,
@@ -84,7 +85,7 @@ class Profile {
     displayName: displayName,
     goals: goals,
     displayCurrency: displayCurrency,
-    monthlyIncomeMinor: minor,
+    declaredIncome: income,
     autoSuggestEnabled: autoSuggestEnabled,
   );
 

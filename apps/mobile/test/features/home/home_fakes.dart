@@ -4,6 +4,7 @@ import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/home/domain/overview.dart';
 import 'package:mobile/features/home/domain/overview_use_cases.dart';
 import 'package:mobile/features/home/presentation/viewmodels/home_view_model.dart';
+import 'package:mobile/features/profile/domain/declared_income.dart';
 import 'package:mobile/features/profile/domain/profile.dart';
 import 'package:mobile/features/profile/presentation/viewmodels/profile_view_model.dart';
 import 'package:mobile/features/sync/domain/sync_item.dart';
@@ -60,12 +61,12 @@ class FakeProfileViewModel extends ChangeNotifier implements ProfileViewModel {
     return true;
   }
 
-  final savedIncomes = <BigInt?>[];
+  final savedIncomes = <DeclaredIncome?>[];
 
   @override
-  Future<bool> saveMonthlyIncome(BigInt? minor) async {
-    savedIncomes.add(minor);
-    saved = saved?.withMonthlyIncome(minor);
+  Future<bool> saveDeclaredIncome(DeclaredIncome? income) async {
+    savedIncomes.add(income);
+    saved = saved?.withDeclaredIncome(income);
     notifyListeners();
     return true;
   }

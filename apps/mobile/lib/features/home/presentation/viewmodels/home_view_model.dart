@@ -42,9 +42,13 @@ abstract class HomeViewModel extends ChangeNotifier {
   /// Whether this device has a PIN (the checklist asks for one if not).
   bool get hasPin;
 
-  /// Whether the user picked "Quản lý chi tiêu": the daily log reminder is
-  /// offered after the first transaction.
+  /// Whether the user picked "Quản lý thu nhập và chi tiêu": the daily log
+  /// reminder is offered after the first transaction.
   bool get trackGoal => false;
+
+  /// Midpoint of the declared income band, for the first budget suggestion;
+  /// null when not shared.
+  BigInt? get incomeMidpointMinor => null;
 
   /// Whether the user picked "Tiết kiệm": the goals block shows under the balance.
   bool get saveGoal => false;
@@ -106,6 +110,9 @@ class DefaultHomeViewModel extends HomeViewModel {
   bool get trackGoal => _profile.saved?.goals.contains('track') ?? false;
   @override
   bool get saveGoal => _profile.saved?.goals.contains('save') ?? false;
+  @override
+  BigInt? get incomeMidpointMinor =>
+      _profile.saved?.declaredIncome?.midpointMinor;
   @override
   String get currency =>
       _profile.saved?.currency ?? CurrencyCatalog.current.defaultCode;

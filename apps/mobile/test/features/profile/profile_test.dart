@@ -8,6 +8,7 @@ import 'package:mobile/features/auth/domain/auth_use_cases.dart';
 import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dart';
 import 'package:mobile/features/onboarding/domain/onboarding_answers.dart';
 import 'package:mobile/features/profile/data/profile_repository_impl.dart';
+import 'package:mobile/features/profile/domain/declared_income.dart';
 import 'package:mobile/features/profile/domain/profile_use_cases.dart';
 import 'package:mobile/features/profile/presentation/viewmodels/profile_view_model.dart';
 
@@ -105,52 +106,78 @@ void main() {
       );
     },
   );
-  test(
-    'income goes out as a string, can be set or cleared, and is read back',
-    () async {
-      final api = Transport();
-      final repo = ProfileRepositoryImpl(api);
-      final cases = ProfileUseCases(repo, testServerConfigModel());
-      expect(
-        (await cases.saveOnboarding(
-          OnboardingAnswers(monthlyIncomeMinor: BigInt.from(25000000)),
-        )).isRight(),
-        true,
-      );
-      expect(api.body, {'monthlyIncomeMinor': '25000000'});
-      api.method = null;
-      expect(
-        (await cases.saveOnboarding(
-          OnboardingAnswers(monthlyIncomeMinor: BigInt.zero),
-        )).isLeft(),
-        true,
-      );
-      expect(api.method, isNull);
-      expect(
-        (await cases.saveMonthlyIncome(BigInt.from(30000000))).isRight(),
-        true,
-      );
-      expect(api.method, 'PUT');
-      expect(api.path, 'profile/monthly-income');
-      expect(api.body, {'monthlyIncomeMinor': '30000000'});
-      expect((await cases.saveMonthlyIncome(null)).isRight(), true);
-      expect(api.body, {'monthlyIncomeMinor': null});
-      api.response = {
-        'locale': 'vi',
-        'defaultCurrencyCode': 'VND',
-        'timezone': 'UTC',
-        'fiscalMonthStartDay': 1,
-        'version': 1,
-        'goals': ['save'],
-        'monthlyIncomeMinor': '25000000',
-      };
-      final loaded = (await repo.load()).getOrElse(() => throw StateError('x'));
-      expect(loaded.monthlyIncomeMinor, BigInt.from(25000000));
-      api.response = {...api.response, 'monthlyIncomeMinor': 'abc'};
-      final bad = (await repo.load()).getOrElse(() => throw StateError('x'));
-      expect(bad.monthlyIncomeMinor, isNull);
-    },
-  );
+  test('declared income goes out as a band, can be set or cleared, and is read '
+      'back with its midpoint', () async {
+    final api = Transport();
+    final repo = ProfileRepositoryImpl(api);
+    final cases = ProfileUseCases(repo, testServerConfigModel());
+    final band = DeclaredIncome(
+      minMinor: BigInt.from(10000000),
+      maxMinor: BigInt.from(20000000),
+    );
+    expect(band.midpointMinor, BigInt.from(15000000));
+    expect(
+      (await cases.saveOnboarding(OnboardingAnswers(declaredIncome: band)))
+          .isRight(),
+      true,
+    );
+    expect(api.body, {
+      'declaredIncome': {'minMinor': '10000000', 'maxMinor': '20000000'},
+    });
+    api.method = null;
+    expect(
+      (await cases.saveOnboarding(
+        OnboardingAnswers(
+          declaredIncome: DeclaredIncome(minMinor: BigInt.zero),
+        ),
+      )).isLeft(),
+      true,
+    );
+    expect(api.method, isNull);
+    final top = DeclaredIncome(minMinor: BigInt.from(40000000));
+    expect(top.midpointMinor, BigInt.from(50000000));
+    expect((await cases.saveDeclaredIncome(top)).isRight(), true);
+    expect(api.method, 'PUT');
+    expect(api.path, 'profile/declared-income');
+    expect(api.body, {
+      'declaredIncome': {'minMinor': '40000000', 'maxMinor': null},
+    });
+    expect((await cases.saveDeclaredIncome(null)).isRight(), true);
+    expect(api.body, {'declaredIncome': null});
+    api.response = {
+      'locale': 'vi',
+      'defaultCurrencyCode': 'VND',
+      'timezone': 'UTC',
+      'fiscalMonthStartDay': 1,
+      'version': 1,
+      'goals': ['save'],
+      'declaredIncome': {
+        'minMinor': '0',
+        'maxMinor': '5000000',
+        'midpointMinor': '2500000',
+      },
+    };
+    final loaded = (await repo.load()).getOrElse(() => throw StateError('x'));
+    expect(loaded.declaredIncome!.maxMinor, BigInt.from(5000000));
+    expect(loaded.declaredIncome!.midpointMinor, BigInt.from(2500000));
+    api.response = {
+      ...api.response,
+      'declaredIncome': {'minMinor': 'abc', 'maxMinor': null},
+    };
+    final bad = (await repo.load()).getOrElse(() => throw StateError('x'));
+    expect(bad.declaredIncome, isNull);
+  });
+  test('bands come from the configured bounds', () {
+    final bands = incomeBandsFrom([
+      BigInt.from(5000000),
+      BigInt.from(10000000),
+      BigInt.from(10000000),
+    ]);
+    expect(bands.length, 3);
+    expect(bands.first.minMinor, BigInt.zero);
+    expect(bands.last.maxMinor, isNull);
+    expect(bands.last.minMinor, BigInt.from(10000000));
+  });
   test(
     'onboarding answers go out as a PATCH with only the set parts',
     () async {
@@ -179,14 +206,11 @@ void main() {
       expect(
         (await cases.saveOnboarding(
           const OnboardingAnswers(
-            goals: [
-              OnboardingGoal.save,
-              OnboardingGoal.budget,
-              OnboardingGoal.track,
-            ],
+            goals: [OnboardingGoal.save, OnboardingGoal.save],
           ),
         )).isLeft(),
         true,
+        reason: 'the same goal twice',
       );
     },
   );

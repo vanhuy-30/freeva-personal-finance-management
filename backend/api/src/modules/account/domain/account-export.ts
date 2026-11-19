@@ -10,7 +10,8 @@ export interface AccountExport {
     defaultCurrencyCode: string;
     fiscalMonthStartDay: number;
     onboardingGoals: string[];
-    monthlyIncomeMinor: string | null;
+    /** BE-P6-002: declared income band (minor units, default currency); `maxMinor` null is the open top band. */
+    declaredIncome: { minMinor: string; maxMinor: string | null } | null;
     displayCurrencyCode: string | null;
     emailVerifiedAt: string | null;
     categoriesInitializedAt: string | null;
@@ -379,7 +380,8 @@ export interface ExportSource {
     defaultCurrencyCode: string;
     fiscalMonthStartDay: number;
     onboardingGoals: string[];
-    monthlyIncomeMinor: bigint | null;
+    declaredIncomeMinMinor: bigint | null;
+    declaredIncomeMaxMinor: bigint | null;
     displayCurrencyCode: string | null;
     emailVerifiedAt: Date | null;
     categoriesInitializedAt: Date | null;
@@ -668,7 +670,10 @@ export function toAccountExport(source: ExportSource): AccountExport {
       defaultCurrencyCode: code(user.defaultCurrencyCode),
       fiscalMonthStartDay: user.fiscalMonthStartDay,
       onboardingGoals: [...user.onboardingGoals],
-      monthlyIncomeMinor: user.monthlyIncomeMinor?.toString() ?? null,
+      declaredIncome: user.declaredIncomeMinMinor === null ? null : {
+        minMinor: user.declaredIncomeMinMinor.toString(),
+        maxMinor: user.declaredIncomeMaxMinor?.toString() ?? null,
+      },
       displayCurrencyCode: user.displayCurrencyCode ? code(user.displayCurrencyCode) : null,
       emailVerifiedAt: user.emailVerifiedAt ? iso(user.emailVerifiedAt) : null,
       categoriesInitializedAt: user.categoriesInitializedAt ? iso(user.categoriesInitializedAt) : null,

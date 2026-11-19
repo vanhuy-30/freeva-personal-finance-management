@@ -2,20 +2,37 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/core/theme/lucide_icons.g.dart';
 
+import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/check_mark.dart';
 import '../../../../core/widgets/freeva_button.dart';
 import '../../../../core/widgets/progress_bar.dart';
+import '../../../wallets/presentation/pages/wallet_editor_page.dart';
+import '../../../wallets/presentation/viewmodels/wallet_view_model.dart';
 import '../../domain/first_run_checklist.dart';
 
-/// "Bắt đầu nào n/3" with a progress bar: what is left to set up. Rows that
-/// are not done open where to do them; "Ghi ngay" goes straight to recording.
+/// "Bắt đầu nào n/3" with a progress bar: what is left to set up (board
+/// ObHome). The first row not done carries the button ("Thêm ví", then
+/// "Ghi ngay"); the others open where to do them.
 class FirstRunCard extends StatelessWidget {
-  const FirstRunCard({required this.checklist, super.key});
+  const FirstRunCard({required this.checklist, this.onWalletAdded, super.key});
 
   final FirstRunChecklist checklist;
+
+  /// Called after a wallet was added from here (Overview reloads).
+  final VoidCallback? onWalletAdded;
+
+  Future<void> _addWallet(BuildContext context) async {
+    final wallets = getIt<WalletViewModel>();
+    if (wallets.currencies.isEmpty || wallets.needsReload) {
+      await wallets.load();
+    }
+    if (!context.mounted) return;
+    final result = await openWalletEditor(context, wallets);
+    if (result != null) onWalletAdded?.call();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,14 +42,22 @@ class FirstRunCard extends StatelessWidget {
       _Item(
         label: s.checklistWallet,
         done: checklist.walletDone,
-        weight: FontWeight.w500,
-        onTap: () => context.push('/wallets'),
+        weight: FontWeight.w600,
+        action: checklist.walletDone
+            ? null
+            : FreevaButton(
+                label: s.checklistAddWallet,
+                size: FreevaButtonSize.compact,
+                onPressed: () => _addWallet(context),
+              ),
       ),
       _Item(
         label: s.checklistExpense,
         done: checklist.expenseDone,
-        weight: FontWeight.w600,
-        action: checklist.expenseDone
+        weight: checklist.walletDone ? FontWeight.w600 : FontWeight.w500,
+        onTap: () => context.push('/record'),
+        chevron: !checklist.walletDone && !checklist.expenseDone,
+        action: checklist.expenseDone || !checklist.walletDone
             ? null
             : FreevaButton(
                 label: s.checklistRecordNow,

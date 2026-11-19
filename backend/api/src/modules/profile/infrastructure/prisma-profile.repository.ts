@@ -1,7 +1,10 @@
 import { NEW_USER_CURRENCY_CODE } from '../../../core/money/currency';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../infrastructure/prisma/prisma.service';
-import type { OnboardingAnswers, Profile, ProfileRepository, ProfileUpdate } from '../domain/profile.repository';
+import { bandFromColumns, type DeclaredIncomeBand } from '../domain/declared-income';
+import {
+  declaredIncomeView, type OnboardingAnswers, type Profile, type ProfileRepository, type ProfileUpdate,
+} from '../domain/profile.repository';
 
 const select = {
   displayName: true,
@@ -11,17 +14,28 @@ const select = {
   fiscalMonthStartDay: true,
   version: true,
   onboardingGoals: true,
-  monthlyIncomeMinor: true,
+  declaredIncomeMinMinor: true,
+  declaredIncomeMaxMinor: true,
   displayCurrencyCode: true,
   autoSuggestEnabled: true,
 };
 
-type Row = Omit<Profile, 'goals' | 'monthlyIncomeMinor'> & { onboardingGoals: string[]; monthlyIncomeMinor: bigint | null };
+type Row = Omit<Profile, 'goals' | 'declaredIncome'> & {
+  onboardingGoals: string[]; declaredIncomeMinMinor: bigint | null; declaredIncomeMaxMinor: bigint | null;
+};
 
 function toProfile(row: Row | null): Profile | null {
   if (!row) return null;
-  const { onboardingGoals, monthlyIncomeMinor, ...rest } = row;
-  return { ...rest, goals: onboardingGoals, monthlyIncomeMinor: monthlyIncomeMinor?.toString() ?? null };
+  const { onboardingGoals, declaredIncomeMinMinor, declaredIncomeMaxMinor, ...rest } = row;
+  return {
+    ...rest,
+    goals: onboardingGoals,
+    declaredIncome: declaredIncomeView(bandFromColumns(declaredIncomeMinMinor, declaredIncomeMaxMinor)),
+  };
+}
+
+function bandColumns(band: DeclaredIncomeBand | null) {
+  return { declaredIncomeMinMinor: band?.minMinor ?? null, declaredIncomeMaxMinor: band?.maxMinor ?? null };
 }
 
 @Injectable()
@@ -45,17 +59,14 @@ export class PrismaProfileRepository implements ProfileRepository {
       where: { id: userId },
       data: {
         ...(answers.goals ? { onboardingGoals: answers.goals } : {}),
-        ...(answers.monthlyIncomeMinor ? { monthlyIncomeMinor: BigInt(answers.monthlyIncomeMinor) } : {}),
+        ...(answers.declaredIncome ? bandColumns(answers.declaredIncome) : {}),
       },
     });
     return changed.count === 1;
   }
 
-  async saveMonthlyIncome(userId: string, minor: string | null): Promise<boolean> {
-    const changed = await this.prisma.user.updateMany({
-      where: { id: userId },
-      data: { monthlyIncomeMinor: minor === null ? null : BigInt(minor) },
-    });
+  async saveDeclaredIncome(userId: string, band: DeclaredIncomeBand | null): Promise<boolean> {
+    const changed = await this.prisma.user.updateMany({ where: { id: userId }, data: bandColumns(band) });
     return changed.count === 1;
   }
 

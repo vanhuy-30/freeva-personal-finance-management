@@ -93,10 +93,12 @@ void main() {
   ) async {
     await pump(tester, 'firstRun');
     expect(find.text('Chào Minh'), findsOneWidget);
-    expect(find.text('Tổng số dư · 1 ví'), findsOneWidget);
+    expect(find.text('Tổng số dư'), findsOneWidget);
     expect(find.text('Bắt đầu nào'), findsOneWidget);
-    expect(find.text('1/3'), findsOneWidget);
-    expect(find.text('Ghi ngay'), findsOneWidget);
+    expect(find.text('0/3'), findsOneWidget);
+    expect(find.text('Thêm ví đầu tiên'), findsOneWidget);
+    expect(find.text('Thêm ví'), findsOneWidget);
+    expect(find.text('Ghi ngay'), findsNothing);
     expect(find.text('Khoá app bằng PIN'), findsOneWidget);
     expect(find.text('Giao dịch sẽ hiện ở đây'), findsOneWidget);
     expect(find.text('Ghi thu'), findsNothing);

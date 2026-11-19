@@ -4,6 +4,7 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../../infrastructure/prisma/prisma.service';
 import { touchFinancialOwner } from '../../../infrastructure/prisma/financial-owner-lock';
 import { todayInTimeZone } from '../../reports/domain/report';
+import { bandFromColumns, incomeBandMidpoint } from '../../profile/domain/declared-income';
 import { TransactionError } from '../../transactions/domain/transaction-error';
 import type { TransactionInput } from '../../transactions/domain/transaction';
 import { createTransactionInTx } from '../../transactions/infrastructure/create-transaction-in-tx';
@@ -73,6 +74,12 @@ const audit = (userId: string, goalId: string, action: 'goal.create' | 'goal.adj
   outcome: 'success' as const,
 });
 
+/** BE-P6-002: midpoint of the declared income band; null when the user has not declared one. */
+function declaredMidpoint(user: { declaredIncomeMinMinor: bigint | null; declaredIncomeMaxMinor: bigint | null }): bigint | null {
+  const band = bandFromColumns(user.declaredIncomeMinMinor, user.declaredIncomeMaxMinor);
+  return band ? incomeBandMidpoint(band) : null;
+}
+
 @Injectable()
 export class PrismaGoalRepository implements GoalRepository {
   constructor(private readonly prisma: PrismaService) {}
@@ -104,12 +111,12 @@ export class PrismaGoalRepository implements GoalRepository {
   async previewContext(userId: string): Promise<{ today: string; income: DeclaredIncome }> {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      select: { timezone: true, defaultCurrencyCode: true, monthlyIncomeMinor: true },
+      select: { timezone: true, defaultCurrencyCode: true, declaredIncomeMinMinor: true, declaredIncomeMaxMinor: true },
     });
     if (!user) throw new GoalError('VALIDATION_ERROR');
     return {
       today: todayInTimeZone(user.timezone, new Date()),
-      income: { currencyCode: user.defaultCurrencyCode.trim(), monthlyIncomeMinor: user.monthlyIncomeMinor },
+      income: { currencyCode: user.defaultCurrencyCode.trim(), midpointMinor: declaredMidpoint(user) },
     };
   }
 

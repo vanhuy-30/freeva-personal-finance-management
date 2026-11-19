@@ -6,7 +6,7 @@ Contract: [OpenAPI](../../packages/api-contracts/openapi.yaml) `/api/v1/goals`. 
 
 - `Goal`: nhóm (`kind`), tên riêng, số đích, **số hiện tại** (lưu cứng), ngày đích, ví liên kết, mức đóng góp/tháng, `icon` + `colorToken` (token catalog, không hex), `archivedAt`, `version`. Tiền tệ = tiền tệ ví liên kết, không đổi sau khi tạo.
 - `GoalEntry`: sổ đóng góp/rút (`contribute` | `withdraw`), `amountMinor > 0`, `clientId` idempotent, `transactionClientId` trỏ chân transfer nếu có.
-- Nhóm có sẵn: `emergency`, `home`, `car`, `travel`, `education`, `wedding`, `retirement`, `custom` — `GET /goals/presets` trả icon/màu mặc định; user luôn đặt tên.
+- Nhóm có sẵn: `emergency`, `home`, `car`, `travel`, `education`, `wedding`, `retirement`, `children`, `business`, `health` (`BE-P6-002`), `custom` — `GET /goals/presets` trả icon/màu mặc định; user luôn đặt tên.
 
 ## Tiền đi đâu
 
@@ -34,4 +34,4 @@ Số nguyên (`bigint`), không `double`.
 
 ## API
 
-Bearer session, `Cache-Control: no-store`, tiền là string integer. `GET/POST /goals`, `GET/PATCH/DELETE /goals/{id}` (DELETE = lưu trữ, cần `version`), `GET /goals/presets`, `GET /goals/{id}/entries` (lịch sử góp, rút và sửa số, mới nhất trước, tối đa 200; `adjust` không có số tiền vì audit không lưu), `POST /goals/{id}/{contribute|withdraw|adjust}`. `POST /goals/preview` (`BE-P3-012`, câu 3 onboarding): trả `monthsLeft`, `requiredPerMonthMinor`, `incomeShareBps` cho một mục tiêu chưa tạo (chưa cần ví), không ghi gì; phần trăm tính trên thu nhập khai trên hồ sơ (`monthlyIncomeMinor`, cùng tiền tệ mặc định), không phải trung bình 90 ngày. Có trong `GET /account/export` (`goals`, `goalEntries`) và xoá theo user. Không log số tiền.
+Bearer session, `Cache-Control: no-store`, tiền là string integer. `GET/POST /goals`, `GET/PATCH/DELETE /goals/{id}` (DELETE = lưu trữ, cần `version`), `GET /goals/presets`, `GET /goals/{id}/entries` (lịch sử góp, rút và sửa số, mới nhất trước, tối đa 200; `adjust` không có số tiền vì audit không lưu), `POST /goals/{id}/{contribute|withdraw|adjust}`. `POST /goals/preview` (`BE-P3-012`, câu 3 onboarding): trả `monthsLeft`, `requiredPerMonthMinor`, `incomeShareBps` cho một mục tiêu chưa tạo (chưa cần ví), không ghi gì; phần trăm tính trên điểm giữa khoảng thu nhập khai trên hồ sơ (`declaredIncome.midpointMinor`, `BE-P6-002`, cùng tiền tệ mặc định), không phải thu nhập thực (trung bình 90 ngày). Có trong `GET /account/export` (`goals`, `goalEntries`) và xoá theo user. Không log số tiền.

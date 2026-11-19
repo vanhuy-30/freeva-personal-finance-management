@@ -15,6 +15,7 @@ import 'package:mobile/features/auth/presentation/pages/auth_page.dart';
 import 'package:mobile/features/auth/presentation/pages/lock_page.dart';
 import 'package:mobile/features/auth/presentation/pages/setup_page.dart';
 import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dart';
+import 'package:mobile/features/auth/presentation/widgets/pin_setup_flow.dart';
 
 import '../../core/widgets/widget_test_app.dart' show loadTestFonts;
 import 'fakes.dart';
@@ -145,19 +146,18 @@ void main() {
         ..email = 'lan@gmail.com',
     );
   });
+  // The PIN is set up from inside the app now (checklist, Bảo mật); the
+  // flow is drawn as on boards ObPin / ObPinConfirm / ObBiometric.
+  Widget pinFlow(AuthViewModel m) =>
+      PinSetupFlow(model: m, onSkip: () {}, onBack: () {});
+
   testWidgets('pin', skip: !Platform.isMacOS, (t) async {
     await shot(
       t,
       'pin',
-      (m) => SetupPage(model: m),
-      prepare: (m) => m.stage = AuthStage.setup,
+      pinFlow,
+      prepare: (m) => m.stage = AuthStage.unlocked,
       then: () async {
-        await t.tap(find.text('Xong'));
-        await t.pumpAndSettle();
-        for (final skip in ['Để sau', 'Để sau', 'Để sau', 'Bỏ qua']) {
-          await t.tap(find.text(skip));
-          await t.pumpAndSettle();
-        }
         for (final d in ['1', '2', '3', '4']) {
           await t.tap(find.bySemanticsLabel(d));
           await t.pump();
@@ -165,15 +165,6 @@ void main() {
       },
     );
   });
-  Future<void> toPin(WidgetTester t) async {
-    await t.tap(find.text('Xong'));
-    await t.pumpAndSettle();
-    for (final skip in ['Để sau', 'Để sau', 'Để sau', 'Bỏ qua']) {
-      await t.tap(find.text(skip));
-      await t.pumpAndSettle();
-    }
-  }
-
   Future<void> typePin(WidgetTester t) async {
     for (final d in ['1', '2', '3', '4', '5', '6']) {
       await t.tap(find.bySemanticsLabel(d));
@@ -185,10 +176,9 @@ void main() {
     await shot(
       t,
       'pin_confirm',
-      (m) => SetupPage(model: m),
-      prepare: (m) => m.stage = AuthStage.setup,
+      pinFlow,
+      prepare: (m) => m.stage = AuthStage.unlocked,
       then: () async {
-        await toPin(t);
         await typePin(t);
         await t.tap(find.text('Tiếp tục'));
         await t.pumpAndSettle();
@@ -202,12 +192,11 @@ void main() {
       await shot(
         t,
         'biometric',
-        (m) => SetupPage(model: m),
+        pinFlow,
         prepare: (m) => m
-          ..stage = AuthStage.setup
+          ..stage = AuthStage.unlocked
           ..biometricAvailable = true,
         then: () async {
-          await toPin(t);
           await typePin(t);
           await t.tap(find.text('Tiếp tục'));
           await t.pumpAndSettle();
@@ -280,8 +269,8 @@ void main() {
       prepare: (m) => m.stage = AuthStage.setup,
       then: () async {
         await toQuestions(t);
-        await t.tap(find.text('Quản lý chi tiêu'));
-        await t.tap(find.text('Tiết kiệm'));
+        await t.tap(find.text('Quản lý thu nhập và chi tiêu'));
+        await t.tap(find.text('Tiết kiệm tiền'));
         await t.pump();
       },
     );
@@ -301,26 +290,30 @@ void main() {
       prepare: (m) => m.stage = AuthStage.setup,
       then: () async {
         await toIncome(t);
-        await t.tap(find.text('25 triệu'));
+        await t.tap(find.text('10 – 20 triệu'));
         await t.pump();
       },
     );
   });
 
-  Future<void> toSaving(WidgetTester t) async {
+  Future<void> toSaving(WidgetTester t, {String kind = 'Mua nhà'}) async {
     await toIncome(t);
-    await t.tap(find.text('25 triệu'));
+    await t.tap(find.text('10 – 20 triệu'));
     await t.pump();
     await t.tap(find.text('Tiếp tục'));
     await t.pumpAndSettle();
-    await t.tap(find.text('Mua nhà'));
-    await t.enterText(find.byType(TextField), '60000000');
+    await t.tap(find.text(kind));
     await t.pump();
-    await t.tap(find.text('Đến khi'));
+    if (kind == 'Khác') {
+      await t.enterText(find.byType(TextField).first, 'Mua laptop mới');
+      await t.pump();
+    }
+    await t.enterText(find.byType(TextField).last, '60000000');
+    await t.pump();
+    await t.tap(find.text('Thời hạn'));
     await t.pumpAndSettle();
     await t.tap(find.text('5'));
     await t.pumpAndSettle();
-    await t.pump(const Duration(milliseconds: 400));
   }
 
   testWidgets('a3 saving', skip: !Platform.isMacOS, (t) async {
@@ -337,77 +330,48 @@ void main() {
     );
   });
 
-  testWidgets('a3 budget suggestion', skip: !Platform.isMacOS, (t) async {
+  testWidgets('a3 saving other', skip: !Platform.isMacOS, (t) async {
     await shot(
       t,
-      'a3_budget_suggest',
+      'a3_saving_other',
       (m) => SetupPage(model: m, today: today),
       prepare: (m) => m.stage = AuthStage.setup,
       then: () async {
-        await toSaving(t);
-        await t.tap(find.text('Tiếp tục'));
-        await t.pumpAndSettle();
+        await toSaving(t, kind: 'Khác');
+        FocusManager.instance.primaryFocus?.unfocus();
+        await t.pump();
       },
     );
   });
 
-  testWidgets('a3 budget suggestion without a goal', skip: !Platform.isMacOS, (
-    t,
-  ) async {
+  testWidgets('a3 done', skip: !Platform.isMacOS, (t) async {
     await shot(
       t,
-      'a3_budget_suggest_no_goal',
+      'a3_done',
+      (m) => SetupPage(model: m, today: today),
+      prepare: (m) => m.stage = AuthStage.setup,
+      then: () async {
+        await toQuestions(t);
+        for (var i = 0; i < 3; i++) {
+          await t.tap(find.text('Để sau'));
+          await t.pumpAndSettle();
+        }
+      },
+    );
+  });
+  testWidgets('a3 done dark', skip: !Platform.isMacOS, (t) async {
+    await shot(
+      t,
+      'a3_done_dark',
       (m) => SetupPage(model: m, today: today),
       dark: true,
       prepare: (m) => m.stage = AuthStage.setup,
       then: () async {
-        await toIncome(t);
-        await t.tap(find.text('25 triệu'));
-        await t.pump();
-        await t.tap(find.text('Tiếp tục'));
-        await t.pumpAndSettle();
-        await t.tap(find.text('Để sau'));
-        await t.pumpAndSettle();
-      },
-    );
-  });
-
-  Future<void> toWallets(WidgetTester t) async {
-    await toQuestions(t);
-    for (var i = 0; i < 3; i++) {
-      await t.tap(find.text('Để sau'));
-      await t.pumpAndSettle();
-    }
-  }
-
-  testWidgets('setup wallets', skip: !Platform.isMacOS, (t) async {
-    await shot(
-      t,
-      'wallets',
-      (m) => SetupPage(model: m),
-      prepare: (m) => m.stage = AuthStage.setup,
-      then: () async {
-        await toWallets(t);
-        // Add cash through the real form.
-        await t.tap(find.text('Thêm').first);
-        await t.pumpAndSettle();
-        await t.enterText(find.byType(TextField).at(0), 'Ví của tôi');
-        await t.enterText(find.byType(TextField).at(1), '850000');
-        await t.tap(find.text('Lưu ví'));
-        await t.pumpAndSettle();
-      },
-    );
-  });
-  testWidgets('setup wallet form', skip: !Platform.isMacOS, (t) async {
-    await shot(
-      t,
-      'wallet_form',
-      (m) => SetupPage(model: m),
-      prepare: (m) => m.stage = AuthStage.setup,
-      then: () async {
-        await toWallets(t);
-        await t.tap(find.text('Thêm').last);
-        await t.pumpAndSettle();
+        await toQuestions(t);
+        for (var i = 0; i < 3; i++) {
+          await t.tap(find.text('Để sau'));
+          await t.pumpAndSettle();
+        }
       },
     );
   });

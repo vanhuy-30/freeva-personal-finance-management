@@ -7,6 +7,7 @@ import '../../../../core/time/device_time_zone.dart';
 import '../../../auth/domain/auth_repository.dart';
 import '../../../auth/presentation/viewmodels/auth_view_model.dart';
 import '../../domain/account_export_use_case.dart';
+import '../../domain/declared_income.dart';
 import '../../domain/profile.dart';
 import '../../domain/profile_use_cases.dart';
 
@@ -28,8 +29,8 @@ abstract class ProfileViewModel extends ChangeNotifier {
   /// Returns false when the server refused or the session changed.
   Future<bool> saveDisplayCurrency(String? code);
 
-  /// Sets or (null) clears the stated monthly income. False on failure.
-  Future<bool> saveMonthlyIncome(BigInt? minor);
+  /// Sets or (null) clears the stated income band. False on failure.
+  Future<bool> saveDeclaredIncome(DeclaredIncome? income);
 
   /// True while an export is being fetched or handed to the OS.
   bool get exporting;
@@ -221,11 +222,11 @@ class DefaultProfileViewModel extends ProfileViewModel {
   }
 
   @override
-  Future<bool> saveMonthlyIncome(BigInt? minor) async {
+  Future<bool> saveDeclaredIncome(DeclaredIncome? income) async {
     final current = saved;
     if (current == null || _stage != AuthStage.unlocked) return false;
     final epoch = _epoch;
-    final result = await _useCases.saveMonthlyIncome(minor);
+    final result = await _useCases.saveDeclaredIncome(income);
     if (epoch != _epoch) return false;
     return result.fold(
       (e) {
@@ -234,8 +235,8 @@ class DefaultProfileViewModel extends ProfileViewModel {
         return false;
       },
       (_) {
-        saved = current.withMonthlyIncome(minor);
-        draft = draft?.withMonthlyIncome(minor);
+        saved = current.withDeclaredIncome(income);
+        draft = draft?.withDeclaredIncome(income);
         notifyListeners();
         return true;
       },

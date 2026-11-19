@@ -15,6 +15,7 @@ import '../../../goals/presentation/widgets/goals_home_block.dart';
 import '../../../insights/presentation/viewmodels/insights_view_model.dart';
 import '../../../notifications/presentation/viewmodels/notification_view_model.dart';
 import '../../../onboarding/presentation/viewmodels/first_run_nudges_view_model.dart';
+import '../../../onboarding/presentation/widgets/budget_ask_sheet.dart';
 import '../../../onboarding/presentation/widgets/daily_log_ask_sheet.dart';
 import '../viewmodels/home_view_model.dart';
 import '../../domain/first_run_checklist.dart';
@@ -76,7 +77,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   /// After each fresh load: create the waiting saving goal, maybe offer the
-  /// daily log reminder.
+  /// monthly budget or the daily log reminder.
   Future<void> _modelChanged() async {
     final data = model.data;
     final nudges = _nudges;
@@ -85,20 +86,33 @@ class _HomePageState extends State<HomePage> {
     final created = await nudges.check(
       trackGoal: model.trackGoal,
       hasTransactions: data.recent.isNotEmpty,
+      incomeMidpointMinor: model.incomeMidpointMinor,
     );
     if (created && model.saveGoal) getIt<GoalViewModel>().load();
   }
 
   void _nudgesChanged() {
     final nudges = _nudges;
-    if (nudges == null || !nudges.askDailyLog || _sheetOpen || !mounted) {
-      return;
-    }
+    if (nudges == null || _sheetOpen || !mounted) return;
+    if (!nudges.askBudget && !nudges.askDailyLog) return;
     // Only over Tổng quan itself, not a screen pushed on top of it.
     if (_lastPath != null && _lastPath != '/home') return;
     _sheetOpen = true;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
+      if (nudges.askBudget) {
+        await showBudgetAskSheet(
+          context,
+          nudges,
+          currency: model.currency,
+          today: model.today,
+        );
+        _sheetOpen = false;
+        await nudges.budgetAnswered();
+        // The budget block reads the new budget.
+        if (mounted) model.load();
+        return;
+      }
       await showDailyLogAskSheet(context, getIt<NotificationViewModel>());
       _sheetOpen = false;
       await nudges.dailyLogAnswered();
@@ -187,7 +201,7 @@ class _HomePageState extends State<HomePage> {
                 BalanceSection(model: model, compact: firstRun),
                 gap,
                 if (firstRun) ...[
-                  FirstRunCard(checklist: checklist),
+                  FirstRunCard(checklist: checklist, onWalletAdded: model.load),
                   gap,
                   const RecentEmptyHint(),
                 ] else ...[

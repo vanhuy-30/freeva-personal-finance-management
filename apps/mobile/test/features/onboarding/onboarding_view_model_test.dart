@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../support/server_config_fixture.dart';
 
 import 'package:mobile/features/auth/domain/auth_repository.dart';
-import 'package:mobile/features/goals/domain/goal.dart';
 import 'package:mobile/features/onboarding/domain/onboarding_answers.dart';
 import 'package:mobile/features/onboarding/domain/pending_goal.dart';
 import 'package:mobile/features/onboarding/domain/pending_goal_use_cases.dart';
@@ -44,13 +43,9 @@ void main() {
     );
     model = OnboardingViewModel(
       ProfileUseCases(profiles, testServerConfigModel()),
-      settings,
-      goals,
       pending,
-      null,
       limits: testServerConfigModel(),
       today: DateTime(2026, 11, 5),
-      previewDelay: Duration.zero,
     );
   });
   tearDown(() => model.dispose());
@@ -63,37 +58,42 @@ void main() {
     model.pickKind('home');
     model.setTargetMinor(BigInt.from(60000000));
     model.pickDate('2027-09-05');
-    await model.settlePreview();
   }
 
-  test('at most two goals; the third stops being pickable', () {
+  test('any number of goals, saved in the board order', () async {
+    model.toggleGoal(OnboardingGoal.habits);
     model.toggleGoal(OnboardingGoal.track);
-    model.toggleGoal(OnboardingGoal.save);
-    model.toggleGoal(OnboardingGoal.budget);
-    expect(model.goals, [OnboardingGoal.track, OnboardingGoal.save]);
-    expect(model.canPickGoal(OnboardingGoal.budget), isFalse);
-    model.toggleGoal(OnboardingGoal.save);
-    expect(model.canPickGoal(OnboardingGoal.budget), isTrue);
+    model.toggleGoal(OnboardingGoal.debt);
+    expect(model.canPickGoal(OnboardingGoal.assets), isTrue);
+    await model.saveGoals();
+    expect(profiles.onboarding.single.toJson(), {
+      'goals': ['track', 'debt', 'habits'],
+    });
   });
 
-  test(
-    'only goals and income go to the server; skipping sends nothing',
-    () async {
-      await model.saveGoals();
-      await model.saveIncome();
-      expect(profiles.onboarding, isEmpty);
-      model.toggleGoal(OnboardingGoal.track);
-      await model.saveGoals();
-      model.setIncome(25000000);
-      await model.saveIncome();
-      expect(profiles.onboarding.map((a) => a.toJson()), [
-        {
-          'goals': ['track'],
-        },
-        {'monthlyIncomeMinor': '25000000'},
-      ]);
-    },
-  );
+  test('only goals and the income band go to the server; skipping and "Không '
+      'muốn chia sẻ" send nothing', () async {
+    await model.saveGoals();
+    await model.saveIncome();
+    expect(profiles.onboarding, isEmpty);
+    model.pickNotShared();
+    await model.saveIncome();
+    expect(profiles.onboarding, isEmpty);
+    model.toggleGoal(OnboardingGoal.track);
+    await model.saveGoals();
+    expect(model.incomeBands.length, 5);
+    model.pickIncome(model.incomeBands[2]);
+    expect(model.incomeNotShared, isFalse);
+    await model.saveIncome();
+    expect(profiles.onboarding.map((a) => a.toJson()), [
+      {
+        'goals': ['track'],
+      },
+      {
+        'declaredIncome': {'minMinor': '10000000', 'maxMinor': '20000000'},
+      },
+    ]);
+  });
 
   test('a failed save never throws', () async {
     profiles.failure = const AuthFailure(AuthError.network);
@@ -102,55 +102,15 @@ void main() {
     expect(profiles.onboarding, isEmpty);
   });
 
-  test('income keys: no leading zeros, 12 digit cap, delete', () {
-    model.typeIncome('0');
-    expect(model.income, BigInt.zero);
-    model.typeIncome('1');
-    model.typeIncome('000');
-    expect(model.income, BigInt.from(1000));
-    model.deleteIncomeDigit();
-    expect(model.income, BigInt.from(100));
-    for (var i = 0; i < 6; i++) {
-      model.typeIncome('000');
-    }
-    expect(model.income.toString().length, lessThanOrEqualTo(12));
-  });
-
-  test('the monthly saving shown is the server preview', () async {
-    await fillSaving();
-    expect(goals.previews.single, ('VND', BigInt.from(60000000), '2027-09-05'));
-    expect(model.preview?.requiredPerMonthMinor, BigInt.from(6000000));
-    expect(model.preview?.incomeShareBps, 2400);
-  });
-
-  test('budget suggestion: income minus the goal, else minus 20%', () async {
-    expect(model.suggestion, isNull);
-    model.setIncome(25000000);
-    final plain = model.suggestion!;
-    expect(plain.fromGoal, isFalse);
-    expect(plain.saving, BigInt.from(5000000));
-    expect(plain.spending, BigInt.from(20000000));
-    await fillSaving();
-    final withGoal = model.suggestion!;
-    expect(withGoal.fromGoal, isTrue);
-    expect(withGoal.saving, BigInt.from(6000000));
-    expect(withGoal.spending, BigInt.from(19000000));
-    goals.previewResult = GoalPreview(
-      monthsLeft: 1,
-      requiredPerMonthMinor: BigInt.from(60000000),
-    );
-    model.pickDate('2026-12-01');
-    await model.settlePreview();
-    expect(model.suggestion, isNull, reason: 'nothing left to spend');
-  });
-
-  test('"Dùng mức này" keeps a device draft when no budget API', () async {
-    model.setIncome(25000000);
-    await model.useSuggestion();
-    final saved = (await settings.load()).getOrElse(
-      () => throw StateError('x'),
-    );
-    expect(saved.budgetDraftMinor, 20000000);
+  test('"Khác" needs a name and keeps it as the goal name', () async {
+    model.pickKind('custom');
+    model.setTargetMinor(BigInt.from(20000000));
+    model.pickDate('2027-01-05');
+    expect(model.savingReady, isFalse);
+    model.setCustomName('  Mua laptop  ');
+    expect(model.savingReady, isTrue);
+    await model.keepSavingGoal('Khác');
+    expect((await pendingGoal())!['name'], 'Mua laptop');
   });
 
   test('the saving goal waits for a wallet, then is created once', () async {

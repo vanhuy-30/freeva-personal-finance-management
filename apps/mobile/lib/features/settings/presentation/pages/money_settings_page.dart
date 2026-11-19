@@ -3,7 +3,6 @@ import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
-import '../../../../core/money/money_text.dart';
 import '../../../../core/router/nav_back.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
@@ -12,6 +11,7 @@ import '../../../../core/widgets/settings_row.dart';
 import '../../../../core/widgets/freeva_top_bar.dart';
 import '../../../profile/presentation/viewmodels/profile_view_model.dart';
 import '../widgets/choice_sheet.dart';
+import '../../../profile/presentation/widgets/income_band_label.dart';
 import '../widgets/income_sheet.dart';
 import '../widgets/profile_actions.dart';
 import '../../../server_config/domain/app_limits.dart';
@@ -101,10 +101,11 @@ class _MoneySettingsPageState extends State<MoneySettingsPage> {
                   minHeight: rowHeight,
                   icon: LucideIcons.arrowDownToLine,
                   title: s.meIncome,
-                  value: saved?.monthlyIncomeMinor == null
+                  value: saved?.declaredIncome == null
                       ? s.meIncomeNone
-                      : formatMoneyText(
-                          saved!.monthlyIncomeMinor!,
+                      : incomeBandLabel(
+                          s,
+                          saved!.declaredIncome!,
                           CurrencyCatalog.current.digits(saved.currency),
                           s.localeName,
                         ),

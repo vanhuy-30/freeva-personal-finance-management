@@ -124,7 +124,9 @@ model User {
   termsAcceptedAt          DateTime? @db.Timestamptz
   termsVersion             String?   @db.VarChar(20)
   onboardingGoals          String[]  @default([])
-  monthlyIncomeMinor       BigInt?
+  /// BE-P6-002: declared income band (minor units, default currency). Max null = open top band.
+  declaredIncomeMinMinor   BigInt?
+  declaredIncomeMaxMinor   BigInt?
   displayCurrencyCode      String?   @db.Char(3)
   locale                   String    @default("vi")
   timezone                 String    @default("Asia/Ho_Chi_Minh")
@@ -719,6 +721,9 @@ enum GoalKind {
   education
   wedding
   retirement
+  children
+  business
+  health
   custom
 }
 

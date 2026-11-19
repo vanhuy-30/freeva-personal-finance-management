@@ -21,6 +21,7 @@ class AppPreferences {
     this.budgetDraftMinor,
     this.pendingGoal,
     this.dailyLogAsked = false,
+    this.budgetAsked = false,
   });
 
   final AppThemePreference theme;
@@ -43,6 +44,9 @@ class AppPreferences {
 
   /// The Overview already offered the daily log reminder once.
   final bool dailyLogAsked;
+
+  /// The first-visit "Đặt ngân sách tháng" sheet was answered or closed.
+  final bool budgetAsked;
   static const _keep = Object();
 
   AppPreferences copyWith({
@@ -56,6 +60,7 @@ class AppPreferences {
     Object? budgetDraftMinor = _keep,
     Object? pendingGoal = _keep,
     bool? dailyLogAsked,
+    bool? budgetAsked,
   }) => AppPreferences(
     theme: theme ?? this.theme,
     onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
@@ -72,5 +77,6 @@ class AppPreferences {
         ? this.pendingGoal
         : pendingGoal as Map<String, String>?,
     dailyLogAsked: dailyLogAsked ?? this.dailyLogAsked,
+    budgetAsked: budgetAsked ?? this.budgetAsked,
   );
 }

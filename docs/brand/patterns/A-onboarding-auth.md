@@ -5,7 +5,11 @@ Canvas: trang **06 · Onboarding và tài khoản**, khối A1, A2.
 (<https://claude.ai/artifact/SmyaVvz57doJiAM6Kn678T>, riêng tư). Spec chung:
 [design-system.md](../design-system.md).
 
-## Thay đổi chốt 2026-11-02 (chưa vẽ, `DS-P3-012`)
+## Thay đổi 2026-11-19 (`MOB-P6-004`)
+
+Onboarding mới ở [A3-onboarding-three-questions.md](A3-onboarding-three-questions.md): ba câu → Hoàn tất → vào app. Thiết lập tài chính (A1.6), gợi ý ngân sách và các bước PIN / Face ID không còn trong onboarding: thêm ví và khoá app nằm ở checklist trang chính, ngân sách hỏi bằng sheet lần đầu vào app. Màn A2.4–A2.6 giữ nguyên, mở từ checklist hoặc Bảo mật. A1.2 đổi câu phụ thành "Bắt đầu hành trình quản lý tài chính thông minh cùng Freeva."; A2.5 bỏ câu "Không khớp sẽ được nhập lại từ đầu."; A2.6 đổi câu phụ thành "Mở khoá Freeva nhanh hơn với Face ID". Bảng A1 và luồng bên dưới là bản cũ.
+
+## Thay đổi chốt 2026-11-02 (`DS-P3-012`)
 
 Câu hỏi A1.3–A1.5 (Mục tiêu, Thói quen, Ngân sách) đã bị thay bằng ba câu A3 và xoá khỏi canvas (2026-11-17); các màn mới nằm ngay hàng A1, đều bỏ qua được, sau đó tới A1.6 như cũ:
 
@@ -49,7 +53,7 @@ Bước 3–5 có thanh tiến độ `1/3 … 3/3`, nút quay lại (trừ bư�
 |---|---|---|
 | 1 | Đăng nhập | Tiêu đề giữa. Ô email + ô mật khẩu (có mắt) trên cùng một màn. "Quên mật khẩu?" gạch chân ở giữa. Nút "Đăng nhập". "hoặc" → Google, Apple. "Chưa có tài khoản? Đăng ký" (→ A1.2) |
 | 2 | Tạo tài khoản bằng email | Ô email, mật khẩu, **nhập lại mật khẩu** (đều có mắt), thanh độ mạnh 3 nấc. Danh sách tự tick: "Ít nhất 8 ký tự" · "Có cả chữ và số" (bắt buộc) · "Thêm ký hiệu như ! @ # để mạnh hơn" (gợi ý) · "Hai mật khẩu khớp nhau". **Checkbox** "Tôi đồng ý với Điều khoản sử dụng và Chính sách bảo mật của Freeva." Nút "Tạo tài khoản" |
-| 3 | Xác nhận email | "Xác nhận email" · "Freeva đã gửi link xác nhận tới …". Thẻ "Email đã xác nhận giúp bạn": lấy lại mật khẩu khi quên · nhận cảnh báo khi có đăng nhập lạ · không lỡ thông báo quan trọng về tài khoản. Nút "Xong" (→ A1.3; không mở app Mail từ Freeva), "Gửi lại". **Không bắt buộc:** chữ "Chưa xác nhận vẫn dùng app bình thường. Bạn có thể xác nhận sau ở Cá nhân." Không có nút quay lại: tài khoản đã tạo, quay lại sẽ thành đăng xuất (owner 2026-10-27). |
+| 3 | Xác nhận email | "Xác nhận email" · "Freeva đã gửi link xác nhận tới …". Thẻ "Email đã xác nhận giúp bạn": lấy lại mật khẩu · nhận cảnh báo khi có đăng nhập lạ · không bỏ lỡ thông báo quan trọng về tài khoản. Nút "Xong" (→ A1.3; không mở app Mail từ Freeva), "Gửi lại". **Không bắt buộc:** chữ "Bạn có thể xác nhận sau ở màn hình Cá nhân." Không có nút quay lại: tài khoản đã tạo, quay lại sẽ thành đăng xuất (owner 2026-10-27). |
 | 4 | Đặt mã PIN | Quay lại · "Để sau" (→ A1.7). "Đặt mã PIN" · "6 số để mở khoá Freeva trên máy này." 6 chấm + bàn phím số, nút "Tiếp tục" |
 | 5 | Nhập lại mã PIN | Quay lại · "Để sau". "Nhập lại mã PIN" · "Nhập lại 6 số vừa đặt để chắc chắn." 6 chấm, "Không khớp sẽ được nhập lại từ đầu.", nút "Xác nhận" |
 | 6 | Face ID | "Thiết lập Face ID" · "Mở khoá Freeva bằng khuôn mặt, nhanh hơn nhập PIN." "Thiết lập Face ID" / "Để sau" (→ A1.7) |

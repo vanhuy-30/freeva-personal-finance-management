@@ -84,7 +84,7 @@ void main() {
     },
   );
   testWidgets(
-    'first-run setup: email, three questions, wallets, PIN, then the app',
+    'first-run setup: email, three questions, Hoàn tất, then the app',
     (tester) async {
       tester.view.physicalSize = const Size(390, 1200);
       tester.view.devicePixelRatio = 1;
@@ -96,33 +96,40 @@ void main() {
       expect(find.text('protected content'), findsNothing);
       await tester.tap(find.text('Xong'));
       await tester.pumpAndSettle();
-      expect(find.text('Freeva giúp bạn việc gì?'), findsOneWidget);
+      expect(find.text('Bạn muốn Freeva giúp gì cho mình?'), findsOneWidget);
       expect(find.text('1/3'), findsOneWidget);
       await tester.tap(find.text('Để sau'));
       await tester.pumpAndSettle();
-      expect(find.text('Thu nhập mỗi tháng khoảng bao nhiêu?'), findsOneWidget);
+      expect(
+        find.text('Thu nhập hàng tháng của bạn là bao nhiêu?'),
+        findsOneWidget,
+      );
       // System back returns to the previous question.
       final dynamic widgetsApp = tester.state(find.byType(WidgetsApp));
       await widgetsApp.didPopRoute();
       await tester.pumpAndSettle();
-      expect(find.text('Freeva giúp bạn việc gì?'), findsOneWidget);
+      expect(find.text('Bạn muốn Freeva giúp gì cho mình?'), findsOneWidget);
       await tester.tap(find.text('Để sau'));
       await tester.pumpAndSettle();
+      await tester.tap(find.text('Không muốn chia sẻ'));
+      await tester.tap(find.text('Tiếp tục'));
+      await tester.pumpAndSettle();
+      expect(
+        find.text('Bạn đang hướng đến mục tiêu tài chính nào?'),
+        findsOneWidget,
+      );
       await tester.tap(find.text('Để sau'));
       await tester.pumpAndSettle();
-      expect(find.text('Bạn để dành cho việc gì?'), findsOneWidget);
-      // No income, so no budget suggestion: straight to wallets.
-      await tester.tap(find.text('Để sau'));
-      await tester.pumpAndSettle();
-      expect(find.text('Tiền của bạn ở đâu?'), findsOneWidget);
-      await tester.tap(find.text('Bỏ qua'));
-      await tester.pumpAndSettle();
-      expect(find.text('Đặt mã PIN'), findsOneWidget);
-      await tester.tap(find.text('Để sau'));
+      // No wallets or PIN here any more: they live in the app.
+      expect(
+        find.text('Hành trình tài chính của bạn bắt đầu từ đây!'),
+        findsOneWidget,
+      );
+      expect(deps.settings.onboardingCompleted, isTrue);
+      await tester.tap(find.text('Khám phá Freeva'));
       await tester.pumpAndSettle();
       expect(model.stage, AuthStage.unlocked);
       expect(find.text('protected content'), findsOneWidget);
-      expect(deps.settings.onboardingCompleted, isTrue);
     },
   );
   testWidgets('without a PIN, backgrounding never locks the app', (

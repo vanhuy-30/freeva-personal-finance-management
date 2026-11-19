@@ -99,7 +99,8 @@ describe('BE-P5-E08 app config HTTP + PostgreSQL', () => {
     expect(result.cache).toBe('no-store');
     expect(Object.values(result.body.flags).every((on) => on === false)).toBe(true);
     expect(result.body.config['budget.defaultAlertThresholds']).toEqual([80, 100]);
-    expect(result.body.config['onboarding.incomeSuggestionsVnd']).toEqual(['10000000', '15000000', '25000000', '40000000']);
+    expect(result.body.config['onboarding.incomeBandsVnd']).toEqual(['5000000', '10000000', '20000000', '40000000']);
+    expect(result.body.config).not.toHaveProperty('onboarding.incomeSuggestionsVnd');
     expect(typeof result.body.version).toBe('number');
   });
 

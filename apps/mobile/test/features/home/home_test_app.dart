@@ -134,11 +134,10 @@ StubHomeViewModel homeState(String name) => switch (name) {
   'error' => StubHomeViewModel(status: HomeStatus.error),
   'firstRun' => StubHomeViewModel(
     hasPin: false,
+    // Board ObHome: wallets are added in the app now, so none yet.
     data: overview(
-      net: [worth('VND', 850000)],
-      wallets: [
-        wallet('cash', 'Tiền mặt', type: WalletType.cash, balance: 850000),
-      ],
+      net: [worth('VND', 0)],
+      wallets: const [],
       flow: month(income: 0, expense: 0, rows: const []),
       rows: const [],
     ),

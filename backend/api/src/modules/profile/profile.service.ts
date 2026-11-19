@@ -1,11 +1,18 @@
 import { AppConfigReader } from '../app-config/app-config.reader';
 import { HttpException, Inject, Injectable } from '@nestjs/common';
+import { isValidIncomeBand, type DeclaredIncomeBand } from './domain/declared-income';
 import {
   PROFILE_REPOSITORY,
-  type OnboardingAnswers,
   type ProfileUpdate,
   type ProfileRepository,
 } from './domain/profile.repository';
+
+/** Strings from the DTO (digits already checked) to a band; throws 400 when the band does not hold. */
+function toBand(input: { minMinor: string; maxMinor: string | null }): DeclaredIncomeBand {
+  const band = { minMinor: BigInt(input.minMinor), maxMinor: input.maxMinor === null ? null : BigInt(input.maxMinor) };
+  if (!isValidIncomeBand(band)) throw error(400, 'VALIDATION_ERROR');
+  return band;
+}
 
 function error(status: number, code: string) {
   return new HttpException(
@@ -43,7 +50,14 @@ export class ProfileService {
     };
   }
 
-  async saveOnboarding(userId: string, answers: OnboardingAnswers) {
+  async saveOnboarding(
+    userId: string,
+    input: { goals?: string[]; declaredIncome?: { minMinor: string; maxMinor: string | null } },
+  ) {
+    const answers = {
+      ...(input.goals ? { goals: input.goals } : {}),
+      ...(input.declaredIncome ? { declaredIncome: toBand(input.declaredIncome) } : {}),
+    };
     // BE-P5-001: onboarding goal count from app config (`onboarding.maxGoals`).
     if (answers.goals && answers.goals.length > (await this.config.value('onboarding.maxGoals'))) {
       throw error(400, 'VALIDATION_ERROR');
@@ -53,8 +67,10 @@ export class ProfileService {
     }
   }
 
-  async saveMonthlyIncome(userId: string, minor: string | null) {
-    if (!(await this.repository.saveMonthlyIncome(userId, minor))) throw error(401, 'SESSION_INVALID');
+  /** BE-P6-002: `null` clears the declared income. */
+  async saveDeclaredIncome(userId: string, input: { minMinor: string; maxMinor: string | null } | null) {
+    const band = input === null ? null : toBand(input);
+    if (!(await this.repository.saveDeclaredIncome(userId, band))) throw error(401, 'SESSION_INVALID');
   }
 
   async saveDisplayCurrency(userId: string, code: string | null) {

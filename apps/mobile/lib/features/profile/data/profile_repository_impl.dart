@@ -4,6 +4,7 @@ import 'package:injectable/injectable.dart';
 import '../../auth/data/authorized_api.dart';
 import '../../auth/domain/auth_repository.dart';
 import '../../onboarding/domain/onboarding_answers.dart';
+import '../domain/declared_income.dart';
 import '../domain/profile.dart';
 import '../domain/profile_repository.dart';
 
@@ -25,7 +26,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
             if (goal is String) goal,
       ],
       displayCurrency: _code(json['displayCurrencyCode']),
-      monthlyIncomeMinor: _minor(json['monthlyIncomeMinor']),
+      declaredIncome: DeclaredIncome.fromJson(json['declaredIncome']),
       autoSuggestEnabled: json['autoSuggestEnabled'] as bool? ?? true,
     );
     if (!['vi', 'en'].contains(value.locale) ||
@@ -78,13 +79,14 @@ class ProfileRepositoryImpl implements ProfileRepository {
         body: {'currencyCode': code},
       );
   @override
-  Future<Either<AuthFailure, Unit>> saveMonthlyIncome(BigInt? minor) =>
-      _request(
-        'PUT',
-        'profile/monthly-income',
-        (_) => unit,
-        body: {'monthlyIncomeMinor': minor?.toString()},
-      );
+  Future<Either<AuthFailure, Unit>> saveDeclaredIncome(
+    DeclaredIncome? income,
+  ) => _request(
+    'PUT',
+    'profile/declared-income',
+    (_) => unit,
+    body: {'declaredIncome': income?.toJson()},
+  );
   @override
   Future<Either<AuthFailure, Unit>> saveOnboarding(OnboardingAnswers answers) =>
       _request(
@@ -116,8 +118,3 @@ String? _name(Object? value) {
 
 String? _code(Object? value) =>
     value is String && RegExp(r'^[A-Z]{3}$').hasMatch(value) ? value : null;
-
-BigInt? _minor(Object? value) {
-  final minor = value is String ? BigInt.tryParse(value) : null;
-  return minor != null && minor > BigInt.zero ? minor : null;
-}

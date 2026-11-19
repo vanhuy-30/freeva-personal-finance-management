@@ -1,6 +1,6 @@
 import { CATEGORY_ICONS, CATEGORY_PALETTE } from '../../categories/domain/category';
 
-export const GOAL_KINDS = ['emergency', 'home', 'car', 'travel', 'education', 'wedding', 'retirement', 'custom'] as const;
+export const GOAL_KINDS = ['emergency', 'home', 'car', 'travel', 'education', 'wedding', 'retirement', 'children', 'business', 'health', 'custom'] as const;
 export type GoalKind = (typeof GOAL_KINDS)[number];
 
 export const GOAL_ENTRY_KINDS = ['contribute', 'withdraw'] as const;
@@ -26,6 +26,9 @@ export const GOAL_PRESETS: readonly GoalPreset[] = [
   { kind: 'education', icon: 'education', colorToken: 'color.category.violetDeep' },
   { kind: 'wedding', icon: 'gifts', colorToken: 'color.category.pink' },
   { kind: 'retirement', icon: 'other_income', colorToken: 'color.semantic.success' },
+  { kind: 'children', icon: 'family', colorToken: 'color.category.orange' },
+  { kind: 'business', icon: 'work', colorToken: 'color.brand.accent' },
+  { kind: 'health', icon: 'health', colorToken: 'color.category.plum' },
   { kind: 'custom', icon: 'category', colorToken: 'color.brand.secondary' },
 ];
 
@@ -139,19 +142,22 @@ export type GoalPreviewInput = {
   targetDate: string;
 };
 
-/** Income the user typed on the profile, in its default currency; null when not given. */
-export type DeclaredIncome = { currencyCode: string; monthlyIncomeMinor: bigint | null };
+/**
+ * BE-P6-002: midpoint of the income band the user declared on the profile, in its default currency;
+ * null when not declared. Not the actual income, which `GoalContext` averages from transactions.
+ */
+export type DeclaredIncome = { currencyCode: string; midpointMinor: bigint | null };
 
 /**
  * Numbers for a goal that does not exist yet (first-run question 3). The income share is taken
- * against the income the user declared, since a new account has no income history to average.
+ * against the declared income midpoint, since a new account has no income history to average.
  */
 export function goalPreview(today: string, input: GoalPreviewInput, income: DeclaredIncome) {
   const months = monthsLeft(today, input.targetDate);
   const required = requiredPerMonth(input.targetMinor, input.currentMinor, months);
   const share = incomeShareBps(
     required,
-    income.currencyCode === input.currencyCode ? income.monthlyIncomeMinor : null,
+    income.currencyCode === input.currencyCode ? income.midpointMinor : null,
   );
   return { monthsLeft: months, requiredPerMonthMinor: required, incomeShareBps: share };
 }

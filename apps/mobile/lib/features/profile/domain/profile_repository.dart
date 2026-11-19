@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 
 import '../../auth/domain/auth_repository.dart';
 import '../../onboarding/domain/onboarding_answers.dart';
+import 'declared_income.dart';
 import 'profile.dart';
 
 abstract class ProfileRepository {
@@ -12,8 +13,8 @@ abstract class ProfileRepository {
   /// Saves the Overview display currency; null goes back to the default.
   Future<Either<AuthFailure, Unit>> saveDisplayCurrency(String? code);
 
-  /// Sets, changes or (null) clears the stated monthly income.
-  Future<Either<AuthFailure, Unit>> saveMonthlyIncome(BigInt? minor);
+  /// Sets, changes or (null) clears the stated income band.
+  Future<Either<AuthFailure, Unit>> saveDeclaredIncome(DeclaredIncome? income);
 
   /// Stores first-run answers; only the parts that are set.
   Future<Either<AuthFailure, Unit>> saveOnboarding(OnboardingAnswers answers);

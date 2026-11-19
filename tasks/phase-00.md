@@ -13,7 +13,7 @@ Cập nhật 2026-09-21: backlog Phase 0 = **25/25 done**; phase **closed**. Bra
 - Status: done
 - Module: 21
 - DoD: bản nháp tiếng Việt; danh sách bên thứ ba dự kiến
-- Note: [terms-of-service.md](../docs/legal/terms-of-service.md), [privacy-policy.md](../docs/legal/privacy-policy.md) (bản nháp, chưa review luật sư); bên thứ ba §10 privacy policy
+- Note: [terms-of-service.md](../docs/legal/terms-of-service.md), [privacy-policy.md](../docs/legal/privacy-policy.md) (bản nháp, chưa review luật sư); bên thứ ba §10 privacy policy. 2026-11-19 viết lại theo app hiện tại ở `PRD-P6-001`
 
 ### DOC-P0-001 — Docs foundation (vision, modules, ADR, conventions)
 - Status: done

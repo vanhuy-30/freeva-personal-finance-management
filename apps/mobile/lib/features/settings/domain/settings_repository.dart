@@ -20,6 +20,7 @@ const _preferenceKeys = {
   'budgetDraftMinor',
   'pendingGoal',
   'dailyLogAsked',
+  'budgetAsked',
 };
 
 AppPreferences decodePreferences(String raw) {
@@ -52,6 +53,7 @@ AppPreferences decodePreferences(String raw) {
     budgetDraftMinor: _preferenceNumber(json, 'budgetDraftMinor'),
     pendingGoal: _preferenceStrings(json, 'pendingGoal'),
     dailyLogAsked: _preferenceFlag(json, 'dailyLogAsked', false),
+    budgetAsked: _preferenceFlag(json, 'budgetAsked', false),
   );
 }
 
@@ -90,4 +92,5 @@ String encodePreferences(AppPreferences value) => jsonEncode({
     'budgetDraftMinor': value.budgetDraftMinor,
   if (value.pendingGoal != null) 'pendingGoal': value.pendingGoal,
   if (value.dailyLogAsked) 'dailyLogAsked': true,
+  if (value.budgetAsked) 'budgetAsked': true,
 });

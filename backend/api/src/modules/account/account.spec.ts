@@ -15,7 +15,7 @@ function source(): ExportSource {
     user: {
       id, email: 'owner@example.test', locale: 'vi', timezone: 'Asia/Ho_Chi_Minh', defaultCurrencyCode: 'VND',
       displayName: null, fiscalMonthStartDay: 1,
-      onboardingGoals: ['save', 'budget'], monthlyIncomeMinor: 15000000n, displayCurrencyCode: 'USD',
+      onboardingGoals: ['save', 'budget'], declaredIncomeMinMinor: 10000000n, declaredIncomeMaxMinor: 20000000n, displayCurrencyCode: 'USD',
       emailVerifiedAt: at, categoriesInitializedAt: null, categoriesSupplementedAt: null, autoSuggestEnabled: false, createdAt: at, updatedAt: at,
     },
     oauthProviders: ['apple', 'google'],
@@ -59,6 +59,15 @@ function source(): ExportSource {
 }
 
 describe('BE-P1-010 account export mapping', () => {
+  it('BE-P6-002 exports the declared income band, open top band and none', () => {
+    const open = source();
+    open.user = { ...open.user, declaredIncomeMinMinor: 40000000n, declaredIncomeMaxMinor: null };
+    expect(toAccountExport(open).profile.declaredIncome).toEqual({ minMinor: '40000000', maxMinor: null });
+    const none = source();
+    none.user = { ...none.user, declaredIncomeMinMinor: null, declaredIncomeMaxMinor: null };
+    expect(toAccountExport(none).profile.declaredIncome).toBeNull();
+  });
+
   it('serializes money as strings and keeps a deleted transaction', () => {
     const snapshot = toAccountExport(source());
     expect(snapshot).toMatchObject({
@@ -67,7 +76,7 @@ describe('BE-P1-010 account export mapping', () => {
       oauthProviders: ['apple', 'google'],
       profile: {
         email: 'owner@example.test', emailVerifiedAt: at.toISOString(), categoriesInitializedAt: null,
-        onboardingGoals: ['save', 'budget'], monthlyIncomeMinor: '15000000', displayCurrencyCode: 'USD',
+        onboardingGoals: ['save', 'budget'], declaredIncome: { minMinor: '10000000', maxMinor: '20000000' }, displayCurrencyCode: 'USD',
         autoSuggestEnabled: false,
       },
       categorySuggestionMappings: [{ id, merchant: 'Highlands Coffee', categoryId: clientId, createdAt: at.toISOString(), updatedAt: at.toISOString() }],
@@ -127,7 +136,7 @@ describe('BE-P1-010 account repository audit', () => {
       user: {
         findUnique: jest.fn().mockResolvedValue({
           id, email: 'owner@example.test', locale: 'vi', timezone: 'Asia/Ho_Chi_Minh', defaultCurrencyCode: 'VND',
-          displayName: null, fiscalMonthStartDay: 1, onboardingGoals: [], monthlyIncomeMinor: null, displayCurrencyCode: null,
+          displayName: null, fiscalMonthStartDay: 1, onboardingGoals: [], declaredIncomeMinMinor: null, declaredIncomeMaxMinor: null, displayCurrencyCode: null,
           emailVerifiedAt: null, categoriesInitializedAt: null, categoriesSupplementedAt: null, createdAt: at, updatedAt: at,
           oauthIdentities: [{ provider: 'google' }],
         }),

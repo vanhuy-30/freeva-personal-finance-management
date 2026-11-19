@@ -45,7 +45,7 @@
   - `deepmerge-ts` 7 (Prisma 6), `glob`/`minimatch` trong tooling build của `@sentry/nextjs` cần major mới.
 
 ### MOB-P6-001 — Cài lại app đăng nhập lại từ đầu; bottom nav sát mép dưới
-- Status: in progress
+- Status: done — 2026-11-19 (PR #147)
 - Module: 22, UI shell
 - Gate: v1
 - DoD: xóa app rồi cài lại thì vào Welcome và phải đăng nhập lại (iOS giữ Keychain sau khi xóa app; marker trong thư mục support của app, không có marker thì xóa toàn bộ vault). Bottom nav cách mép dưới 28 như board trên máy vuốt (inset ≤ 34); máy có thanh nút hệ thống thì nằm trên các nút, cách 8.
@@ -82,7 +82,7 @@
   - Cá nhân chia nhóm lại (board `MeHome`): Tài sản (Ví · Tài sản ròng · Đầu tư · Vay và nợ) và Kế hoạch (Ngân sách · Mục tiêu · Định kỳ · Lịch), mỗi nhóm một hàng 4 ô không số phụ; Gợi ý tự động sang Thiết lập; Dữ liệu và Hỗ trợ gộp một nhóm.
 
 ### BE-P6-001 / MOB-P6-002 — Quản lý phiên đăng nhập theo thiết bị
-- Status: doing
+- Status: done — 2026-11-19 (PR #147)
 - Module: 22
 - Gate: v1
 - Depends: MOB-P6-001
@@ -93,4 +93,40 @@
   - `GET /v1/sessions` trả thêm `deviceName`, `platform`, `osVersion`, `lastUsedAt`; phiên cũ không có thông tin máy vẫn hiện.
   - Màn Phiên đăng nhập: mỗi dòng là một thiết bị (tên máy; dòng phụ "Android 14 · 3 giờ trước" theo lần dùng gần nhất, máy này "iOS 18.1 · Đăng nhập 02/10" + chip "Đang dùng"). Không có tên máy thì "Thiết bị không rõ" + ngày đăng nhập. "Thu hồi" thành "Đăng xuất".
   - OpenAPI, migration Prisma, test BE (unit + integration) và mobile.
+
+### PRD-P6-001 — Bản nháp Điều khoản sử dụng và Chính sách bảo mật theo app hiện tại
+- Status: done — 2026-11-19 (bản nháp; luật sư chưa rà)
+- Module: 21
+- Gate: v1
+- Depends: PRD-P0-002
+- DoD: viết lại [terms-of-service.md](../docs/legal/terms-of-service.md) và [privacy-policy.md](../docs/legal/privacy-policy.md) cho người dùng đọc (không tên task, API hay bảng), khớp tính năng và dữ liệu app đang có sau Phase 5–6. Chỗ chưa chốt (pháp nhân, email liên hệ, nhà cung cấp hosting production, thời hạn lưu) để trong ngoặc vuông. Vẫn là bản nháp, cần luật sư rà trước khi đưa vào app và store.
+
+### MOB-P6-003 — Sửa theo phản hồi test tay (đợt sau Phase 6)
+- Status: doing
+- Module: UI
+- Gate: v1
+- DoD: mỗi đợt ghi các thay đổi bên dưới; board và pattern sửa theo khi đổi câu chữ hoặc giao diện.
+- Đợt 1:
+  - Xác nhận email: "Lấy lại mật khẩu khi quên" thành "Lấy lại mật khẩu"; "Không lỡ thông báo quan trọng về tài khoản" thành "Không bỏ lỡ thông báo quan trọng về tài khoản"; câu cuối chỉ còn "Bạn có thể xác nhận sau ở màn hình Cá nhân."
+
+### BE-P6-002 / MOB-P6-004 — Onboarding làm lại: thu nhập theo khoảng, Hoàn tất, ví / PIN / ngân sách vào trong app
+- Status: doing
+- Module: 01, 02, 07, 09
+- Gate: v1
+- Depends: MOB-P3-012
+- DoD:
+  - Thiết kế owner duyệt trên canvas (bản 184–190): [A3-onboarding-three-questions.md](../docs/brand/patterns/A3-onboarding-three-questions.md).
+  - BE: thu nhập khai báo lưu theo khoảng (`declaredIncomeMinMinor` / `declaredIncomeMaxMinor`, migration chuyển số cũ thành [x, x]), `declaredIncome` trên hồ sơ có `midpointMinor`, `PUT /profile/declared-income` thay `/profile/monthly-income`. Sáu mục tiêu sử dụng (`track`, `budget`, `save`, `debt`, `assets`, `habits`), `onboarding.maxGoals` tối đa 6. Loại mục tiêu thêm `children`, `business`, `health`. Cấu hình `onboarding.incomeBandsVnd` thay `onboarding.incomeSuggestionsVnd`. Export, OpenAPI, test unit + integration.
+  - App: ba câu theo board mới, "Khác" có tên mục tiêu, màn Hoàn tất. Bỏ bước ví, PIN, Face ID và gợi ý ngân sách khỏi onboarding. Tổng quan: checklist "Thêm ví đầu tiên", sheet "Đặt ngân sách tháng" một lần. Cá nhân chọn khoảng thu nhập. Câu A1.2, A2.5, A2.6 theo canvas.
+  - Golden sáng/tối, đối chiếu board, test luồng và 320 pt.
+- Note: nếu production đã lưu `onboarding.maxGoals` = 1 hoặc 2 trên web admin thì onboarding vẫn giới hạn ở số đó tới khi staff sửa lại.
+- Note: 2026-11-19 board I.3 Mục tiêu mới thêm ba chip Con cái, Kinh doanh, Sức khỏe theo app.
+
+### MOB-P6-005 / BE-P6-003 — Chọn tiền tệ trước câu thu nhập và mục tiêu trong onboarding
+- Status: todo
+- Module: 01, 02
+- Gate: v1
+- Depends: BE-P6-002 / MOB-P6-004
+- DoD: trước câu 2 (Thu nhập) có bước chọn tiền tệ của tài khoản (mặc định theo server, đổi được). Khoảng thu nhập và ô "Số tiền" ở câu 3 dùng tiền tệ đã chọn; mốc khoảng cấu hình theo từng tiền tệ thay cho chỉ VND (`onboarding.incomeBandsVnd`). Thiết kế qua canvas trước khi code.
+- Note: owner chốt 2026-11-19 làm sau. Hiện tài khoản mới mặc định VND nên khoảng "triệu" đúng; tài khoản đổi sang tiền tệ khác vẫn thấy khoảng theo triệu đồng.
 
