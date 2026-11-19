@@ -1,34 +1,40 @@
 # Nhóm A3 — Onboarding ba câu
 
-Trạng thái: **chốt thiết kế 2026-11-03**, backend xong (`BE-P3-012`), app xong 2026-11-05 (`MOB-P3-012`, [mobile](../../architecture/mobile-onboarding-three-questions.md)). Task: `DS-P3-012` / `MOB-P3-012` (cả backend `BE-P3-012`). Thay các màn Mục tiêu, Thói quen, Ngân sách tháng của [A-onboarding-auth.md](A-onboarding-auth.md); các bước tài khoản, PIN, ví giữ nguyên.
-Canvas: trang **06 · Onboarding và tài khoản**, khối A1 (A3 thay A1.3–A1.5; ba màn cũ đã xoá 2026-11-17). Spec chung: [design-system.md](../design-system.md).
+Trạng thái: **làm lại 2026-11-19** (`BE-P6-002` / `MOB-P6-004`), owner duyệt trên canvas bản 184–190. Bản đầu: `DS-P3-012` / `MOB-P3-012` (2026-11-03). Thay các màn Mục tiêu, Thói quen, Ngân sách tháng của [A-onboarding-auth.md](A-onboarding-auth.md).
+Canvas: trang **06 · Onboarding và tài khoản**, khối A1. Spec chung: [design-system.md](../design-system.md).
 
 ## Nguyên tắc riêng cho nhóm này
 
-- Sau khi tạo tài khoản chỉ hỏi **ba câu**, câu nào cũng "Để sau" được, rồi tới bước ví và số dư như cũ.
+- Sau khi tạo tài khoản chỉ hỏi **ba câu**, câu nào cũng "Để sau" được, rồi tới màn **Hoàn tất** và vào app.
+- **Ví, mã PIN và ngân sách tháng làm trong app**, không còn trong onboarding: checklist "Bắt đầu nào" nhắc thêm ví và khoá app; ngân sách hỏi bằng sheet khi vào trang chính lần đầu.
 - Thanh tiến độ 1/3, 2/3, 3/3; nút "Tiếp tục" đen bên phải, "Để sau" bên trái.
-- Gợi ý ngân sách chỉ hiện khi có thu nhập.
+- Thu nhập chỉ hỏi theo **khoảng**, không bắt nhập số. Lưu khoảng là **thu nhập khai báo**, tách hẳn với thu nhập thực tế tính từ giao dịch.
+
+```
+Tạo tài khoản → (email: Xác nhận email) → 1 Mục tiêu sử dụng → 2 Thu nhập → 3 Mục tiêu tài chính
+→ 4 Hoàn tất → Trang chính lần đầu (+ sheet 5 Đặt ngân sách) → … sheet 6 Nhắc ghi chi
+```
 
 ## Các màn
 
 | # | Màn | Nội dung | Ghi chú |
 |---|---|---|---|
-| 1 | Mục tiêu sử dụng | "Freeva giúp bạn việc gì?" · "Chọn tối đa 2." Ba thẻ: Quản lý chi tiêu, Tiết kiệm, Quản lý ngân sách | Chi tiêu → khối "Chi tháng" đầu Tổng quan + mời bật nhắc (màn 5). Tiết kiệm → khối mục tiêu (I.6). Ngân sách → khối ngân sách + màn 4 |
-| 2 | Thu nhập | **"Thu nhập mỗi tháng khoảng bao nhiêu?"** · "Để gợi ý ngân sách vừa sức." Số lớn có gạch chân, chip 10 / 15 / 25 / 40 triệu. "Nhập số gần đúng, sửa lại được trong Cá nhân." | Lưu `monthlyIncomeMinor` |
-| 3 | Mục tiêu tiết kiệm | "Bạn để dành cho việc gì?" Chip có icon (Quỹ khẩn cấp, Mua nhà, Mua xe, Du lịch, Học tập, Đám cưới, Khác). Cần có + Đến khi. Thẻ xanh "Mỗi tháng cần để dành 6.000.000 · 24% thu nhập" | Tạo mục tiêu thật (`BE-P3-E01`) |
-| 4 | Gợi ý ngân sách | "Mỗi tháng nên chi khoảng" 19.000.000. Thanh hai màu (chi tiêu / để dành). Thu nhập, "Để dành cho Mua nhà −6.000.000", Chi tiêu. "Sửa được bất cứ lúc nào trong Ngân sách tháng." "Dùng mức này" · "Để sau" | **Chưa có mục tiêu:** dòng để dành thành "Để dành 20% thu nhập −5.000.000", nên chi 20.000.000, thêm câu "Chưa có mục tiêu nên tạm để dành 20%." (ghi chú trên canvas, không vẽ màn riêng) |
-| 5 | Mời bật nhắc ghi chi (sheet trên Tổng quan) | Sau giao dịch đầu tiên, nếu đã chọn "Quản lý chi tiêu": icon chuông, "Nhắc ghi chi mỗi tối". Ô Giờ nhắc 21:00. "Bật" · "Để sau" | Chỉ hỏi một lần |
+| 1 | Mục tiêu sử dụng | "Bạn muốn Freeva giúp gì cho mình?" · "Mỗi người có một cách quản lý tài chính riêng. Hãy cho chúng tôi biết điều bạn quan tâm nhất." Dòng nhỏ "Bạn có thể chọn nhiều đáp án". Sáu thẻ một dòng (icon 36, dấu tích tròn): Quản lý thu nhập và chi tiêu · Kiểm soát ngân sách · Tiết kiệm tiền · Quản lý các khoản nợ · Theo dõi tài sản · Cải thiện thói quen tài chính | Chọn bao nhiêu cũng được (server `onboarding.maxGoals`, mặc định 6). Mã: `track`, `budget`, `save`, `debt`, `assets`, `habits`. `track` → mời bật nhắc (màn 6); `save` → khối mục tiêu trên Tổng quan |
+| 2 | Thu nhập | "Thu nhập hàng tháng của bạn là bao nhiêu?" · "Thông tin này giúp Freeva đưa ra những gợi ý ngân sách và kế hoạch tài chính phù hợp hơn với bạn." Danh sách radio trong một thẻ: Dưới 5 triệu · 5 – 10 triệu · 10 – 20 triệu · 20 – 40 triệu · Trên 40 triệu · Không muốn chia sẻ. Trên nút: ổ khoá + "Thông tin của bạn được bảo mật và chỉ sử dụng để cá nhân hóa trải nghiệm." | Mốc chia khoảng: server `onboarding.incomeBandsVnd` (5 / 10 / 20 / 40 triệu). Lưu `declaredIncome {minMinor, maxMinor}`; "Không muốn chia sẻ" không gửi gì |
+| 3 | Mục tiêu tài chính | "Bạn đang hướng đến mục tiêu tài chính nào?" · "Những mục tiêu nhỏ hôm nay sẽ tạo nên sự khác biệt lớn trong tương lai. Hãy chọn điều bạn muốn đạt được." Chip có icon: Quỹ khẩn cấp, Mua nhà, Mua xe, Du lịch, Học tập, Đám cưới, Nghỉ hưu, Con cái, Kinh doanh, Sức khỏe, Khác. Hai ô "Số tiền" + "Thời hạn" | Không còn thẻ "Mỗi tháng cần để dành". **3b Khác:** thêm ô "Tên mục tiêu" ngay dưới chip, bắt buộc khi chọn Khác. Mục tiêu tạo thật khi có ví |
+| 4 | Hoàn tất | Hình con đường chấm lên đỉnh núi có cờ, ba đồng xu, mặt trời, sao nhỏ. "Hành trình tài chính của bạn bắt đầu từ đây!" · "Freeva đã sẵn sàng đồng hành cùng bạn trên hành trình quản lý tiền bạc thông minh và đạt được những mục tiêu tài chính." Nút "Khám phá Freeva" | Vào thẳng Tổng quan, không qua PIN |
+| 5 | Đặt ngân sách tháng (sheet trên Tổng quan) | Lần đầu vào trang chính khi chưa có ngân sách: icon biểu đồ tròn, "Đặt ngân sách tháng 11". Ô "Mức chi tối đa" (₫ ở cuối ô), dưới ô "Gợi ý theo thu nhập bạn chọn." "Đặt ngân sách" · "Để sau" | Chỉ hỏi một lần. Số gợi ý = giữa khoảng thu nhập × (100 − `onboarding.savingsSharePercent`)%, ví dụ 10–20 triệu → 12.000.000. Không chia sẻ thu nhập thì ô trống, không có dòng gợi ý |
+| 6 | Mời bật nhắc ghi chi (sheet trên Tổng quan) | Sau giao dịch đầu tiên, nếu đã chọn "Quản lý thu nhập và chi tiêu": icon chuông, "Nhắc ghi chi mỗi tối". Ô Giờ nhắc 21:00. "Bật" · "Để sau" | Chỉ hỏi một lần, không cùng lúc với màn 5 |
 
-## Quy tắc gợi ý ngân sách
+**Trang chính lần đầu (A1.7):** "Tổng số dư" 0 ₫ (chưa có ví thì không ghi "· 0 ví"). Checklist "Bắt đầu nào 0/3": Thêm ví đầu tiên (nút "Thêm ví", mở màn Thêm ví) · Ghi khoản chi đầu tiên (mũi tên; có ví rồi thì thành nút "Ghi ngay") · Khoá app bằng PIN (khi chưa có PIN).
 
-- Có mục tiêu: **thu nhập − số cần để dành mỗi tháng** của mục tiêu.
-- Chưa có mục tiêu: **thu nhập × 80%** (để dành 20%).
-- "Dùng mức này" tạo ngân sách tháng; "Để sau" không tạo gì.
+## Giữa khoảng thu nhập
 
-## Phụ thuộc khi làm code
+- Khoảng có trần: (sàn + trần) / 2. "Dưới 5 triệu" → 2.500.000.
+- Khoảng mở "Trên 40 triệu": sàn × 5/4 → 50.000.000.
+- Tài khoản từ trước khi có khoảng: số cũ thành khoảng [x, x], giữa khoảng là x; Cá nhân hiện số đó.
+- Dùng cho: số gợi ý ở màn 5 và "% thu nhập" của mục tiêu.
 
-| Việc | Ghi chú |
-|---|---|
-| Mục tiêu sử dụng | `goals` còn `track`, `save`, `budget`; `emergency` gộp vào `save`, bỏ `debt`, `understand` (migration ở `BE-P3-012`) |
-| Bỏ câu cũ | Xoá `trackingHabit`, `reviewCadence`, `onboardingBudgetMinor` |
-| Nhắc ghi chi | Bật `dailyLogEnabled` + `dailyLogTime` (nhóm N) |
+## Cá nhân → Thu nhập hàng tháng
+
+Dòng hiện khoảng ("10 – 20 triệu") hoặc "Chưa đặt". Chạm mở sheet cùng danh sách khoảng như màn 2; chạm một khoảng là lưu, "Không muốn chia sẻ" xoá thu nhập.

@@ -40,7 +40,7 @@ class AppLimits {
     required this.emailMaxLength,
     required this.displayNameMaxLength,
     required this.onboardingMaxGoals,
-    required this.onboardingIncomeSuggestionsVnd,
+    required this.onboardingIncomeBandsVnd,
     required this.onboardingSavingsSharePercent,
     required this.onboardingGoalKinds,
     required this.importMaxRows,
@@ -100,7 +100,9 @@ class AppLimits {
   final int emailMaxLength;
   final int displayNameMaxLength;
   final int onboardingMaxGoals;
-  final List<BigInt> onboardingIncomeSuggestionsVnd;
+
+  /// Bounds between the income bands of question 2 (VND), increasing.
+  final List<BigInt> onboardingIncomeBandsVnd;
   final int onboardingSavingsSharePercent;
   final List<String> onboardingGoalKinds;
   final int importMaxRows;
@@ -162,9 +164,7 @@ class AppLimits {
         emailMaxLength: n('limit.emailMaxLength'),
         displayNameMaxLength: n('profile.displayNameMaxLength'),
         onboardingMaxGoals: n('onboarding.maxGoals'),
-        onboardingIncomeSuggestionsVnd: money(
-          'onboarding.incomeSuggestionsVnd',
-        ),
+        onboardingIncomeBandsVnd: money('onboarding.incomeBandsVnd'),
         onboardingSavingsSharePercent: n('onboarding.savingsSharePercent'),
         onboardingGoalKinds: ts('onboarding.goalKinds'),
         importMaxRows: n('import.maxRows'),

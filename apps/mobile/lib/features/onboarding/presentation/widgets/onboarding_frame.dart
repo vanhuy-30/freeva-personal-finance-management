@@ -10,7 +10,7 @@ import '../../../../core/widgets/freeva_icon_button.dart';
 
 /// Frame of the three question screens: back button, progress bar with
 /// "1/3", a left-aligned title, content, and "Để sau" with "Tiếp tục" at the
-/// foot. [pinned] sits between the content and the foot (the keypad).
+/// foot. [pinned] sits between the content and the foot.
 class OnboardingFrame extends StatelessWidget {
   const OnboardingFrame({
     required this.step,
@@ -22,6 +22,7 @@ class OnboardingFrame extends StatelessWidget {
     this.onBack,
     this.pinned,
     this.titleGap = FreevaSpace.s8,
+    this.pinnedGap = FreevaSpace.s3,
     super.key,
   });
 
@@ -36,9 +37,11 @@ class OnboardingFrame extends StatelessWidget {
   final VoidCallback? onBack;
   final Widget? pinned;
 
-  /// Space between the progress row and the title: 32, or 28 on the budget
-  /// board.
+  /// Space between the progress row and the title: 32, or 30 on question 3.
   final double titleGap;
+
+  /// Space between [pinned] and the foot.
+  final double pinnedGap;
 
   @override
   Widget build(BuildContext context) {
@@ -86,8 +89,11 @@ class OnboardingFrame extends StatelessWidget {
                         ),
                         ...children,
                         const Spacer(),
-                        if (pinned != null) pinned!,
-                        const SizedBox(height: FreevaSpace.s3),
+                        if (pinned != null) ...[
+                          pinned!,
+                          SizedBox(height: pinnedGap),
+                        ] else
+                          const SizedBox(height: FreevaSpace.s3),
                         Row(
                           children: [
                             Expanded(

@@ -51,7 +51,10 @@ class BalanceSummaryCard extends StatelessWidget {
     final s = S.of(context);
     final c = context.colors;
     final main = summary.main;
-    final label = summary.isConverted
+    // No wallet yet (board ObHome): just "Tổng số dư", no "· 0 ví".
+    final label = main.walletCount == 0
+        ? s.welcomeSampleBalance
+        : summary.isConverted
         ? s.homeTotalConverted(main.walletCount, main.currency)
         : summary.others.isEmpty
         ? s.homeTotalBalance(main.walletCount)

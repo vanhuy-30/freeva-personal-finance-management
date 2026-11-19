@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Onboarding · hoàn tất</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{font-family:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; padding: 56px 24px 40px 24px">
+
+  <div style="margin: 36px -4px 0 -4px; display: flex; justify-content: center">
+    <svg width="350" height="300" viewBox="0 0 350 300" role="img" aria-label="Con đường đi lên đỉnh núi có lá cờ, dọc đường là những đồng xu">
+      <defs>
+        <radialGradient id="dn-glow" cx="50%" cy="45%" r="55%">
+          <stop offset="0%" stop-color="#EEF2FD"></stop>
+          <stop offset="70%" stop-color="#F4F6FB"></stop>
+          <stop offset="100%" stop-color="#FCFDFF"></stop>
+        </radialGradient>
+        <linearGradient id="dn-hill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#C1C8E4"></stop>
+          <stop offset="100%" stop-color="#ECEFFA"></stop>
+        </linearGradient>
+        <linearGradient id="dn-fade" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#FCFDFF" stop-opacity="0"></stop>
+          <stop offset="100%" stop-color="#FCFDFF" stop-opacity="1"></stop>
+        </linearGradient>
+      </defs>
+      <circle cx="175" cy="150" r="150" fill="url(#dn-glow)"></circle>
+      <circle cx="268" cy="70" r="24" fill="#FBF4E0"></circle>
+      <path d="M18 262 L118 150 L168 196 L238 112 L332 262 Z" fill="#ECEFFA"></path>
+      <path d="M0 290 L112 186 L175 96 L250 182 L350 290 Z" fill="url(#dn-hill)"></path>
+      <path d="M175 96 L193 122 L182 118 L175 128 L168 118 L157 122 Z" fill="#FCFDFF"></path>
+      <path d="M58 286 C 108 270, 88 236, 132 226 S 196 200, 170 172 S 162 132, 175 104" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" stroke-dasharray="1 11"></path>
+      <line x1="175" y1="100" x2="175" y2="52" stroke="#22283A" stroke-width="2.5" stroke-linecap="round"></line>
+      <path d="M176 53 L208 62 L176 72 Z" fill="#3F67D1"></path>
+      <g stroke="#7A5A00" stroke-width="1.6" fill="#FBF4E0">
+        <circle cx="96" cy="258" r="10"></circle>
+        <circle cx="138" cy="224" r="10"></circle>
+        <circle cx="178" cy="182" r="10"></circle>
+      </g>
+      <g fill="#7A5A00">
+        <circle cx="96" cy="258" r="3"></circle>
+        <circle cx="138" cy="224" r="3"></circle>
+        <circle cx="178" cy="182" r="3"></circle>
+      </g>
+      <path d="M86 112 l3 8 8 3 -8 3 -3 8 -3 -8 -8 -3 8 -3 Z" fill="#8860D0"></path>
+      <path d="M286 150 l2 6 6 2 -6 2 -2 6 -2 -6 -6 -2 6 -2 Z" fill="#5AB9EA"></path>
+      <path d="M232 36 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2 Z" fill="#5680E9"></path>
+      <rect x="0" y="232" width="350" height="68" fill="url(#dn-fade)"></rect>
+    </svg>
+  </div>
+
+  <h1 style="margin: 20px 0 0 0; font-size: 28px; line-height: 34px; font-weight: 600; letter-spacing: -0.6px; text-align: center">Hành trình tài chính của bạn bắt đầu từ đây!</h1>
+  <p style="margin: 12px auto 0 auto; font-size: 15px; line-height: 22px; color: #5C6378; text-align: center; max-width: 330px">Freeva đã sẵn sàng đồng hành cùng bạn trên hành trình quản lý tiền bạc thông minh và đạt được những mục tiêu tài chính.</p>
+
+  <a href="ObPin.dc.html" style="margin-top: auto; height: 56px; border-radius: 999px; background: #3F67D1; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; text-decoration: none">Khám phá Freeva</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

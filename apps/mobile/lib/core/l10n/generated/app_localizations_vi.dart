@@ -2692,14 +2692,14 @@ class SVi extends S {
   String get authVerifyWhyTitle => 'Email đã xác nhận giúp bạn';
 
   @override
-  String get authVerifyWhyReset => 'Lấy lại mật khẩu khi quên';
+  String get authVerifyWhyReset => 'Lấy lại mật khẩu';
 
   @override
   String get authVerifyWhyAlert => 'Nhận cảnh báo khi có đăng nhập lạ';
 
   @override
   String get authVerifyWhyNotice =>
-      'Không lỡ thông báo quan trọng về tài khoản';
+      'Không bỏ lỡ thông báo quan trọng về tài khoản';
 
   @override
   String get authResendPrompt => 'Chưa nhận được?';
@@ -2711,8 +2711,7 @@ class SVi extends S {
   String get authVerificationSent => 'Đã gửi lại link xác nhận.';
 
   @override
-  String get authVerifyLater =>
-      'Chưa xác nhận vẫn dùng app bình thường. Bạn có thể xác nhận sau ở Cá nhân.';
+  String get authVerifyLater => 'Bạn có thể xác nhận sau ở màn hình Cá nhân.';
 
   @override
   String get authSendResetLink => 'Gửi link đặt lại';
@@ -2797,9 +2796,6 @@ class SVi extends S {
   String get authPinConfirmSub => 'Nhập lại 6 số vừa đặt để chắc chắn.';
 
   @override
-  String get authPinConfirmHint => 'Không khớp sẽ được nhập lại từ đầu.';
-
-  @override
   String get authPinMismatch => 'Hai mã chưa khớp. Đặt lại từ đầu nhé.';
 
   @override
@@ -2809,8 +2805,7 @@ class SVi extends S {
   String get authBiometricTitleFace => 'Thiết lập Face ID';
 
   @override
-  String get authBiometricSubFace =>
-      'Mở khoá Freeva bằng khuôn mặt, nhanh hơn nhập PIN.';
+  String get authBiometricSubFace => 'Mở khoá Freeva nhanh hơn với Face ID';
 
   @override
   String get authBiometricTitle => 'Mở khoá nhanh hơn';
@@ -2883,7 +2878,8 @@ class SVi extends S {
   String get signUpTitle => 'Tạo tài khoản Freeva';
 
   @override
-  String get signUpSub => 'Dữ liệu được lưu an toàn, đổi máy không mất.';
+  String get signUpSub =>
+      'Bắt đầu hành trình quản lý tài chính thông minh cùng Freeva.';
 
   @override
   String get authContinueEmail => 'Tiếp tục với email';
@@ -2903,94 +2899,87 @@ class SVi extends S {
   }
 
   @override
-  String get onbGoalsTitle => 'Freeva giúp bạn việc gì?';
+  String get onbGoalsTitle => 'Bạn muốn Freeva giúp gì cho mình?';
 
   @override
-  String onbGoalsSub(int count) {
-    return 'Chọn tối đa $count.';
+  String get onbGoalsIntro =>
+      'Mỗi người có một cách quản lý tài chính riêng. Hãy cho chúng tôi biết điều bạn quan tâm nhất.';
+
+  @override
+  String get onbGoalsMulti => 'Bạn có thể chọn nhiều đáp án';
+
+  @override
+  String get onbGoalTrack => 'Quản lý thu nhập và chi tiêu';
+
+  @override
+  String get onbGoalSave => 'Tiết kiệm tiền';
+
+  @override
+  String get onbGoalBudget => 'Kiểm soát ngân sách';
+
+  @override
+  String get onbGoalDebt => 'Quản lý các khoản nợ';
+
+  @override
+  String get onbGoalAssets => 'Theo dõi tài sản';
+
+  @override
+  String get onbGoalHabits => 'Cải thiện thói quen tài chính';
+
+  @override
+  String get onbIncomeTitle => 'Thu nhập hàng tháng của bạn là bao nhiêu?';
+
+  @override
+  String get onbIncomeSub =>
+      'Thông tin này giúp Freeva đưa ra những gợi ý ngân sách và kế hoạch tài chính phù hợp hơn với bạn.';
+
+  @override
+  String get onbIncomePrivacy =>
+      'Thông tin của bạn được bảo mật và chỉ sử dụng để cá nhân hóa trải nghiệm.';
+
+  @override
+  String incomeBandUnder(String amount) {
+    return 'Dưới $amount triệu';
   }
 
   @override
-  String get onbGoalTrack => 'Quản lý chi tiêu';
-
-  @override
-  String get onbGoalTrackSub => 'Biết tiền đi đâu mỗi tháng';
-
-  @override
-  String get onbGoalSave => 'Tiết kiệm';
-
-  @override
-  String get onbGoalSaveSub => 'Để dành cho một việc cụ thể';
-
-  @override
-  String get onbGoalBudget => 'Quản lý ngân sách';
-
-  @override
-  String get onbGoalBudgetSub => 'Đặt mức chi và bám theo';
-
-  @override
-  String get onbIncomeTitle => 'Thu nhập mỗi tháng khoảng bao nhiêu?';
-
-  @override
-  String get onbIncomeSub => 'Để gợi ý ngân sách vừa sức.';
-
-  @override
-  String get onbIncomeHint => 'Nhập số gần đúng, sửa lại được trong Cá nhân.';
-
-  @override
-  String get onbIncomeAmount => 'Thu nhập mỗi tháng';
-
-  @override
-  String onbIncomeChip(String amount) {
-    return '$amount triệu';
+  String incomeBandBetween(String from, String to) {
+    return '$from – $to triệu';
   }
 
   @override
-  String get onbSavingTitle => 'Bạn để dành cho việc gì?';
-
-  @override
-  String get onbSavingTarget => 'Cần có';
-
-  @override
-  String get onbSavingDate => 'Đến khi';
-
-  @override
-  String get onbSavingNeed => 'Mỗi tháng cần để dành';
-
-  @override
-  String onbSavingShare(String percent) {
-    return '$percent% thu nhập';
+  String incomeBandOver(String amount) {
+    return 'Trên $amount triệu';
   }
 
   @override
-  String get onbSuggestTitle => 'Mỗi tháng nên chi khoảng';
+  String get incomeBandNone => 'Không muốn chia sẻ';
 
   @override
-  String get onbSuggestIncome => 'Thu nhập';
+  String get onbSavingTitle => 'Bạn đang hướng đến mục tiêu tài chính nào?';
 
   @override
-  String onbSuggestSaveFor(String goal) {
-    return 'Để dành cho $goal';
-  }
+  String get onbSavingSub =>
+      'Những mục tiêu nhỏ hôm nay sẽ tạo nên sự khác biệt lớn trong tương lai. Hãy chọn điều bạn muốn đạt được.';
 
   @override
-  String onbSuggestSaveDefault(int percent) {
-    return 'Để dành $percent% thu nhập';
-  }
+  String get onbSavingTarget => 'Số tiền';
 
   @override
-  String get onbSuggestSpend => 'Chi tiêu';
+  String get onbSavingDate => 'Thời hạn';
 
   @override
-  String onbSuggestNoGoal(int percent) {
-    return 'Chưa có mục tiêu nên tạm để dành $percent%.';
-  }
+  String get onbSavingName => 'Tên mục tiêu';
 
   @override
-  String get onbSuggestHint => 'Sửa được bất cứ lúc nào trong Ngân sách tháng.';
+  String get onbDoneTitle => 'Hành trình tài chính của bạn bắt đầu từ đây!';
 
   @override
-  String get onbSuggestUse => 'Dùng mức này';
+  String get onbDoneSub =>
+      'Freeva đã sẵn sàng đồng hành cùng bạn trên hành trình quản lý tiền bạc thông minh và đạt được những mục tiêu tài chính.';
+
+  @override
+  String get onbDoneStart => 'Khám phá Freeva';
 
   @override
   String get dailyLogAskTitle => 'Nhắc ghi chi mỗi tối';
@@ -3002,37 +2991,36 @@ class SVi extends S {
   String get dailyLogAskOn => 'Bật';
 
   @override
+  String budgetAskTitle(String month) {
+    return 'Đặt ngân sách tháng $month';
+  }
+
+  @override
+  String get budgetAskLimit => 'Mức chi tối đa';
+
+  @override
+  String get budgetAskHint => 'Gợi ý theo thu nhập bạn chọn.';
+
+  @override
+  String get budgetAskSet => 'Đặt ngân sách';
+
+  @override
   String get meIncome => 'Thu nhập hàng tháng';
 
   @override
   String get meIncomeNone => 'Chưa đặt';
 
   @override
-  String get meIncomeClear => 'Xoá thu nhập';
-
-  @override
-  String get meIncomeSave => 'Lưu';
-
-  @override
   String get meIncomeFailed => 'Chưa lưu được, thử lại sau.';
-
-  @override
-  String get setupWalletsTitle => 'Tiền của bạn ở đâu?';
-
-  @override
-  String get setupWalletsSub => 'Thêm ví và số dư. Ước chừng là đủ.';
-
-  @override
-  String get setupAdd => 'Thêm';
-
-  @override
-  String get setupSkip => 'Bỏ qua';
 
   @override
   String get checklistTitle => 'Bắt đầu nào';
 
   @override
-  String get checklistWallet => 'Tạo ví';
+  String get checklistWallet => 'Thêm ví đầu tiên';
+
+  @override
+  String get checklistAddWallet => 'Thêm ví';
 
   @override
   String get checklistExpense => 'Ghi khoản chi đầu tiên';
@@ -3579,6 +3567,15 @@ class SVi extends S {
 
   @override
   String get goalKindRetirement => 'Nghỉ hưu';
+
+  @override
+  String get goalKindChildren => 'Con cái';
+
+  @override
+  String get goalKindBusiness => 'Kinh doanh';
+
+  @override
+  String get goalKindHealth => 'Sức khỏe';
 
   @override
   String get goalKindCustom => 'Khác';

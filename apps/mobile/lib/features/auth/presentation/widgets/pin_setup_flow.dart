@@ -175,9 +175,7 @@ class _PinSetupFlowState extends State<PinSetupFlow> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: 20),
             child: Text(
-              _mismatch
-                  ? s.authPinMismatch
-                  : (confirm ? s.authPinConfirmHint : ''),
+              _mismatch ? s.authPinMismatch : '',
               textAlign: TextAlign.center,
               style: FreevaTypography.bodyS.copyWith(
                 color: _mismatch ? c.statusDanger : c.textSecondary,

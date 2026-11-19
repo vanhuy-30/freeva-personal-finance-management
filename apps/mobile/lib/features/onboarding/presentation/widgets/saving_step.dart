@@ -4,7 +4,6 @@ import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/money/money_input_formatter.dart';
-import '../../../../core/money/money_text.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_picker_field.dart';
@@ -16,8 +15,8 @@ import '../../../wallets/presentation/widgets/editor/form_pair.dart';
 import '../viewmodels/onboarding_view_model.dart';
 import 'onboarding_frame.dart';
 
-/// Question 3 (board ObSaving): what to save for, how much and by when. The
-/// monthly amount comes from the server preview once both are filled.
+/// Question 3 (boards ObSaving, ObSavingOther): which goal, how much and by
+/// when. "Khác" asks for a name first.
 class SavingStep extends StatefulWidget {
   const SavingStep({
     required this.model,
@@ -36,12 +35,14 @@ class SavingStep extends StatefulWidget {
 
 class _SavingStepState extends State<SavingStep> {
   final _target = TextEditingController();
+  final _name = TextEditingController();
 
   OnboardingViewModel get model => widget.model;
 
   @override
   void dispose() {
     _target.dispose();
+    _name.dispose();
     super.dispose();
   }
 
@@ -64,7 +65,6 @@ class _SavingStepState extends State<SavingStep> {
       listenable: model,
       builder: (context, _) {
         final date = model.savingDate;
-        final need = model.preview?.requiredPerMonthMinor;
         return OnboardingFrame(
           step: 3,
           title: s.onbSavingTitle,
@@ -73,7 +73,12 @@ class _SavingStepState extends State<SavingStep> {
           onNext: widget.onNext,
           titleGap: 30,
           children: [
-            const SizedBox(height: 22),
+            const SizedBox(height: FreevaSpace.s2),
+            Text(
+              s.onbSavingSub,
+              style: FreevaTypography.body.copyWith(color: c.textSecondary),
+            ),
+            const SizedBox(height: 18),
             Wrap(
               spacing: FreevaSpace.s2,
               runSpacing: FreevaSpace.s2,
@@ -88,6 +93,16 @@ class _SavingStepState extends State<SavingStep> {
                   ),
               ],
             ),
+            if (model.isCustom) ...[
+              const SizedBox(height: 14),
+              FreevaTextField(
+                label: s.onbSavingName,
+                controller: _name,
+                maxLength: model.goalNameMaxLength,
+                textInputAction: TextInputAction.next,
+                onChanged: model.setCustomName,
+              ),
+            ],
             const SizedBox(height: 14),
             _FieldPair(
               first: FreevaTextField(
@@ -123,13 +138,6 @@ class _SavingStepState extends State<SavingStep> {
                 onTap: _pickDate,
               ),
             ),
-            if (model.savingReady && need != null) ...[
-              const SizedBox(height: 14),
-              _NeedCard(
-                amount: formatMoneyText(need, model.digits, locale),
-                shareBps: model.preview?.incomeShareBps,
-              ),
-            ],
           ],
         );
       },
@@ -137,75 +145,7 @@ class _SavingStepState extends State<SavingStep> {
   }
 }
 
-/// Green card: "Mỗi tháng cần để dành" over the amount and, with income, the
-/// share of it ("· 24% thu nhập").
-class _NeedCard extends StatelessWidget {
-  const _NeedCard({required this.amount, this.shareBps});
-
-  final String amount;
-  final int? shareBps;
-
-  @override
-  Widget build(BuildContext context) {
-    final s = S.of(context);
-    final c = context.colors;
-    final locale = Localizations.localeOf(context).toString();
-    final share = shareBps;
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: c.tintGreen,
-        borderRadius: BorderRadius.circular(FreevaRadius.md),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            s.onbSavingNeed,
-            style: FreevaTypography.bodyS.copyWith(
-              height: 16 / 13,
-              color: c.textOnWash,
-            ),
-          ),
-          const SizedBox(height: 2),
-          Text.rich(
-            TextSpan(
-              text: amount,
-              style: FreevaTypography.titleS.copyWith(
-                height: 24 / 20,
-                fontWeight: FontWeight.w600,
-                color: c.tintGreenFg,
-                fontFeatures: const [FontFeature.tabularFigures()],
-              ),
-              children: [
-                if (share != null)
-                  TextSpan(
-                    text:
-                        ' · ${s.onbSavingShare(percentFromBps(share, locale))}',
-                    style: FreevaTypography.bodyM.copyWith(
-                      fontWeight: FontWeight.w500,
-                      color: c.textOnWash,
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// 2400 → "24", 2435 → "24,3" (vi) / "24.3" (en): one decimal at most,
-/// rounded down, integer maths only.
-String percentFromBps(int bps, String locale) {
-  final whole = bps ~/ 100;
-  final tenth = (bps % 100) ~/ 10;
-  if (tenth == 0) return '$whole';
-  return '$whole${locale.startsWith('vi') ? ',' : '.'}$tenth';
-}
-
-/// "Cần có" and "Đến khi" side by side, stacked when large text on a narrow
+/// "Số tiền" and "Thời hạn" side by side, stacked when large text on a narrow
 /// screen would not fit two (no LayoutBuilder: the frame measures
 /// intrinsics). Width = screen minus the margins, capped at the frame's max.
 class _FieldPair extends StatelessWidget {

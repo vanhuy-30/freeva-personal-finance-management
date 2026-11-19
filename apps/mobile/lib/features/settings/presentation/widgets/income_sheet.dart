@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
-import '../../../../core/money/money_input_formatter.dart';
-import '../../../../core/money/money_text.dart';
-import '../../../../core/theme/theme_context.dart';
-import '../../../../core/theme/tokens.g.dart';
-import '../../../../core/widgets/freeva_button.dart';
+import '../../../../core/money/currency_catalog.dart';
 import '../../../../core/widgets/freeva_sheet.dart';
 import '../../../../core/widgets/freeva_toast.dart';
-import '../../../../core/widgets/sheet_amount_field.dart';
+import '../../../profile/domain/declared_income.dart';
 import '../../../profile/presentation/viewmodels/profile_view_model.dart';
-import '../../../../core/money/currency_catalog.dart';
+import '../../../profile/presentation/widgets/income_band_list.dart';
+import '../../../server_config/domain/app_limits.dart';
 
-/// Edits the stated monthly income (Cá nhân): "Lưu" sets it, "Xoá thu nhập"
-/// clears it. Saved through `PUT /profile/monthly-income`.
+/// Edits the declared income band (Cá nhân), the same list as first-run
+/// question 2: a tap saves the band, "Không muốn chia sẻ" clears it. Saved
+/// through `PUT /profile/declared-income`.
 Future<void> showIncomeSheet(BuildContext context, ProfileViewModel profile) {
   final s = S.of(context);
   return showFreevaSheet<void>(
@@ -33,32 +32,15 @@ class _IncomeBody extends StatefulWidget {
 }
 
 class _IncomeBodyState extends State<_IncomeBody> {
-  late final TextEditingController _amount;
   bool _saving = false;
 
   String get _currency =>
       widget.profile.saved?.currency ?? CurrencyCatalog.current.defaultCode;
-  int get _digits => CurrencyCatalog.current.digits(_currency);
 
-  @override
-  void initState() {
-    super.initState();
-    final income = widget.profile.saved?.monthlyIncomeMinor;
-    final locale = widget.profile.saved?.locale ?? 'vi';
-    _amount = TextEditingController(
-      text: income == null ? '' : formatMoneyText(income, _digits, locale),
-    );
-  }
-
-  @override
-  void dispose() {
-    _amount.dispose();
-    super.dispose();
-  }
-
-  Future<void> _save(BigInt? minor) async {
+  Future<void> _save(DeclaredIncome? band) async {
+    if (_saving) return;
     setState(() => _saving = true);
-    final ok = await widget.profile.saveMonthlyIncome(minor);
+    final ok = await widget.profile.saveDeclaredIncome(band);
     if (!mounted) return;
     setState(() => _saving = false);
     if (!ok) {
@@ -70,50 +52,17 @@ class _IncomeBodyState extends State<_IncomeBody> {
 
   @override
   Widget build(BuildContext context) {
-    final s = S.of(context);
-    final locale = Localizations.localeOf(context).toString();
-    final value = parseGroupedMoney(_amount.text, _digits, locale);
-    final had = widget.profile.saved?.monthlyIncomeMinor != null;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        SheetAmountField(
-          controller: _amount,
-          digits: _digits,
-          locale: locale,
-          symbol: CurrencyCatalog.current.symbol(_currency),
-          onChanged: () => setState(() {}),
-        ),
-        const SizedBox(height: FreevaSpace.s5),
-        FreevaButton(
-          label: s.meIncomeSave,
-          size: FreevaButtonSize.l,
-          expand: true,
-          loading: _saving,
-          onPressed: _saving || value == null || value <= BigInt.zero
-              ? null
-              : () => _save(value),
-        ),
-        if (had) ...[
-          const SizedBox(height: FreevaSpace.s2),
-          Center(
-            child: TextButton(
-              onPressed: _saving ? null : () => _save(null),
-              style: TextButton.styleFrom(
-                minimumSize: const Size(0, FreevaSize.touch),
-                foregroundColor: context.colors.actionDanger,
-              ),
-              child: Text(
-                s.meIncomeClear,
-                style: FreevaTypography.titleM.copyWith(
-                  color: context.colors.actionDanger,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ],
+    final saved = widget.profile.saved?.declaredIncome;
+    final bands = incomeBandsFrom(
+      getIt<AppLimitsSource>().requireLimits.onboardingIncomeBandsVnd,
+    );
+    return IncomeBandList(
+      bands: bands,
+      digits: CurrencyCatalog.current.digits(_currency),
+      selected: saved,
+      notShared: false,
+      onBand: _save,
+      onNotShared: () => _save(null),
     );
   }
 }

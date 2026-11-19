@@ -2742,7 +2742,7 @@ class SEn extends S {
   String get authVerifyWhyTitle => 'A confirmed email helps you';
 
   @override
-  String get authVerifyWhyReset => 'Get your password back if you forget it';
+  String get authVerifyWhyReset => 'Reset your password';
 
   @override
   String get authVerifyWhyAlert => 'Get alerts about unusual sign-ins';
@@ -2760,8 +2760,7 @@ class SEn extends S {
   String get authVerificationSent => 'Confirmation link sent again.';
 
   @override
-  String get authVerifyLater =>
-      'You can use the app without confirming. Confirm later in Profile.';
+  String get authVerifyLater => 'You can confirm later in Profile.';
 
   @override
   String get authSendResetLink => 'Send reset link';
@@ -2846,9 +2845,6 @@ class SEn extends S {
   String get authPinConfirmSub => 'Enter the 6 digits again to be sure.';
 
   @override
-  String get authPinConfirmHint => 'If they don’t match you start again.';
-
-  @override
   String get authPinMismatch => 'The PINs didn’t match. Let’s start again.';
 
   @override
@@ -2858,8 +2854,7 @@ class SEn extends S {
   String get authBiometricTitleFace => 'Set up Face ID';
 
   @override
-  String get authBiometricSubFace =>
-      'Unlock Freeva with your face, faster than a PIN.';
+  String get authBiometricSubFace => 'Unlock Freeva faster with Face ID';
 
   @override
   String get authBiometricTitle => 'Unlock faster';
@@ -2932,8 +2927,7 @@ class SEn extends S {
   String get signUpTitle => 'Create your Freeva account';
 
   @override
-  String get signUpSub =>
-      'Your data is safe and moves with you to a new phone.';
+  String get signUpSub => 'Start managing your money wisely with Freeva.';
 
   @override
   String get authContinueEmail => 'Continue with email';
@@ -2953,95 +2947,87 @@ class SEn extends S {
   }
 
   @override
-  String get onbGoalsTitle => 'What can Freeva help you with?';
+  String get onbGoalsTitle => 'What would you like Freeva to help with?';
 
   @override
-  String onbGoalsSub(int count) {
-    return 'Pick up to $count.';
+  String get onbGoalsIntro =>
+      'Everyone manages money their own way. Tell us what matters most to you.';
+
+  @override
+  String get onbGoalsMulti => 'You can pick more than one';
+
+  @override
+  String get onbGoalTrack => 'Manage income and spending';
+
+  @override
+  String get onbGoalSave => 'Save money';
+
+  @override
+  String get onbGoalBudget => 'Stay on budget';
+
+  @override
+  String get onbGoalDebt => 'Manage debts';
+
+  @override
+  String get onbGoalAssets => 'Track assets';
+
+  @override
+  String get onbGoalHabits => 'Build better money habits';
+
+  @override
+  String get onbIncomeTitle => 'What is your monthly income?';
+
+  @override
+  String get onbIncomeSub =>
+      'This helps Freeva suggest a budget and plans that fit you better.';
+
+  @override
+  String get onbIncomePrivacy =>
+      'Your answer stays private and is only used to personalise your experience.';
+
+  @override
+  String incomeBandUnder(String amount) {
+    return 'Under $amount million';
   }
 
   @override
-  String get onbGoalTrack => 'Track spending';
-
-  @override
-  String get onbGoalTrackSub => 'Know where the money goes each month';
-
-  @override
-  String get onbGoalSave => 'Save';
-
-  @override
-  String get onbGoalSaveSub => 'Put money aside for something';
-
-  @override
-  String get onbGoalBudget => 'Manage a budget';
-
-  @override
-  String get onbGoalBudgetSub => 'Set a spending limit and stick to it';
-
-  @override
-  String get onbIncomeTitle => 'About how much do you earn a month?';
-
-  @override
-  String get onbIncomeSub => 'So the suggested budget fits.';
-
-  @override
-  String get onbIncomeHint =>
-      'A rough number is fine. You can change it in Me.';
-
-  @override
-  String get onbIncomeAmount => 'Monthly income';
-
-  @override
-  String onbIncomeChip(String amount) {
-    return '$amount million';
+  String incomeBandBetween(String from, String to) {
+    return '$from – $to million';
   }
 
   @override
-  String get onbSavingTitle => 'What are you saving for?';
+  String incomeBandOver(String amount) {
+    return 'Over $amount million';
+  }
+
+  @override
+  String get incomeBandNone => 'Prefer not to say';
+
+  @override
+  String get onbSavingTitle => 'Which money goal are you working towards?';
+
+  @override
+  String get onbSavingSub =>
+      'Small goals today make a big difference later. Pick what you want to reach.';
 
   @override
   String get onbSavingTarget => 'Amount';
 
   @override
-  String get onbSavingDate => 'By';
+  String get onbSavingDate => 'Deadline';
 
   @override
-  String get onbSavingNeed => 'Save each month';
+  String get onbSavingName => 'Goal name';
 
   @override
-  String onbSavingShare(String percent) {
-    return '$percent% of income';
-  }
+  String get onbDoneTitle => 'Your money journey starts here!';
 
   @override
-  String get onbSuggestTitle => 'Each month, spend about';
+  String get onbDoneSub =>
+      'Freeva is ready to walk with you as you manage money wisely and reach your money goals.';
 
   @override
-  String get onbSuggestIncome => 'Income';
-
-  @override
-  String onbSuggestSaveFor(String goal) {
-    return 'Saving for $goal';
-  }
-
-  @override
-  String onbSuggestSaveDefault(int percent) {
-    return 'Save $percent% of income';
-  }
-
-  @override
-  String get onbSuggestSpend => 'Spending';
-
-  @override
-  String onbSuggestNoGoal(int percent) {
-    return 'No goal yet, so $percent% goes to savings for now.';
-  }
-
-  @override
-  String get onbSuggestHint => 'You can change it any time in Monthly budget.';
-
-  @override
-  String get onbSuggestUse => 'Use this amount';
+  String get onbDoneStart => 'Explore Freeva';
 
   @override
   String get dailyLogAskTitle => 'Remind you to log spending each evening';
@@ -3053,38 +3039,36 @@ class SEn extends S {
   String get dailyLogAskOn => 'Turn on';
 
   @override
+  String budgetAskTitle(String month) {
+    return 'Set your $month budget';
+  }
+
+  @override
+  String get budgetAskLimit => 'Spending limit';
+
+  @override
+  String get budgetAskHint => 'Suggested from the income you chose.';
+
+  @override
+  String get budgetAskSet => 'Set budget';
+
+  @override
   String get meIncome => 'Monthly income';
 
   @override
   String get meIncomeNone => 'Not set';
 
   @override
-  String get meIncomeClear => 'Remove income';
-
-  @override
-  String get meIncomeSave => 'Save';
-
-  @override
   String get meIncomeFailed => 'Could not save. Try again later.';
-
-  @override
-  String get setupWalletsTitle => 'Where is your money?';
-
-  @override
-  String get setupWalletsSub =>
-      'Add wallets and balances. A rough number is enough.';
-
-  @override
-  String get setupAdd => 'Add';
-
-  @override
-  String get setupSkip => 'Skip';
 
   @override
   String get checklistTitle => 'Let’s get started';
 
   @override
-  String get checklistWallet => 'Create a wallet';
+  String get checklistWallet => 'Add your first wallet';
+
+  @override
+  String get checklistAddWallet => 'Add wallet';
 
   @override
   String get checklistExpense => 'Record your first expense';
@@ -3632,6 +3616,15 @@ class SEn extends S {
 
   @override
   String get goalKindRetirement => 'Retirement';
+
+  @override
+  String get goalKindChildren => 'Children';
+
+  @override
+  String get goalKindBusiness => 'Business';
+
+  @override
+  String get goalKindHealth => 'Health';
 
   @override
   String get goalKindCustom => 'Other';

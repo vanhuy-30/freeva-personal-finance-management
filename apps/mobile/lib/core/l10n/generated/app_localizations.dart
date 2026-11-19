@@ -4893,7 +4893,7 @@ abstract class S {
   /// No description provided for @authVerifyWhyReset.
   ///
   /// In en, this message translates to:
-  /// **'Get your password back if you forget it'**
+  /// **'Reset your password'**
   String get authVerifyWhyReset;
 
   /// No description provided for @authVerifyWhyAlert.
@@ -4929,7 +4929,7 @@ abstract class S {
   /// No description provided for @authVerifyLater.
   ///
   /// In en, this message translates to:
-  /// **'You can use the app without confirming. Confirm later in Profile.'**
+  /// **'You can confirm later in Profile.'**
   String get authVerifyLater;
 
   /// No description provided for @authSendResetLink.
@@ -5088,12 +5088,6 @@ abstract class S {
   /// **'Enter the 6 digits again to be sure.'**
   String get authPinConfirmSub;
 
-  /// No description provided for @authPinConfirmHint.
-  ///
-  /// In en, this message translates to:
-  /// **'If they don’t match you start again.'**
-  String get authPinConfirmHint;
-
   /// No description provided for @authPinMismatch.
   ///
   /// In en, this message translates to:
@@ -5115,7 +5109,7 @@ abstract class S {
   /// No description provided for @authBiometricSubFace.
   ///
   /// In en, this message translates to:
-  /// **'Unlock Freeva with your face, faster than a PIN.'**
+  /// **'Unlock Freeva faster with Face ID'**
   String get authBiometricSubFace;
 
   /// No description provided for @authBiometricTitle.
@@ -5253,7 +5247,7 @@ abstract class S {
   /// No description provided for @signUpSub.
   ///
   /// In en, this message translates to:
-  /// **'Your data is safe and moves with you to a new phone.'**
+  /// **'Start managing your money wisely with Freeva.'**
   String get signUpSub;
 
   /// No description provided for @authContinueEmail.
@@ -5289,86 +5283,110 @@ abstract class S {
   /// No description provided for @onbGoalsTitle.
   ///
   /// In en, this message translates to:
-  /// **'What can Freeva help you with?'**
+  /// **'What would you like Freeva to help with?'**
   String get onbGoalsTitle;
 
-  /// No description provided for @onbGoalsSub.
+  /// No description provided for @onbGoalsIntro.
   ///
   /// In en, this message translates to:
-  /// **'Pick up to {count}.'**
-  String onbGoalsSub(int count);
+  /// **'Everyone manages money their own way. Tell us what matters most to you.'**
+  String get onbGoalsIntro;
+
+  /// No description provided for @onbGoalsMulti.
+  ///
+  /// In en, this message translates to:
+  /// **'You can pick more than one'**
+  String get onbGoalsMulti;
 
   /// No description provided for @onbGoalTrack.
   ///
   /// In en, this message translates to:
-  /// **'Track spending'**
+  /// **'Manage income and spending'**
   String get onbGoalTrack;
-
-  /// No description provided for @onbGoalTrackSub.
-  ///
-  /// In en, this message translates to:
-  /// **'Know where the money goes each month'**
-  String get onbGoalTrackSub;
 
   /// No description provided for @onbGoalSave.
   ///
   /// In en, this message translates to:
-  /// **'Save'**
+  /// **'Save money'**
   String get onbGoalSave;
-
-  /// No description provided for @onbGoalSaveSub.
-  ///
-  /// In en, this message translates to:
-  /// **'Put money aside for something'**
-  String get onbGoalSaveSub;
 
   /// No description provided for @onbGoalBudget.
   ///
   /// In en, this message translates to:
-  /// **'Manage a budget'**
+  /// **'Stay on budget'**
   String get onbGoalBudget;
 
-  /// No description provided for @onbGoalBudgetSub.
+  /// No description provided for @onbGoalDebt.
   ///
   /// In en, this message translates to:
-  /// **'Set a spending limit and stick to it'**
-  String get onbGoalBudgetSub;
+  /// **'Manage debts'**
+  String get onbGoalDebt;
+
+  /// No description provided for @onbGoalAssets.
+  ///
+  /// In en, this message translates to:
+  /// **'Track assets'**
+  String get onbGoalAssets;
+
+  /// No description provided for @onbGoalHabits.
+  ///
+  /// In en, this message translates to:
+  /// **'Build better money habits'**
+  String get onbGoalHabits;
 
   /// No description provided for @onbIncomeTitle.
   ///
   /// In en, this message translates to:
-  /// **'About how much do you earn a month?'**
+  /// **'What is your monthly income?'**
   String get onbIncomeTitle;
 
   /// No description provided for @onbIncomeSub.
   ///
   /// In en, this message translates to:
-  /// **'So the suggested budget fits.'**
+  /// **'This helps Freeva suggest a budget and plans that fit you better.'**
   String get onbIncomeSub;
 
-  /// No description provided for @onbIncomeHint.
+  /// No description provided for @onbIncomePrivacy.
   ///
   /// In en, this message translates to:
-  /// **'A rough number is fine. You can change it in Me.'**
-  String get onbIncomeHint;
+  /// **'Your answer stays private and is only used to personalise your experience.'**
+  String get onbIncomePrivacy;
 
-  /// No description provided for @onbIncomeAmount.
+  /// No description provided for @incomeBandUnder.
   ///
   /// In en, this message translates to:
-  /// **'Monthly income'**
-  String get onbIncomeAmount;
+  /// **'Under {amount} million'**
+  String incomeBandUnder(String amount);
 
-  /// No description provided for @onbIncomeChip.
+  /// No description provided for @incomeBandBetween.
   ///
   /// In en, this message translates to:
-  /// **'{amount} million'**
-  String onbIncomeChip(String amount);
+  /// **'{from} – {to} million'**
+  String incomeBandBetween(String from, String to);
+
+  /// No description provided for @incomeBandOver.
+  ///
+  /// In en, this message translates to:
+  /// **'Over {amount} million'**
+  String incomeBandOver(String amount);
+
+  /// No description provided for @incomeBandNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Prefer not to say'**
+  String get incomeBandNone;
 
   /// No description provided for @onbSavingTitle.
   ///
   /// In en, this message translates to:
-  /// **'What are you saving for?'**
+  /// **'Which money goal are you working towards?'**
   String get onbSavingTitle;
+
+  /// No description provided for @onbSavingSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Small goals today make a big difference later. Pick what you want to reach.'**
+  String get onbSavingSub;
 
   /// No description provided for @onbSavingTarget.
   ///
@@ -5379,68 +5397,32 @@ abstract class S {
   /// No description provided for @onbSavingDate.
   ///
   /// In en, this message translates to:
-  /// **'By'**
+  /// **'Deadline'**
   String get onbSavingDate;
 
-  /// No description provided for @onbSavingNeed.
+  /// No description provided for @onbSavingName.
   ///
   /// In en, this message translates to:
-  /// **'Save each month'**
-  String get onbSavingNeed;
+  /// **'Goal name'**
+  String get onbSavingName;
 
-  /// No description provided for @onbSavingShare.
+  /// No description provided for @onbDoneTitle.
   ///
   /// In en, this message translates to:
-  /// **'{percent}% of income'**
-  String onbSavingShare(String percent);
+  /// **'Your money journey starts here!'**
+  String get onbDoneTitle;
 
-  /// No description provided for @onbSuggestTitle.
+  /// No description provided for @onbDoneSub.
   ///
   /// In en, this message translates to:
-  /// **'Each month, spend about'**
-  String get onbSuggestTitle;
+  /// **'Freeva is ready to walk with you as you manage money wisely and reach your money goals.'**
+  String get onbDoneSub;
 
-  /// No description provided for @onbSuggestIncome.
+  /// No description provided for @onbDoneStart.
   ///
   /// In en, this message translates to:
-  /// **'Income'**
-  String get onbSuggestIncome;
-
-  /// No description provided for @onbSuggestSaveFor.
-  ///
-  /// In en, this message translates to:
-  /// **'Saving for {goal}'**
-  String onbSuggestSaveFor(String goal);
-
-  /// No description provided for @onbSuggestSaveDefault.
-  ///
-  /// In en, this message translates to:
-  /// **'Save {percent}% of income'**
-  String onbSuggestSaveDefault(int percent);
-
-  /// No description provided for @onbSuggestSpend.
-  ///
-  /// In en, this message translates to:
-  /// **'Spending'**
-  String get onbSuggestSpend;
-
-  /// No description provided for @onbSuggestNoGoal.
-  ///
-  /// In en, this message translates to:
-  /// **'No goal yet, so {percent}% goes to savings for now.'**
-  String onbSuggestNoGoal(int percent);
-
-  /// No description provided for @onbSuggestHint.
-  ///
-  /// In en, this message translates to:
-  /// **'You can change it any time in Monthly budget.'**
-  String get onbSuggestHint;
-
-  /// No description provided for @onbSuggestUse.
-  ///
-  /// In en, this message translates to:
-  /// **'Use this amount'**
-  String get onbSuggestUse;
+  /// **'Explore Freeva'**
+  String get onbDoneStart;
 
   /// No description provided for @dailyLogAskTitle.
   ///
@@ -5460,6 +5442,30 @@ abstract class S {
   /// **'Turn on'**
   String get dailyLogAskOn;
 
+  /// No description provided for @budgetAskTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set your {month} budget'**
+  String budgetAskTitle(String month);
+
+  /// No description provided for @budgetAskLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending limit'**
+  String get budgetAskLimit;
+
+  /// No description provided for @budgetAskHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested from the income you chose.'**
+  String get budgetAskHint;
+
+  /// No description provided for @budgetAskSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Set budget'**
+  String get budgetAskSet;
+
   /// No description provided for @meIncome.
   ///
   /// In en, this message translates to:
@@ -5472,47 +5478,11 @@ abstract class S {
   /// **'Not set'**
   String get meIncomeNone;
 
-  /// No description provided for @meIncomeClear.
-  ///
-  /// In en, this message translates to:
-  /// **'Remove income'**
-  String get meIncomeClear;
-
-  /// No description provided for @meIncomeSave.
-  ///
-  /// In en, this message translates to:
-  /// **'Save'**
-  String get meIncomeSave;
-
   /// No description provided for @meIncomeFailed.
   ///
   /// In en, this message translates to:
   /// **'Could not save. Try again later.'**
   String get meIncomeFailed;
-
-  /// No description provided for @setupWalletsTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Where is your money?'**
-  String get setupWalletsTitle;
-
-  /// No description provided for @setupWalletsSub.
-  ///
-  /// In en, this message translates to:
-  /// **'Add wallets and balances. A rough number is enough.'**
-  String get setupWalletsSub;
-
-  /// No description provided for @setupAdd.
-  ///
-  /// In en, this message translates to:
-  /// **'Add'**
-  String get setupAdd;
-
-  /// No description provided for @setupSkip.
-  ///
-  /// In en, this message translates to:
-  /// **'Skip'**
-  String get setupSkip;
 
   /// No description provided for @checklistTitle.
   ///
@@ -5523,8 +5493,14 @@ abstract class S {
   /// No description provided for @checklistWallet.
   ///
   /// In en, this message translates to:
-  /// **'Create a wallet'**
+  /// **'Add your first wallet'**
   String get checklistWallet;
+
+  /// No description provided for @checklistAddWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Add wallet'**
+  String get checklistAddWallet;
 
   /// No description provided for @checklistExpense.
   ///
@@ -6461,6 +6437,24 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Retirement'**
   String get goalKindRetirement;
+
+  /// No description provided for @goalKindChildren.
+  ///
+  /// In en, this message translates to:
+  /// **'Children'**
+  String get goalKindChildren;
+
+  /// No description provided for @goalKindBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Business'**
+  String get goalKindBusiness;
+
+  /// No description provided for @goalKindHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Health'**
+  String get goalKindHealth;
 
   /// No description provided for @goalKindCustom.
   ///

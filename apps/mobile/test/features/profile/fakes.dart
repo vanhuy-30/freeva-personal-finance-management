@@ -4,6 +4,7 @@ import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/onboarding/domain/onboarding_answers.dart';
 import 'package:mobile/features/profile/domain/account_export_use_case.dart';
 import 'package:mobile/features/profile/domain/account_file_sharer.dart';
+import 'package:mobile/features/profile/domain/declared_income.dart';
 import 'package:mobile/features/profile/domain/profile.dart';
 import 'package:mobile/features/profile/domain/profile_repository.dart';
 
@@ -42,12 +43,14 @@ class MemoryProfiles implements ProfileRepository {
     return right(unit);
   }
 
-  final List<BigInt?> incomes = [];
+  final List<DeclaredIncome?> incomes = [];
   @override
-  Future<Either<AuthFailure, Unit>> saveMonthlyIncome(BigInt? minor) async {
+  Future<Either<AuthFailure, Unit>> saveDeclaredIncome(
+    DeclaredIncome? income,
+  ) async {
     if (failure != null) return left(failure!);
-    incomes.add(minor);
-    value = value.withMonthlyIncome(minor);
+    incomes.add(income);
+    value = value.withDeclaredIncome(income);
     return right(unit);
   }
 

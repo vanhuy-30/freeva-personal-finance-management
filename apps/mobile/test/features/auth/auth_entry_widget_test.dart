@@ -148,12 +148,12 @@ void main() {
         await tester.tap(done);
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull, reason: '$locale goals');
-        // Goals (skip) → income (25 million, continue) → saving (skip) →
-        // budget suggestion (skip) → wallets → PIN.
+        // Goals (skip) → income (10–20 million, continue) → saving ("Khác",
+        // then skip) → Hoàn tất.
         final vi = locale == 'vi';
         final skips = vi
-            ? ['Để sau', '25 triệu', 'Tiếp tục', 'Để sau', 'Để sau', 'Bỏ qua']
-            : ['Later', '25 million', 'Continue', 'Later', 'Later', 'Skip'];
+            ? ['Để sau', '10 – 20 triệu', 'Tiếp tục', 'Khác', 'Để sau']
+            : ['Later', '10 – 20 million', 'Continue', 'Other', 'Later'];
         for (final (i, label) in skips.indexed) {
           final skip = find.text(label);
           await tester.ensureVisible(skip);
@@ -162,6 +162,7 @@ void main() {
           await tester.pumpAndSettle();
           expect(tester.takeException(), isNull, reason: '$locale step $i');
         }
+        expect(find.text(vi ? 'Khám phá Freeva' : 'Explore Freeva'), findsOne);
       }
     },
   );

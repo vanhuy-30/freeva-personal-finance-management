@@ -10,8 +10,8 @@ import '../../domain/onboarding_answers.dart';
 import '../viewmodels/onboarding_view_model.dart';
 import 'onboarding_frame.dart';
 
-/// Question 1 (board ObGoals3): what Freeva should help with, at most two.
-/// With two picked the third does not take a tap (the board draws it plain).
+/// Question 1 (board ObGoals3): what Freeva should help with, as many as the
+/// person likes (server `onboarding.maxGoals`).
 class GoalsStep extends StatelessWidget {
   const GoalsStep({
     required this.model,
@@ -26,29 +26,32 @@ class GoalsStep extends StatelessWidget {
 
   static String label(S s, OnboardingGoal goal) => switch (goal) {
     OnboardingGoal.track => s.onbGoalTrack,
-    OnboardingGoal.save => s.onbGoalSave,
     OnboardingGoal.budget => s.onbGoalBudget,
-  };
-
-  static String sub(S s, OnboardingGoal goal) => switch (goal) {
-    OnboardingGoal.track => s.onbGoalTrackSub,
-    OnboardingGoal.save => s.onbGoalSaveSub,
-    OnboardingGoal.budget => s.onbGoalBudgetSub,
+    OnboardingGoal.save => s.onbGoalSave,
+    OnboardingGoal.debt => s.onbGoalDebt,
+    OnboardingGoal.assets => s.onbGoalAssets,
+    OnboardingGoal.habits => s.onbGoalHabits,
   };
 
   static IconData icon(OnboardingGoal goal) => switch (goal) {
-    OnboardingGoal.track => LucideIcons.list,
-    OnboardingGoal.save => LucideIcons.piggyBank,
+    OnboardingGoal.track => LucideIcons.arrowUpDown,
     OnboardingGoal.budget => LucideIcons.chartPie,
+    OnboardingGoal.save => LucideIcons.piggyBank,
+    OnboardingGoal.debt => LucideIcons.creditCard,
+    OnboardingGoal.assets => LucideIcons.trendingUp,
+    OnboardingGoal.habits => LucideIcons.calendarCheck,
   };
 
-  /// Icon box fill and glyph: blue, green and yellow on the board. Picked
-  /// cards put the glyph on a white box.
+  /// Icon box fill and glyph as on the board. Picked cards put the glyph on
+  /// a white box.
   static (Color, Color) tint(FreevaColors c, OnboardingGoal goal) =>
       switch (goal) {
         OnboardingGoal.track => (c.tintBlue, c.tintBlueFg),
-        OnboardingGoal.save => (c.tintGreen, c.tintGreenFg),
         OnboardingGoal.budget => (c.statusWarningBg, c.statusWarning),
+        OnboardingGoal.save => (c.tintGreen, c.tintGreenFg),
+        OnboardingGoal.debt => (c.statusDangerBg, c.statusDanger),
+        OnboardingGoal.assets => (c.tintCyan, c.tintCyanFg),
+        OnboardingGoal.habits => (c.tintViolet, c.tintVioletFg),
       };
 
   @override
@@ -66,15 +69,23 @@ class GoalsStep extends StatelessWidget {
         children: [
           const SizedBox(height: FreevaSpace.s2),
           Text(
-            s.onbGoalsSub(model.maxGoals),
+            s.onbGoalsIntro,
             style: FreevaTypography.body.copyWith(color: c.textSecondary),
           ),
-          const SizedBox(height: FreevaSpace.s6),
+          const SizedBox(height: 20),
+          Text(
+            s.onbGoalsMulti,
+            style: FreevaTypography.bodyS.copyWith(
+              height: 18 / 13,
+              fontWeight: FontWeight.w600,
+              color: c.textSecondary,
+            ),
+          ),
+          const SizedBox(height: 10),
           for (final (i, goal) in OnboardingGoal.values.indexed) ...[
-            if (i > 0) const SizedBox(height: 10),
+            if (i > 0) const SizedBox(height: FreevaSpace.s2),
             _GoalCard(
               title: label(s, goal),
-              sub: sub(s, goal),
               icon: icon(goal),
               tint: tint(c, goal),
               selected: model.goals.contains(goal),
@@ -88,12 +99,11 @@ class GoalsStep extends StatelessWidget {
   }
 }
 
-/// Board card: 20 radius, 16 padding, 40 icon box r12, 16/600 title over a
-/// 13 line, 22 radio at the end (filled with a check when picked).
+/// Board card: 16 radius, 10/14 padding, 56 min height, 36 icon box r10,
+/// one 15 line, 22 check at the end (filled when picked).
 class _GoalCard extends StatelessWidget {
   const _GoalCard({
     required this.title,
-    required this.sub,
     required this.icon,
     required this.tint,
     required this.selected,
@@ -102,7 +112,6 @@ class _GoalCard extends StatelessWidget {
   });
 
   final String title;
-  final String sub;
   final IconData icon;
   final (Color, Color) tint;
   final bool selected;
@@ -112,7 +121,7 @@ class _GoalCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
-    final radius = BorderRadius.circular(FreevaRadius.lg);
+    final radius = BorderRadius.circular(FreevaRadius.md);
     Widget card = AnimatedContainer(
       duration: FreevaMotion.fast,
       decoration: BoxDecoration(
@@ -127,48 +136,36 @@ class _GoalCard extends StatelessWidget {
         borderRadius: radius,
         splashFactory: NoSplash.splashFactory,
         onTap: enabled ? onTap : null,
-        child: Padding(
-          padding: const EdgeInsets.all(FreevaSpace.s4),
-          child: Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: selected ? c.bgSurface : tint.$1,
-                  borderRadius: BorderRadius.circular(FreevaRadius.sm),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 56),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            child: Row(
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: selected ? c.bgSurface : tint.$1,
+                    borderRadius: BorderRadius.circular(FreevaRadius.xs),
+                  ),
+                  child: Icon(icon, size: 18, color: tint.$2),
                 ),
-                child: Icon(icon, size: 20, color: tint.$2),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: FreevaTypography.body.copyWith(
-                        fontSize: 16,
-                        height: 19 / 16,
-                        fontWeight: FontWeight.w600,
-                        color: c.textPrimary,
-                      ),
+                const SizedBox(width: FreevaSpace.s3),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: FreevaTypography.body.copyWith(
+                      fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                      color: c.textPrimary,
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      sub,
-                      style: FreevaTypography.bodyS.copyWith(
-                        height: 16 / 13,
-                        color: c.textSecondary,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 14),
-              _Radio(selected: selected),
-            ],
+                const SizedBox(width: FreevaSpace.s3),
+                _Check(selected: selected),
+              ],
+            ),
           ),
         ),
       ),
@@ -181,8 +178,8 @@ class _GoalCard extends StatelessWidget {
   }
 }
 
-class _Radio extends StatelessWidget {
-  const _Radio({required this.selected});
+class _Check extends StatelessWidget {
+  const _Check({required this.selected});
 
   final bool selected;
 

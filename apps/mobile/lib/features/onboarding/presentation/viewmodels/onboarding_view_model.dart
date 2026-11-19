@@ -1,83 +1,45 @@
-import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 
-import '../../../budgets/domain/budget.dart';
-import '../../../server_config/domain/app_limits.dart';
-import '../../../budgets/domain/budget_use_cases.dart';
-import '../../../goals/domain/goal.dart';
-import '../../../goals/domain/goal_use_cases.dart';
+import '../../../profile/domain/declared_income.dart';
 import '../../../profile/domain/profile_use_cases.dart';
-import '../../../settings/domain/app_preferences.dart';
-import '../../../settings/domain/settings_use_cases.dart';
+import '../../../server_config/domain/app_limits.dart';
 import '../../../sync/domain/sync_queue.dart';
 import '../../domain/onboarding_answers.dart';
 import '../../domain/pending_goal_use_cases.dart';
 import '../../../../core/money/currency_catalog.dart';
 
-/// Monthly split the first budget suggestion shows (minor units).
-class BudgetSuggestion {
-  const BudgetSuggestion({
-    required this.income,
-    required this.saving,
-    required this.spending,
-    required this.fromGoal,
-  });
-  final BigInt income;
-  final BigInt saving;
-  final BigInt spending;
-
-  /// True when [saving] is the goal's monthly need; false = the default share
-  /// of income ([savingsSharePercent]).
-  final bool fromGoal;
-}
-
-/// Choices on the three first-run questions and the budget suggestion.
-/// Saving is best effort: the answers only personalise the app, so a failed
-/// save never holds anyone on a screen.
+/// Choices on the three first-run questions. Saving is best effort: the
+/// answers only personalise the app, so a failed save never holds anyone on
+/// a screen.
 class OnboardingViewModel extends ChangeNotifier {
   OnboardingViewModel(
     this._profile,
-    this._settings,
-    this._goals,
-    this._pending,
-    this._budgets, {
+    this._pending, {
     required this._limits,
     this.today,
-    this.previewDelay = const Duration(milliseconds: 300),
   });
 
   /// Server product numbers (MOB-P5-001).
   final AppLimitsSource _limits;
   final ProfileUseCases _profile;
-  final SettingsUseCases _settings;
-  final GoalUseCases _goals;
   final PendingGoalUseCases _pending;
-
-  /// Null when the budget module is not registered (some tests).
-  final BudgetUseCases? _budgets;
 
   /// Fixed date for tests; null = device date.
   final DateTime? today;
-  final Duration previewDelay;
 
-  /// Server `onboarding.maxGoals`.
+  /// Server `onboarding.maxGoals` (all six by default).
   int get maxGoals => _limits.requireLimits.onboardingMaxGoals;
-  static const maxAmountDigits = 12;
 
-  /// Quick income amounts in VND minor units (server
-  /// `onboarding.incomeSuggestionsVnd`; shown only for VND).
-  List<BigInt> get incomeSuggestions =>
-      _limits.requireLimits.onboardingIncomeSuggestionsVnd;
+  /// Income bands of question 2, from server `onboarding.incomeBandsVnd`.
+  List<DeclaredIncome> get incomeBands =>
+      incomeBandsFrom(_limits.requireLimits.onboardingIncomeBandsVnd);
 
   /// Goal kinds offered on question 3 in display order (server
   /// `onboarding.goalKinds`); `custom` = "Khác".
   List<String> get savingKinds => _limits.requireLimits.onboardingGoalKinds;
 
-  /// Share of income saved when there is no goal (server
-  /// `onboarding.savingsSharePercent`).
-  int get savingsSharePercent =>
-      _limits.requireLimits.onboardingSavingsSharePercent;
+  /// Longest goal name the server takes ("Khác").
+  int get goalNameMaxLength => _limits.requireLimits.goalNameMaxLength;
 
   /// Profile currency; the first run happens in it. Until the profile loads,
   /// the currency new accounts start in (server).
@@ -86,20 +48,22 @@ class OnboardingViewModel extends ChangeNotifier {
 
   final List<OnboardingGoal> goals = [];
 
-  String _incomeDigits = '';
+  /// Picked band; null with nothing picked or with [incomeNotShared].
+  DeclaredIncome? income;
+
+  /// "Không muốn chia sẻ" is picked.
+  bool incomeNotShared = false;
+
   String? savingKind;
+
+  /// Name typed for "Khác".
+  String customName = '';
   BigInt _targetMinor = BigInt.zero;
 
   /// `YYYY-MM-DD`; null until picked.
   String? savingDate;
 
-  /// Server numbers for the saving goal; null until both fields are set.
-  GoalPreview? preview;
-  Timer? _previewTimer;
-  int _previewEpoch = 0;
-  Future<void>? _previewLoad;
-
-  /// Loads the profile currency; keeps VND when it cannot.
+  /// Loads the profile currency; keeps the default when it cannot.
   Future<void> load() async {
     final loaded = await _profile.load();
     loaded.fold((_) {}, (profile) => currency = profile.currency);
@@ -122,42 +86,40 @@ class OnboardingViewModel extends ChangeNotifier {
 
   Future<void> saveGoals() async {
     if (goals.isEmpty) return;
-    await _profile.saveOnboarding(OnboardingAnswers(goals: List.of(goals)));
+    // Saved in the board's order, whatever the tap order was.
+    final ordered = [
+      for (final goal in OnboardingGoal.values)
+        if (goals.contains(goal)) goal,
+    ];
+    await _profile.saveOnboarding(OnboardingAnswers(goals: ordered));
   }
 
   // Question 2 ---------------------------------------------------------------
 
-  /// Income in whole currency units, 0 when nothing is typed.
-  BigInt get income => BigInt.tryParse(_incomeDigits) ?? BigInt.zero;
-  BigInt get incomeMinor => income * BigInt.from(10).pow(digits);
-
-  void typeIncome(String keys) => _type(keys, _incomeDigits, (v) {
-    _incomeDigits = v;
-  });
-
-  void deleteIncomeDigit() {
-    if (_incomeDigits.isEmpty) return;
-    _incomeDigits = _incomeDigits.substring(0, _incomeDigits.length - 1);
+  void pickIncome(DeclaredIncome band) {
+    income = band;
+    incomeNotShared = false;
     notifyListeners();
   }
 
-  void setIncome(int value) {
-    _incomeDigits = value > 0 ? '$value' : '';
+  void pickNotShared() {
+    income = null;
+    incomeNotShared = true;
     notifyListeners();
   }
 
-  /// Waited for before question 3, so the server's share of income in the
-  /// goal preview uses the number just typed.
+  /// Saves the picked band; "Không muốn chia sẻ" and nothing picked send
+  /// nothing.
   Future<void> saveIncome() async {
-    if (incomeMinor <= BigInt.zero) return;
-    await _profile.saveOnboarding(
-      OnboardingAnswers(monthlyIncomeMinor: incomeMinor),
-    );
+    final band = income;
+    if (band == null) return;
+    await _profile.saveOnboarding(OnboardingAnswers(declaredIncome: band));
   }
 
-  /// Skipping question 2 drops what was typed, so no suggestion follows.
+  /// "Để sau" on question 2 drops the pick.
   void clearIncome() {
-    _incomeDigits = '';
+    income = null;
+    incomeNotShared = false;
     notifyListeners();
   }
 
@@ -167,153 +129,67 @@ class OnboardingViewModel extends ChangeNotifier {
 
   DateTime get _today => today ?? DateTime.now();
 
-  /// Earliest date the picker allows: tomorrow (a goal due today needs no
-  /// monthly saving).
+  /// Earliest date the picker allows: tomorrow.
   DateTime get firstDate {
     final now = _today;
     return DateTime(now.year, now.month, now.day + 1);
   }
+
+  bool get isCustom => savingKind == 'custom';
 
   void pickKind(String kind) {
     savingKind = savingKind == kind ? null : kind;
     notifyListeners();
   }
 
-  /// From the "Cần có" field, already in minor units; null = empty.
+  void setCustomName(String value) {
+    customName = value;
+    notifyListeners();
+  }
+
+  /// From the "Số tiền" field, already in minor units; null = empty.
   void setTargetMinor(BigInt? value) {
     final next = value != null && value > BigInt.zero ? value : BigInt.zero;
     if (next == _targetMinor) return;
     _targetMinor = next;
-    _schedulePreview();
     notifyListeners();
   }
 
   /// [day] is `YYYY-MM-DD` from the calendar sheet; null clears it.
   void pickDate(String? day) {
     savingDate = day;
-    _schedulePreview();
     notifyListeners();
   }
 
-  /// "Tiếp tục" on question 3 needs a kind, an amount and a date.
+  /// A goal is kept only with a kind, an amount, a date and, for "Khác", a
+  /// name.
   bool get savingReady =>
-      savingKind != null && targetMinor > BigInt.zero && savingDate != null;
+      savingKind != null &&
+      targetMinor > BigInt.zero &&
+      savingDate != null &&
+      (!isCustom || customName.trim().isNotEmpty);
 
-  void _schedulePreview() {
-    _previewTimer?.cancel();
-    _previewEpoch++;
-    preview = null;
-    if (targetMinor <= BigInt.zero || savingDate == null) return;
-    final epoch = _previewEpoch;
-    _previewTimer = Timer(previewDelay, () {
-      _previewLoad = _loadPreview(epoch);
-    });
-  }
-
-  /// Fetches a pending preview now and waits for it, so the budget
-  /// suggestion after question 3 uses the goal's real monthly need.
-  Future<void> settlePreview() async {
-    final timer = _previewTimer;
-    if (timer != null && timer.isActive) {
-      timer.cancel();
-      _previewLoad = _loadPreview(_previewEpoch);
-    }
-    await _previewLoad;
-  }
-
-  Future<void> _loadPreview(int epoch) async {
-    final result = await _goals.preview(
-      currency: currency,
-      targetMinor: targetMinor,
-      targetDate: savingDate!,
-    );
-    if (epoch != _previewEpoch) return;
-    preview = result.fold((_) => null, (value) => value);
-    notifyListeners();
-  }
-
-  /// Keeps the goal until a wallet exists (the wallets step comes next);
-  /// [name] is the kind's label in the user's language.
-  Future<void> keepSavingGoal(String name) async {
+  /// Keeps the goal until a wallet exists (wallets are added in the app).
+  /// [kindLabel] is the kind's label in the user's language, the name of any
+  /// kind but "Khác".
+  Future<void> keepSavingGoal(String kindLabel) async {
     if (!savingReady) return;
     await _pending.keep(
       clientId: newSyncOpId(),
       kind: savingKind!,
-      name: name,
+      name: isCustom ? customName.trim() : kindLabel,
       currency: currency,
       targetMinor: targetMinor,
       targetDate: savingDate!,
     );
   }
 
-  /// Skipping question 3 forgets the goal, so the suggestion saves the
-  /// default share.
+  /// Skipping question 3 forgets the goal.
   void clearSaving() {
     savingKind = null;
+    customName = '';
     _targetMinor = BigInt.zero;
     savingDate = null;
-    _schedulePreview();
     notifyListeners();
-  }
-
-  // Budget suggestion --------------------------------------------------------
-
-  /// Null without income, or when nothing would be left to spend.
-  BudgetSuggestion? get suggestion {
-    final total = incomeMinor;
-    if (total <= BigInt.zero) return null;
-    final need = savingReady ? preview?.requiredPerMonthMinor : null;
-    final saving =
-        need ?? total * BigInt.from(savingsSharePercent) ~/ BigInt.from(100);
-    final spending = total - saving;
-    if (spending <= BigInt.zero) return null;
-    return BudgetSuggestion(
-      income: total,
-      saving: saving,
-      spending: spending,
-      fromGoal: need != null,
-    );
-  }
-
-  /// "Dùng mức này": creates this month's budget; keeps a device draft when
-  /// the API is unavailable or a budget already exists.
-  Future<void> useSuggestion() async {
-    final amount = suggestion?.spending;
-    if (amount == null) return;
-    final budgets = _budgets;
-    if (budgets != null) {
-      final current = await budgets.current();
-      final created = await current.fold((_) async => false, (value) async {
-        if (value.budget != null) return true;
-        final put = await budgets.put(
-          BudgetDraft(
-            limitMinor: amount,
-            alertThresholds: List.of(
-              _limits.requireLimits.budgetDefaultThresholds,
-            ),
-            categories: const [],
-          ),
-        );
-        return put.isRight();
-      });
-      if (created) return;
-    }
-    final loaded = await _settings.load();
-    final prefs = loaded.fold<AppPreferences?>((_) => null, (value) => value);
-    if (prefs == null || !amount.isValidInt) return;
-    await _settings.save(prefs.copyWith(budgetDraftMinor: amount.toInt()));
-  }
-
-  void _type(String keys, String current, void Function(String) set) {
-    final next = (current + keys).replaceFirst(RegExp(r'^0+'), '');
-    if (next.length > maxAmountDigits) return;
-    set(next);
-    notifyListeners();
-  }
-
-  @override
-  void dispose() {
-    _previewTimer?.cancel();
-    super.dispose();
   }
 }

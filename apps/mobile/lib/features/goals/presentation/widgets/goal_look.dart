@@ -9,7 +9,7 @@ import '../../domain/goal.dart';
 
 /// Icon and tones of a goal kind, as drawn on the I boards: emergency green,
 /// home blue, car violet, travel cyan, education yellow, wedding red,
-/// retirement and other neutral.
+/// children blue, business green, health red, retirement and other neutral.
 class GoalLook {
   const GoalLook(this.icon, this.fill, this.stroke);
   final IconData icon;
@@ -31,6 +31,13 @@ GoalLook goalLook(BuildContext context, String kind) {
     ),
     'wedding' => GoalLook(LucideIcons.heart, c.statusDangerBg, c.statusDanger),
     'retirement' => GoalLook(LucideIcons.armchair, c.bgSubtle, c.textOnWash),
+    'children' => GoalLook(LucideIcons.baby, c.tintBlue, c.tintBlueFg),
+    'business' => GoalLook(LucideIcons.briefcase, c.tintGreen, c.tintGreenFg),
+    'health' => GoalLook(
+      LucideIcons.heartPulse,
+      c.statusDangerBg,
+      c.statusDanger,
+    ),
     _ => GoalLook(LucideIcons.star, c.bgSubtle, c.textOnWash),
   };
 }
@@ -43,6 +50,9 @@ String goalKindLabel(S s, String kind) => switch (kind) {
   'education' => s.goalKindEducation,
   'wedding' => s.goalKindWedding,
   'retirement' => s.goalKindRetirement,
+  'children' => s.goalKindChildren,
+  'business' => s.goalKindBusiness,
+  'health' => s.goalKindHealth,
   _ => s.goalKindCustom,
 };
 

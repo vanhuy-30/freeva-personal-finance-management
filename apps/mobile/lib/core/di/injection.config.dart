@@ -700,6 +700,8 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i779.FirstRunNudgesViewModel(
         gh<_i861.PendingGoalUseCases>(),
         gh<_i519.SettingsUseCases>(),
+        gh<_i245.BudgetUseCases>(),
+        gh<_i855.AppLimitsSource>(),
       ),
     );
     gh.factory<_i1008.DataExportViewModel>(

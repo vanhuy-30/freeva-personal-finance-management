@@ -17,6 +17,7 @@ import 'package:mobile/features/goals/domain/goal_use_cases.dart';
 import 'package:mobile/features/goals/presentation/viewmodels/goal_forecast_view_model.dart';
 import 'package:mobile/features/goals/presentation/viewmodels/goal_view_model.dart';
 import 'package:mobile/features/server_config/domain/server_config.dart';
+import 'package:mobile/features/profile/domain/declared_income.dart';
 import 'package:mobile/features/profile/domain/profile.dart';
 import 'package:mobile/features/profile/domain/profile_use_cases.dart';
 import 'package:mobile/features/profile/presentation/viewmodels/profile_view_model.dart';
@@ -326,7 +327,9 @@ Future<GoalHarness> goalsApp(
       version: 1,
       displayName: 'Minh',
       goals: profileGoals,
-      monthlyIncomeMinor: income,
+      declaredIncome: income == null
+          ? null
+          : DeclaredIncome(minMinor: income, maxMinor: income),
     );
   final profile = DefaultProfileViewModel(
     ProfileUseCases(profiles, testServerConfigModel()),

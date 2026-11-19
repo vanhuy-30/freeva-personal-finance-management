@@ -14,7 +14,7 @@ Canvas: trang **12 · Cá nhân, dữ liệu, đồng bộ**, khối O (màn Cá
 | # | Màn | Nội dung | Ghi chú |
 |---|---|---|---|
 | 1 | Cá nhân | Thay bởi nhóm mới (MOB-P6-001 đợt 6), xem [G-profile-settings.md](G-profile-settings.md) dòng 1: **TÀI SẢN** và **KẾ HOẠCH** (mỗi nhóm 4 ô, không số phụ), **THIẾT LẬP** (Danh mục, Nhãn · 12, Thu nhập và kỳ tính · "VND · ngày 1", Gợi ý tự động), **ỨNG DỤNG**, **DỮ LIỆU VÀ HỖ TRỢ**, Đăng xuất | Ô "Định kỳ" là tên rút gọn của "Định kỳ và hóa đơn" |
-| 2 | Thu nhập và kỳ tính | Ba dòng: Thu nhập hàng tháng, Tiền tệ mặc định, Tháng tính từ. "Lương về giữa tháng? Đặt theo ngày lương để ngân sách và báo cáo tính đúng kỳ." | Thu nhập sửa / xoá được (`monthlyIncomeMinor`) |
+| 2 | Thu nhập và kỳ tính | Ba dòng: Thu nhập hàng tháng, Tiền tệ mặc định, Tháng tính từ. "Lương về giữa tháng? Đặt theo ngày lương để ngân sách và báo cáo tính đúng kỳ." | Thu nhập chọn khoảng như onboarding, "Không muốn chia sẻ" để xoá (`declaredIncome`, 2026-11-19) |
 | 3 | Xuất dữ liệu | Hai thẻ chọn: Bảng giao dịch · Bản sao đầy đủ. Chip thời gian (Tháng này, 3 tháng, Năm nay, Tất cả, Tuỳ chọn), Ví. "01/08 – 03/11 · 248 giao dịch". "Xuất file" | Bản sao đầy đủ: ẩn chip và ô ví |
 | 4 | Nhập giao dịch | Tiêu đề lớn **"Nguồn dữ liệu"**. Thẻ chọn: Money Lover, Sổ thu chi MISA, Freeva, Nơi khác. "Tối đa 2.000 dòng mỗi lần. Giao dịch đã có sẽ được bỏ qua." "Chọn file CSV" | |
 | 5 | Chọn cột (chỉ "Nơi khác") | Thẻ file "so-chi-tieu.csv · 248 dòng". **CỘT TRONG FILE**: Ngày\*, Số tiền\*, Thu hay chi, Danh mục, Ví, Ghi chú, mỗi dòng một ô chọn cột (hoặc "Không dùng"). Kiểu ngày + Kiểu số. "Dòng đầu đọc được". "Tiếp" | |

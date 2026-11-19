@@ -72,10 +72,10 @@ class GoalViewModel extends ChangeNotifier {
     (sum, goal) => sum + (goal.requiredPerMonthMinor ?? BigInt.zero),
   );
 
-  /// Monthly income from the profile; null when not given or when it is in a
-  /// different currency than [currency].
+  /// Midpoint of the declared income band; null when not shared or when it
+  /// is in a different currency than [currency].
   BigInt? incomeFor(String currency) => _profile.saved?.currency == currency
-      ? _profile.saved?.monthlyIncomeMinor
+      ? _profile.saved?.declaredIncome?.midpointMinor
       : null;
 
   List<Wallet> get wallets => _wallets.active;
