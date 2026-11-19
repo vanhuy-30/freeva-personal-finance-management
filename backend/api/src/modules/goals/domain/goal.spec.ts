@@ -68,18 +68,18 @@ describe('BE-P3-012 goal preview', () => {
   const input = { currencyCode: 'VND', targetMinor: 60_000_000n, currentMinor: 0n, targetDate: '2027-09-05' };
 
   it('60000000 over 10 months → 6000000 per month, 24% of a declared 25000000 income', () => {
-    expect(goalPreview('2026-11-05', input, { currencyCode: 'VND', monthlyIncomeMinor: 25_000_000n })).toEqual({
+    expect(goalPreview('2026-11-05', input, { currencyCode: 'VND', midpointMinor: 25_000_000n })).toEqual({
       monthsLeft: 10, requiredPerMonthMinor: 6_000_000n, incomeShareBps: 2400,
     });
   });
 
   it('no share without declared income or in another currency', () => {
-    expect(goalPreview('2026-11-05', input, { currencyCode: 'VND', monthlyIncomeMinor: null }).incomeShareBps).toBeNull();
-    expect(goalPreview('2026-11-05', input, { currencyCode: 'USD', monthlyIncomeMinor: 2_500n }).incomeShareBps).toBeNull();
+    expect(goalPreview('2026-11-05', input, { currencyCode: 'VND', midpointMinor: null }).incomeShareBps).toBeNull();
+    expect(goalPreview('2026-11-05', input, { currencyCode: 'USD', midpointMinor: 2_500n }).incomeShareBps).toBeNull();
   });
 
   it('a past date has no monthly amount', () => {
-    expect(goalPreview('2026-11-05', { ...input, targetDate: '2026-10-01' }, { currencyCode: 'VND', monthlyIncomeMinor: null }))
+    expect(goalPreview('2026-11-05', { ...input, targetDate: '2026-10-01' }, { currencyCode: 'VND', midpointMinor: null }))
       .toEqual({ monthsLeft: 0, requiredPerMonthMinor: null, incomeShareBps: null });
   });
 });

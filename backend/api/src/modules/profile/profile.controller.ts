@@ -3,7 +3,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard, type AuthRequest } from '../auth/auth.guard';
 import { AuthExceptionFilter } from '../auth/auth-exception.filter';
-import { AutoSuggestDto, DisplayCurrencyDto, MonthlyIncomeDto, OnboardingAnswersDto, UpdateProfileDto } from './profile.dto';
+import { AutoSuggestDto, DisplayCurrencyDto, DeclaredIncomeUpdateDto, OnboardingAnswersDto, UpdateProfileDto } from './profile.dto';
 import { ProfileService } from './profile.service';
 
 @Controller('v1/profile')
@@ -31,11 +31,11 @@ export class ProfileController {
     await this.profiles.saveOnboarding(request.session.userId, body);
   }
 
-  @Put('monthly-income')
+  @Put('declared-income')
   @HttpCode(204)
   @Header('Cache-Control', 'no-store')
-  async saveMonthlyIncome(@Req() request: AuthRequest, @Body() body: MonthlyIncomeDto) {
-    await this.profiles.saveMonthlyIncome(request.session.userId, body.monthlyIncomeMinor);
+  async saveDeclaredIncome(@Req() request: AuthRequest, @Body() body: DeclaredIncomeUpdateDto) {
+    await this.profiles.saveDeclaredIncome(request.session.userId, body.declaredIncome);
   }
 
   @Put('display-currency')

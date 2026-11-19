@@ -236,12 +236,23 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
     expect(user.onboardingGoals).toEqual([]);
     const repository = new PrismaProfileRepository(prisma);
     expect(await repository.saveOnboarding(user.id, { goals: ['save', 'budget'] })).toBe(true);
-    expect(await repository.saveOnboarding(user.id, { monthlyIncomeMinor: '15000000' })).toBe(true);
+    expect(await repository.saveOnboarding(user.id, { declaredIncome: { minMinor: 10_000_000n, maxMinor: 20_000_000n } })).toBe(true);
     const saved = await prisma.user.findUniqueOrThrow({ where: { id: user.id } });
     expect(saved.onboardingGoals).toEqual(['save', 'budget']);
-    expect(saved.monthlyIncomeMinor).toBe(15000000n);
-    expect(await repository.saveMonthlyIncome(user.id, null)).toBe(true);
-    expect((await prisma.user.findUniqueOrThrow({ where: { id: user.id } })).monthlyIncomeMinor).toBeNull();
+    expect([saved.declaredIncomeMinMinor, saved.declaredIncomeMaxMinor]).toEqual([10_000_000n, 20_000_000n]);
+    expect((await repository.find(user.id))?.declaredIncome)
+      .toEqual({ minMinor: '10000000', maxMinor: '20000000', midpointMinor: '15000000' });
+    expect(await repository.saveDeclaredIncome(user.id, { minMinor: 40_000_000n, maxMinor: null })).toBe(true);
+    expect((await repository.find(user.id))?.declaredIncome)
+      .toEqual({ minMinor: '40000000', maxMinor: null, midpointMinor: '50000000' });
+    expect(await repository.saveDeclaredIncome(user.id, null)).toBe(true);
+    const cleared = await prisma.user.findUniqueOrThrow({ where: { id: user.id } });
+    expect([cleared.declaredIncomeMinMinor, cleared.declaredIncomeMaxMinor]).toEqual([null, null]);
+    // BE-P6-002: the DB check rejects a band the API would refuse.
+    for (const data of [{ declaredIncomeMinMinor: 0n, declaredIncomeMaxMinor: null }, { declaredIncomeMinMinor: 20n, declaredIncomeMaxMinor: 10n },
+      { declaredIncomeMinMinor: -1n, declaredIncomeMaxMinor: 10n }, { declaredIncomeMinMinor: null, declaredIncomeMaxMinor: 10n }]) {
+      await expect(prisma.user.update({ where: { id: user.id }, data })).rejects.toThrow();
+    }
     expect(await repository.saveOnboarding('00000000-0000-4000-8000-000000000000', {})).toBe(false);
   });
 
@@ -373,9 +384,9 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
     const current = await request('profile', undefined, owner.accessToken, 'GET');
     expect(current.status).toBe(200);
     // The onboarding answers are read only on this endpoint, so they are not sent back.
-    const { goals, monthlyIncomeMinor, displayCurrencyCode, autoSuggestEnabled, ...editable } = current.body;
+    const { goals, declaredIncome, displayCurrencyCode, autoSuggestEnabled, ...editable } = current.body;
     expect(goals).toEqual([]);
-    expect(monthlyIncomeMinor).toBeNull();
+    expect(declaredIncome).toBeNull();
     const changes = { ...editable, locale: 'en', defaultCurrencyCode: 'USD',
       timezone: 'America/New_York', fiscalMonthStartDay: 28 };
     const writes = await Promise.all([
@@ -384,7 +395,7 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
     ]);
     expect(writes.map(r => r.status).sort()).toEqual([200, 409]);
     expect((await request('profile', undefined, owner.accessToken, 'GET')).body)
-      .toEqual({ ...changes, goals, monthlyIncomeMinor, displayCurrencyCode, autoSuggestEnabled, version: current.body.version + 1 });
+      .toEqual({ ...changes, goals, declaredIncome, displayCurrencyCode, autoSuggestEnabled, version: current.body.version + 1 });
     expect((await request('profile', undefined, other.accessToken, 'GET')).body)
       .toMatchObject({ locale: 'vi', defaultCurrencyCode: 'VND', fiscalMonthStartDay: 1 });
     await request('auth/logout', undefined, owner.accessToken);

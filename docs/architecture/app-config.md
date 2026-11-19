@@ -41,6 +41,8 @@ Mốc ngân sách: server báo ở **mọi mốc user đã chọn** (bỏ sàn 8
 
 **Kiểm tra chéo khi lưu** (`crossCheckConfig`): số mốc mặc định ≤ số mốc tối đa; `forecast.defaultMonths` ∈ `monthOptions`; `installment.defaultTerm` ∈ `termOptions`; `recurring.defaultRemindBefore` ∈ `remindBeforeOptions`; mức dùng thẻ cao < nguy hiểm; `password.veryStrongLength` ≥ `password.minLength`. Sai → `400 CONFIG_VALUE_INVALID` kèm lý do.
 
+**Onboarding (`BE-P6-002`):** `onboarding.incomeBandsVnd` là các mốc chia khoảng thu nhập (mặc định 5/10/20/40 triệu → 5 khoảng, khoảng trên cùng mở); thay `onboarding.incomeSuggestionsVnd` (migration xoá giá trị đã lưu, reader vốn bỏ qua khóa không còn trong registry). `onboarding.maxGoals` mặc định 6 (tối đa 6). `onboarding.goalKinds` thêm `retirement`, `children`, `business`, `health`.
+
 **Không cần đăng nhập:** `GET /api/v1/app-config/public` trả `{ version, config }` (không cờ, không dữ liệu user) từ cache của reader, để màn trước khi đăng nhập (quy tắc mật khẩu…) cũng đọc số từ server (chốt 2026-11-11).
 
 **Tiền tệ:** `Currency.symbol` (VND `₫`), `GET /profile/options` trả `{ code, minorDigits, symbol, isDefault }`; `isDefault` là tiền tệ tài khoản mới (`NEW_USER_CURRENCY_CODE`, dùng chung cho đăng ký email và OAuth).
@@ -51,7 +53,7 @@ Mốc ngân sách: server báo ở **mọi mốc user đã chọn** (bỏ sàn 8
 |---|---|
 | `integer` | số nguyên trong `min`–`max` |
 | `integer_list` | số nguyên trong `min`–`max`, không trùng, tăng dần, số phần tử `minItems`–`maxItems` |
-| `money_minor_list` | chuỗi minor units dương (như API tiền), tăng dần, có `currencyCode` |
+| `money_minor_list` | chuỗi minor units dương (như API tiền), tăng dần (không trùng), có `currencyCode` |
 | `enum` / `enum_list` | thuộc `values`; danh sách không trùng, giữ thứ tự staff đặt |
 | `time` | `HH:mm` |
 | `pair_list` | danh sách chuỗi `"Tên: giá trị"`, giá trị sau dấu `:` cuối thuộc `values`, tên ≤ `maxTextLength`, không trùng (bỏ dấu, hoa thường); web admin nhập mỗi dòng một cặp (`BE-P5-E03`) |

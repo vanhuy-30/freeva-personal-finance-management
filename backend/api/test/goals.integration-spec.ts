@@ -195,7 +195,7 @@ describe('BE-P3-E01 goals HTTP + PostgreSQL', () => {
     expect((await request('DELETE', `/goals/${goal.id}?version=${goal.version}`)).status).toBe(204);
     expect((await request('GET', '/goals')).body.items).toHaveLength(0);
     expect((await request('GET', '/goals?includeArchived=true')).body.items).toHaveLength(1);
-    expect((await request('GET', '/goals/presets')).body.items).toHaveLength(8);
+    expect((await request('GET', '/goals/presets')).body.items).toHaveLength(11);
   });
 
   it('lists history newest first: contribute, withdraw and corrected number', async () => {
@@ -216,8 +216,9 @@ describe('BE-P3-E01 goals HTTP + PostgreSQL', () => {
     expect((await request('GET', `/goals/${goal.id}/entries`, undefined, other.bearer)).status).toBe(404);
   });
 
-  it('previews the monthly saving against the declared income without storing a goal', async () => {
-    await prisma.user.update({ where: { id: owner }, data: { monthlyIncomeMinor: 25_000_000n } });
+  it('previews the monthly saving against the declared income midpoint without storing a goal', async () => {
+    // BE-P6-002: band 20–30 million → midpoint 25 million.
+    await prisma.user.update({ where: { id: owner }, data: { declaredIncomeMinMinor: 20_000_000n, declaredIncomeMaxMinor: 30_000_000n } });
     const res = await request('POST', '/goals/preview', { currencyCode: 'VND', targetMinor: '60000000', targetDate: futureDay(10) });
     expect(res.status).toBe(200);
     expect(res.body.monthsLeft).toBeGreaterThanOrEqual(10);

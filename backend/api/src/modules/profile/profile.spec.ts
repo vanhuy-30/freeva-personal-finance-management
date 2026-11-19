@@ -4,11 +4,12 @@ import { Test } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { AuthService } from '../auth/auth.service';
-import { PROFILE_REPOSITORY, type Profile, type ProfileUpdate } from './domain/profile.repository';
+import type { DeclaredIncomeBand } from './domain/declared-income';
+import { PROFILE_REPOSITORY, declaredIncomeView, type Profile, type ProfileUpdate } from './domain/profile.repository';
 import { ProfileController } from './profile.controller';
 import { ProfileService } from './profile.service';
 const initial: Profile = { displayName: null, locale: 'vi', defaultCurrencyCode: 'VND', timezone: 'Asia/Ho_Chi_Minh', fiscalMonthStartDay: 1, version: 1, goals: [],
-  monthlyIncomeMinor: null, displayCurrencyCode: null, autoSuggestEnabled: true };
+  declaredIncome: null, displayCurrencyCode: null, autoSuggestEnabled: true };
 describe('MOB-P1-002 profile HTTP contract', () => {
   let app: INestApplication; let base: string;
   const profiles = new Map<string, Profile>();
@@ -16,9 +17,9 @@ describe('MOB-P1-002 profile HTTP contract', () => {
     find: jest.fn(async (id: string) => profiles.get(id) ?? null),
     currencies: async () => [{ code: 'VND', minorDigits: 0, symbol: '₫', isDefault: true }, { code: 'USD', minorDigits: 2, symbol: null, isDefault: false }],
     saveOnboarding: jest.fn(async (id: string) => profiles.has(id)),
-    saveMonthlyIncome: jest.fn(async (id: string, minor: string | null) => {
+    saveDeclaredIncome: jest.fn(async (id: string, band: DeclaredIncomeBand | null) => {
       if (!profiles.has(id)) return false;
-      profiles.set(id, { ...profiles.get(id)!, monthlyIncomeMinor: minor }); return true;
+      profiles.set(id, { ...profiles.get(id)!, declaredIncome: declaredIncomeView(band) }); return true;
     }),
     saveAutoSuggest: jest.fn(async (id: string, enabled: boolean) => {
       if (!profiles.has(id)) return false;
@@ -59,10 +60,10 @@ describe('MOB-P1-002 profile HTTP contract', () => {
     expect(result.headers.get('cache-control')).toBe('no-store');
   });
   it('persists four fields for session owner and rejects stale version', async () => {
-    const { goals, monthlyIncomeMinor, displayCurrencyCode, autoSuggestEnabled, ...editable } = initial;
+    const { goals, declaredIncome, displayCurrencyCode, autoSuggestEnabled, ...editable } = initial;
     const changes = { ...editable, locale: 'en', defaultCurrencyCode: 'USD', timezone: 'America/New_York', fiscalMonthStartDay: 28 };
-    expect((await request('PUT', changes)).body).toEqual({ ...changes, goals, monthlyIncomeMinor, displayCurrencyCode, autoSuggestEnabled, version: 2 });
-    expect((await request()).body).toEqual({ ...changes, goals, monthlyIncomeMinor, displayCurrencyCode, autoSuggestEnabled, version: 2 });
+    expect((await request('PUT', changes)).body).toEqual({ ...changes, goals, declaredIncome, displayCurrencyCode, autoSuggestEnabled, version: 2 });
+    expect((await request()).body).toEqual({ ...changes, goals, declaredIncome, displayCurrencyCode, autoSuggestEnabled, version: 2 });
     expect((await request('GET', undefined, 'b'.repeat(64))).body).toEqual(initial);
     expect((await request('PUT', changes)).status).toBe(409);
   });
@@ -76,7 +77,7 @@ describe('MOB-P1-002 profile HTTP contract', () => {
       expect(JSON.stringify(result.body)).not.toContain('sensitive@example.test');
   });
   it('keeps displayName when omitted, trims it, and clears it when blank', async () => {
-    const { displayName: _omit, goals: _goals, monthlyIncomeMinor: _i, displayCurrencyCode: _d, autoSuggestEnabled: _a, ...rest } = initial;
+    const { displayName: _omit, goals: _goals, declaredIncome: _i, displayCurrencyCode: _d, autoSuggestEnabled: _a, ...rest } = initial;
     expect((await request('PUT', { ...rest, displayName: '  Minh  ' })).body.displayName).toBe('Minh');
     expect((await request('PUT', { ...rest, version: 2 })).body.displayName).toBe('Minh');
     expect((await request('PUT', { ...rest, version: 3, displayName: '   ' })).body.displayName).toBeNull();
@@ -93,16 +94,27 @@ describe('MOB-P1-002 profile HTTP contract', () => {
     const send = (body: object, token: string | null = 'a'.repeat(64)) => fetch(`${base}/api/v1/profile/onboarding`, {
       method: 'PATCH', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(body) });
     expect((await send({}, null)).status).toBe(401);
-    expect((await send({ goals: ['save', 'budget'], monthlyIncomeMinor: '25000000' })).status).toBe(204);
-    expect((await send({ monthlyIncomeMinor: '15000000' })).status).toBe(204);
-    expect(repo.saveOnboarding).toHaveBeenLastCalledWith('owner', { monthlyIncomeMinor: '15000000' });
+    expect((await send({ goals: ['save', 'budget'], declaredIncome: { minMinor: '10000000', maxMinor: '20000000' } })).status).toBe(204);
+    expect(repo.saveOnboarding).toHaveBeenLastCalledWith('owner',
+      { goals: ['save', 'budget'], declaredIncome: { minMinor: 10_000_000n, maxMinor: 20_000_000n } });
+    expect((await send({ declaredIncome: { minMinor: '40000000', maxMinor: null } })).status).toBe(204);
+    expect(repo.saveOnboarding).toHaveBeenLastCalledWith('owner', { declaredIncome: { minMinor: 40_000_000n, maxMinor: null } });
+    expect((await send({ declaredIncome: { minMinor: '0', maxMinor: '5000000' } })).status).toBe(204);
     expect((await send({ goals: [] })).status).toBe(204);
     expect(repo.saveOnboarding).toHaveBeenLastCalledWith('owner', { goals: [] });
-    for (const bad of [{ goals: ['save', 'budget', 'debt'] }, { goals: ['save', 'save'] }, { goals: ['x'] },
-      { goals: ['debt'] }, { goals: ['emergency'] }, { trackingHabit: 'app' }, { monthlyIncomeMinor: '0' }, { monthlyIncomeMinor: '-5' }, { monthlyIncomeMinor: '1.5' }, { monthlyIncomeMinor: 5000000 },
-      { monthlyIncomeMinor: '1234567890123456789' }, { reviewCadence: 'weekly' }, { email: 'a@b.test' }]) {
+    // BE-P6-002: six goals, all allowed at once (config `onboarding.maxGoals` defaults to 6).
+    expect((await send({ goals: ['track', 'budget', 'save', 'debt', 'assets', 'habits'] })).status).toBe(204);
+    const calls = repo.saveOnboarding.mock.calls.length;
+    for (const bad of [{ goals: ['save', 'save'] }, { goals: ['x'] }, { goals: ['emergency'] }, { goals: ['track', 'budget', 'save', 'debt', 'assets', 'habits', 'x'] },
+      { trackingHabit: 'app' }, { monthlyIncomeMinor: '15000000' }, { reviewCadence: 'weekly' }, { email: 'a@b.test' },
+      { declaredIncome: { minMinor: '0', maxMinor: null } }, { declaredIncome: { minMinor: '20', maxMinor: '10' } },
+      { declaredIncome: { minMinor: '-5', maxMinor: '10' } }, { declaredIncome: { minMinor: '1.5', maxMinor: '10' } },
+      { declaredIncome: { minMinor: 5, maxMinor: '10' } }, { declaredIncome: { minMinor: '5' } }, { declaredIncome: { minMinor: '5', maxMinor: '0' } },
+      { declaredIncome: { minMinor: '1234567890123456789', maxMinor: null } }, { declaredIncome: { minMinor: '5', maxMinor: '10', extra: 1 } },
+      { declaredIncome: '15000000' }, { declaredIncome: null }]) {
       expect((await send(bad)).status).toBe(400);
     }
+    expect(repo.saveOnboarding.mock.calls.length).toBe(calls);
   });
   it('PRD-P5-E01 switches automatic suggestions off and on, and rejects bad values', async () => {
     const send = (body: object, token: string | null = 'a'.repeat(64)) => fetch(`${base}/api/v1/profile/auto-suggest`, { method: 'PUT',
@@ -117,17 +129,23 @@ describe('MOB-P1-002 profile HTTP contract', () => {
       expect((await send(bad)).status).toBe(400);
     }
   });
-  it('BE-P3-012 sets, changes and clears the monthly income, and rejects bad values', async () => {
-    const send = (body: object, token: string | null = 'a'.repeat(64)) => request('PUT', body, token, 'profile/monthly-income');
-    const put = (body: object) => fetch(`${base}/api/v1/profile/monthly-income`, { method: 'PUT',
+  it('BE-P6-002 sets, changes and clears the declared income band, and rejects bad values', async () => {
+    const send = (body: object, token: string | null = 'a'.repeat(64)) => request('PUT', body, token, 'profile/declared-income');
+    const put = (body: object) => fetch(`${base}/api/v1/profile/declared-income`, { method: 'PUT',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${'a'.repeat(64)}` }, body: JSON.stringify(body) });
-    expect((await send({ monthlyIncomeMinor: '1' }, null)).status).toBe(401);
-    expect((await put({ monthlyIncomeMinor: '20000000' })).status).toBe(204);
-    expect((await request()).body.monthlyIncomeMinor).toBe('20000000');
-    expect((await request('GET', undefined, 'b'.repeat(64))).body.monthlyIncomeMinor).toBeNull();
-    expect((await put({ monthlyIncomeMinor: null })).status).toBe(204);
-    expect((await request()).body.monthlyIncomeMinor).toBeNull();
-    for (const bad of [{ monthlyIncomeMinor: '0' }, { monthlyIncomeMinor: '-1' }, { monthlyIncomeMinor: '1.5' }, { monthlyIncomeMinor: 5 }, {}]) {
+    expect((await send({ declaredIncome: { minMinor: '1', maxMinor: null } }, null)).status).toBe(401);
+    expect((await put({ declaredIncome: { minMinor: '10000000', maxMinor: '20000000' } })).status).toBe(204);
+    expect((await request()).body.declaredIncome).toEqual({ minMinor: '10000000', maxMinor: '20000000', midpointMinor: '15000000' });
+    expect((await request('GET', undefined, 'b'.repeat(64))).body.declaredIncome).toBeNull();
+    expect((await put({ declaredIncome: { minMinor: '40000000', maxMinor: null } })).status).toBe(204);
+    expect((await request()).body.declaredIncome).toEqual({ minMinor: '40000000', maxMinor: null, midpointMinor: '50000000' });
+    expect((await put({ declaredIncome: { minMinor: '0', maxMinor: '5000000' } })).status).toBe(204);
+    expect((await request()).body.declaredIncome).toEqual({ minMinor: '0', maxMinor: '5000000', midpointMinor: '2500000' });
+    expect((await put({ declaredIncome: null })).status).toBe(204);
+    expect((await request()).body.declaredIncome).toBeNull();
+    for (const bad of [{ declaredIncome: { minMinor: '0', maxMinor: null } }, { declaredIncome: { minMinor: '10', maxMinor: '9' } },
+      { declaredIncome: { minMinor: '-1', maxMinor: '5' } }, { declaredIncome: { minMinor: '1.5', maxMinor: null } },
+      { declaredIncome: { minMinor: 5, maxMinor: null } }, { declaredIncome: { maxMinor: '5' } }, { monthlyIncomeMinor: '1' }, {}]) {
       expect((await send(bad)).status).toBe(400);
     }
   });
@@ -147,11 +165,12 @@ describe('MOB-P1-002 profile HTTP contract', () => {
     }
   });
   it('BE-P2-012 returns saved answers on GET and keeps the budget number when the currency changes', async () => {
-    profiles.set('owner', { ...initial, goals: ['save'], monthlyIncomeMinor: '15000000' });
-    const { goals, monthlyIncomeMinor, displayCurrencyCode, autoSuggestEnabled, ...editable } = initial;
+    const band = { minMinor: '10000000', maxMinor: '20000000', midpointMinor: '15000000' };
+    profiles.set('owner', { ...initial, goals: ['save'], declaredIncome: band });
+    const { goals, declaredIncome, displayCurrencyCode, autoSuggestEnabled, ...editable } = initial;
     const saved = await request('PUT', { ...editable, defaultCurrencyCode: 'USD' });
-    expect(saved.body).toMatchObject({ defaultCurrencyCode: 'USD', goals: ['save'], monthlyIncomeMinor: '15000000' });
-    expect((await request()).body.monthlyIncomeMinor).toBe('15000000');
-    expect((await request('GET', undefined, 'b'.repeat(64))).body.monthlyIncomeMinor).toBeNull();
+    expect(saved.body).toMatchObject({ defaultCurrencyCode: 'USD', goals: ['save'], declaredIncome: band });
+    expect((await request()).body.declaredIncome).toEqual(band);
+    expect((await request('GET', undefined, 'b'.repeat(64))).body.declaredIncome).toBeNull();
   });
 });

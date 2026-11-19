@@ -87,21 +87,21 @@ export const CONFIG_DEFINITIONS = {
     type: 'integer', default: 14, min: 1, max: 90,
     description: 'Còn bao nhiêu ngày tới hạn cho mượn / đi mượn thì hiện "Sắp đến hạn".',
   },
-  'onboarding.incomeSuggestionsVnd': {
-    type: 'money_minor_list', default: ['10000000', '15000000', '25000000', '40000000'], currencyCode: 'VND',
-    minItems: 0, maxItems: 6,
-    description: 'Mức thu nhập gợi ý chọn nhanh ở câu hỏi onboarding (VND).',
+  'onboarding.incomeBandsVnd': {
+    type: 'money_minor_list', default: ['5000000', '10000000', '20000000', '40000000'], currencyCode: 'VND',
+    minItems: 1, maxItems: 8,
+    description: 'Các mốc chia khoảng thu nhập ở câu hỏi onboarding (VND).',
   },
   'onboarding.savingsSharePercent': {
     type: 'integer', default: 20, min: 0, max: 100,
     description: 'Phần trăm thu nhập dành để tiết kiệm trong gợi ý ngân sách lúc onboarding.',
   },
   'onboarding.maxGoals': {
-    type: 'integer', default: 2, min: 1, max: 2,
+    type: 'integer', default: 6, min: 1, max: 6,
     description: 'Số mục tiêu tối đa chọn ở câu hỏi onboarding.',
   },
   'onboarding.goalKinds': {
-    type: 'enum_list', default: ['emergency', 'home', 'car', 'travel', 'education', 'wedding', 'custom'],
+    type: 'enum_list', default: ['emergency', 'home', 'car', 'travel', 'education', 'wedding', 'retirement', 'children', 'business', 'health', 'custom'],
     values: GOAL_KINDS, minItems: 1, maxItems: GOAL_KINDS.length,
     description: 'Loại mục tiêu tiết kiệm cho chọn ở onboarding, theo thứ tự hiện.',
   },

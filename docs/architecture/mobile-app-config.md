@@ -37,7 +37,7 @@ App lấy cờ tính năng và các số cấu hình từ `GET /api/v1/app-confi
 - Khi đã đăng nhập, bản cấu hình tải kèm danh mục tiền tệ từ `GET /profile/options` (`code`, `minorDigits`, `symbol`, `isDefault`), lưu cùng bản trên máy. `CurrencyCatalog.current` là danh mục dùng chung: `digits(code)`, `symbol(code)` (ký hiệu server, không có thì hiện mã), `defaultCode` (tiền tệ tài khoản mới, server đánh `isDefault`).
 - Lớp chặn khi có phiên chờ cả danh mục. Đăng xuất giữ danh mục (không phụ thuộc user).
 - Đã bỏ: quy tắc `VND ? 0 : 2`, ký hiệu `₫` viết cứng, `?? 'VND'` (thay bằng `defaultCode` khi hồ sơ chưa tải). Mã không có trong danh mục hiện không có số lẻ.
-- Còn có chủ đích: tên đọc màn hình "đồng" và tên tiền tệ (l10n), gợi ý thu nhập onboarding chỉ cho VND (khóa `onboarding.incomeSuggestionsVnd`), hình minh họa `₫` ở Welcome, gallery dev.
+- Còn có chủ đích: tên đọc màn hình "đồng" và tên tiền tệ (l10n), gợi ý thu nhập onboarding chỉ cho VND (khóa `onboarding.incomeBandsVnd`, `BE-P6-002`), hình minh họa `₫` ở Welcome, gallery dev.
 - Test: `test/flutter_test_config.dart` nạp danh mục mẫu cho mọi test.
 
 ## Dùng trong code

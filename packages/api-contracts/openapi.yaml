@@ -1227,7 +1227,7 @@ paths:
       - Goals
       security:
       - UserBearer: []
-      description: Same formulas as Goal. `incomeShareBps` is against the monthly income on the profile (not the 90-day average), only when `currencyCode` is the profile default currency. Nothing is stored.
+      description: Same formulas as Goal. `incomeShareBps` is against the midpoint of the declared income band on the profile (not the 90-day average), only when `currencyCode` is the profile default currency. Nothing is stored.
       requestBody:
         required: true
         content:
@@ -5281,25 +5281,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
-  /api/v1/profile/monthly-income:
+  /api/v1/profile/declared-income:
     put:
-      operationId: saveMonthlyIncome
-      summary: Set, change or clear the monthly income
+      operationId: saveDeclaredIncome
+      summary: Set, change or clear the declared income band
       tags: [Profile]
       security:
         - UserBearer: []
-      description: Stored on the account and used to suggest budgets and savings share. `null` clears it. No version check. Never logged; included in the account export and deleted with the account.
+      description: BE-P6-002. Income band the user declares (not actual income from transactions). Its midpoint is used to suggest budgets and savings share. `null` clears it. No version check. Never logged; included in the account export and deleted with the account. Replaces PUT /profile/monthly-income.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MonthlyIncomeUpdate'
+              $ref: '#/components/schemas/DeclaredIncomeUpdate'
       responses:
         '204':
           description: Saved (Cache-Control no-store)
         '400':
-          description: Not a positive integer string, or an extra field
+          description: Not integer strings, maxMinor below minMinor, an open band (maxMinor null) with minMinor 0, or an extra field
           content:
             application/json:
               schema:
@@ -5668,7 +5668,7 @@ paths:
   /api/v1/profile/onboarding:
     patch:
       operationId: saveOnboardingAnswers
-      summary: Save answers from the first-run questions (goals, monthly income)
+      summary: Save answers from the first-run questions (goals, declared income band)
       tags: [Profile]
       security:
         - UserBearer: []
@@ -5683,7 +5683,7 @@ paths:
         '204':
           description: Saved (Cache-Control no-store)
         '400':
-          description: Unknown value, more than two goals, or an extra field
+          description: Unknown value, more goals than config `onboarding.maxGoals`, an invalid income band (see DeclaredIncomeBand), or an extra field
           content:
             application/json:
               schema:
@@ -8232,7 +8232,7 @@ components:
           type: integer
     GoalKind:
       type: string
-      enum: [emergency, home, car, travel, education, wedding, retirement, custom]
+      enum: [emergency, home, car, travel, education, wedding, retirement, children, business, health, custom]
     Goal:
       type: object
       additionalProperties: false
@@ -8328,7 +8328,7 @@ components:
           description: ceil((target - current) / monthsLeft). Null when the date has passed.
         incomeShareBps:
           type: integer
-          description: requiredPerMonthMinor over the profile monthly income (2400 = 24.00%). Omitted without income or in another currency.
+          description: requiredPerMonthMinor over the declared income midpoint (2400 = 24.00%). Omitted without declared income or in another currency.
     CreateGoalRequest:
       type: object
       additionalProperties: false
@@ -10715,11 +10715,12 @@ components:
           items:
             type: string
           description: Onboarding goals saved via PATCH /profile/onboarding. Returned on GET and PUT; not accepted on PUT.
-        monthlyIncomeMinor:
-          type: [string, 'null']
+        declaredIncome:
           readOnly: true
-          pattern: ^[1-9][0-9]{0,17}$
-          description: Monthly income, positive integer minor units of the default currency at that time. Null until typed. Saved via PATCH /profile/onboarding or PUT /profile/monthly-income. Changing defaultCurrencyCode does not convert it. Never logged. Not accepted on PUT /profile.
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/DeclaredIncome'
+          description: BE-P6-002. Income band the user declared, in minor units of the default currency at that time; not actual income from transactions. Null until given. Saved via PATCH /profile/onboarding or PUT /profile/declared-income. Changing defaultCurrencyCode does not convert it. Never logged. Not accepted on PUT /profile.
         displayCurrencyCode:
           type: [string, 'null']
           readOnly: true
@@ -10735,15 +10736,43 @@ components:
       properties:
         goals:
           type: array
-          maxItems: 2
+          maxItems: 6
           uniqueItems: true
           items:
             type: string
-            enum: [track, save, budget]
-        monthlyIncomeMinor:
+            enum: [track, budget, save, debt, assets, habits]
+          description: At most config `onboarding.maxGoals` items (default 6).
+        declaredIncome:
+          $ref: '#/components/schemas/DeclaredIncomeBand'
+          description: Declared income band. Omit to keep the stored value; null is refused (clear with PUT /profile/declared-income).
+    DeclaredIncomeBand:
+      type: object
+      additionalProperties: false
+      required: [minMinor, maxMinor]
+      description: BE-P6-002. Monthly income band, integer minor units of the profile default currency. maxMinor >= minMinor; maxMinor null is the open top band (e.g. "over 40 million") and needs minMinor > 0. A legacy exact amount reads as [x, x].
+      properties:
+        minMinor:
           type: string
+          pattern: ^(0|[1-9][0-9]{0,17})$
+        maxMinor:
+          type: [string, 'null']
           pattern: ^[1-9][0-9]{0,17}$
-          description: Monthly income, positive integer minor units of the profile default currency. Omit to keep the stored value.
+    DeclaredIncome:
+      type: object
+      additionalProperties: false
+      required: [minMinor, maxMinor, midpointMinor]
+      description: DeclaredIncomeBand plus the point used for suggestions.
+      properties:
+        minMinor:
+          type: string
+          pattern: ^(0|[1-9][0-9]{0,17})$
+        maxMinor:
+          type: [string, 'null']
+          pattern: ^[1-9][0-9]{0,17}$
+        midpointMinor:
+          type: string
+          pattern: ^(0|[1-9][0-9]{0,17})$
+          description: (min + max) / 2 rounded down; for an open band min * 5 / 4 rounded down.
     AutoSuggestUpdate:
       type: object
       additionalProperties: false
@@ -11043,15 +11072,16 @@ components:
         total:
           type: integer
           minimum: 0
-    MonthlyIncomeUpdate:
+    DeclaredIncomeUpdate:
       type: object
       additionalProperties: false
-      required: [monthlyIncomeMinor]
+      required: [declaredIncome]
       properties:
-        monthlyIncomeMinor:
-          type: [string, 'null']
-          pattern: ^[1-9][0-9]{0,17}$
-          description: Positive integer minor units of the profile default currency; `null` clears it.
+        declaredIncome:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/DeclaredIncomeBand'
+          description: '`null` clears it.'
     ProfileOptions:
       type: object
       additionalProperties: false
@@ -12532,7 +12562,7 @@ components:
     AccountExportProfile:
       type: object
       additionalProperties: false
-      required: [email, displayName, locale, timezone, defaultCurrencyCode, fiscalMonthStartDay, onboardingGoals, monthlyIncomeMinor, displayCurrencyCode, emailVerifiedAt, categoriesInitializedAt, categoriesSupplementedAt, createdAt, updatedAt, autoSuggestEnabled]
+      required: [email, displayName, locale, timezone, defaultCurrencyCode, fiscalMonthStartDay, onboardingGoals, declaredIncome, displayCurrencyCode, emailVerifiedAt, categoriesInitializedAt, categoriesSupplementedAt, createdAt, updatedAt, autoSuggestEnabled]
       properties:
         email:
           type: string
@@ -12555,9 +12585,10 @@ components:
           type: array
           items:
             type: string
-        monthlyIncomeMinor:
-          type: [string, 'null']
-          pattern: ^[1-9][0-9]{0,17}$
+        declaredIncome:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/DeclaredIncomeBand'
         displayCurrencyCode:
           type: [string, 'null']
           pattern: ^[A-Z]{3}$

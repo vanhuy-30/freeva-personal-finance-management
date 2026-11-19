@@ -16,6 +16,8 @@ import {
 import { CONFIG_DEFINITIONS, crossCheckConfig, FLAG_DEFINITIONS } from './domain/app-config-registry';
 import type { AppConfigRepository, AppConfigSnapshot } from './domain/app-config.repository';
 import { FeatureGuard, RequireFeature } from './feature.guard';
+import { GOAL_KINDS } from '../goals/domain/goal';
+import { ONBOARDING_GOALS } from '../profile/profile.dto';
 
 function invalid(run: () => unknown): void {
   try {
@@ -109,6 +111,19 @@ describe('BE-P5-E08 registry', () => {
     expect(CONFIG_DEFINITIONS['notification.dailyLogDefaultTime'].default).toBe('21:00');
     expect(CONFIG_DEFINITIONS['profile.displayNameMaxLength'].default).toBe(60);
     expect(CONFIG_DEFINITIONS['import.maxRows'].default).toBe(2000);
+  });
+
+  it('BE-P6-002 income bands are strictly ascending and onboarding allows every goal', () => {
+    const bands = CONFIG_DEFINITIONS['onboarding.incomeBandsVnd'];
+    expect(bands.default).toEqual(['5000000', '10000000', '20000000', '40000000']);
+    invalid(() => parseConfigValue(bands, ['10000000', '5000000']));
+    invalid(() => parseConfigValue(bands, ['5000000', '5000000']));
+    invalid(() => parseConfigValue(bands, []));
+    invalid(() => parseConfigValue(bands, ['0']));
+    expect(CONFIG_DEFINITIONS['onboarding.maxGoals'].max).toBe(ONBOARDING_GOALS.length);
+    expect(CONFIG_DEFINITIONS['onboarding.maxGoals'].default).toBe(ONBOARDING_GOALS.length);
+    expect(CONFIG_DEFINITIONS['onboarding.goalKinds'].default).toEqual(GOAL_KINDS);
+    expect(Object.keys(CONFIG_DEFINITIONS)).not.toContain('onboarding.incomeSuggestionsVnd');
   });
 });
 
@@ -242,6 +257,13 @@ describe('BE-P5-001 reader', () => {
     expect(await reader.value('import.maxRows')).toBe(500);
     expect(await reader.value('limit.passwordMaxLength')).toBe(128);
     expect(await reader.value('budget.defaultAlertThresholds')).toEqual([80, 100]);
+  });
+
+  it('skips a stored value whose key was removed (BE-P6-002)', async () => {
+    const reader = new AppConfigReader(stored([{ key: 'onboarding.incomeSuggestionsVnd', value: ['10000000'] }]));
+    const published = await reader.published();
+    expect(published.config).not.toHaveProperty('onboarding.incomeSuggestionsVnd');
+    expect(published.config['onboarding.incomeBandsVnd']).toEqual(['5000000', '10000000', '20000000', '40000000']);
   });
 
   it('publishes values with the version and no flags', async () => {
