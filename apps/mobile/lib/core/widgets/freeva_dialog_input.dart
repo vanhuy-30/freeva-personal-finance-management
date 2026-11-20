@@ -84,6 +84,7 @@ class _InputDialogState extends State<_InputDialog> {
               keyboardType: widget.keyboardType,
               inputFormatters: widget.formatters,
               obscureText: widget.obscure,
+              revealable: widget.obscure,
               tabular: !widget.obscure,
             ),
             const SizedBox(height: FreevaSpace.s4),
