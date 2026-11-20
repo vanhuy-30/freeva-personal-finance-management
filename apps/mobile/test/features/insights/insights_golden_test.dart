@@ -19,8 +19,9 @@ import 'insights_fakes.dart';
 
 /// Board S.1 InsHome: the PA 3 Overview (10/11) with the "Đáng chú ý" card
 /// under the tiles.
-StubHomeViewModel boardHome() => StubHomeViewModel(data: pa3Overview())
-  ..today = DateTime(2026, 11, 10, 9, 30);
+StubHomeViewModel boardHome() =>
+    StubHomeViewModel(data: pa3Overview())
+      ..today = DateTime(2026, 11, 10, 9, 30);
 
 // Boards S.1 InsHome (Overview card) and S.2 InsAnalysis (forecast card from
 // MOB-P5-E06 on top of the list). macOS only.
