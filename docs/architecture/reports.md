@@ -61,15 +61,16 @@ Mỗi lần đọc chạy trong một transaction Repeatable Read: hồ sơ (tim
 - `assetsMinor` = tổng số dư `cash`, `bank`, `ewallet`. Âm là thấu chi, vẫn ở tài sản
 - `liabilitiesMinor` = tổng số dư `credit`. Âm là nợ; dương là trả dư và vẫn ở nợ
 - `netWorthMinor` = assets + liabilities
-- Ngoài ví: khoản cho mượn còn mở cộng vào tài sản, khoản đi mượn còn mở vào nợ (số âm) ([personal-debts.md](personal-debts.md)); vị thế đầu tư đang giữ cộng vào tài sản theo giá trị hiện tại ([investments.md](investments.md)). Tiền đã chuyển từ ví sang đầu tư đã rời ví nên không tính trùng.
+- Ngoài ví: khoản cho mượn còn mở cộng vào tài sản, khoản đi mượn còn mở vào nợ (số âm) ([personal-debts.md](personal-debts.md)); vị thế đầu tư đang giữ cộng vào tài sản theo giá trị hiện tại ([investments.md](investments.md)). Tiền đã chuyển từ ví sang đầu tư đã rời ví nên không tính trùng. Khoản vay (`/loans`) chưa lưu trữ: dư nợ `outstandingMinor` vào nợ (số âm) (`MOB-P6-005`); khoản vay đã lưu trữ không tính, giống ví đã lưu trữ.
 
 **Tài sản ròng theo thời gian** (`GET /net-worth/history?window=7d|30d|3m|6m|1y|all&on=`, `BE-P4-E02`): cùng các mốc như `/series` (7d/30d từng ngày, 3m/6m/1y tháng tài chính, `all` từng năm dương lịch từ hoạt động đầu tiên của bất kỳ loại nào: giao dịch, khoản mượn, lần mua đầu tư). Mỗi điểm `{ from, to, asOf, items }` là tài sản ròng tại `asOf` = ngày cuối mốc nhưng không muộn hơn hôm nay, nên điểm mới nhất bằng `/net-worth`. Không lưu snapshot: tính lại từ sổ cái mỗi lần đọc trong một transaction Repeatable Read, nên sửa hoặc xoá giao dịch cũ đổi mọi điểm sau nó. Tại ngày `D`:
 
 - Ví đang dùng: `initialBalanceMinor` + giao dịch chưa xoá có `occurredOn ≤ D` (`credit` là nợ).
 - Cho mượn / đi mượn: gốc nếu `occurredOn ≤ D` trừ các lần trả có `paidOn ≤ D`, gồm cả khoản đã lưu trữ (tất toán sau `D` thì tại `D` vẫn còn mở).
+- Khoản vay chưa lưu trữ: 0 trước `startDate`; từ đó là dư nợ hiện tại cộng phần gốc của các lần trả có `paidOn > D`. Lần sửa tay dư nợ (audit) không phát lại, nên các ngày trước lần sửa dùng số đã sửa.
 - Đầu tư: phát lại các lần mua/bán có `tradedOn ≤ D` bằng cùng quy tắc giá vốn bình quân, giá trị theo giá nhập mới nhất có ngày báo (theo múi giờ hồ sơ) `≤ D`; chưa có giá thì tính theo giá vốn; tiền gửi là gốc cộng lãi đơn tới `D`.
 
-Mỗi điểm tách theo tiền tệ, không quy đổi; điểm không có gì trả `items` rỗng. Khoản vay (`/loans`) và ví đã lưu trữ không tính, giống `/net-worth`.
+Mỗi điểm tách theo tiền tệ, không quy đổi; điểm không có gì trả `items` rỗng. Ví và khoản vay đã lưu trữ không tính, giống `/net-worth`.
 
 **Giá trị đầu tư theo thời gian** (`GET /investments/history?window=&on=&kind=&investmentId=`, `BE-P4-E03`): cùng mốc, cùng cách phát lại và định giá như phần đầu tư ở trên, cho tất cả vị thế, một danh mục hoặc một tài sản. Mỗi điểm `{ from, to, asOf, items: [{ currency, valueMinor }] }`; `all` bắt đầu từ lần mua đầu tiên của các vị thế được chọn. Dùng cho đường mờ ở thẻ tổng màn Đầu tư.
 

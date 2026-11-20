@@ -4527,7 +4527,7 @@ paths:
           $ref: '#/components/responses/ReportUnauthorized'
         '503':
           $ref: '#/components/responses/ReportUnavailable'
-      description: "Read-only. Buckets are the same as /reports/series (7d and 30d single days, 3m/6m/1y fiscal months, all = calendar years from the first activity of any kind). Each point is the net worth on `asOf`, the bucket's last day but never later than today, so the newest point equals /reports/net-worth. Computed from the ledger on every read (no stored snapshot), so editing a past transaction changes every later point. Parts match /reports/net-worth: active wallets, open lend/borrow (receivable asset, payable negative liability, archived ones included on the days they were open) and held investments (trades replayed to `asOf`, valued at the latest price quoted by then, deposits at principal plus accrued interest). Money moved from a wallet into an investment already left the wallet, so it is counted once. Amounts stay in each currency; no FX conversion."
+      description: "Read-only. Buckets are the same as /reports/series (7d and 30d single days, 3m/6m/1y fiscal months, all = calendar years from the first activity of any kind). Each point is the net worth on `asOf`, the bucket's last day but never later than today, so the newest point equals /reports/net-worth. Computed from the ledger on every read (no stored snapshot), so editing a past transaction changes every later point. Parts match /reports/net-worth: active wallets, open lend/borrow (receivable asset, payable negative liability, archived ones included on the days they were open) loans that are not archived (negative liability: today's outstanding plus principal paid after `asOf`, nothing before the start date) and held investments (trades replayed to `asOf`, valued at the latest price quoted by then, deposits at principal plus accrued interest). Money moved from a wallet into an investment already left the wallet, so it is counted once. Amounts stay in each currency; no FX conversion."
   /api/v1/reports/net-worth:
     get:
       operationId: reportNetWorth
@@ -4560,7 +4560,7 @@ paths:
           $ref: '#/components/responses/ReportUnauthorized'
         '503':
           $ref: '#/components/responses/ReportUnavailable'
-      description: Read-only current snapshot. Includes archived accounts. Assets are cash, bank, and ewallet balances; liabilities are credit balances. No period filter. `items` are never converted; the optional `converted` block is display only (BE-P2-013).
+      description: Read-only current snapshot. Includes archived accounts. Assets are cash, bank, and ewallet balances, open money lent and held investments; liabilities are credit balances, open money borrowed and the outstanding of loans that are not archived. No period filter. `items` are never converted; the optional `converted` block is display only (BE-P2-013).
   /api/v1/financial-accounts:
     post:
       operationId: createFinancialAccount

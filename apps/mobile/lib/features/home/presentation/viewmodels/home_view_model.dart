@@ -166,6 +166,7 @@ class DefaultHomeViewModel extends HomeViewModel {
     final result = await _cases.load(
       _clock(),
       displayCurrency: displayCurrency,
+      currency: currency,
     );
     if (epoch != _epoch) return;
     _busy = false;

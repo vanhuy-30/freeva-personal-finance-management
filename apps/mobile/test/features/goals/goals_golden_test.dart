@@ -8,7 +8,6 @@ import 'package:mobile/features/goals/domain/goal_forecast.dart';
 import 'package:mobile/features/goals/presentation/pages/goal_detail_page.dart';
 import 'package:mobile/features/goals/presentation/pages/goal_editor_page.dart';
 import 'package:mobile/features/goals/presentation/pages/goals_page.dart';
-import 'package:mobile/features/goals/presentation/widgets/goals_home_block.dart';
 
 import '../../core/widgets/widget_test_app.dart' show loadTestFonts;
 import 'goal_stub.dart';
@@ -232,24 +231,6 @@ void main() {
         await t.pump(const Duration(milliseconds: 400));
         await t.pump(const Duration(milliseconds: 400));
       },
-    );
-  });
-
-  // BHomeGoal: the block only, on the page background.
-  testWidgets('home block', skip: !Platform.isMacOS, (t) async {
-    await shot(
-      t,
-      const Scaffold(
-        body: Padding(
-          padding: EdgeInsets.fromLTRB(20, 56, 20, 0),
-          child: Align(
-            alignment: Alignment.topCenter,
-            child: GoalsHomeBlock(spacing: 0),
-          ),
-        ),
-      ),
-      'home_block',
-      size: const Size(390, 300),
     );
   });
 }

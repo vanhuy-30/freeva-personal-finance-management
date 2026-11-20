@@ -102,7 +102,7 @@ Thứ tự đã chốt: nền tảng → B → C → D → E → F → G → A �
 | Nhóm | Trạng thái | Ghi chú |
 |---|---|---|
 | Nền tảng (`DS-P2-002`) | Xong | Token → Dart, theme, Inter, Lucide, component trong `lib/core/widgets/`, khung 4 tab + nút +, gallery `/debug/gallery`, golden light/dark |
-| B Tổng quan | Xong | 8 trạng thái, `User.displayName`, net-worth bỏ ví đã ẩn, ẩn số dư chỉ ẩn số dư |
+| B Tổng quan | Xong | 8 trạng thái, `User.displayName`, net-worth bỏ ví đã ẩn, ẩn số dư chỉ ẩn số dư. `MOB-P6-005` (2026-11-20): làm lại theo PA 3 (board `BHome`): thẻ Tài sản ròng có Có/Nợ, lưới ô Tháng / Sắp phải trả / Thẻ / Mục tiêu / Đầu tư; tài sản ròng tính thêm khoản vay. Board B1–B5, B7, S.1 vẽ lại theo PA 3 (đối chiếu golden bằng `design_compare` nhóm `B`, `S`) |
 | C Giao dịch | Xong | API lọc nhiều ví/danh mục/nhãn, tìm cửa hàng, `summary`; giờ giao dịch `BE-P2-E09` / `MOB-P2-E09` |
 | D Ví | Xong | D1: danh sách, sắp xếp (`PUT /financial-accounts/order`), chi tiết ví (Vào/Ra tính cả chuyển ví qua `summary.transferIn/OutMinor`), chi tiết thẻ, ví đã ẩn. D2: thêm/sửa ví và thẻ, popup ngày, cờ `hasTransactions` khoá loại/tiền tệ, ẩn có Hoàn tác |
 | E Danh mục | Xong | E1: danh sách Chi · Thu, mở/thu nhớ trên máy, danh mục đã ẩn; API bảng 20 màu, 36 icon, `kind` khi tạo, hai cấp, đổi icon mặc định một lần. E2: thêm/sửa, sheet Thuộc/Biểu tượng, ẩn có Hoàn tác, popup xoá + `GET /categories/{id}/usage` |

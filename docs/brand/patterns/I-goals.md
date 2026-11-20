@@ -7,7 +7,7 @@ Canvas: trang **11 · Mục tiêu, vay nợ, định kỳ**, khối I.
 
 ## Nguyên tắc riêng cho nhóm này
 
-- Vào từ ô "Mục tiêu" ở Cá nhân → Quản lý tiền, hoặc khối Mục tiêu trên Tổng quan. Mọi màn là màn tiếp theo, **không có bottom nav**.
+- Vào từ ô "Mục tiêu" ở Cá nhân → Quản lý tiền, hoặc ô Mục tiêu trên Tổng quan. Mọi màn là màn tiếp theo, **không có bottom nav**.
 - Tiền của mục tiêu vẫn nằm trong một ví ("Giữ ở ví"). Góp vào = chuyển ví hoặc chỉ ghi nhận; **không tính là chi tiêu**.
 - Loại mục tiêu chọn bằng chip có icon (giống chip loại khoản vay), không dùng lưới thẻ.
 - Không có nhãn "Đúng hạn". Chỉ báo khi có việc: **Quá hạn** (đỏ) hoặc **Đã đủ** (xanh).
@@ -21,7 +21,7 @@ Canvas: trang **11 · Mục tiêu, vay nợ, định kỳ**, khối I.
 | 3 | Mục tiêu mới | Đóng · "Mục tiêu mới". Chip loại (11 loại, cuối là Khác). Tên, Số cần có + Đã có (một hàng), Ngày đạt, Giữ ở ví (hiện số dư ví). Thẻ xanh "Cần góp 8.000.000 mỗi tháng, khoảng 32% thu nhập." "Tạo mục tiêu" | % thu nhập chỉ hiện khi hồ sơ có thu nhập khai báo |
 | 4 | Chi tiết mục tiêu | Thẻ wash: đã có / đích, thanh, "33% · còn thiếu …". Ba ô: Cần mỗi tháng, Còn, Ngày đạt. Dòng "Giữ ở ví". Nút "Góp thêm" (primary) · "Rút ra". Lịch sử: góp từ ví khác, ghi nhận tiền đã ở sẵn, sửa số đã có | |
 | 5 | Góp / rút (sheet trên 4) | Công tắc "Góp vào · Rút ra". Số tiền lớn. "Lấy từ": danh sách ví có số dư, cuối cùng là "Đã nằm trong {ví giữ} · Chỉ ghi nhận, không chuyển tiền". Gợi ý "Ghi thành chuyển ví, không tính là chi tiêu." Nút "Góp 5.000.000 ₫" | Rút ra: đảo chiều, chọn ví nhận |
-| 6 | Tổng quan có khối mục tiêu | Khối "Mục tiêu · Xem tất cả" ngay dưới thẻ số dư, tối đa 2 mục tiêu có thanh | Hiện khi người dùng chọn "Tiết kiệm" ở onboarding (A3) và có ít nhất một mục tiêu |
+| 6 | ~~Tổng quan có khối mục tiêu~~ | Bỏ 2026-11-20 (`MOB-P6-005`): thay bằng ô "Mục tiêu" trong lưới PA 3 ([B-overview.md](B-overview.md)), board đã xoá | Ô hiện khi có ít nhất một mục tiêu, không phụ thuộc lựa chọn onboarding |
 
 ## Thành phần mới
 

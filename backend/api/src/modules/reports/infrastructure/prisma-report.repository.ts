@@ -7,7 +7,7 @@ import type {
 } from '../domain/report';
 import { previousPeriod, todayInTimeZone } from '../domain/report';
 import { parseQuantity, valuate, type InvestmentKind, type InvestmentRecord } from '../../investments/domain/investment';
-import type { DebtHistory, InvestmentHistory, InvestmentValueHistorySource, NetWorthHistorySource, WalletBalanceRow } from '../domain/net-worth-history';
+import type { DebtHistory, InvestmentHistory, LoanHistory, InvestmentValueHistorySource, NetWorthHistorySource, WalletBalanceRow } from '../domain/net-worth-history';
 
 const moneyTypes = new Set<ReportMoneyType>(['income', 'expense', 'transfer', 'adjustment', 'debt', 'refund', 'investment']);
 
@@ -77,6 +77,7 @@ export class PrismaReportRepository implements ReportRepository {
         today,
         wallets: await this.walletHistory(tx, userId, buckets.map(bucket => (bucket.to < today ? bucket.to : today))),
         debts: await this.debtHistory(tx, userId),
+        loans: await this.loanHistory(tx, userId),
         investments: await this.investmentHistory(tx, userId, profile.timezone),
       };
     });
@@ -202,6 +203,20 @@ export class PrismaReportRepository implements ReportRepository {
     }));
   }
 
+  /** Loans that are not archived, like the live `/net-worth`; principal payments let earlier days add them back. */
+  private async loanHistory(tx: Prisma.TransactionClient, userId: string): Promise<LoanHistory[]> {
+    const rows = await tx.loan.findMany({
+      where: { userId, archivedAt: null },
+      include: { payments: { select: { paidOn: true, principalMinor: true } } },
+    });
+    return rows.map(row => ({
+      currency: row.currencyCode.trim(),
+      startDate: row.startDate.toISOString().slice(0, 10),
+      outstandingMinor: row.outstandingMinor,
+      payments: row.payments.map(payment => ({ paidOn: payment.paidOn.toISOString().slice(0, 10), principalMinor: payment.principalMinor })),
+    }));
+  }
+
   private async investmentHistory(
     tx: Prisma.TransactionClient, userId: string, timezone: string, filter: { kind?: InvestmentKind; investmentId?: string } = {},
   ): Promise<InvestmentHistory[]> {
@@ -279,6 +294,13 @@ export class PrismaReportRepository implements ReportRepository {
     `);
     // Investments (BE-P4-E01): the wallet already lost the money moved in, so adding the position's value does not double count.
     // Current value is priced here in SQL-free form by the caller; see investmentRows.
+    // Loans (MOB-P6-005): what is still owed is a (negative) liability; archived loans are left out like archived wallets.
+    const loans = await tx.$queryRaw<{ currency: string; total: string }[]>(Prisma.sql`
+      SELECT "currencyCode" AS currency, SUM("outstandingMinor")::text AS total
+      FROM "Loan"
+      WHERE "userId" = ${userId}::uuid AND "archivedAt" IS NULL AND "outstandingMinor" > 0
+      GROUP BY "currencyCode"
+    `);
     const investments = await this.investmentRows(tx, userId);
     const accountRows: NetWorthAggregate[] = rows.map(row => {
       if (row.bucket !== 'asset' && row.bucket !== 'liability') throw new Error('Invalid net worth bucket');
@@ -291,7 +313,8 @@ export class PrismaReportRepository implements ReportRepository {
         ? { currency: row.currency.trim(), bucket: 'asset' as const, total }
         : { currency: row.currency.trim(), bucket: 'liability' as const, total: -total };
     });
-    return [...accountRows, ...debtRows, ...investments];
+    const loanRows: NetWorthAggregate[] = loans.map(row => ({ currency: row.currency.trim(), bucket: 'liability' as const, total: -integer(row.total) }));
+    return [...accountRows, ...debtRows, ...loanRows, ...investments];
   }
 
   /** Held positions as assets: deposits at principal + accrued interest, the rest at quantity x latest price (cost when unpriced). */

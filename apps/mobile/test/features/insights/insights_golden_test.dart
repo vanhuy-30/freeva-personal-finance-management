@@ -8,7 +8,6 @@ import 'package:mobile/core/theme/app_theme.dart';
 import 'package:mobile/features/insights/presentation/pages/insights_page.dart';
 import 'package:mobile/features/insights/presentation/viewmodels/insights_view_model.dart';
 import 'package:mobile/features/spend_forecast/presentation/viewmodels/spend_forecast_view_model.dart';
-import 'package:mobile/features/wallets/domain/wallet.dart';
 
 import '../../core/widgets/widget_test_app.dart' show loadTestFonts;
 import '../home/fixtures.dart';
@@ -18,29 +17,10 @@ import '../spend_forecast/spend_forecast_fakes.dart'
     show StubSpendForecastViewModel, boardForecast;
 import 'insights_fakes.dart';
 
-/// Board S.1 InsHome: Thứ Hai 10/11, four wallets, October in review.
-StubHomeViewModel boardHome() => StubHomeViewModel(
-  data: overview(
-    net: [worth('VND', 70530000)],
-    wallets: [
-      wallet('vcb', 'Vietcombank', balance: 54680000),
-      wallet('cash', 'Tiền mặt', type: WalletType.cash, balance: 3700000),
-      wallet('momo', 'MoMo', type: WalletType.ewallet, balance: 2150000),
-      wallet('tcb', 'Techcombank', balance: 10000000),
-    ],
-    flow: month(
-      expense: 5400000,
-      rows: [
-        spend('food', 2160000),
-        spend('home', 1800000),
-        spend('bus', 1440000),
-      ],
-      from: '2026-11-01',
-      to: '2026-11-30',
-    ),
-    previous: month(expense: 11480000),
-  ),
-)..today = DateTime(2026, 11, 10, 9, 30);
+/// Board S.1 InsHome: the PA 3 Overview (10/11) with the "Đáng chú ý" card
+/// under the tiles.
+StubHomeViewModel boardHome() => StubHomeViewModel(data: pa3Overview())
+  ..today = DateTime(2026, 11, 10, 9, 30);
 
 // Boards S.1 InsHome (Overview card) and S.2 InsAnalysis (forecast card from
 // MOB-P5-E06 on top of the list). macOS only.
@@ -52,10 +32,10 @@ void main() {
   for (final dark in [false, true]) {
     final name = dark ? 's1_ins_home_dark' : 's1_ins_home';
     testWidgets('S.1 $name', skip: !Platform.isMacOS, (t) async {
-      t.view.physicalSize = const Size(390, 1400);
+      t.view.physicalSize = const Size(390, 1600);
       t.view.devicePixelRatio = 1;
       addTearDown(t.view.reset);
-      final app = await homeApp(boardHome(), dark: dark);
+      final app = await homeApp(boardHome(), dark: dark, goals: pa3Goals());
       getIt.registerSingleton<InsightsViewModel>(StubInsightsViewModel());
       await t.pumpWidget(app);
       await t.pump(const Duration(milliseconds: 300));

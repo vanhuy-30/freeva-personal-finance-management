@@ -277,50 +277,6 @@ void main() {
     });
   });
 
-  group('spendingBreakdown', () {
-    test('top 3 parents, the rest is Khác, percentages add up to 100', () {
-      final result = spendingBreakdown(month(), 'VND', categories, top: 3);
-      expect(result.total, b(9320000));
-      expect(result.slices.map((s) => s.name), [
-        'Ăn uống',
-        'Nhà ở',
-        'Đi lại',
-        null,
-      ]);
-      expect(result.slices.map((s) => s.percent), [38, 24, 18, 20]);
-      expect(result.slices.fold(0, (a, s) => a + s.percent), 100);
-    });
-
-    test('rolls subcategories up to the parent', () {
-      final flow = month(
-        rows: [
-          spend('pho', 300, parent: 'food'),
-          spend('food', 100),
-        ],
-      );
-      final result = spendingBreakdown(flow, 'VND', categories, top: 3);
-      expect(result.slices.single.name, 'Ăn uống');
-      expect(result.slices.single.minor, b(400));
-    });
-
-    test('unnamed spending stays in Khác', () {
-      final flow = month(rows: [spend('ghost', 900), spend('food', 100)]);
-      final result = spendingBreakdown(flow, 'VND', categories, top: 3);
-      expect(result.slices.map((s) => s.name), ['Ăn uống', null]);
-    });
-
-    test('empty month has no slices', () {
-      final result = spendingBreakdown(
-        month(rows: const []),
-        'VND',
-        categories,
-        top: 3,
-      );
-      expect(result.slices, isEmpty);
-      expect(result.total, BigInt.zero);
-    });
-  });
-
   group('credit cards', () {
     final today = DateTime(2026, 10, 21);
 
@@ -371,25 +327,5 @@ void main() {
       expect(card.dueWithin(today, 7), isTrue);
       expect(card.dueWithin(DateTime(2026, 10, 10), 7), isFalse);
     });
-  });
-
-  test('other currency spending skips the main currency and zeros', () {
-    final flow = month(
-      extra: [
-        CashflowTotal(
-          currency: 'USD',
-          incomeMinor: BigInt.zero,
-          expenseMinor: b(-3500),
-          netMinor: b(-3500),
-        ),
-        CashflowTotal(
-          currency: 'EUR',
-          incomeMinor: b(5),
-          expenseMinor: BigInt.zero,
-          netMinor: b(5),
-        ),
-      ],
-    );
-    expect(otherCurrencySpending(flow, 'VND').map((r) => r.currency), ['USD']);
   });
 }

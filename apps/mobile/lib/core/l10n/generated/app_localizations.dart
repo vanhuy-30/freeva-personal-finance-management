@@ -10257,6 +10257,156 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Due date'**
   String get goalDue;
+
+  /// No description provided for @homeNetWorth.
+  ///
+  /// In en, this message translates to:
+  /// **'Net worth'**
+  String get homeNetWorth;
+
+  /// No description provided for @homeNetWorthChange.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent} this month'**
+  String homeNetWorthChange(String percent);
+
+  /// No description provided for @homeAssets.
+  ///
+  /// In en, this message translates to:
+  /// **'Assets'**
+  String get homeAssets;
+
+  /// No description provided for @homeDebts.
+  ///
+  /// In en, this message translates to:
+  /// **'Debts'**
+  String get homeDebts;
+
+  /// No description provided for @homeAssetsInvestShare.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% invested'**
+  String homeAssetsInvestShare(int percent);
+
+  /// No description provided for @homeAssetsWallets.
+  ///
+  /// In en, this message translates to:
+  /// **'In {count} wallets'**
+  String homeAssetsWallets(int count);
+
+  /// No description provided for @homeDebtsShare.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% of assets'**
+  String homeDebtsShare(int percent);
+
+  /// No description provided for @homeDebtsNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No debts'**
+  String get homeDebtsNone;
+
+  /// No description provided for @homeMonthLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Left in {month}'**
+  String homeMonthLeft(String month);
+
+  /// No description provided for @homeMonthOver.
+  ///
+  /// In en, this message translates to:
+  /// **'Over in {month}'**
+  String homeMonthOver(String month);
+
+  /// No description provided for @homeMonthPerDay.
+  ///
+  /// In en, this message translates to:
+  /// **'About {amount} a day'**
+  String homeMonthPerDay(String amount);
+
+  /// No description provided for @homeMonthUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'used'**
+  String get homeMonthUsed;
+
+  /// No description provided for @homeMonthSetBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a budget'**
+  String get homeMonthSetBudget;
+
+  /// No description provided for @homeUpcomingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'To pay soon'**
+  String get homeUpcomingTitle;
+
+  /// No description provided for @homeUpcomingCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} until {date}'**
+  String homeUpcomingCount(int count, String date);
+
+  /// No description provided for @homeUpcomingDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} in {days} days'**
+  String homeUpcomingDays(String name, int days);
+
+  /// No description provided for @homeUpcomingToday.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} today'**
+  String homeUpcomingToday(String name);
+
+  /// No description provided for @homeUpcomingOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} overdue'**
+  String homeUpcomingOverdue(String name);
+
+  /// No description provided for @homeUpcomingRecurring.
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring'**
+  String get homeUpcomingRecurring;
+
+  /// No description provided for @homeCardUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'used'**
+  String get homeCardUsed;
+
+  /// No description provided for @homeCardDue.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} · due {date}'**
+  String homeCardDue(String name, String date);
+
+  /// No description provided for @homeGoalsTile.
+  ///
+  /// In en, this message translates to:
+  /// **'Goals'**
+  String get homeGoalsTile;
+
+  /// No description provided for @homeInvestTile.
+  ///
+  /// In en, this message translates to:
+  /// **'Investments'**
+  String get homeInvestTile;
+
+  /// No description provided for @homeInvestGain.
+  ///
+  /// In en, this message translates to:
+  /// **'Gain {amount}'**
+  String homeInvestGain(String amount);
+
+  /// No description provided for @homeInvestLoss.
+  ///
+  /// In en, this message translates to:
+  /// **'Loss {amount}'**
+  String homeInvestLoss(String amount);
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {
