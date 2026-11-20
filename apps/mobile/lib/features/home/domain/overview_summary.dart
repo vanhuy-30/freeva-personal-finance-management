@@ -21,6 +21,8 @@ BalanceSummary balanceSummary(OverviewData data, String profileCurrency) {
           currency: row.currency,
           minor: row.netWorthMinor,
           walletCount: counts[row.currency]!,
+          assetsMinor: row.assetsMinor,
+          liabilitiesMinor: row.liabilitiesMinor,
         ),
   ];
   final converted = data.multiCurrency ? data.netWorth.converted : null;
@@ -39,6 +41,8 @@ BalanceSummary balanceSummary(OverviewData data, String profileCurrency) {
         minor: converted.netWorthMinor,
         walletCount: [for (final c in included) counts[c]!]
             .fold(0, (a, b) => a + b),
+        assetsMinor: converted.assetsMinor,
+        liabilitiesMinor: converted.liabilitiesMinor,
       ),
       others: [
         for (final b in balances)
@@ -103,11 +107,6 @@ MonthFlow monthFlow(CashflowReport report, String currency) {
 }
 
 /// Expense in currencies other than [main], for "Ví USD: chi 35,00 USD".
-List<CashflowTotal> otherCurrencySpending(CashflowReport report, String main) =>
-    [
-      for (final row in report.totals)
-        if (row.currency != main && row.expenseMinor != BigInt.zero) row,
-    ];
 
 /// Expense per parent category (or the category itself when it is a root).
 Map<String?, BigInt> _expenseByParent(CashflowReport report, String currency) {
@@ -165,66 +164,6 @@ MonthInsight monthInsight({
     );
   }
   return MonthInsight(topIncrease: increase, overBudget: overrun);
-}
-
-/// Expense rolled up to parent categories: top [top] by amount, the rest as
-/// one "Khác" slice. Percentages are whole numbers that add up to 100.
-SpendingBreakdown spendingBreakdown(
-  CashflowReport report,
-  String currency,
-  List<FinanceCategory> categories, {
-  required int top,
-}) {
-  final namesById = {for (final c in categories) c.id: c.name};
-  final byParent = _expenseByParent(report, currency);
-  // Unknown or uncategorised spending falls into "Khác".
-  String? nameOf(String? id) => id == null ? null : namesById[id];
-  final total = byParent.values.fold(BigInt.zero, (a, b) => a + b);
-  if (total == BigInt.zero) {
-    return SpendingBreakdown(total: total, slices: const []);
-  }
-  final sorted = byParent.entries.toList()
-    ..sort((a, b) => b.value.compareTo(a.value));
-  final named = [
-    for (final e in sorted)
-      if (nameOf(e.key) != null) e,
-  ];
-  final head = named.take(top).toList();
-  final rest = sorted
-      .where((e) => !head.contains(e))
-      .fold(BigInt.zero, (a, e) => a + e.value);
-  final amounts = [
-    for (final e in head) (nameOf(e.key), e.value),
-    if (rest > BigInt.zero) (null, rest),
-  ];
-  final percents = _wholePercents([for (final a in amounts) a.$2], total);
-  return SpendingBreakdown(
-    total: total,
-    slices: [
-      for (var i = 0; i < amounts.length; i++)
-        SpendingSlice(
-          name: amounts[i].$1,
-          minor: amounts[i].$2,
-          percent: percents[i],
-        ),
-    ],
-  );
-}
-
-/// Largest-remainder rounding so the shown percentages sum to exactly 100.
-List<int> _wholePercents(List<BigInt> parts, BigInt total) {
-  final scaled = [for (final p in parts) p * BigInt.from(100)];
-  final floors = [for (final s in scaled) (s ~/ total).toInt()];
-  final remainders = [
-    for (var i = 0; i < parts.length; i++) (i, scaled[i] % total),
-  ]..sort((a, b) => b.$2.compareTo(a.$2));
-  var missing = 100 - floors.fold(0, (a, b) => a + b);
-  for (final (index, _) in remainders) {
-    if (missing <= 0) break;
-    floors[index]++;
-    missing--;
-  }
-  return floors;
 }
 
 /// Credit wallets as cards, in wallet order.

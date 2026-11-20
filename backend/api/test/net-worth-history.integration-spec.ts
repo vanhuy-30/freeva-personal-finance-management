@@ -65,6 +65,8 @@ describe('BE-P4-E02 net worth history HTTP + PostgreSQL', () => {
   afterAll(async () => {
     if (prisma) {
       const where = { userId: { in: fixtureUsers } };
+      await prisma.loanPayment.deleteMany({ where });
+      await prisma.loan.deleteMany({ where });
       await prisma.investmentPrice.deleteMany({ where });
       await prisma.investmentTrade.deleteMany({ where });
       await prisma.investment.deleteMany({ where });
@@ -190,6 +192,27 @@ describe('BE-P4-E02 net worth history HTTP + PostgreSQL', () => {
     await prisma.personalDebt.update({ where: { id: debt.id }, data: { archivedAt: new Date() } });
     const oct = (await history('window=6m&on=2026-10-15')).points.at(-1)!;
     expect(oct.items[0]!.netWorthMinor).toBe('122000000');
+  });
+
+  it('counts loans that are not archived as debt, now and on earlier days (MOB-P6-005)', async () => {
+    await story();
+    const loan = (startDate: string, outstandingMinor: bigint, archivedAt: Date | null = null) => prisma.loan.create({ data: {
+      userId: owner, clientId: randomUUID(), kind: 'mortgage', name: 'Nhà', currencyCode: 'VND', principalMinor: 60_000_000n,
+      outstandingMinor, startDate: new Date(`${startDate}T00:00:00.000Z`), archivedAt,
+    } });
+    const home = await loan('2026-09-01', 40_000_000n);
+    await prisma.loanPayment.create({ data: {
+      loanId: home.id, userId: owner, clientId: randomUUID(), principalMinor: 10_000_000n, interestMinor: 0n,
+      paidOn: new Date('2026-10-01T00:00:00.000Z'),
+    } });
+    await loan('2026-09-01', 99_000_000n, new Date());
+    const points = (await history('window=6m&on=2026-10-15')).points;
+    // Aug: before the loan; Sep 30: 40m + 10m paid later; Oct 15: 40m. Story nets are 117m, 122m.
+    expect(points.at(-3)!.items[0]!.liabilitiesMinor).toBe('-5000000');
+    expect(points.at(-2)!.items[0]!.liabilitiesMinor).toBe('-55000000');
+    expect(points.at(-1)!.items[0]!.netWorthMinor).toBe('82000000');
+    const live = await request('GET', '/reports/net-worth');
+    expect(live.body.items[0].liabilitiesMinor).toBe('-45000000');
   });
 
   it('all starts at the first activity of any kind', async () => {

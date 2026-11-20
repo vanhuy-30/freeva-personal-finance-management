@@ -32,7 +32,9 @@ void main() {
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
       final state = name.replaceAll('_dark', '');
-      await tester.pumpWidget(await homeApp(homeState(state), dark: dark));
+      await tester.pumpWidget(
+        await homeApp(homeState(state), dark: dark, goals: homeGoals(state)),
+      );
       await tester.pump(const Duration(milliseconds: 300));
       await expectLater(
         find.byType(MaterialApp),

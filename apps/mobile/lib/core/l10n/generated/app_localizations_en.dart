@@ -6140,4 +6140,107 @@ class SEn extends S {
 
   @override
   String get goalDue => 'Due date';
+
+  @override
+  String get homeNetWorth => 'Net worth';
+
+  @override
+  String homeNetWorthChange(String percent) {
+    return '$percent this month';
+  }
+
+  @override
+  String get homeAssets => 'Assets';
+
+  @override
+  String get homeDebts => 'Debts';
+
+  @override
+  String homeAssetsInvestShare(int percent) {
+    return '$percent% invested';
+  }
+
+  @override
+  String homeAssetsWallets(int count) {
+    return 'In $count wallets';
+  }
+
+  @override
+  String homeDebtsShare(int percent) {
+    return '$percent% of assets';
+  }
+
+  @override
+  String get homeDebtsNone => 'No debts';
+
+  @override
+  String homeMonthLeft(String month) {
+    return 'Left in $month';
+  }
+
+  @override
+  String homeMonthOver(String month) {
+    return 'Over in $month';
+  }
+
+  @override
+  String homeMonthPerDay(String amount) {
+    return 'About $amount a day';
+  }
+
+  @override
+  String get homeMonthUsed => 'used';
+
+  @override
+  String get homeMonthSetBudget => 'Set a budget';
+
+  @override
+  String get homeUpcomingTitle => 'To pay soon';
+
+  @override
+  String homeUpcomingCount(int count, String date) {
+    return '$count until $date';
+  }
+
+  @override
+  String homeUpcomingDays(String name, int days) {
+    return '$name in $days days';
+  }
+
+  @override
+  String homeUpcomingToday(String name) {
+    return '$name today';
+  }
+
+  @override
+  String homeUpcomingOverdue(String name) {
+    return '$name overdue';
+  }
+
+  @override
+  String get homeUpcomingRecurring => 'Recurring';
+
+  @override
+  String get homeCardUsed => 'used';
+
+  @override
+  String homeCardDue(String name, String date) {
+    return '$name · due $date';
+  }
+
+  @override
+  String get homeGoalsTile => 'Goals';
+
+  @override
+  String get homeInvestTile => 'Investments';
+
+  @override
+  String homeInvestGain(String amount) {
+    return 'Gain $amount';
+  }
+
+  @override
+  String homeInvestLoss(String amount) {
+    return 'Loss $amount';
+  }
 }

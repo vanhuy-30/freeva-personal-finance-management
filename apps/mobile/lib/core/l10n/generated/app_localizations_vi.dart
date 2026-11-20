@@ -6009,4 +6009,107 @@ class SVi extends S {
 
   @override
   String get goalDue => 'Hạn';
+
+  @override
+  String get homeNetWorth => 'Tài sản ròng';
+
+  @override
+  String homeNetWorthChange(String percent) {
+    return '$percent tháng này';
+  }
+
+  @override
+  String get homeAssets => 'Có';
+
+  @override
+  String get homeDebts => 'Nợ';
+
+  @override
+  String homeAssetsInvestShare(int percent) {
+    return 'Đầu tư chiếm $percent%';
+  }
+
+  @override
+  String homeAssetsWallets(int count) {
+    return 'Trong $count ví';
+  }
+
+  @override
+  String homeDebtsShare(int percent) {
+    return 'Bằng $percent% tài sản';
+  }
+
+  @override
+  String get homeDebtsNone => 'Chưa có khoản nợ';
+
+  @override
+  String homeMonthLeft(String month) {
+    return 'Tháng $month còn';
+  }
+
+  @override
+  String homeMonthOver(String month) {
+    return 'Tháng $month vượt';
+  }
+
+  @override
+  String homeMonthPerDay(String amount) {
+    return 'Khoảng $amount mỗi ngày';
+  }
+
+  @override
+  String get homeMonthUsed => 'đã dùng';
+
+  @override
+  String get homeMonthSetBudget => 'Đặt ngân sách';
+
+  @override
+  String get homeUpcomingTitle => 'Sắp phải trả';
+
+  @override
+  String homeUpcomingCount(int count, String date) {
+    return '$count khoản đến $date';
+  }
+
+  @override
+  String homeUpcomingDays(String name, int days) {
+    return '$name còn $days ngày';
+  }
+
+  @override
+  String homeUpcomingToday(String name) {
+    return '$name hôm nay';
+  }
+
+  @override
+  String homeUpcomingOverdue(String name) {
+    return '$name quá hạn';
+  }
+
+  @override
+  String get homeUpcomingRecurring => 'Định kỳ';
+
+  @override
+  String get homeCardUsed => 'đã dùng';
+
+  @override
+  String homeCardDue(String name, String date) {
+    return '$name · hạn $date';
+  }
+
+  @override
+  String get homeGoalsTile => 'Mục tiêu';
+
+  @override
+  String get homeInvestTile => 'Đầu tư';
+
+  @override
+  String homeInvestGain(String amount) {
+    return 'Lãi $amount';
+  }
+
+  @override
+  String homeInvestLoss(String amount) {
+    return 'Lỗ $amount';
+  }
 }

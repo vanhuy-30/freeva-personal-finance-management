@@ -1,6 +1,6 @@
 # Mục tiêu trên app — MOB-P3-E01
 
-Màn **Mục tiêu** (`/me/goals`, qua AuthGate, không bottom nav). Contract: [goals.md](goals.md). Thiết kế: [patterns/I-goals.md](../brand/patterns/I-goals.md), board `Goal*.dc.html` và `BHomeGoal.dc.html`.
+Màn **Mục tiêu** (`/me/goals`, qua AuthGate, không bottom nav). Contract: [goals.md](goals.md). Thiết kế: [patterns/I-goals.md](../brand/patterns/I-goals.md), board `Goal*.dc.html`. Trên Tổng quan mục tiêu là ô "Mục tiêu" của PA 3 (board `BHome`, `MOB-P6-005`).
 
 ## Hành vi
 

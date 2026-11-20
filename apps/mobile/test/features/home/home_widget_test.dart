@@ -13,77 +13,107 @@ void main() {
     String state, {
     double scale = 1,
   }) async {
-    await tester.pumpWidget(await homeApp(homeState(state), scale: scale));
+    await tester.pumpWidget(
+      await homeApp(homeState(state), scale: scale, goals: homeGoals(state)),
+    );
     await tester.pump(const Duration(milliseconds: 300));
   }
 
-  testWidgets('B1 shows greeting, balance, spending and recent', (
+  testWidgets('PA 3 shows net worth, quick actions, tiles and recent', (
     tester,
   ) async {
+    tester.view.physicalSize = const Size(390, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
     await pump(tester, 'ready');
     expect(find.text('Chào Minh'), findsOneWidget);
-    expect(find.text('Tổng số dư · 4 ví'), findsOneWidget);
-    expect(find.textContaining('48.250.000'), findsOneWidget);
-    expect(find.text('Ăn uống'), findsOneWidget);
-    expect(find.text('38%'), findsOneWidget);
-    expect(find.text('Khác'), findsOneWidget);
+    expect(find.text('Tài sản ròng'), findsOneWidget);
+    expect(find.textContaining('703.609.734'), findsOneWidget);
+    expect(find.text('1,8% tháng này'), findsOneWidget);
+    expect(find.text('966.009.734'), findsOneWidget);
+    expect(find.text('262.400.000'), findsOneWidget);
+    expect(find.text('Đầu tư chiếm 92%'), findsOneWidget);
+    expect(find.text('Bằng 27% tài sản'), findsOneWidget);
+    expect(find.text('Ghi thu'), findsOneWidget);
+    expect(find.text('Tháng 11 còn'), findsOneWidget);
+    expect(find.text('9.600.000'), findsOneWidget);
+    expect(find.text('Đúng nhịp'), findsOneWidget);
+    expect(find.text('Khoảng 480.000 mỗi ngày'), findsOneWidget);
+    expect(find.text('Đã chi 5.400.000 / 15.000.000'), findsOneWidget);
+    expect(find.text('31.030.000'), findsOneWidget);
+    expect(find.text('3 khoản đến 30/11'), findsOneWidget);
+    expect(find.text('Học phí còn 5 ngày'), findsOneWidget);
+    expect(find.text('Thẻ chính · hạn 25/11'), findsOneWidget);
+    expect(find.text('Mua nhà'), findsOneWidget);
+    expect(find.text('80%'), findsOneWidget);
+    expect(find.text('+8,0%'), findsOneWidget);
+    expect(find.text('Lãi 63.229.734'), findsOneWidget);
     expect(find.text('Phở Thìn'), findsOneWidget);
     expect(find.text('−65.000'), findsOneWidget);
-    expect(find.text('+18.500.000'), findsWidgets);
     expect(
       find.bySemanticsLabel('trừ 65.000 đồng, Phở Thìn, Ăn uống · Tiền mặt'),
       findsOneWidget,
     );
+    double top(String text) => tester.getTopLeft(find.text(text)).dy;
+    expect(top('Ghi thu'), greaterThan(top('Bằng 27% tài sản')));
+    expect(top('Tháng 11 còn'), greaterThan(top('Ghi thu')));
+    expect(top('Sắp phải trả'), greaterThan(top('Tháng 11 còn')));
+    expect(top('Sắp phải trả'), top('Thẻ tín dụng'));
   });
 
   testWidgets('B2 hides balances only', (tester) async {
+    tester.view.physicalSize = const Size(390, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
     await pump(tester, 'hidden');
-    expect(find.textContaining('48.250.000'), findsNothing);
-    expect(find.textContaining('••••••', findRichText: true), findsOneWidget);
+    expect(find.textContaining('703.609.734'), findsNothing);
+    expect(find.text('966.009.734'), findsNothing);
+    expect(find.text('262.400.000'), findsNothing);
     final handle = tester.ensureSemantics();
-    expect(find.bySemanticsLabel('số dư đã ẩn'), findsOneWidget);
+    expect(find.bySemanticsLabel('số dư đã ẩn'), findsNWidgets(3));
     handle.dispose();
+    expect(find.text('9.600.000'), findsOneWidget);
+    expect(find.text('31.030.000'), findsOneWidget);
     expect(find.text('−65.000'), findsOneWidget);
-    expect(find.text('+18.500.000'), findsWidgets);
-    expect(find.text('Ăn uống'), findsOneWidget);
   });
 
   testWidgets('B3 keeps other currencies apart', (tester) async {
     await pump(tester, 'multi');
-    expect(find.text('Tổng số dư · 4 ví VND'), findsOneWidget);
+    expect(find.text('Tài sản ròng'), findsOneWidget);
     expect(find.text('1.250,00'), findsOneWidget);
     expect(find.text('USD · 1 ví'), findsOneWidget);
     expect(find.bySemanticsLabel('1.250,00 USD · 1 ví'), findsOneWidget);
-    expect(find.text('Ví USD: chi 35,00 USD tháng này'), findsOneWidget);
   });
 
-  testWidgets('B4 credit cards follow spending', (tester) async {
+  testWidgets('B4 the card tile shows the most used card', (tester) async {
+    tester.view.physicalSize = const Size(390, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
     await pump(tester, 'debt');
     expect(find.text('Thẻ tín dụng'), findsOneWidget);
-    expect(find.text('Đến hạn 25/10'), findsOneWidget);
-    expect(find.text('Đến hạn 12/11'), findsOneWidget);
-    expect(
-      find.textContaining('15.600.000', findRichText: true),
-      findsOneWidget,
-    );
-    expect(find.text('Hạn mức 20.000.000'), findsOneWidget);
+    expect(find.text('Thẻ chính · hạn 25/10'), findsOneWidget);
+    expect(find.text('17.400.000'), findsOneWidget);
+    expect(find.textContaining('78%', findRichText: true), findsOneWidget);
     expect(
       tester.getTopLeft(find.text('Thẻ tín dụng')).dy,
-      greaterThan(tester.getTopLeft(find.text('Chi tháng 10').last).dy),
+      greaterThan(tester.getTopLeft(find.text('Tháng 10 còn')).dy),
     );
   });
 
-  testWidgets('B5 new month: empty spending and last month review', (
+  testWidgets('B5 new month: no budget yet and last month review', (
     tester,
   ) async {
+    tester.view.physicalSize = const Size(390, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
     await pump(tester, 'newMonth');
-    expect(find.text('Chưa có khoản chi nào.'), findsOneWidget);
-    expect(find.text('Ghi chi'), findsOneWidget);
+    expect(find.text('Chi tháng 11'), findsOneWidget);
+    expect(find.text('Đặt ngân sách'), findsOneWidget);
     expect(find.text('Xem lại tháng 10'), findsOneWidget);
     expect(find.textContaining('01/11'), findsOneWidget);
     expect(find.text('Bắt đầu nào'), findsNothing);
     expect(
-      tester.getTopLeft(find.text('Chi tháng 11').last).dy,
+      tester.getTopLeft(find.text('Chi tháng 11')).dy,
       lessThan(tester.getTopLeft(find.text('Xem lại tháng 10')).dy),
     );
   });
@@ -123,7 +153,7 @@ void main() {
     expect(find.text('Số liệu lúc 09:30. Vẫn ghi chi được.'), findsOneWidget);
     expect(find.text('Highlands'), findsOneWidget);
     expect(find.text('Chờ đồng bộ'), findsOneWidget);
-    expect(find.textContaining('48.250.000'), findsOneWidget);
+    expect(find.textContaining('48.250.000'), findsWidgets);
   });
 
   testWidgets('B8 error card retries', (tester) async {
@@ -142,7 +172,7 @@ void main() {
     await pump(tester, 'ready');
     await tester.tap(find.byTooltip('Ẩn số dư'));
     await tester.pump();
-    expect(find.textContaining('48.250.000'), findsNothing);
+    expect(find.textContaining('703.609.734'), findsNothing);
   });
 
   for (final state in [

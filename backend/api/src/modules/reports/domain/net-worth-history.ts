@@ -15,6 +15,15 @@ export type DebtHistory = {
   payments: { paidOn: string; amountMinor: bigint }[];
 };
 
+/** A loan that is not archived (MOB-P6-005). Outstanding today plus the principal paid after a day gives that day's debt. */
+export type LoanHistory = {
+  currency: string;
+  /** Calendar days YYYY-MM-DD. */
+  startDate: string;
+  outstandingMinor: bigint;
+  payments: { paidOn: string; principalMinor: bigint }[];
+};
+
 export type InvestmentHistory = {
   kind: InvestmentKind;
   currency: string;
@@ -33,6 +42,7 @@ export type NetWorthHistorySource = {
   today: string;
   wallets: WalletBalanceRow[];
   debts: DebtHistory[];
+  loans: LoanHistory[];
   investments: InvestmentHistory[];
 };
 
@@ -44,6 +54,16 @@ export function debtOutstandingOn(debt: DebtHistory, day: string): bigint {
   if (debt.occurredOn > day) return 0n;
   const paid = debt.payments.filter(payment => payment.paidOn <= day).reduce((sum, payment) => sum + payment.amountMinor, 0n);
   return debt.principalMinor - paid;
+}
+
+/**
+ * Loan debt on `day`: nothing before it started, then today's outstanding plus the principal paid after `day`.
+ * Hand corrections of the outstanding (audit events) are not replayed, so days before a correction use the corrected number.
+ */
+export function loanOutstandingOn(loan: LoanHistory, day: string): bigint {
+  if (loan.startDate > day) return 0n;
+  const paidLater = loan.payments.filter(payment => payment.paidOn > day).reduce((sum, payment) => sum + payment.principalMinor, 0n);
+  return loan.outstandingMinor + paidLater;
 }
 
 /**
@@ -76,7 +96,7 @@ export function investmentValueOn(history: InvestmentHistory, day: string): bigi
 
 /**
  * Net worth at the end of every bucket, oldest first. Same parts as the live `/net-worth`: active wallets, open lend/borrow
- * (receivable is an asset, payable a negative liability) and held investments. Money moved into an investment already left
+ * (receivable is an asset, payable a negative liability), loans that are not archived (negative liability) and held investments. Money moved into an investment already left
  * the wallet, so adding the position's value counts it once.
  */
 export function buildNetWorthHistory(window: SeriesWindow, source: NetWorthHistorySource) {
@@ -92,6 +112,10 @@ export function buildNetWorthHistory(window: SeriesWindow, source: NetWorthHisto
         rows.push(debt.direction === 'lent'
           ? { currency: debt.currency, bucket: 'asset', total: open }
           : { currency: debt.currency, bucket: 'liability', total: -open });
+      }
+      for (const loan of source.loans) {
+        const open = loanOutstandingOn(loan, asOf);
+        if (open > 0n) rows.push({ currency: loan.currency, bucket: 'liability', total: -open });
       }
       for (const investment of source.investments) {
         const value = investmentValueOn(investment, asOf);

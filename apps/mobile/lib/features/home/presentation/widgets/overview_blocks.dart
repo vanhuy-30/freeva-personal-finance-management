@@ -9,17 +9,15 @@ import '../../../transactions/presentation/widgets/transaction_detail_sheet.dart
 import '../../domain/overview.dart';
 import '../../domain/overview_summary.dart';
 import '../viewmodels/home_view_model.dart';
-import 'credit_cards_block.dart';
+import 'overview_tiles.dart';
 import 'new_month_review_card.dart';
 import 'recent_row_data.dart';
 import 'recent_transactions.dart';
-import 'spending_block.dart';
-import '../../../server_config/domain/app_limits.dart';
 import '../../../insights/presentation/widgets/overview_insight_slot.dart';
 
-/// Blocks under the quick actions once data is loaded: credit cards first
-/// for the debt goal, "Chi tháng", last-month review (new month only), the
-/// "Đáng chú ý" card (S.1), credit cards (other goals), "Gần đây".
+/// Blocks under the quick actions once data is loaded (PA 3): the tile grid,
+/// last-month review (new month only), the "Đáng chú ý" card (S.1) and
+/// "Gần đây".
 class OverviewBlocks extends StatelessWidget {
   const OverviewBlocks({required this.model, required this.data, super.key});
 
@@ -45,8 +43,6 @@ class OverviewBlocks extends StatelessWidget {
     final s = S.of(context);
     final main = balanceSummary(data, model.currency).main.currency;
     final digits = data.digitsOf;
-    final today = data.loadedAt;
-    final cards = creditCards(data.wallets, today);
     final previous = data.previousMonth;
     final names = RecentRowNames(s, data.categories, data.wallets);
     final rows = [
@@ -55,26 +51,10 @@ class OverviewBlocks extends StatelessWidget {
       for (final row in data.recent) names.fromBundle(row),
     ].take(3).toList();
     const gap = SizedBox(height: OverviewBlocks.gap);
-    final credit = cards.isEmpty
-        ? null
-        : CreditCardsBlock(cards: cards, today: today, digitsOf: digits);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        SpendingBlock(
-          breakdown: spendingBreakdown(
-            data.month,
-            main,
-            data.categories,
-            top: getIt<AppLimitsSource>().requireLimits.reportTopRows,
-          ),
-          currency: main,
-          minorDigits: digits(main),
-          monthLabel: _monthLabel(context, data.month.period.from),
-          otherCurrencies: otherCurrencySpending(data.month, main),
-          digitsOf: digits,
-          budget: data.budget,
-        ),
+        OverviewTiles(data: data, currency: main),
         gap,
         if (previous != null && !monthFlow(previous, main).isEmpty) ...[
           NewMonthReviewCard(
@@ -95,7 +75,6 @@ class OverviewBlocks extends StatelessWidget {
           gap,
         ] else
           const OverviewInsightSlot(top: 0, bottom: OverviewBlocks.gap),
-        if (credit != null) ...[credit, gap],
         RecentTransactions(
           rows: rows,
           digitsOf: digits,

@@ -11,7 +11,6 @@ import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_banner.dart';
 import '../../../auth/presentation/widgets/session_alert_banner.dart';
 import '../../../goals/presentation/viewmodels/goal_view_model.dart';
-import '../../../goals/presentation/widgets/goals_home_block.dart';
 import '../../../insights/presentation/viewmodels/insights_view_model.dart';
 import '../../../notifications/presentation/viewmodels/notification_view_model.dart';
 import '../../../onboarding/presentation/viewmodels/first_run_nudges_view_model.dart';
@@ -205,7 +204,6 @@ class _HomePageState extends State<HomePage> {
                   gap,
                   const RecentEmptyHint(),
                 ] else ...[
-                  if (model.saveGoal) const GoalsHomeBlock(),
                   const QuickActions(),
                   gap,
                   if (data != null)

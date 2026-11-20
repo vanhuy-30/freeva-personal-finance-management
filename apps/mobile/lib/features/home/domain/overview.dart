@@ -1,4 +1,8 @@
 import '../../budgets/domain/budget.dart';
+import '../../calendar/domain/calendar_month.dart';
+import '../../investments/domain/investment.dart';
+import '../../loans/domain/loan.dart';
+import '../../net_worth/domain/net_worth_history.dart';
 import '../../categories/domain/finance_category.dart';
 import '../../reports/domain/report.dart';
 import '../../transactions/domain/transaction.dart';
@@ -21,6 +25,10 @@ class OverviewData {
     this.previousBudget,
     this.budget,
     this.multiCurrency = true,
+    this.netWorthTrend,
+    this.investments,
+    this.loans,
+    this.calendar,
   });
 
   final NetWorthReport netWorth;
@@ -44,6 +52,20 @@ class OverviewData {
   /// (MOB-P3-004); stored rates are kept.
   final bool multiCurrency;
 
+  /// Daily net worth of the last 30 days in the profile currency, for the
+  /// "tháng này" change and the investment line (PA 3). Null when it failed.
+  final NetWorthSeries? netWorthTrend;
+
+  /// Held investments; null when it failed.
+  final InvestmentSummary? investments;
+
+  /// Loans, for the "Sắp phải trả" tile; null when it failed.
+  final List<Loan>? loans;
+
+  /// Calendar months from today to the end of the fiscal month (bills and
+  /// recurring items); null when any of them failed.
+  final List<CalendarMonth>? calendar;
+
   /// Active (not hidden) wallets.
   final List<Wallet> wallets;
   final List<WalletCurrency> currencies;
@@ -66,11 +88,24 @@ class CurrencyBalance {
     required this.currency,
     required this.minor,
     required this.walletCount,
-  });
+    BigInt? assetsMinor,
+    BigInt? liabilitiesMinor,
+  }) : _assets = assetsMinor,
+       _liabilities = liabilitiesMinor;
 
   final String currency;
+
+  /// Net worth: [assetsMinor] + [liabilitiesMinor].
   final BigInt minor;
   final int walletCount;
+  final BigInt? _assets;
+  final BigInt? _liabilities;
+
+  /// "Có" on the net worth card.
+  BigInt get assetsMinor => _assets ?? minor;
+
+  /// "Nợ", signed: negative means debt.
+  BigInt get liabilitiesMinor => _liabilities ?? BigInt.zero;
 }
 
 class BalanceSummary {
@@ -135,24 +170,4 @@ class MonthInsight {
   final BudgetOverrun? overBudget;
 
   bool get isEmpty => topIncrease == null && overBudget == null;
-}
-
-/// One slice of "Chi tháng": a parent category, or "Khác" when [name] is null.
-class SpendingSlice {
-  const SpendingSlice({
-    required this.name,
-    required this.minor,
-    required this.percent,
-  });
-
-  final String? name;
-  final BigInt minor;
-  final int percent;
-}
-
-class SpendingBreakdown {
-  const SpendingBreakdown({required this.total, required this.slices});
-
-  final BigInt total;
-  final List<SpendingSlice> slices;
 }

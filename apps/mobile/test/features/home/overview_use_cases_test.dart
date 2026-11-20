@@ -7,7 +7,15 @@ import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/budgets/domain/budget.dart';
 import 'package:mobile/features/budgets/domain/budget_use_cases.dart';
 import 'package:mobile/features/categories/domain/category_repository.dart';
+import 'package:mobile/features/calendar/domain/calendar_month.dart';
+import 'package:mobile/features/calendar/domain/calendar_use_cases.dart';
 import 'package:mobile/features/categories/domain/finance_category.dart';
+import 'package:mobile/features/investments/domain/investment.dart';
+import 'package:mobile/features/investments/domain/investment_use_cases.dart';
+import 'package:mobile/features/loans/domain/loan.dart';
+import 'package:mobile/features/loans/domain/loan_use_cases.dart';
+import 'package:mobile/features/net_worth/domain/net_worth_history.dart';
+import 'package:mobile/features/net_worth/domain/net_worth_use_cases.dart';
 import 'package:mobile/features/home/domain/overview_use_cases.dart';
 import 'package:mobile/features/reports/domain/report.dart';
 import 'package:mobile/features/reports/domain/report_repository.dart';
@@ -25,8 +33,10 @@ void main() {
   late DefaultOverviewUseCases cases;
   late MemoryFxRates rates;
   late _Budgets budgets;
+  late _Glance glance;
 
   setUp(() {
+    glance = _Glance();
     reports = _Reports();
     rates = MemoryFxRates();
     budgets = _Budgets();
@@ -39,7 +49,36 @@ void main() {
       budgets,
       rates,
       testServerConfigModel(),
+      glance.netWorth,
+      glance.investments,
+      glance.loans,
+      glance.calendar,
     );
+  });
+
+  test('loads the glance data best effort (PA 3)', () async {
+    reports.months = [month()];
+    final data = (await cases.load(
+      DateTime(2026, 10, 21),
+      currency: 'VND',
+    )).getOrElse(() => throw StateError('load'));
+    expect(glance.trendCurrency, 'VND');
+    expect(glance.months, ['2026-10']);
+    expect(data.netWorthTrend?.currency, 'VND');
+    expect(data.investments, isNotNull);
+    expect(data.loans, isEmpty);
+    expect(data.calendar, hasLength(1));
+
+    glance.fail = true;
+    final partial = (await cases.load(
+      DateTime(2026, 10, 21),
+      currency: 'VND',
+    )).getOrElse(() => throw StateError('load'));
+    expect(partial.netWorthTrend, isNull);
+    expect(partial.investments, isNull);
+    expect(partial.loans, isNull);
+    expect(partial.calendar, isNull);
+    expect(partial.wallets, isNotEmpty);
   });
 
   test(
@@ -255,4 +294,71 @@ class _Budgets implements BudgetUseCases {
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+/// Net worth trend, investments, loans and calendar for the PA 3 tiles.
+class _Glance {
+  bool fail = false;
+  String? trendCurrency;
+  final months = <String>[];
+  late final netWorth = _NetWorth(this);
+  late final investments = _Investments(this);
+  late final loans = _Loans(this);
+  late final calendar = _Calendar(this);
+
+  Either<AuthFailure, T> result<T>(T value) =>
+      fail ? left(const AuthFailure(AuthError.network)) : right(value);
+}
+
+class _NetWorth implements NetWorthUseCases {
+  _NetWorth(this.glance);
+  final _Glance glance;
+
+  @override
+  Future<Either<AuthFailure, NetWorthSeries>> load(
+    NetWorthWindow window, {
+    required String currency,
+  }) async {
+    glance.trendCurrency = currency;
+    return glance.result(
+      NetWorthSeries(window: window, currency: currency, points: const []),
+    );
+  }
+}
+
+class _Investments implements InvestmentUseCases {
+  _Investments(this.glance);
+  final _Glance glance;
+
+  @override
+  Future<Either<AuthFailure, InvestmentSummary>> summary() async =>
+      glance.result(const InvestmentSummary());
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class _Loans implements LoanUseCases {
+  _Loans(this.glance);
+  final _Glance glance;
+
+  @override
+  Future<Either<AuthFailure, List<Loan>>> list() async =>
+      glance.result(const <Loan>[]);
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class _Calendar implements CalendarUseCases {
+  _Calendar(this.glance);
+  final _Glance glance;
+
+  @override
+  Future<Either<AuthFailure, CalendarMonth>> month(String month) async {
+    glance.months.add(month);
+    return glance.result(
+      CalendarMonth(month: month, timezone: 'UTC', today: '', days: const []),
+    );
+  }
 }

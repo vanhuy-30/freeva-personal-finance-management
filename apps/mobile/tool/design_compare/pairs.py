@@ -16,7 +16,7 @@ M = {
  'F': [('RepMonth','reports/f1_month'),('RepWallets','reports/f1_wallets'),('RepCategory','reports/f2_category'),('RepRange','reports/f2_range'),('RepEmpty','reports/f1_empty')],
  'G': [('MeHome','settings/g1_me'),('MeProfile','settings/g1_profile'),('MeTheme','settings/g1_theme'),('MeSecurity','settings/g1_security'),('MeSessions','settings/g1_sessions'),('MeLogout','settings/g1_logout'),('MeTags','settings/g2_tags'),('MeFeedback','settings/g2_feedback'),('MeFeedbackSent','settings/g2_thanks'),('MeFaq','settings/g2_faq')],
 
- 'I': [('GoalEmpty','goals/goals_empty'),('GoalList','goals/goals_list'),('GoalAdd','goals/goals_add_dated'),('GoalDetail','goals/goals_detail'),('GoalMove','goals/goals_move_in'),('BHomeGoal','goals/goals_home_block')],
+ 'I': [('GoalEmpty','goals/goals_empty'),('GoalList','goals/goals_list'),('GoalAdd','goals/goals_add_dated'),('GoalDetail','goals/goals_detail'),('GoalMove','goals/goals_move_in')],
  'K': [('DebtEmpty','debts/debts_empty'),('DebtList','debts/debts_list'),('DebtAdd','debts/debts_add'),('DebtDetail','debts/debts_detail'),('DebtPay','debts/debts_pay'),('LoanList','debts/debts_loans'),('LoanDetail','debts/debts_loan_detail'),('LoanAdd','debts/debts_loan_add'),('LoanPay','debts/debts_loan_pay')],
  'L': [('RecList','recurring/rec_list'),('RecEdit','recurring/rec_add_remind'),('RecEditAuto','recurring/rec_edit_auto'),('BillPaid','recurring/rec_paid_sheet')],
  'M': [('WReconcile','wallets/reconcile_sheet'),('TxDetail3','transactions/refund_detail'),('TxRefund','transactions/refund_sheet'),('TxRefundDelete','transactions/refund_delete'),('InstAdd','installments/installment_add'),('InstDetail','installments/installment_detail'),('WCredit3','installments/installment_card')],

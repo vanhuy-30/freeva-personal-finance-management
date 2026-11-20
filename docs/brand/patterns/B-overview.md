@@ -6,6 +6,25 @@ Canvas: trang **07 · Tổng quan, báo cáo, dự báo**, khối B.
 [design-system.md](../design-system.md). Màn lần đầu (checklist "Bắt đầu nào") ở
 [A-onboarding-auth.md](A-onboarding-auth.md) A1.7.
 
+## PA 3 · Tài sản ròng + ô nhanh (`MOB-P6-005`, 2026-11-20)
+
+Owner chọn PA 3 trong 5 phương án làm lại; các phương án còn lại và board cũ B9/B10 đã xoá khỏi canvas (2026-11-20). PA 3 là board `BHome` (B1). Board B1–B5, B7 và `InsHome` (nay xếp ở hàng B, tên "B · 9. Có điều đáng chú ý (S.1)") đã vẽ lại theo PA 3 với số liệu của golden; B6 (đang tải) và B8 (lỗi) không đổi. Thay màn 1 bên dưới; quy tắc của các trạng thái 2–8 giữ nguyên, trừ B4: không còn đưa thẻ lên trên theo mục tiêu "Quản lý khoản nợ", board đổi tên "Có thẻ tín dụng" (ô Thẻ một mình thì chiếm cả hàng).
+
+Thứ tự: lời chào + tìm + chuông → thẻ **Tài sản ròng** (wash) → 4 nút nhanh (Ghi thu · Chuyển ví · Ví của tôi · Đầu tư) → lưới ô → Xem lại tháng trước (chỉ đầu tháng) → Đáng chú ý → Gần đây.
+
+| Khối | Nội dung | Ghi chú |
+|---|---|---|
+| Thẻ Tài sản ròng | "Tài sản ròng", nút mắt, số `moneyDisplay`, tag "▲ 1,8% tháng này", hai ô **Có** / **Nợ** (số 17/600, thanh 6, dòng phụ "Đầu tư chiếm 92%" hoặc "Trong N ví" / "Bằng 27% tài sản" hoặc "Chưa có khoản nợ") | Có = tài sản, Nợ = thẻ tín dụng + đi mượn + khoản vay chưa lưu trữ. Tag so với ngày cuối trước kỳ (lịch sử 30 ngày, tiền tệ hồ sơ); ẩn khi số đó ≤ 0, khi đang quy đổi sang tiền tệ khác, hoặc khi thiếu dữ liệu. Ẩn số dư che số lớn và hai ô, tag % vẫn hiện. Viên tiền tệ khác, dòng chưa quy đổi, "Xem tổng theo …" giữ như B3. Có mở Ví, Nợ mở Vay và nợ |
+| Ô Tháng (rộng) | Vòng 88 (72 ở màn ≤ 340) % ngân sách đã dùng, chấm đen là hôm nay; "Tháng 11 còn" + tag trạng thái ngân sách ("Đúng nhịp"…), số còn lại 24/600, "Khoảng 480.000 mỗi ngày", "Đã chi … / …" | Mỗi ngày = còn lại / số ngày sau hôm nay (giống Dự báo chi), ẩn ở ngày cuối kỳ và khi đã vượt ("Tháng 11 vượt", số đỏ). Chưa có ngân sách: "Chi tháng 11", số đã chi, "Đặt ngân sách". Mở Ngân sách |
+| Ô Sắp phải trả | Tổng đến cuối kỳ, "3 khoản đến 30/11", tag khoản gần nhất "Học phí còn 5 ngày" (vàng; đỏ "… quá hạn") | Gồm hóa đơn chưa trả (cả quá hạn), định kỳ chi từ hôm nay, kỳ trả khoản vay (`installmentMinor`), dư nợ thẻ có hạn trong kỳ. Chỉ tiền tệ chính. Ẩn khi không có khoản nào hoặc lịch/khoản vay tải lỗi. Mở Lịch |
+| Ô Thẻ tín dụng | "78% đã dùng", thanh màu theo mức (như B4), "Thẻ chính · hạn 25/11" | Thẻ dùng nhiều nhất, rồi hạn gần nhất. Mở chi tiết thẻ |
+| Ô Mục tiêu | Hai vòng 52 với % và tên | Hai mục tiêu đang góp đầu tiên; thay khối Mục tiêu cũ dưới thẻ số dư. Mở Mục tiêu |
+| Ô Đầu tư | Đường 30 ngày, "+8,0%" xanh (lỗ: đỏ, "−"), "Lãi …" / "Lỗ …" | Từ `GET /investments/summary` và phần đầu tư của lịch sử tài sản ròng. Mở Đầu tư |
+
+- Ô nhỏ cao tối thiểu 152, hai ô một hàng cao bằng nhau; ô nào không có dữ liệu thì bỏ, ô lẻ cuối chiếm cả hàng.
+- Bỏ khối "Chi tháng" (phân bổ danh mục) và khối Thẻ tín dụng cũ; phân bổ chi xem ở Báo cáo. Dòng "Ví USD: chi … tháng này" của B3 cũng bỏ theo.
+- Dữ liệu ô (lịch sử tài sản ròng, đầu tư, khoản vay, lịch) tải cùng lúc với Tổng quan, lỗi riêng từng phần chỉ làm ẩn ô đó.
+
 ## Nguyên tắc riêng cho nhóm này
 
 - Loại màn **Tổng quan**: lời chào, thẻ số dư có lớp màu (chỗ duy nhất có wash), menu nhanh, khối tóm tắt.

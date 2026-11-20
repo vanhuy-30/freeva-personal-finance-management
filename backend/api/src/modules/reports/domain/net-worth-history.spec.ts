@@ -1,5 +1,5 @@
 import { parseQuantity } from '../../investments/domain/investment';
-import { asOfDay, buildInvestmentValueHistory, buildNetWorthHistory, debtOutstandingOn, investmentValueOn, type InvestmentHistory, type NetWorthHistorySource } from './net-worth-history';
+import { asOfDay, buildInvestmentValueHistory, buildNetWorthHistory, debtOutstandingOn, investmentValueOn, loanOutstandingOn, type InvestmentHistory, type LoanHistory, type NetWorthHistorySource } from './net-worth-history';
 
 const q = parseQuantity;
 const gold = (over: Partial<InvestmentHistory> = {}): InvestmentHistory => ({
@@ -59,6 +59,7 @@ describe('buildNetWorthHistory', () => {
     ],
     debts: [{ currency: 'VND', direction: 'lent', principalMinor: 3_000_000n, occurredOn: '2026-10-05', payments: [] },
       { currency: 'VND', direction: 'borrowed', principalMinor: 2_000_000n, occurredOn: '2026-10-10', payments: [{ paidOn: '2026-11-02', amountMinor: 2_000_000n }] }],
+    loans: [],
     investments: [gold()],
   };
   const history = buildNetWorthHistory('3m', source);
@@ -80,8 +81,30 @@ describe('buildNetWorthHistory', () => {
     expect(net(2)).toEqual({ currency: 'VND', assetsMinor: '141000000', liabilitiesMinor: '-5000000', netWorthMinor: '136000000' });
   });
   it('keeps currencies apart and survives an empty source', () => {
-    const empty = buildNetWorthHistory('7d', { buckets: [{ from: '2026-11-06', to: '2026-11-06' }], today: '2026-11-06', wallets: [], debts: [], investments: [] });
+    const empty = buildNetWorthHistory('7d', { buckets: [{ from: '2026-11-06', to: '2026-11-06' }], today: '2026-11-06', wallets: [], debts: [], loans: [], investments: [] });
     expect(empty.points).toEqual([{ from: '2026-11-06', to: '2026-11-06', asOf: '2026-11-06', items: [] }]);
+  });
+});
+
+describe('loanOutstandingOn', () => {
+  const loan: LoanHistory = { currency: 'VND', startDate: '2026-09-15', outstandingMinor: 180_000_000n,
+    payments: [{ paidOn: '2026-10-25', principalMinor: 10_000_000n }, { paidOn: '2026-11-05', principalMinor: 10_000_000n }] };
+  it.each([['2026-09-14', 0n], ['2026-09-30', 200_000_000n], ['2026-10-31', 190_000_000n], ['2026-11-06', 180_000_000n]])(
+    'on %s', (day, expected) => expect(loanOutstandingOn(loan, day)).toBe(expected));
+});
+
+describe('buildNetWorthHistory with a loan', () => {
+  it('adds the loan as a liability from its start day', () => {
+    const result = buildNetWorthHistory('3m', {
+      buckets: [{ from: '2026-09-01', to: '2026-09-10' }, { from: '2026-10-01', to: '2026-10-31' }],
+      today: '2026-11-06',
+      wallets: [{ index: 0, currency: 'VND', bucket: 'asset', total: 50_000_000n }, { index: 1, currency: 'VND', bucket: 'asset', total: 50_000_000n }],
+      debts: [],
+      loans: [{ currency: 'VND', startDate: '2026-09-15', outstandingMinor: 180_000_000n, payments: [{ paidOn: '2026-11-05', principalMinor: 10_000_000n }] }],
+      investments: [],
+    });
+    expect(result.points.map(point => point.items[0]!.liabilitiesMinor)).toEqual(['0', '-190000000']);
+    expect(result.points[1]!.items[0]!.netWorthMinor).toBe('-140000000');
   });
 });
 

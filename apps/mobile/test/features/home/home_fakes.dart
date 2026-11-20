@@ -14,14 +14,17 @@ class FakeOverviewCases implements OverviewUseCases {
   final results = <Either<AuthFailure, OverviewData>>[];
   int calls = 0;
   String? lastDisplayCurrency;
+  String? lastCurrency;
 
   @override
   Future<Either<AuthFailure, OverviewData>> load(
     DateTime now, {
     String? displayCurrency,
+    String? currency,
   }) async {
     calls++;
     lastDisplayCurrency = displayCurrency;
+    lastCurrency = currency;
     return results.length > 1 ? results.removeAt(0) : results.single;
   }
 

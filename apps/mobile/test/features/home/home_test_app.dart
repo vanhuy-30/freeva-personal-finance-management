@@ -9,13 +9,18 @@ import 'package:mobile/features/auth/data/auth_repository_impl.dart';
 import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/auth/domain/auth_use_cases.dart';
 import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dart';
+import 'package:mobile/features/goals/domain/goal.dart';
+import 'package:mobile/features/goals/presentation/viewmodels/goal_view_model.dart';
 import 'package:mobile/features/home/presentation/pages/home_page.dart';
 import 'package:mobile/features/home/presentation/viewmodels/home_view_model.dart';
+import 'package:mobile/features/reports/domain/report.dart';
 import 'package:mobile/features/sync/domain/sync_item.dart';
 import 'package:mobile/features/transactions/domain/transaction.dart';
 import 'package:mobile/features/wallets/domain/wallet.dart';
 
 import '../auth/fakes.dart';
+import '../goals/goal_stub.dart' show FakeGoalUseCases, goal, goalWallets;
+import '../wallets/d1_stub.dart' show StubWalletViewModel;
 import 'fixtures.dart';
 import 'home_fakes.dart';
 
@@ -25,11 +30,12 @@ Future<Widget> homeApp(
   StubHomeViewModel model, {
   bool dark = false,
   double scale = 1,
+  List<Goal>? goals,
 }) async {
   await getIt.reset();
   registerTestServerConfig();
   getIt.registerSingleton<HomeViewModel>(model);
-  getIt.registerSingleton<AuthViewModel>(
+  final auth = getIt.registerSingleton<AuthViewModel>(
     DefaultAuthViewModel(
         DefaultAuthUseCases(
           AuthRepositoryImpl(
@@ -45,6 +51,16 @@ Future<Widget> homeApp(
       ..hasPin = true
       ..ready = true,
   );
+  if (goals != null) {
+    final goalModel = GoalViewModel(
+      FakeGoalUseCases(goals: goals),
+      StubWalletViewModel(wallets: goalWallets()),
+      FakeProfileViewModel(),
+      auth,
+    );
+    await goalModel.load();
+    getIt.registerSingleton<GoalViewModel>(goalModel);
+  }
   return MaterialApp(
     debugShowCheckedModeBanner: false,
     theme: dark ? AppTheme.dark : AppTheme.light,
@@ -59,9 +75,29 @@ Future<Widget> homeApp(
   );
 }
 
-/// The designed states (B1–B8) plus the first-run Overview (A1.7).
+/// The two goals of board BHome (PA 3), for the "Mục tiêu" tile.
+List<Goal> pa3Goals() => [
+  goal(),
+  goal(
+    id: 'trip',
+    kind: 'travel',
+    name: 'Du lịch',
+    target: 15000000,
+    current: 12000000,
+  ),
+];
+
+/// Goals shown in [state]: the PA 3 boards have two.
+List<Goal>? homeGoals(String state) =>
+    const {'ready', 'hidden'}.contains(state) ? pa3Goals() : null;
+
+/// The designed states (B1–B8, PA 3 for the ready board) plus the first-run
+/// Overview (A1.7).
 StubHomeViewModel homeState(String name) => switch (name) {
-  'hidden' => StubHomeViewModel(data: overview(), balancesHidden: true),
+  'hidden' => StubHomeViewModel(
+    data: pa3Overview(),
+    balancesHidden: true,
+  )..today = DateTime(2026, 11, 10, 9, 30),
   'multi' => StubHomeViewModel(
     data: overview(
       net: [worth('VND', 48250000), worth('USD', 125000)],
@@ -73,11 +109,21 @@ StubHomeViewModel homeState(String name) => switch (name) {
         wallet('usd', 'Ngoại tệ', currency: 'USD'),
       ],
       flow: month(extra: [usdSpend()]),
+      budget: budgetOf(15000000, 9320000),
     ),
   ),
   'debt' => StubHomeViewModel(
     data: overview(
-      net: [worth('VND', 41850000)],
+      // 59,25 tr in wallets, 17,4 tr owed on the two cards.
+      net: [
+        NetWorthTotal(
+          currency: 'VND',
+          assetsMinor: b(59250000),
+          liabilitiesMinor: b(-17400000),
+          netWorthMinor: b(41850000),
+        ),
+      ],
+      budget: budgetOf(15000000, 9320000),
       wallets: [
         wallet('vcb', 'Vietcombank'),
         wallet('cash', 'Tiền mặt', type: WalletType.cash),
@@ -128,7 +174,7 @@ StubHomeViewModel homeState(String name) => switch (name) {
   'loading' => StubHomeViewModel(status: HomeStatus.loading),
   'offline' => StubHomeViewModel(
     status: HomeStatus.offline,
-    data: overview(),
+    data: overview(budget: budgetOf(15000000, 9320000)),
     pending: [highlands()],
   ),
   'error' => StubHomeViewModel(status: HomeStatus.error),
@@ -142,7 +188,9 @@ StubHomeViewModel homeState(String name) => switch (name) {
       rows: const [],
     ),
   ),
-  _ => StubHomeViewModel(data: overview()),
+  _ => StubHomeViewModel(
+    data: pa3Overview(),
+  )..today = DateTime(2026, 11, 10, 9, 30),
 };
 
 /// A coffee still waiting to sync (offline board).
