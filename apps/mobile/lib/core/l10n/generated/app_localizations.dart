@@ -826,7 +826,7 @@ abstract class S {
   /// No description provided for @reportTitle.
   ///
   /// In en, this message translates to:
-  /// **'Reports'**
+  /// **'Financial report'**
   String get reportTitle;
 
   /// No description provided for @reportOverview.
@@ -876,12 +876,6 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Month review'**
   String get monthReviewTitle;
-
-  /// No description provided for @monthReviewOpen.
-  ///
-  /// In en, this message translates to:
-  /// **'Open month review'**
-  String get monthReviewOpen;
 
   /// No description provided for @monthReviewSavings.
   ///
@@ -3157,42 +3151,6 @@ abstract class S {
   /// **'Average spend/day'**
   String get reportAverageDay;
 
-  /// No description provided for @reportRemaining.
-  ///
-  /// In en, this message translates to:
-  /// **'Left'**
-  String get reportRemaining;
-
-  /// No description provided for @reportVsMonth.
-  ///
-  /// In en, this message translates to:
-  /// **'vs M{month}'**
-  String reportVsMonth(String month);
-
-  /// No description provided for @reportVsWeek.
-  ///
-  /// In en, this message translates to:
-  /// **'vs last week'**
-  String get reportVsWeek;
-
-  /// No description provided for @reportVsYear.
-  ///
-  /// In en, this message translates to:
-  /// **'vs {year}'**
-  String reportVsYear(String year);
-
-  /// No description provided for @reportVsPeriod.
-  ///
-  /// In en, this message translates to:
-  /// **'vs previous period'**
-  String get reportVsPeriod;
-
-  /// No description provided for @reportChange.
-  ///
-  /// In en, this message translates to:
-  /// **'{percent}% {versus}'**
-  String reportChange(String percent, String versus);
-
   /// No description provided for @reportBudgetSet.
   ///
   /// In en, this message translates to:
@@ -3210,6 +3168,390 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Spending trend'**
   String get reportTrendTitle;
+
+  /// No description provided for @reportTotalIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Total income'**
+  String get reportTotalIncome;
+
+  /// No description provided for @reportTotalExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Total spending'**
+  String get reportTotalExpense;
+
+  /// No description provided for @reportSavings.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved (income − spending)'**
+  String get reportSavings;
+
+  /// No description provided for @reportSavingsRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings rate'**
+  String get reportSavingsRate;
+
+  /// No description provided for @reportWalletTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet balance'**
+  String get reportWalletTotal;
+
+  /// No description provided for @reportCompareWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'vs last week'**
+  String get reportCompareWeek;
+
+  /// No description provided for @reportCompareMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'vs last month'**
+  String get reportCompareMonth;
+
+  /// No description provided for @reportCompareYear.
+  ///
+  /// In en, this message translates to:
+  /// **'vs last year'**
+  String get reportCompareYear;
+
+  /// No description provided for @reportChangePoints.
+  ///
+  /// In en, this message translates to:
+  /// **'{points} pts'**
+  String reportChangePoints(String points);
+
+  /// No description provided for @reportBudgetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly budget'**
+  String get reportBudgetTitle;
+
+  /// No description provided for @reportBudgetOf.
+  ///
+  /// In en, this message translates to:
+  /// **'of {amount}'**
+  String reportBudgetOf(String amount);
+
+  /// No description provided for @reportInsightsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Insights'**
+  String get reportInsightsTitle;
+
+  /// No description provided for @reportInsightsMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get reportInsightsMonth;
+
+  /// No description provided for @reportInsightsAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See all in Insights'**
+  String get reportInsightsAll;
+
+  /// No description provided for @reportFlowTitleWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash flow this week'**
+  String get reportFlowTitleWeek;
+
+  /// No description provided for @reportFlowTitleMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash flow this month'**
+  String get reportFlowTitleMonth;
+
+  /// No description provided for @reportFlowTitleYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash flow this year'**
+  String get reportFlowTitleYear;
+
+  /// No description provided for @reportFlowTitleRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash flow in the period'**
+  String get reportFlowTitleRange;
+
+  /// No description provided for @reportFlowSubDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Income − spending, running total'**
+  String get reportFlowSubDay;
+
+  /// No description provided for @reportFlowSubWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Income − spending, running total by week'**
+  String get reportFlowSubWeek;
+
+  /// No description provided for @reportFlowSubMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Income − spending, running total by month'**
+  String get reportFlowSubMonth;
+
+  /// No description provided for @reportFlowZero.
+  ///
+  /// In en, this message translates to:
+  /// **'Zero'**
+  String get reportFlowZero;
+
+  /// No description provided for @reportFlowToday.
+  ///
+  /// In en, this message translates to:
+  /// **'{date} · today'**
+  String reportFlowToday(String date);
+
+  /// No description provided for @reportFlowBiggestIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Biggest income · {date}'**
+  String reportFlowBiggestIncome(String date);
+
+  /// No description provided for @reportFlowBiggestExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Biggest spend · {date}'**
+  String reportFlowBiggestExpense(String date);
+
+  /// No description provided for @reportFlowBiggestIncomeNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Biggest income'**
+  String get reportFlowBiggestIncomeNone;
+
+  /// No description provided for @reportFlowBiggestExpenseNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Biggest spend'**
+  String get reportFlowBiggestExpenseNone;
+
+  /// No description provided for @reportFlowNone.
+  ///
+  /// In en, this message translates to:
+  /// **'—'**
+  String get reportFlowNone;
+
+  /// No description provided for @reportFlowEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No income or spending in this period'**
+  String get reportFlowEmpty;
+
+  /// No description provided for @reportFlowEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The cash flow chart appears once you record a transaction.'**
+  String get reportFlowEmptyBody;
+
+  /// No description provided for @reportFlowSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Running net cash flow: now {last}, highest {high}, lowest {low}'**
+  String reportFlowSemantics(String last, String high, String low);
+
+  /// No description provided for @reportTrendOngoing.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get reportTrendOngoing;
+
+  /// No description provided for @reportTrendPartialMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'* Month {month}: {elapsed} of {total} days so far'**
+  String reportTrendPartialMonth(String month, int elapsed, int total);
+
+  /// No description provided for @reportTrendPartialWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'* This week: {elapsed} of {total} days so far'**
+  String reportTrendPartialWeek(int elapsed, int total);
+
+  /// No description provided for @reportTrendPartialYear.
+  ///
+  /// In en, this message translates to:
+  /// **'* {year}: {elapsed} of {total} days so far'**
+  String reportTrendPartialYear(String year, int elapsed, int total);
+
+  /// No description provided for @reportBreakdownTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Breakdown'**
+  String get reportBreakdownTitle;
+
+  /// No description provided for @reportBreakdownSubExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending by category'**
+  String get reportBreakdownSubExpense;
+
+  /// No description provided for @reportBreakdownSubIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Income by category'**
+  String get reportBreakdownSubIncome;
+
+  /// No description provided for @reportBreakdownSubWallets.
+  ///
+  /// In en, this message translates to:
+  /// **'Flow by wallet'**
+  String get reportBreakdownSubWallets;
+
+  /// No description provided for @reportBreakdownAllExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'See the whole spending breakdown'**
+  String get reportBreakdownAllExpense;
+
+  /// No description provided for @reportBreakdownAllIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'See the whole income breakdown'**
+  String get reportBreakdownAllIncome;
+
+  /// No description provided for @reportBreakdownPageExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending breakdown'**
+  String get reportBreakdownPageExpense;
+
+  /// No description provided for @reportBreakdownPageIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Income breakdown'**
+  String get reportBreakdownPageIncome;
+
+  /// No description provided for @reportBreakdownCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} categories'**
+  String reportBreakdownCount(int count);
+
+  /// No description provided for @reportBreakdownSortExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Biggest spend first'**
+  String get reportBreakdownSortExpense;
+
+  /// No description provided for @reportBreakdownSortIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Biggest income first'**
+  String get reportBreakdownSortIncome;
+
+  /// No description provided for @reportBreakdownNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Subcategories are counted in their parent. Tap a row to see its transactions.'**
+  String get reportBreakdownNote;
+
+  /// No description provided for @reportInWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'This week'**
+  String get reportInWeek;
+
+  /// No description provided for @reportInMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'In month {month}'**
+  String reportInMonth(String month);
+
+  /// No description provided for @reportInYear.
+  ///
+  /// In en, this message translates to:
+  /// **'In {year}'**
+  String reportInYear(String year);
+
+  /// No description provided for @reportInRange.
+  ///
+  /// In en, this message translates to:
+  /// **'In the chosen range'**
+  String get reportInRange;
+
+  /// No description provided for @reportDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get reportDetail;
+
+  /// No description provided for @reportDebtTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt and loans'**
+  String get reportDebtTitle;
+
+  /// No description provided for @reportDebtChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt changed by'**
+  String get reportDebtChange;
+
+  /// No description provided for @reportDebtFalling.
+  ///
+  /// In en, this message translates to:
+  /// **'Falling'**
+  String get reportDebtFalling;
+
+  /// No description provided for @reportDebtRising.
+  ///
+  /// In en, this message translates to:
+  /// **'Rising'**
+  String get reportDebtRising;
+
+  /// No description provided for @reportDebtPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get reportDebtPaid;
+
+  /// No description provided for @reportDebtBorrowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Borrowed or spent on cards'**
+  String get reportDebtBorrowed;
+
+  /// No description provided for @reportDebtDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Next loan payment: {amount} on {date}'**
+  String reportDebtDue(String amount, String date);
+
+  /// No description provided for @reportDebtDueNoAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'A loan payment is due {date}'**
+  String reportDebtDueNoAmount(String date);
+
+  /// No description provided for @reportInvestTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Investments'**
+  String get reportInvestTitle;
+
+  /// No description provided for @reportInvestPnl.
+  ///
+  /// In en, this message translates to:
+  /// **'Gain/loss'**
+  String get reportInvestPnl;
+
+  /// No description provided for @reportInvestAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Invested'**
+  String get reportInvestAdded;
+
+  /// No description provided for @reportInvestWithdrawn.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawn or sold'**
+  String get reportInvestWithdrawn;
 
   /// No description provided for @reportTrendAverageWeeks.
   ///

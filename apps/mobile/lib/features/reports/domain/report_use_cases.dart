@@ -5,6 +5,8 @@ import '../../auth/domain/auth_repository.dart';
 import '../../categories/domain/category_repository.dart';
 import '../../wallets/domain/wallet_repository.dart';
 import 'report.dart';
+import 'report_flow.dart';
+import 'report_holdings.dart';
 import 'report_names.dart';
 import 'report_period.dart';
 import 'report_repository.dart';
@@ -16,6 +18,12 @@ abstract class ReportUseCases {
 
   /// Totals of the period before [period]; the screen works without them.
   Future<Either<AuthFailure, CashflowReport>> loadPrevious(ReportPeriod period);
+
+  /// Points of the cash flow chart for [period]; the screen works without them.
+  Future<Either<AuthFailure, FlowReport>> loadFlow(ReportPeriod period);
+
+  /// Debt and investment changes during [period]; the screen works without them.
+  Future<Either<AuthFailure, HoldingsReport>> loadHoldings(ReportPeriod period);
 
   /// Month review for the fiscal month that holds [on] (today when null).
   Future<Either<AuthFailure, NamedMonthReview>> loadMonthReview({String? on});
@@ -64,6 +72,15 @@ class DefaultReportUseCases implements ReportUseCases {
     if (query == null) return left(const AuthFailure(AuthError.invalidInput));
     return _reports.cashflow(query);
   }
+
+  @override
+  Future<Either<AuthFailure, FlowReport>> loadFlow(ReportPeriod period) =>
+      _reports.flow(queryOf(period));
+
+  @override
+  Future<Either<AuthFailure, HoldingsReport>> loadHoldings(
+    ReportPeriod period,
+  ) => _reports.holdings(queryOf(period));
 
   @override
   Future<Either<AuthFailure, NamedMonthReview>> loadMonthReview({

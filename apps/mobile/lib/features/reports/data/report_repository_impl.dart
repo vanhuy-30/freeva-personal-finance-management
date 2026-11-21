@@ -4,6 +4,9 @@ import 'package:injectable/injectable.dart';
 import '../../auth/data/authorized_api.dart';
 import '../../auth/domain/auth_repository.dart';
 import '../domain/report.dart';
+import '../domain/report_flow.dart';
+import '../domain/report_holdings.dart';
+import '../domain/report_period.dart';
 import '../domain/report_repository.dart';
 
 @LazySingleton(as: ReportRepository)
@@ -17,6 +20,15 @@ class ReportRepositoryImpl implements ReportRepository {
     ReportPeriodQuery query, {
     String? displayCurrency,
   }) => _request('GET', _cashflowPath(query, displayCurrency), _cashflow);
+
+  @override
+  Future<Either<AuthFailure, FlowReport>> flow(ReportPeriodQuery query) =>
+      _request('GET', _periodPath('reports/flow', query), _flow);
+
+  @override
+  Future<Either<AuthFailure, HoldingsReport>> holdings(
+    ReportPeriodQuery query,
+  ) => _request('GET', _periodPath('reports/holdings', query), _holdings);
 
   @override
   Future<Either<AuthFailure, MonthReviewReport>> monthReview({String? on}) =>
@@ -72,6 +84,16 @@ class ReportRepositoryImpl implements ReportRepository {
   }
 }
 
+String _periodPath(String path, ReportPeriodQuery query) => Uri(
+  path: path,
+  queryParameters: {
+    'period': query.kind.name,
+    if (query.on != null) 'on': query.on,
+    if (query.from != null) 'from': query.from,
+    if (query.to != null) 'to': query.to,
+  },
+).toString();
+
 String _cashflowPath(ReportPeriodQuery query, String? displayCurrency) => Uri(
   path: 'reports/cashflow',
   queryParameters: {
@@ -89,6 +111,65 @@ CashflowReport _cashflow(Map<String, dynamic> json) => CashflowReport(
   byCategory: _rows(json['byCategory'], _category),
   byAccount: _rows(json['byAccount'], _account),
   converted: _converted(json['converted'], _cashflowConverted),
+  walletBalances: _rows(json['walletBalances'] ?? const [], _walletBalance),
+);
+
+WalletBalance _walletBalance(Map<String, dynamic> json) => WalletBalance(
+  currency: _currency(json['currency']),
+  endMinor: _money(json['endMinor']),
+  previousEndMinor: _money(json['previousEndMinor']),
+);
+
+FlowReport _flow(Map<String, dynamic> json) {
+  final period = json['period'] as Map<String, dynamic>;
+  return FlowReport(
+    kind: ReportPeriodKind.values.byName(period['kind'] as String),
+    from: _date(period['from']),
+    to: _date(period['to']),
+    granularity: FlowGranularity.values.byName(json['granularity'] as String),
+    buckets: _rows(json['buckets'], _bucket),
+  );
+}
+
+HoldingsReport _holdings(Map<String, dynamic> json) {
+  final period = json['period'] as Map<String, dynamic>;
+  return HoldingsReport(
+    kind: ReportPeriodKind.values.byName(period['kind'] as String),
+    from: _date(period['from']),
+    to: _date(period['to']),
+    debt: _rows(json['debt'], _debtChange),
+    investments: _rows(json['investments'], _investChange),
+    nextLoanDue: _rows(json['nextLoanDue'], _loanDue),
+  );
+}
+
+DebtChange _debtChange(Map<String, dynamic> json) => DebtChange(
+  currency: _currency(json['currency']),
+  start: _money(json['startMinor']),
+  end: _money(json['endMinor']),
+  change: _money(json['changeMinor']),
+  paid: _money(json['paidMinor']),
+  borrowed: _money(json['borrowedMinor']),
+);
+
+InvestChange _investChange(Map<String, dynamic> json) {
+  final bps = json['pnlBps'];
+  if (bps != null && bps is! int) throw const FormatException();
+  return InvestChange(
+    currency: _currency(json['currency']),
+    startValue: _money(json['startValueMinor']),
+    endValue: _money(json['endValueMinor']),
+    invested: _money(json['investedMinor']),
+    withdrawn: _money(json['withdrawnMinor']),
+    pnl: _money(json['pnlMinor']),
+    pnlBps: bps as int?,
+  );
+}
+
+LoanDue _loanDue(Map<String, dynamic> json) => LoanDue(
+  currency: _currency(json['currency']),
+  dueOn: _date(json['dueOn']),
+  amount: json['amountMinor'] == null ? null : _money(json['amountMinor']),
 );
 
 MonthReviewReport _monthReview(Map<String, dynamic> json) {
@@ -226,9 +307,7 @@ List<T> _rows<T>(Object? value, T Function(Map<String, dynamic>) parse) =>
 
 String _date(Object? value) {
   final text = value as String;
-  if (!RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(text)) {
-    throw const FormatException();
-  }
+  if (!isCalendarDate(text)) throw const FormatException();
   return text;
 }
 

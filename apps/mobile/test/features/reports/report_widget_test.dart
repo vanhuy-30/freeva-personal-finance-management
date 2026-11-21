@@ -177,7 +177,10 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Xu hướng chi'), findsOneWidget);
     expect(find.text('Trung bình 2 tháng: 175.000'), findsOneWidget);
-    expect(find.text('T10'), findsOneWidget);
+    // October is still running on the 23rd: its bar is marked and says so.
+    expect(find.text('T10*'), findsOneWidget);
+    expect(find.text('Đang diễn ra'), findsOneWidget);
+    expect(find.text('* Tháng 10 đã qua 23/31 ngày'), findsOneWidget);
     expect(find.text('Đặt ngân sách tháng'), findsOneWidget);
   });
 
@@ -258,7 +261,7 @@ void main() {
     for (final scale in [1.3, 2.0]) {
       await tester.pumpWidget(app(const ReportPage(), scale: scale));
       await tester.pumpAndSettle();
-      expect(find.text('Báo cáo'), findsOneWidget);
+      expect(find.text('Báo cáo tài chính'), findsOneWidget);
       expect(tester.takeException(), isNull);
       await tester.drag(find.byType(ListView), const Offset(0, -800));
       await tester.pumpAndSettle();
@@ -269,6 +272,10 @@ void main() {
 
 class ReportTransport implements AuthorizedApi {
   final paths = <String>[];
+
+  /// What `reports/flow` and `reports/holdings` answer; null makes them fail.
+  Map<String, dynamic>? flowJson = _flowBody;
+  Map<String, dynamic>? holdingsJson = _holdingsBody;
 
   @override
   Future<Either<AuthFailure, Map<String, dynamic>>> request(
@@ -297,6 +304,18 @@ class ReportTransport implements AuthorizedApi {
       });
     }
     if (path.startsWith('reports/trend')) return right(_trend);
+    if (path.startsWith('reports/flow')) {
+      final body = flowJson;
+      return body == null
+          ? left(const AuthFailure(AuthError.unavailable))
+          : right(body);
+    }
+    if (path.startsWith('reports/holdings')) {
+      final body = holdingsJson;
+      return body == null
+          ? left(const AuthFailure(AuthError.unavailable))
+          : right(body);
+    }
     if (path.startsWith('reports/cashflow')) return right(_cashflow);
     if (path.startsWith('financial-accounts')) {
       return right({
@@ -365,6 +384,63 @@ Map<String, dynamic> _category(String id, String name, {String? parentId}) => {
   'createdAt': '2026-01-01T00:00:00.000Z',
 };
 
+final Map<String, dynamic> _flowBody = {
+  'period': {'kind': 'month', 'from': '2026-10-01', 'to': '2026-10-31'},
+  'granularity': 'day',
+  'buckets': [
+    for (var day = 1; day <= 23; day++)
+      {
+        'from': '2026-10-${day.toString().padLeft(2, '0')}',
+        'to': '2026-10-${day.toString().padLeft(2, '0')}',
+        'totals': day == 5
+            ? [
+                {
+                  'currency': 'VND',
+                  'incomeMinor': '1000000',
+                  'expenseMinor': '0',
+                },
+              ]
+            : day == 9
+            ? [
+                {
+                  'currency': 'VND',
+                  'incomeMinor': '0',
+                  'expenseMinor': '-250000',
+                },
+              ]
+            : <Object>[],
+      },
+  ],
+};
+
+final Map<String, dynamic> _holdingsBody = {
+  'period': {'kind': 'month', 'from': '2026-10-01', 'to': '2026-10-31'},
+  'debt': [
+    {
+      'currency': 'VND',
+      'startMinor': '5000000',
+      'endMinor': '4000000',
+      'changeMinor': '-1000000',
+      'paidMinor': '1500000',
+      'borrowedMinor': '500000',
+    },
+  ],
+  'investments': [
+    {
+      'currency': 'VND',
+      'startValueMinor': '10000000',
+      'endValueMinor': '10400000',
+      'investedMinor': '0',
+      'withdrawnMinor': '0',
+      'pnlMinor': '400000',
+      'pnlBps': 400,
+    },
+  ],
+  'nextLoanDue': [
+    {'currency': 'VND', 'dueOn': '2026-11-05', 'amountMinor': '1200000'},
+  ],
+};
+
 final Map<String, dynamic> _cashflow = {
   'period': {
     'kind': 'month',
@@ -412,6 +488,9 @@ final Map<String, dynamic> _cashflow = {
       'expenseMinor': '-25',
       'transactionCount': 2,
     },
+  ],
+  'walletBalances': [
+    {'currency': 'VND', 'endMinor': '5000000', 'previousEndMinor': '4000000'},
   ],
   'byAccount': [
     {

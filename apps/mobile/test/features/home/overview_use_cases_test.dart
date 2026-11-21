@@ -18,6 +18,8 @@ import 'package:mobile/features/net_worth/domain/net_worth_history.dart';
 import 'package:mobile/features/net_worth/domain/net_worth_use_cases.dart';
 import 'package:mobile/features/home/domain/overview_use_cases.dart';
 import 'package:mobile/features/reports/domain/report.dart';
+import 'package:mobile/features/reports/domain/report_flow.dart';
+import 'package:mobile/features/reports/domain/report_holdings.dart';
 import 'package:mobile/features/reports/domain/report_repository.dart';
 import 'package:mobile/features/transactions/domain/transaction.dart';
 import 'package:mobile/features/transactions/domain/transaction_repository.dart';
@@ -219,6 +221,15 @@ class _Reports implements ReportRepository {
     ReportPeriodKind kind, {
     String? on,
   }) async => left(const AuthFailure(AuthError.unavailable));
+
+  @override
+  Future<Either<AuthFailure, FlowReport>> flow(ReportPeriodQuery query) async =>
+      left(const AuthFailure(AuthError.unavailable));
+
+  @override
+  Future<Either<AuthFailure, HoldingsReport>> holdings(
+    ReportPeriodQuery query,
+  ) async => left(const AuthFailure(AuthError.unavailable));
 
   @override
   Future<Either<AuthFailure, NetWorthReport>> netWorth({

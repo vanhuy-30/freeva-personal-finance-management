@@ -3,9 +3,15 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/core/di/injection.dart';
+import 'package:mobile/features/insights/domain/insight.dart';
+import 'package:mobile/features/reports/domain/category_detail.dart';
+import 'package:mobile/features/reports/domain/report_breakdown.dart';
+import 'package:mobile/features/reports/presentation/pages/report_breakdown_page.dart';
 import 'package:mobile/features/reports/presentation/pages/report_page.dart';
+import 'package:mobile/features/reports/presentation/viewmodels/report_view_model.dart';
 
 import '../../core/widgets/widget_test_app.dart' show loadTestFonts;
+import '../insights/insights_fakes.dart' show StubInsightsViewModel;
 import 'f1_stub.dart';
 
 // macOS only (see core_widgets_golden_test.dart).
@@ -20,13 +26,30 @@ void main() {
     bool dark = false,
     double scale = 1,
     Size size = const Size(390, 1500),
+    StubReportCases? cases,
+    bool insights = true,
+    Widget page = const ReportPage(),
     Future<void> Function()? then,
   }) async {
     tester.view.physicalSize = size;
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     await tester.pumpWidget(
-      await f1App(const ReportPage(), dark: dark, scale: scale),
+      await f1App(
+        page,
+        dark: dark,
+        scale: scale,
+        cases: cases,
+        insights: insights
+            ? StubInsightsViewModel(
+                period: const InsightPeriod(
+                  from: '2026-10-01',
+                  to: '2026-10-31',
+                  today: '2026-10-21',
+                ),
+              )
+            : null,
+      ),
     );
     await tester.pump(const Duration(milliseconds: 400));
     await tester.pump(const Duration(milliseconds: 400));
@@ -73,6 +96,57 @@ void main() {
         await tester.pump(const Duration(milliseconds: 400));
         await tester.pump(const Duration(milliseconds: 400));
       },
+    );
+  });
+  testWidgets('custom range', skip: !Platform.isMacOS, (tester) async {
+    await shot(
+      tester,
+      'range',
+      size: const Size(390, 1500),
+      then: () async {
+        await getIt<ReportViewModel>().applyRange('2026-10-06', '2026-10-19');
+        await tester.pump(const Duration(milliseconds: 400));
+        await tester.pump(const Duration(milliseconds: 400));
+      },
+    );
+  });
+  testWidgets('no cash flow', skip: !Platform.isMacOS, (tester) async {
+    await shot(
+      tester,
+      'flow_empty',
+      cases: StubReportCases(flowEmpty: true),
+      insights: false,
+    );
+  });
+  testWidgets('whole breakdown', skip: !Platform.isMacOS, (tester) async {
+    await shot(
+      tester,
+      'breakdown',
+      size: const Size(390, 1000),
+      page: ReportBreakdownPage(
+        args: BreakdownPageArgs(
+          report: october(),
+          currency: 'VND',
+          digits: 0,
+          kind: BreakdownKind.expense,
+        ),
+      ),
+    );
+  });
+  testWidgets('whole breakdown dark', skip: !Platform.isMacOS, (tester) async {
+    await shot(
+      tester,
+      'breakdown_dark',
+      dark: true,
+      size: const Size(390, 1000),
+      page: ReportBreakdownPage(
+        args: BreakdownPageArgs(
+          report: october(),
+          currency: 'VND',
+          digits: 0,
+          kind: BreakdownKind.expense,
+        ),
+      ),
     );
   });
 }

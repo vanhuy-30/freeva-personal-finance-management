@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/money/compact_money.dart';
@@ -42,12 +43,42 @@ class _ReportBreakdownCardState extends State<ReportBreakdownCard> {
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
+    final c = context.colors;
+    final kind = view == _View.income
+        ? BreakdownKind.income
+        : BreakdownKind.expense;
     return FreevaCard(
       // RepMonth: 18 all round; RepWallets: 8 under the last wallet row.
       padding: EdgeInsets.fromLTRB(18, 18, 18, view == _View.wallets ? 8 : 18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              Text(
+                s.reportBreakdownTitle,
+                style: FreevaTypography.titleM.copyWith(color: c.textPrimary),
+              ),
+              const SizedBox(width: FreevaSpace.s2),
+              Expanded(
+                child: Text(
+                  switch (view) {
+                    _View.expense => s.reportBreakdownSubExpense,
+                    _View.income => s.reportBreakdownSubIncome,
+                    _View.wallets => s.reportBreakdownSubWallets,
+                  },
+                  textAlign: TextAlign.end,
+                  style: FreevaTypography.label.copyWith(
+                    fontWeight: FontWeight.w400,
+                    color: c.textSecondary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: FreevaSpace.s3),
           FreevaSegmented<_View>(
             compact: true,
             expand: true,
@@ -87,7 +118,73 @@ class _ReportBreakdownCardState extends State<ReportBreakdownCard> {
               currency: widget.currency,
               digits: widget.digits,
             ),
+          if (view != _View.wallets) ...[
+            const SizedBox(height: FreevaSpace.s3),
+            _SeeAll(
+              label: view == _View.expense
+                  ? s.reportBreakdownAllExpense
+                  : s.reportBreakdownAllIncome,
+              onTap: () => context.push(
+                '/reports/breakdown',
+                extra: BreakdownPageArgs(
+                  report: widget.report,
+                  currency: widget.currency,
+                  digits: widget.digits,
+                  kind: kind,
+                ),
+              ),
+            ),
+          ],
         ],
+      ),
+    );
+  }
+}
+
+/// Outlined full-width button under the list: opens the whole breakdown.
+class _SeeAll extends StatelessWidget {
+  const _SeeAll({required this.label, required this.onTap});
+
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    return Semantics(
+      button: true,
+      label: label,
+      excludeSemantics: true,
+      child: Material(
+        color: c.bgSurface,
+        shape: StadiumBorder(side: BorderSide(color: c.borderDivider)),
+        child: InkWell(
+          customBorder: const StadiumBorder(),
+          onTap: onTap,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 44),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Flexible(
+                    child: Text(
+                      label,
+                      textAlign: TextAlign.center,
+                      style: FreevaTypography.bodyS.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: c.textLink,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Icon(LucideIcons.chevronRight, size: 16, color: c.textLink),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

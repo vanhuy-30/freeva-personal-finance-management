@@ -31,6 +31,21 @@ class CategoryDetailArgs {
   }
 }
 
+/// What the "whole breakdown" screen needs from the report in hand.
+class BreakdownPageArgs {
+  const BreakdownPageArgs({
+    required this.report,
+    required this.currency,
+    required this.digits,
+    required this.kind,
+  });
+
+  final CashflowReport report;
+  final String currency;
+  final int digits;
+  final BreakdownKind kind;
+}
+
 class CategoryBar {
   const CategoryBar({
     required this.name,

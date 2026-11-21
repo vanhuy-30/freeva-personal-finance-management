@@ -25,6 +25,7 @@ import '../../features/investments/presentation/pages/trade_edit_page.dart';
 import '../../features/investments/presentation/pages/trade_page.dart';
 import '../../features/net_worth/presentation/pages/net_worth_page.dart';
 import '../../features/reports/presentation/pages/month_review_page.dart';
+import '../../features/reports/presentation/pages/report_breakdown_page.dart';
 import '../../features/reports/presentation/pages/report_category_page.dart';
 import '../../features/reports/presentation/pages/report_page.dart';
 import '../../features/settings/domain/app_preferences.dart';
@@ -186,6 +187,14 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
             state.extra is CategoryDetailArgs ? null : '/reports',
         builder: (context, state) => AuthGate(
           child: ReportCategoryPage(args: state.extra! as CategoryDetailArgs),
+        ),
+      ),
+      GoRoute(
+        path: '/reports/breakdown',
+        redirect: (context, state) =>
+            state.extra is BreakdownPageArgs ? null : '/reports',
+        builder: (context, state) => AuthGate(
+          child: ReportBreakdownPage(args: state.extra! as BreakdownPageArgs),
         ),
       ),
       GoRoute(

@@ -399,7 +399,7 @@ class SVi extends S {
   String get categoryError => 'Chưa lưu được danh mục. Thử lại nhé.';
 
   @override
-  String get reportTitle => 'Báo cáo';
+  String get reportTitle => 'Báo cáo tài chính';
 
   @override
   String get reportOverview => 'Tổng quan';
@@ -424,9 +424,6 @@ class SVi extends S {
 
   @override
   String get monthReviewTitle => 'Soát tháng';
-
-  @override
-  String get monthReviewOpen => 'Xem bản soát tháng';
 
   @override
   String get monthReviewSavings => 'Tiết kiệm';
@@ -1705,30 +1702,6 @@ class SVi extends S {
   String get reportAverageDay => 'Chi trung bình/ngày';
 
   @override
-  String get reportRemaining => 'Còn lại';
-
-  @override
-  String reportVsMonth(String month) {
-    return 'so với T$month';
-  }
-
-  @override
-  String get reportVsWeek => 'so với tuần trước';
-
-  @override
-  String reportVsYear(String year) {
-    return 'so với $year';
-  }
-
-  @override
-  String get reportVsPeriod => 'so với kỳ trước';
-
-  @override
-  String reportChange(String percent, String versus) {
-    return '$percent% $versus';
-  }
-
-  @override
   String get reportBudgetSet => 'Đặt ngân sách tháng';
 
   @override
@@ -1736,6 +1709,228 @@ class SVi extends S {
 
   @override
   String get reportTrendTitle => 'Xu hướng chi';
+
+  @override
+  String get reportTotalIncome => 'Tổng thu nhập';
+
+  @override
+  String get reportTotalExpense => 'Tổng chi tiêu';
+
+  @override
+  String get reportSavings => 'Tiết kiệm (thu − chi)';
+
+  @override
+  String get reportSavingsRate => 'Tỷ lệ tiết kiệm';
+
+  @override
+  String get reportWalletTotal => 'Tổng số dư ví';
+
+  @override
+  String get reportCompareWeek => 'so tuần trước';
+
+  @override
+  String get reportCompareMonth => 'so tháng trước';
+
+  @override
+  String get reportCompareYear => 'so năm trước';
+
+  @override
+  String reportChangePoints(String points) {
+    return '$points điểm';
+  }
+
+  @override
+  String get reportBudgetTitle => 'Ngân sách tháng';
+
+  @override
+  String reportBudgetOf(String amount) {
+    return 'trên $amount';
+  }
+
+  @override
+  String get reportInsightsTitle => 'Nhận định';
+
+  @override
+  String get reportInsightsMonth => 'Tháng này';
+
+  @override
+  String get reportInsightsAll => 'Xem tất cả ở Phân tích';
+
+  @override
+  String get reportFlowTitleWeek => 'Dòng tiền trong tuần';
+
+  @override
+  String get reportFlowTitleMonth => 'Dòng tiền trong tháng';
+
+  @override
+  String get reportFlowTitleYear => 'Dòng tiền trong năm';
+
+  @override
+  String get reportFlowTitleRange => 'Dòng tiền trong kỳ';
+
+  @override
+  String get reportFlowSubDay => 'Thu − chi, cộng dồn';
+
+  @override
+  String get reportFlowSubWeek => 'Thu − chi, cộng dồn theo tuần';
+
+  @override
+  String get reportFlowSubMonth => 'Thu − chi, cộng dồn theo tháng';
+
+  @override
+  String get reportFlowZero => 'Mốc 0';
+
+  @override
+  String reportFlowToday(String date) {
+    return '$date · hôm nay';
+  }
+
+  @override
+  String reportFlowBiggestIncome(String date) {
+    return 'Thu lớn nhất · $date';
+  }
+
+  @override
+  String reportFlowBiggestExpense(String date) {
+    return 'Chi lớn nhất · $date';
+  }
+
+  @override
+  String get reportFlowBiggestIncomeNone => 'Thu lớn nhất';
+
+  @override
+  String get reportFlowBiggestExpenseNone => 'Chi lớn nhất';
+
+  @override
+  String get reportFlowNone => '—';
+
+  @override
+  String get reportFlowEmpty => 'Chưa có thu chi trong kỳ này';
+
+  @override
+  String get reportFlowEmptyBody =>
+      'Biểu đồ dòng tiền sẽ hiện khi bạn ghi giao dịch đầu tiên.';
+
+  @override
+  String reportFlowSemantics(String last, String high, String low) {
+    return 'Dòng tiền ròng cộng dồn: hiện $last, cao nhất $high, thấp nhất $low';
+  }
+
+  @override
+  String get reportTrendOngoing => 'Đang diễn ra';
+
+  @override
+  String reportTrendPartialMonth(String month, int elapsed, int total) {
+    return '* Tháng $month đã qua $elapsed/$total ngày';
+  }
+
+  @override
+  String reportTrendPartialWeek(int elapsed, int total) {
+    return '* Tuần này đã qua $elapsed/$total ngày';
+  }
+
+  @override
+  String reportTrendPartialYear(String year, int elapsed, int total) {
+    return '* Năm $year đã qua $elapsed/$total ngày';
+  }
+
+  @override
+  String get reportBreakdownTitle => 'Cơ cấu';
+
+  @override
+  String get reportBreakdownSubExpense => 'Chi tiêu theo danh mục';
+
+  @override
+  String get reportBreakdownSubIncome => 'Thu nhập theo danh mục';
+
+  @override
+  String get reportBreakdownSubWallets => 'Thu chi theo ví';
+
+  @override
+  String get reportBreakdownAllExpense => 'Xem toàn bộ cơ cấu chi tiêu';
+
+  @override
+  String get reportBreakdownAllIncome => 'Xem toàn bộ cơ cấu thu nhập';
+
+  @override
+  String get reportBreakdownPageExpense => 'Cơ cấu chi tiêu';
+
+  @override
+  String get reportBreakdownPageIncome => 'Cơ cấu thu nhập';
+
+  @override
+  String reportBreakdownCount(int count) {
+    return '$count danh mục';
+  }
+
+  @override
+  String get reportBreakdownSortExpense => 'Chi nhiều nhất trước';
+
+  @override
+  String get reportBreakdownSortIncome => 'Thu nhiều nhất trước';
+
+  @override
+  String get reportBreakdownNote =>
+      'Danh mục con được gộp vào danh mục cha. Chạm một dòng để xem từng giao dịch.';
+
+  @override
+  String get reportInWeek => 'Trong tuần';
+
+  @override
+  String reportInMonth(String month) {
+    return 'Trong tháng $month';
+  }
+
+  @override
+  String reportInYear(String year) {
+    return 'Trong năm $year';
+  }
+
+  @override
+  String get reportInRange => 'Trong khoảng đã chọn';
+
+  @override
+  String get reportDetail => 'Chi tiết';
+
+  @override
+  String get reportDebtTitle => 'Nợ và vay';
+
+  @override
+  String get reportDebtChange => 'Dư nợ thay đổi';
+
+  @override
+  String get reportDebtFalling => 'Đang giảm';
+
+  @override
+  String get reportDebtRising => 'Đang tăng';
+
+  @override
+  String get reportDebtPaid => 'Đã trả trong kỳ';
+
+  @override
+  String get reportDebtBorrowed => 'Vay và dùng thẻ thêm';
+
+  @override
+  String reportDebtDue(String amount, String date) {
+    return 'Sắp phải trả: $amount khoản vay vào $date';
+  }
+
+  @override
+  String reportDebtDueNoAmount(String date) {
+    return 'Khoản vay đến hạn $date';
+  }
+
+  @override
+  String get reportInvestTitle => 'Đầu tư';
+
+  @override
+  String get reportInvestPnl => 'Lãi/lỗ trong kỳ';
+
+  @override
+  String get reportInvestAdded => 'Đầu tư thêm';
+
+  @override
+  String get reportInvestWithdrawn => 'Đã rút hoặc bán';
 
   @override
   String reportTrendAverageWeeks(int count) {

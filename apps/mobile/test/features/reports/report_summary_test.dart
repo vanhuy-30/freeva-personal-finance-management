@@ -71,12 +71,14 @@ void main() {
       },
     );
 
-    test('change rounds half away from zero and needs a previous expense', () {
-      expect(expenseChange(b(9320000), b(9900000)), -6);
-      expect(expenseChange(b(150), b(100)), 50);
-      expect(expenseChange(b(1), b(8)), -88);
-      expect(expenseChange(b(5), b(0)), isNull);
-      expect(expenseChange(b(100), b(100)), 0);
+    test('change is in basis points, rounds half away from zero and needs a before', () {
+      expect(changeBps(b(9320000), b(9900000)), -586);
+      expect(changeBps(b(150), b(100)), 5000);
+      expect(changeBps(b(1), b(8)), -8750);
+      expect(changeBps(b(1), b(3)), -6667);
+      expect(changeBps(b(4), b(3)), 3333);
+      expect(changeBps(b(5), b(0)), isNull);
+      expect(changeBps(b(100), b(100)), 0);
     });
 
     test('summary reads one currency and leaves the others alone', () {
@@ -88,13 +90,178 @@ void main() {
       final vnd = reportSummary(current, 'VND', '2026-10-31', previous: before);
       expect(vnd.income, b(18500000));
       expect(vnd.remaining, b(9180000));
-      expect(vnd.expenseChange, -6);
+      expect(vnd.expenseChangeBps, -586);
       final usd = reportSummary(current, 'USD', '2026-10-31', previous: before);
-      expect(usd.expenseChange, isNull);
+      expect(usd.expenseChangeBps, isNull);
       expect(
         reportSummary(current, 'EUR', '2026-10-31').remaining,
         BigInt.zero,
       );
+    });
+
+    test(
+      'compares income, saving, rate and average with the period before',
+      () {
+        final current = report([
+          total(26000000, 19389000),
+        ], period: month('2026-11-01', '2026-11-30'));
+        final before = report([
+          total(24500000, 17200000),
+        ], period: month('2026-10-01', '2026-10-31'));
+        final s = reportSummary(current, 'VND', '2026-11-21', previous: before);
+        expect(s.savings, b(6611000));
+        expect(s.savingsRateBps, 2543);
+        expect(s.incomeChangeBps, 612); // 24,5m -> 26m: +6,12%
+        expect(s.expenseChangeBps, 1273); // 17,2m -> 19,389m: +12,73%
+        expect(s.savingsChangeBps, -944); // 7,3m -> 6,611m: -9,44%
+        expect(s.savingsRateChangeBps, 2543 - 2980);
+        // 19.389.000 over 21 days against 17.200.000 over 31 days.
+        expect(s.averagePerDay, b(923286));
+        expect(s.averageChangeBps, 6641);
+        expect(s.walletBalance, isNull);
+        expect(s.walletChangeBps, isNull);
+      },
+    );
+
+    test('has no rate without income and no change from a zero before', () {
+      final s = reportSummary(
+        report([total(0, 500)]),
+        'VND',
+        '2026-10-31',
+        previous: report([total(0, 0)]),
+      );
+      expect(s.savings, b(-500));
+      expect(s.savingsRateBps, isNull);
+      expect(s.incomeChangeBps, isNull);
+      expect(s.expenseChangeBps, isNull);
+      expect(s.savingsChangeBps, isNull);
+      expect(s.savingsRateChangeBps, isNull);
+      expect(s.averageChangeBps, isNull);
+    });
+
+    test('a saving that turns negative is a drop of more than 100 percent', () {
+      final s = reportSummary(
+        report([total(100, 150)]),
+        'VND',
+        '2026-10-31',
+        previous: report([total(100, 50)]),
+      );
+      expect(s.savings, b(-50));
+      expect(s.savingsChangeBps, -20000);
+      expect(s.savingsRateBps, -5000);
+      // From a negative saving to a positive one is an increase.
+      final back = reportSummary(
+        report([total(100, 50)]),
+        'VND',
+        '2026-10-31',
+        previous: report([total(100, 150)]),
+      );
+      expect(back.savingsChangeBps, 20000);
+    });
+
+    test('a custom range has no comparison at all', () {
+      const range = ReportPeriod(
+        kind: ReportPeriodKind.range,
+        from: '2026-10-06',
+        to: '2026-10-19',
+        timezone: 'Asia/Ho_Chi_Minh',
+        fiscalMonthStartDay: 1,
+      );
+      final s = reportSummary(
+        CashflowReport(
+          period: range,
+          totals: [total(26000000, 19389000)],
+          byCategory: const [],
+          byAccount: const [],
+          walletBalances: [
+            WalletBalance(
+              currency: 'VND',
+              endMinor: b(48250000),
+              previousEndMinor: b(41639000),
+            ),
+          ],
+        ),
+        'VND',
+        '2026-11-21',
+        previous: report([total(1, 1)]),
+      );
+      // The balance itself is still shown; only the comparison goes.
+      expect(s.walletBalance, b(48250000));
+      expect(s.savings, b(6611000));
+      expect(s.savingsRateBps, isNotNull);
+      expect(s.incomeChangeBps, isNull);
+      expect(s.expenseChangeBps, isNull);
+      expect(s.savingsChangeBps, isNull);
+      expect(s.savingsRateChangeBps, isNull);
+      expect(s.averageChangeBps, isNull);
+      expect(s.walletChangeBps, isNull);
+    });
+
+    test(
+      'wallet money: end of period, and a change only from a positive start',
+      () {
+        CashflowReport withBalance(int end, int before) => CashflowReport(
+          period: month('2026-11-01', '2026-11-30'),
+          totals: [total(1, 1)],
+          byCategory: const [],
+          byAccount: const [],
+          walletBalances: [
+            WalletBalance(
+              currency: 'VND',
+              endMinor: b(end),
+              previousEndMinor: b(before),
+            ),
+            WalletBalance(
+              currency: 'USD',
+              endMinor: b(9),
+              previousEndMinor: b(9),
+            ),
+          ],
+        );
+        final s = reportSummary(
+          withBalance(48250000, 41639000),
+          'VND',
+          '2026-11-21',
+          previous: report([total(1, 1)]),
+        );
+        expect(s.walletBalance, b(48250000));
+        expect(s.walletChangeBps, 1588); // 41,639m -> 48,25m: +15,88%
+        expect(
+          reportSummary(
+            withBalance(100, 0),
+            'VND',
+            '2026-11-21',
+          ).walletChangeBps,
+          isNull,
+        );
+        expect(
+          reportSummary(
+            withBalance(100, -50),
+            'VND',
+            '2026-11-21',
+          ).walletChangeBps,
+          isNull,
+        );
+        // A balance is shown even when the period before is unknown.
+        expect(
+          reportSummary(
+            withBalance(100, 80),
+            'VND',
+            '2026-11-21',
+          ).walletBalance,
+          b(100),
+        );
+      },
+    );
+
+    test('savings rate rounds to the nearest basis point', () {
+      expect(savingsRateBps(b(1), b(3)), 3333);
+      expect(savingsRateBps(b(2), b(3)), 6667);
+      expect(savingsRateBps(b(-1), b(3)), -3333);
+      expect(savingsRateBps(b(0), b(3)), 0);
+      expect(savingsRateBps(b(5), b(0)), isNull);
+      expect(changeBps(b(-50), b(100)), -15000);
+      expect(changeBps(b(5), b(0)), isNull);
     });
 
     test('picks the chosen currency, then the profile one, then the first', () {

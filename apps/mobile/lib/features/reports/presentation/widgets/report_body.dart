@@ -7,19 +7,23 @@ import '../../../../core/widgets/error_retry.dart';
 import '../../../../core/widgets/skeleton.dart';
 import '../../domain/report.dart';
 import '../viewmodels/report_view_model.dart';
-import 'month_review_link.dart';
 import 'report_breakdown_card.dart';
 import 'report_budget_row.dart';
+import 'report_cashflow_card.dart';
 import 'report_currency_chips.dart';
 import 'report_empty.dart';
+import 'report_holdings_cards.dart';
+import 'report_insights_card.dart';
 import 'report_labels.dart';
 import 'report_period_labels.dart';
 import 'report_period_nav.dart';
 import 'report_total_card.dart';
 import 'report_trend_card.dart';
 
-/// Báo cáo: period navigator, then totals, budget, trend and breakdown.
-/// Loading, failure and empty periods keep the navigator so the user can move.
+/// Báo cáo tài chính: the period navigator, then the totals with their
+/// comparison, the month's findings and budget, the cash flow, the spending
+/// trend, the breakdown, and how debt and investments moved. Loading, failure
+/// and empty periods keep the navigator so the user can move.
 class ReportBody extends StatelessWidget {
   const ReportBody({required this.model, super.key});
 
@@ -63,7 +67,7 @@ class ReportBody extends StatelessWidget {
     if (data == null) {
       return [
         if (model.kind != ReportPeriodKind.range || model.busy) ...[
-          const SkeletonBox(height: 150, radius: 24),
+          const SkeletonBox(height: 300, radius: 24),
           gap,
           const SkeletonBox(height: 210, radius: 24),
         ],
@@ -76,6 +80,10 @@ class ReportBody extends StatelessWidget {
       return [ReportEmpty(model: model, period: period)];
     }
     final digits = data.digitsOf(code);
+    final holdings = model.holdings;
+    final debt = holdings?.debtOf(code);
+    final invest = holdings?.investOf(code);
+    final subtitle = inPeriodLabel(s, period);
     return [
       if (model.currencies.length > 1) ...[
         ReportCurrencyChips(model: model),
@@ -85,18 +93,52 @@ class ReportBody extends StatelessWidget {
         summary: summary,
         currency: code,
         digits: digits,
-        versus: versusLabel(s, period, model.previous),
+        compare: compareLabel(s, period.kind),
       ),
       if (period.kind == ReportPeriodKind.month) ...[
+        // Nothing (and no space) while the findings are not there or not this month.
+        ReportInsightsCard(period: period),
         gap,
         ReportBudgetRow(period: period, currency: code, minorDigits: digits),
+      ],
+      // A cash flow that failed to load hides its card; while loading it shows a skeleton.
+      if (model.flow != null || model.extrasLoading) ...[
         gap,
-        MonthReviewLink(period: period),
+        ReportCashflowCard(
+          flow: model.flow,
+          currency: code,
+          digits: digits,
+          today: model.today,
+        ),
       ],
       gap,
-      ReportTrendCard(model: model, currency: code, digits: digits),
+      ReportTrendCard(
+        model: model,
+        currency: code,
+        digits: digits,
+        today: model.today,
+      ),
       gap,
       ReportBreakdownCard(report: data.report, currency: code, digits: digits),
+      if (debt != null) ...[
+        gap,
+        ReportDebtCard(
+          change: debt,
+          due: holdings?.dueOf(code),
+          subtitle: subtitle,
+          currency: code,
+          digits: digits,
+        ),
+      ],
+      if (invest != null) ...[
+        gap,
+        ReportInvestCard(
+          change: invest,
+          subtitle: subtitle,
+          currency: code,
+          digits: digits,
+        ),
+      ],
     ];
   }
 }

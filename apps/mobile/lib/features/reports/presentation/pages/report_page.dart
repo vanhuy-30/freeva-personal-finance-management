@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/widgets/freeva_top_bar.dart';
+import '../../../insights/presentation/viewmodels/insights_view_model.dart';
 import '../../domain/report.dart';
 import '../viewmodels/report_view_model.dart';
 import '../widgets/report_body.dart';
@@ -24,6 +25,11 @@ class _ReportPageState extends State<ReportPage> {
     model = getIt<ReportViewModel>();
     model.beginVisit();
     Future.microtask(() => model.load(const ReportPeriodQuery.month()));
+    // The month's findings for the "Nhận định" card; not registered in some tests.
+    if (getIt.isRegistered<InsightsViewModel>()) {
+      final insights = getIt<InsightsViewModel>();
+      if (!insights.loading) Future.microtask(insights.load);
+    }
   }
 
   @override

@@ -18,6 +18,10 @@ String trendBarLabel(S s, ReportPeriodKind kind, TrendBar bar, String locale) {
   };
 }
 
+/// Month number a bar stands for: its start, or its end when a fiscal month
+/// starts after the 1st.
+int trendBarMonth(TrendBar bar) => _monthOf(bar);
+
 int _monthOf(TrendBar bar) {
   final from = DateTime.parse(bar.from);
   return from.day == 1 ? from.month : DateTime.parse(bar.to).month;
