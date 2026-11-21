@@ -185,7 +185,7 @@ describe('BE-P4-E01 investments HTTP + PostgreSQL', () => {
     expect((await request('GET', `/investments/${crypto.id}/prices`)).body.items).toHaveLength(2);
   });
 
-  it('a savings deposit accrues simple interest, allows one buy and a full withdrawal', async () => {
+  it('a savings deposit is valued at its principal, allows one buy and a full withdrawal with interest', async () => {
     const source = await wallet();
     const deposit = (await request('POST', '/investments', {
       clientId: randomUUID(), kind: 'savings_deposit', name: 'VCB 12 tháng', currencyCode: 'VND', unit: 'deposit',
@@ -193,10 +193,11 @@ describe('BE-P4-E01 investments HTTP + PostgreSQL', () => {
     })).body;
     const bought = await trade(deposit.id, { side: 'buy', quantity: '1', amountMinor: '100000000', accountId: source.id });
     expect(bought.body).toMatchObject({ valuationBasis: 'deposit' });
-    // 2020 is a leap year: 365 days from 2020-01-01 to 2020-12-31 -> 12.000.000
-    expect(bought.body.currentValueMinor).toBe('112000000');
+    // Interest is not accrued while the deposit runs: net worth holds the principal only.
+    expect(bought.body.currentValueMinor).toBe('100000000');
     expect((await trade(deposit.id, { side: 'buy', quantity: '1', amountMinor: '1', accountId: source.id })).status).toBe(422);
     expect((await request('POST', `/investments/${deposit.id}/prices`, { clientId: randomUUID(), priceMinor: '1', quotedAt: '2026-11-05T09:00:00.000Z' })).status).toBe(422);
+    // At maturity the bank pays principal + 12.000.000 interest (365 days at 12%); that gain is realized.
     const out = await trade(deposit.id, { side: 'sell', quantity: '1', amountMinor: '112000000', accountId: source.id });
     expect(out.body).toMatchObject({ quantity: '0', costBasisMinor: '0' });
     const history = await request('GET', `/investments/${deposit.id}/trades`);
