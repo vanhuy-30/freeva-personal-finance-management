@@ -60,12 +60,30 @@ void main() {
       await tester.pumpWidget(app());
       expect(find.text('protected content'), findsOneWidget);
       tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
       await tester.pump();
       expect(find.text('protected content'), findsNothing);
       tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
       await tester.pumpAndSettle();
       expect(find.text('Nhập mã PIN'), findsOneWidget);
       expect(find.text('protected content'), findsNothing);
+    },
+  );
+  testWidgets(
+    'a system dialog (inactive only) neither covers the app nor locks it',
+    (tester) async {
+      model
+        ..stage = AuthStage.unlocked
+        ..hasPin = true;
+      await tester.pumpWidget(app());
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      await tester.pump();
+      expect(find.text('protected content'), findsOneWidget);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pumpAndSettle();
+      expect(find.text('protected content'), findsOneWidget);
+      expect(model.stage, AuthStage.unlocked);
     },
   );
   testWidgets(

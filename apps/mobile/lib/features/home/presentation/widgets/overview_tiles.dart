@@ -85,7 +85,17 @@ class _OverviewTilesState extends State<OverviewTiles> {
         UpcomingTile(summary: upcoming, today: today, digits: digits),
       if (cards.isNotEmpty) CardTile(cards: cards),
       if (goals.isNotEmpty) GoalsTile(goals: goals),
-      if (invest != null) InvestTile(glance: invest, digits: digits),
+      if (invest != null)
+        InvestTile(
+          glance: invest,
+          digits: digits,
+          // Alone on its row: it takes the full width and shows more.
+          wide: [
+            upcoming != null,
+            cards.isNotEmpty,
+            goals.isNotEmpty,
+          ].where((e) => e).length.isEven,
+        ),
     ];
     const gap = SizedBox(height: OverviewTiles.gap, width: OverviewTiles.gap);
     return Column(

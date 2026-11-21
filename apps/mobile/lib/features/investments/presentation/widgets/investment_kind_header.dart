@@ -18,6 +18,7 @@ class InvestmentKindHeader extends StatelessWidget {
     required this.currency,
     required this.digits,
     required this.hidden,
+    this.expectedInterest,
     super.key,
   });
 
@@ -29,6 +30,9 @@ class InvestmentKindHeader extends StatelessWidget {
   final int digits;
   final bool hidden;
 
+  /// Set for deposits: principal and expected interest, no gain or loss.
+  final BigInt? expectedInterest;
+
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
@@ -36,9 +40,14 @@ class InvestmentKindHeader extends StatelessWidget {
     final locale = Localizations.localeOf(context).toString();
     final kind = row.kind!;
     final (bg, fg) = investmentKindTint(c, kind);
-    final bps = row.unrealizedBps;
-    String money(BigInt v) =>
-        hidden ? '••••••' : formatMoneyText(v, digits, locale);
+    final bps = expectedInterest == null ? row.unrealizedBps : null;
+    final interest = expectedInterest;
+    final symbol = MoneyDisplay.symbolFor(currency);
+    String money(BigInt v) => hidden
+        ? '••••••'
+        : expectedInterest == null
+        ? formatMoneyText(v, digits, locale)
+        : '${formatMoneyText(v, digits, locale)} $symbol';
     return DecoratedBox(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -133,23 +142,31 @@ class InvestmentKindHeader extends StatelessWidget {
                       color: c.borderDivider,
                     ),
                     Expanded(
-                      child: _Stat(
-                        label: s.investmentsGain,
-                        value: bps == null
-                            ? '—'
-                            : hidden
-                            ? '••••••'
-                            : investmentSigned(
-                                row.unrealizedMinor,
-                                digits,
-                                locale,
-                              ),
-                        color: bps == null
-                            ? null
-                            : row.unrealizedMinor.isNegative
-                            ? c.moneyExpense
-                            : c.moneyIncome,
-                      ),
+                      child: interest != null
+                          ? _Stat(
+                              label: s.depositInterest,
+                              value: hidden
+                                  ? '••••••'
+                                  : '${investmentSigned(interest, digits, locale)} $symbol',
+                              color: c.moneyIncome,
+                            )
+                          : _Stat(
+                              label: s.investmentsGain,
+                              value: bps == null
+                                  ? '—'
+                                  : hidden
+                                  ? '••••••'
+                                  : investmentSigned(
+                                      row.unrealizedMinor,
+                                      digits,
+                                      locale,
+                                    ),
+                              color: bps == null
+                                  ? null
+                                  : row.unrealizedMinor.isNegative
+                                  ? c.moneyExpense
+                                  : c.moneyIncome,
+                            ),
                     ),
                   ],
                 ),

@@ -5,15 +5,13 @@ import '../../../../core/money/money_text.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_card.dart';
-import '../../../../core/widgets/freeva_segmented.dart';
 import '../../../../core/widgets/skeleton.dart';
-import '../../domain/report.dart';
 import '../../domain/report_trend.dart';
 import '../viewmodels/report_view_model.dart';
 import 'trend_bars.dart';
 import 'trend_labels.dart';
 
-/// "Xu hướng chi": bars for 8 weeks, 6 months or the years with data, plus
+/// "Xu hướng chi" follows the Tuần · Tháng · Năm filter above it: bars for 8 weeks, 6 months or the years with data, plus
 /// their average. Hidden when the trend cannot be loaded; the totals above it
 /// do not depend on it.
 class ReportTrendCard extends StatelessWidget {
@@ -41,7 +39,10 @@ class ReportTrendCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _Header(model: model),
+          Text(
+            s.reportTrendTitle,
+            style: FreevaTypography.titleM.copyWith(color: c.textPrimary),
+          ),
           const SizedBox(height: 14),
           if (series == null)
             const SkeletonBox(height: 164, radius: 12)
@@ -77,52 +78,6 @@ class ReportTrendCard extends StatelessWidget {
           ],
         ],
       ),
-    );
-  }
-}
-
-/// Title with the Tuần · Tháng · Năm switch; the switch drops under the title
-/// at large text so it never gets cut.
-class _Header extends StatelessWidget {
-  const _Header({required this.model});
-
-  final ReportViewModel model;
-
-  @override
-  Widget build(BuildContext context) {
-    final s = S.of(context);
-    final c = context.colors;
-    final stack = MediaQuery.textScalerOf(context).scale(1) > 1.15;
-    final title = Text(
-      s.reportTrendTitle,
-      style: FreevaTypography.titleM.copyWith(color: c.textPrimary),
-    );
-    final switcher = FreevaSegmented<ReportPeriodKind>(
-      compact: true,
-      expand: stack,
-      selected: model.trendKind,
-      onChanged: model.selectTrend,
-      segments: [
-        FreevaSegment(ReportPeriodKind.week, s.reportWeek),
-        FreevaSegment(ReportPeriodKind.month, s.reportMonth),
-        FreevaSegment(ReportPeriodKind.year, s.reportYear),
-      ],
-    );
-    if (stack) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          title,
-          const SizedBox(height: FreevaSpace.s2),
-          switcher,
-        ],
-      );
-    }
-    return Wrap(
-      alignment: WrapAlignment.spaceBetween,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      runSpacing: FreevaSpace.s2,
-      children: [title, switcher],
     );
   }
 }

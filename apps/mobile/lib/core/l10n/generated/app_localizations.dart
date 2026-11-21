@@ -7269,7 +7269,7 @@ abstract class S {
   /// No description provided for @debtsEmptyTitle.
   ///
   /// In en, this message translates to:
-  /// **'Nobody owes anybody'**
+  /// **'No loans yet'**
   String get debtsEmptyTitle;
 
   /// No description provided for @debtsEmptyBody.
@@ -8874,156 +8874,6 @@ abstract class S {
   /// **'Paid mid-month? Set your payday so budgets and reports use the right period.'**
   String get meMoneyHint;
 
-  /// No description provided for @forecastTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Balance forecast'**
-  String get forecastTitle;
-
-  /// No description provided for @forecastRange.
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, =1{1 month} other{{count} months}}'**
-  String forecastRange(int count);
-
-  /// No description provided for @forecastRangeSemantics.
-  ///
-  /// In en, this message translates to:
-  /// **'Forecast range'**
-  String get forecastRangeSemantics;
-
-  /// No description provided for @forecastEndOfMonth.
-  ///
-  /// In en, this message translates to:
-  /// **'About this much left at the end of month {month}'**
-  String forecastEndOfMonth(int month);
-
-  /// No description provided for @forecastChange.
-  ///
-  /// In en, this message translates to:
-  /// **'{amount} vs today'**
-  String forecastChange(String amount);
-
-  /// No description provided for @forecastToday.
-  ///
-  /// In en, this message translates to:
-  /// **'Today'**
-  String get forecastToday;
-
-  /// No description provided for @forecastHowTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'How it is worked out'**
-  String get forecastHowTitle;
-
-  /// No description provided for @forecastStartsFrom.
-  ///
-  /// In en, this message translates to:
-  /// **'Starting balance'**
-  String get forecastStartsFrom;
-
-  /// No description provided for @forecastStartsFromWallets.
-  ///
-  /// In en, this message translates to:
-  /// **'{amount} · {count, plural, =1{1 wallet} other{{count} wallets}}'**
-  String forecastStartsFromWallets(String amount, int count);
-
-  /// No description provided for @forecastStartsFromYou.
-  ///
-  /// In en, this message translates to:
-  /// **'{amount} · set by you'**
-  String forecastStartsFromYou(String amount);
-
-  /// No description provided for @forecastEdit.
-  ///
-  /// In en, this message translates to:
-  /// **'Edit'**
-  String get forecastEdit;
-
-  /// No description provided for @forecastScope.
-  ///
-  /// In en, this message translates to:
-  /// **'Only recurring items and bills. Daily spending is not included.'**
-  String get forecastScope;
-
-  /// No description provided for @forecastOtherCurrency.
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, =1{1 item in another currency is left out.} other{{count} items in other currencies are left out.}}'**
-  String forecastOtherCurrency(int count);
-
-  /// No description provided for @forecastRulesHeader.
-  ///
-  /// In en, this message translates to:
-  /// **'Included items'**
-  String get forecastRulesHeader;
-
-  /// No description provided for @forecastRuleToggle.
-  ///
-  /// In en, this message translates to:
-  /// **'Include {name}'**
-  String forecastRuleToggle(String name);
-
-  /// No description provided for @forecastEstimated.
-  ///
-  /// In en, this message translates to:
-  /// **'{schedule} · estimate'**
-  String forecastEstimated(String schedule);
-
-  /// No description provided for @forecastOneOff.
-  ///
-  /// In en, this message translates to:
-  /// **'Once, {date}'**
-  String forecastOneOff(String date);
-
-  /// No description provided for @forecastNoRules.
-  ///
-  /// In en, this message translates to:
-  /// **'No recurring items or bills yet, so the balance stays the same.'**
-  String get forecastNoRules;
-
-  /// No description provided for @forecastChartSemantics.
-  ///
-  /// In en, this message translates to:
-  /// **'Forecast balance at the end of each month: {items}'**
-  String forecastChartSemantics(String items);
-
-  /// No description provided for @forecastBalanceTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Starting balance'**
-  String get forecastBalanceTitle;
-
-  /// No description provided for @forecastBalanceHint.
-  ///
-  /// In en, this message translates to:
-  /// **'The forecast adds your recurring items to this amount.'**
-  String get forecastBalanceHint;
-
-  /// No description provided for @forecastBalanceApply.
-  ///
-  /// In en, this message translates to:
-  /// **'Use this amount'**
-  String get forecastBalanceApply;
-
-  /// No description provided for @forecastBalanceReset.
-  ///
-  /// In en, this message translates to:
-  /// **'Use the total of my wallets'**
-  String get forecastBalanceReset;
-
-  /// No description provided for @forecastBalanceInvalid.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter a valid amount.'**
-  String get forecastBalanceInvalid;
-
-  /// No description provided for @forecastDayEstimated.
-  ///
-  /// In en, this message translates to:
-  /// **'Day {day} · estimate'**
-  String forecastDayEstimated(int day);
-
   /// No description provided for @meNetWorth.
   ///
   /// In en, this message translates to:
@@ -9239,6 +9089,12 @@ abstract class S {
   /// **'Asset name'**
   String get investmentName;
 
+  /// No description provided for @investmentNameOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind, select, gold{Gold type} stock{Ticker} fund{Fund name} savings_deposit{Deposit name} real_estate{Property name} crypto{Coin name} other{Asset name}}'**
+  String investmentNameOf(String kind);
+
   /// No description provided for @investmentGoldByChi.
   ///
   /// In en, this message translates to:
@@ -9292,6 +9148,18 @@ abstract class S {
   /// In en, this message translates to:
   /// **'{amount} left'**
   String investmentWalletLeft(String amount);
+
+  /// No description provided for @walletCreditDebt.
+  ///
+  /// In en, this message translates to:
+  /// **'Owed {amount}'**
+  String walletCreditDebt(String amount);
+
+  /// No description provided for @walletCreditAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Available {amount}'**
+  String walletCreditAvailable(String amount);
 
   /// No description provided for @investmentExisting.
   ///
@@ -9347,6 +9215,18 @@ abstract class S {
   /// **'Maturity date'**
   String get investmentMaturity;
 
+  /// No description provided for @depositTerm.
+  ///
+  /// In en, this message translates to:
+  /// **'Term'**
+  String get depositTerm;
+
+  /// No description provided for @depositTermMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'{months} mo'**
+  String depositTermMonths(int months);
+
   /// No description provided for @investmentPickDate.
   ///
   /// In en, this message translates to:
@@ -9364,6 +9244,30 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Buys'**
   String get investmentTradesHeader;
+
+  /// No description provided for @investmentTradesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 buy} other{{count} buys}}'**
+  String investmentTradesCount(int count);
+
+  /// No description provided for @investmentTradesMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Show {count} more'**
+  String investmentTradesMore(int count);
+
+  /// No description provided for @investmentTradesLess.
+  ///
+  /// In en, this message translates to:
+  /// **'Show less'**
+  String get investmentTradesLess;
+
+  /// No description provided for @investmentExistingTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Held'**
+  String get investmentExistingTag;
 
   /// No description provided for @investmentBuyMore.
   ///
@@ -9518,7 +9422,7 @@ abstract class S {
   /// No description provided for @depositValueToday.
   ///
   /// In en, this message translates to:
-  /// **'Value today'**
+  /// **'Amount deposited'**
   String get depositValueToday;
 
   /// No description provided for @depositPrincipal.
@@ -9530,7 +9434,7 @@ abstract class S {
   /// No description provided for @depositInterest.
   ///
   /// In en, this message translates to:
-  /// **'Interest so far'**
+  /// **'Expected interest'**
   String get depositInterest;
 
   /// No description provided for @depositRateLabel.
@@ -9628,6 +9532,66 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Matures'**
   String get depositMaturityRow;
+
+  /// No description provided for @depositNoteRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get depositNoteRow;
+
+  /// No description provided for @depositNoteNone.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get depositNoteNone;
+
+  /// No description provided for @depositPayout.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid at maturity'**
+  String get depositPayout;
+
+  /// No description provided for @depositMaturedPaidTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Deposit matured'**
+  String get depositMaturedPaidTitle;
+
+  /// No description provided for @depositMaturedPaidBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}: {amount} was added to {wallet}.'**
+  String depositMaturedPaidBody(String name, String amount, String wallet);
+
+  /// No description provided for @depositMaturedChoiceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Deposit matured'**
+  String get depositMaturedChoiceTitle;
+
+  /// No description provided for @depositMaturedChoiceBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} has matured and pays {amount} (principal and interest). Move it to a wallet or deposit it again?'**
+  String depositMaturedChoiceBody(String name, String amount);
+
+  /// No description provided for @depositMaturedToWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to wallet'**
+  String get depositMaturedToWallet;
+
+  /// No description provided for @depositMaturedRenew.
+  ///
+  /// In en, this message translates to:
+  /// **'Deposit again'**
+  String get depositMaturedRenew;
+
+  /// No description provided for @depositMaturedLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get depositMaturedLater;
 
   /// No description provided for @tradeTitle.
   ///
@@ -10180,6 +10144,72 @@ abstract class S {
     String budget,
   );
 
+  /// No description provided for @spendBalanceHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'You may have about this left at the end of {month}'**
+  String spendBalanceHeadline(String month);
+
+  /// No description provided for @spendBalanceRange.
+  ///
+  /// In en, this message translates to:
+  /// **'About {low} to {high}'**
+  String spendBalanceRange(String low, String high);
+
+  /// No description provided for @spendBalanceRunsOut.
+  ///
+  /// In en, this message translates to:
+  /// **'At this pace you will run out of money on {date}'**
+  String spendBalanceRunsOut(String date);
+
+  /// No description provided for @spendBalanceNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet balance now'**
+  String get spendBalanceNow;
+
+  /// No description provided for @spendBalanceIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring income to come'**
+  String get spendBalanceIncome;
+
+  /// No description provided for @spendBalanceBills.
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring bills to come'**
+  String get spendBalanceBills;
+
+  /// No description provided for @spendBalanceDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Day-to-day spending (estimate)'**
+  String get spendBalanceDaily;
+
+  /// No description provided for @spendBalanceNoDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Day-to-day spending not included yet; a few more days of data are needed.'**
+  String get spendBalanceNoDaily;
+
+  /// No description provided for @spendBalanceNote.
+  ///
+  /// In en, this message translates to:
+  /// **'A prediction. Credit-card payments, installments and loans are not included.'**
+  String get spendBalanceNote;
+
+  /// No description provided for @spendBalanceCard.
+  ///
+  /// In en, this message translates to:
+  /// **'About {amount} left at month end'**
+  String spendBalanceCard(String amount);
+
+  /// No description provided for @spendBalanceCardOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Runs out on {date}'**
+  String spendBalanceCardOut(String date);
+
   /// No description provided for @goalForecastPace.
   ///
   /// In en, this message translates to:
@@ -10401,6 +10431,12 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Gain {amount}'**
   String homeInvestGain(String amount);
+
+  /// No description provided for @homeInvestVsCost.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount}'**
+  String homeInvestVsCost(String amount);
 
   /// No description provided for @homeInvestLoss.
   ///

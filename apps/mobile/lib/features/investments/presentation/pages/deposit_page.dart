@@ -18,7 +18,7 @@ import '../../../../core/widgets/skeleton.dart';
 import '../../../auth/presentation/widgets/auth_message.dart';
 import '../../../net_worth/presentation/widgets/net_worth_labels.dart';
 import '../../../reports/presentation/widgets/report_labels.dart';
-import '../../../settings/presentation/widgets/balances_hidden_builder.dart';
+import '../widgets/shown_balances.dart';
 import '../../domain/investment.dart';
 import '../viewmodels/investment_view_model.dart';
 import '../widgets/deposit_sheets.dart';
@@ -85,7 +85,7 @@ class _DepositPageState extends State<DepositPage> {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final margin = context.screenMargin;
-    return BalancesHiddenBuilder(
+    return ShownBalances(
       builder: (context, hidden) => ListenableBuilder(
         listenable: model,
         builder: (context, _) {
@@ -135,8 +135,10 @@ class _DepositPageState extends State<DepositPage> {
       ];
     }
     final digits = model.digitsOf(deposit.currencyCode);
-    final interest = deposit.currentValueMinor - deposit.costBasisMinor;
-    final bps = deposit.unrealizedBps;
+    // Net worth holds the principal only; the interest is paid at maturity.
+    final interest =
+        deposit.interestAtMaturity ?? deposit.interestOn(model.today);
+    final bps = deposit.interestRateBps;
     final days = deposit.maturityDate == null
         ? null
         : daysUntil(deposit.maturityDate!, model.today);
@@ -210,7 +212,7 @@ class _DepositPageState extends State<DepositPage> {
                     child: Align(
                       alignment: AlignmentDirectional.centerStart,
                       child: MoneyDisplay(
-                        minor: deposit.currentValueMinor,
+                        minor: deposit.costBasisMinor,
                         currency: deposit.currencyCode,
                         minorDigits: digits,
                         style: FreevaTypography.moneyDisplayCompact.copyWith(
@@ -220,7 +222,7 @@ class _DepositPageState extends State<DepositPage> {
                       ),
                     ),
                   ),
-                  if (bps != null && !hidden) InvestmentChangePill(bps: bps),
+                  if (bps != null) DepositRatePill(bps: bps),
                 ],
               ),
               const SizedBox(height: 12),
@@ -239,8 +241,11 @@ class _DepositPageState extends State<DepositPage> {
                     children: [
                       Expanded(
                         child: _Stat(
-                          label: s.depositPrincipal,
-                          value: money(deposit.costBasisMinor),
+                          label: s.depositInterest,
+                          value: hidden
+                              ? '••••••'
+                              : investmentSigned(interest, digits, locale),
+                          color: c.moneyIncome,
                         ),
                       ),
                       Container(
@@ -251,13 +256,8 @@ class _DepositPageState extends State<DepositPage> {
                       ),
                       Expanded(
                         child: _Stat(
-                          label: s.depositInterest,
-                          value: hidden
-                              ? '••••••'
-                              : investmentSigned(interest, digits, locale),
-                          color: interest.isNegative
-                              ? c.moneyExpense
-                              : c.moneyIncome,
+                          label: s.depositPayout,
+                          value: money(deposit.costBasisMinor + interest),
                         ),
                       ),
                     ],
@@ -300,6 +300,13 @@ class _DepositPageState extends State<DepositPage> {
                     : (wallet?.draft.name ?? '—'),
               ),
             ],
+            Divider(height: 1, color: c.borderDivider),
+            row(
+              s.depositNoteRow,
+              deposit.note?.trim().isNotEmpty ?? false
+                  ? deposit.note!.trim()
+                  : s.depositNoteNone,
+            ),
           ],
         ),
       ),

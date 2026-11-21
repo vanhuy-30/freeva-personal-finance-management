@@ -4,7 +4,7 @@ import 'package:mobile/core/theme/lucide_icons.g.dart';
 import '../theme/theme_context.dart';
 import '../theme/tokens.g.dart';
 
-/// Ink toast floating above the bottom nav: radius 16, at least 52 high,
+/// Ink toast floating at the top of the screen: radius 16, at least 52 high,
 /// 18 mint icon, plain blue action text. 4 s, or 6 s with an action
 /// (usually "Hoàn tác"). One at a time: a new toast replaces the current one.
 /// `success` shows a check when no [icon] is given.
@@ -15,9 +15,9 @@ void showFreevaToast(
   bool success = false,
   String? actionLabel,
   VoidCallback? onAction,
-  bool aboveNav = true,
 }) {
   final c = context.colors;
+  final media = MediaQuery.of(context);
   final glyph = icon ?? (success ? LucideIcons.check : null);
   final messenger = ScaffoldMessenger.of(context)..hideCurrentSnackBar();
   messenger.showSnackBar(
@@ -30,11 +30,16 @@ void showFreevaToast(
       // The container below paints the surface and the toast shadow.
       clipBehavior: Clip.none,
       behavior: SnackBarBehavior.floating,
+      // Pinned to the top: a bottom margin of "screen height minus the toast
+      // and the status bar" pushes the floating snack bar up there.
       margin: EdgeInsets.fromLTRB(
         context.screenMargin,
         0,
         context.screenMargin,
-        aboveNav ? FreevaLayout.navReserve : FreevaSpace.s4,
+        (media.size.height - media.padding.top - 76).clamp(
+          FreevaSpace.s4,
+          double.infinity,
+        ),
       ),
       padding: EdgeInsets.zero,
       content: Container(

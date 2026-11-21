@@ -210,6 +210,30 @@ void main() {
       await t.pumpAndSettle();
       expect(cases.created, isEmpty);
     });
+
+    testWidgets(
+      'deposit: a term chip sets the maturity from the deposit date',
+      (t) async {
+        final cases = await open(t, kind: 'savings_deposit');
+        final fields = find.byType(TextField);
+        await t.enterText(fields.at(0), 'Techcombank 6 tháng');
+        await t.enterText(fields.at(1), '30000000');
+        await t.enterText(fields.at(2), '5,8');
+        await t.ensureVisible(find.text('6 tháng'));
+        await t.tap(find.text('6 tháng'));
+        await t.pumpAndSettle();
+        await t.ensureVisible(find.text('Lưu khoản đầu tư'));
+        await t.tap(find.text('Lưu khoản đầu tư'));
+        await t.pumpAndSettle();
+        final draft = cases.created.single;
+        final start = DateTime.parse(draft.startDate!);
+        final end = DateTime.parse(draft.maturityDate!);
+        expect(
+          (end.year * 12 + end.month) - (start.year * 12 + start.month),
+          6,
+        );
+      },
+    );
   });
 }
 

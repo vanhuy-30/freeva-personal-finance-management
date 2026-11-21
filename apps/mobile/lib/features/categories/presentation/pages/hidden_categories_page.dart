@@ -36,7 +36,6 @@ class HiddenCategoriesPage extends StatelessWidget {
           ? s.categoryRestored(category.name)
           : categoryError(s, failure),
       icon: ok ? LucideIcons.check : null,
-      aboveNav: false,
     );
   }
 

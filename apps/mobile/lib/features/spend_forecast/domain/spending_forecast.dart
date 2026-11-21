@@ -46,6 +46,45 @@ class SpendTopCategory {
   final int sharePercent;
 }
 
+/// What is left in the wallets at the end of the month: the balance now, the
+/// recurring income and bills still to come and, once the pace is known, the
+/// day-to-day spending. A prediction, not a recorded number.
+class BalanceOutlook {
+  const BalanceOutlook({
+    required this.balanceMinor,
+    required this.incomeAheadMinor,
+    required this.billsAheadMinor,
+    required this.endMinor,
+    required this.endLowMinor,
+    required this.endHighMinor,
+    this.variableAheadMinor,
+    this.runsOutOn,
+  });
+
+  /// Non-credit wallets in the profile currency, now.
+  final BigInt balanceMinor;
+
+  /// Recurring income still to come this month.
+  final BigInt incomeAheadMinor;
+
+  /// Recurring expenses still to come this month (a magnitude).
+  final BigInt billsAheadMinor;
+
+  /// Day-to-day spending expected for the rest of the month; null while the
+  /// pace is unknown.
+  final BigInt? variableAheadMinor;
+  final BigInt endMinor;
+
+  /// End balance when day-to-day spending runs 25% above / below its pace.
+  final BigInt endLowMinor;
+  final BigInt endHighMinor;
+
+  /// First day (`yyyy-MM-dd`) the projected balance goes below zero.
+  final String? runsOutOn;
+
+  bool get paceKnown => variableAheadMinor != null;
+}
+
 /// Month-end spending projected from the daily average so far (MOB-P5-E06,
 /// boards S.2, S.3). A prediction, never recorded spending.
 class SpendingForecast {
@@ -63,6 +102,7 @@ class SpendingForecast {
     required this.previousMonthMinor,
     required this.cumulative,
     required this.topCategories,
+    this.balance,
   });
 
   final SpendForecastStatus status;
@@ -93,6 +133,9 @@ class SpendingForecast {
   /// One point per elapsed day.
   final List<SpendPoint> cumulative;
   final List<SpendTopCategory> topCategories;
+
+  /// Null without a wallet in the profile currency.
+  final BalanceOutlook? balance;
 
   bool get ready => status == SpendForecastStatus.ok && forecastMinor != null;
 }

@@ -67,7 +67,6 @@ class _InstallmentDetailPageState extends State<InstallmentDetailPage> {
       context,
       message: closed == null ? s.installmentLoadError : s.installmentClosed,
       success: closed != null,
-      aboveNav: false,
     );
   }
 

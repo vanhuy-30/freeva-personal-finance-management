@@ -17,6 +17,21 @@ import '../../domain/investment_use_cases.dart';
 import '../../../server_config/domain/app_limits.dart';
 import '../../../../core/money/currency_catalog.dart';
 
+/// A matured deposit that was paid back to the wallet it came from.
+class MaturedPayout {
+  const MaturedPayout({
+    required this.deposit,
+    required this.amountMinor,
+    required this.walletName,
+  });
+
+  final Investment deposit;
+
+  /// Principal plus interest.
+  final BigInt amountMinor;
+  final String walletName;
+}
+
 /// Đầu tư list: totals, share by category, and the positions behind them.
 /// Totals come from `GET /investments/summary`.
 @LazySingleton()
@@ -80,6 +95,15 @@ class InvestmentViewModel extends ChangeNotifier {
   InvestmentTotal? get total => _summary.totalOf(currency);
 
   List<InvestmentTotal> get kinds => _summary.kindsOf(currency);
+
+  /// Interest the held deposits in the shown currency pay over their whole
+  /// terms; a deposit has no gain or loss, only this.
+  BigInt get expectedDepositInterest => _all
+      .where((i) => i.isDeposit && i.currencyCode == currency && !i.archived)
+      .fold(
+        BigInt.zero,
+        (sum, i) => sum + (i.interestAtMaturity ?? BigInt.zero),
+      );
 
   /// Names of the positions of [kind] in [currency], newest first.
   List<String> names(InvestmentKind kind) => [
@@ -190,6 +214,110 @@ class InvestmentViewModel extends ChangeNotifier {
   Future<bool> sell(Investment investment, SellDraft draft) async {
     final result = await _cases.sell(investment, draft);
     return _afterWrite(result, investment.id, walletMoved: true);
+  }
+
+  final Set<String> _settling = {};
+
+  /// Wallet a deposit was paid from when it can take the money back (still
+  /// active, same currency); null for a deposit held before the app.
+  Wallet? _sourceWallet(Investment deposit) {
+    final id = buysOf(deposit.id).firstOrNull?.accountId;
+    if (id == null) return null;
+    return wallets
+        .where((w) => w.id == id && w.draft.currency == deposit.currencyCode)
+        .firstOrNull;
+  }
+
+  /// Principal plus the interest of the whole term: what a deposit pays at
+  /// maturity.
+  BigInt maturityPayout(Investment deposit) =>
+      deposit.costBasisMinor + (deposit.interestAtMaturity ?? BigInt.zero);
+
+  /// Pays every matured deposit that came from a wallet back into it, and
+  /// returns what was paid so the app can tell the user. Run after [load].
+  Future<List<MaturedPayout>> settleMatured() async {
+    final payouts = <MaturedPayout>[];
+    final due = [
+      for (final i in _all)
+        if (i.maturedOn(today)) i,
+    ];
+    for (final deposit in due) {
+      if (_disposed || !_settling.add(deposit.id)) continue;
+      try {
+        if (trades[deposit.id] == null) await loadTrades([deposit.id]);
+        final wallet = _sourceWallet(deposit);
+        if (wallet == null) continue;
+        final amount = maturityPayout(deposit);
+        final ok = await withdraw(
+          deposit,
+          amountMinor: amount,
+          accountId: wallet.id,
+          tradedOn: deposit.maturityDate!,
+          clientId: newClientId(),
+        );
+        if (ok) {
+          payouts.add(
+            MaturedPayout(
+              deposit: deposit,
+              amountMinor: amount,
+              walletName: wallet.draft.name,
+            ),
+          );
+        }
+      } finally {
+        _settling.remove(deposit.id);
+      }
+    }
+    return payouts;
+  }
+
+  /// Matured deposits held before the app (or whose wallet is gone): the
+  /// user decides between a wallet and a new deposit.
+  List<Investment> get maturedAwaitingChoice => [
+    for (final i in _all)
+      if (i.maturedOn(today) &&
+          trades[i.id] != null &&
+          _sourceWallet(i) == null)
+        i,
+  ];
+
+  /// Renews a matured deposit: the payout becomes a new deposit of the same
+  /// length and rate, held before the app (no wallet moves), and the old one
+  /// is removed. True when both went through.
+  Future<bool> renewDeposit(Investment deposit) async {
+    final start = deposit.startDate;
+    final maturity = deposit.maturityDate;
+    final rate = deposit.interestRateBps;
+    if (start == null || maturity == null || rate == null) return false;
+    final from = DateTime.parse('${today}T00:00:00Z');
+    final until = from
+        .add(Duration(days: depositTermDays(start, maturity)))
+        .toIso8601String()
+        .substring(0, 10);
+    final created = await create(
+      InvestmentDraft(
+        clientId: newClientId(),
+        tradeClientId: newClientId(),
+        kind: InvestmentKind.savingsDeposit,
+        name: deposit.name,
+        currencyCode: deposit.currencyCode,
+        unit: deposit.unit,
+        quantity: quantityOne,
+        tradedOn: today,
+        amountMinor: maturityPayout(deposit),
+        note: deposit.note,
+        interestRateBps: rate,
+        startDate: today,
+        maturityDate: until,
+      ),
+    );
+    if (created == null) return false;
+    // `create` reloads in the background; let it finish so the removal below
+    // refreshes the list afterwards.
+    while (loading && !_disposed) {
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+    }
+    return deleteDeposit(deposit);
   }
 
   /// Takes the whole deposit back as [amountMinor] into [accountId].

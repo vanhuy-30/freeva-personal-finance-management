@@ -16,6 +16,7 @@ class InvestmentKindCard extends StatelessWidget {
     required this.names,
     required this.digits,
     required this.hidden,
+    this.expectedInterest,
     this.onTap,
     super.key,
   });
@@ -25,6 +26,9 @@ class InvestmentKindCard extends StatelessWidget {
   final List<String> names;
   final int digits;
   final bool hidden;
+
+  /// Set for deposits: they show principal and expected interest only.
+  final BigInt? expectedInterest;
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +52,7 @@ class InvestmentKindCard extends StatelessWidget {
         ? c.moneyExpense
         : c.moneyIncome;
     final name = investmentKindName(s, kind);
+    final interest = expectedInterest;
     return FreevaCard(
       onTap: onTap,
       padding: const EdgeInsets.all(16),
@@ -100,7 +105,9 @@ class InvestmentKindCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                if (noPrice)
+                if (interest != null)
+                  const SizedBox.shrink()
+                else if (noPrice)
                   _Tag(text: s.investmentsUnpriced)
                 else if (!hidden)
                   _Change(bps: bps),
@@ -111,21 +118,36 @@ class InvestmentKindCard extends StatelessWidget {
             const SizedBox(height: 12),
             Row(
               children: [
-                _Column(
-                  label: s.investmentsValue,
-                  value: money(row.currentValueMinor),
-                ),
-                const SizedBox(width: 10),
-                _Column(
-                  label: s.investmentsCost,
-                  value: money(row.costBasisMinor),
-                ),
-                const SizedBox(width: 10),
-                _Column(
-                  label: s.investmentsGain,
-                  value: gain,
-                  color: gainColor,
-                ),
+                if (interest != null) ...[
+                  _Column(
+                    label: s.depositPrincipal,
+                    value: money(row.costBasisMinor),
+                  ),
+                  const SizedBox(width: 10),
+                  _Column(
+                    label: s.depositInterest,
+                    value: hidden
+                        ? '••••••'
+                        : investmentSigned(interest, digits, locale),
+                    color: c.moneyIncome,
+                  ),
+                ] else ...[
+                  _Column(
+                    label: s.investmentsValue,
+                    value: money(row.currentValueMinor),
+                  ),
+                  const SizedBox(width: 10),
+                  _Column(
+                    label: s.investmentsCost,
+                    value: money(row.costBasisMinor),
+                  ),
+                  const SizedBox(width: 10),
+                  _Column(
+                    label: s.investmentsGain,
+                    value: gain,
+                    color: gainColor,
+                  ),
+                ],
               ],
             ),
           ],

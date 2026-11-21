@@ -6,6 +6,7 @@ import '../../../../core/money/money_text.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_card.dart';
+import '../../../wallets/domain/credit_card_status.dart';
 import '../../../wallets/domain/wallet.dart';
 import '../../../wallets/presentation/widgets/wallet_type_icon.dart';
 
@@ -31,6 +32,19 @@ class InvestmentWalletList extends StatelessWidget {
   final int Function(String currency) digitsOf;
   final bool hidden;
   final bool allowExisting;
+
+  /// A credit card shows what can still be used (the owed part when it has
+  /// no limit); other wallets show their balance.
+  static String _subtitle(S s, Wallet w, int digits, String locale) {
+    if (w.draft.type != WalletType.credit) {
+      return s.investmentWalletLeft(formatMoneyText(w.balance, digits, locale));
+    }
+    final status = CreditCardStatus.of(w, DateTime.now());
+    final left = status.available;
+    return left == null
+        ? s.walletCreditDebt(formatMoneyText(status.used, digits, locale))
+        : s.walletCreditAvailable(formatMoneyText(left, digits, locale));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,13 +122,7 @@ class InvestmentWalletList extends StatelessWidget {
           title: w.draft.name,
           subtitle: hidden
               ? '••••••'
-              : s.investmentWalletLeft(
-                  formatMoneyText(
-                    w.balance,
-                    digitsOf(w.draft.currency),
-                    locale,
-                  ),
-                ),
+              : _subtitle(s, w, digitsOf(w.draft.currency), locale),
           on: selected == w.id,
           onTap: () => onChanged(w.id),
         ),

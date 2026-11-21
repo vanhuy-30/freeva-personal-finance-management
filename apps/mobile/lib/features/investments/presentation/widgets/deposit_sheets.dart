@@ -13,10 +13,11 @@ import '../../../../core/widgets/money_display.dart';
 import '../../../../core/widgets/settings_group.dart';
 import '../../../auth/presentation/widgets/auth_message.dart';
 import '../../../net_worth/presentation/widgets/net_worth_labels.dart';
-import '../../../settings/presentation/widgets/balances_hidden_builder.dart';
+import 'shown_balances.dart';
 import '../../../transactions/presentation/widgets/composer/date_picker_sheet.dart';
 import '../../domain/investment.dart';
 import '../viewmodels/investment_view_model.dart';
+import 'investment_labels.dart';
 import 'investment_wallet_list.dart';
 import '../../../server_config/domain/app_limits.dart';
 import '../../../../core/di/injection.dart';
@@ -113,12 +114,17 @@ class _WithdrawSheetState extends State<_WithdrawSheet> {
     final locale = Localizations.localeOf(context).toString();
     if (!primed) {
       primed = true;
-      amount.text = formatMoneyText(deposit.currentValueMinor, digits, locale);
+      // Principal plus the interest earned up to today (or to maturity).
+      amount.text = formatMoneyText(
+        deposit.costBasisMinor + deposit.interestOn(model.today),
+        digits,
+        locale,
+      );
     }
     final value = _value(locale);
     final ok =
         !saving && walletId != null && value != null && value > BigInt.zero;
-    return BalancesHiddenBuilder(
+    return ShownBalances(
       builder: (context, hidden) => Padding(
         padding: EdgeInsets.fromLTRB(
           20,
@@ -275,7 +281,7 @@ class _EditSheetState extends State<_EditSheet> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           FreevaTextField(
-            label: s.investmentName,
+            label: investmentNameLabel(s, InvestmentKind.savingsDeposit),
             controller: name,
             maxLength:
                 getIt<AppLimitsSource>().requireLimits.investmentNameMaxLength,

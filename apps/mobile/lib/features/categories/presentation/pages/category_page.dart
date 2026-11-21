@@ -77,14 +77,12 @@ class _CategoryPageState extends State<CategoryPage> {
             .firstOrNull;
         if (hidden != null && hidden.archived) model.restore(hidden);
       },
-      aboveNav: false,
     );
   }
 
   void _toastDeleted(FinanceCategory category) => showFreevaToast(
     context,
     message: S.of(context).categoryDeletedToast(category.name),
-    aboveNav: false,
   );
 
   /// Swipe "Ẩn": the same rule as the editor (no visible subcategory left).
@@ -114,7 +112,6 @@ class _CategoryPageState extends State<CategoryPage> {
         .categoryChildrenBlock(
           model.categories.where((c) => c.parentId == category.id).length,
         ),
-    aboveNav: false,
   );
 
   @override
