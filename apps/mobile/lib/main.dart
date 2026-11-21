@@ -28,6 +28,7 @@ import 'core/storage/secure_storage_factory.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/tokens.g.dart';
 import 'core/app_version/app_version.dart';
+import 'features/investments/presentation/widgets/matured_deposit_listener.dart';
 
 Future<void> main() async {
   await runFreeva(_boot);
@@ -85,28 +86,30 @@ class FreevaApp extends StatelessWidget {
         child: RecurringResumeListener(
           child: NotificationResumeListener(
             child: PushRegistrationListener(
-              child: ServerConfigListener(
-                child: MaterialApp.router(
-                  debugShowCheckedModeBanner: false,
-                  onGenerateTitle: (BuildContext context) =>
-                      S.of(context).appTitle,
-                  theme: AppTheme.light,
-                  darkTheme: AppTheme.dark,
-                  themeMode: themeModeFor(settings.theme),
-                  routerConfig: appRouter,
-                  builder: (context, child) =>
-                      MediaQuery.withClampedTextScaling(
-                        maxScaleFactor: FreevaTypography.maxTextScale,
-                        child: ServerConfigBoundary(child: child!),
-                      ),
-                  locale: Locale(profile.locale),
-                  supportedLocales: S.supportedLocales,
-                  localizationsDelegates: const [
-                    S.delegate,
-                    GlobalMaterialLocalizations.delegate,
-                    GlobalWidgetsLocalizations.delegate,
-                    GlobalCupertinoLocalizations.delegate,
-                  ],
+              child: MaturedDepositListener(
+                child: ServerConfigListener(
+                  child: MaterialApp.router(
+                    debugShowCheckedModeBanner: false,
+                    onGenerateTitle: (BuildContext context) =>
+                        S.of(context).appTitle,
+                    theme: AppTheme.light,
+                    darkTheme: AppTheme.dark,
+                    themeMode: themeModeFor(settings.theme),
+                    routerConfig: appRouter,
+                    builder: (context, child) =>
+                        MediaQuery.withClampedTextScaling(
+                          maxScaleFactor: FreevaTypography.maxTextScale,
+                          child: ServerConfigBoundary(child: child!),
+                        ),
+                    locale: Locale(profile.locale),
+                    supportedLocales: S.supportedLocales,
+                    localizationsDelegates: const [
+                      S.delegate,
+                      GlobalMaterialLocalizations.delegate,
+                      GlobalWidgetsLocalizations.delegate,
+                      GlobalCupertinoLocalizations.delegate,
+                    ],
+                  ),
                 ),
               ),
             ),

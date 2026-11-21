@@ -215,7 +215,7 @@ void main() {
       final cases = await open(t, const TradeEditPage(id: 'g1', tradeId: 'b1'));
       expect(find.text('Sửa lần mua'), findsOneWidget);
       expect(find.text('Xoá lần mua này'), findsOneWidget);
-      await t.enterText(find.byType(TextField).at(0), '6');
+      await t.enterText(find.byType(TextField).at(1), '6');
       await t.pumpAndSettle();
       expect(find.textContaining('42.000.000'), findsWidgets);
       await t.tap(find.text('Lưu'));
@@ -225,6 +225,17 @@ void main() {
       expect(e.priceMinor, b(7000000));
       expect(e.accountId, 'vcb');
       expect(e.tradedOn, '2026-09-10');
+    });
+
+    testWidgets('the asset name can be changed while editing a buy', (t) async {
+      final cases = await open(t, const TradeEditPage(id: 'g1', tradeId: 'b1'));
+      expect(find.text('Loại vàng'), findsOneWidget);
+      await t.enterText(find.byType(TextField).at(0), 'Vàng PNJ');
+      await t.pumpAndSettle();
+      await t.tap(find.text('Lưu'));
+      await t.pumpAndSettle();
+      expect(cases.updated.single.name, 'Vàng PNJ');
+      expect(cases.edited, hasLength(1));
     });
   });
 }

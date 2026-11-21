@@ -10798,6 +10798,19 @@ components:
           oneOf:
             - type: 'null'
             - $ref: '#/components/schemas/SpendingForecast'
+    SpendingBalanceOutlook:
+      type: object
+      required: [balanceMinor, incomeAheadMinor, billsAheadMinor, dailySpendMinor, variableAheadMinor, endMinor, endLowMinor, endHighMinor, runsOutOn]
+      properties:
+        balanceMinor: { type: string, description: Non-credit, non-archived wallets in the profile currency, now. }
+        incomeAheadMinor: { type: string, description: Recurring income from today to the end of the month. }
+        billsAheadMinor: { type: string, description: Recurring expenses from today to the end of the month (magnitude). }
+        dailySpendMinor: { type: [string, 'null'], description: Day-to-day spending per day (expenses no recurring rule wrote); null while the forecast is insufficient. }
+        variableAheadMinor: { type: [string, 'null'], description: dailySpendMinor times the days left; null while unknown. }
+        endMinor: { type: string, description: Signed. Balance walked day by day to the last day. }
+        endLowMinor: { type: string, description: endMinor with day-to-day spending 25% above its pace. }
+        endHighMinor: { type: string, description: endMinor with day-to-day spending 25% below its pace. }
+        runsOutOn: { type: [string, 'null'], format: date, description: First day the projected balance is below zero. }
     SpendingForecast:
       type: object
       required: [status, daysElapsed, daysInPeriod, spentMinor, forecastMinor, dailyAverageMinor, budgetLimitMinor, risk, overBudgetMinor, dailyAllowanceMinor, previousMonthMinor, cumulative, topCategories]
@@ -10813,6 +10826,11 @@ components:
         overBudgetMinor: { type: [string, 'null'], description: forecast − budget when above it. }
         dailyAllowanceMinor: { type: [string, 'null'], description: '(budget − spent) / days left; null without budget, once over it, or on the last day.' }
         previousMonthMinor: { type: string, description: Whole previous fiscal month; the comparison when there is no budget. }
+        balance:
+          description: Balance at the end of the fiscal month; null when the user has no non-credit wallet in the profile currency.
+          oneOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/SpendingBalanceOutlook'
         cumulative:
           type: array
           description: Spent so far, one point per elapsed day.

@@ -317,7 +317,7 @@ export class PrismaReportRepository implements ReportRepository {
     return [...accountRows, ...debtRows, ...loanRows, ...investments];
   }
 
-  /** Held positions as assets: deposits at principal + accrued interest, the rest at quantity x latest price (cost when unpriced). */
+  /** Held positions as assets: deposits at principal only, the rest at quantity x latest price (cost when unpriced). */
   private async investmentRows(tx: Prisma.TransactionClient, userId: string): Promise<NetWorthAggregate[]> {
     const user = await tx.user.findUnique({ where: { id: userId }, select: { timezone: true } });
     const today = todayInTimeZone(user?.timezone ?? 'UTC', new Date());

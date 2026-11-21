@@ -14,6 +14,7 @@ import '../../../../core/widgets/skeleton.dart';
 import '../../../reports/presentation/widgets/report_labels.dart';
 import '../../domain/spending_forecast.dart';
 import '../viewmodels/spend_forecast_view_model.dart';
+import '../widgets/spend_forecast_balance.dart';
 import '../widgets/spend_forecast_labels.dart';
 import '../widgets/spend_forecast_parts.dart';
 import '../widgets/spend_forecast_summary.dart';
@@ -78,8 +79,18 @@ class _SpendForecastPageState extends State<SpendForecastPage> {
         return const [SkeletonBox(height: 320, radius: FreevaRadius.xl)];
       }
     }
+    final digits = CurrencyCatalog.current.digits(_model.currencyCode);
+    final balance = forecast?.balance;
     if (forecast == null || !forecast.ready) {
       return [
+        if (balance != null) ...[
+          SpendForecastBalance(
+            balance: balance,
+            period: _model.period,
+            digits: digits,
+          ),
+          const SizedBox(height: 14),
+        ],
         EmptyState(
           title: s.spendForecastEmpty,
           message: s.spendForecastEmptyBody,
@@ -96,7 +107,16 @@ class _SpendForecastPageState extends State<SpendForecastPage> {
     final digits = CurrencyCatalog.current.digits(_model.currencyCode);
     String money(BigInt v) => formatMoneyText(v, digits, locale);
     final side = forecastSideTile(s, forecast, money);
+    final balance = forecast.balance;
     return [
+      if (balance != null) ...[
+        SpendForecastBalance(
+          balance: balance,
+          period: _model.period,
+          digits: digits,
+        ),
+        const SizedBox(height: 14),
+      ],
       SpendForecastSummary(
         forecast: forecast,
         period: _model.period,

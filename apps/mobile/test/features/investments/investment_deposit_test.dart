@@ -141,13 +141,16 @@ void main() {
       return h.cases;
     }
 
-    testWidgets('shows value, principal, interest, rate, dates, wallet', (
+    testWidgets('shows principal, rate, expected interest, dates, wallet', (
       t,
     ) async {
       await open(t);
-      expect(find.text('Giá trị hôm nay'), findsOneWidget);
-      expect(find.text('Gốc'), findsOneWidget);
-      expect(find.text('+2.813.699'), findsOneWidget);
+      // Principal on top (net worth holds no accrued interest), the rate the
+      // user typed in the pill, interest and payout as of maturity.
+      expect(find.text('Số tiền gửi'), findsOneWidget);
+      expect(find.text('6,5%'), findsOneWidget);
+      expect(find.text('+6.500.000'), findsOneWidget);
+      expect(find.text('106.500.000'), findsOneWidget);
       expect(find.text('6,5%/năm'), findsOneWidget);
       expect(find.text('01/06/2026'), findsOneWidget);
       expect(find.text('01/06/2027 · còn 223 ngày'), findsOneWidget);
@@ -164,11 +167,14 @@ void main() {
       await t.tap(find.text('Rút tiền gửi'));
       await t.pumpAndSettle();
       expect(find.text('Tiền nhận về'), findsOneWidget);
-      await t.tap(find.textContaining('Rút 102.813.699'));
+      await t.tap(find.textContaining('Rút 10'));
       await t.pumpAndSettle();
       final d = cases.sold.single;
       expect(d.quantity, BigInt.from(100000000));
-      expect(d.amountMinor, b(102813699));
+      // Starts at principal plus the interest earned so far, never past the
+      // whole term's 6,5%.
+      expect(d.amountMinor! > b(100000000), isTrue);
+      expect(d.amountMinor! < b(106500000), isTrue);
       expect(d.accountId, 'vcb');
     });
 

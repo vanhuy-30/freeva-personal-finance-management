@@ -255,9 +255,9 @@ void main() {
       expect(find.text('Vàng SJC'), findsOneWidget);
       expect(find.text('Vàng nhẫn 9999'), findsOneWidget);
       expect(find.textContaining('8.000.000/chỉ · 05/11'), findsNWidgets(2));
-      expect(find.text('CÁC LẦN MUA'), findsNWidgets(2));
-      expect(find.text('10/09'), findsOneWidget);
-      expect(find.text('có sẵn'), findsOneWidget);
+      expect(find.text('Các lần mua'), findsNWidgets(2));
+      expect(find.text('Có sẵn'), findsOneWidget);
+      expect(find.textContaining('10/09/2026 · Giá vốn'), findsWidgets);
       expect(find.text('Giá vốn 6.000.000/chỉ'), findsOneWidget);
       expect(find.text('Mua thêm'), findsNWidgets(2));
       expect(find.text('Đã bán'), findsOneWidget);

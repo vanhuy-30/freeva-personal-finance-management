@@ -84,6 +84,65 @@ void main() {
       expect(f.topCategories.single.sharePercent, 40);
     });
 
+    test('balance outlook with every field, and without one', () {
+      Map<String, dynamic> body(Object? balance) => {
+        'currencyCode': 'VND',
+        'period': null,
+        'forecast': {
+          'status': 'ok',
+          'daysElapsed': 10,
+          'daysInPeriod': 30,
+          'spentMinor': '5400000',
+          'forecastMinor': '16200000',
+          'dailyAverageMinor': '540000',
+          'budgetLimitMinor': null,
+          'risk': null,
+          'overBudgetMinor': null,
+          'dailyAllowanceMinor': null,
+          'previousMonthMinor': '0',
+          'cumulative': [],
+          'topCategories': [],
+          'balance': balance,
+        },
+      };
+      final b = SpendingForecastRepositoryImpl.parse(
+        body({
+          'balanceMinor': '48250000',
+          'incomeAheadMinor': '18500000',
+          'billsAheadMinor': '3200000',
+          'dailySpendMinor': '540000',
+          'variableAheadMinor': '10800000',
+          'endMinor': '52750000',
+          'endLowMinor': '50050000',
+          'endHighMinor': '55450000',
+          'runsOutOn': '2026-11-25',
+        }),
+      ).forecast!.balance!;
+      expect(b.balanceMinor, BigInt.from(48250000));
+      expect(b.endMinor, BigInt.from(52750000));
+      expect(b.paceKnown, isTrue);
+      expect(b.runsOutOn, '2026-11-25');
+      final unknown = SpendingForecastRepositoryImpl.parse(
+        body({
+          'balanceMinor': '1',
+          'incomeAheadMinor': '0',
+          'billsAheadMinor': '0',
+          'dailySpendMinor': null,
+          'variableAheadMinor': null,
+          'endMinor': '1',
+          'endLowMinor': '1',
+          'endHighMinor': '1',
+          'runsOutOn': null,
+        }),
+      ).forecast!.balance!;
+      expect(unknown.paceKnown, isFalse);
+      expect(unknown.runsOutOn, isNull);
+      expect(
+        SpendingForecastRepositoryImpl.parse(body(null)).forecast!.balance,
+        isNull,
+      );
+    });
+
     test('insufficient with nulls inside', () {
       final f = SpendingForecastRepositoryImpl.parse({
         'currencyCode': 'VND',
@@ -279,6 +338,77 @@ void main() {
       expect(find.text('Ngân sách 15tr'), findsOneWidget);
       expect(find.text('dưới 480.000'), findsOneWidget);
       expect(find.text('Ăn uống'), findsOneWidget);
+    });
+
+    testWidgets('end-of-month balance: figures and what they are made of', (
+      t,
+    ) async {
+      _tall(t);
+      getIt.registerSingleton<SpendForecastViewModel>(
+        StubSpendForecastViewModel(forecast: boardForecast()),
+      );
+      await t.pumpWidget(_app(const SpendForecastPage()));
+      await t.pump();
+      expect(find.text('Cuối tháng 11 còn khoảng'), findsOneWidget);
+      expect(find.text('52.750.000'), findsOneWidget);
+      expect(find.text('Khoảng 50.050.000 đến 55.450.000'), findsOneWidget);
+      expect(find.text('48.250.000'), findsOneWidget);
+      expect(find.text('+18.500.000'), findsOneWidget);
+      expect(find.text('−3.200.000'), findsOneWidget);
+      expect(find.text('−10.800.000'), findsOneWidget);
+      expect(find.textContaining('hết tiền'), findsNothing);
+    });
+
+    testWidgets('warns on the day the money runs out', (t) async {
+      _tall(t);
+      getIt.registerSingleton<SpendForecastViewModel>(
+        StubSpendForecastViewModel(
+          forecast: boardForecast(balance: boardBalance(runsOut: true)),
+        ),
+      );
+      await t.pumpWidget(_app(const SpendForecastPage()));
+      await t.pump();
+      expect(find.text('−12.000.000'), findsOneWidget);
+      expect(
+        find.text('Với nhịp này, bạn sẽ hết tiền vào ngày 14/11'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('too early for the pace: still shows what is certain', (
+      t,
+    ) async {
+      _tall(t);
+      final known = BalanceOutlook(
+        balanceMinor: BigInt.zero,
+        incomeAheadMinor: BigInt.zero,
+        billsAheadMinor: BigInt.zero,
+        endMinor: BigInt.zero,
+        endLowMinor: BigInt.zero,
+        endHighMinor: BigInt.zero,
+      );
+      expect(known.paceKnown, isFalse);
+      getIt.registerSingleton<SpendForecastViewModel>(
+        StubSpendForecastViewModel(
+          forecast: boardForecast(
+            status: SpendForecastStatus.insufficient,
+            balance: BalanceOutlook(
+              balanceMinor: BigInt.from(48250000),
+              incomeAheadMinor: BigInt.from(18500000),
+              billsAheadMinor: BigInt.from(3200000),
+              endMinor: BigInt.from(63550000),
+              endLowMinor: BigInt.from(63550000),
+              endHighMinor: BigInt.from(63550000),
+            ),
+          ),
+        ),
+      );
+      await t.pumpWidget(_app(const SpendForecastPage()));
+      await t.pump();
+      expect(find.text('63.550.000'), findsOneWidget);
+      expect(find.textContaining('Chưa gồm chi thường ngày'), findsOneWidget);
+      expect(find.textContaining('Khoảng'), findsNothing);
+      expect(find.text('Chưa đủ dữ liệu'), findsOneWidget);
     });
 
     testWidgets('too early: empty state', (t) async {

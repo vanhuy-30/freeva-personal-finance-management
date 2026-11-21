@@ -11,6 +11,8 @@ export interface ForecastTransaction {
   amountMinor: bigint;
   categoryId: string | null;
   occurredOn: string;
+  /** Written by a recurring rule: already known ahead, so not part of the day-to-day pace. */
+  recurring?: boolean;
 }
 
 export interface ForecastCategory { id: string; name: string; parentId: string | null; iconToken: string | null; colorToken: string | null }
@@ -122,6 +124,86 @@ export function spendForecast(input: SpendInput): SpendForecast {
   return {
     ...base, status: 'ok', forecastMinor, risk,
     overBudgetMinor: limit !== null && forecastMinor > limit ? forecastMinor - limit : null,
+  };
+}
+
+// ---------------------------------------------------------------- balance at the end of the month
+
+/** One known movement still to come: income positive, expense negative. */
+export interface BalanceEvent { date: string; amountMinor: bigint }
+
+export interface BalanceOutlookInput {
+  today: string;
+  /** Last day of the current fiscal month. */
+  periodTo: string;
+  /** Sum of the user's non-credit wallets in the profile currency. */
+  balanceMinor: bigint;
+  /** Recurring income and expenses from `today` through `periodTo`. */
+  events: BalanceEvent[];
+  /** Day-to-day spending per day (recurring excluded); null while the pace is unknown. */
+  dailySpendMinor: bigint | null;
+}
+
+export interface BalanceOutlook {
+  balanceMinor: bigint;
+  /** Recurring income still to come this month. */
+  incomeAheadMinor: bigint;
+  /** Recurring expenses still to come this month (magnitude). */
+  billsAheadMinor: bigint;
+  /** Day-to-day spending expected over the rest of the month; null while unknown. */
+  dailySpendMinor: bigint | null;
+  variableAheadMinor: bigint | null;
+  endMinor: bigint;
+  /** End balance if day-to-day spending runs 25% above / below the pace. */
+  endLowMinor: bigint;
+  endHighMinor: bigint;
+  /** First day the projected balance goes below zero; null when it stays at or above. */
+  runsOutOn: string | null;
+}
+
+/** How far day-to-day spending may stray from its pace; drives the low/high end balance. */
+export const VARIABLE_SPREAD_PERCENT = 25n;
+
+/**
+ * Average day-to-day spend so far this month: expenses and refunds that no recurring rule wrote,
+ * over the days elapsed. Never negative.
+ */
+export function dailySpend(input: SpendInput): bigint {
+  const daysElapsed = Math.min(days(input.current.from, input.current.to), Math.max(1, days(input.current.from, input.today)));
+  const total = input.transactions
+    .filter(row => !row.recurring && inside(row.occurredOn, input.current.from, input.today))
+    .reduce((sum, row) => sum + signed(row), 0n);
+  return total > 0n ? total / BigInt(daysElapsed) : 0n;
+}
+
+/**
+ * Balance walked day by day to the end of the month: wallet balance, plus recurring income and minus
+ * recurring bills on their dates, minus the day-to-day pace on every day after today. A prediction.
+ */
+export function balanceOutlook(input: BalanceOutlookInput): BalanceOutlook {
+  const byDate = new Map<string, bigint>();
+  let incomeAheadMinor = 0n;
+  let billsAheadMinor = 0n;
+  for (const event of input.events) {
+    if (event.date < input.today || event.date > input.periodTo) continue;
+    byDate.set(event.date, (byDate.get(event.date) ?? 0n) + event.amountMinor);
+    if (event.amountMinor > 0n) incomeAheadMinor += event.amountMinor; else billsAheadMinor -= event.amountMinor;
+  }
+  const pace = input.dailySpendMinor ?? 0n;
+  const span = days(input.today, input.periodTo);
+  let running = input.balanceMinor;
+  let runsOutOn: string | null = null;
+  for (let i = 0; i < span; i += 1) {
+    const date = addDays(input.today, i);
+    running += byDate.get(date) ?? 0n;
+    if (i > 0) running -= pace;
+    if (runsOutOn === null && running < 0n) runsOutOn = date;
+  }
+  const variableAheadMinor = input.dailySpendMinor === null ? null : pace * BigInt(Math.max(0, span - 1));
+  const spread = ((variableAheadMinor ?? 0n) * VARIABLE_SPREAD_PERCENT) / 100n;
+  return {
+    balanceMinor: input.balanceMinor, incomeAheadMinor, billsAheadMinor, dailySpendMinor: input.dailySpendMinor,
+    variableAheadMinor, endMinor: running, endLowMinor: running - spread, endHighMinor: running + spread, runsOutOn,
   };
 }
 

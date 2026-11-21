@@ -36,6 +36,7 @@ class FreevaChip extends StatelessWidget {
     this.icon,
     this.iconSize = FreevaSize.iconChip,
     this.trailingIcon,
+    this.accent = false,
     super.key,
   });
 
@@ -52,16 +53,27 @@ class FreevaChip extends StatelessWidget {
   /// For example a chevron on "Tháng 10 ▾"; drawn at 14.
   final IconData? trailingIcon;
 
+  /// Selected state in the app blue (border and text) instead of ink.
+  final bool accent;
+
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
     final filter = kind == FreevaChipKind.filter;
     final filled = selected && (filter || size == FreevaChipSize.large);
-    final fg = filled ? c.chipFilterSelectedFg : c.textPrimary;
+    final blue = accent && selected && !filled;
+    final fg = filled
+        ? c.chipFilterSelectedFg
+        : blue
+        ? c.actionPrimary
+        : c.textPrimary;
     final side = filled
         ? BorderSide.none
         : selected
-        ? BorderSide(color: c.chipSelectedBorder, width: FreevaBorder.selected)
+        ? BorderSide(
+            color: blue ? c.actionPrimary : c.chipSelectedBorder,
+            width: FreevaBorder.selected,
+          )
         : BorderSide(color: c.chipBorder);
     final (double height, double padding, double fontSize) = switch (size) {
       FreevaChipSize.regular => (
@@ -85,7 +97,11 @@ class FreevaChip extends StatelessWidget {
       child: PressScale(
         enabled: onTap != null,
         child: Material(
-          color: filled ? c.chipFilterSelectedBg : c.bgSurface,
+          color: filled
+              ? c.chipFilterSelectedBg
+              : blue
+              ? c.tintBlue
+              : c.bgSurface,
           shape: StadiumBorder(side: side),
           child: InkWell(
             customBorder: const StadiumBorder(),

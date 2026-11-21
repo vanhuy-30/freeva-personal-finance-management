@@ -12,7 +12,10 @@ import UIKit
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
-  override func applicationWillResignActive(_ application: UIApplication) {
+  // The cover goes on only when the app really leaves the foreground (app
+  // switcher snapshot). willResignActive also fires while a system alert such as
+  // the notification-permission prompt is up, which used to blank the whole app.
+  override func applicationDidEnterBackground(_ application: UIApplication) {
     if let window = window, privacyCover == nil {
       let cover = UIView(frame: window.bounds)
       if #available(iOS 13.0, *) {
@@ -24,7 +27,13 @@ import UIKit
       window.addSubview(cover)
       privacyCover = cover
     }
-    super.applicationWillResignActive(application)
+    super.applicationDidEnterBackground(application)
+  }
+
+  override func applicationWillEnterForeground(_ application: UIApplication) {
+    super.applicationWillEnterForeground(application)
+    privacyCover?.removeFromSuperview()
+    privacyCover = nil
   }
 
   override func applicationDidBecomeActive(_ application: UIApplication) {

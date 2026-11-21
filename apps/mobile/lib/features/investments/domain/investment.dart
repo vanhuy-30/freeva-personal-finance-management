@@ -102,7 +102,52 @@ class Investment {
   final bool archived;
 
   bool get unpriced => valuation == InvestmentValuation.cost;
+
+  bool get isDeposit => kind == InvestmentKind.savingsDeposit;
+
+  /// A deposit whose maturity day is [today] or earlier and that still holds
+  /// money (a withdrawn one is worth 0).
+  bool maturedOn(String today) =>
+      isDeposit &&
+      !archived &&
+      maturityDate != null &&
+      maturityDate!.compareTo(today) <= 0 &&
+      currentValueMinor > BigInt.zero;
+
+  /// Simple interest on the principal from the start day up to [today], or
+  /// to maturity when that came first (the API's rule: principal × rate ×
+  /// days / 365, half up). Zero without terms. The API values a deposit at
+  /// principal only; this is what it pays out.
+  BigInt interestOn(String today) {
+    final start = startDate;
+    final bps = interestRateBps;
+    if (!isDeposit || start == null || bps == null) return BigInt.zero;
+    final end = maturityDate != null && maturityDate!.compareTo(today) < 0
+        ? maturityDate!
+        : today;
+    final days = _daysBetween(start, end);
+    if (days <= 0 || bps == 0 || costBasisMinor == BigInt.zero) {
+      return BigInt.zero;
+    }
+    final numerator =
+        costBasisMinor * BigInt.from(bps) * BigInt.from(days) * BigInt.two;
+    final divisor = BigInt.from(10000 * 365) * BigInt.two;
+    return (numerator + divisor ~/ BigInt.two) ~/ divisor;
+  }
+
+  /// Interest over the whole term; null when the deposit has no maturity.
+  BigInt? get interestAtMaturity =>
+      maturityDate == null ? null : interestOn(maturityDate!);
 }
+
+int _daysBetween(String from, String to) =>
+    DateTime.parse('${to}T00:00:00Z')
+        .difference(DateTime.parse('${from}T00:00:00Z'))
+        .inDays;
+
+/// Whole days of a deposit's term, for renewing it for the same length.
+int depositTermDays(String startDate, String maturityDate) =>
+    _daysBetween(startDate, maturityDate);
 
 /// Totals of one currency, whole or for one kind.
 class InvestmentTotal {

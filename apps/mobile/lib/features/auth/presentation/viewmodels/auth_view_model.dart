@@ -40,6 +40,10 @@ abstract class AuthViewModel extends ChangeNotifier {
   Future<void> resendVerification();
   void goTo(AuthStep step);
 
+  /// Keeps what was typed in the email field so the next screen can start
+  /// from it ("Quên mật khẩu" opens with the sign-in email).
+  void draftEmail(String value);
+
   /// Leaves Welcome for [next] and remembers it was shown, so it never repeats.
   Future<void> leaveWelcome(AuthStep next);
 
@@ -213,6 +217,9 @@ class DefaultAuthViewModel extends AuthViewModel {
     () => _useCases.submit(AuthAction.requestVerification, {'email': email}),
     (_) => notice = AuthNotice.verificationSent,
   );
+
+  @override
+  void draftEmail(String value) => email = value.trim().toLowerCase();
 
   @override
   void goTo(AuthStep next) {

@@ -15,7 +15,7 @@ import '../../../../core/widgets/freeva_top_bar.dart';
 import '../../../../core/widgets/settings_group.dart';
 import '../../../../core/widgets/skeleton.dart';
 import '../../../reports/presentation/widgets/report_labels.dart';
-import '../../../settings/presentation/widgets/balances_hidden_builder.dart';
+import '../widgets/shown_balances.dart';
 import '../../domain/investment.dart';
 import '../viewmodels/investment_view_model.dart';
 import '../widgets/investment_labels.dart';
@@ -56,7 +56,7 @@ class _InvestmentsPageState extends State<InvestmentsPage> {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final margin = context.screenMargin;
-    return BalancesHiddenBuilder(
+    return ShownBalances(
       builder: (context, hidden) => ListenableBuilder(
         listenable: model,
         builder: (context, _) => Scaffold(
@@ -184,6 +184,9 @@ class _InvestmentsPageState extends State<InvestmentsPage> {
         InvestmentKindCard(
           row: row,
           names: model.names(row.kind!),
+          expectedInterest: row.kind == InvestmentKind.savingsDeposit
+              ? model.expectedDepositInterest
+              : null,
           digits: model.digits,
           hidden: hidden,
           onTap: () => _openKind(context, row.kind!),

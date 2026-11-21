@@ -38,11 +38,7 @@ class _AutoSuggestPageState extends State<AutoSuggestPage> {
 
   void _toastIfFailed(bool ok) {
     if (ok || !mounted) return;
-    showFreevaToast(
-      context,
-      message: S.of(context).autoSuggestError,
-      aboveNav: false,
-    );
+    showFreevaToast(context, message: S.of(context).autoSuggestError);
   }
 
   Future<void> _toggle(bool value) async =>

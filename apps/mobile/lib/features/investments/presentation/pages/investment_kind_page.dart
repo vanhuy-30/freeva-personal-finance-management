@@ -14,7 +14,7 @@ import '../../../../core/widgets/freeva_top_bar.dart';
 import '../../../../core/widgets/settings_row.dart';
 import '../../../../core/widgets/skeleton.dart';
 import '../../../reports/presentation/widgets/report_labels.dart';
-import '../../../settings/presentation/widgets/balances_hidden_builder.dart';
+import '../widgets/shown_balances.dart';
 import '../../domain/investment.dart';
 import '../viewmodels/investment_view_model.dart';
 import '../widgets/investment_asset_card.dart';
@@ -65,7 +65,7 @@ class _InvestmentKindPageState extends State<InvestmentKindPage> {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final margin = context.screenMargin;
-    return BalancesHiddenBuilder(
+    return ShownBalances(
       builder: (context, hidden) => ListenableBuilder(
         listenable: model,
         builder: (context, _) => Scaffold(
@@ -130,6 +130,9 @@ class _InvestmentKindPageState extends State<InvestmentKindPage> {
     return [
       InvestmentKindHeader(
         row: row,
+        expectedInterest: kind == InvestmentKind.savingsDeposit
+            ? model.expectedDepositInterest
+            : null,
         quantity: units.length == 1 && !kind.singleLot
             ? investmentQuantityText(s, sum, units.first, locale)
             : null,
