@@ -2,15 +2,32 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { AppConfigReader } from '../app-config/app-config.reader';
 import { BudgetService } from '../budgets/budget.service';
 import { AutoSuggestPolicy } from '../category-suggestions/auto-suggest.policy';
+import { occurrencesInRange } from '../recurring/domain/calendar';
 import { previousPeriod, resolvePeriod, todayInTimeZone } from '../reports/domain/report';
-import { goalForecast, spendForecast, type GoalForecast, type SpendForecast } from './domain/spend-forecast';
+import { balanceOutlook, dailySpend, goalForecast, spendForecast, type BalanceOutlook, type GoalForecast, type SpendForecast, type SpendInput } from './domain/spend-forecast';
 import { SPEND_FORECAST_REPOSITORY, type SpendForecastRepository } from './domain/spend-forecast.repository';
 
 const money = (value: bigint | null) => (value === null ? null : value.toString());
 
-function spendView(result: SpendForecast) {
+function balanceView(result: BalanceOutlook | null) {
+  if (!result) return null;
   return {
     ...result,
+    balanceMinor: money(result.balanceMinor),
+    incomeAheadMinor: money(result.incomeAheadMinor),
+    billsAheadMinor: money(result.billsAheadMinor),
+    dailySpendMinor: money(result.dailySpendMinor),
+    variableAheadMinor: money(result.variableAheadMinor),
+    endMinor: money(result.endMinor),
+    endLowMinor: money(result.endLowMinor),
+    endHighMinor: money(result.endHighMinor),
+  };
+}
+
+function spendView(result: SpendForecast, balance: BalanceOutlook | null) {
+  return {
+    ...result,
+    balance: balanceView(balance),
     spentMinor: money(result.spentMinor),
     forecastMinor: money(result.forecastMinor),
     dailyAverageMinor: money(result.dailyAverageMinor),
@@ -51,7 +68,7 @@ export class SpendForecastService {
     const previous = previousPeriod(month);
     const ledger = await this.repository.ledger(userId, profile.defaultCurrencyCode, previous.from, today);
     const { budget } = await this.budgets.current(userId, { on: today });
-    const result = spendForecast({
+    const input: SpendInput = {
       today, current: { from: month.from, to: month.to }, previous, ...ledger,
       // A budget in another currency is not compared with these totals.
       budgetLimitMinor: budget && budget.currencyCode === profile.defaultCurrencyCode ? BigInt(budget.limitMinor) : null,
@@ -60,8 +77,19 @@ export class SpendForecastService {
         mediumRiskPercent: await this.config.value('spendForecast.mediumRiskPercent'),
         highRiskPercent: await this.config.value('spendForecast.highRiskPercent'),
       },
+    };
+    const result = spendForecast(input);
+    const wallets = await this.repository.outlook(userId, profile.defaultCurrencyCode);
+    const balance = wallets.walletCount === 0 ? null : balanceOutlook({
+      today, periodTo: month.to, balanceMinor: wallets.balanceMinor,
+      events: wallets.rules.flatMap(rule => occurrencesInRange({
+        nextExecutionDate: rule.nextExecutionDate, startDate: rule.startDate, endDate: rule.endDate,
+        rangeFrom: today, rangeTo: month.to, unit: rule.unit, interval: rule.interval, active: true,
+      }).map(date => ({ date, amountMinor: rule.amountMinor }))),
+      // Until the pace is known the outlook shows only what is already certain.
+      dailySpendMinor: result.status === 'ok' ? dailySpend(input) : null,
     });
-    return { currencyCode: profile.defaultCurrencyCode, period: { from: month.from, to: month.to, today }, forecast: spendView(result) };
+    return { currencyCode: profile.defaultCurrencyCode, period: { from: month.from, to: month.to, today }, forecast: spendView(result, balance) };
   }
 
   /** `forecast: null` when forecasts are off for the user; 404 when the goal is not theirs. */

@@ -41,10 +41,10 @@ describe('investmentValueOn', () => {
     const all = gold({ trades: [...gold().trades, { id: 't3', side: 'sell', quantityScaled: q('6'), amountMinor: 49_000_000n, tradedOn: '2026-11-04', createdAt: new Date('2026-11-04T01:00:00Z') }] });
     expect(investmentValueOn(all, '2026-11-05')).toBe(0n);
   });
-  it('accrues deposit interest to the day', () => {
+  it('counts a deposit at principal only, whatever the day', () => {
     const deposit = gold({ kind: 'savings_deposit', unit: 'deposit', interestRateBps: 1200, startDate: '2026-01-01', maturityDate: null,
       trades: [{ id: 't4', side: 'buy', quantityScaled: q('1'), amountMinor: 100_000_000n, tradedOn: '2026-01-01', createdAt: new Date('2026-01-01T01:00:00Z') }], prices: [] });
-    expect(investmentValueOn(deposit, '2027-01-01')).toBe(112_000_000n);
+    expect(investmentValueOn(deposit, '2027-01-01')).toBe(100_000_000n);
   });
 });
 

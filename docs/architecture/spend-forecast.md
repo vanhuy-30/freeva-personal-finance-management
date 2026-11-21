@@ -1,6 +1,6 @@
 # Dự báo chi cuối tháng và ngày dự kiến đạt mục tiêu — BE-P5-E06 / MOB-P5-E06
 
-Contract: [OpenAPI](../../packages/api-contracts/openapi.yaml) `GET /api/v1/spending-forecast`, `GET /api/v1/goals/{id}/forecast`. Màn: board S.2 (thẻ đầu Phân tích), S.3 (Dự báo chi), T.1 (chi tiết mục tiêu) — [pattern](../brand/patterns/R-suggestions-insights.md). Khác [forecast.md](forecast.md) (`BE-P3-E04`: dự báo **số dư** chỉ từ định kỳ và hóa đơn).
+Contract: [OpenAPI](../../packages/api-contracts/openapi.yaml) `GET /api/v1/spending-forecast`, `GET /api/v1/goals/{id}/forecast`. Màn: board S.2 (thẻ đầu Phân tích), S.3 (Dự báo chi), T.1 (chi tiết mục tiêu) — [pattern](../brand/patterns/R-suggestions-insights.md). [forecast.md](forecast.md) (`BE-P3-E04`: dự báo số dư chỉ từ định kỳ) không còn màn trên app từ 2026-11-21: phần "số dư cuối tháng" bên dưới thay nó.
 
 ## Chức năng
 
@@ -14,6 +14,16 @@ Hai con số **dự đoán**, không phải số đã xảy ra; app ghi rõ trê
 - `dailyAllowanceMinor` = (ngân sách − đã chi) ÷ số ngày còn lại; null khi không có ngân sách, đã vượt hoặc ngày cuối.
 - Chưa đủ `spendForecast.minDays` (3) ngày: `status = insufficient`, không có số dự báo.
 - Kèm `cumulative` (đã chi cộng dồn từng ngày, cho biểu đồ) và `topCategories` (3 danh mục gốc chi nhiều nhất, con gộp vào cha).
+
+## Số dư cuối tháng (`balanceOutlook`, thuần; chốt 2026-11-21)
+
+Trả lời "cuối tháng tôi còn bao nhiêu", nằm trong `forecast.balance` (null khi không có ví không phải thẻ cùng tiền tệ hồ sơ).
+
+- Số dư hiện tại = ví chưa lưu trữ, không phải thẻ tín dụng, tiền tệ hồ sơ.
+- Khoản chắc chắn = các lần tới hạn của quy tắc định kỳ thu/chi đang bật (cùng tiền tệ, không gắn ví thẻ) từ hôm nay đến hết tháng tài chính. Ngày hôm nay tính.
+- Chi thường ngày = chi − hoàn tiền **không do quy tắc định kỳ ghi** (`transactions.recurringRuleId` null) từ đầu tháng đến hôm nay ÷ số ngày đã qua. Loại khoản định kỳ để khỏi đếm hai lần với khoản định kỳ sắp đến. Chưa đủ `spendForecast.minDays` ngày thì `null`, chỉ còn số dư cộng trừ khoản chắc chắn.
+- Đi từng ngày đến hết tháng: cộng thu, trừ chi định kỳ vào đúng ngày, trừ nhịp chi thường ngày mỗi ngày sau hôm nay. `endMinor` là số dư ngày cuối; `endLowMinor`/`endHighMinor` khi chi thường ngày cao/thấp hơn nhịp 25% (hằng `VARIABLE_SPREAD_PERCENT`); `runsOutOn` là ngày đầu tiên số dư xuống dưới 0.
+- Chưa tính: thanh toán thẻ tín dụng, trả góp, khoản vay, hóa đơn lịch không đi qua quy tắc định kỳ. Chi bằng thẻ vẫn nằm trong nhịp chi thường ngày (không trừ ví cho đến khi trả thẻ), nên số hơi thận trọng.
 
 ## Ngày dự kiến đạt mục tiêu (`goalForecast`, thuần)
 
@@ -34,5 +44,6 @@ Module `spend-forecast`: domain thuần, repository Prisma, service (kỳ tài c
 
 - **S.2** (`lib/features/spend_forecast/`): thẻ ở đầu màn Phân tích, trên "ĐÁNG CHÚ Ý · N", hiện cả khi danh sách điều đáng chú ý trống. Chip rủi ro, số dự báo, thanh đã chi + phần dự báo sọc + vạch ngân sách; không có ngân sách thì bên phải chú thích là "Tháng trước". Chưa đủ ngày: "Chưa đủ dữ liệu, xem lại sau vài ngày", không chạm được. Tải lại mỗi lần mở màn và khi kéo làm mới; lỗi chỉ ẩn thẻ.
 - **S.3** `/insights/spending-forecast`: số dự báo, "Vượt ngân sách khoảng…", biểu đồ cộng dồn (vẽ tay, có nhãn đọc màn hình), "Trung bình mỗi ngày" và "Để không vượt, mỗi ngày dưới…" (không có thì "Tháng trước"), 3 danh mục chi nhiều nhất, dòng "Dự đoán… chưa phải số đã chi."; chưa đủ dữ liệu thì màn trống.
+- **Số dư cuối tháng:** đầu màn S.3 là thẻ "Cuối tháng N còn khoảng" (số, khoảng thấp–cao, ô đỏ "Với nhịp này, bạn sẽ hết tiền vào ngày …" khi `runsOutOn`, các dòng số dư ví / thu định kỳ / chi định kỳ / chi thường ngày). Chưa đủ ngày thì vẫn hiện thẻ (không có khoảng và dòng chi thường ngày) phía trên "Chưa đủ dữ liệu". Thẻ S.2 thêm một dòng "Cuối tháng còn khoảng …" hoặc "Hết tiền vào ngày …".
 - **T.1** (`goals`): ô "Ngày đạt" trên chi tiết đổi thành "Hạn" (form tạo/sửa giữ "Ngày đạt" theo board I.3). Thẻ "Với mức góp gần đây · Dự kiến đạt MM/yyyy", chip Trễ/Sớm N tháng hoặc Kịp hạn, dải mốc Hôm nay → Hạn → Dự kiến (sớm thì Dự kiến ở giữa), dòng mức góp trung bình và, khi trễ, "Góp X mỗi tháng để kịp hạn." Tải khi mở chi tiết và sau Góp thêm / Rút ra; đã đạt, tắt hoặc lỗi thì không có thẻ.
 - Golden S.2, S.3 sáng/tối, T.1; đối chiếu board bằng `design_compare` nhóm `S`, `T`.
