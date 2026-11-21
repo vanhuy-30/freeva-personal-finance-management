@@ -112,6 +112,15 @@
    "x": 0,
    "y": 0
   },
+  "BHomeLite.dc.html": {
+   "h": 1200,
+   "is_interactive": true,
+   "page": "ov",
+   "title": "B · 1b. Tổng quan · chỉ có thẻ Đầu tư (tile rộng)",
+   "w": 390,
+   "x": 1840,
+   "y": 6900
+  },
   "BLoading.dc.html": {
    "h": 844,
    "is_interactive": true,
@@ -874,7 +883,7 @@
    "y": 0
   },
   "PAddDeposit.dc.html": {
-   "h": 1030,
+   "h": 1084,
    "is_interactive": true,
    "page": "wa",
    "title": "P · 6. Khoản mới · tiền gửi",
@@ -883,7 +892,7 @@
    "y": 2680
   },
   "PAddGold.dc.html": {
-   "h": 1070,
+   "h": 1124,
    "is_interactive": true,
    "page": "wa",
    "title": "P · 5. Khoản mới",
@@ -1477,6 +1486,15 @@
    "w": 390,
    "x": 3680,
    "y": 0
+  },
+  "TxWalletPick.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "page": "ov",
+   "title": "C · Chọn ví khi ghi chi (thẻ tín dụng: dư nợ và khả dụng)",
+   "w": 390,
+   "x": 2300,
+   "y": 6900
   },
   "Type.dc.html": {
    "h": 860,
@@ -2168,7 +2186,9 @@
   "PMaturedPaid.dc.html",
   "RepBreakdown.dc.html",
   "RepMonthRange.dc.html",
-  "RepCashflowStates.dc.html"
+  "RepCashflowStates.dc.html",
+  "BHomeLite.dc.html",
+  "TxWalletPick.dc.html"
  ],
  "pages": [
   {
