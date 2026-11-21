@@ -43,7 +43,10 @@ class ReportBreakdownPage extends StatelessWidget {
         title: expense
             ? s.reportBreakdownPageExpense
             : s.reportBreakdownPageIncome,
-        subtitle: [title.title, ?title.subtitle].join(' · '),
+        subtitle: [
+          title.title,
+          if (title.subtitle != null) title.subtitle!,
+        ].join(' · '),
         onLeading: () => context.popOrGo('/reports'),
       ),
       body: ListView(

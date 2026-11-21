@@ -86,6 +86,15 @@ class ReportTotalCard extends StatelessWidget {
               symbol: symbol,
               change: change(summary.expenseChangeBps, better: false),
             );
+            final savingsChange = change(
+              summary.savingsChangeBps,
+              better: true,
+            );
+            final rateChange = change(
+              summary.savingsRateChangeBps,
+              better: true,
+              points: true,
+            );
             final savedText = Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -97,7 +106,7 @@ class ReportTotalCard extends StatelessWidget {
                   symbol: symbol,
                   size: 24,
                 ),
-                ?change(summary.savingsChangeBps, better: true),
+                if (savingsChange != null) savingsChange,
               ],
             );
             final ring = Column(
@@ -106,11 +115,7 @@ class ReportTotalCard extends StatelessWidget {
                 _RateRing(rateBps: rate),
                 const SizedBox(height: 2),
                 Text(s.reportSavingsRate, style: _label(c)),
-                ?change(
-                  summary.savingsRateChangeBps,
-                  better: true,
-                  points: true,
-                ),
+                if (rateChange != null) rateChange,
               ],
             );
             final stats = Row(
@@ -342,7 +347,7 @@ class _Stat extends StatelessWidget {
             ),
           ),
         ),
-        ?change,
+        if (change != null) change!,
       ],
     );
   }
