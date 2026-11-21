@@ -393,4 +393,93 @@ describe('BE-P1-007 / BE-P2-E06 / BE-P2-E08 HTTP + PostgreSQL', () => {
     expect((await request('/month-review', '')).status).toBe(401);
     for (const secret of [token, 'Housing', 'Private report note', '3000']) expect(logs).not.toContain(secret);
   });
+
+  describe('period flow, wallet balances and holdings', () => {
+    const range = '?period=range&from=2020-03-01&to=2020-03-10';
+
+    async function ledger() {
+      const bank = await account('bank', 'VND', 1_000_000n);
+      const card = await account('credit', 'VND', -2_000_000n);
+      await transaction({ accountId: bank.id, currencyCode: 'VND', type: 'income', amountMinor: 300_000n, occurredOn: '2020-02-20' });
+      await transaction({ accountId: bank.id, currencyCode: 'VND', type: 'income', amountMinor: 5_000_000n, occurredOn: '2020-03-02' });
+      await transaction({ accountId: bank.id, currencyCode: 'VND', type: 'expense', amountMinor: -1_000_000n, occurredOn: '2020-03-03' });
+      await transaction({ accountId: bank.id, currencyCode: 'VND', type: 'expense', amountMinor: -200_000n, occurredOn: '2020-03-03' });
+      await transaction({ accountId: card.id, currencyCode: 'VND', type: 'expense', amountMinor: -500_000n, occurredOn: '2020-03-04' });
+      const group = randomUUID();
+      await transaction({ accountId: bank.id, currencyCode: 'VND', type: 'transfer', amountMinor: -1_000_000n, occurredOn: '2020-03-06', transferGroupId: group });
+      await transaction({ accountId: card.id, currencyCode: 'VND', type: 'transfer', amountMinor: 1_000_000n, occurredOn: '2020-03-06', transferGroupId: group });
+      return { bank, card };
+    }
+
+    it('reports the wallet money at the end of the period and of the one before it, without credit wallets', async () => {
+      await ledger();
+      const res = await request(`/cashflow${range}`);
+      expect(res.status).toBe(200);
+      // 1.000.000 + 300.000 + 5.000.000 - 1.200.000 - 1.000.000 transferred out = 4.100.000; the day before the period: 1.300.000.
+      expect(res.body?.walletBalances).toEqual([{ currency: 'VND', endMinor: '4100000', previousEndMinor: '1300000' }]);
+      expect((await request(`/cashflow${range}`, otherToken)).body?.walletBalances).toEqual([]);
+    });
+
+    it('gives one point per day for a short range, with the income and expense of each day', async () => {
+      await ledger();
+      const res = await request(`/flow${range}`);
+      expect(res.status).toBe(200);
+      const body = res.body as { granularity: string; period: object; buckets: { from: string; to: string; totals: object[] }[] };
+      expect(body.granularity).toBe('day');
+      expect(body.period).toEqual({ kind: 'range', from: '2020-03-01', to: '2020-03-10' });
+      expect(body.buckets).toHaveLength(10);
+      expect(body.buckets[0]).toEqual({ from: '2020-03-01', to: '2020-03-01', totals: [] });
+      expect(body.buckets[1].totals).toEqual([{ currency: 'VND', incomeMinor: '5000000', expenseMinor: '0' }]);
+      // Transfers are not cash flow; the card expense on 04/03 and the bank expenses on 03/03 are.
+      expect(body.buckets[2].totals).toEqual([{ currency: 'VND', incomeMinor: '0', expenseMinor: '-1200000' }]);
+      expect(body.buckets[3].totals).toEqual([{ currency: 'VND', incomeMinor: '0', expenseMinor: '-500000' }]);
+      expect(body.buckets[5].totals).toEqual([]);
+      expect((await request(`/flow${range}`, otherToken)).body?.buckets).toHaveLength(10);
+      expect(((await request(`/flow${range}`, otherToken)).body?.buckets as { totals: object[] }[]).every(bucket => bucket.totals.length === 0)).toBe(true);
+    });
+
+    it('goes week by week for a long range and month by month for a past year', async () => {
+      await ledger();
+      const weekly = (await request('/flow?period=range&from=2020-02-01&to=2020-03-31')).body as { granularity: string; buckets: { from: string; to: string }[] };
+      expect(weekly.granularity).toBe('week');
+      expect(weekly.buckets[0]).toEqual(expect.objectContaining({ from: '2020-02-01', to: '2020-02-07' }));
+      expect(weekly.buckets[weekly.buckets.length - 1].to).toBe('2020-03-31');
+      const yearly = (await request('/flow?period=year&on=2020-06-01')).body as { granularity: string; buckets: { from: string; to: string; totals: object[] }[] };
+      expect(yearly.granularity).toBe('month');
+      expect(yearly.buckets).toHaveLength(12);
+      expect(yearly.buckets[2]).toEqual(expect.objectContaining({ from: '2020-03-01', to: '2020-03-31' }));
+      expect(yearly.buckets[2].totals).toEqual([{ currency: 'VND', incomeMinor: '5000000', expenseMinor: '-1700000' }]);
+    });
+
+    it('tells how debt moved: loans, a card in debt, paying the card and spending on it', async () => {
+      await ledger();
+      const loan = await prisma.loan.create({ data: {
+        userId: owner, clientId: randomUUID(), kind: 'personal', name: 'Car loan', currencyCode: 'VND', principalMinor: 10_000_000n,
+        outstandingMinor: 9_000_000n, installmentMinor: 1_000_000n, startDate: new Date('2020-01-01T00:00:00.000Z'), nextDueDate: new Date('2099-01-01T00:00:00.000Z'),
+      } });
+      await prisma.loanPayment.create({ data: {
+        loanId: loan.id, userId: owner, clientId: randomUUID(), principalMinor: 1_000_000n, interestMinor: 0n, paidOn: new Date('2020-03-05T00:00:00.000Z'),
+      } });
+      const res = await request(`/holdings${range}`);
+      expect(res.status).toBe(200);
+      // Start: loan 9m + 1m paid later = 10m, card 2m. End: loan 9m, card 2m + 0,5m spent - 1m paid = 1,5m.
+      expect(res.body).toEqual({
+        period: { kind: 'range', from: '2020-03-01', to: '2020-03-10' },
+        debt: [{ currency: 'VND', startMinor: '12000000', endMinor: '10500000', changeMinor: '-1500000', paidMinor: '2000000', borrowedMinor: '500000' }],
+        investments: [],
+        nextLoanDue: [{ currency: 'VND', dueOn: '2099-01-01', amountMinor: '1000000' }],
+      });
+      expect((await request(`/holdings${range}`, otherToken)).body).toEqual({
+        period: { kind: 'range', from: '2020-03-01', to: '2020-03-10' }, debt: [], investments: [], nextLoanDue: [],
+      });
+    });
+
+    it('rejects a display currency or a missing period, and needs a session', async () => {
+      for (const path of ['/flow?period=month&displayCurrency=VND', '/flow', '/holdings', '/holdings?period=decade', '/flow?period=range&from=2020-03-10&to=2020-03-01']) {
+        expect((await request(path)).status).toBe(400);
+      }
+      expect((await request(`/flow${range}`, '')).status).toBe(401);
+      expect((await request(`/holdings${range}`, '')).status).toBe(401);
+    });
+  });
 });

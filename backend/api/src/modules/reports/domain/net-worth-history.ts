@@ -1,7 +1,7 @@
 import {
   applyBuy, applySell, tradeOrder, valuate, type InvestmentKind, type InvestmentRecord, type InvestmentSide,
 } from '../../investments/domain/investment';
-import { buildNetWorth, type NetWorthAggregate, type SeriesWindow, type TrendBucket } from './report';
+import { buildNetWorth, type NetWorthAggregate, type ResolvedPeriod, type SeriesWindow, type TrendBucket } from './report';
 
 /** Wallet balances at the end of one bucket, per currency and side (credit wallets are liabilities). */
 export type WalletBalanceRow = { index: number; currency: string; bucket: 'asset' | 'liability'; total: bigint };
@@ -146,4 +146,105 @@ export function buildInvestmentValueHistory(window: SeriesWindow, source: Invest
       return { from: bucket.from, to: bucket.to, asOf, items };
     }),
   };
+}
+
+export type HoldingsSource = {
+  period: ResolvedPeriod;
+  /** The evening before the period began, and its last day (never later than today). */
+  startDay: string;
+  endDay: string;
+  /** Wallet balances on those two days: index 0 is `startDay`, index 1 is `endDay`. */
+  wallets: WalletBalanceRow[];
+  debts: DebtHistory[];
+  loans: LoanHistory[];
+  /** Money moved into credit-card wallets during the period (paying the card), per currency. */
+  cardPayments: { currency: string; total: bigint }[];
+  /** Soonest unpaid loan installment per currency, from today on. */
+  loanDues: { currency: string; dueOn: string; amountMinor: bigint | null }[];
+  investments: InvestmentHistory[];
+};
+
+const inPeriod = (day: string, source: { startDay: string; endDay: string }) => day > source.startDay && day <= source.endDay;
+const nonNegative = (value: bigint) => (value < 0n ? 0n : value);
+
+/**
+ * What changed in debt and in investments during one period, per currency.
+ *
+ * Debt is what the user owes: loans, money borrowed from people and what the credit-card wallets are short. `paid` counts loan
+ * principal, repayments of borrowed money and payments into a card wallet; `borrowed` is whatever else moved the debt (new loans,
+ * new borrowing, spending on a card), derived as `change + paid` so the three always add up.
+ *
+ * Investments: `pnl` is the value gained or lost, i.e. end value minus start value minus money put in plus money taken out.
+ * Buys and sells are read from the trades, so a position bought "before using the app" still counts as money put in.
+ */
+export function buildHoldings(source: HoldingsSource) {
+  const debtIn = new Map<string, { start: bigint; end: bigint; paid: bigint }>();
+  const bucket = (currency: string) => {
+    const item = debtIn.get(currency) ?? { start: 0n, end: 0n, paid: 0n };
+    debtIn.set(currency, item);
+    return item;
+  };
+  for (const row of source.wallets) {
+    if (row.bucket !== 'liability') continue;
+    // A card wallet's balance is negative while it is in debt; a surplus is not debt.
+    const owed = nonNegative(-row.total);
+    if (row.index === 0) bucket(row.currency).start += owed;
+    else bucket(row.currency).end += owed;
+  }
+  for (const debt of source.debts) {
+    if (debt.direction !== 'borrowed') continue;
+    const item = bucket(debt.currency);
+    item.start += nonNegative(debtOutstandingOn(debt, source.startDay));
+    item.end += nonNegative(debtOutstandingOn(debt, source.endDay));
+    for (const payment of debt.payments) if (inPeriod(payment.paidOn, source)) item.paid += payment.amountMinor;
+  }
+  for (const loan of source.loans) {
+    const item = bucket(loan.currency);
+    item.start += nonNegative(loanOutstandingOn(loan, source.startDay));
+    item.end += nonNegative(loanOutstandingOn(loan, source.endDay));
+    for (const payment of loan.payments) if (inPeriod(payment.paidOn, source)) item.paid += payment.principalMinor;
+  }
+  for (const payment of source.cardPayments) bucket(payment.currency).paid += payment.total;
+
+  const investedIn = new Map<string, { start: bigint; end: bigint; invested: bigint; withdrawn: bigint }>();
+  for (const history of source.investments) {
+    const item = investedIn.get(history.currency) ?? { start: 0n, end: 0n, invested: 0n, withdrawn: 0n };
+    item.start += investmentValueOn(history, source.startDay);
+    item.end += investmentValueOn(history, source.endDay);
+    for (const trade of history.trades) {
+      if (!inPeriod(trade.tradedOn, source)) continue;
+      if (trade.side === 'buy') item.invested += trade.amountMinor;
+      else item.withdrawn += trade.amountMinor;
+    }
+    investedIn.set(history.currency, item);
+  }
+
+  const byCurrency = <T>(map: Map<string, T>) => [...map.entries()].sort(([a], [b]) => a.localeCompare(b));
+  return {
+    period: { kind: source.period.kind, from: source.period.from, to: source.period.to },
+    debt: byCurrency(debtIn).filter(([, item]) => item.start !== 0n || item.end !== 0n || item.paid !== 0n).map(([currency, item]) => {
+      const change = item.end - item.start;
+      return {
+        currency, startMinor: item.start.toString(), endMinor: item.end.toString(), changeMinor: change.toString(),
+        paidMinor: item.paid.toString(), borrowedMinor: (change + item.paid).toString(),
+      };
+    }),
+    investments: byCurrency(investedIn).filter(([, item]) => item.start !== 0n || item.end !== 0n || item.invested !== 0n || item.withdrawn !== 0n).map(([currency, item]) => {
+      const pnl = item.end - item.start - item.invested + item.withdrawn;
+      const base = item.start + item.invested;
+      return {
+        currency, startValueMinor: item.start.toString(), endValueMinor: item.end.toString(), investedMinor: item.invested.toString(),
+        withdrawnMinor: item.withdrawn.toString(), pnlMinor: pnl.toString(), pnlBps: base > 0n ? bpsOf(pnl, base) : null,
+      };
+    }),
+    nextLoanDue: [...source.loanDues].sort((a, b) => a.currency.localeCompare(b.currency)).map(due => ({
+      currency: due.currency, dueOn: due.dueOn, amountMinor: due.amountMinor === null ? null : due.amountMinor.toString(),
+    })),
+  };
+}
+
+function bpsOf(value: bigint, base: bigint): number {
+  const bps = (value * 10000n) / base;
+  const max = BigInt(Number.MAX_SAFE_INTEGER);
+  return Number(bps > max ? max : bps < -max ? -max : bps);
 }

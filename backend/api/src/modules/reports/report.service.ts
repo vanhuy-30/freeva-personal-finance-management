@@ -2,10 +2,10 @@ import { Inject, Injectable } from '@nestjs/common';
 import { FxRateService } from '../fx-rates/fx-rate.service';
 import { REPORT_REPOSITORY, type ReportRepository } from './domain/report.repository';
 import {
-  buildCashflow, buildMonthReview, buildNetWorth, buildSeries, buildTrend, convertCashflow, convertNetWorth, resolvePeriod, seriesBuckets, trendBuckets,
+  buildCashflow, buildFlow, buildMonthReview, buildNetWorth, buildSeries, buildTrend, convertCashflow, convertNetWorth, flowBuckets, resolvePeriod, seriesBuckets, trendBuckets,
 } from './domain/report';
-import { buildInvestmentValueHistory, buildNetWorthHistory } from './domain/net-worth-history';
-import type { CashflowQueryDto, InvestmentHistoryQueryDto, MonthReviewQueryDto, SeriesQueryDto, TrendQueryDto } from './report.dto';
+import { buildHoldings, buildInvestmentValueHistory, buildNetWorthHistory } from './domain/net-worth-history';
+import type { CashflowQueryDto, InvestmentHistoryQueryDto, PeriodQueryDto, MonthReviewQueryDto, SeriesQueryDto, TrendQueryDto } from './report.dto';
 
 @Injectable()
 export class ReportService {
@@ -16,9 +16,18 @@ export class ReportService {
 
   async cashflow(userId: string, query: CashflowQueryDto) {
     const result = await this.repository.cashflow(userId, profile => resolvePeriod(query, profile));
-    const report = buildCashflow(result.period, result.source, { previous: result.previous, merchants: result.merchants });
+    const report = buildCashflow(result.period, result.source, { previous: result.previous, merchants: result.merchants, balances: result.balances });
     if (!query.displayCurrency) return report;
     return { ...report, converted: convertCashflow(report.totals, query.displayCurrency, await this.rates.book(userId)) };
+  }
+
+  async flow(userId: string, query: PeriodQueryDto) {
+    const result = await this.repository.flow(userId, profile => resolvePeriod(query, profile), flowBuckets);
+    return buildFlow(result.period, result.granularity, result);
+  }
+
+  async holdings(userId: string, query: PeriodQueryDto) {
+    return buildHoldings(await this.repository.holdings(userId, profile => resolvePeriod(query, profile)));
   }
 
   monthReview(userId: string, query: MonthReviewQueryDto) {
