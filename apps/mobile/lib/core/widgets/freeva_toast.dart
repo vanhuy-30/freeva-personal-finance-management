@@ -8,10 +8,15 @@ import '../theme/tokens.g.dart';
 
 OverlayEntry? _current;
 
-/// Ink toast at the top of the screen, under the status bar: radius 16, at
-/// least 52 high, 18 mint icon, plain blue action text. 4 s, or 6 s with an
-/// action (usually "Hoàn tác"). One at a time: a new toast replaces the
-/// current one. `success` shows a check when no [icon] is given.
+/// Ink toast: radius 16, at least 52 high, 18 mint icon, plain blue action
+/// text. 4 s, or 6 s with an action (usually "Hoàn tác"). One at a time: a
+/// new toast replaces the current one. `success` shows a check when no
+/// [icon] is given.
+///
+/// Where it sits follows how it is used: a toast with an action is at the
+/// bottom, above the nav bar, so the thumb reaches "Hoàn tác"; a plain notice
+/// is at the top, under the status bar, out of the way of what the user is
+/// doing.
 ///
 /// Drawn in the root overlay, not a SnackBar: it does not depend on the
 /// screen's Scaffold (a bottom bar or a sheet cannot push it off screen) and
@@ -37,6 +42,7 @@ void showFreevaToast(
     builder: (context) => _Toast(
       message: message,
       glyph: icon ?? (success ? LucideIcons.check : null),
+      atBottom: actionLabel != null,
       actionLabel: actionLabel,
       onAction: onAction,
       duration: actionLabel == null
@@ -53,6 +59,7 @@ class _Toast extends StatefulWidget {
   const _Toast({
     required this.message,
     required this.glyph,
+    required this.atBottom,
     required this.actionLabel,
     required this.onAction,
     required this.duration,
@@ -61,6 +68,7 @@ class _Toast extends StatefulWidget {
 
   final String message;
   final IconData? glyph;
+  final bool atBottom;
   final String? actionLabel;
   final VoidCallback? onAction;
   final Duration duration;
@@ -103,17 +111,23 @@ class _ToastState extends State<_Toast> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
-    final top = MediaQuery.paddingOf(context).top + FreevaSpace.s2;
+    final media = MediaQuery.of(context);
+    final top = media.padding.top + FreevaSpace.s2;
+    // Above the nav bar, or above the keyboard when it is open.
+    final bottom = media.viewInsets.bottom > 0
+        ? media.viewInsets.bottom + FreevaSpace.s2
+        : media.padding.bottom + FreevaLayout.navReserve;
     final curve = CurvedAnimation(parent: _slide, curve: FreevaMotion.standard);
     return Positioned(
-      top: top,
+      top: widget.atBottom ? null : top,
+      bottom: widget.atBottom ? bottom : null,
       left: context.screenMargin,
       right: context.screenMargin,
       child: FadeTransition(
         opacity: curve,
         child: SlideTransition(
           position: Tween(
-            begin: const Offset(0, -0.4),
+            begin: Offset(0, widget.atBottom ? 0.4 : -0.4),
             end: Offset.zero,
           ).animate(curve),
           child: Semantics(
@@ -122,7 +136,8 @@ class _ToastState extends State<_Toast> with SingleTickerProviderStateMixin {
               color: Colors.transparent,
               child: GestureDetector(
                 onVerticalDragEnd: (d) {
-                  if ((d.primaryVelocity ?? 0) < 0) _dismiss();
+                  final v = d.primaryVelocity ?? 0;
+                  if (widget.atBottom ? v > 0 : v < 0) _dismiss();
                 },
                 child: Container(
                   constraints: const BoxConstraints(minHeight: 52),

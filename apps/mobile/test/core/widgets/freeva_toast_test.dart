@@ -20,7 +20,7 @@ Widget _app({required void Function(BuildContext) onTap}) => MaterialApp(
 );
 
 void main() {
-  testWidgets('shows under the status bar and leaves after its time', (
+  testWidgets('a plain notice sits at the top and leaves after its time', (
     t,
   ) async {
     await t.pumpWidget(
@@ -35,6 +35,29 @@ void main() {
     await t.pump(const Duration(seconds: 5));
     await t.pump(const Duration(milliseconds: 400));
     expect(find.text('Đã lưu'), findsNothing);
+  });
+
+  testWidgets('a toast with an action sits at the bottom, above the nav', (
+    t,
+  ) async {
+    await t.pumpWidget(
+      _app(
+        onTap: (c) => showFreevaToast(
+          c,
+          message: 'Đã lưu khoản chi',
+          actionLabel: 'Hoàn tác',
+        ),
+      ),
+    );
+    await t.tap(find.text('go'));
+    await t.pump(const Duration(milliseconds: 300));
+    final y = t.getTopLeft(find.text('Đã lưu khoản chi')).dy;
+    final height = t.view.physicalSize.height / t.view.devicePixelRatio;
+    expect(y, greaterThan(height / 2));
+    expect(y, lessThan(height - 100));
+    expect(t.takeException(), isNull);
+    await t.pump(const Duration(seconds: 7));
+    await t.pump(const Duration(milliseconds: 400));
   });
 
   testWidgets('a new toast replaces the current one; the action runs', (
