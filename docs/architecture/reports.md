@@ -77,3 +77,13 @@ Mỗi điểm tách theo tiền tệ, không quy đổi; điểm không có gì 
 ## Kiểm thử
 
 Lệnh và kết quả: [backend test README](../../backend/api/test/README.md#reports--be-p1-007--be-p2-e06--be-p2-e08).
+
+## Số dư ví, dòng tiền và nợ/đầu tư theo kỳ (báo cáo tài chính)
+
+- **`walletBalances`** trong `GET /reports/cashflow`: `[{currency, endMinor, previousEndMinor}]`, tiền ở ví đang dùng **không phải thẻ** vào cuối kỳ (không muộn hơn hôm nay) và cuối kỳ liền trước, cùng quy tắc `walletHistory` của lịch sử tài sản ròng.
+- **`GET /reports/flow?period&on|from&to`:** thu/chi theo điểm, không vượt quá hôm nay: tuần, tháng và khoảng ≤ 31 ngày theo ngày; năm theo tháng dương lịch; khoảng dài hơn theo từng 7 ngày kể từ `from`. `granularity` (`day|week|month`) luôn được đặt theo cả kỳ, kể cả khi chưa có điểm. Mỗi điểm liệt kê các loại tiền có hoạt động; chuyển khoản không tính. App tự cộng dồn.
+- **`GET /reports/holdings?period&on|from&to`:** theo loại tiền, đọc ở tối hôm trước kỳ và ngày cuối kỳ (không muộn hơn hôm nay).
+  - `debt`: nợ = khoản vay chưa lưu trữ + tiền đang mượn người khác + số ví thẻ đang thiếu (thẻ dư không phải nợ). `paidMinor` = gốc vay đã trả + trả khoản mượn + tiền chuyển vào ví thẻ; `borrowedMinor = changeMinor + paidMinor` (vay mới, mượn mới, chi tiêu bằng thẻ) nên ba số luôn khớp.
+  - `investments`: giá trị đầu/cuối kỳ (phát lại giao dịch và giá như lịch sử đầu tư), `investedMinor` = mua trong kỳ (kể cả mua "có sẵn"), `withdrawnMinor` = bán, `pnlMinor = cuối − đầu − đã mua + đã bán`, `pnlBps` trên (đầu + đã mua), null khi mẫu số 0.
+  - `nextLoanDue`: kỳ trả gần nhất của khoản vay đang mở, mỗi loại tiền một dòng.
+  - Giới hạn như lịch sử tài sản ròng: lần sửa tay dư nợ khoản vay không được phát lại.
