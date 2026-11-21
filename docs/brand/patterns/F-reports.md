@@ -1,6 +1,6 @@
 # Nhóm F — Báo cáo
 
-Trạng thái: **chốt thiết kế 2026-10-21**, đã code 2026-10-23 (F1 + F2). Task: `DS-P2-003` (màn Báo cáo); ngân sách thuộc `BE-P2-E02` / `MOB-P2-E02`.
+Trạng thái: **chốt thiết kế 2026-10-21**, đã code 2026-10-23 (F1 + F2). **Làm lại 2026-11-21 thành "Báo cáo tài chính"**: bảng màn dưới đây là bản gốc; bản hiện hành là board `RepMonth` (F.1), `RepBreakdown` (F.1b, toàn bộ cơ cấu), `RepMonthRange` (F.1c, khoảng tuỳ chọn không so sánh), `RepCashflowStates` (F.1d) và mô tả ở [mobile-reports.md](../../architecture/mobile-reports.md). Task: `DS-P2-003` (màn Báo cáo); ngân sách thuộc `BE-P2-E02` / `MOB-P2-E02`.
 Canvas: trang **07 · Tổng quan, báo cáo, dự báo**, khối F. 
 (<https://claude.ai/artifact/SmyaVvz57doJiAM6Kn678T>, riêng tư). Spec chung:
 [design-system.md](../design-system.md).

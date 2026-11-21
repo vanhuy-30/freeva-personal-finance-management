@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8">
-<title>Báo cáo · có dự báo · Báo cáo</title>
+<title>F · 1. Báo cáo tài chính</title>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -26,86 +26,85 @@ a,button{font-family:inherit}
 .bc{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1 1 0;height:100%;justify-content:flex-end}
 .b{width:26px;border-radius:8px 8px 4px 4px;background:#DDE6FB}
 .bl{font-size:11px;color:#5C6378}
+.bar{height:8px;border-radius:999px;background:#EEF0F5;overflow:hidden;display:flex}
+.bar>span{border-radius:999px}
+.ri{display:flex;align-items:center;justify-content:center}
+.ri svg,.nb svg{display:block}
 .ni{width:48px;height:48px;border-radius:999px;color:#5C6378;display:flex;align-items:center;justify-content:center}
 </style>
 </helmet>
-<div style="width: 390px; height: 1640px; box-sizing: border-box; position: relative; overflow: hidden; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; padding: 56px 20px 0 20px; gap: 16px">
-
-  <h1 style="margin: 0; font-size: 28px; line-height: 34px; font-weight: 600; letter-spacing: -0.6px">Báo cáo</h1>
-
-  <div role="tablist" aria-label="Kỳ báo cáo" style="display: flex; background: #EAEDF4; border-radius: 999px; padding: 4px">
-    <a href="#" role="tab" aria-selected="false" class="seg">Tuần</a>
-    <span role="tab" aria-selected="true" class="seg" style="background: #FFFFFF; color: #22283A; font-weight: 600; box-shadow: 0 1px 3px rgba(34,40,58,.12)">Tháng</span>
-    <a href="#" role="tab" aria-selected="false" class="seg">Năm</a>
-    <a href="RepRange.dc.html" role="tab" aria-selected="false" class="seg">Tuỳ chọn</a>
-  </div>
-
+<div style="width: 390px; height: 2738px; box-sizing: border-box; position: relative; overflow: hidden; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; padding: 56px 20px 0 20px; gap: 16px">
+  <h1 style="margin: 0; font-size: 28px; line-height: 34px; font-weight: 600; letter-spacing: -0.6px">Báo cáo tài chính</h1>
+  <div role="tablist" aria-label="Kỳ báo cáo" style="display: flex; background: #EAEDF4; border-radius: 999px; padding: 4px"><a href="#" role="tab" aria-selected="false" class="seg">Tuần</a><span role="tab" aria-selected="true" class="seg" style="background: #FFFFFF; color: #22283A; font-weight: 600; box-shadow: 0 1px 3px rgba(34,40,58,.12)">Tháng</span><a href="#" role="tab" aria-selected="false" class="seg">Năm</a><a href="#" role="tab" aria-selected="false" class="seg">Tuỳ chọn</a></div>
   <div style="display: flex; align-items: center; justify-content: space-between">
-    <a href="RepEmpty.dc.html" class="nb" aria-label="Tháng trước"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg></a>
-    <span class="num" style="display: flex; flex-direction: column; align-items: center"><span style="font-size: 17px; font-weight: 600">Tháng 10, 2026</span><span style="font-size: 12px; color: #5C6378">01/10 – 31/10</span></span>
-    <span class="nb" aria-disabled="true" aria-label="Tháng sau" style="color: #C9CEDD; border-color: #F4F6FB"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></span>
+    <a href="#" class="nb" aria-label="Kỳ trước"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <span class="num" style="display: flex; flex-direction: column; align-items: center"><span style="font-size: 17px; font-weight: 600">Tháng 11, 2026</span><span style="font-size: 12px; color: #5C6378">01/11 – 30/11</span></span>
+    <span class="nb" aria-disabled="true" aria-label="Kỳ sau" style="color: #C9CEDD; border-color: #F4F6FB"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></span>
   </div>
-
-  <div class="card num" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 12px">
-    <span style="display: flex; flex-direction: column; gap: 2px"><span class="k">Thu</span><span style="font-size: 20px; font-weight: 600; color: #23795A">+18.500.000</span></span>
-    <span style="display: flex; flex-direction: column; gap: 2px"><span class="k">Chi</span><span style="font-size: 20px; font-weight: 600">−9.320.000</span><span style="font-size: 12px; color: #5C6378; display: flex; align-items: center; gap: 4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"></path></svg>6% so với T9</span></span>
-    <span style="display: flex; flex-direction: column; gap: 2px; border-top: 1px solid #EEF0F5; padding-top: 12px"><span class="k">Chi trung bình/ngày</span><span style="font-size: 16px; font-weight: 600">443.800</span></span>
-    <span style="display: flex; flex-direction: column; gap: 2px; border-top: 1px solid #EEF0F5; padding-top: 12px"><span class="k">Còn lại</span><span style="font-size: 16px; font-weight: 600">+9.180.000</span></span>
+  <div class="num" style="position: relative; overflow: hidden; background: linear-gradient(155deg, #EAF0FF 0%, #F7F9FF 55%, #FFFFFF 100%); border: 1px solid #E1E8FA; border-radius: 24px; padding: 14px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 1px 2px rgba(34,40,58,.04), 0 10px 26px rgba(34,40,58,.06)">
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+      <span style="background: rgba(255,255,255,.85); border: 1px solid #E8EDFA; border-radius: 18px; padding: 12px; display: flex; flex-direction: column; gap: 6px; min-width: 0">
+        <span style="display: flex; align-items: center; gap: 8px"><span style="width: 28px; height: 28px; border-radius: 999px; background: #E3F4EC; color: #23795A; display: flex; align-items: center; justify-content: center; flex: 0 0 28px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 7L7 17M17 17H7V7"></path></svg></span><span class="k" style="font-size: 12px">Tổng thu nhập</span></span>
+        <span style="font-size: 19px; font-weight: 600; letter-spacing: -0.3px; white-space: nowrap">26.000.000</span><span style="font-size: 12px; font-weight: 600; color: #23795A; display: flex; align-items: center; gap: 3px; flex-wrap: nowrap; white-space: nowrap"><span>▲ 6,1%</span><span style="font-weight: 400; font-size: 10.5px; color: #5C6378">so tháng trước</span></span>
+      </span>
+      <span style="background: rgba(255,255,255,.85); border: 1px solid #E8EDFA; border-radius: 18px; padding: 12px; display: flex; flex-direction: column; gap: 6px; min-width: 0">
+        <span style="display: flex; align-items: center; gap: 8px"><span style="width: 28px; height: 28px; border-radius: 999px; background: #EAEDF4; color: #22283A; display: flex; align-items: center; justify-content: center; flex: 0 0 28px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M7 7h10v10"></path></svg></span><span class="k" style="font-size: 12px">Tổng chi tiêu</span></span>
+        <span style="font-size: 19px; font-weight: 600; letter-spacing: -0.3px; white-space: nowrap">19.389.000</span><span style="font-size: 12px; font-weight: 600; color: #B83434; display: flex; align-items: center; gap: 3px; flex-wrap: nowrap; white-space: nowrap"><span>▲ 12,7%</span><span style="font-weight: 400; font-size: 10.5px; color: #5C6378">so tháng trước</span></span>
+      </span>
+    </div>
+    <div style="background: rgba(255,255,255,.85); border: 1px solid #E8EDFA; border-radius: 18px; padding: 12px 14px; display: flex; align-items: center; gap: 12px">
+      <span style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 0; min-width: 0"><span class="k" style="font-size: 12px">Tiết kiệm (thu − chi)</span><span style="font-size: 24px; line-height: 28px; font-weight: 600; letter-spacing: -0.5px">6.611.000</span><span style="font-size: 12px; font-weight: 600; color: #B83434; display: flex; align-items: center; gap: 3px; flex-wrap: nowrap; white-space: nowrap"><span>▼ 9,4%</span><span style="font-weight: 400; font-size: 10.5px; color: #5C6378">so tháng trước</span></span></span>
+      <span style="display: flex; flex-direction: column; align-items: center; gap: 2px"><svg width="76" height="76" viewBox="0 0 76 76" role="img" aria-label="Tỷ lệ tiết kiệm 25,4%"><g transform="rotate(-90 38 38)" fill="none" stroke-width="8" stroke-linecap="round"><circle cx="38" cy="38" r="30" stroke="#E4E9F7"></circle><circle cx="38" cy="38" r="30" stroke="#3F67D1" stroke-dasharray="47.9 188.5"></circle></g><text x="38" y="43" text-anchor="middle" font-size="15" font-weight="600" fill="#22283A" font-family="Inter">25,4%</text></svg><span class="k" style="font-size: 11px">Tỷ lệ tiết kiệm</span><span style="font-size: 12px; font-weight: 600; color: #B83434; display: flex; align-items: center; gap: 3px; flex-wrap: nowrap; white-space: nowrap"><span>▼ 4,4 điểm</span></span></span>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1px 1fr; gap: 12px; padding: 4px 4px 2px 4px">
+      <span style="display: flex; flex-direction: column; gap: 2px"><span class="k">Tổng số dư ví</span><span style="font-size: 16px; font-weight: 600">48.250.000</span><span style="font-size: 12px; font-weight: 600; color: #23795A; display: flex; align-items: center; gap: 3px; flex-wrap: nowrap; white-space: nowrap"><span>▲ 15,9%</span><span style="font-weight: 400; font-size: 10.5px; color: #5C6378">so tháng trước</span></span></span>
+      <span style="background: #DDE3F3"></span>
+      <span style="display: flex; flex-direction: column; gap: 2px"><span class="k">Chi trung bình/ngày</span><span style="font-size: 16px; font-weight: 600">923.286</span><span style="font-size: 12px; font-weight: 600; color: #B83434; display: flex; align-items: center; gap: 3px; flex-wrap: nowrap; white-space: nowrap"><span>▲ 8,2%</span><span style="font-weight: 400; font-size: 10.5px; color: #5C6378">so tháng trước</span></span></span>
+    </div>
   </div>
-
-  <a href="#" class="card num" style="display: flex; flex-direction: column; gap: 12px; text-decoration: none; color: #22283A">
+  <div class="card" style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 8px">
+    <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 6px"><h2 class="h2">Nhận định</h2><span style="font-size: 12px; color: #5C6378">Tháng này</span></div>
+    <a href="InsAnalysis.dc.html" style="display: flex; align-items: center; gap: 12px; padding: 8px 0; text-decoration: none; color: #22283A"><span class="ri" style="width: 32px; height: 32px; flex: 0 0 32px; border-radius: 10px; background: #FBF4E0; color: #7A5A00"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"></path><path d="M15 7h6v6"></path></svg></span><span style="flex: 1 1 0; font-size: 14px; line-height: 20px; font-weight: 500">Ăn uống tăng 35% so với cùng kỳ tháng trước</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9AA1B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></a>
+    <a href="InsAnalysis.dc.html" style="display: flex; align-items: center; gap: 12px; padding: 8px 0; text-decoration: none; color: #22283A; border-top: 1px solid #EEF0F5"><span class="ri" style="width: 32px; height: 32px; flex: 0 0 32px; border-radius: 10px; background: #FBECEC; color: #B83434"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3L2 20h20zM12 10v4M12 17h.01"></path></svg></span><span style="flex: 1 1 0; font-size: 14px; line-height: 20px; font-weight: 500">Mua sắm đã dùng 90% ngân sách</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9AA1B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></a>
+    <a href="InsAnalysis.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 4px; height: 40px; border-top: 1px solid #EEF0F5; text-decoration: none; color: #3F67D1; font-size: 13px; font-weight: 600">Xem tất cả ở Phân tích<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3F67D1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></a>
+  </div>
+  <div class="card num" style="display: flex; flex-direction: column; gap: 12px">
     <div style="display: flex; align-items: center; justify-content: space-between">
       <h2 class="h2">Ngân sách tháng</h2>
-      <span style="height: 24px; padding: 0 10px; border-radius: 999px; background: #E9F5F0; color: #23795A; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg>Đúng nhịp</span>
+      <span style="height: 24px; padding: 0 10px; border-radius: 999px; background: #FBF4E0; color: #7A5A00; font-size: 12px; font-weight: 600; display: flex; align-items: center">Hơi nhanh</span>
     </div>
     <div style="display: flex; align-items: baseline; justify-content: space-between">
-      <span><span style="font-size: 24px; font-weight: 600; letter-spacing: -0.4px">62%</span> <span style="font-size: 13px; color: #5C6378">đã dùng</span></span>
-      <span style="font-size: 13px; color: #5C6378">trên 15.000.000</span>
+      <span><span style="font-size: 24px; font-weight: 600; letter-spacing: -0.4px">77,5%</span> <span style="font-size: 13px; color: #5C6378">đã dùng</span></span>
+      <span style="font-size: 13px; color: #5C6378">trên 25.000.000 ₫</span>
     </div>
-    <div style="position: relative; height: 10px; border-radius: 999px; background: #EEF0F5" role="img" aria-label="Đã dùng 62% ngân sách, đã qua 68% tháng">
-      <span style="position: absolute; left: 0; top: 0; bottom: 0; width: 62%; border-radius: 999px; background: #5680E9"></span>
-      <span style="position: absolute; left: 68%; top: -4px; width: 2px; height: 18px; border-radius: 2px; background: #22283A"></span>
+    <div style="position: relative; height: 10px; border-radius: 999px; background: #EEF0F5" role="img" aria-label="Đã dùng 77,5% ngân sách, đã qua 70% tháng">
+      <span style="position: absolute; left: 0; top: 0; bottom: 0; width: 77.5%; border-radius: 999px; background: #D49C1A"></span>
+      <span style="position: absolute; left: 70%; top: -4px; width: 2px; height: 18px; border-radius: 2px; background: #22283A"></span>
     </div>
-    <div style="display: flex; justify-content: space-between; font-size: 12px; color: #5C6378"><span>Hôm nay ở 68% tháng</span><span>Còn 10 ngày</span></div>
     <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
-      <span style="background: #F4F6FB; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px"><span class="k">Còn lại</span><span style="font-size: 15px; font-weight: 600">5.680.000</span></span>
-      <span style="background: #F4F6FB; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px"><span class="k">Mỗi ngày tiêu được</span><span style="font-size: 15px; font-weight: 600">568.000</span></span>
+      <span style="background: #F4F6FB; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px"><span class="k">Đã chi</span><span style="font-size: 15px; font-weight: 600">19.389.000 ₫</span></span>
+      <span style="background: #F4F6FB; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px"><span class="k">Còn lại</span><span style="font-size: 15px; font-weight: 600">5.611.000 ₫</span></span>
     </div>
-  </a>
-
-  <a href="RevMonth.dc.html" class="card" style="padding: 10px 14px; display: flex; align-items: center; gap: 12px; text-decoration: none; color: #22283A"><span style="width: 32px; height: 32px; border-radius: 10px; background: #EEF2FD; color: #3F67D1; display: flex; align-items: center; justify-content: center"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4M9 15.5l2 2 4-4"></path></svg></span><span style="flex-grow: 1; font-size: 15px; font-weight: 600">Xem bản soát tháng</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C6378" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></a>
-  <a href="Forecast.dc.html" class="card" style="padding: 10px 14px; display: flex; align-items: center; gap: 12px; text-decoration: none; color: #22283A"><span style="width: 32px; height: 32px; border-radius: 10px; background: #EEF2FD; color: #3F67D1; display: flex; align-items: center; justify-content: center"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"></path><path d="M15 7h6v6"></path></svg></span><span style="flex-grow: 1; font-size: 15px; font-weight: 600">Dự báo số dư</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C6378" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></a>
-
-  <div class="card" style="display: flex; flex-direction: column; gap: 14px">
-    <div style="display: flex; align-items: center; justify-content: space-between">
-      <h2 class="h2">Xu hướng chi</h2>
-      <div role="tablist" aria-label="Xu hướng theo" style="display: flex; background: #F4F6FB; border-radius: 999px; padding: 3px">
-        <a href="#" role="tab" aria-selected="false" class="mini">Tuần</a>
-        <span role="tab" aria-selected="true" class="mini" style="background: #22283A; color: #FFFFFF; font-weight: 600">Tháng</span>
-        <a href="#" role="tab" aria-selected="false" class="mini">Năm</a>
-      </div>
-    </div>
-    <div class="num" role="img" aria-label="Chi 6 tháng gần nhất: T5 7,8 triệu, T6 10,6 triệu, T7 8,9 triệu, T8 11,2 triệu, T9 9,9 triệu, T10 9,32 triệu. Ngân sách 15 triệu." style="position: relative; height: 170px; display: flex; gap: 6px; align-items: flex-end; padding-top: 18px">
-      <span style="position: absolute; left: 0; right: 0; top: 18px; border-top: 1.5px dashed #9AA1B8"></span>
-      <span style="position: absolute; right: 0; top: 0; font-size: 11px; color: #5C6378">Ngân sách 15tr</span>
-      <div class="bc"><span class="bl" style="font-weight: 600; color: #3D4460">7,8tr</span><span class="b" style="height: 68px"></span><span class="bl">T5</span></div>
-      <div class="bc"><span class="bl" style="font-weight: 600; color: #3D4460">10,6tr</span><span class="b" style="height: 92px"></span><span class="bl">T6</span></div>
-      <div class="bc"><span class="bl" style="font-weight: 600; color: #3D4460">8,9tr</span><span class="b" style="height: 77px"></span><span class="bl">T7</span></div>
-      <div class="bc"><span class="bl" style="font-weight: 600; color: #3D4460">11,2tr</span><span class="b" style="height: 97px"></span><span class="bl">T8</span></div>
-      <div class="bc"><span class="bl" style="font-weight: 600; color: #3D4460">9,9tr</span><span class="b" style="height: 86px"></span><span class="bl">T9</span></div>
-      <div class="bc"><span class="bl" style="font-weight: 600; color: #22283A">9,32tr</span><span class="b" style="height: 81px; background: #5680E9"></span><span class="bl" style="font-weight: 600; color: #22283A">T10</span></div>
-    </div>
-    <span class="num" style="font-size: 13px; color: #5C6378">Trung bình 6 tháng: <span style="color: #22283A; font-weight: 600">9.620.000</span></span>
   </div>
-
   <div class="card" style="display: flex; flex-direction: column; gap: 12px">
+    <div style="display: flex; align-items: center; justify-content: space-between"><h2 class="h2">Dòng tiền trong tháng</h2><span style="font-size: 12px; color: #5C6378">Thu − chi, cộng dồn</span></div>
+    <div class="num"><svg width="310" height="172" viewBox="0 0 310 172" role="img" aria-label="Dòng tiền ròng cộng dồn tháng 11: nhận lương 26 triệu ngày 5, hôm nay còn dương 6,611 triệu" style="display: block"><line x1="14" y1="22.0" x2="262" y2="22.0" stroke="#EEF0F5" stroke-width="1"></line><text x="268" y="25.5" font-size="10" fill="#9AA1B8" font-family="Inter">+23,3tr</text><line x1="14" y1="128.0" x2="262" y2="128.0" stroke="#EEF0F5" stroke-width="1"></line><text x="268" y="131.5" font-size="10" fill="#9AA1B8" font-family="Inter">−2,2tr</text><line x1="14" y1="119.0" x2="266" y2="119.0" stroke="#3D4460" stroke-width="1.2" stroke-dasharray="5 4"></line><polygon points="14.0,119.0 14.0,120.3 26.4,122.6 38.8,124.3 51.2,128.0 63.6,22.0 76.0,24.9 88.4,29.1 100.8,31.6 113.2,35.7 125.6,39.0 138.0,41.1 150.4,43.0 162.8,45.7 175.2,47.9 187.6,49.4 200.0,51.3 212.4,53.6 224.8,55.6 237.2,57.0 249.6,58.3 262.0,91.5 262.0,119.0" fill="#EEF2FD"></polygon><polyline points="14.0,120.3 26.4,122.6 38.8,124.3 51.2,128.0 63.6,22.0 76.0,24.9 88.4,29.1 100.8,31.6 113.2,35.7 125.6,39.0 138.0,41.1 150.4,43.0 162.8,45.7 175.2,47.9 187.6,49.4 200.0,51.3 212.4,53.6 224.8,55.6 237.2,57.0 249.6,58.3 262.0,91.5" fill="none" stroke="#3F67D1" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"></polyline><circle cx="63.6" cy="22.0" r="4.5" fill="#23795A" stroke="#FFFFFF" stroke-width="2"></circle><circle cx="262.0" cy="91.5" r="5" fill="#3F67D1" stroke="#FFFFFF" stroke-width="2"></circle><text x="270" y="95.0" font-size="11" font-weight="700" fill="#22283A" font-family="Inter">+6,6tr</text><text x="14" y="164" font-size="11" fill="#5C6378" font-family="Inter">01/11</text><text x="262" y="164" text-anchor="end" font-size="11" fill="#5C6378" font-family="Inter">21/11 · hôm nay</text><text x="270" y="122.5" font-size="10" font-weight="700" fill="#3D4460" font-family="Inter">Mốc 0</text></svg></div>
+    <div class="num" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px"><span style="background: #E9F5F0; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px"><span class="k" style="color: #23795A">Thu lớn nhất · 05/11</span><span style="font-size: 15px; font-weight: 600; color: #23795A">+26.000.000</span></span><span style="background: #F4F6FB; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px"><span class="k" style="color: #22283A">Chi lớn nhất · 21/11</span><span style="font-size: 15px; font-weight: 600; color: #22283A">−8.000.000</span></span></div>
+  </div>
+  <div class="card" style="display: flex; flex-direction: column; gap: 14px">
+    <div style="display: flex; align-items: center; justify-content: space-between"><h2 class="h2">Xu hướng chi</h2><span style="height: 24px; padding: 0 10px; border-radius: 999px; background: #EEF2FD; color: #3F67D1; font-size: 12px; font-weight: 600; display: flex; align-items: center">Đang diễn ra</span></div>
+    <div class="num" role="img" aria-label="Chi 6 tháng gần nhất: T6 14,2 triệu, T7 15,8, T8 16,9, T9 15,1, T10 17,2, T11 19,4 triệu, tháng 11 đã qua 21 trên 30 ngày" style="position: relative; height: 150px; display: flex; gap: 6px; align-items: flex-end; padding-top: 18px"><div class="bc"><span class="bl" style="font-weight: 600; color: #3D4460">14,2tr</span><span class="b" style="height: 62px"></span><span class="bl">T6</span></div><div class="bc"><span class="bl" style="font-weight: 600; color: #3D4460">15,8tr</span><span class="b" style="height: 69px"></span><span class="bl">T7</span></div><div class="bc"><span class="bl" style="font-weight: 600; color: #3D4460">16,9tr</span><span class="b" style="height: 74px"></span><span class="bl">T8</span></div><div class="bc"><span class="bl" style="font-weight: 600; color: #3D4460">15,1tr</span><span class="b" style="height: 66px"></span><span class="bl">T9</span></div><div class="bc"><span class="bl" style="font-weight: 600; color: #3D4460">17,2tr</span><span class="b" style="height: 75px"></span><span class="bl">T10</span></div><div class="bc"><span class="bl" style="font-weight: 600; color: #22283A">19,4tr</span><span class="b" style="height: 85px; background: #5680E9"></span><span class="bl" style="font-weight: 600; color: #22283A">T11*</span></div></div>
+    <span style="font-size: 12px; color: #5C6378">* Tháng 11 đã qua 21/30 ngày</span>
+    <span class="num" style="font-size: 13px; color: #5C6378">Trung bình 6 tháng: <span style="color: #22283A; font-weight: 600">16.433.000</span></span>
+  </div>
+  <div class="card" style="display: flex; flex-direction: column; gap: 12px">
+    <div style="display: flex; align-items: center; justify-content: space-between"><h2 class="h2">Cơ cấu</h2><span style="font-size: 12px; color: #5C6378">Chi tiêu theo danh mục</span></div>
     <div role="tablist" aria-label="Xem theo" style="display: flex; background: #F4F6FB; border-radius: 999px; padding: 3px">
       <span role="tab" aria-selected="true" class="mini" style="flex: 1 1 0; background: #22283A; color: #FFFFFF; font-weight: 600; font-size: 13px; height: 32px">Chi</span>
       <a href="#" role="tab" aria-selected="false" class="mini" style="flex: 1 1 0; font-size: 13px; height: 32px">Thu</a>
       <a href="RepWallets.dc.html" role="tab" aria-selected="false" class="mini" style="flex: 1 1 0; font-size: 13px; height: 32px">Ví</a>
     </div>
-    <div style="display: flex; align-items: center; gap: 16px">
-      <svg width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="Ăn uống 38%, Nhà ở 24%, Đi lại 18%, Khác 20%">
+    <div style="display: flex; align-items: center; gap: 16px"><svg width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="Ăn uống 38%, Nhà ở 24%, Đi lại 18%, Khác 20%">
         <g transform="rotate(-90 64 64)" fill="none" stroke-width="16">
           <circle cx="64" cy="64" r="52" stroke="#5680E9" stroke-dasharray="122.2 204.5"></circle>
           <circle cx="64" cy="64" r="52" stroke="#8860D0" stroke-dasharray="76.4 250.3" stroke-dashoffset="-124.2"></circle>
@@ -113,23 +112,29 @@ a,button{font-family:inherit}
           <circle cx="64" cy="64" r="52" stroke="#C1C8E4" stroke-dasharray="63.3 263.4" stroke-dashoffset="-261.4"></circle>
         </g>
         <text x="64" y="60" text-anchor="middle" font-size="11" fill="#5C6378" font-family="Inter">Tổng chi</text>
-        <text x="64" y="77" text-anchor="middle" font-size="15" font-weight="600" fill="#22283A" font-family="Inter">9,32tr</text>
-      </svg>
-      <div class="num" style="display: flex; flex-direction: column; gap: 6px; flex-grow: 1; font-size: 13px">
-        <span style="display: flex; align-items: center; gap: 8px"><span class="dot" style="background: #5680E9"></span><span style="flex-grow: 1">Ăn uống</span><span style="font-weight: 600">38%</span></span>
-        <span style="display: flex; align-items: center; gap: 8px"><span class="dot" style="background: #8860D0"></span><span style="flex-grow: 1">Nhà ở</span><span style="font-weight: 600">24%</span></span>
-        <span style="display: flex; align-items: center; gap: 8px"><span class="dot" style="background: #5AB9EA"></span><span style="flex-grow: 1">Đi lại</span><span style="font-weight: 600">18%</span></span>
-        <span style="display: flex; align-items: center; gap: 8px"><span class="dot" style="background: #C1C8E4"></span><span style="flex-grow: 1">Khác</span><span style="font-weight: 600">20%</span></span>
-      </div>
-    </div>
-    <div class="num">
-      <a href="RepCategory.dc.html" class="lg"><span class="dot" style="background: #5680E9"></span><span style="flex-grow: 1; font-size: 15px">Ăn uống</span><span style="font-size: 15px; font-weight: 600">3.541.600</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9AA1B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></a>
-      <a href="RepCategory.dc.html" class="lg"><span class="dot" style="background: #8860D0"></span><span style="flex-grow: 1; font-size: 15px">Nhà ở</span><span style="font-size: 15px; font-weight: 600">2.236.800</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9AA1B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></a>
-      <a href="RepCategory.dc.html" class="lg"><span class="dot" style="background: #5AB9EA"></span><span style="flex-grow: 1; font-size: 15px">Đi lại</span><span style="font-size: 15px; font-weight: 600">1.677.600</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9AA1B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></a>
-      <a href="RepCategory.dc.html" class="lg"><span class="dot" style="background: #C1C8E4"></span><span style="flex-grow: 1; font-size: 15px">Khác · 6 danh mục</span><span style="font-size: 15px; font-weight: 600">1.864.000</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9AA1B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></a>
-    </div>
+        <text x="64" y="77" text-anchor="middle" font-size="15" font-weight="600" fill="#22283A" font-family="Inter">19,39tr</text>
+      </svg><div class="num" style="display: flex; flex-direction: column; gap: 6px; flex-grow: 1; font-size: 13px"><span style="display: flex; align-items: center; gap: 8px"><span class="dot" style="background: #5680E9"></span><span style="flex-grow: 1">Ăn uống</span><span style="font-weight: 600">38%</span></span><span style="display: flex; align-items: center; gap: 8px"><span class="dot" style="background: #8860D0"></span><span style="flex-grow: 1">Nhà ở</span><span style="font-weight: 600">24%</span></span><span style="display: flex; align-items: center; gap: 8px"><span class="dot" style="background: #5AB9EA"></span><span style="flex-grow: 1">Đi lại</span><span style="font-weight: 600">18%</span></span><span style="display: flex; align-items: center; gap: 8px"><span class="dot" style="background: #C1C8E4"></span><span style="flex-grow: 1">Khác · 6 danh mục</span><span style="font-weight: 600">20%</span></span></div></div>
+    <div class="num"><a href="RepBreakdown.dc.html" class="lg"><span class="dot" style="background: #5680E9"></span><span style="flex-grow: 1; font-size: 15px">Ăn uống</span><span style="font-size: 15px; font-weight: 600">7.367.000</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9AA1B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></a><a href="RepBreakdown.dc.html" class="lg"><span class="dot" style="background: #8860D0"></span><span style="flex-grow: 1; font-size: 15px">Nhà ở</span><span style="font-size: 15px; font-weight: 600">4.653.000</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9AA1B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></a><a href="RepBreakdown.dc.html" class="lg"><span class="dot" style="background: #5AB9EA"></span><span style="flex-grow: 1; font-size: 15px">Đi lại</span><span style="font-size: 15px; font-weight: 600">3.490.000</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9AA1B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></a><a href="RepBreakdown.dc.html" class="lg"><span class="dot" style="background: #C1C8E4"></span><span style="flex-grow: 1; font-size: 15px">Khác · 6 danh mục</span><span style="font-size: 15px; font-weight: 600">3.879.000</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9AA1B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></a></div>
+    <a href="RepBreakdown.dc.html" style="height: 44px; border-radius: 999px; border: 1px solid #E4E7F0; background: #FFFFFF; color: #3F67D1; font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none">Xem toàn bộ cơ cấu chi tiêu<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></a>
   </div>
-
+  <a href="DebtList.dc.html" class="card num" style="display: flex; flex-direction: column; gap: 12px; text-decoration: none; color: #22283A">
+    <div style="display: flex; align-items: center; justify-content: space-between"><span style="display: flex; flex-direction: column; gap: 1px"><h2 class="h2">Nợ và vay</h2><span style="font-size: 12px; color: #5C6378">Trong tháng 11</span></span><span style="display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; color: #3F67D1">Chi tiết<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3F67D1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></span></div>
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 8px"><span style="display: flex; flex-direction: column; gap: 2px"><span class="k">Dư nợ thay đổi</span><span style="display: flex; align-items: baseline; gap: 6px"><span style="font-size: 24px; font-weight: 600; letter-spacing: -0.4px; color: #23795A">−3.600.000</span><span style="font-size: 14px; color: #5C6378">₫</span></span></span><span style="font-size: 12px; font-weight: 600; color: #23795A; background: #E3F4EC; border-radius: 999px; padding: 4px 10px; white-space: nowrap">Đang giảm</span></div>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+      <span style="background: #F4F6FB; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; min-width: 0"><span class="k">Đã trả trong kỳ</span><span style="font-size: 15px; font-weight: 600; color: #22283A">6.700.000</span></span>
+      <span style="background: #F4F6FB; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; min-width: 0"><span class="k">Vay và dùng thẻ thêm</span><span style="font-size: 15px; font-weight: 600; color: #22283A">3.100.000</span></span>
+    </div>
+    <span style="background: #FBF4E0; border-radius: 14px; padding: 10px 12px; font-size: 13px; color: #7A5A00; font-weight: 500">Sắp phải trả: 5.200.000 ₫ khoản vay vào 05/12</span>
+  </a>
+  <a href="PList.dc.html" class="card num" style="display: flex; flex-direction: column; gap: 12px; text-decoration: none; color: #22283A">
+    <div style="display: flex; align-items: center; justify-content: space-between"><span style="display: flex; flex-direction: column; gap: 1px"><h2 class="h2">Đầu tư</h2><span style="font-size: 12px; color: #5C6378">Trong tháng 11</span></span><span style="display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; color: #3F67D1">Chi tiết<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3F67D1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></span></div>
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 8px"><span style="display: flex; flex-direction: column; gap: 2px"><span class="k">Lãi/lỗ trong kỳ</span><span style="display: flex; align-items: baseline; gap: 6px"><span style="font-size: 24px; font-weight: 600; letter-spacing: -0.4px; color: #B83434">−1.350.000</span><span style="font-size: 14px; color: #5C6378">₫</span></span></span><span style="font-size: 13px; font-weight: 600; color: #B83434; background: #FBE9E9; border-radius: 999px; padding: 4px 10px; white-space: nowrap">▼ 0,9%</span></div>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+      <span style="background: #F4F6FB; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; min-width: 0"><span class="k">Đầu tư thêm</span><span style="font-size: 15px; font-weight: 600; color: #22283A">5.000.000</span></span>
+      <span style="background: #F4F6FB; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; min-width: 0"><span class="k">Đã rút hoặc bán</span><span style="font-size: 15px; font-weight: 600; color: #22283A">0</span></span>
+    </div>
+  </a>
+  <div style="height: 96px; flex: 0 0 96px"></div>
   <nav aria-label="Điều hướng chính" style="position: absolute; left: 20px; right: 20px; bottom: 28px; height: 64px; border-radius: 999px; background: #FFFFFF; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; box-shadow: 0 1px 2px rgba(34,40,58,.05), 0 12px 32px rgba(34,40,58,.12)">
     <a href="BHome.dc.html" aria-label="Tổng quan" class="ni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"></path></svg></a>
     <a href="TxList.dc.html" aria-label="Giao dịch" class="ni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h13M7 12h13M7 20h13M3 4h.01M3 12h.01M3 20h.01"></path></svg></a>
@@ -137,9 +142,10 @@ a,button{font-family:inherit}
     <a href="RepMonth.dc.html" aria-label="Báo cáo" aria-current="page" class="ni" style="background: #22283A; color: #FFFFFF"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12A9 9 0 1 1 12 3v9z"></path><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"></path></svg></a>
     <a href="SettingsScreen.dc.html" aria-label="Cá nhân" class="ni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg></a>
   </nav>
+
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1640}}'>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":2738}}'>
 class Component extends DCLogic {
 renderVals() { return {}; }
 }
