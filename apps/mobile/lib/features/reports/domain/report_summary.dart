@@ -2,26 +2,52 @@ import 'report.dart';
 import 'report_period.dart';
 
 /// Figures of the totals card for one currency. Amounts are magnitudes except
-/// [remaining], which is income minus expense and may be negative.
+/// [savings], which is income minus expense and may be negative. Every
+/// `*Change` is against the period before and is null for a custom range, when
+/// that period is unknown, or when there is nothing to compare with.
 class ReportSummary {
   const ReportSummary({
     required this.income,
     required this.expense,
-    required this.remaining,
+    required this.savings,
     required this.averagePerDay,
-    required this.expenseChange,
+    this.savingsRateBps,
+    this.walletBalance,
+    this.incomeChangeBps,
+    this.expenseChangeBps,
+    this.savingsChangeBps,
+    this.savingsRateChangeBps,
+    this.averageChangeBps,
+    this.walletChangeBps,
   });
 
   final BigInt income;
   final BigInt expense;
-  final BigInt remaining;
+
+  /// Income minus expense.
+  final BigInt savings;
 
   /// Null when the period has not started.
   final BigInt? averagePerDay;
 
-  /// Whole-percent change of expense against the previous period; null when
-  /// the previous period is unknown or had no expense.
-  final int? expenseChange;
+  /// Basis points of income that was saved; null when there was no income.
+  final int? savingsRateBps;
+
+  /// Money in the non-credit wallets at the end of the period (today while it
+  /// runs); null when the server did not send it.
+  final BigInt? walletBalance;
+
+  final int? incomeChangeBps;
+  final int? expenseChangeBps;
+  final int? savingsChangeBps;
+
+  /// Difference of the savings rate in basis points (5 points = 500).
+  final int? savingsRateChangeBps;
+  final int? averageChangeBps;
+  final int? walletChangeBps;
+
+  /// Income minus expense, kept for callers that read it as "còn lại".
+  BigInt get remaining => savings;
 }
 
 ReportSummary reportSummary(
@@ -33,16 +59,73 @@ ReportSummary reportSummary(
   final row = _totalOf(report, currency);
   final income = row?.incomeMinor.abs() ?? BigInt.zero;
   final expense = row?.expenseMinor.abs() ?? BigInt.zero;
-  final before = previous == null ? null : _totalOf(previous, currency);
+  final savings = income - expense;
+  final average = averagePerDay(expense, report.period, today);
+  final rate = savingsRateBps(savings, income);
+  final balance = report.walletBalances
+      .where((item) => item.currency == currency)
+      .firstOrNull;
+  // A custom range has no "previous" worth comparing with.
+  final compare = report.period.kind == ReportPeriodKind.range
+      ? null
+      : previous;
+  final before = compare == null ? null : _totalOf(compare, currency);
+  final beforeIncome = before?.incomeMinor.abs();
+  final beforeExpense = before?.expenseMinor.abs();
+  final beforeSavings = (beforeIncome == null || beforeExpense == null)
+      ? null
+      : beforeIncome - beforeExpense;
+  final beforeRate = beforeSavings == null || beforeIncome == null
+      ? null
+      : savingsRateBps(beforeSavings, beforeIncome);
+  final previousLength = compare == null ? null : periodLength(compare.period);
+  final beforeAverage = beforeExpense == null || previousLength == null
+      ? null
+      : _roundedDiv(beforeExpense, previousLength);
   return ReportSummary(
     income: income,
     expense: expense,
-    remaining: income - expense,
-    averagePerDay: averagePerDay(expense, report.period, today),
-    expenseChange: before == null
+    savings: savings,
+    averagePerDay: average,
+    savingsRateBps: rate,
+    walletBalance: balance?.endMinor,
+    incomeChangeBps: beforeIncome == null
         ? null
-        : expenseChange(expense, before.expenseMinor.abs()),
+        : changeBps(income, beforeIncome),
+    expenseChangeBps: beforeExpense == null
+        ? null
+        : changeBps(expense, beforeExpense),
+    savingsChangeBps: beforeSavings == null
+        ? null
+        : changeBps(savings, beforeSavings),
+    savingsRateChangeBps: rate == null || beforeRate == null
+        ? null
+        : rate - beforeRate,
+    averageChangeBps: average == null || beforeAverage == null
+        ? null
+        : changeBps(average, beforeAverage),
+    walletChangeBps:
+        compare == null ||
+            balance == null ||
+            balance.previousEndMinor <= BigInt.zero
+        ? null
+        : changeBps(balance.endMinor, balance.previousEndMinor),
   );
+}
+
+/// Basis points of [income] that [savings] is (2540 = 25,4%); null without income.
+int? savingsRateBps(BigInt savings, BigInt income) {
+  if (income <= BigInt.zero) return null;
+  final twice = savings * BigInt.from(20000) ~/ income;
+  final rounded = twice.isNegative
+      ? (twice - BigInt.one) ~/ BigInt.two
+      : (twice + BigInt.one) ~/ BigInt.two;
+  return rounded.toInt();
+}
+
+BigInt _roundedDiv(BigInt value, int divisor) {
+  final twice = value * BigInt.two ~/ BigInt.from(divisor);
+  return (twice + BigInt.one) ~/ BigInt.two;
 }
 
 /// Expense over the days that have passed (running period) or the whole
@@ -56,11 +139,12 @@ BigInt? averagePerDay(BigInt expense, ReportPeriod period, String today) {
   return (twice + BigInt.one) ~/ BigInt.two;
 }
 
-/// (current − previous) ÷ previous, rounded half away from zero.
-int? expenseChange(BigInt current, BigInt previous) {
+/// (current − previous) ÷ |previous| in basis points (1234 = 12,34%), rounded
+/// half away from zero; null when previous is zero.
+int? changeBps(BigInt current, BigInt previous) {
   if (previous == BigInt.zero) return null;
-  final delta = (current - previous) * BigInt.from(100);
-  final twice = delta * BigInt.two ~/ previous;
+  final delta = (current - previous) * BigInt.from(10000);
+  final twice = delta * BigInt.two ~/ previous.abs();
   final rounded = twice.isNegative
       ? (twice - BigInt.one) ~/ BigInt.two
       : (twice + BigInt.one) ~/ BigInt.two;

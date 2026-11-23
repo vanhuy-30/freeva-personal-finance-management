@@ -173,7 +173,7 @@ describe('BE-P5-E08 service', () => {
     expect(config.version).toBe(1);
     expect(Object.values(config.flags).every((on) => on === false)).toBe(true);
     expect(Object.keys(config.flags)).toEqual(Object.keys(FLAG_DEFINITIONS));
-    expect(config.config['forecast.monthOptions']).toEqual([3, 6, 12]);
+    expect(config.config['budget.alertThresholdOptions']).toEqual([70, 80, 90, 100]);
   });
 
   it('uses stored values and falls back to the default when a stored value no longer fits', async () => {
@@ -191,6 +191,19 @@ describe('BE-P5-E08 service', () => {
     expect(config.flags.insights).toBe(true);
     expect(config.config['report.topRows']).toBe(5);
     expect(config.config['home.recentTransactions']).toBe(3);
+  });
+
+  it('no longer knows the balance forecast keys, and ignores a value stored for one', async () => {
+    const at = new Date();
+    for (const key of ['forecast.monthOptions', 'forecast.defaultMonths', 'limit.forecastMaxMonths']) {
+      expect(Object.keys(CONFIG_DEFINITIONS)).not.toContain(key);
+    }
+    repository.snapshot.mockResolvedValue(snapshot({
+      values: [{ key: 'forecast.monthOptions', value: [1, 3], version: 2, updatedAt: at, updatedBy: staff }],
+    }));
+    const config = await service.forUser(user);
+    expect(config.config).not.toHaveProperty('forecast.monthOptions');
+    await expect(service.updateValue(staff, 'forecast.defaultMonths', { value: 3, version: 0 })).rejects.toMatchObject({ code: 'CONFIG_KEY_UNKNOWN' });
   });
 
   it('rejects unknown keys and bad values before writing', async () => {

@@ -151,6 +151,20 @@ class CashflowConverted {
   final List<UnconvertedCurrency> unconverted;
 }
 
+/// Money in the non-credit wallets of one currency at the end of the period
+/// and at the end of the one before it.
+class WalletBalance {
+  const WalletBalance({
+    required this.currency,
+    required this.endMinor,
+    required this.previousEndMinor,
+  });
+
+  final String currency;
+  final BigInt endMinor;
+  final BigInt previousEndMinor;
+}
+
 class CashflowReport {
   const CashflowReport({
     required this.period,
@@ -158,6 +172,7 @@ class CashflowReport {
     required this.byCategory,
     required this.byAccount,
     this.converted,
+    this.walletBalances = const [],
   });
 
   final ReportPeriod period;
@@ -168,6 +183,9 @@ class CashflowReport {
   /// Only when the request named a display currency.
   final CashflowConverted? converted;
 
+  /// Wallet money at the end of this period and of the previous one.
+  final List<WalletBalance> walletBalances;
+
   CashflowReport withRows(
     List<CashflowCategoryRow> categories,
     List<CashflowAccountRow> accounts,
@@ -177,6 +195,7 @@ class CashflowReport {
     byCategory: categories,
     byAccount: accounts,
     converted: converted,
+    walletBalances: walletBalances,
   );
 }
 

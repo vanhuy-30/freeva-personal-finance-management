@@ -38,7 +38,9 @@ export type AccountMovement = { accountId: string; currency: string; type: Repor
 export type CashflowSource = { categories: CategoryAggregate[]; accounts: AccountRef[]; movements: AccountMovement[] };
 export type MerchantAggregate = { currency: string; merchant: string; expense: bigint; count: number };
 export type PreviousCashflow = { from: string; to: string; categories: CategoryAggregate[] };
-export type CashflowExtras = { previous: PreviousCashflow; merchants: MerchantAggregate[] };
+/** Wallet balances at the end of the period and of the one before it; index 0 is the end, 1 the previous end. */
+export type PeriodBalanceRow = { index: 0 | 1; currency: string; bucket: 'asset' | 'liability'; total: bigint };
+export type CashflowExtras = { previous: PreviousCashflow; merchants: MerchantAggregate[]; balances?: PeriodBalanceRow[] };
 export type NetWorthAggregate = { currency: string; bucket: 'asset' | 'liability'; total: bigint };
 
 export const MAX_RANGE_DAYS = 3660;
@@ -274,6 +276,91 @@ export function buildCashflow(period: ResolvedPeriod, source: CashflowSource, ex
       })),
     },
     topMerchants: topMerchantRows(merchants),
+    walletBalances: walletBalanceRows(extras?.balances ?? []),
+  };
+}
+
+/** Money in the non-credit wallets at the end of the period and of the previous one, per currency. */
+function walletBalanceRows(rows: PeriodBalanceRow[]) {
+  const totals = new Map<string, { end: bigint; previous: bigint }>();
+  for (const row of rows) {
+    if (row.bucket !== 'asset') continue;
+    const item = totals.get(row.currency) ?? { end: 0n, previous: 0n };
+    if (row.index === 0) item.end += row.total;
+    else item.previous += row.total;
+    totals.set(row.currency, item);
+  }
+  return [...totals].sort(([left], [right]) => left.localeCompare(right)).map(([currency, item]) => ({
+    currency, endMinor: money(item.end), previousEndMinor: money(item.previous),
+  }));
+}
+
+/** The days the balances in `walletBalanceRows` are read at: the period's last day, but never later than today. */
+export function balanceDays(period: ResolvedPeriod, today: string): { endDay: string; previousEndDay: string } {
+  const previous = previousPeriod(period);
+  const clamp = (day: string) => (day < today ? day : today);
+  return { endDay: clamp(period.to), previousEndDay: clamp(previous.to) };
+}
+
+export type FlowGranularity = 'day' | 'week' | 'month';
+
+/**
+ * Points of the cash flow chart for one period. Week and month go day by day, a year month by month, a custom range day by day
+ * up to 31 days and week by week beyond that. Buckets never reach past today, so a running period stops at today.
+ */
+export function flowBuckets(period: ResolvedPeriod, today: string): { granularity: FlowGranularity; buckets: TrendBucket[] } {
+  const from = parseDate(period.from);
+  const to = parseDate(period.to);
+  const length = daysApart(from, to) + 1;
+  const granularity: FlowGranularity = period.kind === 'year' ? 'month' : period.kind === 'range' && length > 31 ? 'week' : 'day';
+  const lastDay = period.to < today ? period.to : today;
+  if (period.from > lastDay) return { granularity, buckets: [] };
+  const last = parseDate(lastDay);
+  const clip = (day: CalendarDate) => formatDate(daysApart(day, last) < 0 ? last : day);
+  const buckets: TrendBucket[] = [];
+  if (granularity === 'day') {
+    for (let day = from; daysApart(day, last) >= 0; day = addDays(day, 1)) buckets.push({ from: formatDate(day), to: formatDate(day) });
+  } else if (granularity === 'week') {
+    for (let start = from; daysApart(start, last) >= 0; start = addDays(start, 7)) {
+      buckets.push({ from: formatDate(start), to: clip(addDays(start, 6)) });
+    }
+  } else {
+    for (let month = 1; month <= 12; month++) {
+      const start: CalendarDate = { year: from.year, month, day: 1 };
+      if (daysApart(start, last) < 0) break;
+      buckets.push({ from: formatDate(start), to: clip({ year: from.year, month, day: daysInMonth(from.year, month) }) });
+    }
+  }
+  return { granularity, buckets };
+}
+
+/** The days a period's holdings are read at: the evening before it started and its last day (never later than today). */
+export function holdingsDays(period: ResolvedPeriod, today: string): { startDay: string; endDay: string } {
+  const endDay = period.to < today ? period.to : today;
+  const before = formatDate(addDays(parseDate(period.from), -1));
+  return { startDay: before < endDay ? before : endDay, endDay };
+}
+
+export function buildFlow(period: ResolvedPeriod, granularity: FlowGranularity, source: { buckets: TrendBucket[]; rows: TrendRow[] }) {
+  const { buckets } = bucketTotals(source);
+  return { period: { kind: period.kind, from: period.from, to: period.to }, granularity, buckets };
+}
+
+function bucketTotals(source: { buckets: TrendBucket[]; rows: TrendRow[] }) {
+  const totals = source.buckets.map(() => new Map<string, { income: bigint; expense: bigint }>());
+  for (const row of source.rows) {
+    const item = totals[row.index]?.get(row.currency) ?? { income: 0n, expense: 0n };
+    item[row.type] += row.total;
+    totals[row.index]?.set(row.currency, item);
+  }
+  return {
+    buckets: source.buckets.map((bucket, index) => ({
+      from: bucket.from,
+      to: bucket.to,
+      totals: [...(totals[index] ?? [])].sort(([left], [right]) => left.localeCompare(right)).map(([currency, item]) => ({
+        currency, incomeMinor: money(item.income), expenseMinor: money(item.expense),
+      })),
+    })),
   };
 }
 

@@ -13,8 +13,8 @@ Canvas: trang **07 · Tổng quan, báo cáo, dự báo**, khối N (gồm Ngân
 
 | # | Màn | Nội dung | Ghi chú |
 |---|---|---|---|
-| 1 | Báo cáo · lối vào dự báo | Như F.1, thêm dòng "Dự báo số dư" ngay dưới "Xem bản soát tháng" | |
-| 2 | Dự báo số dư | Công tắc 3 / 6 / 12 tháng. Thẻ: "Cuối tháng 1 còn khoảng 89.200.000", "+40.950.000 so với hôm nay", cột: Hôm nay và từng tháng (cột cuối primary). Thẻ **Cách tính**: "Bắt đầu từ số dư 48.250.000 · 4 ví · Sửa", "Chỉ gồm định kỳ và hóa đơn, chưa gồm chi tiêu hằng ngày." **KHOẢN ĐƯỢC TÍNH**: từng khoản có công tắc; khoản tắt gạch ngang số tiền | Tắt khoản = `excludeRuleIds`; Sửa số dư = `startingBalanceMinor` |
+| 1 | ~~Báo cáo · lối vào dự báo~~ | **Đã gỡ 2026-11-21** cùng màn 2: dự báo chỉ tính định kỳ nên ít giá trị. "Cuối tháng còn khoảng…" nay nằm trong Dự báo chi (board S.3, `SpendForecast`, `SpendForecastOut`) | |
+| 2 | ~~Dự báo số dư~~ (đã gỡ khỏi app và canvas) | Công tắc 3 / 6 / 12 tháng. Thẻ: "Cuối tháng 1 còn khoảng 89.200.000", "+40.950.000 so với hôm nay", cột: Hôm nay và từng tháng (cột cuối primary). Thẻ **Cách tính**: "Bắt đầu từ số dư 48.250.000 · 4 ví · Sửa", "Chỉ gồm định kỳ và hóa đơn, chưa gồm chi tiêu hằng ngày." **KHOẢN ĐƯỢC TÍNH**: từng khoản có công tắc; khoản tắt gạch ngang số tiền | Tắt khoản = `excludeRuleIds`; Sửa số dư = `startingBalanceMinor` |
 | 3 | Đầu tháng · thẻ soát tháng | Thẻ "Xem lại tháng 10 · Chi … · Thu …" thêm hai dòng: danh mục tăng nhiều nhất, vượt ngân sách bao nhiêu % | |
 | 4 | Ngưỡng cảnh báo ngân sách (sheet trên Ngân sách tháng) | "Báo khi đã dùng · Chọn tối đa 4 mốc." Chip 70 / 80 / 90 / 100% có dấu tích. "Mặc định 80% và 100%." "Lưu" | `alertThresholds` 1–4 mốc |
 | 5 | Thông báo · Phase 3 | **NHẮC NHỞ**: Nhắc ghi chi "Mỗi ngày lúc 21:00" (giờ là liên kết), Định kỳ và hóa đơn, Góp vào mục tiêu (Sắp có), Soát tháng (Sắp có). **CẢNH BÁO**: Ngân sách sắp hết "Khi dùng 80% và 100%" (liên kết sang 4), Nợ đến hạn, **Thẻ tín dụng** "Sắp đến hạn, sắp chạm hạn mức" (công tắc), Máy mới đăng nhập. **GIỜ YÊN** | Bỏ Insight |

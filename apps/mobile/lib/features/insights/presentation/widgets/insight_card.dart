@@ -85,7 +85,7 @@ class InsightCard extends StatelessWidget {
       item,
       (v) => formatMoneyText(v, digits, locale),
     );
-    final (icon, bg, fg) = _look(c);
+    final (icon, bg, fg) = insightLook(c, item);
     return InsightShell(
       label: title,
       onTap: onTap,
@@ -133,24 +133,26 @@ class InsightCard extends StatelessWidget {
       ),
     );
   }
-
-  (IconData, Color, Color) _look(FreevaColors c) => switch (item) {
-    BudgetRiskInsight() => (
-      LucideIcons.triangleAlert,
-      c.statusDangerBg,
-      c.statusDanger,
-    ),
-    OutlierInsight() => (LucideIcons.zap, c.tintViolet, c.tintVioletFg),
-    CategoryChangeInsight(up: true) => (
-      LucideIcons.trendingUp,
-      c.statusWarningBg,
-      c.statusWarning,
-    ),
-    CategoryChangeInsight() => (
-      LucideIcons.trendingDown,
-      c.statusSuccessBg,
-      c.statusSuccess,
-    ),
-    SpendTrendInsight() => (LucideIcons.chartLine, c.tintBlue, c.tintBlueFg),
-  };
 }
+
+/// Icon, tile colour and icon colour of an insight's kind.
+(IconData, Color, Color) insightLook(FreevaColors c, Insight item) =>
+    switch (item) {
+      BudgetRiskInsight() => (
+        LucideIcons.triangleAlert,
+        c.statusDangerBg,
+        c.statusDanger,
+      ),
+      OutlierInsight() => (LucideIcons.zap, c.tintViolet, c.tintVioletFg),
+      CategoryChangeInsight(up: true) => (
+        LucideIcons.trendingUp,
+        c.statusWarningBg,
+        c.statusWarning,
+      ),
+      CategoryChangeInsight() => (
+        LucideIcons.trendingDown,
+        c.statusSuccessBg,
+        c.statusSuccess,
+      ),
+      SpendTrendInsight() => (LucideIcons.chartLine, c.tintBlue, c.tintBlueFg),
+    };

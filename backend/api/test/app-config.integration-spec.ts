@@ -139,31 +139,31 @@ describe('BE-P5-E08 app config HTTP + PostgreSQL', () => {
 
   it('saves, conflicts on a stale version without writing, and resets a value', async () => {
     const { bearer } = await user();
-    const first = await call('PUT', '/admin/app-config/values/forecast.monthOptions', staffToken, { value: [1, 3, 6], version: 0 });
+    const first = await call('PUT', '/admin/app-config/values/budget.alertThresholdOptions', staffToken, { value: [50, 80, 100], version: 0 });
     expect(first.status).toBe(200);
-    expect((await call('GET', '/v1/app-config', bearer)).body.config['forecast.monthOptions']).toEqual([1, 3, 6]);
+    expect((await call('GET', '/v1/app-config', bearer)).body.config['budget.alertThresholdOptions']).toEqual([50, 80, 100]);
 
-    const stale = await call('PUT', '/admin/app-config/values/forecast.monthOptions', staffToken, { value: [3, 6], version: 0 });
+    const stale = await call('PUT', '/admin/app-config/values/budget.alertThresholdOptions', staffToken, { value: [80, 100], version: 0 });
     expect(stale.status).toBe(409);
     expect(stale.body.error.code).toBe('CONFIG_CONFLICT');
-    expect(await prisma.appConfigChange.count({ where: { key: 'forecast.monthOptions' } })).toBe(1);
+    expect(await prisma.appConfigChange.count({ where: { key: 'budget.alertThresholdOptions' } })).toBe(1);
 
-    const second = await call('PUT', '/admin/app-config/values/forecast.monthOptions', staffToken, { value: [3, 6], version: 1 });
+    const second = await call('PUT', '/admin/app-config/values/budget.alertThresholdOptions', staffToken, { value: [80, 100], version: 1 });
     expect(second.status).toBe(200);
-    const row = second.body.config.find((entry: { key: string }) => entry.key === 'forecast.monthOptions');
-    expect(row).toMatchObject({ value: [3, 6], isDefault: false, version: 2 });
+    const row = second.body.config.find((entry: { key: string }) => entry.key === 'budget.alertThresholdOptions');
+    expect(row).toMatchObject({ value: [80, 100], isDefault: false, version: 2 });
 
-    expect((await call('DELETE', '/admin/app-config/values/forecast.monthOptions?version=1', staffToken)).status).toBe(409);
-    const reset = await call('DELETE', '/admin/app-config/values/forecast.monthOptions?version=2', staffToken);
+    expect((await call('DELETE', '/admin/app-config/values/budget.alertThresholdOptions?version=1', staffToken)).status).toBe(409);
+    const reset = await call('DELETE', '/admin/app-config/values/budget.alertThresholdOptions?version=2', staffToken);
     expect(reset.status).toBe(200);
-    expect((await call('GET', '/v1/app-config', bearer)).body.config['forecast.monthOptions']).toEqual([3, 6, 12]);
-    const changes = await prisma.appConfigChange.findMany({ where: { key: 'forecast.monthOptions' }, orderBy: { occurredAt: 'asc' } });
-    expect(changes.map((change) => change.after)).toEqual([[1, 3, 6], [3, 6], null]);
+    expect((await call('GET', '/v1/app-config', bearer)).body.config['budget.alertThresholdOptions']).toEqual([70, 80, 90, 100]);
+    const changes = await prisma.appConfigChange.findMany({ where: { key: 'budget.alertThresholdOptions' }, orderBy: { occurredAt: 'asc' } });
+    expect(changes.map((change) => change.after)).toEqual([[50, 80, 100], [80, 100], null]);
     expect(await prisma.auditEvent.count({ where: { actorId: staffActorId, action: 'staff.app_config_update' } })).toBe(3);
   });
 
   it('rejects bad values and unknown keys', async () => {
-    const bad = await call('PUT', '/admin/app-config/values/forecast.monthOptions', staffToken, { value: [6, 3], version: 0 });
+    const bad = await call('PUT', '/admin/app-config/values/budget.alertThresholdOptions', staffToken, { value: [100, 80], version: 0 });
     expect(bad.status).toBe(400);
     expect(bad.body.error).toMatchObject({ code: 'CONFIG_VALUE_INVALID' });
     expect(bad.body.error.details[0].reason).toContain('ascending');

@@ -9,6 +9,8 @@ import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/auth/domain/auth_use_cases.dart';
 import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dart';
 import 'package:mobile/features/reports/domain/report.dart';
+import 'package:mobile/features/reports/domain/report_flow.dart';
+import 'package:mobile/features/reports/domain/report_holdings.dart';
 import 'package:mobile/features/reports/domain/report_use_cases.dart';
 import 'package:mobile/features/reports/presentation/viewmodels/report_view_model.dart';
 import 'package:mobile/features/wallets/domain/wallet.dart';
@@ -101,7 +103,7 @@ void main() {
     expect(cases.trends.single, (ReportPeriodKind.month, '2026-10-11'));
     expect(model.previous, isNotNull);
     expect(model.trend, isNotNull);
-    expect(model.summary?.expenseChange, 0);
+    expect(model.summary?.expenseChangeBps, 0);
   });
 
   test('a failing trend hides only the trend', () async {
@@ -129,14 +131,56 @@ void main() {
     expect(cases.queries, hasLength(before));
   });
 
-  test('changing the trend range reloads only the trend', () async {
+  test('loads the cash flow and the holdings of the viewed period', () async {
     model.beginVisit();
     await model.load(const ReportPeriodQuery.week());
-    final loads = cases.queries.length;
-    await model.selectTrend(ReportPeriodKind.year);
+    expect(cases.flows.single.from, '2026-10-05');
+    expect(cases.holdingsAsked.single.to, '2026-10-11');
+    expect(model.flow, isNotNull);
+    expect(model.holdings, isNotNull);
+    // The next period asks again and replaces them.
+    cases.report = _named(from: '2026-10-12', to: '2026-10-18');
+    await model.load(const ReportPeriodQuery.week(on: '2026-10-12'));
+    expect(cases.flows, hasLength(2));
+    expect(cases.flows.last.from, '2026-10-12');
+    expect(model.flow, isNotNull);
+  });
+
+  test('a failing flow or holdings hides only its own card', () async {
+    cases.flowFailure = const AuthFailure(AuthError.network);
+    model.beginVisit();
+    await model.load(const ReportPeriodQuery.week());
+    expect(model.data, isNotNull);
+    expect(model.failure, isNull);
+    expect(model.flow, isNull);
+    expect(model.holdings, isNotNull);
+    expect(model.trend, isNotNull);
+    cases.flowFailure = null;
+    cases.holdingsFailure = const AuthFailure(AuthError.network);
+    await model.load(const ReportPeriodQuery.week());
+    expect(model.flow, isNotNull);
+    expect(model.holdings, isNull);
+    expect(model.previous, isNotNull);
+  });
+
+  test('a custom range is not compared with the period before it', () async {
+    cases.report = _named(kind: ReportPeriodKind.range);
+    model.beginVisit();
+    await model.applyRange('2026-10-05', '2026-10-11');
+    expect(cases.previous, isEmpty);
+    expect(model.previous, isNull);
+    expect(model.summary?.incomeChangeBps, isNull);
+    expect(model.summary?.expenseChangeBps, isNull);
+    // The cash flow and the holdings still follow the range.
+    expect(cases.flows.single.kind, ReportPeriodKind.range);
+    expect(cases.holdingsAsked.single.kind, ReportPeriodKind.range);
+  });
+
+  test('the trend follows the viewed kind', () async {
+    model.beginVisit();
+    await model.select(ReportPeriodKind.year);
     expect(model.trendKind, ReportPeriodKind.year);
-    expect(cases.trends.last, (ReportPeriodKind.year, '2026-10-11'));
-    expect(cases.queries, hasLength(loads));
+    expect(cases.trends.last.$1, ReportPeriodKind.year);
   });
 
   test('keeps a chosen currency only while it has data', () async {
@@ -189,38 +233,45 @@ void main() {
   });
 }
 
-NamedCashflow _named({String from = '2026-10-05', String to = '2026-10-11'}) =>
-    NamedCashflow(
-      currencies: const [WalletCurrency('VND', 0)],
-      report: CashflowReport(
-        period: ReportPeriod(
-          kind: ReportPeriodKind.week,
-          from: from,
-          to: to,
-          timezone: 'Asia/Ho_Chi_Minh',
-          fiscalMonthStartDay: 1,
-        ),
-        totals: [
-          CashflowTotal(
-            currency: 'VND',
-            incomeMinor: BigInt.from(1000),
-            expenseMinor: BigInt.from(-200),
-            netMinor: BigInt.from(800),
-          ),
-        ],
-        byCategory: const [],
-        byAccount: const [],
+NamedCashflow _named({
+  String from = '2026-10-05',
+  String to = '2026-10-11',
+  ReportPeriodKind kind = ReportPeriodKind.week,
+}) => NamedCashflow(
+  currencies: const [WalletCurrency('VND', 0)],
+  report: CashflowReport(
+    period: ReportPeriod(
+      kind: kind,
+      from: from,
+      to: to,
+      timezone: 'Asia/Ho_Chi_Minh',
+      fiscalMonthStartDay: 1,
+    ),
+    totals: [
+      CashflowTotal(
+        currency: 'VND',
+        incomeMinor: BigInt.from(1000),
+        expenseMinor: BigInt.from(-200),
+        netMinor: BigInt.from(800),
       ),
-    );
+    ],
+    byCategory: const [],
+    byAccount: const [],
+  ),
+);
 
 class _Cases implements ReportUseCases {
   final queries = <ReportPeriodQuery>[];
   NamedCashflow report = _named();
   AuthFailure? failure;
   AuthFailure? trendFailure;
+  AuthFailure? flowFailure;
+  AuthFailure? holdingsFailure;
   Completer<void>? gate;
   final trends = <(ReportPeriodKind, String?)>[];
   final previous = <ReportPeriod>[];
+  final flows = <ReportPeriod>[];
+  final holdingsAsked = <ReportPeriod>[];
 
   @override
   Future<Either<AuthFailure, NamedCashflow>> loadCashflow(
@@ -240,6 +291,41 @@ class _Cases implements ReportUseCases {
   ) async {
     previous.add(period);
     return right(report.report);
+  }
+
+  @override
+  Future<Either<AuthFailure, FlowReport>> loadFlow(ReportPeriod period) async {
+    flows.add(period);
+    final error = flowFailure;
+    if (error != null) return left(error);
+    return right(
+      FlowReport(
+        kind: period.kind,
+        from: period.from,
+        to: period.to,
+        granularity: FlowGranularity.day,
+        buckets: const [],
+      ),
+    );
+  }
+
+  @override
+  Future<Either<AuthFailure, HoldingsReport>> loadHoldings(
+    ReportPeriod period,
+  ) async {
+    holdingsAsked.add(period);
+    final error = holdingsFailure;
+    if (error != null) return left(error);
+    return right(
+      HoldingsReport(
+        kind: period.kind,
+        from: period.from,
+        to: period.to,
+        debt: const [],
+        investments: const [],
+        nextLoanDue: const [],
+      ),
+    );
   }
 
   @override

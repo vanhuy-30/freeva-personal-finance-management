@@ -7,6 +7,8 @@ import '../../../auth/domain/auth_repository.dart';
 import '../../../auth/presentation/viewmodels/auth_view_model.dart';
 import '../../../profile/presentation/viewmodels/profile_view_model.dart';
 import '../../domain/report.dart';
+import '../../domain/report_flow.dart';
+import '../../domain/report_holdings.dart';
 import '../../domain/report_period.dart';
 import '../../domain/report_summary.dart';
 import '../../domain/report_use_cases.dart';
@@ -19,8 +21,19 @@ abstract class ReportViewModel extends ChangeNotifier {
   /// Totals of the period before [data]; null while loading or when missing.
   CashflowReport? get previous;
   TrendReport? get trend;
+
+  /// The kind the trend chart is cut by: the one being viewed (week, month
+  /// or year), and for a custom range the last one picked.
   ReportPeriodKind get trendKind;
   bool get trendFailed;
+
+  /// Cash flow points and debt/investment changes of the viewed period; null
+  /// while loading or when they could not be loaded (their cards hide then).
+  FlowReport? get flow;
+  HoldingsReport? get holdings;
+
+  /// The extras (comparison, trend, cash flow, holdings) are being fetched.
+  bool get extrasLoading;
   bool get busy;
   AuthFailure? get failure;
   bool get canStep;
@@ -39,7 +52,6 @@ abstract class ReportViewModel extends ChangeNotifier {
   Future<void> backToCurrent();
   Future<void> step(int direction);
   void selectCurrency(String code);
-  Future<void> selectTrend(ReportPeriodKind kind);
   Future<void> applyRange(String from, String to);
 }
 
@@ -79,6 +91,12 @@ class DefaultReportViewModel extends ReportViewModel {
   ReportPeriodKind trendKind = ReportPeriodKind.month;
   @override
   bool trendFailed = false;
+  @override
+  FlowReport? flow;
+  @override
+  HoldingsReport? holdings;
+  @override
+  bool extrasLoading = false;
   @override
   bool busy = false;
   @override
@@ -140,6 +158,9 @@ class DefaultReportViewModel extends ReportViewModel {
     previous = null;
     trend = null;
     trendFailed = false;
+    flow = null;
+    holdings = null;
+    extrasLoading = false;
     failure = null;
   }
 
@@ -181,6 +202,8 @@ class DefaultReportViewModel extends ReportViewModel {
         previous = null;
         trend = null;
         trendFailed = false;
+        flow = null;
+        holdings = null;
         if (_viewed) return;
         _viewed = true;
         _analytics.track(AnalyticsEvent.reportViewed);
@@ -192,17 +215,30 @@ class DefaultReportViewModel extends ReportViewModel {
     if (period != null) await _loadExtras(epoch, period);
   }
 
-  /// The comparison and the trend arrive after the totals and never block
-  /// them; either one failing only hides its own block.
+  /// The comparison, the trend, the cash flow and the holdings arrive after
+  /// the totals and never block them; any of them failing only hides its own
+  /// block. A custom range is not compared with anything, so it skips the
+  /// previous period.
   Future<void> _loadExtras(int epoch, ReportPeriod period) async {
-    final before = _cases.loadPrevious(period);
+    extrasLoading = true;
+    notifyListeners();
+    final before = period.kind == ReportPeriodKind.range
+        ? null
+        : _cases.loadPrevious(period);
     final series = _cases.loadTrend(trendKind, on: period.to);
+    final points = _cases.loadFlow(period);
+    final changes = _cases.loadHoldings(period);
     final previousResult = await before;
     final trendResult = await series;
+    final flowResult = await points;
+    final holdingsResult = await changes;
     if (epoch != _epoch) return;
-    previous = previousResult.fold((_) => null, (value) => value);
+    extrasLoading = false;
+    previous = previousResult?.fold((_) => null, (value) => value);
     trend = trendResult.fold((_) => null, (value) => value);
     trendFailed = trendResult.isLeft();
+    flow = flowResult.fold((_) => null, (value) => value);
+    holdings = holdingsResult.fold((_) => null, (value) => value);
     notifyListeners();
   }
 
@@ -237,23 +273,6 @@ class DefaultReportViewModel extends ReportViewModel {
   void selectCurrency(String code) {
     if (!currencies.contains(code) || code == currency) return;
     _chosenCurrency = code;
-    notifyListeners();
-  }
-
-  @override
-  Future<void> selectTrend(ReportPeriodKind next) async {
-    final period = data?.report.period;
-    if (period == null || next == ReportPeriodKind.range) return;
-    if (next == trendKind && trend != null) return;
-    final epoch = _epoch;
-    trendKind = next;
-    trend = null;
-    trendFailed = false;
-    notifyListeners();
-    final result = await _cases.loadTrend(next, on: period.to);
-    if (epoch != _epoch || trendKind != next) return;
-    trend = result.fold((_) => null, (value) => value);
-    trendFailed = result.isLeft();
     notifyListeners();
   }
 

@@ -33,23 +33,28 @@ PeriodTitle periodTitle(S s, ReportPeriod period, String locale) {
   }
 }
 
-/// "so với T9", "so với tuần trước"… the grey words after the % change.
-String versusLabel(S s, ReportPeriod period, CashflowReport? previous) {
-  final before = previous?.period;
-  switch (period.kind) {
-    case ReportPeriodKind.week:
-      return s.reportVsWeek;
-    case ReportPeriodKind.year:
-      final year = before == null ? null : DateTime.parse(before.from).year;
-      return year == null ? s.reportVsPeriod : s.reportVsYear('$year');
-    case ReportPeriodKind.month:
-      final start = before == null ? null : DateTime.parse(before.from);
-      return start == null || start.day != 1
-          ? s.reportVsPeriod
-          : s.reportVsMonth('${start.month}');
-    case ReportPeriodKind.range:
-      return s.reportVsPeriod;
-  }
+/// "so tháng trước", "so tuần trước", "so năm trước": the grey words after a
+/// change. A custom range has no comparison, so it has no words either.
+String? compareLabel(S s, ReportPeriodKind kind) => switch (kind) {
+  ReportPeriodKind.week => s.reportCompareWeek,
+  ReportPeriodKind.month => s.reportCompareMonth,
+  ReportPeriodKind.year => s.reportCompareYear,
+  ReportPeriodKind.range => null,
+};
+
+/// "Trong tháng 11", "Trong tuần", "Trong năm 2026": which period a card's
+/// figures are about.
+String inPeriodLabel(S s, ReportPeriod period) {
+  final from = DateTime.parse(period.from);
+  final to = DateTime.parse(period.to);
+  return switch (period.kind) {
+    ReportPeriodKind.week => s.reportInWeek,
+    ReportPeriodKind.month => s.reportInMonth(
+      '${from.day == 1 ? from.month : to.month}',
+    ),
+    ReportPeriodKind.year => s.reportInYear('${from.year}'),
+    ReportPeriodKind.range => s.reportInRange,
+  };
 }
 
 String backLabel(S s, ReportPeriodKind kind) => switch (kind) {

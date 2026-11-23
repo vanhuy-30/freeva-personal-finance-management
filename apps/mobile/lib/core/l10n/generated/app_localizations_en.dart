@@ -402,7 +402,7 @@ class SEn extends S {
   String get categoryError => 'Couldn\'t save the category. Try again.';
 
   @override
-  String get reportTitle => 'Reports';
+  String get reportTitle => 'Financial report';
 
   @override
   String get reportOverview => 'Overview';
@@ -427,9 +427,6 @@ class SEn extends S {
 
   @override
   String get monthReviewTitle => 'Month review';
-
-  @override
-  String get monthReviewOpen => 'Open month review';
 
   @override
   String get monthReviewSavings => 'Savings';
@@ -1742,30 +1739,6 @@ class SEn extends S {
   String get reportAverageDay => 'Average spend/day';
 
   @override
-  String get reportRemaining => 'Left';
-
-  @override
-  String reportVsMonth(String month) {
-    return 'vs M$month';
-  }
-
-  @override
-  String get reportVsWeek => 'vs last week';
-
-  @override
-  String reportVsYear(String year) {
-    return 'vs $year';
-  }
-
-  @override
-  String get reportVsPeriod => 'vs previous period';
-
-  @override
-  String reportChange(String percent, String versus) {
-    return '$percent% $versus';
-  }
-
-  @override
   String get reportBudgetSet => 'Set a monthly budget';
 
   @override
@@ -1773,6 +1746,228 @@ class SEn extends S {
 
   @override
   String get reportTrendTitle => 'Spending trend';
+
+  @override
+  String get reportTotalIncome => 'Total income';
+
+  @override
+  String get reportTotalExpense => 'Total spending';
+
+  @override
+  String get reportSavings => 'Saved (income − spending)';
+
+  @override
+  String get reportSavingsRate => 'Savings rate';
+
+  @override
+  String get reportWalletTotal => 'Wallet balance';
+
+  @override
+  String get reportCompareWeek => 'vs last week';
+
+  @override
+  String get reportCompareMonth => 'vs last month';
+
+  @override
+  String get reportCompareYear => 'vs last year';
+
+  @override
+  String reportChangePoints(String points) {
+    return '$points pts';
+  }
+
+  @override
+  String get reportBudgetTitle => 'Monthly budget';
+
+  @override
+  String reportBudgetOf(String amount) {
+    return 'of $amount';
+  }
+
+  @override
+  String get reportInsightsTitle => 'Insights';
+
+  @override
+  String get reportInsightsMonth => 'This month';
+
+  @override
+  String get reportInsightsAll => 'See all in Insights';
+
+  @override
+  String get reportFlowTitleWeek => 'Cash flow this week';
+
+  @override
+  String get reportFlowTitleMonth => 'Cash flow this month';
+
+  @override
+  String get reportFlowTitleYear => 'Cash flow this year';
+
+  @override
+  String get reportFlowTitleRange => 'Cash flow in the period';
+
+  @override
+  String get reportFlowSubDay => 'Income − spending, running total';
+
+  @override
+  String get reportFlowSubWeek => 'Income − spending, running total by week';
+
+  @override
+  String get reportFlowSubMonth => 'Income − spending, running total by month';
+
+  @override
+  String get reportFlowZero => 'Zero';
+
+  @override
+  String reportFlowToday(String date) {
+    return '$date · today';
+  }
+
+  @override
+  String reportFlowBiggestIncome(String date) {
+    return 'Biggest income · $date';
+  }
+
+  @override
+  String reportFlowBiggestExpense(String date) {
+    return 'Biggest spend · $date';
+  }
+
+  @override
+  String get reportFlowBiggestIncomeNone => 'Biggest income';
+
+  @override
+  String get reportFlowBiggestExpenseNone => 'Biggest spend';
+
+  @override
+  String get reportFlowNone => '—';
+
+  @override
+  String get reportFlowEmpty => 'No income or spending in this period';
+
+  @override
+  String get reportFlowEmptyBody =>
+      'The cash flow chart appears once you record a transaction.';
+
+  @override
+  String reportFlowSemantics(String last, String high, String low) {
+    return 'Running net cash flow: now $last, highest $high, lowest $low';
+  }
+
+  @override
+  String get reportTrendOngoing => 'In progress';
+
+  @override
+  String reportTrendPartialMonth(String month, int elapsed, int total) {
+    return '* Month $month: $elapsed of $total days so far';
+  }
+
+  @override
+  String reportTrendPartialWeek(int elapsed, int total) {
+    return '* This week: $elapsed of $total days so far';
+  }
+
+  @override
+  String reportTrendPartialYear(String year, int elapsed, int total) {
+    return '* $year: $elapsed of $total days so far';
+  }
+
+  @override
+  String get reportBreakdownTitle => 'Breakdown';
+
+  @override
+  String get reportBreakdownSubExpense => 'Spending by category';
+
+  @override
+  String get reportBreakdownSubIncome => 'Income by category';
+
+  @override
+  String get reportBreakdownSubWallets => 'Flow by wallet';
+
+  @override
+  String get reportBreakdownAllExpense => 'See the whole spending breakdown';
+
+  @override
+  String get reportBreakdownAllIncome => 'See the whole income breakdown';
+
+  @override
+  String get reportBreakdownPageExpense => 'Spending breakdown';
+
+  @override
+  String get reportBreakdownPageIncome => 'Income breakdown';
+
+  @override
+  String reportBreakdownCount(int count) {
+    return '$count categories';
+  }
+
+  @override
+  String get reportBreakdownSortExpense => 'Biggest spend first';
+
+  @override
+  String get reportBreakdownSortIncome => 'Biggest income first';
+
+  @override
+  String get reportBreakdownNote =>
+      'Subcategories are counted in their parent. Tap a row to see its transactions.';
+
+  @override
+  String get reportInWeek => 'This week';
+
+  @override
+  String reportInMonth(String month) {
+    return 'In month $month';
+  }
+
+  @override
+  String reportInYear(String year) {
+    return 'In $year';
+  }
+
+  @override
+  String get reportInRange => 'In the chosen range';
+
+  @override
+  String get reportDetail => 'Details';
+
+  @override
+  String get reportDebtTitle => 'Debt and loans';
+
+  @override
+  String get reportDebtChange => 'Debt changed by';
+
+  @override
+  String get reportDebtFalling => 'Falling';
+
+  @override
+  String get reportDebtRising => 'Rising';
+
+  @override
+  String get reportDebtPaid => 'Paid';
+
+  @override
+  String get reportDebtBorrowed => 'Borrowed or spent on cards';
+
+  @override
+  String reportDebtDue(String amount, String date) {
+    return 'Next loan payment: $amount on $date';
+  }
+
+  @override
+  String reportDebtDueNoAmount(String date) {
+    return 'A loan payment is due $date';
+  }
+
+  @override
+  String get reportInvestTitle => 'Investments';
+
+  @override
+  String get reportInvestPnl => 'Gain/loss';
+
+  @override
+  String get reportInvestAdded => 'Invested';
+
+  @override
+  String get reportInvestWithdrawn => 'Withdrawn or sold';
 
   @override
   String reportTrendAverageWeeks(int count) {

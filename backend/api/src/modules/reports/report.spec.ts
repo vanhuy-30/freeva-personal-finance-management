@@ -374,7 +374,16 @@ describe('BE-P1-007 report HTTP contract', () => {
           source: { categories: [], accounts: [], movements: [] },
           previous: { from: '2026-08-15', to: '2026-09-14', categories: [] },
           merchants: [],
+          balances: [],
         };
+      },
+      async flow(_userId, periodOf, shape) {
+        const period = periodOf(profile(15));
+        return { period, ...shape(period, '2026-10-08'), rows: [] };
+      },
+      async holdings(_userId, periodOf) {
+        const period = periodOf(profile(15));
+        return { period, startDay: '2026-09-14', endDay: '2026-10-08', wallets: [], debts: [], loans: [], cardPayments: [], loanDues: [], investments: [] };
       },
       async monthReview(_userId, periodOf) {
         return { period: periodOf(profile(15)), categories: [] };
@@ -396,6 +405,14 @@ describe('BE-P1-007 report HTTP contract', () => {
       currencies: [],
     });
     await expect(service.series('user', { window: '7d', on: '2026-10-08' })).resolves.toEqual({ window: '7d', buckets: [] });
+    await expect(service.cashflow('user', { period: 'month', on: '2026-10-08' })).resolves.toMatchObject({ walletBalances: [] });
+    const flow = await service.flow('user', { period: 'month', on: '2026-10-08' });
+    expect(flow).toMatchObject({ period: { kind: 'month', from: '2026-09-15', to: '2026-10-14' }, granularity: 'day' });
+    expect(flow.buckets).toHaveLength(24);
+    expect(flow.buckets[23]).toEqual({ from: '2026-10-08', to: '2026-10-08', totals: [] });
+    await expect(service.holdings('user', { period: 'month', on: '2026-10-08' })).resolves.toEqual({
+      period: { kind: 'month', from: '2026-09-15', to: '2026-10-14' }, debt: [], investments: [], nextLoanDue: [],
+    });
     await expect(service.netWorth('user')).resolves.toEqual({ items: [{ currency: 'VND', assetsMinor: '10', liabilitiesMinor: '0', netWorthMinor: '10' }] });
   });
   describe('BE-P2-013 display totals', () => {

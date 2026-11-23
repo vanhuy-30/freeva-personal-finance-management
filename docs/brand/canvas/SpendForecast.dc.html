@@ -78,11 +78,19 @@ a,button{font-family:inherit}
 .chipx{height:24px;padding:0 10px;border-radius:999px;font-size:12px;font-weight:600;display:inline-flex;align-items:center;white-space:nowrap}
 </style>
 </helmet>
-<div style="width: 390px; height: 860px; box-sizing: border-box; position: relative; overflow: hidden; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; padding: 56px 20px 28px 20px; gap: 14px">
+<div style="width: 390px; height: 1190px; box-sizing: border-box; position: relative; overflow: hidden; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; padding: 56px 20px 28px 20px; gap: 14px">
   <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
     <a href="InsAnalysis.dc.html" class="ib" aria-label="Quay lại"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg></a>
     <h1 style="margin: 0; font-size: 17px; line-height: 24px; font-weight: 600; text-align: center; flex: 1 1 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Dự báo chi</h1>
     <span style="width: 44px; flex: 0 0 44px"></span>
+  </div>
+  <div class="card num" style="display: flex; flex-direction: column; gap: 10px">
+    <span class="k" style="font-size: 13px">Cuối tháng 11 còn khoảng</span>
+    <span style="font-size: 32px; line-height: 36px; font-weight: 600; letter-spacing: -0.8px">52.750.000</span>
+    <span style="font-size: 13px; color: #5C6378">Khoảng 50.050.000 đến 55.450.000</span>
+    
+    <span style="display: flex; flex-direction: column; border-top: 1px solid #EEF0F5; margin-top: 4px"><span style="display: flex; justify-content: space-between; padding: 10px 0; font-size: 15px"><span style="color: #5C6378">Số dư các ví hiện tại</span><span style="font-weight: 600;">48.250.000</span></span><span style="display: flex; justify-content: space-between; padding: 10px 0; font-size: 15px"><span style="color: #5C6378">Thu định kỳ sắp về</span><span style="font-weight: 600; color: #23795A">+18.500.000</span></span><span style="display: flex; justify-content: space-between; padding: 10px 0; font-size: 15px"><span style="color: #5C6378">Chi định kỳ sắp đến</span><span style="font-weight: 600;">−3.200.000</span></span><span style="display: flex; justify-content: space-between; padding: 10px 0; font-size: 15px"><span style="color: #5C6378">Chi thường ngày (ước tính)</span><span style="font-weight: 600;">−10.800.000</span></span></span>
+    <span style="font-size: 12px; color: #5C6378; line-height: 17px">Dự đoán, chưa gồm thanh toán thẻ tín dụng, trả góp và khoản vay.</span>
   </div>
   <div class="card num" style="display: flex; flex-direction: column; gap: 10px">
     <span style="display: flex; align-items: center; justify-content: space-between; gap: 8px"><span class="k" style="font-size: 13px">Cuối tháng 11 có thể chi khoảng</span><span class="chipx" style="background: #FBECEC; color: #B83434">Rủi ro cao</span></span>
@@ -119,7 +127,7 @@ a,button{font-family:inherit}
   </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":860}}'>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1190}}'>
 class Component extends DCLogic {
 renderVals() { return {}; }
 }

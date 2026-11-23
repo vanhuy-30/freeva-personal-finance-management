@@ -5,9 +5,10 @@ import type { ReportRepository } from '../domain/report.repository';
 import type {
   AccountMovement, AccountRef, CategoryAggregate, MerchantAggregate, NetWorthAggregate, ReportMoneyType, ReportProfile, ResolvedPeriod, TrendBucket, TrendRow, TrendSource,
 } from '../domain/report';
-import { previousPeriod, todayInTimeZone } from '../domain/report';
+import { balanceDays, holdingsDays, previousPeriod, todayInTimeZone } from '../domain/report';
+import type { FlowGranularity } from '../domain/report';
 import { parseQuantity, valuate, type InvestmentKind, type InvestmentRecord } from '../../investments/domain/investment';
-import type { DebtHistory, InvestmentHistory, LoanHistory, InvestmentValueHistorySource, NetWorthHistorySource, WalletBalanceRow } from '../domain/net-worth-history';
+import type { DebtHistory, HoldingsSource, InvestmentHistory, LoanHistory, InvestmentValueHistorySource, NetWorthHistorySource, WalletBalanceRow } from '../domain/net-worth-history';
 
 const moneyTypes = new Set<ReportMoneyType>(['income', 'expense', 'transfer', 'adjustment', 'debt', 'refund', 'investment']);
 
@@ -20,6 +21,8 @@ export class PrismaReportRepository implements ReportRepository {
       const profile = await this.profile(tx, userId);
       const period = periodOf(profile);
       const previous = previousPeriod(period);
+      const today = todayInTimeZone(profile.timezone, new Date());
+      const days = balanceDays(period, today);
       const [categories, accounts, movements, previousCategories, merchants] = [
         await this.categories(tx, userId, period.from, period.to),
         await this.accounts(tx, userId),
@@ -32,6 +35,40 @@ export class PrismaReportRepository implements ReportRepository {
         source: { categories, accounts, movements },
         previous: { from: previous.from, to: previous.to, categories: previousCategories },
         merchants,
+        balances: (await this.walletHistory(tx, userId, [days.endDay, days.previousEndDay])).map(row => ({ ...row, index: row.index === 0 ? 0 as const : 1 as const })),
+      };
+    });
+  }
+
+  /** The period's points for the cash flow chart; `shape` decides the buckets once the period and today are known. */
+  flow(
+    userId: string,
+    periodOf: (profile: ReportProfile) => ResolvedPeriod,
+    shape: (period: ResolvedPeriod, today: string) => { granularity: FlowGranularity; buckets: TrendBucket[] },
+  ) {
+    return this.snapshot(async tx => {
+      const profile = await this.profile(tx, userId);
+      const period = periodOf(profile);
+      const { granularity, buckets } = shape(period, todayInTimeZone(profile.timezone, new Date()));
+      return { period, granularity, buckets, rows: await this.trendRows(tx, userId, buckets) };
+    });
+  }
+
+  /** Debt and investment history around one period; the domain turns it into what changed. */
+  holdings(userId: string, periodOf: (profile: ReportProfile) => ResolvedPeriod): Promise<HoldingsSource> {
+    return this.snapshot(async tx => {
+      const profile = await this.profile(tx, userId);
+      const period = periodOf(profile);
+      const today = todayInTimeZone(profile.timezone, new Date());
+      const { startDay, endDay } = holdingsDays(period, today);
+      return {
+        period, startDay, endDay,
+        wallets: await this.walletHistory(tx, userId, [startDay, endDay]),
+        debts: await this.debtHistory(tx, userId),
+        loans: await this.loanHistory(tx, userId),
+        cardPayments: await this.cardPayments(tx, userId, startDay, endDay),
+        loanDues: await this.loanDues(tx, userId, today),
+        investments: await this.investmentHistory(tx, userId, profile.timezone),
       };
     });
   }
@@ -154,6 +191,35 @@ export class PrismaReportRepository implements ReportRepository {
       GROUP BY b.idx, t."currencyCode", t.type
     `);
     return rows.map(row => ({ index: row.index, currency: row.currency.trim(), type: flowType(row.type), total: integer(row.total) }));
+  }
+
+  /** Money that reached a credit-card wallet after `startDay` up to `endDay`: transfer legs in, i.e. paying the card. */
+  private async cardPayments(tx: Prisma.TransactionClient, userId: string, startDay: string, endDay: string): Promise<{ currency: string; total: bigint }[]> {
+    const rows = await tx.$queryRaw<{ currency: string; total: string }[]>(Prisma.sql`
+      SELECT a."currencyCode" AS currency, SUM(t."amountMinor")::text AS total
+      FROM "Transaction" t
+      JOIN "FinancialAccount" a ON a.id = t."accountId" AND a."userId" = t."userId"
+      WHERE t."userId" = ${userId}::uuid AND t."deletedAt" IS NULL AND a.type::text = 'credit'
+        AND t.type::text = 'transfer' AND t."amountMinor" > 0
+        AND t."occurredOn" > ${startDay}::date AND t."occurredOn" <= ${endDay}::date
+      GROUP BY a."currencyCode"
+    `);
+    return rows.map(row => ({ currency: row.currency.trim(), total: integer(row.total) }));
+  }
+
+  /** The soonest installment still to come for each currency; archived and settled loans are left out. */
+  private async loanDues(tx: Prisma.TransactionClient, userId: string, today: string): Promise<{ currency: string; dueOn: string; amountMinor: bigint | null }[]> {
+    const rows = await tx.loan.findMany({
+      where: { userId, archivedAt: null, outstandingMinor: { gt: 0n }, nextDueDate: { gte: new Date(`${today}T00:00:00.000Z`) } },
+      orderBy: [{ nextDueDate: 'asc' }, { id: 'asc' }],
+      select: { currencyCode: true, nextDueDate: true, installmentMinor: true },
+    });
+    const seen = new Map<string, { currency: string; dueOn: string; amountMinor: bigint | null }>();
+    for (const row of rows) {
+      const currency = row.currencyCode.trim();
+      if (!seen.has(currency) && row.nextDueDate) seen.set(currency, { currency, dueOn: row.nextDueDate.toISOString().slice(0, 10), amountMinor: row.installmentMinor });
+    }
+    return [...seen.values()];
   }
 
   /** Earliest day anything moved: any transaction, a lend/borrow or an investment trade. */

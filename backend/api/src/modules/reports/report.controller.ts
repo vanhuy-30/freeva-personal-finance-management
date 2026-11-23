@@ -1,6 +1,6 @@
 import { Controller, Get, Header, Query, Req, UseFilters, UseGuards } from '@nestjs/common';
 import { AuthGuard, type AuthRequest } from '../auth/auth.guard';
-import { CashflowQueryDto, InvestmentHistoryQueryDto, MonthReviewQueryDto, NetWorthQueryDto, SeriesQueryDto, TrendQueryDto } from './report.dto';
+import { CashflowQueryDto, InvestmentHistoryQueryDto, MonthReviewQueryDto, NetWorthQueryDto, PeriodQueryDto, SeriesQueryDto, TrendQueryDto } from './report.dto';
 import { ReportExceptionFilter } from './report-exception.filter';
 import { ReportService } from './report.service';
 
@@ -13,6 +13,16 @@ export class ReportController {
   @Get('cashflow') @Header('Cache-Control', 'no-store')
   cashflow(@Req() request: AuthRequest, @Query() query: CashflowQueryDto) {
     return this.reports.cashflow(request.session.userId, query);
+  }
+
+  @Get('flow') @Header('Cache-Control', 'no-store')
+  flow(@Req() request: AuthRequest, @Query() query: PeriodQueryDto) {
+    return this.reports.flow(request.session.userId, query);
+  }
+
+  @Get('holdings') @Header('Cache-Control', 'no-store')
+  holdings(@Req() request: AuthRequest, @Query() query: PeriodQueryDto) {
+    return this.reports.holdings(request.session.userId, query);
   }
 
   @Get('month-review') @Header('Cache-Control', 'no-store')

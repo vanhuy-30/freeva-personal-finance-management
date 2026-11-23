@@ -18,6 +18,14 @@ export class CashflowQueryDto {
   @IsOptional() @IsString() @Matches(/^[A-Z]{3}$/) displayCurrency?: string;
 }
 
+/** Period of the flow and holdings reports; no display currency, they stay per currency. */
+export class PeriodQueryDto {
+  @IsIn(REPORT_PERIODS) period!: ReportPeriodKind;
+  @ValidateIf(optional) @IsString() @Matches(/^\d{4}-\d{2}-\d{2}(?![\s\S])/) on?: string;
+  @ValidateIf(optional) @IsString() @Matches(/^\d{4}-\d{2}-\d{2}(?![\s\S])/) from?: string;
+  @ValidateIf(optional) @IsString() @Matches(/^\d{4}-\d{2}-\d{2}(?![\s\S])/) to?: string;
+}
+
 export class TrendQueryDto {
   @IsIn(TREND_PERIODS) period!: TrendPeriodKind;
   @ValidateIf(optional) @IsString() @Matches(/^\d{4}-\d{2}-\d{2}(?![\s\S])/) on?: string;

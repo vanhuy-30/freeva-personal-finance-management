@@ -59,6 +59,24 @@ ReportPeriodQuery? adjacentPeriod(ReportPeriod period, int direction) {
   };
 }
 
+/// The query that asks for exactly [period] again: its own bounds for a range,
+/// else the kind anchored on its first day.
+ReportPeriodQuery queryOf(ReportPeriod period) => switch (period.kind) {
+  ReportPeriodKind.week => ReportPeriodQuery.week(on: period.from),
+  ReportPeriodKind.month => ReportPeriodQuery.month(on: period.from),
+  ReportPeriodKind.year => ReportPeriodQuery.year(on: period.from),
+  ReportPeriodKind.range => ReportPeriodQuery.range(period.from, period.to),
+};
+
+/// Calendar days from [from] to [to], both ends included; null if a date is invalid.
+int? periodDays(String from, String to) {
+  final apart = daysApart(from, to);
+  return apart == null ? null : apart + 1;
+}
+
+/// Calendar days in [period], both ends included; null if a date is invalid.
+int? periodLength(ReportPeriod period) => periodDays(period.from, period.to);
+
 /// The period right before [period], for "so với kỳ trước". A range moves back
 /// by its own length. Null when that would leave the supported dates.
 ReportPeriodQuery? previousPeriod(ReportPeriod period) {

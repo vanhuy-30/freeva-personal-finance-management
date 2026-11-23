@@ -55,13 +55,14 @@ class BreakdownLegend extends StatelessWidget {
   }
 }
 
-/// One line per slice with its exact amount.
+/// One line per slice with its exact amount, and its share when [showShare].
 class BreakdownRows extends StatelessWidget {
   const BreakdownRows({
     required this.slices,
     required this.currency,
     required this.digits,
     required this.onOpen,
+    this.showShare = false,
     super.key,
   });
 
@@ -69,6 +70,7 @@ class BreakdownRows extends StatelessWidget {
   final String currency;
   final int digits;
   final ValueChanged<BreakdownSlice> onOpen;
+  final bool showShare;
 
   @override
   Widget build(BuildContext context) {
@@ -101,6 +103,17 @@ class BreakdownRows extends StatelessWidget {
                         ),
                       ),
                     ),
+                    if (showShare) ...[
+                      const SizedBox(width: 10),
+                      Text(
+                        '${slices[i].percent}%',
+                        style: FreevaTypography.label.copyWith(
+                          fontWeight: FontWeight.w400,
+                          color: c.textSecondary,
+                          fontFeatures: const [FontFeature.tabularFigures()],
+                        ),
+                      ),
+                    ],
                     const SizedBox(width: 10),
                     MoneyDisplay(
                       minor: slices[i].minor,

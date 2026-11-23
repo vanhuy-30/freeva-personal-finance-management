@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Dòng tiền · các trường hợp</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"cv11" 1}
+a,button{font-family:inherit}
+.seg{flex:1 1 0;height:36px;border:none;border-radius:999px;background:transparent;color:#5C6378;font-size:14px;font-weight:500;display:flex;align-items:center;justify-content:center;text-decoration:none}
+.nb{width:40px;height:40px;border-radius:999px;border:1px solid #EEF0F6;background:#FFFFFF;color:#22283A;display:flex;align-items:center;justify-content:center;box-sizing:border-box;text-decoration:none}
+.card{background:#FFFFFF;border-radius:24px;padding:18px;box-shadow:0 1px 2px rgba(34,40,58,.04),0 8px 24px rgba(34,40,58,.05)}
+.k{font-size:12px;color:#5C6378}
+.h2{margin:0;font-size:15px;font-weight:600}
+.lg{display:flex;align-items:center;gap:10px;min-height:44px;text-decoration:none;color:#22283A}
+.lg+.lg{border-top:1px solid #EEF0F5}
+.dot{width:10px;height:10px;border-radius:999px;flex:0 0 10px}
+.mini{height:30px;padding:0 10px;border:none;border-radius:999px;background:transparent;color:#5C6378;font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center;text-decoration:none}
+.bc{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1 1 0;height:100%;justify-content:flex-end}
+.b{width:26px;border-radius:8px 8px 4px 4px;background:#DDE6FB}
+.bl{font-size:11px;color:#5C6378}
+.bar{height:8px;border-radius:999px;background:#EEF0F5;overflow:hidden;display:flex}
+.bar>span{border-radius:999px}
+.ri{display:flex;align-items:center;justify-content:center}
+.ri svg,.nb svg{display:block}
+.ni{width:48px;height:48px;border-radius:999px;color:#5C6378;display:flex;align-items:center;justify-content:center}
+</style>
+</helmet>
+<div style="width: 390px; height: 1340px; box-sizing: border-box; position: relative; overflow: hidden; background: #FCFDFF; color: #22283A; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; padding: 56px 20px 0 20px; gap: 16px">
+<h1 style="margin: 0; font-size: 17px; line-height: 24px; font-weight: 600; text-align: center">Dòng tiền · các trường hợp</h1>
+  <span style="font-size: 12px; color: #5C6378; text-align: center; line-height: 17px; margin-top: -8px">Trục luôn gồm mức 0. Tuần và tháng chấm theo ngày; năm theo tháng; khoảng tuỳ chọn dài hơn 31 ngày chấm theo tuần.</span>
+  <div class="card" style="display: flex; flex-direction: column; gap: 12px">
+    <div style="display: flex; align-items: center; justify-content: space-between"><h2 class="h2">1 · Chi vượt thu</h2><span style="font-size: 12px; color: #5C6378">Tháng 11</span></div>
+    <div class="num"><svg width="310" height="172" viewBox="0 0 310 172" role="img" aria-label="Dòng tiền âm: chi vượt thu 11,4 triệu" style="display: block"><line x1="14" y1="22.0" x2="262" y2="22.0" stroke="#EEF0F5" stroke-width="1"></line><text x="268" y="25.5" font-size="10" fill="#9AA1B8" font-family="Inter">+5,3tr</text><line x1="14" y1="128.0" x2="262" y2="128.0" stroke="#EEF0F5" stroke-width="1"></line><text x="268" y="131.5" font-size="10" fill="#9AA1B8" font-family="Inter">−11,4tr</text><line x1="14" y1="55.8" x2="266" y2="55.8" stroke="#3D4460" stroke-width="1.2" stroke-dasharray="5 4"></line><polygon points="14.0,55.8 14.0,57.7 26.4,61.3 38.8,63.8 51.2,69.5 63.6,22.0 76.0,26.4 88.4,32.8 100.8,36.6 113.2,42.9 125.6,48.0 138.0,51.1 150.4,54.0 162.8,58.1 175.2,61.4 187.6,63.8 200.0,66.6 212.4,70.2 224.8,73.3 237.2,75.4 249.6,77.3 262.0,128.0 262.0,55.8" fill="#FBECEC"></polygon><polyline points="14.0,57.7 26.4,61.3 38.8,63.8 51.2,69.5 63.6,22.0 76.0,26.4 88.4,32.8 100.8,36.6 113.2,42.9 125.6,48.0 138.0,51.1 150.4,54.0 162.8,58.1 175.2,61.4 187.6,63.8 200.0,66.6 212.4,70.2 224.8,73.3 237.2,75.4 249.6,77.3 262.0,128.0" fill="none" stroke="#B83434" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"></polyline><circle cx="63.6" cy="22.0" r="4.5" fill="#23795A" stroke="#FFFFFF" stroke-width="2"></circle><circle cx="262.0" cy="128.0" r="5" fill="#B83434" stroke="#FFFFFF" stroke-width="2"></circle><text x="270" y="131.5" font-size="11" font-weight="700" fill="#B83434" font-family="Inter">−11,4tr</text><text x="14" y="164" font-size="11" fill="#5C6378" font-family="Inter">01/11</text><text x="262" y="164" text-anchor="end" font-size="11" fill="#5C6378" font-family="Inter">21/11</text><text x="270" y="59.3" font-size="10" font-weight="700" fill="#3D4460" font-family="Inter">Mốc 0</text></svg></div><span style="font-size: 13px; font-weight: 600; color: #B83434; background: #FBECEC; border-radius: 14px; padding: 10px 12px">Chi đang vượt thu 11.389.000 ₫</span>
+    <div class="num" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px"><span style="background: #E9F5F0; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px"><span class="k" style="color: #23795A">Thu lớn nhất · 05/11</span><span style="font-size: 15px; font-weight: 600; color: #23795A">+8.000.000</span></span><span style="background: #F4F6FB; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px"><span class="k" style="color: #22283A">Chi lớn nhất · 21/11</span><span style="font-size: 15px; font-weight: 600; color: #22283A">−8.000.000</span></span></div>
+  </div>
+  <div class="card" style="display: flex; flex-direction: column; gap: 12px">
+    <div style="display: flex; align-items: center; justify-content: space-between"><h2 class="h2">2 · Chưa có thu nhập</h2><span style="font-size: 12px; color: #5C6378">Tháng 11</span></div>
+    <div class="num"><svg width="310" height="172" viewBox="0 0 310 172" role="img" aria-label="Chỉ có chi, chưa ghi thu nhập" style="display: block"><line x1="14" y1="128.0" x2="262" y2="128.0" stroke="#EEF0F5" stroke-width="1"></line><text x="268" y="131.5" font-size="10" fill="#9AA1B8" font-family="Inter">−19,4tr</text><line x1="14" y1="22.0" x2="266" y2="22.0" stroke="#3D4460" stroke-width="1.2" stroke-dasharray="5 4"></line><polygon points="14.0,22.0 14.0,23.6 26.4,26.7 38.8,28.9 51.2,33.8 63.6,36.5 76.0,40.4 88.4,45.8 100.8,49.1 113.2,54.6 125.6,59.0 138.0,61.7 150.4,64.2 162.8,67.7 175.2,70.5 187.6,72.6 200.0,75.0 212.4,78.1 224.8,80.8 237.2,82.6 249.6,84.3 262.0,128.0 262.0,22.0" fill="#FBECEC"></polygon><polyline points="14.0,23.6 26.4,26.7 38.8,28.9 51.2,33.8 63.6,36.5 76.0,40.4 88.4,45.8 100.8,49.1 113.2,54.6 125.6,59.0 138.0,61.7 150.4,64.2 162.8,67.7 175.2,70.5 187.6,72.6 200.0,75.0 212.4,78.1 224.8,80.8 237.2,82.6 249.6,84.3 262.0,128.0" fill="none" stroke="#B83434" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"></polyline><circle cx="262.0" cy="128.0" r="5" fill="#B83434" stroke="#FFFFFF" stroke-width="2"></circle><text x="270" y="131.5" font-size="11" font-weight="700" fill="#B83434" font-family="Inter">−19,4tr</text><text x="14" y="164" font-size="11" fill="#5C6378" font-family="Inter">01/11</text><text x="262" y="164" text-anchor="end" font-size="11" fill="#5C6378" font-family="Inter">21/11</text><text x="270" y="25.5" font-size="10" font-weight="700" fill="#3D4460" font-family="Inter">Mốc 0</text></svg></div>
+    <div class="num" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px"><span style="background: #F4F6FB; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px"><span class="k" style="color: #5C6378">Thu lớn nhất</span><span style="font-size: 15px; font-weight: 600; color: #5C6378">—</span></span><span style="background: #F4F6FB; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px"><span class="k" style="color: #22283A">Chi lớn nhất · 21/11</span><span style="font-size: 15px; font-weight: 600; color: #22283A">−8.000.000</span></span></div>
+  </div>
+  <div class="card" style="display: flex; flex-direction: column; gap: 10px; align-items: center; text-align: center; padding: 22px 18px">
+    <div style="display: flex; align-items: center; justify-content: space-between; align-self: stretch"><h2 class="h2">3 · Chưa có giao dịch</h2><span style="font-size: 12px; color: #5C6378">Tuần 17–23/11</span></div>
+    <span style="font-size: 15px; font-weight: 600; margin-top: 6px">Chưa có thu chi trong kỳ này</span>
+    <span style="font-size: 13px; color: #5C6378; line-height: 19px">Biểu đồ dòng tiền sẽ hiện khi bạn ghi giao dịch đầu tiên.</span>
+  </div>
+  <div class="card" style="display: flex; flex-direction: column; gap: 12px">
+    <div style="display: flex; align-items: center; justify-content: space-between"><h2 class="h2">4 · Cả năm</h2><span style="font-size: 12px; color: #5C6378">Thu − chi, cộng dồn theo tháng</span></div>
+    <div class="num"><svg width="310" height="172" viewBox="0 0 310 172" role="img" aria-label="Dòng tiền cộng dồn theo tháng năm 2026" style="display: block"><line x1="14" y1="22.0" x2="262" y2="22.0" stroke="#EEF0F5" stroke-width="1"></line><text x="268" y="25.5" font-size="10" fill="#9AA1B8" font-family="Inter">+44,1tr</text><line x1="14" y1="128.0" x2="266" y2="128.0" stroke="#3D4460" stroke-width="1.2" stroke-dasharray="5 4"></line><polygon points="14.0,128.0 14.0,115.5 38.8,108.0 63.6,110.5 88.4,99.6 113.2,85.2 138.0,79.9 162.8,70.8 187.6,67.2 212.4,55.4 237.2,37.9 262.0,22.0 262.0,128.0" fill="#EEF2FD"></polygon><polyline points="14.0,115.5 38.8,108.0 63.6,110.5 88.4,99.6 113.2,85.2 138.0,79.9 162.8,70.8 187.6,67.2 212.4,55.4 237.2,37.9 262.0,22.0" fill="none" stroke="#3F67D1" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"></polyline><circle cx="262.0" cy="22.0" r="5" fill="#3F67D1" stroke="#FFFFFF" stroke-width="2"></circle><text x="270" y="25.5" font-size="11" font-weight="700" fill="#22283A" font-family="Inter">+44,1tr</text><text x="14" y="164" font-size="11" fill="#5C6378" font-family="Inter">T1</text><text x="262" y="164" text-anchor="end" font-size="11" fill="#5C6378" font-family="Inter">T11</text><text x="270" y="131.5" font-size="10" font-weight="700" fill="#3D4460" font-family="Inter">Mốc 0</text></svg></div>
+    <div class="num" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px"><span style="background: #E9F5F0; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px"><span class="k" style="color: #23795A">Tháng tiết kiệm nhiều nhất · T10</span><span style="font-size: 15px; font-weight: 600; color: #23795A">+7.300.000</span></span><span style="background: #FBECEC; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px"><span class="k" style="color: #B83434">Tháng chi vượt thu · T3</span><span style="font-size: 15px; font-weight: 600; color: #B83434">−1.000.000</span></span></div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1340}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

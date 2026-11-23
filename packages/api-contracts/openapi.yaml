@@ -1133,68 +1133,6 @@ paths:
         Active recurring rules project from `nextExecutionDate` with month/year day clamp.
         Bills with `dueOn` in the month include paid ones; `overdue` is derived on read from
         profile timezone. Amounts are integer minor-unit strings.
-  /api/v1/forecast:
-    get:
-      operationId: getBalanceForecast
-      summary: Rule-based month-by-month balance forecast from known recurring flows
-      tags:
-      - Forecast
-      security:
-      - UserBearer: []
-      parameters:
-      - in: query
-        name: months
-        schema:
-          type: integer
-          minimum: 1
-          maximum: 12
-          default: 3
-        description: Calendar months ahead, counting the current month.
-      - in: query
-        name: currencyCode
-        schema:
-          type: string
-          pattern: ^[A-Z]{3}$
-        description: Defaults to the profile default currency. No FX conversion; other currencies are listed in assumptions.
-      - in: query
-        name: startingBalanceMinor
-        schema:
-          type: string
-          pattern: ^-?\d{1,18}$
-        description: Overrides the wallet-derived starting balance.
-      - in: query
-        name: excludeRuleIds
-        style: form
-        explode: false
-        schema:
-          type: array
-          items:
-            type: string
-            format: uuid
-        description: Recurring rules or bills to leave out (comma separated).
-      responses:
-        '200':
-          description: Forecast and the assumptions behind it
-          headers:
-            Cache-Control:
-              schema:
-                type: string
-                const: no-store
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BalanceForecast'
-        '400':
-          $ref: '#/components/responses/ForecastValidationError'
-        '401':
-          $ref: '#/components/responses/ForecastUnauthorized'
-        '503':
-          $ref: '#/components/responses/ForecastUnavailable'
-      description: >
-        Starting balance is the sum of non-archived, non-credit wallets in the currency (or the override).
-        Adds active income/expense recurring rules and bills from today to the end of the last month.
-        Transfers are skipped; one-off spending is not predicted. No model is called.
-        Amounts are integer minor-unit strings; expense is negative.
   /api/v1/goals/presets:
     get:
       operationId: listGoalPresets
@@ -4397,6 +4335,126 @@ paths:
         '503':
           $ref: '#/components/responses/ReportUnavailable'
       description: Read-only income and expense series. 7d and 30d are single calendar days. 3m, 6m, and 1y are 3, 6, and 12 fiscal months. all is each calendar year from the first income or expense through the anchor year (current year always kept; history stops at year 100). Amounts stay in each account currency; transfers are excluded. No FX conversion.
+  /api/v1/reports/flow:
+    get:
+      operationId: reportFlow
+      summary: Report income and expense points of a period for the cash flow chart
+      tags:
+      - Reports
+      security:
+      - UserBearer: []
+      parameters:
+      - name: period
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - week
+          - month
+          - year
+          - range
+      - name: on
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
+        description: Anchor calendar date for week, month, or year. Defaults to today in the user timezone. Forbidden for range.
+      - name: from
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
+        description: Inclusive range start. Required with to for period=range. Forbidden for week, month, and year.
+      - name: to
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
+        description: Inclusive range end. At most 3660 days after from.
+      responses:
+        '200':
+          description: Report income and expense points of a period for the cash flow chart
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/ReportNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlowReport'
+        '400':
+          $ref: '#/components/responses/ReportValidationError'
+        '401':
+          $ref: '#/components/responses/ReportUnauthorized'
+        '503':
+          $ref: '#/components/responses/ReportUnavailable'
+      description: 'Read-only. One bucket per day for week, month and a custom range of up to 31 days; per calendar month for year; per 7 days (from the range start) for a longer custom range. Buckets never go past today, so a running period stops at today and a period that has not started has none. `granularity` is set from the whole period even when there are no buckets. Each bucket lists the currencies with activity; transfers are excluded. The app adds the buckets up for the running total. No FX conversion.'
+  /api/v1/reports/holdings:
+    get:
+      operationId: reportHoldings
+      summary: Report how debt and investments changed during a period
+      tags:
+      - Reports
+      security:
+      - UserBearer: []
+      parameters:
+      - name: period
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - week
+          - month
+          - year
+          - range
+      - name: on
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
+        description: Anchor calendar date for week, month, or year. Defaults to today in the user timezone. Forbidden for range.
+      - name: from
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
+        description: Inclusive range start. Required with to for period=range. Forbidden for week, month, and year.
+      - name: to
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+          pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
+        description: Inclusive range end. At most 3660 days after from.
+      responses:
+        '200':
+          description: Report how debt and investments changed during a period
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/ReportNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HoldingsReport'
+        '400':
+          $ref: '#/components/responses/ReportValidationError'
+        '401':
+          $ref: '#/components/responses/ReportUnauthorized'
+        '503':
+          $ref: '#/components/responses/ReportUnavailable'
+      description: 'Read-only, per currency. debt = loans not archived + money borrowed from people + the amount credit-card wallets are short (a card surplus is not debt). paidMinor = loan principal repaid + repayments of borrowed money + money moved into a card wallet; borrowedMinor = changeMinor + paidMinor (new loans, new borrowing and spending on a card). investments: value at the evening before the period and at its end (never later than today), investedMinor = buys in the period, withdrawnMinor = sells, pnlMinor = end - start - invested + withdrawn, pnlBps over start + invested (null when that is zero). nextLoanDue is the soonest installment still to come. Hand corrections to a loan are not replayed, so days before a correction use the corrected number.'
   /api/v1/reports/month-review:
     get:
       operationId: reportMonthReview
@@ -5380,7 +5438,7 @@ paths:
         by the days elapsed, times the days in the fiscal month. Risk against the whole-month budget in the profile
         currency: low below spendForecast.mediumRiskPercent, medium up to spendForecast.highRiskPercent, high above;
         null without such a budget. `status = insufficient` (no forecastMinor) before spendForecast.minDays days.
-        Different from /forecast (balance from recurring items). `forecast` is null when the flag `forecast` is off or
+        `forecast` is null when the flag `forecast` is off or
         the user switched Gợi ý tự động off. Computed on every call, never stored.
       responses:
         '200':
@@ -7329,39 +7387,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorEnvelope'
-    ForecastValidationError:
-      description: VALIDATION_ERROR
-      headers:
-        Cache-Control:
-          schema:
-            type: string
-            const: no-store
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorEnvelope'
-    ForecastUnauthorized:
-      description: SESSION_INVALID
-      headers:
-        Cache-Control:
-          schema:
-            type: string
-            const: no-store
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorEnvelope'
-    ForecastUnavailable:
-      description: FORECAST_UNAVAILABLE or authentication unavailable
-      headers:
-        Cache-Control:
-          schema:
-            type: string
-            const: no-store
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorEnvelope'
     AppConfigUnauthorized:
       description: INVALID_CREDENTIALS
       headers:
@@ -9178,39 +9203,6 @@ components:
           - $ref: '#/components/schemas/BudgetSummary'
         period:
           $ref: '#/components/schemas/CashflowPeriod'
-    BalanceForecast:
-      type: object
-      additionalProperties: false
-      required: [timezone, currencyCode, from, to, startingBalanceMinor, months, assumptions]
-      properties:
-        timezone: {type: string}
-        currencyCode: {type: string}
-        from: {type: string, format: date}
-        to: {type: string, format: date}
-        startingBalanceMinor: {type: string}
-        months:
-          type: array
-          items:
-            type: object
-            additionalProperties: false
-            required: [month, openingMinor, incomeMinor, expenseMinor, closingMinor]
-            properties:
-              month: {type: string, pattern: '^\d{4}-\d{2}$'}
-              openingMinor: {type: string}
-              incomeMinor: {type: string}
-              expenseMinor: {type: string}
-              closingMinor: {type: string}
-        assumptions:
-          type: object
-          additionalProperties: false
-          required: [balanceSource, includesCreditWallets, includesOneOffSpending, includedRuleIds, excludedRuleIds, otherCurrencyRuleIds]
-          properties:
-            balanceSource: {type: string, enum: [wallets, user]}
-            includesCreditWallets: {type: boolean}
-            includesOneOffSpending: {type: boolean}
-            includedRuleIds: {type: array, items: {type: string, format: uuid}}
-            excludedRuleIds: {type: array, items: {type: string, format: uuid}}
-            otherCurrencyRuleIds: {type: array, items: {type: string, format: uuid}}
     CalendarMonth:
       type: object
       additionalProperties: false
@@ -11360,7 +11352,7 @@ components:
             type: boolean
         config:
           type: object
-          description: Every config key, e.g. `budget.defaultAlertThresholds`, `forecast.monthOptions`.
+          description: Every config key, e.g. `budget.defaultAlertThresholds`, `budget.alertThresholdOptions`.
           additionalProperties:
             $ref: '#/components/schemas/AppConfigValue'
     PublicAppConfig:
@@ -11714,9 +11706,27 @@ components:
       - byAccount
       - comparison
       - topMerchants
+      - walletBalances
       properties:
         converted:
           $ref: '#/components/schemas/CashflowConverted'
+        walletBalances:
+          type: array
+          description: Money in the active non-credit wallets at the end of the period (never later than today) and at the end of the previous period, per currency. Credit wallets are not counted.
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - currency
+            - endMinor
+            - previousEndMinor
+            properties:
+              currency:
+                type: string
+              endMinor:
+                $ref: '#/components/schemas/ReportMoney'
+              previousEndMinor:
+                $ref: '#/components/schemas/ReportMoney'
         period:
           $ref: '#/components/schemas/CashflowPeriod'
         totals:
@@ -11738,6 +11748,180 @@ components:
           description: Up to 10 expense merchants per currency in the requested period, sorted by |expense| descending then merchant name.
           items:
             $ref: '#/components/schemas/CashflowMerchantTotal'
+    FlowReport:
+      type: object
+      additionalProperties: false
+      required:
+      - period
+      - granularity
+      - buckets
+      properties:
+        period:
+          type: object
+          additionalProperties: false
+          required:
+          - kind
+          - from
+          - to
+          properties:
+            kind:
+              type: string
+              enum:
+              - week
+              - month
+              - year
+              - range
+            from:
+              type: string
+              format: date
+            to:
+              type: string
+              format: date
+        granularity:
+          type: string
+          enum:
+          - day
+          - week
+          - month
+        buckets:
+          type: array
+          description: Oldest first, up to today.
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - from
+            - to
+            - totals
+            properties:
+              from:
+                type: string
+                format: date
+              to:
+                type: string
+                format: date
+              totals:
+                type: array
+                description: Currencies with activity in the bucket, sorted by code.
+                items:
+                  type: object
+                  additionalProperties: false
+                  required:
+                  - currency
+                  - incomeMinor
+                  - expenseMinor
+                  properties:
+                    currency:
+                      type: string
+                    incomeMinor:
+                      $ref: '#/components/schemas/ReportMoney'
+                    expenseMinor:
+                      $ref: '#/components/schemas/ReportMoney'
+    HoldingsReport:
+      type: object
+      additionalProperties: false
+      required:
+      - period
+      - debt
+      - investments
+      - nextLoanDue
+      properties:
+        period:
+          type: object
+          additionalProperties: false
+          required:
+          - kind
+          - from
+          - to
+          properties:
+            kind:
+              type: string
+              enum:
+              - week
+              - month
+              - year
+              - range
+            from:
+              type: string
+              format: date
+            to:
+              type: string
+              format: date
+        debt:
+          type: array
+          description: Currencies with any debt or repayment, sorted by code.
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - currency
+            - startMinor
+            - endMinor
+            - changeMinor
+            - paidMinor
+            - borrowedMinor
+            properties:
+              currency:
+                type: string
+              startMinor:
+                $ref: '#/components/schemas/ReportMoney'
+              endMinor:
+                $ref: '#/components/schemas/ReportMoney'
+              changeMinor:
+                $ref: '#/components/schemas/ReportMoney'
+              paidMinor:
+                $ref: '#/components/schemas/ReportMoney'
+              borrowedMinor:
+                $ref: '#/components/schemas/ReportMoney'
+        investments:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - currency
+            - startValueMinor
+            - endValueMinor
+            - investedMinor
+            - withdrawnMinor
+            - pnlMinor
+            - pnlBps
+            properties:
+              currency:
+                type: string
+              startValueMinor:
+                $ref: '#/components/schemas/ReportMoney'
+              endValueMinor:
+                $ref: '#/components/schemas/ReportMoney'
+              investedMinor:
+                $ref: '#/components/schemas/ReportMoney'
+              withdrawnMinor:
+                $ref: '#/components/schemas/ReportMoney'
+              pnlMinor:
+                $ref: '#/components/schemas/ReportMoney'
+              pnlBps:
+                type:
+                - integer
+                - 'null'
+        nextLoanDue:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - currency
+            - dueOn
+            - amountMinor
+            properties:
+              currency:
+                type: string
+              dueOn:
+                type: string
+                format: date
+              amountMinor:
+                oneOf:
+                - $ref: '#/components/schemas/ReportMoney'
+                - type: 'null'
     TrendReport:
       type: object
       additionalProperties: false

@@ -14,13 +14,17 @@ import 'package:mobile/features/auth/domain/auth_use_cases.dart';
 import 'package:mobile/features/auth/presentation/viewmodels/auth_view_model.dart';
 import 'package:mobile/features/budgets/domain/budget.dart';
 import 'package:mobile/features/budgets/domain/budget_use_cases.dart';
+import 'package:mobile/features/insights/presentation/viewmodels/insights_view_model.dart';
 import 'package:mobile/features/reports/domain/report.dart';
+import 'package:mobile/features/reports/domain/report_flow.dart';
+import 'package:mobile/features/reports/domain/report_holdings.dart';
 import 'package:mobile/features/reports/domain/report_use_cases.dart';
 import 'package:mobile/features/reports/presentation/viewmodels/report_view_model.dart';
 import 'package:mobile/features/wallets/domain/wallet.dart';
 
 import '../auth/fakes.dart';
 import '../home/home_fakes.dart' show FakeProfileViewModel;
+import '../insights/insights_fakes.dart' show StubInsightsViewModel;
 
 BigInt _b(int v) => BigInt.from(v);
 
@@ -105,7 +109,31 @@ CashflowReport october() => CashflowReport(
     _wallet('cash', 'Tiền mặt', WalletType.cash, 0, 2430000),
     _wallet('momo', 'MoMo', WalletType.ewallet, 500000, 1680000),
   ],
+  // 48.250.000 now; the month saved 9.180.000, so 39.070.000 a month ago.
+  walletBalances: [
+    WalletBalance(
+      currency: 'VND',
+      endMinor: _b(48250000),
+      previousEndMinor: _b(39070000),
+    ),
+  ],
 );
+
+/// The same figures as a custom range, which is how the server labels it.
+CashflowReport _asRange(CashflowReport report, String from, String to) =>
+    CashflowReport(
+      period: ReportPeriod(
+        kind: ReportPeriodKind.range,
+        from: from,
+        to: to,
+        timezone: report.period.timezone,
+        fiscalMonthStartDay: report.period.fiscalMonthStartDay,
+      ),
+      totals: report.totals,
+      byCategory: report.byCategory,
+      byAccount: report.byAccount,
+      walletBalances: report.walletBalances,
+    );
 
 CashflowReport _empty(String from, String to) => CashflowReport(
   period: _month(from, to),
@@ -145,15 +173,33 @@ TrendReport _trend(ReportPeriodKind kind) {
 
 /// Canned data: October 2026 (previous: September 9,9tr), anything else empty.
 class StubReportCases implements ReportUseCases {
+  StubReportCases({
+    this.flowEmpty = false,
+    this.flowFails = false,
+    this.holdingsFail = false,
+    this.noHoldings = false,
+  });
+
+  /// Buckets with nothing in them: the cash flow card says there is none.
+  final bool flowEmpty;
+  final bool flowFails;
+  final bool holdingsFail;
+
+  /// Holdings that answer with no debt and no investment.
+  final bool noHoldings;
+
   @override
   Future<Either<AuthFailure, NamedCashflow>> loadCashflow(
     ReportPeriodQuery query,
   ) async {
     final current = query.on == null || query.on!.startsWith('2026-10');
+    final report = current ? october() : _empty('2026-03-01', '2026-03-31');
     return right(
       NamedCashflow(
         currencies: const [WalletCurrency('VND', 0)],
-        report: current ? october() : _empty('2026-03-01', '2026-03-31'),
+        report: query.kind == ReportPeriodKind.range
+            ? _asRange(report, query.from!, query.to!)
+            : report,
       ),
     );
   }
@@ -167,15 +213,111 @@ class StubReportCases implements ReportUseCases {
       totals: [
         CashflowTotal(
           currency: 'VND',
-          incomeMinor: BigInt.zero,
+          incomeMinor: _b(17000000),
           expenseMinor: _b(-9900000),
-          netMinor: _b(-9900000),
+          netMinor: _b(7100000),
         ),
       ],
       byCategory: const [],
       byAccount: const [],
     ),
   );
+
+  @override
+  Future<Either<AuthFailure, FlowReport>> loadFlow(ReportPeriod period) async {
+    if (flowFails) return left(const AuthFailure(AuthError.unavailable));
+    if (flowEmpty || !period.from.startsWith('2026-10')) {
+      return right(
+        FlowReport(
+          kind: period.kind,
+          from: period.from,
+          to: period.to,
+          granularity: FlowGranularity.day,
+          buckets: const [],
+        ),
+      );
+    }
+    // 1..21 October: the salary on the 5th, 9.320.000 spent in all.
+    const spend = <int>[
+      250000, 400000, 300000, 600000, 350000, 500000, 700000, //
+      400000, 650000, 500000, 350000, 300000, 450000, 380000, //
+      280000, 300000, 420000, 350000, 230000, 160000,
+    ];
+    final last = 9320000 - spend.fold<int>(0, (a, b) => a + b);
+    final days = <int>[...spend, last];
+    return right(
+      FlowReport(
+        kind: period.kind,
+        from: period.from,
+        to: period.to,
+        granularity: FlowGranularity.day,
+        buckets: [
+          for (var i = 0; i < days.length; i++)
+            TrendBucket(
+              from: '2026-10-${(i + 1).toString().padLeft(2, '0')}',
+              to: '2026-10-${(i + 1).toString().padLeft(2, '0')}',
+              totals: [
+                TrendTotal(
+                  currency: 'VND',
+                  incomeMinor: _b(i == 4 ? 18500000 : 0),
+                  expenseMinor: _b(-days[i]),
+                ),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Future<Either<AuthFailure, HoldingsReport>> loadHoldings(
+    ReportPeriod period,
+  ) async {
+    if (holdingsFail) return left(const AuthFailure(AuthError.unavailable));
+    if (noHoldings) {
+      return right(
+        HoldingsReport(
+          kind: period.kind,
+          from: period.from,
+          to: period.to,
+          debt: const [],
+          investments: const [],
+          nextLoanDue: const [],
+        ),
+      );
+    }
+    return right(
+      HoldingsReport(
+        kind: period.kind,
+        from: period.from,
+        to: period.to,
+        debt: [
+          DebtChange(
+            currency: 'VND',
+            start: _b(128965000),
+            end: _b(125365000),
+            change: _b(-3600000),
+            paid: _b(6700000),
+            borrowed: _b(3100000),
+          ),
+        ],
+        investments: [
+          InvestChange(
+            currency: 'VND',
+            startValue: _b(150000000),
+            endValue: _b(153650000),
+            invested: _b(5000000),
+            withdrawn: BigInt.zero,
+            pnl: _b(-1350000),
+            pnlBps: -87,
+          ),
+        ],
+        nextLoanDue: [
+          LoanDue(currency: 'VND', dueOn: '2026-11-05', amount: _b(5200000)),
+        ],
+      ),
+    );
+  }
 
   @override
   Future<Either<AuthFailure, NamedMonthReview>> loadMonthReview({
@@ -195,7 +337,13 @@ class _NoAnalytics implements AnalyticsService {
 }
 
 /// Registers a report model fed by [StubReportCases] (today: 21/10/2026).
-Future<Widget> f1App(Widget page, {bool dark = false, double scale = 1}) async {
+Future<Widget> f1App(
+  Widget page, {
+  bool dark = false,
+  double scale = 1,
+  StubInsightsViewModel? insights,
+  StubReportCases? cases,
+}) async {
   await getIt.reset();
   registerTestServerConfig();
   final auth =
@@ -215,9 +363,10 @@ Future<Widget> f1App(Widget page, {bool dark = false, double scale = 1}) async {
         ..ready = true;
   getIt.registerSingleton<AuthViewModel>(auth);
   getIt.registerSingleton<BudgetUseCases>(_NoBudget());
+  if (insights != null) getIt.registerSingleton<InsightsViewModel>(insights);
   getIt.registerSingleton<ReportViewModel>(
     DefaultReportViewModel(
-      StubReportCases(),
+      cases ?? StubReportCases(),
       auth,
       _NoAnalytics(),
       FakeProfileViewModel(),

@@ -5,6 +5,7 @@ import '../../../../core/money/money_text.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_card.dart';
+import '../../../../core/widgets/money_display.dart';
 import '../../../../core/widgets/progress_bar.dart';
 import '../../domain/budget.dart';
 
@@ -24,18 +25,23 @@ String budgetStatusLabel(S s, BudgetStatus status) => switch (status) {
   BudgetStatus.over => s.budgetStatusOver,
 };
 
-/// Progress card used on Reports (month) and the budget editor header.
+/// Progress card used on Reports (month) and the budget editor header. With
+/// a [title] (Reports) the title and the status share the first row, the
+/// percent sits under it beside the limit, and amounts carry the currency
+/// symbol.
 class BudgetProgressCard extends StatelessWidget {
   const BudgetProgressCard({
     required this.summary,
     required this.minorDigits,
     this.onTap,
+    this.title,
     super.key,
   });
 
   final BudgetSummary summary;
   final int minorDigits;
   final VoidCallback? onTap;
+  final String? title;
 
   @override
   Widget build(BuildContext context) {
@@ -46,40 +52,79 @@ class BudgetProgressCard extends StatelessWidget {
     final percent = (summary.percentBps / 100).toStringAsFixed(
       summary.percentBps % 100 == 0 ? 0 : 1,
     );
-    String money(BigInt value) => formatMoneyText(value, minorDigits, locale);
+    final symbol = MoneyDisplay.symbolFor(summary.currencyCode);
+    String money(BigInt value) => title == null
+        ? formatMoneyText(value, minorDigits, locale)
+        : '${formatMoneyText(value, minorDigits, locale)} $symbol';
+    final status = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(FreevaRadius.full),
+      ),
+      child: Text(
+        budgetStatusLabel(s, summary.status),
+        style: FreevaTypography.label.copyWith(
+          fontWeight: FontWeight.w600,
+          color: color,
+        ),
+      ),
+    );
     return FreevaCard(
       onTap: onTap,
       padding: const EdgeInsets.all(18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  s.budgetUsedPercent(percent),
-                  style: FreevaTypography.titleL.copyWith(color: c.textPrimary),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(FreevaRadius.full),
-                ),
-                child: Text(
-                  budgetStatusLabel(s, summary.status),
-                  style: FreevaTypography.label.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: color,
+          if (title != null) ...[
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    title!,
+                    style: FreevaTypography.titleM.copyWith(
+                      color: c.textPrimary,
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
+                status,
+              ],
+            ),
+            const SizedBox(height: FreevaSpace.s3),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                Expanded(
+                  child: Text(
+                    s.budgetUsedPercent(percent),
+                    style: FreevaTypography.titleL.copyWith(
+                      color: c.textPrimary,
+                    ),
+                  ),
+                ),
+                Text(
+                  s.reportBudgetOf(money(summary.limitMinor)),
+                  style: FreevaTypography.bodyS.copyWith(
+                    color: c.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ] else
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    s.budgetUsedPercent(percent),
+                    style: FreevaTypography.titleL.copyWith(
+                      color: c.textPrimary,
+                    ),
+                  ),
+                ),
+                status,
+              ],
+            ),
           const SizedBox(height: FreevaSpace.s3),
           FreevaProgressBar(value: summary.ratio, color: color),
           const SizedBox(height: FreevaSpace.s3),
@@ -100,14 +145,16 @@ class BudgetProgressCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: FreevaSpace.s2),
-          Text(
-            s.budgetLimitLine(
-              money(summary.spentMinor),
-              money(summary.limitMinor),
+          if (title == null) ...[
+            const SizedBox(height: FreevaSpace.s2),
+            Text(
+              s.budgetLimitLine(
+                money(summary.spentMinor),
+                money(summary.limitMinor),
+              ),
+              style: FreevaTypography.label.copyWith(color: c.textSecondary),
             ),
-            style: FreevaTypography.label.copyWith(color: c.textSecondary),
-          ),
+          ],
         ],
       ),
     );

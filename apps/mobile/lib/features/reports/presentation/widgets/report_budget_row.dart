@@ -84,6 +84,7 @@ class _ReportBudgetRowState extends State<ReportBudgetRow> {
       return BudgetProgressCard(
         summary: budget,
         minorDigits: widget.minorDigits,
+        title: s.reportBudgetTitle,
         onTap: () => context.push(budgetsPath),
       );
     }

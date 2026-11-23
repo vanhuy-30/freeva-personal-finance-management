@@ -2,6 +2,10 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-11-21
+
+- Báo cáo tài chính (mobile + API): card đầu có so sánh kỳ trước, tiết kiệm và tỷ lệ, tổng số dư ví; dòng tiền cộng dồn; xu hướng chi đánh dấu kỳ chưa kết thúc; cơ cấu có màn xem toàn bộ (`/reports/breakdown`); card Nợ và vay, Đầu tư theo kỳ; Nhận định lấy từ Phân tích. API thêm `walletBalances` (cashflow), `GET /reports/flow`, `GET /reports/holdings`; không migration. Bỏ dòng "Xem bản soát tháng" ở Báo cáo và màn Dự báo số dư cũ; gỡ luôn endpoint `GET /forecast`, module backend và ba khoá cấu hình `forecast.monthOptions`, `forecast.defaultMonths`, `limit.forecastMaxMonths` (không migration; giá trị đã lưu trong bảng cấu hình, nếu có, bị bỏ qua). [Chi tiết](../architecture/mobile-reports.md).
+
 ## 2026-11-12
 
 - **Phase 5 closed**: backlog 9/9 done (cờ và cấu hình trên web admin, số hardcode lên server, gợi ý danh mục, điều đáng chú ý, dự báo chi và ngày dự kiến đạt mục tiêu theo quy tắc, công tắc Gợi ý tự động), 4 wont. Mở Phase 6 (chờ đối tác ngân hàng, DPA).

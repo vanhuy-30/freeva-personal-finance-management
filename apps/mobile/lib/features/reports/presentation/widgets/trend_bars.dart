@@ -17,9 +17,12 @@ class TrendBars extends StatelessWidget {
     required this.kind,
     required this.currency,
     required this.digits,
+    this.markLast = false,
     super.key,
   });
 
+  /// Puts a * after the last bar's axis label: it is still running.
+  final bool markLast;
   final TrendSeries series;
   final ReportPeriodKind kind;
   final String currency;
@@ -83,7 +86,8 @@ class TrendBars extends StatelessWidget {
                                 units,
                               ),
                         axis: axisAll || (series.bars.length - 1 - i).isEven
-                            ? trendBarLabel(s, kind, series.bars[i], locale)
+                            ? '${trendBarLabel(s, kind, series.bars[i], locale)}'
+                                  '${markLast && i == series.bars.length - 1 ? '*' : ''}'
                             : '',
                         height: peak == BigInt.zero
                             ? 4
