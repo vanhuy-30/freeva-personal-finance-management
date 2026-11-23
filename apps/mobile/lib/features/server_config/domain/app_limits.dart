@@ -11,9 +11,6 @@ class AppLimits {
     required this.budgetDefaultThresholds,
     required this.budgetMaxThresholds,
     required this.budgetThresholdMax,
-    required this.forecastMonthOptions,
-    required this.forecastDefaultMonths,
-    required this.forecastMaxMonths,
     required this.installmentTermOptions,
     required this.installmentDefaultTerm,
     required this.installmentMinTerm,
@@ -66,9 +63,6 @@ class AppLimits {
   final List<int> budgetDefaultThresholds;
   final int budgetMaxThresholds;
   final int budgetThresholdMax;
-  final List<int> forecastMonthOptions;
-  final int forecastDefaultMonths;
-  final int forecastMaxMonths;
   final List<int> installmentTermOptions;
   final int installmentDefaultTerm;
   final int installmentMinTerm;
@@ -135,9 +129,6 @@ class AppLimits {
         budgetDefaultThresholds: ns('budget.defaultAlertThresholds'),
         budgetMaxThresholds: n('budget.maxAlertThresholds'),
         budgetThresholdMax: n('limit.budgetThresholdMax'),
-        forecastMonthOptions: ns('forecast.monthOptions'),
-        forecastDefaultMonths: n('forecast.defaultMonths'),
-        forecastMaxMonths: n('limit.forecastMaxMonths'),
         installmentTermOptions: ns('installment.termOptions'),
         installmentDefaultTerm: n('installment.defaultTerm'),
         installmentMinTerm: n('limit.installmentMinTerm'),

@@ -1,6 +1,6 @@
 # Dự báo chi cuối tháng và ngày dự kiến đạt mục tiêu — BE-P5-E06 / MOB-P5-E06
 
-Contract: [OpenAPI](../../packages/api-contracts/openapi.yaml) `GET /api/v1/spending-forecast`, `GET /api/v1/goals/{id}/forecast`. Màn: board S.2 (thẻ đầu Phân tích), S.3 (Dự báo chi), T.1 (chi tiết mục tiêu) — [pattern](../brand/patterns/R-suggestions-insights.md). [forecast.md](forecast.md) (`BE-P3-E04`: dự báo số dư chỉ từ định kỳ) không còn màn trên app từ 2026-11-21: phần "số dư cuối tháng" bên dưới thay nó.
+Contract: [OpenAPI](../../packages/api-contracts/openapi.yaml) `GET /api/v1/spending-forecast`, `GET /api/v1/goals/{id}/forecast`. Màn: board S.2 (thẻ đầu Phân tích), S.3 (Dự báo chi), T.1 (chi tiết mục tiêu) — [pattern](../brand/patterns/R-suggestions-insights.md). Màn Dự báo số dư cũ (`BE-P3-E04`, chỉ tính định kỳ) đã gỡ cùng endpoint `GET /forecast` (2026-11-21); phần "số dư cuối tháng" bên dưới thay nó.
 
 ## Chức năng
 

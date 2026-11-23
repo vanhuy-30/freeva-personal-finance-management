@@ -21,7 +21,7 @@ Map<String, dynamic> _body({int version = 3, bool insights = false}) => {
   'version': version,
   'flags': {'insights': insights, 'forecast': false},
   'config': {
-    'forecast.monthOptions': [3, 6, 12],
+    'budget.alertThresholdOptions': [70, 80, 90, 100],
     'report.topRows': 3,
     'onboarding.incomeSuggestionsVnd': ['10000000', '15000000'],
     'netWorth.defaultWindow': '6m',
@@ -37,7 +37,12 @@ void main() {
       expect(config.version, 3);
       expect(config.flag('insights'), isTrue);
       expect(config.flag('unknown'), isFalse);
-      expect(config.integers('forecast.monthOptions'), [3, 6, 12]);
+      expect(config.integers('budget.alertThresholdOptions'), [
+        70,
+        80,
+        90,
+        100,
+      ]);
       expect(config.integer('report.topRows'), 3);
       expect(config.moneyMinor('onboarding.incomeSuggestionsVnd'), [
         BigInt.from(10000000),
@@ -56,7 +61,7 @@ void main() {
         jsonDecode(jsonEncode(config.toJson())) as Map<String, dynamic>,
       );
       expect(again.version, config.version);
-      expect(again.integers('forecast.monthOptions'), [3, 6, 12]);
+      expect(again.integers('budget.alertThresholdOptions'), [70, 80, 90, 100]);
       expect(
         () => ServerConfig.fromJson({'version': '3'}),
         throwsFormatException,

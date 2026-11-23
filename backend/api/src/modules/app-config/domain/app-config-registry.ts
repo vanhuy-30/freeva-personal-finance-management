@@ -1,7 +1,6 @@
 import { DEFAULT_ALERT_THRESHOLDS } from '../../budgets/domain/budget';
 import { MAX_RATE_BPS } from '../../loans/domain/loan';
 import { MAX_INSTALLMENTS, MIN_INSTALLMENTS } from '../../card-installments/domain/card-installment';
-import { FORECAST_DEFAULT_MONTHS, FORECAST_MAX_MONTHS } from '../../forecast/domain/forecast';
 import { GOAL_KINDS } from '../../goals/domain/goal';
 import {
   CARD_HIGH_USAGE_THRESHOLD,
@@ -46,14 +45,6 @@ export const CONFIG_DEFINITIONS = {
   'budget.maxAlertThresholds': {
     type: 'integer', default: 4, min: 1, max: 4,
     description: 'Số mốc cảnh báo tối đa trên một ngân sách.',
-  },
-  'forecast.monthOptions': {
-    type: 'integer_list', default: [3, 6, 12], min: 1, max: FORECAST_MAX_MONTHS, minItems: 1, maxItems: 6,
-    description: 'Số tháng cho chọn ở màn dự báo số dư.',
-  },
-  'forecast.defaultMonths': {
-    type: 'integer', default: FORECAST_DEFAULT_MONTHS, min: 1, max: FORECAST_MAX_MONTHS,
-    description: 'Số tháng mặc định khi mở màn dự báo số dư.',
   },
   'installment.termOptions': {
     type: 'integer_list', default: [3, 6, 9, 12], min: MIN_INSTALLMENTS, max: MAX_INSTALLMENTS, minItems: 1, maxItems: 8,
@@ -238,7 +229,6 @@ export const CONFIG_DEFINITIONS = {
   'limit.feedbackMaxLength': { type: 'integer', default: 2000, min: 2000, max: 2000, editable: false, description: 'Độ dài góp ý tối đa.' },
   'limit.periodStartDayMax': { type: 'integer', default: 28, min: 28, max: 28, editable: false, description: 'Ngày bắt đầu kỳ, ngày sao kê, ngày đến hạn thẻ lớn nhất.' },
   'limit.budgetThresholdMax': { type: 'integer', default: 100, min: 100, max: 100, editable: false, description: 'Mốc cảnh báo ngân sách lớn nhất (%).' },
-  'limit.forecastMaxMonths': { type: 'integer', default: FORECAST_MAX_MONTHS, min: FORECAST_MAX_MONTHS, max: FORECAST_MAX_MONTHS, editable: false, description: 'Số tháng dự báo số dư lớn nhất.' },
   'limit.installmentMinTerm': { type: 'integer', default: MIN_INSTALLMENTS, min: MIN_INSTALLMENTS, max: MIN_INSTALLMENTS, editable: false, description: 'Kỳ hạn trả góp nhỏ nhất.' },
   'limit.installmentMaxTerm': { type: 'integer', default: MAX_INSTALLMENTS, min: MAX_INSTALLMENTS, max: MAX_INSTALLMENTS, editable: false, description: 'Kỳ hạn trả góp lớn nhất.' },
   'limit.remindBeforeMax': { type: 'integer', default: 30, min: 30, max: 30, editable: false, description: 'Số ngày nhắc trước lớn nhất.' },
@@ -269,9 +259,6 @@ export function crossCheckConfig(values: Record<ConfigKey, ConfigValue>): string
   const v = <K extends ConfigKey>(key: K) => values[key] as ConfigValueOf<K>;
   if ((v('budget.defaultAlertThresholds')).length > v('budget.maxAlertThresholds')) {
     return 'budget.defaultAlertThresholds has more items than budget.maxAlertThresholds';
-  }
-  if (!v('forecast.monthOptions').includes(v('forecast.defaultMonths'))) {
-    return 'forecast.defaultMonths must be one of forecast.monthOptions';
   }
   if (!v('installment.termOptions').includes(v('installment.defaultTerm'))) {
     return 'installment.defaultTerm must be one of installment.termOptions';

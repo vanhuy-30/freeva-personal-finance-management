@@ -17,7 +17,6 @@ import { LoanModule } from './modules/loans/loan.module';
 import { InvestmentModule } from './modules/investments/investment.module';
 import { PersonalDebtModule } from './modules/personal-debts/personal-debt.module';
 import { CalendarModule } from './modules/calendar/calendar.module';
-import { ForecastModule } from './modules/forecast/forecast.module';
 import { NotificationModule } from './modules/notifications/notification.module';
 import { FinancialAccountModule } from './modules/financial-accounts/financial-account.module';
 import { FxRateModule } from './modules/fx-rates/fx-rate.module';
@@ -65,7 +64,6 @@ import { HealthModule } from './modules/health/health.module';
     PersonalDebtModule,
     InvestmentModule,
     CalendarModule,
-    ForecastModule,
     NotificationModule,
     SyncModule,
     AccountModule,

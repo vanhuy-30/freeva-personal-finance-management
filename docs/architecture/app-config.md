@@ -25,7 +25,6 @@ Mỗi môi trường (local, staging, production) có DB riêng nên tự quản
 | Khóa | Nơi dùng |
 |---|---|
 | `budget.defaultAlertThresholds`, `budget.maxAlertThresholds` | `BudgetService` (`normalizeAlertThresholds`) |
-| `forecast.defaultMonths` | `ForecastService` |
 | `recurring.defaultRemindBefore` | `RecurringService` |
 | `creditCard.highUsagePercent`, `creditCard.criticalUsagePercent` | `NotificationService` (cảnh báo dùng thẻ) |
 | `notification.dailyLogDefaultTime`, `quietStartDefault`, `quietEndDefault` | `PrismaNotificationRepository` (user chưa lưu cài đặt) |
@@ -39,7 +38,7 @@ Mốc ngân sách: server báo ở **mọi mốc user đã chọn** (bỏ sàn 8
 
 **Khóa chỉ đọc (`editable: false`, nhóm `limit.*`):** giới hạn kỹ thuật API áp dụng nguyên (độ dài tên, ghi chú, mật khẩu, email; ngày đầu kỳ 28; mốc 100; dự báo 12; trả góp 2–60; nhắc trước 30; lặp 366; lãi suất; khoảng báo cáo 3660 ngày; 1 000 000 ký tự CSV). `/app-config` trả để app báo trước cho user; staff chỉ xem, sửa trả `400 CONFIG_KEY_READONLY`. Test `registry-limits.spec.ts` so từng khóa với decorator DTO để hai bên không lệch.
 
-**Kiểm tra chéo khi lưu** (`crossCheckConfig`): số mốc mặc định ≤ số mốc tối đa; `forecast.defaultMonths` ∈ `monthOptions`; `installment.defaultTerm` ∈ `termOptions`; `recurring.defaultRemindBefore` ∈ `remindBeforeOptions`; mức dùng thẻ cao < nguy hiểm; `password.veryStrongLength` ≥ `password.minLength`. Sai → `400 CONFIG_VALUE_INVALID` kèm lý do.
+**Kiểm tra chéo khi lưu** (`crossCheckConfig`): số mốc mặc định ≤ số mốc tối đa; `installment.defaultTerm` ∈ `termOptions`; `recurring.defaultRemindBefore` ∈ `remindBeforeOptions`; mức dùng thẻ cao < nguy hiểm; `password.veryStrongLength` ≥ `password.minLength`. Sai → `400 CONFIG_VALUE_INVALID` kèm lý do.
 
 **Onboarding (`BE-P6-002`):** `onboarding.incomeBandsVnd` là các mốc chia khoảng thu nhập (mặc định 5/10/20/40 triệu → 5 khoảng, khoảng trên cùng mở); thay `onboarding.incomeSuggestionsVnd` (migration xoá giá trị đã lưu, reader vốn bỏ qua khóa không còn trong registry). `onboarding.maxGoals` mặc định 6 (tối đa 6). `onboarding.goalKinds` thêm `retirement`, `children`, `business`, `health`.
 
