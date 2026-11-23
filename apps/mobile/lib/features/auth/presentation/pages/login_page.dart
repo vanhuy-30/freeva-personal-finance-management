@@ -39,6 +39,12 @@ class _LoginPageState extends State<LoginPage> {
     if (mounted) _password.clear();
   }
 
+  /// Carries the typed email over; the next screen lets them edit it.
+  void _forgot() {
+    widget.model.draftEmail(_email.text);
+    widget.model.goTo(AuthStep.forgot);
+  }
+
   void _soon() =>
       showFreevaToast(context, message: S.of(context).authSocialSoon);
 
@@ -87,7 +93,7 @@ class _LoginPageState extends State<LoginPage> {
         const SizedBox(height: FreevaSpace.s2),
         Center(
           child: TextButton(
-            onPressed: idle ? () => model.goTo(AuthStep.forgot) : null,
+            onPressed: idle ? _forgot : null,
             style: TextButton.styleFrom(
               padding: const EdgeInsets.all(FreevaSpace.s3),
               foregroundColor: c.textOnWash,

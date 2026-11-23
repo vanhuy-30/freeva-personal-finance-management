@@ -19,7 +19,7 @@ import 'package:mobile/features/profile/presentation/viewmodels/profile_view_mod
 import 'package:mobile/features/wallets/presentation/viewmodels/wallet_view_model.dart';
 
 import '../auth/fakes.dart';
-import '../forecast/forecast_stub.dart' show ForecastWallets;
+import '../../support/wallets_stub.dart' show ForecastWallets;
 import '../home/fixtures.dart' show b;
 import '../profile/fakes.dart';
 

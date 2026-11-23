@@ -30,7 +30,6 @@ class HiddenWalletsPage extends StatelessWidget {
         context,
         message: s.walletRestored(wallet.draft.name),
         icon: LucideIcons.check,
-        aboveNav: false,
       );
     }
   }

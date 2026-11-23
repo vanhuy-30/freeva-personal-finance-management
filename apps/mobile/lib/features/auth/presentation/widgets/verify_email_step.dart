@@ -28,7 +28,7 @@ class VerifyEmailStep extends StatelessWidget {
     final message = S.of(context).authVerificationSent;
     await model.resendVerification();
     if (context.mounted && model.failure == null) {
-      showFreevaToast(context, message: message, aboveNav: false);
+      showFreevaToast(context, message: message);
     }
   }
 

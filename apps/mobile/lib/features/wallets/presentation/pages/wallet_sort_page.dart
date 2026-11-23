@@ -42,11 +42,7 @@ class _WalletSortPageState extends State<WalletSortPage> {
       context.popOrGo('/wallets');
       return;
     }
-    showFreevaToast(
-      context,
-      message: S.of(context).walletSortFailed,
-      aboveNav: false,
-    );
+    showFreevaToast(context, message: S.of(context).walletSortFailed);
     if (model.needsReload) {
       await model.load();
       if (mounted) setState(() => order = model.active);

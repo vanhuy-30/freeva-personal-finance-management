@@ -83,7 +83,6 @@ class _WalletDetailPageState extends State<WalletDetailPage> {
       context,
       message: S.of(context).walletReconcileDone,
       success: true,
-      aboveNav: false,
     );
     await _refresh();
   }
@@ -106,7 +105,6 @@ class _WalletDetailPageState extends State<WalletDetailPage> {
         final hidden = model.byId(id);
         if (hidden != null && hidden.archived) model.archive(hidden);
       },
-      aboveNav: false,
     );
     context.popOrGo('/wallets');
   }

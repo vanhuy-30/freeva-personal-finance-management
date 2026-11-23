@@ -21,7 +21,7 @@ import 'package:mobile/features/profile/presentation/viewmodels/profile_view_mod
 import 'package:mobile/features/wallets/presentation/viewmodels/wallet_view_model.dart';
 
 import '../auth/fakes.dart';
-import '../forecast/forecast_stub.dart' show ForecastWallets;
+import '../../support/wallets_stub.dart' show ForecastWallets;
 import '../home/fixtures.dart' show b;
 import '../profile/fakes.dart';
 
@@ -96,8 +96,8 @@ class FakeInvestmentUseCases implements InvestmentUseCases {
       InvestmentKind.savingsDeposit,
       'VCB 12 tháng',
       cost: 100000000,
-      value: 102813699,
-      bps: 281,
+      value: 100000000,
+      bps: 0,
       unit: 'deposit',
       rate: 650,
       start: '2026-06-01',
@@ -128,21 +128,21 @@ class FakeInvestmentUseCases implements InvestmentUseCases {
     position('s1', InvestmentKind.stock, 'VNM', cost: 9000000),
   ];
   InvestmentSummary summaryValue = InvestmentSummary(
-    totals: [total(cost: 749000000, value: 800813699, bps: 826)],
+    totals: [total(cost: 749000000, value: 798000000, bps: 787)],
     byKind: [
       total(
         kind: InvestmentKind.realEstate,
         cost: 600000000,
         value: 650000000,
         bps: 833,
-        share: 8116,
+        share: 8145,
       ),
       total(
         kind: InvestmentKind.savingsDeposit,
         cost: 100000000,
-        value: 102813699,
-        bps: 281,
-        share: 1284,
+        value: 100000000,
+        bps: 0,
+        share: 1253,
       ),
       total(
         kind: InvestmentKind.gold,

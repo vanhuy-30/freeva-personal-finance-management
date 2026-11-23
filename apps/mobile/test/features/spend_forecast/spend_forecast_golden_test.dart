@@ -17,14 +17,22 @@ void main() {
   setUpAll(loadTestFonts);
   tearDown(() => getIt.reset());
 
-  for (final dark in [false, true]) {
-    final name = dark ? 's3_spend_forecast_dark' : 's3_spend_forecast';
+  for (final (dark, runsOut) in [
+    (false, false),
+    (true, false),
+    (false, true),
+  ]) {
+    final name = runsOut
+        ? 's3_spend_forecast_out'
+        : (dark ? 's3_spend_forecast_dark' : 's3_spend_forecast');
     testWidgets('S.3 $name', skip: !Platform.isMacOS, (t) async {
-      t.view.physicalSize = const Size(390, 860);
+      t.view.physicalSize = const Size(390, 1500);
       t.view.devicePixelRatio = 1;
       addTearDown(t.view.reset);
       getIt.registerSingleton<SpendForecastViewModel>(
-        StubSpendForecastViewModel(forecast: boardForecast()),
+        StubSpendForecastViewModel(
+          forecast: boardForecast(balance: boardBalance(runsOut: runsOut)),
+        ),
       );
       await t.pumpWidget(
         MaterialApp(

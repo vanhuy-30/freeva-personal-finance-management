@@ -74,7 +74,21 @@ class SpendingForecastRepositoryImpl implements SpendingForecastRepository {
           for (final raw in json['topCategories'] as List? ?? const [])
             _top(raw as Map<String, dynamic>),
         ]),
+        balance: json['balance'] == null
+            ? null
+            : _balance(json['balance'] as Map<String, dynamic>),
       );
+
+  static BalanceOutlook _balance(Map<String, dynamic> json) => BalanceOutlook(
+    balanceMinor: _money(json['balanceMinor']),
+    incomeAheadMinor: _money(json['incomeAheadMinor']),
+    billsAheadMinor: _money(json['billsAheadMinor']),
+    variableAheadMinor: _maybe(json['variableAheadMinor']),
+    endMinor: _money(json['endMinor']),
+    endLowMinor: _money(json['endLowMinor']),
+    endHighMinor: _money(json['endHighMinor']),
+    runsOutOn: json['runsOutOn'] as String?,
+  );
 
   static SpendTopCategory _top(Map<String, dynamic> json) {
     final category = json['category'] as Map<String, dynamic>;

@@ -79,12 +79,6 @@ import 'package:mobile/features/debts/presentation/viewmodels/debt_view_model.da
 import 'package:mobile/features/feedback/data/feedback_repository_impl.dart'
     as _i216;
 import 'package:mobile/features/feedback/domain/feedback.dart' as _i173;
-import 'package:mobile/features/forecast/data/forecast_repository_impl.dart'
-    as _i587;
-import 'package:mobile/features/forecast/domain/forecast_repository.dart'
-    as _i159;
-import 'package:mobile/features/forecast/domain/forecast_use_cases.dart'
-    as _i1004;
 import 'package:mobile/features/fx_rates/data/fx_rate_repository_impl.dart'
     as _i435;
 import 'package:mobile/features/fx_rates/domain/fx_rate_repository.dart'
@@ -347,8 +341,6 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i173.AuthRepository>(),
           gh<_i1007.AccountFileSharer>(),
         ));
-    gh.lazySingleton<_i159.ForecastRepository>(
-        () => _i587.ForecastRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i572.LoanUseCases>(() => _i572.DefaultLoanUseCases(
           gh<_i63.LoanRepository>(),
           gh<_i855.AppLimitsSource>(),
@@ -443,11 +435,6 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i57.TagRepository>(),
           gh<_i855.AppLimitsSource>(),
         ));
-    gh.lazySingleton<_i1004.ForecastUseCases>(
-        () => _i1004.DefaultForecastUseCases(
-              gh<_i159.ForecastRepository>(),
-              gh<_i855.AppLimitsSource>(),
-            ));
     gh.lazySingleton<_i221.CategoryUseCases>(
         () => _i221.DefaultCategoryUseCases(
               gh<_i561.CategoryRepository>(),

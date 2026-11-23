@@ -4,7 +4,7 @@ import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/money_display.dart';
-import '../../../forecast/presentation/widgets/forecast_labels.dart';
+import '../../../../core/money/signed_money.dart';
 import '../../domain/net_worth_history.dart';
 import 'net_worth_labels.dart';
 

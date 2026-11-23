@@ -28,6 +28,7 @@ class FreevaSegmented<T> extends StatelessWidget {
     this.expand = false,
     this.compact = false,
     this.style = FreevaSegmentedStyle.ink,
+    this.accent = false,
     super.key,
   }) : assert(segments.length >= 2 && segments.length <= 4);
 
@@ -44,6 +45,9 @@ class FreevaSegmented<T> extends StatelessWidget {
 
   /// Look of the selected pill. Applies to the regular size only.
   final FreevaSegmentedStyle style;
+
+  /// Selected pill in the app blue with white text instead of ink.
+  final bool accent;
 
   @override
   Widget build(BuildContext context) {
@@ -79,6 +83,8 @@ class FreevaSegmented<T> extends StatelessWidget {
               shape: const StadiumBorder(),
               color: !on
                   ? Colors.transparent
+                  : accent
+                  ? c.actionPrimary
                   : raised
                   ? c.segmentedRaisedBg
                   : c.segmentedSelectedBg,
@@ -93,6 +99,8 @@ class FreevaSegmented<T> extends StatelessWidget {
                 fontWeight: on ? FontWeight.w600 : FontWeight.w500,
                 color: !on
                     ? c.textSecondary
+                    : accent
+                    ? c.buttonPrimaryFg
                     : raised
                     ? c.textPrimary
                     : c.segmentedSelectedFg,

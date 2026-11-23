@@ -109,10 +109,10 @@ describe('valuation', () => {
   it('falls back to cost with no price', () => {
     expect(valuate(record({}), '2026-11-06')).toEqual({ basis: 'cost', currentValueMinor: 70_000_000n, unrealizedMinor: null });
   });
-  it('values a deposit as principal plus accrued interest', () => {
+  it('values a deposit at principal only, without accrued interest', () => {
     const v = valuate(record({ kind: 'savings_deposit', unit: 'deposit', quantityScaled: QUANTITY_SCALE, costBasisMinor: 100_000_000n,
       interestRateBps: 1200, startDate: '2026-01-01', maturityDate: null }), '2027-01-01');
-    expect(v).toEqual({ basis: 'deposit', currentValueMinor: 112_000_000n, unrealizedMinor: 12_000_000n });
+    expect(v).toEqual({ basis: 'deposit', currentValueMinor: 100_000_000n, unrealizedMinor: 0n });
   });
   it('sums totals per currency and counts unpriced positions', () => {
     const priced = record({ latestPrice: { priceMinor: 8_000_000n, source: 'manual', quotedAt: new Date(0) } });

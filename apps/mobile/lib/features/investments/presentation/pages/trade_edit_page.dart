@@ -18,9 +18,10 @@ import '../../../../core/widgets/freeva_top_bar.dart';
 import '../../../../core/widgets/money_display.dart';
 import '../../../auth/presentation/widgets/auth_message.dart';
 import '../../../net_worth/presentation/widgets/net_worth_labels.dart';
-import '../../../settings/presentation/widgets/balances_hidden_builder.dart';
+import '../widgets/shown_balances.dart';
 import '../../../transactions/presentation/widgets/composer/date_picker_sheet.dart';
 import '../../../wallets/presentation/widgets/editor/form_pair.dart';
+import '../../../server_config/domain/app_limits.dart';
 import '../../domain/investment.dart';
 import '../viewmodels/investment_view_model.dart';
 import '../widgets/investment_labels.dart';
@@ -43,6 +44,7 @@ class TradeEditPage extends StatefulWidget {
 
 class _TradeEditPageState extends State<TradeEditPage> {
   late final InvestmentViewModel model = getIt<InvestmentViewModel>();
+  final name = TextEditingController();
   final quantity = TextEditingController();
   final price = TextEditingController();
   final note = TextEditingController();
@@ -79,6 +81,7 @@ class _TradeEditPageState extends State<TradeEditPage> {
         digits,
         locale,
       );
+      name.text = i.name;
       note.text = t.note ?? '';
       tradedOn = t.tradedOn;
       walletId = t.accountId;
@@ -88,7 +91,7 @@ class _TradeEditPageState extends State<TradeEditPage> {
 
   @override
   void dispose() {
-    for (final c in [quantity, price, note]) {
+    for (final c in [name, quantity, price, note]) {
       c.dispose();
     }
     super.dispose();
@@ -112,6 +115,7 @@ class _TradeEditPageState extends State<TradeEditPage> {
     final q = _quantity(locale);
     final p = _price(locale);
     return !saving &&
+        name.text.trim().isNotEmpty &&
         q != null &&
         q > BigInt.zero &&
         p != null &&
@@ -153,8 +157,31 @@ class _TradeEditPageState extends State<TradeEditPage> {
 
   Future<void> _save(String locale) async {
     final s = S.of(context);
-    final i = inv!;
+    var i = inv!;
     setState(() => saving = true);
+    final newName = name.text.trim();
+    if (newName != i.name) {
+      // Renames the asset first; the position's own note stays as it was.
+      final renamed = await model.update(
+        i,
+        name: newName,
+        note: i.note,
+        maturityDate: i.maturityDate,
+      );
+      if (!mounted) return;
+      if (!renamed) {
+        setState(() => saving = false);
+        final failure = model.failure;
+        showFreevaToast(
+          context,
+          message: failure == null
+              ? s.meSaveError
+              : authFailureText(s, failure),
+        );
+        return;
+      }
+      i = inv ?? i;
+    }
     final ok = await model.updateTrade(
       i,
       widget.tradeId,
@@ -219,7 +246,7 @@ class _TradeEditPageState extends State<TradeEditPage> {
     final s = S.of(context);
     final margin = context.screenMargin;
     final locale = Localizations.localeOf(context).toString();
-    return BalancesHiddenBuilder(
+    return ShownBalances(
       builder: (context, hidden) => Scaffold(
         appBar: FreevaTopBar(
           title: s.tradeEditTitle,
@@ -305,6 +332,13 @@ class _TradeEditPageState extends State<TradeEditPage> {
       suffix: MoneyDisplay.symbolFor(i.currencyCode),
     );
     final children = <Widget>[
+      FreevaTextField(
+        label: investmentNameLabel(s, i.kind),
+        controller: name,
+        maxLength:
+            getIt<AppLimitsSource>().requireLimits.investmentNameMaxLength,
+        onChanged: (_) => setState(() {}),
+      ),
       if (lot)
         priceField
       else

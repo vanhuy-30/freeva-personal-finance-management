@@ -6,8 +6,10 @@ import '../../../../core/money/money_text.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_card.dart';
+import '../../../net_worth/presentation/widgets/net_worth_labels.dart';
 import '../../domain/spending_forecast.dart';
 import 'forecast_chip.dart';
+import 'spend_forecast_balance.dart';
 import 'spend_forecast_bar.dart';
 import 'spend_forecast_labels.dart';
 
@@ -125,10 +127,54 @@ class SpendForecastCard extends StatelessWidget {
                 compare: compare,
                 budget: forecast.budgetLimitMinor != null,
               ),
+              if (forecast.balance case final BalanceOutlook balance) ...[
+                const SizedBox(height: FreevaSpace.s3),
+                Divider(height: 1, color: c.borderDivider),
+                const SizedBox(height: FreevaSpace.s3),
+                _BalanceLine(balance: balance, digits: digits),
+              ],
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+/// "Cuối tháng còn khoảng …", or in red the day the money runs out.
+class _BalanceLine extends StatelessWidget {
+  const _BalanceLine({required this.balance, required this.digits});
+
+  final BalanceOutlook balance;
+  final int digits;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    final c = context.colors;
+    final locale = Localizations.localeOf(context).toString();
+    final out = balance.runsOutOn;
+    final text = out == null
+        ? s.spendBalanceCard(balanceMoney(balance.endMinor, digits, locale))
+        : s.spendBalanceCardOut(netWorthDate(out, locale));
+    return Row(
+      children: [
+        Icon(
+          out == null ? LucideIcons.wallet : LucideIcons.alertTriangle,
+          size: FreevaSize.iconSm,
+          color: out == null ? c.textSecondary : c.statusDanger,
+        ),
+        const SizedBox(width: FreevaSpace.s2),
+        Expanded(
+          child: Text(
+            text,
+            style: FreevaTypography.bodyS.copyWith(
+              fontWeight: FontWeight.w600,
+              color: out == null ? c.textPrimary : c.statusDanger,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

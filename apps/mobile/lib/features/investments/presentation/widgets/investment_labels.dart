@@ -11,6 +11,10 @@ import '../../domain/investment.dart';
 String investmentKindName(S s, InvestmentKind kind) =>
     s.investmentKind(kind.apiValue);
 
+/// Label of the name field, worded for the kind ("Mã cổ phiếu", "Tên quỹ").
+String investmentNameLabel(S s, InvestmentKind kind) =>
+    s.investmentNameOf(kind.apiValue);
+
 IconData investmentKindIcon(InvestmentKind kind) => switch (kind) {
   InvestmentKind.gold => LucideIcons.coins,
   InvestmentKind.stock => LucideIcons.chartCandlestick,

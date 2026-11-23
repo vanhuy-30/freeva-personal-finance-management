@@ -15,7 +15,7 @@ import '../../../../core/widgets/money_display.dart';
 import '../../../../core/widgets/settings_group.dart';
 import '../../../auth/presentation/widgets/auth_message.dart';
 import '../../../net_worth/presentation/widgets/net_worth_labels.dart';
-import '../../../settings/presentation/widgets/balances_hidden_builder.dart';
+import 'shown_balances.dart';
 import '../../../transactions/presentation/widgets/composer/date_picker_sheet.dart';
 import '../../../wallets/presentation/widgets/editor/form_pair.dart';
 import '../../domain/investment.dart';
@@ -147,7 +147,7 @@ class _SellSheetState extends State<_SellSheet> {
         ? null
         : total - soldCostMinor(inv.costBasisMinor, held, q);
     final unit = inv.unit;
-    return BalancesHiddenBuilder(
+    return ShownBalances(
       builder: (context, hidden) => Padding(
         padding: EdgeInsets.fromLTRB(
           20,

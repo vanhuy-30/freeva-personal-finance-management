@@ -224,7 +224,6 @@ class GalleryFeedback extends StatelessWidget {
                 icon: LucideIcons.circleCheck,
                 actionLabel: 'Hoàn tác',
                 onAction: () {},
-                aboveNav: false,
               ),
             ),
             FreevaButton(

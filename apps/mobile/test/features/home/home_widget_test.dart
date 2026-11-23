@@ -46,8 +46,10 @@ void main() {
     expect(find.text('Thẻ chính · hạn 25/11'), findsOneWidget);
     expect(find.text('Mua nhà'), findsOneWidget);
     expect(find.text('80%'), findsOneWidget);
-    expect(find.text('+8,0%'), findsOneWidget);
-    expect(find.text('Lãi 63.229.734'), findsOneWidget);
+    // Current value, ▲ with the percent, and the gain against cost.
+    expect(find.text('893.479.734'), findsOneWidget);
+    expect(find.text('▲ 8,0%'), findsOneWidget);
+    expect(find.text('+63.229.734'), findsOneWidget);
     expect(find.text('Phở Thìn'), findsOneWidget);
     expect(find.text('−65.000'), findsOneWidget);
     expect(

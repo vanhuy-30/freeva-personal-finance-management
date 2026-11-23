@@ -5,6 +5,8 @@ import '../../../../../core/money/money_text.dart';
 import '../../../../../core/theme/theme_context.dart';
 import '../../../../../core/theme/tokens.g.dart';
 import '../../../../../core/widgets/freeva_sheet.dart';
+import '../../../../../core/l10n/generated/app_localizations.dart';
+import '../../../../wallets/domain/credit_card_status.dart';
 import '../../../../wallets/domain/wallet.dart';
 import '../../../../../core/money/currency_catalog.dart';
 
@@ -25,6 +27,7 @@ Future<String?> showWalletPicker(
   builder: (context) {
     final c = context.colors;
     final locale = Localizations.localeOf(context).toString();
+    final s = S.of(context);
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -65,6 +68,15 @@ Future<String?> showWalletPicker(
                     ),
                     if (w.id == selected)
                       Icon(LucideIcons.circleCheck, color: c.actionPrimary)
+                    else if (w.draft.type == WalletType.credit)
+                      _CreditBalance(
+                        status: CreditCardStatus.of(w, DateTime.now()),
+                        digits: digitsOf(w.draft.currency),
+                        locale: locale,
+                        hidden: hideBalances,
+                        debt: s.walletCreditDebt,
+                        available: s.walletCreditAvailable,
+                      )
                     else
                       Text(
                         hideBalances
@@ -85,3 +97,42 @@ Future<String?> showWalletPicker(
     );
   },
 );
+
+/// Credit card: what is owed and, with a limit, what can still be used.
+class _CreditBalance extends StatelessWidget {
+  const _CreditBalance({
+    required this.status,
+    required this.digits,
+    required this.locale,
+    required this.hidden,
+    required this.debt,
+    required this.available,
+  });
+
+  final CreditCardStatus status;
+  final int digits;
+  final String locale;
+  final bool hidden;
+  final String Function(String) debt;
+  final String Function(String) available;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    String money(BigInt v) =>
+        hidden ? '••••••' : formatMoneyText(v, digits, locale);
+    final style = FreevaTypography.label.copyWith(
+      color: c.textSecondary,
+      fontFeatures: const [FontFeature.tabularFigures()],
+    );
+    final left = status.available;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text(debt(money(status.used)), style: style),
+        if (left != null) Text(available(money(left)), style: style),
+      ],
+    );
+  }
+}

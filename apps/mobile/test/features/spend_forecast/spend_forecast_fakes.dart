@@ -12,10 +12,25 @@ const boardPeriod = SpendForecastPeriod(
   today: '2026-11-10',
 );
 
+/// Ten days in: 48.250.000 in the wallets, the salary still to come, rent and
+/// bills, and 540.000 a day for the 20 days left.
+BalanceOutlook boardBalance({bool runsOut = false}) => BalanceOutlook(
+  balanceMinor: b(runsOut ? 2000000 : 48250000),
+  incomeAheadMinor: b(runsOut ? 0 : 18500000),
+  billsAheadMinor: b(3200000),
+  variableAheadMinor: b(10800000),
+  endMinor: b(runsOut ? -12000000 : 52750000),
+  endLowMinor: b(runsOut ? -14700000 : 50050000),
+  endHighMinor: b(runsOut ? -9300000 : 55450000),
+  runsOutOn: runsOut ? '2026-11-14' : null,
+);
+
 /// Boards S.2 / S.3: ten days into a 30-day November, over the budget.
 SpendingForecast boardForecast({
   BigInt? budget,
   bool noBudget = false,
+  BalanceOutlook? balance,
+  bool noBalance = false,
   SpendForecastStatus status = SpendForecastStatus.ok,
 }) {
   const steps = [0.3, 0.6, 1.4, 1.6, 2.2, 2.5, 3.1, 4.4, 4.9, 5.4];
@@ -31,6 +46,7 @@ SpendingForecast boardForecast({
     overBudgetMinor: noBudget ? null : b(1200000),
     dailyAllowanceMinor: noBudget ? null : b(480000),
     previousMonthMinor: b(11480000),
+    balance: noBalance ? null : (balance ?? boardBalance()),
     cumulative: [
       for (final (i, tr) in steps.indexed)
         SpendPoint(

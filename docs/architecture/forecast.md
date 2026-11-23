@@ -13,6 +13,8 @@ Từ hôm nay (timezone hồ sơ) đến hết tháng thứ `months` (1–12, m�
 
 ## Giả định (`assumptions`)
 
-`balanceSource` (`wallets` | `user`), `includesCreditWallets=false`, `includesOneOffSpending=false`, `includedRuleIds`, `excludedRuleIds`, `otherCurrencyRuleIds` (rule khác loại tiền, không quy đổi FX). Mobile dùng để hiện giả định và cho sửa input: [mobile-forecast.md](mobile-forecast.md).
+`balanceSource` (`wallets` | `user`), `includesCreditWallets=false`, `includesOneOffSpending=false`, `includedRuleIds`, `excludedRuleIds`, `otherCurrencyRuleIds` (rule khác loại tiền, không quy đổi FX). Màn mobile của endpoint này đã gỡ (xem ghi chú cuối file).
 
 Bearer session, `Cache-Control: no-store`. Không log số tiền, tên hóa đơn.
+
+> **2026-11-21:** màn app `/reports/forecast` đã gỡ (chỉ tính định kỳ nên ít giá trị); `GET /forecast` còn ở backend. Số dư cuối tháng nay nằm trong `GET /spending-forecast` (`forecast.balance`), xem [spend-forecast.md](spend-forecast.md).

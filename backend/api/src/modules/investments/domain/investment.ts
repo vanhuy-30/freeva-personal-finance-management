@@ -124,17 +124,17 @@ export type InvestmentRecord = {
 };
 
 export type Valuation = {
-  /** `price` = quantity x latest price; `deposit` = principal + accrued interest; `cost` = no price yet, falls back to cost. */
+  /** `price` = quantity x latest price; `deposit` = principal only (interest is paid out at maturity, not accrued); `cost` = no price yet, falls back to cost. */
   basis: 'price' | 'deposit' | 'cost';
   currentValueMinor: bigint;
   unrealizedMinor: bigint | null;
 };
 
-export function valuate(investment: InvestmentRecord, today: string): Valuation {
+export function valuate(investment: InvestmentRecord, _today: string): Valuation {
   if (investment.kind === 'savings_deposit' && investment.startDate !== null) {
     if (investment.quantityScaled === 0n) return { basis: 'deposit', currentValueMinor: 0n, unrealizedMinor: 0n };
-    const interest = depositInterest(investment.costBasisMinor, investment.interestRateBps ?? 0, investment.startDate, investment.maturityDate, today);
-    return { basis: 'deposit', currentValueMinor: investment.costBasisMinor + interest, unrealizedMinor: interest };
+    // Interest is not counted while the deposit runs (net worth holds the principal only); it is paid out at maturity.
+    return { basis: 'deposit', currentValueMinor: investment.costBasisMinor, unrealizedMinor: 0n };
   }
   if (investment.latestPrice === null) {
     return { basis: 'cost', currentValueMinor: investment.costBasisMinor, unrealizedMinor: null };

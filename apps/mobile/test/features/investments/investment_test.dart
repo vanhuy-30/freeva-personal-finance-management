@@ -157,7 +157,7 @@ void main() {
       final h = await investmentApp(const SizedBox());
       await h.model.load();
       expect(h.model.loaded, isTrue);
-      expect(h.model.total!.currentValueMinor, b(800813699));
+      expect(h.model.total!.currentValueMinor, b(798000000));
       expect(h.model.kinds.first.kind, InvestmentKind.realEstate);
       expect(h.model.names(InvestmentKind.gold), [
         'Vàng nhẫn 9999',

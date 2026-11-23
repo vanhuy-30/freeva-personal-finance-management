@@ -4129,7 +4129,7 @@ class SEn extends S {
   String get debtsAdd => 'Record a debt';
 
   @override
-  String get debtsEmptyTitle => 'Nobody owes anybody';
+  String get debtsEmptyTitle => 'No loans yet';
 
   @override
   String get debtsEmptyBody =>
@@ -5118,124 +5118,6 @@ class SEn extends S {
       'Paid mid-month? Set your payday so budgets and reports use the right period.';
 
   @override
-  String get forecastTitle => 'Balance forecast';
-
-  @override
-  String forecastRange(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count months',
-      one: '1 month',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get forecastRangeSemantics => 'Forecast range';
-
-  @override
-  String forecastEndOfMonth(int month) {
-    return 'About this much left at the end of month $month';
-  }
-
-  @override
-  String forecastChange(String amount) {
-    return '$amount vs today';
-  }
-
-  @override
-  String get forecastToday => 'Today';
-
-  @override
-  String get forecastHowTitle => 'How it is worked out';
-
-  @override
-  String get forecastStartsFrom => 'Starting balance';
-
-  @override
-  String forecastStartsFromWallets(String amount, int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count wallets',
-      one: '1 wallet',
-    );
-    return '$amount · $_temp0';
-  }
-
-  @override
-  String forecastStartsFromYou(String amount) {
-    return '$amount · set by you';
-  }
-
-  @override
-  String get forecastEdit => 'Edit';
-
-  @override
-  String get forecastScope =>
-      'Only recurring items and bills. Daily spending is not included.';
-
-  @override
-  String forecastOtherCurrency(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count items in other currencies are left out.',
-      one: '1 item in another currency is left out.',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get forecastRulesHeader => 'Included items';
-
-  @override
-  String forecastRuleToggle(String name) {
-    return 'Include $name';
-  }
-
-  @override
-  String forecastEstimated(String schedule) {
-    return '$schedule · estimate';
-  }
-
-  @override
-  String forecastOneOff(String date) {
-    return 'Once, $date';
-  }
-
-  @override
-  String get forecastNoRules =>
-      'No recurring items or bills yet, so the balance stays the same.';
-
-  @override
-  String forecastChartSemantics(String items) {
-    return 'Forecast balance at the end of each month: $items';
-  }
-
-  @override
-  String get forecastBalanceTitle => 'Starting balance';
-
-  @override
-  String get forecastBalanceHint =>
-      'The forecast adds your recurring items to this amount.';
-
-  @override
-  String get forecastBalanceApply => 'Use this amount';
-
-  @override
-  String get forecastBalanceReset => 'Use the total of my wallets';
-
-  @override
-  String get forecastBalanceInvalid => 'Enter a valid amount.';
-
-  @override
-  String forecastDayEstimated(int day) {
-    return 'Day $day · estimate';
-  }
-
-  @override
   String get meNetWorth => 'Net worth';
 
   @override
@@ -5387,6 +5269,20 @@ class SEn extends S {
   String get investmentName => 'Asset name';
 
   @override
+  String investmentNameOf(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'gold': 'Gold type',
+      'stock': 'Ticker',
+      'fund': 'Fund name',
+      'savings_deposit': 'Deposit name',
+      'real_estate': 'Property name',
+      'crypto': 'Coin name',
+      'other': 'Asset name',
+    });
+    return '$_temp0';
+  }
+
+  @override
   String get investmentGoldByChi => 'Count by chỉ';
 
   @override
@@ -5436,6 +5332,16 @@ class SEn extends S {
   }
 
   @override
+  String walletCreditDebt(String amount) {
+    return 'Owed $amount';
+  }
+
+  @override
+  String walletCreditAvailable(String amount) {
+    return 'Available $amount';
+  }
+
+  @override
   String get investmentExisting => 'Already held';
 
   @override
@@ -5463,6 +5369,14 @@ class SEn extends S {
   String get investmentMaturity => 'Maturity date';
 
   @override
+  String get depositTerm => 'Term';
+
+  @override
+  String depositTermMonths(int months) {
+    return '$months mo';
+  }
+
+  @override
   String get investmentPickDate => 'Pick a date';
 
   @override
@@ -5472,6 +5386,28 @@ class SEn extends S {
 
   @override
   String get investmentTradesHeader => 'Buys';
+
+  @override
+  String investmentTradesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count buys',
+      one: '1 buy',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String investmentTradesMore(int count) {
+    return 'Show $count more';
+  }
+
+  @override
+  String get investmentTradesLess => 'Show less';
+
+  @override
+  String get investmentExistingTag => 'Held';
 
   @override
   String get investmentBuyMore => 'Buy more';
@@ -5593,13 +5529,13 @@ class SEn extends S {
   String get investmentSavePrice => 'Save price';
 
   @override
-  String get depositValueToday => 'Value today';
+  String get depositValueToday => 'Amount deposited';
 
   @override
   String get depositPrincipal => 'Principal';
 
   @override
-  String get depositInterest => 'Interest so far';
+  String get depositInterest => 'Expected interest';
 
   @override
   String get depositRateLabel => 'Interest rate';
@@ -5663,6 +5599,40 @@ class SEn extends S {
 
   @override
   String get depositMaturityRow => 'Matures';
+
+  @override
+  String get depositNoteRow => 'Note';
+
+  @override
+  String get depositNoteNone => 'None';
+
+  @override
+  String get depositPayout => 'Paid at maturity';
+
+  @override
+  String get depositMaturedPaidTitle => 'Deposit matured';
+
+  @override
+  String depositMaturedPaidBody(String name, String amount, String wallet) {
+    return '$name: $amount was added to $wallet.';
+  }
+
+  @override
+  String get depositMaturedChoiceTitle => 'Deposit matured';
+
+  @override
+  String depositMaturedChoiceBody(String name, String amount) {
+    return '$name has matured and pays $amount (principal and interest). Move it to a wallet or deposit it again?';
+  }
+
+  @override
+  String get depositMaturedToWallet => 'Move to wallet';
+
+  @override
+  String get depositMaturedRenew => 'Deposit again';
+
+  @override
+  String get depositMaturedLater => 'Later';
 
   @override
   String tradeTitle(String date) {
@@ -6073,6 +6043,51 @@ class SEn extends S {
   }
 
   @override
+  String spendBalanceHeadline(String month) {
+    return 'You may have about this left at the end of $month';
+  }
+
+  @override
+  String spendBalanceRange(String low, String high) {
+    return 'About $low to $high';
+  }
+
+  @override
+  String spendBalanceRunsOut(String date) {
+    return 'At this pace you will run out of money on $date';
+  }
+
+  @override
+  String get spendBalanceNow => 'Wallet balance now';
+
+  @override
+  String get spendBalanceIncome => 'Recurring income to come';
+
+  @override
+  String get spendBalanceBills => 'Recurring bills to come';
+
+  @override
+  String get spendBalanceDaily => 'Day-to-day spending (estimate)';
+
+  @override
+  String get spendBalanceNoDaily =>
+      'Day-to-day spending not included yet; a few more days of data are needed.';
+
+  @override
+  String get spendBalanceNote =>
+      'A prediction. Credit-card payments, installments and loans are not included.';
+
+  @override
+  String spendBalanceCard(String amount) {
+    return 'About $amount left at month end';
+  }
+
+  @override
+  String spendBalanceCardOut(String date) {
+    return 'Runs out on $date';
+  }
+
+  @override
   String get goalForecastPace => 'At your recent pace';
 
   @override
@@ -6237,6 +6252,11 @@ class SEn extends S {
   @override
   String homeInvestGain(String amount) {
     return 'Gain $amount';
+  }
+
+  @override
+  String homeInvestVsCost(String amount) {
+    return '$amount';
   }
 
   @override

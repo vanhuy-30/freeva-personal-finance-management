@@ -16,7 +16,7 @@ import '../../../../core/widgets/money_display.dart';
 import '../../../../core/widgets/skeleton.dart';
 import '../../../auth/presentation/widgets/auth_message.dart';
 import '../../../net_worth/presentation/widgets/net_worth_labels.dart';
-import '../../../settings/presentation/widgets/balances_hidden_builder.dart';
+import '../widgets/shown_balances.dart';
 import '../../domain/investment.dart';
 import '../viewmodels/investment_view_model.dart';
 import '../widgets/investment_asset_card.dart';
@@ -90,7 +90,7 @@ class _TradePageState extends State<TradePage> {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final margin = context.screenMargin;
-    return BalancesHiddenBuilder(
+    return ShownBalances(
       builder: (context, hidden) => ListenableBuilder(
         listenable: model,
         builder: (context, _) {

@@ -5,6 +5,7 @@ import '../../../../core/money/money_text.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_card.dart';
+import '../../../../core/widgets/money_display.dart';
 import '../../domain/investment.dart';
 import '../../../net_worth/presentation/widgets/net_worth_labels.dart';
 import 'investment_asset_card.dart';
@@ -29,15 +30,18 @@ class InvestmentDepositTile extends StatelessWidget {
     final s = S.of(context);
     final c = context.colors;
     final locale = Localizations.localeOf(context).toString();
-    final bps = deposit.unrealizedBps;
-    final value = hidden
-        ? '••••••'
-        : formatMoneyText(deposit.currentValueMinor, digits, locale);
-    final maturity = deposit.maturityDate == null
-        ? null
-        : s.investmentMaturity.isEmpty
-        ? null
-        : '${s.investmentMaturity} ${netWorthDate(deposit.maturityDate!, locale, year: true)}';
+    final bps = deposit.interestRateBps;
+    final symbol = MoneyDisplay.symbolFor(deposit.currencyCode);
+    String money(BigInt v) =>
+        hidden ? '••••••' : '${formatMoneyText(v, digits, locale)} $symbol';
+    final value = money(deposit.costBasisMinor);
+    final interest = deposit.interestAtMaturity;
+    String dateLine(String label, String? day) =>
+        day == null ? '' : '$label ${netWorthDate(day, locale, year: true)}';
+    final lines = [
+      dateLine(s.investmentDepositDate, deposit.startDate),
+      dateLine(s.investmentMaturity, deposit.maturityDate),
+    ].where((line) => line.isNotEmpty).toList();
     return FreevaCard(
       padding: const EdgeInsets.all(16),
       onTap: onTap,
@@ -57,9 +61,9 @@ class InvestmentDepositTile extends StatelessWidget {
                       color: c.textPrimary,
                     ),
                   ),
-                  if (maturity != null)
+                  for (final line in lines)
                     Text(
-                      maturity,
+                      line,
                       style: FreevaTypography.label.copyWith(
                         fontWeight: FontWeight.w400,
                         color: c.textSecondary,
@@ -81,7 +85,21 @@ class InvestmentDepositTile extends StatelessWidget {
                     fontFeatures: const [FontFeature.tabularFigures()],
                   ),
                 ),
-                if (bps != null && !hidden) InvestmentChangePill(bps: bps),
+                if (bps != null) DepositRatePill(bps: bps),
+                if (interest != null && interest > BigInt.zero)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Text(
+                      hidden
+                          ? '••••••'
+                          : '+${formatMoneyText(interest, digits, locale)} $symbol',
+                      style: FreevaTypography.label.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: c.moneyIncome,
+                        fontFeatures: const [FontFeature.tabularFigures()],
+                      ),
+                    ),
+                  ),
               ],
             ),
           ],

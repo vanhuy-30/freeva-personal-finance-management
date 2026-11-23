@@ -58,7 +58,6 @@ class _DeletedTransactionsPageState extends State<DeletedTransactionsPage> {
       context,
       message: s.txRestoredToast,
       icon: LucideIcons.rotateCcw,
-      aboveNav: false,
     );
     await results.reload();
   }

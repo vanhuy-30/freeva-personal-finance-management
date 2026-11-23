@@ -690,7 +690,7 @@ class SVi extends S {
   String get homeQuickIncome => 'Ghi thu';
 
   @override
-  String get homeQuickTransfer => 'Chuyển ví';
+  String get homeQuickTransfer => 'Chuyển tiền';
 
   @override
   String get homeQuickWallets => 'Ví của tôi';
@@ -4055,7 +4055,7 @@ class SVi extends S {
   String get debtsAdd => 'Ghi khoản mượn';
 
   @override
-  String get debtsEmptyTitle => 'Chưa ai nợ ai';
+  String get debtsEmptyTitle => 'Chưa có khoản mượn nào';
 
   @override
   String get debtsEmptyBody =>
@@ -5030,106 +5030,6 @@ class SVi extends S {
       'Lương về giữa tháng? Đặt theo ngày lương để ngân sách và báo cáo tính đúng kỳ.';
 
   @override
-  String get forecastTitle => 'Dự báo số dư';
-
-  @override
-  String forecastRange(int count) {
-    return '$count tháng';
-  }
-
-  @override
-  String get forecastRangeSemantics => 'Khoảng dự báo';
-
-  @override
-  String forecastEndOfMonth(int month) {
-    return 'Cuối tháng $month còn khoảng';
-  }
-
-  @override
-  String forecastChange(String amount) {
-    return '$amount so với hôm nay';
-  }
-
-  @override
-  String get forecastToday => 'Hôm nay';
-
-  @override
-  String get forecastHowTitle => 'Cách tính';
-
-  @override
-  String get forecastStartsFrom => 'Bắt đầu từ số dư';
-
-  @override
-  String forecastStartsFromWallets(String amount, int count) {
-    return '$amount · $count ví';
-  }
-
-  @override
-  String forecastStartsFromYou(String amount) {
-    return '$amount · bạn nhập';
-  }
-
-  @override
-  String get forecastEdit => 'Sửa';
-
-  @override
-  String get forecastScope =>
-      'Chỉ gồm định kỳ và hóa đơn, chưa gồm chi tiêu hằng ngày.';
-
-  @override
-  String forecastOtherCurrency(int count) {
-    return '$count khoản khác loại tiền chưa được tính.';
-  }
-
-  @override
-  String get forecastRulesHeader => 'Khoản được tính';
-
-  @override
-  String forecastRuleToggle(String name) {
-    return 'Tính $name';
-  }
-
-  @override
-  String forecastEstimated(String schedule) {
-    return '$schedule · số ước tính';
-  }
-
-  @override
-  String forecastOneOff(String date) {
-    return 'Một lần, $date';
-  }
-
-  @override
-  String get forecastNoRules =>
-      'Chưa có khoản định kỳ hay hóa đơn nào, nên số dư giữ nguyên.';
-
-  @override
-  String forecastChartSemantics(String items) {
-    return 'Số dư dự báo cuối từng tháng: $items';
-  }
-
-  @override
-  String get forecastBalanceTitle => 'Số dư bắt đầu';
-
-  @override
-  String get forecastBalanceHint =>
-      'Dự báo sẽ cộng các khoản định kỳ vào số này.';
-
-  @override
-  String get forecastBalanceApply => 'Dùng số này';
-
-  @override
-  String get forecastBalanceReset => 'Dùng tổng số dư các ví';
-
-  @override
-  String get forecastBalanceInvalid => 'Nhập một số hợp lệ.';
-
-  @override
-  String forecastDayEstimated(int day) {
-    return 'Ngày $day · số ước tính';
-  }
-
-  @override
   String get meNetWorth => 'Tài sản ròng';
 
   @override
@@ -5281,6 +5181,20 @@ class SVi extends S {
   String get investmentName => 'Tên tài sản';
 
   @override
+  String investmentNameOf(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'gold': 'Loại vàng',
+      'stock': 'Mã cổ phiếu',
+      'fund': 'Tên quỹ',
+      'savings_deposit': 'Tên khoản gửi',
+      'real_estate': 'Tên bất động sản',
+      'crypto': 'Tên coin',
+      'other': 'Tên tài sản',
+    });
+    return '$_temp0';
+  }
+
+  @override
   String get investmentGoldByChi => 'Tính theo chỉ';
 
   @override
@@ -5295,7 +5209,7 @@ class SVi extends S {
       'chi': 'chỉ',
       'luong': 'lượng',
       'share': 'cổ phiếu',
-      'unit': 'chứng chỉ',
+      'unit': 'CCQ',
       'coin': 'coin',
       'other': '',
     });
@@ -5308,7 +5222,7 @@ class SVi extends S {
       'chi': 'Giá mua một chỉ',
       'luong': 'Giá mua một lượng',
       'share': 'Giá mua một cổ phiếu',
-      'unit': 'Giá mua một chứng chỉ',
+      'unit': 'Giá mua một CCQ',
       'coin': 'Giá mua một coin',
       'other': 'Giá mua',
     });
@@ -5327,6 +5241,16 @@ class SVi extends S {
   @override
   String investmentWalletLeft(String amount) {
     return 'Còn $amount';
+  }
+
+  @override
+  String walletCreditDebt(String amount) {
+    return 'Dư nợ $amount';
+  }
+
+  @override
+  String walletCreditAvailable(String amount) {
+    return 'Khả dụng $amount';
   }
 
   @override
@@ -5357,6 +5281,14 @@ class SVi extends S {
   String get investmentMaturity => 'Ngày đáo hạn';
 
   @override
+  String get depositTerm => 'Kỳ hạn';
+
+  @override
+  String depositTermMonths(int months) {
+    return '$months tháng';
+  }
+
+  @override
   String get investmentPickDate => 'Chọn ngày';
 
   @override
@@ -5366,6 +5298,22 @@ class SVi extends S {
 
   @override
   String get investmentTradesHeader => 'Các lần mua';
+
+  @override
+  String investmentTradesCount(int count) {
+    return '$count lần';
+  }
+
+  @override
+  String investmentTradesMore(int count) {
+    return 'Xem thêm $count lần mua';
+  }
+
+  @override
+  String get investmentTradesLess => 'Thu gọn';
+
+  @override
+  String get investmentExistingTag => 'Có sẵn';
 
   @override
   String get investmentBuyMore => 'Mua thêm';
@@ -5429,7 +5377,7 @@ class SVi extends S {
       'chi': 'Giá bán một chỉ',
       'luong': 'Giá bán một lượng',
       'share': 'Giá bán một cổ phiếu',
-      'unit': 'Giá bán một chứng chỉ',
+      'unit': 'Giá bán một CCQ',
       'coin': 'Giá bán một coin',
       'other': 'Giá bán',
     });
@@ -5468,7 +5416,7 @@ class SVi extends S {
       'chi': 'Giá một chỉ',
       'luong': 'Giá một lượng',
       'share': 'Giá một cổ phiếu',
-      'unit': 'Giá một chứng chỉ',
+      'unit': 'Giá một CCQ',
       'coin': 'Giá một coin',
       'other': 'Giá',
     });
@@ -5487,13 +5435,13 @@ class SVi extends S {
   String get investmentSavePrice => 'Lưu giá';
 
   @override
-  String get depositValueToday => 'Giá trị hôm nay';
+  String get depositValueToday => 'Số tiền gửi';
 
   @override
   String get depositPrincipal => 'Gốc';
 
   @override
-  String get depositInterest => 'Lãi tạm tính';
+  String get depositInterest => 'Lãi dự kiến';
 
   @override
   String get depositRateLabel => 'Lãi suất';
@@ -5551,6 +5499,40 @@ class SVi extends S {
 
   @override
   String get depositMaturityRow => 'Đáo hạn';
+
+  @override
+  String get depositNoteRow => 'Ghi chú';
+
+  @override
+  String get depositNoteNone => 'Không có';
+
+  @override
+  String get depositPayout => 'Nhận khi đáo hạn';
+
+  @override
+  String get depositMaturedPaidTitle => 'Khoản gửi đã đáo hạn';
+
+  @override
+  String depositMaturedPaidBody(String name, String amount, String wallet) {
+    return '$name: $amount đã được cộng vào ví $wallet.';
+  }
+
+  @override
+  String get depositMaturedChoiceTitle => 'Khoản gửi đã đáo hạn';
+
+  @override
+  String depositMaturedChoiceBody(String name, String amount) {
+    return '$name đã đáo hạn, bạn nhận về $amount (gồm gốc và lãi). Chuyển vào ví hoặc gửi tiếp?';
+  }
+
+  @override
+  String get depositMaturedToWallet => 'Chuyển vào ví';
+
+  @override
+  String get depositMaturedRenew => 'Tái gửi';
+
+  @override
+  String get depositMaturedLater => 'Để sau';
 
   @override
   String tradeTitle(String date) {
@@ -5947,6 +5929,51 @@ class SVi extends S {
   }
 
   @override
+  String spendBalanceHeadline(String month) {
+    return 'Cuối tháng $month còn khoảng';
+  }
+
+  @override
+  String spendBalanceRange(String low, String high) {
+    return 'Khoảng $low đến $high';
+  }
+
+  @override
+  String spendBalanceRunsOut(String date) {
+    return 'Với nhịp này, bạn sẽ hết tiền vào ngày $date';
+  }
+
+  @override
+  String get spendBalanceNow => 'Số dư các ví hiện tại';
+
+  @override
+  String get spendBalanceIncome => 'Thu định kỳ sắp về';
+
+  @override
+  String get spendBalanceBills => 'Chi định kỳ sắp đến';
+
+  @override
+  String get spendBalanceDaily => 'Chi thường ngày (ước tính)';
+
+  @override
+  String get spendBalanceNoDaily =>
+      'Chưa gồm chi thường ngày, cần thêm vài ngày dữ liệu.';
+
+  @override
+  String get spendBalanceNote =>
+      'Dự đoán, chưa gồm thanh toán thẻ tín dụng, trả góp và khoản vay.';
+
+  @override
+  String spendBalanceCard(String amount) {
+    return 'Cuối tháng còn khoảng $amount';
+  }
+
+  @override
+  String spendBalanceCardOut(String date) {
+    return 'Hết tiền vào ngày $date';
+  }
+
+  @override
   String get goalForecastPace => 'Với mức góp gần đây';
 
   @override
@@ -6106,6 +6133,11 @@ class SVi extends S {
   @override
   String homeInvestGain(String amount) {
     return 'Lãi $amount';
+  }
+
+  @override
+  String homeInvestVsCost(String amount) {
+    return '$amount';
   }
 
   @override

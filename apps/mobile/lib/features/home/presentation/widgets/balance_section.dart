@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
+import '../../../../core/widgets/freeva_toast.dart';
 import '../../../settings/presentation/widgets/choice_sheet.dart';
 import '../../../transactions/presentation/widgets/composer/rate_dialog.dart';
 import '../../domain/overview_glance.dart';
@@ -104,5 +106,5 @@ class BalanceSection extends StatelessWidget {
   }
 
   void _snack(BuildContext context, String text) =>
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
+      showFreevaToast(context, message: text);
 }

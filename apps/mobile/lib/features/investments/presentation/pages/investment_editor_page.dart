@@ -19,7 +19,7 @@ import '../../../../core/widgets/money_display.dart';
 import '../../../../core/widgets/settings_group.dart';
 import '../../../auth/presentation/widgets/auth_message.dart';
 import '../../../net_worth/presentation/widgets/net_worth_labels.dart';
-import '../../../settings/presentation/widgets/balances_hidden_builder.dart';
+import '../widgets/shown_balances.dart';
 import '../../../transactions/presentation/widgets/composer/date_picker_sheet.dart';
 import '../../../wallets/domain/wallet.dart';
 import '../../../wallets/presentation/widgets/editor/form_pair.dart';
@@ -58,6 +58,9 @@ class _InvestmentEditorPageState extends State<InvestmentEditorPage> {
   late String unit = widget.unit ?? kind.defaultUnit;
   late String tradedOn = model.today;
   String? maturityOn;
+
+  /// Chosen term in months; null when the maturity was typed by hand.
+  int? termMonths;
   String? walletId;
   bool saving = false;
   bool ready = false;
@@ -104,6 +107,7 @@ class _InvestmentEditorPageState extends State<InvestmentEditorPage> {
       unit = value.defaultUnit;
       quantity.clear();
       price.clear();
+      termMonths = null;
     });
   }
 
@@ -154,14 +158,47 @@ class _InvestmentEditorPageState extends State<InvestmentEditorPage> {
     setState(() {
       if (maturity) {
         maturityOn = picked;
+        termMonths = _termOf(tradedOn, picked);
       } else {
         tradedOn = picked;
-        if (maturityOn != null && maturityOn!.compareTo(picked) <= 0) {
+        final term = termMonths;
+        if (term != null) {
+          // The term stays; the maturity moves with the deposit date.
+          maturityOn = _addMonths(picked, term);
+        } else if (maturityOn != null && maturityOn!.compareTo(picked) <= 0) {
           maturityOn = null;
         }
       }
     });
   }
+
+  void _pickTerm(int months) => setState(() {
+    termMonths = months;
+    maturityOn = _addMonths(tradedOn, months);
+  });
+
+  /// [day] (yyyy-MM-dd) plus [months], clamped to the end of the month.
+  static String _addMonths(String day, int months) {
+    final d = DateTime.parse(day);
+    final index = d.month - 1 + months;
+    final year = d.year + index ~/ 12;
+    final month = index % 12 + 1;
+    final last = DateTime(year, month + 1, 0).day;
+    final out = DateTime(year, month, d.day > last ? last : d.day);
+    return '${out.year.toString().padLeft(4, '0')}-'
+        '${out.month.toString().padLeft(2, '0')}-'
+        '${out.day.toString().padLeft(2, '0')}';
+  }
+
+  /// The listed term that lands exactly on [maturity], if any.
+  static int? _termOf(String start, String maturity) {
+    for (final m in _terms) {
+      if (_addMonths(start, m) == maturity) return m;
+    }
+    return null;
+  }
+
+  static const _terms = [1, 3, 6, 9, 12, 18, 24, 36];
 
   Future<void> _save() async {
     final s = S.of(context);
@@ -207,7 +244,7 @@ class _InvestmentEditorPageState extends State<InvestmentEditorPage> {
     final s = S.of(context);
     final margin = context.screenMargin;
     final locale = Localizations.localeOf(context).toString();
-    return BalancesHiddenBuilder(
+    return ShownBalances(
       builder: (context, hidden) => Scaffold(
         appBar: FreevaTopBar(
           title: s.investmentNewTitle,
@@ -300,6 +337,7 @@ class _InvestmentEditorPageState extends State<InvestmentEditorPage> {
             FreevaChip(
               label: investmentKindName(s, k),
               selected: k == kind,
+              accent: true,
               icon: investmentKindIcon(k),
               onTap: () => _pickKind(k),
             ),
@@ -307,7 +345,7 @@ class _InvestmentEditorPageState extends State<InvestmentEditorPage> {
       ),
       const SizedBox(height: 14),
       FreevaTextField(
-        label: s.investmentName,
+        label: investmentNameLabel(s, kind),
         controller: name,
         maxLength:
             getIt<AppLimitsSource>().requireLimits.investmentNameMaxLength,
@@ -318,6 +356,7 @@ class _InvestmentEditorPageState extends State<InvestmentEditorPage> {
         const SizedBox(height: 14),
         FreevaSegmented<String>(
           expand: true,
+          accent: true,
           selected: unit,
           segments: [
             FreevaSegment('chi', s.investmentGoldByChi),
@@ -345,6 +384,22 @@ class _InvestmentEditorPageState extends State<InvestmentEditorPage> {
             () => _pickDate(maturity: true),
           ),
         ),
+        const SizedBox(height: 14),
+        SectionHeader(s.depositTerm),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (final m in _terms)
+              FreevaChip(
+                label: s.depositTermMonths(m),
+                selected: termMonths == m,
+                accent: true,
+                onTap: () => _pickTerm(m),
+              ),
+          ],
+        ),
+        const SizedBox(height: 14),
       ] else if (lot) ...[
         priceField,
         const SizedBox(height: 14),

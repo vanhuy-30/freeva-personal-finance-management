@@ -168,11 +168,19 @@ class InvestmentGlance {
     required this.valueMinor,
     required this.unrealizedMinor,
     required this.trend,
+    required this.costMinor,
+    this.kinds = const [],
     this.unrealizedBps,
   });
 
   final BigInt valueMinor;
   final BigInt unrealizedMinor;
+
+  /// Money put in (vốn).
+  final BigInt costMinor;
+
+  /// Categories held, largest first; shown when the tile has the full width.
+  final List<InvestmentTotal> kinds;
 
   /// Null when nothing is priced yet.
   final int? unrealizedBps;
@@ -194,6 +202,8 @@ InvestmentGlance? investmentGlance(
     valueMinor: total.currentValueMinor,
     unrealizedMinor: total.unrealizedMinor,
     unrealizedBps: total.unrealizedBps,
+    costMinor: total.costBasisMinor,
+    kinds: summary!.kindsOf(currency),
     trend: series == null || series.currency != currency
         ? const []
         : [

@@ -26,13 +26,16 @@ class _AuthGateState extends State<AuthGate> with WidgetsBindingObserver {
     _model.initialize();
   }
 
+  /// `inactive` is not "left the app": iOS reports it while a system dialog
+  /// (the notification-permission prompt) or the control centre is up, and
+  /// covering the app then blanked the screen behind the prompt and locked
+  /// the session. Only a real trip to the background covers and locks; the
+  /// app-switcher snapshot is covered natively (AppDelegate).
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.inactive) return;
     final covered = state != AppLifecycleState.resumed;
-    if (covered &&
-        !(state == AppLifecycleState.inactive && _model.biometricPrompt)) {
-      _model.lock();
-    }
+    if (covered) _model.lock();
     setState(() => _covered = covered);
   }
 
