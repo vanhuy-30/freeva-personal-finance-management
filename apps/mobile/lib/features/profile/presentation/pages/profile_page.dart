@@ -293,7 +293,7 @@ class _EditableAvatar extends StatelessWidget {
                     ),
                     child: Icon(
                       LucideIcons.camera,
-                      size: 15,
+                      size: 16,
                       color: c.buttonInkFg,
                     ),
                   ),
@@ -367,8 +367,7 @@ class _EmailField extends StatelessWidget {
                         email,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: FreevaTypography.body.copyWith(
-                          fontSize: 16,
+                        style: FreevaTypography.bodyL.copyWith(
                           color: c.textPrimary,
                         ),
                       ),

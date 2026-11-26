@@ -94,7 +94,7 @@ class _Row extends StatelessWidget {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(shape: BoxShape.circle, color: fill),
-                child: Icon(icon, size: 17, color: ink),
+                child: Icon(icon, size: 18, color: ink),
               ),
             ),
             const SizedBox(width: FreevaSpace.s3),

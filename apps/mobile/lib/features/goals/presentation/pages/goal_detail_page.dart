@@ -167,11 +167,7 @@ class _GoalDetailPageState extends State<GoalDetailPage> {
                                 currency: goal.currencyCode,
                                 minorDigits: digits,
                                 showCurrency: false,
-                                style: FreevaTypography.moneyL.copyWith(
-                                  fontSize: 26,
-                                  height: 30 / 26,
-                                  letterSpacing: -0.6,
-                                ),
+                                style: FreevaTypography.moneyL,
                               ),
                               const SizedBox(width: 6),
                               Text(

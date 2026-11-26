@@ -6,7 +6,7 @@ import '../../../../../core/theme/theme_context.dart';
 import '../../../../../core/theme/tokens.g.dart';
 import '../../../../../core/widgets/money_display.dart';
 
-/// "Số tiền" with the typed amount and a caret (52, or 44 for a transfer),
+/// "Số tiền" with the typed amount and a caret (40/44, `moneyDisplay`),
 /// or the compact 40 amount without label on the details screen that
 /// returns to the keypad on tap.
 class AmountHeader extends StatelessWidget {
@@ -28,7 +28,7 @@ class AmountHeader extends StatelessWidget {
   final String label;
   final bool compact;
 
-  /// Transfer keypad screen: 44/50 amount, 34 caret, 22 ₫, label gap 4.
+  /// Transfer keypad screen: label gap 4.
   final bool transfer;
 
   /// The keypad is up: the caret shows. It keeps its space when hidden so the
@@ -43,9 +43,7 @@ class AmountHeader extends StatelessWidget {
     // Board sizes: (font, line height, letter-spacing, caret, ₫).
     final (size, line, spacing, caret, mark) = compact
         ? (40.0, 44.0, -1.2, 0.0, 20.0)
-        : transfer
-        ? (44.0, 50.0, -1.4, 34.0, 22.0)
-        : (52.0, 56.0, -1.6, 40.0, 24.0);
+        : (40.0, 44.0, -1.2, 28.0, 20.0);
     final number = formatMoneyText(minor, digits, locale);
     final style = FreevaTypography.moneyDisplay.copyWith(
       fontSize: size,

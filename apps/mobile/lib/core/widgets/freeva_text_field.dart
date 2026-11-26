@@ -114,8 +114,7 @@ class _FreevaTextFieldState extends State<FreevaTextField> {
         ? c.borderDivider
         : c.inputBorder;
     final labelColor = error != null ? c.statusDanger : c.textSecondary;
-    final valueStyle = FreevaTypography.body.copyWith(
-      fontSize: 16,
+    final valueStyle = FreevaTypography.bodyL.copyWith(
       color: widget.locked ? c.textSecondary : c.textPrimary,
       fontFeatures: widget.tabular
           ? const [FontFeature.tabularFigures()]

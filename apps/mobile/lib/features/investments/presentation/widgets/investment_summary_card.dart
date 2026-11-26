@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/money/money_text.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/money_display.dart';
+import '../../../../core/widgets/total_card.dart';
 import '../../domain/investment.dart';
 import 'investment_labels.dart';
 
-/// A2 total card: value, change pill, cost and expected gain/loss, with the
-/// value history as a faint line behind the number (hidden under two points).
+/// Flat total card (PA1): icon and label with the change pill, the value, the
+/// value history as a line under it (hidden under two points), then cost and
+/// expected gain/loss.
 class InvestmentSummaryCard extends StatelessWidget {
   const InvestmentSummaryCard({
     required this.total,
@@ -37,107 +40,93 @@ class InvestmentSummaryCard extends StatelessWidget {
     String money(BigInt v) =>
         hidden ? '••••••' : formatMoneyText(v, digits, locale);
     return DecoratedBox(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: const Alignment(-0.6, -1),
-          end: const Alignment(0.6, 1),
-          colors: [c.tintBlue, c.bgSurface],
-        ),
-        border: Border.all(color: c.borderDivider),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: Stack(
+      decoration: totalCardDecoration(c),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (line.length >= 2)
-              Positioned.fill(
-                child: ExcludeSemantics(
-                  child: CustomPaint(
-                    painter: _FaintLine([
-                      for (final p in line) p.valueMinor,
-                    ], c.actionPrimary.withValues(alpha: 0.18)),
-                  ),
+            Row(
+              children: [
+                TotalCardIcon(
+                  icon: LucideIcons.trendingUp,
+                  background: c.tintBlue,
+                  foreground: c.tintBlueFg,
                 ),
-              ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
                     s.investmentsTotal,
                     style: FreevaTypography.bodyS.copyWith(
                       fontWeight: FontWeight.w500,
                       color: c.textSecondary,
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Align(
-                          alignment: AlignmentDirectional.centerStart,
-                          child: MoneyDisplay(
-                            minor: total.currentValueMinor,
-                            currency: currency,
-                            minorDigits: digits,
-                            style: FreevaTypography.moneyDisplayCompact
-                                .copyWith(letterSpacing: -1),
-                            hidden: hidden,
-                          ),
-                        ),
-                      ),
-                      if (bps != null && !hidden)
-                        _Pill(
-                          text: investmentPill(bps, locale),
-                          negative: bps < 0,
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: c.bgSurface.withValues(alpha: 0.8),
-                      border: Border.all(color: c.borderDivider),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 10,
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: _Stat(
-                              label: s.investmentsCost,
-                              value: money(total.costBasisMinor),
-                            ),
-                          ),
-                          Container(
-                            width: 1,
-                            height: 34,
-                            margin: const EdgeInsets.symmetric(horizontal: 14),
-                            color: c.borderDivider,
-                          ),
-                          Expanded(
-                            child: _Stat(
-                              label: s.investmentsGain,
-                              value: bps == null
-                                  ? '—'
-                                  : hidden
-                                  ? '••••••'
-                                  : investmentSigned(gain, digits, locale),
-                              color: bps == null ? null : gainColor,
-                            ),
-                          ),
-                        ],
-                      ),
+                ),
+                if (bps != null && !hidden)
+                  _Pill(text: investmentPill(bps, locale), negative: bps < 0),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: MoneyDisplay(
+                minor: total.currentValueMinor,
+                currency: currency,
+                minorDigits: digits,
+                style: FreevaTypography.moneyDisplayCompact.copyWith(
+                  letterSpacing: -1,
+                ),
+                hidden: hidden,
+              ),
+            ),
+            if (line.length >= 2) ...[
+              const SizedBox(height: 12),
+              ExcludeSemantics(
+                child: SizedBox(
+                  height: 64,
+                  child: CustomPaint(
+                    painter: _ValueLine(
+                      [for (final p in line) p.valueMinor],
+                      c.actionPrimary,
+                      FreevaPrimitive.blue100,
                     ),
                   ),
-                ],
+                ),
+              ),
+            ],
+            const SizedBox(height: 12),
+            DecoratedBox(
+              decoration: totalCardStatsDecoration(c),
+              child: Padding(
+                padding: totalCardStatsPadding,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _Stat(
+                        label: s.investmentsCost,
+                        value: money(total.costBasisMinor),
+                      ),
+                    ),
+                    Container(
+                      width: 1,
+                      height: 34,
+                      margin: const EdgeInsets.symmetric(horizontal: 14),
+                      color: c.borderDivider,
+                    ),
+                    Expanded(
+                      child: _Stat(
+                        label: s.investmentsGain,
+                        value: bps == null
+                            ? '—'
+                            : hidden
+                            ? '••••••'
+                            : investmentSigned(gain, digits, locale),
+                        color: bps == null ? null : gainColor,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -214,12 +203,14 @@ class _Pill extends StatelessWidget {
   }
 }
 
-/// Decorative value history, low on the card behind the number.
-class _FaintLine extends CustomPainter {
-  _FaintLine(this.values, this.color);
+/// Value history over the whole card width: a filled area fading to the
+/// surface under a 2.5 line, hidden under two points.
+class _ValueLine extends CustomPainter {
+  _ValueLine(this.values, this.line, this.fill);
 
   final List<BigInt> values;
-  final Color color;
+  final Color line;
+  final Color fill;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -230,8 +221,8 @@ class _FaintLine extends CustomPainter {
       if (v > high) high = v;
     }
     final span = high - low;
-    final top = size.height * 0.15;
-    final bottom = size.height * 0.55;
+    final top = size.height * 0.1;
+    final bottom = size.height * 0.9;
     double y(BigInt v) {
       if (span == BigInt.zero) return (top + bottom) / 2;
       final ratio = ((v - low) * BigInt.from(10000) ~/ span).toInt();
@@ -243,20 +234,33 @@ class _FaintLine extends CustomPainter {
       final x = size.width * i / (values.length - 1);
       i == 0 ? path.moveTo(x, y(values[i])) : path.lineTo(x, y(values[i]));
     }
+    final area = Path.from(path)
+      ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height)
+      ..close();
+    canvas.drawPath(
+      area,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [fill, fill.withValues(alpha: 0)],
+        ).createShader(Offset.zero & size),
+    );
     canvas.drawPath(
       path,
       Paint()
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 3
+        ..strokeWidth = 2.5
         ..strokeJoin = StrokeJoin.round
         ..strokeCap = StrokeCap.round
-        ..color = color,
+        ..color = line,
     );
   }
 
   @override
-  bool shouldRepaint(_FaintLine old) =>
-      old.color != color || !_same(old.values, values);
+  bool shouldRepaint(_ValueLine old) =>
+      old.line != line || old.fill != fill || !_same(old.values, values);
 
   static bool _same(List<BigInt> a, List<BigInt> b) {
     if (a.length != b.length) return false;

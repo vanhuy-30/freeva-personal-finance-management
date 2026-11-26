@@ -76,8 +76,7 @@ class InvestmentAssetCard extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       investmentQuantityText(s, held, unit, locale),
-                      style: FreevaTypography.bodyM.copyWith(
-                        fontSize: 16,
+                      style: FreevaTypography.bodyL.copyWith(
                         fontWeight: FontWeight.w600,
                         color: c.textSecondary,
                         fontFeatures: const [FontFeature.tabularFigures()],

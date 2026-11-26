@@ -69,8 +69,7 @@ class _FreevaPillFieldState extends State<FreevaPillField> {
         textInputAction: widget.textInputAction,
         onChanged: widget.onChanged,
         onSubmitted: widget.onSubmitted,
-        style: FreevaTypography.body.copyWith(
-          fontSize: 16,
+        style: FreevaTypography.bodyL.copyWith(
           height: 1.2,
           color: c.textPrimary,
         ),
@@ -85,8 +84,7 @@ class _FreevaPillFieldState extends State<FreevaPillField> {
             widget.obscure ? 0 : 18,
             17,
           ),
-          hintStyle: FreevaTypography.body.copyWith(
-            fontSize: 16,
+          hintStyle: FreevaTypography.bodyL.copyWith(
             height: 1.2,
             color: c.textSecondary,
           ),

@@ -139,7 +139,7 @@ class RecentEmptyHint extends StatelessWidget {
                 color: c.bgSubtle,
                 borderRadius: BorderRadius.circular(FreevaRadius.md),
               ),
-              child: Icon(LucideIcons.list, size: 22, color: c.textSecondary),
+              child: Icon(LucideIcons.list, size: 24, color: c.textSecondary),
             ),
           ),
           const SizedBox(height: FreevaSpace.s2),

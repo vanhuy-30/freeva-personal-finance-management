@@ -62,8 +62,8 @@ class SocialSignInButton extends StatelessWidget {
                   Flexible(
                     child: Text(
                       label,
-                      style: FreevaTypography.titleM.copyWith(
-                        fontSize: 16,
+                      style: FreevaTypography.bodyL.copyWith(
+                        fontWeight: FontWeight.w600,
                         color: fg,
                       ),
                     ),

@@ -821,6 +821,11 @@ abstract final class FreevaSpace {
   static const double s6 = 24.0;
   static const double s8 = 32.0;
   static const double s12 = 48.0;
+  static const double s1h = 6.0;
+  static const double s2h = 10.0;
+  static const double s3h = 14.0;
+  static const double s4h = 18.0;
+  static const double s5h = 22.0;
 }
 
 abstract final class FreevaRadius {
@@ -857,6 +862,7 @@ abstract final class FreevaSize {
   static const double pill = 32.0;
   static const double iconSm = 18.0;
   static const double iconXs = 14.0;
+  static const double iconMicro = 12.0;
 }
 
 abstract final class FreevaLayout {
@@ -1025,6 +1031,13 @@ abstract final class FreevaTypography {
     fontFamily: 'Inter',
     fontSize: 14.0,
     height: 1.4286,
+    fontWeight: FontWeight.w400,
+    letterSpacing: 0.0,
+  );
+  static const TextStyle bodyL = TextStyle(
+    fontFamily: 'Inter',
+    fontSize: 16.0,
+    height: 1.375,
     fontWeight: FontWeight.w400,
     letterSpacing: 0.0,
   );

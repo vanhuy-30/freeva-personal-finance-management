@@ -230,7 +230,7 @@ class _NextButton extends StatelessWidget {
             EdgeInsets.symmetric(horizontal: FreevaSpace.s8),
           ),
           textStyle: WidgetStatePropertyAll(
-            FreevaTypography.titleM.copyWith(fontSize: 16),
+            FreevaTypography.bodyL.copyWith(fontWeight: FontWeight.w600),
           ),
         );
     return PressScale(

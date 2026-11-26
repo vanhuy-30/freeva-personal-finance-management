@@ -137,7 +137,7 @@ class ImportColumnsView extends StatelessWidget {
                         dimension: 32,
                         child: Icon(
                           LucideIcons.file,
-                          size: 17,
+                          size: 18,
                           color: c.textPrimary,
                         ),
                       ),
@@ -364,8 +364,7 @@ class _OptionField extends StatelessWidget {
                           value,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: FreevaTypography.body.copyWith(
-                            fontSize: 16,
+                          style: FreevaTypography.bodyL.copyWith(
                             color: c.textPrimary,
                           ),
                         ),

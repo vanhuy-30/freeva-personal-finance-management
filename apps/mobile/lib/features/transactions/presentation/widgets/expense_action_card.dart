@@ -117,7 +117,7 @@ class _ActionRow extends StatelessWidget {
                     color: background,
                     borderRadius: BorderRadius.circular(FreevaRadius.xs),
                   ),
-                  child: Icon(icon, size: 17, color: foreground),
+                  child: Icon(icon, size: 18, color: foreground),
                 ),
                 const SizedBox(width: 12),
                 Expanded(

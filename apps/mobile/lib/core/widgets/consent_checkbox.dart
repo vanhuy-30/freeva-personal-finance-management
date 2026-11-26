@@ -77,7 +77,7 @@ class _ConsentCheckboxState extends State<ConsentCheckbox> {
                   margin: const EdgeInsets.only(top: 1),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(7),
+                    borderRadius: BorderRadius.circular(6),
                     color: widget.checked
                         ? c.actionPrimary
                         : Colors.transparent,

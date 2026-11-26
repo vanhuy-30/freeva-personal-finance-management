@@ -154,7 +154,7 @@ class _Column extends StatelessWidget {
           decoration: BoxDecoration(
             color: color,
             borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(8),
+              top: Radius.circular(6),
               bottom: Radius.circular(4),
             ),
           ),

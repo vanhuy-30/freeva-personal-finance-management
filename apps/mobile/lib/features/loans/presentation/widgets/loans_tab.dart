@@ -105,11 +105,7 @@ class _Summary extends StatelessWidget {
             minor: total?.outstandingMinor ?? BigInt.zero,
             currency: currency,
             minorDigits: digits,
-            style: FreevaTypography.moneyL.copyWith(
-              fontSize: 30,
-              height: 34 / 30,
-              letterSpacing: -0.9,
-            ),
+            style: FreevaTypography.moneyL,
             currencySize: 15,
             currencyColor: c.textOnWash,
           ),

@@ -295,7 +295,7 @@ class _Why extends StatelessWidget {
             alignment: Alignment.center,
             child: icon == null
                 ? KeyGlyph(color: c.tintBlueFg, size: 17)
-                : Icon(icon, size: 17, color: c.tintBlueFg),
+                : Icon(icon, size: 18, color: c.tintBlueFg),
           ),
           const SizedBox(width: FreevaSpace.s3),
           Expanded(

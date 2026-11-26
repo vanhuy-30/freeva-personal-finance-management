@@ -56,18 +56,23 @@ nút và link `#3F67D1`, chữ số tiền thu `#23795A`, chữ lỗi `#B83434`.
 **Lớp màu mờ (wash):** nền `#ECEFFA`, highlight 50% ở góc trên phải, accent 22% ở
 góc dưới trái. Chỉ dùng cho thẻ số dư, trên màn Tổng quan và chi tiết ví.
 
+**Thẻ tổng phẳng (PA1):** thẻ tổng của nhóm Đầu tư và của Báo cáo dùng nền `bg.surface`, viền `border.default`, elevation 1, không wash và không gradient, để khác thẻ số dư ở Tổng quan. Đầu thẻ: ô icon tint 36, nhãn, pill thay đổi. Giữa: con số lớn, rồi (khi có lịch sử) đường giá trị `blue.500` với vùng tô `blue.100` trải hết chiều rộng. Cuối: đường kẻ `border.divider` và hai cột số liệu. Ô con trong thẻ Báo cáo dùng `bg.subtle`.
+
+**Xanh lá `green.700`** (`money.income`, `status.success`) mang nghĩa "dương": khoản thu, lãi, đúng nhịp. Thanh tiến độ tích luỹ dùng `data.saving`.
+
 ### Typography
 
 Inter 400/500/600, đóng gói trong app cho cả iOS và Android.
 
 | Token | Cỡ/dòng | Đậm | Giãn chữ | Dùng |
 |---|---|---|---|---|
-| `moneyDisplay` | 40/44 | 600 | −1.2 | Số dư chính (màn 320 pt: 32/36) |
-| `moneyL` | 28/32 | 600 | −0.6 | Số tiền ở màn nhập, chi tiết |
+| `moneyDisplay` | 40/44 | 600 | −1.2 | Số dư chính, số tiền đang nhập ở mọi màn nhập (màn 320 pt: 32/36) |
+| `moneyL` | 28/32 | 600 | −0.6 | Số tiền ở thẻ và màn chi tiết |
 | `titleXl` | 28/34 | 600 | −0.6 | Tiêu đề lớn màn gốc của tab |
 | `headline` | 24/30 | 600 | −0.4 | Lời chào, tiêu đề màn khoá |
 | `titleL` | 17/24 | 600 | 0 | Tiêu đề khối, tiêu đề thanh trên |
 | `titleM` | 15/22 | 600 | 0 | Tiêu đề thẻ |
+| `bodyL` | 16/22 | 400–600 | 0 | Giá trị trong ô nhập, nhãn nút L |
 | `body` | 15/22 | 400–500 | 0 | Nội dung, tên giao dịch |
 | `bodyS` | 13/18 | 400 | 0 | Dòng phụ |
 | `label` | 12/16 | 500 | 0 | Nhãn menu nhanh, chú thích |
@@ -79,10 +84,10 @@ Inter 400/500/600, đóng gói trong app cho cả iOS và Android.
 
 ### Spacing, layout, hình khối
 
-- Lưới 4 pt: `space.1…12` = 4, 8, 12, 16, 20, 24, 32, 48.
+- Lưới 4 pt: `space.1…12` = 4, 8, 12, 16, 20, 24, 32, 48. Nửa bậc `space.1h…5h` = 6, 10, 14, 18, 22 chỉ cho gap và padding trong component, không cho lề màn hình.
 - Một cột, lề 20 (16 khi màn ≤ 340 pt). Màn ≥ 430 pt và tablet: nội dung tối đa 480, căn giữa.
 - Nội dung cuộn chừa 120 ở đáy cho bottom nav nổi.
-- Radius: 12 ô icon · 16 input, ô con · 20 list, tile · 24 thẻ · 28 sheet · full cho nút, chip, nav.
+- Radius: 12 ô icon · 16 input, ô con · 20 list, tile · 24 thẻ · 28 sheet · full cho nút, chip, nav. Chỉ dùng các bậc trong `radius` (6, 10, 12, 14, 16, 18, 20, 22, 24, 28, full); dưới 6 là hình riêng (đầu thanh tiến độ, ô màu), không phải góc thẻ.
 - Viền: 1 mặc định · 1.5 đang chọn · focus = viền 1.5 primary + vòng 4 px.
 - Elevation: `0` viền · `1` thẻ, list · `2` nav, sheet, toast.
 - Vùng chạm tối thiểu 44 pt (Android 48 dp). Nút 52, nút cuối form 56, dòng list 56.
@@ -93,7 +98,7 @@ Inter 400/500/600, đóng gói trong app cho cả iOS và Android.
   Icon Lucide không có thì vẽ trên lưới 24, đầu tròn, độ dày nét khớp gói.
 - Ba kiểu: outline (mặc định) · hai tông = nền tint 50 + nét 600/700 (ví, danh mục,
   menu nhanh) · tô đặc chỉ cho trạng thái đang chọn.
-- Cỡ: 16 trong chip, 20 trong nút và nav, 24 độc lập. Không emoji.
+- Cỡ: 12 trong nhãn nhỏ (`iconMicro`), 14 trong chip nhỏ, 16 trong chip, 18 trong nút M và ô tint, 20 trong nút L và nav, 24 độc lập. Nét mặc định của Lucide (2), không tự đổi độ dày. Không emoji.
 - Trạng thái trống: **animation tự vẽ bằng Flutter** (`AnimationController` + `CustomPainter`)
   từ ba nét chữ F, trôi lệch nhịp, chu kỳ 3 s. Không Lottie, không ảnh stock hay 3D.
   Màu lấy từ token. Bật giảm chuyển động thì hiện khung tĩnh.
@@ -138,10 +143,10 @@ Lệnh (trong `packages/design-tokens`):
 
 | Nhóm | Thành phần |
 |---|---|
-| Buttons | Primary (`action.primary`), Ink (bước tiếp theo), Secondary (viền), Destructive, Text. Cỡ L 56 · M 52 · S 44 · XS 40. Nút icon 44 / 36 trên thẻ. Nút + 56 chỉ ở giữa bottom nav. Một nút primary mỗi màn. |
+| Buttons | Primary (`action.primary`), Ink (bước tiếp theo), Secondary (viền), Destructive, Text. Cỡ L 56 · M 52 · S 44 · XS 40; nút trong dòng/thẻ hiển thị 36 (compact) hoặc 32 (pill) nhưng vùng chạm luôn ≥ 44. Nút icon 44 / 36 trên thẻ. Nút + 56 chỉ ở giữa bottom nav. Một nút primary mỗi màn. |
 | Inputs & selection | Trường nhập nhãn trong ô; focus, lỗi, khoá. **Ô nhập viên thuốc có icon** chỉ cho màn tài khoản. Ô chọn mở sheet. Ô tìm kiếm. Nhập số tiền bằng bàn phím riêng có phím `000`. Segmented (2–4 lựa chọn), chip chọn (viền ink), chip lọc (nền ink), **thẻ chọn** (nền `tint.blue`, viền primary, dấu tích), công tắc, radio, checkbox. Nút đăng nhập Google (nền nhạt) / Apple (ink). |
-| Navigation | Bottom nav 4 tab + nút +, chỉ icon, mục đang chọn là vòng ink. Nút + nổi nửa trên thanh (lệch lên 26), thanh có khe cắt rộng hơn nút 6 mỗi bên, mép khe cong lõm (Flutter: vẽ bằng `CustomPainter`, không giả bằng viền màu nền). Thanh trên: tiêu đề lớn · màn đẩy vào · modal. Segmented trong trang. Bottom sheet. |
-| Cards & data | Thẻ số dư (wash, duy nhất), thẻ ví, menu nhanh, ô chỉ số, thanh tiến độ (hạn mức thẻ), thanh phân bổ, biểu đồ cột theo kỳ. |
+| Navigation | Bottom nav 4 tab + nút +, chỉ icon, mục đang chọn là vòng ink. Nút + nổi nửa trên thanh (lệch lên 26), thanh có khe cắt rộng hơn nút 6 mỗi bên, mép khe cong lõm (Flutter: vẽ bằng `CustomPainter`, không giả bằng viền màu nền). Thanh trên: tiêu đề lớn · màn đẩy vào · modal. Segmented trong trang. Bottom sheet (tay cầm 36×4, tiêu đề `titleL` căn trái, padding trên 10). |
+| Cards & data | Thẻ số dư (wash; thẻ tổng Đầu tư/Báo cáo kiểu phẳng, xem §2), thẻ ví, menu nhanh, ô chỉ số, thanh tiến độ (hạn mức thẻ), thanh phân bổ, biểu đồ cột theo kỳ. |
 | Lists | Dòng giao dịch (icon 40 · tên + danh mục · ví · số tiền có dấu, không ₫), nhóm theo ngày kèm tổng ròng, vuốt để sửa/xoá, danh sách cài đặt. |
 | Feedback | Toast ink (4 s, 6 s nếu có Hoàn tác), banner trong luồng nội dung, hộp thoại xác nhận, trạng thái trống, skeleton, lỗi có nút thử lại. |
 
@@ -156,7 +161,7 @@ Mọi component tương tác có: **default · pressed · focused · disabled ·
 - Focused: viền 1.5 primary + vòng 4 px (bàn phím ngoài, Switch Access).
 - Disabled: đổi sang token disabled, không chỉ giảm opacity; nói lý do gần đó.
 - Loading: giữ kích thước, chặn chạm lặp; danh sách dùng skeleton.
-- Error: viền lỗi + chữ hướng dẫn + icon; không báo lỗi chỉ bằng màu.
+- Error: viền lỗi (`status.danger`, 1.5) + chữ hướng dẫn + icon; không báo lỗi chỉ bằng màu. `border.danger` (red.300) chỉ dành cho nút viền nguy hiểm.
 
 ## 6. Patterns
 
@@ -165,7 +170,7 @@ Mọi component tương tác có: **default · pressed · focused · disabled ·
 | Data display | Một con số lớn mở màn; một thẻ có lớp màu; số rút gọn chỉ ở chip và biểu đồ; bật ẩn số dư thì chỉ ẩn số dư (tổng và từng ví), thu/chi và giao dịch vẫn hiện. Chi tiết: [patterns/B-overview.md](patterns/B-overview.md). |
 | Search & filter | Chip lọc luôn hiện; ô tìm mở từ kính lúp; tìm tiếng Việt không dấu, cập nhật sau 300 ms; tổng thu/chi theo bộ lọc; không kết quả có nút "Xoá bộ lọc". Chi tiết: [patterns/C-transactions.md](patterns/C-transactions.md). |
 | Form | Số tiền focus sẵn; mặc định ví gần nhất, hôm nay, danh mục hay dùng; trường phụ gấp lại; lưu xong đóng màn + toast Hoàn tác. |
-| Settings | Thẻ hồ sơ, email che một phần; nhóm Quản lý · Ứng dụng · Hỗ trợ; bật/tắt có hiệu lực ngay; hành động nguy hiểm ở cuối và luôn hỏi lại. |
+| Settings | Thẻ hồ sơ, email che một phần; nhóm Tài sản · Kế hoạch · Thiết lập · Ứng dụng · Dữ liệu và hỗ trợ (chi tiết: [patterns/G-profile-settings.md](patterns/G-profile-settings.md)); bật/tắt có hiệu lực ngay; hành động nguy hiểm ở cuối và luôn hỏi lại. |
 | Authentication | Email + mật khẩu trên một màn, kèm Google/Apple. Mở khoá: sinh trắc học trước, PIN 6 số dự phòng; chưa mở khoá thì không hiện số tiền nào, kể cả ở màn chuyển app; sai 5 lần thì đăng nhập lại. Chi tiết: [patterns/A-onboarding-auth.md](patterns/A-onboarding-auth.md). |
 | Onboarding | Hỏi trước, tạo tài khoản sau, tiền cuối cùng và không bắt buộc. Mỗi màn một câu hỏi, chữ ngắn, "Để sau" luôn có. Câu trả lời phải dùng để cá nhân hoá. |
 
@@ -201,18 +206,6 @@ Mọi component tương tác có: **default · pressed · focused · disabled ·
 
 Easing `cubic-bezier(0.2, 0, 0, 1)`. Sheet trồi từ đáy, chi tiết trượt từ phải.
 Giảm chuyển động: bỏ trượt, thu phóng, đếm số; chỉ mờ dần 150 ms; splash tĩnh.
-
-### Nội dung và UX writing
-
-- Giọng văn: rõ ràng, thân thiện nhưng không suồng sã, **không phán xét chi tiêu**, ít chữ giải thích.
-- Nút là động từ cụ thể ("Lưu khoản chi"), không "OK".
-- Lỗi = chuyện gì xảy ra + dữ liệu có an toàn không + làm gì tiếp. Không đổ lỗi cho người dùng.
-- Định dạng: `18.500.000 ₫`; rút gọn `18,5tr`, `850k`; "Hôm nay", "Thứ Hai, 20/10";
-  giờ 24h; `−6% so với T9`.
-- Thuật ngữ: **Ví** (không "tài khoản"), **Ghi chi/Ghi thu** (hành động), **Khoản chi** (bản ghi),
-  **Chuyển ví** (giữa hai ví của mình, không "chuyển khoản"), **Danh mục** (một, bắt buộc),
-  **Nhãn** (nhiều, tuỳ chọn).
-- Mọi chuỗi qua l10n; viết tiếng Việt trước.
 
 ## 8. Quản lý thay đổi
 

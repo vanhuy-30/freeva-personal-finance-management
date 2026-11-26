@@ -294,8 +294,7 @@ class _ReconcileSheetState extends State<ReconcileSheet> {
               ),
               Text(
                 answer == null || diff == null ? '—' : signed(diff),
-                style: FreevaTypography.body.copyWith(
-                  fontSize: 16,
+                style: FreevaTypography.bodyL.copyWith(
                   fontWeight: FontWeight.w600,
                   color: stripFg,
                   fontFeatures: const [FontFeature.tabularFigures()],

@@ -68,7 +68,7 @@ class LoanKindTile extends StatelessWidget {
           color: bg,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Icon(loanKindIcon(kind), size: 19, color: fg),
+        child: Icon(loanKindIcon(kind), size: 20, color: fg),
       ),
     );
   }

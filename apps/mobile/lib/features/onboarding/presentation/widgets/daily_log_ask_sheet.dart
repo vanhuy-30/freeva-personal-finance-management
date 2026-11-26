@@ -74,7 +74,7 @@ class _DailyLogAskBodyState extends State<DailyLogAskBody> {
               color: c.statusWarningBg,
               borderRadius: BorderRadius.circular(FreevaRadius.md),
             ),
-            child: Icon(LucideIcons.bell, size: 22, color: c.statusWarning),
+            child: Icon(LucideIcons.bell, size: 24, color: c.statusWarning),
           ),
         ),
         const SizedBox(height: 10),

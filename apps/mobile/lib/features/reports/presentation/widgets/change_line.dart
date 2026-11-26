@@ -56,7 +56,7 @@ class ChangeLine extends StatelessWidget {
       color: tone,
     );
     final soft = FreevaTypography.label.copyWith(
-      fontSize: 10.5,
+      fontSize: 11,
       fontWeight: FontWeight.w400,
       color: c.textSecondary,
     );

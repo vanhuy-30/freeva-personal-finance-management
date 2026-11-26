@@ -55,9 +55,9 @@ class LoanKindChip extends StatelessWidget {
                     height: 28,
                     decoration: BoxDecoration(
                       color: bg,
-                      borderRadius: BorderRadius.circular(9),
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Icon(loanKindIcon(kind), size: 15, color: fg),
+                    child: Icon(loanKindIcon(kind), size: 16, color: fg),
                   ),
                   const SizedBox(width: 6),
                   Text(

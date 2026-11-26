@@ -51,7 +51,9 @@ TextStyle _textStyle(FreevaButtonVariant variant, FreevaButtonSize size) {
     return FreevaTypography.bodyS.copyWith(fontWeight: FontWeight.w500);
   }
   return switch (size) {
-    FreevaButtonSize.l => FreevaTypography.titleM.copyWith(fontSize: 16),
+    FreevaButtonSize.l => FreevaTypography.bodyL.copyWith(
+      fontWeight: FontWeight.w600,
+    ),
     FreevaButtonSize.m || FreevaButtonSize.dialog => FreevaTypography.titleM,
     FreevaButtonSize.s ||
     FreevaButtonSize.xs => FreevaTypography.titleM.copyWith(fontSize: 14),

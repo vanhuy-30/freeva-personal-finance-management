@@ -71,7 +71,7 @@ class FreevaDialogIcon extends StatelessWidget {
           color: bg,
           borderRadius: BorderRadius.circular(FreevaRadius.md),
         ),
-        child: Icon(icon, size: 22, color: fg),
+        child: Icon(icon, size: 24, color: fg),
       ),
     );
   }

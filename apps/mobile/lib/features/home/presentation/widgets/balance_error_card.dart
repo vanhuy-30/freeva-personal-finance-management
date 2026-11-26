@@ -37,7 +37,7 @@ class BalanceErrorCard extends StatelessWidget {
               ),
               child: Icon(
                 LucideIcons.circleAlert,
-                size: 22,
+                size: 24,
                 color: c.statusDanger,
               ),
             ),

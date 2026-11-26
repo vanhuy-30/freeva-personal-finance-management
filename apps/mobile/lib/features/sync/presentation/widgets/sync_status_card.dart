@@ -150,7 +150,7 @@ class _Tile extends StatelessWidget {
                     color: iconBg ?? c.bgSubtle,
                     borderRadius: BorderRadius.circular(FreevaRadius.smd),
                   ),
-                  child: Icon(icon, size: 22, color: iconFg ?? c.textPrimary),
+                  child: Icon(icon, size: 24, color: iconFg ?? c.textPrimary),
                 ),
                 const SizedBox(width: FreevaSpace.s3),
                 Expanded(

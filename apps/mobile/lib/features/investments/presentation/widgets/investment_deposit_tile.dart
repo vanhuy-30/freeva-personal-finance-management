@@ -98,7 +98,7 @@ class InvestmentDepositTile extends StatelessWidget {
                     height: 44,
                     child: Icon(
                       LucideIcons.landmark,
-                      size: 22,
+                      size: 24,
                       color: c.moneyIncome,
                     ),
                   ),
