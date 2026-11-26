@@ -383,6 +383,10 @@ describe('BE-P1-005 HTTP + PostgreSQL', () => {
     const biggest = await list('type=expense&sort=amountDesc&pageSize=2');
     expect(biggest.items.map(item => item.id)).toEqual([pho.legs[0].id, grab.legs[0].id]);
     expect(biggest.total).toBe(3);
+    const smallest = await list('type=expense&sort=amountAsc');
+    expect(smallest.items.map(item => item.id)).toEqual((await list('type=expense&sort=amountDesc')).items.map(item => item.id).reverse());
+    const oldest = await list('type=expense&sort=dateAsc');
+    expect(oldest.items.map(item => item.id)).toEqual((await list('type=expense')).items.map(item => item.id).reverse());
     const largestIncome = await list('type=income&sort=amountDesc');
     expect(largestIncome.items[0].id).not.toBe(largestIncome.items[1].id);
     expect((await list('type=expense')).items[0].id).toBe(grab.legs[0].id);

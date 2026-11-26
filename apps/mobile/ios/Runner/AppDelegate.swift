@@ -2,43 +2,48 @@ import Flutter
 import UIKit
 
 @main
-@objc class AppDelegate: FlutterAppDelegate {
-  private var privacyCover: UIView?
+@objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
+  private var privacyCovers: [ObjectIdentifier: UIView] = [:]
 
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    GeneratedPluginRegistrant.register(with: self)
+    let center = NotificationCenter.default
+    center.addObserver(
+      self, selector: #selector(sceneDidEnterBackground(_:)),
+      name: UIScene.didEnterBackgroundNotification, object: nil)
+    center.addObserver(
+      self, selector: #selector(sceneBecameVisible(_:)),
+      name: UIScene.willEnterForegroundNotification, object: nil)
+    center.addObserver(
+      self, selector: #selector(sceneBecameVisible(_:)),
+      name: UIScene.didActivateNotification, object: nil)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
-  // The cover goes on only when the app really leaves the foreground (app
+
+  func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
+    GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
+  }
+
+  // The cover goes on only when a scene really leaves the foreground (app
   // switcher snapshot). willResignActive also fires while a system alert such as
   // the notification-permission prompt is up, which used to blank the whole app.
-  override func applicationDidEnterBackground(_ application: UIApplication) {
-    if let window = window, privacyCover == nil {
-      let cover = UIView(frame: window.bounds)
-      if #available(iOS 13.0, *) {
-        cover.backgroundColor = .systemBackground
-      } else {
-        cover.backgroundColor = .white
-      }
-      cover.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-      window.addSubview(cover)
-      privacyCover = cover
-    }
-    super.applicationDidEnterBackground(application)
+  @objc private func sceneDidEnterBackground(_ note: Notification) {
+    guard let scene = note.object as? UIWindowScene,
+      let window = scene.windows.first(where: { $0.isKeyWindow }) ?? scene.windows.first
+    else { return }
+    let id = ObjectIdentifier(scene)
+    if privacyCovers[id] != nil { return }
+    let cover = UIView(frame: window.bounds)
+    cover.backgroundColor = .systemBackground
+    cover.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+    window.addSubview(cover)
+    privacyCovers[id] = cover
   }
 
-  override func applicationWillEnterForeground(_ application: UIApplication) {
-    super.applicationWillEnterForeground(application)
-    privacyCover?.removeFromSuperview()
-    privacyCover = nil
-  }
-
-  override func applicationDidBecomeActive(_ application: UIApplication) {
-    super.applicationDidBecomeActive(application)
-    privacyCover?.removeFromSuperview()
-    privacyCover = nil
+  @objc private func sceneBecameVisible(_ note: Notification) {
+    guard let scene = note.object as? UIScene else { return }
+    privacyCovers.removeValue(forKey: ObjectIdentifier(scene))?.removeFromSuperview()
   }
 }

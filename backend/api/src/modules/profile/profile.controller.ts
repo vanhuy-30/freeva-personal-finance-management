@@ -1,9 +1,9 @@
 import {
-  Body, Controller, Get, Header, HttpCode, Patch, Put, Req, UseFilters, UseGuards,
+  Body, Controller, Delete, Get, Header, HttpCode, Patch, Put, Req, UseFilters, UseGuards,
 } from '@nestjs/common';
 import { AuthGuard, type AuthRequest } from '../auth/auth.guard';
 import { AuthExceptionFilter } from '../auth/auth-exception.filter';
-import { AutoSuggestDto, DisplayCurrencyDto, DeclaredIncomeUpdateDto, OnboardingAnswersDto, UpdateProfileDto } from './profile.dto';
+import { AutoSuggestDto, AvatarDto, DisplayCurrencyDto, DeclaredIncomeUpdateDto, OnboardingAnswersDto, UpdateProfileDto } from './profile.dto';
 import { ProfileService } from './profile.service';
 
 @Controller('v1/profile')
@@ -50,6 +50,27 @@ export class ProfileController {
   @Header('Cache-Control', 'no-store')
   async saveAutoSuggest(@Req() request: AuthRequest, @Body() body: AutoSuggestDto) {
     await this.profiles.saveAutoSuggest(request.session.userId, body.enabled);
+  }
+
+  @Put('avatar')
+  @HttpCode(204)
+  @Header('Cache-Control', 'no-store')
+  async saveAvatar(@Req() request: AuthRequest, @Body() body: AvatarDto) {
+    await this.profiles.saveAvatar(request.session.userId, body.imageBase64);
+  }
+
+  @Get('avatar')
+  @Header('Cache-Control', 'no-store')
+  async avatar(@Req() request: AuthRequest) {
+    const { image, updatedAt } = await this.profiles.avatar(request.session.userId);
+    return { imageBase64: image.toString('base64'), updatedAt: updatedAt.toISOString() };
+  }
+
+  @Delete('avatar')
+  @HttpCode(204)
+  @Header('Cache-Control', 'no-store')
+  async deleteAvatar(@Req() request: AuthRequest) {
+    await this.profiles.deleteAvatar(request.session.userId);
   }
 
   @Put()

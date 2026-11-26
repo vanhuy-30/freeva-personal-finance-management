@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'dart:math';
 
 import 'package:dartz/dartz.dart';
@@ -142,7 +144,26 @@ class DefaultTransactionViewModel extends TransactionViewModel {
     _seenApplied = _sync.appliedEpoch;
     _auth.addListener(_authChanged);
     _sync.addListener(_syncChanged);
+    _categoryChanges = _categoriesUseCases.changes.listen(
+      (_) => unawaited(_reloadCategories()),
+    );
     if (_stage == AuthStage.unlocked) Future.microtask(load);
+  }
+
+  late final StreamSubscription<void> _categoryChanges;
+
+  /// A category was added, hidden or deleted elsewhere: the composer and the
+  /// filters must offer the new list, not the one read at the first load.
+  Future<void> _reloadCategories() async {
+    if (_stage != AuthStage.unlocked || !composerReady) return;
+    final epoch = _epoch;
+    final result = await _categoriesUseCases.load();
+    if (epoch != _epoch) return;
+    result.fold((_) {}, (value) {
+      categories = value.all;
+      recentCategories = value.recent;
+      notifyListeners();
+    });
   }
 
   final FxRateUseCases _fx;
@@ -760,6 +781,7 @@ class DefaultTransactionViewModel extends TransactionViewModel {
     _listEpoch++;
     _auth.removeListener(_authChanged);
     _sync.removeListener(_syncChanged);
+    unawaited(_categoryChanges.cancel());
     super.dispose();
   }
 }

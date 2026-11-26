@@ -20,7 +20,11 @@ import 'package:mobile/features/settings/domain/settings_use_cases.dart';
 import 'package:mobile/features/settings/presentation/viewmodels/settings_view_model.dart';
 
 import '../auth/fakes.dart';
+import '../profile/avatar_fakes.dart';
 import '../profile/fakes.dart';
+
+import 'package:mobile/features/profile/presentation/viewmodels/avatar_view_model.dart';
+
 import 'fakes.dart';
 
 /// Everything the Cá nhân screens read: a signed-in, PIN-protected device
@@ -35,6 +39,9 @@ class G1 {
   late final DefaultProfileViewModel profile;
   late final MemoryProfiles profiles;
   final preferences = MemoryPreferences();
+  final avatarRepository = FakeAvatarRepository();
+  final avatarPicker = FakeAvatarPicker();
+  late final AvatarViewModel avatar;
 
   static Future<G1> create({
     String? displayName = 'Minh',
@@ -99,6 +106,11 @@ class G1 {
       ),
     );
     await g.profile.load();
+    g.avatar = avatarViewModel(
+      g.auth,
+      repository: g.avatarRepository,
+      picker: g.avatarPicker,
+    );
     g.api.sessionItems = [
       {
         'id': 'current',
@@ -133,7 +145,8 @@ class G1 {
       ..registerSingleton<AuthViewModel>(g.auth)
       ..registerSingleton<AuthUseCases>(cases)
       ..registerSingleton<SettingsViewModel>(g.settings)
-      ..registerSingleton<ProfileViewModel>(g.profile);
+      ..registerSingleton<ProfileViewModel>(g.profile)
+      ..registerSingleton<AvatarViewModel>(g.avatar);
     return g;
   }
 

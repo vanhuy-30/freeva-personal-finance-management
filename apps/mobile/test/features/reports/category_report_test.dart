@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../support/server_config_fixture.dart';
 
@@ -21,6 +22,7 @@ import 'package:mobile/features/transactions/domain/transaction.dart';
 import '../auth/fakes.dart';
 import '../transactions/c1_stub.dart' show StubTransactionViewModel;
 import 'f1_stub.dart';
+import '../transactions/c1_stub.dart' show tx;
 import 'f2_stub.dart';
 
 DefaultAuthViewModel _auth() =>
@@ -164,41 +166,79 @@ void main() {
     tearDown(() => auth.dispose());
 
     test(
-      'asks for the three largest of the slice in its currency and period',
+      'asks for ten of the slice, newest first, in its currency and period',
       () async {
-        final model = CategoryReportViewModel(
-          repository,
-          auth,
-          f2Args(),
-          shown: 3,
-        );
+        final model = CategoryReportViewModel(repository, auth, f2Args());
         await model.load();
         final query = repository.queries.single;
-        expect(query.pageSize, 3);
+        expect(query.page, 1);
+        expect(query.pageSize, 10);
         expect(query.type, TransactionType.expense);
-        expect(query.sort, TransactionSort.amountDesc);
+        expect(query.sort, TransactionSort.date);
         expect(query.currency, 'VND');
         expect(query.categoryIds, ['coffee', 'out']);
         expect((query.from, query.to), ('2026-10-01', '2026-10-31'));
         expect(model.count, 42);
-        expect(model.largest, hasLength(3));
+        expect(model.items, hasLength(3));
         model.dispose();
       },
     );
 
     test(
+      '"Xem thêm" appends the next page until every row is loaded',
+      () async {
+        repository
+          ..total = 25
+          ..legsFor = (query) => [
+            for (var i = 0; i < 10 && (query.page - 1) * 10 + i < 25; i++)
+              tx(
+                'p${query.page}-$i',
+                account: 'cash',
+                amount: -1000,
+                day: '2026-10-10',
+                category: 'food',
+              ),
+          ];
+        final model = CategoryReportViewModel(repository, auth, f2Args());
+        await model.load();
+        expect(model.items, hasLength(10));
+        expect(model.hasMore, isTrue);
+        await model.loadMore();
+        expect(repository.queries.last.page, 2);
+        expect(model.items, hasLength(20));
+        await model.loadMore();
+        expect(model.items, hasLength(25));
+        expect(model.hasMore, isFalse);
+        final calls = repository.queries.length;
+        await model.loadMore();
+        expect(repository.queries, hasLength(calls));
+        model.dispose();
+      },
+    );
+
+    test('changing the order starts again from the first page', () async {
+      repository.total = 25;
+      final model = CategoryReportViewModel(repository, auth, f2Args());
+      await model.load();
+      await model.setSort(TransactionSort.amountAsc);
+      final query = repository.queries.last;
+      expect(query.page, 1);
+      expect(query.sort, TransactionSort.amountAsc);
+      expect(model.sort, TransactionSort.amountAsc);
+      final calls = repository.queries.length;
+      await model.setSort(TransactionSort.amountAsc);
+      expect(repository.queries, hasLength(calls));
+      model.dispose();
+    });
+
+    test(
       'a failure keeps the screen usable; an expired session signs out',
       () async {
         repository.failure = const AuthFailure(AuthError.network);
-        final model = CategoryReportViewModel(
-          repository,
-          auth,
-          f2Args(),
-          shown: 3,
-        );
+        final model = CategoryReportViewModel(repository, auth, f2Args());
         await model.load();
         expect(model.failure?.code, AuthError.network);
-        expect(model.largest, isEmpty);
+        expect(model.items, isEmpty);
         repository.failure = const AuthFailure(AuthError.expired);
         await model.load();
         expect(auth.stage, AuthStage.signedOut);
@@ -245,6 +285,12 @@ void main() {
                 builder: (_, __) => ReportCategoryPage(args: args),
               ),
               GoRoute(
+                path: '/reports/category',
+                builder: (_, state) => ReportCategoryPage(
+                  args: state.extra! as CategoryDetailArgs,
+                ),
+              ),
+              GoRoute(
                 path: '/transactions',
                 builder: (_, __) => const Text('DANH SÁCH'),
               ),
@@ -265,12 +311,13 @@ void main() {
       expect(find.textContaining('3.541.600'), findsOneWidget);
       expect(find.text('38% tổng chi · 42 giao dịch'), findsOneWidget);
       expect(find.text('Ăn ngoài'), findsOneWidget);
-      expect(find.text('Giao dịch lớn nhất'), findsOneWidget);
+      expect(find.text('Giao dịch'), findsOneWidget);
       expect(find.text('Co.opmart'), findsOneWidget);
-      expect(find.text('Xem cả 42'), findsOneWidget);
+      expect(find.text('Xem thêm'), findsOneWidget);
+      expect(find.text('Xem cả 42'), findsNothing);
     });
 
-    testWidgets('"Xem cả N" opens the list filtered to this slice and period', (
+    testWidgets('sorts by date or amount and loads ten more on "Xem thêm"', (
       tester,
     ) async {
       tester.view.physicalSize = const Size(390, 1200);
@@ -278,14 +325,24 @@ void main() {
       addTearDown(tester.view.reset);
       await tester.pumpWidget(app(f2Args()));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Xem cả 42'));
+      for (final (label, sort) in [
+        ('Cũ nhất', TransactionSort.dateAsc),
+        ('Lớn nhất', TransactionSort.amountDesc),
+        ('Nhỏ nhất', TransactionSort.amountAsc),
+        ('Mới nhất', TransactionSort.date),
+      ]) {
+        await tester.tap(find.byIcon(LucideIcons.arrowUpDown));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text(label));
+        await tester.pumpAndSettle();
+        expect(repository.queries.last.sort, sort);
+        expect(repository.queries.last.page, 1);
+      }
+      await tester.ensureVisible(find.text('Xem thêm'));
+      await tester.tap(find.text('Xem thêm'));
       await tester.pumpAndSettle();
-      expect(find.text('DANH SÁCH'), findsOneWidget);
-      final filter = transactions.filter;
-      expect(filter.type, TransactionType.expense);
-      expect(filter.categoryIds, {'coffee', 'out'});
-      expect(filter.custom?.from, '2026-10-01');
-      expect(filter.custom?.to, '2026-10-31');
+      expect(repository.queries.last.page, 2);
+      expect(repository.queries.last.sort, TransactionSort.date);
     });
 
     testWidgets(
@@ -324,10 +381,31 @@ void main() {
         );
         await tester.pumpAndSettle();
         expect(find.text('Khác'), findsOneWidget);
-        expect(find.text('Giao dịch lớn nhất'), findsNothing);
+        expect(find.text('Giao dịch'), findsNothing);
         expect(repository.queries, isEmpty);
       },
     );
+
+    testWidgets('a category inside "Khác" opens with its own transactions', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(390, 1200);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final args = f2Args(index: 3);
+      final bar = categoryDetail(args).bars.first;
+      expect(bar.memberId, isNotNull);
+      await tester.pumpWidget(app(args));
+      await tester.pumpAndSettle();
+      expect(find.text('Khác'), findsOneWidget);
+      final calls = repository.queries.length;
+      await tester.tap(find.text(bar.name));
+      await tester.pumpAndSettle();
+      expect(find.text(bar.name), findsWidgets);
+      expect(find.text('Khác'), findsNothing);
+      expect(repository.queries.length, greaterThan(calls));
+      expect(repository.queries.last.categoryIds, isNotEmpty);
+    });
 
     testWidgets('fits 320 pt at 1.3× and 2× text', (tester) async {
       tester.view.physicalSize = const Size(320, 700);

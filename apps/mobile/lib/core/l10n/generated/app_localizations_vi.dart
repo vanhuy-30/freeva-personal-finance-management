@@ -1023,6 +1023,40 @@ class SVi extends S {
   String get txFrequent => 'Hay dùng';
 
   @override
+  String get txNewCategory => 'Tạo danh mục';
+
+  @override
+  String get txNewCategoryCta => 'Tạo danh mục mới';
+
+  @override
+  String txNewCategoryCtaNamed(String name) {
+    return 'Tạo “$name”';
+  }
+
+  @override
+  String get txNewCategoryName => 'Tên danh mục';
+
+  @override
+  String get txNewCategoryNameHint => 'Nhập tên danh mục';
+
+  @override
+  String get txNewCategoryExists => 'Đã có danh mục tên này';
+
+  @override
+  String get txNewCategoryFailed => 'Chưa tạo được. Thử lại nhé.';
+
+  @override
+  String get txNewCategoryNoteExpense =>
+      'Sẽ thêm vào danh mục chi. Đổi biểu tượng và màu ở mục Danh mục.';
+
+  @override
+  String get txNewCategoryNoteIncome =>
+      'Sẽ thêm vào danh mục thu. Đổi biểu tượng và màu ở mục Danh mục.';
+
+  @override
+  String get txNewCategoryCreate => 'Tạo và chọn';
+
+  @override
   String get txFindOrCreateTag => 'Tìm hoặc tạo nhãn';
 
   @override
@@ -1277,9 +1311,6 @@ class SVi extends S {
 
   @override
   String get walletCurrentBalance => 'Số dư hiện tại';
-
-  @override
-  String get walletBalanceHint => 'Nhập số gần đúng, có thể sửa lại sau.';
 
   @override
   String get creditCurrentDebt => 'Dư nợ hiện tại';
@@ -1726,13 +1757,13 @@ class SVi extends S {
   String get reportWalletTotal => 'Tổng số dư ví';
 
   @override
-  String get reportCompareWeek => 'so tuần trước';
+  String get reportCompareWeek => 'so với tuần trước';
 
   @override
-  String get reportCompareMonth => 'so tháng trước';
+  String get reportCompareMonth => 'so với tháng trước';
 
   @override
-  String get reportCompareYear => 'so năm trước';
+  String get reportCompareYear => 'so với năm trước';
 
   @override
   String reportChangePoints(String points) {
@@ -1862,12 +1893,6 @@ class SVi extends S {
   String reportBreakdownCount(int count) {
     return '$count danh mục';
   }
-
-  @override
-  String get reportBreakdownSortExpense => 'Chi nhiều nhất trước';
-
-  @override
-  String get reportBreakdownSortIncome => 'Thu nhiều nhất trước';
 
   @override
   String get reportBreakdownNote =>
@@ -2077,12 +2102,25 @@ class SVi extends S {
   }
 
   @override
-  String get reportLargest => 'Giao dịch lớn nhất';
+  String get reportTransactions => 'Giao dịch';
 
   @override
-  String reportSeeAll(int count) {
-    return 'Xem cả $count';
-  }
+  String get reportLoadMore => 'Xem thêm';
+
+  @override
+  String get reportSortNewest => 'Mới nhất';
+
+  @override
+  String get reportSortOldest => 'Cũ nhất';
+
+  @override
+  String get reportSortLargest => 'Lớn nhất';
+
+  @override
+  String get reportSortSmallest => 'Nhỏ nhất';
+
+  @override
+  String get reportSortLabel => 'Sắp xếp giao dịch';
 
   @override
   String get reportLargestError => 'Không tải được giao dịch';
@@ -3512,9 +3550,6 @@ class SVi extends S {
   String get meExportData => 'Xuất dữ liệu';
 
   @override
-  String get meExportHint => 'Lưu hoặc gửi một bản sao dữ liệu của bạn';
-
-  @override
   String get meExportError => 'Chưa xuất được. Thử lại nhé.';
 
   @override
@@ -3535,6 +3570,27 @@ class SVi extends S {
 
   @override
   String get meChangeAvatar => 'Đổi ảnh đại diện';
+
+  @override
+  String get meAvatarCamera => 'Chụp ảnh mới';
+
+  @override
+  String get meAvatarPick => 'Chọn ảnh từ thư viện';
+
+  @override
+  String get meAvatarRemove => 'Xóa ảnh đại diện';
+
+  @override
+  String get meAvatarSaved => 'Đã cập nhật ảnh đại diện';
+
+  @override
+  String get meAvatarRemoved => 'Đã xóa ảnh đại diện';
+
+  @override
+  String get meAvatarUnreadable => 'Không đọc được ảnh này. Hãy thử ảnh khác.';
+
+  @override
+  String get meAvatarError => 'Chưa cập nhật được ảnh đại diện. Thử lại sau.';
 
   @override
   String get meSecurityValueFaceId => 'PIN · Face ID';
@@ -4340,9 +4396,6 @@ class SVi extends S {
 
   @override
   String get debtPickDate => 'Chọn ngày';
-
-  @override
-  String get debtClearDue => 'Bỏ hạn';
 
   @override
   String get debtDueBeforeDate => 'Hạn trả phải sau ngày mượn.';
@@ -5637,6 +5690,19 @@ class SVi extends S {
 
   @override
   String get depositInterest => 'Lãi dự kiến';
+
+  @override
+  String depositDaysLeft(int count) {
+    return 'Còn $count ngày';
+  }
+
+  @override
+  String depositMaturesOn(String date) {
+    return 'Đáo hạn $date';
+  }
+
+  @override
+  String get depositMaturedTag => 'Đã đáo hạn';
 
   @override
   String get depositRateLabel => 'Lãi suất';

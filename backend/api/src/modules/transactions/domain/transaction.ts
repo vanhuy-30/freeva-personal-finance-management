@@ -50,10 +50,12 @@ export interface TransactionLeg extends LegInput {
   updatedAt: Date;
 }
 export interface TransactionBundle { legs: TransactionLeg[]; fx: (ManualFx & { id: string; fromCode: string; toCode: string }) | null }
+export const TRANSACTION_SORTS = ['date', 'dateAsc', 'amountDesc', 'amountAsc'] as const;
+export type TransactionSort = (typeof TRANSACTION_SORTS)[number];
 export interface TransactionQuery {
   page: number; pageSize: number; status: 'active' | 'deleted' | 'all';
-  /** `date` is newest first; `amountDesc` is the largest amount first, ignoring sign ("Giao dịch lớn nhất"). */
-  sort?: 'date' | 'amountDesc';
+  /** `date` newest first, `dateAsc` oldest first; `amountDesc` / `amountAsc` largest / smallest amount first, ignoring sign. */
+  sort?: TransactionSort;
   /** Any of these (OR within one filter, AND across filters). */
   accountIds?: string[]; categoryIds?: string[]; tagIds?: string[];
   type?: TransactionType; from?: string; to?: string; search?: string;

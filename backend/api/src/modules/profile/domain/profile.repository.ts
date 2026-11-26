@@ -31,9 +31,11 @@ export interface Profile {
   displayCurrencyCode: string | null;
   /** PRD-P5-E01: category suggestions, insights and spending forecast for this user. Set via PUT /profile/auto-suggest. */
   autoSuggestEnabled: boolean;
+  /** When the profile photo last changed (ISO 8601); null without one. The photo itself is GET /profile/avatar. */
+  avatarUpdatedAt: string | null;
 }
 /** `displayName` undefined keeps the stored value. */
-export type ProfileUpdate = Omit<Profile, 'displayName' | 'goals' | 'declaredIncome' | 'displayCurrencyCode' | 'autoSuggestEnabled'> & { displayName?: string | null };
+export type ProfileUpdate = Omit<Profile, 'displayName' | 'goals' | 'declaredIncome' | 'displayCurrencyCode' | 'autoSuggestEnabled' | 'avatarUpdatedAt'> & { displayName?: string | null };
 /** Only the fields present are stored; the rest keep their value. */
 export interface OnboardingAnswers {
   goals?: string[];
@@ -50,4 +52,8 @@ export interface ProfileRepository {
   saveDeclaredIncome(userId: string, band: DeclaredIncomeBand | null): Promise<boolean>;
   saveDisplayCurrency(userId: string, code: string | null): Promise<boolean>;
   saveAutoSuggest(userId: string, enabled: boolean): Promise<boolean>;
+  /** False when the user does not exist. */
+  saveAvatar(userId: string, image: Buffer): Promise<boolean>;
+  readAvatar(userId: string): Promise<{ image: Buffer; updatedAt: Date } | null>;
+  deleteAvatar(userId: string): Promise<void>;
 }

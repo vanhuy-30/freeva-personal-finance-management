@@ -10,7 +10,6 @@ import '../../../../core/widgets/freeva_top_bar.dart';
 import '../../../auth/presentation/viewmodels/auth_view_model.dart';
 import '../../../home/presentation/widgets/recent_row_data.dart';
 import '../../../transactions/domain/transaction.dart';
-import '../../../transactions/domain/transaction_filter.dart';
 import '../../../transactions/domain/transaction_repository.dart';
 import '../../../transactions/presentation/viewmodels/transaction_view_model.dart';
 import '../../../transactions/presentation/widgets/transaction_detail_sheet.dart';
@@ -18,12 +17,11 @@ import '../../domain/category_detail.dart';
 import '../viewmodels/category_report_view_model.dart';
 import '../widgets/category_bars.dart';
 import '../widgets/category_header.dart';
-import '../widgets/largest_transactions.dart';
+import '../widgets/category_transactions.dart';
 import '../widgets/report_period_labels.dart';
-import '../../../server_config/domain/app_limits.dart';
 
 /// One slice of the breakdown in the period: total, share, the child
-/// categories and the largest transactions. A pushed screen (no bottom nav).
+/// categories and its transactions, ten at a time. A pushed screen (no bottom nav).
 class ReportCategoryPage extends StatefulWidget {
   const ReportCategoryPage({required this.args, super.key});
 
@@ -38,7 +36,6 @@ class _ReportCategoryPageState extends State<ReportCategoryPage> {
     getIt<TransactionRepository>(),
     getIt<AuthViewModel>(),
     widget.args,
-    shown: getIt<AppLimitsSource>().requireLimits.reportTopRows,
   );
   late final TransactionViewModel transactions = getIt<TransactionViewModel>();
 
@@ -55,17 +52,20 @@ class _ReportCategoryPageState extends State<ReportCategoryPage> {
     super.dispose();
   }
 
-  void _seeAll() {
-    final args = widget.args;
-    transactions.setFilter(
-      TransactionFilter(
-        type: model.type,
-        period: PeriodPreset.custom,
-        custom: DateRange(args.report.period.from, args.report.period.to),
-        categoryIds: {...?args.categoryIds},
+  /// A category inside "Khác": its own screen, with its transactions.
+  void _openBar(BuildContext context, CategoryBar bar) {
+    final slice = sliceOfCategory(widget.args, bar.memberId!);
+    if (slice == null) return;
+    context.push(
+      '/reports/category',
+      extra: CategoryDetailArgs(
+        report: widget.args.report,
+        currency: widget.args.currency,
+        digits: widget.args.digits,
+        kind: widget.args.kind,
+        slice: slice,
       ),
     );
-    context.go('/transactions');
   }
 
   @override
@@ -112,10 +112,11 @@ class _ReportCategoryPageState extends State<ReportCategoryPage> {
                 detail: detail,
                 currency: args.currency,
                 digits: args.digits,
+                onOpen: single == null ? (bar) => _openBar(context, bar) : null,
               ),
               if (model.available) ...[
                 gap,
-                LargestTransactions(
+                CategoryTransactions(
                   model: model,
                   names: RecentRowNames(
                     s,
@@ -125,7 +126,6 @@ class _ReportCategoryPageState extends State<ReportCategoryPage> {
                   digitsOf: (_) => args.digits,
                   onOpen: (TransactionBundle row) =>
                       openTransactionDetail(context, transactions, row),
-                  onSeeAll: _seeAll,
                 ),
               ],
             ],

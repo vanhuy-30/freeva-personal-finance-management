@@ -13,6 +13,17 @@ import { assertWithinRefundCap, validateRefundAmount, type RefundInput } from '.
 import type { CsvTransactionRow } from '../domain/csv-export';
 import { todayInTimeZone } from '../../reports/domain/report';
 
+/** Ties always fall back to the same order so pages never repeat or skip a row. */
+function listOrder(sort: TransactionQuery['sort']): Prisma.Sql {
+  const newest = Prisma.sql`t."occurredOn" DESC, t."createdAt" DESC, t.id ASC`;
+  switch (sort) {
+    case 'dateAsc': return Prisma.sql`t."occurredOn" ASC, t."createdAt" ASC, t.id ASC`;
+    case 'amountDesc': return Prisma.sql`ABS(t."amountMinor") DESC, ${newest}`;
+    case 'amountAsc': return Prisma.sql`ABS(t."amountMinor") ASC, ${newest}`;
+    default: return newest;
+  }
+}
+
 const include = { tags: { select: { tagId: true } }, fxQuote: true } satisfies Prisma.TransactionInclude;
 type Row = Prisma.TransactionGetPayload<{ include: typeof include }>;
 function leg(row: Row): TransactionLeg {
@@ -134,7 +145,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
         WHERE ${where}`;
       const ids = await tx.$queryRaw<{ id: string }[]>(Prisma.sql`
         SELECT t.id ${listed}
-        ORDER BY ${query.sort === 'amountDesc' ? Prisma.sql`ABS(t."amountMinor") DESC, ` : Prisma.empty}t."occurredOn" DESC, t."createdAt" DESC, t.id ASC
+        ORDER BY ${listOrder(query.sort)}
         LIMIT ${query.pageSize} OFFSET ${(query.page - 1) * query.pageSize}`);
       const [count] = await tx.$queryRaw<{ total: string; bundles: string }[]>(Prisma.sql`
         SELECT COUNT(*)::text AS total, COUNT(DISTINCT COALESCE(t."transferGroupId", t.id))::text AS bundles ${listed}`);

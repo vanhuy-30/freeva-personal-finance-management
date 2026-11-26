@@ -347,17 +347,6 @@ class _DebtEditorPageState extends State<DebtEditorPage> {
                 ),
               ),
             ),
-            if (dueDate != null)
-              TextButton(
-                onPressed: () => setState(() => dueDate = null),
-                child: Text(
-                  s.debtClearDue,
-                  style: FreevaTypography.bodyS.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: c.textLink,
-                  ),
-                ),
-              ),
           ],
         ),
       ),

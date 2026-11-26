@@ -62,6 +62,17 @@ export class AutoSuggestDto {
   enabled!: boolean;
 }
 
+/** Largest photo the API keeps; the app resizes to about 20 KiB before sending. */
+export const AVATAR_MAX_BYTES = 65536;
+
+/** Photo as base64 (a JPEG). Size and format of the decoded bytes are checked in the service. */
+export class AvatarDto {
+  @IsString()
+  @MaxLength(Math.ceil(AVATAR_MAX_BYTES / 3) * 4 + 4)
+  @Matches(/^[A-Za-z0-9+/]+={0,2}$/)
+  imageBase64!: string;
+}
+
 export class UpdateProfileDto {
   /** Omitted keeps the stored name; blank clears it. */
   @IsOptional()

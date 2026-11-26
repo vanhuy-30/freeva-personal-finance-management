@@ -170,8 +170,14 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
       categories: _categories,
       frequent: const [],
       selected: categoryId,
+      createKind: CategoryKind.expense,
     );
-    if (picked != null) setState(() => categoryId = picked);
+    if (picked == null) return;
+    // A category made in the sheet is not in this page's list yet.
+    if (!categoriesVm.categories.any((c) => c.id == picked)) {
+      await categoriesVm.load();
+    }
+    if (mounted) setState(() => categoryId = picked);
   }
 
   Future<void> _pickDate() async {

@@ -133,7 +133,11 @@ void main() {
     await model.archive(model.wallets[1]);
     await tester.pumpWidget(app(list()));
     expect(find.text('Tổng số dư · 2 ví'), findsOneWidget);
-    expect(find.text('18.446.744.073.709.551.614'), findsNWidgets(2));
+    // Each row: the exact balance and its currency.
+    expect(
+      find.textContaining('18.446.744.073.709.551.614 ₫', findRichText: true),
+      findsNWidgets(2),
+    );
     expect(find.text('36.893.488.147.419.103.228 ₫'), findsOneWidget);
     expect(find.text('Sắp xếp'), findsOneWidget);
     expect(find.text('b'), findsNothing);
@@ -144,7 +148,7 @@ void main() {
   ) async {
     await tester.pumpWidget(app(list(hidden: true)));
     expect(find.textContaining('18.446'), findsNothing);
-    expect(find.text('••••••'), findsNWidgets(3));
+    expect(find.textContaining('••••••', findRichText: true), findsNWidgets(4));
     expect(find.text('a'), findsOneWidget);
   });
   testWidgets('empty list offers to add a wallet; no sort for one wallet', (

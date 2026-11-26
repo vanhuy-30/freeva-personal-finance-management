@@ -136,14 +136,6 @@ class WalletFormBody extends StatelessWidget {
                 ? s.walletAmountInvalid
                 : null,
           ),
-          if (form.isNew)
-            Padding(
-              padding: const EdgeInsets.only(left: 4, top: 6),
-              child: Text(
-                s.walletBalanceHint,
-                style: FreevaTypography.bodyS.copyWith(color: c.textSecondary),
-              ),
-            ),
         ],
         if (onHide != null) ...[
           // Board: page gap 16 + 8 above the text button.

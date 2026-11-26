@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../../core/text/vietnamese_fold.dart';
@@ -10,24 +11,31 @@ import '../../../../categories/domain/finance_category.dart';
 import '../../../../categories/presentation/widgets/category_badge.dart';
 import '../../../../categories/presentation/widgets/category_icon_tile.dart';
 import '../search_box.dart';
+import 'quick_category_sheet.dart';
 import 'category_parent_group.dart';
 
 /// "Chọn danh mục" (C2.2): search, 4 frequent cards, then each parent row
 /// with its children as chips. A parent or a child can be picked; picking
-/// closes the sheet.
+/// closes the sheet. With [createKind] a "Tạo danh mục mới" row adds a
+/// category of that kind on the spot and picks it.
 Future<String?> showCategoryPicker(
   BuildContext context, {
   required List<FinanceCategory> categories,
   required List<FinanceCategory> frequent,
   required String? selected,
+  CategoryKind? createKind,
 }) {
   final s = S.of(context);
   return showFreevaSheet<String>(
     context: context,
     title: s.txPickCategory,
     titleGap: FreevaSpace.s4,
-    builder: (_) =>
-        _Body(categories: categories, frequent: frequent, selected: selected),
+    builder: (_) => _Body(
+      categories: categories,
+      frequent: frequent,
+      selected: selected,
+      createKind: createKind,
+    ),
   );
 }
 
@@ -36,10 +44,12 @@ class _Body extends StatefulWidget {
     required this.categories,
     required this.frequent,
     required this.selected,
+    required this.createKind,
   });
   final List<FinanceCategory> categories;
   final List<FinanceCategory> frequent;
   final String? selected;
+  final CategoryKind? createKind;
 
   @override
   State<_Body> createState() => _BodyState();
@@ -47,6 +57,18 @@ class _Body extends StatefulWidget {
 
 class _BodyState extends State<_Body> {
   String query = '';
+
+  Future<void> _create() async {
+    final kind = widget.createKind;
+    if (kind == null) return;
+    final created = await showQuickCategorySheet(
+      context,
+      kind: kind,
+      categories: widget.categories,
+      initialName: query,
+    );
+    if (created != null && mounted) Navigator.of(context).pop(created.id);
+  }
 
   bool _match(FinanceCategory c) =>
       query.isEmpty || foldVietnamese(c.name).contains(foldVietnamese(query));
@@ -85,6 +107,13 @@ class _BodyState extends State<_Body> {
             iconSize: FreevaSize.iconSm,
             onChanged: (v) => setState(() => query = v.trim()),
           ),
+          if (widget.createKind != null)
+            _CreateRow(
+              label: query.isEmpty
+                  ? s.txNewCategoryCta
+                  : s.txNewCategoryCtaNamed(query),
+              onTap: _create,
+            ),
           Expanded(
             child: ListView(
               padding: const EdgeInsets.only(top: FreevaSpace.s4),
@@ -128,6 +157,52 @@ class _BodyState extends State<_Body> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// "+ Tạo danh mục mới" under the search box: 44 high link-style row.
+class _CreateRow extends StatelessWidget {
+  const _CreateRow({required this.label, required this.onTap});
+
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    return Semantics(
+      button: true,
+      label: label,
+      excludeSemantics: true,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(FreevaRadius.md),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: FreevaSize.touch),
+          child: Row(
+            children: [
+              Icon(
+                LucideIcons.plus,
+                size: FreevaSize.iconSm,
+                color: c.textLink,
+              ),
+              const SizedBox(width: FreevaSpace.s2),
+              Expanded(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: FreevaTypography.titleM.copyWith(
+                    fontSize: 14,
+                    color: c.textLink,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

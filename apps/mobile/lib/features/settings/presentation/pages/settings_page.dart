@@ -11,6 +11,7 @@ import '../../../../core/widgets/freeva_top_bar.dart';
 import '../../../auth/presentation/viewmodels/auth_view_model.dart';
 import '../../../auto_suggest/presentation/viewmodels/auto_suggest_view_model.dart';
 import '../../../auth/presentation/widgets/session_alert_banner.dart';
+import '../../../profile/presentation/viewmodels/avatar_view_model.dart';
 import '../../../profile/presentation/viewmodels/profile_view_model.dart';
 import '../../../tags/domain/tag_use_cases.dart';
 import '../viewmodels/settings_view_model.dart';
@@ -34,6 +35,7 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   late final SettingsViewModel settings = getIt<SettingsViewModel>();
   late final ProfileViewModel profile = getIt<ProfileViewModel>();
+  late final AvatarViewModel avatar = getIt<AvatarViewModel>();
   final AutoSuggestViewModel? autoSuggest =
       getIt.isRegistered<AutoSuggestViewModel>()
       ? getIt<AutoSuggestViewModel>()
@@ -80,6 +82,7 @@ class _SettingsPageState extends State<SettingsPage> {
     listenable: Listenable.merge([
       settings,
       profile,
+      avatar,
       if (autoSuggest != null) autoSuggest!,
     ]),
     builder: (context, _) {
@@ -103,6 +106,7 @@ class _SettingsPageState extends State<SettingsPage> {
             ProfileCard(
               name: profile.saved?.displayName,
               email: settings.email,
+              image: avatar.image,
             ),
             const ManageGrid(),
             MoneySetupGroup(

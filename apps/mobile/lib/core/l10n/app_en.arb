@@ -564,6 +564,23 @@
   "txPickCategory": "Choose a category",
   "txFindCategory": "Find a category",
   "txFrequent": "Frequent",
+  "txNewCategory": "New category",
+  "txNewCategoryCta": "New category",
+  "txNewCategoryCtaNamed": "Create “{name}”",
+  "@txNewCategoryCtaNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "txNewCategoryName": "Category name",
+  "txNewCategoryNameHint": "Enter a name",
+  "txNewCategoryExists": "You already have a category with this name",
+  "txNewCategoryFailed": "Couldn't create it. Try again.",
+  "txNewCategoryNoteExpense": "Added to your expense categories. Change its icon and colour in Categories.",
+  "txNewCategoryNoteIncome": "Added to your income categories. Change its icon and colour in Categories.",
+  "txNewCategoryCreate": "Create and pick",
   "txFindOrCreateTag": "Find or create a tag",
   "txCreateTag": "Create tag “{name}”",
   "@txCreateTag": {
@@ -773,7 +790,6 @@
   "walletCurrencyField": "Currency",
   "walletCurrencyTitle": "Choose currency",
   "walletCurrentBalance": "Current balance",
-  "walletBalanceHint": "A rough number is fine. You can change it later.",
   "creditCurrentDebt": "Current balance owed",
   "creditInitialDebt": "Starting balance owed",
   "creditLimitField": "Limit",
@@ -1078,8 +1094,6 @@
   "reportBreakdownPageIncome": "Income breakdown",
   "reportBreakdownCount": "{count} categories",
   "@reportBreakdownCount": {"placeholders": {"count": {"type": "int"}}},
-  "reportBreakdownSortExpense": "Biggest spend first",
-  "reportBreakdownSortIncome": "Biggest income first",
   "reportBreakdownNote": "Subcategories are counted in their parent. Tap a row to see its transactions.",
   "reportInWeek": "This week",
   "reportInMonth": "In month {month}",
@@ -1271,15 +1285,13 @@
       }
     }
   },
-  "reportLargest": "Largest transactions",
-  "reportSeeAll": "See all {count}",
-  "@reportSeeAll": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "reportTransactions": "Transactions",
+  "reportLoadMore": "Show more",
+  "reportSortNewest": "Newest",
+  "reportSortOldest": "Oldest",
+  "reportSortLargest": "Largest",
+  "reportSortSmallest": "Smallest",
+  "reportSortLabel": "Sort transactions",
   "reportLargestError": "Couldn't load transactions",
   "meTitle": "You",
   "meGroupApp": "App",
@@ -2039,7 +2051,6 @@
   "meProfileEmailUnverified": "Email · not verified",
   "meDeleteAccount": "Delete account",
   "meExportData": "Export data",
-  "meExportHint": "Save or send a copy of your data",
   "meExportError": "Couldn't export. Try again.",
   "meDeleteTitle": "Delete account?",
   "meDeleteBody": "All your data is deleted right away and can't be restored. You can export it first.",
@@ -2047,6 +2058,13 @@
   "meDeleteError": "Couldn't delete. Your data is untouched.",
   "meConfirmPasswordTitle": "Enter your password to continue",
   "meChangeAvatar": "Change photo",
+  "meAvatarCamera": "Take a photo",
+  "meAvatarPick": "Choose from library",
+  "meAvatarRemove": "Remove photo",
+  "meAvatarSaved": "Profile photo updated",
+  "meAvatarRemoved": "Profile photo removed",
+  "meAvatarUnreadable": "That picture can't be read. Try another one.",
+  "meAvatarError": "Couldn't update your photo. Try again later.",
   "meSecurityValueFaceId": "PIN · Face ID",
   "meSecFaceId": "Unlock with Face ID",
   "notifySessionSubAlways": "Always on so you can check",
@@ -2412,7 +2430,6 @@
   "debtDate": "Date",
   "debtDueDate": "Due date",
   "debtPickDate": "Pick a date",
-  "debtClearDue": "Clear due date",
   "debtDueBeforeDate": "The due date must be after the date.",
   "debtNote": "Note",
   "debtNoteHint": "Add a note",
@@ -2831,6 +2848,11 @@
   "depositValueToday": "Amount deposited",
   "depositPrincipal": "Principal",
   "depositInterest": "Expected interest",
+  "depositDaysLeft": "{count, plural, =1{1 day left} other{{count} days left}}",
+  "@depositDaysLeft": {"placeholders": {"count": {"type": "int"}}},
+  "depositMaturesOn": "Matures {date}",
+  "@depositMaturesOn": {"placeholders": {"date": {"type": "String"}}},
+  "depositMaturedTag": "Matured",
   "depositRateLabel": "Interest rate",
   "depositRatePerYear": "{rate}/year",
   "@depositRatePerYear": {"placeholders": {"rate": {"type": "String"}}},

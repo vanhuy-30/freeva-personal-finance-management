@@ -147,6 +147,7 @@ class _InvestmentKindPageState extends State<InvestmentKindPage> {
             deposit: a,
             digits: model.digits,
             hidden: hidden,
+            today: model.today,
             onTap: () => context.push('/me/investments/${a.id}'),
           )
         else

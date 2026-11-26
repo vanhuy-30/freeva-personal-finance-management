@@ -115,6 +115,15 @@ model Currency {
   cardInstallmentPlans  CardInstallmentPlan[]
 }
 
+/// Profile photo: one small JPEG (at most 64 KiB) per user, apart from "User" so user reads never load it.
+model UserAvatar {
+  userId    String   @id @db.Uuid
+  image     Bytes
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
 model User {
   id                       String    @id @default(uuid()) @db.Uuid
   email                    String    @unique
@@ -145,6 +154,7 @@ model User {
   authTokens      AuthToken[]
   sessions        AuthSession[]
   authMailJobs    AuthMailJob[]
+  avatar          UserAvatar?
 
   defaultCurrency        Currency                    @relation("UserDefaultCurrency", fields: [defaultCurrencyCode], references: [code])
   financialAccounts      FinancialAccount[]

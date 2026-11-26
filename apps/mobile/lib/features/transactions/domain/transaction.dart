@@ -203,8 +203,9 @@ class TransactionLegCommand {
   final BigInt amountMinor;
 }
 
-/// `date` is newest first; `amountDesc` the largest amount first, ignoring sign.
-enum TransactionSort { date, amountDesc }
+/// `date` is newest first, `dateAsc` oldest first; `amountDesc` / `amountAsc`
+/// the largest / smallest amount first, ignoring sign.
+enum TransactionSort { date, dateAsc, amountDesc, amountAsc }
 
 class TransactionQuery {
   const TransactionQuery({

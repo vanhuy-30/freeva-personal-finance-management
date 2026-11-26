@@ -1945,6 +1945,66 @@ abstract class S {
   /// **'Frequent'**
   String get txFrequent;
 
+  /// No description provided for @txNewCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'New category'**
+  String get txNewCategory;
+
+  /// No description provided for @txNewCategoryCta.
+  ///
+  /// In en, this message translates to:
+  /// **'New category'**
+  String get txNewCategoryCta;
+
+  /// No description provided for @txNewCategoryCtaNamed.
+  ///
+  /// In en, this message translates to:
+  /// **'Create “{name}”'**
+  String txNewCategoryCtaNamed(String name);
+
+  /// No description provided for @txNewCategoryName.
+  ///
+  /// In en, this message translates to:
+  /// **'Category name'**
+  String get txNewCategoryName;
+
+  /// No description provided for @txNewCategoryNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a name'**
+  String get txNewCategoryNameHint;
+
+  /// No description provided for @txNewCategoryExists.
+  ///
+  /// In en, this message translates to:
+  /// **'You already have a category with this name'**
+  String get txNewCategoryExists;
+
+  /// No description provided for @txNewCategoryFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t create it. Try again.'**
+  String get txNewCategoryFailed;
+
+  /// No description provided for @txNewCategoryNoteExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to your expense categories. Change its icon and colour in Categories.'**
+  String get txNewCategoryNoteExpense;
+
+  /// No description provided for @txNewCategoryNoteIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to your income categories. Change its icon and colour in Categories.'**
+  String get txNewCategoryNoteIncome;
+
+  /// No description provided for @txNewCategoryCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create and pick'**
+  String get txNewCategoryCreate;
+
   /// No description provided for @txFindOrCreateTag.
   ///
   /// In en, this message translates to:
@@ -2370,12 +2430,6 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Current balance'**
   String get walletCurrentBalance;
-
-  /// No description provided for @walletBalanceHint.
-  ///
-  /// In en, this message translates to:
-  /// **'A rough number is fine. You can change it later.'**
-  String get walletBalanceHint;
 
   /// No description provided for @creditCurrentDebt.
   ///
@@ -3433,18 +3487,6 @@ abstract class S {
   /// **'{count} categories'**
   String reportBreakdownCount(int count);
 
-  /// No description provided for @reportBreakdownSortExpense.
-  ///
-  /// In en, this message translates to:
-  /// **'Biggest spend first'**
-  String get reportBreakdownSortExpense;
-
-  /// No description provided for @reportBreakdownSortIncome.
-  ///
-  /// In en, this message translates to:
-  /// **'Biggest income first'**
-  String get reportBreakdownSortIncome;
-
   /// No description provided for @reportBreakdownNote.
   ///
   /// In en, this message translates to:
@@ -3768,17 +3810,47 @@ abstract class S {
   /// **'{share} · {count} transactions'**
   String reportShareCount(String share, int count);
 
-  /// No description provided for @reportLargest.
+  /// No description provided for @reportTransactions.
   ///
   /// In en, this message translates to:
-  /// **'Largest transactions'**
-  String get reportLargest;
+  /// **'Transactions'**
+  String get reportTransactions;
 
-  /// No description provided for @reportSeeAll.
+  /// No description provided for @reportLoadMore.
   ///
   /// In en, this message translates to:
-  /// **'See all {count}'**
-  String reportSeeAll(int count);
+  /// **'Show more'**
+  String get reportLoadMore;
+
+  /// No description provided for @reportSortNewest.
+  ///
+  /// In en, this message translates to:
+  /// **'Newest'**
+  String get reportSortNewest;
+
+  /// No description provided for @reportSortOldest.
+  ///
+  /// In en, this message translates to:
+  /// **'Oldest'**
+  String get reportSortOldest;
+
+  /// No description provided for @reportSortLargest.
+  ///
+  /// In en, this message translates to:
+  /// **'Largest'**
+  String get reportSortLargest;
+
+  /// No description provided for @reportSortSmallest.
+  ///
+  /// In en, this message translates to:
+  /// **'Smallest'**
+  String get reportSortSmallest;
+
+  /// No description provided for @reportSortLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort transactions'**
+  String get reportSortLabel;
 
   /// No description provided for @reportLargestError.
   ///
@@ -6342,12 +6414,6 @@ abstract class S {
   /// **'Export data'**
   String get meExportData;
 
-  /// No description provided for @meExportHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Save or send a copy of your data'**
-  String get meExportHint;
-
   /// No description provided for @meExportError.
   ///
   /// In en, this message translates to:
@@ -6389,6 +6455,48 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Change photo'**
   String get meChangeAvatar;
+
+  /// No description provided for @meAvatarCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a photo'**
+  String get meAvatarCamera;
+
+  /// No description provided for @meAvatarPick.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from library'**
+  String get meAvatarPick;
+
+  /// No description provided for @meAvatarRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove photo'**
+  String get meAvatarRemove;
+
+  /// No description provided for @meAvatarSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile photo updated'**
+  String get meAvatarSaved;
+
+  /// No description provided for @meAvatarRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile photo removed'**
+  String get meAvatarRemoved;
+
+  /// No description provided for @meAvatarUnreadable.
+  ///
+  /// In en, this message translates to:
+  /// **'That picture can\'t be read. Try another one.'**
+  String get meAvatarUnreadable;
+
+  /// No description provided for @meAvatarError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t update your photo. Try again later.'**
+  String get meAvatarError;
 
   /// No description provided for @meSecurityValueFaceId.
   ///
@@ -7769,12 +7877,6 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Pick a date'**
   String get debtPickDate;
-
-  /// No description provided for @debtClearDue.
-  ///
-  /// In en, this message translates to:
-  /// **'Clear due date'**
-  String get debtClearDue;
 
   /// No description provided for @debtDueBeforeDate.
   ///
@@ -9778,6 +9880,24 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Expected interest'**
   String get depositInterest;
+
+  /// No description provided for @depositDaysLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 day left} other{{count} days left}}'**
+  String depositDaysLeft(int count);
+
+  /// No description provided for @depositMaturesOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Matures {date}'**
+  String depositMaturesOn(String date);
+
+  /// No description provided for @depositMaturedTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Matured'**
+  String get depositMaturedTag;
 
   /// No description provided for @depositRateLabel.
   ///

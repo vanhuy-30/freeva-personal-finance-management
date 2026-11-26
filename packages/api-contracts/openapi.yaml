@@ -3468,12 +3468,14 @@ paths:
       - in: query
         name: sort
         required: false
-        description: date is newest first (default). amountDesc is the largest amount first, ignoring sign.
+        description: date is newest first (default), dateAsc oldest first. amountDesc is the largest amount first, amountAsc the smallest, both ignoring sign.
         schema:
           type: string
           enum:
           - date
+          - dateAsc
           - amountDesc
+          - amountAsc
           default: date
       - in: query
         name: accountId
@@ -5391,6 +5393,75 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/profile/avatar:
+    get:
+      operationId: getAvatar
+      summary: Read own profile photo
+      tags: [Profile]
+      security:
+        - UserBearer: []
+      responses:
+        '200':
+          description: The JPEG as base64 (Cache-Control no-store). Compare `avatarUpdatedAt` of the profile to know when to fetch again.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Avatar'
+        '404':
+          description: No photo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    put:
+      operationId: saveAvatar
+      summary: Set own profile photo
+      tags: [Profile]
+      security:
+        - UserBearer: []
+      description: Replaces the photo. The decoded bytes must start with the JPEG signature and be at most 65536 bytes. No version check.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AvatarUpdate'
+      responses:
+        '204':
+          description: Saved (Cache-Control no-store)
+        '400':
+          description: Not base64, not a JPEG, too large, or an extra field
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Invalid or expired session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    delete:
+      operationId: deleteAvatar
+      summary: Remove own profile photo
+      tags: [Profile]
+      security:
+        - UserBearer: []
+      responses:
+        '204':
+          description: Removed, or there was none (Cache-Control no-store)
         '401':
           description: Invalid or expired session
           content:
@@ -10722,6 +10793,11 @@ components:
           type: boolean
           readOnly: true
           description: PRD-P5-E01 switch for category suggestions, insights and spending forecast. Default true. Saved via PUT /profile/auto-suggest. Not accepted on PUT /profile.
+        avatarUpdatedAt:
+          type: [string, 'null']
+          format: date-time
+          readOnly: true
+          description: When the profile photo last changed; null without one. The photo is GET /profile/avatar. Saved via PUT /profile/avatar. Not accepted on PUT /profile.
     OnboardingAnswers:
       type: object
       additionalProperties: false
@@ -10765,6 +10841,25 @@ components:
           type: string
           pattern: ^(0|[1-9][0-9]{0,17})$
           description: (min + max) / 2 rounded down; for an open band min * 5 / 4 rounded down.
+    Avatar:
+      type: object
+      required: [imageBase64, updatedAt]
+      properties:
+        imageBase64:
+          type: string
+        updatedAt:
+          type: string
+          format: date-time
+    AvatarUpdate:
+      type: object
+      additionalProperties: false
+      required: [imageBase64]
+      properties:
+        imageBase64:
+          type: string
+          pattern: ^[A-Za-z0-9+/]+={0,2}$
+          maxLength: 87388
+          description: A JPEG of at most 65536 bytes, base64. The app resizes to about 512 px before sending.
     AutoSuggestUpdate:
       type: object
       additionalProperties: false

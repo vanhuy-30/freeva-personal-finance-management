@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/theme_context.dart';
@@ -9,7 +10,7 @@ import '../../../../core/theme/tokens.g.dart';
 String percentText(int bps, String locale) =>
     '${NumberFormat('#,##0.0', locale).format(bps.abs() / 100)}%';
 
-/// "▲ 6,1% so tháng trước": the arrow and number carry the meaning by colour
+/// "↑ 6,1% so tháng trước": the arrow and number carry the meaning by colour
 /// (green when it is good news, red when not), the grey words say against
 /// what. A zero change is plain grey with no arrow.
 ///
@@ -50,11 +51,6 @@ class ChangeLine extends StatelessWidget {
             NumberFormat('#,##0.0', locale).format(bps.abs() / 100),
           )
         : percentText(bps, locale);
-    final arrow = flat
-        ? ''
-        : up
-        ? '▲ '
-        : '▼ ';
     final strong = FreevaTypography.label.copyWith(
       fontWeight: FontWeight.w600,
       color: tone,
@@ -79,7 +75,26 @@ class ChangeLine extends StatelessWidget {
         crossAxisAlignment: WrapCrossAlignment.center,
         spacing: 3,
         children: [
-          Text('$arrow$number', style: strong),
+          Text.rich(
+            TextSpan(
+              children: [
+                if (!flat)
+                  WidgetSpan(
+                    alignment: PlaceholderAlignment.middle,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 2),
+                      child: Icon(
+                        up ? LucideIcons.arrowUp : LucideIcons.arrowDown,
+                        size: 12,
+                        color: tone,
+                      ),
+                    ),
+                  ),
+                TextSpan(text: number),
+              ],
+            ),
+            style: strong,
+          ),
           if (compare != null) Text(compare!, style: soft),
         ],
       ),

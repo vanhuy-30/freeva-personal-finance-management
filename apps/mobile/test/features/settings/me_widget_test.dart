@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../support/server_config_fixture.dart';
 
@@ -15,6 +16,9 @@ import 'package:mobile/features/settings/presentation/pages/sessions_page.dart';
 import 'package:mobile/features/settings/presentation/pages/money_settings_page.dart';
 import 'package:mobile/features/settings/presentation/pages/settings_page.dart';
 
+import 'package:mobile/features/profile/domain/avatar_picker.dart';
+
+import '../profile/avatar_fakes.dart';
 import 'g1_harness.dart';
 
 /// PIN hashing runs in a real isolate, which the fake clock of a widget test
@@ -53,7 +57,7 @@ void main() {
       await tester.pumpWidget(g.app(const SettingsPage()));
       await tester.pumpAndSettle();
       expect(find.text('Minh'), findsOneWidget);
-      expect(find.text('m•••@gmail.com'), findsOneWidget);
+      expect(find.text('minh@gmail.com'), findsOneWidget);
       expect(find.text('TÀI SẢN'), findsOneWidget);
       expect(find.text('KẾ HOẠCH'), findsOneWidget);
       expect(find.text('THIẾT LẬP'), findsOneWidget);
@@ -180,6 +184,35 @@ void main() {
       await tester.tap(find.text('Lưu thay đổi'));
       await tester.pumpAndSettle();
       expect(g.profile.saved?.displayName, 'Lan');
+    });
+
+    testWidgets('the camera button picks a photo, shows it and can remove it', (
+      tester,
+    ) async {
+      tall(tester);
+      g.avatarPicker.next = samplePicture();
+      await tester.pumpWidget(g.app(const ProfilePage()));
+      await tester.pumpAndSettle();
+      expect(find.byType(Image), findsNothing);
+      await tester.tap(find.byIcon(LucideIcons.camera));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Chọn ảnh từ thư viện'));
+      await tester.pumpAndSettle();
+      expect(g.avatarPicker.calls, 1);
+      expect(g.avatarPicker.lastSource, AvatarSource.library);
+      expect(g.avatarRepository.saved, hasLength(1));
+      expect(g.avatar.image, isNotNull);
+      expect(find.text('Đã cập nhật ảnh đại diện'), findsOneWidget);
+      expect(find.byType(Image), findsOneWidget);
+      await tester.pump(const Duration(seconds: 5));
+      await tester.tap(find.byIcon(LucideIcons.camera));
+      await tester.pumpAndSettle();
+      expect(find.text('Chụp ảnh mới'), findsOneWidget);
+      expect(find.text('Chọn ảnh từ thư viện'), findsOneWidget);
+      await tester.tap(find.text('Xóa ảnh đại diện'));
+      await tester.pumpAndSettle();
+      expect(g.avatar.image, isNull);
+      expect(find.byType(Image), findsNothing);
     });
 
     testWidgets('SEC-P6-002: delete asks for the password again', (
