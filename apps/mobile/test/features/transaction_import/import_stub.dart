@@ -49,6 +49,9 @@ class FakeImportWallets implements WalletUseCases {
 }
 
 class FakeImportCategories implements CategoryUseCases {
+  @override
+  Stream<void> get changes => const Stream.empty();
+
   FakeImportCategories([this.catalog = defaultCatalog]);
   final CategoryCatalog catalog;
 

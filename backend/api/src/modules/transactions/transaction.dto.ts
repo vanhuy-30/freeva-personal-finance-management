@@ -1,6 +1,6 @@
 import { Transform, Type } from 'class-transformer';
 import { ArrayMaxSize, ArrayMinSize, ArrayUnique, IsArray, IsBoolean, IsISO8601, IsIn, IsInt, IsObject, IsString, IsUUID, Length, Matches, Max, MaxLength, Min, ValidateIf, ValidateNested } from 'class-validator';
-import { STORED_TRANSACTION_TYPES, TRANSACTION_TYPES, type CreatableTransactionType, type RefundDisposition, type TransactionType } from './domain/transaction';
+import { STORED_TRANSACTION_TYPES, TRANSACTION_SORTS, TRANSACTION_TYPES, type CreatableTransactionType, type RefundDisposition, type TransactionSort, type TransactionType } from './domain/transaction';
 const REFUND_DISPOSITIONS = ['cascade', 'keep'] as const;
 const optional = (_: unknown, value: unknown) => value !== undefined;
 const nullable = (_: unknown, value: unknown) => value !== undefined && value !== null;
@@ -67,7 +67,7 @@ export class TransactionQueryDto {
   @Type(() => Number) @IsInt() @Min(1) @Max(2147483647) page = 1;
   @Type(() => Number) @IsInt() @Min(1) @Max(100) pageSize = 50;
   @IsIn(['active', 'deleted', 'all']) status: 'active' | 'deleted' | 'all' = 'active';
-  @IsIn(['date', 'amountDesc']) sort: 'date' | 'amountDesc' = 'date';
+  @IsIn(TRANSACTION_SORTS) sort: TransactionSort = 'date';
   @ValidateIf(optional) @Transform(many) @IsArray() @ArrayMaxSize(20) @ArrayUnique() @IsUUID('all', { each: true }) accountId?: string[];
   @ValidateIf(optional) @Transform(many) @IsArray() @ArrayMaxSize(50) @ArrayUnique() @IsUUID('all', { each: true }) categoryId?: string[];
   @ValidateIf(optional) @Transform(many) @IsArray() @ArrayMaxSize(20) @ArrayUnique() @IsUUID('all', { each: true }) tagId?: string[];

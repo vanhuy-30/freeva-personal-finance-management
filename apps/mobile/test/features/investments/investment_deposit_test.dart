@@ -214,7 +214,7 @@ void main() {
     h.router.push('/page');
     await t.pumpAndSettle();
     expect(find.text('VCB 12 tháng'), findsOneWidget);
-    expect(find.text('Ngày đáo hạn 01/06/2027'), findsOneWidget);
+    expect(find.text('Đáo hạn 01/06/2027'), findsOneWidget);
     expect(find.text('Mua thêm'), findsNothing);
   });
 }

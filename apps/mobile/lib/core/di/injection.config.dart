@@ -146,6 +146,10 @@ import 'package:mobile/features/onboarding/domain/pending_goal_use_cases.dart'
     as _i861;
 import 'package:mobile/features/onboarding/presentation/viewmodels/first_run_nudges_view_model.dart'
     as _i779;
+import 'package:mobile/features/profile/data/avatar_repository_impl.dart'
+    as _i349;
+import 'package:mobile/features/profile/data/gallery_avatar_picker.dart'
+    as _i906;
 import 'package:mobile/features/profile/data/profile_repository_impl.dart'
     as _i72;
 import 'package:mobile/features/profile/data/share_account_file_sharer.dart'
@@ -154,10 +158,14 @@ import 'package:mobile/features/profile/domain/account_export_use_case.dart'
     as _i410;
 import 'package:mobile/features/profile/domain/account_file_sharer.dart'
     as _i1007;
+import 'package:mobile/features/profile/domain/avatar_picker.dart' as _i719;
+import 'package:mobile/features/profile/domain/avatar_repository.dart' as _i888;
 import 'package:mobile/features/profile/domain/profile_repository.dart' as _i4;
 import 'package:mobile/features/profile/domain/profile_use_cases.dart' as _i281;
 import 'package:mobile/features/profile/domain/transactions_csv_export_use_case.dart'
     as _i421;
+import 'package:mobile/features/profile/presentation/viewmodels/avatar_view_model.dart'
+    as _i712;
 import 'package:mobile/features/profile/presentation/viewmodels/data_export_view_model.dart'
     as _i1008;
 import 'package:mobile/features/profile/presentation/viewmodels/profile_view_model.dart'
@@ -270,6 +278,7 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i165.LocalSessionAlertNotifier());
     gh.lazySingleton<_i497.ServerConfigVault>(
         () => _i497.SecureServerConfigVault());
+    gh.lazySingleton<_i719.AvatarPicker>(() => _i906.GalleryAvatarPicker());
     gh.lazySingleton<_i810.DeviceBiometrics>(
         () => _i810.LocalDeviceBiometrics());
     gh.lazySingleton<_i444.CategoryExpansionRepository>(
@@ -322,6 +331,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i826.AutoSuggestRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i791.CalendarRepository>(
         () => _i918.CalendarRepositoryImpl(gh<_i443.AuthorizedApi>()));
+    gh.lazySingleton<_i888.AvatarRepository>(
+        () => _i349.AvatarRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i931.TransactionRepository>(
         () => _i1020.TransactionRepositoryImpl(gh<_i443.AuthorizedApi>()));
     gh.lazySingleton<_i821.RecurringRepository>(
@@ -483,6 +494,11 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i1017.FeatureFlagService>(),
           gh<_i990.AuthViewModel>(),
         ));
+    gh.lazySingleton<_i712.AvatarViewModel>(() => _i712.AvatarViewModel(
+          gh<_i888.AvatarRepository>(),
+          gh<_i719.AvatarPicker>(),
+          gh<_i990.AuthViewModel>(),
+        ));
     gh.factory<_i281.ProfileUseCases>(() => _i281.ProfileUseCases(
           gh<_i4.ProfileRepository>(),
           gh<_i855.AppLimitsSource>(),
@@ -525,6 +541,14 @@ extension GetItInjectableX on _i174.GetIt {
               gh<_i999.InvestmentUseCases>(),
               gh<_i572.LoanUseCases>(),
               gh<_i471.CalendarUseCases>(),
+            ));
+    gh.lazySingleton<_i779.FirstRunNudgesViewModel>(
+        () => _i779.FirstRunNudgesViewModel(
+              gh<_i861.PendingGoalUseCases>(),
+              gh<_i519.SettingsUseCases>(),
+              gh<_i245.BudgetUseCases>(),
+              gh<_i855.AppLimitsSource>(),
+              gh<_i338.NotificationUseCases>(),
             ));
     gh.lazySingleton<_i488.SyncViewModel>(() => _i488.DefaultSyncViewModel(
           gh<_i665.SyncUseCases>(),
@@ -599,13 +623,6 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i990.AuthViewModel>(),
           gh<_i855.AppLimitsSource>(),
         ));
-    gh.lazySingleton<_i779.FirstRunNudgesViewModel>(
-        () => _i779.FirstRunNudgesViewModel(
-              gh<_i861.PendingGoalUseCases>(),
-              gh<_i519.SettingsUseCases>(),
-              gh<_i245.BudgetUseCases>(),
-              gh<_i855.AppLimitsSource>(),
-            ));
     gh.lazySingleton<_i987.InstallmentViewModel>(
         () => _i987.InstallmentViewModel(
               gh<_i238.CardInstallmentUseCases>(),

@@ -1,5 +1,6 @@
 import { AppConfigReader } from '../app-config/app-config.reader';
 import { HttpException, Inject, Injectable } from '@nestjs/common';
+import { AVATAR_MAX_BYTES } from './profile.dto';
 import { isValidIncomeBand, type DeclaredIncomeBand } from './domain/declared-income';
 import {
   PROFILE_REPOSITORY,
@@ -82,6 +83,24 @@ export class ProfileService {
 
   async saveAutoSuggest(userId: string, enabled: boolean) {
     if (!(await this.repository.saveAutoSuggest(userId, enabled))) throw error(401, 'SESSION_INVALID');
+  }
+
+  /** The decoded bytes must be a JPEG within the size limit (the check is on content, not on what the client claims). */
+  async saveAvatar(userId: string, imageBase64: string) {
+    const image = Buffer.from(imageBase64, 'base64');
+    const jpeg = image.length > 3 && image[0] === 0xff && image[1] === 0xd8 && image[2] === 0xff;
+    if (!jpeg || image.length > AVATAR_MAX_BYTES) throw error(400, 'VALIDATION_ERROR');
+    if (!(await this.repository.saveAvatar(userId, image))) throw error(401, 'SESSION_INVALID');
+  }
+
+  async avatar(userId: string) {
+    const avatar = await this.repository.readAvatar(userId);
+    if (!avatar) throw error(404, 'NOT_FOUND');
+    return avatar;
+  }
+
+  async deleteAvatar(userId: string) {
+    await this.repository.deleteAvatar(userId);
   }
 
   async update(userId: string, profile: ProfileUpdate) {

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../core/di/injection.dart';
 import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../settings/presentation/viewmodels/settings_view_model.dart';
+import '../../../../categories/domain/finance_category.dart';
 import '../../../domain/transaction.dart';
 import '../../viewmodels/transaction_composer.dart';
 import 'category_picker_sheet.dart';
@@ -35,6 +36,9 @@ class ComposerPickers {
           if (ids.contains(c.id)) c,
       ],
       selected: composer.categoryId,
+      createKind: composer.type == TransactionType.income
+          ? CategoryKind.income
+          : CategoryKind.expense,
     );
     if (id != null) composer.pickCategory(id);
   }

@@ -1,5 +1,6 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/di/injection.dart';
@@ -9,17 +10,18 @@ import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_button.dart';
 import '../../../../core/widgets/freeva_dialog.dart';
-import '../../../../core/widgets/settings_row.dart';
+import '../../../../core/widgets/freeva_sheet.dart';
 import '../../../../core/widgets/freeva_text_field.dart';
 import '../../../../core/widgets/freeva_toast.dart';
 import '../../../../core/widgets/freeva_top_bar.dart';
 import '../../../auth/domain/auth_repository.dart';
 import '../../../auth/presentation/viewmodels/auth_view_model.dart';
-import '../../../settings/domain/account_labels.dart';
 import '../../../settings/presentation/viewmodels/settings_view_model.dart';
 import '../../../settings/presentation/widgets/avatar_letter.dart';
 import '../../../settings/presentation/widgets/danger_text_button.dart';
 import '../../../settings/presentation/widgets/profile_actions.dart';
+import '../../domain/avatar_picker.dart';
+import '../viewmodels/avatar_view_model.dart';
 import '../viewmodels/profile_view_model.dart';
 import '../widgets/account_step_up.dart';
 import '../../../server_config/domain/app_limits.dart';
@@ -36,6 +38,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final ProfileViewModel profile = getIt<ProfileViewModel>();
   final SettingsViewModel settings = getIt<SettingsViewModel>();
+  final AvatarViewModel avatar = getIt<AvatarViewModel>();
   late final TextEditingController name = TextEditingController(
     text: profile.saved?.displayName ?? '',
   );
@@ -68,6 +71,61 @@ class _ProfilePageState extends State<ProfilePage> {
     context.popOrGo('/me');
   }
 
+  /// Camera button: take a photo, choose one, or remove the one there.
+  Future<void> _editAvatar(BuildContext context) async {
+    final s = S.of(context);
+    if (avatar.busy) return;
+    final action = await showFreevaSheet<_AvatarAction>(
+      context: context,
+      title: s.meChangeAvatar,
+      builder: (sheet) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(LucideIcons.camera),
+            title: Text(s.meAvatarCamera),
+            onTap: () => Navigator.of(sheet).pop(_AvatarAction.camera),
+          ),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(LucideIcons.image),
+            title: Text(s.meAvatarPick),
+            onTap: () => Navigator.of(sheet).pop(_AvatarAction.library),
+          ),
+          if (avatar.image != null)
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Icon(
+                LucideIcons.trash,
+                color: sheet.colors.statusDanger,
+              ),
+              title: Text(
+                s.meAvatarRemove,
+                style: TextStyle(color: sheet.colors.statusDanger),
+              ),
+              onTap: () => Navigator.of(sheet).pop(_AvatarAction.remove),
+            ),
+        ],
+      ),
+    );
+    if (action == null || !context.mounted) return;
+    final outcome = switch (action) {
+      _AvatarAction.camera => await avatar.change(AvatarSource.camera),
+      _AvatarAction.library => await avatar.change(AvatarSource.library),
+      _AvatarAction.remove => await avatar.remove(),
+    };
+    if (!context.mounted) return;
+    final message = switch (outcome) {
+      AvatarOutcome.saved => s.meAvatarSaved,
+      AvatarOutcome.removed => s.meAvatarRemoved,
+      AvatarOutcome.unreadable => s.meAvatarUnreadable,
+      AvatarOutcome.failed => s.meAvatarError,
+      AvatarOutcome.cancelled => null,
+    };
+    if (message != null) showFreevaToast(context, message: message);
+  }
+
   Future<void> _delete() async {
     final s = S.of(context);
     final auth = getIt<AuthViewModel>();
@@ -98,12 +156,13 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
-    listenable: Listenable.merge([profile, settings, name]),
+    listenable: Listenable.merge([profile, settings, name, avatar]),
     builder: (context, _) {
       final s = S.of(context);
       final margin = context.screenMargin;
       final email = settings.email;
       void soon() => showFreevaToast(context, message: s.meSoon);
+      Future<void> editAvatar() => _editAvatar(context);
       return Scaffold(
         appBar: FreevaTopBar(
           title: s.meProfileTitle,
@@ -125,7 +184,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: _EditableAvatar(
                           name: _typed,
                           email: email,
-                          onEdit: soon,
+                          image: avatar.image,
+                          busy: avatar.busy,
+                          onEdit: editAvatar,
                         ),
                       ),
                       const SizedBox(height: 28),
@@ -145,14 +206,6 @@ class _ProfilePageState extends State<ProfilePage> {
                         const SizedBox(height: 14),
                         _EmailField(email: email, onChange: soon),
                       ],
-                      const SizedBox(height: 14),
-                      SettingsRow(
-                        icon: LucideIcons.download,
-                        title: s.meExportData,
-                        subtitle: s.meExportHint,
-                        chevron: false,
-                        onTap: () => context.push('/me/export'),
-                      ),
                     ],
                   ),
                 ),
@@ -179,16 +232,22 @@ class _ProfilePageState extends State<ProfilePage> {
   );
 }
 
+enum _AvatarAction { camera, library, remove }
+
 /// 96 letter avatar with the 36 ink camera button over its lower right edge.
 class _EditableAvatar extends StatelessWidget {
   const _EditableAvatar({
     required this.name,
     required this.email,
+    required this.image,
+    required this.busy,
     required this.onEdit,
   });
 
   final String? name;
   final String? email;
+  final Uint8List? image;
+  final bool busy;
   final VoidCallback onEdit;
 
   @override
@@ -200,7 +259,17 @@ class _EditableAvatar extends StatelessWidget {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          AvatarLetter(name: name, email: email, size: 96, letterSize: 34),
+          AvatarLetter(
+            name: name,
+            email: email,
+            image: image,
+            size: 96,
+            letterSize: 34,
+          ),
+          if (busy)
+            const Positioned.fill(
+              child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+            ),
           PositionedDirectional(
             end: -2 - 4,
             bottom: -2 - 4,
@@ -295,7 +364,7 @@ class _EmailField extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        maskEmail(email),
+                        email,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: FreevaTypography.body.copyWith(

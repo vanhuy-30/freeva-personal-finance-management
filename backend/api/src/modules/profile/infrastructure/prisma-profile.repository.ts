@@ -18,18 +18,21 @@ const select = {
   declaredIncomeMaxMinor: true,
   displayCurrencyCode: true,
   autoSuggestEnabled: true,
+  avatar: { select: { updatedAt: true } },
 };
 
-type Row = Omit<Profile, 'goals' | 'declaredIncome'> & {
+type Row = Omit<Profile, 'goals' | 'declaredIncome' | 'avatarUpdatedAt'> & {
   onboardingGoals: string[]; declaredIncomeMinMinor: bigint | null; declaredIncomeMaxMinor: bigint | null;
+  avatar: { updatedAt: Date } | null;
 };
 
 function toProfile(row: Row | null): Profile | null {
   if (!row) return null;
-  const { onboardingGoals, declaredIncomeMinMinor, declaredIncomeMaxMinor, ...rest } = row;
+  const { onboardingGoals, declaredIncomeMinMinor, declaredIncomeMaxMinor, avatar, ...rest } = row;
   return {
     ...rest,
     goals: onboardingGoals,
+    avatarUpdatedAt: avatar?.updatedAt.toISOString() ?? null,
     declaredIncome: declaredIncomeView(bandFromColumns(declaredIncomeMinMinor, declaredIncomeMaxMinor)),
   };
 }
@@ -78,6 +81,26 @@ export class PrismaProfileRepository implements ProfileRepository {
   async saveAutoSuggest(userId: string, enabled: boolean): Promise<boolean> {
     const changed = await this.prisma.user.updateMany({ where: { id: userId }, data: { autoSuggestEnabled: enabled } });
     return changed.count === 1;
+  }
+
+  async saveAvatar(userId: string, image: Buffer): Promise<boolean> {
+    if (!(await this.prisma.user.findUnique({ where: { id: userId }, select: { id: true } }))) return false;
+    const bytes = new Uint8Array(image);
+    await this.prisma.userAvatar.upsert({
+      where: { userId },
+      create: { userId, image: bytes },
+      update: { image: bytes },
+    });
+    return true;
+  }
+
+  async readAvatar(userId: string) {
+    const row = await this.prisma.userAvatar.findUnique({ where: { userId } });
+    return row ? { image: Buffer.from(row.image), updatedAt: row.updatedAt } : null;
+  }
+
+  async deleteAvatar(userId: string): Promise<void> {
+    await this.prisma.userAvatar.deleteMany({ where: { userId } });
   }
 
   async update(userId: string, profile: ProfileUpdate): Promise<Profile | null> {

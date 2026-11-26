@@ -168,15 +168,6 @@ class ReportBreakdownPage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      Text(
-                        expense
-                            ? s.reportBreakdownSortExpense
-                            : s.reportBreakdownSortIncome,
-                        style: FreevaTypography.label.copyWith(
-                          fontWeight: FontWeight.w400,
-                          color: c.textSecondary,
-                        ),
-                      ),
                     ],
                   ),
                   const SizedBox(height: FreevaSpace.s2),

@@ -7,71 +7,114 @@ import '../../../transactions/domain/transaction_repository.dart';
 import '../../domain/category_detail.dart';
 import '../../domain/report_breakdown.dart';
 
-/// The three largest transactions behind one category slice, and how many
-/// there are in all. Built per screen from the report already on display.
+/// The transactions behind one category slice, ten at a time, in the order
+/// the person picked. Built per screen from the report already on display.
 class CategoryReportViewModel extends ChangeNotifier {
-  CategoryReportViewModel(
-    this._transactions,
-    this._auth,
-    this.args, {
-    required this.shown,
-  });
+  CategoryReportViewModel(this._transactions, this._auth, this.args);
 
-  /// Rows before "Xem tất cả" (server `report.topRows`).
-  final int shown;
+  /// Rows per request; "Xem thêm" asks for the next ten.
+  static const pageSize = 10;
 
   final TransactionRepository _transactions;
   final AuthViewModel _auth;
   final CategoryDetailArgs args;
   int _epoch = 0;
+  int _page = 0;
+  int _legs = 0;
 
-  /// Largest first. Empty until loaded or when the slice cannot be filtered.
-  List<TransactionBundle> largest = const [];
+  /// In the chosen order. Empty until loaded or when the slice cannot be
+  /// filtered.
+  List<TransactionBundle> items = const [];
 
   /// Transactions in the slice; null until known.
   int? count;
+  TransactionSort sort = TransactionSort.date;
+
+  /// First page (or a re-sort) in flight.
   bool loading = false;
+
+  /// A following page in flight.
+  bool loadingMore = false;
   AuthFailure? failure;
 
-  /// Uncategorised income has no category id to filter by, so the largest
-  /// list is not offered for it.
+  /// A failed "Xem thêm" keeps the rows already on screen.
+  bool moreFailed = false;
+
+  /// Uncategorised income has no category id to filter by, so the list is
+  /// not offered for it.
   bool get available => args.categoryIds != null;
+
+  bool get hasMore => count != null && _legs < count!;
 
   TransactionType get type => args.kind == BreakdownKind.expense
       ? TransactionType.expense
       : TransactionType.income;
 
-  Future<void> load() async {
+  /// First page again, from the top, in the current order.
+  Future<void> load() => _fetch(1);
+
+  Future<void> loadMore() {
+    if (loading || loadingMore || !hasMore) return Future.value();
+    return _fetch(_page + 1);
+  }
+
+  Future<void> setSort(TransactionSort next) {
+    if (next == sort) return Future.value();
+    sort = next;
+    return _fetch(1);
+  }
+
+  Future<void> _fetch(int page) async {
     final ids = args.categoryIds;
-    if (ids == null || loading) return;
+    if (ids == null) return;
+    final more = page > 1;
     final epoch = ++_epoch;
-    loading = true;
-    failure = null;
+    if (more) {
+      loadingMore = true;
+      moreFailed = false;
+    } else {
+      loading = true;
+      loadingMore = false;
+      failure = null;
+    }
     notifyListeners();
     final period = args.report.period;
     final result = await _transactions.list(
       TransactionQuery(
-        pageSize: shown,
+        page: page,
+        pageSize: pageSize,
         type: type,
         from: period.from,
         to: period.to,
         categoryIds: ids,
         currency: args.currency,
-        sort: TransactionSort.amountDesc,
+        sort: sort,
       ),
     );
     if (epoch != _epoch) return;
     result.fold(
       (error) {
-        failure = error;
+        if (more) {
+          moreFailed = true;
+        } else {
+          // Rows in another order than the chip would mislead: show the retry.
+          failure = error;
+          items = const [];
+        }
         if (error.code == AuthError.expired) _auth.sessionExpired();
       },
-      (page) {
-        largest = groupTransactionLegs(page.legs);
-        count = page.total;
+      (list) {
+        _page = page;
+        _legs = (more ? _legs : 0) + list.legs.length;
+        items = [
+          ...(more ? items : const []),
+          ...groupTransactionLegs(list.legs),
+        ];
+        count = list.total;
       },
     );
     loading = false;
+    loadingMore = false;
     notifyListeners();
   }
 

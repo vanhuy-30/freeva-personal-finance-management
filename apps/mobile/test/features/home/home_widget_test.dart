@@ -53,7 +53,9 @@ void main() {
     expect(find.text('Phở Thìn'), findsOneWidget);
     expect(find.text('−65.000'), findsOneWidget);
     expect(
-      find.bySemanticsLabel('trừ 65.000 đồng, Phở Thìn, Ăn uống · Tiền mặt'),
+      find.bySemanticsLabel(
+        'trừ 65.000 đồng, Phở Thìn, Ăn uống · Tiền mặt · 21/10',
+      ),
       findsOneWidget,
     );
     double top(String text) => tester.getTopLeft(find.text(text)).dy;

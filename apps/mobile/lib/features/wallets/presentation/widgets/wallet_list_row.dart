@@ -14,7 +14,7 @@ import 'wallet_type_icon.dart';
 import '../../../server_config/domain/app_limits.dart';
 import '../../../../core/di/injection.dart';
 
-/// One wallet in "Ví của tôi": type icon, name, type, balance. A credit card
+/// One wallet in "Ví của tôi": type icon, name, type, balance with its currency. A credit card
 /// adds "đến hạn dd/MM" and a 6-high limit bar.
 class WalletListRow extends StatelessWidget {
   const WalletListRow({
@@ -107,7 +107,6 @@ class WalletListRow extends StatelessWidget {
                 currency: wallet.draft.currency,
                 minorDigits: minorDigits,
                 style: FreevaTypography.titleM,
-                showCurrency: false,
                 hidden: hidden,
               ),
             ],

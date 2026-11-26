@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 
@@ -28,6 +30,10 @@ abstract class CategoryUseCases {
     String? replacementCategoryId,
   });
   Future<Either<AuthFailure, int>> usage(FinanceCategory category);
+
+  /// Fires after a category was added, changed, hidden, restored or deleted,
+  /// so screens that keep their own copy (the transaction composer) reload.
+  Stream<void> get changes;
 }
 
 @LazySingleton(as: CategoryUseCases)
@@ -37,6 +43,19 @@ class DefaultCategoryUseCases implements CategoryUseCases {
   /// Server limits (MOB-P5-001).
   final AppLimitsSource _limits;
   final CategoryRepository _repository;
+  final _changes = StreamController<void>.broadcast();
+
+  @override
+  Stream<void> get changes => _changes.stream;
+
+  Future<Either<AuthFailure, T>> _announce<T>(
+    Future<Either<AuthFailure, T>> result,
+  ) async {
+    final done = await result;
+    if (done.isRight() && !_changes.isClosed) _changes.add(null);
+    return done;
+  }
+
   @override
   Future<Either<AuthFailure, CategoryCatalog>> load() => _repository.load();
   @override
@@ -73,7 +92,9 @@ class DefaultCategoryUseCases implements CategoryUseCases {
     if (category != null && _stale(category)) {
       return Future.value(left(const AuthFailure(AuthError.conflict)));
     }
-    return _repository.save(draft, category: category, clientId: clientId);
+    return _announce(
+      _repository.save(draft, category: category, clientId: clientId),
+    );
   }
 
   @override
@@ -90,7 +111,7 @@ class DefaultCategoryUseCases implements CategoryUseCases {
     if (_stale(category)) {
       return Future.value(left(const AuthFailure(AuthError.conflict)));
     }
-    return _repository.update(category, archived: archived);
+    return _announce(_repository.update(category, archived: archived));
   }
 
   @override
@@ -116,9 +137,11 @@ class DefaultCategoryUseCases implements CategoryUseCases {
     if (_stale(category)) {
       return Future.value(left(const AuthFailure(AuthError.conflict)));
     }
-    return _repository.delete(
-      category,
-      replacementCategoryId: replacementCategoryId,
+    return _announce(
+      _repository.delete(
+        category,
+        replacementCategoryId: replacementCategoryId,
+      ),
     );
   }
 }

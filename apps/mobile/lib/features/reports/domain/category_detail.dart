@@ -51,6 +51,7 @@ class CategoryBar {
     required this.name,
     required this.minor,
     required this.general,
+    this.memberId,
   });
 
   final String name;
@@ -59,6 +60,11 @@ class CategoryBar {
   /// The parent's own transactions, shown as "Ăn uống (chung)" when it also
   /// has children.
   final bool general;
+
+  /// Parent-level key of the category behind a bar of a "Khác" slice; null
+  /// for the bars of one category and for uncategorised money, which has no
+  /// screen of its own.
+  final String? memberId;
 }
 
 class CategoryDetail {
@@ -73,6 +79,21 @@ class CategoryDetail {
   /// Whole-number share of everything of this kind in the period.
   final int percent;
   final List<CategoryBar> bars;
+}
+
+/// The slice of the single category [memberId] inside the report of [args],
+/// as the whole breakdown would list it; null when it has no money there.
+BreakdownSlice? sliceOfCategory(CategoryDetailArgs args, String memberId) {
+  final slices = reportBreakdown(
+    args.report,
+    args.currency,
+    args.kind,
+    top: 1 << 30,
+  ).slices;
+  for (final slice in slices) {
+    if (slice.id == memberId) return slice;
+  }
+  return null;
 }
 
 CategoryDetail categoryDetail(CategoryDetailArgs args) {
@@ -116,7 +137,12 @@ CategoryDetail categoryDetail(CategoryDetailArgs args) {
     }
     for (final e in byMember.entries) {
       bars.add(
-        CategoryBar(name: names[e.key]!, minor: e.value, general: false),
+        CategoryBar(
+          name: names[e.key]!,
+          minor: e.value,
+          general: false,
+          memberId: e.key,
+        ),
       );
     }
   }

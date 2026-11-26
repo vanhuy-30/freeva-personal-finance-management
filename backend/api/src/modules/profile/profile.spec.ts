@@ -9,10 +9,11 @@ import { PROFILE_REPOSITORY, declaredIncomeView, type Profile, type ProfileUpdat
 import { ProfileController } from './profile.controller';
 import { ProfileService } from './profile.service';
 const initial: Profile = { displayName: null, locale: 'vi', defaultCurrencyCode: 'VND', timezone: 'Asia/Ho_Chi_Minh', fiscalMonthStartDay: 1, version: 1, goals: [],
-  declaredIncome: null, displayCurrencyCode: null, autoSuggestEnabled: true };
+  declaredIncome: null, displayCurrencyCode: null, autoSuggestEnabled: true, avatarUpdatedAt: null };
 describe('MOB-P1-002 profile HTTP contract', () => {
   let app: INestApplication; let base: string;
   const profiles = new Map<string, Profile>();
+  const avatars = new Map<string, Buffer>();
   const repo = {
     find: jest.fn(async (id: string) => profiles.get(id) ?? null),
     currencies: async () => [{ code: 'VND', minorDigits: 0, symbol: '₫', isDefault: true }, { code: 'USD', minorDigits: 2, symbol: null, isDefault: false }],
@@ -29,6 +30,12 @@ describe('MOB-P1-002 profile HTTP contract', () => {
       if (!profiles.has(id)) return false;
       profiles.set(id, { ...profiles.get(id)!, displayCurrencyCode: code }); return true;
     }),
+    saveAvatar: jest.fn(async (id: string, image: Buffer) => {
+      if (!profiles.has(id)) return false;
+      avatars.set(id, image); profiles.set(id, { ...profiles.get(id)!, avatarUpdatedAt: '2026-11-24T00:00:00.000Z' }); return true;
+    }),
+    readAvatar: jest.fn(async (id: string) => (avatars.has(id) ? { image: avatars.get(id)!, updatedAt: new Date('2026-11-24T00:00:00.000Z') } : null)),
+    deleteAvatar: jest.fn(async (id: string) => { avatars.delete(id); profiles.set(id, { ...profiles.get(id)!, avatarUpdatedAt: null }); }),
     update: jest.fn(async (id: string, profile: ProfileUpdate) => {
       if (profiles.get(id)?.version !== profile.version) return null;
       const stored = profiles.get(id)!;
@@ -46,24 +53,54 @@ describe('MOB-P1-002 profile HTTP contract', () => {
     app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }));
     await app.listen(0, '127.0.0.1'); base = await app.getUrl();
   });
-  beforeEach(() => { profiles.set('owner', { ...initial }); profiles.set('other', { ...initial }); repo.update.mockClear(); });
+  beforeEach(() => { profiles.set('owner', { ...initial }); profiles.set('other', { ...initial }); avatars.clear(); repo.update.mockClear(); repo.saveAvatar.mockClear(); });
   afterAll(async () => app?.close());
   async function request(method = 'GET', body?: object, token: string | null = 'a'.repeat(64), path = 'profile') {
     const result = await fetch(`${base}/api/v1/${path}`, { method,
       headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
       body: body ? JSON.stringify(body) : undefined });
-    return { status: result.status, body: await result.json(), headers: result.headers };
+    return { status: result.status, body: await result.text().then(text => (text ? JSON.parse(text) : null)), headers: result.headers };
   }
+  describe('avatar', () => {
+    const jpeg = Buffer.from([0xff, 0xd8, 0xff, 0xe0, 1, 2, 3, 4]);
+    const put = (image: Buffer, token: string | null = 'a'.repeat(64)) => request('PUT', { imageBase64: image.toString('base64') }, token, 'profile/avatar');
+    const get = (token = 'a'.repeat(64)) => fetch(`${base}/api/v1/profile/avatar`, { headers: { Authorization: `Bearer ${token}` } });
+    it('stores a JPEG, serves it back to its owner only and reports when it changed', async () => {
+      expect((await put(jpeg, null)).status).toBe(401);
+      expect((await get('b'.repeat(64))).status).toBe(404);
+      const saved = await fetch(`${base}/api/v1/profile/avatar`, { method: 'PUT', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${'a'.repeat(64)}` }, body: JSON.stringify({ imageBase64: jpeg.toString('base64') }) });
+      expect(saved.status).toBe(204);
+      const photo = await get();
+      expect(photo.status).toBe(200);
+      expect(await photo.json()).toEqual({ imageBase64: jpeg.toString('base64'), updatedAt: '2026-11-24T00:00:00.000Z' });
+      expect((await get('b'.repeat(64))).status).toBe(404);
+      expect((await request()).body.avatarUpdatedAt).toBe('2026-11-24T00:00:00.000Z');
+    });
+    it('refuses what is not a JPEG, is too large or is not base64', async () => {
+      expect((await put(Buffer.from('GIF89a-not-a-jpeg'))).status).toBe(400);
+      expect((await put(Buffer.concat([jpeg, Buffer.alloc(65536)]))).status).toBe(400);
+      expect((await request('PUT', { imageBase64: 'not base64!' }, 'a'.repeat(64), 'profile/avatar')).status).toBe(400);
+      expect((await request('PUT', {}, 'a'.repeat(64), 'profile/avatar')).status).toBe(400);
+      expect(repo.saveAvatar).not.toHaveBeenCalledWith('owner', expect.anything());
+    });
+    it('removes the photo', async () => {
+      await put(jpeg);
+      const removed = await fetch(`${base}/api/v1/profile/avatar`, { method: 'DELETE', headers: { Authorization: `Bearer ${'a'.repeat(64)}` } });
+      expect(removed.status).toBe(204);
+      expect((await get()).status).toBe(404);
+      expect((await request()).body.avatarUpdatedAt).toBeNull();
+    });
+  });
   it('requires auth and returns only own preferences without PII', async () => {
     expect((await request('GET', undefined, null)).status).toBe(401);
     const result = await request(); expect(result.body).toEqual(initial);
     expect(result.headers.get('cache-control')).toBe('no-store');
   });
   it('persists four fields for session owner and rejects stale version', async () => {
-    const { goals, declaredIncome, displayCurrencyCode, autoSuggestEnabled, ...editable } = initial;
+    const { goals, declaredIncome, displayCurrencyCode, autoSuggestEnabled, avatarUpdatedAt, ...editable } = initial;
     const changes = { ...editable, locale: 'en', defaultCurrencyCode: 'USD', timezone: 'America/New_York', fiscalMonthStartDay: 28 };
-    expect((await request('PUT', changes)).body).toEqual({ ...changes, goals, declaredIncome, displayCurrencyCode, autoSuggestEnabled, version: 2 });
-    expect((await request()).body).toEqual({ ...changes, goals, declaredIncome, displayCurrencyCode, autoSuggestEnabled, version: 2 });
+    expect((await request('PUT', changes)).body).toEqual({ ...changes, goals, declaredIncome, displayCurrencyCode, autoSuggestEnabled, avatarUpdatedAt, version: 2 });
+    expect((await request()).body).toEqual({ ...changes, goals, declaredIncome, displayCurrencyCode, autoSuggestEnabled, avatarUpdatedAt, version: 2 });
     expect((await request('GET', undefined, 'b'.repeat(64))).body).toEqual(initial);
     expect((await request('PUT', changes)).status).toBe(409);
   });
@@ -77,7 +114,7 @@ describe('MOB-P1-002 profile HTTP contract', () => {
       expect(JSON.stringify(result.body)).not.toContain('sensitive@example.test');
   });
   it('keeps displayName when omitted, trims it, and clears it when blank', async () => {
-    const { displayName: _omit, goals: _goals, declaredIncome: _i, displayCurrencyCode: _d, autoSuggestEnabled: _a, ...rest } = initial;
+    const { displayName: _omit, goals: _goals, declaredIncome: _i, displayCurrencyCode: _d, autoSuggestEnabled: _a, avatarUpdatedAt: _av, ...rest } = initial;
     expect((await request('PUT', { ...rest, displayName: '  Minh  ' })).body.displayName).toBe('Minh');
     expect((await request('PUT', { ...rest, version: 2 })).body.displayName).toBe('Minh');
     expect((await request('PUT', { ...rest, version: 3, displayName: '   ' })).body.displayName).toBeNull();
@@ -167,7 +204,7 @@ describe('MOB-P1-002 profile HTTP contract', () => {
   it('BE-P2-012 returns saved answers on GET and keeps the budget number when the currency changes', async () => {
     const band = { minMinor: '10000000', maxMinor: '20000000', midpointMinor: '15000000' };
     profiles.set('owner', { ...initial, goals: ['save'], declaredIncome: band });
-    const { goals, declaredIncome, displayCurrencyCode, autoSuggestEnabled, ...editable } = initial;
+    const { goals, declaredIncome, displayCurrencyCode, autoSuggestEnabled, avatarUpdatedAt, ...editable } = initial;
     const saved = await request('PUT', { ...editable, defaultCurrencyCode: 'USD' });
     expect(saved.body).toMatchObject({ defaultCurrencyCode: 'USD', goals: ['save'], declaredIncome: band });
     expect((await request()).body.declaredIncome).toEqual(band);

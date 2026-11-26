@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/theme/theme_context.dart';
@@ -7,21 +10,22 @@ import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/error_retry.dart';
 import '../../../../core/widgets/freeva_button.dart';
 import '../../../../core/widgets/freeva_card.dart';
+import '../../../../core/widgets/freeva_icon_button.dart';
 import '../../../../core/widgets/money_display.dart';
 import '../../../../core/widgets/skeleton.dart';
 import '../../../../core/widgets/transaction_row.dart';
 import '../../../home/presentation/widgets/recent_row_data.dart';
+import '../../../settings/presentation/widgets/choice_sheet.dart';
 import '../../../transactions/domain/transaction.dart';
 import '../viewmodels/category_report_view_model.dart';
 
-/// "Giao dịch lớn nhất": the top three and "Xem cả N" for the filtered list.
-class LargestTransactions extends StatelessWidget {
-  const LargestTransactions({
+/// "Giao dịch" of one slice: a sort icon, ten rows at a time and "Xem thêm".
+class CategoryTransactions extends StatelessWidget {
+  const CategoryTransactions({
     required this.model,
     required this.names,
     required this.digitsOf,
     required this.onOpen,
-    required this.onSeeAll,
     super.key,
   });
 
@@ -29,51 +33,49 @@ class LargestTransactions extends StatelessWidget {
   final RecentRowNames names;
   final int Function(String) digitsOf;
   final ValueChanged<TransactionBundle> onOpen;
-  final VoidCallback onSeeAll;
 
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
     final c = context.colors;
     final locale = Localizations.localeOf(context).toString();
-    final count = model.count;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: FreevaSpace.s1),
+          padding: const EdgeInsets.only(left: FreevaSpace.s1),
           child: Row(
             children: [
               Expanded(
                 child: Semantics(
                   header: true,
                   child: Text(
-                    s.reportLargest,
+                    s.reportTransactions,
                     style: FreevaTypography.titleM.copyWith(
                       color: c.textPrimary,
                     ),
                   ),
                 ),
               ),
-              if (count != null && count > 0)
-                FreevaButton(
-                  label: s.reportSeeAll(count),
-                  variant: FreevaButtonVariant.link,
-                  onPressed: onSeeAll,
-                ),
+              FreevaIconButton(
+                icon: LucideIcons.arrowUpDown,
+                label: s.reportSortLabel,
+                kind: FreevaIconButtonKind.subtle,
+                onPressed: () => _pickSort(context, s),
+              ),
             ],
           ),
         ),
         const SizedBox(height: FreevaSpace.s2),
-        if (model.failure != null && model.largest.isEmpty)
+        if (model.failure != null && model.items.isEmpty)
           ErrorRetry(
             title: s.reportLargestError,
             message: s.homeErrorBody,
             onRetry: model.load,
           )
-        else if (model.loading && model.largest.isEmpty)
+        else if (model.loading && model.items.isEmpty)
           const SkeletonRows(count: 3)
-        else
+        else ...[
           FreevaCard(
             list: true,
             padding: const EdgeInsets.symmetric(
@@ -82,15 +84,42 @@ class LargestTransactions extends StatelessWidget {
             ),
             child: Column(
               children: [
-                for (final (i, bundle) in model.largest.indexed) ...[
+                for (final (i, bundle) in model.items.indexed) ...[
                   if (i > 0) Divider(height: 1, color: c.listDivider),
                   _row(context, s, locale, bundle),
                 ],
               ],
             ),
           ),
+          if (model.hasMore) ...[
+            const SizedBox(height: FreevaSpace.s2),
+            Center(
+              child: FreevaButton(
+                label: s.reportLoadMore,
+                variant: FreevaButtonVariant.link,
+                loading: model.loadingMore,
+                onPressed: model.loadMore,
+              ),
+            ),
+          ],
+        ],
       ],
     );
+  }
+
+  Future<void> _pickSort(BuildContext context, S s) async {
+    final picked = await showChoiceSheet<TransactionSort>(
+      context,
+      title: s.reportSortLabel,
+      selected: model.sort,
+      options: [
+        Choice(TransactionSort.date, s.reportSortNewest),
+        Choice(TransactionSort.dateAsc, s.reportSortOldest),
+        Choice(TransactionSort.amountDesc, s.reportSortLargest),
+        Choice(TransactionSort.amountAsc, s.reportSortSmallest),
+      ],
+    );
+    if (picked != null) unawaited(model.setSort(picked));
   }
 
   Widget _row(BuildContext context, S s, String locale, TransactionBundle b) {

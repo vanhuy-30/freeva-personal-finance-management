@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../core/money/money_text.dart';
@@ -68,13 +69,18 @@ class RecentRowNames {
 
   String wallet(String id) => _wallets[id] ?? '';
 
-  /// Same naming as the transaction list.
+  /// Same naming as the transaction list, with the day after it ("… · 16/11").
   RecentRowData fromBundle(TransactionBundle row) {
     final label = _naming.label(row);
+    final day = DateTime.tryParse(row.occurredOn);
     return RecentRowData(
       icon: label.icon,
       title: label.title,
-      detail: label.detail,
+      detail: [
+        label.detail,
+        if (day != null)
+          DateFormat(s.reportShortDatePattern, s.localeName).format(day),
+      ].where((part) => part.isNotEmpty).join(' · '),
       minor: label.minor,
       currency: label.currency,
       tone: label.tone,

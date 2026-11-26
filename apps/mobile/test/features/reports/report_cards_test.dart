@@ -70,14 +70,32 @@ void main() {
     testWidgets('compares each figure with the month before', (t) async {
       await _open(t);
       // September: 17,0m in, 9,9m out, 39,07m in the wallets.
-      expect(find.text('▲ 8,8%'), findsOneWidget); // income
-      expect(find.text('▼ 5,9%'), findsOneWidget); // spending went down
-      expect(find.text('▲ 29,3%'), findsOneWidget); // saving
-      expect(find.text('▲ 23,5%'), findsOneWidget); // wallets
-      expect(find.text('▲ 34,5%'), findsOneWidget); // average per day
-      expect(find.text('▲ 7,9 điểm'), findsOneWidget); // savings rate
+      expect(
+        find.textContaining('8,8%', findRichText: true),
+        findsOneWidget,
+      ); // income
+      expect(
+        find.textContaining('5,9%', findRichText: true),
+        findsOneWidget,
+      ); // spending went down
+      expect(
+        find.textContaining('29,3%', findRichText: true),
+        findsOneWidget,
+      ); // saving
+      expect(
+        find.textContaining('23,5%', findRichText: true),
+        findsOneWidget,
+      ); // wallets
+      expect(
+        find.textContaining('34,5%', findRichText: true),
+        findsOneWidget,
+      ); // average per day
+      expect(
+        find.textContaining('7,9 điểm', findRichText: true),
+        findsOneWidget,
+      ); // savings rate
       expect(find.text('49,6%'), findsOneWidget); // the ring
-      expect(find.text('so tháng trước'), findsNWidgets(5));
+      expect(find.text('so với tháng trước'), findsNWidgets(5));
     });
 
     testWidgets('a custom range shows the figures and no comparison', (
@@ -93,16 +111,14 @@ void main() {
         find.text('49,6%'),
         findsOneWidget,
       ); // the ring is not a comparison
-      for (final change in [
-        '▲ 8,8%',
-        '▼ 5,9%',
-        '▲ 29,3%',
-        '▲ 23,5%',
-        '▲ 34,5%',
-      ]) {
-        expect(find.text(change), findsNothing, reason: change);
+      for (final change in ['8,8%', '5,9%', '29,3%', '23,5%', '34,5%']) {
+        expect(
+          find.textContaining(change, findRichText: true),
+          findsNothing,
+          reason: change,
+        );
       }
-      expect(find.textContaining('so tháng trước'), findsNothing);
+      expect(find.textContaining('so với tháng trước'), findsNothing);
       expect(find.textContaining('điểm'), findsNothing);
       // The budget is the month's.
       expect(find.text('Đặt ngân sách tháng'), findsNothing);
@@ -286,7 +302,7 @@ void main() {
       expect(find.text('Tổng chi tiêu'), findsOneWidget);
       expect(find.textContaining('9.320.000'), findsOneWidget);
       expect(find.text('9 DANH MỤC'), findsOneWidget);
-      expect(find.text('Chi nhiều nhất trước'), findsOneWidget);
+      expect(find.text('Chi nhiều nhất trước'), findsNothing);
       // Every parent is listed: Ăn uống (two children folded), then the rest.
       for (final name in [
         'Ăn uống',

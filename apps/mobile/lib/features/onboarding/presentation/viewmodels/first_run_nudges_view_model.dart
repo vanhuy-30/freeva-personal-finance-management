@@ -3,6 +3,8 @@ import 'package:injectable/injectable.dart';
 
 import '../../../budgets/domain/budget.dart';
 import '../../../budgets/domain/budget_use_cases.dart';
+import '../../../notifications/domain/notification_models.dart';
+import '../../../notifications/domain/notification_use_cases.dart';
 import '../../../server_config/domain/app_limits.dart';
 import '../../../settings/domain/settings_use_cases.dart';
 import '../../domain/pending_goal_use_cases.dart';
@@ -18,12 +20,14 @@ class FirstRunNudgesViewModel extends ChangeNotifier {
     this._settings,
     this._budgets,
     this._limits,
+    this._notifications,
   );
 
   final PendingGoalUseCases _pending;
   final SettingsUseCases _settings;
   final BudgetUseCases _budgets;
   final AppLimitsSource _limits;
+  final NotificationUseCases _notifications;
 
   bool _checking = false;
   bool _askingLog = false;
@@ -60,6 +64,14 @@ class FirstRunNudgesViewModel extends ChangeNotifier {
           !_askingLog &&
           !_askingBudget &&
           !prefs.dailyLogAsked) {
+        // "Asked" lives on this phone only; the reminder itself is on the
+        // account. After a reinstall it may already be on: do not ask again.
+        final on = await _reminderOn();
+        if (on == null) return created;
+        if (on) {
+          await _settings.save(prefs.copyWith(dailyLogAsked: true));
+          return created;
+        }
         _askingLog = true;
         notifyListeners();
       }
@@ -67,6 +79,16 @@ class FirstRunNudgesViewModel extends ChangeNotifier {
     } finally {
       _checking = false;
     }
+  }
+
+  /// Whether the account has the daily reminder on; null when that could
+  /// not be read (offline), so nothing is asked or remembered this time.
+  Future<bool?> _reminderOn() async {
+    final result = await _notifications.preferences();
+    return result.fold<bool?>(
+      (_) => null,
+      (p) => p.toggle(NotificationKind.dailyLog)?.enabled ?? false,
+    );
   }
 
   /// Spending part of the declared income: midpoint minus the default

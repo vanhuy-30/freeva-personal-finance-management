@@ -15,8 +15,12 @@ class CategoryBars extends StatelessWidget {
     required this.detail,
     required this.currency,
     required this.digits,
+    this.onOpen,
     super.key,
   });
+
+  /// Makes a bar with a category behind it tappable (the bars of "Khác").
+  final ValueChanged<CategoryBar>? onOpen;
 
   final CategoryDetail detail;
   final String currency;
@@ -31,63 +35,72 @@ class CategoryBars extends StatelessWidget {
       child: Column(
         children: [
           for (final (i, bar) in detail.bars.indexed)
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              decoration: BoxDecoration(
-                border: i == 0
-                    ? null
-                    : Border(top: BorderSide(color: c.borderDivider)),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text.rich(
-                          TextSpan(
-                            text: bar.name,
-                            children: [
-                              // "Ăn uống (chung)": the suffix in grey.
-                              if (bar.general)
-                                TextSpan(
-                                  text: ' ${s.reportBarGeneralSuffix}',
-                                  style: TextStyle(color: c.textSecondary),
-                                ),
-                            ],
+            _tappable(
+              bar,
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                decoration: BoxDecoration(
+                  border: i == 0
+                      ? null
+                      : Border(top: BorderSide(color: c.borderDivider)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text.rich(
+                            TextSpan(
+                              text: bar.name,
+                              children: [
+                                // "Ăn uống (chung)": the suffix in grey.
+                                if (bar.general)
+                                  TextSpan(
+                                    text: ' ${s.reportBarGeneralSuffix}',
+                                    style: TextStyle(color: c.textSecondary),
+                                  ),
+                              ],
+                            ),
+                            style: FreevaTypography.bodyM.copyWith(
+                              color: c.textPrimary,
+                            ),
                           ),
+                        ),
+                        const SizedBox(width: 8),
+                        MoneyDisplay(
+                          minor: bar.minor,
+                          currency: currency,
+                          minorDigits: digits,
+                          showCurrency: false,
                           style: FreevaTypography.bodyM.copyWith(
-                            color: c.textPrimary,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      MoneyDisplay(
-                        minor: bar.minor,
-                        currency: currency,
-                        minorDigits: digits,
-                        showCurrency: false,
-                        style: FreevaTypography.bodyM.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  FreevaProgressBar(
-                    value: detail.total == BigInt.zero
-                        ? 0
-                        : (bar.minor * BigInt.from(1000) ~/ detail.total)
-                                  .toInt() /
-                              1000,
-                    trackColor: c.borderDivider,
-                    semanticsLabel: bar.name,
-                  ),
-                ],
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    FreevaProgressBar(
+                      value: detail.total == BigInt.zero
+                          ? 0
+                          : (bar.minor * BigInt.from(1000) ~/ detail.total)
+                                    .toInt() /
+                                1000,
+                      trackColor: c.borderDivider,
+                      semanticsLabel: bar.name,
+                    ),
+                  ],
+                ),
               ),
             ),
         ],
       ),
     );
+  }
+
+  Widget _tappable(CategoryBar bar, Widget child) {
+    final open = onOpen;
+    if (open == null || bar.memberId == null) return child;
+    return InkWell(onTap: () => open(bar), child: child);
   }
 }

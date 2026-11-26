@@ -17,7 +17,10 @@ import 'package:mobile/features/settings/domain/settings_use_cases.dart';
 import 'package:mobile/features/settings/presentation/pages/faq_page.dart';
 import 'package:mobile/features/settings/presentation/pages/legal_page.dart';
 import 'package:mobile/features/settings/presentation/pages/settings_page.dart';
+import 'package:mobile/features/profile/presentation/viewmodels/avatar_view_model.dart';
 import 'package:mobile/features/settings/presentation/viewmodels/settings_view_model.dart';
+
+import '../profile/avatar_fakes.dart';
 
 import '../auth/fakes.dart';
 import '../profile/fakes.dart';
@@ -78,6 +81,7 @@ void main() {
     getIt.registerSingleton<AuthViewModel>(auth);
     getIt.registerSingleton<SettingsViewModel>(settings);
     getIt.registerSingleton<ProfileViewModel>(profile);
+    getIt.registerSingleton<AvatarViewModel>(avatarViewModel(auth));
   });
 
   tearDown(() async {

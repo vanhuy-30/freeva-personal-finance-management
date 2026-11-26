@@ -1028,6 +1028,41 @@ class SEn extends S {
   String get txFrequent => 'Frequent';
 
   @override
+  String get txNewCategory => 'New category';
+
+  @override
+  String get txNewCategoryCta => 'New category';
+
+  @override
+  String txNewCategoryCtaNamed(String name) {
+    return 'Create “$name”';
+  }
+
+  @override
+  String get txNewCategoryName => 'Category name';
+
+  @override
+  String get txNewCategoryNameHint => 'Enter a name';
+
+  @override
+  String get txNewCategoryExists =>
+      'You already have a category with this name';
+
+  @override
+  String get txNewCategoryFailed => 'Couldn\'t create it. Try again.';
+
+  @override
+  String get txNewCategoryNoteExpense =>
+      'Added to your expense categories. Change its icon and colour in Categories.';
+
+  @override
+  String get txNewCategoryNoteIncome =>
+      'Added to your income categories. Change its icon and colour in Categories.';
+
+  @override
+  String get txNewCategoryCreate => 'Create and pick';
+
+  @override
   String get txFindOrCreateTag => 'Find or create a tag';
 
   @override
@@ -1295,10 +1330,6 @@ class SEn extends S {
 
   @override
   String get walletCurrentBalance => 'Current balance';
-
-  @override
-  String get walletBalanceHint =>
-      'A rough number is fine. You can change it later.';
 
   @override
   String get creditCurrentDebt => 'Current balance owed';
@@ -1901,12 +1932,6 @@ class SEn extends S {
   }
 
   @override
-  String get reportBreakdownSortExpense => 'Biggest spend first';
-
-  @override
-  String get reportBreakdownSortIncome => 'Biggest income first';
-
-  @override
   String get reportBreakdownNote =>
       'Subcategories are counted in their parent. Tap a row to see its transactions.';
 
@@ -2114,12 +2139,25 @@ class SEn extends S {
   }
 
   @override
-  String get reportLargest => 'Largest transactions';
+  String get reportTransactions => 'Transactions';
 
   @override
-  String reportSeeAll(int count) {
-    return 'See all $count';
-  }
+  String get reportLoadMore => 'Show more';
+
+  @override
+  String get reportSortNewest => 'Newest';
+
+  @override
+  String get reportSortOldest => 'Oldest';
+
+  @override
+  String get reportSortLargest => 'Largest';
+
+  @override
+  String get reportSortSmallest => 'Smallest';
+
+  @override
+  String get reportSortLabel => 'Sort transactions';
 
   @override
   String get reportLargestError => 'Couldn\'t load transactions';
@@ -3561,9 +3599,6 @@ class SEn extends S {
   String get meExportData => 'Export data';
 
   @override
-  String get meExportHint => 'Save or send a copy of your data';
-
-  @override
   String get meExportError => 'Couldn\'t export. Try again.';
 
   @override
@@ -3584,6 +3619,28 @@ class SEn extends S {
 
   @override
   String get meChangeAvatar => 'Change photo';
+
+  @override
+  String get meAvatarCamera => 'Take a photo';
+
+  @override
+  String get meAvatarPick => 'Choose from library';
+
+  @override
+  String get meAvatarRemove => 'Remove photo';
+
+  @override
+  String get meAvatarSaved => 'Profile photo updated';
+
+  @override
+  String get meAvatarRemoved => 'Profile photo removed';
+
+  @override
+  String get meAvatarUnreadable =>
+      'That picture can\'t be read. Try another one.';
+
+  @override
+  String get meAvatarError => 'Couldn\'t update your photo. Try again later.';
 
   @override
   String get meSecurityValueFaceId => 'PIN · Face ID';
@@ -4414,9 +4471,6 @@ class SEn extends S {
 
   @override
   String get debtPickDate => 'Pick a date';
-
-  @override
-  String get debtClearDue => 'Clear due date';
 
   @override
   String get debtDueBeforeDate => 'The due date must be after the date.';
@@ -5731,6 +5785,25 @@ class SEn extends S {
 
   @override
   String get depositInterest => 'Expected interest';
+
+  @override
+  String depositDaysLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days left',
+      one: '1 day left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String depositMaturesOn(String date) {
+    return 'Matures $date';
+  }
+
+  @override
+  String get depositMaturedTag => 'Matured';
 
   @override
   String get depositRateLabel => 'Interest rate';

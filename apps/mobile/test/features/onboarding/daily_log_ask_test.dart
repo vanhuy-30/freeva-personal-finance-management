@@ -2,9 +2,12 @@ import 'dart:io';
 
 import '../../support/server_config_fixture.dart';
 
+import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/notifications/domain/notification_models.dart';
+import 'package:mobile/features/notifications/domain/notification_use_cases.dart';
 import 'package:mobile/features/onboarding/domain/pending_goal_use_cases.dart';
 import 'package:mobile/features/onboarding/presentation/viewmodels/first_run_nudges_view_model.dart';
 import 'package:mobile/features/onboarding/presentation/widgets/budget_ask_sheet.dart';
@@ -20,6 +23,39 @@ import '../notifications/fake_notification_view_model.dart';
 import '../settings/fakes.dart';
 import 'budget_fakes.dart';
 
+class _Notifications extends Fake implements NotificationUseCases {
+  _Notifications({required this.reminderOn, required this.offline});
+  final bool reminderOn;
+  final bool offline;
+
+  @override
+  Future<Either<AuthFailure, NotificationPreferences>> preferences() async {
+    if (offline) return left(const AuthFailure(AuthError.network));
+    final base = FakeNotificationViewModel().preferences!;
+    return right(
+      NotificationPreferences(
+        kinds: [
+          for (final k in base.kinds)
+            NotificationKindToggle(
+              kind: k.kind,
+              enabled: k.kind == NotificationKind.dailyLog
+                  ? reminderOn
+                  : k.enabled,
+              available: k.available,
+              managedLocally: k.managedLocally,
+            ),
+        ],
+        dailyLogTime: base.dailyLogTime,
+        quietHoursEnabled: base.quietHoursEnabled,
+        quietStart: base.quietStart,
+        quietEnd: base.quietEnd,
+        version: base.version,
+        updatedAt: base.updatedAt,
+      ),
+    );
+  }
+}
+
 void main() {
   setUp(registerTestServerConfig);
   setUpAll(loadTestFonts);
@@ -27,6 +63,8 @@ void main() {
   FirstRunNudgesViewModel nudges(
     DefaultSettingsUseCases settings, {
     FakeBudgets? budgets,
+    bool reminderOn = false,
+    bool offline = false,
   }) => FirstRunNudgesViewModel(
     PendingGoalUseCases(
       settings,
@@ -37,6 +75,7 @@ void main() {
     settings,
     budgets ?? FakeBudgets(hasBudget: true),
     testServerConfigModel(),
+    _Notifications(reminderOn: reminderOn, offline: offline),
   );
 
   test('the reminder is offered once, only after a transaction, only for '
@@ -55,6 +94,36 @@ void main() {
     expect(model.askDailyLog, isFalse);
     await model.check(trackGoal: true, hasTransactions: true);
     expect(model.askDailyLog, isFalse);
+  });
+
+  test('after a reinstall the reminder is not offered again when the account '
+      'already has it on', () async {
+    final settings = DefaultSettingsUseCases(
+      SettingsRepositoryImpl(MemoryPreferences()),
+    );
+    final model = nudges(settings, reminderOn: true);
+    await model.check(trackGoal: true, hasTransactions: true);
+    expect(model.askDailyLog, isFalse);
+    expect(
+      (await settings.load()).getOrElse(() => throw 0).dailyLogAsked,
+      isTrue,
+    );
+  });
+
+  test('offline: nothing is asked and nothing is remembered', () async {
+    final settings = DefaultSettingsUseCases(
+      SettingsRepositoryImpl(MemoryPreferences()),
+    );
+    final model = nudges(settings, offline: true);
+    await model.check(trackGoal: true, hasTransactions: true);
+    expect(model.askDailyLog, isFalse);
+    expect(
+      (await settings.load()).getOrElse(() => throw 0).dailyLogAsked,
+      isFalse,
+    );
+    final later = nudges(settings);
+    await later.check(trackGoal: true, hasTransactions: true);
+    expect(later.askDailyLog, isTrue);
   });
 
   test('the budget is offered once when there is none, before the reminder, '

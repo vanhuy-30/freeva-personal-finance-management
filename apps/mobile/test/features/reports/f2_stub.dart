@@ -57,6 +57,9 @@ class FakeTransactionRepository implements TransactionRepository {
   AuthFailure? failure;
   int total = 42;
 
+  /// Rows for a request; the three canvas rows when not set.
+  List<TxLeg> Function(TransactionQuery query)? legsFor;
+
   @override
   Future<Either<AuthFailure, TransactionListPage>> list(
     TransactionQuery query,
@@ -65,7 +68,11 @@ class FakeTransactionRepository implements TransactionRepository {
     final error = failure;
     if (error != null) return left(error);
     return right(
-      TransactionListPage(legs: largestLegs(), page: 1, total: total),
+      TransactionListPage(
+        legs: legsFor?.call(query) ?? largestLegs(),
+        page: query.page,
+        total: total,
+      ),
     );
   }
 

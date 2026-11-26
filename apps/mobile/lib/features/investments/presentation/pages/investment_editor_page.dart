@@ -372,19 +372,6 @@ class _InvestmentEditorPageState extends State<InvestmentEditorPage> {
           second: field(s.investmentRate, rate, 2, suffix: '%'),
         ),
         const SizedBox(height: 14),
-        FormPair(
-          first: date(
-            s.investmentDepositDate,
-            tradedOn,
-            () => _pickDate(maturity: false),
-          ),
-          second: date(
-            s.investmentMaturity,
-            maturityOn,
-            () => _pickDate(maturity: true),
-          ),
-        ),
-        const SizedBox(height: 14),
         SectionHeader(s.depositTerm),
         Wrap(
           spacing: 8,
@@ -398,6 +385,19 @@ class _InvestmentEditorPageState extends State<InvestmentEditorPage> {
                 onTap: () => _pickTerm(m),
               ),
           ],
+        ),
+        const SizedBox(height: 14),
+        FormPair(
+          first: date(
+            s.investmentDepositDate,
+            tradedOn,
+            () => _pickDate(maturity: false),
+          ),
+          second: date(
+            s.investmentMaturity,
+            maturityOn,
+            () => _pickDate(maturity: true),
+          ),
         ),
         const SizedBox(height: 14),
       ] else if (lot) ...[
