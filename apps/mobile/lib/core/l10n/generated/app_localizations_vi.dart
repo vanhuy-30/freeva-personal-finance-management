@@ -37,7 +37,7 @@ class SVi extends S {
   String get authInvalidCredentials => 'Email hoặc mật khẩu không đúng.';
 
   @override
-  String get authInvalidToken => 'Mã không hợp lệ, đã dùng hoặc đã hết hạn.';
+  String get authInvalidToken => 'Link không hợp lệ, đã dùng hoặc đã hết hạn.';
 
   @override
   String authRateLimited(int seconds) {
@@ -6405,4 +6405,29 @@ class SVi extends S {
   String homeInvestLoss(String amount) {
     return 'Lỗ $amount';
   }
+
+  @override
+  String get authLinkInvalid =>
+      'Link không hợp lệ. Hãy mở lại link trong email.';
+
+  @override
+  String get authLinkSignOutTitle => 'Đặt lại mật khẩu?';
+
+  @override
+  String get authLinkSignOutBody =>
+      'Bạn sẽ được đăng xuất khỏi máy này để đặt mật khẩu mới. Dữ liệu vẫn nằm trong tài khoản của bạn.';
+
+  @override
+  String get authLinkSignOutUnsynced =>
+      'Bạn sẽ được đăng xuất khỏi máy này để đặt mật khẩu mới. Thay đổi chưa đồng bộ trên máy này sẽ mất.';
+
+  @override
+  String get authLinkSignOutConfirm => 'Đặt lại';
+
+  @override
+  String get authLinkSignOutFailed =>
+      'Chưa đăng xuất được. Hãy thử mở lại link trong email.';
+
+  @override
+  String get authRequestNewLink => 'Yêu cầu link mới';
 }

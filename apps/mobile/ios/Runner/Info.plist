@@ -2,6 +2,22 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<!-- Links are handled by the app_links plugin, not as Flutter routes. -->
+	<key>FlutterDeepLinkingEnabled</key>
+	<false/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.vanhuy.freeva</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>freeva</string>
+			</array>
+		</dict>
+	</array>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Xác thực để mở khóa Freeva / Authenticate to unlock Freeva.</string>
 	<key>CFBundleDevelopmentRegion</key>

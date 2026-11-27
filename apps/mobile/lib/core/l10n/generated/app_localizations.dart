@@ -154,7 +154,7 @@ abstract class S {
   /// No description provided for @authInvalidToken.
   ///
   /// In en, this message translates to:
-  /// **'Code is invalid, already used, or expired.'**
+  /// **'This link is invalid, already used, or expired.'**
   String get authInvalidToken;
 
   /// No description provided for @authRateLimited.
@@ -10905,6 +10905,48 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Loss {amount}'**
   String homeInvestLoss(String amount);
+
+  /// No description provided for @authLinkInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'This link is not valid. Open the link in your email again.'**
+  String get authLinkInvalid;
+
+  /// No description provided for @authLinkSignOutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset your password?'**
+  String get authLinkSignOutTitle;
+
+  /// No description provided for @authLinkSignOutBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You will be signed out of this device to set a new password. Your data stays in your account.'**
+  String get authLinkSignOutBody;
+
+  /// No description provided for @authLinkSignOutUnsynced.
+  ///
+  /// In en, this message translates to:
+  /// **'You will be signed out of this device to set a new password. Changes not yet synced on this device will be lost.'**
+  String get authLinkSignOutUnsynced;
+
+  /// No description provided for @authLinkSignOutConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get authLinkSignOutConfirm;
+
+  /// No description provided for @authLinkSignOutFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not sign out. Try opening the link in your email again.'**
+  String get authLinkSignOutFailed;
+
+  /// No description provided for @authRequestNewLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Request a new link'**
+  String get authRequestNewLink;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

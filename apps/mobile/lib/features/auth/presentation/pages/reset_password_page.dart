@@ -9,6 +9,7 @@ import '../../../../core/widgets/freeva_button.dart';
 import '../../../../core/widgets/freeva_pill_field.dart';
 import '../../../../core/widgets/password_checklist.dart';
 import '../../domain/password_check.dart';
+import '../../domain/auth_repository.dart';
 import '../viewmodels/auth_view_model.dart';
 import '../widgets/auth_message.dart';
 import '../widgets/auth_scaffold.dart';
@@ -134,6 +135,20 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         const SizedBox(height: FreevaSpace.s3),
         PasswordChecklist(check: _check),
         AuthMessage(model: model),
+        // A used or expired link cannot be fixed here; offer a new one.
+        if (model.failure?.code == AuthError.invalidToken)
+          Padding(
+            padding: const EdgeInsets.only(top: FreevaSpace.s3),
+            child: FreevaButton(
+              label: s.authRequestNewLink,
+              variant: FreevaButtonVariant.secondary,
+              size: FreevaButtonSize.l,
+              expand: true,
+              onPressed: model.loading
+                  ? null
+                  : () => model.goTo(AuthStep.forgot),
+            ),
+          ),
       ],
     );
   }

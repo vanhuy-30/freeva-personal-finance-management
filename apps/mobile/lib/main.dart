@@ -1,3 +1,5 @@
+import 'features/auth/domain/deep_link_service.dart';
+import 'features/auth/presentation/widgets/auth_link_host.dart';
 import 'features/profile/presentation/viewmodels/profile_view_model.dart';
 import 'features/settings/presentation/theme_mode.dart';
 import 'features/settings/presentation/viewmodels/settings_view_model.dart';
@@ -11,6 +13,8 @@ import 'features/sync/presentation/widgets/sync_resume_listener.dart';
 import 'features/server_config/presentation/viewmodels/server_config_view_model.dart';
 import 'features/server_config/presentation/widgets/server_config_boundary.dart';
 import 'features/server_config/presentation/widgets/server_config_listener.dart';
+
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -68,6 +72,8 @@ Future<void> _boot() async {
   getIt<SyncViewModel>();
   getIt<RecurringViewModel>();
   getIt<NotificationViewModel>();
+  // Email links wait in the service until auth is ready; start() never throws.
+  unawaited(getIt<DeepLinkService>().start());
   createAppRouter();
   logger.op('boot ready');
   runApp(const FreevaApp());
@@ -88,27 +94,30 @@ class FreevaApp extends StatelessWidget {
             child: PushRegistrationListener(
               child: MaturedDepositListener(
                 child: ServerConfigListener(
-                  child: MaterialApp.router(
-                    debugShowCheckedModeBanner: false,
-                    onGenerateTitle: (BuildContext context) =>
-                        S.of(context).appTitle,
-                    theme: AppTheme.light,
-                    darkTheme: AppTheme.dark,
-                    themeMode: themeModeFor(settings.theme),
-                    routerConfig: appRouter,
-                    builder: (context, child) =>
-                        MediaQuery.withClampedTextScaling(
-                          maxScaleFactor: FreevaTypography.maxTextScale,
-                          child: ServerConfigBoundary(child: child!),
-                        ),
-                    locale: Locale(profile.locale),
-                    supportedLocales: S.supportedLocales,
-                    localizationsDelegates: const [
-                      S.delegate,
-                      GlobalMaterialLocalizations.delegate,
-                      GlobalWidgetsLocalizations.delegate,
-                      GlobalCupertinoLocalizations.delegate,
-                    ],
+                  child: AuthLinkHost(
+                    navigatorKey: appRouter.routerDelegate.navigatorKey,
+                    child: MaterialApp.router(
+                      debugShowCheckedModeBanner: false,
+                      onGenerateTitle: (BuildContext context) =>
+                          S.of(context).appTitle,
+                      theme: AppTheme.light,
+                      darkTheme: AppTheme.dark,
+                      themeMode: themeModeFor(settings.theme),
+                      routerConfig: appRouter,
+                      builder: (context, child) =>
+                          MediaQuery.withClampedTextScaling(
+                            maxScaleFactor: FreevaTypography.maxTextScale,
+                            child: ServerConfigBoundary(child: child!),
+                          ),
+                      locale: Locale(profile.locale),
+                      supportedLocales: S.supportedLocales,
+                      localizationsDelegates: const [
+                        S.delegate,
+                        GlobalMaterialLocalizations.delegate,
+                        GlobalWidgetsLocalizations.delegate,
+                        GlobalCupertinoLocalizations.delegate,
+                      ],
+                    ),
                   ),
                 ),
               ),
