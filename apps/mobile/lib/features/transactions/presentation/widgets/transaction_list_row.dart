@@ -63,6 +63,11 @@ class TransactionListRow extends StatelessWidget {
             s.txRefundedNote(formatMoneyText(refunded, digits, locale)),
           ].where((p) => p.isNotEmpty).join(' · ')
         : label.detail;
+    // The clock time sits under the amount, so the left line keeps room for
+    // the category, wallet and tags. Rows without one (older rows, system
+    // rows) show only the amount.
+    final time = row.occurredTime;
+    final hasTime = time != null && time.isNotEmpty;
     final signed = switch (label.tone) {
       MoneyTone.income => s.homeSpokenIncome(amount, currency),
       MoneyTone.expense => s.homeSpokenExpense(amount, currency),
@@ -95,16 +100,30 @@ class TransactionListRow extends StatelessWidget {
       onTap: onTap,
       semanticsLabel: [
         s.homeSpokenRow(signed, label.title, detail),
+        if (hasTime) time,
         if (mark != null) SyncMarkChip.label(s, mark!),
       ].join(', '),
-      amount: MoneyDisplay(
-        minor: label.minor,
-        currency: label.currency,
-        minorDigits: digits,
-        tone: label.tone,
-        muted: muted,
-        style: FreevaTypography.titleM,
-        showCurrency: showCurrency,
+      amount: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          MoneyDisplay(
+            minor: label.minor,
+            currency: label.currency,
+            minorDigits: digits,
+            tone: label.tone,
+            muted: muted,
+            style: FreevaTypography.titleM,
+            showCurrency: showCurrency,
+          ),
+          if (hasTime)
+            Text(
+              time,
+              style: FreevaTypography.bodyS.copyWith(
+                color: context.colors.textMuted,
+              ),
+            ),
+        ],
       ),
     );
   }

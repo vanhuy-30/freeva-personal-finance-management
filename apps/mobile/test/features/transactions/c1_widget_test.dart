@@ -30,6 +30,7 @@ void main() {
     expect(find.text('+17.788.000'), findsOneWidget);
     expect(find.text('Phở Thìn'), findsOneWidget);
     expect(find.text('Ăn uống · Tiền mặt'), findsOneWidget);
+    expect(find.text('12:40'), findsOneWidget);
     expect(find.text('Nạp MoMo'), findsOneWidget);
     expect(find.text('Vietcombank → MoMo'), findsOneWidget);
     expect(find.text('#Đi làm'.substring(1)), findsOneWidget);
