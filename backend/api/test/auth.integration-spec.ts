@@ -384,7 +384,8 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
     const current = await request('profile', undefined, owner.accessToken, 'GET');
     expect(current.status).toBe(200);
     // The onboarding answers are read only on this endpoint, so they are not sent back.
-    const { goals, declaredIncome, displayCurrencyCode, autoSuggestEnabled, avatarUpdatedAt, ...editable } = current.body;
+    const { goals, declaredIncome, displayCurrencyCode, autoSuggestEnabled, avatarUpdatedAt, emailVerifiedAt, ...editable } = current.body;
+    expect(emailVerifiedAt).not.toBeNull();
     expect(goals).toEqual([]);
     expect(declaredIncome).toBeNull();
     const changes = { ...editable, locale: 'en', defaultCurrencyCode: 'USD',
@@ -395,7 +396,7 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
     ]);
     expect(writes.map(r => r.status).sort()).toEqual([200, 409]);
     expect((await request('profile', undefined, owner.accessToken, 'GET')).body)
-      .toEqual({ ...changes, goals, declaredIncome, displayCurrencyCode, autoSuggestEnabled, avatarUpdatedAt, version: current.body.version + 1 });
+      .toEqual({ ...changes, goals, declaredIncome, displayCurrencyCode, autoSuggestEnabled, avatarUpdatedAt, emailVerifiedAt, version: current.body.version + 1 });
     expect((await request('profile', undefined, other.accessToken, 'GET')).body)
       .toMatchObject({ locale: 'vi', defaultCurrencyCode: 'VND', fiscalMonthStartDay: 1 });
     await request('auth/logout', undefined, owner.accessToken);
@@ -727,6 +728,23 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
         where: { action: 'auth.reset_password', outcome: 'success' },
       }),
     ).toBe(1);
+  });
+
+  it('MOB-P2-017 profile shows when the email was confirmed', async () => {
+    const email = 'flag@example.test';
+    await request('auth/register', { email, password });
+    const login = await request('auth/login', { email, password });
+    expect(login.status).toBe(200);
+    const before = await request('profile', undefined, login.body.accessToken, 'GET');
+    expect(before.status).toBe(200);
+    expect(before.body.emailVerifiedAt).toBeNull();
+    const token = await emailToken(email, 'verify_email');
+    expect((await request('auth/verify-email', { token })).status).toBe(204);
+    const after = await request('profile', undefined, login.body.accessToken, 'GET');
+    expect(Date.parse(after.body.emailVerifiedAt)).toBeGreaterThan(Date.now() - 60_000);
+    // Asking for another email once confirmed changes nothing, and the flag stays.
+    expect((await request('auth/email-verifications', { email })).status).toBe(202);
+    expect((await request('profile', undefined, login.body.accessToken, 'GET')).body.emailVerifiedAt).toBe(after.body.emailVerifiedAt);
   });
 
   it('rejects expired/replaced tokens; reset does not verify unverified accounts', async () => {

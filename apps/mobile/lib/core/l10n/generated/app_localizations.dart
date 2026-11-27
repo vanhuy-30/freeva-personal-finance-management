@@ -6402,6 +6402,30 @@ abstract class S {
   /// **'Email · not verified'**
   String get meProfileEmailUnverified;
 
+  /// No description provided for @meEmailSendLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Send confirmation link'**
+  String get meEmailSendLink;
+
+  /// No description provided for @meEmailSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Link sent. Check your email, then come back here.'**
+  String get meEmailSent;
+
+  /// No description provided for @meEmailSendError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not send. Check your connection and try again.'**
+  String get meEmailSendError;
+
+  /// No description provided for @meEmailUnverifiedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Needed to recover your password if you forget it.'**
+  String get meEmailUnverifiedHint;
+
   /// No description provided for @meDeleteAccount.
   ///
   /// In en, this message translates to:

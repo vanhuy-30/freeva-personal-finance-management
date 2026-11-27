@@ -3544,6 +3544,18 @@ class SVi extends S {
   String get meProfileEmailUnverified => 'Email · chưa xác nhận';
 
   @override
+  String get meEmailSendLink => 'Gửi link xác nhận';
+
+  @override
+  String get meEmailSent => 'Đã gửi link. Kiểm tra email rồi quay lại đây.';
+
+  @override
+  String get meEmailSendError => 'Chưa gửi được. Kiểm tra mạng rồi thử lại.';
+
+  @override
+  String get meEmailUnverifiedHint => 'Cần để lấy lại mật khẩu khi bạn quên.';
+
+  @override
   String get meDeleteAccount => 'Xoá tài khoản';
 
   @override

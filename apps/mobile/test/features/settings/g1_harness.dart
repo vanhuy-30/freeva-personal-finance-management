@@ -48,6 +48,7 @@ class G1 {
     String email = 'minh@gmail.com',
     int? budgetDraft,
     List<String> goals = const [],
+    bool? emailVerified,
   }) async {
     tzdata.initializeTimeZones();
     await getIt.reset();
@@ -92,6 +93,7 @@ class G1 {
         version: 1,
         displayName: displayName,
         goals: goals,
+        emailVerified: emailVerified,
       );
     g.profile = DefaultProfileViewModel(
       ProfileUseCases(g.profiles, testServerConfigModel()),

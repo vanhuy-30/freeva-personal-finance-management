@@ -21,9 +21,11 @@ class MemoryProfiles implements ProfileRepository {
   AuthFailure? failure;
   Future<void>? pending;
   int saves = 0;
+  int loads = 0;
   final List<OnboardingAnswers> onboarding = [];
   @override
   Future<Either<AuthFailure, Profile>> load() async {
+    loads++;
     if (pending != null) await pending;
     return failure == null ? right(value) : left(failure!);
   }

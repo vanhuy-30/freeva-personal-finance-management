@@ -18,21 +18,24 @@ const select = {
   declaredIncomeMaxMinor: true,
   displayCurrencyCode: true,
   autoSuggestEnabled: true,
+  emailVerifiedAt: true,
   avatar: { select: { updatedAt: true } },
 };
 
-type Row = Omit<Profile, 'goals' | 'declaredIncome' | 'avatarUpdatedAt'> & {
+type Row = Omit<Profile, 'goals' | 'declaredIncome' | 'avatarUpdatedAt' | 'emailVerifiedAt'> & {
+  emailVerifiedAt: Date | null;
   onboardingGoals: string[]; declaredIncomeMinMinor: bigint | null; declaredIncomeMaxMinor: bigint | null;
   avatar: { updatedAt: Date } | null;
 };
 
 function toProfile(row: Row | null): Profile | null {
   if (!row) return null;
-  const { onboardingGoals, declaredIncomeMinMinor, declaredIncomeMaxMinor, avatar, ...rest } = row;
+  const { onboardingGoals, declaredIncomeMinMinor, declaredIncomeMaxMinor, avatar, emailVerifiedAt, ...rest } = row;
   return {
     ...rest,
     goals: onboardingGoals,
     avatarUpdatedAt: avatar?.updatedAt.toISOString() ?? null,
+    emailVerifiedAt: emailVerifiedAt?.toISOString() ?? null,
     declaredIncome: declaredIncomeView(bandFromColumns(declaredIncomeMinMinor, declaredIncomeMaxMinor)),
   };
 }

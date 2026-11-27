@@ -28,6 +28,10 @@ class ProfileRepositoryImpl implements ProfileRepository {
       displayCurrency: _code(json['displayCurrencyCode']),
       declaredIncome: DeclaredIncome.fromJson(json['declaredIncome']),
       autoSuggestEnabled: json['autoSuggestEnabled'] as bool? ?? true,
+      // Absent on an older server: unknown, not "not verified".
+      emailVerified: json.containsKey('emailVerifiedAt')
+          ? json['emailVerifiedAt'] is String
+          : null,
     );
     if (!['vi', 'en'].contains(value.locale) ||
         !RegExp(r'^[A-Z]{3}$').hasMatch(value.currency) ||

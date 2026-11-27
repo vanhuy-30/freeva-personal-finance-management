@@ -2,6 +2,11 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-11-27
+
+- `BE-P2-017` / `MOB-P2-017`: Hồ sơ cho biết email đã xác nhận hay chưa (`GET /profile` thêm `emailVerifiedAt`, chỉ đọc; không migration) và có "Gửi link xác nhận" khi chưa; tự cập nhật khi quay lại app. Board G · 2c.
+- `BE-P2-020` / `MOB-P2-020`: danh sách giao dịch và xuất CSV sắp theo giờ trong ngày (dòng không có giờ xếp cuối ngày); dòng danh sách hiện giờ nhỏ dưới số tiền. Không migration.
+
 ## 2026-11-21
 
 - Báo cáo tài chính (mobile + API): card đầu có so sánh kỳ trước, tiết kiệm và tỷ lệ, tổng số dư ví; dòng tiền cộng dồn; xu hướng chi đánh dấu kỳ chưa kết thúc; cơ cấu có màn xem toàn bộ (`/reports/breakdown`); card Nợ và vay, Đầu tư theo kỳ; Nhận định lấy từ Phân tích. API thêm `walletBalances` (cashflow), `GET /reports/flow`, `GET /reports/holdings`; không migration. Bỏ dòng "Xem bản soát tháng" ở Báo cáo và màn Dự báo số dư cũ; gỡ luôn endpoint `GET /forecast`, module backend và ba khoá cấu hình `forecast.monthOptions`, `forecast.defaultMonths`, `limit.forecastMaxMonths` (không migration; giá trị đã lưu trong bảng cấu hình, nếu có, bị bỏ qua). [Chi tiết](../architecture/mobile-reports.md).

@@ -31,12 +31,17 @@ void main() {
     double scale = 1,
     Size size = const Size(390, 1500),
     Future<void> Function()? then,
+    bool? emailVerified,
   }) async {
     t.view.physicalSize = size;
     t.view.devicePixelRatio = 1;
     addTearDown(t.view.reset);
     final g = (await t.runAsync(
-      () => G1.create(budgetDraft: 15000000, goals: const ['save', 'budget']),
+      () => G1.create(
+        budgetDraft: 15000000,
+        goals: const ['save', 'budget'],
+        emailVerified: emailVerified,
+      ),
     ))!;
     addTearDown(g.dispose);
     final wallets = StubWalletViewModel();
@@ -113,6 +118,32 @@ void main() {
       size: const Size(390, 844),
     );
   });
+  testWidgets('profile email not confirmed', skip: !Platform.isMacOS, (
+    t,
+  ) async {
+    await shot(
+      t,
+      (_) => const ProfilePage(),
+      'profile_unverified',
+      size: const Size(390, 844),
+      emailVerified: false,
+    );
+  });
+  testWidgets(
+    'profile email not confirmed, dark 1.3x',
+    skip: !Platform.isMacOS,
+    (t) async {
+      await shot(
+        t,
+        (_) => const ProfilePage(),
+        'profile_unverified_scale',
+        dark: true,
+        scale: 1.3,
+        size: const Size(320, 900),
+        emailVerified: false,
+      );
+    },
+  );
   testWidgets('security', skip: !Platform.isMacOS, (t) async {
     await shot(
       t,

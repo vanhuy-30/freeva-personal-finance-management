@@ -3593,6 +3593,20 @@ class SEn extends S {
   String get meProfileEmailUnverified => 'Email · not verified';
 
   @override
+  String get meEmailSendLink => 'Send confirmation link';
+
+  @override
+  String get meEmailSent => 'Link sent. Check your email, then come back here.';
+
+  @override
+  String get meEmailSendError =>
+      'Could not send. Check your connection and try again.';
+
+  @override
+  String get meEmailUnverifiedHint =>
+      'Needed to recover your password if you forget it.';
+
+  @override
   String get meDeleteAccount => 'Delete account';
 
   @override
