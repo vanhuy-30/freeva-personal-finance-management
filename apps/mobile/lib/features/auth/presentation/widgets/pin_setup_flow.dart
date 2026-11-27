@@ -158,11 +158,7 @@ class _PinSetupFlowState extends State<PinSetupFlow> {
         AuthTitle(
           confirm ? s.authPinConfirmTitle : s.authPinSetupTitle,
           subtitle: confirm ? s.authPinConfirmSub : s.authPinSetupSub,
-          style: FreevaTypography.titleXl.copyWith(
-            fontSize: 26,
-            height: 32 / 26,
-            letterSpacing: -0.5,
-          ),
+          style: FreevaTypography.headline,
           subtitleMaxWidth: 290,
         ),
         const SizedBox(height: 28),

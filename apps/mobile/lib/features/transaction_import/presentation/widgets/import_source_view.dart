@@ -185,7 +185,7 @@ class _SourceCard extends StatelessWidget {
                       ),
                       child: SizedBox.square(
                         dimension: 40,
-                        child: Icon(icon, size: 19, color: fg),
+                        child: Icon(icon, size: 20, color: fg),
                       ),
                     ),
                     const SizedBox(width: 12),

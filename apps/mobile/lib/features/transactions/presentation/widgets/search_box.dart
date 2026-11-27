@@ -56,8 +56,7 @@ class _SearchBoxState extends State<SearchBox> {
     final s = S.of(context);
     final c = context.colors;
     final focused = focus.hasFocus && !widget.filled;
-    final text = FreevaTypography.body.copyWith(
-      fontSize: 16,
+    final text = FreevaTypography.bodyL.copyWith(
       height: 1.25,
       color: c.textPrimary,
     );

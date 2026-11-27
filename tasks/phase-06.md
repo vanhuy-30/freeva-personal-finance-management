@@ -130,3 +130,14 @@
 - DoD: trước câu 2 (Thu nhập) có bước chọn tiền tệ của tài khoản (mặc định theo server, đổi được). Khoảng thu nhập và ô "Số tiền" ở câu 3 dùng tiền tệ đã chọn; mốc khoảng cấu hình theo từng tiền tệ thay cho chỉ VND (`onboarding.incomeBandsVnd`). Thiết kế qua canvas trước khi code.
 - Note: owner chốt 2026-11-19 làm sau. Hiện tài khoản mới mặc định VND nên khoảng "triệu" đúng; tài khoản đổi sang tiền tệ khác vẫn thấy khoảng theo triệu đồng.
 
+
+### DS-P6-001 — Dọn design system: một thang cỡ chữ, icon, bo góc cho canvas và app; thẻ tổng phẳng
+- Status: done
+- Module: UI
+- Gate: v1
+- DoD:
+  - Token: thêm `bodyL` (16/22), `iconMicro` (12), `space.1h…5h` (6, 10, 14, 18, 22); `design-system.md` ghi lại thang và bỏ mục "Nội dung và UX writing".
+  - Canvas: số tiền khi nhập 40/44 (`moneyDisplay`), số tiền trên thẻ 28 (`moneyL`); nét icon mặc định Lucide, cỡ icon và bo góc về thang; màu rời về token; số liệu Tổng quan, Tài sản ròng, Tiền gửi khớp nhau; bỏ board Content & UX writing; sắp xếp lại layout trang 07 và 09.
+  - App: cùng thang (số tiền nhập, cỡ chữ PIN/Welcome/chi tiết, icon, bo góc, `bodyL` thay `fontSize: 16`); thẻ tổng Đầu tư và Báo cáo theo PA1 (nền phẳng, đường giá trị, hàng số liệu có đường kẻ), thêm `core/widgets/total_card.dart`.
+  - Golden sáng/tối tạo lại, test xanh.
+- Note: owner chọn PA1 cho thẻ tổng ngày 2026-11-26; thẻ số dư ở Tổng quan giữ lớp wash.

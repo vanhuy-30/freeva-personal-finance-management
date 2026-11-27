@@ -24,7 +24,7 @@ class PillSearchField extends StatelessWidget {
           borderRadius: BorderRadius.circular(FreevaRadius.md),
           borderSide: side,
         );
-    final text = FreevaTypography.body.copyWith(fontSize: 16);
+    const text = FreevaTypography.bodyL;
     return Semantics(
       textField: true,
       label: hint,

@@ -59,7 +59,7 @@ class InstallmentPlansGroup extends StatelessWidget {
                         ),
                         child: Icon(
                           installmentIcon(naming, plan),
-                          size: 17,
+                          size: 18,
                           color: c.tintVioletFg,
                         ),
                       ),

@@ -9,6 +9,7 @@ import '../../../../core/money/money_text.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/money_display.dart';
+import '../../../../core/widgets/total_card.dart';
 import '../../domain/report_summary.dart';
 import '../../../wallets/presentation/widgets/editor/form_pair.dart';
 import 'change_line.dart';
@@ -53,16 +54,7 @@ class ReportTotalCard extends StatelessWidget {
     final rate = summary.savingsRateBps;
     final balance = summary.walletBalance;
     return DecoratedBox(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: const Alignment(-0.6, -1),
-          end: const Alignment(0.6, 1),
-          colors: [c.tintBlue, c.bgSurface],
-        ),
-        border: Border.all(color: c.borderDivider),
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: FreevaElevation.s1,
-      ),
+      decoration: totalCardDecoration(c),
       child: Padding(
         padding: const EdgeInsets.all(14),
         child: LayoutBuilder(
@@ -202,7 +194,7 @@ TextStyle _label(FreevaColors c) => FreevaTypography.label.copyWith(
   color: c.textSecondary,
 );
 
-/// White translucent panel on the gradient.
+/// Subtle panel on the flat card.
 class _Panel extends StatelessWidget {
   const _Panel({required this.child, this.padding});
 
@@ -214,9 +206,8 @@ class _Panel extends StatelessWidget {
     final c = context.colors;
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: c.bgSurface.withValues(alpha: 0.85),
-        border: Border.all(color: c.borderDivider),
-        borderRadius: BorderRadius.circular(18),
+        color: c.bgSubtle,
+        borderRadius: BorderRadius.circular(FreevaRadius.mlg),
       ),
       child: Padding(
         padding: padding ?? const EdgeInsets.fromLTRB(14, 12, 14, 12),
@@ -307,7 +298,7 @@ class _Tile extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 6),
-          _Amount(text: value, symbol: symbol, size: 19),
+          _Amount(text: value, symbol: symbol, size: 20),
           if (change != null) ...[const SizedBox(height: 2), change!],
         ],
       ),
@@ -339,8 +330,8 @@ class _Stat extends StatelessWidget {
             value ?? '—',
             maxLines: 1,
             softWrap: false,
-            style: FreevaTypography.titleL.copyWith(
-              fontSize: 16,
+            style: FreevaTypography.bodyL.copyWith(
+              fontWeight: FontWeight.w600,
               height: 1.2,
               color: c.textPrimary,
               fontFeatures: const [FontFeature.tabularFigures()],

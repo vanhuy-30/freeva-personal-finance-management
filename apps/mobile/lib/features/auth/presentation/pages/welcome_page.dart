@@ -19,12 +19,7 @@ class WelcomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final c = context.colors;
-    final title = FreevaTypography.titleXl.copyWith(
-      fontSize: 34,
-      height: 40 / 34,
-      letterSpacing: -1,
-      color: c.textPrimary,
-    );
+    final title = FreevaTypography.titleXl.copyWith(color: c.textPrimary);
     return AuthScaffold(
       topGap: 30,
       footer: Column(
@@ -66,8 +61,7 @@ class WelcomePage extends StatelessWidget {
         const SizedBox(height: FreevaSpace.s3),
         Text(
           s.welcomeSub,
-          style: FreevaTypography.body.copyWith(
-            fontSize: 16,
+          style: FreevaTypography.bodyL.copyWith(
             height: 1.5,
             color: c.textSecondary,
           ),
@@ -263,7 +257,7 @@ class _FloatingRow extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(color: tint, shape: BoxShape.circle),
-            child: Icon(icon, size: 17, color: tintFg),
+            child: Icon(icon, size: 18, color: tintFg),
           ),
           const SizedBox(width: 10),
           Text(title, style: text),

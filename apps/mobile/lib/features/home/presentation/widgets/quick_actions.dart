@@ -87,7 +87,7 @@ class _Action extends StatelessWidget {
                     borderRadius: BorderRadius.circular(FreevaRadius.lg),
                     boxShadow: FreevaElevation.action,
                   ),
-                  child: Icon(icon, size: 22, color: color),
+                  child: Icon(icon, size: 24, color: color),
                 ),
                 const SizedBox(height: FreevaSpace.s2),
                 Text(

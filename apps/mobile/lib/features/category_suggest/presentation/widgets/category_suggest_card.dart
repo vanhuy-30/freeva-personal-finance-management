@@ -78,7 +78,7 @@ class _Card extends StatelessWidget {
                 ),
                 child: Icon(
                   categoryIcon(suggestion.iconToken),
-                  size: 17,
+                  size: 18,
                   color: c.tintBlueFg,
                 ),
               ),

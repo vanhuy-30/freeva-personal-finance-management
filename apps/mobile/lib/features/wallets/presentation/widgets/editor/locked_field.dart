@@ -52,10 +52,7 @@ class LockedField extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     value,
-                    style: FreevaTypography.body.copyWith(
-                      fontSize: 16,
-                      color: c.textOnWash,
-                    ),
+                    style: FreevaTypography.bodyL.copyWith(color: c.textOnWash),
                   ),
                 ],
               ),

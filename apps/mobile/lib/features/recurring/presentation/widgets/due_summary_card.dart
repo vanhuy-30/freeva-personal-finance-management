@@ -36,7 +36,7 @@ class DueSummaryCard extends StatelessWidget {
               color: c.tintBlue,
               borderRadius: BorderRadius.circular(FreevaRadius.xs),
             ),
-            child: Icon(LucideIcons.calendar, size: 17, color: c.tintBlueFg),
+            child: Icon(LucideIcons.calendar, size: 18, color: c.tintBlueFg),
           ),
           const SizedBox(width: 12),
           Expanded(

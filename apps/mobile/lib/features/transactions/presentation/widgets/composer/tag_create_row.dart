@@ -31,7 +31,7 @@ class TagCreateRow extends StatelessWidget {
               height: 22,
               decoration: BoxDecoration(
                 color: c.tintBlue,
-                borderRadius: BorderRadius.circular(7),
+                borderRadius: BorderRadius.circular(6),
               ),
               child: busy
                   ? Padding(

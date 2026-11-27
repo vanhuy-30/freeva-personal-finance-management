@@ -142,11 +142,7 @@ class _LoanDetailPageState extends State<LoanDetailPage> {
                     minor: loan.outstandingMinor,
                     currency: loan.currencyCode,
                     minorDigits: digits,
-                    style: FreevaTypography.moneyL.copyWith(
-                      fontSize: 30,
-                      height: 34 / 30,
-                      letterSpacing: -0.9,
-                    ),
+                    style: FreevaTypography.moneyL,
                     currencySize: 15,
                     currencyColor: c.textOnWash,
                   ),
@@ -281,7 +277,7 @@ class _NextCard extends StatelessWidget {
                   ),
                   child: Icon(
                     LucideIcons.calendarClock,
-                    size: 19,
+                    size: 20,
                     color: c.statusWarning,
                   ),
                 ),

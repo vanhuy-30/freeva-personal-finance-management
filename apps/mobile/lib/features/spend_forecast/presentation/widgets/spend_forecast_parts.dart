@@ -131,7 +131,7 @@ class _TopRow extends StatelessWidget {
                 ),
                 child: Icon(
                   categoryIcon(item.iconToken),
-                  size: 17,
+                  size: 18,
                   color: c.textOnWash,
                 ),
               ),

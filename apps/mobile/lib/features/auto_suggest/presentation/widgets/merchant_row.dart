@@ -46,7 +46,7 @@ class MerchantRow extends StatelessWidget {
                 ),
                 child: Icon(
                   categoryIcon(mapping.iconToken),
-                  size: 17,
+                  size: 18,
                   color: c.textOnWash,
                 ),
               ),

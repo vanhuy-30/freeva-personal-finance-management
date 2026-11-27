@@ -27,7 +27,7 @@ class SheetAmountField extends StatelessWidget {
   final String symbol;
   final VoidCallback onChanged;
 
-  /// 40/44 in a sheet; 48/52 with a 34 caret on a form page (DebtAdd).
+  /// 40/44 (`moneyDisplay`) everywhere an amount is typed.
   final double fontSize;
   final double lineHeight;
   final double caretHeight;
@@ -39,7 +39,7 @@ class SheetAmountField extends StatelessWidget {
     final style = FreevaTypography.moneyDisplay.copyWith(
       fontSize: fontSize,
       height: lineHeight / fontSize,
-      letterSpacing: -1.4,
+      letterSpacing: -1.2,
       color: c.textPrimary,
       fontFeatures: const [FontFeature.tabularFigures()],
     );

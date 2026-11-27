@@ -112,7 +112,7 @@ class _BudgetAskBodyState extends State<BudgetAskBody> {
               color: c.statusWarningBg,
               borderRadius: BorderRadius.circular(FreevaRadius.md),
             ),
-            child: Icon(LucideIcons.chartPie, size: 22, color: c.statusWarning),
+            child: Icon(LucideIcons.chartPie, size: 24, color: c.statusWarning),
           ),
         ),
         const SizedBox(height: 10),

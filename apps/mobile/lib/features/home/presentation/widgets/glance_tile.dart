@@ -90,9 +90,9 @@ class GlanceHeader extends StatelessWidget {
         height: 28,
         decoration: BoxDecoration(
           color: bg,
-          borderRadius: BorderRadius.circular(9),
+          borderRadius: BorderRadius.circular(10),
         ),
-        child: Icon(icon, size: 15, color: fg),
+        child: Icon(icon, size: 16, color: fg),
       ),
       const SizedBox(width: FreevaSpace.s2),
       Expanded(

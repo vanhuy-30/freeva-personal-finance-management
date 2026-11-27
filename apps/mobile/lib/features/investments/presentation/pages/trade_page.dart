@@ -13,6 +13,7 @@ import '../../../../core/widgets/freeva_card.dart';
 import '../../../../core/widgets/freeva_toast.dart';
 import '../../../../core/widgets/freeva_top_bar.dart';
 import '../../../../core/widgets/money_display.dart';
+import '../../../../core/widgets/total_card.dart';
 import '../../../../core/widgets/skeleton.dart';
 import '../../../auth/presentation/widgets/auth_message.dart';
 import '../../../net_worth/presentation/widgets/net_worth_labels.dart';
@@ -196,52 +197,51 @@ class _TradePageState extends State<TradePage> {
     ];
     return [
       DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: const Alignment(-0.6, -1),
-            end: const Alignment(0.6, 1),
-            colors: [c.tintBlue, c.bgSurface],
-          ),
-          border: Border.all(color: c.borderDivider),
-          borderRadius: BorderRadius.circular(24),
-        ),
+        decoration: totalCardDecoration(c),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                s.tradeCardTitle(inv.name),
-                style: FreevaTypography.bodyS.copyWith(
-                  fontWeight: FontWeight.w500,
-                  color: c.textSecondary,
-                ),
-              ),
-              const SizedBox(height: 12),
               Row(
                 children: [
+                  TotalCardIcon(
+                    icon: LucideIcons.trendingUp,
+                    background: c.tintBlue,
+                    foreground: c.tintBlueFg,
+                  ),
+                  const SizedBox(width: 10),
                   Expanded(
-                    child: Align(
-                      alignment: AlignmentDirectional.centerStart,
-                      child: value == null
-                          ? Text(
-                              s.investmentsUnpriced,
-                              style: FreevaTypography.titleL.copyWith(
-                                color: c.textSecondary,
-                              ),
-                            )
-                          : MoneyDisplay(
-                              minor: value,
-                              currency: inv.currencyCode,
-                              minorDigits: digits,
-                              style: FreevaTypography.moneyDisplayCompact
-                                  .copyWith(letterSpacing: -1),
-                              hidden: hidden,
-                            ),
+                    child: Text(
+                      s.tradeCardTitle(inv.name),
+                      style: FreevaTypography.bodyS.copyWith(
+                        fontWeight: FontWeight.w500,
+                        color: c.textSecondary,
+                      ),
                     ),
                   ),
                   if (bps != null && !hidden) InvestmentChangePill(bps: bps),
                 ],
+              ),
+              const SizedBox(height: 12),
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: value == null
+                    ? Text(
+                        s.investmentsUnpriced,
+                        style: FreevaTypography.titleL.copyWith(
+                          color: c.textSecondary,
+                        ),
+                      )
+                    : MoneyDisplay(
+                        minor: value,
+                        currency: inv.currencyCode,
+                        minorDigits: digits,
+                        style: FreevaTypography.moneyDisplayCompact.copyWith(
+                          letterSpacing: -1,
+                        ),
+                        hidden: hidden,
+                      ),
               ),
               if (price != null) ...[
                 const SizedBox(height: 4),
@@ -258,16 +258,9 @@ class _TradePageState extends State<TradePage> {
               ],
               const SizedBox(height: 12),
               DecoratedBox(
-                decoration: BoxDecoration(
-                  color: c.bgSurface.withValues(alpha: 0.8),
-                  border: Border.all(color: c.borderDivider),
-                  borderRadius: BorderRadius.circular(16),
-                ),
+                decoration: totalCardStatsDecoration(c),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 10,
-                  ),
+                  padding: totalCardStatsPadding,
                   child: Row(
                     children: [
                       Expanded(

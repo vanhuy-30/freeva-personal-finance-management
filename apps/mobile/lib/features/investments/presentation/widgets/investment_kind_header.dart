@@ -5,6 +5,7 @@ import '../../../../core/money/money_text.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/money_display.dart';
+import '../../../../core/widgets/total_card.dart';
 import '../../domain/investment.dart';
 import 'investment_asset_card.dart';
 import 'investment_labels.dart';
@@ -49,15 +50,7 @@ class InvestmentKindHeader extends StatelessWidget {
         ? formatMoneyText(v, digits, locale)
         : '${formatMoneyText(v, digits, locale)} $symbol';
     return DecoratedBox(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: const Alignment(-0.6, -1),
-          end: const Alignment(0.6, 1),
-          colors: [c.tintBlue, c.bgSurface],
-        ),
-        border: Border.all(color: c.borderDivider),
-        borderRadius: BorderRadius.circular(24),
-      ),
+      decoration: totalCardDecoration(c),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
         child: Column(
@@ -65,45 +58,36 @@ class InvestmentKindHeader extends StatelessWidget {
           children: [
             Row(
               children: [
-                DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: bg,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: SizedBox.square(
-                    dimension: 32,
-                    child: Icon(investmentKindIcon(kind), size: 16, color: fg),
-                  ),
+                TotalCardIcon(
+                  icon: investmentKindIcon(kind),
+                  background: bg,
+                  foreground: fg,
                 ),
                 const SizedBox(width: 10),
-                Text(
-                  s.investmentHolding(investmentKindName(s, kind)),
-                  style: FreevaTypography.bodyS.copyWith(
-                    fontWeight: FontWeight.w500,
-                    color: c.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
                 Expanded(
-                  child: Align(
-                    alignment: AlignmentDirectional.centerStart,
-                    child: MoneyDisplay(
-                      minor: row.currentValueMinor,
-                      currency: currency,
-                      minorDigits: digits,
-                      style: FreevaTypography.moneyDisplayCompact.copyWith(
-                        letterSpacing: -1,
-                      ),
-                      hidden: hidden,
+                  child: Text(
+                    s.investmentHolding(investmentKindName(s, kind)),
+                    style: FreevaTypography.bodyS.copyWith(
+                      fontWeight: FontWeight.w500,
+                      color: c.textSecondary,
                     ),
                   ),
                 ),
                 if (bps != null && !hidden) InvestmentChangePill(bps: bps),
               ],
+            ),
+            const SizedBox(height: 12),
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: MoneyDisplay(
+                minor: row.currentValueMinor,
+                currency: currency,
+                minorDigits: digits,
+                style: FreevaTypography.moneyDisplayCompact.copyWith(
+                  letterSpacing: -1,
+                ),
+                hidden: hidden,
+              ),
             ),
             if (quantity != null) ...[
               const SizedBox(height: 4),
@@ -117,16 +101,9 @@ class InvestmentKindHeader extends StatelessWidget {
             ],
             const SizedBox(height: 12),
             DecoratedBox(
-              decoration: BoxDecoration(
-                color: c.bgSurface.withValues(alpha: 0.8),
-                border: Border.all(color: c.borderDivider),
-                borderRadius: BorderRadius.circular(16),
-              ),
+              decoration: totalCardStatsDecoration(c),
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 10,
-                ),
+                padding: totalCardStatsPadding,
                 child: Row(
                   children: [
                     Expanded(

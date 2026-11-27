@@ -14,6 +14,7 @@ import '../../../../core/widgets/freeva_dialog.dart';
 import '../../../../core/widgets/freeva_toast.dart';
 import '../../../../core/widgets/freeva_top_bar.dart';
 import '../../../../core/widgets/money_display.dart';
+import '../../../../core/widgets/total_card.dart';
 import '../../../../core/widgets/skeleton.dart';
 import '../../../auth/presentation/widgets/auth_message.dart';
 import '../../../net_worth/presentation/widgets/net_worth_labels.dart';
@@ -184,41 +185,26 @@ class _DepositPageState extends State<DepositPage> {
         hidden ? '••••••' : formatMoneyText(v, digits, locale);
     return [
       DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: const Alignment(-0.6, -1),
-            end: const Alignment(0.6, 1),
-            colors: [c.tintBlue, c.bgSurface],
-          ),
-          border: Border.all(color: c.borderDivider),
-          borderRadius: BorderRadius.circular(24),
-        ),
+        decoration: totalCardDecoration(c),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                s.depositValueToday,
-                style: FreevaTypography.bodyS.copyWith(
-                  fontWeight: FontWeight.w500,
-                  color: c.textSecondary,
-                ),
-              ),
-              const SizedBox(height: 12),
               Row(
                 children: [
+                  TotalCardIcon(
+                    icon: LucideIcons.landmark,
+                    background: c.tintBlue,
+                    foreground: c.tintBlueFg,
+                  ),
+                  const SizedBox(width: 10),
                   Expanded(
-                    child: Align(
-                      alignment: AlignmentDirectional.centerStart,
-                      child: MoneyDisplay(
-                        minor: deposit.costBasisMinor,
-                        currency: deposit.currencyCode,
-                        minorDigits: digits,
-                        style: FreevaTypography.moneyDisplayCompact.copyWith(
-                          letterSpacing: -1,
-                        ),
-                        hidden: hidden,
+                    child: Text(
+                      s.depositValueToday,
+                      style: FreevaTypography.bodyS.copyWith(
+                        fontWeight: FontWeight.w500,
+                        color: c.textSecondary,
                       ),
                     ),
                   ),
@@ -226,17 +212,23 @@ class _DepositPageState extends State<DepositPage> {
                 ],
               ),
               const SizedBox(height: 12),
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  color: c.bgSurface.withValues(alpha: 0.8),
-                  border: Border.all(color: c.borderDivider),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 10,
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: MoneyDisplay(
+                  minor: deposit.costBasisMinor,
+                  currency: deposit.currencyCode,
+                  minorDigits: digits,
+                  style: FreevaTypography.moneyDisplayCompact.copyWith(
+                    letterSpacing: -1,
                   ),
+                  hidden: hidden,
+                ),
+              ),
+              const SizedBox(height: 12),
+              DecoratedBox(
+                decoration: totalCardStatsDecoration(c),
+                child: Padding(
+                  padding: totalCardStatsPadding,
                   child: Row(
                     children: [
                       Expanded(

@@ -64,9 +64,9 @@ class ImportCategoryTile extends StatelessWidget {
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: c.bgSubtle,
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          child: Icon(icon, size: 15, color: c.textOnWash),
+                          child: Icon(icon, size: 16, color: c.textOnWash),
                         ),
                         const SizedBox(width: 10),
                         Flexible(

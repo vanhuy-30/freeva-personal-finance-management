@@ -135,8 +135,7 @@ class _DailyLogTimeDialogState extends State<DailyLogTimeDialog> {
                     ExcludeSemantics(
                       child: Text(
                         ':',
-                        style: FreevaTypography.titleL.copyWith(
-                          fontSize: 26,
+                        style: FreevaTypography.headline.copyWith(
                           color: c.textPrimary,
                         ),
                       ),

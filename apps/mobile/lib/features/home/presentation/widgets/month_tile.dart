@@ -88,7 +88,7 @@ class MonthTile extends StatelessWidget {
                 if (percent != null)
                   Text(
                     s.homeMonthUsed,
-                    style: note.copyWith(fontSize: 10, height: 1.2),
+                    style: note.copyWith(fontSize: 11, height: 1.2),
                   ),
               ],
             ),

@@ -124,7 +124,7 @@ class _BodyState extends State<_Body> {
                   height: 22,
                   decoration: BoxDecoration(
                     color: on ? c.actionPrimary : null,
-                    borderRadius: BorderRadius.circular(7),
+                    borderRadius: BorderRadius.circular(6),
                     border: on
                         ? null
                         : Border.all(

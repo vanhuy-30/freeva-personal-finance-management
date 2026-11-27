@@ -226,7 +226,7 @@ class DebtHistoryRow extends StatelessWidget {
                 ),
                 child: Icon(
                   icon,
-                  size: 17,
+                  size: 18,
                   color: incoming ? c.tintGreenFg : c.textOnWash,
                 ),
               ),
