@@ -89,7 +89,7 @@ void main() {
     final g = await open(tester, verified: false);
     expect(find.text('Email · chưa xác nhận'), findsOneWidget);
     // Confirmed in the browser meanwhile.
-    g.profiles.value = Profile(
+    g.profiles.value = const Profile(
       locale: 'vi',
       currency: 'VND',
       timezone: 'Asia/Ho_Chi_Minh',
