@@ -4,6 +4,7 @@ Nhật ký repo/process — không phải App Store release notes.
 
 ## 2026-11-27
 
+- `MOB-P2-019`: popup xóa tài khoản riêng (cảnh báo, xuất dữ liệu trước, mật khẩu, lỗi ngay dưới ô), xóa xong về đăng nhập với "Đã xóa tài khoản.". Board G · 12 và 12b. Không đổi API.
 - `MOB-P2-018`: màn Đồng bộ có nút "Cập nhật" (mở App Store / Play Store; iOS ẩn tới khi có `STORE_URL_IOS`) và "Sửa" cho thay đổi lỗi do dữ liệu (thay tại chỗ trong hàng đợi, gửi ngay). Không đổi API. [Chi tiết](../architecture/mobile-sync.md).
 - `BE-P2-017` / `MOB-P2-017`: Hồ sơ cho biết email đã xác nhận hay chưa (`GET /profile` thêm `emailVerifiedAt`, chỉ đọc; không migration) và có "Gửi link xác nhận" khi chưa; tự cập nhật khi quay lại app. Board G · 2c.
 - `BE-P2-020` / `MOB-P2-020`: danh sách giao dịch và xuất CSV sắp theo giờ trong ngày (dòng không có giờ xếp cuối ngày); dòng danh sách hiện giờ nhỏ dưới số tiền. Không migration.

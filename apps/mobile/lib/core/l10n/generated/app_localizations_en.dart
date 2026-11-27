@@ -3630,10 +3630,16 @@ class SEn extends S {
 
   @override
   String get meDeleteBody =>
-      'All your data is deleted right away and can\'t be restored. You can export it first.';
+      'All your data is deleted right away and cannot be restored.';
 
   @override
   String get meDeleteConfirm => 'Delete permanently';
+
+  @override
+  String get meDeleteExportFirst => 'Export your data first';
+
+  @override
+  String get authAccountDeleted => 'Account deleted.';
 
   @override
   String get meDeleteError => 'Couldn\'t delete. Your data is untouched.';

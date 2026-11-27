@@ -132,7 +132,7 @@ Còn lệch có chủ đích hoặc chưa làm: ô thả khi kéo sắp xếp v�
 
 Tám nhóm A–H, bảy nhóm Phase 3, nhóm P, Q của Phase 4 và nhóm R, S, T, U của Phase 5 đã chốt. Còn:
 
-- **Popup xoá tài khoản** (nhóm G): đã làm bằng hộp xác nhận chung ở `MOB-P2-011`; chưa vẽ trên board. Xuất dữ liệu đã vẽ ở nhóm O.
+- **Popup xoá tài khoản** (nhóm G, G · 12 và 12b): đã vẽ và làm ở `MOB-P2-019`. Thiếu biến thể tài khoản chỉ đăng nhập OAuth (chờ Google/Apple trên mobile).
 - **Khoản bạn đi mượn** (nhóm K): chi tiết và sheet trả giống khoản cho mượn, chỉ đổi chữ; chưa vẽ riêng.
 - **Hộp thư thông báo** vẽ lại 2026-11-04 (N.7, N.8): thay bản đang chạy; chưa code.
 

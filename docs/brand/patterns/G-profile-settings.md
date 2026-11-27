@@ -23,6 +23,7 @@ Canvas: trang **12 · Cá nhân, dữ liệu, đồng bộ**, khối G.
 | 3 | Giao diện (sheet) | 3 thẻ chọn có ảnh thu nhỏ: Sáng · Tối · Theo máy | Đổi ngay khi chọn |
 | 4 | Bảo mật | **Mở khoá:** Khoá bằng mã PIN, Mở bằng Face ID (công tắc), Đổi mã PIN. **Đăng nhập:** Phiên đăng nhập (số), Đổi mật khẩu | Face ID khoá khi chưa có PIN, kèm lý do ngắn |
 | 5 | Phiên đăng nhập | Mỗi dòng một thiết bị (`BE-P6-001`): tên máy ("iPhone 15 Pro"), máy này có chip "Đang dùng"; máy khác có nút "Đăng xuất" (viền đỏ). Phiên cũ chưa có tên máy: "Máy này" / "Thiết bị không rõ". "Đăng xuất khỏi mọi thiết bị" (máy này vẫn đăng nhập) | Dòng phụ "iOS 18.1 · Đăng nhập 02/10" (máy này) hoặc "Android 14 · 3 giờ trước" (lần dùng gần nhất) |
+| 12 | Xóa tài khoản (popup) | Xem bảng phụ thuộc: "Xoá tài khoản". 12b: sai mật khẩu | Boards `MeDeleteAccount`, `MeDeleteAccountError` (x 1380, 1840, y 1814) |
 | 6 | Đăng xuất (popup) | "Đăng xuất khỏi máy này?" · "Dữ liệu vẫn nằm trong tài khoản của bạn." · Huỷ / Đăng xuất (đỏ) | |
 | 7 | Nhãn | Ô tìm, danh sách nhãn + số giao dịch, nút + tạo nhãn. Chạm nhãn mở danh sách giao dịch đã lọc | |
 | 8 | Góp ý | "Bạn muốn nói gì với Freeva?" Thẻ chọn một dòng: Lỗi · Ý tưởng · Lời khen. "Về phần nào?": Ghi chi · Báo cáo · Ví · Danh mục · Giao diện · Khác. Ô nội dung (nhãn đổi theo loại, đếm ký tự). Ảnh chụp màn hình (ảnh nhỏ có nút bỏ + ô thêm). Công tắc "Trả lời tôi qua email". "Gửi góp ý" | Modal |
@@ -61,7 +62,7 @@ Canvas: trang **12 · Cá nhân, dữ liệu, đồng bộ**, khối G.
 | Thông báo | Hộp thư và công tắc `BE-P2-E05`; giờ yên theo timezone hồ sơ. Push FCM `BE-P2-015`. |
 | Đổi email | API đổi email có xác nhận lại qua thư. |
 | Đổi mật khẩu khi đang đăng nhập | API mới (Phase 1 chỉ có đặt lại qua email). |
-| Xoá tài khoản | Hộp xác nhận (`MOB-P2-011`): hỏi lại một lần, xoá ngay, không mật khẩu, không thời gian chờ huỷ. Popup chưa vẽ trên board, dùng hộp xác nhận chung. |
+| Xoá tài khoản | Một popup (board 12, `MOB-P2-019`): "Xóa tài khoản?" · "Mọi dữ liệu của bạn sẽ bị xóa ngay và không khôi phục được." · liên kết "Xuất dữ liệu trước" (mở màn xuất, popup đóng) · ô mật khẩu có nút mắt · Huỷ / Xóa vĩnh viễn (đỏ, tắt khi ô trống hoặc đang gửi). Xoá ngay, không thời gian chờ. Lỗi hiện ngay dưới ô và popup ở lại, dữ liệu còn nguyên: sai mật khẩu "Mật khẩu hiện tại chưa đúng." (board 12b), bị giới hạn "Thử lại sau n phút nhé.", mất mạng "Chưa xóa được. Dữ liệu của bạn vẫn còn nguyên.". Đang gửi thì không đóng được. Phiên hết hạn thì về đăng nhập với lỗi hết phiên. Xong thì về đăng nhập với "Đã xóa tài khoản.". Màn nhỏ hoặc chữ lớn: hai nút xếp dọc, Xóa trước. Tài khoản chỉ đăng nhập OAuth (server cần phiên mới ≤ 10 phút, `SEC-P6-002`) chưa vẽ: Google/Apple trên mobile còn "Sắp có" và hồ sơ chưa có cờ có mật khẩu. |
 | Góp ý | API nhận nội dung, loại, chủ đề, ảnh, đồng ý liên hệ; Phase 1 chỉ sao chép. Ảnh có thể chứa số dư: nhắc trước khi gửi. |
 | Nhãn | API mới có danh sách và tạo; cần đổi tên, xoá, số giao dịch mỗi nhãn. |
 | Phiên đăng nhập | API không có tên máy; hiện "Máy này" / "Phiên khác". |

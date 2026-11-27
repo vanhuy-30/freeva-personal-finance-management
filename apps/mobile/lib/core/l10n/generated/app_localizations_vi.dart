@@ -3579,10 +3579,16 @@ class SVi extends S {
 
   @override
   String get meDeleteBody =>
-      'Mọi dữ liệu của bạn sẽ bị xóa ngay và không khôi phục được. Bạn có thể xuất dữ liệu trước.';
+      'Mọi dữ liệu của bạn sẽ bị xóa ngay và không khôi phục được.';
 
   @override
   String get meDeleteConfirm => 'Xóa vĩnh viễn';
+
+  @override
+  String get meDeleteExportFirst => 'Xuất dữ liệu trước';
+
+  @override
+  String get authAccountDeleted => 'Đã xóa tài khoản.';
 
   @override
   String get meDeleteError => 'Chưa xóa được. Dữ liệu của bạn vẫn còn nguyên.';

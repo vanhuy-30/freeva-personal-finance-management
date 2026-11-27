@@ -225,9 +225,6 @@ void main() {
         await tester.ensureVisible(find.text('Xoá tài khoản'));
         await tester.tap(find.text('Xoá tài khoản'));
         await tester.pumpAndSettle();
-        await tester.tap(find.text('Xóa vĩnh viễn'));
-        await tester.pumpAndSettle();
-        expect(find.text('Nhập mật khẩu để tiếp tục'), findsOneWidget);
         await tester.enterText(
           find.descendant(
             of: find.byType(Dialog),
@@ -235,7 +232,8 @@ void main() {
           ),
           password,
         );
-        await tester.tap(find.text('Xong'));
+        await tester.pump();
+        await tester.tap(find.text('Xóa vĩnh viễn'));
         await tester.pumpAndSettle();
       }
 

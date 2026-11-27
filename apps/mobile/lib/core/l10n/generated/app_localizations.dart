@@ -6471,7 +6471,7 @@ abstract class S {
   /// No description provided for @meDeleteBody.
   ///
   /// In en, this message translates to:
-  /// **'All your data is deleted right away and can\'t be restored. You can export it first.'**
+  /// **'All your data is deleted right away and cannot be restored.'**
   String get meDeleteBody;
 
   /// No description provided for @meDeleteConfirm.
@@ -6479,6 +6479,18 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Delete permanently'**
   String get meDeleteConfirm;
+
+  /// No description provided for @meDeleteExportFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Export your data first'**
+  String get meDeleteExportFirst;
+
+  /// No description provided for @authAccountDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Account deleted.'**
+  String get authAccountDeleted;
 
   /// No description provided for @meDeleteError.
   ///

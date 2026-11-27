@@ -15,7 +15,7 @@ import '../../domain/session_alert_notifier.dart';
 /// in the email.
 enum AuthStep { welcome, signUp, login, register, forgot, reset }
 
-enum AuthNotice { verificationSent, resetSent, passwordChanged }
+enum AuthNotice { verificationSent, resetSent, passwordChanged, accountDeleted }
 
 abstract class AuthViewModel extends ChangeNotifier {
   AuthStage get stage;
@@ -484,6 +484,7 @@ class DefaultAuthViewModel extends AuthViewModel {
         stage = AuthStage.signedOut;
         _resetFlow();
         sessions = [];
+        notice = AuthNotice.accountDeleted;
       });
   @override
   void sessionExpired() {

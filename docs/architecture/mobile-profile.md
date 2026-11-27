@@ -61,6 +61,6 @@ schema mới; tận dụng `User`, `Currency`, `version` hiện có.
 ## Xuất dữ liệu và xóa tài khoản — MOB-P2-011
 
 - Hồ sơ có dòng "Xuất dữ liệu": lấy `GET /account/export`, ghi file `freeva-export-YYYYMMDD.json` đúng body API (không decode lại), mở share sheet (`share_plus`), rồi xóa file tạm. Đóng share sheet không phải lỗi.
-- "Xoá tài khoản": hộp xác nhận một lần, `DELETE /account`, không mật khẩu, không cửa sổ chờ. Thành công thì xóa phiên, PIN và hàng đợi sync trên máy, về màn vào app. Lỗi mạng hoặc server từ chối thì không xóa gì local và báo chưa xóa được.
+- "Xoá tài khoản" (`MOB-P2-019`): một popup có cảnh báo, "Xuất dữ liệu trước", ô mật khẩu; `DELETE /account` gửi `{password}` (server cần mật khẩu hiện tại, `SEC-P6-002`), không cửa sổ chờ. Lỗi (sai mật khẩu, bị giới hạn 5 lần mỗi 15 phút, mất mạng) hiện dưới ô và popup ở lại, không xóa gì local. Phiên hết hạn thì về đăng nhập. Thành công thì xóa phiên, PIN và hàng đợi sync trên máy, về màn đăng nhập với "Đã xóa tài khoản." (`AuthNotice.accountDeleted`).
 - Không log email, ghi chú hay số tiền.
 

@@ -197,3 +197,11 @@ Phase 1 giữ đóng. Các ticket dưới đây không đổi số 28/28.
 - DoD: thẻ "Cần cập nhật Freeva" có nút mở trang app trên cửa hàng (ẩn khi nền tảng chưa có đường dẫn; lỗi mở thì báo). Thay đổi lỗi do dữ liệu (Thêm/Sửa với `invalid`, `categoryKind`, `walletMissing`) có "Sửa": mở form với giá trị đã xếp hàng, lưu thì thay tại chỗ trong hàng đợi (giữ clientId, `opId`, thứ tự) và gửi ngay; hủy không đổi gì; kiểm tra luật như khi ghi mới, không gọi server trước. Xoá, khôi phục, mục tiêu đã mất, và lỗi tạm thời không có "Sửa". Màn nhỏ × chữ lớn vẫn có đủ nút. Test đơn vị, widget, golden.
 - Note: 2026-11-27. Đường dẫn cửa hàng là `--dart-define` (không phải khoá cấu hình server) vì là định danh của bản build; **iOS chưa có App Store id nên nút ẩn tới khi đặt `STORE_URL_IOS`**. Chi tiết: [mobile-sync.md](../docs/architecture/mobile-sync.md).
 
+### MOB-P2-019 — Popup xóa tài khoản có thiết kế riêng
+- Status: done
+- Module: 2, 21
+- Gate: v1
+- Depends: MOB-P2-011, SEC-P6-002
+- DoD: một popup (board G · 12, 12b) thay cho hai hộp rời: cảnh báo không khôi phục, "Xuất dữ liệu trước" mở màn xuất, ô mật khẩu có nút mắt, Huỷ / Xóa vĩnh viễn. Xóa tắt khi ô trống hoặc đang gửi; đang gửi thì không đóng được. Lỗi hiện ngay dưới ô và popup ở lại với dữ liệu còn nguyên (sai mật khẩu, bị giới hạn kèm số phút, mất mạng). Phiên hết hạn thì về đăng nhập với lỗi hết phiên, không nói "đã xóa". Xong thì về đăng nhập với "Đã xóa tài khoản.". Màn nhỏ × chữ lớn xếp nút dọc. Sửa các câu cũ "không mật khẩu" trong docs. Test widget và golden.
+- Note: 2026-11-27. Biến thể tài khoản chỉ OAuth chưa làm (Google/Apple mobile còn "Sắp có"; hồ sơ chưa có cờ có mật khẩu).
+

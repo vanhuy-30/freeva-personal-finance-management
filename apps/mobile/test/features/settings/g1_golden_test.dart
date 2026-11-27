@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/core/di/injection.dart';
+import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/goals/presentation/viewmodels/goal_view_model.dart';
 import 'package:mobile/features/profile/presentation/pages/profile_page.dart';
 import 'package:mobile/features/settings/presentation/pages/security_page.dart';
@@ -85,7 +86,9 @@ void main() {
       then: () async {
         await t.tap(find.text('Giao diện'));
         await t.pump(const Duration(milliseconds: 400));
-        await t.pump(const Duration(milliseconds: 400));
+        await t.pump();
+        await t.pump(const Duration(seconds: 1));
+        await t.pump(const Duration(seconds: 1));
       },
     );
   });
@@ -141,6 +144,51 @@ void main() {
         scale: 1.3,
         size: const Size(320, 900),
         emailVerified: false,
+      );
+    },
+  );
+  testWidgets('delete account popup', skip: !Platform.isMacOS, (t) async {
+    await shot(
+      t,
+      (g) {
+        g.api.failure = const AuthFailure(AuthError.credentials);
+        return const ProfilePage();
+      },
+      'delete_account',
+      size: const Size(390, 844),
+      then: () async {
+        await t.tap(find.text('Xoá tài khoản'));
+        await t.pumpAndSettle();
+        await t.enterText(find.byType(TextField).last, 'matkhau');
+        await t.pump();
+        await t.tap(find.text('Xóa vĩnh viễn'));
+        await t.pumpAndSettle();
+      },
+    );
+  });
+  testWidgets(
+    'delete account popup with an error, dark 1.3x',
+    skip: !Platform.isMacOS,
+    (t) async {
+      await shot(
+        t,
+        (g) {
+          g.api.failure = const AuthFailure(AuthError.credentials);
+          return const ProfilePage();
+        },
+        'delete_account_error',
+        dark: true,
+        scale: 1.3,
+        size: const Size(320, 900),
+        then: () async {
+          await t.ensureVisible(find.text('Xoá tài khoản'));
+          await t.tap(find.text('Xoá tài khoản'));
+          await t.pumpAndSettle();
+          await t.enterText(find.byType(TextField).last, 'matkhau');
+          await t.pump();
+          await t.tap(find.text('Xóa vĩnh viễn'));
+          await t.pumpAndSettle();
+        },
       );
     },
   );
