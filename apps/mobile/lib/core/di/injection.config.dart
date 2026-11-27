@@ -17,6 +17,7 @@ import 'package:mobile/core/config/app_config.dart' as _i467;
 import 'package:mobile/core/feature_flags/feature_flag_service.dart' as _i1017;
 import 'package:mobile/core/logging/app_logger.dart' as _i766;
 import 'package:mobile/core/logging/app_logger_impl.dart' as _i760;
+import 'package:mobile/features/auth/data/app_links_source.dart' as _i892;
 import 'package:mobile/features/auth/data/auth_api.dart' as _i88;
 import 'package:mobile/features/auth/data/auth_data_module.dart' as _i901;
 import 'package:mobile/features/auth/data/auth_platform.dart' as _i810;
@@ -26,6 +27,7 @@ import 'package:mobile/features/auth/data/local_session_alert_notifier.dart'
     as _i165;
 import 'package:mobile/features/auth/domain/auth_repository.dart' as _i173;
 import 'package:mobile/features/auth/domain/auth_use_cases.dart' as _i253;
+import 'package:mobile/features/auth/domain/deep_link_service.dart' as _i899;
 import 'package:mobile/features/auth/domain/session_alert_notifier.dart'
     as _i54;
 import 'package:mobile/features/auth/presentation/auth_presentation_module.dart'
@@ -274,6 +276,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i938.SyncQueueVault>(() => _i938.SecureSyncQueueVault());
     gh.lazySingleton<_i810.AuthVault>(
         () => _i810.SecureAuthVault(gh<_i467.AppConfig>()));
+    gh.lazySingleton<_i899.LinkSource>(() => _i892.AppLinksSource());
     gh.lazySingleton<_i54.SessionAlertNotifier>(
         () => _i165.LocalSessionAlertNotifier());
     gh.lazySingleton<_i497.ServerConfigVault>(
@@ -288,6 +291,10 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i429.ShareAccountFileSharer());
     gh.lazySingleton<_i855.AppLimitsSource>(
         () => serverConfigModule.appLimits(gh<_i855.AppLimitsStore>()));
+    gh.lazySingleton<_i899.DeepLinkService>(() => _i899.DeepLinkService(
+          gh<_i899.LinkSource>(),
+          gh<_i766.AppLogger>(),
+        ));
     gh.lazySingleton<_i88.AuthApi>(() => _i88.HttpAuthApi(
           gh<_i467.AppConfig>(),
           gh<_i766.AppLogger>(),

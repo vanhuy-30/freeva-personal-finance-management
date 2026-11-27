@@ -46,6 +46,9 @@ services:
       # Phase 1 auth: openssl rand -hex 32; independent of staff credential.
       - key: AUTH_SECRET_KEY
         sync: false
+      # Links in verify/reset emails open these pages on the API. Switch to the freeva web domain later.
+      - key: APP_LINK_BASE_URL
+        value: https://freeva-api-staging.onrender.com
       # Resend SMTP: alternate TLS port; Render Free blocks 25/465/587.
       - key: MAIL_PROVIDER
         value: resend

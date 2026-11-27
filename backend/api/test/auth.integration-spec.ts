@@ -10,6 +10,7 @@ import { AuthModule } from '../src/modules/auth/auth.module';
 import { AUTH_REPOSITORY } from '../src/modules/auth/domain/auth.repository';
 import { AuthService, TERMS_VERSION } from '../src/modules/auth/auth.service';
 import { AuthCrypto } from '../src/modules/auth/infrastructure/auth-crypto';
+import { AUTH_LINK_PATHS } from '../src/modules/auth/auth-link';
 import { AuthMailWorker } from '../src/modules/auth/infrastructure/auth-mail.worker';
 import { PrismaProfileRepository } from '../src/modules/profile/infrastructure/prisma-profile.repository';
 import { PrismaAuthRepository } from '../src/modules/auth/infrastructure/prisma-auth.repository';
@@ -92,7 +93,7 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
       .useValue({ assertEnabled: jest.fn(), verify: oauthVerify })
       .compile();
     app = module.createNestApplication();
-    app.setGlobalPrefix('api');
+    app.setGlobalPrefix('api', { exclude: Object.values(AUTH_LINK_PATHS) });
     app.useGlobalPipes(
       new ValidationPipe({
         whitelist: true,
@@ -727,6 +728,38 @@ describe('BE-P1-001 / BE-P1-002 HTTP + PostgreSQL', () => {
         where: { action: 'auth.reset_password', outcome: 'success' },
       }),
     ).toBe(1);
+  });
+
+  it('emails a link whose fragment token works, and opening the landing page never consumes it', async () => {
+    const email = 'owner@example.test';
+    const linkToken = async (purpose: 'verify' | 'reset') => {
+      await worker.flush();
+      const message = sendMail.mock.calls.at(-1)?.[0] as { text: string };
+      const url = new URL(/https?:\/\/\S+/.exec(message.text)![0]);
+      expect(url.pathname).toBe(purpose === 'verify' ? '/verify-email' : '/reset-password');
+      expect(url.search).toBe('');
+      const token = new URLSearchParams(url.hash.slice(1)).get('token')!;
+      expect(token).toMatch(/^[a-f0-9]{64}$/);
+      expect(message.text.split(token)).toHaveLength(2);
+      return { token, path: url.pathname };
+    };
+
+    await request('auth/register', { email, password });
+    const verify = await linkToken('verify');
+    for (const method of ['GET', 'HEAD']) {
+      const page = await fetch(`${base}${verify.path}`, { method });
+      expect(page.status).toBe(200);
+    }
+    expect((await request('auth/verify-email', { token: verify.token })).status).toBe(204);
+    expect((await request('auth/verify-email', { token: verify.token })).status).toBe(400);
+
+    await request('auth/password-resets', { email });
+    const reset = await linkToken('reset');
+    expect((await fetch(`${base}${reset.path}`)).status).toBe(200);
+    const newPassword = 'brand new secure password 5';
+    expect((await request('auth/reset-password', { token: reset.token, password: newPassword })).status).toBe(204);
+    expect((await request('auth/reset-password', { token: reset.token, password: newPassword })).status).toBe(400);
+    expect((await request('auth/login', { email, password: newPassword })).status).toBe(200);
   });
 
   it('rejects expired/replaced tokens; reset does not verify unverified accounts', async () => {

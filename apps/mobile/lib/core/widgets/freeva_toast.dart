@@ -28,8 +28,11 @@ void showFreevaToast(
   bool success = false,
   String? actionLabel,
   VoidCallback? onAction,
+  OverlayState? overlay,
 }) {
-  final overlay = Overlay.maybeOf(context, rootOverlay: true);
+  // [overlay] is for callers above the navigator (no overlay in their context),
+  // who take it from the navigator key.
+  overlay ??= Overlay.maybeOf(context, rootOverlay: true);
   if (overlay == null) return;
   _current?.remove();
   late final OverlayEntry entry;

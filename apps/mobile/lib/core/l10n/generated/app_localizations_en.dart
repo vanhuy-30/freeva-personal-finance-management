@@ -37,7 +37,8 @@ class SEn extends S {
   String get authInvalidCredentials => 'Email or password is incorrect.';
 
   @override
-  String get authInvalidToken => 'Code is invalid, already used, or expired.';
+  String get authInvalidToken =>
+      'This link is invalid, already used, or expired.';
 
   @override
   String authRateLimited(int seconds) {
@@ -6531,4 +6532,29 @@ class SEn extends S {
   String homeInvestLoss(String amount) {
     return 'Loss $amount';
   }
+
+  @override
+  String get authLinkInvalid =>
+      'This link is not valid. Open the link in your email again.';
+
+  @override
+  String get authLinkSignOutTitle => 'Reset your password?';
+
+  @override
+  String get authLinkSignOutBody =>
+      'You will be signed out of this device to set a new password. Your data stays in your account.';
+
+  @override
+  String get authLinkSignOutUnsynced =>
+      'You will be signed out of this device to set a new password. Changes not yet synced on this device will be lost.';
+
+  @override
+  String get authLinkSignOutConfirm => 'Reset';
+
+  @override
+  String get authLinkSignOutFailed =>
+      'Could not sign out. Try opening the link in your email again.';
+
+  @override
+  String get authRequestNewLink => 'Request a new link';
 }

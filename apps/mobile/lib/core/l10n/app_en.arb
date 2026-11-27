@@ -15,7 +15,7 @@
   "authPassword": "Password",
   "authInvalidInput": "Check your email and password.",
   "authInvalidCredentials": "Email or password is incorrect.",
-  "authInvalidToken": "Code is invalid, already used, or expired.",
+  "authInvalidToken": "This link is invalid, already used, or expired.",
   "authRateLimited": "Too many requests. Try again in {seconds} seconds.",
   "authNetworkError": "Unable to connect. Check your connection and retry.",
   "authStorageError": "Secure storage is unavailable. Please retry.",
@@ -3087,5 +3087,12 @@
   "homeInvestVsCost": "{amount}",
   "@homeInvestVsCost": {"placeholders": {"amount": {"type": "String"}}},
   "homeInvestLoss": "Loss {amount}",
-  "@homeInvestLoss": {"placeholders": {"amount": {"type": "String"}}}
+  "@homeInvestLoss": {"placeholders": {"amount": {"type": "String"}}},
+  "authLinkInvalid": "This link is not valid. Open the link in your email again.",
+  "authLinkSignOutTitle": "Reset your password?",
+  "authLinkSignOutBody": "You will be signed out of this device to set a new password. Your data stays in your account.",
+  "authLinkSignOutUnsynced": "You will be signed out of this device to set a new password. Changes not yet synced on this device will be lost.",
+  "authLinkSignOutConfirm": "Reset",
+  "authLinkSignOutFailed": "Could not sign out. Try opening the link in your email again.",
+  "authRequestNewLink": "Request a new link"
 }

@@ -6279,12 +6279,48 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/AuthCredentialsRequest'
+  /verify-email:
+    get:
+      operationId: verifyEmailPage
+      tags:
+      - Auth
+      summary: Landing page for the link in the verification email (not under /api)
+      description: 'Static HTML. The single-use token is in the URL fragment, which
+        is never sent to the server. Opening the page never consumes the token; the
+        page calls POST /api/v1/auth/verify-email after the person taps the button.
+        Served with its own nonce-based Content-Security-Policy, Cache-Control: no-store
+        and Referrer-Policy: no-referrer.'
+      security: []
+      responses:
+        '200':
+          description: HTML page
+          content:
+            text/html:
+              schema:
+                type: string
+  /reset-password:
+    get:
+      operationId: resetPasswordPage
+      tags:
+      - Auth
+      summary: Landing page for the link in the password-reset email (not under /api)
+      description: 'Static HTML with the token in the URL fragment. The page offers
+        a button that opens the app through freeva://reset-password?token=…; it never
+        calls the API and never consumes the token.'
+      security: []
+      responses:
+        '200':
+          description: HTML page
+          content:
+            text/html:
+              schema:
+                type: string
   /api/v1/auth/email-verifications:
     post:
       operationId: requestEmailVerification
       tags:
       - Auth
-      summary: Request/retry verification email (24-hour single-use token); replaces
+      summary: Request/retry verification email (24-hour single-use link); replaces
         previous token
       security: []
       responses:
@@ -6375,7 +6411,7 @@ paths:
       operationId: requestPasswordReset
       tags:
       - Auth
-      summary: Request reset email (30-minute single-use token); same response for unknown
+      summary: Request reset email (30-minute single-use link); same response for unknown
         accounts
       security: []
       responses:

@@ -35,7 +35,7 @@
 - **Trả góp thẻ:** `BE-P3-009` done 2026-11-03 (BE): `/card-installments`, lịch trả góp trên khoản chi của ví thẻ (không ghi tiền, khoản mua vẫn tính một lần), `due` cho "số phải trả kỳ này", đóng lịch khi trả trước/hủy. `MOB-P3-009` done 2026-11-05: chuyển khoản chi trên thẻ thành trả góp (xem trước từ `POST /card-installments/preview`), lịch và kết thúc sớm, "Phải trả kỳ này" trên chi tiết thẻ cộng phần trả góp. [Mobile](../architecture/mobile-card-installments.md). [Chi tiết](../architecture/card-installments.md).
 - **Hoàn tiền:** `BE-P3-008` done 2026-11-03 (BE): `POST /transactions/{id}/refunds`, giao dịch `refund` một leg trừ vào chi và ngân sách của kỳ khoản gốc (không phải thu nhập), tổng hoàn ≤ khoản gốc, xóa gốc cần chọn `cascade`/`keep`. `MOB-P3-008` done 2026-11-05: ghi hoàn tiền từ chi tiết khoản chi, "đã hoàn" lấy từ `refundedMinor` của API, popup xoá hỏi xử lý hoàn tiền. [Mobile](../architecture/mobile-refunds.md). [Chi tiết](../architecture/refunds.md).
 - **Đối soát ví:** `BE-P3-005` done 2026-11-02 (BE): `POST /financial-accounts/{id}/reconcile`, giao dịch `adjustment` một leg ngoài thu/chi và ngân sách, thẻ theo dư nợ. `MOB-P3-005` done 2026-11-04. [Chi tiết](../architecture/wallet-reconciliation.md).
-- **Onboarding/tài khoản (nhóm A):** `DS-P2-004` done 2026-10-29: 16 màn khớp canvas, ngân sách nối `BE-P2-E02`, mục tiêu Nợ đưa khối Thẻ tín dụng lên đầu. `BE-P2-012` done 2026-10-30. Còn tách riêng: deep link email, Google/Apple mobile, xác nhận lại email trong Cá nhân. [Chi tiết](../brand/patterns/A-onboarding-auth.md).
+- **Onboarding/tài khoản (nhóm A):** `DS-P2-004` done 2026-10-29: 16 màn khớp canvas, ngân sách nối `BE-P2-E02`, mục tiêu Nợ đưa khối Thẻ tín dụng lên đầu. `BE-P2-012` done 2026-10-30. Link email mở app: `BE-P2-016` / `MOB-P2-016` done 2026-11-27 (trang web tạm trên API, `freeva://`; Universal/App Links chờ domain). Còn tách riêng: Google/Apple mobile, xác nhận lại email trong Cá nhân. [Chi tiết](../brand/patterns/A-onboarding-auth.md).
 - **Tài sản và đầu tư:** `BE-P4-E01` done 2026-11-06 (BE): `/investments` sáu loại, mua/bán bằng giao dịch `investment` một chân (ngoài thu/chi, ngân sách, tỷ lệ tiết kiệm), giá vốn bình quân gia quyền, lãi/lỗ thực hiện trên từng lần bán, giá nhập tay kèm ngày, tiền gửi lãi đơn, giá trị vào tài sản ròng không trùng ví. Migration additive `investments` (deploy trước API). Mobile `MOB-P4-E01` done 2026-11-07 (5 PR): danh sách, tạo, danh mục/bán/giá, tiền gửi, chi tiết/sửa/xoá lần mua ([mobile](../architecture/mobile-investments.md)). [ADR 014](../architecture/adr/014-investment-ledger.md). [Chi tiết](../architecture/investments.md).
 - **Tài sản ròng theo thời gian:** `BE-P4-E02` done 2026-11-06 (BE): `GET /reports/net-worth/history` cho 7d/30d/3m/6m/1y/toàn bộ, tính từ sổ cái (ví + cho mượn/đi mượn + đầu tư), điểm mới nhất bằng `/net-worth`, không migration. `MOB-P4-E02` done 2026-11-06: màn `/me/net-worth` với biểu đồ, chip khoảng, chạm điểm. [Mobile](../architecture/mobile-net-worth.md). [Chi tiết](../architecture/reports.md).
 - **API đầu tư theo thiết kế:** `BE-P4-E03` done 2026-11-06: tạo kèm lần mua, lần mua có sẵn, sửa/xoá lần mua, % lãi/lỗ, theo danh mục, giá trị theo thời gian. [Chi tiết](../architecture/investments.md).
@@ -73,7 +73,7 @@ Chi tiết status từng ID: [tasks/phase-01.md](../../tasks/phase-01.md).
 
 ## Backlog Phase 2
 
-- **21/21 done.** Chi tiết: [tasks/phase-02.md](../../tasks/phase-02.md).
+- **22/22 done.** Chi tiết: [tasks/phase-02.md](../../tasks/phase-02.md).
 
 ## Phase 0 gate — đã đóng (2026-09-21)
 
