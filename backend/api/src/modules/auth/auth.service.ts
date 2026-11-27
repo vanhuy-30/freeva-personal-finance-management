@@ -14,6 +14,7 @@ import {
   type SessionDevice,
   type TokenPurpose,
 } from './domain/auth.repository';
+import { TOKEN_TTL_MINUTES } from './auth-link';
 import { AuthCrypto } from './infrastructure/auth-crypto';
 
 /** Version of the Terms and Privacy policy people agree to at sign-up. */
@@ -61,9 +62,7 @@ export class AuthService {
     return {
       tokenHash: this.crypto.digest(token),
       encryptedToken: this.crypto.encrypt(token),
-      expiresAt: new Date(
-        Date.now() + (purpose === 'verify_email' ? 24 * 60 : 30) * 60_000,
-      ),
+      expiresAt: new Date(Date.now() + TOKEN_TTL_MINUTES[purpose] * 60_000),
     };
   }
 

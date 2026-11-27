@@ -3,10 +3,13 @@ import { OAUTH_REPOSITORY, OAUTH_VERIFIER } from './domain/oauth';
 import { OidcVerifier } from './infrastructure/oidc-verifier';
 import { PrismaOAuthRepository } from './infrastructure/prisma-oauth.repository';
 import { Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { AppConfigCoreModule } from '../app-config/app-config-core.module';
 import { MailModule } from '../mail/mail.module';
 import { AUTH_REPOSITORY } from './domain/auth.repository';
 import { AuthController, SessionsController } from './auth.controller';
+import { APP_LINK_SETTINGS, readAppLinkSettings } from './auth-link';
+import { AuthLinkController } from './auth-link.controller';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { AuthRateLimitGuard } from './auth-rate-limit.guard';
@@ -16,7 +19,7 @@ import { AuthMailWorker } from './infrastructure/auth-mail.worker';
 
 @Module({
   imports: [MailModule, AppConfigCoreModule],
-  controllers: [AuthController, SessionsController],
+  controllers: [AuthController, SessionsController, AuthLinkController],
   providers: [
     AuthService,
     OAuthService,
@@ -26,6 +29,11 @@ import { AuthMailWorker } from './infrastructure/auth-mail.worker';
     AuthRateLimitGuard,
     AuthCrypto,
     AuthMailWorker,
+    {
+      provide: APP_LINK_SETTINGS,
+      inject: [ConfigService],
+      useFactory: readAppLinkSettings,
+    },
     { provide: AUTH_REPOSITORY, useClass: PrismaAuthRepository },
   ],
   exports: [AuthGuard, AuthService],

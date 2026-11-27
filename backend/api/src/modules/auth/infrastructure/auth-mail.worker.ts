@@ -10,6 +10,11 @@ import {
   AUTH_REPOSITORY,
   type AuthRepository,
 } from '../domain/auth.repository';
+import {
+  APP_LINK_SETTINGS,
+  buildAuthEmail,
+  type AppLinkSettings,
+} from '../auth-link';
 import { AuthCrypto } from './auth-crypto';
 
 @Injectable()
@@ -22,6 +27,7 @@ export class AuthMailWorker implements OnApplicationBootstrap, OnModuleDestroy {
     @Inject(AUTH_REPOSITORY) private readonly repository: AuthRepository,
     private readonly crypto: AuthCrypto,
     @Inject(EMAIL_SENDER) private readonly sender: EmailSender,
+    @Inject(APP_LINK_SETTINGS) private readonly links: AppLinkSettings,
   ) {}
 
   onApplicationBootstrap(): void {
@@ -52,14 +58,10 @@ export class AuthMailWorker implements OnApplicationBootstrap, OnModuleDestroy {
         if (!job) return;
         try {
           const token = this.crypto.decrypt(job.encryptedToken);
-          const verify = job.purpose === 'verify_email';
           await this.sender.send({
             deliveryId: job.id,
             to: job.email,
-            subject: verify
-              ? 'Freeva — Xác thực email'
-              : 'Freeva — Đặt lại mật khẩu',
-            text: `${verify ? 'Mã xác thực email (hiệu lực tối đa 24 giờ)' : 'Mã đặt lại mật khẩu (hiệu lực tối đa 30 phút)'}:\n\n${token}\n\nNhập mã trong ứng dụng Freeva. Nếu không yêu cầu, hãy bỏ qua email này.`,
+            ...buildAuthEmail(this.links, job.purpose, token),
           });
           await this.repository.completeMail(job.id);
         } catch {
