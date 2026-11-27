@@ -9,6 +9,7 @@ import '../../../../../core/theme/tokens.g.dart';
 import '../../../../../core/widgets/amount_keypad.dart';
 import '../../../../../core/widgets/freeva_button.dart';
 import '../../../../category_suggest/presentation/viewmodels/category_suggest_view_model.dart';
+import '../../../../sync/domain/sync_item.dart';
 import '../../../domain/transaction.dart';
 import '../../viewmodels/transaction_composer.dart';
 import '../../viewmodels/transaction_view_model.dart';
@@ -29,6 +30,7 @@ class TransactionComposerScreen extends StatefulWidget {
     this.initialType,
     this.fromAccountId,
     this.toAccountId,
+    this.queued,
     super.key,
   });
 
@@ -40,6 +42,9 @@ class TransactionComposerScreen extends StatefulWidget {
   /// Preselected source / destination wallet (from wallet detail).
   final String? fromAccountId;
   final String? toAccountId;
+
+  /// Failed queued change being fixed (Đồng bộ → "Sửa"); [existing] is its shape.
+  final SyncQueueItem? queued;
 
   @override
   State<TransactionComposerScreen> createState() => _ComposerScreenState();
@@ -55,6 +60,7 @@ class _ComposerScreenState extends State<TransactionComposerScreen>
     initialType: widget.initialType,
     fromAccountId: widget.fromAccountId,
     toAccountId: widget.toAccountId,
+    queued: widget.queued,
   );
   late final merchant = TextEditingController(text: composer.merchant);
   late final notes = TextEditingController(text: composer.notes);

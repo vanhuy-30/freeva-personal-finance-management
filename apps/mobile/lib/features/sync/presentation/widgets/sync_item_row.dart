@@ -36,6 +36,7 @@ class SyncItemRow extends StatelessWidget {
     required this.detail,
     this.style = SyncRowStyle.review,
     this.onView,
+    this.onEdit,
     this.onRetry,
     this.onDiscard,
     super.key,
@@ -50,6 +51,9 @@ class SyncItemRow extends StatelessWidget {
 
   /// "Xem": opens the comparison of a conflict.
   final VoidCallback? onView;
+
+  /// "Sửa": opens the form with this failed change, for data the server refused.
+  final VoidCallback? onEdit;
   final VoidCallback? onRetry;
   final VoidCallback? onDiscard;
 
@@ -171,11 +175,18 @@ class SyncItemRow extends StatelessWidget {
                 if (stacked && style == SyncRowStyle.review)
                   Wrap(
                     spacing: FreevaSpace.s2,
-                    children: _trailing(
-                      s,
-                      c,
-                      stacked: false,
-                    ).whereType<_PillButton>().toList(),
+                    children: [
+                      ..._trailing(
+                        s,
+                        c,
+                        stacked: false,
+                      ).whereType<_PillButton>(),
+                      if (onEdit != null && onDiscard != null)
+                        _PillButton(
+                          label: s.syncDiscardConfirm,
+                          onTap: onDiscard!,
+                        ),
+                    ],
                   ),
               ],
             ),
@@ -245,17 +256,23 @@ class SyncItemRow extends StatelessWidget {
       case SyncRowStyle.waiting:
         return [if (discard != null) discard];
       case SyncRowStyle.review:
-        // One button, like the board: "Xem" for a conflict, else "Thử lại",
-        // else "Bỏ". A retryable row keeps × to drop it.
+        // One button, like the board: "Xem" for a conflict, "Sửa" for data
+        // the server refused, else "Thử lại", else "Bỏ". A row with "Sửa" or
+        // "Thử lại" keeps × to drop it.
         final Widget? main = onView != null
             ? _PillButton(label: s.syncViewAction, ink: true, onTap: onView!)
+            : onEdit != null
+            ? _PillButton(label: s.syncEditAction, onTap: onEdit!)
             : onRetry != null
             ? _PillButton(label: s.syncRetry, onTap: onRetry!)
             : onDiscard != null
             ? _PillButton(label: s.syncDiscardConfirm, onTap: onDiscard!)
             : null;
-        final extra = onView == null && onRetry != null ? discard : null;
-        // Narrow screen or large text: the buttons go under the text.
+        final extra = onView == null && (onRetry != null || onEdit != null)
+            ? discard
+            : null;
+        // Narrow screen or large text: the buttons go under the text. A row
+        // with "Sửa" also gets "Bỏ" there, since the × is not shown.
         if (stacked) return const [];
         return [
           if (main != null) ...[const SizedBox(width: FreevaSpace.s2), main],

@@ -1898,6 +1898,7 @@
     }
   },
   "syncRetry": "Try again",
+  "syncEditAction": "Edit",
   "syncSending": "Sending {count} changes",
   "@syncSending": {
     "placeholders": {
@@ -1957,6 +1958,8 @@
   "syncFooter": "Your data stays on this device until it is sent.",
   "syncUpdateTitle": "Freeva needs an update",
   "syncUpdateBody": "To keep syncing. Your changes are kept.",
+  "syncUpdateAction": "Update",
+  "syncUpdateOpenError": "Could not open the app store. Open it yourself and update Freeva.",
   "syncDiscardTitle": "Discard this change?",
   "syncDiscardMessage": "{name} {amount} won’t be saved.",
   "@syncDiscardMessage": {

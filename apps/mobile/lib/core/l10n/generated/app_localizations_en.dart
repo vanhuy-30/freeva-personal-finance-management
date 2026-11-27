@@ -3369,6 +3369,9 @@ class SEn extends S {
   String get syncRetry => 'Try again';
 
   @override
+  String get syncEditAction => 'Edit';
+
+  @override
   String syncSending(int count) {
     return 'Sending $count changes';
   }
@@ -3442,6 +3445,13 @@ class SEn extends S {
 
   @override
   String get syncUpdateBody => 'To keep syncing. Your changes are kept.';
+
+  @override
+  String get syncUpdateAction => 'Update';
+
+  @override
+  String get syncUpdateOpenError =>
+      'Could not open the app store. Open it yourself and update Freeva.';
 
   @override
   String get syncDiscardTitle => 'Discard this change?';

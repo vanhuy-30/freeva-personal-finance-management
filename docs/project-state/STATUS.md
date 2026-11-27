@@ -73,7 +73,7 @@ Chi tiết status từng ID: [tasks/phase-01.md](../../tasks/phase-01.md).
 
 ## Backlog Phase 2
 
-- **23/23 done.** Chi tiết: [tasks/phase-02.md](../../tasks/phase-02.md).
+- **24/24 done.** Chi tiết: [tasks/phase-02.md](../../tasks/phase-02.md).
 
 ## Phase 0 gate — đã đóng (2026-09-21)
 

@@ -6018,6 +6018,12 @@ abstract class S {
   /// **'Try again'**
   String get syncRetry;
 
+  /// No description provided for @syncEditAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get syncEditAction;
+
   /// No description provided for @syncSending.
   ///
   /// In en, this message translates to:
@@ -6143,6 +6149,18 @@ abstract class S {
   /// In en, this message translates to:
   /// **'To keep syncing. Your changes are kept.'**
   String get syncUpdateBody;
+
+  /// No description provided for @syncUpdateAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get syncUpdateAction;
+
+  /// No description provided for @syncUpdateOpenError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the app store. Open it yourself and update Freeva.'**
+  String get syncUpdateOpenError;
 
   /// No description provided for @syncDiscardTitle.
   ///

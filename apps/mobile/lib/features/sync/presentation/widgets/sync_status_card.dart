@@ -1,10 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:mobile/core/theme/lucide_icons.g.dart';
 
+import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
+import '../../../../core/store/store_launcher.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_button.dart';
+import '../../../../core/widgets/freeva_toast.dart';
 import '../viewmodels/sync_view_model.dart';
 import 'sync_labels.dart';
 
@@ -12,10 +17,25 @@ import 'sync_labels.dart';
 /// send, or waiting. Says what is happening and that nothing is lost. The
 /// all-done state is [SyncDoneView], not a card.
 class SyncStatusCard extends StatelessWidget {
-  const SyncStatusCard({required this.model, required this.now, super.key});
+  const SyncStatusCard({
+    required this.model,
+    required this.now,
+    this.launcher,
+    super.key,
+  });
 
   final SyncViewModel model;
   final DateTime now;
+
+  /// Opens the store for "Cập nhật"; defaults to the registered one. Without
+  /// one (or without a store page for this platform) the card has no button.
+  final StoreLauncher? launcher;
+
+  Future<void> _update(BuildContext context, StoreLauncher store) async {
+    final failed = S.of(context).syncUpdateOpenError;
+    if (await store.open() || !context.mounted) return;
+    showFreevaToast(context, message: failed);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +47,9 @@ class SyncStatusCard extends StatelessWidget {
         ? s.syncLastNever
         : syncLast(s, stamp, now, locale);
     if (model.schemaMismatch) {
+      final store =
+          launcher ??
+          (getIt.isRegistered<StoreLauncher>() ? getIt<StoreLauncher>() : null);
       return _Tile(
         icon: LucideIcons.arrowDownToLine,
         iconBg: c.bgSurface,
@@ -35,6 +58,17 @@ class SyncStatusCard extends StatelessWidget {
         background: c.statusWarningBg,
         title: s.syncUpdateTitle,
         subtitle: s.syncUpdateBody,
+        // Board SyncUpdate: ink pill, 48 high, full width under the text.
+        fullWidthAction: true,
+        action: store != null && store.available
+            ? FreevaButton(
+                label: s.syncUpdateAction,
+                variant: FreevaButtonVariant.ink,
+                size: FreevaButtonSize.l,
+                expand: true,
+                onPressed: () => unawaited(_update(context, store)),
+              )
+            : null,
       );
     }
     if (model.syncing) {
@@ -100,6 +134,7 @@ class _Tile extends StatelessWidget {
     this.textColor,
     this.background,
     this.action,
+    this.fullWidthAction = false,
     this.progress = false,
   });
 
@@ -115,6 +150,10 @@ class _Tile extends StatelessWidget {
   /// Tinted card without shadow (update needed); null is the white card.
   final Color? background;
   final Widget? action;
+
+  /// The action spans the card under the text (update needed) instead of
+  /// sitting at the right.
+  final bool fullWidthAction;
   final bool progress;
 
   @override
@@ -123,6 +162,7 @@ class _Tile extends StatelessWidget {
     // On a narrow screen or at a large text size the button drops under the
     // text instead of squeezing it.
     final stacked =
+        fullWidthAction ||
         context.isCompactScreen ||
         MediaQuery.textScalerOf(context).scale(1) > 1.15;
     return Semantics(
@@ -181,7 +221,9 @@ class _Tile extends StatelessWidget {
             ),
             if (action != null && stacked) ...[
               const SizedBox(height: FreevaSpace.s3),
-              Align(alignment: Alignment.centerRight, child: action),
+              fullWidthAction
+                  ? action!
+                  : Align(alignment: Alignment.centerRight, child: action),
             ],
             if (progress) ...[
               const SizedBox(height: FreevaSpace.s3),

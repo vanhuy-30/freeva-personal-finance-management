@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../auth/presentation/widgets/auth_gate.dart';
+import '../../../sync/domain/sync_item.dart';
 import '../../domain/transaction.dart';
 import '../viewmodels/transaction_view_model.dart';
 import '../../../../core/widgets/error_retry.dart';
@@ -17,6 +18,7 @@ class TransactionEditor extends StatefulWidget {
     this.initialType,
     this.fromAccountId,
     this.toAccountId,
+    this.queued,
     super.key,
   });
   final TransactionViewModel model;
@@ -26,6 +28,9 @@ class TransactionEditor extends StatefulWidget {
   final TransactionType? initialType;
   final String? fromAccountId;
   final String? toAccountId;
+
+  /// Failed change from the sync queue; [initial] is built from it.
+  final SyncQueueItem? queued;
   @override
   State<TransactionEditor> createState() => _TransactionEditorState();
 }
@@ -98,6 +103,7 @@ class _TransactionEditorState extends State<TransactionEditor> {
               initialType: widget.initialType,
               fromAccountId: widget.fromAccountId,
               toAccountId: widget.toAccountId,
+              queued: widget.queued,
             ),
     );
   }

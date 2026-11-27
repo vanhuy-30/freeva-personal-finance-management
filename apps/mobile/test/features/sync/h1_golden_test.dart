@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/core/di/injection.dart';
 import 'package:mobile/core/l10n/generated/app_localizations.dart';
+import 'package:mobile/core/store/store_launcher.dart';
 import 'package:mobile/core/theme/app_theme.dart';
 import 'package:mobile/features/sync/domain/sync_item.dart';
 import 'package:mobile/features/sync/presentation/pages/sync_page.dart';
@@ -84,6 +85,7 @@ void main() {
     double scale = 1,
     Size size = const Size(390, 844),
     Widget? home,
+    StoreLauncher? store,
     Future<void> Function()? then,
   }) async {
     t.view.physicalSize = size;
@@ -96,6 +98,7 @@ void main() {
       ..registerSingleton<TransactionViewModel>(
         StubTransactionViewModel()..categories = syncCategories,
       );
+    if (store != null) getIt.registerSingleton<StoreLauncher>(store);
     await t.pumpWidget(
       MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -147,7 +150,19 @@ void main() {
   });
   testWidgets('update needed', skip: !Platform.isMacOS, (t) async {
     final model = FixedSync(waitingOnly())..schemaMismatch = true;
-    await shot(t, 'update', model, size: const Size(390, 900));
+    await shot(t, 'update', model, size: const Size(390, 900), store: _Store());
+  });
+  testWidgets('update dark compact', skip: !Platform.isMacOS, (t) async {
+    final model = FixedSync(waitingOnly())..schemaMismatch = true;
+    await shot(
+      t,
+      'update_compact',
+      model,
+      dark: true,
+      scale: 1.3,
+      size: const Size(320, 900),
+      store: _Store(),
+    );
   });
   testWidgets('discard popup', skip: !Platform.isMacOS, (t) async {
     await shot(
@@ -214,4 +229,11 @@ void main() {
       ),
     );
   });
+}
+
+class _Store implements StoreLauncher {
+  @override
+  bool get available => true;
+  @override
+  Future<bool> open() async => true;
 }

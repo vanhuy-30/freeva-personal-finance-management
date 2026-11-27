@@ -21,6 +21,11 @@ Giao diện (`DS-P2-003`, nhóm H): dải trên danh sách Giao dịch mở màn
 
 Xung đột (H2): mục giữ `server` (id, version, ngày, số tiền, danh mục, ghi chú, cửa hàng, giờ sửa) từ bản server trong kết quả `/sync`; màn Chọn bản giữ lại (`/sync/compare/:opId`) so hai bản, mặc định giữ bản đã lưu (bỏ mục trên máy). Giữ bản trên máy này đặt `version` mục theo `server.version` và gửi lại; chỉ ghi đè khi người dùng chọn rõ. Gợi ý trùng: `SyncDuplicate(newId, existingId)` từ kết quả create, hỏi bằng sheet khi ở màn gốc của tab; xoá bản vừa ghi qua `TransactionViewModel.remove` có Hoàn tác.
 
+## Cập nhật app và sửa thay đổi lỗi (`MOB-P2-018`)
+
+- **Cập nhật:** khi `POST /sync` trả 409 (lệch phiên bản) thẻ "Cần cập nhật Freeva" có nút "Cập nhật" mở trang app trên App Store / Play Store (`StoreLauncher`, `url_launcher`, mở ngoài app). Đường dẫn là `--dart-define` `STORE_URL_IOS` / `STORE_URL_ANDROID` (https, kiểm khi khởi động; Android mặc định trang của `com.vanhuy.freeva`). Thiếu đường dẫn cho nền tảng thì ẩn nút, thẻ vẫn hiện. Không mở được thì toast. Mọi 409 trên `/sync` vẫn bị coi là lệch phiên bản (client bỏ mã lỗi); siết lại khi server có mã riêng ở mọi đường.
+- **Sửa:** hàng `failed` của Thêm/Sửa với lý do `invalid`, `categoryKind`, `walletMissing` có nút "Sửa" → `/sync/edit/:opId` mở form giao dịch với giá trị đã xếp hàng (`bundleFromQueueItem`, giữ nguyên clientId các chân để server vẫn coi là một giao dịch). Lưu = `TransactionViewModel.saveQueued`: kiểm tra như thường, không gọi server trước, thay hàng tại chỗ qua `enqueue` (giữ `opId`, `createdAt`, `version` của bản Sửa; về `pending`, xoá lý do, `retryCount` 0) rồi gửi ngay. Không tính lại analytics tạo/sửa. Form giữ bản chụp hàng lúc mở nên không đóng khi hàng đã gửi xong. Xoá, khôi phục, `transactionMissing`, `unavailable` không có "Sửa".
+
 ## Giới hạn
 
 Không sync ví hay danh mục, không pull cursor, không CRDT, không last-write-wins, không đối soát. Không cơ sở dữ liệu giao dịch đầy đủ. Update hoặc delete mất response có thể thành `conflict` dù server đã áp; mục đó được giữ để người dùng tải lại.

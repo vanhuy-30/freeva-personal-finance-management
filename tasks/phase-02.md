@@ -189,3 +189,11 @@ Phase 1 giữ đóng. Các ticket dưới đây không đổi số 28/28.
 - DoD: trong cùng một ngày, danh sách và file CSV sắp theo giờ (`occurredTime`), dòng không có giờ xếp cuối ngày; phân trang ổn định. Dòng danh sách hiện giờ nhỏ dưới số tiền khi có giờ. Không migration, báo cáo vẫn theo `occurredOn`.
 - Note: 2026-11-27. Tiêu đề nhóm ngày giữ `"Hôm nay · 21/10"`. Hàng gần đây ở Tổng quan chưa hiện giờ (cố ý, giữ ngắn).
 
+### MOB-P2-018 — Màn Đồng bộ: nút "Cập nhật" và "Sửa"
+- Status: done
+- Module: 20
+- Gate: v1
+- Depends: DS-P2-003
+- DoD: thẻ "Cần cập nhật Freeva" có nút mở trang app trên cửa hàng (ẩn khi nền tảng chưa có đường dẫn; lỗi mở thì báo). Thay đổi lỗi do dữ liệu (Thêm/Sửa với `invalid`, `categoryKind`, `walletMissing`) có "Sửa": mở form với giá trị đã xếp hàng, lưu thì thay tại chỗ trong hàng đợi (giữ clientId, `opId`, thứ tự) và gửi ngay; hủy không đổi gì; kiểm tra luật như khi ghi mới, không gọi server trước. Xoá, khôi phục, mục tiêu đã mất, và lỗi tạm thời không có "Sửa". Màn nhỏ × chữ lớn vẫn có đủ nút. Test đơn vị, widget, golden.
+- Note: 2026-11-27. Đường dẫn cửa hàng là `--dart-define` (không phải khoá cấu hình server) vì là định danh của bản build; **iOS chưa có App Store id nên nút ẩn tới khi đặt `STORE_URL_IOS`**. Chi tiết: [mobile-sync.md](../docs/architecture/mobile-sync.md).
+

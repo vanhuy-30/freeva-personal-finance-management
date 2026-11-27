@@ -3321,6 +3321,9 @@ class SVi extends S {
   String get syncRetry => 'Thử lại';
 
   @override
+  String get syncEditAction => 'Sửa';
+
+  @override
   String syncSending(int count) {
     return 'Đang gửi $count thay đổi';
   }
@@ -3393,6 +3396,13 @@ class SVi extends S {
 
   @override
   String get syncUpdateBody => 'Để tiếp tục đồng bộ. Thay đổi vẫn được giữ.';
+
+  @override
+  String get syncUpdateAction => 'Cập nhật';
+
+  @override
+  String get syncUpdateOpenError =>
+      'Chưa mở được cửa hàng ứng dụng. Hãy tự mở rồi cập nhật Freeva.';
 
   @override
   String get syncDiscardTitle => 'Bỏ thay đổi này?';

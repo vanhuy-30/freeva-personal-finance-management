@@ -17,6 +17,7 @@ import 'package:mobile/core/config/app_config.dart' as _i467;
 import 'package:mobile/core/feature_flags/feature_flag_service.dart' as _i1017;
 import 'package:mobile/core/logging/app_logger.dart' as _i766;
 import 'package:mobile/core/logging/app_logger_impl.dart' as _i760;
+import 'package:mobile/core/store/store_launcher.dart' as _i946;
 import 'package:mobile/features/auth/data/auth_api.dart' as _i88;
 import 'package:mobile/features/auth/data/auth_data_module.dart' as _i901;
 import 'package:mobile/features/auth/data/auth_platform.dart' as _i810;
@@ -278,6 +279,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i165.LocalSessionAlertNotifier());
     gh.lazySingleton<_i497.ServerConfigVault>(
         () => _i497.SecureServerConfigVault());
+    gh.lazySingleton<_i946.StoreLauncher>(
+        () => _i946.UrlStoreLauncher(gh<_i467.AppConfig>()));
     gh.lazySingleton<_i719.AvatarPicker>(() => _i906.GalleryAvatarPicker());
     gh.lazySingleton<_i810.DeviceBiometrics>(
         () => _i810.LocalDeviceBiometrics());

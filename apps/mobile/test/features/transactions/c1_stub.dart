@@ -14,6 +14,7 @@ import 'package:mobile/features/transactions/presentation/viewmodels/transaction
 import 'package:mobile/features/transactions/presentation/viewmodels/transaction_view_model.dart';
 import 'package:mobile/features/wallets/domain/wallet.dart';
 
+import 'package:mobile/features/sync/domain/sync_item.dart';
 import 'package:mobile/features/sync/presentation/viewmodels/sync_view_model.dart';
 
 import '../home/fixtures.dart' show b, wallet;
@@ -359,6 +360,14 @@ class StubTransactionViewModel extends ChangeNotifier
   }) async {
     saved.add(draft);
     return true;
+  }
+
+  final savedQueued = <(TransactionDraft, SyncQueueItem)>[];
+  bool queuedSaves = true;
+  @override
+  Future<bool> saveQueued(TransactionDraft draft, SyncQueueItem item) async {
+    savedQueued.add((draft, item));
+    return queuedSaves;
   }
 
   final applied = <TransactionFilter>[];
