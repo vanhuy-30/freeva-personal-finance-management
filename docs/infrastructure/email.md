@@ -13,6 +13,7 @@
 | `SMTP_PORT` | `2465` |
 | `RESEND_API_KEY` | API key có quyền gửi email, lưu dưới dạng secret |
 | `AUTH_SECRET_KEY` | Key 64 hex hiện có; giữ ổn định giữa các lần deploy |
+| `APP_LINK_BASE_URL` | Gốc của link trong email, https, không query/fragment. Staging: URL của chính API (`https://freeva-api-staging.onrender.com`). Khi có web freeva: đổi sang domain web, không sửa code. Bắt buộc ngoài development/test; sai thì API không khởi động |
 
 Preset cố định host `smtp.resend.com`, username `resend`, dùng API key làm password, TLS với kiểm tra certificate. Không cần `SMTP_HOST`, `SMTP_USER`, `SMTP_PASSWORD`; bỏ `SMTP_SECURE` cũ nếu đang override sai mode.
 
@@ -33,9 +34,10 @@ Lệnh chỉ kiểm tra kết nối/TLS/authentication, không gửi email, khô
 
 Checklist E2E staging với email tài khoản Resend:
 
-- Đăng ký trên mobile → email xác thực tự gửi → nhập mã → trạng thái verified.
+- Đăng ký trên mobile → email xác thực tự gửi → bấm link trong mail → trang "Xác nhận email" → bấm nút → "Email đã được xác nhận".
 - Đăng nhập bằng mật khẩu; request gửi lại mã khi còn chưa verify, mã cũ hết hiệu lực.
-- Quên mật khẩu → nhận email → reset → mật khẩu cũ và session cũ bị từ chối → login bằng mật khẩu mới.
+- Quên mật khẩu → nhận email → bấm link trên điện thoại đã cài app → trang "Đặt lại mật khẩu" → "Mở Freeva" → màn mật khẩu mới → mật khẩu cũ và session cũ bị từ chối → login bằng mật khẩu mới. Thử thêm: link dùng lần hai và link quá hạn (báo hết hạn, có "Yêu cầu link mới"), mở link khi đang đăng nhập (hỏi xác nhận).
+- Mail scanner/preview: mở link bằng GET không làm mất token (chỉ nút trên trang mới tiêu thụ).
 - Đối chiếu Resend dashboard và inbox/spam; HTTP 202 chỉ xác nhận request, không bảo đảm delivery.
 - Kiểm chứng PIN/biometric, background/recents trên thiết bị thực trước khi đóng `MOB-P1-001`.
 

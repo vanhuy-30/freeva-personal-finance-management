@@ -2,6 +2,10 @@
 
 Nhật ký repo/process — không phải App Store release notes.
 
+## 2026-11-27
+
+- `BE-P2-016` / `MOB-P2-016`: email xác nhận và đặt lại mật khẩu gửi link thay token trần. API: biến `APP_LINK_BASE_URL` (https, kiểm khi khởi động), trang `/verify-email` và `/reset-password` ngoài `/api` (token trong fragment, CSP nonce, GET không tiêu thụ token), hằng số thời hạn token dùng chung; không migration. Mobile: `freeva://reset-password` mở màn mật khẩu mới (`app_links`), hỏi xác nhận nếu đang đăng nhập, nút "Yêu cầu link mới" khi link hết hạn. Cần đặt `APP_LINK_BASE_URL` trên Render (đã có trong `render.yaml`). Mail cũ gửi trước bản này (chỉ có token) không dùng được. [Chi tiết](../architecture/mobile-auth.md).
+
 ## 2026-11-21
 
 - Báo cáo tài chính (mobile + API): card đầu có so sánh kỳ trước, tiết kiệm và tỷ lệ, tổng số dư ví; dòng tiền cộng dồn; xu hướng chi đánh dấu kỳ chưa kết thúc; cơ cấu có màn xem toàn bộ (`/reports/breakdown`); card Nợ và vay, Đầu tư theo kỳ; Nhận định lấy từ Phân tích. API thêm `walletBalances` (cashflow), `GET /reports/flow`, `GET /reports/holdings`; không migration. Bỏ dòng "Xem bản soát tháng" ở Báo cáo và màn Dự báo số dư cũ; gỡ luôn endpoint `GET /forecast`, module backend và ba khoá cấu hình `forecast.monthOptions`, `forecast.defaultMonths`, `limit.forecastMaxMonths` (không migration; giá trị đã lưu trong bảng cấu hình, nếu có, bị bỏ qua). [Chi tiết](../architecture/mobile-reports.md).
