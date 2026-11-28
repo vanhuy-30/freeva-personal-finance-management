@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mobile/core/theme/lucide_icons.g.dart';
 
 import '../../../../core/di/injection.dart';
@@ -9,7 +11,6 @@ import '../../../../core/router/nav_back.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/theme/tokens.g.dart';
 import '../../../../core/widgets/freeva_button.dart';
-import '../../../../core/widgets/freeva_dialog.dart';
 import '../../../../core/widgets/freeva_sheet.dart';
 import '../../../../core/widgets/freeva_text_field.dart';
 import '../../../../core/widgets/freeva_toast.dart';
@@ -21,9 +22,11 @@ import '../../../settings/presentation/widgets/avatar_letter.dart';
 import '../../../settings/presentation/widgets/danger_text_button.dart';
 import '../../../settings/presentation/widgets/profile_actions.dart';
 import '../../domain/avatar_picker.dart';
+import '../../../../core/widgets/freeva_banner.dart';
 import '../viewmodels/avatar_view_model.dart';
+import '../viewmodels/email_verification_controller.dart';
 import '../viewmodels/profile_view_model.dart';
-import '../widgets/account_step_up.dart';
+import '../widgets/delete_account_dialog.dart';
 import '../../../server_config/domain/app_limits.dart';
 
 /// Hồ sơ: information about you. Name is editable; the email changes later
@@ -35,7 +38,7 @@ class ProfilePage extends StatefulWidget {
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _ProfilePageState extends State<ProfilePage> with WidgetsBindingObserver {
   final ProfileViewModel profile = getIt<ProfileViewModel>();
   final SettingsViewModel settings = getIt<SettingsViewModel>();
   final AvatarViewModel avatar = getIt<AvatarViewModel>();
@@ -43,16 +46,47 @@ class _ProfilePageState extends State<ProfilePage> {
     text: profile.saved?.displayName ?? '',
   );
 
+  late final EmailVerificationController emailSend =
+      EmailVerificationController(resend: _resendVerification);
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     Future.microtask(settings.refreshAccount);
+    // The email may have been confirmed in the browser since the profile was
+    // last read; ask again so the row is right when the page opens.
+    if (profile.saved?.emailVerified != true) Future.microtask(profile.load);
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    emailSend.dispose();
     name.dispose();
     super.dispose();
+  }
+
+  /// Back from the browser (or mail app): the link there may have confirmed
+  /// the email, and only the server knows.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed &&
+        profile.saved?.emailVerified == false) {
+      profile.load();
+    }
+  }
+
+  /// Uses the email kept on the device: the sign-in draft is empty after a cold
+  /// start. The server answers 202 whether or not it sends.
+  Future<AuthFailure?> _resendVerification() async {
+    final auth = getIt<AuthViewModel>();
+    if (auth.loading) return const AuthFailure(AuthError.unavailable);
+    auth.draftEmail(settings.email ?? '');
+    await auth.resendVerification();
+    final failure = auth.failure;
+    auth.clearMessage();
+    return failure;
   }
 
   String? get _typed => name.text.trim().isEmpty ? null : name.text.trim();
@@ -127,36 +161,24 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _delete() async {
-    final s = S.of(context);
     final auth = getIt<AuthViewModel>();
-    final ok = await showFreevaConfirm(
-      context: context,
-      title: s.meDeleteTitle,
-      message: s.meDeleteBody,
-      icon: LucideIcons.trash,
-      iconTone: FreevaDialogTone.danger,
-      cancelLabel: s.commonCancel,
-      confirmLabel: s.meDeleteConfirm,
-      destructive: true,
-    );
-    if (!ok || !mounted) return;
-    final password = await askAccountPassword(context);
-    if (password == null || !mounted) return;
-    await auth.deleteAccount(password: password);
-    // On success the stage is signedOut and AuthGate has left this page.
-    if (!mounted || auth.stage == AuthStage.signedOut) return;
-    final failure = auth.failure;
-    showFreevaToast(
+    final result = await showDeleteAccountDialog(
       context,
-      message: failure == null
-          ? s.meDeleteError
-          : accountStepUpError(s, failure, s.meDeleteError),
+      onDelete: (password) async {
+        await auth.deleteAccount(password: password);
+        // On success (or an expired session) the stage is signedOut and
+        // AuthGate has left this page; otherwise the failure says why.
+        if (auth.stage == AuthStage.signedOut) return null;
+        return auth.failure ?? const AuthFailure(AuthError.unavailable);
+      },
     );
+    if (!mounted || result != DeleteAccountResult.export) return;
+    unawaited(context.push('/me/export'));
   }
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
-    listenable: Listenable.merge([profile, settings, name, avatar]),
+    listenable: Listenable.merge([profile, settings, name, avatar, emailSend]),
     builder: (context, _) {
       final s = S.of(context);
       final margin = context.screenMargin;
@@ -204,7 +226,13 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       if (email != null) ...[
                         const SizedBox(height: 14),
-                        _EmailField(email: email, onChange: soon),
+                        _EmailField(
+                          email: email,
+                          verified: profile.saved?.emailVerified,
+                          onChange: soon,
+                        ),
+                        if (profile.saved?.emailVerified == false)
+                          _EmailVerifyBanner(controller: emailSend),
                       ],
                     ],
                   ),
@@ -309,9 +337,16 @@ class _EditableAvatar extends StatelessWidget {
 
 /// Email in the same boxed style as the name field, with "Đổi" on the right.
 class _EmailField extends StatelessWidget {
-  const _EmailField({required this.email, required this.onChange});
+  const _EmailField({
+    required this.email,
+    required this.verified,
+    required this.onChange,
+  });
 
   final String email;
+
+  /// Null when the server does not say; the label is then a plain "Email".
+  final bool? verified;
   final VoidCallback onChange;
 
   @override
@@ -355,8 +390,11 @@ class _EmailField extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        // No verification state from the API yet, so no "đã xác nhận".
-                        s.meProfileEmail,
+                        switch (verified) {
+                          true => s.meProfileEmailVerified,
+                          false => s.meProfileEmailUnverified,
+                          null => s.meProfileEmail,
+                        },
                         style: FreevaTypography.label.copyWith(
                           fontWeight: FontWeight.w400,
                           color: c.textSecondary,
@@ -386,6 +424,53 @@ class _EmailField extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Under an unconfirmed email: why it matters and "Gửi link xác nhận". The
+/// state follows [EmailVerificationController]; the profile decides when the
+/// whole banner goes away (once the server reports the email confirmed).
+class _EmailVerifyBanner extends StatelessWidget {
+  const _EmailVerifyBanner({required this.controller});
+
+  final EmailVerificationController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    final state = controller.state;
+    final (message, icon, tone) = switch (state) {
+      EmailSendState.sent => (
+        s.meEmailSent,
+        LucideIcons.circleCheck,
+        FreevaBannerTone.success,
+      ),
+      EmailSendState.limited => (
+        s.meBusyRetry(controller.retryMinutes ?? 15),
+        LucideIcons.clock,
+        FreevaBannerTone.warning,
+      ),
+      EmailSendState.failed => (
+        s.meEmailSendError,
+        LucideIcons.triangleAlert,
+        FreevaBannerTone.danger,
+      ),
+      _ => (
+        s.meEmailUnverifiedHint,
+        LucideIcons.mail,
+        FreevaBannerTone.warning,
+      ),
+    };
+    return Padding(
+      padding: const EdgeInsets.only(top: FreevaSpace.s3),
+      child: FreevaBanner(
+        message: message,
+        icon: icon,
+        tone: tone,
+        actionLabel: controller.canSend ? s.meEmailSendLink : null,
+        onAction: controller.canSend ? controller.send : null,
       ),
     );
   }

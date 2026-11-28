@@ -12,6 +12,7 @@ class Profile {
     this.displayCurrency,
     this.declaredIncome,
     this.autoSuggestEnabled = true,
+    this.emailVerified,
   });
 
   /// Greeting name; null until the user sets one (Hồ sơ).
@@ -32,6 +33,11 @@ class Profile {
   /// Gợi ý tự động (category suggestions, insights, forecast). Read-only here:
   /// saved with its own call, never part of the PUT body. Default on.
   final bool autoSuggestEnabled;
+
+  /// Whether the sign-in email was confirmed. Null when the server does not
+  /// say (an older API): the screen then shows the plain "Email" label.
+  /// Read-only: it changes only through the link in the email.
+  final bool? emailVerified;
   final String locale;
   final String currency;
   final String timezone;
@@ -58,6 +64,7 @@ class Profile {
     displayCurrency: displayCurrency,
     declaredIncome: declaredIncome,
     autoSuggestEnabled: autoSuggestEnabled,
+    emailVerified: emailVerified,
   );
 
   /// Currency the Overview shows totals in: the saved choice, else [currency].
@@ -74,6 +81,7 @@ class Profile {
     displayCurrency: code,
     declaredIncome: declaredIncome,
     autoSuggestEnabled: autoSuggestEnabled,
+    emailVerified: emailVerified,
   );
 
   Profile withDeclaredIncome(DeclaredIncome? income) => Profile(
@@ -87,6 +95,7 @@ class Profile {
     displayCurrency: displayCurrency,
     declaredIncome: income,
     autoSuggestEnabled: autoSuggestEnabled,
+    emailVerified: emailVerified,
   );
 
   bool samePreferences(Profile other) =>

@@ -19,6 +19,8 @@ Từ home chọn **Hồ sơ tài chính**. Hồ sơ thuộc tài khoản đang �
 
 ## Contract và quyền riêng tư
 
+**`emailVerifiedAt` (`BE-P2-017`):** ISO 8601 hoặc `null`, chỉ đọc (`PUT /profile` từ chối). Đổi duy nhất qua link trong email (`POST /auth/verify-email`). App đọc thành `Profile.emailVerified` (null khi server cũ không gửi). `POST /auth/email-verifications` luôn trả 202 nên không dùng để biết đã xác nhận hay chưa. Hồ sơ gửi lại bằng email lưu trên máy, tự đọc lại hồ sơ khi mở trang và khi quay lại app (`EmailVerificationController`).
+
 **`declaredIncome` (`BE-P6-002`, thay `monthlyIncomeMinor`):** khoảng thu nhập user tự khai (không phải thu nhập thực tính từ giao dịch), tuỳ chọn. GET trả `{ minMinor, maxMinor, midpointMinor } | null` (chuỗi minor unit của tiền tệ mặc định; `maxMinor` null là khoảng trên cùng; điểm giữa = (min + max) / 2, khoảng mở = min × 5/4), không quy đổi khi đổi tiền tệ. Lưu lúc onboarding qua `PATCH /api/v1/profile/onboarding` (`declaredIncome: { minMinor, maxMinor }`, cùng `goals`: `track`, `budget`, `save`, `debt`, `assets`, `habits`, tối đa `onboarding.maxGoals`) hoặc sửa/xóa qua `PUT /api/v1/profile/declared-income` (`{ declaredIncome: null }` xóa). Số cũ đã nhập chuyển thành khoảng [x, x]. PUT `/profile` không nhận. Không ghi log, có trong export, xóa cùng tài khoản.
 
 **`displayName` (`DS-P2-003`):** tên tuỳ chọn (≤ 60 ký tự) chỉ dùng cho lời chào ở
@@ -59,6 +61,6 @@ schema mới; tận dụng `User`, `Currency`, `version` hiện có.
 ## Xuất dữ liệu và xóa tài khoản — MOB-P2-011
 
 - Hồ sơ có dòng "Xuất dữ liệu": lấy `GET /account/export`, ghi file `freeva-export-YYYYMMDD.json` đúng body API (không decode lại), mở share sheet (`share_plus`), rồi xóa file tạm. Đóng share sheet không phải lỗi.
-- "Xoá tài khoản": hộp xác nhận một lần, `DELETE /account`, không mật khẩu, không cửa sổ chờ. Thành công thì xóa phiên, PIN và hàng đợi sync trên máy, về màn vào app. Lỗi mạng hoặc server từ chối thì không xóa gì local và báo chưa xóa được.
+- "Xoá tài khoản" (`MOB-P2-019`): một popup có cảnh báo, "Xuất dữ liệu trước", ô mật khẩu; `DELETE /account` gửi `{password}` (server cần mật khẩu hiện tại, `SEC-P6-002`), không cửa sổ chờ. Lỗi (sai mật khẩu, bị giới hạn 5 lần mỗi 15 phút, mất mạng) hiện dưới ô và popup ở lại, không xóa gì local. Phiên hết hạn thì về đăng nhập. Thành công thì xóa phiên, PIN và hàng đợi sync trên máy, về màn đăng nhập với "Đã xóa tài khoản." (`AuthNotice.accountDeleted`).
 - Không log email, ghi chú hay số tiền.
 

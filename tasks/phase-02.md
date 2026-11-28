@@ -32,7 +32,7 @@
 - Gate: post-v1
 - Depends: DS-P2-002
 - DoD: luồng và màn theo [A-onboarding-auth.md](../docs/brand/patterns/A-onboarding-auth.md): Welcome → Mục tiêu (tối đa 2) → Thói quen → Ngân sách (ẩn hoặc lưu tạm nếu chưa có `BE-P2-E02`) → Tạo tài khoản → Thiết lập tài chính (không bắt buộc) → Trang chính có checklist. Đăng nhập email + mật khẩu một màn. PIN không chặn đường vào app. Deep link xác nhận email / đặt lại mật khẩu và Google/Apple mobile tách task BE/MOB riêng khi làm.
-- Tiến độ: A1 xong 2026-10-23 (đăng nhập, đăng ký + `termsAccepted`, xác nhận email, quên/đặt lại mật khẩu, PIN tuỳ chọn, Mở khoá). A2a xong 2026-10-23 (Welcome, Tạo tài khoản Freeva, Mục tiêu, Thói quen, Ngân sách lưu trên máy; `PATCH /profile/onboarding`; màn giới thiệu cũ bị bỏ). A2b xong 2026-10-23 (Thiết lập tài chính, checklist "Bắt đầu nào", tên ở màn Mở khoá). Câu trả lời và số ngân sách đầu gắn với tài khoản, kể cả export: `BE-P2-012` (done 2026-10-30). Ngân sách đã nối `BE-P2-E02` (2026-10-29): `PUT /budgets/current` khi chưa có ngân sách, không thì giữ `budgetDraftMinor`. Mục tiêu chỉ đổi thứ tự khối Tổng quan ở "Quản lý khoản nợ" (Thẻ tín dụng lên đầu); thiết kế chưa vẽ khối riêng cho 5 mục tiêu còn lại nên giữ nguyên (owner chốt 2026-10-29). Board nhóm A khớp bản trong `docs/brand/canvas/` (2026-10-29). Việc tách riêng: link xác nhận email / đặt lại mật khẩu mở thẳng app (BE gửi link, MOB deep link; nối vào `AuthViewModel.startReset`), Google/Apple trên mobile, nơi xác nhận lại email trong Cá nhân (cần cờ `emailVerified` trong hồ sơ).
+- Tiến độ: A1 xong 2026-10-23 (đăng nhập, đăng ký + `termsAccepted`, xác nhận email, quên/đặt lại mật khẩu, PIN tuỳ chọn, Mở khoá). A2a xong 2026-10-23 (Welcome, Tạo tài khoản Freeva, Mục tiêu, Thói quen, Ngân sách lưu trên máy; `PATCH /profile/onboarding`; màn giới thiệu cũ bị bỏ). A2b xong 2026-10-23 (Thiết lập tài chính, checklist "Bắt đầu nào", tên ở màn Mở khoá). Câu trả lời và số ngân sách đầu gắn với tài khoản, kể cả export: `BE-P2-012` (done 2026-10-30). Ngân sách đã nối `BE-P2-E02` (2026-10-29): `PUT /budgets/current` khi chưa có ngân sách, không thì giữ `budgetDraftMinor`. Mục tiêu chỉ đổi thứ tự khối Tổng quan ở "Quản lý khoản nợ" (Thẻ tín dụng lên đầu); thiết kế chưa vẽ khối riêng cho 5 mục tiêu còn lại nên giữ nguyên (owner chốt 2026-10-29). Board nhóm A khớp bản trong `docs/brand/canvas/` (2026-10-29). Việc tách riêng: link xác nhận email / đặt lại mật khẩu mở thẳng app (BE gửi link, MOB deep link; nối vào `AuthViewModel.startReset`), Google/Apple trên mobile, nơi xác nhận lại email trong Cá nhân (xong ở `BE-P2-017` / `MOB-P2-017`).
 
 ### DS-P2-005 — Giao dịch theo thiết kế nhóm C
 - Status: done
@@ -172,3 +172,36 @@ Phase 1 giữ đóng. Các ticket dưới đây không đổi số 28/28.
 - Depends: BE-P2-E05
 - DoD: Firebase Cloud Messaging là nhà cung cấp push. App đăng ký token FCM theo phiên; đăng xuất và xóa tài khoản xóa token. Khi E05 tạo hàng hộp thư ngoài giờ yên, server gửi một push; trong giờ yên không gửi, hết giờ yên thì gửi một lần nếu hàng vẫn chưa đọc. Payload không có số dư, số tài khoản, email đầy đủ, tên rule hay id phiên. iOS đi qua FCM (APNs do Firebase giữ). Khóa Firebase chỉ trên dashboard / secret CI, không commit. Hộp thư và công tắc E05 giữ nguyên. Cập nhật [notifications.md](../docs/architecture/notifications.md) và câu push trong [mobile-privacy.md](../docs/architecture/mobile-privacy.md).
 - Note: bảng `PushToken` (một token mỗi phiên, FK cascade tới `AuthSession` và `User`) + cột `InAppNotification.pushedAt`; `PUT/DELETE /api/v1/push-tokens` (OpenAPI). Gửi qua FCM HTTP v1 bằng `fetch` + `jose` (không `firebase-admin`), port `PushSender`; chạy sau mỗi `evaluate`, nhận hàng bằng `pushedAt` (một lần), bỏ qua khi giờ yên rồi gửi sau nếu còn chưa đọc, lỗi tạm thời thử lại trong 24 giờ. Chữ vi/en dựng ở server theo `User.locale`, `data` chỉ `notificationId` + `kind`. Thiếu `FCM_SERVICE_ACCOUNT_*` thì tắt. Mobile: `firebase_core` 4 + `firebase_messaging` 16 (ghim 16.x vì 17 đổi sang FID), `FcmPushRegistrar`, `PushRegistrationListener`; xin quyền khi bật một loại; build thiếu file Firebase thì tắt. ADR 013, `DECISIONS-OPEN` #11.
+
+### BE-P2-017 / MOB-P2-017 — Xác nhận lại email trong Cá nhân
+- Status: done
+- Module: 1, 2
+- Gate: v1
+- Depends: DS-P2-004
+- DoD: Hồ sơ cho biết email đã xác nhận hay chưa và cho gửi lại link khi chưa. `GET /profile` có `emailVerifiedAt` (chỉ đọc, không nhận ở `PUT`). Gửi lại dùng email lưu trên máy, chống bấm liên tiếp (60 giây), hiện thời gian chờ khi server giới hạn (5 lần mỗi 15 phút), báo lỗi khi mất mạng. Server luôn trả 202 nên nguồn sự thật là cờ trong hồ sơ. Về app từ trình duyệt (resume) thì dòng tự đọc lại hồ sơ. Server cũ không gửi cờ thì app không nói gì về trạng thái. Test backend, mobile và golden.
+- Note: 2026-11-27. Board `MeProfileUnverified` (G · 2c). Link xác nhận mở trang web, không có đường về app (sẽ có khi có Universal/App Links).
+
+### BE-P2-020 / MOB-P2-020 — Giờ giao dịch trong danh sách
+- Status: done
+- Module: 4
+- Gate: v1
+- Depends: BE-P2-E09, MOB-P2-E09
+- DoD: trong cùng một ngày, danh sách và file CSV sắp theo giờ (`occurredTime`), dòng không có giờ xếp cuối ngày; phân trang ổn định. Dòng danh sách hiện giờ nhỏ dưới số tiền khi có giờ. Không migration, báo cáo vẫn theo `occurredOn`.
+- Note: 2026-11-27. Tiêu đề nhóm ngày giữ `"Hôm nay · 21/10"`. Hàng gần đây ở Tổng quan chưa hiện giờ (cố ý, giữ ngắn).
+
+### MOB-P2-018 — Màn Đồng bộ: nút "Cập nhật" và "Sửa"
+- Status: done
+- Module: 20
+- Gate: v1
+- Depends: DS-P2-003
+- DoD: thẻ "Cần cập nhật Freeva" có nút mở trang app trên cửa hàng (ẩn khi nền tảng chưa có đường dẫn; lỗi mở thì báo). Thay đổi lỗi do dữ liệu (Thêm/Sửa với `invalid`, `categoryKind`, `walletMissing`) có "Sửa": mở form với giá trị đã xếp hàng, lưu thì thay tại chỗ trong hàng đợi (giữ clientId, `opId`, thứ tự) và gửi ngay; hủy không đổi gì; kiểm tra luật như khi ghi mới, không gọi server trước. Xoá, khôi phục, mục tiêu đã mất, và lỗi tạm thời không có "Sửa". Màn nhỏ × chữ lớn vẫn có đủ nút. Test đơn vị, widget, golden.
+- Note: 2026-11-27. Đường dẫn cửa hàng là `--dart-define` (không phải khoá cấu hình server) vì là định danh của bản build; **iOS chưa có App Store id nên nút ẩn tới khi đặt `STORE_URL_IOS`**. Chi tiết: [mobile-sync.md](../docs/architecture/mobile-sync.md).
+
+### MOB-P2-019 — Popup xóa tài khoản có thiết kế riêng
+- Status: done
+- Module: 2, 21
+- Gate: v1
+- Depends: MOB-P2-011, SEC-P6-002
+- DoD: một popup (board G · 12, 12b) thay cho hai hộp rời: cảnh báo không khôi phục, "Xuất dữ liệu trước" mở màn xuất, ô mật khẩu có nút mắt, Huỷ / Xóa vĩnh viễn. Xóa tắt khi ô trống hoặc đang gửi; đang gửi thì không đóng được. Lỗi hiện ngay dưới ô và popup ở lại với dữ liệu còn nguyên (sai mật khẩu, bị giới hạn kèm số phút, mất mạng). Phiên hết hạn thì về đăng nhập với lỗi hết phiên, không nói "đã xóa". Xong thì về đăng nhập với "Đã xóa tài khoản.". Màn nhỏ × chữ lớn xếp nút dọc. Sửa các câu cũ "không mật khẩu" trong docs. Test widget và golden.
+- Note: 2026-11-27. Biến thể tài khoản chỉ OAuth chưa làm (Google/Apple mobile còn "Sắp có"; hồ sơ chưa có cờ có mật khẩu).
+

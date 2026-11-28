@@ -75,6 +75,7 @@ void main() {
   late DefaultWalletViewModel wallets;
   late DefaultTransactionViewModel model;
   late DefaultSyncViewModel sync;
+  late MemorySyncRepository syncRepo;
   late RecordingAnalytics analytics;
 
   setUp(() async {
@@ -101,7 +102,7 @@ void main() {
     );
     wallets = DefaultWalletViewModel(walletCases, auth);
     sync = DefaultSyncViewModel(
-      DefaultSyncUseCases(MemorySyncRepository()),
+      DefaultSyncUseCases(syncRepo = MemorySyncRepository()),
       auth,
       analytics,
     );
@@ -219,6 +220,134 @@ void main() {
       expect(analytics.events, hasLength(0));
     },
   );
+
+  group('saveQueued (Đồng bộ → Sửa)', () {
+    Future<void> markFailed(SyncReason reason) async {
+      syncRepo.items = [
+        syncRepo.items.single.copyWith(
+          status: SyncItemStatus.failed,
+          reason: reason,
+          retryCount: 3,
+        ),
+      ];
+      await sync.flush();
+      expect(sync.items.single.status, SyncItemStatus.failed);
+    }
+
+    TransactionDraft edited(SyncQueueItem item, {int amount = 99000}) =>
+        TransactionDraft(
+          type: TransactionType.expense,
+          occurredOn: '2026-01-16',
+          accountId: 'card',
+          magnitude: BigInt.from(amount),
+          clientIds: [for (final leg in item.legs) leg.clientId],
+          categoryId: 'food',
+          merchant: 'Grab',
+        );
+
+    test(
+      'a failed create goes back in line in place, same ids, no server call',
+      () async {
+        api.failWrite = 1;
+        expect(await model.save(_draft(model.newClientId())), isTrue);
+        await markFailed(SyncReason.invalid);
+        final item = sync.items.single;
+        final writes = api.writes;
+        expect(await model.saveQueued(edited(item), item), isTrue);
+        // It is sent right away in the background; let that finish.
+        await pumpEventQueue();
+        expect(api.writes, writes);
+        final next = sync.items.single;
+        expect(next.opId, item.opId);
+        expect(next.createdAt, item.createdAt);
+        expect(next.clientId, item.clientId);
+        expect(next.legs.single.clientId, item.legs.single.clientId);
+        expect(next.action, SyncAction.create);
+        expect(next.version, isNull);
+        expect(next.status, SyncItemStatus.pending);
+        expect(next.reason, isNull);
+        expect(next.retryCount, 0);
+        expect(next.legs.single.amountMinor, '-99000');
+        expect(next.merchant, 'Grab');
+        expect(next.occurredOn, '2026-01-16');
+        expect(model.lastSaved, isNull);
+        // The first save counted the creation; fixing it counts nothing more.
+        expect(analytics.events, hasLength(1));
+      },
+    );
+
+    test(
+      'a failed update keeps its server id and the version it was queued with',
+      () async {
+        const clientId = 'cccccccc-cccc-4ccc-8ccc-cccccccccccc';
+        await sync.enqueue(
+          const SyncMutation(
+            action: SyncAction.update,
+            clientId: clientId,
+            serverId: 'tx-1',
+            version: 3,
+            type: TransactionType.expense,
+            occurredOn: '2026-01-15',
+            categoryId: 'food',
+            legs: [
+              SyncLeg(
+                clientId: clientId,
+                accountId: 'card',
+                currencyCode: 'VND',
+                amountMinor: '-150000',
+              ),
+            ],
+          ),
+        );
+        await markFailed(SyncReason.categoryKind);
+        final item = sync.items.single;
+        expect(await model.saveQueued(edited(item), item), isTrue);
+        // It is sent right away in the background; let that finish.
+        await pumpEventQueue();
+        final next = sync.items.single;
+        expect(next.opId, item.opId);
+        expect(next.action, SyncAction.update);
+        expect(next.serverId, 'tx-1');
+        expect(next.version, 3);
+        expect(next.status, SyncItemStatus.pending);
+        expect(next.legs.single.amountMinor, '-99000');
+      },
+    );
+
+    test(
+      'a draft the rules refuse leaves the item exactly as it was',
+      () async {
+        api.failWrite = 1;
+        expect(await model.save(_draft(model.newClientId())), isTrue);
+        await markFailed(SyncReason.walletMissing);
+        final item = sync.items.single;
+        expect(await model.saveQueued(edited(item, amount: 0), item), isFalse);
+        expect(model.failure?.code, AuthError.invalidInput);
+        final same = sync.items.single;
+        expect(same.status, SyncItemStatus.failed);
+        expect(same.reason, SyncReason.walletMissing);
+        expect(same.retryCount, 3);
+        expect(same.legs.single.amountMinor, item.legs.single.amountMinor);
+      },
+    );
+
+    test('a wallet that is gone cannot be chosen again', () async {
+      api.failWrite = 1;
+      expect(await model.save(_draft(model.newClientId())), isTrue);
+      await markFailed(SyncReason.walletMissing);
+      final item = sync.items.single;
+      final gone = TransactionDraft(
+        type: TransactionType.expense,
+        occurredOn: '2026-01-16',
+        accountId: 'deleted-wallet',
+        magnitude: BigInt.from(1000),
+        clientIds: [item.legs.single.clientId],
+        categoryId: 'food',
+      );
+      expect(await model.saveQueued(gone, item), isFalse);
+      expect(sync.items.single.status, SyncItemStatus.failed);
+    });
+  });
 
   test(
     'composer is ready before the list finishes and save still works',

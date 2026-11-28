@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/core/di/injection.dart';
+import 'package:mobile/features/auth/domain/auth_repository.dart';
 import 'package:mobile/features/goals/presentation/viewmodels/goal_view_model.dart';
 import 'package:mobile/features/profile/presentation/pages/profile_page.dart';
 import 'package:mobile/features/settings/presentation/pages/security_page.dart';
@@ -31,12 +32,17 @@ void main() {
     double scale = 1,
     Size size = const Size(390, 1500),
     Future<void> Function()? then,
+    bool? emailVerified,
   }) async {
     t.view.physicalSize = size;
     t.view.devicePixelRatio = 1;
     addTearDown(t.view.reset);
     final g = (await t.runAsync(
-      () => G1.create(budgetDraft: 15000000, goals: const ['save', 'budget']),
+      () => G1.create(
+        budgetDraft: 15000000,
+        goals: const ['save', 'budget'],
+        emailVerified: emailVerified,
+      ),
     ))!;
     addTearDown(g.dispose);
     final wallets = StubWalletViewModel();
@@ -80,7 +86,9 @@ void main() {
       then: () async {
         await t.tap(find.text('Giao diện'));
         await t.pump(const Duration(milliseconds: 400));
-        await t.pump(const Duration(milliseconds: 400));
+        await t.pump();
+        await t.pump(const Duration(seconds: 1));
+        await t.pump(const Duration(seconds: 1));
       },
     );
   });
@@ -113,6 +121,77 @@ void main() {
       size: const Size(390, 844),
     );
   });
+  testWidgets('profile email not confirmed', skip: !Platform.isMacOS, (
+    t,
+  ) async {
+    await shot(
+      t,
+      (_) => const ProfilePage(),
+      'profile_unverified',
+      size: const Size(390, 844),
+      emailVerified: false,
+    );
+  });
+  testWidgets(
+    'profile email not confirmed, dark 1.3x',
+    skip: !Platform.isMacOS,
+    (t) async {
+      await shot(
+        t,
+        (_) => const ProfilePage(),
+        'profile_unverified_scale',
+        dark: true,
+        scale: 1.3,
+        size: const Size(320, 900),
+        emailVerified: false,
+      );
+    },
+  );
+  testWidgets('delete account popup', skip: !Platform.isMacOS, (t) async {
+    await shot(
+      t,
+      (g) {
+        g.api.failure = const AuthFailure(AuthError.credentials);
+        return const ProfilePage();
+      },
+      'delete_account',
+      size: const Size(390, 844),
+      then: () async {
+        await t.tap(find.text('Xoá tài khoản'));
+        await t.pumpAndSettle();
+        await t.enterText(find.byType(TextField).last, 'matkhau');
+        await t.pump();
+        await t.tap(find.text('Xóa vĩnh viễn'));
+        await t.pumpAndSettle();
+      },
+    );
+  });
+  testWidgets(
+    'delete account popup with an error, dark 1.3x',
+    skip: !Platform.isMacOS,
+    (t) async {
+      await shot(
+        t,
+        (g) {
+          g.api.failure = const AuthFailure(AuthError.credentials);
+          return const ProfilePage();
+        },
+        'delete_account_error',
+        dark: true,
+        scale: 1.3,
+        size: const Size(320, 900),
+        then: () async {
+          await t.ensureVisible(find.text('Xoá tài khoản'));
+          await t.tap(find.text('Xoá tài khoản'));
+          await t.pumpAndSettle();
+          await t.enterText(find.byType(TextField).last, 'matkhau');
+          await t.pump();
+          await t.tap(find.text('Xóa vĩnh viễn'));
+          await t.pumpAndSettle();
+        },
+      );
+    },
+  );
   testWidgets('security', skip: !Platform.isMacOS, (t) async {
     await shot(
       t,

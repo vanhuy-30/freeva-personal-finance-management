@@ -21,14 +21,17 @@ class AuthMessage extends StatelessWidget {
     final s = S.of(context);
     final failure = model.failure;
     final notice = model.notice;
-    if (failure == null && notice != AuthNotice.passwordChanged) {
-      return const SizedBox.shrink();
-    }
+    final done = switch (notice) {
+      AuthNotice.passwordChanged => s.authPasswordChanged,
+      AuthNotice.accountDeleted => s.authAccountDeleted,
+      _ => null,
+    };
+    if (failure == null && done == null) return const SizedBox.shrink();
     return Padding(
       padding: const EdgeInsets.only(top: FreevaSpace.s3),
       child: failure == null
           ? FreevaBanner(
-              message: s.authPasswordChanged,
+              message: done!,
               icon: LucideIcons.circleCheck,
               tone: FreevaBannerTone.success,
             )

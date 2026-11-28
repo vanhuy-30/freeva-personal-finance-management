@@ -33,9 +33,14 @@ export interface Profile {
   autoSuggestEnabled: boolean;
   /** When the profile photo last changed (ISO 8601); null without one. The photo itself is GET /profile/avatar. */
   avatarUpdatedAt: string | null;
+  /**
+   * When the sign-in email was confirmed (ISO 8601); null while it is not. Read only: it changes only through the
+   * link in the verification email (POST /auth/verify-email), never through PUT /profile.
+   */
+  emailVerifiedAt: string | null;
 }
 /** `displayName` undefined keeps the stored value. */
-export type ProfileUpdate = Omit<Profile, 'displayName' | 'goals' | 'declaredIncome' | 'displayCurrencyCode' | 'autoSuggestEnabled' | 'avatarUpdatedAt'> & { displayName?: string | null };
+export type ProfileUpdate = Omit<Profile, 'displayName' | 'goals' | 'declaredIncome' | 'displayCurrencyCode' | 'autoSuggestEnabled' | 'avatarUpdatedAt' | 'emailVerifiedAt'> & { displayName?: string | null };
 /** Only the fields present are stored; the rest keep their value. */
 export interface OnboardingAnswers {
   goals?: string[];

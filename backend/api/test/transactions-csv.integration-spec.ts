@@ -108,6 +108,22 @@ describe('BE-P3-010 transactions CSV export HTTP + PostgreSQL', () => {
     expect(await prisma.auditEvent.count({ where: { actorId: owner, action: 'user.transactions_export' } })).toBe(2);
   });
 
+  it('orders a day by clock time, rows without a time last, oldest first', async () => {
+    const a = await wallet(owner, 'Ví');
+    await spend(owner, token, a.id, 3000n, '2026-10-05', { occurredTime: '20:00' });
+    await spend(owner, token, a.id, 1000n, '2026-10-05');
+    await spend(owner, token, a.id, 2000n, '2026-10-05', { occurredTime: '08:30' });
+    await spend(owner, token, a.id, 4000n, '2026-10-04');
+    const text = await (await get('/v1/transactions/export.csv')).text();
+    const rows = text.trimEnd().split('\r\n').slice(1).map(line => line.split(',').slice(0, 4).join(','));
+    expect(rows).toEqual([
+      '2026-10-04,,expense,-4000',
+      '2026-10-05,08:30,expense,-2000',
+      '2026-10-05,20:00,expense,-3000',
+      '2026-10-05,,expense,-1000',
+    ]);
+  });
+
   it('never includes another user\'s rows and rejects bad filters', async () => {
     const mine = await wallet(owner, 'Của tôi'); const theirs = await wallet(otherOwner, 'Của người khác');
     await spend(owner, token, mine.id, 1000n, '2026-10-05');

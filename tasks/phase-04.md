@@ -66,3 +66,20 @@
 - DoD: bảng số giá vốn và lãi/lỗ đã chốt (FX: v1 không hỗ trợ vị thế khác tiền tệ ví, xem Note), chạy trong test API, gồm vàng theo chỉ/lượng, crypto số lượng lẻ, lãi tiền gửi tới ngày đáo hạn, và một vòng mua → góp thêm → bán một phần. Không dùng số thực dấu phẩy động cho tiền hoặc số lượng.
 - Note: 2026-11-06 `investment.spec.ts` (29 test domain) và `investments.integration-spec.ts` (11 test PostgreSQL) phủ vàng chỉ/lượng, crypto 0,12345678, lãi tiền gửi tới đáo hạn (100tr · 12% · 365 ngày = 12tr), mua → góp → bán một phần, làm tròn half-up. Còn thiếu: vị thế khác tiền tệ ví với FX đã chốt; chốt khi quyết định có hỗ trợ hay không.
 - Note: 2026-11-09 chốt (chủ dự án): v1 không hỗ trợ vị thế khác tiền tệ ví, nên không có tỷ giá trong đầu tư. Khoản đầu tư luôn cùng tiền tệ với ví mua/bán (API trả 400 nếu khác); khoản "đã có từ trước" dùng tiền tệ hồ sơ. Tài sản ròng và báo cáo vẫn theo từng tiền tệ, không quy đổi. Muốn hỗ trợ sau thì cần ADR mới (nguồn tỷ giá, tiền tệ ghi sổ, làm tròn) và task riêng.
+
+### BE-P4-E04 / MOB-P4-E04 — Giá và tỷ giá tự động
+- Status: todo
+- Module: 12, 3
+- Gate: post-v1
+- Depends: BE-P5-E08, DECISIONS-OPEN #6
+- DoD: theo [ADR 015](../docs/architecture/adr/015-investment-foreign-currency-and-auto-prices.md) sau khi chủ dự án chốt nguồn và quy tắc ưu tiên giữa giá nhập tay và giá tự động. Mỗi giá có nguồn và thời điểm, hiện cảnh báo khi cũ, người dùng ghi đè được. Cờ và cấu hình ở server, tắt khi thiếu khoá nhà cung cấp. Không gửi dữ liệu người dùng cho nhà cung cấp. Làm theo bậc: tỷ giá, crypto, vàng và chứng khoán.
+- Note: 2026-11-27 tách khỏi danh sách "thiếu so với v1"; chưa chốt nguồn nên chưa băm ticket.
+
+### BE-P4-E05 / MOB-P4-E05 — Đầu tư ngoại tệ
+- Status: todo
+- Module: 12
+- Gate: post-v1
+- Depends: BE-P4-E01, QA-P4-E01
+- DoD: theo ADR 015 sau khi chốt mô hình sổ cái (vị thế có tiền tệ riêng hoặc báo giá ngoại tệ). Có tỷ giá kèm nguồn và thời điểm trên lần mua/bán, lãi/lỗ đúng, báo cáo và tài sản ròng theo thời gian không lệch, `QA-P4-E01` thêm dòng tỷ giá.
+- Note: 2026-11-27 đảo quyết định 2026-11-09 nên cần ADR chốt trước khi làm.
+

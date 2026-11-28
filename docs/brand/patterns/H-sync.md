@@ -1,6 +1,6 @@
 # Nhóm H — Đồng bộ
 
-Trạng thái: **chốt thiết kế 2026-10-22**, code H1 xong 2026-10-23 (banner, chip, màn Đồng bộ, popup bỏ); H2 (màn 5 chọn bản, màn 6 sheet trùng) xong cùng ngày. Khác thiết kế ở H1: không có tiến độ "2/3" từng mục (một lô gửi một lần gọi, hiện "Đang gửi n thay đổi" + thanh chạy); chưa có nút "Cập nhật" (chờ lên store) và nút "Sửa" (cần form giao dịch nhận dữ liệu từ hàng đợi); lỗi do dữ liệu chỉ có "Bỏ"; lý do "Danh mục đã bị ẩn" thành "Dữ liệu không còn hợp lệ" vì server chỉ trả `VALIDATION_ERROR`. Task: `DS-P2-003`.
+Trạng thái: **chốt thiết kế 2026-10-22**, code H1 xong 2026-10-23 (banner, chip, màn Đồng bộ, popup bỏ); H2 (màn 5 chọn bản, màn 6 sheet trùng) xong cùng ngày. Khác thiết kế ở H1: không có tiến độ "2/3" từng mục (một lô gửi một lần gọi, hiện "Đang gửi n thay đổi" + thanh chạy); lý do "Danh mục đã bị ẩn" thành "Dữ liệu không còn hợp lệ" vì server chỉ trả `VALIDATION_ERROR`. Task: `DS-P2-003`. Nút "Cập nhật" và "Sửa" xong ở `MOB-P2-018` (2026-11-27).
 Canvas: trang **12 · Cá nhân, dữ liệu, đồng bộ**, khối H. 
 (<https://claude.ai/artifact/SmyaVvz57doJiAM6Kn678T>, riêng tư). Spec chung:
 [design-system.md](../design-system.md). Hành vi đồng bộ:
@@ -54,7 +54,7 @@ Canvas: trang **12 · Cá nhân, dữ liệu, đồng bộ**, khối H.
 | `create` / `update` / `delete` / `restore` | Thêm / Sửa / Xoá / Khôi phục |
 | `pending` | Đang chờ gửi |
 | `conflict` | Cần bạn xem → màn 5 |
-| `failed` | Cần bạn xem → lý do + "Sửa" hoặc Thử lại |
+| `failed` | Cần bạn xem → lý do + "Sửa" (lý do về dữ liệu: `invalid`, `categoryKind`, `walletMissing`, chỉ với Thêm/Sửa; mở form với giá trị đã xếp hàng, lưu thì thay tại chỗ trong hàng đợi rồi gửi ngay), "Thử lại" (`unavailable`), hoặc chỉ "Bỏ" (xoá/khôi phục, `transactionMissing`). Màn nhỏ hoặc chữ lớn: hàng có "Sửa" có thêm nút "Bỏ" dưới chữ |
 | Server từ chối schema (409) | Màn 8, giữ nguyên hàng chờ |
 | Gợi ý trùng | Màn 6 |
 
@@ -66,6 +66,6 @@ Canvas: trang **12 · Cá nhân, dữ liệu, đồng bộ**, khối H.
 | Lý do lỗi | Xong một phần (H1): app dịch mã lỗi theo mục có sẵn (`ACCOUNT_NOT_FOUND` → ví đã bị xoá, `TRANSACTION_NOT_FOUND`, `VALIDATION_ERROR` → dữ liệu không còn hợp lệ, còn lại → chưa gửi được). Muốn "Danh mục đã bị ẩn" thì API cần mã riêng. |
 | Gợi ý trùng dạng sheet | Xong (H2): kết quả `/sync` giữ id giao dịch vừa tạo và id giao dịch đã có; sheet hiện ở màn gốc của tab, mỗi cặp một lần; không đọc được một trong hai bản thì bỏ qua. |
 | Giờ đồng bộ lần cuối, tiến độ x/n | Giờ lần cuối xong (lưu cùng hàng đợi, xoá khi đăng xuất). Tiến độ x/n không làm: một lô là một lần gọi. |
-| Cập nhật app | Nút mở App Store / Google Play: chưa làm (cần gói `url_launcher` và đường dẫn store khi app lên store). |
+| Cập nhật app | Nút "Cập nhật" mở trang app trên cửa hàng bằng `url_launcher` (`MOB-P2-018`). Đường dẫn lấy từ `--dart-define` `STORE_URL_IOS` / `STORE_URL_ANDROID` (Android mặc định trang của `com.vanhuy.freeva`); **chưa có App Store id nên iOS ẩn nút** (thẻ vẫn báo cần cập nhật). Không mở được thì toast. |
 | Ví, danh mục | Chưa đồng bộ ở Phase 1; khi có thì dùng cùng màn này. |
 | Copy l10n | Thay `syncPending`, `syncConflict`, `syncDuplicate`… bằng chữ ở bảng trên. |

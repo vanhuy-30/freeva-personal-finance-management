@@ -19,6 +19,7 @@ import '../viewmodels/sync_view_model.dart';
 import '../widgets/sync_done_view.dart';
 import '../widgets/sync_item_row.dart';
 import '../widgets/sync_item_view.dart';
+import '../../domain/queued_transaction.dart';
 import '../widgets/sync_labels.dart';
 import '../widgets/sync_status_card.dart';
 
@@ -147,6 +148,9 @@ class _SyncPageState extends State<SyncPage> {
                           item.status == SyncItemStatus.conflict &&
                               item.server != null
                           ? () => context.push('/sync/compare/${item.opId}')
+                          : null,
+                      onEdit: syncItemEditable(item) && !sending
+                          ? () => context.push('/sync/edit/${item.opId}')
                           : null,
                       onRetry: syncCanRetry(item) && !sending
                           ? () => model.retry(item.opId)

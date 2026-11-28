@@ -30,6 +30,7 @@ import '../../features/reports/presentation/pages/report_category_page.dart';
 import '../../features/reports/presentation/pages/report_page.dart';
 import '../../features/settings/domain/app_preferences.dart';
 import '../../features/sync/presentation/pages/sync_compare_page.dart';
+import '../../features/sync/presentation/pages/sync_edit_page.dart';
 import '../../features/sync/presentation/pages/sync_page.dart';
 import '../../features/sync/presentation/widgets/sync_duplicate_host.dart';
 import '../../features/settings/presentation/pages/faq_page.dart';
@@ -314,6 +315,16 @@ GoRouter _createAppRouter(Listenable refresh, AppLogger logger) {
             path: 'compare/:opId',
             builder: (context, state) => AuthGate(
               child: SyncComparePage(opId: state.pathParameters['opId']!),
+            ),
+          ),
+          GoRoute(
+            path: 'edit/:opId',
+            pageBuilder: (context, state) => MaterialPage(
+              key: state.pageKey,
+              fullscreenDialog: true,
+              child: AuthGate(
+                child: SyncEditPage(opId: state.pathParameters['opId']!),
+              ),
             ),
           ),
         ],

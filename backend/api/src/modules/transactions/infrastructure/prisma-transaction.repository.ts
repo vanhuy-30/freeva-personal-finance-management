@@ -13,11 +13,14 @@ import { assertWithinRefundCap, validateRefundAmount, type RefundInput } from '.
 import type { CsvTransactionRow } from '../domain/csv-export';
 import { todayInTimeZone } from '../../reports/domain/report';
 
-/** Ties always fall back to the same order so pages never repeat or skip a row. */
+/**
+ * Within a day the clock time decides, and a row without a time goes last in both directions.
+ * Ties always fall back to the same order so pages never repeat or skip a row.
+ */
 function listOrder(sort: TransactionQuery['sort']): Prisma.Sql {
-  const newest = Prisma.sql`t."occurredOn" DESC, t."createdAt" DESC, t.id ASC`;
+  const newest = Prisma.sql`t."occurredOn" DESC, t."occurredTime" DESC NULLS LAST, t."createdAt" DESC, t.id ASC`;
   switch (sort) {
-    case 'dateAsc': return Prisma.sql`t."occurredOn" ASC, t."createdAt" ASC, t.id ASC`;
+    case 'dateAsc': return Prisma.sql`t."occurredOn" ASC, t."occurredTime" ASC NULLS LAST, t."createdAt" ASC, t.id ASC`;
     case 'amountDesc': return Prisma.sql`ABS(t."amountMinor") DESC, ${newest}`;
     case 'amountAsc': return Prisma.sql`ABS(t."amountMinor") ASC, ${newest}`;
     default: return newest;
@@ -190,7 +193,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
         LEFT JOIN "FinancialAccount" a ON a.id = t."accountId" AND a."userId" = t."userId"
         JOIN "Currency" ccy ON ccy.code = t."currencyCode"
         WHERE ${where}
-        ORDER BY t."occurredOn" ASC, t."createdAt" ASC, t.id ASC
+        ORDER BY t."occurredOn" ASC, t."occurredTime" ASC NULLS LAST, t."createdAt" ASC, t.id ASC
         LIMIT ${maxRows + 1}`);
       if (rows.length > maxRows) throw new TransactionError('VALIDATION_ERROR');
       await tx.auditEvent.create({ data: { actorType: 'user', actorId: userId, action: 'user.transactions_export', targetType: 'user', targetId: userId, outcome: 'success' } });

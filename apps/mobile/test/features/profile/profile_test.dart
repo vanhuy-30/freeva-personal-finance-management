@@ -106,6 +106,35 @@ void main() {
       );
     },
   );
+  test(
+    'repository reads the confirmed state: date, null, or unknown',
+    () async {
+      final api = Transport();
+      final repo = ProfileRepositoryImpl(api);
+      final base = {
+        'locale': 'vi',
+        'defaultCurrencyCode': 'VND',
+        'timezone': 'UTC',
+        'fiscalMonthStartDay': 1,
+        'version': 1,
+      };
+      Future<bool?> read(Map<String, dynamic> json) async {
+        api.response = json;
+        return (await repo.load())
+            .getOrElse(() => throw StateError(''))
+            .emailVerified;
+      }
+
+      expect(
+        await read({...base, 'emailVerifiedAt': '2026-11-27T03:00:00.000Z'}),
+        true,
+      );
+      expect(await read({...base, 'emailVerifiedAt': null}), false);
+      // An older server sends nothing: unknown, so the screen shows no claim.
+      expect(await read(base), isNull);
+    },
+  );
+
   test('declared income goes out as a band, can be set or cleared, and is read '
       'back with its midpoint', () async {
     final api = Transport();

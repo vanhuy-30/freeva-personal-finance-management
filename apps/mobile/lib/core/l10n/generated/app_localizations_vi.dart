@@ -3321,6 +3321,9 @@ class SVi extends S {
   String get syncRetry => 'Thử lại';
 
   @override
+  String get syncEditAction => 'Sửa';
+
+  @override
   String syncSending(int count) {
     return 'Đang gửi $count thay đổi';
   }
@@ -3393,6 +3396,13 @@ class SVi extends S {
 
   @override
   String get syncUpdateBody => 'Để tiếp tục đồng bộ. Thay đổi vẫn được giữ.';
+
+  @override
+  String get syncUpdateAction => 'Cập nhật';
+
+  @override
+  String get syncUpdateOpenError =>
+      'Chưa mở được cửa hàng ứng dụng. Hãy tự mở rồi cập nhật Freeva.';
 
   @override
   String get syncDiscardTitle => 'Bỏ thay đổi này?';
@@ -3544,6 +3554,18 @@ class SVi extends S {
   String get meProfileEmailUnverified => 'Email · chưa xác nhận';
 
   @override
+  String get meEmailSendLink => 'Gửi link xác nhận';
+
+  @override
+  String get meEmailSent => 'Đã gửi link. Kiểm tra email rồi quay lại đây.';
+
+  @override
+  String get meEmailSendError => 'Chưa gửi được. Kiểm tra mạng rồi thử lại.';
+
+  @override
+  String get meEmailUnverifiedHint => 'Cần để lấy lại mật khẩu khi bạn quên.';
+
+  @override
   String get meDeleteAccount => 'Xoá tài khoản';
 
   @override
@@ -3557,10 +3579,16 @@ class SVi extends S {
 
   @override
   String get meDeleteBody =>
-      'Mọi dữ liệu của bạn sẽ bị xóa ngay và không khôi phục được. Bạn có thể xuất dữ liệu trước.';
+      'Mọi dữ liệu của bạn sẽ bị xóa ngay và không khôi phục được.';
 
   @override
   String get meDeleteConfirm => 'Xóa vĩnh viễn';
+
+  @override
+  String get meDeleteExportFirst => 'Xuất dữ liệu trước';
+
+  @override
+  String get authAccountDeleted => 'Đã xóa tài khoản.';
 
   @override
   String get meDeleteError => 'Chưa xóa được. Dữ liệu của bạn vẫn còn nguyên.';

@@ -1,4 +1,6 @@
 {
   "APP_ENV": "prod",
-  "API_BASE_URL": ""
+  "API_BASE_URL": "",
+  "STORE_URL_IOS": "",
+  "STORE_URL_ANDROID": ""
 }

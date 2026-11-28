@@ -245,6 +245,21 @@ describe('BE-P1-005 HTTP + PostgreSQL', () => {
     expect(cleared.status).toBe(200);
     expect(cleared.body.legs[0].occurredTime).toBeNull();
   });
+  it('lists a day newest time first with untimed rows last, and keeps pages stable', async () => {
+    const category = await prisma.category.create({ data: { userId: owner, clientId: randomUUID(), name: 'Food' } });
+    const data = await input('expense');
+    const make = (occurredTime?: string) => create({ ...data, categoryId: category.id, legs: [{ ...data.legs[0], clientId: randomUUID(), amountMinor: '-1000' }], ...(occurredTime ? { occurredTime } : {}) });
+    // Logged in this order, so createdAt alone would give the opposite of the clock order.
+    const evening = await make('20:00'); const none = await make(); const morning = await make('08:00');
+    const later = await create({ ...data, categoryId: category.id, occurredOn: '2026-09-26', legs: [{ ...data.legs[0], clientId: randomUUID(), amountMinor: '-1000' }], occurredTime: '07:00' });
+    const ids = (body: { items: { id: string }[] }) => body.items.map(item => item.id);
+    const newest = await request('GET', '?type=expense');
+    expect(ids(newest.body)).toEqual([later.legs[0].id, evening.legs[0].id, morning.legs[0].id, none.legs[0].id]);
+    const oldest = await request('GET', '?type=expense&sort=dateAsc');
+    expect(ids(oldest.body)).toEqual([morning.legs[0].id, evening.legs[0].id, none.legs[0].id, later.legs[0].id]);
+    const pages = await Promise.all([1, 2, 3, 4].map(page => request('GET', `?type=expense&page=${page}&pageSize=1`)));
+    expect(pages.map(page => page.body.items[0].id)).toEqual(ids(newest.body));
+  });
   it('allows only one winner for concurrent updates through opposite transfer legs', async () => {
     const data = await input(); const created = await create(data);
     const results = await Promise.all(created.legs.map((leg: { id: string }, index: number) => request('PATCH', `/${leg.id}`, { version: 1, notes: `revision ${index}` })));

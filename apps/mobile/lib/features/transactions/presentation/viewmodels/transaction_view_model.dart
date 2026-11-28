@@ -21,6 +21,7 @@ import '../../../tags/domain/tag_use_cases.dart';
 import '../../../wallets/domain/wallet.dart';
 import '../../../wallets/domain/wallet_use_cases.dart';
 import '../../../wallets/presentation/viewmodels/wallet_view_model.dart';
+import '../../../sync/domain/queued_transaction.dart';
 import '../../../sync/domain/sync_item.dart';
 import '../../../sync/presentation/viewmodels/sync_view_model.dart';
 import '../../domain/transaction.dart';
@@ -102,6 +103,11 @@ abstract class TransactionViewModel extends ChangeNotifier {
   Future<TransactionBundle?> open(String id);
   Future<Tag?> createTag(String name, {required String clientId});
   Future<bool> save(TransactionDraft draft, {TransactionBundle? existing});
+
+  /// Replaces a failed queued create or update with the edited [draft]
+  /// (Đồng bộ → "Sửa"). Never asks the server first: the item goes back in
+  /// line in place, keeping its place and ids, and is sent right away.
+  Future<bool> saveQueued(TransactionDraft draft, SyncQueueItem item);
 
   /// Deletes [bundle]. An expense with refunds needs [refunds]; that delete
   /// is online only (the offline queue cannot carry the choice).
@@ -675,6 +681,43 @@ class DefaultTransactionViewModel extends TransactionViewModel {
       clientId: draft.clientIds.first,
       serverId: existing?.id,
     );
+  }
+
+  @override
+  Future<bool> saveQueued(TransactionDraft draft, SyncQueueItem item) async {
+    if (!canWrite) return false;
+    final epoch = ++_epoch;
+    _writing = true;
+    failure = null;
+    notifyListeners();
+    // An update keeps the version it was queued with; a create has none.
+    final prepared = prepareTransaction(
+      draft,
+      wallets,
+      currencies,
+      categories,
+      tags,
+      limits: _limits.requireLimits,
+      existing: item.serverId == null ? null : bundleFromQueueItem(item),
+    );
+    final error = prepared.fold<AuthFailure?>((value) => value, (_) => null);
+    if (error != null) {
+      _fail(error);
+      _writing = false;
+      notifyListeners();
+      return false;
+    }
+    final command = prepared.getOrElse(() => throw StateError('unreachable'));
+    await _sync.enqueue(mutationFromCommand(command, serverId: item.serverId));
+    if (epoch != _epoch) return false;
+    // Not a new transaction and not stored yet: nothing to mark or undo.
+    lastSaved = null;
+    lastSavedAt = null;
+    _writing = false;
+    _drainSyncReload();
+    notifyListeners();
+    unawaited(_sync.flush());
+    return true;
   }
 
   @override

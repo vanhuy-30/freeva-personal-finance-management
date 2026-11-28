@@ -3369,6 +3369,9 @@ class SEn extends S {
   String get syncRetry => 'Try again';
 
   @override
+  String get syncEditAction => 'Edit';
+
+  @override
   String syncSending(int count) {
     return 'Sending $count changes';
   }
@@ -3442,6 +3445,13 @@ class SEn extends S {
 
   @override
   String get syncUpdateBody => 'To keep syncing. Your changes are kept.';
+
+  @override
+  String get syncUpdateAction => 'Update';
+
+  @override
+  String get syncUpdateOpenError =>
+      'Could not open the app store. Open it yourself and update Freeva.';
 
   @override
   String get syncDiscardTitle => 'Discard this change?';
@@ -3593,6 +3603,20 @@ class SEn extends S {
   String get meProfileEmailUnverified => 'Email · not verified';
 
   @override
+  String get meEmailSendLink => 'Send confirmation link';
+
+  @override
+  String get meEmailSent => 'Link sent. Check your email, then come back here.';
+
+  @override
+  String get meEmailSendError =>
+      'Could not send. Check your connection and try again.';
+
+  @override
+  String get meEmailUnverifiedHint =>
+      'Needed to recover your password if you forget it.';
+
+  @override
   String get meDeleteAccount => 'Delete account';
 
   @override
@@ -3606,10 +3630,16 @@ class SEn extends S {
 
   @override
   String get meDeleteBody =>
-      'All your data is deleted right away and can\'t be restored. You can export it first.';
+      'All your data is deleted right away and cannot be restored.';
 
   @override
   String get meDeleteConfirm => 'Delete permanently';
+
+  @override
+  String get meDeleteExportFirst => 'Export your data first';
+
+  @override
+  String get authAccountDeleted => 'Account deleted.';
 
   @override
   String get meDeleteError => 'Couldn\'t delete. Your data is untouched.';

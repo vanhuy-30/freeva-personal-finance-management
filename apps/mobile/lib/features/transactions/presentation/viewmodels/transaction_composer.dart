@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../../../categories/domain/finance_category.dart';
+import '../../../sync/domain/sync_item.dart';
 import '../../../wallets/domain/wallet.dart';
 import '../../domain/transaction.dart';
 import '../../domain/transaction_money.dart';
@@ -20,6 +21,7 @@ class TransactionComposer extends ChangeNotifier {
     TransactionType? initialType,
     String? fromAccountId,
     String? toAccountId,
+    this.queued,
   }) : existing = copy ? null : existing {
     final from = existing;
     type = from?.type ?? initialType ?? TransactionType.expense;
@@ -63,6 +65,10 @@ class TransactionComposer extends ChangeNotifier {
   final TransactionViewModel model;
   final TransactionBundle? existing;
   final bool copy;
+
+  /// A failed change from the sync queue being fixed: saving puts it back in
+  /// line instead of sending it to the server.
+  final SyncQueueItem? queued;
 
   late TransactionType type;
   late BigInt amount;
@@ -280,7 +286,10 @@ class TransactionComposer extends ChangeNotifier {
       rate: cross ? rate : null,
       quotedAt: cross ? quotedAt : null,
     );
-    final ok = await model.save(draft, existing: existing);
+    final item = queued;
+    final ok = item == null
+        ? await model.save(draft, existing: existing)
+        : await model.saveQueued(draft, item);
     saving = false;
     invalid = !ok;
     notifyListeners();

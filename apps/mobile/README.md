@@ -89,7 +89,7 @@ cần signing và entitlement Keychain hợp lệ (kể cả simulator). Repo đ
 
 ## Môi trường mobile — MOB-P1-001
 
-`AppConfig` đọc `APP_ENV` (`dev`, `staging`, `prod`) và `API_BASE_URL` tại compile time. App kiểm tra origin HTTPS trước khi dựng UI; thiếu/sai cấu hình dừng startup với lỗi cấu hình không chứa giá trị nhạy cảm. Không đọc `.env` của backend. `APP_ENV` mặc định `dev` để giữ tương thích lệnh `--dart-define=API_BASE_URL=...` cũ.
+`AppConfig` đọc `APP_ENV` (`dev`, `staging`, `prod`) và `API_BASE_URL` tại compile time. Tuỳ chọn `STORE_URL_IOS` / `STORE_URL_ANDROID` (https) cho nút "Cập nhật" ở màn Đồng bộ: Android mặc định trang của `com.vanhuy.freeva`, iOS ẩn nút khi chưa đặt. App kiểm tra origin HTTPS trước khi dựng UI; thiếu/sai cấu hình dừng startup với lỗi cấu hình không chứa giá trị nhạy cảm. Không đọc `.env` của backend. `APP_ENV` mặc định `dev` để giữ tương thích lệnh `--dart-define=API_BASE_URL=...` cũ.
 
 - Staging: `config/staging.json` đã có URL Render.
 - Dev: copy `config/dev.example.json` thành `config/dev.json`, điền origin HTTPS của backend dev mà thiết bị truy cập và tin cậy certificate.

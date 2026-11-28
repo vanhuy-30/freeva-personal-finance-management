@@ -6018,6 +6018,12 @@ abstract class S {
   /// **'Try again'**
   String get syncRetry;
 
+  /// No description provided for @syncEditAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get syncEditAction;
+
   /// No description provided for @syncSending.
   ///
   /// In en, this message translates to:
@@ -6143,6 +6149,18 @@ abstract class S {
   /// In en, this message translates to:
   /// **'To keep syncing. Your changes are kept.'**
   String get syncUpdateBody;
+
+  /// No description provided for @syncUpdateAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get syncUpdateAction;
+
+  /// No description provided for @syncUpdateOpenError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the app store. Open it yourself and update Freeva.'**
+  String get syncUpdateOpenError;
 
   /// No description provided for @syncDiscardTitle.
   ///
@@ -6402,6 +6420,30 @@ abstract class S {
   /// **'Email · not verified'**
   String get meProfileEmailUnverified;
 
+  /// No description provided for @meEmailSendLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Send confirmation link'**
+  String get meEmailSendLink;
+
+  /// No description provided for @meEmailSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Link sent. Check your email, then come back here.'**
+  String get meEmailSent;
+
+  /// No description provided for @meEmailSendError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not send. Check your connection and try again.'**
+  String get meEmailSendError;
+
+  /// No description provided for @meEmailUnverifiedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Needed to recover your password if you forget it.'**
+  String get meEmailUnverifiedHint;
+
   /// No description provided for @meDeleteAccount.
   ///
   /// In en, this message translates to:
@@ -6429,7 +6471,7 @@ abstract class S {
   /// No description provided for @meDeleteBody.
   ///
   /// In en, this message translates to:
-  /// **'All your data is deleted right away and can\'t be restored. You can export it first.'**
+  /// **'All your data is deleted right away and cannot be restored.'**
   String get meDeleteBody;
 
   /// No description provided for @meDeleteConfirm.
@@ -6437,6 +6479,18 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Delete permanently'**
   String get meDeleteConfirm;
+
+  /// No description provided for @meDeleteExportFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Export your data first'**
+  String get meDeleteExportFirst;
+
+  /// No description provided for @authAccountDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Account deleted.'**
+  String get authAccountDeleted;
 
   /// No description provided for @meDeleteError.
   ///

@@ -10798,6 +10798,11 @@ components:
           format: date-time
           readOnly: true
           description: When the profile photo last changed; null without one. The photo is GET /profile/avatar. Saved via PUT /profile/avatar. Not accepted on PUT /profile.
+        emailVerifiedAt:
+          type: [string, 'null']
+          format: date-time
+          readOnly: true
+          description: When the sign-in email was confirmed; null while it is not. It changes only through the link in the verification email (POST /auth/verify-email). POST /auth/email-verifications answers 202 either way, so this field is the way to know. Not accepted on PUT /profile.
     OnboardingAnswers:
       type: object
       additionalProperties: false
